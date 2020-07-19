@@ -633,8 +633,10 @@ unsafe extern "C" fn TestFlips_bitboard_a8(mut my_bits_high: libc::c_uint,
                               0x3f as libc::c_int as libc::c_uint) as usize]
             as libc::c_int;
     fl = right_flip[contig as usize] << 24 as libc::c_int + 1 as libc::c_int;
+    // FIXME see if this is intended
+    let negated = ((my_bits_high & fl) as libc::c_int).wrapping_neg();
     t =
-        (-((my_bits_high & fl) as libc::c_int) >> 31 as libc::c_int) as
+        (negated >> 31 as libc::c_int) as
             libc::c_uint;
     my_bits_high |= fl & t;
     flipped = (contig as libc::c_uint & t) as libc::c_int;
@@ -1741,8 +1743,11 @@ unsafe extern "C" fn TestFlips_bitboard_b8(mut my_bits_high: libc::c_uint,
                               0x1f as libc::c_int as libc::c_uint) as usize]
             as libc::c_int;
     fl = right_flip[contig as usize] << 25 as libc::c_int + 1 as libc::c_int;
+    // FIXME find out if this was the correct assumption in the original code
+    //  because there is UB in the original (negation can overflow there)
+    let negated = ((my_bits_high & fl) as libc::c_int).wrapping_neg();
     t =
-        (-((my_bits_high & fl) as libc::c_int) >> 31 as libc::c_int) as
+        (negated >> 31 as libc::c_int) as
             libc::c_uint;
     my_bits_high |= fl & t;
     flipped = (contig as libc::c_uint & t) as libc::c_int;
@@ -3948,8 +3953,10 @@ unsafe extern "C" fn TestFlips_bitboard_a4(mut my_bits_high: libc::c_uint,
                               & 0x3f as libc::c_int as libc::c_uint) as usize]
             as libc::c_int;
     fl = right_flip[contig as usize] << 24 as libc::c_int + 1 as libc::c_int;
+    // FIXME verify that original behaviour is intended to be wrapping
+    let negated = ((my_bits_low & fl) as libc::c_int).wrapping_neg();
     t =
-        (-((my_bits_low & fl) as libc::c_int) >> 31 as libc::c_int) as
+        (negated >> 31 as libc::c_int) as
             libc::c_uint;
     my_bits_low |= fl & t;
     flipped = (contig as libc::c_uint & t) as libc::c_int;
@@ -4124,8 +4131,10 @@ unsafe extern "C" fn TestFlips_bitboard_h4(mut my_bits_high: libc::c_uint,
             (contig as libc::c_uint).wrapping_add(t) as libc::c_int as
                 libc::c_int;
         fl = lsb_mask[contig as usize] & 0x80808080 as libc::c_uint;
+        // fixme VERIFY overflow
+        let negated = ((my_bits_high & fl) as libc::c_int).wrapping_neg();
         t =
-            (-((my_bits_high & fl) as libc::c_int) >> 31 as libc::c_int) as
+            (negated >> 31 as libc::c_int) as
                 libc::c_uint;
         my_bits_high |= fl & t;
         flipped =
@@ -6108,8 +6117,9 @@ unsafe extern "C" fn TestFlips_bitboard_b4(mut my_bits_high: libc::c_uint,
                               & 0x1f as libc::c_int as libc::c_uint) as usize]
             as libc::c_int;
     fl = right_flip[contig as usize] << 25 as libc::c_int + 1 as libc::c_int;
+    let negated = ((my_bits_low & fl) as libc::c_int).wrapping_neg();
     t =
-        (-((my_bits_low & fl) as libc::c_int) >> 31 as libc::c_int) as
+        (negated >> 31 as libc::c_int) as
             libc::c_uint;
     my_bits_low |= fl & t;
     flipped = (contig as libc::c_uint & t) as libc::c_int;

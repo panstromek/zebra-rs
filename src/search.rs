@@ -261,6 +261,10 @@ unsafe extern "C" fn init_move_lists() {
 pub unsafe extern "C" fn inherit_move_lists(mut stage: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut last: libc::c_int = 0;
+
+    // FIXME
+    //  Index out of bounds here - reproducer:
+    //  cargo run  -- -l 20 10 0 20 10 0 -r 0
     if list_inherited[stage as usize] != 0 { return }
     list_inherited[stage as usize] = 1 as libc::c_int;
     if stage == 0 as libc::c_int { return }
