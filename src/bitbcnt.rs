@@ -16,7 +16,7 @@ use crate::src::libc;
 
 // NULL
 // #include "bitboard.h"
-static mut right_count: [i8; 128] =
+static right_count: [i8; 128] =
     [0 as i32 as i8, 0 as i32 as i8,
      1 as i32 as i8, 0 as i32 as i8,
      2 as i32 as i8, 0 as i32 as i8,
@@ -81,7 +81,7 @@ static mut right_count: [i8; 128] =
      1 as i32 as i8, 0 as i32 as i8,
      2 as i32 as i8, 0 as i32 as i8,
      1 as i32 as i8, 0 as i32 as i8];
-static mut left_count: [i8; 128] =
+static left_count: [i8; 128] =
     [0 as i32 as i8, 6 as i32 as i8,
      5 as i32 as i8, 5 as i32 as i8,
      4 as i32 as i8, 4 as i32 as i8,
@@ -146,7 +146,7 @@ static mut left_count: [i8; 128] =
      0 as i32 as i8, 0 as i32 as i8,
      0 as i32 as i8, 0 as i32 as i8,
      0 as i32 as i8, 0 as i32 as i8];
-static mut center_count: [i8; 256] =
+static center_count: [i8; 256] =
     [0 as i32 as i8, 3 as i32 as i8,
      2 as i32 as i8, 2 as i32 as i8,
      1 as i32 as i8, 1 as i32 as i8,
@@ -275,7 +275,7 @@ static mut center_count: [i8; 256] =
      0 as i32 as i8, 0 as i32 as i8,
      0 as i32 as i8, 0 as i32 as i8,
      0 as i32 as i8, 0 as i32 as i8];
-unsafe fn CountFlips_bitboard_a1(mut my_bits_high: u32,
+fn CountFlips_bitboard_a1(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -314,7 +314,7 @@ unsafe fn CountFlips_bitboard_a1(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_h1(mut my_bits_high: u32,
+fn CountFlips_bitboard_h1(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -348,7 +348,7 @@ unsafe fn CountFlips_bitboard_h1(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_a8(mut my_bits_high: u32,
+fn CountFlips_bitboard_a8(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -383,7 +383,7 @@ unsafe fn CountFlips_bitboard_a8(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_h8(mut my_bits_high: u32,
+fn CountFlips_bitboard_h8(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -421,7 +421,7 @@ unsafe fn CountFlips_bitboard_h8(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_b1(mut my_bits_high: u32,
+fn CountFlips_bitboard_b1(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -459,7 +459,7 @@ unsafe fn CountFlips_bitboard_b1(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_g1(mut my_bits_high: u32,
+fn CountFlips_bitboard_g1(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -493,7 +493,7 @@ unsafe fn CountFlips_bitboard_g1(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_a2(mut my_bits_high: u32,
+fn CountFlips_bitboard_a2(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -532,7 +532,7 @@ unsafe fn CountFlips_bitboard_a2(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_h2(mut my_bits_high: u32,
+fn CountFlips_bitboard_h2(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -566,7 +566,7 @@ unsafe fn CountFlips_bitboard_h2(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_a7(mut my_bits_high: u32,
+fn CountFlips_bitboard_a7(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -600,7 +600,7 @@ unsafe fn CountFlips_bitboard_a7(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_h7(mut my_bits_high: u32,
+fn CountFlips_bitboard_h7(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -638,7 +638,7 @@ unsafe fn CountFlips_bitboard_h7(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_b8(mut my_bits_high: u32,
+fn CountFlips_bitboard_b8(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -673,7 +673,7 @@ unsafe fn CountFlips_bitboard_b8(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_g8(mut my_bits_high: u32,
+fn CountFlips_bitboard_g8(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -711,7 +711,7 @@ unsafe fn CountFlips_bitboard_g8(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_b2(mut my_bits_high: u32,
+fn CountFlips_bitboard_b2(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -750,7 +750,7 @@ unsafe fn CountFlips_bitboard_b2(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_g2(mut my_bits_high: u32,
+fn CountFlips_bitboard_g2(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -784,7 +784,7 @@ unsafe fn CountFlips_bitboard_g2(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_b7(mut my_bits_high: u32,
+fn CountFlips_bitboard_b7(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -819,7 +819,7 @@ unsafe fn CountFlips_bitboard_b7(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_g7(mut my_bits_high: u32,
+fn CountFlips_bitboard_g7(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -857,7 +857,7 @@ unsafe fn CountFlips_bitboard_g7(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_c1(mut my_bits_high: u32,
+fn CountFlips_bitboard_c1(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -905,7 +905,7 @@ unsafe fn CountFlips_bitboard_c1(mut my_bits_high: u32,
                  i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_f1(mut my_bits_high: u32,
+fn CountFlips_bitboard_f1(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -952,7 +952,7 @@ unsafe fn CountFlips_bitboard_f1(mut my_bits_high: u32,
                  i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_a3(mut my_bits_high: u32,
+fn CountFlips_bitboard_a3(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1000,7 +1000,7 @@ unsafe fn CountFlips_bitboard_a3(mut my_bits_high: u32,
                  i32 as i8 as i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_h3(mut my_bits_high: u32,
+fn CountFlips_bitboard_h3(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1047,7 +1047,7 @@ unsafe fn CountFlips_bitboard_h3(mut my_bits_high: u32,
                  i32 as i8 as i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_a6(mut my_bits_high: u32,
+fn CountFlips_bitboard_a6(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1096,7 +1096,7 @@ unsafe fn CountFlips_bitboard_a6(mut my_bits_high: u32,
                  i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_h6(mut my_bits_high: u32,
+fn CountFlips_bitboard_h6(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1145,7 +1145,7 @@ unsafe fn CountFlips_bitboard_h6(mut my_bits_high: u32,
                  as i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_c8(mut my_bits_high: u32,
+fn CountFlips_bitboard_c8(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1195,7 +1195,7 @@ unsafe fn CountFlips_bitboard_c8(mut my_bits_high: u32,
             i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_f8(mut my_bits_high: u32,
+fn CountFlips_bitboard_f8(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1244,7 +1244,7 @@ unsafe fn CountFlips_bitboard_f8(mut my_bits_high: u32,
                  i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_d1(mut my_bits_high: u32,
+fn CountFlips_bitboard_d1(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1292,7 +1292,7 @@ unsafe fn CountFlips_bitboard_d1(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_e1(mut my_bits_high: u32,
+fn CountFlips_bitboard_e1(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1336,7 +1336,7 @@ unsafe fn CountFlips_bitboard_e1(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_a4(mut my_bits_high: u32,
+fn CountFlips_bitboard_a4(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1380,7 +1380,7 @@ unsafe fn CountFlips_bitboard_a4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_h4(mut my_bits_high: u32,
+fn CountFlips_bitboard_h4(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1423,7 +1423,7 @@ unsafe fn CountFlips_bitboard_h4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_a5(mut my_bits_high: u32,
+fn CountFlips_bitboard_a5(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1467,7 +1467,7 @@ unsafe fn CountFlips_bitboard_a5(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_h5(mut my_bits_high: u32,
+fn CountFlips_bitboard_h5(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1510,7 +1510,7 @@ unsafe fn CountFlips_bitboard_h5(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_d8(mut my_bits_high: u32,
+fn CountFlips_bitboard_d8(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1557,7 +1557,7 @@ unsafe fn CountFlips_bitboard_d8(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_e8(mut my_bits_high: u32,
+fn CountFlips_bitboard_e8(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1606,7 +1606,7 @@ unsafe fn CountFlips_bitboard_e8(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_c2(mut my_bits_high: u32,
+fn CountFlips_bitboard_c2(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1654,7 +1654,7 @@ unsafe fn CountFlips_bitboard_c2(mut my_bits_high: u32,
                  i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_f2(mut my_bits_high: u32,
+fn CountFlips_bitboard_f2(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1703,7 +1703,7 @@ unsafe fn CountFlips_bitboard_f2(mut my_bits_high: u32,
                  as i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_b3(mut my_bits_high: u32,
+fn CountFlips_bitboard_b3(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1751,7 +1751,7 @@ unsafe fn CountFlips_bitboard_b3(mut my_bits_high: u32,
                  i32 as i8 as i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_g3(mut my_bits_high: u32,
+fn CountFlips_bitboard_g3(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1798,7 +1798,7 @@ unsafe fn CountFlips_bitboard_g3(mut my_bits_high: u32,
                  i32 as i8 as i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_b6(mut my_bits_high: u32,
+fn CountFlips_bitboard_b6(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1847,7 +1847,7 @@ unsafe fn CountFlips_bitboard_b6(mut my_bits_high: u32,
                  i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_g6(mut my_bits_high: u32,
+fn CountFlips_bitboard_g6(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1896,7 +1896,7 @@ unsafe fn CountFlips_bitboard_g6(mut my_bits_high: u32,
                  as i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_c7(mut my_bits_high: u32,
+fn CountFlips_bitboard_c7(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1945,7 +1945,7 @@ unsafe fn CountFlips_bitboard_c7(mut my_bits_high: u32,
                  i32 as i8 as i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_f7(mut my_bits_high: u32,
+fn CountFlips_bitboard_f7(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -1994,7 +1994,7 @@ unsafe fn CountFlips_bitboard_f7(mut my_bits_high: u32,
             i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_d2(mut my_bits_high: u32,
+fn CountFlips_bitboard_d2(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2046,7 +2046,7 @@ unsafe fn CountFlips_bitboard_d2(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_e2(mut my_bits_high: u32,
+fn CountFlips_bitboard_e2(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2093,7 +2093,7 @@ unsafe fn CountFlips_bitboard_e2(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_b4(mut my_bits_high: u32,
+fn CountFlips_bitboard_b4(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2137,7 +2137,7 @@ unsafe fn CountFlips_bitboard_b4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_g4(mut my_bits_high: u32,
+fn CountFlips_bitboard_g4(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2180,7 +2180,7 @@ unsafe fn CountFlips_bitboard_g4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_b5(mut my_bits_high: u32,
+fn CountFlips_bitboard_b5(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2220,7 +2220,7 @@ unsafe fn CountFlips_bitboard_b5(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_g5(mut my_bits_high: u32,
+fn CountFlips_bitboard_g5(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2263,7 +2263,7 @@ unsafe fn CountFlips_bitboard_g5(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_d7(mut my_bits_high: u32,
+fn CountFlips_bitboard_d7(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2314,7 +2314,7 @@ unsafe fn CountFlips_bitboard_d7(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_e7(mut my_bits_high: u32,
+fn CountFlips_bitboard_e7(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2369,7 +2369,7 @@ unsafe fn CountFlips_bitboard_e7(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_c3(mut my_bits_high: u32,
+fn CountFlips_bitboard_c3(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2435,7 +2435,7 @@ unsafe fn CountFlips_bitboard_c3(mut my_bits_high: u32,
             as i8 as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_f3(mut my_bits_high: u32,
+fn CountFlips_bitboard_f3(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2500,7 +2500,7 @@ unsafe fn CountFlips_bitboard_f3(mut my_bits_high: u32,
             as i8 as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_c6(mut my_bits_high: u32,
+fn CountFlips_bitboard_c6(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2569,7 +2569,7 @@ unsafe fn CountFlips_bitboard_c6(mut my_bits_high: u32,
             as i8 as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_f6(mut my_bits_high: u32,
+fn CountFlips_bitboard_f6(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2637,7 +2637,7 @@ unsafe fn CountFlips_bitboard_f6(mut my_bits_high: u32,
             as i8 as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_d3(mut my_bits_high: u32,
+fn CountFlips_bitboard_d3(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2703,7 +2703,7 @@ unsafe fn CountFlips_bitboard_d3(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_e3(mut my_bits_high: u32,
+fn CountFlips_bitboard_e3(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2764,7 +2764,7 @@ unsafe fn CountFlips_bitboard_e3(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_c4(mut my_bits_high: u32,
+fn CountFlips_bitboard_c4(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2826,7 +2826,7 @@ unsafe fn CountFlips_bitboard_c4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_f4(mut my_bits_high: u32,
+fn CountFlips_bitboard_f4(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2889,7 +2889,7 @@ unsafe fn CountFlips_bitboard_f4(mut my_bits_high: u32,
                  as i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_c5(mut my_bits_high: u32,
+fn CountFlips_bitboard_c5(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -2951,7 +2951,7 @@ unsafe fn CountFlips_bitboard_c5(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_f5(mut my_bits_high: u32,
+fn CountFlips_bitboard_f5(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -3013,7 +3013,7 @@ unsafe fn CountFlips_bitboard_f5(mut my_bits_high: u32,
                  i32 as i8 as i32) as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_d6(mut my_bits_high: u32,
+fn CountFlips_bitboard_d6(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -3077,7 +3077,7 @@ unsafe fn CountFlips_bitboard_d6(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_e6(mut my_bits_high: u32,
+fn CountFlips_bitboard_e6(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -3145,7 +3145,7 @@ unsafe fn CountFlips_bitboard_e6(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_d4(mut my_bits_high: u32,
+fn CountFlips_bitboard_d4(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -3202,7 +3202,7 @@ unsafe fn CountFlips_bitboard_d4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_e4(mut my_bits_high: u32,
+fn CountFlips_bitboard_e4(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -3257,7 +3257,7 @@ unsafe fn CountFlips_bitboard_e4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_d5(mut my_bits_high: u32,
+fn CountFlips_bitboard_d5(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -3316,7 +3316,7 @@ unsafe fn CountFlips_bitboard_d5(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-unsafe fn CountFlips_bitboard_e5(mut my_bits_high: u32,
+fn CountFlips_bitboard_e5(mut my_bits_high: u32,
                                             mut my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
@@ -3375,200 +3375,68 @@ unsafe fn CountFlips_bitboard_e5(mut my_bits_high: u32,
     return flipped as i32;
 }
 
-pub static mut CountFlips_bitboard:
-           [Option<unsafe fn(_: u32, _: u32)
-                       -> i32>; 78] =
-    unsafe {
-        [Some(CountFlips_bitboard_a1 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_b1 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_c1 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_d1 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_e1 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_f1 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_g1 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_h1 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32), None, None,
-         Some(CountFlips_bitboard_a2 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_b2 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_c2 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_d2 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_e2 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_f2 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_g2 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_h2 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32), None, None,
-         Some(CountFlips_bitboard_a3 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_b3 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_c3 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_d3 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_e3 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_f3 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_g3 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_h3 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32), None, None,
-         Some(CountFlips_bitboard_a4 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_b4 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_c4 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_d4 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_e4 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_f4 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_g4 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_h4 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32), None, None,
-         Some(CountFlips_bitboard_a5 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_b5 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_c5 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_d5 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_e5 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_f5 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_g5 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_h5 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32), None, None,
-         Some(CountFlips_bitboard_a6 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_b6 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_c6 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_d6 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_e6 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_f6 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_g6 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_h6 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32), None, None,
-         Some(CountFlips_bitboard_a7 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_b7 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_c7 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_d7 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_e7 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_f7 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_g7 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_h7 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32), None, None,
-         Some(CountFlips_bitboard_a8 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_b8 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_c8 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_d8 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_e8 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_f8 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_g8 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32),
-         Some(CountFlips_bitboard_h8 as
-                  unsafe fn(_: u32, _: u32)
-                      -> i32)]
-    };
+pub static CountFlips_bitboard: [Option<fn(_: u32, _: u32) -> i32>; 78] =
+ [Some(CountFlips_bitboard_a1),
+  Some(CountFlips_bitboard_b1 ),
+  Some(CountFlips_bitboard_c1 ),
+  Some(CountFlips_bitboard_d1 ),
+  Some(CountFlips_bitboard_e1 ),
+  Some(CountFlips_bitboard_f1 ),
+  Some(CountFlips_bitboard_g1 ),
+  Some(CountFlips_bitboard_h1 ), None, None,
+  Some(CountFlips_bitboard_a2 ),
+  Some(CountFlips_bitboard_b2 ),
+  Some(CountFlips_bitboard_c2 ),
+  Some(CountFlips_bitboard_d2 ),
+  Some(CountFlips_bitboard_e2 ),
+  Some(CountFlips_bitboard_f2 ),
+  Some(CountFlips_bitboard_g2 ),
+  Some(CountFlips_bitboard_h2 ), None, None,
+  Some(CountFlips_bitboard_a3 ),
+  Some(CountFlips_bitboard_b3 ),
+  Some(CountFlips_bitboard_c3 ),
+  Some(CountFlips_bitboard_d3 ),
+  Some(CountFlips_bitboard_e3 ),
+  Some(CountFlips_bitboard_f3 ),
+  Some(CountFlips_bitboard_g3 ),
+  Some(CountFlips_bitboard_h3 ), None, None,
+  Some(CountFlips_bitboard_a4 ),
+  Some(CountFlips_bitboard_b4 ),
+  Some(CountFlips_bitboard_c4 ),
+  Some(CountFlips_bitboard_d4 ),
+  Some(CountFlips_bitboard_e4 ),
+  Some(CountFlips_bitboard_f4 ),
+  Some(CountFlips_bitboard_g4 ),
+  Some(CountFlips_bitboard_h4 ), None, None,
+  Some(CountFlips_bitboard_a5 ),
+  Some(CountFlips_bitboard_b5 ),
+  Some(CountFlips_bitboard_c5 ),
+  Some(CountFlips_bitboard_d5 ),
+  Some(CountFlips_bitboard_e5 ),
+  Some(CountFlips_bitboard_f5 ),
+  Some(CountFlips_bitboard_g5 ),
+  Some(CountFlips_bitboard_h5 ), None, None,
+  Some(CountFlips_bitboard_a6 ),
+  Some(CountFlips_bitboard_b6 ),
+  Some(CountFlips_bitboard_c6 ),
+  Some(CountFlips_bitboard_d6 ),
+  Some(CountFlips_bitboard_e6 ),
+  Some(CountFlips_bitboard_f6 ),
+  Some(CountFlips_bitboard_g6 ),
+  Some(CountFlips_bitboard_h6 ), None, None,
+  Some(CountFlips_bitboard_a7 ),
+  Some(CountFlips_bitboard_b7 ),
+  Some(CountFlips_bitboard_c7 ),
+  Some(CountFlips_bitboard_d7 ),
+  Some(CountFlips_bitboard_e7 ),
+  Some(CountFlips_bitboard_f7 ),
+  Some(CountFlips_bitboard_g7 ),
+  Some(CountFlips_bitboard_h7 ), None, None,
+  Some(CountFlips_bitboard_a8 ),
+  Some(CountFlips_bitboard_b8 ),
+  Some(CountFlips_bitboard_c8 ),
+  Some(CountFlips_bitboard_d8 ),
+  Some(CountFlips_bitboard_e8 ),
+  Some(CountFlips_bitboard_f8 ),
+  Some(CountFlips_bitboard_g8 ),
+  Some(CountFlips_bitboard_h8 )];
