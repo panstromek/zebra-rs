@@ -12,12 +12,12 @@
 /* Global variables */
 use crate::src::libc;
 
-pub static mut global_flip_stack: [*mut libc::c_int; 2048] =
-    [0 as *const libc::c_int as *mut libc::c_int; 2048];
+pub static mut global_flip_stack: [*mut i32; 2048] =
+    [0 as *const i32 as *mut i32; 2048];
 // Initialized in run_static_initializers
 
-pub static mut flip_stack: *mut *mut libc::c_int =
-    0 as *const *mut libc::c_int as *mut *mut libc::c_int;
+pub static mut flip_stack: *mut *mut i32 =
+    0 as *const *mut i32 as *mut *mut i32;
 /*
    File:          unflip.h
 
@@ -38,17 +38,17 @@ pub static mut flip_stack: *mut *mut libc::c_int =
   of the time.
 */
 
-pub unsafe fn UndoFlips(mut flip_count: libc::c_int,
-                                   mut oppcol: libc::c_int) {
+pub unsafe fn UndoFlips(mut flip_count: i32,
+                                   mut oppcol: i32) {
     let mut UndoFlips__flip_count = flip_count;
     let mut UndoFlips__oppcol = oppcol;
-    if UndoFlips__flip_count & 1 as libc::c_int != 0 {
+    if UndoFlips__flip_count & 1 as i32 != 0 {
         UndoFlips__flip_count -= 1;
         flip_stack = flip_stack.offset(-1);
         **flip_stack = UndoFlips__oppcol
     }
     while UndoFlips__flip_count != 0 {
-        UndoFlips__flip_count -= 2 as libc::c_int;
+        UndoFlips__flip_count -= 2 as i32;
         flip_stack = flip_stack.offset(-1);
         **flip_stack = UndoFlips__oppcol;
         flip_stack = flip_stack.offset(-1);
@@ -62,13 +62,13 @@ pub unsafe fn UndoFlips(mut flip_count: libc::c_int,
 
 pub unsafe fn init_flip_stack() {
     flip_stack =
-        &mut *global_flip_stack.as_mut_ptr().offset(0 as libc::c_int as isize)
-            as *mut *mut libc::c_int;
+        &mut *global_flip_stack.as_mut_ptr().offset(0 as i32 as isize)
+            as *mut *mut i32;
 }
 unsafe fn run_static_initializers() {
     flip_stack =
-        &mut *global_flip_stack.as_mut_ptr().offset(0 as libc::c_int as isize)
-            as *mut *mut libc::c_int
+        &mut *global_flip_stack.as_mut_ptr().offset(0 as i32 as isize)
+            as *mut *mut i32
 }
 #[used]
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]

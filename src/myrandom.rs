@@ -1,12 +1,12 @@
 
 use crate::src::libc;
 /* max number of types above */
-static mut my_degrees: [libc::c_int; 5] =
-    [0 as libc::c_int, 7 as libc::c_int, 15 as libc::c_int, 31 as libc::c_int,
-     63 as libc::c_int];
-static mut my_seps: [libc::c_int; 5] =
-    [0 as libc::c_int, 3 as libc::c_int, 1 as libc::c_int, 3 as libc::c_int,
-     1 as libc::c_int];
+static mut my_degrees: [i32; 5] =
+    [0 as i32, 7 as i32, 15 as i32, 31 as i32,
+     63 as i32];
+static mut my_seps: [i32; 5] =
+    [0 as i32, 3 as i32, 1 as i32, 3 as i32,
+     1 as i32];
 /*
  * Initially, everything is set up as if from :
  *      initstate( 1, &randtbl, 128 );
@@ -17,39 +17,39 @@ static mut my_seps: [libc::c_int; 5] =
  * position of the rear pointer is just
  *  MAX_TYPES*(rptr - state) + TYPE_3 == TYPE_3.
  */
-static mut my_randtbl: [libc::c_ulong; 32] =
-    [3 as libc::c_int as libc::c_ulong,
-     0x9a319039 as libc::c_uint as libc::c_ulong,
-     0x32d9c024 as libc::c_uint as libc::c_ulong,
-     0x9b663182 as libc::c_uint as libc::c_ulong,
-     0x5da1f342 as libc::c_uint as libc::c_ulong,
-     0xde3b81e0 as libc::c_uint as libc::c_ulong,
-     0xdf0a6fb5 as libc::c_uint as libc::c_ulong,
-     0xf103bc02 as libc::c_uint as libc::c_ulong,
-     0x48f340fb as libc::c_uint as libc::c_ulong,
-     0x7449e56b as libc::c_uint as libc::c_ulong,
-     0xbeb1dbb0 as libc::c_uint as libc::c_ulong,
-     0xab5c5918 as libc::c_uint as libc::c_ulong,
-     0x946554fd as libc::c_uint as libc::c_ulong,
-     0x8c2e680f as libc::c_uint as libc::c_ulong,
-     0xeb3d799f as libc::c_uint as libc::c_ulong,
-     0xb11ee0b7 as libc::c_uint as libc::c_ulong,
-     0x2d436b86 as libc::c_uint as libc::c_ulong,
-     0xda672e2a as libc::c_uint as libc::c_ulong,
-     0x1588ca88 as libc::c_uint as libc::c_ulong,
-     0xe369735d as libc::c_uint as libc::c_ulong,
-     0x904f35f7 as libc::c_uint as libc::c_ulong,
-     0xd7158fd6 as libc::c_uint as libc::c_ulong,
-     0x6fa6f051 as libc::c_uint as libc::c_ulong,
-     0x616e6b96 as libc::c_uint as libc::c_ulong,
-     0xac94efdc as libc::c_uint as libc::c_ulong,
-     0x36413f93 as libc::c_uint as libc::c_ulong,
-     0xc622c298 as libc::c_uint as libc::c_ulong,
-     0xf5a42ab8 as libc::c_uint as libc::c_ulong,
-     0x8a88d77b as libc::c_uint as libc::c_ulong,
-     0xf5ad9d0e as libc::c_uint as libc::c_ulong,
-     0x8999220b as libc::c_uint as libc::c_ulong,
-     0x27fb47b9 as libc::c_uint as libc::c_ulong];
+static mut my_randtbl: [u64; 32] =
+    [3 as i32 as u64,
+     0x9a319039 as u32 as u64,
+     0x32d9c024 as u32 as u64,
+     0x9b663182 as u32 as u64,
+     0x5da1f342 as u32 as u64,
+     0xde3b81e0 as u32 as u64,
+     0xdf0a6fb5 as u32 as u64,
+     0xf103bc02 as u32 as u64,
+     0x48f340fb as u32 as u64,
+     0x7449e56b as u32 as u64,
+     0xbeb1dbb0 as u32 as u64,
+     0xab5c5918 as u32 as u64,
+     0x946554fd as u32 as u64,
+     0x8c2e680f as u32 as u64,
+     0xeb3d799f as u32 as u64,
+     0xb11ee0b7 as u32 as u64,
+     0x2d436b86 as u32 as u64,
+     0xda672e2a as u32 as u64,
+     0x1588ca88 as u32 as u64,
+     0xe369735d as u32 as u64,
+     0x904f35f7 as u32 as u64,
+     0xd7158fd6 as u32 as u64,
+     0x6fa6f051 as u32 as u64,
+     0x616e6b96 as u32 as u64,
+     0xac94efdc as u32 as u64,
+     0x36413f93 as u32 as u64,
+     0xc622c298 as u32 as u64,
+     0xf5a42ab8 as u32 as u64,
+     0x8a88d77b as u32 as u64,
+     0xf5ad9d0e as u32 as u64,
+     0x8999220b as u32 as u64,
+     0x27fb47b9 as u32 as u64];
 /*
  * fptr and rptr are two pointers into the state info, a front and a rear
  * pointer.  These two pointers are always rand_sep places aparts, as they cycle
@@ -62,11 +62,11 @@ static mut my_randtbl: [libc::c_ulong; 32] =
  * to point to randtbl[1] (as explained below).
  */
 // Initialized in run_static_initializers
-static mut my_fptr: *mut libc::c_long =
-    0 as *const libc::c_long as *mut libc::c_long;
+static mut my_fptr: *mut i64 =
+    0 as *const i64 as *mut i64;
 // Initialized in run_static_initializers
-static mut my_rptr: *mut libc::c_long =
-    0 as *const libc::c_long as *mut libc::c_long;
+static mut my_rptr: *mut i64 =
+    0 as *const i64 as *mut i64;
 /*
  * The following things are the pointer to the state information table,
  * the type of the current generator, the degree of the current polynomial
@@ -79,14 +79,14 @@ static mut my_rptr: *mut libc::c_long =
  * the front and rear pointers have wrapped.
  */
 // Initialized in run_static_initializers
-static mut my_state: *mut libc::c_long =
-    0 as *const libc::c_long as *mut libc::c_long;
-static mut my_rand_type: libc::c_int = 3 as libc::c_int;
-static mut my_rand_deg: libc::c_int = 31 as libc::c_int;
-static mut my_rand_sep: libc::c_int = 3 as libc::c_int;
+static mut my_state: *mut i64 =
+    0 as *const i64 as *mut i64;
+static mut my_rand_type: i32 = 3 as i32;
+static mut my_rand_deg: i32 = 31 as i32;
+static mut my_rand_sep: i32 = 3 as i32;
 // Initialized in run_static_initializers
-static mut my_end_ptr: *mut libc::c_long =
-    0 as *const libc::c_long as *mut libc::c_long;
+static mut my_end_ptr: *mut i64 =
+    0 as *const i64 as *mut i64;
 /*
  * srandom:
  * Initialize the random number generator based on the given seed.  If the
@@ -100,31 +100,31 @@ static mut my_end_ptr: *mut libc::c_long =
  * values produced by this routine.
  */
 
-pub unsafe fn my_srandom(mut x: libc::c_int) -> libc::c_int {
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    if my_rand_type == 0 as libc::c_int {
-        *my_state.offset(0 as libc::c_int as isize) = x as libc::c_long
+pub unsafe fn my_srandom(mut x: i32) -> i32 {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    if my_rand_type == 0 as i32 {
+        *my_state.offset(0 as i32 as isize) = x as i64
     } else {
-        j = 1 as libc::c_int;
-        *my_state.offset(0 as libc::c_int as isize) = x as libc::c_long;
-        i = 1 as libc::c_int;
+        j = 1 as i32;
+        *my_state.offset(0 as i32 as isize) = x as i64;
+        i = 1 as i32;
         while i < my_rand_deg {
             *my_state.offset(i as isize) =
-                (1103515245 as libc::c_int as libc::c_long)
-                    .wrapping_mul(*my_state.offset((i - 1 as libc::c_int) as isize))
-                    .wrapping_add(12345 as libc::c_int as libc::c_long);
+                (1103515245 as i32 as i64)
+                    .wrapping_mul(*my_state.offset((i - 1 as i32) as isize))
+                    .wrapping_add(12345 as i32 as i64);
             i += 1
         }
         my_fptr =
-            &mut *my_state.offset(my_rand_sep as isize) as *mut libc::c_long;
+            &mut *my_state.offset(my_rand_sep as isize) as *mut i64;
         my_rptr =
-            &mut *my_state.offset(0 as libc::c_int as isize) as
-                *mut libc::c_long;
-        i = 0 as libc::c_int;
-        while i < 10 as libc::c_int * my_rand_deg { my_random(); i += 1 }
+            &mut *my_state.offset(0 as i32 as isize) as
+                *mut i64;
+        i = 0 as i32;
+        while i < 10 as i32 * my_rand_deg { my_random(); i += 1 }
     }
-    return 0 as libc::c_int;
+    return 0 as i32;
 }
 /*
  * initstate:
@@ -142,59 +142,59 @@ pub unsafe fn my_srandom(mut x: libc::c_int) -> libc::c_int {
  * Returns a pointer to the old state.
  */
 
-pub unsafe fn my_initstate(mut seed: libc::c_uint,
-                                      mut arg_state: *mut libc::c_char,
-                                      mut n: libc::c_int)
- -> *mut libc::c_char {
+pub unsafe fn my_initstate(mut seed: u32,
+                                      mut arg_state: *mut i8,
+                                      mut n: i32)
+ -> *mut i8 {
     let mut ostate =
-        &mut *my_state.offset(-(1 as libc::c_int) as isize) as
-            *mut libc::c_long as *mut libc::c_char; /* first location */
-    if my_rand_type == 0 as libc::c_int {
-        *my_state.offset(-(1 as libc::c_int) as isize) =
-            my_rand_type as libc::c_long
+        &mut *my_state.offset(-(1 as i32) as isize) as
+            *mut i64 as *mut i8; /* first location */
+    if my_rand_type == 0 as i32 {
+        *my_state.offset(-(1 as i32) as isize) =
+            my_rand_type as i64
     } else {
-        *my_state.offset(-(1 as libc::c_int) as isize) =
-            5 as libc::c_int as libc::c_long *
-                my_rptr.wrapping_offset_from(my_state) as libc::c_long +
-                my_rand_type as libc::c_long
+        *my_state.offset(-(1 as i32) as isize) =
+            5 as i32 as i64 *
+                my_rptr.wrapping_offset_from(my_state) as i64 +
+                my_rand_type as i64
     } /* must set end_ptr before srandom */
-    if n < 32 as libc::c_int {
-        if n < 8 as libc::c_int { return 0 as *mut libc::c_char }
-        my_rand_type = 0 as libc::c_int;
-        my_rand_deg = 0 as libc::c_int;
-        my_rand_sep = 0 as libc::c_int
-    } else if n < 64 as libc::c_int {
-        my_rand_type = 1 as libc::c_int;
-        my_rand_deg = 7 as libc::c_int;
-        my_rand_sep = 3 as libc::c_int
-    } else if n < 128 as libc::c_int {
-        my_rand_type = 2 as libc::c_int;
-        my_rand_deg = 15 as libc::c_int;
-        my_rand_sep = 1 as libc::c_int
-    } else if n < 256 as libc::c_int {
-        my_rand_type = 3 as libc::c_int;
-        my_rand_deg = 31 as libc::c_int;
-        my_rand_sep = 3 as libc::c_int
+    if n < 32 as i32 {
+        if n < 8 as i32 { return 0 as *mut i8 }
+        my_rand_type = 0 as i32;
+        my_rand_deg = 0 as i32;
+        my_rand_sep = 0 as i32
+    } else if n < 64 as i32 {
+        my_rand_type = 1 as i32;
+        my_rand_deg = 7 as i32;
+        my_rand_sep = 3 as i32
+    } else if n < 128 as i32 {
+        my_rand_type = 2 as i32;
+        my_rand_deg = 15 as i32;
+        my_rand_sep = 1 as i32
+    } else if n < 256 as i32 {
+        my_rand_type = 3 as i32;
+        my_rand_deg = 31 as i32;
+        my_rand_sep = 3 as i32
     } else {
-        my_rand_type = 4 as libc::c_int;
-        my_rand_deg = 63 as libc::c_int;
-        my_rand_sep = 1 as libc::c_int
+        my_rand_type = 4 as i32;
+        my_rand_deg = 63 as i32;
+        my_rand_sep = 1 as i32
     }
     my_state =
         &mut *(arg_state as
-                   *mut libc::c_long).offset(1 as libc::c_int as isize) as
-            *mut libc::c_long;
+                   *mut i64).offset(1 as i32 as isize) as
+            *mut i64;
     my_end_ptr =
-        &mut *my_state.offset(my_rand_deg as isize) as *mut libc::c_long;
-    my_srandom(seed as libc::c_int);
-    if my_rand_type == 0 as libc::c_int {
-        *my_state.offset(-(1 as libc::c_int) as isize) =
-            my_rand_type as libc::c_long
+        &mut *my_state.offset(my_rand_deg as isize) as *mut i64;
+    my_srandom(seed as i32);
+    if my_rand_type == 0 as i32 {
+        *my_state.offset(-(1 as i32) as isize) =
+            my_rand_type as i64
     } else {
-        *my_state.offset(-(1 as libc::c_int) as isize) =
-            5 as libc::c_int as libc::c_long *
-                my_rptr.wrapping_offset_from(my_state) as libc::c_long +
-                my_rand_type as libc::c_long
+        *my_state.offset(-(1 as i32) as isize) =
+            5 as i32 as i64 *
+                my_rptr.wrapping_offset_from(my_state) as i64 +
+                my_rand_type as i64
     }
     return ostate;
 }
@@ -210,26 +210,26 @@ pub unsafe fn my_initstate(mut seed: libc::c_uint,
  * Returns a pointer to the old state information.
  */
 
-pub unsafe fn my_setstate(mut arg_state: *mut libc::c_char)
- -> *mut libc::c_char {
-    let mut new_state = arg_state as *mut libc::c_long; /* set end_ptr too */
+pub unsafe fn my_setstate(mut arg_state: *mut i8)
+ -> *mut i8 {
+    let mut new_state = arg_state as *mut i64; /* set end_ptr too */
     let mut type_0 =
-        (*new_state.offset(0 as libc::c_int as isize) %
-             5 as libc::c_int as libc::c_long) as libc::c_int;
+        (*new_state.offset(0 as i32 as isize) %
+             5 as i32 as i64) as i32;
     let mut rear =
-        (*new_state.offset(0 as libc::c_int as isize) /
-             5 as libc::c_int as libc::c_long) as libc::c_int;
+        (*new_state.offset(0 as i32 as isize) /
+             5 as i32 as i64) as i32;
     let mut ostate =
-        &mut *my_state.offset(-(1 as libc::c_int) as isize) as
-            *mut libc::c_long as *mut libc::c_char;
-    if my_rand_type == 0 as libc::c_int {
-        *my_state.offset(-(1 as libc::c_int) as isize) =
-            my_rand_type as libc::c_long
+        &mut *my_state.offset(-(1 as i32) as isize) as
+            *mut i64 as *mut i8;
+    if my_rand_type == 0 as i32 {
+        *my_state.offset(-(1 as i32) as isize) =
+            my_rand_type as i64
     } else {
-        *my_state.offset(-(1 as libc::c_int) as isize) =
-            5 as libc::c_int as libc::c_long *
-                my_rptr.wrapping_offset_from(my_state) as libc::c_long +
-                my_rand_type as libc::c_long
+        *my_state.offset(-(1 as i32) as isize) =
+            5 as i32 as i64 *
+                my_rptr.wrapping_offset_from(my_state) as i64 +
+                my_rand_type as i64
     }
     match type_0 {
         0 | 1 | 2 | 3 | 4 => {
@@ -240,16 +240,16 @@ pub unsafe fn my_setstate(mut arg_state: *mut libc::c_char)
         _ => { }
     }
     my_state =
-        &mut *new_state.offset(1 as libc::c_int as isize) as
-            *mut libc::c_long;
-    if my_rand_type != 0 as libc::c_int {
-        my_rptr = &mut *my_state.offset(rear as isize) as *mut libc::c_long;
+        &mut *new_state.offset(1 as i32 as isize) as
+            *mut i64;
+    if my_rand_type != 0 as i32 {
+        my_rptr = &mut *my_state.offset(rear as isize) as *mut i64;
         my_fptr =
             &mut *my_state.offset(((rear + my_rand_sep) % my_rand_deg) as
-                                      isize) as *mut libc::c_long
+                                      isize) as *mut i64
     }
     my_end_ptr =
-        &mut *my_state.offset(my_rand_deg as isize) as *mut libc::c_long;
+        &mut *my_state.offset(my_rand_deg as isize) as *mut i64;
     return ostate;
 }
 /*
@@ -267,21 +267,21 @@ pub unsafe fn my_setstate(mut arg_state: *mut libc::c_char)
  * Returns a 31-bit random number.
  */
 
-pub unsafe fn my_random() -> libc::c_long {
-    let mut i: libc::c_long = 0; /* chucking least random bit */
-    if my_rand_type == 0 as libc::c_int {
-        let ref mut fresh0 = *my_state.offset(0 as libc::c_int as isize);
+pub unsafe fn my_random() -> i64 {
+    let mut i: i64 = 0; /* chucking least random bit */
+    if my_rand_type == 0 as i32 {
+        let ref mut fresh0 = *my_state.offset(0 as i32 as isize);
         *fresh0 =
-            *my_state.offset(0 as libc::c_int as isize) *
-                1103515245 as libc::c_int as libc::c_long +
-                12345 as libc::c_int as libc::c_long &
-                0x7fffffff as libc::c_int as libc::c_long;
+            *my_state.offset(0 as i32 as isize) *
+                1103515245 as i32 as i64 +
+                12345 as i32 as i64 &
+                0x7fffffff as i32 as i64;
         i = *fresh0
     } else {
         *my_fptr = (*my_fptr).wrapping_add(*my_rptr);
         i =
-            *my_fptr >> 1 as libc::c_int &
-                0x7fffffff as libc::c_int as libc::c_long;
+            *my_fptr >> 1 as i32 &
+                0x7fffffff as i32 as i64;
         my_fptr = my_fptr.offset(1);
         if my_fptr >= my_end_ptr {
             my_fptr = my_state;
@@ -295,19 +295,19 @@ pub unsafe fn my_random() -> libc::c_long {
 }
 unsafe fn run_static_initializers() {
     my_fptr =
-        &mut *my_randtbl.as_mut_ptr().offset((3 as libc::c_int +
-                                                  1 as libc::c_int) as isize)
-            as *mut libc::c_ulong as *mut libc::c_long;
+        &mut *my_randtbl.as_mut_ptr().offset((3 as i32 +
+                                                  1 as i32) as isize)
+            as *mut u64 as *mut i64;
     my_rptr =
-        &mut *my_randtbl.as_mut_ptr().offset(1 as libc::c_int as isize) as
-            *mut libc::c_ulong as *mut libc::c_long;
+        &mut *my_randtbl.as_mut_ptr().offset(1 as i32 as isize) as
+            *mut u64 as *mut i64;
     my_state =
-        &mut *my_randtbl.as_mut_ptr().offset(1 as libc::c_int as isize) as
-            *mut libc::c_ulong as *mut libc::c_long;
+        &mut *my_randtbl.as_mut_ptr().offset(1 as i32 as isize) as
+            *mut u64 as *mut i64;
     my_end_ptr =
-        &mut *my_randtbl.as_mut_ptr().offset((31 as libc::c_int +
-                                                  1 as libc::c_int) as isize)
-            as *mut libc::c_ulong as *mut libc::c_long
+        &mut *my_randtbl.as_mut_ptr().offset((31 as i32 +
+                                                  1 as i32) as isize)
+            as *mut u64 as *mut i64
 }
 #[used]
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]

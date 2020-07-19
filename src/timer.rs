@@ -1,29 +1,29 @@
 use crate::src::libc;
 use crate::src::stubs::{printf, fabs, time};
 
-pub type __time_t = libc::c_long;
+pub type __time_t = i64;
 pub type time_t = __time_t;
 /* Global variables */
 
-pub static mut last_panic_check: libc::c_double = 0.;
+pub static mut last_panic_check: f64 = 0.;
 
-pub static mut ponder_depth: [libc::c_int; 100] = [0; 100];
+pub static mut ponder_depth: [i32; 100] = [0; 100];
 
-pub static mut current_ponder_depth: libc::c_int = 0;
+pub static mut current_ponder_depth: i32 = 0;
 
-pub static mut frozen_ponder_depth: libc::c_int = 0;
+pub static mut frozen_ponder_depth: i32 = 0;
 /* Local variables */
 
-pub static mut current_ponder_time: libc::c_double = 0.;
+pub static mut current_ponder_time: f64 = 0.;
 
-pub static mut frozen_ponder_time: libc::c_double = 0.;
-static mut panic_value: libc::c_double = 0.;
-static mut time_per_move: libc::c_double = 0.;
-static mut start_time: libc::c_double = 0.;
-static mut total_move_time: libc::c_double = 0.;
-static mut ponder_time: [libc::c_double; 100] = [0.; 100];
-static mut panic_abort: libc::c_int = 0;
-static mut do_check_abort: libc::c_int = 1 as libc::c_int;
+pub static mut frozen_ponder_time: f64 = 0.;
+static mut panic_value: f64 = 0.;
+static mut time_per_move: f64 = 0.;
+static mut start_time: f64 = 0.;
+static mut total_move_time: f64 = 0.;
+static mut ponder_time: [f64; 100] = [0.; 100];
+static mut panic_abort: i32 = 0;
+static mut do_check_abort: i32 = 1 as i32;
 static mut init_time: time_t = 0;
 /*
   RESET_REAL_TIMER
@@ -43,10 +43,10 @@ pub unsafe fn init_timer() { reset_real_timer(); }
   Returns the time passed since the last call to init_timer() or reset_timer().
 */
 
-pub unsafe fn get_real_timer() -> libc::c_double {
+pub unsafe fn get_real_timer() -> f64 {
     let mut curr_time: time_t = 0;
     time(&mut curr_time);
-    return (curr_time - init_time) as libc::c_double;
+    return (curr_time - init_time) as f64;
 }
 /*
   SET_DEFAULT_PANIC
@@ -74,34 +74,34 @@ pub unsafe fn set_default_panic() {
   Initializes the timing subsystem and allocates time for the current move.
 */
 
-pub unsafe fn determine_move_time(mut time_left: libc::c_double,
-                                             mut incr: libc::c_double,
-                                             mut discs: libc::c_int) {
-    let mut time_available: libc::c_double = 0.;
-    let mut moves_left: libc::c_int = 0;
+pub unsafe fn determine_move_time(mut time_left: f64,
+                                             mut incr: f64,
+                                             mut discs: i32) {
+    let mut time_available: f64 = 0.;
+    let mut moves_left: i32 = 0;
     frozen_ponder_time = current_ponder_time;
     frozen_ponder_depth = current_ponder_depth;
     moves_left =
-        if (65 as libc::c_int - discs) / 2 as libc::c_int - 5 as libc::c_int >
-               2 as libc::c_int {
-            ((65 as libc::c_int - discs) / 2 as libc::c_int) -
-                5 as libc::c_int
-        } else { 2 as libc::c_int };
+        if (65 as i32 - discs) / 2 as i32 - 5 as i32 >
+               2 as i32 {
+            ((65 as i32 - discs) / 2 as i32) -
+                5 as i32
+        } else { 2 as i32 };
     time_available =
-        time_left + frozen_ponder_time + moves_left as libc::c_double * incr -
+        time_left + frozen_ponder_time + moves_left as f64 * incr -
             10.0f64;
     if time_available < 1.0f64 { time_available = 1.0f64 }
     time_per_move =
-        time_available / (moves_left + 1 as libc::c_int) as libc::c_double *
+        time_available / (moves_left + 1 as i32) as f64 *
             0.7f64;
-    if time_per_move > time_left / 4 as libc::c_int as libc::c_double {
-        time_per_move = time_left / 4 as libc::c_int as libc::c_double
+    if time_per_move > time_left / 4 as i32 as f64 {
+        time_per_move = time_left / 4 as i32 as f64
     }
     if time_per_move > time_left + frozen_ponder_time {
-        time_per_move = time_left / 4 as libc::c_int as libc::c_double
+        time_per_move = time_left / 4 as i32 as f64
     }
-    if time_per_move == 0 as libc::c_int as libc::c_double {
-        time_per_move = 1 as libc::c_int as libc::c_double
+    if time_per_move == 0 as i32 as f64 {
+        time_per_move = 1 as i32 as f64
     }
     set_default_panic();
 }
@@ -111,16 +111,16 @@ pub unsafe fn determine_move_time(mut time_left: libc::c_double,
   This is the actual time, not adjusted for pondering.
 */
 
-pub unsafe fn get_elapsed_time() -> libc::c_double {
+pub unsafe fn get_elapsed_time() -> f64 {
     return fabs(get_real_timer() - start_time);
 }
 /*
   START_MOVE
 */
 
-pub unsafe fn start_move(mut in_total_time: libc::c_double,
-                                    mut increment: libc::c_double,
-                                    mut discs: libc::c_int) {
+pub unsafe fn start_move(mut in_total_time: f64,
+                                    mut increment: f64,
+                                    mut discs: i32) {
     /*
       This is a possible approach in time control games with increment:
         available_time = in_total_time + increment * (65 - discs) / 2.0;
@@ -131,7 +131,7 @@ pub unsafe fn start_move(mut in_total_time: libc::c_double,
         if in_total_time - 10.0f64 > 0.1f64 {
             (in_total_time) - 10.0f64
         } else { 0.1f64 };
-    panic_abort = 0 as libc::c_int;
+    panic_abort = 0 as i32;
     start_time = get_real_timer();
 }
 /*
@@ -140,7 +140,7 @@ pub unsafe fn start_move(mut in_total_time: libc::c_double,
   before the panic timeout kicks in.
 */
 
-pub unsafe fn set_panic_threshold(mut value: libc::c_double) {
+pub unsafe fn set_panic_threshold(mut value: f64) {
     panic_value = value;
 }
 /*
@@ -150,12 +150,12 @@ pub unsafe fn set_panic_threshold(mut value: libc::c_double) {
 */
 
 pub unsafe fn check_panic_abort() {
-    let mut curr_time: libc::c_double = 0.;
-    let mut adjusted_total_time: libc::c_double = 0.;
+    let mut curr_time: f64 = 0.;
+    let mut adjusted_total_time: f64 = 0.;
     curr_time = get_elapsed_time();
     adjusted_total_time = total_move_time;
     if do_check_abort != 0 && curr_time >= panic_value * adjusted_total_time {
-        panic_abort = 1 as libc::c_int
+        panic_abort = 1 as i32
     };
 }
 /*
@@ -163,22 +163,22 @@ pub unsafe fn check_panic_abort() {
   Checks if a certain fraction of the panic time has been used.
 */
 
-pub unsafe fn check_threshold(mut threshold: libc::c_double)
- -> libc::c_int {
-    let mut curr_time: libc::c_double = 0.;
-    let mut adjusted_total_time: libc::c_double = 0.;
+pub unsafe fn check_threshold(mut threshold: f64)
+ -> i32 {
+    let mut curr_time: f64 = 0.;
+    let mut adjusted_total_time: f64 = 0.;
     curr_time = get_elapsed_time();
     adjusted_total_time = total_move_time;
     return (do_check_abort != 0 &&
                 curr_time >= panic_value * threshold * adjusted_total_time) as
-               libc::c_int;
+               i32;
 }
 /*
   TOGGLE_ABORT_CHECK
   Enables/disables panic time abort checking.
 */
 
-pub unsafe fn toggle_abort_check(mut enable: libc::c_int) {
+pub unsafe fn toggle_abort_check(mut enable: i32) {
     do_check_abort = enable;
 }
 /*
@@ -187,14 +187,14 @@ pub unsafe fn toggle_abort_check(mut enable: libc::c_int) {
 */
 
 pub unsafe fn clear_panic_abort() {
-    panic_abort = 0 as libc::c_int;
+    panic_abort = 0 as i32;
 }
 /*
   IS_PANIC_ABORT
   Returns the current panic status.
 */
 
-pub unsafe fn is_panic_abort() -> libc::c_int {
+pub unsafe fn is_panic_abort() -> i32 {
     return panic_abort;
 }
 /*
@@ -204,15 +204,15 @@ pub unsafe fn is_panic_abort() -> libc::c_int {
 */
 
 pub unsafe fn clear_ponder_times() {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
-    while i < 100 as libc::c_int {
+    let mut i: i32 = 0;
+    i = 0 as i32;
+    while i < 100 as i32 {
         ponder_time[i as usize] = 0.0f64;
-        ponder_depth[i as usize] = 0 as libc::c_int;
+        ponder_depth[i as usize] = 0 as i32;
         i += 1
     }
     current_ponder_time = 0.0f64;
-    current_ponder_depth = 0 as libc::c_int;
+    current_ponder_depth = 0 as i32;
 }
 /*
   ADD_PONDER_TIME
@@ -220,8 +220,8 @@ pub unsafe fn clear_ponder_times() {
   a certain move.
 */
 
-pub unsafe fn add_ponder_time(mut move_0: libc::c_int,
-                                         mut time_0: libc::c_double) {
+pub unsafe fn add_ponder_time(mut move_0: i32,
+                                         mut time_0: f64) {
     ponder_time[move_0 as usize] += time_0;
 }
 /*
@@ -230,12 +230,12 @@ pub unsafe fn add_ponder_time(mut move_0: libc::c_int,
   pondering was made is stored.
 */
 
-pub unsafe fn adjust_current_ponder_time(mut move_0: libc::c_int) {
+pub unsafe fn adjust_current_ponder_time(mut move_0: i32) {
     current_ponder_time = ponder_time[move_0 as usize];
     current_ponder_depth = ponder_depth[move_0 as usize];
-    printf(b"Ponder time: %.1f s\n\x00" as *const u8 as *const libc::c_char,
+    printf(b"Ponder time: %.1f s\n\x00" as *const u8 as *const i8,
            current_ponder_time);
-    printf(b"Ponder depth: %d\n\x00" as *const u8 as *const libc::c_char,
+    printf(b"Ponder depth: %d\n\x00" as *const u8 as *const i8,
            current_ponder_depth);
 }
 /*
@@ -246,11 +246,11 @@ pub unsafe fn adjust_current_ponder_time(mut move_0: libc::c_int) {
   The extended version takes the ponder time into account.
 */
 
-pub unsafe fn above_recommended() -> libc::c_int {
-    return (get_elapsed_time() >= time_per_move) as libc::c_int;
+pub unsafe fn above_recommended() -> i32 {
+    return (get_elapsed_time() >= time_per_move) as i32;
 }
 
-pub unsafe fn extended_above_recommended() -> libc::c_int {
+pub unsafe fn extended_above_recommended() -> i32 {
     return (get_elapsed_time() + frozen_ponder_time >= 1.5f64 * time_per_move)
-               as libc::c_int;
+               as i32;
 }

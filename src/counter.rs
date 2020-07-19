@@ -2,16 +2,16 @@ use crate::src::libc;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct CounterType {
-    pub hi: libc::c_uint,
-    pub lo: libc::c_uint,
+    pub hi: u32,
+    pub lo: u32,
 }
 /*
   RESET_COUNTER
 */
 
 pub unsafe fn reset_counter(mut counter: *mut CounterType) {
-    (*counter).lo = 0 as libc::c_int as libc::c_uint;
-    (*counter).hi = 0 as libc::c_int as libc::c_uint;
+    (*counter).lo = 0 as i32 as u32;
+    (*counter).hi = 0 as i32 as u32;
 }
 /*
   ADJUST_COUNTER
@@ -19,10 +19,10 @@ pub unsafe fn reset_counter(mut counter: *mut CounterType) {
 */
 
 pub unsafe fn adjust_counter(mut counter: *mut CounterType) {
-    while (*counter).lo >= 100000000 as libc::c_int as libc::c_uint {
+    while (*counter).lo >= 100000000 as i32 as u32 {
         (*counter).lo =
-            (*counter).lo.wrapping_sub(100000000 as libc::c_int as
-                                           libc::c_uint);
+            (*counter).lo.wrapping_sub(100000000 as i32 as
+                                           u32);
         (*counter).hi = (*counter).hi.wrapping_add(1)
     };
 }
@@ -32,11 +32,11 @@ pub unsafe fn adjust_counter(mut counter: *mut CounterType) {
 */
 
 pub unsafe fn counter_value(mut counter: *mut CounterType)
- -> libc::c_double {
+ -> f64 {
     adjust_counter(counter);
-    return 100000000 as libc::c_int as libc::c_double *
-               (*counter).hi as libc::c_double +
-               (*counter).lo as libc::c_double;
+    return 100000000 as i32 as f64 *
+               (*counter).hi as f64 +
+               (*counter).lo as f64;
 }
 /*
   ADD_COUNTER

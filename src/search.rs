@@ -18,7 +18,7 @@ use crate::src::stubs::{printf, puts};
 use crate::src::counter::CounterType;
 use crate::src::zebra::EvaluationType;
 
-pub type EvalType = libc::c_uint;
+pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
 pub const INTERRUPTED_EVAL: EvalType = 7;
 pub const UNDEFINED_EVAL: EvalType = 6;
@@ -28,7 +28,7 @@ pub const SELECTIVE_EVAL: EvalType = 3;
 pub const WLD_EVAL: EvalType = 2;
 pub const EXACT_EVAL: EvalType = 1;
 pub const MIDGAME_EVAL: EvalType = 0;
-pub type EvalResult = libc::c_uint;
+pub type EvalResult = u32;
 pub const UNSOLVED_POSITION: EvalResult = 3;
 pub const LOST_POSITION: EvalResult = 2;
 pub const DRAWN_POSITION: EvalResult = 1;
@@ -47,19 +47,19 @@ pub const WON_POSITION: EvalResult = 0;
 */
 /* Global variables */
 
-pub static mut total_time: libc::c_double = 0.;
+pub static mut total_time: f64 = 0.;
 
-pub static mut root_eval: libc::c_int = 0;
+pub static mut root_eval: i32 = 0;
 
-pub static mut force_return: libc::c_int = 0;
+pub static mut force_return: i32 = 0;
 
-pub static mut full_pv_depth: libc::c_int = 0;
+pub static mut full_pv_depth: i32 = 0;
 
-pub static mut full_pv: [libc::c_int; 120] = [0; 120];
+pub static mut full_pv: [i32; 120] = [0; 120];
 
-pub static mut list_inherited: [libc::c_int; 61] = [0; 61];
+pub static mut list_inherited: [i32; 61] = [0; 61];
 
-pub static mut sorted_move_order: [[libc::c_int; 64]; 64] = [[0; 64]; 64];
+pub static mut sorted_move_order: [[i32; 64]; 64] = [[0; 64]; 64];
 /* 61*60 used */
 
 pub static mut evals: [Board; 61] = [[0; 128]; 61];
@@ -74,43 +74,43 @@ pub static mut total_evaluations: CounterType = CounterType{hi: 0, lo: 0,};
 /* When no other information is available, JCW's endgame
    priority order is used also in the midgame. */
 
-pub static mut position_list: [libc::c_int; 100] =
-    [11 as libc::c_int, 18 as libc::c_int, 81 as libc::c_int,
-     88 as libc::c_int, 13 as libc::c_int, 16 as libc::c_int,
-     31 as libc::c_int, 38 as libc::c_int, 61 as libc::c_int,
-     68 as libc::c_int, 83 as libc::c_int, 86 as libc::c_int,
-     33 as libc::c_int, 36 as libc::c_int, 63 as libc::c_int,
-     66 as libc::c_int, 14 as libc::c_int, 15 as libc::c_int,
-     41 as libc::c_int, 48 as libc::c_int, 51 as libc::c_int,
-     58 as libc::c_int, 84 as libc::c_int, 85 as libc::c_int,
-     34 as libc::c_int, 35 as libc::c_int, 43 as libc::c_int,
-     46 as libc::c_int, 53 as libc::c_int, 56 as libc::c_int,
-     64 as libc::c_int, 65 as libc::c_int, 24 as libc::c_int,
-     25 as libc::c_int, 42 as libc::c_int, 47 as libc::c_int,
-     52 as libc::c_int, 57 as libc::c_int, 74 as libc::c_int,
-     75 as libc::c_int, 23 as libc::c_int, 26 as libc::c_int,
-     32 as libc::c_int, 37 as libc::c_int, 62 as libc::c_int,
-     67 as libc::c_int, 73 as libc::c_int, 76 as libc::c_int,
-     12 as libc::c_int, 17 as libc::c_int, 21 as libc::c_int,
-     28 as libc::c_int, 71 as libc::c_int, 78 as libc::c_int,
-     82 as libc::c_int, 87 as libc::c_int, 22 as libc::c_int,
-     27 as libc::c_int, 72 as libc::c_int, 77 as libc::c_int,
-     44 as libc::c_int, 45 as libc::c_int, 54 as libc::c_int,
-     45 as libc::c_int, 0 as libc::c_int, 1 as libc::c_int, 2 as libc::c_int,
-     3 as libc::c_int, 4 as libc::c_int, 5 as libc::c_int, 6 as libc::c_int,
-     7 as libc::c_int, 8 as libc::c_int, 9 as libc::c_int, 19 as libc::c_int,
-     29 as libc::c_int, 39 as libc::c_int, 49 as libc::c_int,
-     59 as libc::c_int, 69 as libc::c_int, 79 as libc::c_int,
-     89 as libc::c_int, 10 as libc::c_int, 20 as libc::c_int,
-     30 as libc::c_int, 40 as libc::c_int, 50 as libc::c_int,
-     60 as libc::c_int, 70 as libc::c_int, 80 as libc::c_int,
-     90 as libc::c_int, 91 as libc::c_int, 92 as libc::c_int,
-     93 as libc::c_int, 94 as libc::c_int, 95 as libc::c_int,
-     96 as libc::c_int, 97 as libc::c_int, 98 as libc::c_int,
-     99 as libc::c_int];
+pub static mut position_list: [i32; 100] =
+    [11 as i32, 18 as i32, 81 as i32,
+     88 as i32, 13 as i32, 16 as i32,
+     31 as i32, 38 as i32, 61 as i32,
+     68 as i32, 83 as i32, 86 as i32,
+     33 as i32, 36 as i32, 63 as i32,
+     66 as i32, 14 as i32, 15 as i32,
+     41 as i32, 48 as i32, 51 as i32,
+     58 as i32, 84 as i32, 85 as i32,
+     34 as i32, 35 as i32, 43 as i32,
+     46 as i32, 53 as i32, 56 as i32,
+     64 as i32, 65 as i32, 24 as i32,
+     25 as i32, 42 as i32, 47 as i32,
+     52 as i32, 57 as i32, 74 as i32,
+     75 as i32, 23 as i32, 26 as i32,
+     32 as i32, 37 as i32, 62 as i32,
+     67 as i32, 73 as i32, 76 as i32,
+     12 as i32, 17 as i32, 21 as i32,
+     28 as i32, 71 as i32, 78 as i32,
+     82 as i32, 87 as i32, 22 as i32,
+     27 as i32, 72 as i32, 77 as i32,
+     44 as i32, 45 as i32, 54 as i32,
+     45 as i32, 0 as i32, 1 as i32, 2 as i32,
+     3 as i32, 4 as i32, 5 as i32, 6 as i32,
+     7 as i32, 8 as i32, 9 as i32, 19 as i32,
+     29 as i32, 39 as i32, 49 as i32,
+     59 as i32, 69 as i32, 79 as i32,
+     89 as i32, 10 as i32, 20 as i32,
+     30 as i32, 40 as i32, 50 as i32,
+     60 as i32, 70 as i32, 80 as i32,
+     90 as i32, 91 as i32, 92 as i32,
+     93 as i32, 94 as i32, 95 as i32,
+     96 as i32, 97 as i32, 98 as i32,
+     99 as i32];
 /* Local variables */
-static mut pondered_move: libc::c_int = 0 as libc::c_int;
-static mut negate_eval: libc::c_int = 0;
+static mut pondered_move: i32 = 0 as i32;
+static mut negate_eval: i32 = 0;
 static mut last_eval: EvaluationType =
     EvaluationType{type_0: MIDGAME_EVAL,
                    res: WON_POSITION,
@@ -123,21 +123,21 @@ static mut last_eval: EvaluationType =
   Initalize the self-organizing move lists.
 */
 unsafe fn init_move_lists() {
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    i = 0 as libc::c_int;
-    while i <= 60 as libc::c_int {
-        j = 0 as libc::c_int;
-        while j < 60 as libc::c_int {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    i = 0 as i32;
+    while i <= 60 as i32 {
+        j = 0 as i32;
+        while j < 60 as i32 {
             sorted_move_order[i as usize][j as usize] =
                 position_list[j as usize];
             j += 1
         }
         i += 1
     }
-    i = 0 as libc::c_int;
-    while i <= 60 as libc::c_int {
-        list_inherited[i as usize] = 0 as libc::c_int;
+    i = 0 as i32;
+    while i <= 60 as i32 {
+        list_inherited[i as usize] = 0 as i32;
         i += 1
     };
 }
@@ -163,23 +163,23 @@ unsafe fn init_move_lists() {
   corresponding to the same parity (i.e., in practice side to move).
 */
 
-pub unsafe fn inherit_move_lists(mut stage: libc::c_int) {
-    let mut i: libc::c_int = 0;
-    let mut last: libc::c_int = 0;
+pub unsafe fn inherit_move_lists(mut stage: i32) {
+    let mut i: i32 = 0;
+    let mut last: i32 = 0;
 
     // FIXME
     //  Index out of bounds here - reproducer:
     //  cargo run  -- -l 20 10 0 20 10 0 -r 0
     if list_inherited[stage as usize] != 0 { return }
-    list_inherited[stage as usize] = 1 as libc::c_int;
-    if stage == 0 as libc::c_int { return }
-    last = stage - 2 as libc::c_int;
-    while last >= 0 as libc::c_int && list_inherited[last as usize] == 0 {
-        last -= 2 as libc::c_int
+    list_inherited[stage as usize] = 1 as i32;
+    if stage == 0 as i32 { return }
+    last = stage - 2 as i32;
+    while last >= 0 as i32 && list_inherited[last as usize] == 0 {
+        last -= 2 as i32
     }
-    if last < 0 as libc::c_int { return }
-    i = 0 as libc::c_int;
-    while i < 60 as libc::c_int {
+    if last < 0 as i32 { return }
+    i = 0 as i32;
+    while i < 60 as i32 {
         sorted_move_order[stage as usize][i as usize] =
             sorted_move_order[last as usize][i as usize];
         i += 1
@@ -192,42 +192,42 @@ pub unsafe fn inherit_move_lists(mut stage: libc::c_int) {
   in many variations in the tree.
 */
 
-pub unsafe fn reorder_move_list(mut stage: libc::c_int) {
-    let dont_touch = 24 as libc::c_int;
-    let mut i: libc::c_int = 0;
-    let mut move_0: libc::c_int = 0;
-    let mut empty_pos: libc::c_int = 0;
-    let mut nonempty_pos: libc::c_int = 0;
-    let mut empty_buffer: [libc::c_int; 60] = [0; 60];
-    let mut nonempty_buffer: [libc::c_int; 60] = [0; 60];
-    empty_pos = 0 as libc::c_int;
-    i = 0 as libc::c_int;
-    while i < 60 as libc::c_int {
+pub unsafe fn reorder_move_list(mut stage: i32) {
+    let dont_touch = 24 as i32;
+    let mut i: i32 = 0;
+    let mut move_0: i32 = 0;
+    let mut empty_pos: i32 = 0;
+    let mut nonempty_pos: i32 = 0;
+    let mut empty_buffer: [i32; 60] = [0; 60];
+    let mut nonempty_buffer: [i32; 60] = [0; 60];
+    empty_pos = 0 as i32;
+    i = 0 as i32;
+    while i < 60 as i32 {
         move_0 = sorted_move_order[stage as usize][i as usize];
-        if board[move_0 as usize] == 1 as libc::c_int || i < dont_touch {
+        if board[move_0 as usize] == 1 as i32 || i < dont_touch {
             empty_buffer[empty_pos as usize] = move_0;
             empty_pos += 1
         }
         i += 1
     }
-    nonempty_pos = 60 as libc::c_int - 1 as libc::c_int;
-    i = 60 as libc::c_int - 1 as libc::c_int;
-    while i >= 0 as libc::c_int {
+    nonempty_pos = 60 as i32 - 1 as i32;
+    i = 60 as i32 - 1 as i32;
+    while i >= 0 as i32 {
         move_0 = sorted_move_order[stage as usize][i as usize];
-        if board[move_0 as usize] != 1 as libc::c_int && i >= dont_touch {
+        if board[move_0 as usize] != 1 as i32 && i >= dont_touch {
             nonempty_buffer[nonempty_pos as usize] = move_0;
             nonempty_pos -= 1
         }
         i -= 1
     }
-    i = 0 as libc::c_int;
+    i = 0 as i32;
     while i < empty_pos {
         sorted_move_order[stage as usize][i as usize] =
             empty_buffer[i as usize];
         i += 1
     }
     i = empty_pos;
-    while i < 60 as libc::c_int {
+    while i < 60 as i32 {
         sorted_move_order[stage as usize][i as usize] =
             nonempty_buffer[i as usize];
         i += 1
@@ -240,9 +240,9 @@ pub unsafe fn reorder_move_list(mut stage: libc::c_int) {
 
 pub unsafe fn setup_search() {
     init_move_lists();
-    create_eval_info(UNINITIALIZED_EVAL, UNSOLVED_POSITION, 0 as libc::c_int,
-                     0.0f64, 0 as libc::c_int, 0 as libc::c_int);
-    negate_eval = 0 as libc::c_int;
+    create_eval_info(UNINITIALIZED_EVAL, UNSOLVED_POSITION, 0 as i32,
+                     0.0f64, 0 as i32, 0 as i32);
+    negate_eval = 0 as i32;
 }
 /*
    DISC_COUNT
@@ -250,16 +250,16 @@ pub unsafe fn setup_search() {
    Returns the number of disks of a specified color.
 */
 
-pub unsafe fn disc_count(mut side_to_move: libc::c_int)
- -> libc::c_int {
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut sum: libc::c_int = 0;
-    sum = 0 as libc::c_int;
-    i = 1 as libc::c_int;
-    while i <= 8 as libc::c_int {
-        j = 10 as libc::c_int * i + 1 as libc::c_int;
-        while j <= 10 as libc::c_int * i + 8 as libc::c_int {
+pub unsafe fn disc_count(mut side_to_move: i32)
+ -> i32 {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut sum: i32 = 0;
+    sum = 0 as i32;
+    i = 1 as i32;
+    while i <= 8 as i32 {
+        j = 10 as i32 * i + 1 as i32;
+        while j <= 10 as i32 * i + 8 as i32 {
             if board[j as usize] == side_to_move { sum += 1 }
             j += 1
         }
@@ -273,14 +273,14 @@ pub unsafe fn disc_count(mut side_to_move: libc::c_int)
    from a shallow search.
 */
 
-pub unsafe fn sort_moves(mut list_size: libc::c_int) {
-    let mut i: libc::c_int = 0;
-    let mut modified: libc::c_int = 0;
-    let mut temp_move: libc::c_int = 0;
+pub unsafe fn sort_moves(mut list_size: i32) {
+    let mut i: i32 = 0;
+    let mut modified: i32 = 0;
+    let mut temp_move: i32 = 0;
     loop  {
-        modified = 0 as libc::c_int;
-        i = 0 as libc::c_int;
-        while i < list_size - 1 as libc::c_int {
+        modified = 0 as i32;
+        i = 0 as i32;
+        while i < list_size - 1 as i32 {
             if evals[disks_played as
                          usize][move_list[disks_played as usize][i as usize]
                                     as usize] <
@@ -288,16 +288,16 @@ pub unsafe fn sort_moves(mut list_size: libc::c_int) {
                              usize][move_list[disks_played as
                                                   usize][(i +
                                                               1 as
-                                                                  libc::c_int)
+                                                                  i32)
                                                              as usize] as
                                         usize] {
-                modified = 1 as libc::c_int;
+                modified = 1 as i32;
                 temp_move = move_list[disks_played as usize][i as usize];
                 move_list[disks_played as usize][i as usize] =
                     move_list[disks_played as
-                                  usize][(i + 1 as libc::c_int) as usize];
+                                  usize][(i + 1 as i32) as usize];
                 move_list[disks_played as
-                              usize][(i + 1 as libc::c_int) as usize] =
+                              usize][(i + 1 as i32) as usize] =
                     temp_move
             }
             i += 1
@@ -311,19 +311,19 @@ pub unsafe fn sort_moves(mut list_size: libc::c_int) {
   Moves this move to the front of the sub-list.
 */
 
-pub unsafe fn select_move(mut first: libc::c_int,
-                                     mut list_size: libc::c_int)
- -> libc::c_int {
-    let mut i: libc::c_int = 0;
-    let mut temp_move: libc::c_int = 0;
-    let mut best: libc::c_int = 0;
-    let mut best_eval: libc::c_int = 0;
+pub unsafe fn select_move(mut first: i32,
+                                     mut list_size: i32)
+ -> i32 {
+    let mut i: i32 = 0;
+    let mut temp_move: i32 = 0;
+    let mut best: i32 = 0;
+    let mut best_eval: i32 = 0;
     best = first;
     best_eval =
         evals[disks_played as
                   usize][move_list[disks_played as usize][first as usize] as
                              usize];
-    i = first + 1 as libc::c_int;
+    i = first + 1 as i32;
     while i < list_size {
         if evals[disks_played as
                      usize][move_list[disks_played as usize][i as usize] as
@@ -351,60 +351,60 @@ pub unsafe fn select_move(mut first: libc::c_int,
   Return 1 if the move was found, 0 otherwise.
 */
 
-pub unsafe fn float_move(mut move_0: libc::c_int,
-                                    mut list_size: libc::c_int)
- -> libc::c_int {
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    i = 0 as libc::c_int;
+pub unsafe fn float_move(mut move_0: i32,
+                                    mut list_size: i32)
+ -> i32 {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    i = 0 as i32;
     while i < list_size {
         if move_list[disks_played as usize][i as usize] == move_0 {
             j = i;
-            while j >= 1 as libc::c_int {
+            while j >= 1 as i32 {
                 move_list[disks_played as usize][j as usize] =
                     move_list[disks_played as
-                                  usize][(j - 1 as libc::c_int) as usize];
+                                  usize][(j - 1 as i32) as usize];
                 j -= 1
             }
-            move_list[disks_played as usize][0 as libc::c_int as usize] =
+            move_list[disks_played as usize][0 as i32 as usize] =
                 move_0;
-            return 1 as libc::c_int
+            return 1 as i32
         }
         i += 1
     }
-    return 0 as libc::c_int;
+    return 0 as i32;
 }
 /*
    STORE_PV
    Saves the principal variation (the first row of the PV matrix).
 */
 
-pub unsafe fn store_pv(mut pv_buffer: *mut libc::c_int,
-                                  mut depth_buffer: *mut libc::c_int) {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
-    while i < pv_depth[0 as libc::c_int as usize] {
+pub unsafe fn store_pv(mut pv_buffer: *mut i32,
+                                  mut depth_buffer: *mut i32) {
+    let mut i: i32 = 0;
+    i = 0 as i32;
+    while i < pv_depth[0 as i32 as usize] {
         *pv_buffer.offset(i as isize) =
-            pv[0 as libc::c_int as usize][i as usize];
+            pv[0 as i32 as usize][i as usize];
         i += 1
     }
-    *depth_buffer = pv_depth[0 as libc::c_int as usize];
+    *depth_buffer = pv_depth[0 as i32 as usize];
 }
 /*
    RESTORE_PV
    Put the stored principal variation back into the PV matrix.
 */
 
-pub unsafe fn restore_pv(mut pv_buffer: *mut libc::c_int,
-                                    mut depth_buffer: libc::c_int) {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
+pub unsafe fn restore_pv(mut pv_buffer: *mut i32,
+                                    mut depth_buffer: i32) {
+    let mut i: i32 = 0;
+    i = 0 as i32;
     while i < depth_buffer {
-        pv[0 as libc::c_int as usize][i as usize] =
+        pv[0 as i32 as usize][i as usize] =
             *pv_buffer.offset(i as isize);
         i += 1
     }
-    pv_depth[0 as libc::c_int as usize] = depth_buffer;
+    pv_depth[0 as i32 as usize] = depth_buffer;
 }
 /*
   CLEAR_PV
@@ -412,65 +412,65 @@ pub unsafe fn restore_pv(mut pv_buffer: *mut libc::c_int,
 */
 
 pub unsafe fn clear_pv() {
-    pv_depth[0 as libc::c_int as usize] = 0 as libc::c_int;
+    pv_depth[0 as i32 as usize] = 0 as i32;
 }
 /*
   COMPLETE_PV
   Complete the principal variation with passes (if any there are any).
 */
 
-pub unsafe fn complete_pv(mut side_to_move: libc::c_int) {
-    let mut i: libc::c_int = 0;
-    let mut actual_side_to_move: [libc::c_int; 60] = [0; 60];
-    full_pv_depth = 0 as libc::c_int;
-    i = 0 as libc::c_int;
-    while i < pv_depth[0 as libc::c_int as usize] {
-        if make_move(side_to_move, pv[0 as libc::c_int as usize][i as usize],
-                     1 as libc::c_int) != 0 {
+pub unsafe fn complete_pv(mut side_to_move: i32) {
+    let mut i: i32 = 0;
+    let mut actual_side_to_move: [i32; 60] = [0; 60];
+    full_pv_depth = 0 as i32;
+    i = 0 as i32;
+    while i < pv_depth[0 as i32 as usize] {
+        if make_move(side_to_move, pv[0 as i32 as usize][i as usize],
+                     1 as i32) != 0 {
             actual_side_to_move[i as usize] = side_to_move;
             full_pv[full_pv_depth as usize] =
-                pv[0 as libc::c_int as usize][i as usize];
+                pv[0 as i32 as usize][i as usize];
             full_pv_depth += 1
         } else {
-            full_pv[full_pv_depth as usize] = -(1 as libc::c_int);
+            full_pv[full_pv_depth as usize] = -(1 as i32);
             full_pv_depth += 1;
-            side_to_move = 0 as libc::c_int + 2 as libc::c_int - side_to_move;
+            side_to_move = 0 as i32 + 2 as i32 - side_to_move;
             if make_move(side_to_move,
-                         pv[0 as libc::c_int as usize][i as usize],
-                         1 as libc::c_int) != 0 {
+                         pv[0 as i32 as usize][i as usize],
+                         1 as i32) != 0 {
                 actual_side_to_move[i as usize] = side_to_move;
                 full_pv[full_pv_depth as usize] =
-                    pv[0 as libc::c_int as usize][i as usize];
+                    pv[0 as i32 as usize][i as usize];
                 full_pv_depth += 1
             } else {
-                let mut j: libc::c_int = 0;
+                let mut j: i32 = 0;
                 printf(b"pv_depth[0] = %d\n\x00" as *const u8 as
-                           *const libc::c_char,
-                       pv_depth[0 as libc::c_int as usize]);
-                j = 0 as libc::c_int;
-                while j < pv_depth[0 as libc::c_int as usize] {
-                    printf(b"%c%c \x00" as *const u8 as *const libc::c_char,
+                           *const i8,
+                       pv_depth[0 as i32 as usize]);
+                j = 0 as i32;
+                while j < pv_depth[0 as i32 as usize] {
+                    printf(b"%c%c \x00" as *const u8 as *const i8,
                            'a' as i32 +
-                               pv[0 as libc::c_int as usize][j as usize] %
-                                   10 as libc::c_int - 1 as libc::c_int,
+                               pv[0 as i32 as usize][j as usize] %
+                                   10 as i32 - 1 as i32,
                            '0' as i32 +
-                               pv[0 as libc::c_int as usize][j as usize] /
-                                   10 as libc::c_int);
+                               pv[0 as i32 as usize][j as usize] /
+                                   10 as i32);
                     j += 1
                 }
-                puts(b"\x00" as *const u8 as *const libc::c_char);
-                printf(b"i=%d\n\x00" as *const u8 as *const libc::c_char, i);
+                puts(b"\x00" as *const u8 as *const i8);
+                printf(b"i=%d\n\x00" as *const u8 as *const i8, i);
                 fatal_error(b"Error in PV completion\x00" as *const u8 as
-                                *const libc::c_char);
+                                *const i8);
             }
         }
-        side_to_move = 0 as libc::c_int + 2 as libc::c_int - side_to_move;
+        side_to_move = 0 as i32 + 2 as i32 - side_to_move;
         i += 1
     }
-    i = pv_depth[0 as libc::c_int as usize] - 1 as libc::c_int;
-    while i >= 0 as libc::c_int {
+    i = pv_depth[0 as i32 as usize] - 1 as i32;
+    while i >= 0 as i32 {
         unmake_move(actual_side_to_move[i as usize],
-                    pv[0 as libc::c_int as usize][i as usize]);
+                    pv[0 as i32 as usize][i as usize]);
         i -= 1
     };
 }
@@ -479,15 +479,15 @@ pub unsafe fn complete_pv(mut side_to_move: libc::c_int) {
   Pad the existing PV with the move sequence suggested by the hash table.
 */
 
-pub unsafe fn hash_expand_pv(mut side_to_move: libc::c_int,
-                                        mut mode: libc::c_int,
-                                        mut flags: libc::c_int,
-                                        mut max_selectivity: libc::c_int) {
-    let mut i: libc::c_int = 0;
-    let mut pass_count: libc::c_int = 0;
-    let mut new_pv_depth: libc::c_int = 0;
-    let mut new_pv: [libc::c_int; 61] = [0; 61];
-    let mut new_side_to_move: [libc::c_int; 61] = [0; 61];
+pub unsafe fn hash_expand_pv(mut side_to_move: i32,
+                                        mut mode: i32,
+                                        mut flags: i32,
+                                        mut max_selectivity: i32) {
+    let mut i: i32 = 0;
+    let mut pass_count: i32 = 0;
+    let mut new_pv_depth: i32 = 0;
+    let mut new_pv: [i32; 61] = [0; 61];
+    let mut new_side_to_move: [i32; 61] = [0; 61];
     let mut entry =
         HashEntry{key1: 0,
                   key2: 0,
@@ -497,22 +497,22 @@ pub unsafe fn hash_expand_pv(mut side_to_move: libc::c_int,
                   selectivity: 0,
                   flags: 0,};
     determine_hash_values(side_to_move, board.as_mut_ptr());
-    new_pv_depth = 0 as libc::c_int;
-    pass_count = 0 as libc::c_int;
-    while pass_count < 2 as libc::c_int {
+    new_pv_depth = 0 as i32;
+    pass_count = 0 as i32;
+    while pass_count < 2 as i32 {
         new_side_to_move[new_pv_depth as usize] = side_to_move;
-        if new_pv_depth < pv_depth[0 as libc::c_int as usize] &&
-               new_pv_depth == 0 as libc::c_int {
-            if board[pv[0 as libc::c_int as usize][new_pv_depth as usize] as
-                         usize] == 1 as libc::c_int &&
+        if new_pv_depth < pv_depth[0 as i32 as usize] &&
+               new_pv_depth == 0 as i32 {
+            if board[pv[0 as i32 as usize][new_pv_depth as usize] as
+                         usize] == 1 as i32 &&
                    make_move(side_to_move,
-                             pv[0 as libc::c_int as
+                             pv[0 as i32 as
                                     usize][new_pv_depth as usize],
-                             1 as libc::c_int) != 0 {
+                             1 as i32) != 0 {
                 new_pv[new_pv_depth as usize] =
-                    pv[0 as libc::c_int as usize][new_pv_depth as usize];
+                    pv[0 as i32 as usize][new_pv_depth as usize];
                 new_pv_depth += 1;
-                pass_count = 0 as libc::c_int
+                pass_count = 0 as i32
             } else {
                 hash1 ^= hash_flip_color1;
                 hash2 ^= hash_flip_color2;
@@ -520,37 +520,37 @@ pub unsafe fn hash_expand_pv(mut side_to_move: libc::c_int,
             }
         } else {
             find_hash(&mut entry, mode);
-            if entry.draft as libc::c_int != 0 as libc::c_int &&
-                   entry.flags as libc::c_int & flags != 0 &&
-                   entry.selectivity as libc::c_int <= max_selectivity &&
-                   board[entry.move_0[0 as libc::c_int as usize] as usize] ==
-                       1 as libc::c_int &&
+            if entry.draft as i32 != 0 as i32 &&
+                   entry.flags as i32 & flags != 0 &&
+                   entry.selectivity as i32 <= max_selectivity &&
+                   board[entry.move_0[0 as i32 as usize] as usize] ==
+                       1 as i32 &&
                    make_move(side_to_move,
-                             entry.move_0[0 as libc::c_int as usize],
-                             1 as libc::c_int) != 0 {
+                             entry.move_0[0 as i32 as usize],
+                             1 as i32) != 0 {
                 new_pv[new_pv_depth as usize] =
-                    entry.move_0[0 as libc::c_int as usize];
+                    entry.move_0[0 as i32 as usize];
                 new_pv_depth += 1;
-                pass_count = 0 as libc::c_int
+                pass_count = 0 as i32
             } else {
                 hash1 ^= hash_flip_color1;
                 hash2 ^= hash_flip_color2;
                 pass_count += 1
             }
         }
-        side_to_move = 0 as libc::c_int + 2 as libc::c_int - side_to_move
+        side_to_move = 0 as i32 + 2 as i32 - side_to_move
     }
-    i = new_pv_depth - 1 as libc::c_int;
-    while i >= 0 as libc::c_int {
+    i = new_pv_depth - 1 as i32;
+    while i >= 0 as i32 {
         unmake_move(new_side_to_move[i as usize], new_pv[i as usize]);
         i -= 1
     }
-    i = 0 as libc::c_int;
+    i = 0 as i32;
     while i < new_pv_depth {
-        pv[0 as libc::c_int as usize][i as usize] = new_pv[i as usize];
+        pv[0 as i32 as usize][i as usize] = new_pv[i as usize];
         i += 1
     }
-    pv_depth[0 as libc::c_int as usize] = new_pv_depth;
+    pv_depth[0 as i32 as usize] = new_pv_depth;
 }
 /*
   SET_PONDER_MOVE
@@ -561,15 +561,15 @@ pub unsafe fn hash_expand_pv(mut side_to_move: libc::c_int,
   been made.
 */
 
-pub unsafe fn set_ponder_move(mut move_0: libc::c_int) {
+pub unsafe fn set_ponder_move(mut move_0: i32) {
     pondered_move = move_0;
 }
 
 pub unsafe fn clear_ponder_move() {
-    pondered_move = 0 as libc::c_int;
+    pondered_move = 0 as i32;
 }
 
-pub unsafe fn get_ponder_move() -> libc::c_int {
+pub unsafe fn get_ponder_move() -> i32 {
     return pondered_move;
 }
 /*
@@ -580,10 +580,10 @@ pub unsafe fn get_ponder_move() -> libc::c_int {
 
 pub unsafe fn create_eval_info(mut in_type: EvalType,
                                           mut in_res: EvalResult,
-                                          mut in_score: libc::c_int,
-                                          mut in_conf: libc::c_double,
-                                          mut in_depth: libc::c_int,
-                                          mut in_book: libc::c_int)
+                                          mut in_score: i32,
+                                          mut in_conf: f64,
+                                          mut in_depth: i32,
+                                          mut in_book: i32)
  -> EvaluationType {
     let mut out =
         EvaluationType{type_0: MIDGAME_EVAL,
@@ -606,38 +606,38 @@ pub unsafe fn create_eval_info(mut in_type: EvalType,
 */
 
 pub unsafe fn produce_compact_eval(mut eval_info: EvaluationType)
- -> libc::c_double {
-    let mut eval: libc::c_double = 0.;
+ -> f64 {
+    let mut eval: f64 = 0.;
     's_97:
         {
             let mut current_block_17: u64;
-            match eval_info.type_0 as libc::c_uint {
+            match eval_info.type_0 as u32 {
                 0 => {
                     /*
         eval = eval_info.search_depth + logistic_map( eval_info.score );
         if ( eval_info.is_book )
           eval = -eval;
           */
-                    eval = eval_info.score as libc::c_double / 128.0f64;
+                    eval = eval_info.score as f64 / 128.0f64;
                     return eval
                 }
-                1 => { return eval_info.score as libc::c_double / 128.0f64 }
+                1 => { return eval_info.score as f64 / 128.0f64 }
                 2 => {
-                    match eval_info.res as libc::c_uint {
+                    match eval_info.res as u32 {
                         0 => {
                             if eval_info.score >
-                                   2 as libc::c_int * 128 as libc::c_int {
+                                   2 as i32 * 128 as i32 {
                                 /* Win by more than 2 */
-                                return eval_info.score as libc::c_double /
+                                return eval_info.score as f64 /
                                            128.0f64 - 0.01f64
                             } else { return 1.99f64 }
                         }
                         1 => { return 0.0f64 }
                         2 => {
                             if eval_info.score <
-                                   -(2 as libc::c_int) * 128 as libc::c_int {
+                                   -(2 as i32) * 128 as i32 {
                                 /* Loss by more than 2 */
-                                return eval_info.score as libc::c_double /
+                                return eval_info.score as f64 /
                                            128.0f64 + 0.01f64
                             } else { return -1.99f64 }
                         }
@@ -654,12 +654,12 @@ pub unsafe fn produce_compact_eval(mut eval_info: EvaluationType)
             }
             match current_block_17 {
                 13171200747117244060 => {
-                    match eval_info.res as libc::c_uint {
+                    match eval_info.res as u32 {
                         0 => { return 1.0f64 + eval_info.confidence }
                         1 => { return -1.0f64 + eval_info.confidence }
                         2 => { return -1.0f64 - eval_info.confidence }
                         3 => {
-                            return eval_info.score as libc::c_double /
+                            return eval_info.score as f64 /
                                        128.0f64
                         }
                         _ => { }
@@ -684,11 +684,11 @@ pub unsafe fn set_current_eval(mut eval: EvaluationType) {
     last_eval = eval;
     if negate_eval != 0 {
         last_eval.score = -last_eval.score;
-        if last_eval.res as libc::c_uint ==
-               WON_POSITION as libc::c_int as libc::c_uint {
+        if last_eval.res as u32 ==
+               WON_POSITION as i32 as u32 {
             last_eval.res = LOST_POSITION
-        } else if last_eval.res as libc::c_uint ==
-                      LOST_POSITION as libc::c_int as libc::c_uint {
+        } else if last_eval.res as u32 ==
+                      LOST_POSITION as i32 as u32 {
             last_eval.res = WON_POSITION
         }
     };
@@ -698,6 +698,6 @@ pub unsafe fn get_current_eval() -> EvaluationType {
     return last_eval;
 }
 
-pub unsafe fn negate_current_eval(mut negate: libc::c_int) {
+pub unsafe fn negate_current_eval(mut negate: i32) {
     negate_eval = negate;
 }

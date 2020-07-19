@@ -4,68 +4,68 @@ use crate::src::safemem::safe_malloc;
 use crate::src::stubs::{free, abs, __assert_fail};
 use crate::src::myrandom::my_random;
 
-pub type size_t = libc::c_ulong;
+pub type size_t = u64;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct HashEntry {
-    pub key1: libc::c_uint,
-    pub key2: libc::c_uint,
-    pub eval: libc::c_int,
-    pub move_0: [libc::c_int; 4],
-    pub draft: libc::c_short,
-    pub selectivity: libc::c_short,
-    pub flags: libc::c_short,
+    pub key1: u32,
+    pub key2: u32,
+    pub eval: i32,
+    pub move_0: [i32; 4],
+    pub draft: i16,
+    pub selectivity: i16,
+    pub flags: i16,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct CompactHashEntry {
-    pub key2: libc::c_uint,
-    pub eval: libc::c_int,
-    pub moves: libc::c_uint,
-    pub key1_selectivity_flags_draft: libc::c_uint,
+    pub key2: u32,
+    pub eval: i32,
+    pub moves: u32,
+    pub key1_selectivity_flags_draft: u32,
 }
 /* Global variables */
 
-pub static mut hash_size: libc::c_int = 0;
+pub static mut hash_size: i32 = 0;
 
-pub static mut hash1: libc::c_uint = 0;
+pub static mut hash1: u32 = 0;
 
-pub static mut hash2: libc::c_uint = 0;
+pub static mut hash2: u32 = 0;
 
-pub static mut hash_value1: [[libc::c_uint; 128]; 3] = [[0; 128]; 3];
+pub static mut hash_value1: [[u32; 128]; 3] = [[0; 128]; 3];
 
-pub static mut hash_value2: [[libc::c_uint; 128]; 3] = [[0; 128]; 3];
+pub static mut hash_value2: [[u32; 128]; 3] = [[0; 128]; 3];
 
-pub static mut hash_put_value1: [[libc::c_uint; 128]; 3] = [[0; 128]; 3];
+pub static mut hash_put_value1: [[u32; 128]; 3] = [[0; 128]; 3];
 
-pub static mut hash_put_value2: [[libc::c_uint; 128]; 3] = [[0; 128]; 3];
+pub static mut hash_put_value2: [[u32; 128]; 3] = [[0; 128]; 3];
 
-pub static mut hash_flip1: [libc::c_uint; 128] = [0; 128];
+pub static mut hash_flip1: [u32; 128] = [0; 128];
 
-pub static mut hash_flip2: [libc::c_uint; 128] = [0; 128];
+pub static mut hash_flip2: [u32; 128] = [0; 128];
 
-pub static mut hash_color1: [libc::c_uint; 3] = [0; 3];
+pub static mut hash_color1: [u32; 3] = [0; 3];
 
-pub static mut hash_color2: [libc::c_uint; 3] = [0; 3];
+pub static mut hash_color2: [u32; 3] = [0; 3];
 
-pub static mut hash_flip_color1: libc::c_uint = 0;
+pub static mut hash_flip_color1: u32 = 0;
 
-pub static mut hash_flip_color2: libc::c_uint = 0;
+pub static mut hash_flip_color2: u32 = 0;
 
-pub static mut hash_diff1: [libc::c_uint; 64] = [0; 64];
+pub static mut hash_diff1: [u32; 64] = [0; 64];
 
-pub static mut hash_diff2: [libc::c_uint; 64] = [0; 64];
+pub static mut hash_diff2: [u32; 64] = [0; 64];
 
-pub static mut hash_stored1: [libc::c_uint; 64] = [0; 64];
+pub static mut hash_stored1: [u32; 64] = [0; 64];
 
-pub static mut hash_stored2: [libc::c_uint; 64] = [0; 64];
+pub static mut hash_stored2: [u32; 64] = [0; 64];
 /* Local variables */
-static mut hash_bits: libc::c_int = 0;
-static mut hash_mask: libc::c_int = 0;
-static mut rehash_count: libc::c_int = 0;
-static mut hash_trans1: libc::c_uint = 0 as libc::c_int as libc::c_uint;
-static mut hash_trans2: libc::c_uint = 0 as libc::c_int as libc::c_uint;
+static mut hash_bits: i32 = 0;
+static mut hash_mask: i32 = 0;
+static mut rehash_count: i32 = 0;
+static mut hash_trans1: u32 = 0 as i32 as u32;
+static mut hash_trans2: u32 = 0 as i32 as u32;
 static mut hash_table: *mut CompactHashEntry =
     0 as *const CompactHashEntry as *mut CompactHashEntry;
 /* The number of entries in the hash table. Always a power of 2. */
@@ -86,36 +86,36 @@ static mut hash_table: *mut CompactHashEntry =
    Allocate memory for the hash table.
 */
 
-pub unsafe fn init_hash(mut in_hash_bits: libc::c_int) {
+pub unsafe fn init_hash(mut in_hash_bits: i32) {
     hash_bits = in_hash_bits;
-    hash_size = (1 as libc::c_int) << hash_bits;
-    hash_mask = hash_size - 1 as libc::c_int;
+    hash_size = (1 as i32) << hash_bits;
+    hash_mask = hash_size - 1 as i32;
     hash_table =
         safe_malloc((hash_size as
-                         libc::c_ulong).wrapping_mul(::std::mem::size_of::<CompactHashEntry>()
-                                                         as libc::c_ulong)) as
+                         u64).wrapping_mul(::std::mem::size_of::<CompactHashEntry>()
+                                                         as u64)) as
             *mut CompactHashEntry;
-    rehash_count = 0 as libc::c_int;
+    rehash_count = 0 as i32;
 }
 /*
   RESIZE_HASH
   Changes the size of the hash table.
 */
 
-pub unsafe fn resize_hash(mut new_hash_bits: libc::c_int) {
+pub unsafe fn resize_hash(mut new_hash_bits: i32) {
     free(hash_table as *mut libc::c_void);
     init_hash(new_hash_bits);
-    setup_hash(1 as libc::c_int);
+    setup_hash(1 as i32);
 }
 /*
   POPCOUNT
 */
-unsafe fn popcount(mut b: libc::c_uint) -> libc::c_uint {
-    let mut n: libc::c_uint = 0;
-    n = 0 as libc::c_int as libc::c_uint;
-    while b != 0 as libc::c_int as libc::c_uint {
+unsafe fn popcount(mut b: u32) -> u32 {
+    let mut n: u32 = 0;
+    n = 0 as i32 as u32;
+    while b != 0 as i32 as u32 {
         n = n.wrapping_add(1);
-        b &= b.wrapping_sub(1 as libc::c_int as libc::c_uint)
+        b &= b.wrapping_sub(1 as i32 as u32)
     }
     return n;
 }
@@ -124,91 +124,91 @@ unsafe fn popcount(mut b: libc::c_uint) -> libc::c_uint {
   Returns the closeness between the 64-bit integers (a0,a1) and (b0,b1).
   A closeness of 0 means that 32 bits differ.
 */
-unsafe fn get_closeness(mut a0: libc::c_uint, mut a1: libc::c_uint,
-                                   mut b0: libc::c_uint, mut b1: libc::c_uint)
- -> libc::c_uint {
+unsafe fn get_closeness(mut a0: u32, mut a1: u32,
+                                   mut b0: u32, mut b1: u32)
+ -> u32 {
     return abs(popcount(a0 ^
                             b0).wrapping_add(popcount(a1 ^
                                                           b1)).wrapping_sub(32
                                                                                 as
-                                                                                libc::c_int
+                                                                                i32
                                                                                 as
-                                                                                libc::c_uint)
-                   as libc::c_int) as libc::c_uint;
+                                                                                u32)
+                   as i32) as u32;
 }
 /*
    SETUP_HASH
    Determine randomized hash masks.
 */
 
-pub unsafe fn setup_hash(mut clear: libc::c_int) {
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut pos: libc::c_int = 0;
-    let mut rand_index: libc::c_int = 0;
-    let max_pair_closeness = 10 as libc::c_int as libc::c_uint;
-    let max_zero_closeness = 9 as libc::c_int as libc::c_uint;
-    let mut closeness: libc::c_uint = 0;
-    let mut random_pair: [[libc::c_uint; 2]; 130] = [[0; 2]; 130];
+pub unsafe fn setup_hash(mut clear: i32) {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut pos: i32 = 0;
+    let mut rand_index: i32 = 0;
+    let max_pair_closeness = 10 as i32 as u32;
+    let max_zero_closeness = 9 as i32 as u32;
+    let mut closeness: u32 = 0;
+    let mut random_pair: [[u32; 2]; 130] = [[0; 2]; 130];
     if clear != 0 {
-        i = 0 as libc::c_int;
+        i = 0 as i32;
         while i < hash_size {
             (*hash_table.offset(i as isize)).key1_selectivity_flags_draft &=
-                !(255 as libc::c_int) as libc::c_uint;
+                !(255 as i32) as u32;
             (*hash_table.offset(i as isize)).key2 =
-                0 as libc::c_int as libc::c_uint;
+                0 as i32 as u32;
             i += 1
         }
     }
-    rand_index = 0 as libc::c_int;
-    while rand_index < 130 as libc::c_int {
+    rand_index = 0 as i32;
+    while rand_index < 130 as i32 {
         'c_2013:
             loop  {
-                random_pair[rand_index as usize][0 as libc::c_int as usize] =
-                    ((my_random() << 3 as libc::c_int) +
-                         (my_random() >> 2 as libc::c_int)) as libc::c_uint;
-                random_pair[rand_index as usize][1 as libc::c_int as usize] =
-                    ((my_random() << 3 as libc::c_int) +
-                         (my_random() >> 2 as libc::c_int)) as libc::c_uint;
+                random_pair[rand_index as usize][0 as i32 as usize] =
+                    ((my_random() << 3 as i32) +
+                         (my_random() >> 2 as i32)) as u32;
+                random_pair[rand_index as usize][1 as i32 as usize] =
+                    ((my_random() << 3 as i32) +
+                         (my_random() >> 2 as i32)) as u32;
                 closeness =
                     get_closeness(random_pair[rand_index as
-                                                  usize][0 as libc::c_int as
+                                                  usize][0 as i32 as
                                                              usize],
                                   random_pair[rand_index as
-                                                  usize][1 as libc::c_int as
+                                                  usize][1 as i32 as
                                                              usize],
-                                  0 as libc::c_int as libc::c_uint,
-                                  0 as libc::c_int as libc::c_uint);
+                                  0 as i32 as u32,
+                                  0 as i32 as u32);
                 if closeness > max_zero_closeness { continue ; }
-                i = 0 as libc::c_int;
+                i = 0 as i32;
                 loop  {
                     if !(i < rand_index) { break 'c_2013 ; }
                     closeness =
                         get_closeness(random_pair[rand_index as
-                                                      usize][0 as libc::c_int
+                                                      usize][0 as i32
                                                                  as usize],
                                       random_pair[rand_index as
-                                                      usize][1 as libc::c_int
+                                                      usize][1 as i32
                                                                  as usize],
                                       random_pair[i as
-                                                      usize][0 as libc::c_int
+                                                      usize][0 as i32
                                                                  as usize],
                                       random_pair[i as
-                                                      usize][1 as libc::c_int
+                                                      usize][1 as i32
                                                                  as usize]);
                     if closeness > max_pair_closeness { break ; }
                     closeness =
                         get_closeness(random_pair[rand_index as
-                                                      usize][0 as libc::c_int
+                                                      usize][0 as i32
                                                                  as usize],
                                       random_pair[rand_index as
-                                                      usize][1 as libc::c_int
+                                                      usize][1 as i32
                                                                  as usize],
                                       random_pair[i as
-                                                      usize][1 as libc::c_int
+                                                      usize][1 as i32
                                                                  as usize],
                                       random_pair[i as
-                                                      usize][0 as libc::c_int
+                                                      usize][0 as i32
                                                                  as usize]);
                     if closeness > max_pair_closeness { break ; }
                     i += 1
@@ -216,77 +216,77 @@ pub unsafe fn setup_hash(mut clear: libc::c_int) {
             }
         rand_index += 1
     }
-    rand_index = 0 as libc::c_int;
-    i = 0 as libc::c_int;
-    while i < 128 as libc::c_int {
-        hash_value1[0 as libc::c_int as usize][i as usize] =
-            0 as libc::c_int as libc::c_uint;
-        hash_value2[0 as libc::c_int as usize][i as usize] =
-            0 as libc::c_int as libc::c_uint;
-        hash_value1[2 as libc::c_int as usize][i as usize] =
-            0 as libc::c_int as libc::c_uint;
-        hash_value2[2 as libc::c_int as usize][i as usize] =
-            0 as libc::c_int as libc::c_uint;
+    rand_index = 0 as i32;
+    i = 0 as i32;
+    while i < 128 as i32 {
+        hash_value1[0 as i32 as usize][i as usize] =
+            0 as i32 as u32;
+        hash_value2[0 as i32 as usize][i as usize] =
+            0 as i32 as u32;
+        hash_value1[2 as i32 as usize][i as usize] =
+            0 as i32 as u32;
+        hash_value2[2 as i32 as usize][i as usize] =
+            0 as i32 as u32;
         i += 1
     }
-    i = 1 as libc::c_int;
-    while i <= 8 as libc::c_int {
-        j = 1 as libc::c_int;
-        while j <= 8 as libc::c_int {
-            pos = 10 as libc::c_int * i + j;
-            hash_value1[0 as libc::c_int as usize][pos as usize] =
-                random_pair[rand_index as usize][0 as libc::c_int as usize];
-            hash_value2[0 as libc::c_int as usize][pos as usize] =
-                random_pair[rand_index as usize][1 as libc::c_int as usize];
+    i = 1 as i32;
+    while i <= 8 as i32 {
+        j = 1 as i32;
+        while j <= 8 as i32 {
+            pos = 10 as i32 * i + j;
+            hash_value1[0 as i32 as usize][pos as usize] =
+                random_pair[rand_index as usize][0 as i32 as usize];
+            hash_value2[0 as i32 as usize][pos as usize] =
+                random_pair[rand_index as usize][1 as i32 as usize];
             rand_index += 1;
-            hash_value1[2 as libc::c_int as usize][pos as usize] =
-                random_pair[rand_index as usize][0 as libc::c_int as usize];
-            hash_value2[2 as libc::c_int as usize][pos as usize] =
-                random_pair[rand_index as usize][1 as libc::c_int as usize];
+            hash_value1[2 as i32 as usize][pos as usize] =
+                random_pair[rand_index as usize][0 as i32 as usize];
+            hash_value2[2 as i32 as usize][pos as usize] =
+                random_pair[rand_index as usize][1 as i32 as usize];
             rand_index += 1;
             j += 1
         }
         i += 1
     }
-    i = 0 as libc::c_int;
-    while i < 128 as libc::c_int {
+    i = 0 as i32;
+    while i < 128 as i32 {
         hash_flip1[i as usize] =
-            hash_value1[0 as libc::c_int as usize][i as usize] ^
-                hash_value1[2 as libc::c_int as usize][i as usize];
+            hash_value1[0 as i32 as usize][i as usize] ^
+                hash_value1[2 as i32 as usize][i as usize];
         hash_flip2[i as usize] =
-            hash_value2[0 as libc::c_int as usize][i as usize] ^
-                hash_value2[2 as libc::c_int as usize][i as usize];
+            hash_value2[0 as i32 as usize][i as usize] ^
+                hash_value2[2 as i32 as usize][i as usize];
         i += 1
     }
-    hash_color1[0 as libc::c_int as usize] =
-        random_pair[rand_index as usize][0 as libc::c_int as usize];
-    hash_color2[0 as libc::c_int as usize] =
-        random_pair[rand_index as usize][1 as libc::c_int as usize];
+    hash_color1[0 as i32 as usize] =
+        random_pair[rand_index as usize][0 as i32 as usize];
+    hash_color2[0 as i32 as usize] =
+        random_pair[rand_index as usize][1 as i32 as usize];
     rand_index += 1;
-    hash_color1[2 as libc::c_int as usize] =
-        random_pair[rand_index as usize][0 as libc::c_int as usize];
-    hash_color2[2 as libc::c_int as usize] =
-        random_pair[rand_index as usize][1 as libc::c_int as usize];
+    hash_color1[2 as i32 as usize] =
+        random_pair[rand_index as usize][0 as i32 as usize];
+    hash_color2[2 as i32 as usize] =
+        random_pair[rand_index as usize][1 as i32 as usize];
     rand_index += 1;
     hash_flip_color1 =
-        hash_color1[0 as libc::c_int as usize] ^
-            hash_color1[2 as libc::c_int as usize];
+        hash_color1[0 as i32 as usize] ^
+            hash_color1[2 as i32 as usize];
     hash_flip_color2 =
-        hash_color2[0 as libc::c_int as usize] ^
-            hash_color2[2 as libc::c_int as usize];
-    j = 0 as libc::c_int;
-    while j < 128 as libc::c_int {
-        hash_put_value1[0 as libc::c_int as usize][j as usize] =
-            hash_value1[0 as libc::c_int as usize][j as usize] ^
+        hash_color2[0 as i32 as usize] ^
+            hash_color2[2 as i32 as usize];
+    j = 0 as i32;
+    while j < 128 as i32 {
+        hash_put_value1[0 as i32 as usize][j as usize] =
+            hash_value1[0 as i32 as usize][j as usize] ^
                 hash_flip_color1;
-        hash_put_value2[0 as libc::c_int as usize][j as usize] =
-            hash_value2[0 as libc::c_int as usize][j as usize] ^
+        hash_put_value2[0 as i32 as usize][j as usize] =
+            hash_value2[0 as i32 as usize][j as usize] ^
                 hash_flip_color2;
-        hash_put_value1[2 as libc::c_int as usize][j as usize] =
-            hash_value1[2 as libc::c_int as usize][j as usize] ^
+        hash_put_value1[2 as i32 as usize][j as usize] =
+            hash_value1[2 as i32 as usize][j as usize] ^
                 hash_flip_color1;
-        hash_put_value2[2 as libc::c_int as usize][j as usize] =
-            hash_value2[2 as libc::c_int as usize][j as usize] ^
+        hash_put_value2[2 as i32 as usize][j as usize] =
+            hash_value2[2 as i32 as usize][j as usize] ^
                 hash_flip_color2;
         j += 1
     };
@@ -297,12 +297,12 @@ pub unsafe fn setup_hash(mut clear: libc::c_int) {
 */
 
 pub unsafe fn clear_hash_drafts() {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
+    let mut i: i32 = 0;
+    i = 0 as i32;
     while i < hash_size {
         /* Set the draft to 0 */
         (*hash_table.offset(i as isize)).key1_selectivity_flags_draft &=
-            !(0xff as libc::c_int) as libc::c_uint;
+            !(0xff as i32) as u32;
         i += 1
     };
 }
@@ -319,30 +319,30 @@ pub unsafe fn free_hash() {
    Calculates the hash codes for the given board position.
 */
 
-pub unsafe fn determine_hash_values(mut side_to_move: libc::c_int,
+pub unsafe fn determine_hash_values(mut side_to_move: i32,
                                                mut board:
-                                                   *const libc::c_int) {
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    hash1 = 0 as libc::c_int as libc::c_uint;
-    hash2 = 0 as libc::c_int as libc::c_uint;
-    i = 1 as libc::c_int;
-    while i <= 8 as libc::c_int {
-        j = 1 as libc::c_int;
-        while j <= 8 as libc::c_int {
-            let mut pos = 10 as libc::c_int * i + j;
+                                                   *const i32) {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    hash1 = 0 as i32 as u32;
+    hash2 = 0 as i32 as u32;
+    i = 1 as i32;
+    while i <= 8 as i32 {
+        j = 1 as i32;
+        while j <= 8 as i32 {
+            let mut pos = 10 as i32 * i + j;
             match *board.offset(pos as isize) {
                 0 => {
                     hash1 ^=
-                        hash_value1[0 as libc::c_int as usize][pos as usize];
+                        hash_value1[0 as i32 as usize][pos as usize];
                     hash2 ^=
-                        hash_value2[0 as libc::c_int as usize][pos as usize]
+                        hash_value2[0 as i32 as usize][pos as usize]
                 }
                 2 => {
                     hash1 ^=
-                        hash_value1[2 as libc::c_int as usize][pos as usize];
+                        hash_value1[2 as i32 as usize][pos as usize];
                     hash2 ^=
-                        hash_value2[2 as libc::c_int as usize][pos as usize]
+                        hash_value2[2 as i32 as usize][pos as usize]
                 }
                 _ => { }
             }
@@ -364,30 +364,30 @@ unsafe fn wide_to_compact(mut entry: *const HashEntry,
     (*compact_entry).key2 = (*entry).key2;
     (*compact_entry).eval = (*entry).eval;
     (*compact_entry).moves =
-        ((*entry).move_0[0 as libc::c_int as usize] +
-             ((*entry).move_0[1 as libc::c_int as usize] << 8 as libc::c_int)
+        ((*entry).move_0[0 as i32 as usize] +
+             ((*entry).move_0[1 as i32 as usize] << 8 as i32)
              +
-             ((*entry).move_0[2 as libc::c_int as usize] << 16 as libc::c_int)
+             ((*entry).move_0[2 as i32 as usize] << 16 as i32)
              +
-             ((*entry).move_0[3 as libc::c_int as usize] <<
-                  24 as libc::c_int)) as libc::c_uint;
+             ((*entry).move_0[3 as i32 as usize] <<
+                  24 as i32)) as u32;
     (*compact_entry).key1_selectivity_flags_draft =
         ((*entry).key1 &
              0xff000000 as
-                 libc::c_uint).wrapping_add((((*entry).selectivity as
-                                                  libc::c_int) <<
-                                                 16 as libc::c_int) as
-                                                libc::c_uint).wrapping_add((((*entry).flags
+                 u32).wrapping_add((((*entry).selectivity as
+                                                  i32) <<
+                                                 16 as i32) as
+                                                u32).wrapping_add((((*entry).flags
                                                                                  as
-                                                                                 libc::c_int)
+                                                                                 i32)
                                                                                 <<
                                                                                 8
                                                                                     as
-                                                                                    libc::c_int)
+                                                                                    i32)
                                                                                as
-                                                                               libc::c_uint).wrapping_add((*entry).draft
+                                                                               u32).wrapping_add((*entry).draft
                                                                                                               as
-                                                                                                              libc::c_uint);
+                                                                                                              u32);
 }
 /*
    COMPACT_TO_WIDE
@@ -399,32 +399,32 @@ unsafe fn compact_to_wide(mut compact_entry:
                                      mut entry: *mut HashEntry) {
     (*entry).key2 = (*compact_entry).key2;
     (*entry).eval = (*compact_entry).eval;
-    (*entry).move_0[0 as libc::c_int as usize] =
-        ((*compact_entry).moves & 255 as libc::c_int as libc::c_uint) as
-            libc::c_int;
-    (*entry).move_0[1 as libc::c_int as usize] =
-        ((*compact_entry).moves >> 8 as libc::c_int &
-             255 as libc::c_int as libc::c_uint) as libc::c_int;
-    (*entry).move_0[2 as libc::c_int as usize] =
-        ((*compact_entry).moves >> 16 as libc::c_int &
-             255 as libc::c_int as libc::c_uint) as libc::c_int;
-    (*entry).move_0[3 as libc::c_int as usize] =
-        ((*compact_entry).moves >> 24 as libc::c_int &
-             255 as libc::c_int as libc::c_uint) as libc::c_int;
+    (*entry).move_0[0 as i32 as usize] =
+        ((*compact_entry).moves & 255 as i32 as u32) as
+            i32;
+    (*entry).move_0[1 as i32 as usize] =
+        ((*compact_entry).moves >> 8 as i32 &
+             255 as i32 as u32) as i32;
+    (*entry).move_0[2 as i32 as usize] =
+        ((*compact_entry).moves >> 16 as i32 &
+             255 as i32 as u32) as i32;
+    (*entry).move_0[3 as i32 as usize] =
+        ((*compact_entry).moves >> 24 as i32 &
+             255 as i32 as u32) as i32;
     (*entry).key1 =
         (*compact_entry).key1_selectivity_flags_draft &
-            0xff000000 as libc::c_uint;
+            0xff000000 as u32;
     (*entry).selectivity =
         (((*compact_entry).key1_selectivity_flags_draft &
-              0xffffff as libc::c_int as libc::c_uint) >> 16 as libc::c_int)
-            as libc::c_short;
+              0xffffff as i32 as u32) >> 16 as i32)
+            as i16;
     (*entry).flags =
         (((*compact_entry).key1_selectivity_flags_draft &
-              0xffff as libc::c_int as libc::c_uint) >> 8 as libc::c_int) as
-            libc::c_short;
+              0xffff as i32 as u32) >> 8 as i32) as
+            i16;
     (*entry).draft =
         ((*compact_entry).key1_selectivity_flags_draft &
-             0xff as libc::c_int as libc::c_uint) as libc::c_short;
+             0xff as i32 as u32) as i16;
 }
 /*
   SET_HASH_TRANSFORMATION
@@ -433,8 +433,8 @@ unsafe fn compact_to_wide(mut compact_entry:
   table.
 */
 
-pub unsafe fn set_hash_transformation(mut trans1: libc::c_uint,
-                                                 mut trans2: libc::c_uint) {
+pub unsafe fn set_hash_transformation(mut trans1: u32,
+                                                 mut trans2: u32) {
     hash_trans1 = trans1;
     hash_trans2 = trans2;
 }
@@ -444,19 +444,19 @@ pub unsafe fn set_hash_transformation(mut trans1: libc::c_uint,
    and the most shallow search is replaced.
 */
 
-pub unsafe fn add_hash(mut reverse_mode: libc::c_int,
-                                  mut score: libc::c_int,
-                                  mut best: libc::c_int,
-                                  mut flags: libc::c_int,
-                                  mut draft: libc::c_int,
-                                  mut selectivity: libc::c_int) {
-    let mut old_draft: libc::c_int = 0;
-    let mut change_encouragment: libc::c_int = 0;
-    let mut index: libc::c_uint = 0;
-    let mut index1: libc::c_uint = 0;
-    let mut index2: libc::c_uint = 0;
-    let mut code1: libc::c_uint = 0;
-    let mut code2: libc::c_uint = 0;
+pub unsafe fn add_hash(mut reverse_mode: i32,
+                                  mut score: i32,
+                                  mut best: i32,
+                                  mut flags: i32,
+                                  mut draft: i32,
+                                  mut selectivity: i32) {
+    let mut old_draft: i32 = 0;
+    let mut change_encouragment: i32 = 0;
+    let mut index: u32 = 0;
+    let mut index1: u32 = 0;
+    let mut index2: u32 = 0;
+    let mut code1: u32 = 0;
+    let mut code2: u32 = 0;
     let mut entry =
         HashEntry{key1: 0,
                   key2: 0,
@@ -465,57 +465,57 @@ pub unsafe fn add_hash(mut reverse_mode: libc::c_int,
                   draft: 0,
                   selectivity: 0,
                   flags: 0,};
-    if abs(score) != -(27000 as libc::c_int) {
+    if abs(score) != -(27000 as i32) {
     } else {
         __assert_fail(b"abs( score ) != SEARCH_ABORT\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"hash.c\x00" as *const u8 as *const libc::c_char,
-                      372 as libc::c_int as libc::c_uint,
+                          *const i8,
+                      b"hash.c\x00" as *const u8 as *const i8,
+                      372 as i32 as u32,
                       (*::std::mem::transmute::<&[u8; 44],
-                                                &[libc::c_char; 44]>(b"void add_hash(int, int, int, int, int, int)\x00")).as_ptr());
+                                                &[i8; 44]>(b"void add_hash(int, int, int, int, int, int)\x00")).as_ptr());
     }
     if reverse_mode != 0 {
         code1 = hash2 ^ hash_trans2;
         code2 = hash1 ^ hash_trans1
     } else { code1 = hash1 ^ hash_trans1; code2 = hash2 ^ hash_trans2 }
-    index1 = code1 & hash_mask as libc::c_uint;
-    index2 = index1 ^ 1 as libc::c_int as libc::c_uint;
+    index1 = code1 & hash_mask as u32;
+    index2 = index1 ^ 1 as i32 as u32;
     if (*hash_table.offset(index1 as isize)).key2 == code2 {
         index = index1
     } else if (*hash_table.offset(index2 as isize)).key2 == code2 {
         index = index2
     } else if (*hash_table.offset(index1 as
                                       isize)).key1_selectivity_flags_draft &
-                  255 as libc::c_int as libc::c_uint <=
+                  255 as i32 as u32 <=
                   (*hash_table.offset(index2 as
                                           isize)).key1_selectivity_flags_draft
-                      & 255 as libc::c_int as libc::c_uint {
+                      & 255 as i32 as u32 {
         index = index1
     } else { index = index2 }
     old_draft =
         ((*hash_table.offset(index as isize)).key1_selectivity_flags_draft &
-             255 as libc::c_int as libc::c_uint) as libc::c_int;
-    if flags & 4 as libc::c_int != 0 {
+             255 as i32 as u32) as i32;
+    if flags & 4 as i32 != 0 {
         /* Exact scores are potentially more useful */
-        change_encouragment = 2 as libc::c_int
-    } else { change_encouragment = 0 as libc::c_int }
+        change_encouragment = 2 as i32
+    } else { change_encouragment = 0 as i32 }
     if (*hash_table.offset(index as isize)).key2 == code2 {
-        if old_draft > draft + change_encouragment + 2 as libc::c_int {
+        if old_draft > draft + change_encouragment + 2 as i32 {
             return
         }
-    } else if old_draft > draft + change_encouragment + 4 as libc::c_int {
+    } else if old_draft > draft + change_encouragment + 4 as i32 {
         return
     }
     entry.key1 = code1;
     entry.key2 = code2;
     entry.eval = score;
-    entry.move_0[0 as libc::c_int as usize] = best;
-    entry.move_0[1 as libc::c_int as usize] = 0 as libc::c_int;
-    entry.move_0[2 as libc::c_int as usize] = 0 as libc::c_int;
-    entry.move_0[3 as libc::c_int as usize] = 0 as libc::c_int;
-    entry.flags = flags as libc::c_short;
-    entry.draft = draft as libc::c_short;
-    entry.selectivity = selectivity as libc::c_short;
+    entry.move_0[0 as i32 as usize] = best;
+    entry.move_0[1 as i32 as usize] = 0 as i32;
+    entry.move_0[2 as i32 as usize] = 0 as i32;
+    entry.move_0[3 as i32 as usize] = 0 as i32;
+    entry.flags = flags as i16;
+    entry.draft = draft as i16;
+    entry.selectivity = selectivity as i16;
     wide_to_compact(&mut entry, &mut *hash_table.offset(index as isize));
 }
 /*
@@ -524,20 +524,20 @@ pub unsafe fn add_hash(mut reverse_mode: libc::c_int,
    and the most shallow search is replaced.
 */
 
-pub unsafe fn add_hash_extended(mut reverse_mode: libc::c_int,
-                                           mut score: libc::c_int,
-                                           mut best: *mut libc::c_int,
-                                           mut flags: libc::c_int,
-                                           mut draft: libc::c_int,
-                                           mut selectivity: libc::c_int) {
-    let mut i: libc::c_int = 0;
-    let mut old_draft: libc::c_int = 0;
-    let mut change_encouragment: libc::c_int = 0;
-    let mut index: libc::c_uint = 0;
-    let mut index1: libc::c_uint = 0;
-    let mut index2: libc::c_uint = 0;
-    let mut code1: libc::c_uint = 0;
-    let mut code2: libc::c_uint = 0;
+pub unsafe fn add_hash_extended(mut reverse_mode: i32,
+                                           mut score: i32,
+                                           mut best: *mut i32,
+                                           mut flags: i32,
+                                           mut draft: i32,
+                                           mut selectivity: i32) {
+    let mut i: i32 = 0;
+    let mut old_draft: i32 = 0;
+    let mut change_encouragment: i32 = 0;
+    let mut index: u32 = 0;
+    let mut index1: u32 = 0;
+    let mut index2: u32 = 0;
+    let mut code1: u32 = 0;
+    let mut code2: u32 = 0;
     let mut entry =
         HashEntry{key1: 0,
                   key2: 0,
@@ -550,45 +550,45 @@ pub unsafe fn add_hash_extended(mut reverse_mode: libc::c_int,
         code1 = hash2 ^ hash_trans2;
         code2 = hash1 ^ hash_trans1
     } else { code1 = hash1 ^ hash_trans1; code2 = hash2 ^ hash_trans2 }
-    index1 = code1 & hash_mask as libc::c_uint;
-    index2 = index1 ^ 1 as libc::c_int as libc::c_uint;
+    index1 = code1 & hash_mask as u32;
+    index2 = index1 ^ 1 as i32 as u32;
     if (*hash_table.offset(index1 as isize)).key2 == code2 {
         index = index1
     } else if (*hash_table.offset(index2 as isize)).key2 == code2 {
         index = index2
     } else if (*hash_table.offset(index1 as
                                       isize)).key1_selectivity_flags_draft &
-                  255 as libc::c_int as libc::c_uint <=
+                  255 as i32 as u32 <=
                   (*hash_table.offset(index2 as
                                           isize)).key1_selectivity_flags_draft
-                      & 255 as libc::c_int as libc::c_uint {
+                      & 255 as i32 as u32 {
         index = index1
     } else { index = index2 }
     old_draft =
         ((*hash_table.offset(index as isize)).key1_selectivity_flags_draft &
-             255 as libc::c_int as libc::c_uint) as libc::c_int;
-    if flags & 4 as libc::c_int != 0 {
+             255 as i32 as u32) as i32;
+    if flags & 4 as i32 != 0 {
         /* Exact scores are potentially more useful */
-        change_encouragment = 2 as libc::c_int
-    } else { change_encouragment = 0 as libc::c_int }
+        change_encouragment = 2 as i32
+    } else { change_encouragment = 0 as i32 }
     if (*hash_table.offset(index as isize)).key2 == code2 {
-        if old_draft > draft + change_encouragment + 2 as libc::c_int {
+        if old_draft > draft + change_encouragment + 2 as i32 {
             return
         }
-    } else if old_draft > draft + change_encouragment + 4 as libc::c_int {
+    } else if old_draft > draft + change_encouragment + 4 as i32 {
         return
     }
     entry.key1 = code1;
     entry.key2 = code2;
     entry.eval = score;
-    i = 0 as libc::c_int;
-    while i < 4 as libc::c_int {
+    i = 0 as i32;
+    while i < 4 as i32 {
         entry.move_0[i as usize] = *best.offset(i as isize);
         i += 1
     }
-    entry.flags = flags as libc::c_short;
-    entry.draft = draft as libc::c_short;
-    entry.selectivity = selectivity as libc::c_short;
+    entry.flags = flags as i16;
+    entry.draft = draft as i16;
+    entry.selectivity = selectivity as i16;
     wide_to_compact(&mut entry, &mut *hash_table.offset(index as isize));
 }
 /*
@@ -598,37 +598,37 @@ pub unsafe fn add_hash_extended(mut reverse_mode: libc::c_int,
 */
 
 pub unsafe fn find_hash(mut entry: *mut HashEntry,
-                                   mut reverse_mode: libc::c_int) {
-    let mut index1: libc::c_int = 0;
-    let mut index2: libc::c_int = 0;
-    let mut code1: libc::c_uint = 0;
-    let mut code2: libc::c_uint = 0;
+                                   mut reverse_mode: i32) {
+    let mut index1: i32 = 0;
+    let mut index2: i32 = 0;
+    let mut code1: u32 = 0;
+    let mut code2: u32 = 0;
     if reverse_mode != 0 {
         code1 = hash2 ^ hash_trans2;
         code2 = hash1 ^ hash_trans1
     } else { code1 = hash1 ^ hash_trans1; code2 = hash2 ^ hash_trans2 }
-    index1 = (code1 & hash_mask as libc::c_uint) as libc::c_int;
-    index2 = index1 ^ 1 as libc::c_int;
+    index1 = (code1 & hash_mask as u32) as i32;
+    index2 = index1 ^ 1 as i32;
     if (*hash_table.offset(index1 as isize)).key2 == code2 {
         if ((*hash_table.offset(index1 as isize)).key1_selectivity_flags_draft
-                ^ code1) & 0xff000000 as libc::c_uint ==
-               0 as libc::c_int as libc::c_uint {
+                ^ code1) & 0xff000000 as u32 ==
+               0 as i32 as u32 {
             compact_to_wide(&mut *hash_table.offset(index1 as isize), entry);
             return
         }
     } else if (*hash_table.offset(index2 as isize)).key2 == code2 &&
                   ((*hash_table.offset(index2 as
                                            isize)).key1_selectivity_flags_draft
-                       ^ code1) & 0xff000000 as libc::c_uint ==
-                      0 as libc::c_int as libc::c_uint {
+                       ^ code1) & 0xff000000 as u32 ==
+                      0 as i32 as u32 {
         compact_to_wide(&mut *hash_table.offset(index2 as isize), entry);
         return
     }
-    (*entry).draft = 0 as libc::c_int as libc::c_short;
-    (*entry).flags = 2 as libc::c_int as libc::c_short;
-    (*entry).eval = 12345678 as libc::c_int;
-    (*entry).move_0[0 as libc::c_int as usize] = 44 as libc::c_int;
-    (*entry).move_0[1 as libc::c_int as usize] = 0 as libc::c_int;
-    (*entry).move_0[2 as libc::c_int as usize] = 0 as libc::c_int;
-    (*entry).move_0[3 as libc::c_int as usize] = 0 as libc::c_int;
+    (*entry).draft = 0 as i32 as i16;
+    (*entry).flags = 2 as i32 as i16;
+    (*entry).eval = 12345678 as i32;
+    (*entry).move_0[0 as i32 as usize] = 44 as i32;
+    (*entry).move_0[1 as i32 as usize] = 0 as i32;
+    (*entry).move_0[2 as i32 as usize] = 0 as i32;
+    (*entry).move_0[3 as i32 as usize] = 0 as i32;
 }

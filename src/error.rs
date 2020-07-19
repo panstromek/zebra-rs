@@ -7,16 +7,16 @@ pub type __builtin_va_list = [__va_list_tag; 1];
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __va_list_tag {
-    pub gp_offset: libc::c_uint,
-    pub fp_offset: libc::c_uint,
+    pub gp_offset: u32,
+    pub fp_offset: u32,
     pub overflow_arg_area: *mut libc::c_void,
     pub reg_save_area: *mut libc::c_void,
 }
 pub type va_list = __builtin_va_list;
-pub type size_t = libc::c_ulong;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __time_t = libc::c_long;
+pub type size_t = u64;
+pub type __off_t = i64;
+pub type __off64_t = i64;
+pub type __time_t = i64;
 
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
@@ -45,26 +45,26 @@ pub type time_t = __time_t;
 */
 /* not Windows CE */
 
-pub unsafe extern "C" fn fatal_error(mut format: *const libc::c_char,
+pub unsafe extern "C" fn fatal_error(mut format: *const i8,
                                      mut args: ...) {
     let mut stream = 0 as *mut FILE;
     let mut timer: time_t = 0;
     let mut arg_ptr: ::std::ffi::VaListImpl;
     arg_ptr = args.clone();
-    fprintf(stderr, b"\n%s: \x00" as *const u8 as *const libc::c_char,
-            b"Fatal error\x00" as *const u8 as *const libc::c_char);
+    fprintf(stderr, b"\n%s: \x00" as *const u8 as *const i8,
+            b"Fatal error\x00" as *const u8 as *const i8);
     vfprintf(stderr, format, arg_ptr.as_va_list());
     stream =
-        fopen(b"zebra.err\x00" as *const u8 as *const libc::c_char,
-              b"a\x00" as *const u8 as *const libc::c_char);
+        fopen(b"zebra.err\x00" as *const u8 as *const i8,
+              b"a\x00" as *const u8 as *const i8);
     if !stream.is_null() {
         time(&mut timer);
         fprintf(stream,
-                b"%s @ %s\n  \x00" as *const u8 as *const libc::c_char,
-                b"Fatal error\x00" as *const u8 as *const libc::c_char,
+                b"%s @ %s\n  \x00" as *const u8 as *const i8,
+                b"Fatal error\x00" as *const u8 as *const i8,
                 ctime(&mut timer));
         arg_ptr = args.clone();
         vfprintf(stream, format, arg_ptr.as_va_list());
     }
-    exit(1 as libc::c_int);
+    exit(1 as i32);
 }

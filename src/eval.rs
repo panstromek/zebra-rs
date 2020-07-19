@@ -17,13 +17,13 @@ use crate::src::search::evaluations;
                    No knowledge in this module though.
 */
 /* Local variables */
-static mut use_experimental: libc::c_int = 0;
+static mut use_experimental: i32 = 0;
 /*
    TOGGLE_EXPERIMENTAL
    Toggles usage of novelties in the evaluation function on/off.
 */
 
-pub unsafe fn toggle_experimental(mut use_0: libc::c_int) {
+pub unsafe fn toggle_experimental(mut use_0: i32) {
     use_experimental = use_0;
 }
 /*
@@ -32,7 +32,7 @@ pub unsafe fn toggle_experimental(mut use_0: libc::c_int) {
   0 otherwise.
 */
 
-pub unsafe fn experimental_eval() -> libc::c_int {
+pub unsafe fn experimental_eval() -> i32 {
     return use_experimental;
 }
 /*
@@ -61,24 +61,24 @@ pub unsafe fn init_eval() { }
   Evaluates the position when no player has any legal moves.
 */
 
-pub unsafe fn terminal_evaluation(mut side_to_move: libc::c_int)
- -> libc::c_int {
-    let mut disc_diff: libc::c_int = 0;
-    let mut my_discs: libc::c_int = 0;
-    let mut opp_discs: libc::c_int = 0;
+pub unsafe fn terminal_evaluation(mut side_to_move: i32)
+ -> i32 {
+    let mut disc_diff: i32 = 0;
+    let mut my_discs: i32 = 0;
+    let mut opp_discs: i32 = 0;
     evaluations.lo = evaluations.lo.wrapping_add(1);
     my_discs = piece_count[side_to_move as usize][disks_played as usize];
     opp_discs =
-        piece_count[(0 as libc::c_int + 2 as libc::c_int - side_to_move) as
+        piece_count[(0 as i32 + 2 as i32 - side_to_move) as
                         usize][disks_played as usize];
     if my_discs > opp_discs {
-        disc_diff = 64 as libc::c_int - 2 as libc::c_int * opp_discs
+        disc_diff = 64 as i32 - 2 as i32 * opp_discs
     } else if opp_discs > my_discs {
-        disc_diff = 2 as libc::c_int * my_discs - 64 as libc::c_int
-    } else { disc_diff = 0 as libc::c_int }
-    if disc_diff > 0 as libc::c_int {
-        return 29000 as libc::c_int + disc_diff
-    } else if disc_diff == 0 as libc::c_int {
-        return 0 as libc::c_int
-    } else { return -(29000 as libc::c_int) + disc_diff };
+        disc_diff = 2 as i32 * my_discs - 64 as i32
+    } else { disc_diff = 0 as i32 }
+    if disc_diff > 0 as i32 {
+        return 29000 as i32 + disc_diff
+    } else if disc_diff == 0 as i32 {
+        return 0 as i32
+    } else { return -(29000 as i32) + disc_diff };
 }

@@ -22,10 +22,10 @@ use crate::src::libc;
    Contents:      An empty definition of functions from autoplay
                   used when no event handling is necessary.
 */
-pub unsafe fn handle_event(mut only_passive_events: libc::c_int,
-                                      mut allow_delay: libc::c_int,
-                                      mut passive_mode: libc::c_int) {
+pub unsafe fn handle_event(mut only_passive_events: i32,
+                                      mut allow_delay: i32,
+                                      mut passive_mode: i32) {
 }
 pub unsafe fn toggle_event_status(mut allow_event_handling:
-                                                 libc::c_int) {
+                                                 i32) {
 }

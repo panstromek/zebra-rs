@@ -9,18 +9,18 @@ pub type __builtin_va_list = [__va_list_tag; 1];
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct __va_list_tag {
-    pub gp_offset: libc::c_uint,
-    pub fp_offset: libc::c_uint,
+    pub gp_offset: u32,
+    pub fp_offset: u32,
     pub overflow_arg_area: *mut libc::c_void,
     pub reg_save_area: *mut libc::c_void,
 }
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
+pub type __off_t = i64;
+pub type __off64_t = i64;
 pub type va_list = __builtin_va_list;
-pub type size_t = libc::c_ulong;
+pub type size_t = u64;
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
-pub type EvalType = libc::c_uint;
+pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
 pub const INTERRUPTED_EVAL: EvalType = 7;
 pub const UNDEFINED_EVAL: EvalType = 6;
@@ -30,7 +30,7 @@ pub const SELECTIVE_EVAL: EvalType = 3;
 pub const WLD_EVAL: EvalType = 2;
 pub const EXACT_EVAL: EvalType = 1;
 pub const MIDGAME_EVAL: EvalType = 0;
-pub type EvalResult = libc::c_uint;
+pub type EvalResult = u32;
 pub const UNSOLVED_POSITION: EvalResult = 3;
 pub const LOST_POSITION: EvalResult = 2;
 pub const DRAWN_POSITION: EvalResult = 1;
@@ -49,34 +49,34 @@ pub const WON_POSITION: EvalResult = 0;
 */
 /* Global variables */
 
-pub static mut echo: libc::c_int = 0;
+pub static mut echo: i32 = 0;
 
-pub static mut display_pv: libc::c_int = 0;
+pub static mut display_pv: i32 = 0;
 /* Local variables */
-static mut black_player: *mut libc::c_char =
-    0 as *const libc::c_char as *mut libc::c_char;
-static mut white_player: *mut libc::c_char =
-    0 as *const libc::c_char as *mut libc::c_char;
-static mut status_buffer: [libc::c_char; 256] = [0; 256];
-static mut sweep_buffer: [libc::c_char; 256] = [0; 256];
-static mut stored_status_buffer: [libc::c_char; 256] = [0; 256];
-static mut black_eval: libc::c_double = 0.0f64;
-static mut white_eval: libc::c_double = 0.0f64;
-static mut last_output: libc::c_double = 0.0f64;
-static mut interval1: libc::c_double = 0.;
-static mut interval2: libc::c_double = 0.;
-static mut black_time: libc::c_int = 0;
-static mut white_time: libc::c_int = 0;
-static mut current_row: libc::c_int = 0;
-static mut status_modified: libc::c_int = 0 as libc::c_int;
-static mut sweep_modified: libc::c_int = 0 as libc::c_int;
-static mut timed_buffer_management: libc::c_int = 1 as libc::c_int;
-static mut status_pos: libc::c_int = 0;
-static mut sweep_pos: libc::c_int = 0;
-static mut black_list: *mut libc::c_int =
-    0 as *const libc::c_int as *mut libc::c_int;
-static mut white_list: *mut libc::c_int =
-    0 as *const libc::c_int as *mut libc::c_int;
+static mut black_player: *mut i8 =
+    0 as *const i8 as *mut i8;
+static mut white_player: *mut i8 =
+    0 as *const i8 as *mut i8;
+static mut status_buffer: [i8; 256] = [0; 256];
+static mut sweep_buffer: [i8; 256] = [0; 256];
+static mut stored_status_buffer: [i8; 256] = [0; 256];
+static mut black_eval: f64 = 0.0f64;
+static mut white_eval: f64 = 0.0f64;
+static mut last_output: f64 = 0.0f64;
+static mut interval1: f64 = 0.;
+static mut interval2: f64 = 0.;
+static mut black_time: i32 = 0;
+static mut white_time: i32 = 0;
+static mut current_row: i32 = 0;
+static mut status_modified: i32 = 0 as i32;
+static mut sweep_modified: i32 = 0 as i32;
+static mut timed_buffer_management: i32 = 1 as i32;
+static mut status_pos: i32 = 0;
+static mut sweep_pos: i32 = 0;
+static mut black_list: *mut i32 =
+    0 as *const i32 as *mut i32;
+static mut white_list: *mut i32 =
+    0 as *const i32 as *mut i32;
 /*
    File:         display.h
 
@@ -98,9 +98,9 @@ static mut white_list: *mut libc::c_int =
 */
 
 pub unsafe fn dumpch() {
-    let mut ch: libc::c_char = 0;
-    ch = getc(stdin) as libc::c_char;
-    if ch as libc::c_int == ' ' as i32 { exit(1 as libc::c_int); };
+    let mut ch: i8 = 0;
+    ch = getc(stdin) as i8;
+    if ch as i32 == ' ' as i32 { exit(1 as i32); };
 }
 /*
   SET_NAMES
@@ -111,29 +111,29 @@ pub unsafe fn dumpch() {
   board by DISPLAY_BOARD.
 */
 
-pub unsafe fn set_names(mut black_name: *const libc::c_char,
-                                   mut white_name: *const libc::c_char) {
+pub unsafe fn set_names(mut black_name: *const i8,
+                                   mut white_name: *const i8) {
     if !black_player.is_null() { free(black_player as *mut libc::c_void); }
     if !white_player.is_null() { free(white_player as *mut libc::c_void); }
     black_player = strdup(black_name);
     white_player = strdup(white_name);
 }
 
-pub unsafe fn set_times(mut black: libc::c_int,
-                                   mut white: libc::c_int) {
+pub unsafe fn set_times(mut black: i32,
+                                   mut white: i32) {
     black_time = black;
     white_time = white;
 }
 
-pub unsafe fn set_evals(mut black: libc::c_double,
-                                   mut white: libc::c_double) {
+pub unsafe fn set_evals(mut black: f64,
+                                   mut white: f64) {
     black_eval = black;
     white_eval = white;
 }
 
-pub unsafe fn set_move_list(mut black: *mut libc::c_int,
-                                       mut white: *mut libc::c_int,
-                                       mut row: libc::c_int) {
+pub unsafe fn set_move_list(mut black: *mut i32,
+                                       mut white: *mut i32,
+                                       mut row: i32) {
     black_list = black;
     white_list = white;
     current_row = row;
@@ -149,210 +149,210 @@ pub unsafe fn set_move_list(mut black: *mut libc::c_int,
 */
 
 pub unsafe fn display_board(mut stream: *mut FILE,
-                                       mut board: *mut libc::c_int,
-                                       mut side_to_move: libc::c_int,
-                                       mut give_game_score: libc::c_int,
-                                       mut give_time: libc::c_int,
-                                       mut give_evals: libc::c_int) {
-    let mut buffer: [libc::c_char; 16] = [0; 16];
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut written: libc::c_int = 0;
-    let mut first_row: libc::c_int = 0;
-    let mut row: libc::c_int = 0;
-    if side_to_move == 0 as libc::c_int {
+                                       mut board: *mut i32,
+                                       mut side_to_move: i32,
+                                       mut give_game_score: i32,
+                                       mut give_time: i32,
+                                       mut give_evals: i32) {
+    let mut buffer: [i8; 16] = [0; 16];
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut written: i32 = 0;
+    let mut first_row: i32 = 0;
+    let mut row: i32 = 0;
+    if side_to_move == 0 as i32 {
         first_row =
-            if 0 as libc::c_int > current_row - 8 as libc::c_int {
-                0 as libc::c_int
-            } else { (current_row) - 8 as libc::c_int }
+            if 0 as i32 > current_row - 8 as i32 {
+                0 as i32
+            } else { (current_row) - 8 as i32 }
     } else {
         first_row =
-            if 0 as libc::c_int > current_row - 7 as libc::c_int {
-                0 as libc::c_int
-            } else { (current_row) - 7 as libc::c_int }
+            if 0 as i32 > current_row - 7 as i32 {
+                0 as i32
+            } else { (current_row) - 7 as i32 }
     }
-    buffer[15 as libc::c_int as usize] = 0 as libc::c_int as libc::c_char;
-    fputs(b"\n\x00" as *const u8 as *const libc::c_char, stream);
+    buffer[15 as i32 as usize] = 0 as i32 as i8;
+    fputs(b"\n\x00" as *const u8 as *const i8, stream);
     fprintf(stream,
-            b"%s   a b c d e f g h\n\x00" as *const u8 as *const libc::c_char,
-            b"      \x00" as *const u8 as *const libc::c_char);
-    fputs(b"\n\x00" as *const u8 as *const libc::c_char, stream);
-    i = 1 as libc::c_int;
-    while i <= 8 as libc::c_int {
-        j = 0 as libc::c_int;
-        while j < 15 as libc::c_int {
-            buffer[j as usize] = ' ' as i32 as libc::c_char;
+            b"%s   a b c d e f g h\n\x00" as *const u8 as *const i8,
+            b"      \x00" as *const u8 as *const i8);
+    fputs(b"\n\x00" as *const u8 as *const i8, stream);
+    i = 1 as i32;
+    while i <= 8 as i32 {
+        j = 0 as i32;
+        while j < 15 as i32 {
+            buffer[j as usize] = ' ' as i32 as i8;
             j += 1
         }
-        j = 1 as libc::c_int;
-        while j <= 8 as libc::c_int {
-            match *board.offset((10 as libc::c_int * i + j) as isize) {
+        j = 1 as i32;
+        while j <= 8 as i32 {
+            match *board.offset((10 as i32 * i + j) as isize) {
                 0 => {
-                    buffer[(2 as libc::c_int * (j - 1 as libc::c_int)) as
-                               usize] = '*' as i32 as libc::c_char
+                    buffer[(2 as i32 * (j - 1 as i32)) as
+                               usize] = '*' as i32 as i8
                 }
                 2 => {
-                    buffer[(2 as libc::c_int * (j - 1 as libc::c_int)) as
-                               usize] = 'O' as i32 as libc::c_char
+                    buffer[(2 as i32 * (j - 1 as i32)) as
+                               usize] = 'O' as i32 as i8
                 }
                 _ => {
-                    buffer[(2 as libc::c_int * (j - 1 as libc::c_int)) as
-                               usize] = ' ' as i32 as libc::c_char
+                    buffer[(2 as i32 * (j - 1 as i32)) as
+                               usize] = ' ' as i32 as i8
                 }
             }
             j += 1
         }
         fprintf(stream,
-                b"%s%d  %s      \x00" as *const u8 as *const libc::c_char,
-                b"      \x00" as *const u8 as *const libc::c_char, i,
+                b"%s%d  %s      \x00" as *const u8 as *const i8,
+                b"      \x00" as *const u8 as *const i8, i,
                 buffer.as_mut_ptr());
-        written = 0 as libc::c_int;
-        if i == 1 as libc::c_int {
+        written = 0 as i32;
+        if i == 1 as i32 {
             written +=
                 fprintf(stream,
-                        b"%-9s\x00" as *const u8 as *const libc::c_char,
-                        b"Black\x00" as *const u8 as *const libc::c_char);
+                        b"%-9s\x00" as *const u8 as *const i8,
+                        b"Black\x00" as *const u8 as *const i8);
             if !black_player.is_null() {
                 written +=
                     fprintf(stream,
-                            b"%s\x00" as *const u8 as *const libc::c_char,
+                            b"%s\x00" as *const u8 as *const i8,
                             black_player)
             }
         }
-        if i == 2 as libc::c_int && give_time != 0 {
+        if i == 2 as i32 && give_time != 0 {
             written +=
                 fprintf(stream,
                         b"         %02d:%02d\x00" as *const u8 as
-                            *const libc::c_char,
-                        black_time / 60 as libc::c_int,
-                        black_time % 60 as libc::c_int)
+                            *const i8,
+                        black_time / 60 as i32,
+                        black_time % 60 as i32)
         }
-        if i == 3 as libc::c_int {
-            if side_to_move == 0 as libc::c_int {
+        if i == 3 as i32 {
+            if side_to_move == 0 as i32 {
                 written +=
                     fprintf(stream,
-                            b" (*)  \x00" as *const u8 as *const libc::c_char)
+                            b" (*)  \x00" as *const u8 as *const i8)
             } else if give_evals != 0 && black_eval != 0.0f64 {
                 if black_eval >= 0.0f64 && black_eval <= 1.0f64 {
                     written +=
                         fprintf(stream,
                                 b"%-6.2f\x00" as *const u8 as
-                                    *const libc::c_char, black_eval)
+                                    *const i8, black_eval)
                 } else {
                     written +=
                         fprintf(stream,
                                 b"%+-6.2f\x00" as *const u8 as
-                                    *const libc::c_char, black_eval)
+                                    *const i8, black_eval)
                 }
             } else {
                 written +=
                     fprintf(stream,
-                            b"      \x00" as *const u8 as *const libc::c_char)
+                            b"      \x00" as *const u8 as *const i8)
             }
             written +=
                 fprintf(stream,
-                        b"   %d %s\x00" as *const u8 as *const libc::c_char,
-                        disc_count(0 as libc::c_int),
-                        b"discs\x00" as *const u8 as *const libc::c_char)
+                        b"   %d %s\x00" as *const u8 as *const i8,
+                        disc_count(0 as i32),
+                        b"discs\x00" as *const u8 as *const i8)
         }
-        if i == 5 as libc::c_int {
+        if i == 5 as i32 {
             written +=
                 fprintf(stream,
-                        b"%-9s\x00" as *const u8 as *const libc::c_char,
-                        b"White\x00" as *const u8 as *const libc::c_char);
+                        b"%-9s\x00" as *const u8 as *const i8,
+                        b"White\x00" as *const u8 as *const i8);
             if !white_player.is_null() {
                 written +=
                     fprintf(stream,
-                            b"%s\x00" as *const u8 as *const libc::c_char,
+                            b"%s\x00" as *const u8 as *const i8,
                             white_player)
             }
         }
-        if i == 6 as libc::c_int && give_time != 0 {
+        if i == 6 as i32 && give_time != 0 {
             written +=
                 fprintf(stream,
                         b"         %02d:%02d\x00" as *const u8 as
-                            *const libc::c_char,
-                        white_time / 60 as libc::c_int,
-                        white_time % 60 as libc::c_int)
+                            *const i8,
+                        white_time / 60 as i32,
+                        white_time % 60 as i32)
         }
-        if i == 7 as libc::c_int {
-            if side_to_move == 2 as libc::c_int {
+        if i == 7 as i32 {
+            if side_to_move == 2 as i32 {
                 written +=
                     fprintf(stream,
-                            b" (O)  \x00" as *const u8 as *const libc::c_char)
+                            b" (O)  \x00" as *const u8 as *const i8)
             } else if give_evals != 0 && white_eval != 0.0f64 {
                 if white_eval >= 0.0f64 && white_eval <= 1.0f64 {
                     written +=
                         fprintf(stream,
                                 b"%-6.2f\x00" as *const u8 as
-                                    *const libc::c_char, white_eval)
+                                    *const i8, white_eval)
                 } else {
                     written +=
                         fprintf(stream,
                                 b"%+-6.2f\x00" as *const u8 as
-                                    *const libc::c_char, white_eval)
+                                    *const i8, white_eval)
                 }
             } else {
                 written +=
                     fprintf(stream,
-                            b"      \x00" as *const u8 as *const libc::c_char)
+                            b"      \x00" as *const u8 as *const i8)
             }
             written +=
                 fprintf(stream,
-                        b"   %d %s\x00" as *const u8 as *const libc::c_char,
-                        disc_count(2 as libc::c_int),
-                        b"discs\x00" as *const u8 as *const libc::c_char)
+                        b"   %d %s\x00" as *const u8 as *const i8,
+                        disc_count(2 as i32),
+                        b"discs\x00" as *const u8 as *const i8)
         }
         if give_game_score != 0 {
-            fprintf(stream, b"%*s\x00" as *const u8 as *const libc::c_char,
-                    22 as libc::c_int - written,
-                    b"\x00" as *const u8 as *const libc::c_char);
-            row = first_row + (i - 1 as libc::c_int);
+            fprintf(stream, b"%*s\x00" as *const u8 as *const i8,
+                    22 as i32 - written,
+                    b"\x00" as *const u8 as *const i8);
+            row = first_row + (i - 1 as i32);
             if row < current_row ||
-                   row == current_row && side_to_move == 2 as libc::c_int {
+                   row == current_row && side_to_move == 2 as i32 {
                 fprintf(stream,
-                        b"%2d. \x00" as *const u8 as *const libc::c_char,
-                        row + 1 as libc::c_int);
-                if black_moves[row as usize] == -(1 as libc::c_int) {
+                        b"%2d. \x00" as *const u8 as *const i8,
+                        row + 1 as i32);
+                if black_moves[row as usize] == -(1 as i32) {
                     fprintf(stream,
-                            b"- \x00" as *const u8 as *const libc::c_char);
+                            b"- \x00" as *const u8 as *const i8);
                 } else {
                     fprintf(stream,
-                            b"%c%c\x00" as *const u8 as *const libc::c_char,
+                            b"%c%c\x00" as *const u8 as *const i8,
                             'a' as i32 +
-                                black_moves[row as usize] % 10 as libc::c_int
-                                - 1 as libc::c_int,
+                                black_moves[row as usize] % 10 as i32
+                                - 1 as i32,
                             '0' as i32 +
                                 black_moves[row as usize] /
-                                    10 as libc::c_int);
+                                    10 as i32);
                 }
                 fprintf(stream,
-                        b"  \x00" as *const u8 as *const libc::c_char);
+                        b"  \x00" as *const u8 as *const i8);
                 if row < current_row ||
-                       row == current_row && side_to_move == 0 as libc::c_int
+                       row == current_row && side_to_move == 0 as i32
                    {
-                    if white_moves[row as usize] == -(1 as libc::c_int) {
+                    if white_moves[row as usize] == -(1 as i32) {
                         fprintf(stream,
                                 b"- \x00" as *const u8 as
-                                    *const libc::c_char);
+                                    *const i8);
                     } else {
                         fprintf(stream,
                                 b"%c%c\x00" as *const u8 as
-                                    *const libc::c_char,
+                                    *const i8,
                                 'a' as i32 +
                                     white_moves[row as usize] %
-                                        10 as libc::c_int - 1 as libc::c_int,
+                                        10 as i32 - 1 as i32,
                                 '0' as i32 +
                                     white_moves[row as usize] /
-                                        10 as libc::c_int);
+                                        10 as i32);
                     }
                 }
             }
         }
-        fputs(b"\n\x00" as *const u8 as *const libc::c_char, stream);
+        fputs(b"\n\x00" as *const u8 as *const i8, stream);
         i += 1
     }
-    fputs(b"\n\x00" as *const u8 as *const libc::c_char, stream);
+    fputs(b"\n\x00" as *const u8 as *const i8, stream);
 }
 /*
   DISPLAY_MOVE
@@ -360,13 +360,13 @@ pub unsafe fn display_board(mut stream: *mut FILE,
 */
 
 pub unsafe fn display_move(mut stream: *mut FILE,
-                                      mut move_0: libc::c_int) {
-    if move_0 == -(1 as libc::c_int) {
-        fprintf(stream, b"--\x00" as *const u8 as *const libc::c_char);
+                                      mut move_0: i32) {
+    if move_0 == -(1 as i32) {
+        fprintf(stream, b"--\x00" as *const u8 as *const i8);
     } else {
-        fprintf(stream, b"%c%c\x00" as *const u8 as *const libc::c_char,
-                'a' as i32 + move_0 % 10 as libc::c_int - 1 as libc::c_int,
-                '0' as i32 + move_0 / 10 as libc::c_int);
+        fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
+                'a' as i32 + move_0 % 10 as i32 - 1 as i32,
+                '0' as i32 + move_0 / 10 as i32);
     };
 }
 /*
@@ -375,38 +375,38 @@ pub unsafe fn display_move(mut stream: *mut FILE,
 */
 
 pub unsafe fn display_optimal_line(mut stream: *mut FILE) {
-    let mut i: libc::c_int = 0;
-    if full_pv_depth == 0 as libc::c_int { return }
-    fprintf(stream, b"%s: \x00" as *const u8 as *const libc::c_char,
-            b"PV\x00" as *const u8 as *const libc::c_char);
-    i = 0 as libc::c_int;
+    let mut i: i32 = 0;
+    if full_pv_depth == 0 as i32 { return }
+    fprintf(stream, b"%s: \x00" as *const u8 as *const i8,
+            b"PV\x00" as *const u8 as *const i8);
+    i = 0 as i32;
     while i < full_pv_depth {
-        if i % 25 as libc::c_int != 0 as libc::c_int {
+        if i % 25 as i32 != 0 as i32 {
             fputc(' ' as i32, stream);
-        } else if i > 0 as libc::c_int {
+        } else if i > 0 as i32 {
             fprintf(stream,
-                    b"\n    \x00" as *const u8 as *const libc::c_char);
+                    b"\n    \x00" as *const u8 as *const i8);
         }
         display_move(stream, full_pv[i as usize]);
         i += 1
     }
-    fputs(b"\n\x00" as *const u8 as *const libc::c_char, stream);
+    fputs(b"\n\x00" as *const u8 as *const i8, stream);
 }
 /*
   SEND_STATUS
   Store information about the last completed search.
 */
 
-pub unsafe extern "C" fn send_status(mut format: *const libc::c_char,
+pub unsafe extern "C" fn send_status(mut format: *const i8,
                                      mut args: ...) {
-    let mut written: libc::c_int = 0;
+    let mut written: i32 = 0;
     let mut arg_ptr: ::std::ffi::VaListImpl;
     arg_ptr = args.clone();
     written =
         vsprintf(status_buffer.as_mut_ptr().offset(status_pos as isize),
                  format, arg_ptr.as_va_list());
     status_pos += written;
-    status_modified = 1 as libc::c_int;
+    status_modified = 1 as i32;
 }
 /*
   SEND_STATUS_TIME
@@ -415,15 +415,15 @@ pub unsafe extern "C" fn send_status(mut format: *const libc::c_char,
   the time string.
 */
 
-pub unsafe fn send_status_time(mut elapsed_time: libc::c_double) {
+pub unsafe fn send_status_time(mut elapsed_time: f64) {
     if elapsed_time < 10000.0f64 {
-        send_status(b"%6.1f %c\x00" as *const u8 as *const libc::c_char,
+        send_status(b"%6.1f %c\x00" as *const u8 as *const i8,
                     elapsed_time, 's' as i32);
     } else {
-        send_status(b"%6d %c\x00" as *const u8 as *const libc::c_char,
-                    ceil(elapsed_time) as libc::c_int, 's' as i32);
+        send_status(b"%6d %c\x00" as *const u8 as *const i8,
+                    ceil(elapsed_time) as i32, 's' as i32);
     }
-    send_status(b"  \x00" as *const u8 as *const libc::c_char);
+    send_status(b"  \x00" as *const u8 as *const i8);
 }
 /*
   SEND_STATUS_NODES
@@ -432,18 +432,18 @@ pub unsafe fn send_status_time(mut elapsed_time: libc::c_double) {
   the number of nodes.
 */
 
-pub unsafe fn send_status_nodes(mut node_count: libc::c_double) {
+pub unsafe fn send_status_nodes(mut node_count: f64) {
     if node_count < 1.0e8f64 {
-        send_status(b"%8.0f  \x00" as *const u8 as *const libc::c_char,
+        send_status(b"%8.0f  \x00" as *const u8 as *const i8,
                     node_count);
     } else if node_count < 1.0e10f64 {
-        send_status(b"%7.0f%c  \x00" as *const u8 as *const libc::c_char,
+        send_status(b"%7.0f%c  \x00" as *const u8 as *const i8,
                     node_count / 1000.0f64, 'k' as i32);
     } else if node_count < 1.0e13f64 {
-        send_status(b"%7.0f%c  \x00" as *const u8 as *const libc::c_char,
+        send_status(b"%7.0f%c  \x00" as *const u8 as *const i8,
                     node_count / 1000000.0f64, 'M' as i32);
     } else {
-        send_status(b"%7.0f%c  \x00" as *const u8 as *const libc::c_char,
+        send_status(b"%7.0f%c  \x00" as *const u8 as *const i8,
                     node_count / 1000000000.0f64, 'G' as i32);
     };
 }
@@ -452,27 +452,27 @@ pub unsafe fn send_status_nodes(mut node_count: libc::c_double) {
   Pipes the principal variation to SEND_STATUS.
 */
 
-pub unsafe fn send_status_pv(mut pv: *mut libc::c_int,
-                                        mut max_depth: libc::c_int) {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
+pub unsafe fn send_status_pv(mut pv: *mut i32,
+                                        mut max_depth: i32) {
+    let mut i: i32 = 0;
+    i = 0 as i32;
     while i <
-              (if max_depth < 5 as libc::c_int {
+              (if max_depth < 5 as i32 {
                    max_depth
-               } else { 5 as libc::c_int }) {
-        if i < pv_depth[0 as libc::c_int as usize] {
-            send_status(b"%c%c \x00" as *const u8 as *const libc::c_char,
+               } else { 5 as i32 }) {
+        if i < pv_depth[0 as i32 as usize] {
+            send_status(b"%c%c \x00" as *const u8 as *const i8,
                         'a' as i32 +
-                            *pv.offset(i as isize) % 10 as libc::c_int -
-                            1 as libc::c_int,
+                            *pv.offset(i as isize) % 10 as i32 -
+                            1 as i32,
                         '0' as i32 +
-                            *pv.offset(i as isize) / 10 as libc::c_int);
+                            *pv.offset(i as isize) / 10 as i32);
         } else {
-            send_status(b"   \x00" as *const u8 as *const libc::c_char);
+            send_status(b"   \x00" as *const u8 as *const i8);
         }
         i += 1
     }
-    send_status(b" \x00" as *const u8 as *const libc::c_char);
+    send_status(b" \x00" as *const u8 as *const i8);
 }
 /*
   CLEAR_STATUS
@@ -480,10 +480,10 @@ pub unsafe fn send_status_pv(mut pv: *mut libc::c_int,
 */
 
 pub unsafe fn clear_status() {
-    status_pos = 0 as libc::c_int;
-    status_buffer[0 as libc::c_int as usize] =
-        0 as libc::c_int as libc::c_char;
-    status_modified = 1 as libc::c_int;
+    status_pos = 0 as i32;
+    status_buffer[0 as i32 as usize] =
+        0 as i32 as i8;
+    status_modified = 1 as i32;
 }
 /*
   DISPLAY_STATUS
@@ -491,18 +491,18 @@ pub unsafe fn clear_status() {
 */
 
 pub unsafe fn display_status(mut stream: *mut FILE,
-                                        mut allow_repeat: libc::c_int) {
-    if (status_pos != 0 as libc::c_int || allow_repeat != 0) &&
+                                        mut allow_repeat: i32) {
+    if (status_pos != 0 as i32 || allow_repeat != 0) &&
            strlen(status_buffer.as_mut_ptr()) >
-               0 as libc::c_int as libc::c_ulong {
-        fprintf(stream, b"%s\n\x00" as *const u8 as *const libc::c_char,
+               0 as i32 as u64 {
+        fprintf(stream, b"%s\n\x00" as *const u8 as *const i8,
                 status_buffer.as_mut_ptr());
         strcpy(stored_status_buffer.as_mut_ptr(), status_buffer.as_mut_ptr());
     }
-    status_pos = 0 as libc::c_int;
+    status_pos = 0 as i32;
 }
 
-pub unsafe fn get_last_status() -> *const libc::c_char {
+pub unsafe fn get_last_status() -> *const i8 {
     return stored_status_buffer.as_mut_ptr();
 }
 /*
@@ -510,16 +510,16 @@ pub unsafe fn get_last_status() -> *const libc::c_char {
   Store information about the current search.
 */
 
-pub unsafe extern "C" fn send_sweep(mut format: *const libc::c_char,
+pub unsafe extern "C" fn send_sweep(mut format: *const i8,
                                     mut args: ...) {
-    let mut written: libc::c_int = 0;
+    let mut written: i32 = 0;
     let mut arg_ptr: ::std::ffi::VaListImpl;
     arg_ptr = args.clone();
     written =
         vsprintf(sweep_buffer.as_mut_ptr().offset(sweep_pos as isize), format,
                  arg_ptr.as_va_list());
     sweep_pos += written;
-    sweep_modified = 1 as libc::c_int;
+    sweep_modified = 1 as i32;
 }
 /*
   CLEAR_SWEEP
@@ -527,10 +527,10 @@ pub unsafe extern "C" fn send_sweep(mut format: *const libc::c_char,
 */
 
 pub unsafe fn clear_sweep() {
-    sweep_pos = 0 as libc::c_int;
-    sweep_buffer[0 as libc::c_int as usize] =
-        0 as libc::c_int as libc::c_char;
-    sweep_modified = 1 as libc::c_int;
+    sweep_pos = 0 as i32;
+    sweep_buffer[0 as i32 as usize] =
+        0 as i32 as i8;
+    sweep_modified = 1 as i32;
 }
 /*
   DISPLAY_SWEEP
@@ -538,11 +538,11 @@ pub unsafe fn clear_sweep() {
 */
 
 pub unsafe fn display_sweep(mut stream: *mut FILE) {
-    if sweep_pos != 0 as libc::c_int {
-        fprintf(stream, b"%s\n\x00" as *const u8 as *const libc::c_char,
+    if sweep_pos != 0 as i32 {
+        fprintf(stream, b"%s\n\x00" as *const u8 as *const i8,
                 sweep_buffer.as_mut_ptr());
     }
-    sweep_modified = 0 as libc::c_int;
+    sweep_modified = 0 as i32;
 }
 /*
   RESET_BUFFER_DISPLAY
@@ -564,12 +564,12 @@ pub unsafe fn reset_buffer_display() {
 */
 
 pub unsafe fn display_buffers() {
-    let mut timer: libc::c_double = 0.;
-    let mut new_interval: libc::c_double = 0.;
+    let mut timer: f64 = 0.;
+    let mut new_interval: f64 = 0.;
     timer = get_real_timer();
     if timer - last_output >= interval2 || timed_buffer_management == 0 {
-        display_status(stdout, 0 as libc::c_int);
-        status_modified = 0 as libc::c_int;
+        display_status(stdout, 0 as i32);
+        status_modified = 0 as i32;
         if timer - last_output >= interval2 {
             if sweep_modified != 0 { display_sweep(stdout); }
             last_output = timer;
@@ -588,7 +588,7 @@ pub unsafe fn display_buffers() {
 */
 
 pub unsafe fn toggle_smart_buffer_management(mut use_smart:
-                                                            libc::c_int) {
+                                                            i32) {
     timed_buffer_management = use_smart;
 }
 /*
@@ -597,38 +597,38 @@ pub unsafe fn toggle_smart_buffer_management(mut use_smart:
 */
 
 pub unsafe fn produce_eval_text(mut eval_info: EvaluationType,
-                                           mut short_output: libc::c_int)
- -> *mut libc::c_char {
-    let mut buffer = 0 as *mut libc::c_char;
-    let mut disk_diff: libc::c_double = 0.;
-    let mut len: libc::c_int = 0;
-    let mut int_confidence: libc::c_int = 0;
-    buffer = safe_malloc(32 as libc::c_int as size_t) as *mut libc::c_char;
-    len = 0 as libc::c_int;
-    match eval_info.type_0 as libc::c_uint {
+                                           mut short_output: i32)
+ -> *mut i8 {
+    let mut buffer = 0 as *mut i8;
+    let mut disk_diff: f64 = 0.;
+    let mut len: i32 = 0;
+    let mut int_confidence: i32 = 0;
+    buffer = safe_malloc(32 as i32 as size_t) as *mut i8;
+    len = 0 as i32;
+    match eval_info.type_0 as u32 {
         0 => {
-            if eval_info.score >= 29000 as libc::c_int {
+            if eval_info.score >= 29000 as i32 {
                 len =
                     sprintf(buffer,
-                            b"Win\x00" as *const u8 as *const libc::c_char)
-            } else if eval_info.score <= -(29000 as libc::c_int) {
+                            b"Win\x00" as *const u8 as *const i8)
+            } else if eval_info.score <= -(29000 as i32) {
                 len =
                     sprintf(buffer,
-                            b"Loss\x00" as *const u8 as *const libc::c_char)
+                            b"Loss\x00" as *const u8 as *const i8)
             } else {
-                disk_diff = eval_info.score as libc::c_double / 128.0f64;
+                disk_diff = eval_info.score as f64 / 128.0f64;
                 if short_output != 0 {
                     len =
                         sprintf(buffer,
                                 b"%+.2f\x00" as *const u8 as
-                                    *const libc::c_char, disk_diff)
+                                    *const i8, disk_diff)
                 } else {
                     len =
                         sprintf(buffer,
                                 b"%+.2f %s\x00" as *const u8 as
-                                    *const libc::c_char, disk_diff,
+                                    *const i8, disk_diff,
                                 b"discs\x00" as *const u8 as
-                                    *const libc::c_char)
+                                    *const i8)
                 }
             }
         }
@@ -636,123 +636,123 @@ pub unsafe fn produce_eval_text(mut eval_info: EvaluationType,
             if short_output != 0 {
                 len =
                     sprintf(buffer,
-                            b"%+d\x00" as *const u8 as *const libc::c_char,
-                            eval_info.score >> 7 as libc::c_int)
-            } else if eval_info.score > 0 as libc::c_int {
+                            b"%+d\x00" as *const u8 as *const i8,
+                            eval_info.score >> 7 as i32)
+            } else if eval_info.score > 0 as i32 {
                 len =
                     sprintf(buffer,
                             b"%s %d-%d\x00" as *const u8 as
-                                *const libc::c_char,
-                            b"Win by\x00" as *const u8 as *const libc::c_char,
-                            32 as libc::c_int +
-                                (eval_info.score >> 8 as libc::c_int),
-                            32 as libc::c_int -
-                                (eval_info.score >> 8 as libc::c_int))
-            } else if eval_info.score < 0 as libc::c_int {
+                                *const i8,
+                            b"Win by\x00" as *const u8 as *const i8,
+                            32 as i32 +
+                                (eval_info.score >> 8 as i32),
+                            32 as i32 -
+                                (eval_info.score >> 8 as i32))
+            } else if eval_info.score < 0 as i32 {
                 len =
                     sprintf(buffer,
                             b"%s %d-%d\x00" as *const u8 as
-                                *const libc::c_char,
+                                *const i8,
                             b"Loss by\x00" as *const u8 as
-                                *const libc::c_char,
-                            32 as libc::c_int -
-                                (abs(eval_info.score) >> 8 as libc::c_int),
-                            32 as libc::c_int +
-                                (abs(eval_info.score) >> 8 as libc::c_int))
+                                *const i8,
+                            32 as i32 -
+                                (abs(eval_info.score) >> 8 as i32),
+                            32 as i32 +
+                                (abs(eval_info.score) >> 8 as i32))
             } else {
                 len =
                     sprintf(buffer,
-                            b"Draw\x00" as *const u8 as *const libc::c_char)
+                            b"Draw\x00" as *const u8 as *const i8)
             }
         }
         2 => {
             if short_output != 0 {
-                match eval_info.res as libc::c_uint {
+                match eval_info.res as u32 {
                     0 => {
                         len =
                             sprintf(buffer,
                                     b"Win\x00" as *const u8 as
-                                        *const libc::c_char)
+                                        *const i8)
                     }
                     1 => {
                         len =
                             sprintf(buffer,
                                     b"Draw\x00" as *const u8 as
-                                        *const libc::c_char)
+                                        *const i8)
                     }
                     2 => {
                         len =
                             sprintf(buffer,
                                     b"Loss\x00" as *const u8 as
-                                        *const libc::c_char)
+                                        *const i8)
                     }
                     3 => {
                         len =
                             sprintf(buffer,
                                     b"???\x00" as *const u8 as
-                                        *const libc::c_char)
+                                        *const i8)
                     }
                     _ => { }
                 }
             } else {
-                match eval_info.res as libc::c_uint {
+                match eval_info.res as u32 {
                     0 => {
                         if eval_info.score !=
-                               1 as libc::c_int * 128 as libc::c_int {
+                               1 as i32 * 128 as i32 {
                             /* Lower bound on win */
                             len =
                                 sprintf(buffer,
                                         b"%s %d-%d\x00" as *const u8 as
-                                            *const libc::c_char,
+                                            *const i8,
                                         b"Win by at least\x00" as *const u8 as
-                                            *const libc::c_char,
-                                        32 as libc::c_int +
+                                            *const i8,
+                                        32 as i32 +
                                             (eval_info.score >>
-                                                 8 as libc::c_int),
-                                        32 as libc::c_int -
+                                                 8 as i32),
+                                        32 as i32 -
                                             (eval_info.score >>
-                                                 8 as libc::c_int))
+                                                 8 as i32))
                         } else {
                             len =
                                 sprintf(buffer,
                                         b"Win\x00" as *const u8 as
-                                            *const libc::c_char)
+                                            *const i8)
                         }
                     }
                     1 => {
                         len =
                             sprintf(buffer,
                                     b"Draw\x00" as *const u8 as
-                                        *const libc::c_char)
+                                        *const i8)
                     }
                     2 => {
                         if eval_info.score !=
-                               -(1 as libc::c_int) * 128 as libc::c_int {
+                               -(1 as i32) * 128 as i32 {
                             /* Upper bound on win */
                             len =
                                 sprintf(buffer,
                                         b"%s %d-%d\x00" as *const u8 as
-                                            *const libc::c_char,
+                                            *const i8,
                                         b"Loss by at least\x00" as *const u8
-                                            as *const libc::c_char,
-                                        32 as libc::c_int -
+                                            as *const i8,
+                                        32 as i32 -
                                             (abs(eval_info.score) >>
-                                                 8 as libc::c_int),
-                                        32 as libc::c_int +
+                                                 8 as i32),
+                                        32 as i32 +
                                             (abs(eval_info.score) >>
-                                                 8 as libc::c_int))
+                                                 8 as i32))
                         } else {
                             len =
                                 sprintf(buffer,
                                         b"Loss\x00" as *const u8 as
-                                            *const libc::c_char)
+                                            *const i8)
                         }
                     }
                     3 => {
                         len =
                             sprintf(buffer,
                                     b"???\x00" as *const u8 as
-                                        *const libc::c_char)
+                                        *const i8)
                     }
                     _ => { }
                 }
@@ -760,64 +760,64 @@ pub unsafe fn produce_eval_text(mut eval_info: EvaluationType,
         }
         3 => {
             int_confidence =
-                floor(eval_info.confidence * 100.0f64) as libc::c_int;
-            match eval_info.res as libc::c_uint {
+                floor(eval_info.confidence * 100.0f64) as i32;
+            match eval_info.res as u32 {
                 0 => {
                     if eval_info.score !=
-                           1 as libc::c_int * 128 as libc::c_int {
+                           1 as i32 * 128 as i32 {
                         len =
                             sprintf(buffer,
                                     b"%+d @ %d%%\x00" as *const u8 as
-                                        *const libc::c_char,
-                                    eval_info.score / 128 as libc::c_int,
+                                        *const i8,
+                                    eval_info.score / 128 as i32,
                                     int_confidence)
                     } else {
                         len =
                             sprintf(buffer,
                                     b"%s @ %d%%\x00" as *const u8 as
-                                        *const libc::c_char,
+                                        *const i8,
                                     b"Win\x00" as *const u8 as
-                                        *const libc::c_char, int_confidence)
+                                        *const i8, int_confidence)
                     }
                 }
                 1 => {
                     len =
                         sprintf(buffer,
                                 b"%s @ %d%%\x00" as *const u8 as
-                                    *const libc::c_char,
+                                    *const i8,
                                 b"Draw\x00" as *const u8 as
-                                    *const libc::c_char, int_confidence)
+                                    *const i8, int_confidence)
                 }
                 2 => {
                     if eval_info.score !=
-                           -(1 as libc::c_int) * 128 as libc::c_int {
+                           -(1 as i32) * 128 as i32 {
                         len =
                             sprintf(buffer,
                                     b"%+d @ %d%%\x00" as *const u8 as
-                                        *const libc::c_char,
-                                    eval_info.score >> 7 as libc::c_int,
+                                        *const i8,
+                                    eval_info.score >> 7 as i32,
                                     int_confidence)
                     } else {
                         len =
                             sprintf(buffer,
                                     b"%s @ %d%%\x00" as *const u8 as
-                                        *const libc::c_char,
+                                        *const i8,
                                     b"Loss\x00" as *const u8 as
-                                        *const libc::c_char, int_confidence)
+                                        *const i8, int_confidence)
                     }
                 }
                 3 => {
-                    if eval_info.score == 0 as libc::c_int {
+                    if eval_info.score == 0 as i32 {
                         len =
                             sprintf(buffer,
                                     b"Draw @ %d%%\x00" as *const u8 as
-                                        *const libc::c_char, int_confidence)
+                                        *const i8, int_confidence)
                     } else {
                         len =
                             sprintf(buffer,
                                     b"%+d @ %d%%\x00" as *const u8 as
-                                        *const libc::c_char,
-                                    eval_info.score / 128 as libc::c_int,
+                                        *const i8,
+                                    eval_info.score / 128 as i32,
                                     int_confidence)
                     }
                 }
@@ -828,46 +828,46 @@ pub unsafe fn produce_eval_text(mut eval_info: EvaluationType,
             if short_output != 0 {
                 len =
                     sprintf(buffer,
-                            b"-\x00" as *const u8 as *const libc::c_char)
+                            b"-\x00" as *const u8 as *const i8)
             } else {
                 len =
                     sprintf(buffer,
-                            b"forced\x00" as *const u8 as *const libc::c_char)
+                            b"forced\x00" as *const u8 as *const i8)
             }
         }
         5 => {
             if short_output != 0 {
                 len =
                     sprintf(buffer,
-                            b"-\x00" as *const u8 as *const libc::c_char)
+                            b"-\x00" as *const u8 as *const i8)
             } else {
                 len =
                     sprintf(buffer,
-                            b"pass\x00" as *const u8 as *const libc::c_char)
+                            b"pass\x00" as *const u8 as *const i8)
             }
         }
         7 => {
             len =
                 sprintf(buffer,
-                        b"incompl\x00" as *const u8 as *const libc::c_char)
+                        b"incompl\x00" as *const u8 as *const i8)
         }
         6 => {
             /* We really want to perform len = sprintf( buffer, "" ); */
-            *buffer.offset(0 as libc::c_int as isize) =
-                0 as libc::c_int as libc::c_char;
-            len = 0 as libc::c_int
+            *buffer.offset(0 as i32 as isize) =
+                0 as i32 as i8;
+            len = 0 as i32
         }
         8 => {
             len =
-                sprintf(buffer, b"--\x00" as *const u8 as *const libc::c_char)
+                sprintf(buffer, b"--\x00" as *const u8 as *const i8)
         }
         _ => { }
     }
     if eval_info.is_book != 0 {
         len +=
             sprintf(buffer.offset(len as isize),
-                    b" (%s)\x00" as *const u8 as *const libc::c_char,
-                    b"book\x00" as *const u8 as *const libc::c_char)
+                    b" (%s)\x00" as *const u8 as *const i8,
+                    b"book\x00" as *const u8 as *const i8)
     }
     return buffer;
 }
