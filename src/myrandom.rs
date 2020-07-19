@@ -110,9 +110,9 @@ pub unsafe extern "C" fn my_srandom(mut x: libc::c_int) -> libc::c_int {
         i = 1 as libc::c_int;
         while i < my_rand_deg {
             *my_state.offset(i as isize) =
-                1103515245 as libc::c_int as libc::c_long *
-                    *my_state.offset((i - 1 as libc::c_int) as isize) +
-                    12345 as libc::c_int as libc::c_long;
+                (1103515245 as libc::c_int as libc::c_long)
+                    .wrapping_mul(*my_state.offset((i - 1 as libc::c_int) as isize))
+                    .wrapping_add(12345 as libc::c_int as libc::c_long);
             i += 1
         }
         my_fptr =
@@ -277,7 +277,7 @@ pub unsafe extern "C" fn my_random() -> libc::c_long {
                 0x7fffffff as libc::c_int as libc::c_long;
         i = *fresh0
     } else {
-        *my_fptr += *my_rptr;
+        *my_fptr = (*my_fptr).wrapping_add(*my_rptr);
         i =
             *my_fptr >> 1 as libc::c_int &
                 0x7fffffff as libc::c_int as libc::c_long;
