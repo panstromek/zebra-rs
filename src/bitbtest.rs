@@ -1,10 +1,5 @@
-use ::libc;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct BitBoard {
-    pub high: libc::c_uint,
-    pub low: libc::c_uint,
-}
+use crate::src::bitboard::BitBoard;
+use crate::src::libc;
 /*
    File:          bitbtest.c
 
@@ -18,7 +13,7 @@ pub struct BitBoard {
    This piece of software is released under the GPL.
    See the file COPYING for more information.
 */
-#[no_mangle]
+
 pub static mut bb_flips: BitBoard = BitBoard{high: 0, low: 0,};
 static mut right_contiguous: [libc::c_uchar; 64] =
     [0 as libc::c_int as libc::c_uchar, 1 as libc::c_int as libc::c_uchar,
@@ -9431,7 +9426,7 @@ unsafe extern "C" fn TestFlips_bitboard_e5(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-#[no_mangle]
+
 pub static mut TestFlips_bitboard:
            [Option<unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
                                         _: libc::c_uint, _: libc::c_uint)

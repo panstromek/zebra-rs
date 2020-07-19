@@ -1,56 +1,9 @@
-use ::libc;
-extern "C" {
-    #[no_mangle]
-    static mut square_mask: [BitBoard; 100];
-    #[no_mangle]
-    fn non_iterative_popcount(n1: libc::c_uint, n2: libc::c_uint)
-     -> libc::c_uint;
-    #[no_mangle]
-    fn set_bitboards(board: *mut libc::c_int, side_to_move: libc::c_int,
-                     my_out: *mut BitBoard, opp_out: *mut BitBoard);
-    /*
-   File:          bitbtest.h
+use crate::src::libc;
+use crate::src::bitboard::{BitBoard, non_iterative_popcount, set_bitboards, square_mask};
+use crate::src::patterns::pow3;
+use crate::src::search::position_list;
+use crate::src::bitbtest::{bb_flips, TestFlips_bitboard};
 
-   Created:       November 22, 1999
-
-   Modified:      November 24, 2005
-
-   Authors:       Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:
-*/
-    #[no_mangle]
-    static mut bb_flips: BitBoard;
-    #[no_mangle]
-    static TestFlips_bitboard:
-           [Option<unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
-                                        _: libc::c_uint, _: libc::c_uint)
-                       -> libc::c_int>; 78];
-    /* JCW's move order */
-    #[no_mangle]
-    static mut position_list: [libc::c_int; 100];
-    /*
-   File:           patterns.h
-
-   Created:        July 4, 1997
-
-   Modified:       August 1, 2002
-
-   Author:         Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:       The patterns.
-*/
-    /* Predefined two-bit patterns. */
-    /* Board patterns used in position evaluation */
-    #[no_mangle]
-    static mut pow3: [libc::c_int; 10];
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct BitBoard {
-    pub high: libc::c_uint,
-    pub low: libc::c_uint,
-}
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct MoveLink {
@@ -62,9 +15,9 @@ pub struct MoveLink {
 /* Global variables */
 /* All discs determined as stable last time COUNT_STABLE was called
    for the two colors */
-#[no_mangle]
+
 pub static mut last_black_stable: BitBoard = BitBoard{high: 0, low: 0,};
-#[no_mangle]
+
 pub static mut last_white_stable: BitBoard = BitBoard{high: 0, low: 0,};
 /* Local variables */
 /* For each of the 3^8 edges, edge_stable[] holds an 8-bit mask
@@ -84,7 +37,7 @@ static mut edge_a8h8: libc::c_int = 0;
 static mut edge_a1a8: libc::c_int = 0;
 static mut edge_h1h8: libc::c_int = 0;
 /* Position list used in the complete stability search */
-#[no_mangle]
+
 pub static mut stab_move_list: [MoveLink; 100] =
     [MoveLink{pred: 0, succ: 0,}; 100];
 unsafe extern "C" fn and_line_shift_64(mut target: *mut BitBoard,
@@ -234,7 +187,7 @@ unsafe extern "C" fn edge_zardoz_stable(mut ss: *mut BitBoard,
   Side effect: The edge indices are calculated. They are needed
   by COUNT_STABLE below.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn count_edge_stable(mut color: libc::c_int,
                                            mut col_bits: BitBoard,
                                            mut opp_bits: BitBoard)
@@ -365,7 +318,7 @@ pub unsafe extern "C" fn count_edge_stable(mut color: libc::c_int,
   Note: COUNT_EDGE_STABLE must have been called immediately
         before this function is called *or you lose big*.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn count_stable(mut color: libc::c_int,
                                       mut col_bits: BitBoard,
                                       mut opp_bits: BitBoard) -> libc::c_int {
@@ -600,7 +553,7 @@ unsafe extern "C" fn complete_stability_search(mut board: *mut libc::c_int,
   The stability status of all squares (black, white and empty)
   is returned in the boolean vector IS_STABLE.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn get_stable(mut board: *mut libc::c_int,
                                     mut side_to_move: libc::c_int,
                                     mut is_stable: *mut libc::c_int) {
@@ -865,7 +818,7 @@ unsafe extern "C" fn count_color_stable() {
   Build the table containing the stability masks for all edge
   configurations. This is done using dynamic programming.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn init_stable() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;

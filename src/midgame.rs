@@ -1,251 +1,31 @@
-use ::libc;
-extern "C" {
-    pub type _IO_wide_data;
-    pub type _IO_codecvt;
-    pub type _IO_marker;
-    #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
-    #[no_mangle]
-    static mut stdout: *mut FILE;
-    #[no_mangle]
-    fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...)
-     -> libc::c_int;
-    #[no_mangle]
-    fn free(__ptr: *mut libc::c_void);
-    #[no_mangle]
-    fn abs(_: libc::c_int) -> libc::c_int;
-    /*
-   File:          autoplay.h
+use crate::{
+    src::{
+        search::{root_eval, force_return, hash_expand_pv, get_ponder_move, nodes, create_eval_info, inherit_move_lists, disc_count, evaluations, evals, sorted_move_order, reorder_move_list},
+        timer::{frozen_ponder_depth, extended_above_recommended, above_recommended, is_panic_abort, get_elapsed_time, last_panic_check, check_panic_abort},
+        display::{send_status, send_status_time, send_status_pv, send_status_nodes, produce_eval_text, clear_status, display_sweep, echo, send_sweep, clear_sweep, display_buffers},
+        counter::{counter_value, adjust_counter},
+        stubs::{free, sprintf, abs, __assert_fail, stdout},
+        libc,
+        moves::{valid_move, disks_played, unmake_move, make_move, move_list, move_count, generate_all, unmake_move_no_hash, make_move_no_hash},
+        hash::{find_hash, HashEntry, hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended, add_hash},
+        globals::{piece_count, board, pv, pv_depth},
+        getcoeff::pattern_evaluation,
+        eval::terminal_evaluation,
+        autop::handle_event,
+        probcut::mpc_cut,
+        myrandom::my_random,
+        zebra::{EvaluationType, _IO_FILE}
+    }
+};
 
-   Created:       May 21, 1998
-
-   Modified:      August 1, 2002
-
-   Author:        Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:
-*/
-    #[no_mangle]
-    fn handle_event(only_passive_events: libc::c_int,
-                    allow_delay: libc::c_int, passive_mode: libc::c_int);
-    /* The value of the root position from the last midgame or
-   endgame search. Can contain strange values if an event
-   occurred. */
-    #[no_mangle]
-    static mut root_eval: libc::c_int;
-    /* Event flag which forces the search to abort immediately when set. */
-    #[no_mangle]
-    static mut force_return: libc::c_int;
-    /* The number of positions evaluated during the current search. */
-    #[no_mangle]
-    static mut evaluations: CounterType;
-    /* Holds the number of nodes searched during the current search. */
-    #[no_mangle]
-    static mut nodes: CounterType;
-    /* The last available evaluations for all possible moves at all
-   possible game stages. */
-    #[no_mangle]
-    static mut evals: [Board; 61];
-    /* Move lists */
-    #[no_mangle]
-    static mut sorted_move_order: [[libc::c_int; 64]; 64];
-    #[no_mangle]
-    fn inherit_move_lists(stage: libc::c_int);
-    #[no_mangle]
-    fn reorder_move_list(stage: libc::c_int);
-    #[no_mangle]
-    fn disc_count(side_to_move: libc::c_int) -> libc::c_int;
-    /*
-   File:         display.h
-
-   Created:      July 10, 1997
-
-   Modified:     November 17, 2002
-
-   Author:       Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:     Declarations of the screen output functions.
-*/
-    /* Flag variable, non-zero if output should be written to stdout. */
-    /* Flag variable, non-zero if the principal variation is to be
-   displayed. */
-    #[no_mangle]
-    fn send_status_nodes(node_count: libc::c_double);
-    /* Holds the current board position. Updated as the search progresses,
-   but all updates must be reversed when the search stops. */
-    #[no_mangle]
-    static mut board: Board;
-    #[no_mangle]
-    fn get_ponder_move() -> libc::c_int;
-    #[no_mangle]
-    fn create_eval_info(in_type: EvalType, in_res: EvalResult,
-                        in_score: libc::c_int, in_conf: libc::c_double,
-                        in_depth: libc::c_int, in_book: libc::c_int)
-     -> EvaluationType;
-    #[no_mangle]
-    fn hash_expand_pv(side_to_move: libc::c_int, mode: libc::c_int,
-                      flags: libc::c_int, max_selectivity: libc::c_int);
-    #[no_mangle]
-    static mut echo: libc::c_int;
-    #[no_mangle]
-    fn send_status(format: *const libc::c_char, _: ...);
-    #[no_mangle]
-    fn send_status_time(elapsed_time: libc::c_double);
-    #[no_mangle]
-    fn send_status_pv(pv_0: *mut libc::c_int, max_depth: libc::c_int);
-    #[no_mangle]
-    fn counter_value(counter: *mut CounterType) -> libc::c_double;
-    #[no_mangle]
-    fn adjust_counter(counter: *mut CounterType);
-    #[no_mangle]
-    static mut pv: [[libc::c_int; 64]; 64];
-    #[no_mangle]
-    static mut pv_depth: [libc::c_int; 64];
-    #[no_mangle]
-    static mut piece_count: [[libc::c_int; 64]; 3];
-    #[no_mangle]
-    fn clear_status();
-    #[no_mangle]
-    fn send_sweep(format: *const libc::c_char, _: ...);
-    #[no_mangle]
-    fn clear_sweep();
-    #[no_mangle]
-    fn display_sweep(stream: *mut FILE);
-    #[no_mangle]
-    fn display_buffers();
-    #[no_mangle]
-    fn produce_eval_text(eval_info: EvaluationType, short_output: libc::c_int)
-     -> *mut libc::c_char;
-    #[no_mangle]
-    fn terminal_evaluation(side_to_move: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn pattern_evaluation(side_to_move: libc::c_int) -> libc::c_int;
-    /* The 64-bit hash key. */
-    #[no_mangle]
-    static mut hash1: libc::c_uint;
-    #[no_mangle]
-    static mut hash2: libc::c_uint;
-    /* The XOR of the hash_color*, used for disk flipping. */
-    #[no_mangle]
-    static mut hash_flip_color1: libc::c_uint;
-    #[no_mangle]
-    static mut hash_flip_color2: libc::c_uint;
-    #[no_mangle]
-    fn add_hash(reverse_mode: libc::c_int, score: libc::c_int,
-                best: libc::c_int, flags: libc::c_int, draft: libc::c_int,
-                selectivity: libc::c_int);
-    #[no_mangle]
-    fn add_hash_extended(reverse_mode: libc::c_int, score: libc::c_int,
-                         best: *mut libc::c_int, flags: libc::c_int,
-                         draft: libc::c_int, selectivity: libc::c_int);
-    #[no_mangle]
-    fn find_hash(entry: *mut HashEntry, reverse_mode: libc::c_int);
-    /*
-   File:           moves.h
-
-   Created:        June 30, 1997
-
-   Modified:       August 1, 2002
-
-   Author:         Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:       The move generator's interface.
-*/
-    /* The number of disks played from the initial position.
-   Must match the current status of the BOARD variable. */
-    #[no_mangle]
-    static mut disks_played: libc::c_int;
-    /* The number of moves available after a certain number
-   of disks played. */
-    #[no_mangle]
-    static mut move_count: [libc::c_int; 64];
-    /* The actual moves available after a certain number of
-   disks played. */
-    #[no_mangle]
-    static mut move_list: [[libc::c_int; 64]; 64];
-    #[no_mangle]
-    fn generate_all(side_to_move: libc::c_int);
-    #[no_mangle]
-    fn make_move(side_to_move: libc::c_int, move_0: libc::c_int,
-                 update_hash: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn make_move_no_hash(side_to_move: libc::c_int, move_0: libc::c_int)
-     -> libc::c_int;
-    #[no_mangle]
-    fn unmake_move(side_to_move: libc::c_int, move_0: libc::c_int);
-    #[no_mangle]
-    fn unmake_move_no_hash(side_to_move: libc::c_int, move_0: libc::c_int);
-    #[no_mangle]
-    fn valid_move(move_0: libc::c_int, side_to_move: libc::c_int)
-     -> libc::c_int;
-    #[no_mangle]
-    fn my_random() -> libc::c_long;
-    #[no_mangle]
-    static mut mpc_cut: [DepthInfo; 23];
-    #[no_mangle]
-    static mut frozen_ponder_depth: libc::c_int;
-    /* Holds the value of the variable NODES the last time the
-   timer module was called to check if a panic abort occured. */
-    #[no_mangle]
-    static mut last_panic_check: libc::c_double;
-    #[no_mangle]
-    fn check_panic_abort();
-    #[no_mangle]
-    fn is_panic_abort() -> libc::c_int;
-    #[no_mangle]
-    fn get_elapsed_time() -> libc::c_double;
-    #[no_mangle]
-    fn above_recommended() -> libc::c_int;
-    #[no_mangle]
-    fn extended_above_recommended() -> libc::c_int;
-}
 pub type size_t = libc::c_ulong;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-    pub _flags: libc::c_int,
-    pub _IO_read_ptr: *mut libc::c_char,
-    pub _IO_read_end: *mut libc::c_char,
-    pub _IO_read_base: *mut libc::c_char,
-    pub _IO_write_base: *mut libc::c_char,
-    pub _IO_write_ptr: *mut libc::c_char,
-    pub _IO_write_end: *mut libc::c_char,
-    pub _IO_buf_base: *mut libc::c_char,
-    pub _IO_buf_end: *mut libc::c_char,
-    pub _IO_save_base: *mut libc::c_char,
-    pub _IO_backup_base: *mut libc::c_char,
-    pub _IO_save_end: *mut libc::c_char,
-    pub _markers: *mut _IO_marker,
-    pub _chain: *mut _IO_FILE,
-    pub _fileno: libc::c_int,
-    pub _flags2: libc::c_int,
-    pub _old_offset: __off_t,
-    pub _cur_column: libc::c_ushort,
-    pub _vtable_offset: libc::c_schar,
-    pub _shortbuf: [libc::c_char; 1],
-    pub _lock: *mut libc::c_void,
-    pub _offset: __off64_t,
-    pub _codecvt: *mut _IO_codecvt,
-    pub _wide_data: *mut _IO_wide_data,
-    pub _freeres_list: *mut _IO_FILE,
-    pub _freeres_buf: *mut libc::c_void,
-    pub __pad5: size_t,
-    pub _mode: libc::c_int,
-    pub _unused2: [libc::c_char; 20],
-}
+
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct CounterType {
-    pub hi: libc::c_uint,
-    pub lo: libc::c_uint,
-}
-pub type Board = [libc::c_int; 128];
+
+
 pub type EvalType = libc::c_uint;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
 pub const INTERRUPTED_EVAL: EvalType = 7;
@@ -261,27 +41,8 @@ pub const UNSOLVED_POSITION: EvalResult = 3;
 pub const LOST_POSITION: EvalResult = 2;
 pub const DRAWN_POSITION: EvalResult = 1;
 pub const WON_POSITION: EvalResult = 0;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct EvaluationType {
-    pub type_0: EvalType,
-    pub res: EvalResult,
-    pub score: libc::c_int,
-    pub confidence: libc::c_double,
-    pub search_depth: libc::c_int,
-    pub is_book: libc::c_int,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct HashEntry {
-    pub key1: libc::c_uint,
-    pub key2: libc::c_uint,
-    pub eval: libc::c_int,
-    pub move_0: [libc::c_int; 4],
-    pub draft: libc::c_short,
-    pub selectivity: libc::c_short,
-    pub flags: libc::c_short,
-}
+
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct DepthInfo {
@@ -310,7 +71,7 @@ static mut feas_index_list: [[libc::c_int; 64]; 64] = [[0; 64]; 64];
    SETUP_MIDGAME
    Sets up some search parameters.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn setup_midgame() {
     let mut i: libc::c_int = 0;
     allow_midgame_hash_probe = 1 as libc::c_int;
@@ -331,19 +92,19 @@ pub unsafe extern "C" fn setup_midgame() {
   when it is estimated that the next iteration in the iterative
   deepening would take too long.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn clear_midgame_abort() {
     midgame_abort = 0 as libc::c_int;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn is_midgame_abort() -> libc::c_int {
     return midgame_abort;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn set_midgame_abort() {
     midgame_abort = do_check_midgame_abort;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn toggle_midgame_abort_check(mut toggle: libc::c_int) {
     do_check_midgame_abort = toggle;
 }
@@ -351,7 +112,7 @@ pub unsafe extern "C" fn toggle_midgame_abort_check(mut toggle: libc::c_int) {
    TOGGLE_MIDGAME_HASH_USAGE
    Toggles hash table access in the midgame search on/off.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn toggle_midgame_hash_usage(mut allow_read:
                                                        libc::c_int,
                                                    mut allow_write:
@@ -363,7 +124,7 @@ pub unsafe extern "C" fn toggle_midgame_hash_usage(mut allow_read:
   CALCULATE_PERTURBATION
   Determines the score perturbations (if any) to the root moves.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn calculate_perturbation() {
     let mut i: libc::c_int = 0;
     let mut shift: libc::c_int = 0;
@@ -389,7 +150,7 @@ pub unsafe extern "C" fn calculate_perturbation() {
   Set the amplitude of the score perturbation applied by
   CALCULATE_PERTURBATION.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn set_perturbation(mut amplitude: libc::c_int) {
     perturbation_amplitude = amplitude;
 }
@@ -397,7 +158,7 @@ pub unsafe extern "C" fn set_perturbation(mut amplitude: libc::c_int) {
   TOGGLE_PERTURBATION_USAGE
   Toggle usage of score perturbations on/off.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn toggle_perturbation_usage(mut toggle: libc::c_int) {
     apply_perturbation = toggle;
 }
@@ -681,7 +442,7 @@ unsafe extern "C" fn midgame_c__update_best_list(mut best_list:
    The recursive tree search function. It uses negascout for
    tree pruning.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn tree_search(mut level: libc::c_int,
                                      mut max_depth: libc::c_int,
                                      mut side_to_move: libc::c_int,
@@ -1251,7 +1012,7 @@ unsafe extern "C" fn perturb_score(mut score: libc::c_int,
    The recursive tree search function that is to be called only
    for the root of the search tree.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn root_tree_search(mut level: libc::c_int,
                                           mut max_depth: libc::c_int,
                                           mut side_to_move: libc::c_int,
@@ -1684,7 +1445,7 @@ unsafe extern "C" fn protected_one_ply_search(mut side_to_move: libc::c_int)
    MIDDLE_GAME
    side_to_move = the side whose turn it is to move
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn middle_game(mut side_to_move: libc::c_int,
                                      mut max_depth: libc::c_int,
                                      mut update_evals: libc::c_int,

@@ -1,387 +1,32 @@
-use ::libc;
-extern "C" {
-    pub type _IO_wide_data;
-    pub type _IO_codecvt;
-    pub type _IO_marker;
-    #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
-    #[no_mangle]
-    fn ceil(_: libc::c_double) -> libc::c_double;
-    #[no_mangle]
-    static mut stdout: *mut FILE;
-    #[no_mangle]
-    fn fflush(__stream: *mut FILE) -> libc::c_int;
-    #[no_mangle]
-    fn printf(_: *const libc::c_char, _: ...) -> libc::c_int;
-    #[no_mangle]
-    fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...)
-     -> libc::c_int;
-    #[no_mangle]
-    fn puts(__s: *const libc::c_char) -> libc::c_int;
-    #[no_mangle]
-    fn free(__ptr: *mut libc::c_void);
-    #[no_mangle]
-    fn abs(_: libc::c_int) -> libc::c_int;
-    /*
-   File:          autoplay.h
+use crate::src::libc;
+use crate::src::stubs::{ceil, abs, printf, __assert_fail, free, fflush, sprintf, puts, stdout};
+use crate::src::epcstat::{end_sigma, end_mean, end_stats_available};
+use crate::src::moves::{dir_mask, disks_played, unmake_move, make_move, move_count, generate_all, move_list, valid_move};
+use crate::src::search::{force_return, hash_expand_pv, root_eval, store_pv, restore_pv, nodes, create_eval_info, disc_count, get_ponder_move, set_current_eval, select_move, evals, sorted_move_order};
+use crate::src::display::{display_status, echo, reset_buffer_display, send_status, send_status_time, send_status_pv, send_status_nodes, produce_eval_text, clear_status, display_sweep, send_sweep, display_buffers, clear_sweep};
+use crate::src::timer::{clear_panic_abort, get_elapsed_time, is_panic_abort, check_panic_abort, check_threshold, set_panic_threshold, last_panic_check};
+use crate::src::counter::{adjust_counter, counter_value};
+use crate::src::midgame::{toggle_midgame_hash_usage, tree_search};
+use crate::src::globals::{piece_count, board, pv_depth, pv};
+use crate::src::osfbook::{fill_endgame_hash, get_book_move, fill_move_alternatives};
+use crate::src::hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended, find_hash, HashEntry, add_hash, hash_put_value2, hash_put_value1};
+use crate::src::bitboard::{set_bitboards, BitBoard};
+use crate::src::bitbmob::{init_mmx, bitboard_mobility, weighted_mobility};
+use crate::src::bitbtest::{bb_flips, TestFlips_bitboard};
+use crate::src::autop::handle_event;
+use crate::src::probcut::{end_mpc_depth, use_end_cut};
+use crate::src::stable::{count_stable, count_edge_stable};
+use crate::src::unflip::UndoFlips;
+use crate::src::doflip::{hash_update2, hash_update1, DoFlips_hash};
+use crate::src::bitbcnt::CountFlips_bitboard;
+use crate::src::zebra::{EvaluationType, _IO_FILE};
 
-   Created:       May 21, 1998
-
-   Modified:      August 1, 2002
-
-   Author:        Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:
-*/
-    #[no_mangle]
-    fn handle_event(only_passive_events: libc::c_int,
-                    allow_delay: libc::c_int, passive_mode: libc::c_int);
-    #[no_mangle]
-    fn set_bitboards(board_0: *mut libc::c_int, side_to_move: libc::c_int,
-                     my_out: *mut BitBoard, opp_out: *mut BitBoard);
-    /*
-   File:          bitbcnt.h
-
-   Created:       November 22, 1999
-
-   Modified:      November 24, 2005
-
-   Authors:       Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:
-*/
-    #[no_mangle]
-    static CountFlips_bitboard:
-           [Option<unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint)
-                       -> libc::c_int>; 78];
-    /* pv[n][n..<depth>] contains the principal variation from the
-   node on recursion depth n on the current recursive call sequence.
-   After the search, pv[0][0..<depth>] contains the principal
-   variation from the root position. */
-    #[no_mangle]
-    static mut pv: [[libc::c_int; 64]; 64];
-    /* pv_depth[n] contains the depth of the principal variation
-   starting at level n in the call sequence.
-   After the search, pv[0] holds the depth of the principal variation
-   from the root position. */
-    #[no_mangle]
-    static mut pv_depth: [libc::c_int; 64];
-    /* piece_count[col][n] holds the number of disks of color col after
-   n moves have been played. */
-    #[no_mangle]
-    static mut piece_count: [[libc::c_int; 64]; 3];
-    /* Holds the current board position. Updated as the search progresses,
-   but all updates must be reversed when the search stops. */
-    #[no_mangle]
-    static mut board: Board;
-    /* The value of the root position from the last midgame or
-   endgame search. Can contain strange values if an event
-   occurred. */
-    #[no_mangle]
-    static mut root_eval: libc::c_int;
-    /* Event flag which forces the search to abort immediately when set. */
-    #[no_mangle]
-    static mut force_return: libc::c_int;
-    /* Holds the number of nodes searched during the current search. */
-    #[no_mangle]
-    static mut nodes: CounterType;
-    /* The last available evaluations for all possible moves at all
-   possible game stages. */
-    #[no_mangle]
-    static mut evals: [Board; 61];
-    /* Move lists */
-    #[no_mangle]
-    static mut sorted_move_order: [[libc::c_int; 64]; 64];
-    #[no_mangle]
-    fn disc_count(side_to_move: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn select_move(first: libc::c_int, list_size: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn store_pv(pv_buffer: *mut libc::c_int, depth_buffer: *mut libc::c_int);
-    #[no_mangle]
-    fn restore_pv(pv_buffer: *mut libc::c_int, depth_buffer: libc::c_int);
-    #[no_mangle]
-    fn get_ponder_move() -> libc::c_int;
-    #[no_mangle]
-    fn create_eval_info(in_type: EvalType, in_res: EvalResult,
-                        in_score: libc::c_int, in_conf: libc::c_double,
-                        in_depth: libc::c_int, in_book: libc::c_int)
-     -> EvaluationType;
-    #[no_mangle]
-    fn hash_expand_pv(side_to_move: libc::c_int, mode: libc::c_int,
-                      flags: libc::c_int, max_selectivity: libc::c_int);
-    #[no_mangle]
-    fn set_current_eval(eval: EvaluationType);
-    #[no_mangle]
-    fn adjust_counter(counter: *mut CounterType);
-    #[no_mangle]
-    fn counter_value(counter: *mut CounterType) -> libc::c_double;
-    /*
-   File:          bitbmob.h
-
-   Created:       November 22, 1999
-
-   Modified:      December 25, 2002
-
-   Authors:       Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:
-*/
-    #[no_mangle]
-    fn bitboard_mobility(my_bits: BitBoard, opp_bits: BitBoard)
-     -> libc::c_int;
-    #[no_mangle]
-    fn init_mmx();
-    #[no_mangle]
-    fn weighted_mobility(my_bits: BitBoard, opp_bits: BitBoard)
-     -> libc::c_int;
-    /*
-   File:          bitbtest.h
-
-   Created:       November 22, 1999
-
-   Modified:      November 24, 2005
-
-   Authors:       Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:
-*/
-    #[no_mangle]
-    static mut bb_flips: BitBoard;
-    #[no_mangle]
-    static TestFlips_bitboard:
-           [Option<unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
-                                        _: libc::c_uint, _: libc::c_uint)
-                       -> libc::c_int>; 78];
-    /*
-   File:         display.h
-
-   Created:      July 10, 1997
-
-   Modified:     November 17, 2002
-
-   Author:       Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:     Declarations of the screen output functions.
-*/
-    /* Flag variable, non-zero if output should be written to stdout. */
-    #[no_mangle]
-    static mut echo: libc::c_int;
-    #[no_mangle]
-    fn send_status(format: *const libc::c_char, _: ...);
-    #[no_mangle]
-    fn send_status_time(elapsed_time: libc::c_double);
-    #[no_mangle]
-    fn send_status_pv(pv_0: *mut libc::c_int, max_depth: libc::c_int);
-    #[no_mangle]
-    fn send_status_nodes(node_count: libc::c_double);
-    #[no_mangle]
-    fn clear_status();
-    #[no_mangle]
-    fn display_status(stream: *mut FILE, allow_repeat: libc::c_int);
-    #[no_mangle]
-    fn send_sweep(format: *const libc::c_char, _: ...);
-    #[no_mangle]
-    fn clear_sweep();
-    #[no_mangle]
-    fn display_sweep(stream: *mut FILE);
-    #[no_mangle]
-    fn reset_buffer_display();
-    #[no_mangle]
-    fn display_buffers();
-    #[no_mangle]
-    fn produce_eval_text(eval_info: EvaluationType, short_output: libc::c_int)
-     -> *mut libc::c_char;
-    /*
-   doflip.h
-
-   Automatically created by ENDMACRO on Fri Feb 26 20:29:42 1999
-
-   Last modified:   October 25, 2005
-*/
-    #[no_mangle]
-    static mut hash_update1: libc::c_uint;
-    #[no_mangle]
-    static mut hash_update2: libc::c_uint;
-    #[no_mangle]
-    fn DoFlips_hash(sqnum: libc::c_int, color: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    static mut end_mean: [[libc::c_float; 9]; 61];
-    #[no_mangle]
-    static mut end_sigma: [[libc::c_float; 9]; 61];
-    #[no_mangle]
-    static mut end_stats_available: [[libc::c_short; 9]; 61];
-    /* The 64-bit hash key. */
-    #[no_mangle]
-    static mut hash1: libc::c_uint;
-    #[no_mangle]
-    static mut hash2: libc::c_uint;
-    /* 64-bit hash masks used when a disc is played on the board;
-   the relation
-     hash_put_value?[][] == hash_value?[][] ^ hash_flip_color?
-   is guaranteed to hold. */
-    #[no_mangle]
-    static mut hash_put_value1: [[libc::c_uint; 128]; 3];
-    #[no_mangle]
-    static mut hash_put_value2: [[libc::c_uint; 128]; 3];
-    /* The XOR of the hash_color*, used for disk flipping. */
-    #[no_mangle]
-    static mut hash_flip_color1: libc::c_uint;
-    #[no_mangle]
-    static mut hash_flip_color2: libc::c_uint;
-    #[no_mangle]
-    fn add_hash(reverse_mode: libc::c_int, score: libc::c_int,
-                best: libc::c_int, flags: libc::c_int, draft: libc::c_int,
-                selectivity: libc::c_int);
-    #[no_mangle]
-    fn add_hash_extended(reverse_mode: libc::c_int, score: libc::c_int,
-                         best: *mut libc::c_int, flags: libc::c_int,
-                         draft: libc::c_int, selectivity: libc::c_int);
-    #[no_mangle]
-    fn find_hash(entry: *mut HashEntry, reverse_mode: libc::c_int);
-    #[no_mangle]
-    fn toggle_midgame_hash_usage(allow_read: libc::c_int,
-                                 allow_write: libc::c_int);
-    #[no_mangle]
-    fn tree_search(level: libc::c_int, max_depth: libc::c_int,
-                   side_to_move: libc::c_int, alpha: libc::c_int,
-                   beta: libc::c_int, allow_hash: libc::c_int,
-                   allow_mpc: libc::c_int, void_legal: libc::c_int)
-     -> libc::c_int;
-    /*
-   File:           moves.h
-
-   Created:        June 30, 1997
-
-   Modified:       August 1, 2002
-
-   Author:         Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:       The move generator's interface.
-*/
-    /* The number of disks played from the initial position.
-   Must match the current status of the BOARD variable. */
-    #[no_mangle]
-    static mut disks_played: libc::c_int;
-    /* The number of moves available after a certain number
-   of disks played. */
-    #[no_mangle]
-    static mut move_count: [libc::c_int; 64];
-    /* The actual moves available after a certain number of
-   disks played. */
-    #[no_mangle]
-    static mut move_list: [[libc::c_int; 64]; 64];
-    /* Directional flip masks for all board positions. */
-    #[no_mangle]
-    static dir_mask: [libc::c_int; 100];
-    #[no_mangle]
-    fn generate_all(side_to_move: libc::c_int);
-    #[no_mangle]
-    fn make_move(side_to_move: libc::c_int, move_0: libc::c_int,
-                 update_hash: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn unmake_move(side_to_move: libc::c_int, move_0: libc::c_int);
-    #[no_mangle]
-    fn valid_move(move_0: libc::c_int, side_to_move: libc::c_int)
-     -> libc::c_int;
-    #[no_mangle]
-    fn fill_endgame_hash(cutoff: libc::c_int, level: libc::c_int);
-    #[no_mangle]
-    fn fill_move_alternatives(side_to_move: libc::c_int, flags: libc::c_int);
-    #[no_mangle]
-    fn get_book_move(side_to_move: libc::c_int, update_slack: libc::c_int,
-                     eval_info: *mut EvaluationType) -> libc::c_int;
-    #[no_mangle]
-    static mut use_end_cut: [libc::c_int; 61];
-    #[no_mangle]
-    static mut end_mpc_depth: [[libc::c_int; 4]; 61];
-    /*
-  COUNT_EDGE_STABLE
-  Returns the number of stable edge discs for COLOR.
-*/
-    #[no_mangle]
-    fn count_edge_stable(color: libc::c_int, col_bits: BitBoard,
-                         opp_bits: BitBoard) -> libc::c_int;
-    /*
-  COUNT_STABLE
-  Returns the number of stable discs for COLOR.
-  Note: COUNT_EDGE_STABLE must have been called immediately
-        before this function is called *or you lose big*.
-*/
-    #[no_mangle]
-    fn count_stable(color: libc::c_int, col_bits: BitBoard,
-                    opp_bits: BitBoard) -> libc::c_int;
-    /* Holds the value of the variable NODES the last time the
-   timer module was called to check if a panic abort occured. */
-    #[no_mangle]
-    static mut last_panic_check: libc::c_double;
-    #[no_mangle]
-    fn set_panic_threshold(value: libc::c_double);
-    #[no_mangle]
-    fn check_panic_abort();
-    #[no_mangle]
-    fn check_threshold(threshold: libc::c_double) -> libc::c_int;
-    #[no_mangle]
-    fn clear_panic_abort();
-    #[no_mangle]
-    fn is_panic_abort() -> libc::c_int;
-    #[no_mangle]
-    fn get_elapsed_time() -> libc::c_double;
-    #[no_mangle]
-    fn UndoFlips(flip_count: libc::c_int, oppcol: libc::c_int);
-}
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type size_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-    pub _flags: libc::c_int,
-    pub _IO_read_ptr: *mut libc::c_char,
-    pub _IO_read_end: *mut libc::c_char,
-    pub _IO_read_base: *mut libc::c_char,
-    pub _IO_write_base: *mut libc::c_char,
-    pub _IO_write_ptr: *mut libc::c_char,
-    pub _IO_write_end: *mut libc::c_char,
-    pub _IO_buf_base: *mut libc::c_char,
-    pub _IO_buf_end: *mut libc::c_char,
-    pub _IO_save_base: *mut libc::c_char,
-    pub _IO_backup_base: *mut libc::c_char,
-    pub _IO_save_end: *mut libc::c_char,
-    pub _markers: *mut _IO_marker,
-    pub _chain: *mut _IO_FILE,
-    pub _fileno: libc::c_int,
-    pub _flags2: libc::c_int,
-    pub _old_offset: __off_t,
-    pub _cur_column: libc::c_ushort,
-    pub _vtable_offset: libc::c_schar,
-    pub _shortbuf: [libc::c_char; 1],
-    pub _lock: *mut libc::c_void,
-    pub _offset: __off64_t,
-    pub _codecvt: *mut _IO_codecvt,
-    pub _wide_data: *mut _IO_wide_data,
-    pub _freeres_list: *mut _IO_FILE,
-    pub _freeres_buf: *mut libc::c_void,
-    pub __pad5: size_t,
-    pub _mode: libc::c_int,
-    pub _unused2: [libc::c_char; 20],
-}
+
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct BitBoard {
-    pub high: libc::c_uint,
-    pub low: libc::c_uint,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct CounterType {
-    pub hi: libc::c_uint,
-    pub lo: libc::c_uint,
-}
 /*
    File:           globals.h
 
@@ -395,7 +40,7 @@ pub struct CounterType {
 */
 /* The basic board type. One index for each position;
    a1=11, h1=18, a8=81, h8=88. */
-pub type Board = [libc::c_int; 128];
+
 /*
    File:          search.h
 
@@ -423,39 +68,20 @@ pub const LOST_POSITION: EvalResult = 2;
 pub const DRAWN_POSITION: EvalResult = 1;
 pub const WON_POSITION: EvalResult = 0;
 /* All information available about a move decision. */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct EvaluationType {
-    pub type_0: EvalType,
-    pub res: EvalResult,
-    pub score: libc::c_int,
-    pub confidence: libc::c_double,
-    pub search_depth: libc::c_int,
-    pub is_book: libc::c_int,
-}
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct MoveLink {
     pub pred: libc::c_int,
     pub succ: libc::c_int,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct HashEntry {
-    pub key1: libc::c_uint,
-    pub key2: libc::c_uint,
-    pub eval: libc::c_int,
-    pub move_0: [libc::c_int; 4],
-    pub draft: libc::c_short,
-    pub selectivity: libc::c_short,
-    pub flags: libc::c_short,
-}
+
 pub const DRAW: C2RustUnnamed = 2;
 pub type C2RustUnnamed = libc::c_uint;
 pub const UNKNOWN: C2RustUnnamed = 3;
 pub const LOSS: C2RustUnnamed = 1;
 pub const WIN: C2RustUnnamed = 0;
-#[no_mangle]
+
 pub static mut end_move_list: [MoveLink; 100] =
     [MoveLink{pred: 0, succ: 0,}; 100];
 /* The parities of the regions are in the region_parity bit vector. */
@@ -491,7 +117,7 @@ static mut fast_first_threshold: [[libc::c_int; 64]; 61] = [[0; 64]; 61];
 static mut ff_mob_factor: [libc::c_int; 61] = [0; 61];
 static mut neighborhood_mask: [BitBoard; 100] =
     [BitBoard{high: 0, low: 0,}; 100];
-#[no_mangle]
+
 pub static mut quadrant_mask: [libc::c_uint; 100] =
     [0 as libc::c_int as libc::c_uint, 0 as libc::c_int as libc::c_uint,
      0 as libc::c_int as libc::c_uint, 0 as libc::c_int as libc::c_uint,
@@ -2666,7 +2292,7 @@ unsafe extern "C" fn send_solve_status(mut empties: libc::c_int,
   END_GAME
   Provides an interface to the fast endgame solver.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn end_game(mut side_to_move: libc::c_int,
                                   mut wld: libc::c_int,
                                   mut force_echo: libc::c_int,
@@ -3130,7 +2756,7 @@ pub unsafe extern "C" fn end_game(mut side_to_move: libc::c_int,
    Prepares the endgame solver for a new game.
    This means clearing a few status fields.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn setup_end() {
     let mut last_mean: libc::c_double = 0.;
     let mut last_sigma: libc::c_double = 0.;
@@ -3254,11 +2880,11 @@ pub unsafe extern "C" fn setup_end() {
   Return the highest #empty when WLD and full solve respectively
   were completed (not initiated).
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn get_earliest_wld_solve() -> libc::c_int {
     return earliest_wld_solve;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn get_earliest_full_solve() -> libc::c_int {
     return earliest_full_solve;
 }
@@ -3266,7 +2892,7 @@ pub unsafe extern "C" fn get_earliest_full_solve() -> libc::c_int {
   SET_OUTPUT_MODE
   Toggles output of intermediate search status on/off.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn set_output_mode(mut full: libc::c_int) {
     full_output_mode = full;
 }

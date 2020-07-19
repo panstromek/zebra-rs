@@ -1,4 +1,4 @@
-use ::libc;
+
 /*
    File:          bitbcnt.c
 
@@ -12,6 +12,8 @@ use ::libc;
    This piece of software is released under the GPL.
    See the file COPYING for more information.
 */
+use crate::src::libc;
+
 // NULL
 // #include "bitboard.h"
 static mut right_count: [libc::c_char; 128] =
@@ -3372,7 +3374,7 @@ unsafe extern "C" fn CountFlips_bitboard_e5(mut my_bits_high: libc::c_uint,
             as libc::c_char;
     return flipped as libc::c_int;
 }
-#[no_mangle]
+
 pub static mut CountFlips_bitboard:
            [Option<unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint)
                        -> libc::c_int>; 78] =

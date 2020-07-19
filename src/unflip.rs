@@ -1,4 +1,3 @@
-use ::libc;
 /*
    File:           unflip.c
 
@@ -11,11 +10,12 @@ use ::libc;
    Contents:       Low-level code to flip back the discs flipped by a move.
 */
 /* Global variables */
-#[no_mangle]
+use crate::src::libc;
+
 pub static mut global_flip_stack: [*mut libc::c_int; 2048] =
     [0 as *const libc::c_int as *mut libc::c_int; 2048];
 // Initialized in run_static_initializers
-#[no_mangle]
+
 pub static mut flip_stack: *mut *mut libc::c_int =
     0 as *const *mut libc::c_int as *mut *mut libc::c_int;
 /*
@@ -37,7 +37,7 @@ pub static mut flip_stack: *mut *mut libc::c_int =
   much anyway as this function consumes a negligible percentage
   of the time.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn UndoFlips(mut flip_count: libc::c_int,
                                    mut oppcol: libc::c_int) {
     let mut UndoFlips__flip_count = flip_count;
@@ -59,7 +59,7 @@ pub unsafe extern "C" fn UndoFlips(mut flip_count: libc::c_int,
   INIT_FLIP_STACK
   Reset the flip stack.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn init_flip_stack() {
     flip_stack =
         &mut *global_flip_stack.as_mut_ptr().offset(0 as libc::c_int as isize)

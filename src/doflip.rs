@@ -1,17 +1,8 @@
-use ::libc;
-extern "C" {
-    /* Holds the current board position. Updated as the search progresses,
-   but all updates must be reversed when the search stops. */
-    #[no_mangle]
-    static mut board: Board;
-    /* XORs of hash_value* - used for disk flipping. */
-    #[no_mangle]
-    static mut hash_flip1: [libc::c_uint; 128];
-    #[no_mangle]
-    static mut hash_flip2: [libc::c_uint; 128];
-    #[no_mangle]
-    static mut flip_stack: *mut *mut libc::c_int;
-}
+use crate::src::libc;
+use crate::src::globals::{Board, board};
+use crate::src::unflip::flip_stack;
+use crate::src::hash::{hash_flip2, hash_flip1};
+
 /*
    File:           globals.h
 
@@ -25,7 +16,7 @@ extern "C" {
 */
 /* The basic board type. One index for each position;
    a1=11, h1=18, a8=81, h8=88. */
-pub type Board = [libc::c_int; 128];
+
 /*
    File:          doflip.c
 
@@ -42,9 +33,9 @@ pub type Board = [libc::c_int; 128];
    See the file COPYING for more information.
 */
 /* Global variables */
-#[no_mangle]
+
 pub static mut hash_update1: libc::c_uint = 0;
-#[no_mangle]
+
 pub static mut hash_update2: libc::c_uint = 0;
 /* The board split into nine regions. */
 static mut board_region: [libc::c_char; 100] =
@@ -98,7 +89,7 @@ static mut board_region: [libc::c_char; 100] =
      0 as libc::c_int as libc::c_char, 0 as libc::c_int as libc::c_char,
      0 as libc::c_int as libc::c_char, 0 as libc::c_int as libc::c_char,
      0 as libc::c_int as libc::c_char, 0 as libc::c_int as libc::c_char];
-#[no_mangle]
+
 pub unsafe extern "C" fn DoFlips_no_hash(mut sqnum: libc::c_int,
                                          mut color: libc::c_int)
  -> libc::c_int {
@@ -1270,7 +1261,7 @@ pub unsafe extern "C" fn DoFlips_no_hash(mut sqnum: libc::c_int,
 
    Last modified:   October 25, 2005
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn DoFlips_hash(mut sqnum: libc::c_int,
                                       mut color: libc::c_int) -> libc::c_int {
     let mut opp_color = 0 as libc::c_int + 2 as libc::c_int - color;

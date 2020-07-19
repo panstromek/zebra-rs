@@ -1,4 +1,5 @@
-use ::libc;
+
+use crate::src::libc;
 /* max number of types above */
 static mut my_degrees: [libc::c_int; 5] =
     [0 as libc::c_int, 7 as libc::c_int, 15 as libc::c_int, 31 as libc::c_int,
@@ -98,7 +99,7 @@ static mut my_end_ptr: *mut libc::c_long =
  * Note that the initialization of randtbl[] for default usage relies on
  * values produced by this routine.
  */
-#[no_mangle]
+
 pub unsafe extern "C" fn my_srandom(mut x: libc::c_int) -> libc::c_int {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
@@ -140,7 +141,7 @@ pub unsafe extern "C" fn my_srandom(mut x: libc::c_int) -> libc::c_int {
  * setstate() so that it doesn't matter when initstate is called.
  * Returns a pointer to the old state.
  */
-#[no_mangle]
+
 pub unsafe extern "C" fn my_initstate(mut seed: libc::c_uint,
                                       mut arg_state: *mut libc::c_char,
                                       mut n: libc::c_int)
@@ -208,7 +209,7 @@ pub unsafe extern "C" fn my_initstate(mut seed: libc::c_uint,
  * setstate() with the same state as the current state.
  * Returns a pointer to the old state information.
  */
-#[no_mangle]
+
 pub unsafe extern "C" fn my_setstate(mut arg_state: *mut libc::c_char)
  -> *mut libc::c_char {
     let mut new_state = arg_state as *mut libc::c_long; /* set end_ptr too */
@@ -265,7 +266,7 @@ pub unsafe extern "C" fn my_setstate(mut arg_state: *mut libc::c_char)
  * pointer if the front one has wrapped.
  * Returns a 31-bit random number.
  */
-#[no_mangle]
+
 pub unsafe extern "C" fn my_random() -> libc::c_long {
     let mut i: libc::c_long = 0; /* chucking least random bit */
     if my_rand_type == 0 as libc::c_int {

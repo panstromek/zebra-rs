@@ -1,102 +1,13 @@
-use ::libc;
-extern "C" {
-    pub type _IO_wide_data;
-    pub type _IO_codecvt;
-    pub type _IO_marker;
-    #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
-    #[no_mangle]
-    fn gzgetc(file: gzFile) -> libc::c_int;
-    #[no_mangle]
-    fn gzclose(file: gzFile) -> libc::c_int;
-    #[no_mangle]
-    fn gzopen(_: *const libc::c_char, _: *const libc::c_char) -> gzFile;
-    #[no_mangle]
-    fn floor(_: libc::c_double) -> libc::c_double;
-    #[no_mangle]
-    fn fclose(__stream: *mut FILE) -> libc::c_int;
-    #[no_mangle]
-    fn fopen(__filename: *const libc::c_char, __modes: *const libc::c_char)
-     -> *mut FILE;
-    #[no_mangle]
-    fn printf(_: *const libc::c_char, _: ...) -> libc::c_int;
-    #[no_mangle]
-    fn fscanf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-    #[no_mangle]
-    fn free(__ptr: *mut libc::c_void);
-    #[no_mangle]
-    fn exit(_: libc::c_int) -> !;
-    #[no_mangle]
-    fn strcpy(_: *mut libc::c_char, _: *const libc::c_char)
-     -> *mut libc::c_char;
-    /*
-   File:       error.h
+use crate::src::libc;
+use crate::src::stubs::{floor, fclose, fscanf, fopen, gzclose, gzopen, strcpy, free, printf, __assert_fail, gzgetc, exit};
+use crate::src::globals::{board, piece_count};
+use crate::src::moves::disks_played;
+use crate::src::error::fatal_error;
+use crate::src::safemem::safe_malloc;
+use crate::src::patterns::{flip8, pow3};
+use crate::src::zebra::_IO_FILE;
+use std::ops::Deref;
 
-   Created:    June 13, 1998
-
-   Modified:   August 1, 2002
-
-   Author:     Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:   The interface to the error handler.
-*/
-    #[no_mangle]
-    fn fatal_error(format: *const libc::c_char, _: ...);
-    /* Holds the current board position. Updated as the search progresses,
-   but all updates must be reversed when the search stops. */
-    #[no_mangle]
-    static mut board: Board;
-    #[no_mangle]
-    static mut piece_count: [[libc::c_int; 64]; 3];
-    /*
-   File:           moves.h
-
-   Created:        June 30, 1997
-
-   Modified:       August 1, 2002
-
-   Author:         Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:       The move generator's interface.
-*/
-    /* The number of disks played from the initial position.
-   Must match the current status of the BOARD variable. */
-    #[no_mangle]
-    static mut disks_played: libc::c_int;
-    /*
-   File:           patterns.h
-
-   Created:        July 4, 1997
-
-   Modified:       August 1, 2002
-
-   Author:         Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:       The patterns.
-*/
-    /* Predefined two-bit patterns. */
-    /* Board patterns used in position evaluation */
-    #[no_mangle]
-    static mut pow3: [libc::c_int; 10];
-    /* Symmetry maps */
-    #[no_mangle]
-    static mut flip8: [libc::c_int; 6561];
-    /*
-   File:       safemem.h
-
-   Created:    August 30, 1998
-
-   Modified:   January 25, 2000
-
-   Author:     Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:   The interface to the safer version of malloc.
-*/
-    #[no_mangle]
-    fn safe_malloc(size: size_t) -> *mut libc::c_void;
-}
 pub type size_t = libc::c_ulong;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
@@ -109,42 +20,9 @@ pub struct gzFile_s {
     pub pos: off_t,
 }
 pub type gzFile = *mut gzFile_s;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-    pub _flags: libc::c_int,
-    pub _IO_read_ptr: *mut libc::c_char,
-    pub _IO_read_end: *mut libc::c_char,
-    pub _IO_read_base: *mut libc::c_char,
-    pub _IO_write_base: *mut libc::c_char,
-    pub _IO_write_ptr: *mut libc::c_char,
-    pub _IO_write_end: *mut libc::c_char,
-    pub _IO_buf_base: *mut libc::c_char,
-    pub _IO_buf_end: *mut libc::c_char,
-    pub _IO_save_base: *mut libc::c_char,
-    pub _IO_backup_base: *mut libc::c_char,
-    pub _IO_save_end: *mut libc::c_char,
-    pub _markers: *mut _IO_marker,
-    pub _chain: *mut _IO_FILE,
-    pub _fileno: libc::c_int,
-    pub _flags2: libc::c_int,
-    pub _old_offset: __off_t,
-    pub _cur_column: libc::c_ushort,
-    pub _vtable_offset: libc::c_schar,
-    pub _shortbuf: [libc::c_char; 1],
-    pub _lock: *mut libc::c_void,
-    pub _offset: __off64_t,
-    pub _codecvt: *mut _IO_codecvt,
-    pub _wide_data: *mut _IO_wide_data,
-    pub _freeres_list: *mut _IO_FILE,
-    pub _freeres_buf: *mut libc::c_void,
-    pub __pad5: size_t,
-    pub _mode: libc::c_int,
-    pub _unused2: [libc::c_char; 20],
-}
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
-pub type Board = [libc::c_int; 128];
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct CoeffSet {
@@ -1494,7 +1372,7 @@ unsafe extern "C" fn eval_adjustment(mut disc_adjust: libc::c_double,
    INIT_COEFFS
    Manages the initialization of all relevant tables.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn init_coeffs() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
@@ -1641,9 +1519,9 @@ pub unsafe extern "C" fn init_coeffs() {
    Calculates the static evaluation of the position using
    the statistically optimized pattern tables.
 */
-#[no_mangle]
+
 pub static mut pattern_score: libc::c_short = 0;
-#[no_mangle]
+
 pub unsafe extern "C" fn pattern_evaluation(mut side_to_move: libc::c_int)
  -> libc::c_int {
     let mut eval_phase: libc::c_int = 0;
@@ -3441,7 +3319,7 @@ unsafe extern "C" fn remove_specific_coeffs(mut phase: libc::c_int) {
    REMOVE_COEFFS
    Removes pattern tables which have gone out of scope from memory.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn remove_coeffs(mut phase: libc::c_int) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
@@ -3451,7 +3329,7 @@ pub unsafe extern "C" fn remove_coeffs(mut phase: libc::c_int) {
    CLEAR_COEFFS
    Remove all coefficients loaded from memory.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn clear_coeffs() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;

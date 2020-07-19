@@ -1,10 +1,12 @@
-use ::libc;
+
 /*
    epcstat.ccc
 
    Automatically created by CORRELA2 on Sat Nov 23 16:29:22 2002
 */
-#[no_mangle]
+use crate::src::libc;
+
+
 pub static mut end_mean: [[libc::c_float; 9]; 61] =
     [[0.0f64 as libc::c_float, 0.0f64 as libc::c_float,
       0.0f64 as libc::c_float, 0.0f64 as libc::c_float,
@@ -263,7 +265,7 @@ pub static mut end_mean: [[libc::c_float; 9]; 61] =
       0.0f64 as libc::c_float, 0.0f64 as libc::c_float,
       0.0f64 as libc::c_float, 0.0f64 as libc::c_float,
       0.0f64 as libc::c_float]];
-#[no_mangle]
+
 pub static mut end_sigma: [[libc::c_float; 9]; 61] =
     [[0.0f64 as libc::c_float, 0.0f64 as libc::c_float,
       0.0f64 as libc::c_float, 0.0f64 as libc::c_float,
@@ -522,7 +524,7 @@ pub static mut end_sigma: [[libc::c_float; 9]; 61] =
       0.0f64 as libc::c_float, 0.0f64 as libc::c_float,
       0.0f64 as libc::c_float, 0.0f64 as libc::c_float,
       0.0f64 as libc::c_float]];
-#[no_mangle]
+
 pub static mut end_stats_available: [[libc::c_short; 9]; 61] =
     [[0 as libc::c_int as libc::c_short, 0 as libc::c_int as libc::c_short,
       0 as libc::c_int as libc::c_short, 0 as libc::c_int as libc::c_short,

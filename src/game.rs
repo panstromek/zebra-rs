@@ -1,394 +1,37 @@
-use ::libc;
-extern "C" {
-    pub type _IO_wide_data;
-    pub type _IO_codecvt;
-    pub type _IO_marker;
-    #[no_mangle]
-    static mut stdout: *mut FILE;
-    #[no_mangle]
-    fn fclose(__stream: *mut FILE) -> libc::c_int;
-    #[no_mangle]
-    fn fopen(__filename: *const libc::c_char, __modes: *const libc::c_char)
-     -> *mut FILE;
-    #[no_mangle]
-    fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-    #[no_mangle]
-    fn printf(_: *const libc::c_char, _: ...) -> libc::c_int;
-    #[no_mangle]
-    fn fgets(__s: *mut libc::c_char, __n: libc::c_int, __stream: *mut FILE)
-     -> *mut libc::c_char;
-    #[no_mangle]
-    fn fputs(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-    #[no_mangle]
-    fn puts(__s: *const libc::c_char) -> libc::c_int;
-    #[no_mangle]
-    fn free(__ptr: *mut libc::c_void);
-    #[no_mangle]
-    fn abs(_: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn strcpy(_: *mut libc::c_char, _: *const libc::c_char)
-     -> *mut libc::c_char;
-    #[no_mangle]
-    fn time(__timer: *mut time_t) -> time_t;
-    #[no_mangle]
-    fn ctime(__timer: *const time_t) -> *mut libc::c_char;
-    #[no_mangle]
-    fn init_bitboard();
-    /* The time spent searching during the game. */
-    #[no_mangle]
-    static mut total_time: libc::c_double;
-    /* The value of the root position from the last midgame or
-   endgame search. Can contain strange values if an event
-   occurred. */
-    #[no_mangle]
-    static mut root_eval: libc::c_int;
-    /* Event flag which forces the search to abort immediately when set. */
-    #[no_mangle]
-    static mut force_return: libc::c_int;
-    /* The number of positions evaluated during the current search. */
-    #[no_mangle]
-    static mut evaluations: CounterType;
-    /* The number of positions evaluated during the entire game. */
-    #[no_mangle]
-    static mut total_evaluations: CounterType;
-    /* Holds the number of nodes searched during the current search. */
-    #[no_mangle]
-    static mut nodes: CounterType;
-    /* Holds the total number of nodes searched during the entire game. */
-    #[no_mangle]
-    static mut total_nodes: CounterType;
-    /* The last available evaluations for all possible moves at all
-   possible game stages. */
-    #[no_mangle]
-    static mut evals: [Board; 61];
-    #[no_mangle]
-    fn setup_search();
-    #[no_mangle]
-    fn disc_count(side_to_move: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn sort_moves(list_size: libc::c_int);
-    #[no_mangle]
-    fn float_move(move_0: libc::c_int, list_size: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn clear_pv();
-    #[no_mangle]
-    fn set_ponder_move(move_0: libc::c_int);
-    #[no_mangle]
-    fn clear_ponder_move();
-    #[no_mangle]
-    fn get_ponder_move() -> libc::c_int;
-    #[no_mangle]
-    fn create_eval_info(in_type: EvalType, in_res: EvalResult,
-                        in_score: libc::c_int, in_conf: libc::c_double,
-                        in_depth: libc::c_int, in_book: libc::c_int)
-     -> EvaluationType;
-    #[no_mangle]
-    fn complete_pv(side_to_move: libc::c_int);
-    /*
-   File:         display.h
+use crate::src::libc;
+use crate::src::globals::{pv_depth, pv, board, piece_count, score_sheet_row, black_moves};
+use crate::src::search::{nodes, complete_pv, get_ponder_move, total_nodes, evaluations, total_evaluations, total_time, set_current_eval, create_eval_info, root_eval, force_return, clear_pv, evals, disc_count, negate_current_eval, clear_ponder_move, set_ponder_move, float_move, sort_moves, setup_search};
+use crate::src::counter::{counter_value, adjust_counter, add_counter, reset_counter};
+use crate::src::stubs::{fclose, free, fprintf, abs, fputs, fopen, puts, printf, fgets, time, ctime, strcpy, stdout};
+use crate::src::display::{display_optimal_line, echo, display_pv, display_status, produce_eval_text, send_status, send_status_time, send_status_pv, send_status_nodes, clear_status, reset_buffer_display, display_board};
+use crate::src::timer::{clear_panic_abort, get_elapsed_time, is_panic_abort, clear_ponder_times, determine_move_time, toggle_abort_check, start_move, ponder_depth, add_ponder_time, get_real_timer, init_timer};
+use crate::src::end::{end_game, setup_end};
+use crate::src::moves::{disks_played, valid_move, move_list, move_count, generate_all, init_moves, unmake_move, make_move};
+use crate::src::midgame::{is_midgame_abort, middle_game, toggle_midgame_hash_usage, toggle_midgame_abort_check, clear_midgame_abort, calculate_perturbation, toggle_perturbation_usage, setup_midgame};
+use crate::src::osfbook::{get_book_move, fill_move_alternatives, check_forced_opening, get_candidate, get_candidate_count, clear_osf};
+use crate::src::thordb::{choose_thor_opening_move, get_thor_game_move, get_match_count, database_search};
+use crate::src::error::fatal_error;
+use crate::src::myrandom::{my_random, my_srandom};
+use crate::src::getcoeff::{remove_coeffs, pattern_evaluation, clear_coeffs, init_coeffs};
+use crate::src::hash::{determine_hash_values, set_hash_transformation, find_hash, HashEntry, free_hash, init_hash};
+use crate::src::unflip::init_flip_stack;
+use crate::src::eval::init_eval;
+use crate::src::stable::init_stable;
+use crate::src::probcut::init_probcut;
+use crate::src::patterns::init_patterns;
+use crate::src::bitboard::init_bitboard;
+use crate::src::zebra::{EvaluationType, _IO_FILE};
 
-   Created:      July 10, 1997
-
-   Modified:     November 17, 2002
-
-   Author:       Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:     Declarations of the screen output functions.
-*/
-    /* Flag variable, non-zero if output should be written to stdout. */
-    /* Flag variable, non-zero if the principal variation is to be
-   displayed. */
-    #[no_mangle]
-    fn send_status_pv(pv_0: *mut libc::c_int, max_depth: libc::c_int);
-    /* Holds the current board position. Updated as the search progresses,
-   but all updates must be reversed when the search stops. */
-    #[no_mangle]
-    static mut board: Board;
-    #[no_mangle]
-    fn set_current_eval(eval: EvaluationType);
-    #[no_mangle]
-    fn negate_current_eval(negate: libc::c_int);
-    #[no_mangle]
-    static mut echo: libc::c_int;
-    #[no_mangle]
-    static mut display_pv: libc::c_int;
-    #[no_mangle]
-    fn display_board(stream: *mut FILE, board_0: *mut libc::c_int,
-                     side_to_move: libc::c_int, give_game_score: libc::c_int,
-                     give_time: libc::c_int, give_evals: libc::c_int);
-    #[no_mangle]
-    fn display_optimal_line(stream: *mut FILE);
-    #[no_mangle]
-    fn send_status(format: *const libc::c_char, _: ...);
-    #[no_mangle]
-    fn send_status_time(elapsed_time: libc::c_double);
-    #[no_mangle]
-    fn counter_value(counter: *mut CounterType) -> libc::c_double;
-    #[no_mangle]
-    fn adjust_counter(counter: *mut CounterType);
-    #[no_mangle]
-    fn add_counter(sum: *mut CounterType, term: *mut CounterType);
-    #[no_mangle]
-    static mut pv: [[libc::c_int; 64]; 64];
-    #[no_mangle]
-    static mut pv_depth: [libc::c_int; 64];
-    #[no_mangle]
-    static mut piece_count: [[libc::c_int; 64]; 3];
-    #[no_mangle]
-    static mut score_sheet_row: libc::c_int;
-    #[no_mangle]
-    static mut black_moves: [libc::c_int; 60];
-    #[no_mangle]
-    fn reset_counter(counter: *mut CounterType);
-    #[no_mangle]
-    fn send_status_nodes(node_count: libc::c_double);
-    #[no_mangle]
-    fn clear_status();
-    #[no_mangle]
-    fn display_status(stream: *mut FILE, allow_repeat: libc::c_int);
-    #[no_mangle]
-    fn reset_buffer_display();
-    #[no_mangle]
-    fn produce_eval_text(eval_info: EvaluationType, short_output: libc::c_int)
-     -> *mut libc::c_char;
-    #[no_mangle]
-    fn end_game(side_to_move: libc::c_int, wld: libc::c_int,
-                force_echo: libc::c_int, allow_book: libc::c_int,
-                komi_0: libc::c_int, eval_info: *mut EvaluationType)
-     -> libc::c_int;
-    #[no_mangle]
-    fn setup_end();
-    /*
-   File:       error.h
-
-   Created:    June 13, 1998
-
-   Modified:   August 1, 2002
-
-   Author:     Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:   The interface to the error handler.
-*/
-    #[no_mangle]
-    fn fatal_error(format: *const libc::c_char, _: ...);
-    #[no_mangle]
-    fn init_eval();
-    /*
-   File:         getcoeff.h
-
-   Created:      November 20, 1997
-
-   Modified:     August 1, 2002
-
-   Author:       Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:
-*/
-    #[no_mangle]
-    fn init_coeffs();
-    #[no_mangle]
-    fn remove_coeffs(phase: libc::c_int);
-    #[no_mangle]
-    fn clear_coeffs();
-    #[no_mangle]
-    fn pattern_evaluation(side_to_move: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn init_hash(in_hash_bits: libc::c_int);
-    #[no_mangle]
-    fn free_hash();
-    #[no_mangle]
-    fn determine_hash_values(side_to_move: libc::c_int,
-                             board_0: *const libc::c_int);
-    #[no_mangle]
-    fn set_hash_transformation(trans1: libc::c_uint, trans2: libc::c_uint);
-    #[no_mangle]
-    fn find_hash(entry: *mut HashEntry, reverse_mode: libc::c_int);
-    /*
-   File:          midgame.h
-
-   Created:       July 1, 1998
-
-   Modified:      August 1, 2002
-
-   Author:        Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:      The midgame search driver.
-*/
-    /* The minimum depth to perform Multi-ProbCut */
-    #[no_mangle]
-    fn setup_midgame();
-    #[no_mangle]
-    fn toggle_midgame_hash_usage(allow_read: libc::c_int,
-                                 allow_write: libc::c_int);
-    #[no_mangle]
-    fn clear_midgame_abort();
-    #[no_mangle]
-    fn is_midgame_abort() -> libc::c_int;
-    #[no_mangle]
-    fn toggle_midgame_abort_check(toggle: libc::c_int);
-    #[no_mangle]
-    fn calculate_perturbation();
-    #[no_mangle]
-    fn toggle_perturbation_usage(toggle: libc::c_int);
-    #[no_mangle]
-    fn middle_game(side_to_move: libc::c_int, max_depth: libc::c_int,
-                   update_evals: libc::c_int, eval_info: *mut EvaluationType)
-     -> libc::c_int;
-    /*
-   File:           moves.h
-
-   Created:        June 30, 1997
-
-   Modified:       August 1, 2002
-
-   Author:         Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:       The move generator's interface.
-*/
-    /* The number of disks played from the initial position.
-   Must match the current status of the BOARD variable. */
-    #[no_mangle]
-    static mut disks_played: libc::c_int;
-    /* The number of moves available after a certain number
-   of disks played. */
-    #[no_mangle]
-    static mut move_count: [libc::c_int; 64];
-    /* The actual moves available after a certain number of
-   disks played. */
-    #[no_mangle]
-    static mut move_list: [[libc::c_int; 64]; 64];
-    #[no_mangle]
-    fn init_moves();
-    #[no_mangle]
-    fn generate_all(side_to_move: libc::c_int);
-    #[no_mangle]
-    fn make_move(side_to_move: libc::c_int, move_0: libc::c_int,
-                 update_hash: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn unmake_move(side_to_move: libc::c_int, move_0: libc::c_int);
-    #[no_mangle]
-    fn valid_move(move_0: libc::c_int, side_to_move: libc::c_int)
-     -> libc::c_int;
-    #[no_mangle]
-    fn my_srandom(x: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn my_random() -> libc::c_long;
-    #[no_mangle]
-    fn check_forced_opening(side_to_move: libc::c_int,
-                            opening: *const libc::c_char) -> libc::c_int;
-    #[no_mangle]
-    fn fill_move_alternatives(side_to_move: libc::c_int, flags: libc::c_int);
-    #[no_mangle]
-    fn get_candidate_count() -> libc::c_int;
-    #[no_mangle]
-    fn get_candidate(index: libc::c_int) -> CandidateMove;
-    #[no_mangle]
-    fn get_book_move(side_to_move: libc::c_int, update_slack: libc::c_int,
-                     eval_info: *mut EvaluationType) -> libc::c_int;
-    #[no_mangle]
-    fn clear_osf();
-    #[no_mangle]
-    fn init_patterns();
-    /*
-   File:          probcut.h
-
-   Created:       March 1, 1998
-
-   Modified:      November 23, 2002
-
-   Author:        Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:      The declaration of the Multi-Prob-Cut variables.
-*/
-    #[no_mangle]
-    fn init_probcut();
-    #[no_mangle]
-    fn init_stable();
-    #[no_mangle]
-    fn choose_thor_opening_move(in_board: *mut libc::c_int,
-                                side_to_move: libc::c_int,
-                                echo_0: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn database_search(in_board: *mut libc::c_int, side_to_move: libc::c_int);
-    #[no_mangle]
-    fn get_match_count() -> libc::c_int;
-    #[no_mangle]
-    fn get_thor_game_move(index: libc::c_int, move_number: libc::c_int)
-     -> libc::c_int;
-    #[no_mangle]
-    static mut ponder_depth: [libc::c_int; 100];
-    #[no_mangle]
-    fn determine_move_time(time_left: libc::c_double, incr: libc::c_double,
-                           discs: libc::c_int);
-    #[no_mangle]
-    fn start_move(in_total_time: libc::c_double, increment: libc::c_double,
-                  discs: libc::c_int);
-    #[no_mangle]
-    fn clear_panic_abort();
-    #[no_mangle]
-    fn is_panic_abort() -> libc::c_int;
-    #[no_mangle]
-    fn toggle_abort_check(enable: libc::c_int);
-    #[no_mangle]
-    fn init_timer();
-    #[no_mangle]
-    fn get_real_timer() -> libc::c_double;
-    #[no_mangle]
-    fn get_elapsed_time() -> libc::c_double;
-    #[no_mangle]
-    fn clear_ponder_times();
-    #[no_mangle]
-    fn add_ponder_time(move_0: libc::c_int, time_0: libc::c_double);
-    #[no_mangle]
-    fn init_flip_stack();
-}
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type __time_t = libc::c_long;
 pub type size_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-    pub _flags: libc::c_int,
-    pub _IO_read_ptr: *mut libc::c_char,
-    pub _IO_read_end: *mut libc::c_char,
-    pub _IO_read_base: *mut libc::c_char,
-    pub _IO_write_base: *mut libc::c_char,
-    pub _IO_write_ptr: *mut libc::c_char,
-    pub _IO_write_end: *mut libc::c_char,
-    pub _IO_buf_base: *mut libc::c_char,
-    pub _IO_buf_end: *mut libc::c_char,
-    pub _IO_save_base: *mut libc::c_char,
-    pub _IO_backup_base: *mut libc::c_char,
-    pub _IO_save_end: *mut libc::c_char,
-    pub _markers: *mut _IO_marker,
-    pub _chain: *mut _IO_FILE,
-    pub _fileno: libc::c_int,
-    pub _flags2: libc::c_int,
-    pub _old_offset: __off_t,
-    pub _cur_column: libc::c_ushort,
-    pub _vtable_offset: libc::c_schar,
-    pub _shortbuf: [libc::c_char; 1],
-    pub _lock: *mut libc::c_void,
-    pub _offset: __off64_t,
-    pub _codecvt: *mut _IO_codecvt,
-    pub _wide_data: *mut _IO_wide_data,
-    pub _freeres_list: *mut _IO_FILE,
-    pub _freeres_buf: *mut libc::c_void,
-    pub __pad5: size_t,
-    pub _mode: libc::c_int,
-    pub _unused2: [libc::c_char; 20],
-}
+
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 pub type time_t = __time_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct CounterType {
-    pub hi: libc::c_uint,
-    pub lo: libc::c_uint,
-}
-pub type Board = [libc::c_int; 128];
+
+
 pub type EvalType = libc::c_uint;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
 pub const INTERRUPTED_EVAL: EvalType = 7;
@@ -404,16 +47,7 @@ pub const UNSOLVED_POSITION: EvalResult = 3;
 pub const LOST_POSITION: EvalResult = 2;
 pub const DRAWN_POSITION: EvalResult = 1;
 pub const WON_POSITION: EvalResult = 0;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct EvaluationType {
-    pub type_0: EvalType,
-    pub res: EvalResult,
-    pub score: libc::c_int,
-    pub confidence: libc::c_double,
-    pub search_depth: libc::c_int,
-    pub is_book: libc::c_int,
-}
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct EvaluatedMove {
@@ -428,17 +62,7 @@ pub type C2RustUnnamed = libc::c_uint;
 pub const ENDGAME_MOVE: C2RustUnnamed = 3;
 pub const MIDGAME_MOVE: C2RustUnnamed = 2;
 pub const INTERRUPTED_MOVE: C2RustUnnamed = 0;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct HashEntry {
-    pub key1: libc::c_uint,
-    pub key2: libc::c_uint,
-    pub eval: libc::c_int,
-    pub move_0: [libc::c_int; 4],
-    pub draft: libc::c_short,
-    pub selectivity: libc::c_short,
-    pub flags: libc::c_short,
-}
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct CandidateMove {
@@ -476,7 +100,7 @@ static mut evaluated_list: [EvaluatedMove; 60] =
   Enable/disable the use of logging all the output that the
   text version of Zebra would output to the screen.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn toggle_status_log(mut write_log: libc::c_int) {
     use_log_file = write_log;
 }
@@ -484,7 +108,7 @@ pub unsafe extern "C" fn toggle_status_log(mut write_log: libc::c_int) {
    GLOBAL_SETUP
    Initialize the different sub-systems.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn global_setup(mut use_random: libc::c_int,
                                       mut hash_bits: libc::c_int) {
     let mut log_file = 0 as *mut FILE;
@@ -529,7 +153,7 @@ pub unsafe extern "C" fn global_setup(mut use_random: libc::c_int,
    GLOBAL_TERMINATE
    Free all dynamically allocated memory.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn global_terminate() {
     free_hash();
     clear_coeffs();
@@ -635,7 +259,7 @@ unsafe extern "C" fn setup_game(mut file_name: *const libc::c_char,
    can be played. The position is read from the file
    specified by FILE_NAME.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn game_init(mut file_name: *const libc::c_char,
                                    mut side_to_move: *mut libc::c_int) {
     setup_game(file_name, side_to_move);
@@ -658,7 +282,7 @@ pub unsafe extern "C" fn game_init(mut file_name: *const libc::c_char,
   SET_KOMI
   Set the endgame komi value.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn set_komi(mut in_komi: libc::c_int) {
     komi = in_komi;
 }
@@ -667,7 +291,7 @@ pub unsafe extern "C" fn set_komi(mut in_komi: libc::c_int) {
   Specifies whether the Thor statistics should be queried for
   openings moves before resorting to the usual opening book.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn toggle_human_openings(mut toggle: libc::c_int) {
     play_human_openings = toggle;
 }
@@ -676,7 +300,7 @@ pub unsafe extern "C" fn toggle_human_openings(mut toggle: libc::c_int) {
   Specifies whether matching Thor games are used as opening book
   before resorting to the usual opening book.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn toggle_thor_match_openings(mut toggle: libc::c_int) {
     play_thor_match_openings = toggle;
 }
@@ -684,7 +308,7 @@ pub unsafe extern "C" fn toggle_thor_match_openings(mut toggle: libc::c_int) {
   SET_FORCED_OPENING
   Specifies an opening line that Zebra is forced to follow when playing.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn set_forced_opening(mut opening_str:
                                                 *const libc::c_char) {
     forced_opening = opening_str;
@@ -695,7 +319,7 @@ pub unsafe extern "C" fn set_forced_opening(mut opening_str:
   The results are not returned, but the hash table is filled
   with useful scores and moves.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn ponder_move(mut side_to_move: libc::c_int,
                                      mut book: libc::c_int,
                                      mut mid: libc::c_int,
@@ -877,7 +501,7 @@ unsafe extern "C" fn compare_eval(mut e1: EvaluationType,
   of all moves available as opposed to upper bounds for all moves
   except for the best.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn extended_compute_move(mut side_to_move: libc::c_int,
                                                mut book_only: libc::c_int,
                                                mut book: libc::c_int,
@@ -1470,7 +1094,7 @@ pub unsafe extern "C" fn extended_compute_move(mut side_to_move: libc::c_int,
   Calculates exact score or WLD status for the move ACTUAL_MOVE as
   well as for the best move in the position (if it is any other move).
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn perform_extended_solve(mut side_to_move: libc::c_int,
                                                 mut actual_move: libc::c_int,
                                                 mut book: libc::c_int,
@@ -1657,11 +1281,11 @@ pub unsafe extern "C" fn perform_extended_solve(mut side_to_move: libc::c_int,
   GET_EVALUATED
   Accessor functions for the data structure filled by extended_compute_move().
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn get_evaluated_count() -> libc::c_int {
     return game_evaluated_count;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn get_evaluated(mut index: libc::c_int)
  -> EvaluatedMove {
     return evaluated_list[index as usize];
@@ -1670,7 +1294,7 @@ pub unsafe extern "C" fn get_evaluated(mut index: libc::c_int)
    COMPUTE_MOVE
    Returns the best move in a position given search parameters.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn compute_move(mut side_to_move: libc::c_int,
                                       mut update_all: libc::c_int,
                                       mut my_time: libc::c_int,
@@ -2198,7 +1822,7 @@ pub unsafe extern "C" fn compute_move(mut side_to_move: libc::c_int,
   GET_SEARCH_STATISTICS
   Returns some statistics about the last search made.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn get_search_statistics(mut max_depth:
                                                    *mut libc::c_int,
                                                mut node_count:
@@ -2212,7 +1836,7 @@ pub unsafe extern "C" fn get_search_statistics(mut max_depth:
   GET_PV
   Returns the principal variation.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn get_pv(mut destin: *mut libc::c_int) -> libc::c_int {
     let mut i: libc::c_int = 0;
     if prefix_move == 0 as libc::c_int {

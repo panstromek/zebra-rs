@@ -1,95 +1,3 @@
-use ::libc;
-extern "C" {
-    #[no_mangle]
-    fn printf(_: *const libc::c_char, _: ...) -> libc::c_int;
-    #[no_mangle]
-    fn puts(__s: *const libc::c_char) -> libc::c_int;
-    /*
-   File:       error.h
-
-   Created:    June 13, 1998
-
-   Modified:   August 1, 2002
-
-   Author:     Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:   The interface to the error handler.
-*/
-    #[no_mangle]
-    fn fatal_error(format: *const libc::c_char, _: ...);
-    /* The 64-bit hash key. */
-    #[no_mangle]
-    static mut hash1: libc::c_uint;
-    #[no_mangle]
-    static mut hash2: libc::c_uint;
-    /* The XOR of the hash_color*, used for disk flipping. */
-    #[no_mangle]
-    static mut hash_flip_color1: libc::c_uint;
-    #[no_mangle]
-    static mut hash_flip_color2: libc::c_uint;
-    #[no_mangle]
-    fn determine_hash_values(side_to_move: libc::c_int,
-                             board_0: *const libc::c_int);
-    #[no_mangle]
-    fn find_hash(entry: *mut HashEntry, reverse_mode: libc::c_int);
-    /* pv[n][n..<depth>] contains the principal variation from the
-   node on recursion depth n on the current recursive call sequence.
-   After the search, pv[0][0..<depth>] contains the principal
-   variation from the root position. */
-    #[no_mangle]
-    static mut pv: [[libc::c_int; 64]; 64];
-    /* pv_depth[n] contains the depth of the principal variation
-   starting at level n in the call sequence.
-   After the search, pv[0] holds the depth of the principal variation
-   from the root position. */
-    #[no_mangle]
-    static mut pv_depth: [libc::c_int; 64];
-    /* Holds the current board position. Updated as the search progresses,
-   but all updates must be reversed when the search stops. */
-    #[no_mangle]
-    static mut board: Board;
-    /*
-   File:           moves.h
-
-   Created:        June 30, 1997
-
-   Modified:       August 1, 2002
-
-   Author:         Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:       The move generator's interface.
-*/
-    /* The number of disks played from the initial position.
-   Must match the current status of the BOARD variable. */
-    #[no_mangle]
-    static mut disks_played: libc::c_int;
-    /* The actual moves available after a certain number of
-   disks played. */
-    #[no_mangle]
-    static mut move_list: [[libc::c_int; 64]; 64];
-    #[no_mangle]
-    fn make_move(side_to_move: libc::c_int, move_0: libc::c_int,
-                 update_hash: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn unmake_move(side_to_move: libc::c_int, move_0: libc::c_int);
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct CounterType {
-    pub hi: libc::c_uint,
-    pub lo: libc::c_uint,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct HashEntry {
-    pub key1: libc::c_uint,
-    pub key2: libc::c_uint,
-    pub eval: libc::c_int,
-    pub move_0: [libc::c_int; 4],
-    pub draft: libc::c_short,
-    pub selectivity: libc::c_short,
-    pub flags: libc::c_short,
-}
 /*
    File:           globals.h
 
@@ -101,9 +9,15 @@ pub struct HashEntry {
 
    Contents:       Global state variables.
 */
-/* The basic board type. One index for each position;
-   a1=11, h1=18, a8=81, h8=88. */
-pub type Board = [libc::c_int; 128];
+use crate::src::libc;
+use crate::src::moves::{unmake_move, make_move, disks_played, move_list};
+use crate::src::hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, find_hash, determine_hash_values, HashEntry};
+use crate::src::globals::{board, Board, pv_depth, pv};
+use crate::src::error::fatal_error;
+use crate::src::stubs::{printf, puts};
+use crate::src::counter::CounterType;
+use crate::src::zebra::EvaluationType;
+
 pub type EvalType = libc::c_uint;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
 pub const INTERRUPTED_EVAL: EvalType = 7;
@@ -119,16 +33,7 @@ pub const UNSOLVED_POSITION: EvalResult = 3;
 pub const LOST_POSITION: EvalResult = 2;
 pub const DRAWN_POSITION: EvalResult = 1;
 pub const WON_POSITION: EvalResult = 0;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct EvaluationType {
-    pub type_0: EvalType,
-    pub res: EvalResult,
-    pub score: libc::c_int,
-    pub confidence: libc::c_double,
-    pub search_depth: libc::c_int,
-    pub is_book: libc::c_int,
-}
+
 /*
    File:          search.c
 
@@ -141,34 +46,34 @@ pub struct EvaluationType {
    Contents:      Common search routines and variables.
 */
 /* Global variables */
-#[no_mangle]
+
 pub static mut total_time: libc::c_double = 0.;
-#[no_mangle]
+
 pub static mut root_eval: libc::c_int = 0;
-#[no_mangle]
+
 pub static mut force_return: libc::c_int = 0;
-#[no_mangle]
+
 pub static mut full_pv_depth: libc::c_int = 0;
-#[no_mangle]
+
 pub static mut full_pv: [libc::c_int; 120] = [0; 120];
-#[no_mangle]
+
 pub static mut list_inherited: [libc::c_int; 61] = [0; 61];
-#[no_mangle]
+
 pub static mut sorted_move_order: [[libc::c_int; 64]; 64] = [[0; 64]; 64];
 /* 61*60 used */
-#[no_mangle]
+
 pub static mut evals: [Board; 61] = [[0; 128]; 61];
-#[no_mangle]
+
 pub static mut nodes: CounterType = CounterType{hi: 0, lo: 0,};
-#[no_mangle]
+
 pub static mut total_nodes: CounterType = CounterType{hi: 0, lo: 0,};
-#[no_mangle]
+
 pub static mut evaluations: CounterType = CounterType{hi: 0, lo: 0,};
-#[no_mangle]
+
 pub static mut total_evaluations: CounterType = CounterType{hi: 0, lo: 0,};
 /* When no other information is available, JCW's endgame
    priority order is used also in the midgame. */
-#[no_mangle]
+
 pub static mut position_list: [libc::c_int; 100] =
     [11 as libc::c_int, 18 as libc::c_int, 81 as libc::c_int,
      88 as libc::c_int, 13 as libc::c_int, 16 as libc::c_int,
@@ -257,7 +162,7 @@ unsafe extern "C" fn init_move_lists() {
   moves being played with an earlier move list from a stage
   corresponding to the same parity (i.e., in practice side to move).
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn inherit_move_lists(mut stage: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut last: libc::c_int = 0;
@@ -286,7 +191,7 @@ pub unsafe extern "C" fn inherit_move_lists(mut stage: libc::c_int) {
   high up in the ranking are kept in place as they probably are empty
   in many variations in the tree.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn reorder_move_list(mut stage: libc::c_int) {
     let dont_touch = 24 as libc::c_int;
     let mut i: libc::c_int = 0;
@@ -332,7 +237,7 @@ pub unsafe extern "C" fn reorder_move_list(mut stage: libc::c_int) {
    SETUP_SEARCH
    Initialize the history of the game in the search driver.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn setup_search() {
     init_move_lists();
     create_eval_info(UNINITIALIZED_EVAL, UNSOLVED_POSITION, 0 as libc::c_int,
@@ -344,7 +249,7 @@ pub unsafe extern "C" fn setup_search() {
    side_to_move = the player whose disks are to be counted
    Returns the number of disks of a specified color.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn disc_count(mut side_to_move: libc::c_int)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
@@ -367,7 +272,7 @@ pub unsafe extern "C" fn disc_count(mut side_to_move: libc::c_int)
    Sort the available in decreasing order based on the results
    from a shallow search.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn sort_moves(mut list_size: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut modified: libc::c_int = 0;
@@ -405,7 +310,7 @@ pub unsafe extern "C" fn sort_moves(mut list_size: libc::c_int) {
   Finds the best move in the move list neglecting the first FIRST moves.
   Moves this move to the front of the sub-list.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn select_move(mut first: libc::c_int,
                                      mut list_size: libc::c_int)
  -> libc::c_int {
@@ -445,7 +350,7 @@ pub unsafe extern "C" fn select_move(mut first: libc::c_int,
   of the list of available moves.
   Return 1 if the move was found, 0 otherwise.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn float_move(mut move_0: libc::c_int,
                                     mut list_size: libc::c_int)
  -> libc::c_int {
@@ -473,7 +378,7 @@ pub unsafe extern "C" fn float_move(mut move_0: libc::c_int,
    STORE_PV
    Saves the principal variation (the first row of the PV matrix).
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn store_pv(mut pv_buffer: *mut libc::c_int,
                                   mut depth_buffer: *mut libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -489,7 +394,7 @@ pub unsafe extern "C" fn store_pv(mut pv_buffer: *mut libc::c_int,
    RESTORE_PV
    Put the stored principal variation back into the PV matrix.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn restore_pv(mut pv_buffer: *mut libc::c_int,
                                     mut depth_buffer: libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -505,7 +410,7 @@ pub unsafe extern "C" fn restore_pv(mut pv_buffer: *mut libc::c_int,
   CLEAR_PV
   Clears the principal variation.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn clear_pv() {
     pv_depth[0 as libc::c_int as usize] = 0 as libc::c_int;
 }
@@ -513,7 +418,7 @@ pub unsafe extern "C" fn clear_pv() {
   COMPLETE_PV
   Complete the principal variation with passes (if any there are any).
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn complete_pv(mut side_to_move: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut actual_side_to_move: [libc::c_int; 60] = [0; 60];
@@ -573,7 +478,7 @@ pub unsafe extern "C" fn complete_pv(mut side_to_move: libc::c_int) {
   HASH_EXPAND_PV
   Pad the existing PV with the move sequence suggested by the hash table.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn hash_expand_pv(mut side_to_move: libc::c_int,
                                         mut mode: libc::c_int,
                                         mut flags: libc::c_int,
@@ -655,15 +560,15 @@ pub unsafe extern "C" fn hash_expand_pv(mut side_to_move: libc::c_int,
   that the search is performed given that the move indicated has
   been made.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn set_ponder_move(mut move_0: libc::c_int) {
     pondered_move = move_0;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn clear_ponder_move() {
     pondered_move = 0 as libc::c_int;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn get_ponder_move() -> libc::c_int {
     return pondered_move;
 }
@@ -672,7 +577,7 @@ pub unsafe extern "C" fn get_ponder_move() -> libc::c_int {
   Creates a result descriptor given all the information available
   about the last search.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn create_eval_info(mut in_type: EvalType,
                                           mut in_res: EvalResult,
                                           mut in_score: libc::c_int,
@@ -699,7 +604,7 @@ pub unsafe extern "C" fn create_eval_info(mut in_type: EvalType,
   PRODUCE_COMPACT_EVAL
   Converts a result descriptor into a number between -99.99 and 99.99 a la GGS.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn produce_compact_eval(mut eval_info: EvaluationType)
  -> libc::c_double {
     let mut eval: libc::c_double = 0.;
@@ -774,7 +679,7 @@ pub unsafe extern "C" fn produce_compact_eval(mut eval_info: EvaluationType)
   Mutator and accessor functions for the global variable
   holding the last available position evaluation.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn set_current_eval(mut eval: EvaluationType) {
     last_eval = eval;
     if negate_eval != 0 {
@@ -788,11 +693,11 @@ pub unsafe extern "C" fn set_current_eval(mut eval: EvaluationType) {
         }
     };
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn get_current_eval() -> EvaluationType {
     return last_eval;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn negate_current_eval(mut negate: libc::c_int) {
     negate_eval = negate;
 }

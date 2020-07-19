@@ -1,27 +1,7 @@
-use ::libc;
-extern "C" {
-    /*
-   File:          bitboard.h
 
-   Created:       November 21, 1999
+use crate::src::bitboard::{BitBoard, non_iterative_popcount};
+use crate::src::libc;
 
-   Modified:      November 24, 2005
-
-   Author:        Gunnar Andersson (gunnar@radagast.se)
-                  Toshihiko Okuhara
-
-   Contents:
-*/
-    #[no_mangle]
-    fn non_iterative_popcount(n1: libc::c_uint, n2: libc::c_uint)
-     -> libc::c_uint;
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct BitBoard {
-    pub high: libc::c_uint,
-    pub low: libc::c_uint,
-}
 /*
    File:          bitbmob.c
 
@@ -35,7 +15,7 @@ pub struct BitBoard {
    This piece of software is released under the GPL.
    See the file COPYING for more information.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn init_mmx() { }
 unsafe extern "C" fn generate_all_c(my_bits: BitBoard, opp_bits: BitBoard)
  -> BitBoard {
@@ -266,7 +246,7 @@ unsafe extern "C" fn generate_all_c(my_bits: BitBoard, opp_bits: BitBoard)
     moves.low &= !(my_bits.low | opp_bits.low);
     return moves;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn bitboard_mobility(my_bits: BitBoard,
                                            opp_bits: BitBoard)
  -> libc::c_int {
@@ -287,7 +267,7 @@ pub unsafe extern "C" fn bitboard_mobility(my_bits: BitBoard,
 
    Contents:
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn weighted_mobility(my_bits: BitBoard,
                                            opp_bits: BitBoard)
  -> libc::c_int {

@@ -1,4 +1,5 @@
-use ::libc;
+use crate::src::libc;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct BitBoard {
@@ -17,7 +18,7 @@ pub struct BitBoard {
 
    Contents:      Basic bitboard manipulations
 */
-#[no_mangle]
+
 pub static mut square_mask: [BitBoard; 100] =
     [BitBoard{high: 0, low: 0,}; 100];
 /*
@@ -25,7 +26,7 @@ pub static mut square_mask: [BitBoard; 100] =
   Counts the number of bits set in a 64-bit integer.
   This is done using some bitfiddling tricks.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn non_iterative_popcount(mut n1: libc::c_uint,
                                                 mut n2: libc::c_uint)
  -> libc::c_uint {
@@ -54,7 +55,7 @@ pub unsafe extern "C" fn non_iterative_popcount(mut n1: libc::c_uint,
   hence this function is fast when the number of bits
   set is low.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn iterative_popcount(mut n1: libc::c_uint,
                                             mut n2: libc::c_uint)
  -> libc::c_uint {
@@ -74,7 +75,7 @@ pub unsafe extern "C" fn iterative_popcount(mut n1: libc::c_uint,
   BIT_REVERSE_32
   Returns the bit-reverse of a 32-bit integer.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn bit_reverse_32(mut val: libc::c_uint)
  -> libc::c_uint {
     val =
@@ -98,7 +99,7 @@ pub unsafe extern "C" fn bit_reverse_32(mut val: libc::c_uint)
   SET_BITBOARDS
   Converts the vector board representation to the bitboard representation.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn set_bitboards(mut board: *mut libc::c_int,
                                        mut side_to_move: libc::c_int,
                                        mut my_out: *mut BitBoard,
@@ -150,7 +151,7 @@ pub unsafe extern "C" fn set_bitboards(mut board: *mut libc::c_int,
     *my_out = my_bits;
     *opp_out = opp_bits;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn init_bitboard() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;

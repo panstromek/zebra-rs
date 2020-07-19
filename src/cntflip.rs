@@ -1,9 +1,7 @@
-use ::libc;
-extern "C" {
-    /* Pointers to FLIPDIRECTION[][0]. */
-    #[no_mangle]
-    static mut first_flip_direction: [*mut libc::c_int; 100];
-}
+
+use crate::src::moves::first_flip_direction;
+use crate::src::libc;
+
 /*
    cntflip.c
 
@@ -40,7 +38,7 @@ unsafe extern "C" fn AnyDrctnlFlips(mut sq: *mut libc::c_int,
 
    Last modified:   December 25, 1999
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn AnyFlips_compact(mut board: *mut libc::c_int,
                                           mut sqnum: libc::c_int,
                                           mut color: libc::c_int,

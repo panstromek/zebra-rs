@@ -1,28 +1,4 @@
-use ::libc;
-extern "C" {
-    #[no_mangle]
-    fn floor(_: libc::c_double) -> libc::c_double;
-    #[no_mangle]
-    static mut end_stats_available: [[libc::c_short; 9]; 61];
-    #[no_mangle]
-    static mut mid_corr: [[Correlation; 9]; 61];
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct Correlation {
-    pub const_base: libc::c_float,
-    pub const_slope: libc::c_float,
-    pub sigma_base: libc::c_float,
-    pub sigma_slope: libc::c_float,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct DepthInfo {
-    pub cut_tries: libc::c_int,
-    pub cut_depth: [libc::c_int; 2],
-    pub bias: [[libc::c_int; 61]; 2],
-    pub window: [[libc::c_int; 61]; 2],
-}
+
 /*
    File:          probcut.c
 
@@ -35,11 +11,17 @@ pub struct DepthInfo {
    Contents:      The initialization of the Multi-ProbCut search parameters.
 */
 /* Global variables */
-#[no_mangle]
+use crate::src::libc;
+use crate::src::epcstat::end_stats_available;
+use crate::src::pcstat::mid_corr;
+use crate::src::stubs::floor;
+use crate::src::midgame::DepthInfo;
+
+
 pub static mut use_end_cut: [libc::c_int; 61] = [0; 61];
-#[no_mangle]
+
 pub static mut end_mpc_depth: [[libc::c_int; 4]; 61] = [[0; 4]; 61];
-#[no_mangle]
+
 pub static mut mpc_cut: [DepthInfo; 23] =
     [DepthInfo{cut_tries: 0,
                cut_depth: [0; 2],
@@ -96,7 +78,7 @@ unsafe extern "C" fn set_end_probcut(mut empty: libc::c_int,
    Clears the tables with MPC information and chooses some
    reasonable cut pairs.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn init_probcut() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;

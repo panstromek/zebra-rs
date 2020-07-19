@@ -1,4 +1,4 @@
-use ::libc;
+
 /*
    File:          patterns.c
 
@@ -11,39 +11,41 @@ use ::libc;
    Contents:      The patterns.
 */
 /* Global variables */
-#[no_mangle]
+use crate::src::libc;
+
+
 pub static mut pow3: [libc::c_int; 10] =
     [1 as libc::c_int, 3 as libc::c_int, 9 as libc::c_int, 27 as libc::c_int,
      81 as libc::c_int, 243 as libc::c_int, 729 as libc::c_int,
      2187 as libc::c_int, 6561 as libc::c_int, 19683 as libc::c_int];
 /* Connections between the squares and the bit masks */
-#[no_mangle]
+
 pub static mut row_no: [libc::c_int; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut row_index: [libc::c_int; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut col_no: [libc::c_int; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut col_index: [libc::c_int; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut color_pattern: [libc::c_int; 3] = [0; 3];
 /* The patterns describing the current state of the board. */
-#[no_mangle]
+
 pub static mut row_pattern: [libc::c_int; 8] = [0; 8];
-#[no_mangle]
+
 pub static mut col_pattern: [libc::c_int; 8] = [0; 8];
 /* Symmetry maps */
-#[no_mangle]
+
 pub static mut flip8: [libc::c_int; 6561] = [0; 6561];
 /* Bit masks which represent dependencies between discs and patterns */
-#[no_mangle]
+
 pub static mut depend_lo: [libc::c_uint; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut depend_hi: [libc::c_uint; 100] = [0; 100];
 /* Bit masks that show what patterns have been modified */
-#[no_mangle]
+
 pub static mut modified_lo: libc::c_uint = 0;
-#[no_mangle]
+
 pub static mut modified_hi: libc::c_uint = 0;
 /*
    TRANSFORMATION_SET_UP
@@ -304,7 +306,7 @@ unsafe extern "C" fn pattern_dependency() {
    INIT_PATTERNS
    Pre-computes some tables needed for fast pattern access.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn init_patterns() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
@@ -332,7 +334,7 @@ pub unsafe extern "C" fn init_patterns() {
    COMPUTE_LINE_PATTERNS
    Translate the current board configuration into patterns.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn compute_line_patterns(mut in_board:
                                                    *mut libc::c_int) {
     let mut i: libc::c_int = 0;

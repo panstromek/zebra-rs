@@ -53,5 +53,8 @@ pub mod stable;
 pub mod thordb;
 pub mod timer;
 pub mod unflip;
+pub mod stubs;
+pub mod libc;
+pub mod zebra;
 } // mod src
 

@@ -1,4 +1,4 @@
-use ::libc;
+use crate::src::libc;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct Correlation {
@@ -12,7 +12,7 @@ pub struct Correlation {
 
    Automatically created by CORRELAT on Tue Sep 07 19:41:49 1999
 */
-#[no_mangle]
+
 pub static mut mid_corr: [[Correlation; 9]; 61] =
     [[{
           let mut init =

@@ -1,4 +1,4 @@
-use ::libc;
+use crate::src::libc;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct OpeningDescriptor {
@@ -13,7 +13,7 @@ pub struct OpeningDescriptor {
 
    Automatically created by OSF on Sun Nov 24 16:01:10 2002
 */
-#[no_mangle]
+
 pub static mut opening_list: [OpeningDescriptor; 76] =
     [{
          let mut init =

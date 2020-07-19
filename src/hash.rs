@@ -1,30 +1,11 @@
-use ::libc;
-extern "C" {
-    #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
-    #[no_mangle]
-    fn free(__ptr: *mut libc::c_void);
-    #[no_mangle]
-    fn abs(_: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn my_random() -> libc::c_long;
-    /*
-   File:       safemem.h
 
-   Created:    August 30, 1998
+use crate::src::libc;
+use crate::src::safemem::safe_malloc;
+use crate::src::stubs::{free, abs, __assert_fail};
+use crate::src::myrandom::my_random;
 
-   Modified:   January 25, 2000
-
-   Author:     Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:   The interface to the safer version of malloc.
-*/
-    #[no_mangle]
-    fn safe_malloc(size: size_t) -> *mut libc::c_void;
-}
 pub type size_t = libc::c_ulong;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct HashEntry {
@@ -45,39 +26,39 @@ pub struct CompactHashEntry {
     pub key1_selectivity_flags_draft: libc::c_uint,
 }
 /* Global variables */
-#[no_mangle]
+
 pub static mut hash_size: libc::c_int = 0;
-#[no_mangle]
+
 pub static mut hash1: libc::c_uint = 0;
-#[no_mangle]
+
 pub static mut hash2: libc::c_uint = 0;
-#[no_mangle]
+
 pub static mut hash_value1: [[libc::c_uint; 128]; 3] = [[0; 128]; 3];
-#[no_mangle]
+
 pub static mut hash_value2: [[libc::c_uint; 128]; 3] = [[0; 128]; 3];
-#[no_mangle]
+
 pub static mut hash_put_value1: [[libc::c_uint; 128]; 3] = [[0; 128]; 3];
-#[no_mangle]
+
 pub static mut hash_put_value2: [[libc::c_uint; 128]; 3] = [[0; 128]; 3];
-#[no_mangle]
+
 pub static mut hash_flip1: [libc::c_uint; 128] = [0; 128];
-#[no_mangle]
+
 pub static mut hash_flip2: [libc::c_uint; 128] = [0; 128];
-#[no_mangle]
+
 pub static mut hash_color1: [libc::c_uint; 3] = [0; 3];
-#[no_mangle]
+
 pub static mut hash_color2: [libc::c_uint; 3] = [0; 3];
-#[no_mangle]
+
 pub static mut hash_flip_color1: libc::c_uint = 0;
-#[no_mangle]
+
 pub static mut hash_flip_color2: libc::c_uint = 0;
-#[no_mangle]
+
 pub static mut hash_diff1: [libc::c_uint; 64] = [0; 64];
-#[no_mangle]
+
 pub static mut hash_diff2: [libc::c_uint; 64] = [0; 64];
-#[no_mangle]
+
 pub static mut hash_stored1: [libc::c_uint; 64] = [0; 64];
-#[no_mangle]
+
 pub static mut hash_stored2: [libc::c_uint; 64] = [0; 64];
 /* Local variables */
 static mut hash_bits: libc::c_int = 0;
@@ -104,7 +85,7 @@ static mut hash_table: *mut CompactHashEntry =
    INIT_HASH
    Allocate memory for the hash table.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn init_hash(mut in_hash_bits: libc::c_int) {
     hash_bits = in_hash_bits;
     hash_size = (1 as libc::c_int) << hash_bits;
@@ -120,7 +101,7 @@ pub unsafe extern "C" fn init_hash(mut in_hash_bits: libc::c_int) {
   RESIZE_HASH
   Changes the size of the hash table.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn resize_hash(mut new_hash_bits: libc::c_int) {
     free(hash_table as *mut libc::c_void);
     init_hash(new_hash_bits);
@@ -159,7 +140,7 @@ unsafe extern "C" fn get_closeness(mut a0: libc::c_uint, mut a1: libc::c_uint,
    SETUP_HASH
    Determine randomized hash masks.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn setup_hash(mut clear: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
@@ -314,7 +295,7 @@ pub unsafe extern "C" fn setup_hash(mut clear: libc::c_int) {
   CLEAR_HASH_DRAFTS
   Resets the draft information for all entries in the hash table.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn clear_hash_drafts() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
@@ -329,7 +310,7 @@ pub unsafe extern "C" fn clear_hash_drafts() {
    FREE_HASH
    Remove the hash table.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn free_hash() {
     free(hash_table as *mut libc::c_void);
 }
@@ -337,7 +318,7 @@ pub unsafe extern "C" fn free_hash() {
    DETERMINE_HASH_VALUES
    Calculates the hash codes for the given board position.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn determine_hash_values(mut side_to_move: libc::c_int,
                                                mut board:
                                                    *const libc::c_int) {
@@ -451,7 +432,7 @@ unsafe extern "C" fn compact_to_wide(mut compact_entry:
   is the poor man's way to achieve the effect of clearing the hash
   table.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn set_hash_transformation(mut trans1: libc::c_uint,
                                                  mut trans2: libc::c_uint) {
     hash_trans1 = trans1;
@@ -462,7 +443,7 @@ pub unsafe extern "C" fn set_hash_transformation(mut trans1: libc::c_uint,
    Add information to the hash table. Two adjacent positions are tried
    and the most shallow search is replaced.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn add_hash(mut reverse_mode: libc::c_int,
                                   mut score: libc::c_int,
                                   mut best: libc::c_int,
@@ -542,7 +523,7 @@ pub unsafe extern "C" fn add_hash(mut reverse_mode: libc::c_int,
    Add information to the hash table. Two adjacent positions are tried
    and the most shallow search is replaced.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn add_hash_extended(mut reverse_mode: libc::c_int,
                                            mut score: libc::c_int,
                                            mut best: *mut libc::c_int,
@@ -615,7 +596,7 @@ pub unsafe extern "C" fn add_hash_extended(mut reverse_mode: libc::c_int,
    Search the hash table for the current position. The two possible
    hash table positions are probed.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn find_hash(mut entry: *mut HashEntry,
                                    mut reverse_mode: libc::c_int) {
     let mut index1: libc::c_int = 0;

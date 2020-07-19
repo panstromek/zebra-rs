@@ -1,73 +1,10 @@
-use ::libc;
-extern "C" {
-    pub type _IO_wide_data;
-    pub type _IO_codecvt;
-    pub type _IO_marker;
-    #[no_mangle]
-    fn ceil(_: libc::c_double) -> libc::c_double;
-    #[no_mangle]
-    fn floor(_: libc::c_double) -> libc::c_double;
-    #[no_mangle]
-    static mut stdin: *mut FILE;
-    #[no_mangle]
-    static mut stdout: *mut FILE;
-    #[no_mangle]
-    fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-    #[no_mangle]
-    fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...)
-     -> libc::c_int;
-    #[no_mangle]
-    fn vsprintf(_: *mut libc::c_char, _: *const libc::c_char,
-                _: ::std::ffi::VaList) -> libc::c_int;
-    #[no_mangle]
-    fn getc(__stream: *mut FILE) -> libc::c_int;
-    #[no_mangle]
-    fn fputc(__c: libc::c_int, __stream: *mut FILE) -> libc::c_int;
-    #[no_mangle]
-    fn fputs(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-    #[no_mangle]
-    fn free(__ptr: *mut libc::c_void);
-    #[no_mangle]
-    fn exit(_: libc::c_int) -> !;
-    #[no_mangle]
-    fn abs(_: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn strcpy(_: *mut libc::c_char, _: *const libc::c_char)
-     -> *mut libc::c_char;
-    #[no_mangle]
-    fn strdup(_: *const libc::c_char) -> *mut libc::c_char;
-    #[no_mangle]
-    fn strlen(_: *const libc::c_char) -> libc::c_ulong;
-    /* 61*60 used */
-    /* The principal variation including passes */
-    #[no_mangle]
-    static mut full_pv_depth: libc::c_int;
-    #[no_mangle]
-    static mut full_pv: [libc::c_int; 120];
-    #[no_mangle]
-    fn disc_count(side_to_move: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    static mut pv_depth: [libc::c_int; 64];
-    #[no_mangle]
-    static mut black_moves: [libc::c_int; 60];
-    #[no_mangle]
-    static mut white_moves: [libc::c_int; 60];
-    /*
-   File:       safemem.h
-
-   Created:    August 30, 1998
-
-   Modified:   January 25, 2000
-
-   Author:     Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:   The interface to the safer version of malloc.
-*/
-    #[no_mangle]
-    fn safe_malloc(size: size_t) -> *mut libc::c_void;
-    #[no_mangle]
-    fn get_real_timer() -> libc::c_double;
-}
+use crate::src::stubs::{sprintf, floor, fprintf, vsprintf, strlen, ceil, fputs, fputc, strdup, exit, abs, strcpy, free, getc, stdout, stdin};
+use crate::src::safemem::safe_malloc;
+use crate::src::timer::get_real_timer;
+use crate::src::search::{full_pv, full_pv_depth, disc_count};
+use crate::src::globals::{white_moves, black_moves, pv_depth};
+use crate::src::libc;
+use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub type __builtin_va_list = [__va_list_tag; 1];
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -81,39 +18,6 @@ pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type va_list = __builtin_va_list;
 pub type size_t = libc::c_ulong;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-    pub _flags: libc::c_int,
-    pub _IO_read_ptr: *mut libc::c_char,
-    pub _IO_read_end: *mut libc::c_char,
-    pub _IO_read_base: *mut libc::c_char,
-    pub _IO_write_base: *mut libc::c_char,
-    pub _IO_write_ptr: *mut libc::c_char,
-    pub _IO_write_end: *mut libc::c_char,
-    pub _IO_buf_base: *mut libc::c_char,
-    pub _IO_buf_end: *mut libc::c_char,
-    pub _IO_save_base: *mut libc::c_char,
-    pub _IO_backup_base: *mut libc::c_char,
-    pub _IO_save_end: *mut libc::c_char,
-    pub _markers: *mut _IO_marker,
-    pub _chain: *mut _IO_FILE,
-    pub _fileno: libc::c_int,
-    pub _flags2: libc::c_int,
-    pub _old_offset: __off_t,
-    pub _cur_column: libc::c_ushort,
-    pub _vtable_offset: libc::c_schar,
-    pub _shortbuf: [libc::c_char; 1],
-    pub _lock: *mut libc::c_void,
-    pub _offset: __off64_t,
-    pub _codecvt: *mut _IO_codecvt,
-    pub _wide_data: *mut _IO_wide_data,
-    pub _freeres_list: *mut _IO_FILE,
-    pub _freeres_buf: *mut libc::c_void,
-    pub __pad5: size_t,
-    pub _mode: libc::c_int,
-    pub _unused2: [libc::c_char; 20],
-}
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 pub type EvalType = libc::c_uint;
@@ -131,16 +35,7 @@ pub const UNSOLVED_POSITION: EvalResult = 3;
 pub const LOST_POSITION: EvalResult = 2;
 pub const DRAWN_POSITION: EvalResult = 1;
 pub const WON_POSITION: EvalResult = 0;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct EvaluationType {
-    pub type_0: EvalType,
-    pub res: EvalResult,
-    pub score: libc::c_int,
-    pub confidence: libc::c_double,
-    pub search_depth: libc::c_int,
-    pub is_book: libc::c_int,
-}
+
 /*
    File:           display.c
 
@@ -153,9 +48,9 @@ pub struct EvaluationType {
    Contents:       Some I/O routines.
 */
 /* Global variables */
-#[no_mangle]
+
 pub static mut echo: libc::c_int = 0;
-#[no_mangle]
+
 pub static mut display_pv: libc::c_int = 0;
 /* Local variables */
 static mut black_player: *mut libc::c_char =
@@ -201,7 +96,7 @@ static mut white_list: *mut libc::c_int =
    Reads a character off standard input and terminates the program
    if the character typed is ' '.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn dumpch() {
     let mut ch: libc::c_char = 0;
     ch = getc(stdin) as libc::c_char;
@@ -215,7 +110,7 @@ pub unsafe extern "C" fn dumpch() {
   Specify some information to be output along with the
   board by DISPLAY_BOARD.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn set_names(mut black_name: *const libc::c_char,
                                    mut white_name: *const libc::c_char) {
     if !black_player.is_null() { free(black_player as *mut libc::c_void); }
@@ -223,19 +118,19 @@ pub unsafe extern "C" fn set_names(mut black_name: *const libc::c_char,
     black_player = strdup(black_name);
     white_player = strdup(white_name);
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn set_times(mut black: libc::c_int,
                                    mut white: libc::c_int) {
     black_time = black;
     white_time = white;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn set_evals(mut black: libc::c_double,
                                    mut white: libc::c_double) {
     black_eval = black;
     white_eval = white;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn set_move_list(mut black: *mut libc::c_int,
                                        mut white: *mut libc::c_int,
                                        mut row: libc::c_int) {
@@ -252,7 +147,7 @@ pub unsafe extern "C" fn set_move_list(mut black: *mut libc::c_int,
 
    The board is displayed using '*' for black and 'O' for white.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn display_board(mut stream: *mut FILE,
                                        mut board: *mut libc::c_int,
                                        mut side_to_move: libc::c_int,
@@ -463,7 +358,7 @@ pub unsafe extern "C" fn display_board(mut stream: *mut FILE,
   DISPLAY_MOVE
   Outputs a move or a pass to STREAM.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn display_move(mut stream: *mut FILE,
                                       mut move_0: libc::c_int) {
     if move_0 == -(1 as libc::c_int) {
@@ -478,7 +373,7 @@ pub unsafe extern "C" fn display_move(mut stream: *mut FILE,
    DISPLAY_OPTIMAL_LINE
    Displays the principal variation found during the tree search.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn display_optimal_line(mut stream: *mut FILE) {
     let mut i: libc::c_int = 0;
     if full_pv_depth == 0 as libc::c_int { return }
@@ -501,7 +396,7 @@ pub unsafe extern "C" fn display_optimal_line(mut stream: *mut FILE) {
   SEND_STATUS
   Store information about the last completed search.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn send_status(mut format: *const libc::c_char,
                                      mut args: ...) {
     let mut written: libc::c_int = 0;
@@ -519,7 +414,7 @@ pub unsafe extern "C" fn send_status(mut format: *const libc::c_char,
   The purpose of this function is to unify the format for
   the time string.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn send_status_time(mut elapsed_time: libc::c_double) {
     if elapsed_time < 10000.0f64 {
         send_status(b"%6.1f %c\x00" as *const u8 as *const libc::c_char,
@@ -536,7 +431,7 @@ pub unsafe extern "C" fn send_status_time(mut elapsed_time: libc::c_double) {
   The purpose of this function is to unify the format for
   the number of nodes.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn send_status_nodes(mut node_count: libc::c_double) {
     if node_count < 1.0e8f64 {
         send_status(b"%8.0f  \x00" as *const u8 as *const libc::c_char,
@@ -556,7 +451,7 @@ pub unsafe extern "C" fn send_status_nodes(mut node_count: libc::c_double) {
   SEND_STATUS_PV
   Pipes the principal variation to SEND_STATUS.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn send_status_pv(mut pv: *mut libc::c_int,
                                         mut max_depth: libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -583,7 +478,7 @@ pub unsafe extern "C" fn send_status_pv(mut pv: *mut libc::c_int,
   CLEAR_STATUS
   Clear the current status information.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn clear_status() {
     status_pos = 0 as libc::c_int;
     status_buffer[0 as libc::c_int as usize] =
@@ -594,7 +489,7 @@ pub unsafe extern "C" fn clear_status() {
   DISPLAY_STATUS
   Output and clear the stored status information.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn display_status(mut stream: *mut FILE,
                                         mut allow_repeat: libc::c_int) {
     if (status_pos != 0 as libc::c_int || allow_repeat != 0) &&
@@ -606,7 +501,7 @@ pub unsafe extern "C" fn display_status(mut stream: *mut FILE,
     }
     status_pos = 0 as libc::c_int;
 }
-#[no_mangle]
+
 pub unsafe extern "C" fn get_last_status() -> *const libc::c_char {
     return stored_status_buffer.as_mut_ptr();
 }
@@ -614,7 +509,7 @@ pub unsafe extern "C" fn get_last_status() -> *const libc::c_char {
   SEND_SWEEP
   Store information about the current search.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn send_sweep(mut format: *const libc::c_char,
                                     mut args: ...) {
     let mut written: libc::c_int = 0;
@@ -630,7 +525,7 @@ pub unsafe extern "C" fn send_sweep(mut format: *const libc::c_char,
   CLEAR_SWEEP
   Clear the search information.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn clear_sweep() {
     sweep_pos = 0 as libc::c_int;
     sweep_buffer[0 as libc::c_int as usize] =
@@ -641,7 +536,7 @@ pub unsafe extern "C" fn clear_sweep() {
   DISPLAY_SWEEP
   Display and clear the current search information.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn display_sweep(mut stream: *mut FILE) {
     if sweep_pos != 0 as libc::c_int {
         fprintf(stream, b"%s\n\x00" as *const u8 as *const libc::c_char,
@@ -653,7 +548,7 @@ pub unsafe extern "C" fn display_sweep(mut stream: *mut FILE) {
   RESET_BUFFER_DISPLAY
   Clear all buffers and initialize time variables.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn reset_buffer_display() {
     /* The first two Fibonacci numbers */
     clear_status();
@@ -667,7 +562,7 @@ pub unsafe extern "C" fn reset_buffer_display() {
   If an update has happened and the last display was long enough ago,
   output relevant buffers.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn display_buffers() {
     let mut timer: libc::c_double = 0.;
     let mut new_interval: libc::c_double = 0.;
@@ -691,7 +586,7 @@ pub unsafe extern "C" fn display_buffers() {
   and the simple "you asked for it, you got it"-approach which
   displays everything that is fed to the buffer.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn toggle_smart_buffer_management(mut use_smart:
                                                             libc::c_int) {
     timed_buffer_management = use_smart;
@@ -700,7 +595,7 @@ pub unsafe extern "C" fn toggle_smart_buffer_management(mut use_smart:
   PRODUCE_EVAL_TEXT
   Convert a result descriptor into a string intended for output.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn produce_eval_text(mut eval_info: EvaluationType,
                                            mut short_output: libc::c_int)
  -> *mut libc::c_char {

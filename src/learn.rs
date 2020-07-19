@@ -1,111 +1,16 @@
-use ::libc;
-extern "C" {
-    pub type _IO_wide_data;
-    pub type _IO_codecvt;
-    pub type _IO_marker;
-    #[no_mangle]
-    fn fclose(__stream: *mut FILE) -> libc::c_int;
-    #[no_mangle]
-    fn fopen(__filename: *const libc::c_char, __modes: *const libc::c_char)
-     -> *mut FILE;
-    #[no_mangle]
-    fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-    #[no_mangle]
-    fn fputs(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-    #[no_mangle]
-    fn strcpy(_: *mut libc::c_char, _: *const libc::c_char)
-     -> *mut libc::c_char;
-    #[no_mangle]
-    fn get_earliest_wld_solve() -> libc::c_int;
-    #[no_mangle]
-    fn get_earliest_full_solve() -> libc::c_int;
-    #[no_mangle]
-    fn game_init(file_name: *const libc::c_char,
-                 side_to_move: *mut libc::c_int);
-    /*
-   File:           moves.h
+use crate::src::libc;
+use crate::src::timer::{toggle_abort_check, clear_panic_abort};
+use crate::src::osfbook::{write_text_database, write_binary_database, add_new_game, set_search_depth, read_text_database, read_binary_database, init_osf};
+use crate::src::moves::{make_move, generate_all, disks_played, move_count};
+use crate::src::game::game_init;
+use crate::src::stubs::{fclose, fputs, fprintf, fopen, strcpy};
+use crate::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
+use crate::src::zebra::_IO_FILE;
 
-   Created:        June 30, 1997
-
-   Modified:       August 1, 2002
-
-   Author:         Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:       The move generator's interface.
-*/
-    /* The number of disks played from the initial position.
-   Must match the current status of the BOARD variable. */
-    #[no_mangle]
-    static mut disks_played: libc::c_int;
-    /* The number of moves available after a certain number
-   of disks played. */
-    #[no_mangle]
-    static mut move_count: [libc::c_int; 64];
-    #[no_mangle]
-    fn generate_all(side_to_move: libc::c_int);
-    #[no_mangle]
-    fn make_move(side_to_move: libc::c_int, move_0: libc::c_int,
-                 update_hash: libc::c_int) -> libc::c_int;
-    #[no_mangle]
-    fn add_new_game(move_count_0: libc::c_int,
-                    game_move_list: *mut libc::c_short,
-                    min_empties: libc::c_int,
-                    earliest_full_solve: libc::c_int,
-                    earliest_wld_solve: libc::c_int, update_path: libc::c_int,
-                    private_game: libc::c_int);
-    #[no_mangle]
-    fn read_text_database(file_name: *const libc::c_char);
-    #[no_mangle]
-    fn read_binary_database(file_name: *const libc::c_char);
-    #[no_mangle]
-    fn write_text_database(file_name: *const libc::c_char);
-    #[no_mangle]
-    fn write_binary_database(file_name: *const libc::c_char);
-    #[no_mangle]
-    fn set_search_depth(depth: libc::c_int);
-    #[no_mangle]
-    fn init_osf(do_global_setup: libc::c_int);
-    #[no_mangle]
-    fn clear_panic_abort();
-    #[no_mangle]
-    fn toggle_abort_check(enable: libc::c_int);
-}
 pub type size_t = libc::c_ulong;
 pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-    pub _flags: libc::c_int,
-    pub _IO_read_ptr: *mut libc::c_char,
-    pub _IO_read_end: *mut libc::c_char,
-    pub _IO_read_base: *mut libc::c_char,
-    pub _IO_write_base: *mut libc::c_char,
-    pub _IO_write_ptr: *mut libc::c_char,
-    pub _IO_write_end: *mut libc::c_char,
-    pub _IO_buf_base: *mut libc::c_char,
-    pub _IO_buf_end: *mut libc::c_char,
-    pub _IO_save_base: *mut libc::c_char,
-    pub _IO_backup_base: *mut libc::c_char,
-    pub _IO_save_end: *mut libc::c_char,
-    pub _markers: *mut _IO_marker,
-    pub _chain: *mut _IO_FILE,
-    pub _fileno: libc::c_int,
-    pub _flags2: libc::c_int,
-    pub _old_offset: __off_t,
-    pub _cur_column: libc::c_ushort,
-    pub _vtable_offset: libc::c_schar,
-    pub _shortbuf: [libc::c_char; 1],
-    pub _lock: *mut libc::c_void,
-    pub _offset: __off64_t,
-    pub _codecvt: *mut _IO_codecvt,
-    pub _wide_data: *mut _IO_wide_data,
-    pub _freeres_list: *mut _IO_FILE,
-    pub _freeres_buf: *mut libc::c_void,
-    pub __pad5: size_t,
-    pub _mode: libc::c_int,
-    pub _unused2: [libc::c_char; 20],
-}
+
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 static mut database_name: [libc::c_char; 256] = [0; 256];
@@ -128,7 +33,7 @@ static mut game_move: [libc::c_short; 61] = [0; 61];
    CLEAR_STORED_GAME
    Remove all stored moves.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn clear_stored_game() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
@@ -142,7 +47,7 @@ pub unsafe extern "C" fn clear_stored_game() {
    Mark the move MOVE as being played after DISKS_PLAYED moves
    had been played.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn store_move(mut disks_played_0: libc::c_int,
                                     mut move_0: libc::c_int) {
     game_move[disks_played_0 as usize] = move_0 as libc::c_short;
@@ -152,7 +57,7 @@ pub unsafe extern "C" fn store_move(mut disks_played_0: libc::c_int,
    Specify the depth to which deviations are checked for and the number
    of empty squares at which the game is considered over.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn set_learning_parameters(mut depth: libc::c_int,
                                                  mut cutoff: libc::c_int) {
     learn_depth = depth;
@@ -164,7 +69,7 @@ pub unsafe extern "C" fn set_learning_parameters(mut depth: libc::c_int,
    game are available and the game was finished or contains enough
    moves to be learned anyway.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn game_learnable(mut finished: libc::c_int,
                                         mut move_count_0: libc::c_int)
  -> libc::c_int {
@@ -187,7 +92,7 @@ pub unsafe extern "C" fn game_learnable(mut finished: libc::c_int,
    INIT_LEARN
    Initialize the learning module.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn init_learn(mut file_name: *const libc::c_char,
                                     mut is_binary: libc::c_int) {
     init_osf(0 as libc::c_int);
@@ -203,7 +108,7 @@ pub unsafe extern "C" fn init_learn(mut file_name: *const libc::c_char,
    perfect endgame play from both sides. Then add the game to
    the database.
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn learn_game(mut game_length: libc::c_int,
                                     mut private_game: libc::c_int,
                                     mut save_database: libc::c_int) {
@@ -250,7 +155,7 @@ pub unsafe extern "C" fn learn_game(mut game_length: libc::c_int,
   parameters CUTOFF and DEVIATION_DEPTH with the same
   interpretation as in a call to set_learning_parameters().
 */
-#[no_mangle]
+
 pub unsafe extern "C" fn full_learn_public_game(mut length: libc::c_int,
                                                 mut moves: *mut libc::c_int,
                                                 mut cutoff: libc::c_int,
