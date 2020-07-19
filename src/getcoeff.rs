@@ -6,7 +6,6 @@ use crate::src::error::fatal_error;
 use crate::src::safemem::safe_malloc;
 use crate::src::patterns::{flip8, pow3};
 use crate::src::zebra::_IO_FILE;
-use std::ops::Deref;
 
 pub type size_t = u64;
 pub type __off_t = i64;

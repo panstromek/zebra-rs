@@ -1,6 +1,5 @@
 use crate::src::libc;
 use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit};
-use std::env::args;
 use crate::src::zebra::_IO_FILE;
 
 pub type __builtin_va_list = [__va_list_tag; 1];

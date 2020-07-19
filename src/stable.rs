@@ -1,4 +1,3 @@
-use crate::src::libc;
 use crate::src::bitboard::{BitBoard, non_iterative_popcount, set_bitboards, square_mask};
 use crate::src::patterns::pow3;
 use crate::src::search::position_list;

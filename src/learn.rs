@@ -1,4 +1,3 @@
-use crate::src::libc;
 use crate::src::timer::{toggle_abort_check, clear_panic_abort};
 use crate::src::osfbook::{write_text_database, write_binary_database, add_new_game, set_search_depth, read_text_database, read_binary_database, init_osf};
 use crate::src::moves::{make_move, generate_all, disks_played, move_count};

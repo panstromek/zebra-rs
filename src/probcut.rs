@@ -10,8 +10,6 @@
 
    Contents:      The initialization of the Multi-ProbCut search parameters.
 */
-/* Global variables */
-use crate::src::libc;
 use crate::src::epcstat::end_stats_available;
 use crate::src::pcstat::mid_corr;
 use crate::src::stubs::floor;

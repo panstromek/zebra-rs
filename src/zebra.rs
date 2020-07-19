@@ -1,12 +1,7 @@
 #![allow(dead_code, mutable_transmutes, non_camel_case_types, non_snake_case,
          non_upper_case_globals, unused_assignments, unused_mut)]
 
-#![feature(const_raw_ptr_to_usize_cast, extern_types, main, register_tool)]
-
-use std::thread::sleep;
-use std::time::Duration;
 use std::process::exit;
-use std::rc::Rc;
 use crate::{
     src::{
         game::{compute_move, toggle_human_openings, game_init, toggle_status_log, global_terminate, global_setup},

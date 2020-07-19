@@ -10,8 +10,6 @@
 
    Contents:      The patterns.
 */
-/* Global variables */
-use crate::src::libc;
 
 
 pub static mut pow3: [i32; 10] =

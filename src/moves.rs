@@ -1,4 +1,3 @@
-use crate::src::libc;
 use crate::src::cntflip::AnyFlips_compact;
 use crate::src::globals::{board, piece_count};
 use crate::src::stubs::{atoi, printf, scanf};

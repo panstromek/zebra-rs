@@ -1,4 +1,3 @@
-use crate::src::libc;
 use crate::src::stubs::{printf, fabs, time};
 
 pub type __time_t = i64;

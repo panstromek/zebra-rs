@@ -1,4 +1,3 @@
-use crate::src::libc;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct Correlation {

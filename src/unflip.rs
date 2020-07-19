@@ -9,8 +9,6 @@
 
    Contents:       Low-level code to flip back the discs flipped by a move.
 */
-/* Global variables */
-use crate::src::libc;
 
 pub static mut global_flip_stack: [*mut i32; 2048] =
     [0 as *const i32 as *mut i32; 2048];
