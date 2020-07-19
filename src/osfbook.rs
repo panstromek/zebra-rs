@@ -48,7 +48,7 @@ pub type FILE = _IO_FILE;
 pub type time_t = __time_t;
 pub type __compar_fn_t
     =
-    Option<unsafe fn(_: *const libc::c_void,
+    Option<unsafe extern "C" fn(_: *const libc::c_void,
                                 _: *const libc::c_void) -> i32>;
 
 /*
@@ -1687,7 +1687,7 @@ pub unsafe fn examine_tree() {
            (stop_time - start_time) as i32);
     puts(b"\x00" as *const u8 as *const i8);
 }
-unsafe fn int_compare(mut i1: *const libc::c_void,
+unsafe extern "C" fn int_compare(mut i1: *const libc::c_void,
                                  mut i2: *const libc::c_void) -> i32 {
     return *(i1 as *mut i32) - *(i2 as *mut i32);
 }
@@ -1778,13 +1778,13 @@ pub unsafe fn book_statistics(mut full_statistics: i32) {
     qsort(evals as *mut libc::c_void, eval_count as size_t,
           ::std::mem::size_of::<i32>() as u64,
           Some(int_compare as
-                   unsafe fn(_: *const libc::c_void,
+                   unsafe extern "C" fn(_: *const libc::c_void,
                                         _: *const libc::c_void)
                        -> i32));
     qsort(negamax as *mut libc::c_void, negamax_count as size_t,
           ::std::mem::size_of::<i32>() as u64,
           Some(int_compare as
-                   unsafe fn(_: *const libc::c_void,
+                   unsafe extern "C" fn(_: *const libc::c_void,
                                         _: *const libc::c_void)
                        -> i32));
     puts(b"\x00" as *const u8 as *const i8);

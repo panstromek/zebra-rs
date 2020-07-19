@@ -7399,7 +7399,7 @@ unsafe fn read_prolog(mut stream: *mut FILE,
   Lexicographically compares the names of two tournaments
   represented by pointers.
 */
-unsafe fn thor_compare_tournaments(mut t1: *const libc::c_void,
+unsafe extern "C" fn thor_compare_tournaments(mut t1: *const libc::c_void,
                                               mut t2: *const libc::c_void)
  -> i32 {
     let mut tournament1 = *(t1 as *mut *mut TournamentType);
@@ -7410,7 +7410,7 @@ unsafe fn thor_compare_tournaments(mut t1: *const libc::c_void,
   SORT_TOURNAMENT_DATABASE
   Computes the lexicographic order of all tournaments in the database.
 */
-unsafe fn sort_tournament_database() {
+unsafe extern "C" fn sort_tournament_database() {
     let mut tournament_buffer = 0 as *mut *mut TournamentType;
     let mut i: i32 = 0;
     tournament_buffer =
@@ -7429,7 +7429,7 @@ unsafe fn sort_tournament_database() {
     qsort(tournament_buffer as *mut libc::c_void, tournaments.count as size_t,
           ::std::mem::size_of::<*mut TournamentType>() as u64,
           Some(thor_compare_tournaments as
-                   unsafe fn(_: *const libc::c_void,
+                   unsafe extern "C" fn(_: *const libc::c_void,
                                         _: *const libc::c_void)
                        -> i32));
     i = 0 as i32;
@@ -7520,7 +7520,7 @@ pub unsafe fn get_tournament_count() -> i32 {
   Lexicographically compares the names of two players
   represented by pointers.
 */
-unsafe fn thor_compare_players(mut p1: *const libc::c_void,
+unsafe extern "C" fn thor_compare_players(mut p1: *const libc::c_void,
                                           mut p2: *const libc::c_void)
  -> i32 {
     let mut ch: i8 = 0;
@@ -7575,7 +7575,7 @@ unsafe fn sort_player_database() {
     qsort(player_buffer as *mut libc::c_void, players.count as size_t,
           ::std::mem::size_of::<*mut PlayerType>() as u64,
           Some(thor_compare_players as
-                   unsafe fn(_: *const libc::c_void,
+                   unsafe extern "C" fn(_: *const libc::c_void,
                                         _: *const libc::c_void)
                        -> i32));
     i = 0 as i32;
@@ -8030,7 +8030,7 @@ unsafe fn secondary_hash_lookup(mut target_hash: u32)
   Only to be called by QSORT. A full comparison is
   performed using the priority order from THOR_SORT_ORDER.
 */
-unsafe fn thor_compare(mut g1: *const libc::c_void,
+unsafe extern "C" fn thor_compare(mut g1: *const libc::c_void,
                                   mut g2: *const libc::c_void)
  -> i32 {
     let mut i: i32 = 0;
@@ -8269,7 +8269,7 @@ unsafe fn sort_thor_games(mut count: i32) {
     qsort(thor_search.match_list as *mut libc::c_void, count as size_t,
           ::std::mem::size_of::<*mut GameType>() as u64,
           Some(thor_compare as
-                   unsafe fn(_: *const libc::c_void,
+                   unsafe extern "C" fn(_: *const libc::c_void,
                                         _: *const libc::c_void)
                        -> i32));
 }
