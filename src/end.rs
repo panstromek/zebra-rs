@@ -1,25 +1,29 @@
-use crate::src::libc;
-use crate::src::stubs::{ceil, abs, printf, __assert_fail, free, fflush, sprintf, puts, stdout};
-use crate::src::epcstat::{end_sigma, end_mean, end_stats_available};
-use crate::src::moves::{dir_mask, disks_played, unmake_move, make_move, move_count, generate_all, move_list, valid_move};
-use crate::src::search::{force_return, hash_expand_pv, root_eval, store_pv, restore_pv, nodes, create_eval_info, disc_count, get_ponder_move, set_current_eval, select_move, evals, sorted_move_order};
-use crate::src::display::{display_status, echo, reset_buffer_display, send_status, send_status_time, send_status_pv, send_status_nodes, produce_eval_text, clear_status, display_sweep, send_sweep, display_buffers, clear_sweep};
-use crate::src::timer::{clear_panic_abort, get_elapsed_time, is_panic_abort, check_panic_abort, check_threshold, set_panic_threshold, last_panic_check};
-use crate::src::counter::{adjust_counter, counter_value};
-use crate::src::midgame::{toggle_midgame_hash_usage, tree_search};
-use crate::src::globals::{piece_count, board, pv_depth, pv};
-use crate::src::osfbook::{fill_endgame_hash, get_book_move, fill_move_alternatives};
-use crate::src::hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended, find_hash, HashEntry, add_hash, hash_put_value2, hash_put_value1};
-use crate::src::bitboard::{set_bitboards, BitBoard};
-use crate::src::bitbmob::{init_mmx, bitboard_mobility, weighted_mobility};
-use crate::src::bitbtest::{bb_flips, TestFlips_bitboard};
-use crate::src::autop::handle_event;
-use crate::src::probcut::{end_mpc_depth, use_end_cut};
-use crate::src::stable::{count_stable, count_edge_stable};
-use crate::src::unflip::UndoFlips;
-use crate::src::doflip::{hash_update2, hash_update1, DoFlips_hash};
-use crate::src::bitbcnt::CountFlips_bitboard;
-use crate::src::zebra::{EvaluationType, _IO_FILE};
+use crate::{
+    src::{
+        epcstat::{end_sigma, end_mean, end_stats_available},
+        libc,
+        stubs::{ceil, abs, printf, __assert_fail, free, fflush, sprintf, puts, stdout},
+        moves::{dir_mask, disks_played, unmake_move, make_move, move_count, generate_all, move_list, valid_move},
+        search::{force_return, hash_expand_pv, root_eval, store_pv, restore_pv, nodes, create_eval_info, disc_count, get_ponder_move, set_current_eval, select_move, evals, sorted_move_order},
+        display::{display_status, echo, reset_buffer_display, send_status, send_status_time, send_status_pv, send_status_nodes, produce_eval_text, clear_status, display_sweep, send_sweep, display_buffers, clear_sweep},
+        timer::{clear_panic_abort, get_elapsed_time, is_panic_abort, check_panic_abort, check_threshold, set_panic_threshold, last_panic_check},
+        counter::{adjust_counter, counter_value},
+        midgame::{toggle_midgame_hash_usage, tree_search},
+        globals::{piece_count, board, pv_depth, pv},
+        osfbook::{fill_endgame_hash, get_book_move, fill_move_alternatives},
+        hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended, find_hash, HashEntry, add_hash, hash_put_value2, hash_put_value1},
+        bitboard::{set_bitboards, BitBoard},
+        bitbmob::{init_mmx, bitboard_mobility, weighted_mobility},
+        bitbtest::{bb_flips, TestFlips_bitboard},
+        autop::handle_event,
+        probcut::{end_mpc_depth, use_end_cut},
+        stable::{count_stable, count_edge_stable},
+        unflip::UndoFlips,
+        doflip::{hash_update2, hash_update1, DoFlips_hash},
+        bitbcnt::CountFlips_bitboard,
+        zebra::{EvaluationType, _IO_FILE}
+    }
+};
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -118,57 +122,18 @@ static mut ff_mob_factor: [i32; 61] = [0; 61];
 static mut neighborhood_mask: [BitBoard; 100] =
     [BitBoard{high: 0, low: 0,}; 100];
 
-pub static mut quadrant_mask: [u32; 100] =
-    [0 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 1 as i32 as u32,
-     1 as i32 as u32, 1 as i32 as u32,
-     1 as i32 as u32, 2 as i32 as u32,
-     2 as i32 as u32, 2 as i32 as u32,
-     2 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 1 as i32 as u32,
-     1 as i32 as u32, 1 as i32 as u32,
-     1 as i32 as u32, 2 as i32 as u32,
-     2 as i32 as u32, 2 as i32 as u32,
-     2 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 1 as i32 as u32,
-     1 as i32 as u32, 1 as i32 as u32,
-     1 as i32 as u32, 2 as i32 as u32,
-     2 as i32 as u32, 2 as i32 as u32,
-     2 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 1 as i32 as u32,
-     1 as i32 as u32, 1 as i32 as u32,
-     1 as i32 as u32, 2 as i32 as u32,
-     2 as i32 as u32, 2 as i32 as u32,
-     2 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 4 as i32 as u32,
-     4 as i32 as u32, 4 as i32 as u32,
-     4 as i32 as u32, 8 as i32 as u32,
-     8 as i32 as u32, 8 as i32 as u32,
-     8 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 4 as i32 as u32,
-     4 as i32 as u32, 4 as i32 as u32,
-     4 as i32 as u32, 8 as i32 as u32,
-     8 as i32 as u32, 8 as i32 as u32,
-     8 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 4 as i32 as u32,
-     4 as i32 as u32, 4 as i32 as u32,
-     4 as i32 as u32, 8 as i32 as u32,
-     8 as i32 as u32, 8 as i32 as u32,
-     8 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 4 as i32 as u32,
-     4 as i32 as u32, 4 as i32 as u32,
-     4 as i32 as u32, 8 as i32 as u32,
-     8 as i32 as u32, 8 as i32 as u32,
-     8 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 0 as i32 as u32,
-     0 as i32 as u32, 0 as i32 as u32];
+pub static quadrant_mask: [u32; 100] = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 2, 2, 2, 2, 0,
+    0, 1, 1, 1, 1, 2, 2, 2, 2, 0,
+    0, 1, 1, 1, 1, 2, 2, 2, 2, 0,
+    0, 1, 1, 1, 1, 2, 2, 2, 2, 0,
+    0, 4, 4, 4, 4, 8, 8, 8, 8, 0,
+    0, 4, 4, 4, 4, 8, 8, 8, 8, 0,
+    0, 4, 4, 4, 4, 8, 8, 8, 8, 0,
+    0, 4, 4, 4, 4, 8, 8, 8, 8, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+];
 /* Number of discs that the side to move at the root has to win with. */
 static mut komi_shift: i32 = 0;
 /*

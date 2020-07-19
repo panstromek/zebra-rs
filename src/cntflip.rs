@@ -1,6 +1,4 @@
-
 use crate::src::moves::first_flip_direction;
-use crate::src::libc;
 
 /*
    cntflip.c

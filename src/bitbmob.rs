@@ -1,6 +1,4 @@
-
 use crate::src::bitboard::{BitBoard, non_iterative_popcount};
-use crate::src::libc;
 
 /*
    File:          bitbmob.c

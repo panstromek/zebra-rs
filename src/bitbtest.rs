@@ -1,5 +1,4 @@
 use crate::src::bitboard::BitBoard;
-use crate::src::libc;
 /*
    File:          bitbtest.c
 
@@ -15,7 +14,7 @@ use crate::src::libc;
 */
 
 pub static mut bb_flips: BitBoard = BitBoard{high: 0, low: 0,};
-static mut right_contiguous: [u8; 64] =
+static right_contiguous: [u8; 64] =
     [0 as i32 as u8, 1 as i32 as u8,
      0 as i32 as u8, 2 as i32 as u8,
      0 as i32 as u8, 1 as i32 as u8,
@@ -48,7 +47,7 @@ static mut right_contiguous: [u8; 64] =
      0 as i32 as u8, 2 as i32 as u8,
      0 as i32 as u8, 1 as i32 as u8,
      0 as i32 as u8, 6 as i32 as u8];
-static mut left_contiguous: [u8; 64] =
+static left_contiguous: [u8; 64] =
     [0 as i32 as u8, 0 as i32 as u8,
      0 as i32 as u8, 0 as i32 as u8,
      0 as i32 as u8, 0 as i32 as u8,
@@ -81,17 +80,17 @@ static mut left_contiguous: [u8; 64] =
      3 as i32 as u8, 3 as i32 as u8,
      4 as i32 as u8, 4 as i32 as u8,
      5 as i32 as u8, 6 as i32 as u8];
-static mut right_flip: [u32; 7] =
+static right_flip: [u32; 7] =
     [0x1 as u32, 0x3 as u32, 0x7 as u32,
      0xf as u32, 0x1f as u32, 0x3f as u32,
      0x7f as u32];
-static mut lsb_mask: [u32; 4] =
+static lsb_mask: [u32; 4] =
     [0xff as u32, 0xffff as u32, 0xffffff as u32,
      0xffffffff as u32];
-static mut msb_mask: [u32; 4] =
+static  msb_mask: [u32; 4] =
     [0xff000000 as u32, 0xffff0000 as u32,
      0xffffff00 as u32, 0xffffffff as u32];
-static mut pop_count: [u8; 64] =
+static  pop_count: [u8; 64] =
     [0 as i32 as u8, 1 as i32 as u8,
      1 as i32 as u8, 2 as i32 as u8,
      1 as i32 as u8, 2 as i32 as u8,
@@ -124,7 +123,7 @@ static mut pop_count: [u8; 64] =
      4 as i32 as u8, 5 as i32 as u8,
      4 as i32 as u8, 5 as i32 as u8,
      5 as i32 as u8, 6 as i32 as u8];
-static mut c_frontier: [u8; 62] =
+static  c_frontier: [u8; 62] =
     [0 as i32 as u8, 0x1 as i32 as u8,
      0 as i32 as u8, 0 as i32 as u8,
      0x10 as i32 as u8,
@@ -157,7 +156,7 @@ static mut c_frontier: [u8; 62] =
      0x1 as i32 as u8, 0 as i32 as u8,
      0 as i32 as u8, 0x80 as i32 as u8,
      0x81 as i32 as u8];
-static mut d_frontier: [u8; 60] =
+static  d_frontier: [u8; 60] =
     [0 as i32 as u8, 0 as i32 as u8,
      0x2 as i32 as u8, 0x1 as i32 as u8,
      0 as i32 as u8, 0 as i32 as u8,
@@ -193,7 +192,7 @@ static mut d_frontier: [u8; 60] =
      0x80 as i32 as u8,
      0x82 as i32 as u8,
      0x81 as i32 as u8];
-static mut e_frontier: [u8; 56] =
+static  e_frontier: [u8; 56] =
     [0 as i32 as u8, 0 as i32 as u8,
      0 as i32 as u8, 0 as i32 as u8,
      0x4 as i32 as u8, 0x4 as i32 as u8,
@@ -229,7 +228,7 @@ static mut e_frontier: [u8; 56] =
      0x84 as i32 as u8,
      0x82 as i32 as u8,
      0x81 as i32 as u8];
-static mut f_flip: [u8; 160] =
+static  f_flip: [u8; 160] =
     [0 as i32 as u8, 0xf as i32 as u8,
      0xe as i32 as u8, 0 as i32 as u8,
      0xc as i32 as u8, 0 as i32 as u8,
@@ -9427,265 +9426,69 @@ unsafe fn TestFlips_bitboard_e5(mut my_bits_high: u32,
     return flipped;
 }
 
-pub static mut TestFlips_bitboard:
-           [Option<unsafe fn(_: u32, _: u32,
-                                        _: u32, _: u32)
-                       -> i32>; 78] =
-    unsafe {
-        [Some(TestFlips_bitboard_a1 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_b1 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_c1 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_d1 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_e1 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_f1 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_g1 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_h1 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32), None, None,
-         Some(TestFlips_bitboard_a2 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_b2 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_c2 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_d2 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_e2 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_f2 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_g2 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_h2 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32), None, None,
-         Some(TestFlips_bitboard_a3 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_b3 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_c3 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_d3 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_e3 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_f3 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_g3 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_h3 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32), None, None,
-         Some(TestFlips_bitboard_a4 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_b4 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_c4 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_d4 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_e4 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_f4 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_g4 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_h4 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32), None, None,
-         Some(TestFlips_bitboard_a5 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_b5 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_c5 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_d5 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_e5 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_f5 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_g5 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_h5 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32), None, None,
-         Some(TestFlips_bitboard_a6 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_b6 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_c6 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_d6 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_e6 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_f6 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_g6 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_h6 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32), None, None,
-         Some(TestFlips_bitboard_a7 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_b7 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_c7 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_d7 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_e7 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_f7 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_g7 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_h7 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32), None, None,
-         Some(TestFlips_bitboard_a8 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_b8 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_c8 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_d8 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_e8 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_f8 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_g8 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32),
-         Some(TestFlips_bitboard_h8 as
-                  unsafe fn(_: u32, _: u32,
-                                       _: u32, _: u32)
-                      -> i32)]
-    };
+pub static TestFlips_bitboard: [Option<unsafe fn(_: u32, _: u32, _: u32, _: u32) -> i32>; 78] = [
+    Some(TestFlips_bitboard_a1),
+    Some(TestFlips_bitboard_b1),
+    Some(TestFlips_bitboard_c1),
+    Some(TestFlips_bitboard_d1),
+    Some(TestFlips_bitboard_e1),
+    Some(TestFlips_bitboard_f1),
+    Some(TestFlips_bitboard_g1),
+    Some(TestFlips_bitboard_h1), None, None,
+    Some(TestFlips_bitboard_a2),
+    Some(TestFlips_bitboard_b2),
+    Some(TestFlips_bitboard_c2),
+    Some(TestFlips_bitboard_d2),
+    Some(TestFlips_bitboard_e2),
+    Some(TestFlips_bitboard_f2),
+    Some(TestFlips_bitboard_g2),
+    Some(TestFlips_bitboard_h2), None, None,
+    Some(TestFlips_bitboard_a3),
+    Some(TestFlips_bitboard_b3),
+    Some(TestFlips_bitboard_c3),
+    Some(TestFlips_bitboard_d3),
+    Some(TestFlips_bitboard_e3),
+    Some(TestFlips_bitboard_f3),
+    Some(TestFlips_bitboard_g3),
+    Some(TestFlips_bitboard_h3), None, None,
+    Some(TestFlips_bitboard_a4),
+    Some(TestFlips_bitboard_b4),
+    Some(TestFlips_bitboard_c4),
+    Some(TestFlips_bitboard_d4),
+    Some(TestFlips_bitboard_e4),
+    Some(TestFlips_bitboard_f4),
+    Some(TestFlips_bitboard_g4),
+    Some(TestFlips_bitboard_h4), None, None,
+    Some(TestFlips_bitboard_a5),
+    Some(TestFlips_bitboard_b5),
+    Some(TestFlips_bitboard_c5),
+    Some(TestFlips_bitboard_d5),
+    Some(TestFlips_bitboard_e5),
+    Some(TestFlips_bitboard_f5),
+    Some(TestFlips_bitboard_g5),
+    Some(TestFlips_bitboard_h5), None, None,
+    Some(TestFlips_bitboard_a6),
+    Some(TestFlips_bitboard_b6),
+    Some(TestFlips_bitboard_c6),
+    Some(TestFlips_bitboard_d6),
+    Some(TestFlips_bitboard_e6),
+    Some(TestFlips_bitboard_f6),
+    Some(TestFlips_bitboard_g6),
+    Some(TestFlips_bitboard_h6), None, None,
+    Some(TestFlips_bitboard_a7),
+    Some(TestFlips_bitboard_b7),
+    Some(TestFlips_bitboard_c7),
+    Some(TestFlips_bitboard_d7),
+    Some(TestFlips_bitboard_e7),
+    Some(TestFlips_bitboard_f7),
+    Some(TestFlips_bitboard_g7),
+    Some(TestFlips_bitboard_h7), None, None,
+    Some(TestFlips_bitboard_a8),
+    Some(TestFlips_bitboard_b8),
+    Some(TestFlips_bitboard_c8),
+    Some(TestFlips_bitboard_d8),
+    Some(TestFlips_bitboard_e8),
+    Some(TestFlips_bitboard_f8),
+    Some(TestFlips_bitboard_g8),
+    Some(TestFlips_bitboard_h8)
+];

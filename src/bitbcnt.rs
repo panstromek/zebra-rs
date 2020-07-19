@@ -12,7 +12,6 @@
    This piece of software is released under the GPL.
    See the file COPYING for more information.
 */
-use crate::src::libc;
 
 // NULL
 // #include "bitboard.h"

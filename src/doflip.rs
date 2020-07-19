@@ -1,4 +1,3 @@
-use crate::src::libc;
 use crate::src::globals::{Board, board};
 use crate::src::unflip::flip_stack;
 use crate::src::hash::{hash_flip2, hash_flip1};

@@ -1,4 +1,3 @@
-use crate::src::libc;
 /*
    File:          autoplay.h
 
