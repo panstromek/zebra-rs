@@ -1,0 +1,33 @@
+[workspace]
+members = [
+]
+
+[package]
+name = "c2rust_out"
+authors = ["C2Rust"]
+version = "0.0.0"
+publish = false
+edition = "2018"
+autobins = false
+
+[profile.release]
+opt-level = 3
+lto = "fat" 
+
+[lib]
+name = "c2rust_out"
+path = "lib.rs"
+crate-type = ["staticlib", "rlib"]
+
+
+[[bin]]
+path = "src/zebra.rs"
+name = "zebra"
+
+[dependencies]
+libc = "0.2"
+
+
+[build-dependencies]
+pkg-config = "0.3.16"
+
