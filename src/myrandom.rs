@@ -100,7 +100,7 @@ static mut my_end_ptr: *mut libc::c_long =
  * values produced by this routine.
  */
 
-pub unsafe extern "C" fn my_srandom(mut x: libc::c_int) -> libc::c_int {
+pub unsafe fn my_srandom(mut x: libc::c_int) -> libc::c_int {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     if my_rand_type == 0 as libc::c_int {
@@ -142,7 +142,7 @@ pub unsafe extern "C" fn my_srandom(mut x: libc::c_int) -> libc::c_int {
  * Returns a pointer to the old state.
  */
 
-pub unsafe extern "C" fn my_initstate(mut seed: libc::c_uint,
+pub unsafe fn my_initstate(mut seed: libc::c_uint,
                                       mut arg_state: *mut libc::c_char,
                                       mut n: libc::c_int)
  -> *mut libc::c_char {
@@ -210,7 +210,7 @@ pub unsafe extern "C" fn my_initstate(mut seed: libc::c_uint,
  * Returns a pointer to the old state information.
  */
 
-pub unsafe extern "C" fn my_setstate(mut arg_state: *mut libc::c_char)
+pub unsafe fn my_setstate(mut arg_state: *mut libc::c_char)
  -> *mut libc::c_char {
     let mut new_state = arg_state as *mut libc::c_long; /* set end_ptr too */
     let mut type_0 =
@@ -267,7 +267,7 @@ pub unsafe extern "C" fn my_setstate(mut arg_state: *mut libc::c_char)
  * Returns a 31-bit random number.
  */
 
-pub unsafe extern "C" fn my_random() -> libc::c_long {
+pub unsafe fn my_random() -> libc::c_long {
     let mut i: libc::c_long = 0; /* chucking least random bit */
     if my_rand_type == 0 as libc::c_int {
         let ref mut fresh0 = *my_state.offset(0 as libc::c_int as isize);
@@ -293,7 +293,7 @@ pub unsafe extern "C" fn my_random() -> libc::c_long {
     }
     return i;
 }
-unsafe extern "C" fn run_static_initializers() {
+unsafe fn run_static_initializers() {
     my_fptr =
         &mut *my_randtbl.as_mut_ptr().offset((3 as libc::c_int +
                                                   1 as libc::c_int) as isize)
@@ -313,4 +313,4 @@ unsafe extern "C" fn run_static_initializers() {
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]
 #[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
 #[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
-static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];
+static INIT_ARRAY: [unsafe fn(); 1] = [run_static_initializers];

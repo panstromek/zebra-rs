@@ -97,7 +97,7 @@ static mut white_list: *mut libc::c_int =
    if the character typed is ' '.
 */
 
-pub unsafe extern "C" fn dumpch() {
+pub unsafe fn dumpch() {
     let mut ch: libc::c_char = 0;
     ch = getc(stdin) as libc::c_char;
     if ch as libc::c_int == ' ' as i32 { exit(1 as libc::c_int); };
@@ -111,7 +111,7 @@ pub unsafe extern "C" fn dumpch() {
   board by DISPLAY_BOARD.
 */
 
-pub unsafe extern "C" fn set_names(mut black_name: *const libc::c_char,
+pub unsafe fn set_names(mut black_name: *const libc::c_char,
                                    mut white_name: *const libc::c_char) {
     if !black_player.is_null() { free(black_player as *mut libc::c_void); }
     if !white_player.is_null() { free(white_player as *mut libc::c_void); }
@@ -119,19 +119,19 @@ pub unsafe extern "C" fn set_names(mut black_name: *const libc::c_char,
     white_player = strdup(white_name);
 }
 
-pub unsafe extern "C" fn set_times(mut black: libc::c_int,
+pub unsafe fn set_times(mut black: libc::c_int,
                                    mut white: libc::c_int) {
     black_time = black;
     white_time = white;
 }
 
-pub unsafe extern "C" fn set_evals(mut black: libc::c_double,
+pub unsafe fn set_evals(mut black: libc::c_double,
                                    mut white: libc::c_double) {
     black_eval = black;
     white_eval = white;
 }
 
-pub unsafe extern "C" fn set_move_list(mut black: *mut libc::c_int,
+pub unsafe fn set_move_list(mut black: *mut libc::c_int,
                                        mut white: *mut libc::c_int,
                                        mut row: libc::c_int) {
     black_list = black;
@@ -148,7 +148,7 @@ pub unsafe extern "C" fn set_move_list(mut black: *mut libc::c_int,
    The board is displayed using '*' for black and 'O' for white.
 */
 
-pub unsafe extern "C" fn display_board(mut stream: *mut FILE,
+pub unsafe fn display_board(mut stream: *mut FILE,
                                        mut board: *mut libc::c_int,
                                        mut side_to_move: libc::c_int,
                                        mut give_game_score: libc::c_int,
@@ -359,7 +359,7 @@ pub unsafe extern "C" fn display_board(mut stream: *mut FILE,
   Outputs a move or a pass to STREAM.
 */
 
-pub unsafe extern "C" fn display_move(mut stream: *mut FILE,
+pub unsafe fn display_move(mut stream: *mut FILE,
                                       mut move_0: libc::c_int) {
     if move_0 == -(1 as libc::c_int) {
         fprintf(stream, b"--\x00" as *const u8 as *const libc::c_char);
@@ -374,7 +374,7 @@ pub unsafe extern "C" fn display_move(mut stream: *mut FILE,
    Displays the principal variation found during the tree search.
 */
 
-pub unsafe extern "C" fn display_optimal_line(mut stream: *mut FILE) {
+pub unsafe fn display_optimal_line(mut stream: *mut FILE) {
     let mut i: libc::c_int = 0;
     if full_pv_depth == 0 as libc::c_int { return }
     fprintf(stream, b"%s: \x00" as *const u8 as *const libc::c_char,
@@ -415,7 +415,7 @@ pub unsafe extern "C" fn send_status(mut format: *const libc::c_char,
   the time string.
 */
 
-pub unsafe extern "C" fn send_status_time(mut elapsed_time: libc::c_double) {
+pub unsafe fn send_status_time(mut elapsed_time: libc::c_double) {
     if elapsed_time < 10000.0f64 {
         send_status(b"%6.1f %c\x00" as *const u8 as *const libc::c_char,
                     elapsed_time, 's' as i32);
@@ -432,7 +432,7 @@ pub unsafe extern "C" fn send_status_time(mut elapsed_time: libc::c_double) {
   the number of nodes.
 */
 
-pub unsafe extern "C" fn send_status_nodes(mut node_count: libc::c_double) {
+pub unsafe fn send_status_nodes(mut node_count: libc::c_double) {
     if node_count < 1.0e8f64 {
         send_status(b"%8.0f  \x00" as *const u8 as *const libc::c_char,
                     node_count);
@@ -452,7 +452,7 @@ pub unsafe extern "C" fn send_status_nodes(mut node_count: libc::c_double) {
   Pipes the principal variation to SEND_STATUS.
 */
 
-pub unsafe extern "C" fn send_status_pv(mut pv: *mut libc::c_int,
+pub unsafe fn send_status_pv(mut pv: *mut libc::c_int,
                                         mut max_depth: libc::c_int) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
@@ -479,7 +479,7 @@ pub unsafe extern "C" fn send_status_pv(mut pv: *mut libc::c_int,
   Clear the current status information.
 */
 
-pub unsafe extern "C" fn clear_status() {
+pub unsafe fn clear_status() {
     status_pos = 0 as libc::c_int;
     status_buffer[0 as libc::c_int as usize] =
         0 as libc::c_int as libc::c_char;
@@ -490,7 +490,7 @@ pub unsafe extern "C" fn clear_status() {
   Output and clear the stored status information.
 */
 
-pub unsafe extern "C" fn display_status(mut stream: *mut FILE,
+pub unsafe fn display_status(mut stream: *mut FILE,
                                         mut allow_repeat: libc::c_int) {
     if (status_pos != 0 as libc::c_int || allow_repeat != 0) &&
            strlen(status_buffer.as_mut_ptr()) >
@@ -502,7 +502,7 @@ pub unsafe extern "C" fn display_status(mut stream: *mut FILE,
     status_pos = 0 as libc::c_int;
 }
 
-pub unsafe extern "C" fn get_last_status() -> *const libc::c_char {
+pub unsafe fn get_last_status() -> *const libc::c_char {
     return stored_status_buffer.as_mut_ptr();
 }
 /*
@@ -526,7 +526,7 @@ pub unsafe extern "C" fn send_sweep(mut format: *const libc::c_char,
   Clear the search information.
 */
 
-pub unsafe extern "C" fn clear_sweep() {
+pub unsafe fn clear_sweep() {
     sweep_pos = 0 as libc::c_int;
     sweep_buffer[0 as libc::c_int as usize] =
         0 as libc::c_int as libc::c_char;
@@ -537,7 +537,7 @@ pub unsafe extern "C" fn clear_sweep() {
   Display and clear the current search information.
 */
 
-pub unsafe extern "C" fn display_sweep(mut stream: *mut FILE) {
+pub unsafe fn display_sweep(mut stream: *mut FILE) {
     if sweep_pos != 0 as libc::c_int {
         fprintf(stream, b"%s\n\x00" as *const u8 as *const libc::c_char,
                 sweep_buffer.as_mut_ptr());
@@ -549,7 +549,7 @@ pub unsafe extern "C" fn display_sweep(mut stream: *mut FILE) {
   Clear all buffers and initialize time variables.
 */
 
-pub unsafe extern "C" fn reset_buffer_display() {
+pub unsafe fn reset_buffer_display() {
     /* The first two Fibonacci numbers */
     clear_status();
     clear_sweep();
@@ -563,7 +563,7 @@ pub unsafe extern "C" fn reset_buffer_display() {
   output relevant buffers.
 */
 
-pub unsafe extern "C" fn display_buffers() {
+pub unsafe fn display_buffers() {
     let mut timer: libc::c_double = 0.;
     let mut new_interval: libc::c_double = 0.;
     timer = get_real_timer();
@@ -587,7 +587,7 @@ pub unsafe extern "C" fn display_buffers() {
   displays everything that is fed to the buffer.
 */
 
-pub unsafe extern "C" fn toggle_smart_buffer_management(mut use_smart:
+pub unsafe fn toggle_smart_buffer_management(mut use_smart:
                                                             libc::c_int) {
     timed_buffer_management = use_smart;
 }
@@ -596,7 +596,7 @@ pub unsafe extern "C" fn toggle_smart_buffer_management(mut use_smart:
   Convert a result descriptor into a string intended for output.
 */
 
-pub unsafe extern "C" fn produce_eval_text(mut eval_info: EvaluationType,
+pub unsafe fn produce_eval_text(mut eval_info: EvaluationType,
                                            mut short_output: libc::c_int)
  -> *mut libc::c_char {
     let mut buffer = 0 as *mut libc::c_char;

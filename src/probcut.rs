@@ -32,7 +32,7 @@ pub static mut mpc_cut: [DepthInfo; 23] =
    Specifies that searches to depth DEPTH are to be
    estimated using searches to depth SHALLOW_DEPTH.
 */
-unsafe extern "C" fn set_probcut(mut depth: libc::c_int,
+unsafe fn set_probcut(mut depth: libc::c_int,
                                  mut shallow: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut this_try: libc::c_int = 0;
@@ -61,7 +61,7 @@ unsafe extern "C" fn set_probcut(mut depth: libc::c_int,
    Specifies that endgame searches with EMPTY empty disks
    are to be estimated using searches to depth SHALLOW_DEPTH.
 */
-unsafe extern "C" fn set_end_probcut(mut empty: libc::c_int,
+unsafe fn set_end_probcut(mut empty: libc::c_int,
                                      mut shallow_depth: libc::c_int) {
     let mut stage: libc::c_int = 0;
     stage = 60 as libc::c_int - empty;
@@ -79,7 +79,7 @@ unsafe extern "C" fn set_end_probcut(mut empty: libc::c_int,
    reasonable cut pairs.
 */
 
-pub unsafe extern "C" fn init_probcut() {
+pub unsafe fn init_probcut() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i <= 22 as libc::c_int {

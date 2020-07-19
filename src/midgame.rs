@@ -72,7 +72,7 @@ static mut feas_index_list: [[libc::c_int; 64]; 64] = [[0; 64]; 64];
    Sets up some search parameters.
 */
 
-pub unsafe extern "C" fn setup_midgame() {
+pub unsafe fn setup_midgame() {
     let mut i: libc::c_int = 0;
     allow_midgame_hash_probe = 1 as libc::c_int;
     allow_midgame_hash_update = 1 as libc::c_int;
@@ -93,19 +93,19 @@ pub unsafe extern "C" fn setup_midgame() {
   deepening would take too long.
 */
 
-pub unsafe extern "C" fn clear_midgame_abort() {
+pub unsafe fn clear_midgame_abort() {
     midgame_abort = 0 as libc::c_int;
 }
 
-pub unsafe extern "C" fn is_midgame_abort() -> libc::c_int {
+pub unsafe fn is_midgame_abort() -> libc::c_int {
     return midgame_abort;
 }
 
-pub unsafe extern "C" fn set_midgame_abort() {
+pub unsafe fn set_midgame_abort() {
     midgame_abort = do_check_midgame_abort;
 }
 
-pub unsafe extern "C" fn toggle_midgame_abort_check(mut toggle: libc::c_int) {
+pub unsafe fn toggle_midgame_abort_check(mut toggle: libc::c_int) {
     do_check_midgame_abort = toggle;
 }
 /*
@@ -113,7 +113,7 @@ pub unsafe extern "C" fn toggle_midgame_abort_check(mut toggle: libc::c_int) {
    Toggles hash table access in the midgame search on/off.
 */
 
-pub unsafe extern "C" fn toggle_midgame_hash_usage(mut allow_read:
+pub unsafe fn toggle_midgame_hash_usage(mut allow_read:
                                                        libc::c_int,
                                                    mut allow_write:
                                                        libc::c_int) {
@@ -125,7 +125,7 @@ pub unsafe extern "C" fn toggle_midgame_hash_usage(mut allow_read:
   Determines the score perturbations (if any) to the root moves.
 */
 
-pub unsafe extern "C" fn calculate_perturbation() {
+pub unsafe fn calculate_perturbation() {
     let mut i: libc::c_int = 0;
     let mut shift: libc::c_int = 0;
     if apply_perturbation == 0 || perturbation_amplitude == 0 as libc::c_int {
@@ -151,7 +151,7 @@ pub unsafe extern "C" fn calculate_perturbation() {
   CALCULATE_PERTURBATION.
 */
 
-pub unsafe extern "C" fn set_perturbation(mut amplitude: libc::c_int) {
+pub unsafe fn set_perturbation(mut amplitude: libc::c_int) {
     perturbation_amplitude = amplitude;
 }
 /*
@@ -159,7 +159,7 @@ pub unsafe extern "C" fn set_perturbation(mut amplitude: libc::c_int) {
   Toggle usage of score perturbations on/off.
 */
 
-pub unsafe extern "C" fn toggle_perturbation_usage(mut toggle: libc::c_int) {
+pub unsafe fn toggle_perturbation_usage(mut toggle: libc::c_int) {
     apply_perturbation = toggle;
 }
 /*
@@ -167,7 +167,7 @@ pub unsafe extern "C" fn toggle_perturbation_usage(mut toggle: libc::c_int) {
   Swaps a move and its predecessor in the move list if it's
   not already first in the list.
 */
-unsafe extern "C" fn advance_move(mut index: libc::c_int) {
+unsafe fn advance_move(mut index: libc::c_int) {
     let mut temp_move: libc::c_int = 0;
     if index > 0 as libc::c_int {
         temp_move = sorted_move_order[disks_played as usize][index as usize];
@@ -184,7 +184,7 @@ unsafe extern "C" fn advance_move(mut index: libc::c_int) {
   Invokes the proper evaluation function depending on whether the
   board is filled or not.
 */
-unsafe extern "C" fn static_or_terminal_evaluation(mut side_to_move:
+unsafe fn static_or_terminal_evaluation(mut side_to_move:
                                                        libc::c_int)
  -> libc::c_int {
     if disks_played == 60 as libc::c_int {
@@ -199,7 +199,7 @@ unsafe extern "C" fn static_or_terminal_evaluation(mut side_to_move:
    The recursive tree search function. It uses negascout for
    tree pruning.
 */
-unsafe extern "C" fn fast_tree_search(mut level: libc::c_int,
+unsafe fn fast_tree_search(mut level: libc::c_int,
                                       mut max_depth: libc::c_int,
                                       mut side_to_move: libc::c_int,
                                       mut alpha: libc::c_int,
@@ -412,7 +412,7 @@ unsafe extern "C" fn fast_tree_search(mut level: libc::c_int,
 /*
   midgame_c__update_best_list
 */
-unsafe extern "C" fn midgame_c__update_best_list(mut best_list:
+unsafe fn midgame_c__update_best_list(mut best_list:
                                                      *mut libc::c_int,
                                                  mut move_0: libc::c_int,
                                                  mut best_list_index:
@@ -443,7 +443,7 @@ unsafe extern "C" fn midgame_c__update_best_list(mut best_list:
    tree pruning.
 */
 
-pub unsafe extern "C" fn tree_search(mut level: libc::c_int,
+pub unsafe fn tree_search(mut level: libc::c_int,
                                      mut max_depth: libc::c_int,
                                      mut side_to_move: libc::c_int,
                                      mut alpha: libc::c_int,
@@ -1000,7 +1000,7 @@ pub unsafe extern "C" fn tree_search(mut level: libc::c_int,
   Perturbs SCORE by PERTURBATION if it doesn't appear to be
   a midgame win.
 */
-unsafe extern "C" fn perturb_score(mut score: libc::c_int,
+unsafe fn perturb_score(mut score: libc::c_int,
                                    mut perturbation: libc::c_int)
  -> libc::c_int {
     if abs(score) < 29000 as libc::c_int - 4000 as libc::c_int {
@@ -1013,7 +1013,7 @@ unsafe extern "C" fn perturb_score(mut score: libc::c_int,
    for the root of the search tree.
 */
 
-pub unsafe extern "C" fn root_tree_search(mut level: libc::c_int,
+pub unsafe fn root_tree_search(mut level: libc::c_int,
                                           mut max_depth: libc::c_int,
                                           mut side_to_move: libc::c_int,
                                           mut alpha: libc::c_int,
@@ -1387,7 +1387,7 @@ pub unsafe extern "C" fn root_tree_search(mut level: libc::c_int,
   while avoiding all moves which allow an immediate loss
   (if that is possible).
 */
-unsafe extern "C" fn protected_one_ply_search(mut side_to_move: libc::c_int)
+unsafe fn protected_one_ply_search(mut side_to_move: libc::c_int)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
     let mut move_0: libc::c_int = 0;
@@ -1446,7 +1446,7 @@ unsafe extern "C" fn protected_one_ply_search(mut side_to_move: libc::c_int)
    side_to_move = the side whose turn it is to move
 */
 
-pub unsafe extern "C" fn middle_game(mut side_to_move: libc::c_int,
+pub unsafe fn middle_game(mut side_to_move: libc::c_int,
                                      mut max_depth: libc::c_int,
                                      mut update_evals: libc::c_int,
                                      mut eval_info: *mut EvaluationType)

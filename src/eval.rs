@@ -23,7 +23,7 @@ static mut use_experimental: libc::c_int = 0;
    Toggles usage of novelties in the evaluation function on/off.
 */
 
-pub unsafe extern "C" fn toggle_experimental(mut use_0: libc::c_int) {
+pub unsafe fn toggle_experimental(mut use_0: libc::c_int) {
     use_experimental = use_0;
 }
 /*
@@ -32,7 +32,7 @@ pub unsafe extern "C" fn toggle_experimental(mut use_0: libc::c_int) {
   0 otherwise.
 */
 
-pub unsafe extern "C" fn experimental_eval() -> libc::c_int {
+pub unsafe fn experimental_eval() -> libc::c_int {
     return use_experimental;
 }
 /*
@@ -40,7 +40,7 @@ pub unsafe extern "C" fn experimental_eval() -> libc::c_int {
   Reset the evaluation module.
 */
 
-pub unsafe extern "C" fn init_eval() { }
+pub unsafe fn init_eval() { }
 /*
    File:           eval.h
 
@@ -61,7 +61,7 @@ pub unsafe extern "C" fn init_eval() { }
   Evaluates the position when no player has any legal moves.
 */
 
-pub unsafe extern "C" fn terminal_evaluation(mut side_to_move: libc::c_int)
+pub unsafe fn terminal_evaluation(mut side_to_move: libc::c_int)
  -> libc::c_int {
     let mut disc_diff: libc::c_int = 0;
     let mut my_discs: libc::c_int = 0;

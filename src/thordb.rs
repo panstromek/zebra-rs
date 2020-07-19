@@ -16,7 +16,7 @@ pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 pub type __compar_fn_t
     =
-    Option<unsafe extern "C" fn(_: *const libc::c_void,
+    Option<unsafe fn(_: *const libc::c_void,
                                 _: *const libc::c_void) -> libc::c_int>;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -6764,7 +6764,7 @@ static mut filter: FilterType =
 /*
   CLEAR_THOR_BOARD
 */
-unsafe extern "C" fn clear_thor_board() {
+unsafe fn clear_thor_board() {
     let mut pos: libc::c_int = 0;
     pos = 11 as libc::c_int;
     while pos <= 88 as libc::c_int {
@@ -6782,7 +6782,7 @@ unsafe extern "C" fn clear_thor_board() {
   PREPARE_THOR_BOARD
   Mark the positions outside the board as OUTSIDE.
 */
-unsafe extern "C" fn prepare_thor_board() {
+unsafe fn prepare_thor_board() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut pos: libc::c_int = 0;
@@ -6806,7 +6806,7 @@ unsafe extern "C" fn prepare_thor_board() {
   Count the number of discs flipped in the direction given by INC
   when SQ is played by COLOR and flip those discs.
 */
-unsafe extern "C" fn directional_flip_count(mut sq: libc::c_int,
+unsafe fn directional_flip_count(mut sq: libc::c_int,
                                             mut inc: libc::c_int,
                                             mut color: libc::c_int,
                                             mut oppcol: libc::c_int)
@@ -6853,7 +6853,7 @@ unsafe extern "C" fn directional_flip_count(mut sq: libc::c_int,
   Returns 1 if SQ is feasible for COLOR in the direction given by INC
   and flip the discs which are flipped if SQ is played.
 */
-unsafe extern "C" fn directional_flip_any(mut sq: libc::c_int,
+unsafe fn directional_flip_any(mut sq: libc::c_int,
                                           mut inc: libc::c_int,
                                           mut color: libc::c_int,
                                           mut oppcol: libc::c_int)
@@ -6891,7 +6891,7 @@ unsafe extern "C" fn directional_flip_any(mut sq: libc::c_int,
   Returns the number of discs flipped if SQNUM is played by COLOR
   and flips those discs (if there are any).
 */
-unsafe extern "C" fn count_flips(mut sqnum: libc::c_int,
+unsafe fn count_flips(mut sqnum: libc::c_int,
                                  mut color: libc::c_int,
                                  mut oppcol: libc::c_int) -> libc::c_int {
     let mut count: libc::c_int = 0;
@@ -6937,7 +6937,7 @@ unsafe extern "C" fn count_flips(mut sqnum: libc::c_int,
   Returns 1 if SQNUM flips any discs for COLOR, otherwise 0, and
   flips those discs.
 */
-unsafe extern "C" fn any_flips(mut sqnum: libc::c_int, mut color: libc::c_int,
+unsafe fn any_flips(mut sqnum: libc::c_int, mut color: libc::c_int,
                                mut oppcol: libc::c_int) -> libc::c_int {
     let mut count: libc::c_int = 0;
     let mut mask: libc::c_int = 0;
@@ -6978,7 +6978,7 @@ unsafe extern "C" fn any_flips(mut sqnum: libc::c_int, mut color: libc::c_int,
   Computes the row and column patterns.
 
 */
-unsafe extern "C" fn compute_thor_patterns(mut in_board: *mut libc::c_int) {
+unsafe fn compute_thor_patterns(mut in_board: *mut libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut pos: libc::c_int = 0;
@@ -7015,7 +7015,7 @@ unsafe extern "C" fn compute_thor_patterns(mut in_board: *mut libc::c_int) {
   one corner has been played (obvious generalization for one or two
   corners).
 */
-unsafe extern "C" fn get_corner_mask(mut disc_a1: libc::c_int,
+unsafe fn get_corner_mask(mut disc_a1: libc::c_int,
                                      mut disc_a8: libc::c_int,
                                      mut disc_h1: libc::c_int,
                                      mut disc_h8: libc::c_int)
@@ -7090,7 +7090,7 @@ unsafe extern "C" fn get_corner_mask(mut disc_a1: libc::c_int,
   Play the MAX_MOVES first moves of GAME and update THOR_BOARD
   and THOR_SIDE_TO_MOVE to represent the position after those moves.
 */
-unsafe extern "C" fn play_through_game(mut game: *mut GameType,
+unsafe fn play_through_game(mut game: *mut GameType,
                                        mut max_moves: libc::c_int)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
@@ -7132,7 +7132,7 @@ unsafe extern "C" fn play_through_game(mut game: *mut GameType,
   The main result is that the number of black discs on the board after
   each of the moves is stored.
 */
-unsafe extern "C" fn prepare_game(mut game: *mut GameType) {
+unsafe fn prepare_game(mut game: *mut GameType) {
     let mut i: libc::c_int = 0;
     let mut move_0: libc::c_int = 0;
     let mut done: libc::c_int = 0;
@@ -7253,7 +7253,7 @@ unsafe extern "C" fn prepare_game(mut game: *mut GameType) {
   Reads an 8-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe extern "C" fn get_int_8(mut stream: *mut FILE, mut value: *mut int_8)
+unsafe fn get_int_8(mut stream: *mut FILE, mut value: *mut int_8)
  -> libc::c_int {
     let mut actually_read: libc::c_int = 0;
     actually_read =
@@ -7267,7 +7267,7 @@ unsafe extern "C" fn get_int_8(mut stream: *mut FILE, mut value: *mut int_8)
   Reads a 16-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe extern "C" fn get_int_16(mut stream: *mut FILE, mut value: *mut int_16)
+unsafe fn get_int_16(mut stream: *mut FILE, mut value: *mut int_16)
  -> libc::c_int {
     let mut actually_read: libc::c_int = 0;
     actually_read =
@@ -7281,7 +7281,7 @@ unsafe extern "C" fn get_int_16(mut stream: *mut FILE, mut value: *mut int_16)
   Reads a 32-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe extern "C" fn get_int_32(mut stream: *mut FILE, mut value: *mut int_32)
+unsafe fn get_int_32(mut stream: *mut FILE, mut value: *mut int_32)
  -> libc::c_int {
     let mut actually_read: libc::c_int = 0;
     actually_read =
@@ -7294,7 +7294,7 @@ unsafe extern "C" fn get_int_32(mut stream: *mut FILE, mut value: *mut int_32)
   TOURNAMENT_NAME
   Returns the name of the INDEXth tournament if available.
 */
-unsafe extern "C" fn tournament_name(mut index: libc::c_int)
+unsafe fn tournament_name(mut index: libc::c_int)
  -> *const libc::c_char {
     if index < 0 as libc::c_int || index >= tournaments.count {
         return b"<Not available>\x00" as *const u8 as *const libc::c_char
@@ -7309,7 +7309,7 @@ unsafe extern "C" fn tournament_name(mut index: libc::c_int)
   INDEXth tournament if available, otherwise the last
   index + 1.
 */
-unsafe extern "C" fn tournament_lex_order(mut index: libc::c_int)
+unsafe fn tournament_lex_order(mut index: libc::c_int)
  -> libc::c_int {
     if index < 0 as libc::c_int || index >= tournaments.count {
         return tournaments.count
@@ -7322,7 +7322,7 @@ unsafe extern "C" fn tournament_lex_order(mut index: libc::c_int)
   Returns the name of the INDEXth player if available.
 */
 
-pub unsafe extern "C" fn get_player_name(mut index: libc::c_int)
+pub unsafe fn get_player_name(mut index: libc::c_int)
  -> *const libc::c_char {
     if index < 0 as libc::c_int || index >= players.count {
         return b"< Not available >\x00" as *const u8 as *const libc::c_char
@@ -7336,7 +7336,7 @@ pub unsafe extern "C" fn get_player_name(mut index: libc::c_int)
   Returns the number of players in the database.
 */
 
-pub unsafe extern "C" fn get_player_count() -> libc::c_int {
+pub unsafe fn get_player_count() -> libc::c_int {
     return players.count;
 }
 /*
@@ -7344,7 +7344,7 @@ pub unsafe extern "C" fn get_player_count() -> libc::c_int {
   Returns the index into the lexicographical order of the
   INDEXth player if available, otherwise the last index + 1.
 */
-unsafe extern "C" fn player_lex_order(mut index: libc::c_int) -> libc::c_int {
+unsafe fn player_lex_order(mut index: libc::c_int) -> libc::c_int {
     if index < 0 as libc::c_int || index >= players.count {
         return players.count
     } else { return (*players.player_list.offset(index as isize)).lex_order };
@@ -7356,7 +7356,7 @@ unsafe extern "C" fn player_lex_order(mut index: libc::c_int) -> libc::c_int {
   values which aren't used are read.
   Returns TRUE upon success, otherwise FALSE.
 */
-unsafe extern "C" fn read_prolog(mut stream: *mut FILE,
+unsafe fn read_prolog(mut stream: *mut FILE,
                                  mut prolog: *mut PrologType) -> libc::c_int {
     let mut success: libc::c_int = 0;
     let mut byte_val: int_8 = 0;
@@ -7399,7 +7399,7 @@ unsafe extern "C" fn read_prolog(mut stream: *mut FILE,
   Lexicographically compares the names of two tournaments
   represented by pointers.
 */
-unsafe extern "C" fn thor_compare_tournaments(mut t1: *const libc::c_void,
+unsafe fn thor_compare_tournaments(mut t1: *const libc::c_void,
                                               mut t2: *const libc::c_void)
  -> libc::c_int {
     let mut tournament1 = *(t1 as *mut *mut TournamentType);
@@ -7410,7 +7410,7 @@ unsafe extern "C" fn thor_compare_tournaments(mut t1: *const libc::c_void,
   SORT_TOURNAMENT_DATABASE
   Computes the lexicographic order of all tournaments in the database.
 */
-unsafe extern "C" fn sort_tournament_database() {
+unsafe fn sort_tournament_database() {
     let mut tournament_buffer = 0 as *mut *mut TournamentType;
     let mut i: libc::c_int = 0;
     tournament_buffer =
@@ -7429,7 +7429,7 @@ unsafe extern "C" fn sort_tournament_database() {
     qsort(tournament_buffer as *mut libc::c_void, tournaments.count as size_t,
           ::std::mem::size_of::<*mut TournamentType>() as libc::c_ulong,
           Some(thor_compare_tournaments as
-                   unsafe extern "C" fn(_: *const libc::c_void,
+                   unsafe fn(_: *const libc::c_void,
                                         _: *const libc::c_void)
                        -> libc::c_int));
     i = 0 as libc::c_int;
@@ -7445,7 +7445,7 @@ unsafe extern "C" fn sort_tournament_database() {
   Returns TRUE if all went well, otherwise FALSE.
 */
 
-pub unsafe extern "C" fn read_tournament_database(mut file_name:
+pub unsafe fn read_tournament_database(mut file_name:
                                                       *const libc::c_char)
  -> libc::c_int {
     let mut stream = 0 as *mut FILE;
@@ -7498,7 +7498,7 @@ pub unsafe extern "C" fn read_tournament_database(mut file_name:
   Returns the name of the INDEXth tournament if available.
 */
 
-pub unsafe extern "C" fn get_tournament_name(mut index: libc::c_int)
+pub unsafe fn get_tournament_name(mut index: libc::c_int)
  -> *const libc::c_char {
     if index < 0 as libc::c_int || index >= tournaments.count {
         return b"< Not available >\x00" as *const u8 as *const libc::c_char
@@ -7512,7 +7512,7 @@ pub unsafe extern "C" fn get_tournament_name(mut index: libc::c_int)
   Returns the number of players in the database.
 */
 
-pub unsafe extern "C" fn get_tournament_count() -> libc::c_int {
+pub unsafe fn get_tournament_count() -> libc::c_int {
     return tournaments.count;
 }
 /*
@@ -7520,7 +7520,7 @@ pub unsafe extern "C" fn get_tournament_count() -> libc::c_int {
   Lexicographically compares the names of two players
   represented by pointers.
 */
-unsafe extern "C" fn thor_compare_players(mut p1: *const libc::c_void,
+unsafe fn thor_compare_players(mut p1: *const libc::c_void,
                                           mut p2: *const libc::c_void)
  -> libc::c_int {
     let mut ch: libc::c_char = 0;
@@ -7557,7 +7557,7 @@ unsafe extern "C" fn thor_compare_players(mut p1: *const libc::c_void,
   SORT_PLAYER_DATABASE
   Computes the lexicographic order of all players in the database.
 */
-unsafe extern "C" fn sort_player_database() {
+unsafe fn sort_player_database() {
     let mut player_buffer = 0 as *mut *mut PlayerType;
     let mut i: libc::c_int = 0;
     player_buffer =
@@ -7575,7 +7575,7 @@ unsafe extern "C" fn sort_player_database() {
     qsort(player_buffer as *mut libc::c_void, players.count as size_t,
           ::std::mem::size_of::<*mut PlayerType>() as libc::c_ulong,
           Some(thor_compare_players as
-                   unsafe extern "C" fn(_: *const libc::c_void,
+                   unsafe fn(_: *const libc::c_void,
                                         _: *const libc::c_void)
                        -> libc::c_int));
     i = 0 as libc::c_int;
@@ -7591,7 +7591,7 @@ unsafe extern "C" fn sort_player_database() {
   Returns TRUE if all went well, otherwise FALSE.
 */
 
-pub unsafe extern "C" fn read_player_database(mut file_name:
+pub unsafe fn read_player_database(mut file_name:
                                                   *const libc::c_char)
  -> libc::c_int {
     let mut stream = 0 as *mut FILE;
@@ -7656,7 +7656,7 @@ pub unsafe extern "C" fn read_player_database(mut file_name:
   for database questions. Returns TRUE upon success,
   otherwise FALSE.
 */
-unsafe extern "C" fn read_game(mut stream: *mut FILE, mut game: *mut GameType)
+unsafe fn read_game(mut stream: *mut FILE, mut game: *mut GameType)
  -> libc::c_int {
     let mut success: libc::c_int = 0;
     let mut actually_read: libc::c_int = 0;
@@ -7693,7 +7693,7 @@ unsafe extern "C" fn read_game(mut stream: *mut FILE, mut game: *mut GameType)
   Reads a game database from FILE_NAME.
 */
 
-pub unsafe extern "C" fn read_game_database(mut file_name:
+pub unsafe fn read_game_database(mut file_name:
                                                 *const libc::c_char)
  -> libc::c_int {
     let mut stream = 0 as *mut FILE;
@@ -7744,7 +7744,7 @@ pub unsafe extern "C" fn read_game_database(mut file_name:
   according to the specification of the database format).
 */
 
-pub unsafe extern "C" fn game_database_already_loaded(mut file_name:
+pub unsafe fn game_database_already_loaded(mut file_name:
                                                           *const libc::c_char)
  -> libc::c_int {
     let mut stream = 0 as *mut FILE;
@@ -7789,7 +7789,7 @@ pub unsafe extern "C" fn game_database_already_loaded(mut file_name:
   Returns the number of game databases currently loaded.
 */
 
-pub unsafe extern "C" fn get_database_count() -> libc::c_int {
+pub unsafe fn get_database_count() -> libc::c_int {
     return thor_database_count;
 }
 /*
@@ -7801,7 +7801,7 @@ pub unsafe extern "C" fn get_database_count() -> libc::c_int {
   above.
 */
 
-pub unsafe extern "C" fn get_database_info(mut info: *mut DatabaseInfoType) {
+pub unsafe fn get_database_info(mut info: *mut DatabaseInfoType) {
     let mut i: libc::c_int = 0;
     let mut change: libc::c_int = 0;
     let mut temp = DatabaseInfoType{year: 0, count: 0,};
@@ -7839,7 +7839,7 @@ pub unsafe extern "C" fn get_database_info(mut info: *mut DatabaseInfoType) {
   The flag DISPLAY_MOVES specifies if the moves of the
   game are to be output or not.
 */
-unsafe extern "C" fn print_game(mut stream: *mut FILE,
+unsafe fn print_game(mut stream: *mut FILE,
                                 mut game: *mut GameType,
                                 mut display_moves: libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -7876,7 +7876,7 @@ unsafe extern "C" fn print_game(mut stream: *mut FILE,
   Computes the primary and secondary hash values for the
   unit element in the rotation group.
 */
-unsafe extern "C" fn compute_partial_hash(mut hash_val1: *mut libc::c_uint,
+unsafe fn compute_partial_hash(mut hash_val1: *mut libc::c_uint,
                                           mut hash_val2: *mut libc::c_uint) {
     let mut i: libc::c_int = 0;
     *hash_val1 = 0 as libc::c_int as libc::c_uint;
@@ -7898,7 +7898,7 @@ unsafe extern "C" fn compute_partial_hash(mut hash_val1: *mut libc::c_uint,
   Note: The order of the hash codes must coincide with the
         definitions in INIT_SYMMETRY_MAPS().
 */
-unsafe extern "C" fn compute_full_primary_hash(mut hash_val:
+unsafe fn compute_full_primary_hash(mut hash_val:
                                                    *mut libc::c_uint) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
@@ -7939,7 +7939,7 @@ unsafe extern "C" fn compute_full_primary_hash(mut hash_val:
     *hash_val.offset(7 as libc::c_int as isize) =
         bit_reverse_32(*hash_val.offset(3 as libc::c_int as isize));
 }
-unsafe extern "C" fn compute_full_secondary_hash(mut hash_val:
+unsafe fn compute_full_secondary_hash(mut hash_val:
                                                      *mut libc::c_uint) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
@@ -7987,7 +7987,7 @@ unsafe extern "C" fn compute_full_secondary_hash(mut hash_val:
   Checks if any of the rotations of the current pattern set
   match the primary hash code TARGET_HASH.
 */
-unsafe extern "C" fn primary_hash_lookup(mut target_hash: libc::c_uint)
+unsafe fn primary_hash_lookup(mut target_hash: libc::c_uint)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
     let mut hit_mask: libc::c_int = 0;
@@ -8008,7 +8008,7 @@ unsafe extern "C" fn primary_hash_lookup(mut target_hash: libc::c_uint)
   Checks if any of the rotations of the current pattern set
   match the secondary hash code TARGET_HASH.
 */
-unsafe extern "C" fn secondary_hash_lookup(mut target_hash: libc::c_uint)
+unsafe fn secondary_hash_lookup(mut target_hash: libc::c_uint)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
     let mut hit_mask: libc::c_int = 0;
@@ -8030,7 +8030,7 @@ unsafe extern "C" fn secondary_hash_lookup(mut target_hash: libc::c_uint)
   Only to be called by QSORT. A full comparison is
   performed using the priority order from THOR_SORT_ORDER.
 */
-unsafe extern "C" fn thor_compare(mut g1: *const libc::c_void,
+unsafe fn thor_compare(mut g1: *const libc::c_void,
                                   mut g2: *const libc::c_void)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
@@ -8090,7 +8090,7 @@ unsafe extern "C" fn thor_compare(mut g1: *const libc::c_void,
   FILTER_DATABASE
   Applies the current filter rules to the database DB.
 */
-unsafe extern "C" fn filter_database(mut db: *mut DatabaseType) {
+unsafe fn filter_database(mut db: *mut DatabaseType) {
     let mut i: libc::c_int = 0;
     let mut category: libc::c_int = 0;
     let mut passes_filter: libc::c_int = 0;
@@ -8177,7 +8177,7 @@ unsafe extern "C" fn filter_database(mut db: *mut DatabaseType) {
   FILTER_ALL_DATABASES
   Applies the current filter rules to all databases.
 */
-unsafe extern "C" fn filter_all_databases() {
+unsafe fn filter_all_databases() {
     let mut current_db = 0 as *mut DatabaseType;
     current_db = database_head;
     while !current_db.is_null() {
@@ -8192,7 +8192,7 @@ unsafe extern "C" fn filter_all_databases() {
   GET_PLAYER_COUNT() if necessary.
 */
 
-pub unsafe extern "C" fn set_player_filter(mut selected: *mut libc::c_int) {
+pub unsafe fn set_player_filter(mut selected: *mut libc::c_int) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < players.count {
@@ -8208,7 +8208,7 @@ pub unsafe extern "C" fn set_player_filter(mut selected: *mut libc::c_int) {
   player or if both players have to be selected for it be displayed.
 */
 
-pub unsafe extern "C" fn set_player_filter_type(mut player_filter:
+pub unsafe fn set_player_filter_type(mut player_filter:
                                                     PlayerFilterType) {
     filter.player_filter = player_filter;
 }
@@ -8219,7 +8219,7 @@ pub unsafe extern "C" fn set_player_filter_type(mut player_filter:
   GET_TOURNAMENT_COUNT() if necessary.
 */
 
-pub unsafe extern "C" fn set_tournament_filter(mut selected:
+pub unsafe fn set_tournament_filter(mut selected:
                                                    *mut libc::c_int) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
@@ -8235,7 +8235,7 @@ pub unsafe extern "C" fn set_tournament_filter(mut selected:
   Specify the interval of years to which the search will be confined.
 */
 
-pub unsafe extern "C" fn set_year_filter(mut first_year: libc::c_int,
+pub unsafe fn set_year_filter(mut first_year: libc::c_int,
                                          mut last_year: libc::c_int) {
     filter.first_year = first_year;
     filter.last_year = last_year;
@@ -8248,7 +8248,7 @@ pub unsafe extern "C" fn set_year_filter(mut first_year: libc::c_int,
   OR of the flags for the types enabled.
 */
 
-pub unsafe extern "C" fn specify_game_categories(mut categories:
+pub unsafe fn specify_game_categories(mut categories:
                                                      libc::c_int) {
     if categories != filter.game_categories {
         filter.game_categories = categories;
@@ -8261,7 +8261,7 @@ pub unsafe extern "C" fn specify_game_categories(mut categories:
   The first THOR_SORT_CRITERIA_COUNT entries of THOR_SORT_ORDER are
   used (in order) to sort the matches.
 */
-unsafe extern "C" fn sort_thor_games(mut count: libc::c_int) {
+unsafe fn sort_thor_games(mut count: libc::c_int) {
     if count <= 1 as libc::c_int {
         /* No need to sort 0 or 1 games. */
         return
@@ -8269,7 +8269,7 @@ unsafe extern "C" fn sort_thor_games(mut count: libc::c_int) {
     qsort(thor_search.match_list as *mut libc::c_void, count as size_t,
           ::std::mem::size_of::<*mut GameType>() as libc::c_ulong,
           Some(thor_compare as
-                   unsafe extern "C" fn(_: *const libc::c_void,
+                   unsafe fn(_: *const libc::c_void,
                                         _: *const libc::c_void)
                        -> libc::c_int));
 }
@@ -8282,7 +8282,7 @@ unsafe extern "C" fn sort_thor_games(mut count: libc::c_int) {
         to which SORT_ORDER points, a crash is likely.
 */
 
-pub unsafe extern "C" fn specify_thor_sort_order(mut count: libc::c_int,
+pub unsafe fn specify_thor_sort_order(mut count: libc::c_int,
                                                  mut sort_order:
                                                      *mut libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -8314,7 +8314,7 @@ pub unsafe extern "C" fn specify_thor_sort_order(mut count: libc::c_int,
   with the primary and secondary hash codes from the 8 different
   rotations.
 */
-unsafe extern "C" fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
+unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
                                             mut depth: libc::c_int,
                                             mut moves_played: libc::c_int,
                                             mut primary_hash_0:
@@ -8364,7 +8364,7 @@ unsafe extern "C" fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
   Fills the opening tree with information on how well
   the current pattern configuration matches the openings.
 */
-unsafe extern "C" fn opening_scan(mut moves_played: libc::c_int) {
+unsafe fn opening_scan(mut moves_played: libc::c_int) {
     let mut primary_hash_0: [libc::c_uint; 8] = [0; 8];
     let mut secondary_hash_0: [libc::c_uint; 8] = [0; 8];
     compute_full_primary_hash(primary_hash_0.as_mut_ptr());
@@ -8379,7 +8379,7 @@ unsafe extern "C" fn opening_scan(mut moves_played: libc::c_int) {
   the number of times each move has been played according to the
   trimmed set of openings from the Thor database.
 */
-unsafe extern "C" fn recursive_frequency_count(mut node: *mut ThorOpeningNode,
+unsafe fn recursive_frequency_count(mut node: *mut ThorOpeningNode,
                                                mut freq_count:
                                                    *mut libc::c_int,
                                                mut depth: libc::c_int,
@@ -8432,7 +8432,7 @@ unsafe extern "C" fn recursive_frequency_count(mut node: *mut ThorOpeningNode,
   towards common moves. (If no moves are found, PASS is returned.)
 */
 
-pub unsafe extern "C" fn choose_thor_opening_move(mut in_board:
+pub unsafe fn choose_thor_opening_move(mut in_board:
                                                       *mut libc::c_int,
                                                   mut side_to_move:
                                                       libc::c_int,
@@ -8596,7 +8596,7 @@ pub unsafe extern "C" fn choose_thor_opening_move(mut in_board:
   SIDE_TO_MOVE being the player to move, matches the hash codes
   IN_HASH1 and IN_HASH2, otherwise FALSE.
 */
-unsafe extern "C" fn position_match(mut game: *mut GameType,
+unsafe fn position_match(mut game: *mut GameType,
                                     mut move_count: libc::c_int,
                                     mut side_to_move: libc::c_int,
                                     mut shape_lo: *mut libc::c_uint,
@@ -8731,7 +8731,7 @@ unsafe extern "C" fn position_match(mut game: *mut GameType,
   given by IN_BOARD with SIDE_TO_MOVE being the player whose turn it is.
 */
 
-pub unsafe extern "C" fn database_search(mut in_board: *mut libc::c_int,
+pub unsafe fn database_search(mut in_board: *mut libc::c_int,
                                          mut side_to_move: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
@@ -9097,7 +9097,7 @@ pub unsafe extern "C" fn database_search(mut in_board: *mut libc::c_int,
   in the list of matching games generated by DATABASE_SEARCH.
 */
 
-pub unsafe extern "C" fn get_thor_game(mut index: libc::c_int)
+pub unsafe fn get_thor_game(mut index: libc::c_int)
  -> GameInfoType {
     let mut info =
         GameInfoType{black_name: 0 as *const libc::c_char,
@@ -9138,7 +9138,7 @@ pub unsafe extern "C" fn get_thor_game(mut index: libc::c_int)
   on what rotation that gave a match.
 */
 
-pub unsafe extern "C" fn get_thor_game_moves(mut index: libc::c_int,
+pub unsafe fn get_thor_game_moves(mut index: libc::c_int,
                                              mut move_count: *mut libc::c_int,
                                              mut moves: *mut libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -9182,7 +9182,7 @@ pub unsafe extern "C" fn get_thor_game_moves(mut index: libc::c_int,
   in the list of matching games generated by DATABASE_SEARCH.
 */
 
-pub unsafe extern "C" fn get_thor_game_move_count(mut index: libc::c_int)
+pub unsafe fn get_thor_game_move_count(mut index: libc::c_int)
  -> libc::c_int {
     if index < 0 as libc::c_int || index >= thor_search.match_count {
         /* Bad index */
@@ -9198,7 +9198,7 @@ pub unsafe extern "C" fn get_thor_game_move_count(mut index: libc::c_int)
   in the list of matching games generated by DATABASE_SEARCH.
 */
 
-pub unsafe extern "C" fn get_thor_game_move(mut index: libc::c_int,
+pub unsafe fn get_thor_game_move(mut index: libc::c_int,
                                             mut move_number: libc::c_int)
  -> libc::c_int {
     if index < 0 as libc::c_int || index >= thor_search.match_count {
@@ -9232,40 +9232,40 @@ pub unsafe extern "C" fn get_thor_game_move(mut index: libc::c_int,
   query to DATABASE_SEARCH.
 */
 
-pub unsafe extern "C" fn get_total_game_count() -> libc::c_int {
+pub unsafe fn get_total_game_count() -> libc::c_int {
     return thor_game_count;
 }
 
-pub unsafe extern "C" fn get_match_count() -> libc::c_int {
+pub unsafe fn get_match_count() -> libc::c_int {
     return thor_search.match_count;
 }
 
-pub unsafe extern "C" fn get_black_win_count() -> libc::c_int {
+pub unsafe fn get_black_win_count() -> libc::c_int {
     return thor_search.black_wins;
 }
 
-pub unsafe extern "C" fn get_draw_count() -> libc::c_int {
+pub unsafe fn get_draw_count() -> libc::c_int {
     return thor_search.draws;
 }
 
-pub unsafe extern "C" fn get_white_win_count() -> libc::c_int {
+pub unsafe fn get_white_win_count() -> libc::c_int {
     return thor_search.white_wins;
 }
 
-pub unsafe extern "C" fn get_black_median_score() -> libc::c_int {
+pub unsafe fn get_black_median_score() -> libc::c_int {
     return thor_search.median_black_score;
 }
 
-pub unsafe extern "C" fn get_black_average_score() -> libc::c_double {
+pub unsafe fn get_black_average_score() -> libc::c_double {
     return thor_search.average_black_score;
 }
 
-pub unsafe extern "C" fn get_move_frequency(mut move_0: libc::c_int)
+pub unsafe fn get_move_frequency(mut move_0: libc::c_int)
  -> libc::c_int {
     return thor_search.next_move_frequency[move_0 as usize];
 }
 
-pub unsafe extern "C" fn get_move_win_rate(mut move_0: libc::c_int)
+pub unsafe fn get_move_win_rate(mut move_0: libc::c_int)
  -> libc::c_double {
     if thor_search.next_move_frequency[move_0 as usize] == 0 as libc::c_int {
         return 0.0f64
@@ -9281,7 +9281,7 @@ pub unsafe extern "C" fn get_move_win_rate(mut move_0: libc::c_int)
   database search to STREAM.
 */
 
-pub unsafe extern "C" fn print_thor_matches(mut stream: *mut FILE,
+pub unsafe fn print_thor_matches(mut stream: *mut FILE,
                                             mut max_games: libc::c_int) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
@@ -9306,7 +9306,7 @@ pub unsafe extern "C" fn print_thor_matches(mut stream: *mut FILE,
 
   which speeds up the computation of the hash functions.
 */
-unsafe extern "C" fn init_thor_hash() {
+unsafe fn init_thor_hash() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut row: [libc::c_int; 10] = [0; 10];
@@ -9378,7 +9378,7 @@ unsafe extern "C" fn init_thor_hash() {
   INIT_MOVE_MASKS
   Initializes the shape bit masks for each of the possible moves.
 */
-unsafe extern "C" fn init_move_masks() {
+unsafe fn init_move_masks() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut pos: libc::c_int = 0;
@@ -9428,7 +9428,7 @@ unsafe extern "C" fn init_move_masks() {
         in which they are calculated in COMPUTE_FULL_PRIMARY_HASH()
     and COMPUTE_FULL_SECONDARY_HASH().
 */
-unsafe extern "C" fn init_symmetry_maps() {
+unsafe fn init_symmetry_maps() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut k: libc::c_int = 0;
@@ -9509,7 +9509,7 @@ unsafe extern "C" fn init_symmetry_maps() {
   NEW_THOR_OPENING_NODE
   Creates and initializes a new node for use in the opening tree.
 */
-unsafe extern "C" fn new_thor_opening_node(mut parent: *mut ThorOpeningNode)
+unsafe fn new_thor_opening_node(mut parent: *mut ThorOpeningNode)
  -> *mut ThorOpeningNode {
     let mut node = 0 as *mut ThorOpeningNode;
     node =
@@ -9527,7 +9527,7 @@ unsafe extern "C" fn new_thor_opening_node(mut parent: *mut ThorOpeningNode)
   Calculates and returns the number of lines in the Thor opening base
   that match the line defined by NODE.
 */
-unsafe extern "C" fn calculate_opening_frequency(mut node:
+unsafe fn calculate_opening_frequency(mut node:
                                                      *mut ThorOpeningNode)
  -> libc::c_int {
     let mut sum: libc::c_int = 0;
@@ -9551,7 +9551,7 @@ unsafe extern "C" fn calculate_opening_frequency(mut node:
   Builds the opening tree from the statically computed
   structure THOR_OPENING_LIST (see thorop.c).
 */
-unsafe extern "C" fn build_thor_opening_tree() {
+unsafe fn build_thor_opening_tree() {
     let mut thor_move_list: [libc::c_char; 61] = [0; 61];
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
@@ -9715,7 +9715,7 @@ unsafe extern "C" fn build_thor_opening_tree() {
   Returns the amount of memory which each game in the database takes.
 */
 
-pub unsafe extern "C" fn get_thor_game_size() -> libc::c_int {
+pub unsafe fn get_thor_game_size() -> libc::c_int {
     return ::std::mem::size_of::<GameType>() as libc::c_ulong as libc::c_int;
 }
 /*
@@ -9725,7 +9725,7 @@ pub unsafe extern "C" fn get_thor_game_size() -> libc::c_int {
   must be called.
 */
 
-pub unsafe extern "C" fn init_thor_database() {
+pub unsafe fn init_thor_database() {
     let mut i: libc::c_int = 0; /* "infinity" */
     thor_game_count = 0 as libc::c_int;
     thor_database_count = 0 as libc::c_int;

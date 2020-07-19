@@ -25,7 +25,7 @@ use crate::src::error::fatal_error;
 use crate::src::libc;
 
 pub type size_t = libc::c_ulong;
-pub unsafe extern "C" fn safe_malloc(mut size: size_t) -> *mut libc::c_void {
+pub unsafe fn safe_malloc(mut size: size_t) -> *mut libc::c_void {
     let mut block = 0 as *mut libc::c_void;
     block = malloc(size);
     if block.is_null() {
@@ -36,7 +36,7 @@ pub unsafe extern "C" fn safe_malloc(mut size: size_t) -> *mut libc::c_void {
     return block;
 }
 
-pub unsafe extern "C" fn safe_realloc(mut ptr: *mut libc::c_void,
+pub unsafe fn safe_realloc(mut ptr: *mut libc::c_void,
                                       mut size: size_t) -> *mut libc::c_void {
     let mut block = 0 as *mut libc::c_void;
     block = realloc(ptr, size);

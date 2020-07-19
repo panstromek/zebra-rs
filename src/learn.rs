@@ -34,7 +34,7 @@ static mut game_move: [libc::c_short; 61] = [0; 61];
    Remove all stored moves.
 */
 
-pub unsafe extern "C" fn clear_stored_game() {
+pub unsafe fn clear_stored_game() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i <= 60 as libc::c_int {
@@ -48,7 +48,7 @@ pub unsafe extern "C" fn clear_stored_game() {
    had been played.
 */
 
-pub unsafe extern "C" fn store_move(mut disks_played_0: libc::c_int,
+pub unsafe fn store_move(mut disks_played_0: libc::c_int,
                                     mut move_0: libc::c_int) {
     game_move[disks_played_0 as usize] = move_0 as libc::c_short;
 }
@@ -58,7 +58,7 @@ pub unsafe extern "C" fn store_move(mut disks_played_0: libc::c_int,
    of empty squares at which the game is considered over.
 */
 
-pub unsafe extern "C" fn set_learning_parameters(mut depth: libc::c_int,
+pub unsafe fn set_learning_parameters(mut depth: libc::c_int,
                                                  mut cutoff: libc::c_int) {
     learn_depth = depth;
     cutoff_empty = cutoff;
@@ -70,7 +70,7 @@ pub unsafe extern "C" fn set_learning_parameters(mut depth: libc::c_int,
    moves to be learned anyway.
 */
 
-pub unsafe extern "C" fn game_learnable(mut finished: libc::c_int,
+pub unsafe fn game_learnable(mut finished: libc::c_int,
                                         mut move_count_0: libc::c_int)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
@@ -93,7 +93,7 @@ pub unsafe extern "C" fn game_learnable(mut finished: libc::c_int,
    Initialize the learning module.
 */
 
-pub unsafe extern "C" fn init_learn(mut file_name: *const libc::c_char,
+pub unsafe fn init_learn(mut file_name: *const libc::c_char,
                                     mut is_binary: libc::c_int) {
     init_osf(0 as libc::c_int);
     if is_binary != 0 {
@@ -109,7 +109,7 @@ pub unsafe extern "C" fn init_learn(mut file_name: *const libc::c_char,
    the database.
 */
 
-pub unsafe extern "C" fn learn_game(mut game_length: libc::c_int,
+pub unsafe fn learn_game(mut game_length: libc::c_int,
                                     mut private_game: libc::c_int,
                                     mut save_database: libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -156,7 +156,7 @@ pub unsafe extern "C" fn learn_game(mut game_length: libc::c_int,
   interpretation as in a call to set_learning_parameters().
 */
 
-pub unsafe extern "C" fn full_learn_public_game(mut length: libc::c_int,
+pub unsafe fn full_learn_public_game(mut length: libc::c_int,
                                                 mut moves: *mut libc::c_int,
                                                 mut cutoff: libc::c_int,
                                                 mut deviation_depth:

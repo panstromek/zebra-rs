@@ -29,7 +29,7 @@ static mut init_time: time_t = 0;
   RESET_REAL_TIMER
 */
 
-pub unsafe extern "C" fn reset_real_timer() { time(&mut init_time); }
+pub unsafe fn reset_real_timer() { time(&mut init_time); }
 /*
   INIT_TIMER
   Initializes the timer. This is really only needed when
@@ -37,13 +37,13 @@ pub unsafe extern "C" fn reset_real_timer() { time(&mut init_time); }
   is used for timing.
 */
 
-pub unsafe extern "C" fn init_timer() { reset_real_timer(); }
+pub unsafe fn init_timer() { reset_real_timer(); }
 /*
   GET_REAL_TIMER
   Returns the time passed since the last call to init_timer() or reset_timer().
 */
 
-pub unsafe extern "C" fn get_real_timer() -> libc::c_double {
+pub unsafe fn get_real_timer() -> libc::c_double {
     let mut curr_time: time_t = 0;
     time(&mut curr_time);
     return (curr_time - init_time) as libc::c_double;
@@ -53,7 +53,7 @@ pub unsafe extern "C" fn get_real_timer() -> libc::c_double {
   Sets the panic timeout when search immediately must stop.
 */
 
-pub unsafe extern "C" fn set_default_panic() {
+pub unsafe fn set_default_panic() {
     panic_value = time_per_move * (1.6f64 / 0.7f64) / total_move_time;
 }
 /*
@@ -74,7 +74,7 @@ pub unsafe extern "C" fn set_default_panic() {
   Initializes the timing subsystem and allocates time for the current move.
 */
 
-pub unsafe extern "C" fn determine_move_time(mut time_left: libc::c_double,
+pub unsafe fn determine_move_time(mut time_left: libc::c_double,
                                              mut incr: libc::c_double,
                                              mut discs: libc::c_int) {
     let mut time_available: libc::c_double = 0.;
@@ -111,14 +111,14 @@ pub unsafe extern "C" fn determine_move_time(mut time_left: libc::c_double,
   This is the actual time, not adjusted for pondering.
 */
 
-pub unsafe extern "C" fn get_elapsed_time() -> libc::c_double {
+pub unsafe fn get_elapsed_time() -> libc::c_double {
     return fabs(get_real_timer() - start_time);
 }
 /*
   START_MOVE
 */
 
-pub unsafe extern "C" fn start_move(mut in_total_time: libc::c_double,
+pub unsafe fn start_move(mut in_total_time: libc::c_double,
                                     mut increment: libc::c_double,
                                     mut discs: libc::c_int) {
     /*
@@ -140,7 +140,7 @@ pub unsafe extern "C" fn start_move(mut in_total_time: libc::c_double,
   before the panic timeout kicks in.
 */
 
-pub unsafe extern "C" fn set_panic_threshold(mut value: libc::c_double) {
+pub unsafe fn set_panic_threshold(mut value: libc::c_double) {
     panic_value = value;
 }
 /*
@@ -149,7 +149,7 @@ pub unsafe extern "C" fn set_panic_threshold(mut value: libc::c_double) {
   sets the PANIC_ABORT flags.
 */
 
-pub unsafe extern "C" fn check_panic_abort() {
+pub unsafe fn check_panic_abort() {
     let mut curr_time: libc::c_double = 0.;
     let mut adjusted_total_time: libc::c_double = 0.;
     curr_time = get_elapsed_time();
@@ -163,7 +163,7 @@ pub unsafe extern "C" fn check_panic_abort() {
   Checks if a certain fraction of the panic time has been used.
 */
 
-pub unsafe extern "C" fn check_threshold(mut threshold: libc::c_double)
+pub unsafe fn check_threshold(mut threshold: libc::c_double)
  -> libc::c_int {
     let mut curr_time: libc::c_double = 0.;
     let mut adjusted_total_time: libc::c_double = 0.;
@@ -178,7 +178,7 @@ pub unsafe extern "C" fn check_threshold(mut threshold: libc::c_double)
   Enables/disables panic time abort checking.
 */
 
-pub unsafe extern "C" fn toggle_abort_check(mut enable: libc::c_int) {
+pub unsafe fn toggle_abort_check(mut enable: libc::c_int) {
     do_check_abort = enable;
 }
 /*
@@ -186,7 +186,7 @@ pub unsafe extern "C" fn toggle_abort_check(mut enable: libc::c_int) {
   Resets the panic abort flag.
 */
 
-pub unsafe extern "C" fn clear_panic_abort() {
+pub unsafe fn clear_panic_abort() {
     panic_abort = 0 as libc::c_int;
 }
 /*
@@ -194,7 +194,7 @@ pub unsafe extern "C" fn clear_panic_abort() {
   Returns the current panic status.
 */
 
-pub unsafe extern "C" fn is_panic_abort() -> libc::c_int {
+pub unsafe fn is_panic_abort() -> libc::c_int {
     return panic_abort;
 }
 /*
@@ -203,7 +203,7 @@ pub unsafe extern "C" fn is_panic_abort() -> libc::c_int {
   the time associated with the last move actually made.
 */
 
-pub unsafe extern "C" fn clear_ponder_times() {
+pub unsafe fn clear_ponder_times() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < 100 as libc::c_int {
@@ -220,7 +220,7 @@ pub unsafe extern "C" fn clear_ponder_times() {
   a certain move.
 */
 
-pub unsafe extern "C" fn add_ponder_time(mut move_0: libc::c_int,
+pub unsafe fn add_ponder_time(mut move_0: libc::c_int,
                                          mut time_0: libc::c_double) {
     ponder_time[move_0 as usize] += time_0;
 }
@@ -230,7 +230,7 @@ pub unsafe extern "C" fn add_ponder_time(mut move_0: libc::c_int,
   pondering was made is stored.
 */
 
-pub unsafe extern "C" fn adjust_current_ponder_time(mut move_0: libc::c_int) {
+pub unsafe fn adjust_current_ponder_time(mut move_0: libc::c_int) {
     current_ponder_time = ponder_time[move_0 as usize];
     current_ponder_depth = ponder_depth[move_0 as usize];
     printf(b"Ponder time: %.1f s\n\x00" as *const u8 as *const libc::c_char,
@@ -246,11 +246,11 @@ pub unsafe extern "C" fn adjust_current_ponder_time(mut move_0: libc::c_int) {
   The extended version takes the ponder time into account.
 */
 
-pub unsafe extern "C" fn above_recommended() -> libc::c_int {
+pub unsafe fn above_recommended() -> libc::c_int {
     return (get_elapsed_time() >= time_per_move) as libc::c_int;
 }
 
-pub unsafe extern "C" fn extended_above_recommended() -> libc::c_int {
+pub unsafe fn extended_above_recommended() -> libc::c_int {
     return (get_elapsed_time() + frozen_ponder_time >= 1.5f64 * time_per_move)
                as libc::c_int;
 }

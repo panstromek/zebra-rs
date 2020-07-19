@@ -324,7 +324,7 @@ static mut f_flip: [libc::c_uchar; 160] =
      0x3d as libc::c_int as libc::c_uchar, 0 as libc::c_int as libc::c_uchar,
      0 as libc::c_int as libc::c_uchar];
 // //
-unsafe extern "C" fn TestFlips_bitboard_a1(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_a1(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -467,7 +467,7 @@ unsafe extern "C" fn TestFlips_bitboard_a1(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_h1(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_h1(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -612,7 +612,7 @@ unsafe extern "C" fn TestFlips_bitboard_h1(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_a8(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_a8(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -760,7 +760,7 @@ unsafe extern "C" fn TestFlips_bitboard_a8(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_h8(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_h8(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -907,7 +907,7 @@ unsafe extern "C" fn TestFlips_bitboard_h8(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_b1(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_b1(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -1043,7 +1043,7 @@ unsafe extern "C" fn TestFlips_bitboard_b1(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_g1(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_g1(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -1181,7 +1181,7 @@ unsafe extern "C" fn TestFlips_bitboard_g1(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_a2(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_a2(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -1314,7 +1314,7 @@ unsafe extern "C" fn TestFlips_bitboard_a2(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_h2(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_h2(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -1449,7 +1449,7 @@ unsafe extern "C" fn TestFlips_bitboard_h2(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_a7(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_a7(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -1585,7 +1585,7 @@ unsafe extern "C" fn TestFlips_bitboard_a7(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_h7(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_h7(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -1722,7 +1722,7 @@ unsafe extern "C" fn TestFlips_bitboard_h7(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_b8(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_b8(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -1864,7 +1864,7 @@ unsafe extern "C" fn TestFlips_bitboard_b8(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_g8(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_g8(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -2004,7 +2004,7 @@ unsafe extern "C" fn TestFlips_bitboard_g8(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_b2(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_b2(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -2137,7 +2137,7 @@ unsafe extern "C" fn TestFlips_bitboard_b2(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_g2(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_g2(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -2272,7 +2272,7 @@ unsafe extern "C" fn TestFlips_bitboard_g2(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_b7(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_b7(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -2408,7 +2408,7 @@ unsafe extern "C" fn TestFlips_bitboard_b7(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_g7(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_g7(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -2545,7 +2545,7 @@ unsafe extern "C" fn TestFlips_bitboard_g7(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_c1(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_c1(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -2695,7 +2695,7 @@ unsafe extern "C" fn TestFlips_bitboard_c1(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_f1(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_f1(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -2842,7 +2842,7 @@ unsafe extern "C" fn TestFlips_bitboard_f1(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_a3(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_a3(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -2961,7 +2961,7 @@ unsafe extern "C" fn TestFlips_bitboard_a3(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_h3(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_h3(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -3082,7 +3082,7 @@ unsafe extern "C" fn TestFlips_bitboard_h3(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_a6(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_a6(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -3203,7 +3203,7 @@ unsafe extern "C" fn TestFlips_bitboard_a6(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_h6(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_h6(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -3326,7 +3326,7 @@ unsafe extern "C" fn TestFlips_bitboard_h6(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_c8(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_c8(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -3478,7 +3478,7 @@ unsafe extern "C" fn TestFlips_bitboard_c8(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_f8(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_f8(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -3627,7 +3627,7 @@ unsafe extern "C" fn TestFlips_bitboard_f8(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_d1(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_d1(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -3780,7 +3780,7 @@ unsafe extern "C" fn TestFlips_bitboard_d1(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_e1(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_e1(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -3933,7 +3933,7 @@ unsafe extern "C" fn TestFlips_bitboard_e1(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_a4(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_a4(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -4058,7 +4058,7 @@ unsafe extern "C" fn TestFlips_bitboard_a4(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_h4(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_h4(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -4185,7 +4185,7 @@ unsafe extern "C" fn TestFlips_bitboard_h4(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_a5(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_a5(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -4310,7 +4310,7 @@ unsafe extern "C" fn TestFlips_bitboard_a5(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_h5(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_h5(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -4437,7 +4437,7 @@ unsafe extern "C" fn TestFlips_bitboard_h5(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_d8(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_d8(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -4590,7 +4590,7 @@ unsafe extern "C" fn TestFlips_bitboard_d8(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_e8(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_e8(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -4743,7 +4743,7 @@ unsafe extern "C" fn TestFlips_bitboard_e8(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_c2(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_c2(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -4885,7 +4885,7 @@ unsafe extern "C" fn TestFlips_bitboard_c2(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_f2(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_f2(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -5024,7 +5024,7 @@ unsafe extern "C" fn TestFlips_bitboard_f2(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_b3(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_b3(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -5143,7 +5143,7 @@ unsafe extern "C" fn TestFlips_bitboard_b3(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_g3(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_g3(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -5264,7 +5264,7 @@ unsafe extern "C" fn TestFlips_bitboard_g3(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_b6(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_b6(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -5385,7 +5385,7 @@ unsafe extern "C" fn TestFlips_bitboard_b6(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_g6(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_g6(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -5508,7 +5508,7 @@ unsafe extern "C" fn TestFlips_bitboard_g6(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_c7(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_c7(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -5652,7 +5652,7 @@ unsafe extern "C" fn TestFlips_bitboard_c7(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_f7(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_f7(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -5793,7 +5793,7 @@ unsafe extern "C" fn TestFlips_bitboard_f7(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_d2(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_d2(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -5945,7 +5945,7 @@ unsafe extern "C" fn TestFlips_bitboard_d2(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_e2(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_e2(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -6097,7 +6097,7 @@ unsafe extern "C" fn TestFlips_bitboard_e2(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_b4(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_b4(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -6221,7 +6221,7 @@ unsafe extern "C" fn TestFlips_bitboard_b4(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_g4(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_g4(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -6346,7 +6346,7 @@ unsafe extern "C" fn TestFlips_bitboard_g4(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_b5(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_b5(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -6471,7 +6471,7 @@ unsafe extern "C" fn TestFlips_bitboard_b5(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_g5(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_g5(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -6598,7 +6598,7 @@ unsafe extern "C" fn TestFlips_bitboard_g5(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_d7(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_d7(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -6752,7 +6752,7 @@ unsafe extern "C" fn TestFlips_bitboard_d7(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_e7(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_e7(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -6906,7 +6906,7 @@ unsafe extern "C" fn TestFlips_bitboard_e7(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_c3(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_c3(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -7053,7 +7053,7 @@ unsafe extern "C" fn TestFlips_bitboard_c3(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_f3(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_f3(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -7197,7 +7197,7 @@ unsafe extern "C" fn TestFlips_bitboard_f3(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_c6(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_c6(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -7346,7 +7346,7 @@ unsafe extern "C" fn TestFlips_bitboard_c6(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_f6(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_f6(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -7492,7 +7492,7 @@ unsafe extern "C" fn TestFlips_bitboard_f6(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_d3(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_d3(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -7649,7 +7649,7 @@ unsafe extern "C" fn TestFlips_bitboard_d3(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_e3(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_e3(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -7806,7 +7806,7 @@ unsafe extern "C" fn TestFlips_bitboard_e3(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_c4(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_c4(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -7959,7 +7959,7 @@ unsafe extern "C" fn TestFlips_bitboard_c4(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_f4(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_f4(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -8109,7 +8109,7 @@ unsafe extern "C" fn TestFlips_bitboard_f4(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_c5(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_c5(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -8264,7 +8264,7 @@ unsafe extern "C" fn TestFlips_bitboard_c5(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_f5(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_f5(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -8416,7 +8416,7 @@ unsafe extern "C" fn TestFlips_bitboard_f5(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_d6(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_d6(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -8575,7 +8575,7 @@ unsafe extern "C" fn TestFlips_bitboard_d6(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_e6(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_e6(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -8734,7 +8734,7 @@ unsafe extern "C" fn TestFlips_bitboard_e6(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_d4(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_d4(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -8906,7 +8906,7 @@ unsafe extern "C" fn TestFlips_bitboard_d4(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_e4(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_e4(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -9078,7 +9078,7 @@ unsafe extern "C" fn TestFlips_bitboard_e4(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_d5(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_d5(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -9252,7 +9252,7 @@ unsafe extern "C" fn TestFlips_bitboard_d5(mut my_bits_high: libc::c_uint,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe extern "C" fn TestFlips_bitboard_e5(mut my_bits_high: libc::c_uint,
+unsafe fn TestFlips_bitboard_e5(mut my_bits_high: libc::c_uint,
                                            mut my_bits_low: libc::c_uint,
                                            mut opp_bits_high: libc::c_uint,
                                            mut opp_bits_low: libc::c_uint)
@@ -9428,264 +9428,264 @@ unsafe extern "C" fn TestFlips_bitboard_e5(mut my_bits_high: libc::c_uint,
 }
 
 pub static mut TestFlips_bitboard:
-           [Option<unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+           [Option<unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                         _: libc::c_uint, _: libc::c_uint)
                        -> libc::c_int>; 78] =
     unsafe {
         [Some(TestFlips_bitboard_a1 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_b1 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_c1 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_d1 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_e1 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_f1 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_g1 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_h1 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int), None, None,
          Some(TestFlips_bitboard_a2 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_b2 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_c2 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_d2 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_e2 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_f2 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_g2 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_h2 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int), None, None,
          Some(TestFlips_bitboard_a3 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_b3 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_c3 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_d3 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_e3 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_f3 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_g3 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_h3 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int), None, None,
          Some(TestFlips_bitboard_a4 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_b4 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_c4 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_d4 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_e4 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_f4 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_g4 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_h4 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int), None, None,
          Some(TestFlips_bitboard_a5 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_b5 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_c5 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_d5 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_e5 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_f5 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_g5 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_h5 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int), None, None,
          Some(TestFlips_bitboard_a6 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_b6 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_c6 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_d6 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_e6 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_f6 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_g6 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_h6 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int), None, None,
          Some(TestFlips_bitboard_a7 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_b7 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_c7 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_d7 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_e7 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_f7 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_g7 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_h7 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int), None, None,
          Some(TestFlips_bitboard_a8 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_b8 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_c8 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_d8 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_e8 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_f8 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_g8 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int),
          Some(TestFlips_bitboard_h8 as
-                  unsafe extern "C" fn(_: libc::c_uint, _: libc::c_uint,
+                  unsafe fn(_: libc::c_uint, _: libc::c_uint,
                                        _: libc::c_uint, _: libc::c_uint)
                       -> libc::c_int)]
     };

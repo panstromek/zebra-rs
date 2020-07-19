@@ -38,7 +38,7 @@ pub static mut flip_stack: *mut *mut libc::c_int =
   of the time.
 */
 
-pub unsafe extern "C" fn UndoFlips(mut flip_count: libc::c_int,
+pub unsafe fn UndoFlips(mut flip_count: libc::c_int,
                                    mut oppcol: libc::c_int) {
     let mut UndoFlips__flip_count = flip_count;
     let mut UndoFlips__oppcol = oppcol;
@@ -60,12 +60,12 @@ pub unsafe extern "C" fn UndoFlips(mut flip_count: libc::c_int,
   Reset the flip stack.
 */
 
-pub unsafe extern "C" fn init_flip_stack() {
+pub unsafe fn init_flip_stack() {
     flip_stack =
         &mut *global_flip_stack.as_mut_ptr().offset(0 as libc::c_int as isize)
             as *mut *mut libc::c_int;
 }
-unsafe extern "C" fn run_static_initializers() {
+unsafe fn run_static_initializers() {
     flip_stack =
         &mut *global_flip_stack.as_mut_ptr().offset(0 as libc::c_int as isize)
             as *mut *mut libc::c_int
@@ -74,4 +74,4 @@ unsafe extern "C" fn run_static_initializers() {
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]
 #[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
 #[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
-static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];
+static INIT_ARRAY: [unsafe fn(); 1] = [run_static_initializers];

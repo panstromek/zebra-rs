@@ -86,7 +86,7 @@ static mut hash_table: *mut CompactHashEntry =
    Allocate memory for the hash table.
 */
 
-pub unsafe extern "C" fn init_hash(mut in_hash_bits: libc::c_int) {
+pub unsafe fn init_hash(mut in_hash_bits: libc::c_int) {
     hash_bits = in_hash_bits;
     hash_size = (1 as libc::c_int) << hash_bits;
     hash_mask = hash_size - 1 as libc::c_int;
@@ -102,7 +102,7 @@ pub unsafe extern "C" fn init_hash(mut in_hash_bits: libc::c_int) {
   Changes the size of the hash table.
 */
 
-pub unsafe extern "C" fn resize_hash(mut new_hash_bits: libc::c_int) {
+pub unsafe fn resize_hash(mut new_hash_bits: libc::c_int) {
     free(hash_table as *mut libc::c_void);
     init_hash(new_hash_bits);
     setup_hash(1 as libc::c_int);
@@ -110,7 +110,7 @@ pub unsafe extern "C" fn resize_hash(mut new_hash_bits: libc::c_int) {
 /*
   POPCOUNT
 */
-unsafe extern "C" fn popcount(mut b: libc::c_uint) -> libc::c_uint {
+unsafe fn popcount(mut b: libc::c_uint) -> libc::c_uint {
     let mut n: libc::c_uint = 0;
     n = 0 as libc::c_int as libc::c_uint;
     while b != 0 as libc::c_int as libc::c_uint {
@@ -124,7 +124,7 @@ unsafe extern "C" fn popcount(mut b: libc::c_uint) -> libc::c_uint {
   Returns the closeness between the 64-bit integers (a0,a1) and (b0,b1).
   A closeness of 0 means that 32 bits differ.
 */
-unsafe extern "C" fn get_closeness(mut a0: libc::c_uint, mut a1: libc::c_uint,
+unsafe fn get_closeness(mut a0: libc::c_uint, mut a1: libc::c_uint,
                                    mut b0: libc::c_uint, mut b1: libc::c_uint)
  -> libc::c_uint {
     return abs(popcount(a0 ^
@@ -141,7 +141,7 @@ unsafe extern "C" fn get_closeness(mut a0: libc::c_uint, mut a1: libc::c_uint,
    Determine randomized hash masks.
 */
 
-pub unsafe extern "C" fn setup_hash(mut clear: libc::c_int) {
+pub unsafe fn setup_hash(mut clear: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut pos: libc::c_int = 0;
@@ -296,7 +296,7 @@ pub unsafe extern "C" fn setup_hash(mut clear: libc::c_int) {
   Resets the draft information for all entries in the hash table.
 */
 
-pub unsafe extern "C" fn clear_hash_drafts() {
+pub unsafe fn clear_hash_drafts() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < hash_size {
@@ -311,7 +311,7 @@ pub unsafe extern "C" fn clear_hash_drafts() {
    Remove the hash table.
 */
 
-pub unsafe extern "C" fn free_hash() {
+pub unsafe fn free_hash() {
     free(hash_table as *mut libc::c_void);
 }
 /*
@@ -319,7 +319,7 @@ pub unsafe extern "C" fn free_hash() {
    Calculates the hash codes for the given board position.
 */
 
-pub unsafe extern "C" fn determine_hash_values(mut side_to_move: libc::c_int,
+pub unsafe fn determine_hash_values(mut side_to_move: libc::c_int,
                                                mut board:
                                                    *const libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -358,7 +358,7 @@ pub unsafe extern "C" fn determine_hash_values(mut side_to_move: libc::c_int,
    Convert the easily readable representation to the more
    compact one actually stored in the hash table.
 */
-unsafe extern "C" fn wide_to_compact(mut entry: *const HashEntry,
+unsafe fn wide_to_compact(mut entry: *const HashEntry,
                                      mut compact_entry:
                                          *mut CompactHashEntry) {
     (*compact_entry).key2 = (*entry).key2;
@@ -394,7 +394,7 @@ unsafe extern "C" fn wide_to_compact(mut entry: *const HashEntry,
    Expand the compact internal representation of entries
    in the hash table to something more usable.
 */
-unsafe extern "C" fn compact_to_wide(mut compact_entry:
+unsafe fn compact_to_wide(mut compact_entry:
                                          *const CompactHashEntry,
                                      mut entry: *mut HashEntry) {
     (*entry).key2 = (*compact_entry).key2;
@@ -433,7 +433,7 @@ unsafe extern "C" fn compact_to_wide(mut compact_entry:
   table.
 */
 
-pub unsafe extern "C" fn set_hash_transformation(mut trans1: libc::c_uint,
+pub unsafe fn set_hash_transformation(mut trans1: libc::c_uint,
                                                  mut trans2: libc::c_uint) {
     hash_trans1 = trans1;
     hash_trans2 = trans2;
@@ -444,7 +444,7 @@ pub unsafe extern "C" fn set_hash_transformation(mut trans1: libc::c_uint,
    and the most shallow search is replaced.
 */
 
-pub unsafe extern "C" fn add_hash(mut reverse_mode: libc::c_int,
+pub unsafe fn add_hash(mut reverse_mode: libc::c_int,
                                   mut score: libc::c_int,
                                   mut best: libc::c_int,
                                   mut flags: libc::c_int,
@@ -524,7 +524,7 @@ pub unsafe extern "C" fn add_hash(mut reverse_mode: libc::c_int,
    and the most shallow search is replaced.
 */
 
-pub unsafe extern "C" fn add_hash_extended(mut reverse_mode: libc::c_int,
+pub unsafe fn add_hash_extended(mut reverse_mode: libc::c_int,
                                            mut score: libc::c_int,
                                            mut best: *mut libc::c_int,
                                            mut flags: libc::c_int,
@@ -597,7 +597,7 @@ pub unsafe extern "C" fn add_hash_extended(mut reverse_mode: libc::c_int,
    hash table positions are probed.
 */
 
-pub unsafe extern "C" fn find_hash(mut entry: *mut HashEntry,
+pub unsafe fn find_hash(mut entry: *mut HashEntry,
                                    mut reverse_mode: libc::c_int) {
     let mut index1: libc::c_int = 0;
     let mut index2: libc::c_int = 0;

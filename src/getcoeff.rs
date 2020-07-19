@@ -124,7 +124,7 @@ static mut set: [CoeffSet; 61] =
    Calculates the patterns associated with a filled board,
    only counting discs.
 */
-unsafe extern "C" fn terminal_patterns() {
+unsafe fn terminal_patterns() {
     let mut result: libc::c_double = 0.;
     let mut value: [[libc::c_double; 8]; 8] = [[0.; 8]; 8];
     let mut i: libc::c_int = 0;
@@ -468,7 +468,7 @@ unsafe extern "C" fn terminal_patterns() {
    GET_WORD
    Reads a 16-bit signed integer from a file.
 */
-unsafe extern "C" fn get_word(mut stream: gzFile) -> libc::c_short {
+unsafe fn get_word(mut stream: gzFile) -> libc::c_short {
     let mut val = C2RustUnnamed{signed_val: 0,};
     let mut hi: libc::c_int = 0;
     let mut lo: libc::c_int = 0;
@@ -511,7 +511,7 @@ unsafe extern "C" fn get_word(mut stream: gzFile) -> libc::c_short {
    UNPACK_BATCH
    Reads feature values for one specific pattern
 */
-unsafe extern "C" fn unpack_batch(mut item: *mut libc::c_short,
+unsafe fn unpack_batch(mut item: *mut libc::c_short,
                                   mut mirror: *mut libc::c_int,
                                   mut count: libc::c_int,
                                   mut stream: gzFile) {
@@ -569,7 +569,7 @@ unsafe extern "C" fn unpack_batch(mut item: *mut libc::c_short,
    Reads all feature values for a certain stage. To take care of
    symmetric patterns, mirror tables are calculated.
 */
-unsafe extern "C" fn unpack_coeffs(mut stream: gzFile) {
+unsafe fn unpack_coeffs(mut stream: gzFile) {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut k: libc::c_int = 0;
@@ -923,7 +923,7 @@ unsafe extern "C" fn unpack_coeffs(mut stream: gzFile) {
    GENERATE_BATCH
    Interpolates between two stages.
 */
-unsafe extern "C" fn generate_batch(mut target: *mut libc::c_short,
+unsafe fn generate_batch(mut target: *mut libc::c_short,
                                     mut count: libc::c_int,
                                     mut source1: *mut libc::c_short,
                                     mut weight1: libc::c_int,
@@ -946,7 +946,7 @@ unsafe extern "C" fn generate_batch(mut target: *mut libc::c_short,
    Maintains an internal memory handler to boost
    performance and avoid heap fragmentation.
 */
-unsafe extern "C" fn find_memory_block(mut afile2x: *mut *mut libc::c_short,
+unsafe fn find_memory_block(mut afile2x: *mut *mut libc::c_short,
                                        mut bfile: *mut *mut libc::c_short,
                                        mut cfile: *mut *mut libc::c_short,
                                        mut dfile: *mut *mut libc::c_short,
@@ -1008,14 +1008,14 @@ unsafe extern "C" fn find_memory_block(mut afile2x: *mut *mut libc::c_short,
    FREE_MEMORY_BLOCK
    Marks a memory block as no longer in use.
 */
-unsafe extern "C" fn free_memory_block(mut block: libc::c_int) {
+unsafe fn free_memory_block(mut block: libc::c_int) {
     block_allocated[block as usize] = 0 as libc::c_int;
 }
 /*
    INIT_MEMORY_HANDLER
    Mark all blocks in the memory arena as "not used".
 */
-unsafe extern "C" fn init_memory_handler() {
+unsafe fn init_memory_handler() {
     let mut i: libc::c_int = 0;
     block_count = 0 as libc::c_int;
     i = 0 as libc::c_int;
@@ -1028,7 +1028,7 @@ unsafe extern "C" fn init_memory_handler() {
    ALLOCATE_SET
    Finds memory for all patterns belonging to a certain stage.
 */
-unsafe extern "C" fn allocate_set(mut index: libc::c_int) {
+unsafe fn allocate_set(mut index: libc::c_int) {
     set[index as usize].block =
         find_memory_block(&mut (*set.as_mut_ptr().offset(index as
                                                              isize)).afile2x,
@@ -1061,7 +1061,7 @@ unsafe extern "C" fn allocate_set(mut index: libc::c_int) {
    Also calculates the offset pointers to the last elements in each block
    (used for the inverted patterns when white is to move).
 */
-unsafe extern "C" fn load_set(mut index: libc::c_int) {
+unsafe fn load_set(mut index: libc::c_int) {
     let mut prev: libc::c_int = 0;
     let mut next: libc::c_int = 0;
     let mut weight1: libc::c_int = 0;
@@ -1150,7 +1150,7 @@ unsafe extern "C" fn load_set(mut index: libc::c_int) {
 /*
   DISC_COUNT_ADJUSTMENT
 */
-unsafe extern "C" fn eval_adjustment(mut disc_adjust: libc::c_double,
+unsafe fn eval_adjustment(mut disc_adjust: libc::c_double,
                                      mut edge_adjust: libc::c_double,
                                      mut corner_adjust: libc::c_double,
                                      mut x_adjust: libc::c_double) {
@@ -1373,7 +1373,7 @@ unsafe extern "C" fn eval_adjustment(mut disc_adjust: libc::c_double,
    Manages the initialization of all relevant tables.
 */
 
-pub unsafe extern "C" fn init_coeffs() {
+pub unsafe fn init_coeffs() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut word1: libc::c_int = 0;
@@ -1522,7 +1522,7 @@ pub unsafe extern "C" fn init_coeffs() {
 
 pub static mut pattern_score: libc::c_short = 0;
 
-pub unsafe extern "C" fn pattern_evaluation(mut side_to_move: libc::c_int)
+pub unsafe fn pattern_evaluation(mut side_to_move: libc::c_int)
  -> libc::c_int {
     let mut eval_phase: libc::c_int = 0;
     let mut score: libc::c_short = 0;
@@ -3307,7 +3307,7 @@ pub unsafe extern "C" fn pattern_evaluation(mut side_to_move: libc::c_int)
    Removes the interpolated coefficients for a
    specific game phase from memory.
 */
-unsafe extern "C" fn remove_specific_coeffs(mut phase: libc::c_int) {
+unsafe fn remove_specific_coeffs(mut phase: libc::c_int) {
     if set[phase as usize].loaded != 0 {
         if set[phase as usize].permanent == 0 {
             free_memory_block(set[phase as usize].block);
@@ -3320,7 +3320,7 @@ unsafe extern "C" fn remove_specific_coeffs(mut phase: libc::c_int) {
    Removes pattern tables which have gone out of scope from memory.
 */
 
-pub unsafe extern "C" fn remove_coeffs(mut phase: libc::c_int) {
+pub unsafe fn remove_coeffs(mut phase: libc::c_int) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < phase { remove_specific_coeffs(i); i += 1 };
@@ -3330,7 +3330,7 @@ pub unsafe extern "C" fn remove_coeffs(mut phase: libc::c_int) {
    Remove all coefficients loaded from memory.
 */
 
-pub unsafe extern "C" fn clear_coeffs() {
+pub unsafe fn clear_coeffs() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i <= 60 as libc::c_int { remove_specific_coeffs(i); i += 1 };

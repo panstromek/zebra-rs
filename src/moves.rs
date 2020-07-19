@@ -95,7 +95,7 @@ static mut sweep_status: [libc::c_int; 64] = [0; 64];
   Initialize the move generation subsystem.
 */
 
-pub unsafe extern "C" fn init_moves() {
+pub unsafe fn init_moves() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut k: libc::c_int = 0;
@@ -138,14 +138,14 @@ pub unsafe extern "C" fn init_moves() {
    RESET_GENERATION
    Prepare for move generation at a given level in the tree.
 */
-unsafe extern "C" fn reset_generation(mut side_to_move: libc::c_int) {
+unsafe fn reset_generation(mut side_to_move: libc::c_int) {
     sweep_status[disks_played as usize] = 0 as libc::c_int;
 }
 /*
    GENERATE_SPECIFIC
 */
 
-pub unsafe extern "C" fn generate_specific(mut curr_move: libc::c_int,
+pub unsafe fn generate_specific(mut curr_move: libc::c_int,
                                            mut side_to_move: libc::c_int)
  -> libc::c_int {
     return AnyFlips_compact(board.as_mut_ptr(), curr_move, side_to_move,
@@ -160,7 +160,7 @@ pub unsafe extern "C" fn generate_specific(mut curr_move: libc::c_int,
    in a position are generated, only those who need be considered.
 */
 
-pub unsafe extern "C" fn generate_move(mut side_to_move: libc::c_int)
+pub unsafe fn generate_move(mut side_to_move: libc::c_int)
  -> libc::c_int {
     let mut move_0: libc::c_int = 0;
     let mut move_index = 0 as libc::c_int;
@@ -183,7 +183,7 @@ pub unsafe extern "C" fn generate_move(mut side_to_move: libc::c_int)
    Generates a list containing all the moves possible in a position.
 */
 
-pub unsafe extern "C" fn generate_all(mut side_to_move: libc::c_int) {
+pub unsafe fn generate_all(mut side_to_move: libc::c_int) {
     let mut count: libc::c_int = 0;
     let mut curr_move: libc::c_int = 0;
     reset_generation(side_to_move);
@@ -202,7 +202,7 @@ pub unsafe extern "C" fn generate_all(mut side_to_move: libc::c_int) {
   Counts the number of moves for one player.
 */
 
-pub unsafe extern "C" fn count_all(mut side_to_move: libc::c_int,
+pub unsafe fn count_all(mut side_to_move: libc::c_int,
                                    mut empty: libc::c_int) -> libc::c_int {
     let mut move_0: libc::c_int = 0;
     let mut move_index: libc::c_int = 0;
@@ -228,7 +228,7 @@ pub unsafe extern "C" fn count_all(mut side_to_move: libc::c_int,
    Determines if any of the players has a valid move.
 */
 
-pub unsafe extern "C" fn game_in_progress() -> libc::c_int {
+pub unsafe fn game_in_progress() -> libc::c_int {
     let mut black_count: libc::c_int = 0;
     let mut white_count: libc::c_int = 0;
     generate_all(0 as libc::c_int);
@@ -247,7 +247,7 @@ pub unsafe extern "C" fn game_in_progress() -> libc::c_int {
    counters.
 */
 
-pub unsafe extern "C" fn make_move(mut side_to_move: libc::c_int,
+pub unsafe fn make_move(mut side_to_move: libc::c_int,
                                    mut move_0: libc::c_int,
                                    mut update_hash: libc::c_int)
  -> libc::c_int {
@@ -307,7 +307,7 @@ pub unsafe extern "C" fn make_move(mut side_to_move: libc::c_int,
    is not updated - the move has to be unmade using UNMAKE_MOVE_NO_HASH().
 */
 
-pub unsafe extern "C" fn make_move_no_hash(mut side_to_move: libc::c_int,
+pub unsafe fn make_move_no_hash(mut side_to_move: libc::c_int,
                                            mut move_0: libc::c_int)
  -> libc::c_int {
     let mut flipped: libc::c_int = 0;
@@ -343,7 +343,7 @@ pub unsafe extern "C" fn make_move_no_hash(mut side_to_move: libc::c_int,
   Takes back a move.
 */
 
-pub unsafe extern "C" fn unmake_move(mut side_to_move: libc::c_int,
+pub unsafe fn unmake_move(mut side_to_move: libc::c_int,
                                      mut move_0: libc::c_int) {
     board[move_0 as usize] = 1 as libc::c_int;
     disks_played -= 1;
@@ -371,7 +371,7 @@ pub unsafe extern "C" fn unmake_move(mut side_to_move: libc::c_int,
   updating hash table, preferrable through MAKE_MOVE_NO_HASH().
 */
 
-pub unsafe extern "C" fn unmake_move_no_hash(mut side_to_move: libc::c_int,
+pub unsafe fn unmake_move_no_hash(mut side_to_move: libc::c_int,
                                              mut move_0: libc::c_int) {
     board[move_0 as usize] = 1 as libc::c_int;
     disks_played -= 1;
@@ -396,7 +396,7 @@ pub unsafe extern "C" fn unmake_move_no_hash(mut side_to_move: libc::c_int,
    Determines if a move is legal.
 */
 
-pub unsafe extern "C" fn valid_move(mut move_0: libc::c_int,
+pub unsafe fn valid_move(mut move_0: libc::c_int,
                                     mut side_to_move: libc::c_int)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
@@ -429,7 +429,7 @@ pub unsafe extern "C" fn valid_move(mut move_0: libc::c_int,
    Prompts the user to enter a move and checks if the move is legal.
 */
 
-pub unsafe extern "C" fn get_move(mut side_to_move: libc::c_int)
+pub unsafe fn get_move(mut side_to_move: libc::c_int)
  -> libc::c_int {
     let mut buffer: [libc::c_char; 255] = [0; 255];
     let mut ready = 0 as libc::c_int;

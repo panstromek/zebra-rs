@@ -48,7 +48,7 @@ pub type FILE = _IO_FILE;
 pub type time_t = __time_t;
 pub type __compar_fn_t
     =
-    Option<unsafe extern "C" fn(_: *const libc::c_void,
+    Option<unsafe fn(_: *const libc::c_void,
                                 _: *const libc::c_void) -> libc::c_int>;
 
 /*
@@ -158,7 +158,7 @@ static mut candidate_list: [CandidateMove; 60] =
    Notice that the order of these MUST coincide with the returned
    orientation value from get_hash() OR YOU WILL LOSE BIG.
 */
-unsafe extern "C" fn init_maps() {
+unsafe fn init_maps() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut k: libc::c_int = 0;
@@ -246,7 +246,7 @@ unsafe extern "C" fn init_maps() {
    Finds a slot in the hash table for the node INDEX
    using linear probing.
 */
-unsafe extern "C" fn select_hash_slot(mut index: libc::c_int) {
+unsafe fn select_hash_slot(mut index: libc::c_int) {
     let mut slot: libc::c_int = 0;
     slot = (*node.offset(index as isize)).hash_val1 % hash_table_size;
     while *book_hash_table.offset(slot as isize) != -(1 as libc::c_int) {
@@ -258,7 +258,7 @@ unsafe extern "C" fn select_hash_slot(mut index: libc::c_int) {
    PROBE_HASH_TABLE
    Search for a certain hash code in the hash table.
 */
-unsafe extern "C" fn probe_hash_table(mut val1: libc::c_int,
+unsafe fn probe_hash_table(mut val1: libc::c_int,
                                       mut val2: libc::c_int) -> libc::c_int {
     let mut slot: libc::c_int = 0;
     if hash_table_size == 0 as libc::c_int {
@@ -280,7 +280,7 @@ unsafe extern "C" fn probe_hash_table(mut val1: libc::c_int,
    Takes the node list and fills the hash table with indices
    into the node list.
 */
-unsafe extern "C" fn create_hash_reference() {
+unsafe fn create_hash_reference() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < hash_table_size {
@@ -294,7 +294,7 @@ unsafe extern "C" fn create_hash_reference() {
    REBUILD_HASH_TABLE
    Resize the hash table for a requested number of nodes.
 */
-unsafe extern "C" fn rebuild_hash_table(mut requested_items: libc::c_int) {
+unsafe fn rebuild_hash_table(mut requested_items: libc::c_int) {
     let mut new_size: libc::c_int = 0;
     let mut new_memory: libc::c_int = 0;
     new_size = 2 as libc::c_int * requested_items;
@@ -322,7 +322,7 @@ unsafe extern "C" fn rebuild_hash_table(mut requested_items: libc::c_int) {
    PREPARE_HASH
    Compute the position hash codes.
 */
-unsafe extern "C" fn prepare_hash() {
+unsafe fn prepare_hash() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut k: libc::c_int = 0;
@@ -364,7 +364,7 @@ unsafe extern "C" fn prepare_hash() {
    See also init_maps().
 */
 
-pub unsafe extern "C" fn get_hash(mut val0: *mut libc::c_int,
+pub unsafe fn get_hash(mut val0: *mut libc::c_int,
                                   mut val1: *mut libc::c_int,
                                   mut orientation: *mut libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -514,7 +514,7 @@ pub unsafe extern "C" fn get_hash(mut val0: *mut libc::c_int,
    SET_ALLOCATION
    Changes the number of nodes for which memory is allocated.
 */
-unsafe extern "C" fn set_allocation(mut size: libc::c_int) {
+unsafe fn set_allocation(mut size: libc::c_int) {
     if node.is_null() {
         node =
             safe_malloc((size as
@@ -550,7 +550,7 @@ unsafe extern "C" fn set_allocation(mut size: libc::c_int) {
    INCREASE_ALLOCATION
    Allocate more memory for the book tree.
 */
-unsafe extern "C" fn increase_allocation() {
+unsafe fn increase_allocation() {
     set_allocation(node_table_size + 50000 as libc::c_int);
 }
 /*
@@ -558,7 +558,7 @@ unsafe extern "C" fn increase_allocation() {
    Creates a new book node without any connections whatsoever
    to the rest of the tree.
 */
-unsafe extern "C" fn create_BookNode(mut val1: libc::c_int,
+unsafe fn create_BookNode(mut val1: libc::c_int,
                                      mut val2: libc::c_int,
                                      mut flags: libc::c_ushort)
  -> libc::c_int {
@@ -584,7 +584,7 @@ unsafe extern "C" fn create_BookNode(mut val1: libc::c_int,
    INIT_BOOK_TREE
    Initializes the node tree by creating the root of the tree.
 */
-unsafe extern "C" fn init_book_tree() {
+unsafe fn init_book_tree() {
     book_node_count = 0 as libc::c_int;
     node = 0 as *mut BookNode;
 }
@@ -593,7 +593,7 @@ unsafe extern "C" fn init_book_tree() {
    Prepares all relevant data structures for a tree search
    or traversal.
 */
-unsafe extern "C" fn prepare_tree_traversal() {
+unsafe fn prepare_tree_traversal() {
     let mut side_to_move: libc::c_int = 0;
     toggle_experimental(0 as libc::c_int);
     game_init(0 as *const libc::c_char, &mut side_to_move);
@@ -606,7 +606,7 @@ unsafe extern "C" fn prepare_tree_traversal() {
    Changes the flags of a node so that the search depth
    bits are cleared.
 */
-unsafe extern "C" fn clear_node_depth(mut index: libc::c_int) {
+unsafe fn clear_node_depth(mut index: libc::c_int) {
     let mut depth: libc::c_int = 0;
     depth =
         (*node.offset(index as isize)).flags as libc::c_int >>
@@ -619,7 +619,7 @@ unsafe extern "C" fn clear_node_depth(mut index: libc::c_int) {
 /*
    GET_NODE_DEPTH
 */
-unsafe extern "C" fn get_node_depth(mut index: libc::c_int) -> libc::c_int {
+unsafe fn get_node_depth(mut index: libc::c_int) -> libc::c_int {
     return (*node.offset(index as isize)).flags as libc::c_int >>
                10 as libc::c_int;
 }
@@ -627,7 +627,7 @@ unsafe extern "C" fn get_node_depth(mut index: libc::c_int) -> libc::c_int {
    SET_NODE_DEPTH
    Marks a node as being searched to a certain depth.
 */
-unsafe extern "C" fn set_node_depth(mut index: libc::c_int,
+unsafe fn set_node_depth(mut index: libc::c_int,
                                     mut depth: libc::c_int) {
     let ref mut fresh1 = (*node.offset(index as isize)).flags;
     *fresh1 =
@@ -638,7 +638,7 @@ unsafe extern "C" fn set_node_depth(mut index: libc::c_int,
    ADJUST_SCORE
    Tweak a score as to encourage early deviations.
 */
-unsafe extern "C" fn adjust_score(mut score: libc::c_int,
+unsafe fn adjust_score(mut score: libc::c_int,
                                   mut side_to_move: libc::c_int)
  -> libc::c_int {
     let mut adjustment: libc::c_int = 0;
@@ -661,7 +661,7 @@ unsafe extern "C" fn adjust_score(mut score: libc::c_int,
    DO_MINIMAX
    Calculates the minimax value of node INDEX.
 */
-unsafe extern "C" fn do_minimax(mut index: libc::c_int,
+unsafe fn do_minimax(mut index: libc::c_int,
                                 mut black_score: *mut libc::c_int,
                                 mut white_score: *mut libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -948,7 +948,7 @@ unsafe extern "C" fn do_minimax(mut index: libc::c_int,
    Calculates the minimax values of all nodes in the tree.
 */
 
-pub unsafe extern "C" fn minimax_tree() {
+pub unsafe fn minimax_tree() {
     let mut i: libc::c_int = 0;
     let mut dummy_black_score: libc::c_int = 0;
     let mut dummy_white_score: libc::c_int = 0;
@@ -979,7 +979,7 @@ pub unsafe extern "C" fn minimax_tree() {
   This wrapper on top of TREE_SEARCH is used by EVALUATE_NODE
   to search the possible deviations.
 */
-unsafe extern "C" fn nega_scout(mut depth: libc::c_int,
+unsafe fn nega_scout(mut depth: libc::c_int,
                                 mut allow_mpc: libc::c_int,
                                 mut side_to_move: libc::c_int,
                                 mut allowed_count: libc::c_int,
@@ -1098,7 +1098,7 @@ unsafe extern "C" fn nega_scout(mut depth: libc::c_int,
    Note: This function assumes that generate_all() has been
          called prior to it being called.
 */
-unsafe extern "C" fn evaluate_node(mut index: libc::c_int) {
+unsafe fn evaluate_node(mut index: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut side_to_move: libc::c_int = 0;
     let mut alternative_move_count: libc::c_int = 0;
@@ -1201,7 +1201,7 @@ unsafe extern "C" fn evaluate_node(mut index: libc::c_int) {
    Recursively makes sure a subtree is evaluated to
    the specified depth.
 */
-unsafe extern "C" fn do_evaluate(mut index: libc::c_int) {
+unsafe fn do_evaluate(mut index: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut child: libc::c_int = 0;
     let mut side_to_move: libc::c_int = 0;
@@ -1254,7 +1254,7 @@ unsafe extern "C" fn do_evaluate(mut index: libc::c_int) {
    Finds the most promising deviations from all nodes in the tree.
 */
 
-pub unsafe extern "C" fn evaluate_tree() {
+pub unsafe fn evaluate_tree() {
     let mut i: libc::c_int = 0;
     let mut feasible_count: libc::c_int = 0;
     let mut start_time: time_t = 0;
@@ -1332,7 +1332,7 @@ pub unsafe extern "C" fn evaluate_tree() {
    Recursively makes sure a subtree doesn't contain any midgame
    node without a deviation move.
 */
-unsafe extern "C" fn do_validate(mut index: libc::c_int) {
+unsafe fn do_validate(mut index: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut child: libc::c_int = 0;
     let mut side_to_move: libc::c_int = 0;
@@ -1379,7 +1379,7 @@ unsafe extern "C" fn do_validate(mut index: libc::c_int) {
   The number of positions evaluated is returned.
 */
 
-pub unsafe extern "C" fn validate_tree() -> libc::c_int {
+pub unsafe fn validate_tree() -> libc::c_int {
     let mut i: libc::c_int = 0;
     let mut feasible_count: libc::c_int = 0;
     prepare_tree_traversal();
@@ -1422,7 +1422,7 @@ pub unsafe extern "C" fn validate_tree() -> libc::c_int {
   book hash table to the game hash table.
 */
 
-pub unsafe extern "C" fn fill_endgame_hash(mut cutoff: libc::c_int,
+pub unsafe fn fill_endgame_hash(mut cutoff: libc::c_int,
                                            mut level: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut this_index: libc::c_int = 0;
@@ -1542,7 +1542,7 @@ pub unsafe extern "C" fn fill_endgame_hash(mut cutoff: libc::c_int,
    and recursively traverse the subtree of the node, doing the same
    thing in all nodes.
 */
-unsafe extern "C" fn do_examine(mut index: libc::c_int) {
+unsafe fn do_examine(mut index: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut child: libc::c_int = 0;
     let mut side_to_move: libc::c_int = 0;
@@ -1642,7 +1642,7 @@ unsafe extern "C" fn do_examine(mut index: libc::c_int) {
    Generates some statistics about the book tree.
 */
 
-pub unsafe extern "C" fn examine_tree() {
+pub unsafe fn examine_tree() {
     let mut i: libc::c_int = 0;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
@@ -1687,7 +1687,7 @@ pub unsafe extern "C" fn examine_tree() {
            (stop_time - start_time) as libc::c_int);
     puts(b"\x00" as *const u8 as *const libc::c_char);
 }
-unsafe extern "C" fn int_compare(mut i1: *const libc::c_void,
+unsafe fn int_compare(mut i1: *const libc::c_void,
                                  mut i2: *const libc::c_void) -> libc::c_int {
     return *(i1 as *mut libc::c_int) - *(i2 as *mut libc::c_int);
 }
@@ -1696,7 +1696,7 @@ unsafe extern "C" fn int_compare(mut i1: *const libc::c_void,
    Describe the status of the nodes in the tree.
 */
 
-pub unsafe extern "C" fn book_statistics(mut full_statistics: libc::c_int) {
+pub unsafe fn book_statistics(mut full_statistics: libc::c_int) {
     let mut strata: [libc::c_double; 11] =
         [0.01f64, 0.02f64, 0.03f64, 0.05f64, 0.10f64, 0.30f64, 0.50f64,
          0.70f64, 0.90f64, 0.99f64, 1.01f64];
@@ -1778,13 +1778,13 @@ pub unsafe extern "C" fn book_statistics(mut full_statistics: libc::c_int) {
     qsort(evals as *mut libc::c_void, eval_count as size_t,
           ::std::mem::size_of::<libc::c_int>() as libc::c_ulong,
           Some(int_compare as
-                   unsafe extern "C" fn(_: *const libc::c_void,
+                   unsafe fn(_: *const libc::c_void,
                                         _: *const libc::c_void)
                        -> libc::c_int));
     qsort(negamax as *mut libc::c_void, negamax_count as size_t,
           ::std::mem::size_of::<libc::c_int>() as libc::c_ulong,
           Some(int_compare as
-                   unsafe extern "C" fn(_: *const libc::c_void,
+                   unsafe fn(_: *const libc::c_void,
                                         _: *const libc::c_void)
                        -> libc::c_int));
     puts(b"\x00" as *const u8 as *const libc::c_char);
@@ -1926,7 +1926,7 @@ pub unsafe extern "C" fn book_statistics(mut full_statistics: libc::c_int) {
    to both players.
 */
 
-pub unsafe extern "C" fn display_doubly_optimal_line(mut original_side_to_move:
+pub unsafe fn display_doubly_optimal_line(mut original_side_to_move:
                                                          libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut done: libc::c_int = 0;
@@ -2040,7 +2040,7 @@ pub unsafe extern "C" fn display_doubly_optimal_line(mut original_side_to_move:
   Adds a new game to the game tree.
 */
 
-pub unsafe extern "C" fn add_new_game(mut move_count_0: libc::c_int,
+pub unsafe fn add_new_game(mut move_count_0: libc::c_int,
                                       mut game_move_list: *mut libc::c_short,
                                       mut min_empties: libc::c_int,
                                       mut max_full_solve: libc::c_int,
@@ -2402,7 +2402,7 @@ pub unsafe extern "C" fn add_new_game(mut move_count_0: libc::c_int,
    incorporates them into the game tree.
 */
 
-pub unsafe extern "C" fn build_tree(mut file_name: *const libc::c_char,
+pub unsafe fn build_tree(mut file_name: *const libc::c_char,
                                     mut max_game_count: libc::c_int,
                                     mut max_diff: libc::c_int,
                                     mut min_empties: libc::c_int) {
@@ -2493,7 +2493,7 @@ pub unsafe extern "C" fn build_tree(mut file_name: *const libc::c_char,
    Reads an existing ASCII database file.
 */
 
-pub unsafe extern "C" fn read_text_database(mut file_name:
+pub unsafe fn read_text_database(mut file_name:
                                                 *const libc::c_char) {
     let mut i: libc::c_int = 0;
     let mut magic1: libc::c_int = 0;
@@ -2555,7 +2555,7 @@ pub unsafe extern "C" fn read_text_database(mut file_name:
    Reads a binary database file.
 */
 
-pub unsafe extern "C" fn read_binary_database(mut file_name:
+pub unsafe fn read_binary_database(mut file_name:
                                                   *const libc::c_char) {
     let mut i: libc::c_int = 0;
     let mut new_book_node_count: libc::c_int = 0;
@@ -2634,7 +2634,7 @@ pub unsafe extern "C" fn read_binary_database(mut file_name:
    Merges a binary database file with the current book.
 */
 
-pub unsafe extern "C" fn merge_binary_database(mut file_name:
+pub unsafe fn merge_binary_database(mut file_name:
                                                    *const libc::c_char) {
     let mut start_time: time_t = 0;
     time(&mut start_time);
@@ -2749,7 +2749,7 @@ pub unsafe extern "C" fn merge_binary_database(mut file_name:
    Writes the database to an ASCII file.
 */
 
-pub unsafe extern "C" fn write_text_database(mut file_name:
+pub unsafe fn write_text_database(mut file_name:
                                                  *const libc::c_char) {
     let mut i: libc::c_int = 0;
     let mut start_time: time_t = 0;
@@ -2794,7 +2794,7 @@ pub unsafe extern "C" fn write_text_database(mut file_name:
    Writes the database to a binary file.
 */
 
-pub unsafe extern "C" fn write_binary_database(mut file_name:
+pub unsafe fn write_binary_database(mut file_name:
                                                    *const libc::c_char) {
     let mut i: libc::c_int = 0;
     let mut magic: libc::c_short = 0;
@@ -2864,7 +2864,7 @@ pub unsafe extern "C" fn write_binary_database(mut file_name:
    DO_COMPRESS
    Compresses the subtree below the current node.
 */
-unsafe extern "C" fn do_compress(mut index: libc::c_int,
+unsafe fn do_compress(mut index: libc::c_int,
                                  mut node_order: *mut libc::c_int,
                                  mut child_count: *mut libc::c_short,
                                  mut node_index: *mut libc::c_int,
@@ -2944,7 +2944,7 @@ unsafe extern "C" fn do_compress(mut index: libc::c_int,
    Creates and saves a compressed database file.
 */
 
-pub unsafe extern "C" fn write_compressed_database(mut file_name:
+pub unsafe fn write_compressed_database(mut file_name:
                                                        *const libc::c_char) {
     let mut i: libc::c_int = 0;
     let mut node_index: libc::c_int = 0;
@@ -3059,7 +3059,7 @@ pub unsafe extern "C" fn write_compressed_database(mut file_name:
   Uncompress the subtree below the current node. This is done
   in preorder.
 */
-unsafe extern "C" fn do_uncompress(mut depth: libc::c_int,
+unsafe fn do_uncompress(mut depth: libc::c_int,
                                    mut stream: *mut FILE,
                                    mut node_index: *mut libc::c_int,
                                    mut child_index: *mut libc::c_int,
@@ -3143,7 +3143,7 @@ unsafe extern "C" fn do_uncompress(mut depth: libc::c_int,
   and unpacks it into an ordinary .bin file.
 */
 
-pub unsafe extern "C" fn unpack_compressed_database(mut in_name:
+pub unsafe fn unpack_compressed_database(mut in_name:
                                                         *const libc::c_char,
                                                     mut out_name:
                                                         *const libc::c_char) {
@@ -3292,7 +3292,7 @@ pub unsafe extern "C" fn unpack_compressed_database(mut in_name:
    will be performed.
 */
 
-pub unsafe extern "C" fn set_search_depth(mut depth: libc::c_int) {
+pub unsafe fn set_search_depth(mut depth: libc::c_int) {
     search_depth = depth;
 }
 /*
@@ -3300,7 +3300,7 @@ pub unsafe extern "C" fn set_search_depth(mut depth: libc::c_int) {
   Specify the evaluation value interval where nodes are re-evaluated.
 */
 
-pub unsafe extern "C" fn set_eval_span(mut min_span: libc::c_double,
+pub unsafe fn set_eval_span(mut min_span: libc::c_double,
                                        mut max_span: libc::c_double) {
     min_eval_span = ceil(min_span * 128.0f64) as libc::c_int;
     max_eval_span = ceil(max_span * 128.0f64) as libc::c_int;
@@ -3310,7 +3310,7 @@ pub unsafe extern "C" fn set_eval_span(mut min_span: libc::c_double,
   Specify the negamax value interval where nodes are re-evaluated.
 */
 
-pub unsafe extern "C" fn set_negamax_span(mut min_span: libc::c_double,
+pub unsafe fn set_negamax_span(mut min_span: libc::c_double,
                                           mut max_span: libc::c_double) {
     min_negamax_span = ceil(min_span * 128.0f64) as libc::c_int;
     max_negamax_span = ceil(max_span * 128.0f64) as libc::c_int;
@@ -3320,7 +3320,7 @@ pub unsafe extern "C" fn set_negamax_span(mut min_span: libc::c_double,
   Specify the maximum number of nodes to evaluate.
 */
 
-pub unsafe extern "C" fn set_max_batch_size(mut size: libc::c_int) {
+pub unsafe fn set_max_batch_size(mut size: libc::c_int) {
     max_batch_size = size;
 }
 /*
@@ -3330,7 +3330,7 @@ pub unsafe extern "C" fn set_max_batch_size(mut size: libc::c_int) {
    stage; also set the punishment per move after the threshold.
 */
 
-pub unsafe extern "C" fn set_deviation_value(mut low_threshold: libc::c_int,
+pub unsafe fn set_deviation_value(mut low_threshold: libc::c_int,
                                              mut high_threshold: libc::c_int,
                                              mut bonus: libc::c_double) {
     low_deviation_threshold = low_threshold;
@@ -3342,7 +3342,7 @@ pub unsafe extern "C" fn set_deviation_value(mut low_threshold: libc::c_int,
    Sets the used slack count to zero.
 */
 
-pub unsafe extern "C" fn reset_book_search() {
+pub unsafe fn reset_book_search() {
     used_slack[0 as libc::c_int as usize] = 0.0f64 as libc::c_int;
     used_slack[2 as libc::c_int as usize] = 0.0f64 as libc::c_int;
 }
@@ -3352,7 +3352,7 @@ pub unsafe extern "C" fn reset_book_search() {
    the program is willing to trade for randomness.
 */
 
-pub unsafe extern "C" fn set_slack(mut slack: libc::c_int) {
+pub unsafe fn set_slack(mut slack: libc::c_int) {
     max_slack = slack;
 }
 /*
@@ -3360,7 +3360,7 @@ pub unsafe extern "C" fn set_slack(mut slack: libc::c_int) {
   Specifies how book draws should be treated.
 */
 
-pub unsafe extern "C" fn set_draw_mode(mut mode: DrawMode) {
+pub unsafe fn set_draw_mode(mut mode: DrawMode) {
     draw_mode = mode;
 }
 /*
@@ -3368,7 +3368,7 @@ pub unsafe extern "C" fn set_draw_mode(mut mode: DrawMode) {
   Specifies if the book is in private or public mode.
 */
 
-pub unsafe extern "C" fn set_game_mode(mut mode: GameMode) {
+pub unsafe fn set_game_mode(mut mode: GameMode) {
     game_mode = mode;
 }
 /*
@@ -3378,11 +3378,11 @@ pub unsafe extern "C" fn set_game_mode(mut mode: GameMode) {
   be forced when recursing the tree.
 */
 
-pub unsafe extern "C" fn set_black_force(mut force: libc::c_int) {
+pub unsafe fn set_black_force(mut force: libc::c_int) {
     force_black = force;
 }
 
-pub unsafe extern "C" fn set_white_force(mut force: libc::c_int) {
+pub unsafe fn set_white_force(mut force: libc::c_int) {
     force_white = force;
 }
 /*
@@ -3392,7 +3392,7 @@ pub unsafe extern "C" fn set_white_force(mut force: libc::c_int) {
   if they don't describe the same set of positions, something has gone awry.
 */
 
-pub unsafe extern "C" fn merge_position_list(mut script_file:
+pub unsafe fn merge_position_list(mut script_file:
                                                  *const libc::c_char,
                                              mut output_file:
                                                  *const libc::c_char) {
@@ -3840,7 +3840,7 @@ pub unsafe extern "C" fn merge_position_list(mut script_file:
   otherwise PASS is returned.
 */
 
-pub unsafe extern "C" fn check_forced_opening(mut side_to_move: libc::c_int,
+pub unsafe fn check_forced_opening(mut side_to_move: libc::c_int,
                                               mut opening:
                                                   *const libc::c_char)
  -> libc::c_int {
@@ -3958,7 +3958,7 @@ pub unsafe extern "C" fn check_forced_opening(mut side_to_move: libc::c_int,
   any flag combination.
 */
 
-pub unsafe extern "C" fn fill_move_alternatives(mut side_to_move: libc::c_int,
+pub unsafe fn fill_move_alternatives(mut side_to_move: libc::c_int,
                                                 mut flags: libc::c_int) {
     let mut temp =
         CandidateMove{move_0: 0, score: 0, flags: 0, parent_flags: 0,};
@@ -4129,11 +4129,11 @@ pub unsafe extern "C" fn fill_move_alternatives(mut side_to_move: libc::c_int,
   FILL_MOVE_ALTERNATIVES.
 */
 
-pub unsafe extern "C" fn get_candidate_count() -> libc::c_int {
+pub unsafe fn get_candidate_count() -> libc::c_int {
     return candidate_count;
 }
 
-pub unsafe extern "C" fn get_candidate(mut index: libc::c_int)
+pub unsafe fn get_candidate(mut index: libc::c_int)
  -> CandidateMove {
     return candidate_list[index as usize];
 }
@@ -4145,7 +4145,7 @@ pub unsafe extern "C" fn get_candidate(mut index: libc::c_int)
    any flag combination.
 */
 
-pub unsafe extern "C" fn print_move_alternatives(mut side_to_move:
+pub unsafe fn print_move_alternatives(mut side_to_move:
                                                      libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut sign: libc::c_int = 0;
@@ -4245,7 +4245,7 @@ pub unsafe extern "C" fn print_move_alternatives(mut side_to_move:
    evaluation by too much.
 */
 
-pub unsafe extern "C" fn get_book_move(mut side_to_move: libc::c_int,
+pub unsafe fn get_book_move(mut side_to_move: libc::c_int,
                                        mut update_slack: libc::c_int,
                                        mut eval_info: *mut EvaluationType)
  -> libc::c_int {
@@ -4539,7 +4539,7 @@ pub unsafe extern "C" fn get_book_move(mut side_to_move: libc::c_int,
   DUPSTR
   A strdup clone.
 */
-unsafe extern "C" fn dupstr(mut str: *const libc::c_char)
+unsafe fn dupstr(mut str: *const libc::c_char)
  -> *mut libc::c_char {
     let mut new_str =
         malloc(strlen(str).wrapping_add(1 as libc::c_int as libc::c_ulong)) as
@@ -4553,7 +4553,7 @@ unsafe extern "C" fn dupstr(mut str: *const libc::c_char)
   to a hash table representation containing the same information.
 */
 
-pub unsafe extern "C" fn convert_opening_list(mut base_file:
+pub unsafe fn convert_opening_list(mut base_file:
                                                   *const libc::c_char) {
     let mut in_stream =
         0 as *mut FILE; /* Max number of opening names occurring */
@@ -4767,7 +4767,7 @@ pub unsafe extern "C" fn convert_opening_list(mut base_file:
   NULL otherwise.
 */
 
-pub unsafe extern "C" fn find_opening_name() -> *const libc::c_char {
+pub unsafe fn find_opening_name() -> *const libc::c_char {
     let mut i: libc::c_int = 0;
     let mut val1: libc::c_int = 0;
     let mut val2: libc::c_int = 0;
@@ -4788,7 +4788,7 @@ pub unsafe extern "C" fn find_opening_name() -> *const libc::c_char {
    Makes sure all data structures are initialized.
 */
 
-pub unsafe extern "C" fn init_osf(mut do_global_setup: libc::c_int) {
+pub unsafe fn init_osf(mut do_global_setup: libc::c_int) {
     init_maps();
     prepare_hash();
     setup_hash(1 as libc::c_int);
@@ -4815,7 +4815,7 @@ pub unsafe extern "C" fn init_osf(mut do_global_setup: libc::c_int) {
   Free all dynamically allocated memory.
 */
 
-pub unsafe extern "C" fn clear_osf() {
+pub unsafe fn clear_osf() {
     free(book_hash_table as *mut libc::c_void);
     book_hash_table = 0 as *mut libc::c_int;
     free(node as *mut libc::c_void);

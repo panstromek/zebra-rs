@@ -122,7 +122,7 @@ static mut last_eval: EvaluationType =
   INIT_MOVE_LISTS
   Initalize the self-organizing move lists.
 */
-unsafe extern "C" fn init_move_lists() {
+unsafe fn init_move_lists() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     i = 0 as libc::c_int;
@@ -163,7 +163,7 @@ unsafe extern "C" fn init_move_lists() {
   corresponding to the same parity (i.e., in practice side to move).
 */
 
-pub unsafe extern "C" fn inherit_move_lists(mut stage: libc::c_int) {
+pub unsafe fn inherit_move_lists(mut stage: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut last: libc::c_int = 0;
 
@@ -192,7 +192,7 @@ pub unsafe extern "C" fn inherit_move_lists(mut stage: libc::c_int) {
   in many variations in the tree.
 */
 
-pub unsafe extern "C" fn reorder_move_list(mut stage: libc::c_int) {
+pub unsafe fn reorder_move_list(mut stage: libc::c_int) {
     let dont_touch = 24 as libc::c_int;
     let mut i: libc::c_int = 0;
     let mut move_0: libc::c_int = 0;
@@ -238,7 +238,7 @@ pub unsafe extern "C" fn reorder_move_list(mut stage: libc::c_int) {
    Initialize the history of the game in the search driver.
 */
 
-pub unsafe extern "C" fn setup_search() {
+pub unsafe fn setup_search() {
     init_move_lists();
     create_eval_info(UNINITIALIZED_EVAL, UNSOLVED_POSITION, 0 as libc::c_int,
                      0.0f64, 0 as libc::c_int, 0 as libc::c_int);
@@ -250,7 +250,7 @@ pub unsafe extern "C" fn setup_search() {
    Returns the number of disks of a specified color.
 */
 
-pub unsafe extern "C" fn disc_count(mut side_to_move: libc::c_int)
+pub unsafe fn disc_count(mut side_to_move: libc::c_int)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
@@ -273,7 +273,7 @@ pub unsafe extern "C" fn disc_count(mut side_to_move: libc::c_int)
    from a shallow search.
 */
 
-pub unsafe extern "C" fn sort_moves(mut list_size: libc::c_int) {
+pub unsafe fn sort_moves(mut list_size: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut modified: libc::c_int = 0;
     let mut temp_move: libc::c_int = 0;
@@ -311,7 +311,7 @@ pub unsafe extern "C" fn sort_moves(mut list_size: libc::c_int) {
   Moves this move to the front of the sub-list.
 */
 
-pub unsafe extern "C" fn select_move(mut first: libc::c_int,
+pub unsafe fn select_move(mut first: libc::c_int,
                                      mut list_size: libc::c_int)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
@@ -351,7 +351,7 @@ pub unsafe extern "C" fn select_move(mut first: libc::c_int,
   Return 1 if the move was found, 0 otherwise.
 */
 
-pub unsafe extern "C" fn float_move(mut move_0: libc::c_int,
+pub unsafe fn float_move(mut move_0: libc::c_int,
                                     mut list_size: libc::c_int)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
@@ -379,7 +379,7 @@ pub unsafe extern "C" fn float_move(mut move_0: libc::c_int,
    Saves the principal variation (the first row of the PV matrix).
 */
 
-pub unsafe extern "C" fn store_pv(mut pv_buffer: *mut libc::c_int,
+pub unsafe fn store_pv(mut pv_buffer: *mut libc::c_int,
                                   mut depth_buffer: *mut libc::c_int) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
@@ -395,7 +395,7 @@ pub unsafe extern "C" fn store_pv(mut pv_buffer: *mut libc::c_int,
    Put the stored principal variation back into the PV matrix.
 */
 
-pub unsafe extern "C" fn restore_pv(mut pv_buffer: *mut libc::c_int,
+pub unsafe fn restore_pv(mut pv_buffer: *mut libc::c_int,
                                     mut depth_buffer: libc::c_int) {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
@@ -411,7 +411,7 @@ pub unsafe extern "C" fn restore_pv(mut pv_buffer: *mut libc::c_int,
   Clears the principal variation.
 */
 
-pub unsafe extern "C" fn clear_pv() {
+pub unsafe fn clear_pv() {
     pv_depth[0 as libc::c_int as usize] = 0 as libc::c_int;
 }
 /*
@@ -419,7 +419,7 @@ pub unsafe extern "C" fn clear_pv() {
   Complete the principal variation with passes (if any there are any).
 */
 
-pub unsafe extern "C" fn complete_pv(mut side_to_move: libc::c_int) {
+pub unsafe fn complete_pv(mut side_to_move: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut actual_side_to_move: [libc::c_int; 60] = [0; 60];
     full_pv_depth = 0 as libc::c_int;
@@ -479,7 +479,7 @@ pub unsafe extern "C" fn complete_pv(mut side_to_move: libc::c_int) {
   Pad the existing PV with the move sequence suggested by the hash table.
 */
 
-pub unsafe extern "C" fn hash_expand_pv(mut side_to_move: libc::c_int,
+pub unsafe fn hash_expand_pv(mut side_to_move: libc::c_int,
                                         mut mode: libc::c_int,
                                         mut flags: libc::c_int,
                                         mut max_selectivity: libc::c_int) {
@@ -561,15 +561,15 @@ pub unsafe extern "C" fn hash_expand_pv(mut side_to_move: libc::c_int,
   been made.
 */
 
-pub unsafe extern "C" fn set_ponder_move(mut move_0: libc::c_int) {
+pub unsafe fn set_ponder_move(mut move_0: libc::c_int) {
     pondered_move = move_0;
 }
 
-pub unsafe extern "C" fn clear_ponder_move() {
+pub unsafe fn clear_ponder_move() {
     pondered_move = 0 as libc::c_int;
 }
 
-pub unsafe extern "C" fn get_ponder_move() -> libc::c_int {
+pub unsafe fn get_ponder_move() -> libc::c_int {
     return pondered_move;
 }
 /*
@@ -578,7 +578,7 @@ pub unsafe extern "C" fn get_ponder_move() -> libc::c_int {
   about the last search.
 */
 
-pub unsafe extern "C" fn create_eval_info(mut in_type: EvalType,
+pub unsafe fn create_eval_info(mut in_type: EvalType,
                                           mut in_res: EvalResult,
                                           mut in_score: libc::c_int,
                                           mut in_conf: libc::c_double,
@@ -605,7 +605,7 @@ pub unsafe extern "C" fn create_eval_info(mut in_type: EvalType,
   Converts a result descriptor into a number between -99.99 and 99.99 a la GGS.
 */
 
-pub unsafe extern "C" fn produce_compact_eval(mut eval_info: EvaluationType)
+pub unsafe fn produce_compact_eval(mut eval_info: EvaluationType)
  -> libc::c_double {
     let mut eval: libc::c_double = 0.;
     's_97:
@@ -680,7 +680,7 @@ pub unsafe extern "C" fn produce_compact_eval(mut eval_info: EvaluationType)
   holding the last available position evaluation.
 */
 
-pub unsafe extern "C" fn set_current_eval(mut eval: EvaluationType) {
+pub unsafe fn set_current_eval(mut eval: EvaluationType) {
     last_eval = eval;
     if negate_eval != 0 {
         last_eval.score = -last_eval.score;
@@ -694,10 +694,10 @@ pub unsafe extern "C" fn set_current_eval(mut eval: EvaluationType) {
     };
 }
 
-pub unsafe extern "C" fn get_current_eval() -> EvaluationType {
+pub unsafe fn get_current_eval() -> EvaluationType {
     return last_eval;
 }
 
-pub unsafe extern "C" fn negate_current_eval(mut negate: libc::c_int) {
+pub unsafe fn negate_current_eval(mut negate: libc::c_int) {
     negate_eval = negate;
 }

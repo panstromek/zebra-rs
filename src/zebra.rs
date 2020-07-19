@@ -765,7 +765,7 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
    Administrates the tournament between different levels
    of the program.
 */
-unsafe extern "C" fn play_tournament(mut move_sequence: *const libc::c_char) {
+unsafe fn play_tournament(mut move_sequence: *const libc::c_char) {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut result: [[[libc::c_int; 3]; 8]; 8] = [[[0; 3]; 8]; 8];
@@ -869,7 +869,7 @@ unsafe extern "C" fn play_tournament(mut move_sequence: *const libc::c_char) {
    PLAY_GAME
    Administrates the game between two players, humans or computers.
 */
-unsafe extern "C" fn play_game(mut file_name: *const libc::c_char,
+unsafe fn play_game(mut file_name: *const libc::c_char,
                                mut move_string: *const libc::c_char,
                                mut move_file_name: *const libc::c_char,
                                mut repeat: libc::c_int) {
@@ -1322,7 +1322,7 @@ unsafe extern "C" fn play_game(mut file_name: *const libc::c_char,
    ANALYZE_GAME
    Analyzes all positions arising from a given move sequence.
 */
-unsafe extern "C" fn analyze_game(mut move_string: *const libc::c_char) {
+unsafe fn analyze_game(mut move_string: *const libc::c_char) {
     let mut best_info1 =
         EvaluationType{type_0: MIDGAME_EVAL,
                        res: WON_POSITION,
@@ -1673,7 +1673,7 @@ unsafe extern "C" fn analyze_game(mut move_string: *const libc::c_char) {
     }
     fclose(output_stream);
 }
-unsafe extern "C" fn run_endgame_script(mut in_file_name: *const libc::c_char,
+unsafe fn run_endgame_script(mut in_file_name: *const libc::c_char,
                                         mut out_file_name:
                                             *const libc::c_char,
                                         mut display_line: libc::c_int) {
@@ -2017,7 +2017,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const libc::c_char,
    DUMP_POSITION
    Saves the current board position to disk.
 */
-unsafe extern "C" fn dump_position(mut side_to_move: libc::c_int) {
+unsafe fn dump_position(mut side_to_move: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut stream = 0 as *mut FILE;
@@ -2059,7 +2059,7 @@ unsafe extern "C" fn dump_position(mut side_to_move: libc::c_int) {
   DUMP_GAME_SCORE
   Writes the current game score to disk.
 */
-unsafe extern "C" fn dump_game_score(mut side_to_move: libc::c_int) {
+unsafe fn dump_game_score(mut side_to_move: libc::c_int) {
     let mut stream = 0 as *mut FILE;
     let mut i: libc::c_int = 0;
     stream =

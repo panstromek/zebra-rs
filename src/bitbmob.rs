@@ -16,8 +16,8 @@ use crate::src::libc;
    See the file COPYING for more information.
 */
 
-pub unsafe extern "C" fn init_mmx() { }
-unsafe extern "C" fn generate_all_c(my_bits: BitBoard, opp_bits: BitBoard)
+pub unsafe fn init_mmx() { }
+unsafe fn generate_all_c(my_bits: BitBoard, opp_bits: BitBoard)
  -> BitBoard {
     // mm6
     let mut moves = BitBoard{high: 0, low: 0,}; // mm4
@@ -247,7 +247,7 @@ unsafe extern "C" fn generate_all_c(my_bits: BitBoard, opp_bits: BitBoard)
     return moves;
 }
 
-pub unsafe extern "C" fn bitboard_mobility(my_bits: BitBoard,
+pub unsafe fn bitboard_mobility(my_bits: BitBoard,
                                            opp_bits: BitBoard)
  -> libc::c_int {
     let mut moves = BitBoard{high: 0, low: 0,};
@@ -268,7 +268,7 @@ pub unsafe extern "C" fn bitboard_mobility(my_bits: BitBoard,
    Contents:
 */
 
-pub unsafe extern "C" fn weighted_mobility(my_bits: BitBoard,
+pub unsafe fn weighted_mobility(my_bits: BitBoard,
                                            opp_bits: BitBoard)
  -> libc::c_int {
     let mut n1: libc::c_uint = 0; /* corner bonus for A1/H1/A8/H8 */

@@ -51,7 +51,7 @@ pub static mut modified_hi: libc::c_uint = 0;
    TRANSFORMATION_SET_UP
    Calculate the various symmetry and color transformations.
 */
-unsafe extern "C" fn transformation_setup() {
+unsafe fn transformation_setup() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut row: [libc::c_int; 10] = [0; 10];
@@ -89,7 +89,7 @@ unsafe extern "C" fn transformation_setup() {
   ADD_SINGLE
   Mark board position POS as depending on pattern # MASK.
 */
-unsafe extern "C" fn add_single(mut mask: libc::c_int, mut pos: libc::c_int) {
+unsafe fn add_single(mut mask: libc::c_int, mut pos: libc::c_int) {
     if mask < 32 as libc::c_int {
         depend_lo[pos as usize] |=
             ((1 as libc::c_int) << mask) as libc::c_uint
@@ -103,7 +103,7 @@ unsafe extern "C" fn add_single(mut mask: libc::c_int, mut pos: libc::c_int) {
   Mark board positions POS, POS+STEP, ..., POS+(COUNT-1)STEP as
   depending on pattern # MASK.
 */
-unsafe extern "C" fn add_multiple(mut mask: libc::c_int, mut pos: libc::c_int,
+unsafe fn add_multiple(mut mask: libc::c_int, mut pos: libc::c_int,
                                   mut count: libc::c_int,
                                   mut step: libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -117,7 +117,7 @@ unsafe extern "C" fn add_multiple(mut mask: libc::c_int, mut pos: libc::c_int,
   Note: The definitions of the patterns and their corresponding name
         must match the order given in endmacro.c.
 */
-unsafe extern "C" fn pattern_dependency() {
+unsafe fn pattern_dependency() {
     /* A-file+2X: a1-a8 + b2,b7 */
     add_multiple(0 as libc::c_int, 11 as libc::c_int, 8 as libc::c_int,
                  10 as libc::c_int);
@@ -307,7 +307,7 @@ unsafe extern "C" fn pattern_dependency() {
    Pre-computes some tables needed for fast pattern access.
 */
 
-pub unsafe extern "C" fn init_patterns() {
+pub unsafe fn init_patterns() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut pos: libc::c_int = 0;
@@ -335,7 +335,7 @@ pub unsafe extern "C" fn init_patterns() {
    Translate the current board configuration into patterns.
 */
 
-pub unsafe extern "C" fn compute_line_patterns(mut in_board:
+pub unsafe fn compute_line_patterns(mut in_board:
                                                    *mut libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;

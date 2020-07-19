@@ -90,7 +90,7 @@ static mut board_region: [libc::c_char; 100] =
      0 as libc::c_int as libc::c_char, 0 as libc::c_int as libc::c_char,
      0 as libc::c_int as libc::c_char, 0 as libc::c_int as libc::c_char];
 
-pub unsafe extern "C" fn DoFlips_no_hash(mut sqnum: libc::c_int,
+pub unsafe fn DoFlips_no_hash(mut sqnum: libc::c_int,
                                          mut color: libc::c_int)
  -> libc::c_int {
     let mut opp_color = 0 as libc::c_int + 2 as libc::c_int - color;
@@ -1262,7 +1262,7 @@ pub unsafe extern "C" fn DoFlips_no_hash(mut sqnum: libc::c_int,
    Last modified:   October 25, 2005
 */
 
-pub unsafe extern "C" fn DoFlips_hash(mut sqnum: libc::c_int,
+pub unsafe fn DoFlips_hash(mut sqnum: libc::c_int,
                                       mut color: libc::c_int) -> libc::c_int {
     let mut opp_color = 0 as libc::c_int + 2 as libc::c_int - color;
     let mut sq = 0 as *mut libc::c_int;

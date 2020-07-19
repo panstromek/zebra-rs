@@ -177,7 +177,7 @@ static mut komi_shift: libc::c_int = 0;
   (1) verifying that there exists a neighboring opponent disc,
   (2) verifying that the move flips some disc.
 */
-unsafe extern "C" fn TestFlips_wrapper(mut sq: libc::c_int,
+unsafe fn TestFlips_wrapper(mut sq: libc::c_int,
                                        mut my_bits: BitBoard,
                                        mut opp_bits: BitBoard)
  -> libc::c_int {
@@ -198,7 +198,7 @@ unsafe extern "C" fn TestFlips_wrapper(mut sq: libc::c_int,
   PREPARE_TO_SOLVE
   Create the list of empty squares.
 */
-unsafe extern "C" fn prepare_to_solve(mut board_0: *const libc::c_int) {
+unsafe fn prepare_to_solve(mut board_0: *const libc::c_int) {
     /* fixed square ordering: */
     /* jcw's order, which is the best of 4 tried (according to Warren Smith) */
     static mut worst2best: [libc::c_uchar; 64] =
@@ -301,7 +301,7 @@ unsafe extern "C" fn prepare_to_solve(mut board_0: *const libc::c_int) {
   * SOLVE_PARITY_HASH_HIGH uses stability, hash table and (non-thresholded)
     fastest first
 */
-unsafe extern "C" fn solve_two_empty(mut my_bits: BitBoard,
+unsafe fn solve_two_empty(mut my_bits: BitBoard,
                                      mut opp_bits: BitBoard,
                                      mut sq1: libc::c_int,
                                      mut sq2: libc::c_int,
@@ -426,7 +426,7 @@ unsafe extern "C" fn solve_two_empty(mut my_bits: BitBoard,
         }
     } else { return score };
 }
-unsafe extern "C" fn solve_three_empty(mut my_bits: BitBoard,
+unsafe fn solve_three_empty(mut my_bits: BitBoard,
                                        mut opp_bits: BitBoard,
                                        mut sq1: libc::c_int,
                                        mut sq2: libc::c_int,
@@ -499,7 +499,7 @@ unsafe extern "C" fn solve_three_empty(mut my_bits: BitBoard,
     }
     return score;
 }
-unsafe extern "C" fn solve_four_empty(mut my_bits: BitBoard,
+unsafe fn solve_four_empty(mut my_bits: BitBoard,
                                       mut opp_bits: BitBoard,
                                       mut sq1: libc::c_int,
                                       mut sq2: libc::c_int,
@@ -588,7 +588,7 @@ unsafe extern "C" fn solve_four_empty(mut my_bits: BitBoard,
     }
     return score;
 }
-unsafe extern "C" fn solve_parity(mut my_bits: BitBoard,
+unsafe fn solve_parity(mut my_bits: BitBoard,
                                   mut opp_bits: BitBoard,
                                   mut alpha: libc::c_int,
                                   mut beta: libc::c_int,
@@ -737,7 +737,7 @@ unsafe extern "C" fn solve_parity(mut my_bits: BitBoard,
     best_move = best_sq;
     return score;
 }
-unsafe extern "C" fn solve_parity_hash(mut my_bits: BitBoard,
+unsafe fn solve_parity_hash(mut my_bits: BitBoard,
                                        mut opp_bits: BitBoard,
                                        mut alpha: libc::c_int,
                                        mut beta: libc::c_int,
@@ -910,7 +910,7 @@ unsafe extern "C" fn solve_parity_hash(mut my_bits: BitBoard,
     }
     return score;
 }
-unsafe extern "C" fn solve_parity_hash_high(mut my_bits: BitBoard,
+unsafe fn solve_parity_hash_high(mut my_bits: BitBoard,
                                             mut opp_bits: BitBoard,
                                             mut alpha: libc::c_int,
                                             mut beta: libc::c_int,
@@ -1438,7 +1438,7 @@ unsafe extern "C" fn solve_parity_hash_high(mut my_bits: BitBoard,
   PREPARE_TO_SOLVE(). Returns difference between disc count for
   COLOR and disc count for the opponent of COLOR.
 */
-unsafe extern "C" fn end_solve(mut my_bits: BitBoard, mut opp_bits: BitBoard,
+unsafe fn end_solve(mut my_bits: BitBoard, mut opp_bits: BitBoard,
                                mut alpha: libc::c_int, mut beta: libc::c_int,
                                mut color: libc::c_int,
                                mut empties: libc::c_int,
@@ -1459,7 +1459,7 @@ unsafe extern "C" fn end_solve(mut my_bits: BitBoard, mut opp_bits: BitBoard,
 /*
   UPDATE_BEST_LIST
 */
-unsafe extern "C" fn update_best_list(mut best_list: *mut libc::c_int,
+unsafe fn update_best_list(mut best_list: *mut libc::c_int,
                                       mut move_0: libc::c_int,
                                       mut best_list_index: libc::c_int,
                                       mut best_list_length: *mut libc::c_int,
@@ -1510,7 +1510,7 @@ unsafe extern "C" fn update_best_list(mut best_list: *mut libc::c_int,
   END_TREE_SEARCH
   Plain nega-scout with fastest-first move ordering.
 */
-unsafe extern "C" fn end_tree_search(mut level: libc::c_int,
+unsafe fn end_tree_search(mut level: libc::c_int,
                                      mut max_depth: libc::c_int,
                                      mut my_bits: BitBoard,
                                      mut opp_bits: BitBoard,
@@ -2186,7 +2186,7 @@ unsafe extern "C" fn end_tree_search(mut level: libc::c_int,
   Wrapper onto END_TREE_SEARCH which applies the knowledge that
   the range of valid scores is [-64,+64].  Komi, if any, is accounted for.
 */
-unsafe extern "C" fn end_tree_wrapper(mut level: libc::c_int,
+unsafe fn end_tree_wrapper(mut level: libc::c_int,
                                       mut max_depth: libc::c_int,
                                       mut side_to_move: libc::c_int,
                                       mut alpha: libc::c_int,
@@ -2213,7 +2213,7 @@ unsafe extern "C" fn end_tree_wrapper(mut level: libc::c_int,
    FULL_EXPAND_PV
    Pad the PV with optimal moves in the low-level phase.
 */
-unsafe extern "C" fn full_expand_pv(mut side_to_move: libc::c_int,
+unsafe fn full_expand_pv(mut side_to_move: libc::c_int,
                                     mut selectivity: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut pass_count: libc::c_int = 0;
@@ -2260,7 +2260,7 @@ unsafe extern "C" fn full_expand_pv(mut side_to_move: libc::c_int,
   SEND_SOLVE_STATUS
   Displays endgame results - partial or full.
 */
-unsafe extern "C" fn send_solve_status(mut empties: libc::c_int,
+unsafe fn send_solve_status(mut empties: libc::c_int,
                                        mut side_to_move: libc::c_int,
                                        mut eval_info: *mut EvaluationType) {
     let mut eval_str = 0 as *mut libc::c_char;
@@ -2293,7 +2293,7 @@ unsafe extern "C" fn send_solve_status(mut empties: libc::c_int,
   Provides an interface to the fast endgame solver.
 */
 
-pub unsafe extern "C" fn end_game(mut side_to_move: libc::c_int,
+pub unsafe fn end_game(mut side_to_move: libc::c_int,
                                   mut wld: libc::c_int,
                                   mut force_echo: libc::c_int,
                                   mut allow_book: libc::c_int,
@@ -2757,7 +2757,7 @@ pub unsafe extern "C" fn end_game(mut side_to_move: libc::c_int,
    This means clearing a few status fields.
 */
 
-pub unsafe extern "C" fn setup_end() {
+pub unsafe fn setup_end() {
     let mut last_mean: libc::c_double = 0.;
     let mut last_sigma: libc::c_double = 0.;
     let mut ff_threshold: [libc::c_double; 61] = [0.; 61];
@@ -2881,11 +2881,11 @@ pub unsafe extern "C" fn setup_end() {
   were completed (not initiated).
 */
 
-pub unsafe extern "C" fn get_earliest_wld_solve() -> libc::c_int {
+pub unsafe fn get_earliest_wld_solve() -> libc::c_int {
     return earliest_wld_solve;
 }
 
-pub unsafe extern "C" fn get_earliest_full_solve() -> libc::c_int {
+pub unsafe fn get_earliest_full_solve() -> libc::c_int {
     return earliest_full_solve;
 }
 /*
@@ -2893,6 +2893,6 @@ pub unsafe extern "C" fn get_earliest_full_solve() -> libc::c_int {
   Toggles output of intermediate search status on/off.
 */
 
-pub unsafe extern "C" fn set_output_mode(mut full: libc::c_int) {
+pub unsafe fn set_output_mode(mut full: libc::c_int) {
     full_output_mode = full;
 }

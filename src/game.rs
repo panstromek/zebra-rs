@@ -101,7 +101,7 @@ static mut evaluated_list: [EvaluatedMove; 60] =
   text version of Zebra would output to the screen.
 */
 
-pub unsafe extern "C" fn toggle_status_log(mut write_log: libc::c_int) {
+pub unsafe fn toggle_status_log(mut write_log: libc::c_int) {
     use_log_file = write_log;
 }
 /*
@@ -109,7 +109,7 @@ pub unsafe extern "C" fn toggle_status_log(mut write_log: libc::c_int) {
    Initialize the different sub-systems.
 */
 
-pub unsafe extern "C" fn global_setup(mut use_random: libc::c_int,
+pub unsafe fn global_setup(mut use_random: libc::c_int,
                                       mut hash_bits: libc::c_int) {
     let mut log_file = 0 as *mut FILE;
     let mut timer: time_t = 0;
@@ -154,7 +154,7 @@ pub unsafe extern "C" fn global_setup(mut use_random: libc::c_int,
    Free all dynamically allocated memory.
 */
 
-pub unsafe extern "C" fn global_terminate() {
+pub unsafe fn global_terminate() {
     free_hash();
     clear_coeffs();
     clear_osf();
@@ -163,7 +163,7 @@ pub unsafe extern "C" fn global_terminate() {
    SETUP_GAME
    Prepares the board.
 */
-unsafe extern "C" fn setup_game(mut file_name: *const libc::c_char,
+unsafe fn setup_game(mut file_name: *const libc::c_char,
                                 mut side_to_move: *mut libc::c_int) {
     let mut buffer: [libc::c_char; 65] = [0; 65];
     let mut i: libc::c_int = 0;
@@ -260,7 +260,7 @@ unsafe extern "C" fn setup_game(mut file_name: *const libc::c_char,
    specified by FILE_NAME.
 */
 
-pub unsafe extern "C" fn game_init(mut file_name: *const libc::c_char,
+pub unsafe fn game_init(mut file_name: *const libc::c_char,
                                    mut side_to_move: *mut libc::c_int) {
     setup_game(file_name, side_to_move);
     setup_search();
@@ -283,7 +283,7 @@ pub unsafe extern "C" fn game_init(mut file_name: *const libc::c_char,
   Set the endgame komi value.
 */
 
-pub unsafe extern "C" fn set_komi(mut in_komi: libc::c_int) {
+pub unsafe fn set_komi(mut in_komi: libc::c_int) {
     komi = in_komi;
 }
 /*
@@ -292,7 +292,7 @@ pub unsafe extern "C" fn set_komi(mut in_komi: libc::c_int) {
   openings moves before resorting to the usual opening book.
 */
 
-pub unsafe extern "C" fn toggle_human_openings(mut toggle: libc::c_int) {
+pub unsafe fn toggle_human_openings(mut toggle: libc::c_int) {
     play_human_openings = toggle;
 }
 /*
@@ -301,7 +301,7 @@ pub unsafe extern "C" fn toggle_human_openings(mut toggle: libc::c_int) {
   before resorting to the usual opening book.
 */
 
-pub unsafe extern "C" fn toggle_thor_match_openings(mut toggle: libc::c_int) {
+pub unsafe fn toggle_thor_match_openings(mut toggle: libc::c_int) {
     play_thor_match_openings = toggle;
 }
 /*
@@ -309,7 +309,7 @@ pub unsafe extern "C" fn toggle_thor_match_openings(mut toggle: libc::c_int) {
   Specifies an opening line that Zebra is forced to follow when playing.
 */
 
-pub unsafe extern "C" fn set_forced_opening(mut opening_str:
+pub unsafe fn set_forced_opening(mut opening_str:
                                                 *const libc::c_char) {
     forced_opening = opening_str;
 }
@@ -320,7 +320,7 @@ pub unsafe extern "C" fn set_forced_opening(mut opening_str:
   with useful scores and moves.
 */
 
-pub unsafe extern "C" fn ponder_move(mut side_to_move: libc::c_int,
+pub unsafe fn ponder_move(mut side_to_move: libc::c_int,
                                      mut book: libc::c_int,
                                      mut mid: libc::c_int,
                                      mut exact: libc::c_int,
@@ -481,7 +481,7 @@ pub unsafe extern "C" fn ponder_move(mut side_to_move: libc::c_int,
   Comparison function for two evals.  Same return value conventions
   as QuickSort.
 */
-unsafe extern "C" fn compare_eval(mut e1: EvaluationType,
+unsafe fn compare_eval(mut e1: EvaluationType,
                                   mut e2: EvaluationType) -> libc::c_int {
     if e1.type_0 as libc::c_uint == WLD_EVAL as libc::c_int as libc::c_uint ||
            e1.type_0 as libc::c_uint ==
@@ -502,7 +502,7 @@ unsafe extern "C" fn compare_eval(mut e1: EvaluationType,
   except for the best.
 */
 
-pub unsafe extern "C" fn extended_compute_move(mut side_to_move: libc::c_int,
+pub unsafe fn extended_compute_move(mut side_to_move: libc::c_int,
                                                mut book_only: libc::c_int,
                                                mut book: libc::c_int,
                                                mut mid: libc::c_int,
@@ -1095,7 +1095,7 @@ pub unsafe extern "C" fn extended_compute_move(mut side_to_move: libc::c_int,
   well as for the best move in the position (if it is any other move).
 */
 
-pub unsafe extern "C" fn perform_extended_solve(mut side_to_move: libc::c_int,
+pub unsafe fn perform_extended_solve(mut side_to_move: libc::c_int,
                                                 mut actual_move: libc::c_int,
                                                 mut book: libc::c_int,
                                                 mut exact_solve:
@@ -1282,11 +1282,11 @@ pub unsafe extern "C" fn perform_extended_solve(mut side_to_move: libc::c_int,
   Accessor functions for the data structure filled by extended_compute_move().
 */
 
-pub unsafe extern "C" fn get_evaluated_count() -> libc::c_int {
+pub unsafe fn get_evaluated_count() -> libc::c_int {
     return game_evaluated_count;
 }
 
-pub unsafe extern "C" fn get_evaluated(mut index: libc::c_int)
+pub unsafe fn get_evaluated(mut index: libc::c_int)
  -> EvaluatedMove {
     return evaluated_list[index as usize];
 }
@@ -1295,7 +1295,7 @@ pub unsafe extern "C" fn get_evaluated(mut index: libc::c_int)
    Returns the best move in a position given search parameters.
 */
 
-pub unsafe extern "C" fn compute_move(mut side_to_move: libc::c_int,
+pub unsafe fn compute_move(mut side_to_move: libc::c_int,
                                       mut update_all: libc::c_int,
                                       mut my_time: libc::c_int,
                                       mut my_incr: libc::c_int,
@@ -1823,7 +1823,7 @@ pub unsafe extern "C" fn compute_move(mut side_to_move: libc::c_int,
   Returns some statistics about the last search made.
 */
 
-pub unsafe extern "C" fn get_search_statistics(mut max_depth:
+pub unsafe fn get_search_statistics(mut max_depth:
                                                    *mut libc::c_int,
                                                mut node_count:
                                                    *mut libc::c_double) {
@@ -1837,7 +1837,7 @@ pub unsafe extern "C" fn get_search_statistics(mut max_depth:
   Returns the principal variation.
 */
 
-pub unsafe extern "C" fn get_pv(mut destin: *mut libc::c_int) -> libc::c_int {
+pub unsafe fn get_pv(mut destin: *mut libc::c_int) -> libc::c_int {
     let mut i: libc::c_int = 0;
     if prefix_move == 0 as libc::c_int {
         i = 0 as libc::c_int;

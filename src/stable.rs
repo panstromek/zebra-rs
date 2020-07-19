@@ -40,7 +40,7 @@ static mut edge_h1h8: libc::c_int = 0;
 
 pub static mut stab_move_list: [MoveLink; 100] =
     [MoveLink{pred: 0, succ: 0,}; 100];
-unsafe extern "C" fn and_line_shift_64(mut target: *mut BitBoard,
+unsafe fn and_line_shift_64(mut target: *mut BitBoard,
                                        mut base: BitBoard,
                                        mut shift: libc::c_int,
                                        mut dir_ss: BitBoard) {
@@ -58,7 +58,7 @@ unsafe extern "C" fn and_line_shift_64(mut target: *mut BitBoard,
   Determines the bit mask for (a subset of) the stable discs in a position.
   Zardoz' algorithm + edge tables is used.
 */
-unsafe extern "C" fn edge_zardoz_stable(mut ss: *mut BitBoard,
+unsafe fn edge_zardoz_stable(mut ss: *mut BitBoard,
                                         mut dd: BitBoard, mut od: BitBoard) {
     /* dd is the disks of the side we are looking for stable disks for
        od is the opponent
@@ -188,7 +188,7 @@ unsafe extern "C" fn edge_zardoz_stable(mut ss: *mut BitBoard,
   by COUNT_STABLE below.
 */
 
-pub unsafe extern "C" fn count_edge_stable(mut color: libc::c_int,
+pub unsafe fn count_edge_stable(mut color: libc::c_int,
                                            mut col_bits: BitBoard,
                                            mut opp_bits: BitBoard)
  -> libc::c_int {
@@ -319,7 +319,7 @@ pub unsafe extern "C" fn count_edge_stable(mut color: libc::c_int,
         before this function is called *or you lose big*.
 */
 
-pub unsafe extern "C" fn count_stable(mut color: libc::c_int,
+pub unsafe fn count_stable(mut color: libc::c_int,
                                       mut col_bits: BitBoard,
                                       mut opp_bits: BitBoard) -> libc::c_int {
     let mut t: libc::c_uint = 0;
@@ -374,7 +374,7 @@ pub unsafe extern "C" fn count_stable(mut color: libc::c_int,
   find variations in which the discs in CANDIDATE_BITS are
   flipped. Aborts if all those discs are stable in the subtree.
 */
-unsafe extern "C" fn stability_search(mut my_bits: BitBoard,
+unsafe fn stability_search(mut my_bits: BitBoard,
                                       mut opp_bits: BitBoard,
                                       mut side_to_move: libc::c_int,
                                       mut candidate_bits: *mut BitBoard,
@@ -462,7 +462,7 @@ unsafe extern "C" fn stability_search(mut my_bits: BitBoard,
   Tries to compute all stable discs by search the entire game tree.
   The actual work is performed by STABILITY_SEARCH above.
 */
-unsafe extern "C" fn complete_stability_search(mut board: *mut libc::c_int,
+unsafe fn complete_stability_search(mut board: *mut libc::c_int,
                                                mut side_to_move: libc::c_int,
                                                mut stable_bits:
                                                    *mut BitBoard) {
@@ -554,7 +554,7 @@ unsafe extern "C" fn complete_stability_search(mut board: *mut libc::c_int,
   is returned in the boolean vector IS_STABLE.
 */
 
-pub unsafe extern "C" fn get_stable(mut board: *mut libc::c_int,
+pub unsafe fn get_stable(mut board: *mut libc::c_int,
                                     mut side_to_move: libc::c_int,
                                     mut is_stable: *mut libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -626,7 +626,7 @@ pub unsafe extern "C" fn get_stable(mut board: *mut libc::c_int,
   edge PATTERN. When a bit mask is calculated, it's stored in
   a table so that any particular bit mask only is generated once.
 */
-unsafe extern "C" fn recursive_find_stable(mut pattern: libc::c_int)
+unsafe fn recursive_find_stable(mut pattern: libc::c_int)
  -> libc::c_int {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
@@ -765,7 +765,7 @@ unsafe extern "C" fn recursive_find_stable(mut pattern: libc::c_int)
   This way the stability values for the four edges can be added together
   without any risk for double-counting.
 */
-unsafe extern "C" fn count_color_stable() {
+unsafe fn count_color_stable() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut pattern: libc::c_int = 0;
@@ -819,7 +819,7 @@ unsafe extern "C" fn count_color_stable() {
   configurations. This is done using dynamic programming.
 */
 
-pub unsafe extern "C" fn init_stable() {
+pub unsafe fn init_stable() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     i = 0 as libc::c_int;

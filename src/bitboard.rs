@@ -27,7 +27,7 @@ pub static mut square_mask: [BitBoard; 100] =
   This is done using some bitfiddling tricks.
 */
 
-pub unsafe extern "C" fn non_iterative_popcount(mut n1: libc::c_uint,
+pub unsafe fn non_iterative_popcount(mut n1: libc::c_uint,
                                                 mut n2: libc::c_uint)
  -> libc::c_uint {
     n1 = n1.wrapping_sub(n1 >> 1 as libc::c_int & 0x55555555 as libc::c_uint);
@@ -56,7 +56,7 @@ pub unsafe extern "C" fn non_iterative_popcount(mut n1: libc::c_uint,
   set is low.
 */
 
-pub unsafe extern "C" fn iterative_popcount(mut n1: libc::c_uint,
+pub unsafe fn iterative_popcount(mut n1: libc::c_uint,
                                             mut n2: libc::c_uint)
  -> libc::c_uint {
     let mut n: libc::c_uint = 0;
@@ -76,7 +76,7 @@ pub unsafe extern "C" fn iterative_popcount(mut n1: libc::c_uint,
   Returns the bit-reverse of a 32-bit integer.
 */
 
-pub unsafe extern "C" fn bit_reverse_32(mut val: libc::c_uint)
+pub unsafe fn bit_reverse_32(mut val: libc::c_uint)
  -> libc::c_uint {
     val =
         val >> 1 as libc::c_int & 0x55555555 as libc::c_int as libc::c_uint |
@@ -100,7 +100,7 @@ pub unsafe extern "C" fn bit_reverse_32(mut val: libc::c_uint)
   Converts the vector board representation to the bitboard representation.
 */
 
-pub unsafe extern "C" fn set_bitboards(mut board: *mut libc::c_int,
+pub unsafe fn set_bitboards(mut board: *mut libc::c_int,
                                        mut side_to_move: libc::c_int,
                                        mut my_out: *mut BitBoard,
                                        mut opp_out: *mut BitBoard) {
@@ -152,7 +152,7 @@ pub unsafe extern "C" fn set_bitboards(mut board: *mut libc::c_int,
     *opp_out = opp_bits;
 }
 
-pub unsafe extern "C" fn init_bitboard() {
+pub unsafe fn init_bitboard() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     i = 1 as libc::c_int;

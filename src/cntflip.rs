@@ -7,7 +7,7 @@ use crate::src::libc;
 
    Last modified:     November 1, 2000
 */
-unsafe extern "C" fn AnyDrctnlFlips(mut sq: *mut libc::c_int,
+unsafe fn AnyDrctnlFlips(mut sq: *mut libc::c_int,
                                     mut inc: libc::c_int,
                                     mut color: libc::c_int,
                                     mut oppcol: libc::c_int) -> libc::c_int {
@@ -39,7 +39,7 @@ unsafe extern "C" fn AnyDrctnlFlips(mut sq: *mut libc::c_int,
    Last modified:   December 25, 1999
 */
 
-pub unsafe extern "C" fn AnyFlips_compact(mut board: *mut libc::c_int,
+pub unsafe fn AnyFlips_compact(mut board: *mut libc::c_int,
                                           mut sqnum: libc::c_int,
                                           mut color: libc::c_int,
                                           mut oppcol: libc::c_int)
