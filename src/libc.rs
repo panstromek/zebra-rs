@@ -1,3 +1,1 @@
-pub use ::libc::{
-    c_void
-};
+pub use std::ffi::c_void;
