@@ -21,37 +21,26 @@ extern crate libc;
 
 
 pub mod src {
-pub mod bitbcnt;
-pub mod bitbmob;
-pub mod bitboard;
-pub mod bitbtest;
+pub use ::engine::src::*;
 pub mod cntflip;
-pub mod counter;
 pub mod display;
 pub mod doflip;
 pub mod end;
-pub mod epcstat;
 pub mod error;
 pub mod eval;
 pub mod game;
 pub mod getcoeff;
-pub mod globals;
 pub mod hash;
 pub mod learn;
 pub mod midgame;
 pub mod moves;
-pub mod myrandom;
-pub mod opname;
 pub mod osfbook;
-pub mod patterns;
-pub mod pcstat;
 pub mod probcut;
 pub mod safemem;
 pub mod search;
 pub mod stable;
 pub mod thordb;
 pub mod timer;
-pub mod unflip;
 pub mod stubs;
 pub mod libc;
 pub mod zebra;

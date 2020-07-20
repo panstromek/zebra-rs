@@ -1,4 +1,3 @@
-use crate::src::libc;
 use crate::src::moves::disks_played;
 use crate::src::globals::piece_count;
 use crate::src::search::evaluations;

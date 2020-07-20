@@ -12,7 +12,6 @@
 */
 /* The basic board type. One index for each position;
    a1=11, h1=18, a8=81, h8=88. */
-use crate::src::libc;
 
 pub type Board = [i32; 128];
 /*

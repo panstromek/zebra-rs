@@ -4,7 +4,6 @@
 
    Automatically created by CORRELA2 on Sat Nov 23 16:29:22 2002
 */
-use crate::src::libc;
 
 
 pub static mut end_mean: [[f32; 9]; 61] =
