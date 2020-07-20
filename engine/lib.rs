@@ -1,4 +1,5 @@
 #![feature(ptr_wrapping_offset_from)]
+#![feature(label_break_value)]
 
 pub mod src {
     pub mod bitbcnt;
@@ -15,4 +16,8 @@ pub mod src {
     pub mod epcstat;
     pub mod search;
     pub mod zebra;
+    pub mod moves;
+    pub mod hash;
+    pub mod cntflip;
+    pub mod doflip;
 }

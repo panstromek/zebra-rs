@@ -22,9 +22,7 @@ extern crate libc;
 
 pub mod src {
 pub use ::engine::src::*;
-pub mod cntflip;
 pub mod display;
-pub mod doflip;
 pub mod end;
 pub mod error;
 pub mod eval;
