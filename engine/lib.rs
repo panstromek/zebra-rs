@@ -13,5 +13,6 @@ pub mod src {
     pub mod globals;
     pub mod myrandom;
     pub mod epcstat;
-
+    pub mod search;
+    pub mod zebra;
 }
