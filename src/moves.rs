@@ -6,19 +6,7 @@ use crate::src::unflip::flip_stack;
 use crate::src::hash::{hash_stored2, hash2, hash_stored1, hash1, hash_put_value2, hash_put_value1};
 use crate::src::search::sorted_move_order;
 pub use engine::src::moves::*;
-/*
-   File:           globals.h
 
-   Created:        June 30, 1997
-
-   Modified:       January 8, 2000
-
-   Author:         Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:       Global state variables.
-*/
-/* The basic board type. One index for each position;
-   a1=11, h1=18, a8=81, h8=88. */
 /*
    File:              moves.c
 

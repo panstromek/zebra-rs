@@ -2,7 +2,7 @@
 use crate::src::libc;
 use crate::src::safemem::safe_malloc;
 use crate::src::stubs::{free, abs, __assert_fail};
-use crate::src::myrandom::my_random;
+use engine::src::myrandom::my_random;
 pub use ::engine::src::hash::*;
 
 /* The number of entries in the hash table. Always a power of 2. */
@@ -43,18 +43,6 @@ pub unsafe fn resize_hash(mut new_hash_bits: i32) {
     free(hash_table as *mut libc::c_void);
     init_hash(new_hash_bits);
     setup_hash(1 as i32);
-}
-/*
-  POPCOUNT
-*/
-unsafe fn popcount(mut b: u32) -> u32 {
-    let mut n: u32 = 0;
-    n = 0 as i32 as u32;
-    while b != 0 as i32 as u32 {
-        n = n.wrapping_add(1);
-        b &= b.wrapping_sub(1 as i32 as u32)
-    }
-    return n;
 }
 /*
   GET_CLOSENESS
@@ -229,21 +217,6 @@ pub unsafe fn setup_hash(mut clear: i32) {
     };
 }
 /*
-  CLEAR_HASH_DRAFTS
-  Resets the draft information for all entries in the hash table.
-*/
-
-pub unsafe fn clear_hash_drafts() {
-    let mut i: i32 = 0;
-    i = 0 as i32;
-    while i < hash_size {
-        /* Set the draft to 0 */
-        (*hash_table.offset(i as isize)).key1_selectivity_flags_draft &=
-            !(0xff as i32) as u32;
-        i += 1
-    };
-}
-/*
    FREE_HASH
    Remove the hash table.
 */
@@ -252,55 +225,6 @@ pub unsafe fn free_hash() {
     free(hash_table as *mut libc::c_void);
 }
 
-/*
-   WIDE_TO_COMPACT
-   Convert the easily readable representation to the more
-   compact one actually stored in the hash table.
-*/
-unsafe fn wide_to_compact(mut entry: *const HashEntry,
-                                     mut compact_entry:
-                                         *mut CompactHashEntry) {
-    (*compact_entry).key2 = (*entry).key2;
-    (*compact_entry).eval = (*entry).eval;
-    (*compact_entry).moves =
-        ((*entry).move_0[0 as i32 as usize] +
-             ((*entry).move_0[1 as i32 as usize] << 8 as i32)
-             +
-             ((*entry).move_0[2 as i32 as usize] << 16 as i32)
-             +
-             ((*entry).move_0[3 as i32 as usize] <<
-                  24 as i32)) as u32;
-    (*compact_entry).key1_selectivity_flags_draft =
-        ((*entry).key1 &
-             0xff000000 as
-                 u32).wrapping_add((((*entry).selectivity as
-                                                  i32) <<
-                                                 16 as i32) as
-                                                u32).wrapping_add((((*entry).flags
-                                                                                 as
-                                                                                 i32)
-                                                                                <<
-                                                                                8
-                                                                                    as
-                                                                                    i32)
-                                                                               as
-                                                                               u32).wrapping_add((*entry).draft
-                                                                                                              as
-                                                                                                              u32);
-}
-
-/*
-  SET_HASH_TRANSFORMATION
-  Specify the hash code transformation masks. Changing these masks
-  is the poor man's way to achieve the effect of clearing the hash
-  table.
-*/
-
-pub unsafe fn set_hash_transformation(mut trans1: u32,
-                                                 mut trans2: u32) {
-    hash_trans1 = trans1;
-    hash_trans2 = trans2;
-}
 /*
    ADD_HASH
    Add information to the hash table. Two adjacent positions are tried
@@ -376,79 +300,6 @@ pub unsafe fn add_hash(mut reverse_mode: i32,
     entry.move_0[1 as i32 as usize] = 0 as i32;
     entry.move_0[2 as i32 as usize] = 0 as i32;
     entry.move_0[3 as i32 as usize] = 0 as i32;
-    entry.flags = flags as i16;
-    entry.draft = draft as i16;
-    entry.selectivity = selectivity as i16;
-    wide_to_compact(&mut entry, &mut *hash_table.offset(index as isize));
-}
-/*
-   ADD_HASH_EXTENDED
-   Add information to the hash table. Two adjacent positions are tried
-   and the most shallow search is replaced.
-*/
-
-pub unsafe fn add_hash_extended(mut reverse_mode: i32,
-                                           mut score: i32,
-                                           mut best: *mut i32,
-                                           mut flags: i32,
-                                           mut draft: i32,
-                                           mut selectivity: i32) {
-    let mut i: i32 = 0;
-    let mut old_draft: i32 = 0;
-    let mut change_encouragment: i32 = 0;
-    let mut index: u32 = 0;
-    let mut index1: u32 = 0;
-    let mut index2: u32 = 0;
-    let mut code1: u32 = 0;
-    let mut code2: u32 = 0;
-    let mut entry =
-        HashEntry{key1: 0,
-                  key2: 0,
-                  eval: 0,
-                  move_0: [0; 4],
-                  draft: 0,
-                  selectivity: 0,
-                  flags: 0,};
-    if reverse_mode != 0 {
-        code1 = hash2 ^ hash_trans2;
-        code2 = hash1 ^ hash_trans1
-    } else { code1 = hash1 ^ hash_trans1; code2 = hash2 ^ hash_trans2 }
-    index1 = code1 & hash_mask as u32;
-    index2 = index1 ^ 1 as i32 as u32;
-    if (*hash_table.offset(index1 as isize)).key2 == code2 {
-        index = index1
-    } else if (*hash_table.offset(index2 as isize)).key2 == code2 {
-        index = index2
-    } else if (*hash_table.offset(index1 as
-                                      isize)).key1_selectivity_flags_draft &
-                  255 as i32 as u32 <=
-                  (*hash_table.offset(index2 as
-                                          isize)).key1_selectivity_flags_draft
-                      & 255 as i32 as u32 {
-        index = index1
-    } else { index = index2 }
-    old_draft =
-        ((*hash_table.offset(index as isize)).key1_selectivity_flags_draft &
-             255 as i32 as u32) as i32;
-    if flags & 4 as i32 != 0 {
-        /* Exact scores are potentially more useful */
-        change_encouragment = 2 as i32
-    } else { change_encouragment = 0 as i32 }
-    if (*hash_table.offset(index as isize)).key2 == code2 {
-        if old_draft > draft + change_encouragment + 2 as i32 {
-            return
-        }
-    } else if old_draft > draft + change_encouragment + 4 as i32 {
-        return
-    }
-    entry.key1 = code1;
-    entry.key2 = code2;
-    entry.eval = score;
-    i = 0 as i32;
-    while i < 4 as i32 {
-        entry.move_0[i as usize] = *best.offset(i as isize);
-        i += 1
-    }
     entry.flags = flags as i16;
     entry.draft = draft as i16;
     entry.selectivity = selectivity as i16;
