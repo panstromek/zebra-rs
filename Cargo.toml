@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "engine"
 ]
 
 [package]
@@ -29,7 +30,7 @@ name = "zebra"
 
 [dependencies]
 libc = "0.2"
-
+engine = { path= "./engine" }
 
 [build-dependencies]
 pkg-config = "0.3.16"

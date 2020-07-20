@@ -4,9 +4,14 @@
 name = "c2rust_out"
 version = "0.0.0"
 dependencies = [
+ "engine",
  "libc",
  "pkg-config",
 ]
+
+[[package]]
+name = "engine"
+version = "0.1.0"
 
 [[package]]
 name = "libc"
