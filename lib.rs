@@ -21,7 +21,6 @@ extern crate libc;
 
 
 pub mod src {
-pub mod autop;
 pub mod bitbcnt;
 pub mod bitbmob;
 pub mod bitboard;

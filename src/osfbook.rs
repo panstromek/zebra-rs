@@ -15,7 +15,6 @@ use crate::{
         timer::{toggle_abort_check, clear_panic_abort, last_panic_check},
         eval::toggle_experimental,
         safemem::{safe_malloc, safe_realloc},
-        autop::toggle_event_status,
         end::end_game,
         getcoeff::remove_coeffs,
         counter::reset_counter,
@@ -2075,7 +2074,6 @@ pub unsafe fn add_new_game(mut move_count_0: i32,
     let mut flags: [u16; 61] = [0; 61];
     stored_echo = echo;
     echo = 0 as i32;
-    toggle_event_status(0 as i32);
     /* First create new nodes for new positions */
     prepare_tree_traversal();
     i = 0 as i32;
@@ -2392,7 +2390,6 @@ pub unsafe fn add_new_game(mut move_count_0: i32,
         }
         puts(b"\x00" as *const u8 as *const i8);
     }
-    toggle_event_status(1 as i32);
     echo = stored_echo;
     total_game_count += 1;
 }

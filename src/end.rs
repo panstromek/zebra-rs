@@ -15,7 +15,6 @@ use crate::{
         bitboard::{set_bitboards, BitBoard},
         bitbmob::{init_mmx, bitboard_mobility, weighted_mobility},
         bitbtest::{bb_flips, TestFlips_bitboard},
-        autop::handle_event,
         probcut::{end_mpc_depth, use_end_cut},
         stable::{count_stable, count_edge_stable},
         unflip::UndoFlips,
@@ -1953,8 +1952,6 @@ unsafe fn end_tree_search(mut level: i32,
             /* Output status buffers if in interactive mode */
             if echo != 0 { display_buffers(); }
             /* Check for events */
-            handle_event(1 as i32, 0 as i32,
-                         1 as i32);
             if is_panic_abort() != 0 || force_return != 0 {
                 return -(27000 as i32)
             }

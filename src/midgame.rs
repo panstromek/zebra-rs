@@ -11,7 +11,6 @@ use crate::{
         globals::{piece_count, board, pv, pv_depth},
         getcoeff::pattern_evaluation,
         eval::terminal_evaluation,
-        autop::handle_event,
         probcut::mpc_cut,
         myrandom::my_random,
         zebra::{EvaluationType, _IO_FILE}
@@ -885,8 +884,6 @@ pub unsafe fn tree_search(mut level: i32,
                 /* Display available search information */
                 if echo != 0 { display_buffers(); }
                 /* Check for events */
-                handle_event(1 as i32, 0 as i32,
-                             1 as i32);
                 if is_panic_abort() != 0 || force_return != 0 {
                     return -(27000 as i32)
                 }
