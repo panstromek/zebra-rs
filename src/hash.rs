@@ -294,8 +294,7 @@ pub unsafe fn add_hash(mut reverse_mode: i32,
         return
     }
     entry.key1 = code1;
-    entry.key2 = code2;
-    entry.eval = score;
+    entry.key2 = code2;entry.eval = score;
     entry.move_0[0 as i32 as usize] = best;
     entry.move_0[1 as i32 as usize] = 0 as i32;
     entry.move_0[2 as i32 as usize] = 0 as i32;

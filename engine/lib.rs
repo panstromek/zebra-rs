@@ -21,4 +21,6 @@ pub mod src {
     pub mod hash;
     pub mod cntflip;
     pub mod doflip;
+    pub mod eval;
+    pub mod stable;
 }
