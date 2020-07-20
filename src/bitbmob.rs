@@ -15,7 +15,7 @@ use crate::src::bitboard::{BitBoard, non_iterative_popcount};
 */
 
 pub unsafe fn init_mmx() { }
-unsafe fn generate_all_c(my_bits: BitBoard, opp_bits: BitBoard)
+fn generate_all_c(my_bits: BitBoard, opp_bits: BitBoard)
  -> BitBoard {
     // mm6
     let mut moves = BitBoard{high: 0, low: 0,}; // mm4

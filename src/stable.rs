@@ -422,7 +422,7 @@ unsafe fn stability_search(mut my_bits: BitBoard,
     sq = stab_move_list[old_sq as usize].succ;
     while sq != 99 as i32 {
         if TestFlips_bitboard[(sq - 11 as i32) as
-                                  usize].expect("non-null function pointer")(my_bits.high,
+                                  usize](my_bits.high,
                                                                              my_bits.low,
                                                                              opp_bits.high,
                                                                              opp_bits.low)

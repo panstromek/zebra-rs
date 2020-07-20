@@ -152,7 +152,7 @@ unsafe fn TestFlips_wrapper(mut sq: i32,
            0 as i32 as u32 {
         flipped =
             TestFlips_bitboard[(sq - 11 as i32) as
-                                   usize].expect("non-null function pointer")(my_bits.high,
+                                   usize](my_bits.high,
                                                                               my_bits.low,
                                                                               opp_bits.high,
                                                                               opp_bits.low)
@@ -292,7 +292,7 @@ unsafe fn solve_two_empty(mut my_bits: BitBoard,
         ev = disc_diff + 2 as i32 * flipped;
         flipped =
             CountFlips_bitboard[(sq2 - 11 as i32) as
-                                    usize].expect("non-null function pointer")(opp_bits.high
+                                    usize](opp_bits.high
                                                                                    &
                                                                                    !bb_flips.high,
                                                                                opp_bits.low
@@ -309,14 +309,14 @@ unsafe fn solve_two_empty(mut my_bits: BitBoard,
                 ev +=
                     2 as i32 *
                         CountFlips_bitboard[(sq2 - 11 as i32) as
-                                                usize].expect("non-null function pointer")(bb_flips.high,
+                                                usize](bb_flips.high,
                                                                                            bb_flips.low)
             }
         } else if ev < beta {
             /* Only bother if not fail-high already */
             flipped =
                 CountFlips_bitboard[(sq2 - 11 as i32) as
-                                        usize].expect("non-null function pointer")(bb_flips.high,
+                                        usize](bb_flips.high,
                                                                                    bb_flips.low);
             if flipped != 0 as i32 {
                 /* ELSE: SQ2 will end up empty, game over */
@@ -336,7 +336,7 @@ unsafe fn solve_two_empty(mut my_bits: BitBoard,
         ev = disc_diff + 2 as i32 * flipped;
         flipped =
             CountFlips_bitboard[(sq1 - 11 as i32) as
-                                    usize].expect("non-null function pointer")(opp_bits.high
+                                    usize](opp_bits.high
                                                                                    &
                                                                                    !bb_flips.high,
                                                                                opp_bits.low
@@ -354,14 +354,14 @@ unsafe fn solve_two_empty(mut my_bits: BitBoard,
                 ev +=
                     2 as i32 *
                         CountFlips_bitboard[(sq1 - 11 as i32) as
-                                                usize].expect("non-null function pointer")(bb_flips.high,
+                                                usize](bb_flips.high,
                                                                                            bb_flips.low)
             }
         } else if ev < beta {
             /* Only bother if not fail-high already */
             flipped =
                 CountFlips_bitboard[(sq1 - 11 as i32) as
-                                        usize].expect("non-null function pointer")(bb_flips.high,
+                                        usize](bb_flips.high,
                                                                                    bb_flips.low);
             if flipped != 0 as i32 {
                 /* ELSE: SQ1 will end up empty, game over */
