@@ -1,5 +1,6 @@
 #![feature(ptr_wrapping_offset_from)]
 #![feature(label_break_value)]
+#![no_std]
 
 pub mod src {
     pub mod bitbcnt;
