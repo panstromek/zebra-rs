@@ -25,22 +25,6 @@ pub type __off64_t = i64;
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 
-/* Default aspiration window parameters. These values are currently
-   really huge as usage of a small windows tends to slow down
-   the search. */
-static mut allow_midgame_hash_probe: i32 = 0;
-static mut allow_midgame_hash_update: i32 = 0;
-static mut best_mid_move: i32 = 0;
-static mut best_mid_root_move: i32 = 0;
-static mut midgame_abort: i32 = 0;
-static mut do_check_midgame_abort: i32 = 1 as i32;
-static mut counter_phase: i32 = 0;
-static mut apply_perturbation: i32 = 1 as i32;
-static mut perturbation_amplitude: i32 = 0 as i32;
-static mut stage_reached: [i32; 61] = [0; 61];
-static mut stage_score: [i32; 61] = [0; 61];
-static mut score_perturbation: [i32; 100] = [0; 100];
-static mut feas_index_list: [[i32; 64]; 64] = [[0; 64]; 64];
 /*
    SETUP_MIDGAME
    Sets up some search parameters.
@@ -56,43 +40,6 @@ pub unsafe fn setup_midgame() {
         i += 1
     }
     calculate_perturbation();
-}
-/*
-  CLEAR_MIDGAME_ABORT
-  IS_MIDGAME_ABORT
-  SET_MIDGAME_ABORT
-  TOGGLE_MIDGAME_ABORT_CHECK
-  These functions handle the midgame abort system which kicks in
-  when it is estimated that the next iteration in the iterative
-  deepening would take too long.
-*/
-
-pub unsafe fn clear_midgame_abort() {
-    midgame_abort = 0 as i32;
-}
-
-pub unsafe fn is_midgame_abort() -> i32 {
-    return midgame_abort;
-}
-
-pub unsafe fn set_midgame_abort() {
-    midgame_abort = do_check_midgame_abort;
-}
-
-pub unsafe fn toggle_midgame_abort_check(mut toggle: i32) {
-    do_check_midgame_abort = toggle;
-}
-/*
-   TOGGLE_MIDGAME_HASH_USAGE
-   Toggles hash table access in the midgame search on/off.
-*/
-
-pub unsafe fn toggle_midgame_hash_usage(mut allow_read:
-                                                       i32,
-                                                   mut allow_write:
-                                                       i32) {
-    allow_midgame_hash_probe = allow_read;
-    allow_midgame_hash_update = allow_write;
 }
 /*
   CALCULATE_PERTURBATION
@@ -119,40 +66,7 @@ pub unsafe fn calculate_perturbation() {
         }
     };
 }
-/*
-  SET_PERTURBATION
-  Set the amplitude of the score perturbation applied by
-  CALCULATE_PERTURBATION.
-*/
 
-pub unsafe fn set_perturbation(mut amplitude: i32) {
-    perturbation_amplitude = amplitude;
-}
-/*
-  TOGGLE_PERTURBATION_USAGE
-  Toggle usage of score perturbations on/off.
-*/
-
-pub unsafe fn toggle_perturbation_usage(mut toggle: i32) {
-    apply_perturbation = toggle;
-}
-/*
-  ADVANCE_MOVE
-  Swaps a move and its predecessor in the move list if it's
-  not already first in the list.
-*/
-unsafe fn advance_move(mut index: i32) {
-    let mut temp_move: i32 = 0;
-    if index > 0 as i32 {
-        temp_move = sorted_move_order[disks_played as usize][index as usize];
-        sorted_move_order[disks_played as usize][index as usize] =
-            sorted_move_order[disks_played as
-                                  usize][(index - 1 as i32) as usize];
-        sorted_move_order[disks_played as
-                              usize][(index - 1 as i32) as usize] =
-            temp_move
-    };
-}
 /*
   STATIC_OR_TERMINAL_EVALUATION
   Invokes the proper evaluation function depending on whether the
