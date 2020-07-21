@@ -27,4 +27,5 @@ pub mod src {
     pub mod midgame;
     pub mod end;
     pub mod game;
+    pub mod getcoeff;
 }
