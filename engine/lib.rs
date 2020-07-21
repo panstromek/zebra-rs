@@ -30,4 +30,5 @@ pub mod src {
     pub mod getcoeff;
     pub mod learn;
     pub mod osfbook;
+    pub mod thordb;
 }
