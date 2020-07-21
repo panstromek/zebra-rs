@@ -29,4 +29,5 @@ pub mod src {
     pub mod game;
     pub mod getcoeff;
     pub mod learn;
+    pub mod osfbook;
 }
