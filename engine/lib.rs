@@ -28,4 +28,5 @@ pub mod src {
     pub mod end;
     pub mod game;
     pub mod getcoeff;
+    pub mod learn;
 }
