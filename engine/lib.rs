@@ -31,4 +31,5 @@ pub mod src {
     pub mod learn;
     pub mod osfbook;
     pub mod thordb;
+    pub mod stubs;
 }
