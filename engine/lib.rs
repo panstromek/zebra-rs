@@ -25,4 +25,5 @@ pub mod src {
     pub mod stable;
     pub mod probcut;
     pub mod midgame;
+    pub mod end;
 }
