@@ -23,4 +23,6 @@ pub mod src {
     pub mod doflip;
     pub mod eval;
     pub mod stable;
+    pub mod probcut;
+    pub mod midgame;
 }
