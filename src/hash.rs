@@ -80,15 +80,15 @@ pub unsafe fn add_hash(mut reverse_mode: i32,
                   draft: 0,
                   selectivity: 0,
                   flags: 0,};
-    if abs(score) != -(27000 as i32) {
-    } else {
-        __assert_fail(b"abs( score ) != SEARCH_ABORT\x00" as *const u8 as
-                          *const i8,
-                      b"hash.c\x00" as *const u8 as *const i8,
-                      372 as i32 as u32,
-                      (*::std::mem::transmute::<&[u8; 44],
-                                                &[i8; 44]>(b"void add_hash(int, int, int, int, int, int)\x00")).as_ptr());
-    }
+    // TODO
+    //  note for investigation. There was this assert in the original source
+    //      assert( abs( score ) != SEARCH_ABORT );
+    //  but SEARCH_ABORT is defined as
+    //      #define SEARCH_ABORT                -27000
+    //  so it cannot ever fail...
+    //  And there is not comment or anything in there about it.. weird
+    //
+
     if reverse_mode != 0 {
         code1 = hash2 ^ hash_trans2;
         code2 = hash1 ^ hash_trans1
