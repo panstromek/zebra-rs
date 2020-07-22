@@ -32,7 +32,6 @@ pub mod learn;
 pub mod midgame;
 pub mod moves;
 pub mod osfbook;
-pub mod probcut;
 pub mod safemem;
 pub mod search;
 pub mod thordb;
