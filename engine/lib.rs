@@ -31,4 +31,5 @@ pub mod src {
     pub mod osfbook;
     pub mod thordb;
     pub mod stubs;
+    pub mod timer;
 }
