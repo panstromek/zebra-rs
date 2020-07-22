@@ -15,7 +15,7 @@ use crate::{
         zebra::{EvaluationType}
     }
 };
-
+use crate::src::stubs::{abs, ceil};
 
 
 pub type __off_t = i64;
@@ -333,4 +333,262 @@ pub unsafe fn get_candidate_count() -> i32 {
 pub unsafe fn get_candidate(mut index: i32)
                             -> CandidateMove {
     return candidate_list[index as usize];
+}
+
+
+pub unsafe fn get_hash(mut val0: *mut i32,
+                       mut val1: *mut i32,
+                       mut orientation: *mut i32) {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut min_map: i32 = 0;
+    let mut min_hash0: i32 = 0;
+    let mut min_hash1: i32 = 0;
+    let mut out: [[i32; 2]; 8] = [[0; 2]; 8];
+    /* Calculate the 8 different 64-bit hash values for the
+       different rotations. */
+    compute_line_patterns(board.as_mut_ptr());
+    i = 0 as i32;
+    while i < 8 as i32 {
+        j = 0 as i32;
+        while j < 2 as i32 {
+            out[i as usize][j as usize] = 0 as i32;
+            j += 1
+        }
+        i += 1
+    }
+    i = 0 as i32;
+    while i < 8 as i32 {
+        /* b1 -> b1 */
+        out[0 as i32 as usize][0 as i32 as usize] ^=
+            line_hash[0 as i32 as
+                usize][i as
+                usize][row_pattern[i as usize] as usize];
+        out[0 as i32 as usize][1 as i32 as usize] ^=
+            line_hash[1 as i32 as
+                usize][i as
+                usize][row_pattern[i as usize] as usize];
+        /* g1 -> b1 */
+        out[1 as i32 as usize][0 as i32 as usize] ^=
+            line_hash[0 as i32 as
+                usize][i as
+                usize][flip8[row_pattern[i as usize] as
+                usize] as usize];
+        out[1 as i32 as usize][1 as i32 as usize] ^=
+            line_hash[1 as i32 as
+                usize][i as
+                usize][flip8[row_pattern[i as usize] as
+                usize] as usize];
+        /* g8 -> b1 */
+        out[2 as i32 as usize][0 as i32 as usize] ^=
+            line_hash[0 as i32 as
+                usize][i as
+                usize][flip8[row_pattern[(7 as
+                i32
+                - i) as
+                usize] as
+                usize] as usize];
+        out[2 as i32 as usize][1 as i32 as usize] ^=
+            line_hash[1 as i32 as
+                usize][i as
+                usize][flip8[row_pattern[(7 as
+                i32
+                - i) as
+                usize] as
+                usize] as usize];
+        /* b8 -> b1 */
+        out[3 as i32 as usize][0 as i32 as usize] ^=
+            line_hash[0 as i32 as
+                usize][i as
+                usize][row_pattern[(7 as i32 - i)
+                as usize] as
+                usize];
+        out[3 as i32 as usize][1 as i32 as usize] ^=
+            line_hash[1 as i32 as
+                usize][i as
+                usize][row_pattern[(7 as i32 - i)
+                as usize] as
+                usize];
+        /* a2 -> b1 */
+        out[4 as i32 as usize][0 as i32 as usize] ^=
+            line_hash[0 as i32 as
+                usize][i as
+                usize][col_pattern[i as usize] as usize];
+        out[4 as i32 as usize][1 as i32 as usize] ^=
+            line_hash[1 as i32 as
+                usize][i as
+                usize][col_pattern[i as usize] as usize];
+        /* a7 -> b1 */
+        out[5 as i32 as usize][0 as i32 as usize] ^=
+            line_hash[0 as i32 as
+                usize][i as
+                usize][flip8[col_pattern[i as usize] as
+                usize] as usize];
+        out[5 as i32 as usize][1 as i32 as usize] ^=
+            line_hash[1 as i32 as
+                usize][i as
+                usize][flip8[col_pattern[i as usize] as
+                usize] as usize];
+        /* h7 -> b1 */
+        out[6 as i32 as usize][0 as i32 as usize] ^=
+            line_hash[0 as i32 as
+                usize][i as
+                usize][flip8[col_pattern[(7 as
+                i32
+                - i) as
+                usize] as
+                usize] as usize];
+        out[6 as i32 as usize][1 as i32 as usize] ^=
+            line_hash[1 as i32 as
+                usize][i as
+                usize][flip8[col_pattern[(7 as
+                i32
+                - i) as
+                usize] as
+                usize] as usize];
+        /* h2 -> b1 */
+        out[7 as i32 as usize][0 as i32 as usize] ^=
+            line_hash[0 as i32 as
+                usize][i as
+                usize][col_pattern[(7 as i32 - i)
+                as usize] as
+                usize];
+        out[7 as i32 as usize][1 as i32 as usize] ^=
+            line_hash[1 as i32 as
+                usize][i as
+                usize][col_pattern[(7 as i32 - i)
+                as usize] as
+                usize];
+        i += 1
+    }
+    /* Find the rotation minimizing the hash index.
+       If two hash indices are equal, map number is implicitly used
+       as tie-breaker. */
+    min_map = 0 as i32;
+    min_hash0 = out[0 as i32 as usize][0 as i32 as usize];
+    min_hash1 = out[0 as i32 as usize][1 as i32 as usize];
+    i = 1 as i32;
+    while i < 8 as i32 {
+        if out[i as usize][0 as i32 as usize] < min_hash0 ||
+            out[i as usize][0 as i32 as usize] == min_hash0 &&
+                out[i as usize][1 as i32 as usize] < min_hash1 {
+            min_map = i;
+            min_hash0 = out[i as usize][0 as i32 as usize];
+            min_hash1 = out[i as usize][1 as i32 as usize]
+        }
+        i += 1
+    }
+    *val0 = abs(min_hash0);
+    *val1 = abs(min_hash1);
+    *orientation = min_map;
+}
+
+/*
+   DO_COMPRESS
+   Compresses the subtree below the current node.
+*/
+pub unsafe fn do_compress(mut index: i32,
+                      mut node_order: *mut i32,
+                      mut child_count: *mut i16,
+                      mut node_index: *mut i32,
+                      mut child_list: *mut i16,
+                      mut child_index: *mut i32) {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut child: i32 = 0;
+    let mut valid_child_count: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    let mut found: i32 = 0;
+    let mut local_child_list: [i32; 64] = [0; 64];
+    let mut this_move: i16 = 0;
+    let mut local_child_move: [i16; 64] = [0; 64];
+    if (*node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        return
+    }
+    *node_order.offset(*node_index as isize) = index;
+    if (*node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    valid_child_count = 0 as i32;
+    generate_all(side_to_move);
+    i = 0 as i32;
+    while i < move_count[disks_played as usize] {
+        this_move =
+            move_list[disks_played as usize][i as usize] as i16;
+        make_move(side_to_move, this_move as i32, 1 as i32);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2);
+        child = *book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) &&
+            (*node.offset(child as isize)).flags as i32 &
+                8 as i32 != 0 {
+            j = 0 as i32;
+            found = 0 as i32;
+            while j < valid_child_count {
+                if child == local_child_list[j as usize] {
+                    found = 1 as i32
+                }
+                j += 1
+            }
+            if found == 0 {
+                local_child_list[valid_child_count as usize] = child;
+                local_child_move[valid_child_count as usize] = this_move;
+                valid_child_count += 1;
+                *child_list.offset(*child_index as isize) = this_move;
+                *child_index += 1
+            }
+        }
+        unmake_move(side_to_move, this_move as i32);
+        i += 1
+    }
+    *child_count.offset(*node_index as isize) =
+        valid_child_count as i16;
+    *node_index += 1;
+    i = 0 as i32;
+    while i < valid_child_count {
+        this_move = local_child_move[i as usize];
+        make_move(side_to_move, this_move as i32, 1 as i32);
+        do_compress(local_child_list[i as usize], node_order, child_count,
+                    node_index, child_list, child_index);
+        unmake_move(side_to_move, this_move as i32);
+        i += 1
+    }
+    let ref mut fresh44 = (*node.offset(index as isize)).flags;
+    *fresh44 = (*fresh44 as i32 ^ 8 as i32) as u16;
+}
+
+/*
+   SET_SEARCH_DEPTH
+   When finding move alternatives, searches to depth DEPTH
+   will be performed.
+*/
+
+pub unsafe fn set_search_depth(mut depth: i32) {
+    search_depth = depth;
+}
+/*
+  SET_EVAL_SPAN
+  Specify the evaluation value interval where nodes are re-evaluated.
+*/
+
+pub unsafe fn set_eval_span(mut min_span: f64,
+                            mut max_span: f64) {
+    min_eval_span = ceil(min_span * 128.0f64) as i32;
+    max_eval_span = ceil(max_span * 128.0f64) as i32;
+}
+/*
+  SET_NEGAMAX_SPAN
+  Specify the negamax value interval where nodes are re-evaluated.
+*/
+
+pub unsafe fn set_negamax_span(mut min_span: f64,
+                               mut max_span: f64) {
+    min_negamax_span = ceil(min_span * 128.0f64) as i32;
+    max_negamax_span = ceil(max_span * 128.0f64) as i32;
 }
