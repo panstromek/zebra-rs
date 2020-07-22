@@ -15,7 +15,7 @@ use crate::{
         zebra::{EvaluationType}
     }
 };
-use crate::src::stubs::{abs, ceil};
+use crate::src::stubs::{abs, ceil, floor};
 
 
 pub type __off_t = i64;
@@ -591,4 +591,313 @@ pub unsafe fn set_negamax_span(mut min_span: f64,
                                mut max_span: f64) {
     min_negamax_span = ceil(min_span * 128.0f64) as i32;
     max_negamax_span = ceil(max_span * 128.0f64) as i32;
+}
+/*
+   ADJUST_SCORE
+   Tweak a score as to encourage early deviations.
+*/
+pub unsafe fn adjust_score(mut score: i32,
+                       mut side_to_move: i32)
+                       -> i32 {
+    let mut adjustment: i32 = 0;
+    let mut adjust_steps: i32 = 0;
+    adjust_steps = high_deviation_threshold - disks_played;
+    if adjust_steps < 0 as i32 {
+        adjustment = 0 as i32
+    } else {
+        if disks_played < low_deviation_threshold {
+            adjust_steps = high_deviation_threshold - low_deviation_threshold
+        }
+        adjustment =
+            floor(adjust_steps as f64 * deviation_bonus * 128.0f64)
+                as i32;
+        if side_to_move == 2 as i32 { adjustment = -adjustment }
+    }
+    return score + adjustment;
+}
+/*
+   DO_MINIMAX
+   Calculates the minimax value of node INDEX.
+*/
+pub unsafe fn do_minimax(mut index: i32,
+                         mut black_score: *mut i32,
+                         mut white_score: *mut i32) {
+    let mut i: i32 = 0;
+    let mut child: i32 = 0;
+    let mut child_black_score: i32 = 0;
+    let mut child_white_score: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut alternative_move: i32 = 0;
+    let mut alternative_move_found: i32 = 0;
+    let mut child_count: i32 = 0;
+    let mut best_black_child_val: i32 = 0;
+    let mut best_white_child_val: i32 = 0;
+    let mut worst_black_child_val: i32 = 0;
+    let mut worst_white_child_val: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    let mut best_black_score: i16 = 0;
+    let mut best_white_score: i16 = 0;
+    /* If the node has been visited AND it is a midgame node, meaning
+       that the minimax values are not to be tweaked, return the
+       stored values. */
+    if (*node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        if (*node.offset(index as isize)).flags as i32 &
+            (4 as i32 | 16 as i32) == 0 {
+            *black_score =
+                (*node.offset(index as isize)).black_minimax_score as
+                    i32;
+            *white_score =
+                (*node.offset(index as isize)).white_minimax_score as
+                    i32;
+            return
+        }
+    }
+    /* Correct WLD solved nodes corresponding to draws to be represented
+       as full solved and make sure full solved nodes are marked as
+       WLD solved as well */
+    if (*node.offset(index as isize)).flags as i32 & 4 as i32
+        != 0 &&
+        (*node.offset(index as isize)).black_minimax_score as i32
+            == 0 as i32 &&
+        (*node.offset(index as isize)).white_minimax_score as i32
+            == 0 as i32 {
+        let ref mut fresh2 = (*node.offset(index as isize)).flags;
+        *fresh2 =
+            (*fresh2 as i32 | 16 as i32) as u16
+    }
+    if (*node.offset(index as isize)).flags as i32 & 16 as i32
+        != 0 &&
+        (*node.offset(index as isize)).flags as i32 &
+            4 as i32 == 0 {
+        let ref mut fresh3 = (*node.offset(index as isize)).flags;
+        *fresh3 =
+            (*fresh3 as i32 | 4 as i32) as u16
+    }
+    /* Recursively minimax all children of the node */
+    if (*node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    best_black_child_val = -(99999 as i32);
+    best_white_child_val = -(99999 as i32);
+    worst_black_child_val = 99999 as i32;
+    worst_white_child_val = 99999 as i32;
+    if (*node.offset(index as isize)).alternative_score as i32 !=
+        9999 as i32 {
+        best_black_score =
+            adjust_score((*node.offset(index as isize)).alternative_score as
+                             i32, side_to_move) as i16;
+        best_white_score = best_black_score;
+        worst_black_child_val = best_black_score as i32;
+        best_black_child_val = worst_black_child_val;
+        worst_white_child_val = best_white_score as i32;
+        best_white_child_val = worst_white_child_val;
+        alternative_move_found = 0 as i32;
+        alternative_move =
+            (*node.offset(index as isize)).best_alternative_move as
+                i32;
+        if alternative_move > 0 as i32 {
+            get_hash(&mut val1, &mut val2, &mut orientation);
+            alternative_move =
+                *inv_symmetry_map[orientation as
+                    usize].offset(alternative_move as isize)
+        }
+    } else {
+        alternative_move_found = 1 as i32;
+        alternative_move = 0 as i32;
+        if side_to_move == 0 as i32 {
+            best_black_score = -(32000 as i32) as i16;
+            best_white_score = -(32000 as i32) as i16
+        } else {
+            best_black_score = 32000 as i32 as i16;
+            best_white_score = 32000 as i32 as i16
+        }
+    }
+    generate_all(side_to_move);
+    child_count = 0 as i32;
+    i = 0 as i32;
+    while i < move_count[disks_played as usize] {
+        piece_count[0 as i32 as usize][disks_played as usize] =
+            disc_count(0 as i32);
+        piece_count[2 as i32 as usize][disks_played as usize] =
+            disc_count(2 as i32);
+        this_move = move_list[disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2);
+        child = *book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) {
+            do_minimax(child, &mut child_black_score, &mut child_white_score);
+            best_black_child_val =
+                if best_black_child_val > child_black_score {
+                    best_black_child_val
+                } else { child_black_score };
+            best_white_child_val =
+                if best_white_child_val > child_white_score {
+                    best_white_child_val
+                } else { child_white_score };
+            worst_black_child_val =
+                if worst_black_child_val < child_black_score {
+                    worst_black_child_val
+                } else { child_black_score };
+            worst_white_child_val =
+                if worst_white_child_val < child_white_score {
+                    worst_white_child_val
+                } else { child_white_score };
+            if side_to_move == 0 as i32 {
+                best_black_score =
+                    if child_black_score > best_black_score as i32 {
+                        child_black_score
+                    } else { best_black_score as i32 } as
+                        i16;
+                best_white_score =
+                    if child_white_score > best_white_score as i32 {
+                        child_white_score
+                    } else { best_white_score as i32 } as
+                        i16
+            } else {
+                best_black_score =
+                    if child_black_score < best_black_score as i32 {
+                        child_black_score
+                    } else { best_black_score as i32 } as
+                        i16;
+                best_white_score =
+                    if child_white_score < best_white_score as i32 {
+                        child_white_score
+                    } else { best_white_score as i32 } as
+                        i16
+            }
+            child_count += 1
+        } else if alternative_move_found == 0 && this_move == alternative_move
+        {
+            alternative_move_found = 1 as i32
+        }
+        unmake_move(side_to_move, this_move);
+        i += 1
+    }
+    if alternative_move_found == 0 {
+        /* The was-to-be deviation now leads to a position in the database,
+           hence it can no longer be used. */
+        (*node.offset(index as isize)).alternative_score =
+            9999 as i32 as i16;
+        (*node.offset(index as isize)).best_alternative_move =
+            -(1 as i32) as i16
+    }
+    /* Try to infer the WLD status from the children */
+    if (*node.offset(index as isize)).flags as i32 &
+        (16 as i32 | 4 as i32) == 0 &&
+        child_count > 0 as i32 {
+        if side_to_move == 0 as i32 {
+            if best_black_child_val >= 30000 as i32 &&
+                best_white_child_val >= 30000 as i32 {
+                /* Black win */
+                let ref mut fresh4 =
+                    (*node.offset(index as isize)).white_minimax_score;
+                *fresh4 =
+                    if best_black_child_val < best_white_child_val {
+                        best_black_child_val
+                    } else { best_white_child_val } as i16;
+                (*node.offset(index as isize)).black_minimax_score = *fresh4;
+                let ref mut fresh5 = (*node.offset(index as isize)).flags;
+                *fresh5 =
+                    (*fresh5 as i32 | 4 as i32) as
+                        u16
+            } else if best_black_child_val <= -(30000 as i32) &&
+                best_white_child_val <= -(30000 as i32) {
+                /* Black loss */
+                let ref mut fresh6 =
+                    (*node.offset(index as isize)).white_minimax_score;
+                *fresh6 =
+                    if best_black_child_val > best_white_child_val {
+                        best_black_child_val
+                    } else { best_white_child_val } as i16;
+                (*node.offset(index as isize)).black_minimax_score = *fresh6;
+                let ref mut fresh7 = (*node.offset(index as isize)).flags;
+                *fresh7 =
+                    (*fresh7 as i32 | 4 as i32) as
+                        u16
+            }
+        } else if worst_black_child_val <= -(30000 as i32) &&
+            worst_white_child_val <= -(30000 as i32) {
+            /* White win */
+            let ref mut fresh8 =
+                (*node.offset(index as isize)).white_minimax_score;
+            *fresh8 =
+                if worst_black_child_val > worst_white_child_val {
+                    worst_black_child_val
+                } else { worst_white_child_val } as i16;
+            (*node.offset(index as isize)).black_minimax_score = *fresh8;
+            let ref mut fresh9 = (*node.offset(index as isize)).flags;
+            *fresh9 =
+                (*fresh9 as i32 | 4 as i32) as u16
+        } else if worst_black_child_val >= 30000 as i32 &&
+            worst_white_child_val >= 30000 as i32 {
+            /* White loss */
+            let ref mut fresh10 =
+                (*node.offset(index as isize)).white_minimax_score;
+            *fresh10 =
+                if worst_black_child_val < worst_white_child_val {
+                    worst_black_child_val
+                } else { worst_white_child_val } as i16;
+            (*node.offset(index as isize)).black_minimax_score = *fresh10;
+            let ref mut fresh11 = (*node.offset(index as isize)).flags;
+            *fresh11 =
+                (*fresh11 as i32 | 4 as i32) as u16
+        }
+    }
+    /* Tweak the minimax scores for draws to give the right
+       draw avoidance behavior */
+    if (*node.offset(index as isize)).flags as i32 &
+        (16 as i32 | 4 as i32) != 0 {
+        *black_score =
+            (*node.offset(index as isize)).black_minimax_score as i32;
+        *white_score =
+            (*node.offset(index as isize)).white_minimax_score as i32;
+        if (*node.offset(index as isize)).black_minimax_score as i32
+            == 0 as i32 &&
+            (*node.offset(index as isize)).white_minimax_score as
+                i32 == 0 as i32 {
+            /* Is it a position in which a draw should be avoided? */
+            if game_mode as u32 ==
+                PRIVATE_GAME as i32 as u32 ||
+                (*node.offset(index as isize)).flags as i32 &
+                    32 as i32 == 0 {
+                match draw_mode as u32 {
+                    1 => {
+                        *black_score =
+                            30000 as i32 - 1 as i32;
+                        *white_score = 30000 as i32 - 1 as i32
+                    }
+                    2 => {
+                        *black_score =
+                            -(30000 as i32 - 1 as i32);
+                        *white_score =
+                            -(30000 as i32 - 1 as i32)
+                    }
+                    3 => {
+                        *black_score =
+                            -(30000 as i32 - 1 as i32);
+                        *white_score = 30000 as i32 - 1 as i32
+                    }
+                    0 | _ => { }
+                }
+            }
+        }
+    } else {
+        let ref mut fresh12 =
+            (*node.offset(index as isize)).black_minimax_score;
+        *fresh12 = best_black_score;
+        *black_score = *fresh12 as i32;
+        let ref mut fresh13 =
+            (*node.offset(index as isize)).white_minimax_score;
+        *fresh13 = best_white_score;
+        *white_score = *fresh13 as i32
+    }
+    let ref mut fresh14 = (*node.offset(index as isize)).flags;
+    *fresh14 = (*fresh14 as i32 ^ 8 as i32) as u16;
 }
