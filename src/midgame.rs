@@ -298,34 +298,6 @@ unsafe fn fast_tree_search(mut level: i32,
     };
 }
 /*
-  midgame_c__update_best_list
-*/
-unsafe fn midgame_c__update_best_list(mut best_list:
-                                                     *mut i32,
-                                                 mut move_0: i32,
-                                                 mut best_list_index:
-                                                     i32,
-                                                 mut best_list_length:
-                                                     i32) {
-    let mut i: i32 = 0;
-    if best_list_index < best_list_length {
-        i = best_list_index;
-        while i >= 1 as i32 {
-            *best_list.offset(i as isize) =
-                *best_list.offset((i - 1 as i32) as isize);
-            i -= 1
-        }
-    } else {
-        i = 3 as i32;
-        while i >= 1 as i32 {
-            *best_list.offset(i as isize) =
-                *best_list.offset((i - 1 as i32) as isize);
-            i -= 1
-        }
-    }
-    *best_list.offset(0 as i32 as isize) = move_0;
-}
-/*
    TREE_SEARCH
    The recursive tree search function. It uses negascout for
    tree pruning.

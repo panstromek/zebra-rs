@@ -133,7 +133,7 @@ pub unsafe fn advance_move(mut index: i32) {
 /*
   midgame_c__update_best_list
 */
-unsafe fn midgame_c__update_best_list(mut best_list:
+pub unsafe fn midgame_c__update_best_list(mut best_list:
                                       *mut i32,
                                       mut move_0: i32,
                                       mut best_list_index:
