@@ -1,4 +1,5 @@
-
+use crate::src::stubs::abs;
+use crate::src::myrandom::my_random;
 pub type size_t = u64;
 
 #[derive(Copy, Clone)]
@@ -335,4 +336,177 @@ pub fn popcount(mut b: u32) -> u32 {
         b &= b.wrapping_sub(1 as i32 as u32)
     }
     return n;
+}
+/*
+  GET_CLOSENESS
+  Returns the closeness between the 64-bit integers (a0,a1) and (b0,b1).
+  A closeness of 0 means that 32 bits differ.
+*/
+pub unsafe fn get_closeness(mut a0: u32, mut a1: u32,
+                        mut b0: u32, mut b1: u32)
+                        -> u32 {
+    return abs(popcount(a0 ^
+        b0).wrapping_add(popcount(a1 ^
+        b1)).wrapping_sub(32
+        as
+        i32
+        as
+        u32)
+        as i32) as u32;
+}
+
+/*
+   SETUP_HASH
+   Determine randomized hash masks.
+*/
+
+pub unsafe fn setup_hash(mut clear: i32) {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut pos: i32 = 0;
+    let mut rand_index: i32 = 0;
+    let max_pair_closeness = 10 as i32 as u32;
+    let max_zero_closeness = 9 as i32 as u32;
+    let mut closeness: u32 = 0;
+    let mut random_pair: [[u32; 2]; 130] = [[0; 2]; 130];
+    if clear != 0 {
+        i = 0 as i32;
+        while i < hash_size {
+            (*hash_table.offset(i as isize)).key1_selectivity_flags_draft &=
+                !(255 as i32) as u32;
+            (*hash_table.offset(i as isize)).key2 =
+                0 as i32 as u32;
+            i += 1
+        }
+    }
+    rand_index = 0 as i32;
+    while rand_index < 130 as i32 {
+        'c_2013:
+        loop  {
+            random_pair[rand_index as usize][0 as i32 as usize] =
+                ((my_random() << 3 as i32) +
+                    (my_random() >> 2 as i32)) as u32;
+            random_pair[rand_index as usize][1 as i32 as usize] =
+                ((my_random() << 3 as i32) +
+                    (my_random() >> 2 as i32)) as u32;
+            closeness =
+                get_closeness(random_pair[rand_index as
+                    usize][0 as i32 as
+                    usize],
+                              random_pair[rand_index as
+                                  usize][1 as i32 as
+                                  usize],
+                              0 as i32 as u32,
+                              0 as i32 as u32);
+            if closeness > max_zero_closeness { continue ; }
+            i = 0 as i32;
+            loop  {
+                if !(i < rand_index) { break 'c_2013 ; }
+                closeness =
+                    get_closeness(random_pair[rand_index as
+                        usize][0 as i32
+                        as usize],
+                                  random_pair[rand_index as
+                                      usize][1 as i32
+                                      as usize],
+                                  random_pair[i as
+                                      usize][0 as i32
+                                      as usize],
+                                  random_pair[i as
+                                      usize][1 as i32
+                                      as usize]);
+                if closeness > max_pair_closeness { break ; }
+                closeness =
+                    get_closeness(random_pair[rand_index as
+                        usize][0 as i32
+                        as usize],
+                                  random_pair[rand_index as
+                                      usize][1 as i32
+                                      as usize],
+                                  random_pair[i as
+                                      usize][1 as i32
+                                      as usize],
+                                  random_pair[i as
+                                      usize][0 as i32
+                                      as usize]);
+                if closeness > max_pair_closeness { break ; }
+                i += 1
+            }
+        }
+        rand_index += 1
+    }
+    rand_index = 0 as i32;
+    i = 0 as i32;
+    while i < 128 as i32 {
+        hash_value1[0 as i32 as usize][i as usize] =
+            0 as i32 as u32;
+        hash_value2[0 as i32 as usize][i as usize] =
+            0 as i32 as u32;
+        hash_value1[2 as i32 as usize][i as usize] =
+            0 as i32 as u32;
+        hash_value2[2 as i32 as usize][i as usize] =
+            0 as i32 as u32;
+        i += 1
+    }
+    i = 1 as i32;
+    while i <= 8 as i32 {
+        j = 1 as i32;
+        while j <= 8 as i32 {
+            pos = 10 as i32 * i + j;
+            hash_value1[0 as i32 as usize][pos as usize] =
+                random_pair[rand_index as usize][0 as i32 as usize];
+            hash_value2[0 as i32 as usize][pos as usize] =
+                random_pair[rand_index as usize][1 as i32 as usize];
+            rand_index += 1;
+            hash_value1[2 as i32 as usize][pos as usize] =
+                random_pair[rand_index as usize][0 as i32 as usize];
+            hash_value2[2 as i32 as usize][pos as usize] =
+                random_pair[rand_index as usize][1 as i32 as usize];
+            rand_index += 1;
+            j += 1
+        }
+        i += 1
+    }
+    i = 0 as i32;
+    while i < 128 as i32 {
+        hash_flip1[i as usize] =
+            hash_value1[0 as i32 as usize][i as usize] ^
+                hash_value1[2 as i32 as usize][i as usize];
+        hash_flip2[i as usize] =
+            hash_value2[0 as i32 as usize][i as usize] ^
+                hash_value2[2 as i32 as usize][i as usize];
+        i += 1
+    }
+    hash_color1[0 as i32 as usize] =
+        random_pair[rand_index as usize][0 as i32 as usize];
+    hash_color2[0 as i32 as usize] =
+        random_pair[rand_index as usize][1 as i32 as usize];
+    rand_index += 1;
+    hash_color1[2 as i32 as usize] =
+        random_pair[rand_index as usize][0 as i32 as usize];
+    hash_color2[2 as i32 as usize] =
+        random_pair[rand_index as usize][1 as i32 as usize];
+    rand_index += 1;
+    hash_flip_color1 =
+        hash_color1[0 as i32 as usize] ^
+            hash_color1[2 as i32 as usize];
+    hash_flip_color2 =
+        hash_color2[0 as i32 as usize] ^
+            hash_color2[2 as i32 as usize];
+    j = 0 as i32;
+    while j < 128 as i32 {
+        hash_put_value1[0 as i32 as usize][j as usize] =
+            hash_value1[0 as i32 as usize][j as usize] ^
+                hash_flip_color1;
+        hash_put_value2[0 as i32 as usize][j as usize] =
+            hash_value2[0 as i32 as usize][j as usize] ^
+                hash_flip_color2;
+        hash_put_value1[2 as i32 as usize][j as usize] =
+            hash_value1[2 as i32 as usize][j as usize] ^
+                hash_flip_color1;
+        hash_put_value2[2 as i32 as usize][j as usize] =
+            hash_value2[2 as i32 as usize][j as usize] ^
+                hash_flip_color2;
+        j += 1
+    };
 }
