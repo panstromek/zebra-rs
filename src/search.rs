@@ -1,10 +1,7 @@
-use crate::src::moves::{unmake_move, make_move, disks_played, move_list};
-use crate::src::hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, find_hash, determine_hash_values, HashEntry};
-use crate::src::globals::{board, Board, pv_depth, pv};
+use crate::src::moves::{unmake_move, make_move};
+use crate::src::globals::{pv_depth, pv};
 use crate::src::error::fatal_error;
 use crate::src::stubs::{printf, puts};
-use crate::src::counter::CounterType;
-use crate::src::zebra::EvaluationType;
 pub use ::engine::src::search::*;
 
 /*

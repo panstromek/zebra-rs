@@ -1,11 +1,9 @@
 use crate::src::libc;
 use crate::src::stubs::{puts, strlen, abs, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, tolower};
 use crate::src::safemem::{safe_malloc, safe_realloc};
-use crate::src::error::fatal_error;
 use crate::src::bitboard::bit_reverse_32;
 use crate::src::myrandom::my_random;
 use crate::src::patterns::pow3;
-use crate::src::moves::dir_mask;
 use crate::src::zebra::_IO_FILE;
 pub use engine::src::thordb::*;
 

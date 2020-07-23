@@ -1,7 +1,7 @@
 use crate::src::libc;
 use crate::src::globals::{pv_depth, pv, board, piece_count, score_sheet_row, black_moves};
 use crate::src::search::{nodes, complete_pv, get_ponder_move, total_nodes, evaluations, total_evaluations, total_time, set_current_eval, create_eval_info, root_eval, force_return, clear_pv, evals, disc_count, negate_current_eval, clear_ponder_move, set_ponder_move, float_move, sort_moves, setup_search};
-use crate::src::counter::{counter_value, adjust_counter, add_counter, reset_counter};
+use crate::src::counter::{counter_value, add_counter, reset_counter};
 use crate::src::stubs::{fclose, free, fprintf, abs, fputs, fopen, puts, printf, fgets, time, ctime, strcpy, stdout};
 use crate::src::display::{display_optimal_line, echo, display_pv, display_status, produce_eval_text, send_status, send_status_time, send_status_pv, send_status_nodes, clear_status, reset_buffer_display, display_board};
 use crate::src::timer::{clear_panic_abort, get_elapsed_time, is_panic_abort, clear_ponder_times, determine_move_time, toggle_abort_check, start_move, ponder_depth, add_ponder_time, get_real_timer, init_timer};

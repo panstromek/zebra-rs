@@ -8,7 +8,7 @@ use crate::{
         game::{global_setup, game_init, CandidateMove},
         stubs::*,
         libc,
-        myrandom::{my_random, my_srandom},
+        myrandom::{my_random},
         error::fatal_error,
         globals::{board, piece_count, pv, pv_depth},
         midgame::{toggle_midgame_abort_check, toggle_midgame_hash_usage, tree_search},
@@ -18,7 +18,6 @@ use crate::{
         end::end_game,
         getcoeff::remove_coeffs,
         counter::reset_counter,
-        patterns::{col_pattern, flip8, row_pattern, compute_line_patterns},
         zebra::{EvaluationType, _IO_FILE}
     }
 };

@@ -1,7 +1,7 @@
 pub use engine::src::end::*;
 use engine::{
     src:: {
-        epcstat::{end_sigma, end_mean, end_stats_available},
+        epcstat::{end_sigma, end_mean},
         moves::{dir_mask, disks_played, unmake_move, make_move, move_count, generate_all, move_list, valid_move},
         search::{force_return, hash_expand_pv, root_eval, store_pv, restore_pv, nodes, create_eval_info, disc_count, get_ponder_move, set_current_eval, select_move, evals, sorted_move_order},
         hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended, find_hash, HashEntry, hash_put_value2, hash_put_value1},

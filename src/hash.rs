@@ -1,8 +1,7 @@
 
 use crate::src::libc;
 use crate::src::safemem::safe_malloc;
-use crate::src::stubs::{free, abs, __assert_fail};
-use engine::src::myrandom::my_random;
+use crate::src::stubs::{free};
 pub use ::engine::src::hash::*;
 
 /* The number of entries in the hash table. Always a power of 2. */

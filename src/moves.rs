@@ -1,10 +1,4 @@
 use crate::src::stubs::{atoi, printf, scanf};
-use crate::src::doflip::{DoFlips_no_hash, hash_update2, hash_update1, DoFlips_hash};
-use crate::src::cntflip::AnyFlips_compact;
-use crate::src::globals::{board, piece_count};
-use crate::src::unflip::flip_stack;
-use crate::src::hash::{hash_stored2, hash2, hash_stored1, hash1, hash_put_value2, hash_put_value1};
-use crate::src::search::sorted_move_order;
 pub use engine::src::moves::*;
 
 /*
