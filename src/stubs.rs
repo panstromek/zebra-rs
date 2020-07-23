@@ -2,6 +2,7 @@ use crate::src::libc;
 use crate::src::game::{FILE, time_t, size_t};
 use crate::src::osfbook::__compar_fn_t;
 use crate::src::getcoeff::gzFile;
+pub use engine::src::stubs::{malloc, realloc, free};
 
 extern "C" {
     pub type _IO_wide_data;
@@ -61,10 +62,10 @@ extern "C" {
     pub fn time(__timer: *mut time_t) -> time_t;
     #[no_mangle]
     pub fn ctime(__timer: *const time_t) -> *mut i8;
-    #[no_mangle]
-    pub fn malloc(_: u64) -> *mut libc::c_void;
-    #[no_mangle]
-    pub fn realloc(_: *mut libc::c_void, _: u64) -> *mut libc::c_void;
+    // #[no_mangle]
+    // pub fn malloc(_: u64) -> *mut libc::c_void;
+    // #[no_mangle]
+    // pub fn realloc(_: *mut libc::c_void, _: u64) -> *mut libc::c_void;
     #[no_mangle]
     pub fn fabs(_: f64) -> f64;
     #[no_mangle]
@@ -88,8 +89,8 @@ extern "C" {
     #[no_mangle]
     pub fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t,
               __s: *mut FILE) -> size_t;
-    #[no_mangle]
-    pub fn free(__ptr: *mut libc::c_void);
+    // #[no_mangle]
+    // pub fn free(__ptr: *mut libc::c_void);
     #[no_mangle]
     pub fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t,
              __compar: __compar_fn_t);
