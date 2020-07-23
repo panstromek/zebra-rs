@@ -2066,6 +2066,7 @@ unsafe fn dump_game_score(mut side_to_move: i32) {
 }
 #[main]
 pub fn main() {
+    unsafe { engine::src::error::fatal_error = crate::src::error::fatal_error; };
     let mut args: Vec<*mut i8> = Vec::new();
     for arg in ::std::env::args() {
         args.push(::std::ffi::CString::new(arg).expect("Failed to convert argument into CString.").into_raw());

@@ -1,5 +1,6 @@
 #![feature(ptr_wrapping_offset_from)]
 #![feature(label_break_value)]
+#![feature(c_variadic)]
 
 pub mod src {
     pub mod bitbcnt;
@@ -32,4 +33,5 @@ pub mod src {
     pub mod thordb;
     pub mod stubs;
     pub mod timer;
+    pub mod error;
 }
