@@ -4,7 +4,7 @@ use crate::{
         timer::{frozen_ponder_depth, extended_above_recommended, above_recommended, is_panic_abort, get_elapsed_time, last_panic_check, check_panic_abort},
         display::{send_status, send_status_time, send_status_pv, send_status_nodes, produce_eval_text, clear_status, display_sweep, echo, send_sweep, clear_sweep, display_buffers},
         counter::{counter_value, adjust_counter},
-        stubs::{free, sprintf, abs, __assert_fail, stdout},
+        stubs::{free, sprintf, abs, stdout},
         libc,
         moves::{valid_move, disks_played, unmake_move, make_move, move_list, move_count, generate_all, unmake_move_no_hash, make_move_no_hash},
         hash::{find_hash, HashEntry, hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended, add_hash},
@@ -363,16 +363,7 @@ pub unsafe fn tree_search(mut level: i32,
                             alpha_test = 0 as i32
                         }
                     }
-                    if alpha_test != 0 || beta_test != 0 {
-                    } else {
-                        __assert_fail(b"alpha_test || beta_test\x00" as
-                                          *const u8 as *const i8,
-                                      b"midgame.c\x00" as *const u8 as
-                                          *const i8,
-                                      563 as i32 as u32,
-                                      (*::std::mem::transmute::<&[u8; 56],
-                                                                &[i8; 56]>(b"int tree_search(int, int, int, int, int, int, int, int)\x00")).as_ptr());
-                    }
+                    assert!(alpha_test != 0 || beta_test != 0);
                     if alpha_test != 0 && beta_test != 0 {
                         /* Test for likely fail-low or likely fail-high. */
                         let mut shallow_val =
