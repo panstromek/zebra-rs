@@ -1,5 +1,5 @@
 use crate::src::libc;
-use crate::src::stubs::{fclose, fscanf, fopen, gzclose, gzopen, strcpy, free, printf, __assert_fail, gzgetc, exit};
+use crate::src::stubs::{fclose, fscanf, fopen, gzclose, gzopen, strcpy, free, printf, gzgetc, exit};
 use crate::src::globals::{board, piece_count};
 use crate::src::moves::disks_played;
 use crate::src::error::fatal_error;
@@ -39,14 +39,7 @@ unsafe fn get_word(mut stream: gzFile) -> i16 {
             (*stream).next = (*stream).next.offset(1);
             *fresh0 as i32
         } else { gzgetc(stream) };
-    if hi != -(1 as i32) {
-    } else {
-        __assert_fail(b"hi != -1\x00" as *const u8 as *const i8,
-                      b"getcoeff.c\x00" as *const u8 as *const i8,
-                      339 as i32 as u32,
-                      (*::std::mem::transmute::<&[u8; 23],
-                                                &[i8; 23]>(b"short get_word(gzFile)\x00")).as_ptr());
-    }
+    assert_ne!(hi, -(1 as i32));
     lo =
         if (*stream).have != 0 {
             (*stream).have = (*stream).have.wrapping_sub(1);
@@ -55,14 +48,7 @@ unsafe fn get_word(mut stream: gzFile) -> i16 {
             (*stream).next = (*stream).next.offset(1);
             *fresh1 as i32
         } else { gzgetc(stream) };
-    if lo != -(1 as i32) {
-    } else {
-        __assert_fail(b"lo != -1\x00" as *const u8 as *const i8,
-                      b"getcoeff.c\x00" as *const u8 as *const i8,
-                      342 as i32 as u32,
-                      (*::std::mem::transmute::<&[u8; 23],
-                                                &[i8; 23]>(b"short get_word(gzFile)\x00")).as_ptr());
-    }
+    assert_ne!(lo, -(1 as i32));
     val.unsigned_val = ((hi << 8 as i32) + lo) as u16;
     return val.signed_val;
 }
