@@ -5,6 +5,8 @@ use crate::src::search::{full_pv, full_pv_depth, disc_count};
 use crate::src::globals::{white_moves, black_moves, pv_depth};
 use crate::src::libc;
 use crate::src::zebra::{EvaluationType, _IO_FILE};
+pub use engine::src::display::*;
+
 pub type __builtin_va_list = [__va_list_tag; 1];
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -49,9 +51,6 @@ pub const WON_POSITION: EvalResult = 0;
 */
 /* Global variables */
 
-pub static mut echo: i32 = 0;
-
-pub static mut display_pv: i32 = 0;
 /* Local variables */
 static mut black_player: *mut i8 =
     0 as *const i8 as *mut i8;
@@ -562,8 +561,8 @@ pub unsafe fn reset_buffer_display() {
   If an update has happened and the last display was long enough ago,
   output relevant buffers.
 */
-
-pub unsafe fn display_buffers() {
+#[no_mangle]
+pub unsafe extern "C" fn display_buffers() {
     let mut timer: f64 = 0.;
     let mut new_interval: f64 = 0.;
     timer = get_real_timer();
