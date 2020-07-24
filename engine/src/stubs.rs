@@ -5,6 +5,8 @@ use std::alloc::{Layout, LayoutErr};
 pub fn abs(num: i32) -> i32 {
     num.abs()
 }
+type __time_t = i64;
+type time_t = __time_t;
 
 // FIXME verify: are these replacements equivalent to their libc counterparts???
 //  if not, does it matter??
@@ -28,4 +30,6 @@ extern "C" {
     pub fn realloc(_: *mut c_void, _: u64) -> *mut c_void;
     #[no_mangle]
     pub fn free(__ptr: *mut c_void);
+    #[no_mangle]
+    pub fn time(__timer: *mut time_t) -> time_t;
 }

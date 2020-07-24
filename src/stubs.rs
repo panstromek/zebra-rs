@@ -2,7 +2,7 @@ use crate::src::libc;
 use crate::src::game::{FILE, time_t, size_t};
 use crate::src::osfbook::__compar_fn_t;
 use crate::src::getcoeff::gzFile;
-pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs};
+pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs, time};
 
 extern "C" {
     pub type _IO_wide_data;
@@ -56,8 +56,6 @@ extern "C" {
     #[no_mangle]
     pub fn strcasecmp(_: *const i8, _: *const i8)
                       -> i32;
-    #[no_mangle]
-    pub fn time(__timer: *mut time_t) -> time_t;
     #[no_mangle]
     pub fn ctime(__timer: *const time_t) -> *mut i8;
     #[no_mangle]
