@@ -35,4 +35,5 @@ pub mod src {
     pub mod timer;
     pub mod error;
     pub mod safemem;
+    pub mod display;
 }
