@@ -43,7 +43,7 @@ pub type time_t = __time_t;
    Contents:   The text-based error handler.
 */
 /* not Windows CE */
-
+#[no_mangle]
 pub unsafe extern "C" fn fatal_error(mut format: *const i8,
                                      mut args: ...) {
     let mut stream = 0 as *mut FILE;
