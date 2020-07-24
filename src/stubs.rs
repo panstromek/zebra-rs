@@ -62,10 +62,6 @@ extern "C" {
     pub fn time(__timer: *mut time_t) -> time_t;
     #[no_mangle]
     pub fn ctime(__timer: *const time_t) -> *mut i8;
-    // #[no_mangle]
-    // pub fn malloc(_: u64) -> *mut libc::c_void;
-    // #[no_mangle]
-    // pub fn realloc(_: *mut libc::c_void, _: u64) -> *mut libc::c_void;
     #[no_mangle]
     pub fn fabs(_: f64) -> f64;
     #[no_mangle]
@@ -89,8 +85,6 @@ extern "C" {
     #[no_mangle]
     pub fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t,
               __s: *mut FILE) -> size_t;
-    // #[no_mangle]
-    // pub fn free(__ptr: *mut libc::c_void);
     #[no_mangle]
     pub fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t,
              __compar: __compar_fn_t);
@@ -124,3 +118,45 @@ extern "C" {
     #[no_mangle]
     pub fn gzopen(_: *const i8, _: *const i8) -> gzFile;
 }
+// // Use these in rust version
+// // If there is a problem with these things, I can always just link to libc if I need to
+// #[no_mangle]
+// pub unsafe extern "C" fn malloc(len: u64) -> *mut c_void {
+//     // This is a really primitive version
+//     // of malloc that just uses a Vec to allocate the storage
+//     // We could do better but this is just a stub so let's be ok with it
+//     // we use u64 because that is the alignment malloc usually gives you
+//     // as "sufficient"
+//     let mut vec: Vec<u64> = Vec::new();
+//     let size = std::mem::size_of::<u64>();
+//     // division will truncate the length if it's not a multiple of size_of::u64,
+//     // so we need to add one to round it up
+//     let count = len as usize / size + 2;
+//     vec.resize(count, 0u64);
+//     vec[0] = (count) as u64;
+//     // we store the size in the first byte because
+//     // we need it in realloc or free
+//     let raw = Box::into_raw(vec.into_boxed_slice());
+//     (raw as *mut u64).offset(1) as *mut c_void
+// }
+//
+// #[no_mangle]
+// pub unsafe extern "C" fn realloc(mem: *mut c_void, num_bytes: u64) -> *mut c_void {
+//     let start = (mem as *mut u64).offset(-1);
+//     let size = (*start) as usize;
+//     let mut vec = Vec::from_raw_parts(start, size, size);
+//
+//     let size = num_bytes as usize / std::mem::size_of::<u64>() + 2;
+//     vec.resize(size, 0u64);
+//     vec[0] = (size) as u64;
+//     let raw = Box::into_raw(vec.into_boxed_slice());
+//     (raw as *mut u64).offset(1) as *mut c_void
+// }
+//
+// #[no_mangle]
+// pub unsafe extern "C" fn free(mem: *mut c_void) {
+//     let start = (mem as *mut u64).offset(-1);
+//     let size = (*start) as usize;
+//     let vec = Vec::from_raw_parts(start, size, size);
+//     drop(vec)
+// }
