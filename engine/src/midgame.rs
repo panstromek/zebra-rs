@@ -11,6 +11,8 @@ use crate::{
         zebra::{EvaluationType}
     }
 };
+use crate::src::getcoeff::pattern_evaluation;
+use crate::src::stubs::abs;
 
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
@@ -157,4 +159,63 @@ pub unsafe fn midgame_c__update_best_list(mut best_list:
         }
     }
     *best_list.offset(0 as i32 as isize) = move_0;
+}
+
+
+/*
+  STATIC_OR_TERMINAL_EVALUATION
+  Invokes the proper evaluation function depending on whether the
+  board is filled or not.
+*/
+pub unsafe fn static_or_terminal_evaluation(mut side_to_move:
+                                            i32)
+                                            -> i32 {
+    if disks_played == 60 as i32 {
+        return terminal_evaluation(side_to_move)
+    } else {
+        evaluations.lo = evaluations.lo.wrapping_add(1);
+        return pattern_evaluation(side_to_move)
+    };
+}
+
+/*
+   SETUP_MIDGAME
+   Sets up some search parameters.
+*/
+
+pub unsafe fn setup_midgame() {
+    let mut i: i32 = 0;
+    allow_midgame_hash_probe = 1 as i32;
+    allow_midgame_hash_update = 1 as i32;
+    i = 0 as i32;
+    while i <= 60 as i32 {
+        stage_reached[i as usize] = 0 as i32;
+        i += 1
+    }
+    calculate_perturbation();
+}
+/*
+  CALCULATE_PERTURBATION
+  Determines the score perturbations (if any) to the root moves.
+*/
+
+pub unsafe fn calculate_perturbation() {
+    let mut i: i32 = 0;
+    let mut shift: i32 = 0;
+    if apply_perturbation == 0 || perturbation_amplitude == 0 as i32 {
+        i = 0 as i32;
+        while i < 100 as i32 {
+            score_perturbation[i as usize] = 0 as i32;
+            i += 1
+        }
+    } else {
+        shift = perturbation_amplitude / 2 as i32;
+        i = 0 as i32;
+        while i < 100 as i32 {
+            score_perturbation[i as usize] =
+                abs(my_random() as i32) % perturbation_amplitude -
+                    shift;
+            i += 1
+        }
+    };
 }

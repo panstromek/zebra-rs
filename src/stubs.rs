@@ -2,7 +2,7 @@ use crate::src::libc;
 use crate::src::game::{FILE, time_t, size_t};
 use crate::src::osfbook::__compar_fn_t;
 use crate::src::getcoeff::gzFile;
-pub use engine::src::stubs::{malloc, realloc, free};
+pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs};
 
 extern "C" {
     pub type _IO_wide_data;
@@ -10,8 +10,6 @@ extern "C" {
     pub type _IO_marker;
     #[no_mangle]
     pub fn tolower(_: i32) -> i32;
-    #[no_mangle]
-    pub fn floor(_: f64) -> f64;
     #[no_mangle]
     pub static mut stdout: *mut FILE;
     #[no_mangle]
@@ -63,13 +61,9 @@ extern "C" {
     #[no_mangle]
     pub fn ctime(__timer: *const time_t) -> *mut i8;
     #[no_mangle]
-    pub fn fabs(_: f64) -> f64;
-    #[no_mangle]
     pub fn __ctype_b_loc() -> *mut *const u16;
     #[no_mangle]
     pub fn toupper(_: i32) -> i32;
-    #[no_mangle]
-    pub fn ceil(_: f64) -> f64;
     #[no_mangle]
     pub static mut stderr: *mut FILE;
     #[no_mangle]
@@ -88,8 +82,6 @@ extern "C" {
     #[no_mangle]
     pub fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t,
              __compar: __compar_fn_t);
-    #[no_mangle]
-    pub fn abs(_: i32) -> i32;
     #[no_mangle]
     pub fn strcpy(_: *mut i8, _: *const i8)
               -> *mut i8;
