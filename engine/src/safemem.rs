@@ -20,13 +20,13 @@
 
    Contents:        Provides safer memory allocation than malloc().
 */
-use crate::src::stubs::*;
+use crate::src::stubs::{malloc, realloc};
 use crate::src::error::fatal_error;
-use crate::src::libc;
+use std::ffi::c_void;
 
 pub type size_t = u64;
-pub unsafe fn safe_malloc(mut size: size_t) -> *mut libc::c_void {
-    let mut block = 0 as *mut libc::c_void;
+pub unsafe fn safe_malloc(mut size: size_t) -> *mut c_void {
+    let mut block = 0 as *mut c_void;
     block = malloc(size);
     if block.is_null() {
         fatal_error(b"%s %d\n\x00" as *const u8 as *const i8,
@@ -36,9 +36,9 @@ pub unsafe fn safe_malloc(mut size: size_t) -> *mut libc::c_void {
     return block;
 }
 
-pub unsafe fn safe_realloc(mut ptr: *mut libc::c_void,
-                                      mut size: size_t) -> *mut libc::c_void {
-    let mut block = 0 as *mut libc::c_void;
+pub unsafe fn safe_realloc(mut ptr: *mut c_void,
+                                      mut size: size_t) -> *mut c_void {
+    let mut block = 0 as *mut c_void;
     block = realloc(ptr, size);
     if block.is_null() {
         fatal_error(b"%s %d\n\x00" as *const u8 as *const i8,
