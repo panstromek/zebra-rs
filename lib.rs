@@ -27,7 +27,6 @@ pub mod end;
 pub mod error;
 pub mod game;
 pub mod getcoeff;
-pub mod hash;
 pub mod learn;
 pub mod midgame;
 pub mod moves;
