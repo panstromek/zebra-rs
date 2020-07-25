@@ -16,7 +16,8 @@ opt-level = 3
 lto = "fat" 
 
 [profile.dev]
-opt-level = 1
+opt-level = 0
+lto="thin"
 
 [lib]
 name = "c2rust_out"
