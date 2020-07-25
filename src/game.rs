@@ -31,7 +31,7 @@ pub type size_t = u64;
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 pub type time_t = __time_t;
-
+pub static mut log_file_path: [i8; 2048] = [0; 2048];
 /*
    GLOBAL_SETUP
    Initialize the different sub-systems.
@@ -77,16 +77,7 @@ pub unsafe fn global_setup(mut use_random: i32,
     init_stable();
     setup_search();
 }
-/*
-   GLOBAL_TERMINATE
-   Free all dynamically allocated memory.
-*/
 
-pub unsafe fn global_terminate() {
-    free_hash();
-    clear_coeffs();
-    clear_osf();
-}
 /*
    SETUP_GAME
    Prepares the board.
