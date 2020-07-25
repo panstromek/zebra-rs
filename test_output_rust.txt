@@ -1,7 +1,7 @@
 
 Zebra (c) 1997-2005 Gunnar Andersson, compile date Jul  2 2020 at 19:33:54
 
-Reading binary opening database... done (took 1 s)
+Reading binary opening database... done (took 0 s)
 Book randomness: 0.25 disks
 
          a b c d e f g h
@@ -612,7 +612,9 @@ PV: e7 a3 h2 h1 h6 d8 a5 d2 e2 d1 a6 b7 c1 b1 g1
       7      * * * O           (O)     20 discs     15. g2  e8
       8          O O                                16. e7  
 
--->  16  +1.75         476138  a3 h2 h1 h6 d8     0.0 s  
+-->  15  +3.05          73808  a3 h2 h1 h6 d8     0.0 s  
+[-inf,inf]:    a3
+-->  16  +1.75         476138  a3 h2 h1 h6 d8     1.0 s  475662 nps
 PV: a3 h2 h1 h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 a7 g8
 
          a b c d e f g h
@@ -1026,4 +1028,4 @@ PV: b1
 Black: 31   White: 33
 Nodes searched:        4196548   
 Positions evaluated:   2756433   
-Total time: 0.0 s
+Total time: 1.0 s

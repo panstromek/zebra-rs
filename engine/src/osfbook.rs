@@ -15,7 +15,7 @@ use crate::{
         zebra::{EvaluationType}
     }
 };
-use crate::src::stubs::{abs, ceil, floor};
+use crate::src::stubs::{abs, ceil, floor, free};
 use crate::src::error::fatal_error;
 use crate::src::safemem::{safe_malloc, safe_realloc};
 use std::ffi::c_void;
@@ -1105,4 +1105,40 @@ pub unsafe fn create_BookNode(mut val1: i32,
     select_hash_slot(index);
     book_node_count += 1;
     return index;
+}
+
+
+/*
+  FIND_OPENING_NAME
+  Searches the opening name database read by READ_OPENING_LIST
+  and returns a pointer to the name if the position was found,
+  NULL otherwise.
+*/
+
+pub unsafe fn find_opening_name() -> *const i8 {
+    let mut i: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    get_hash(&mut val1, &mut val2, &mut orientation);
+    i = 0 as i32;
+    while i < 76 as i32 {
+        if val1 == opening_list[i as usize].hash_val1 &&
+            val2 == opening_list[i as usize].hash_val2 {
+            return opening_list[i as usize].name
+        }
+        i += 1
+    }
+    return 0 as *const i8;
+}
+/*
+  CLEAR_OSF
+  Free all dynamically allocated memory.
+*/
+
+pub unsafe fn clear_osf() {
+    free(book_hash_table as *mut c_void);
+    book_hash_table = 0 as *mut i32;
+    free(node as *mut c_void);
+    node = 0 as *mut BookNode;
 }
