@@ -1046,3 +1046,16 @@ unsafe fn fast_tree_search(mut level: i32,
         return curr_val
     };
 }
+
+/*
+  PERTURB_SCORE
+  Perturbs SCORE by PERTURBATION if it doesn't appear to be
+  a midgame win.
+*/
+pub unsafe fn perturb_score(mut score: i32,
+                        mut perturbation: i32)
+                        -> i32 {
+    if abs(score) < 29000 as i32 - 4000 as i32 {
+        return score + perturbation
+    } else { return score };
+}
