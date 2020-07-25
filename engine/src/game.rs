@@ -2,6 +2,9 @@ use crate::src::zebra::EvaluationType;
 use crate::src::counter::{adjust_counter, counter_value};
 use crate::src::search::nodes;
 use crate::src::globals::{pv_depth, pv};
+use crate::src::osfbook::clear_osf;
+use crate::src::getcoeff::clear_coeffs;
+use crate::src::hash::free_hash;
 
 
 pub type EvalType = u32;
@@ -46,7 +49,6 @@ pub struct CandidateMove {
 
 /* The maximum length of any system path. */
 pub static mut forced_opening: *const i8 = 0 as *const i8;
-pub static mut log_file_path: [i8; 2048] = [0; 2048];
 pub static mut last_time_used: f64 = 0.;
 pub static mut max_depth_reached: i32 = 0;
 pub static mut use_log_file: i32 = 1 as i32;
@@ -189,4 +191,14 @@ pub unsafe fn get_pv(mut destin: *mut i32) -> i32 {
         }
         return pv_depth[0 as i32 as usize] + 1 as i32
     };
+}
+/*
+   GLOBAL_TERMINATE
+   Free all dynamically allocated memory.
+*/
+
+pub unsafe fn global_terminate() {
+    free_hash();
+    clear_coeffs();
+    clear_osf();
 }
