@@ -4,6 +4,11 @@ use crate::src::zebra::EvaluationType;
 use crate::src::moves::{unmake_move, make_move, disks_played, move_list};
 use crate::src::hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, find_hash, determine_hash_values, HashEntry};
 
+extern "C" {
+    #[no_mangle]
+    fn handle_fatal_pv_error(i: i32);
+}
+
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
 pub const INTERRUPTED_EVAL: EvalType = 7;
@@ -618,3 +623,46 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
     pv_depth[0 as i32 as usize] = new_pv_depth;
 }
 
+
+/*
+  COMPLETE_PV
+  Complete the principal variation with passes (if any there are any).
+*/
+
+pub unsafe fn complete_pv(mut side_to_move: i32) {
+    let mut i: i32 = 0;
+    let mut actual_side_to_move: [i32; 60] = [0; 60];
+    full_pv_depth = 0 as i32;
+    i = 0 as i32;
+    while i < pv_depth[0 as i32 as usize] {
+        if make_move(side_to_move, pv[0 as i32 as usize][i as usize],
+                     1 as i32) != 0 {
+            actual_side_to_move[i as usize] = side_to_move;
+            full_pv[full_pv_depth as usize] =
+                pv[0 as i32 as usize][i as usize];
+            full_pv_depth += 1
+        } else {
+            full_pv[full_pv_depth as usize] = -(1 as i32);
+            full_pv_depth += 1;
+            side_to_move = 0 as i32 + 2 as i32 - side_to_move;
+            if make_move(side_to_move,
+                         pv[0 as i32 as usize][i as usize],
+                         1 as i32) != 0 {
+                actual_side_to_move[i as usize] = side_to_move;
+                full_pv[full_pv_depth as usize] =
+                    pv[0 as i32 as usize][i as usize];
+                full_pv_depth += 1
+            } else {
+                handle_fatal_pv_error(i);
+            }
+        }
+        side_to_move = 0 as i32 + 2 as i32 - side_to_move;
+        i += 1
+    }
+    i = pv_depth[0 as i32 as usize] - 1 as i32;
+    while i >= 0 as i32 {
+        unmake_move(actual_side_to_move[i as usize],
+                    pv[0 as i32 as usize][i as usize]);
+        i -= 1
+    };
+}
