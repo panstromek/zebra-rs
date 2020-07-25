@@ -20,7 +20,7 @@ use engine::{
 use crate::{
     src::{
         libc,
-        stubs::{ceil, abs, printf, __assert_fail, free, fflush, sprintf, puts, stdout},
+        stubs::{ceil, abs, printf, free, fflush, sprintf, puts, stdout},
         display::{display_status, echo, reset_buffer_display, send_status, send_status_time, send_status_pv, send_status_nodes, produce_eval_text, clear_status, display_sweep, send_sweep, display_buffers, clear_sweep},
         timer::{clear_panic_abort, get_elapsed_time, is_panic_abort, check_panic_abort, check_threshold, set_panic_threshold, last_panic_check},
         midgame::{toggle_midgame_hash_usage, tree_search},
@@ -1199,16 +1199,7 @@ pub unsafe fn end_game(mut side_to_move: i32,
                                          side_to_move, alpha, beta,
                                          0 as i32, 1 as i32);
                     if is_panic_abort() != 0 || force_return != 0 { break ; }
-                    if root_eval > alpha {
-                    } else {
-                        __assert_fail(b"root_eval > alpha\x00" as *const u8 as
-                                          *const i8,
-                                      b"end.c\x00" as *const u8 as
-                                          *const i8,
-                                      2126 as i32 as u32,
-                                      (*::std::mem::transmute::<&[u8; 56],
-                                                                &[i8; 56]>(b"int end_game(int, int, int, int, int, EvaluationType *)\x00")).as_ptr());
-                    }
+                    assert!( root_eval > alpha );
                     if root_eval < beta { break ; }
                     floor_value += 2 as i32
                 }
