@@ -150,3 +150,14 @@ extern "C" {
 //     let vec = Vec::from_raw_parts(start, size, size);
 //     drop(vec)
 // }
+
+
+// TODO do a crosscheck with this. So far I only implemented
+//  it for ascii and I am not sure if more is needed
+// pub fn tolower(num: i32) -> i32 {
+//     if num >= 'A' as i32 && num <= 'Z' as i32 {
+//         let offset = ('a' as i32) - ('A' as i32);
+//         return num - offset;
+//     }
+//     return num;
+// }
