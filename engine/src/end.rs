@@ -18,6 +18,13 @@ use crate::{
 };
 use crate::src::stubs::ceil;
 use crate::src::hash::add_hash;
+extern "C" {
+    #[no_mangle]
+    fn after_update_best_list_verbose(best_list: *mut i32);
+
+    #[no_mangle]
+     fn before_update_best_list_verbose(best_list: *mut i32, move_0: i32, best_list_index: i32, best_list_length: *mut i32);
+}
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -1524,4 +1531,39 @@ pub unsafe fn end_solve(mut my_bits: BitBoard, mut opp_bits: BitBoard,
                                    empties, discdiff, prevmove)
     }
     return result;
+}
+
+
+/*
+  UPDATE_BEST_LIST
+*/
+pub unsafe fn update_best_list(mut best_list: *mut i32,
+                           mut move_0: i32,
+                           mut best_list_index: i32,
+                           mut best_list_length: *mut i32,
+                           mut verbose: i32) {
+    verbose = 0 as i32;
+    if verbose != 0 {
+        before_update_best_list_verbose(best_list, move_0, best_list_index, best_list_length)
+    }
+    if best_list_index < *best_list_length {
+        let mut i = best_list_index;
+        while i >= 1 as i32 {
+            *best_list.offset(i as isize) =
+                *best_list.offset((i - 1 as i32) as isize);
+            i -= 1
+        }
+    } else {
+        let mut i = 3 as i32;
+        while i >= 1 as i32 {
+            *best_list.offset(i as isize) =
+                *best_list.offset((i - 1 as i32) as isize);
+            i -= 1
+        }
+        if *best_list_length < 4 as i32 { *best_list_length += 1 }
+    }
+    *best_list.offset(0 as i32 as isize) = move_0;
+    if verbose != 0 {
+        after_update_best_list_verbose(best_list);
+    };
 }

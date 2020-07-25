@@ -63,39 +63,6 @@ pub const LOST_POSITION: EvalResult = 2;
 pub const DRAWN_POSITION: EvalResult = 1;
 pub const WON_POSITION: EvalResult = 0;
 
-/*
-  UPDATE_BEST_LIST
-*/
-unsafe fn update_best_list(mut best_list: *mut i32,
-                                      mut move_0: i32,
-                                      mut best_list_index: i32,
-                                      mut best_list_length: *mut i32,
-                                      mut verbose: i32) {
-    verbose = 0 as i32;
-    if verbose != 0 {
-        before_update_best_list_verbose(best_list, move_0, best_list_index, best_list_length)
-    }
-    if best_list_index < *best_list_length {
-        let mut i = best_list_index;
-        while i >= 1 as i32 {
-            *best_list.offset(i as isize) =
-                *best_list.offset((i - 1 as i32) as isize);
-            i -= 1
-        }
-    } else {
-        let mut i = 3 as i32;
-        while i >= 1 as i32 {
-            *best_list.offset(i as isize) =
-                *best_list.offset((i - 1 as i32) as isize);
-            i -= 1
-        }
-        if *best_list_length < 4 as i32 { *best_list_length += 1 }
-    }
-    *best_list.offset(0 as i32 as isize) = move_0;
-    if verbose != 0 {
-        after_update_best_list_verbose(best_list);
-    };
-}
 #[no_mangle]
 pub unsafe extern "C" fn after_update_best_list_verbose(best_list: *mut i32) {
     printf(b"      After:  \x00" as *const u8 as *const i8);
