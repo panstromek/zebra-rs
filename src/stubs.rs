@@ -2,7 +2,7 @@ use crate::src::libc;
 use crate::src::game::{FILE, time_t, size_t};
 use crate::src::osfbook::__compar_fn_t;
 use crate::src::getcoeff::gzFile;
-pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs, time};
+pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs, time, strlen};
 
 extern "C" {
     pub type _IO_wide_data;
@@ -51,8 +51,6 @@ extern "C" {
     #[no_mangle]
     pub fn strstr(_: *const i8, _: *const i8)
                   -> *mut i8;
-    #[no_mangle]
-    pub fn strlen(_: *const i8) -> u64;
     #[no_mangle]
     pub fn strcasecmp(_: *const i8, _: *const i8)
                       -> i32;
@@ -160,4 +158,9 @@ extern "C" {
 //         return num - offset;
 //     }
 //     return num;
+// }
+
+// pub unsafe extern "C" fn strlen(string: *const libc::c_char) -> libc::c_ulong {
+//     // std::sys::strlen(string)
+//     std::ffi::CStr::from_ptr(string).to_bytes().len() as libc::c_ulong
 // }

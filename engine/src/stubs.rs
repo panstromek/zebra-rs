@@ -32,4 +32,6 @@ extern "C" {
     pub fn free(__ptr: *mut c_void);
     #[no_mangle]
     pub fn time(__timer: *mut time_t) -> time_t;
+    #[no_mangle]
+    pub fn strlen(_: *const i8) -> u64;
 }

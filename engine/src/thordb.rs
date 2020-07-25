@@ -3,7 +3,15 @@ use crate::src::myrandom::my_random;
 use crate::src::patterns::pow3;
 use crate::src::moves::dir_mask;
 use crate::src::error::fatal_error;
+use crate::src::stubs::{abs, strlen};
+use crate::src::safemem::safe_malloc;
+extern "C" {
+    #[no_mangle]
+    fn thordb_report_flipped_0_first();
+    #[no_mangle]
+    fn thordb_report_flipped_0_second();
 
+}
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct GameInfoType {
@@ -7952,3 +7960,427 @@ pub unsafe fn init_symmetry_maps() {
         i += 1
     };
 }
+
+/*
+  PLAY_THROUGH_GAME
+  Play the MAX_MOVES first moves of GAME and update THOR_BOARD
+  and THOR_SIDE_TO_MOVE to represent the position after those moves.
+*/
+pub unsafe fn play_through_game(mut game: *mut GameType,
+                                mut max_moves: i32)
+                                -> i32 {
+    let mut i: i32 = 0;
+    let mut move_0: i32 = 0;
+    let mut flipped: i32 = 0;
+    clear_thor_board();
+    thor_side_to_move = 0 as i32;
+    i = 0 as i32;
+    while i < max_moves {
+        move_0 = abs((*game).moves[i as usize] as i32);
+        flipped =
+            any_flips(move_0, thor_side_to_move,
+                      0 as i32 + 2 as i32 -
+                          thor_side_to_move);
+        if flipped != 0 {
+            thor_board[move_0 as usize] = thor_side_to_move;
+            thor_side_to_move =
+                0 as i32 + 2 as i32 - thor_side_to_move
+        } else {
+            thor_side_to_move =
+                0 as i32 + 2 as i32 - thor_side_to_move;
+            flipped =
+                any_flips(move_0, thor_side_to_move,
+                          0 as i32 + 2 as i32 -
+                              thor_side_to_move);
+            if flipped != 0 {
+                thor_board[move_0 as usize] = thor_side_to_move;
+                thor_side_to_move =
+                    0 as i32 + 2 as i32 - thor_side_to_move
+            } else { return 0 as i32 }
+        }
+        i += 1
+    }
+    return 1 as i32;
+}
+
+/*
+  PREPARE_GAME
+  Performs off-line analysis of GAME to speed up subsequent requests.
+  The main result is that the number of black discs on the board after
+  each of the moves is stored.
+*/
+pub unsafe fn prepare_game(mut game: *mut GameType) {
+    let mut i: i32 = 0;
+    let mut move_0: i32 = 0;
+    let mut done: i32 = 0;
+    let mut flipped: i32 = 0;
+    let mut opening_match: i32 = 0;
+    let mut moves_played: i32 = 0;
+    let mut disc_count: [i32; 3] = [0; 3];
+    let mut corner_descriptor: u32 = 0;
+    let mut opening = 0 as *mut ThorOpeningNode;
+    let mut child = 0 as *mut ThorOpeningNode;
+    /* Play through the game and count the number of black discs
+       at each stage. */
+    clear_thor_board();
+    disc_count[2 as i32 as usize] = 2 as i32;
+    disc_count[0 as i32 as usize] =
+        disc_count[2 as i32 as usize];
+    thor_side_to_move = 0 as i32;
+    corner_descriptor = 0 as i32 as u32;
+    moves_played = 0 as i32;
+    done = 0 as i32;
+    loop  {
+        /* Store the number of black discs. */
+        (*game).black_disc_count[moves_played as usize] =
+            disc_count[0 as i32 as usize] as i8;
+        /* Make the move, update the board and disc count,
+           and change the sign for white moves */
+        move_0 = (*game).moves[moves_played as usize] as i32;
+        flipped =
+            count_flips(move_0, thor_side_to_move,
+                        0 as i32 + 2 as i32 -
+                            thor_side_to_move);
+        if flipped != 0 {
+            thor_board[move_0 as usize] = thor_side_to_move;
+            disc_count[thor_side_to_move as usize] +=
+                flipped + 1 as i32;
+            disc_count[(0 as i32 + 2 as i32 -
+                thor_side_to_move) as usize] -= flipped;
+            if thor_side_to_move == 2 as i32 {
+                (*game).moves[moves_played as usize] =
+                    -((*game).moves[moves_played as usize] as i32) as
+                        i8
+            }
+            thor_side_to_move =
+                0 as i32 + 2 as i32 - thor_side_to_move;
+            moves_played += 1
+        } else {
+            thor_side_to_move =
+                0 as i32 + 2 as i32 - thor_side_to_move;
+            flipped =
+                count_flips(move_0, thor_side_to_move,
+                            0 as i32 + 2 as i32 -
+                                thor_side_to_move);
+            if flipped != 0 {
+                thor_board[move_0 as usize] = thor_side_to_move;
+                disc_count[thor_side_to_move as usize] +=
+                    flipped + 1 as i32;
+                disc_count[(0 as i32 + 2 as i32 -
+                    thor_side_to_move) as usize] -= flipped;
+                if thor_side_to_move == 2 as i32 {
+                    (*game).moves[moves_played as usize] =
+                        -((*game).moves[moves_played as usize] as i32)
+                            as i8
+                }
+                thor_side_to_move =
+                    0 as i32 + 2 as i32 - thor_side_to_move;
+                moves_played += 1
+            } else { done = 1 as i32 }
+        }
+        /* Update the corner descriptor if necessary */
+        if move_0 == 11 as i32 || move_0 == 18 as i32 ||
+            move_0 == 81 as i32 || move_0 == 88 as i32 {
+            corner_descriptor |=
+                get_corner_mask(thor_board[11 as i32 as usize],
+                                thor_board[81 as i32 as usize],
+                                thor_board[18 as i32 as usize],
+                                thor_board[88 as i32 as usize])
+        }
+        if !(done == 0 && moves_played < 60 as i32) { break ; }
+    }
+    (*game).black_disc_count[moves_played as usize] =
+        disc_count[0 as i32 as usize] as i8;
+    (*game).move_count = moves_played as i16;
+    i = moves_played + 1 as i32;
+    while i <= 60 as i32 {
+        (*game).black_disc_count[i as usize] =
+            -(1 as i32) as i8;
+        i += 1
+    }
+    /* Find the longest opening which coincides with the game */
+    opening = root_node;
+    i = 0 as i32;
+    opening_match = 1 as i32;
+    while opening_match != 0 {
+        move_0 = (*opening).child_move as i32;
+        child = (*opening).child_node;
+        while !child.is_null() &&
+            move_0 != abs((*game).moves[i as usize] as i32) {
+            move_0 = (*child).sibling_move as i32;
+            child = (*child).sibling_node
+        }
+        if child.is_null() {
+            opening_match = 0 as i32
+        } else { opening = child; i += 1 }
+    }
+    (*game).opening = opening;
+    /* Initialize the shape state */
+    (*game).shape_lo =
+        ((3 as i32) << 27 as i32) as u32;
+    (*game).shape_hi =
+        ((3 as i32) << 3 as i32) as u32;
+    (*game).shape_state_hi = 0 as i32 as i16;
+    (*game).shape_state_lo = 0 as i32 as i16;
+    /* Store the corner descriptor */
+    (*game).corner_descriptor = corner_descriptor;
+}
+
+/*
+  INIT_THOR_HASH
+  Computes hash codes for each of the 6561 configurations of the 8 different
+  rows. A special feature of the codes is the relation
+
+     hash[flip[pattern]] == reverse[hash[pattern]]
+
+  which speeds up the computation of the hash functions.
+*/
+pub unsafe fn init_thor_hash() {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut row: [i32; 10] = [0; 10];
+    let mut flip_row: [i32; 6561] = [0; 6561];
+    let mut buffer: [i32; 6561] = [0; 6561];
+    i = 0 as i32;
+    while i < 8 as i32 { row[i as usize] = 0 as i32; i += 1 }
+    i = 0 as i32;
+    while i < 6561 as i32 {
+        flip_row[i as usize] = 0 as i32;
+        j = 0 as i32;
+        while j < 8 as i32 {
+            flip_row[i as usize] +=
+                row[j as usize] * pow3[(7 as i32 - j) as usize];
+            j += 1
+        }
+        /* Next configuration */
+        j = 0 as i32;
+        loop  {
+            /* The odometer principle */
+            row[j as usize] += 1;
+            if row[j as usize] == 3 as i32 {
+                row[j as usize] = 0 as i32
+            }
+            j += 1;
+            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
+                j < 8 as i32) {
+                break ;
+            }
+        }
+        i += 1
+    }
+    i = 0 as i32;
+    while i < 8 as i32 {
+        j = 0 as i32;
+        while j < 6561 as i32 {
+            buffer[j as usize] = abs(my_random() as i32);
+            j += 1
+        }
+        j = 0 as i32;
+        while j < 6561 as i32 {
+            primary_hash[i as usize][j as usize] =
+                buffer[j as usize] as u32 &
+                    0xffff0000 as u32 |
+                    bit_reverse_32(buffer[flip_row[j as usize] as usize] as
+                        u32) &
+                        0xffff as i32 as u32;
+            j += 1
+        }
+        j = 0 as i32;
+        while j < 6561 as i32 {
+            buffer[j as usize] = abs(my_random() as i32);
+            j += 1
+        }
+        j = 0 as i32;
+        while j < 6561 as i32 {
+            secondary_hash[i as usize][j as usize] =
+                buffer[j as usize] as u32 &
+                    0xffff0000 as u32 |
+                    bit_reverse_32(buffer[flip_row[j as usize] as usize] as
+                        u32) &
+                        0xffff as i32 as u32;
+            j += 1
+        }
+        i += 1
+    };
+}
+/*
+  NEW_THOR_OPENING_NODE
+  Creates and initializes a new node for use in the opening tree.
+*/
+pub unsafe fn new_thor_opening_node(mut parent: *mut ThorOpeningNode)
+                                -> *mut ThorOpeningNode {
+    let mut node = 0 as *mut ThorOpeningNode;
+    node =
+        safe_malloc(::std::mem::size_of::<ThorOpeningNode>() as u64)
+            as *mut ThorOpeningNode;
+    (*node).child_move = 0 as i32 as i8;
+    (*node).sibling_move = 0 as i32 as i8;
+    (*node).child_node = 0 as *mut ThorOpeningNode_;
+    (*node).sibling_node = 0 as *mut ThorOpeningNode_;
+    (*node).parent_node = parent;
+    return node;
+}
+
+/*
+  BUILD_THOR_OPENING_TREE
+  Builds the opening tree from the statically computed
+  structure THOR_OPENING_LIST (see thorop.c).
+*/
+pub unsafe fn build_thor_opening_tree() {
+    let mut thor_move_list: [i8; 61] = [0; 61];
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut move_0: i32 = 0;
+    let mut branch_depth: i32 = 0;
+    let mut end_depth: i32 = 0;
+    let mut flipped: i32 = 0;
+    let mut hash1: u32 = 0;
+    let mut hash2: u32 = 0;
+    let mut parent = 0 as *mut ThorOpeningNode;
+    let mut last_child = 0 as *mut ThorOpeningNode;
+    let mut new_child = 0 as *mut ThorOpeningNode;
+    let mut node_list: [*mut ThorOpeningNode; 61] =
+        [0 as *mut ThorOpeningNode; 61];
+    /* Create the root node and compute its hash value */
+    root_node = new_thor_opening_node(0 as *mut ThorOpeningNode);
+    clear_thor_board();
+    compute_thor_patterns(thor_board.as_mut_ptr());
+    compute_partial_hash(&mut hash1, &mut hash2);
+    (*root_node).hash1 = hash1;
+    (*root_node).hash2 = hash2;
+    node_list[0 as i32 as usize] = root_node;
+    /* Add each of the openings to the tree */
+    i = 0 as i32;
+    while i < 741 as i32 {
+        branch_depth = thor_opening_list[i as usize].first_unique;
+        end_depth =
+            (branch_depth as
+                u64).wrapping_add(strlen(thor_opening_list[i as
+                usize].move_str).wrapping_div(2
+                as
+                i32
+                as
+                u64))
+                as i32;
+        j = 0 as i32;
+        while j < end_depth - branch_depth {
+            thor_move_list[(branch_depth + j) as usize] =
+                (10 as i32 *
+                    (*thor_opening_list[i as
+                        usize].move_str.offset((2 as
+                        i32
+                        * j +
+                        1 as
+                            i32)
+                        as
+                        isize)
+                        as i32 - '0' as i32) +
+                    (*thor_opening_list[i as
+                        usize].move_str.offset((2 as
+                        i32
+                        * j)
+                        as
+                        isize)
+                        as i32 - 'a' as i32 + 1 as i32)) as
+                    i8;
+            j += 1
+        }
+        /* Play through the moves common with the previous line
+           and the first deviation */
+        clear_thor_board();
+        thor_side_to_move = 0 as i32;
+        j = 0 as i32;
+        while j <= branch_depth {
+            move_0 = thor_move_list[j as usize] as i32;
+            flipped =
+                any_flips(move_0, thor_side_to_move,
+                          0 as i32 + 2 as i32 -
+                              thor_side_to_move);
+            if flipped != 0 {
+                thor_board[move_0 as usize] = thor_side_to_move;
+                thor_side_to_move =
+                    0 as i32 + 2 as i32 - thor_side_to_move
+            } else {
+                thor_side_to_move =
+                    0 as i32 + 2 as i32 - thor_side_to_move;
+                flipped =
+                    any_flips(move_0, thor_side_to_move,
+                              0 as i32 + 2 as i32 -
+                                  thor_side_to_move);
+                if flipped != 0 {
+                    thor_board[move_0 as usize] = thor_side_to_move;
+                    thor_side_to_move =
+                        0 as i32 + 2 as i32 -
+                            thor_side_to_move
+                } else {
+                    thordb_report_flipped_0_first();
+                }
+            }
+            j += 1
+        }
+        /* Create the branch from the previous node */
+        parent = node_list[branch_depth as usize];
+        new_child = new_thor_opening_node(parent);
+        compute_thor_patterns(thor_board.as_mut_ptr());
+        compute_partial_hash(&mut hash1, &mut hash2);
+        (*new_child).hash1 = hash1;
+        (*new_child).hash2 = hash2;
+        if (*parent).child_node.is_null() {
+            (*parent).child_node = new_child;
+            (*parent).child_move = thor_move_list[branch_depth as usize]
+        } else {
+            last_child = (*parent).child_node;
+            while !(*last_child).sibling_node.is_null() {
+                last_child = (*last_child).sibling_node
+            }
+            (*last_child).sibling_node = new_child;
+            (*last_child).sibling_move = thor_move_list[branch_depth as usize]
+        }
+        node_list[(branch_depth + 1 as i32) as usize] = new_child;
+        /* Play through the rest of the moves and create new nodes for each
+           of the resulting positions */
+        j = branch_depth + 1 as i32;
+        while j < end_depth {
+            move_0 = thor_move_list[j as usize] as i32;
+            flipped =
+                any_flips(move_0, thor_side_to_move,
+                          0 as i32 + 2 as i32 -
+                              thor_side_to_move);
+            if flipped != 0 {
+                thor_board[move_0 as usize] = thor_side_to_move;
+                thor_side_to_move =
+                    0 as i32 + 2 as i32 - thor_side_to_move
+            } else {
+                thor_side_to_move =
+                    0 as i32 + 2 as i32 - thor_side_to_move;
+                flipped =
+                    any_flips(move_0, thor_side_to_move,
+                              0 as i32 + 2 as i32 -
+                                  thor_side_to_move);
+                if flipped != 0 {
+                    thor_board[move_0 as usize] = thor_side_to_move;
+                    thor_side_to_move =
+                        0 as i32 + 2 as i32 -
+                            thor_side_to_move
+                } else {
+                    thordb_report_flipped_0_second();
+                }
+            }
+            parent = new_child;
+            new_child = new_thor_opening_node(parent);
+            compute_thor_patterns(thor_board.as_mut_ptr());
+            compute_partial_hash(&mut hash1, &mut hash2);
+            (*new_child).hash1 = hash1;
+            (*new_child).hash2 = hash2;
+            (*parent).child_node = new_child;
+            (*parent).child_move = thor_move_list[j as usize];
+            node_list[(j + 1 as i32) as usize] = new_child;
+            j += 1
+        }
+        (*new_child).frequency = thor_opening_list[i as usize].frequency;
+        i += 1
+    }
+    /* Calculate opening frequencies also for interior nodes */
+    calculate_opening_frequency(root_node);
+}
+
