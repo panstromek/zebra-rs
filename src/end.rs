@@ -71,29 +71,19 @@ unsafe fn update_best_list(mut best_list: *mut i32,
                                       mut best_list_index: i32,
                                       mut best_list_length: *mut i32,
                                       mut verbose: i32) {
-    let mut i: i32 = 0;
     verbose = 0 as i32;
     if verbose != 0 {
-        printf(b"move=%2d  index=%d  length=%d      \x00" as *const u8 as
-                   *const i8, move_0, best_list_index,
-               *best_list_length);
-        printf(b"Before:  \x00" as *const u8 as *const i8);
-        i = 0 as i32;
-        while i < 4 as i32 {
-            printf(b"%2d \x00" as *const u8 as *const i8,
-                   *best_list.offset(i as isize));
-            i += 1
-        }
+        before_update_best_list_verbose(best_list, move_0, best_list_index, best_list_length)
     }
     if best_list_index < *best_list_length {
-        i = best_list_index;
+        let mut i = best_list_index;
         while i >= 1 as i32 {
             *best_list.offset(i as isize) =
                 *best_list.offset((i - 1 as i32) as isize);
             i -= 1
         }
     } else {
-        i = 3 as i32;
+        let mut i = 3 as i32;
         while i >= 1 as i32 {
             *best_list.offset(i as isize) =
                 *best_list.offset((i - 1 as i32) as isize);
@@ -103,15 +93,33 @@ unsafe fn update_best_list(mut best_list: *mut i32,
     }
     *best_list.offset(0 as i32 as isize) = move_0;
     if verbose != 0 {
-        printf(b"      After:  \x00" as *const u8 as *const i8);
-        i = 0 as i32;
-        while i < 4 as i32 {
-            printf(b"%2d \x00" as *const u8 as *const i8,
-                   *best_list.offset(i as isize));
-            i += 1
-        }
-        puts(b"\x00" as *const u8 as *const i8);
+        after_update_best_list_verbose(best_list);
     };
+}
+#[no_mangle]
+pub unsafe extern "C" fn after_update_best_list_verbose(best_list: *mut i32) {
+    printf(b"      After:  \x00" as *const u8 as *const i8);
+    let mut i = 0 as i32;
+    while i < 4 as i32 {
+        printf(b"%2d \x00" as *const u8 as *const i8,
+               *best_list.offset(i as isize));
+        i += 1
+    }
+    puts(b"\x00" as *const u8 as *const i8);
+}
+#[no_mangle]
+pub unsafe extern "C"  fn before_update_best_list_verbose(best_list: *mut i32, mut move_0: i32, mut best_list_index: i32, best_list_length: *mut i32) {
+    let mut i: i32 = 0;
+    printf(b"move=%2d  index=%d  length=%d      \x00" as *const u8 as
+               *const i8, move_0, best_list_index,
+           *best_list_length);
+    printf(b"Before:  \x00" as *const u8 as *const i8);
+    i = 0 as i32;
+    while i < 4 as i32 {
+        printf(b"%2d \x00" as *const u8 as *const i8,
+               *best_list.offset(i as isize));
+        i += 1
+    }
 }
 /*
   END_TREE_SEARCH
@@ -1146,7 +1154,7 @@ pub unsafe fn end_game(mut side_to_move: i32,
             root_eval = -(27000 as i32)
         }
         if echo != 0 || force_echo != 0 {
-            display_status(stdout, 0 as i32);
+            end_display_zero_status();
         }
         if book_move != -(1 as i32) &&
                (book_eval_info.res as u32 ==
@@ -1267,7 +1275,7 @@ pub unsafe fn end_game(mut side_to_move: i32,
                     send_solve_status(empties, side_to_move, eval_info);
                 }
                 if echo != 0 || force_echo != 0 {
-                    display_status(stdout, 0 as i32);
+                    end_display_zero_status();
                 }
             }
             restore_pv(old_pv.as_mut_ptr(), old_depth);
@@ -1309,7 +1317,7 @@ pub unsafe fn end_game(mut side_to_move: i32,
                 send_solve_status(empties, side_to_move, eval_info);
             }
             if echo != 0 || force_echo != 0 {
-                display_status(stdout, 0 as i32);
+                end_display_zero_status();
             }
         }
         pv[0 as i32 as usize][0 as i32 as usize] =
@@ -1337,7 +1345,7 @@ pub unsafe fn end_game(mut side_to_move: i32,
         send_solve_status(empties, side_to_move, eval_info);
     }
     if echo != 0 || force_echo != 0 {
-        display_status(stdout, 0 as i32);
+        end_display_zero_status();
     }
     /* For shallow endgames, we can afford to compute the entire PV
        move by move. */
@@ -1346,4 +1354,9 @@ pub unsafe fn end_game(mut side_to_move: i32,
         full_expand_pv(side_to_move, 0 as i32);
     }
     return pv[0 as i32 as usize][0 as i32 as usize];
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn end_display_zero_status() {
+    display_status(stdout, 0 as i32);
 }
