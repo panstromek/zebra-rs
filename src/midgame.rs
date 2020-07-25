@@ -19,18 +19,6 @@ use crate::{
 pub use engine::src::midgame::*;
 
 /*
-  PERTURB_SCORE
-  Perturbs SCORE by PERTURBATION if it doesn't appear to be
-  a midgame win.
-*/
-unsafe fn perturb_score(mut score: i32,
-                                   mut perturbation: i32)
- -> i32 {
-    if abs(score) < 29000 as i32 - 4000 as i32 {
-        return score + perturbation
-    } else { return score };
-}
-/*
    ROOT_TREE_SEARCH
    The recursive tree search function that is to be called only
    for the root of the search tree.
