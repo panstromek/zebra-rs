@@ -12,7 +12,8 @@ extern "C" {
     fn thordb_report_flipped_0_first();
     #[no_mangle]
     fn thordb_report_flipped_0_second();
-
+    #[no_mangle]
+    fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]);
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -8720,4 +8721,150 @@ pub unsafe extern "C" fn thor_compare(mut g1: *const c_void,
     /* If control reaches this point, the two games couldn't be
        distinguished by the current search criteria. */
     return 0 as i32;
+}
+
+
+/*
+  CHOOSE_THOR_OPENING_MOVE
+  Computes frequencies for all moves from the given position,
+  display these and chooses one if from a distribution skewed
+  towards common moves. (If no moves are found, PASS is returned.)
+*/
+
+pub unsafe fn choose_thor_opening_move(mut in_board:
+                                       *mut i32,
+                                       mut side_to_move:
+                                       i32,
+                                       mut echo: i32)
+                                       -> i32 {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut temp_symm: i32 = 0;
+    let mut pos: i32 = 0;
+    let mut disc_count: i32 = 0;
+    let mut freq_sum: i32 = 0;
+    let mut acc_freq_sum: i32 = 0;
+    let mut random_move: i32 = 0;
+    let mut random_value: i32 = 0;
+    let mut match_count: i32 = 0;
+    let mut symmetries: [i32; 8] = [0; 8];
+    let mut freq_count: [i32; 100] = [0; 100];
+    let mut primary_hash_0: [u32; 8] = [0; 8];
+    let mut secondary_hash_0: [u32; 8] = [0; 8];
+    let mut move_list: [C2RustUnnamed; 64] =
+        [C2RustUnnamed{move_0: 0, frequency: 0,}; 64];
+    let mut temp = C2RustUnnamed{move_0: 0, frequency: 0,};
+    disc_count = 0 as i32;
+    i = 1 as i32;
+    while i <= 8 as i32 {
+        j = 1 as i32;
+        pos = 10 as i32 * i + 1 as i32;
+        while j <= 8 as i32 {
+            freq_count[pos as usize] = 0 as i32;
+            if *in_board.offset(pos as isize) != 1 as i32 {
+                disc_count += 1
+            }
+            j += 1;
+            pos += 1
+        }
+        i += 1
+    }
+    /* Check that the parity of the board coincides with standard
+       Othello - if this is not the case, the Thor opening lines are useless
+       as they don't contain any passes. */
+    if side_to_move == 0 as i32 &&
+        disc_count % 2 as i32 == 1 as i32 {
+        return -(1 as i32)
+    }
+    if side_to_move == 2 as i32 &&
+        disc_count % 2 as i32 == 0 as i32 {
+        return -(1 as i32)
+    }
+    /* Create a random permutation of the symmetries to avoid the same
+       symmetry always being chosen in e.g. the initial position */
+    i = 0 as i32;
+    while i < 8 as i32 { symmetries[i as usize] = i; i += 1 }
+    i = 0 as i32;
+    while i < 7 as i32 {
+        j = i + abs(my_random() as i32) % (8 as i32 - i);
+        temp_symm = symmetries[i as usize];
+        symmetries[i as usize] = symmetries[j as usize];
+        symmetries[j as usize] = temp_symm;
+        i += 1
+    }
+    /* Calculate frequencies for all moves */
+    compute_thor_patterns(in_board);
+    compute_full_primary_hash(primary_hash_0.as_mut_ptr());
+    compute_full_secondary_hash(secondary_hash_0.as_mut_ptr());
+    recursive_frequency_count(root_node, freq_count.as_mut_ptr(),
+                              0 as i32, disc_count - 4 as i32,
+                              symmetries.as_mut_ptr(),
+                              primary_hash_0.as_mut_ptr(),
+                              secondary_hash_0.as_mut_ptr());
+    freq_sum = 0 as i32;
+    i = 1 as i32;
+    while i <= 8 as i32 {
+        j = 1 as i32;
+        pos = 10 as i32 * i + 1 as i32;
+        while j <= 8 as i32 {
+            freq_sum += freq_count[pos as usize];
+            j += 1;
+            pos += 1
+        }
+        i += 1
+    }
+    if freq_sum > 0 as i32 {
+        /* Position found in Thor opening tree */
+        /* Create a list of the moves chosen from the position and also
+           randomly select one of them. Probability for each move is
+           proportional to the frequency of that move being played here. */
+        random_value = abs(my_random() as i32) % freq_sum;
+        random_move = -(1 as i32);
+        acc_freq_sum = 0 as i32;
+        match_count = 0 as i32;
+        i = 1 as i32;
+        while i <= 8 as i32 {
+            j = 1 as i32;
+            pos = 10 as i32 * i + 1 as i32;
+            while j <= 8 as i32 {
+                if freq_count[pos as usize] > 0 as i32 {
+                    move_list[match_count as usize].move_0 = pos;
+                    move_list[match_count as usize].frequency =
+                        freq_count[pos as usize];
+                    match_count += 1;
+                    if acc_freq_sum < random_value &&
+                        acc_freq_sum + freq_count[pos as usize] >=
+                            random_value {
+                        random_move = pos
+                    }
+                    acc_freq_sum += freq_count[pos as usize]
+                }
+                j += 1;
+                pos += 1
+            }
+            i += 1
+        }
+        /* Optionally display the database moves sorted on frequency */
+        if echo != 0 {
+            i = 0 as i32;
+            while i < match_count {
+                j = 0 as i32;
+                while j < match_count - 1 as i32 {
+                    if move_list[j as usize].frequency <
+                        move_list[(j + 1 as i32) as
+                            usize].frequency {
+                        temp = move_list[j as usize];
+                        move_list[j as usize] =
+                            move_list[(j + 1 as i32) as usize];
+                        move_list[(j + 1 as i32) as usize] = temp
+                    }
+                    j += 1
+                }
+                i += 1
+            }
+            choose_thor_opening_move_report(freq_sum, match_count, &move_list)
+        }
+        return random_move
+    }
+    return -(1 as i32);
 }
