@@ -3667,29 +3667,7 @@ pub unsafe fn convert_opening_list(mut base_file:
     fclose(out_stream);
     fclose(in_stream);
 }
-/*
-  FIND_OPENING_NAME
-  Searches the opening name database read by READ_OPENING_LIST
-  and returns a pointer to the name if the position was found,
-  NULL otherwise.
-*/
 
-pub unsafe fn find_opening_name() -> *const i8 {
-    let mut i: i32 = 0;
-    let mut val1: i32 = 0;
-    let mut val2: i32 = 0;
-    let mut orientation: i32 = 0;
-    get_hash(&mut val1, &mut val2, &mut orientation);
-    i = 0 as i32;
-    while i < 76 as i32 {
-        if val1 == opening_list[i as usize].hash_val1 &&
-               val2 == opening_list[i as usize].hash_val2 {
-            return opening_list[i as usize].name
-        }
-        i += 1
-    }
-    return 0 as *const i8;
-}
 /*
    INIT_OSF
    Makes sure all data structures are initialized.
@@ -3716,15 +3694,4 @@ pub unsafe fn init_osf(mut do_global_setup: i32) {
     if do_global_setup != 0 {
         global_setup(0 as i32, 19 as i32);
     };
-}
-/*
-  CLEAR_OSF
-  Free all dynamically allocated memory.
-*/
-
-pub unsafe fn clear_osf() {
-    free(book_hash_table as *mut libc::c_void);
-    book_hash_table = 0 as *mut i32;
-    free(node as *mut libc::c_void);
-    node = 0 as *mut BookNode;
 }
