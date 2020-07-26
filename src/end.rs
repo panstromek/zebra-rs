@@ -88,6 +88,8 @@ pub unsafe extern "C"  fn before_update_best_list_verbose(best_list: *mut i32, m
         i += 1
     }
 }
+
+static mut buffer: [i8; 16] = [0; 16];
 /*
   END_TREE_SEARCH
   Plain nega-scout with fastest-first move ordering.
@@ -103,7 +105,6 @@ unsafe fn end_tree_search(mut level: i32,
                                      mut selective_cutoff: *mut i32,
                                      mut void_legal: i32)
  -> i32 {
-    static mut buffer: [i8; 16] = [0; 16];
     let mut node_val: f64 = 0.;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -149,10 +150,7 @@ unsafe fn end_tree_search(mut level: i32,
                   flags: 0,};
     let mut stability_bound: i32 = 0;
     if level == 0 as i32 {
-        sprintf(buffer.as_mut_ptr(),
-                b"[%d,%d]:\x00" as *const u8 as *const i8, alpha,
-                beta);
-        clear_sweep();
+        end_tree_search_level_0_report(alpha, beta);
     }
     remains = max_depth - level;
     *selective_cutoff = 0 as i32;
@@ -201,22 +199,7 @@ unsafe fn end_tree_search(mut level: i32,
         pv_depth[level as usize] = level + 1 as i32;
         pv[level as usize][level as usize] = best_move;
         if level == 0 as i32 && get_ponder_move() == 0 {
-            send_sweep(b"%-10s \x00" as *const u8 as *const i8,
-                       buffer.as_mut_ptr());
-            send_sweep(b"%c%c\x00" as *const u8 as *const i8,
-                       'a' as i32 + best_move % 10 as i32 -
-                           1 as i32,
-                       '0' as i32 + best_move / 10 as i32);
-            if result <= alpha {
-                send_sweep(b"<%d\x00" as *const u8 as *const i8,
-                           result + 1 as i32);
-            } else if result >= beta {
-                send_sweep(b">%d\x00" as *const u8 as *const i8,
-                           result - 1 as i32);
-            } else {
-                send_sweep(b"=%d\x00" as *const u8 as *const i8,
-                           result);
-            }
+            end_tree_search_level_0_ponder_0_report(alpha, beta, result)
         }
         return result
     }
@@ -240,29 +223,7 @@ unsafe fn end_tree_search(mut level: i32,
                 entry.move_0[0 as i32 as usize];
             pv_depth[level as usize] = level + 1 as i32;
             if level == 0 as i32 && get_ponder_move() == 0 {
-                /* Output some stats */
-                send_sweep(b"%c%c\x00" as *const u8 as *const i8,
-                           'a' as i32 +
-                               entry.move_0[0 as i32 as usize] %
-                                   10 as i32 - 1 as i32,
-                           '0' as i32 +
-                               entry.move_0[0 as i32 as usize] /
-                                   10 as i32);
-                if entry.flags as i32 & 16 as i32 != 0 &&
-                       entry.flags as i32 & 4 as i32 != 0 {
-                    send_sweep(b"=%d\x00" as *const u8 as *const i8,
-                               entry.eval);
-                } else if entry.flags as i32 & 16 as i32 != 0
-                              &&
-                              entry.flags as i32 & 1 as i32 !=
-                                  0 {
-                    send_sweep(b">%d\x00" as *const u8 as *const i8,
-                               entry.eval - 1 as i32);
-                } else {
-                    send_sweep(b"<%d\x00" as *const u8 as *const i8,
-                               entry.eval + 1 as i32);
-                }
-                fflush(stdout);
+                end_tree_search_output_some_stats(&entry);
             }
             if entry.selectivity as i32 > 0 as i32 {
                 *selective_cutoff = 1 as i32
@@ -575,14 +536,7 @@ unsafe fn end_tree_search(mut level: i32,
             }
         }
         if level == 0 as i32 && get_ponder_move() == 0 {
-            if first != 0 {
-                send_sweep(b"%-10s \x00" as *const u8 as *const i8,
-                           buffer.as_mut_ptr());
-            }
-            send_sweep(b"%c%c\x00" as *const u8 as *const i8,
-                       'a' as i32 + move_0 % 10 as i32 -
-                           1 as i32,
-                       '0' as i32 + move_0 / 10 as i32);
+            end_tree_search_level_0_ponder_0_short_report(move_0, first);
         }
         make_move(side_to_move, move_0, use_hash);
         TestFlips_wrapper(move_0, my_bits, opp_bits);
@@ -663,24 +617,7 @@ unsafe fn end_tree_search(mut level: i32,
         }
         if level == 0 as i32 && get_ponder_move() == 0 {
             /* Output some stats */
-            if update_pv != 0 {
-                if curr_val <= alpha {
-                    send_sweep(b"<%d\x00" as *const u8 as *const i8,
-                               curr_val + 1 as i32);
-                } else if curr_val >= beta {
-                    send_sweep(b">%d\x00" as *const u8 as *const i8,
-                               curr_val - 1 as i32);
-                } else {
-                    send_sweep(b"=%d\x00" as *const u8 as *const i8,
-                               curr_val);
-                    true_found = 1 as i32;
-                    true_val = curr_val
-                }
-            }
-            send_sweep(b" \x00" as *const u8 as *const i8);
-            if update_pv != 0 && move_index > 0 as i32 && echo != 0 {
-                display_sweep(stdout);
-            }
+            end_tree_search_output_some_second_stats(alpha, beta, curr_val, update_pv, move_index)
         }
         if update_pv != 0 {
             update_best_list(best_list.as_mut_ptr(), move_0, best_list_index,
@@ -760,6 +697,99 @@ unsafe fn end_tree_search(mut level: i32,
             return 0 as i32
         } else { return -(64 as i32 - 2 as i32 * my_discs) }
     };
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32) {
+    if update_pv != 0 {
+        end_tree_search_some_pv_stats_report(alpha, beta, curr_val)
+    }
+    send_sweep(b" \x00" as *const u8 as *const i8);
+    if update_pv != 0 && move_index > 0 as i32 && echo != 0 {
+        display_sweep(stdout);
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32) {
+    if curr_val <= alpha {
+        send_sweep(b"<%d\x00" as *const u8 as *const i8,
+                   curr_val + 1 as i32);
+    } else if curr_val >= beta {
+        send_sweep(b">%d\x00" as *const u8 as *const i8,
+                   curr_val - 1 as i32);
+    } else {
+        send_sweep(b"=%d\x00" as *const u8 as *const i8,
+                   curr_val);
+        // TODO wtf are these???? they are not used...
+        true_found = 1 as i32;
+        true_val = curr_val
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32) {
+    if first != 0 {
+        send_sweep(b"%-10s \x00" as *const u8 as *const i8,
+                   buffer.as_mut_ptr());
+    }
+    send_sweep(b"%c%c\x00" as *const u8 as *const i8,
+               'a' as i32 + move_0 % 10 as i32 -
+                   1 as i32,
+               '0' as i32 + move_0 / 10 as i32);
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn end_tree_search_output_some_stats(entry: &HashEntry) {
+    /* Output some stats */
+    send_sweep(b"%c%c\x00" as *const u8 as *const i8,
+               'a' as i32 +
+                   entry.move_0[0 as i32 as usize] %
+                       10 as i32 - 1 as i32,
+               '0' as i32 +
+                   entry.move_0[0 as i32 as usize] /
+                       10 as i32);
+    if entry.flags as i32 & 16 as i32 != 0 &&
+        entry.flags as i32 & 4 as i32 != 0 {
+        send_sweep(b"=%d\x00" as *const u8 as *const i8,
+                   entry.eval);
+    } else if entry.flags as i32 & 16 as i32 != 0
+        &&
+        entry.flags as i32 & 1 as i32 !=
+            0 {
+        send_sweep(b">%d\x00" as *const u8 as *const i8,
+                   entry.eval - 1 as i32);
+    } else {
+        send_sweep(b"<%d\x00" as *const u8 as *const i8,
+                   entry.eval + 1 as i32);
+    }
+    fflush(stdout);
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32) {
+    send_sweep(b"%-10s \x00" as *const u8 as *const i8,
+               buffer.as_mut_ptr());
+    send_sweep(b"%c%c\x00" as *const u8 as *const i8,
+               'a' as i32 + best_move % 10 as i32 -
+                   1 as i32,
+               '0' as i32 + best_move / 10 as i32);
+    if result <= alpha {
+        send_sweep(b"<%d\x00" as *const u8 as *const i8,
+                   result + 1 as i32);
+    } else if result >= beta {
+        send_sweep(b">%d\x00" as *const u8 as *const i8,
+                   result - 1 as i32);
+    } else {
+        send_sweep(b"=%d\x00" as *const u8 as *const i8,
+                   result);
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
+    sprintf(buffer.as_mut_ptr(), b"[%d,%d]:\x00" as *const u8 as *const i8, alpha, beta);
+    clear_sweep();
 }
 /*
   END_TREE_WRAPPER
