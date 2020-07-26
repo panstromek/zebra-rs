@@ -91,8 +91,6 @@ pub unsafe extern "C" fn report_do_evaluate(evaluation_stage_: i32) {
 */
 
 pub unsafe fn evaluate_tree() {
-    let mut i: i32 = 0;
-    let mut feasible_count: i32 = 0;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     prepare_tree_traversal();
@@ -100,29 +98,7 @@ pub unsafe fn evaluate_tree() {
     evaluated_count = 0 as i32;
     evaluation_stage = 0 as i32;
     time(&mut start_time);
-    feasible_count = 0 as i32;
-    i = 0 as i32;
-    while i < book_node_count {
-        let ref mut fresh18 = (*node.offset(i as isize)).flags;
-        *fresh18 =
-            (*fresh18 as i32 | 8 as i32) as u16;
-        if ((*node.offset(i as isize)).alternative_score as i32 ==
-                9999 as i32 ||
-                get_node_depth(i) < search_depth &&
-                    abs((*node.offset(i as isize)).alternative_score as
-                            i32) >= min_eval_span &&
-                    abs((*node.offset(i as isize)).alternative_score as
-                            i32) <= max_eval_span &&
-                    abs((*node.offset(i as isize)).black_minimax_score as
-                            i32) >= min_negamax_span &&
-                    abs((*node.offset(i as isize)).black_minimax_score as
-                            i32) <= max_negamax_span) &&
-               (*node.offset(i as isize)).flags as i32 &
-                   (4 as i32 | 16 as i32) == 0 {
-            feasible_count += 1
-        }
-        i += 1
-    }
+    let feasible_count = compute_feasible_count();
     max_eval_count =
         if feasible_count < max_batch_size {
             feasible_count
@@ -170,41 +146,8 @@ pub unsafe fn evaluate_tree() {
 */
 
 pub unsafe fn validate_tree() -> i32 {
-    let mut i: i32 = 0;
-    let mut feasible_count: i32 = 0;
     prepare_tree_traversal();
-    exhausted_node_count = 0 as i32;
-    evaluated_count = 0 as i32;
-    evaluation_stage = 0 as i32;
-    feasible_count = 0 as i32;
-    i = 0 as i32;
-    while i < book_node_count {
-        if (*node.offset(i as isize)).flags as i32 &
-               (4 as i32 | 16 as i32) == 0 &&
-               (*node.offset(i as isize)).alternative_score as i32 ==
-                   9999 as i32 &&
-               (*node.offset(i as isize)).best_alternative_move as i32
-                   != -(2 as i32) {
-            feasible_count += 1
-        }
-        i += 1
-    }
-    max_eval_count =
-        if feasible_count < max_batch_size {
-            feasible_count
-        } else { max_batch_size };
-    if feasible_count > 0 as i32 {
-        i = 0 as i32;
-        while i < book_node_count {
-            let ref mut fresh20 = (*node.offset(i as isize)).flags;
-            *fresh20 =
-                (*fresh20 as i32 | 8 as i32) as
-                    u16;
-            i += 1
-        }
-        do_validate(0 as i32);
-    }
-    return evaluated_count;
+    validate_prepared_tree()
 }
 /*
   FILL_ENDGAME_HASH
