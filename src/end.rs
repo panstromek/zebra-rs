@@ -36,32 +36,6 @@ pub type size_t = u64;
 
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
-/*
-   File:          search.h
-
-   Created:       July 1, 1997
-
-   Modified:      August 1, 2002
-
-   Author:        Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:      The interface to common search routines and variables.
-*/
-pub type EvalType = u32;
-pub const UNINITIALIZED_EVAL: EvalType = 8;
-pub const INTERRUPTED_EVAL: EvalType = 7;
-pub const UNDEFINED_EVAL: EvalType = 6;
-pub const PASS_EVAL: EvalType = 5;
-pub const FORCED_EVAL: EvalType = 4;
-pub const SELECTIVE_EVAL: EvalType = 3;
-pub const WLD_EVAL: EvalType = 2;
-pub const EXACT_EVAL: EvalType = 1;
-pub const MIDGAME_EVAL: EvalType = 0;
-pub type EvalResult = u32;
-pub const UNSOLVED_POSITION: EvalResult = 3;
-pub const LOST_POSITION: EvalResult = 2;
-pub const DRAWN_POSITION: EvalResult = 1;
-pub const WON_POSITION: EvalResult = 0;
 
 #[no_mangle]
 pub unsafe extern "C" fn after_update_best_list_verbose(best_list: *mut i32) {
@@ -187,7 +161,8 @@ pub unsafe extern "C" fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
   SEND_SOLVE_STATUS
   Displays endgame results - partial or full.
 */
-unsafe fn send_solve_status(mut empties: i32,
+#[no_mangle]
+pub unsafe extern "C" fn send_solve_status(mut empties: i32,
                                        mut side_to_move: i32,
                                        mut eval_info: *mut EvaluationType) {
     let mut eval_str = 0 as *mut i8;
@@ -215,459 +190,58 @@ unsafe fn send_solve_status(mut empties: i32,
                     b"nps\x00" as *const u8 as *const i8);
     };
 }
-/*
-  END_GAME
-  Provides an interface to the fast endgame solver.
-*/
 
-pub unsafe fn end_game(mut side_to_move: i32,
-                                  mut wld: i32,
-                                  mut force_echo: i32,
-                                  mut allow_book: i32,
-                                  mut komi: i32,
-                                  mut eval_info: *mut EvaluationType)
- -> i32 {
-    let mut current_confidence: f64 = 0.;
-    let mut solve_status = WIN;
-    let mut book_move: i32 = 0;
-    let mut empties: i32 = 0;
-    let mut selectivity: i32 = 0;
-    let mut alpha: i32 = 0;
-    let mut beta: i32 = 0;
-    let mut any_search_result: i32 = 0;
-    let mut exact_score_failed: i32 = 0;
-    let mut incomplete_search: i32 = 0;
-    let mut long_selective_search: i32 = 0;
-    let mut old_depth: i32 = 0;
-    let mut old_eval: i32 = 0;
-    let mut last_window_center: i32 = 0;
-    let mut old_pv: [i32; 64] = [0; 64];
-    let mut book_eval_info =
-        EvaluationType{type_0: MIDGAME_EVAL,
-                       res: WON_POSITION,
-                       score: 0,
-                       confidence: 0.,
-                       search_depth: 0,
-                       is_book: 0,};
-    empties =
-        64 as i32 - disc_count(0 as i32) -
-            disc_count(2 as i32);
-    /* In komi games, the WLD window is adjusted. */
-    if side_to_move == 0 as i32 {
-        komi_shift = komi
-    } else { komi_shift = -komi }
-    /* Check if the position is solved (WLD or exact) in the book. */
-    book_move = -(1 as i32);
-    if allow_book != 0 {
-        /* Is the exact score known? */
-        fill_move_alternatives(side_to_move, 16 as i32);
-        book_move = get_book_move(side_to_move, 0 as i32, eval_info);
-        if book_move != -(1 as i32) {
-            root_eval = (*eval_info).score / 128 as i32;
-            hash_expand_pv(side_to_move, 1 as i32, 4 as i32,
-                           0 as i32);
-            send_solve_status(empties, side_to_move, eval_info);
-            return book_move
-        }
-        /* Is the WLD status known? */
-        fill_move_alternatives(side_to_move, 4 as i32);
-        if komi_shift == 0 as i32 {
-            book_move =
-                get_book_move(side_to_move, 0 as i32, eval_info);
-            if book_move != -(1 as i32) {
-                if wld != 0 {
-                    root_eval = (*eval_info).score / 128 as i32;
-                    hash_expand_pv(side_to_move, 1 as i32,
-                                   4 as i32 | 2 as i32 |
-                                       1 as i32, 0 as i32);
-                    send_solve_status(empties, side_to_move, eval_info);
-                    return book_move
-                } else { book_eval_info = *eval_info }
-            }
-        }
-        fill_endgame_hash(8 as i32 + 1 as i32,
-                          0 as i32);
-    }
-    last_panic_check = 0.0f64;
-    solve_status = UNKNOWN;
-    old_eval = 0 as i32;
-    /* Prepare for the shallow searches using the midgame eval */
-    piece_count[0 as i32 as usize][disks_played as usize] =
-        disc_count(0 as i32);
-    piece_count[2 as i32 as usize][disks_played as usize] =
-        disc_count(2 as i32);
-    if empties > 32 as i32 {
-        set_panic_threshold(0.20f64);
-    } else if empties < 22 as i32 {
-        set_panic_threshold(0.50f64);
-    } else {
-        set_panic_threshold(0.50f64 -
-                                (empties - 22 as i32) as
-                                    f64 * 0.03f64);
-    }
-    reset_buffer_display();
-    /* Make sure the pre-searches don't mess up the hash table */
-    toggle_midgame_hash_usage(1 as i32, 0 as i32);
-    incomplete_search = 0 as i32;
-    any_search_result = 0 as i32;
-    /* Start off by selective endgame search */
-    last_window_center = 0 as i32;
-    if empties > 18 as i32 {
-        if wld != 0 {
-            selectivity = 9 as i32;
-            while selectivity > 0 as i32 && is_panic_abort() == 0 &&
-                      force_return == 0 {
-                let mut flags: u32 = 0;
-                let mut res = WON_POSITION;
-                alpha = -(1 as i32);
-                beta = 1 as i32;
-                root_eval =
-                    end_tree_wrapper(0 as i32, empties, side_to_move,
-                                     alpha, beta, selectivity,
-                                     1 as i32);
-                adjust_counter(&mut nodes);
-                if is_panic_abort() != 0 || force_return != 0 { break ; }
-                any_search_result = 1 as i32;
-                old_eval = root_eval;
-                store_pv(old_pv.as_mut_ptr(), &mut old_depth);
-                current_confidence = confidence[selectivity as usize];
-                flags = 4 as i32 as u32;
-                if root_eval == 0 as i32 {
-                    res = DRAWN_POSITION
-                } else {
-                    flags |=
-                        (2 as i32 | 1 as i32) as u32;
-                    if root_eval > 0 as i32 {
-                        res = WON_POSITION
-                    } else { res = LOST_POSITION }
-                }
-                *eval_info =
-                    create_eval_info(SELECTIVE_EVAL, res,
-                                     root_eval * 128 as i32,
-                                     current_confidence, empties,
-                                     0 as i32);
-                if full_output_mode != 0 {
-                    hash_expand_pv(side_to_move, 1 as i32,
-                                   flags as i32, selectivity);
-                    send_solve_status(empties, side_to_move, eval_info);
-                }
-                selectivity -= 1
-            }
-        } else {
-            selectivity = 9 as i32;
-            while selectivity > 0 as i32 && is_panic_abort() == 0 &&
-                      force_return == 0 {
-                alpha = last_window_center - 1 as i32;
-                beta = last_window_center + 1 as i32;
-                root_eval =
-                    end_tree_wrapper(0 as i32, empties, side_to_move,
-                                     alpha, beta, selectivity,
-                                     1 as i32);
-                if root_eval <= alpha {
-                    loop  {
-                        last_window_center -= 2 as i32;
-                        alpha = last_window_center - 1 as i32;
-                        beta = last_window_center + 1 as i32;
-                        if is_panic_abort() != 0 || force_return != 0 {
-                            break ;
-                        }
-                        root_eval =
-                            end_tree_wrapper(0 as i32, empties,
-                                             side_to_move, alpha, beta,
-                                             selectivity, 1 as i32);
-                        if !(root_eval <= alpha) { break ; }
-                    }
-                    root_eval = last_window_center
-                } else if root_eval >= beta {
-                    loop  {
-                        last_window_center += 2 as i32;
-                        alpha = last_window_center - 1 as i32;
-                        beta = last_window_center + 1 as i32;
-                        if is_panic_abort() != 0 || force_return != 0 {
-                            break ;
-                        }
-                        root_eval =
-                            end_tree_wrapper(0 as i32, empties,
-                                             side_to_move, alpha, beta,
-                                             selectivity, 1 as i32);
-                        if !(root_eval >= beta) { break ; }
-                    }
-                    root_eval = last_window_center
-                }
-                adjust_counter(&mut nodes);
-                if is_panic_abort() != 0 || force_return != 0 { break ; }
-                last_window_center = root_eval;
-                if is_panic_abort() == 0 && force_return == 0 {
-                    any_search_result = 1 as i32;
-                    old_eval = root_eval;
-                    store_pv(old_pv.as_mut_ptr(), &mut old_depth);
-                    current_confidence = confidence[selectivity as usize];
-                    *eval_info =
-                        create_eval_info(SELECTIVE_EVAL, UNSOLVED_POSITION,
-                                         root_eval * 128 as i32,
-                                         current_confidence, empties,
-                                         0 as i32);
-                    if full_output_mode != 0 {
-                        hash_expand_pv(side_to_move, 1 as i32,
-                                       4 as i32, selectivity);
-                        send_solve_status(empties, side_to_move, eval_info);
-                    }
-                }
-                selectivity -= 1
-            }
-        }
-    } else { selectivity = 0 as i32 }
-    /* Check if the selective search took more than 40% of the allocated
-         time. If this is the case, there is no point attempting WLD. */
-    long_selective_search = check_threshold(0.35f64);
-    /* Make sure the panic abort flag is set properly; it must match
-       the status of long_selective_search. This is not automatic as
-       it is not guaranteed that any selective search was performed. */
-    check_panic_abort();
-    if is_panic_abort() != 0 || force_return != 0 ||
-           long_selective_search != 0 {
-        /* Don't try non-selective solve. */
-        if any_search_result != 0 {
-            if echo != 0 && (is_panic_abort() != 0 || force_return != 0) {
-                printf(b"%s %.1f %c %s\n\x00" as *const u8 as
-                           *const i8,
-                       b"Semi-panic abort after\x00" as *const u8 as
-                           *const i8, get_elapsed_time(),
-                       's' as i32,
-                       b"in selective search\x00" as *const u8 as
-                           *const i8);
-                if full_output_mode != 0 {
-                    let mut flags_0: u32 = 0;
-                    flags_0 = 4 as i32 as u32;
-                    if solve_status as u32 !=
-                           DRAW as i32 as u32 {
-                        flags_0 |=
-                            (2 as i32 | 1 as i32) as
-                                u32
-                    }
-                    hash_expand_pv(side_to_move, 1 as i32,
-                                   flags_0 as i32, selectivity);
-                    send_solve_status(empties, side_to_move, eval_info);
-                }
-            }
-            pv[0 as i32 as usize][0 as i32 as usize] =
-                best_end_root_move;
-            pv_depth[0 as i32 as usize] = 1 as i32;
-            root_eval = old_eval;
-            clear_panic_abort();
-        } else {
-            if echo != 0 {
-                printf(b"%s %.1f %c %s\n\x00" as *const u8 as
-                           *const i8,
-                       b"Panic abort after\x00" as *const u8 as
-                           *const i8, get_elapsed_time(),
-                       's' as i32,
-                       b"in selective search\x00" as *const u8 as
-                           *const i8);
-            }
-            root_eval = -(27000 as i32)
-        }
-        if echo != 0 || force_echo != 0 {
-            end_display_zero_status();
-        }
-        if book_move != -(1 as i32) &&
-               (book_eval_info.res as u32 ==
-                    WON_POSITION as i32 as u32 ||
-                    book_eval_info.res as u32 ==
-                        DRAWN_POSITION as i32 as u32) {
-            /* If there is a known win (or mismarked draw) available,
-             always play it upon timeout. */
-            *eval_info = book_eval_info;
-            root_eval = (*eval_info).score / 128 as i32;
-            return book_move
-        } else {
-            return pv[0 as i32 as usize][0 as i32 as usize]
-        }
-    }
-    /* Start non-selective solve */
-    if wld != 0 {
-        alpha = -(1 as i32);
-        beta = 1 as i32
-    } else {
-        alpha = last_window_center - 1 as i32;
-        beta = last_window_center + 1 as i32
-    }
-    root_eval =
-        end_tree_wrapper(0 as i32, empties, side_to_move, alpha, beta,
-                         0 as i32, 1 as i32);
-    adjust_counter(&mut nodes);
-    if is_panic_abort() == 0 && force_return == 0 {
-        if wld == 0 {
-            if root_eval <= alpha {
-                let mut ceiling_value = last_window_center - 2 as i32;
-                loop  {
-                    alpha = ceiling_value - 1 as i32;
-                    beta = ceiling_value;
-                    root_eval =
-                        end_tree_wrapper(0 as i32, empties,
-                                         side_to_move, alpha, beta,
-                                         0 as i32, 1 as i32);
-                    if is_panic_abort() != 0 || force_return != 0 { break ; }
-                    if root_eval > alpha { break ; }
-                    ceiling_value -= 2 as i32
-                }
-            } else if root_eval >= beta {
-                let mut floor_value = last_window_center + 2 as i32;
-                loop  {
-                    alpha = floor_value - 1 as i32;
-                    beta = floor_value + 1 as i32;
-                    root_eval =
-                        end_tree_wrapper(0 as i32, empties,
-                                         side_to_move, alpha, beta,
-                                         0 as i32, 1 as i32);
-                    if is_panic_abort() != 0 || force_return != 0 { break ; }
-                    assert!( root_eval > alpha );
-                    if root_eval < beta { break ; }
-                    floor_value += 2 as i32
-                }
-            }
-        }
-        if is_panic_abort() == 0 && force_return == 0 {
-            let mut res_0 = WON_POSITION;
-            if root_eval < 0 as i32 {
-                res_0 = LOST_POSITION
-            } else if root_eval == 0 as i32 {
-                res_0 = DRAWN_POSITION
-            } else { res_0 = WON_POSITION }
-            if wld != 0 {
-                let mut flags_1: u32 = 0;
-                if root_eval == 0 as i32 {
-                    flags_1 = 4 as i32 as u32
-                } else {
-                    flags_1 =
-                        (2 as i32 | 1 as i32) as u32
-                }
-                *eval_info =
-                    create_eval_info(WLD_EVAL, res_0,
-                                     root_eval * 128 as i32, 0.0f64,
-                                     empties, 0 as i32);
-                if full_output_mode != 0 {
-                    hash_expand_pv(side_to_move, 1 as i32,
-                                   flags_1 as i32, 0 as i32);
-                    send_solve_status(empties, side_to_move, eval_info);
-                }
-            } else {
-                *eval_info =
-                    create_eval_info(EXACT_EVAL, res_0,
-                                     root_eval * 128 as i32, 0.0f64,
-                                     empties, 0 as i32);
-                if full_output_mode != 0 {
-                    hash_expand_pv(side_to_move, 1 as i32,
-                                   4 as i32, 0 as i32);
-                    send_solve_status(empties, side_to_move, eval_info);
-                }
-            }
-        }
-    }
-    adjust_counter(&mut nodes);
-    /* Check for abort. */
-    if is_panic_abort() != 0 || force_return != 0 {
-        if any_search_result != 0 {
-            if echo != 0 {
-                printf(b"%s %.1f %c %s\n\x00" as *const u8 as
-                           *const i8,
-                       b"Semi-panic abort after\x00" as *const u8 as
-                           *const i8, get_elapsed_time(),
-                       's' as i32,
-                       b"in WLD search\x00" as *const u8 as
-                           *const i8);
-                if full_output_mode != 0 {
-                    let mut flags_2: u32 = 0;
-                    flags_2 = 4 as i32 as u32;
-                    if root_eval != 0 as i32 {
-                        flags_2 |=
-                            (2 as i32 | 1 as i32) as
-                                u32
-                    }
-                    hash_expand_pv(side_to_move, 1 as i32,
-                                   flags_2 as i32, 0 as i32);
-                    send_solve_status(empties, side_to_move, eval_info);
-                }
-                if echo != 0 || force_echo != 0 {
-                    end_display_zero_status();
-                }
-            }
-            restore_pv(old_pv.as_mut_ptr(), old_depth);
-            root_eval = old_eval;
-            clear_panic_abort();
-        } else {
-            if echo != 0 {
-                printf(b"%s %.1f %c %s\n\x00" as *const u8 as
-                           *const i8,
-                       b"Panic abort after\x00" as *const u8 as
-                           *const i8, get_elapsed_time(),
-                       's' as i32,
-                       b"in WLD search\x00" as *const u8 as
-                           *const i8);
-            }
-            root_eval = -(27000 as i32)
-        }
-        return pv[0 as i32 as usize][0 as i32 as usize]
-    }
-    /* Update solve info. */
-    store_pv(old_pv.as_mut_ptr(), &mut old_depth);
-    old_eval = root_eval;
-    if is_panic_abort() == 0 && force_return == 0 &&
-           empties > earliest_wld_solve {
-        earliest_wld_solve = empties
-    }
-    /* Check for aborted search. */
-    exact_score_failed = 0 as i32;
-    if incomplete_search != 0 {
-        if echo != 0 {
-            printf(b"%s %.1f %c %s\n\x00" as *const u8 as *const i8,
-                   b"Semi-panic abort after\x00" as *const u8 as
-                       *const i8, get_elapsed_time(), 's' as i32,
-                   b"in exact search\x00" as *const u8 as
-                       *const i8);
-            if full_output_mode != 0 {
-                hash_expand_pv(side_to_move, 1 as i32,
-                               4 as i32, 0 as i32);
-                send_solve_status(empties, side_to_move, eval_info);
-            }
-            if echo != 0 || force_echo != 0 {
-                end_display_zero_status();
-            }
-        }
-        pv[0 as i32 as usize][0 as i32 as usize] =
-            best_end_root_move;
-        pv_depth[0 as i32 as usize] = 1 as i32;
-        root_eval = old_eval;
-        exact_score_failed = 1 as i32;
-        clear_panic_abort();
-    }
-    if abs(root_eval) % 2 as i32 == 1 as i32 {
-        if root_eval > 0 as i32 {
-            root_eval += 1
-        } else { root_eval -= 1 }
-    }
-    if exact_score_failed == 0 && wld == 0 && empties > earliest_full_solve {
-        earliest_full_solve = empties
-    }
-    if wld == 0 && exact_score_failed == 0 {
-        (*eval_info).type_0 = EXACT_EVAL;
-        (*eval_info).score = root_eval * 128 as i32
-    }
-    if wld == 0 && exact_score_failed == 0 {
-        hash_expand_pv(side_to_move, 1 as i32, 4 as i32,
-                       0 as i32);
-        send_solve_status(empties, side_to_move, eval_info);
-    }
-    if echo != 0 || force_echo != 0 {
-        end_display_zero_status();
-    }
-    /* For shallow endgames, we can afford to compute the entire PV
-       move by move. */
-    if wld == 0 && incomplete_search == 0 && force_return == 0 &&
-           empties <= 16 as i32 {
-        full_expand_pv(side_to_move, 0 as i32);
-    }
-    return pv[0 as i32 as usize][0 as i32 as usize];
+#[no_mangle]
+pub unsafe extern "C"  fn end_report_panic_abort_2() {
+    printf(b"%s %.1f %c %s\n\x00" as *const u8 as
+               *const i8,
+           b"Panic abort after\x00" as *const u8 as
+               *const i8, get_elapsed_time(),
+           's' as i32,
+           b"in selective search\x00" as *const u8 as
+               *const i8);
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn end_report_semi_panic_abort_3() {
+    printf(b"%s %.1f %c %s\n\x00" as *const u8 as
+               *const i8,
+           b"Semi-panic abort after\x00" as *const u8 as
+               *const i8, get_elapsed_time(),
+           's' as i32,
+           b"in WLD search\x00" as *const u8 as
+               *const i8);
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn end_report_semi_panic_abort_2() {
+    printf(b"%s %.1f %c %s\n\x00" as *const u8 as *const i8,
+           b"Semi-panic abort after\x00" as *const u8 as
+               *const i8, get_elapsed_time(), 's' as i32,
+           b"in exact search\x00" as *const u8 as
+               *const i8);
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn end_report_panic_abort() {
+    printf(b"%s %.1f %c %s\n\x00" as *const u8 as
+               *const i8,
+           b"Panic abort after\x00" as *const u8 as
+               *const i8, get_elapsed_time(),
+           's' as i32,
+           b"in WLD search\x00" as *const u8 as
+               *const i8);
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn end_report_semi_panic_abort() {
+    printf(b"%s %.1f %c %s\n\x00" as *const u8 as
+               *const i8,
+           b"Semi-panic abort after\x00" as *const u8 as
+               *const i8, get_elapsed_time(), // FIXME resolve if we should extract this as param??
+           's' as i32,
+           b"in selective search\x00" as *const u8 as
+               *const i8);
 }
 
 #[no_mangle]

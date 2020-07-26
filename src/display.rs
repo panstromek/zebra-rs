@@ -548,7 +548,8 @@ pub unsafe fn display_sweep(mut stream: *mut FILE) {
   Clear all buffers and initialize time variables.
 */
 
-pub unsafe fn reset_buffer_display() {
+#[no_mangle]
+pub unsafe extern "C"  fn reset_buffer_display() {
     /* The first two Fibonacci numbers */
     clear_status();
     clear_sweep();
