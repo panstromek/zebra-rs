@@ -20,9 +20,10 @@ use crate::src::error::fatal_error;
 use crate::src::safemem::{safe_malloc, safe_realloc};
 use std::ffi::c_void;
 use crate::src::midgame::tree_search;
-use crate::src::timer::{last_panic_check, clear_panic_abort};
+use crate::src::timer::{last_panic_check, clear_panic_abort, toggle_abort_check};
 use crate::src::hash::{add_hash, setup_hash};
 use crate::src::display::echo;
+use crate::src::game::{engine_game_init, setup_non_file_based_game};
 
 extern "C" {
     #[no_mangle]
@@ -2335,4 +2336,18 @@ pub unsafe fn engine_init_osf() {
     max_batch_size = 10000000 as i32;
     force_black = 0 as i32;
     force_white = 0 as i32;
+}
+/*
+   PREPATE_TREE_TRAVERSAL
+   Prepares all relevant data structures for a tree search
+   or traversal.
+*/
+pub unsafe fn prepare_tree_traversal() {
+    let mut side_to_move: i32 = 0;
+    toggle_experimental(0 as i32);
+    setup_non_file_based_game(&mut side_to_move);
+    engine_game_init();
+    toggle_midgame_hash_usage(1 as i32, 1 as i32);
+    toggle_abort_check(0 as i32);
+    toggle_midgame_abort_check(0 as i32);
 }
