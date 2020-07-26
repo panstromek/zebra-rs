@@ -18,12 +18,30 @@ use crate::{
 };
 use crate::src::stubs::ceil;
 use crate::src::hash::add_hash;
+use crate::src::midgame::tree_search;
+use crate::src::timer::{is_panic_abort, check_panic_abort, last_panic_check};
+use crate::src::display::{display_buffers, echo};
+
 extern "C" {
     #[no_mangle]
     fn after_update_best_list_verbose(best_list: *mut i32);
 
     #[no_mangle]
      fn before_update_best_list_verbose(best_list: *mut i32, move_0: i32, best_list_index: i32, best_list_length: *mut i32);
+
+    #[no_mangle]
+    pub  fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32);
+    #[no_mangle]
+    pub fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32);
+    #[no_mangle]
+    pub  fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32);
+    #[no_mangle]
+    pub  fn end_tree_search_output_some_stats(entry: &HashEntry);
+    #[no_mangle]
+    pub  fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32);
+    #[no_mangle]
+    pub  fn end_tree_search_level_0_report(alpha: i32, beta: i32);
+
 }
 
 #[derive(Copy, Clone)]
@@ -1566,4 +1584,691 @@ pub unsafe fn update_best_list(mut best_list: *mut i32,
     if verbose != 0 {
         after_update_best_list_verbose(best_list);
     };
+}
+
+
+/*
+  END_TREE_SEARCH
+  Plain nega-scout with fastest-first move ordering.
+*/
+pub unsafe fn end_tree_search(mut level: i32,
+                              mut max_depth: i32,
+                              mut my_bits: BitBoard,
+                              mut opp_bits: BitBoard,
+                              mut side_to_move: i32,
+                              mut alpha: i32,
+                              mut beta: i32,
+                              mut selectivity: i32,
+                              mut selective_cutoff: *mut i32,
+                              mut void_legal: i32)
+                              -> i32 {
+    let mut node_val: f64 = 0.;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut empties: i32 = 0;
+    let mut disk_diff: i32 = 0;
+    let mut previous_move: i32 = 0;
+    let mut result: i32 = 0;
+    let mut curr_val: i32 = 0;
+    let mut best: i32 = 0;
+    let mut move_0: i32 = 0;
+    let mut hash_hit: i32 = 0;
+    let mut move_index: i32 = 0;
+    let mut remains: i32 = 0;
+    let mut exp_depth: i32 = 0;
+    let mut pre_depth: i32 = 0;
+    let mut update_pv: i32 = 0;
+    let mut first: i32 = 0;
+    let mut use_hash: i32 = 0;
+    let mut my_discs: i32 = 0;
+    let mut opp_discs: i32 = 0;
+    let mut curr_alpha: i32 = 0;
+    let mut pre_search_done: i32 = 0;
+    let mut mobility: i32 = 0;
+    let mut threshold: i32 = 0;
+    let mut best_list_index: i32 = 0;
+    let mut best_list_length: i32 = 0;
+    let mut best_list: [i32; 4] = [0; 4];
+    let mut entry =
+        HashEntry{key1: 0,
+            key2: 0,
+            eval: 0,
+            move_0: [0; 4],
+            draft: 0,
+            selectivity: 0,
+            flags: 0,};
+    let mut mid_entry =
+        HashEntry{key1: 0,
+            key2: 0,
+            eval: 0,
+            move_0: [0; 4],
+            draft: 0,
+            selectivity: 0,
+            flags: 0,};
+    let mut stability_bound: i32 = 0;
+    if level == 0 as i32 {
+        end_tree_search_level_0_report(alpha, beta);
+    }
+    remains = max_depth - level;
+    *selective_cutoff = 0 as i32;
+    /* Always (almost) check for stability cutoff in this region of search */
+    if alpha >= 24 as i32 {
+        stability_bound =
+            64 as i32 -
+                2 as i32 *
+                    count_edge_stable(0 as i32 + 2 as i32 -
+                                          side_to_move, opp_bits, my_bits);
+        if stability_bound <= alpha {
+            pv_depth[level as usize] = level;
+            return alpha
+        }
+        stability_bound =
+            64 as i32 -
+                2 as i32 *
+                    count_stable(0 as i32 + 2 as i32 -
+                                     side_to_move, opp_bits, my_bits);
+        if stability_bound < beta {
+            beta = stability_bound + 1 as i32
+        }
+        if stability_bound <= alpha {
+            pv_depth[level as usize] = level;
+            return alpha
+        }
+    }
+    /* Check if the low-level code is to be invoked */
+    my_discs = piece_count[side_to_move as usize][disks_played as usize];
+    opp_discs =
+        piece_count[(0 as i32 + 2 as i32 - side_to_move) as
+            usize][disks_played as usize];
+    empties = 64 as i32 - my_discs - opp_discs;
+    if remains <= 12 as i32 {
+        disk_diff = my_discs - opp_discs;
+        if void_legal != 0 {
+            /* Is PASS legal or was last move a pass? */
+            previous_move = 44 as i32
+        } else {
+            previous_move = 0 as i32
+        } /* d4, of course impossible */
+        prepare_to_solve(board.as_mut_ptr());
+        result =
+            end_solve(my_bits, opp_bits, alpha, beta, side_to_move, empties,
+                      disk_diff, previous_move);
+        pv_depth[level as usize] = level + 1 as i32;
+        pv[level as usize][level as usize] = best_move;
+        if level == 0 as i32 && get_ponder_move() == 0 {
+            end_tree_search_level_0_ponder_0_report(alpha, beta, result)
+        }
+        return result
+    }
+    /* Otherwise normal search */
+    nodes.lo = nodes.lo.wrapping_add(1);
+    use_hash = 1 as i32;
+    if use_hash != 0 {
+        /* Check for endgame hash table move */
+        find_hash(&mut entry, 1 as i32);
+        if entry.draft as i32 == remains &&
+            entry.selectivity as i32 <= selectivity &&
+            valid_move(entry.move_0[0 as i32 as usize],
+                       side_to_move) != 0 &&
+            entry.flags as i32 & 16 as i32 != 0 &&
+            (entry.flags as i32 & 4 as i32 != 0 ||
+                entry.flags as i32 & 1 as i32 != 0 &&
+                    entry.eval >= beta ||
+                entry.flags as i32 & 2 as i32 != 0 &&
+                    entry.eval <= alpha) {
+            pv[level as usize][level as usize] =
+                entry.move_0[0 as i32 as usize];
+            pv_depth[level as usize] = level + 1 as i32;
+            if level == 0 as i32 && get_ponder_move() == 0 {
+                end_tree_search_output_some_stats(&entry);
+            }
+            if entry.selectivity as i32 > 0 as i32 {
+                *selective_cutoff = 1 as i32
+            }
+            return entry.eval
+        }
+        hash_hit =
+            (entry.draft as i32 != 0 as i32) as i32;
+        /* If not any such found, check for a midgame hash move */
+        find_hash(&mut mid_entry, 0 as i32);
+        if mid_entry.draft as i32 != 0 as i32 &&
+            mid_entry.flags as i32 & 8 as i32 != 0 {
+            if level <= 4 as i32 ||
+                mid_entry.flags as i32 &
+                    (4 as i32 | 1 as i32) != 0 {
+                /* Give the midgame move full priority if we're are the root
+                   of the tree, no endgame hash move was found and the position
+                   isn't in the wipeout zone. */
+                if level == 0 as i32 && hash_hit == 0 &&
+                    mid_entry.eval < 60 as i32 * 128 as i32
+                {
+                    entry = mid_entry;
+                    hash_hit = 1 as i32
+                }
+            }
+        }
+    }
+    /* Use endgame multi-prob-cut to selectively prune the tree */
+    if 1 as i32 != 0 && level > 2 as i32 &&
+        selectivity > 0 as i32 {
+        let mut cut: i32 = 0;
+        cut = 0 as i32;
+        while cut < use_end_cut[disks_played as usize] {
+            let mut shallow_remains =
+                end_mpc_depth[disks_played as usize][cut as usize];
+            let mut mpc_bias =
+                ceil(end_mean[disks_played as usize][shallow_remains as usize]
+                    as f64 * 128.0f64) as i32;
+            let mut mpc_window =
+                ceil(end_sigma[disks_played as
+                    usize][shallow_remains as usize] as
+                    f64 * end_percentile[selectivity as usize]
+                    * 128.0f64) as i32;
+            let mut beta_bound =
+                128 as i32 * beta + mpc_bias + mpc_window;
+            let mut alpha_bound =
+                128 as i32 * alpha + mpc_bias - mpc_window;
+            let mut shallow_val =
+                tree_search(level, level + shallow_remains, side_to_move,
+                            alpha_bound, beta_bound, use_hash,
+                            0 as i32, void_legal);
+            if shallow_val >= beta_bound {
+                if use_hash != 0 {
+                    add_hash(1 as i32, alpha,
+                             pv[level as usize][level as usize],
+                             16 as i32 | 1 as i32, remains,
+                             selectivity);
+                }
+                *selective_cutoff = 1 as i32;
+                return beta
+            }
+            if shallow_val <= alpha_bound {
+                if use_hash != 0 {
+                    add_hash(1 as i32, beta,
+                             pv[level as usize][level as usize],
+                             16 as i32 | 2 as i32, remains,
+                             selectivity);
+                }
+                *selective_cutoff = 1 as i32;
+                return alpha
+            }
+            cut += 1
+        }
+    }
+    /* Determine the depth of the shallow search used to find
+       achieve good move sorting */
+    if remains >= 15 as i32 {
+        if remains >= 20 as i32 {
+            if remains >= 24 as i32 {
+                if remains >= 30 as i32 {
+                    pre_depth = 6 as i32
+                } else { pre_depth = 4 as i32 }
+            } else { pre_depth = 3 as i32 }
+        } else { pre_depth = 2 as i32 }
+    } else { pre_depth = 1 as i32 }
+    if level == 0 as i32 {
+        /* Deeper pre-search from the root */
+        pre_depth += 2 as i32;
+        if pre_depth % 2 as i32 == 1 as i32 {
+            /* Avoid odd depths from the root */
+            pre_depth += 1
+        }
+    }
+    /* The nega-scout search */
+    exp_depth = remains;
+    first = 1 as i32;
+    best = -(12345678 as i32);
+    pre_search_done = 0 as i32;
+    curr_alpha = alpha;
+    /* Initialize the move list and check the hash table move list */
+    move_count[disks_played as usize] = 0 as i32;
+    best_list_length = 0 as i32;
+    i = 0 as i32;
+    while i < 4 as i32 {
+        best_list[i as usize] = 0 as i32;
+        i += 1
+    }
+    if hash_hit != 0 {
+        i = 0 as i32;
+        while i < 4 as i32 {
+            if valid_move(entry.move_0[i as usize], side_to_move) != 0 {
+                let fresh0 = best_list_length;
+                best_list_length = best_list_length + 1;
+                best_list[fresh0 as usize] = entry.move_0[i as usize];
+                /* Check for ETC among the hash table moves */
+                if use_hash != 0 &&
+                    make_move(side_to_move, entry.move_0[i as usize],
+                              1 as i32) != 0 as i32 {
+                    let mut etc_entry =
+                        HashEntry{key1: 0,
+                            key2: 0,
+                            eval: 0,
+                            move_0: [0; 4],
+                            draft: 0,
+                            selectivity: 0,
+                            flags: 0,};
+                    find_hash(&mut etc_entry, 1 as i32);
+                    if etc_entry.flags as i32 & 16 as i32 != 0
+                        &&
+                        etc_entry.draft as i32 ==
+                            empties - 1 as i32 &&
+                        etc_entry.selectivity as i32 <= selectivity
+                        &&
+                        etc_entry.flags as i32 &
+                            (2 as i32 | 4 as i32) != 0 &&
+                        etc_entry.eval <= -beta {
+                        /* Immediate cutoff from this move, move it up front */
+                        j = best_list_length - 1 as i32;
+                        while j >= 1 as i32 {
+                            best_list[j as usize] =
+                                best_list[(j - 1 as i32) as usize];
+                            j -= 1
+                        }
+                        best_list[0 as i32 as usize] =
+                            entry.move_0[i as usize]
+                    }
+                    unmake_move(side_to_move, entry.move_0[i as usize]);
+                }
+            }
+            i += 1
+        }
+    }
+    move_index = 0 as i32;
+    best_list_index = 0 as i32;
+    loop  {
+        let mut child_selective_cutoff: i32 = 0;
+        let mut new_my_bits = BitBoard{high: 0, low: 0,};
+        let mut new_opp_bits = BitBoard{high: 0, low: 0,};
+        /* Use results of shallow searches to determine the move order */
+        if best_list_index < best_list_length {
+            move_0 = best_list[best_list_index as usize];
+            move_count[disks_played as usize] += 1
+        } else {
+            if pre_search_done == 0 {
+                let mut shallow_index: i32 = 0;
+                pre_search_done = 1 as i32;
+                threshold =
+                    if (60 as i32 * 128 as i32) <
+                        128 as i32 * alpha +
+                            fast_first_threshold[disks_played as
+                                usize][pre_depth as
+                                usize] {
+                        (60 as i32) * 128 as i32
+                    } else {
+                        (128 as i32 * alpha) +
+                            fast_first_threshold[disks_played as
+                                usize][pre_depth as
+                                usize]
+                    };
+                shallow_index = 0 as i32;
+                while shallow_index < 60 as i32 {
+                    let mut already_checked: i32 = 0;
+                    move_0 =
+                        sorted_move_order[disks_played as
+                            usize][shallow_index as usize];
+                    already_checked = 0 as i32;
+                    j = 0 as i32;
+                    while j < best_list_length {
+                        if move_0 == best_list[j as usize] {
+                            already_checked = 1 as i32
+                        }
+                        j += 1
+                    }
+                    if already_checked == 0 &&
+                        board[move_0 as usize] == 1 as i32 &&
+                        TestFlips_wrapper(move_0, my_bits, opp_bits) >
+                            0 as i32 {
+                        new_opp_bits.high = opp_bits.high & !bb_flips.high;
+                        new_opp_bits.low = opp_bits.low & !bb_flips.low;
+                        make_move(side_to_move, move_0, 1 as i32);
+                        curr_val = 0 as i32;
+                        /* Enhanced Transposition Cutoff: It's a good idea to
+                           transpose back into a position in the hash table. */
+                        if use_hash != 0 {
+                            let mut etc_entry_0 =
+                                HashEntry{key1: 0,
+                                    key2: 0,
+                                    eval: 0,
+                                    move_0: [0; 4],
+                                    draft: 0,
+                                    selectivity: 0,
+                                    flags: 0,};
+                            find_hash(&mut etc_entry_0, 1 as i32);
+                            if etc_entry_0.flags as i32 &
+                                16 as i32 != 0 &&
+                                etc_entry_0.draft as i32 ==
+                                    empties - 1 as i32 {
+                                curr_val += 384 as i32;
+                                if etc_entry_0.selectivity as i32 <=
+                                    selectivity {
+                                    if etc_entry_0.flags as i32 &
+                                        (2 as i32 |
+                                            4 as i32) != 0 &&
+                                        etc_entry_0.eval <= -beta {
+                                        curr_val = 10000000 as i32
+                                    }
+                                    if etc_entry_0.flags as i32 &
+                                        1 as i32 != 0 &&
+                                        etc_entry_0.eval >= -alpha {
+                                        curr_val -= 640 as i32
+                                    }
+                                }
+                            }
+                        }
+                        /* Determine the midgame score. If it is worse than
+                           alpha-8, a fail-high is likely so precision in that
+                           range is not worth the extra nodes required. */
+                        if curr_val != 10000000 as i32 {
+                            curr_val -=
+                                tree_search(level + 1 as i32,
+                                            level + pre_depth,
+                                            0 as i32 +
+                                                2 as i32 -
+                                                side_to_move,
+                                            -(12345678 as i32),
+                                            (-alpha + 8 as i32) *
+                                                128 as i32,
+                                            1 as i32,
+                                            1 as i32,
+                                            1 as i32)
+                        }
+                        /* Make the moves which are highly likely to result in
+                           fail-high in decreasing order of mobility for the
+                           opponent. */
+                        if curr_val > threshold ||
+                            move_0 ==
+                                mid_entry.move_0[0 as i32 as usize]
+                        {
+                            if curr_val >
+                                60 as i32 * 128 as i32 {
+                                curr_val +=
+                                    2 as i32 * 1000000 as i32
+                            } else { curr_val += 1000000 as i32 }
+                            if curr_val < 10000000 as i32 {
+                                mobility =
+                                    bitboard_mobility(new_opp_bits, bb_flips);
+                                if curr_val >
+                                    2 as i32 *
+                                        1000000 as i32 {
+                                    curr_val -=
+                                        2 as i32 *
+                                            ff_mob_factor[(disks_played -
+                                                1 as
+                                                    i32)
+                                                as usize] *
+                                            mobility
+                                } else {
+                                    curr_val -=
+                                        ff_mob_factor[(disks_played -
+                                            1 as i32)
+                                            as usize] * mobility
+                                }
+                            }
+                        }
+                        unmake_move(side_to_move, move_0);
+                        evals[disks_played as usize][move_0 as usize] =
+                            curr_val;
+                        move_list[disks_played as
+                            usize][move_count[disks_played as usize]
+                            as usize] = move_0;
+                        move_count[disks_played as usize] += 1
+                    }
+                    shallow_index += 1
+                }
+            }
+            if move_index == move_count[disks_played as usize] { break ; }
+            move_0 =
+                select_move(move_index, move_count[disks_played as usize])
+        }
+        node_val = counter_value(&mut nodes);
+        if node_val - last_panic_check >= 250000.0f64 {
+            /* Check for time abort */
+            last_panic_check = node_val;
+            check_panic_abort();
+            /* Output status buffers if in interactive mode */
+            if echo != 0 { display_buffers(); }
+            /* Check for events */
+            if is_panic_abort() != 0 || force_return != 0 {
+                return -(27000 as i32)
+            }
+        }
+        if level == 0 as i32 && get_ponder_move() == 0 {
+            end_tree_search_level_0_ponder_0_short_report(move_0, first);
+        }
+        make_move(side_to_move, move_0, use_hash);
+        TestFlips_wrapper(move_0, my_bits, opp_bits);
+        new_my_bits = bb_flips;
+        new_opp_bits.high = opp_bits.high & !bb_flips.high;
+        new_opp_bits.low = opp_bits.low & !bb_flips.low;
+        update_pv = 0 as i32;
+        if first != 0 {
+            curr_val =
+                -end_tree_search(level + 1 as i32, level + exp_depth,
+                                 new_opp_bits, new_my_bits,
+                                 0 as i32 + 2 as i32 -
+                                     side_to_move, -beta, -curr_alpha,
+                                 selectivity, &mut child_selective_cutoff,
+                                 1 as i32);
+            best = curr_val;
+            update_pv = 1 as i32;
+            if level == 0 as i32 { best_end_root_move = move_0 }
+        } else {
+            curr_alpha = if best > curr_alpha { best } else { curr_alpha };
+            curr_val =
+                -end_tree_search(level + 1 as i32, level + exp_depth,
+                                 new_opp_bits, new_my_bits,
+                                 0 as i32 + 2 as i32 -
+                                     side_to_move,
+                                 -(curr_alpha + 1 as i32),
+                                 -curr_alpha, selectivity,
+                                 &mut child_selective_cutoff,
+                                 1 as i32);
+            if curr_val > curr_alpha && curr_val < beta {
+                if selectivity > 0 as i32 {
+                    curr_val =
+                        -end_tree_search(level + 1 as i32,
+                                         level + exp_depth, new_opp_bits,
+                                         new_my_bits,
+                                         0 as i32 + 2 as i32 -
+                                             side_to_move, -beta,
+                                         12345678 as i32, selectivity,
+                                         &mut child_selective_cutoff,
+                                         1 as i32)
+                } else {
+                    curr_val =
+                        -end_tree_search(level + 1 as i32,
+                                         level + exp_depth, new_opp_bits,
+                                         new_my_bits,
+                                         0 as i32 + 2 as i32 -
+                                             side_to_move, -beta, -curr_val,
+                                         selectivity,
+                                         &mut child_selective_cutoff,
+                                         1 as i32)
+                }
+                if curr_val > best {
+                    best = curr_val;
+                    update_pv = 1 as i32;
+                    if level == 0 as i32 && is_panic_abort() == 0 &&
+                        force_return == 0 {
+                        best_end_root_move = move_0
+                    }
+                }
+            } else if curr_val > best {
+                best = curr_val;
+                update_pv = 1 as i32;
+                if level == 0 as i32 && is_panic_abort() == 0 &&
+                    force_return == 0 {
+                    best_end_root_move = move_0
+                }
+            }
+        }
+        if best >= beta {
+            /* The other children don't matter in this case. */
+            *selective_cutoff = child_selective_cutoff
+        } else if child_selective_cutoff != 0 {
+            *selective_cutoff = 1 as i32
+        }
+        unmake_move(side_to_move, move_0);
+        if is_panic_abort() != 0 || force_return != 0 {
+            return -(27000 as i32)
+        }
+        if level == 0 as i32 && get_ponder_move() == 0 {
+            /* Output some stats */
+            end_tree_search_output_some_second_stats(alpha, beta, curr_val, update_pv, move_index)
+        }
+        if update_pv != 0 {
+            update_best_list(best_list.as_mut_ptr(), move_0, best_list_index,
+                             &mut best_list_length,
+                             (level == 0 as i32) as i32);
+            pv[level as usize][level as usize] = move_0;
+            pv_depth[level as usize] =
+                pv_depth[(level + 1 as i32) as usize];
+            i = level + 1 as i32;
+            while i < pv_depth[(level + 1 as i32) as usize] {
+                pv[level as usize][i as usize] =
+                    pv[(level + 1 as i32) as usize][i as usize];
+                i += 1
+            }
+        }
+        if best >= beta {
+            /* Fail high */
+            if use_hash != 0 {
+                add_hash_extended(1 as i32, best,
+                                  best_list.as_mut_ptr(),
+                                  16 as i32 | 1 as i32,
+                                  remains,
+                                  if *selective_cutoff != 0 {
+                                      selectivity
+                                  } else { 0 as i32 });
+            }
+            return best
+        }
+        if best_list_index >= best_list_length && update_pv == 0 &&
+            best_list_length < 4 as i32 {
+            let fresh1 = best_list_length;
+            best_list_length = best_list_length + 1;
+            best_list[fresh1 as usize] = move_0
+        }
+        first = 0 as i32;
+        move_index += 1;
+        best_list_index += 1
+    }
+    if first == 0 {
+        if use_hash != 0 {
+            let mut flags = 16 as i32;
+            if best > alpha {
+                flags |= 4 as i32
+            } else { flags |= 2 as i32 }
+            add_hash_extended(1 as i32, best, best_list.as_mut_ptr(),
+                              flags, remains,
+                              if *selective_cutoff != 0 {
+                                  selectivity
+                              } else { 0 as i32 });
+        }
+        return best
+    } else if void_legal != 0 {
+        if use_hash != 0 {
+            hash1 ^= hash_flip_color1;
+            hash2 ^= hash_flip_color2
+        }
+        curr_val =
+            -end_tree_search(level, max_depth, opp_bits, my_bits,
+                             0 as i32 + 2 as i32 -
+                                 side_to_move, -beta, -alpha, selectivity,
+                             selective_cutoff, 0 as i32);
+        if use_hash != 0 {
+            hash1 ^= hash_flip_color1;
+            hash2 ^= hash_flip_color2
+        }
+        return curr_val
+    } else {
+        pv_depth[level as usize] = level;
+        my_discs = piece_count[side_to_move as usize][disks_played as usize];
+        opp_discs =
+            piece_count[(0 as i32 + 2 as i32 - side_to_move)
+                as usize][disks_played as usize];
+        disk_diff = my_discs - opp_discs;
+        if my_discs > opp_discs {
+            return 64 as i32 - 2 as i32 * opp_discs
+        } else if my_discs == opp_discs {
+            return 0 as i32
+        } else { return -(64 as i32 - 2 as i32 * my_discs) }
+    };
+}
+
+
+/*
+  END_TREE_WRAPPER
+  Wrapper onto END_TREE_SEARCH which applies the knowledge that
+  the range of valid scores is [-64,+64].  Komi, if any, is accounted for.
+*/
+pub unsafe fn end_tree_wrapper(mut level: i32,
+                           mut max_depth: i32,
+                           mut side_to_move: i32,
+                           mut alpha: i32,
+                           mut beta: i32,
+                           mut selectivity: i32,
+                           mut void_legal: i32)
+                           -> i32 {
+    let mut selective_cutoff: i32 = 0;
+    let mut my_bits = BitBoard{high: 0, low: 0,};
+    let mut opp_bits = BitBoard{high: 0, low: 0,};
+    init_mmx();
+    set_bitboards(board.as_mut_ptr(), side_to_move, &mut my_bits,
+                  &mut opp_bits);
+    return end_tree_search(level, max_depth, my_bits, opp_bits, side_to_move,
+                           (if alpha - komi_shift > -(64 as i32) {
+                               (alpha) - komi_shift
+                           } else { -(64 as i32) }),
+                           (if beta - komi_shift < 64 as i32 {
+                               (beta) - komi_shift
+                           } else { 64 as i32 }), selectivity,
+                           &mut selective_cutoff, void_legal) + komi_shift;
+}
+/*
+   FULL_EXPAND_PV
+   Pad the PV with optimal moves in the low-level phase.
+*/
+pub unsafe fn full_expand_pv(mut side_to_move: i32,
+                         mut selectivity: i32) {
+    let mut i: i32 = 0;
+    let mut pass_count: i32 = 0;
+    let mut new_pv_depth: i32 = 0;
+    let mut new_pv: [i32; 61] = [0; 61];
+    let mut new_side_to_move: [i32; 61] = [0; 61];
+    new_pv_depth = 0 as i32;
+    pass_count = 0 as i32;
+    while pass_count < 2 as i32 {
+        let mut move_0: i32 = 0;
+        generate_all(side_to_move);
+        if move_count[disks_played as usize] > 0 as i32 {
+            let mut empties =
+                64 as i32 - disc_count(0 as i32) -
+                    disc_count(2 as i32);
+            end_tree_wrapper(new_pv_depth, empties, side_to_move,
+                             -(64 as i32), 64 as i32,
+                             selectivity, 1 as i32);
+            move_0 = pv[new_pv_depth as usize][new_pv_depth as usize];
+            new_pv[new_pv_depth as usize] = move_0;
+            new_side_to_move[new_pv_depth as usize] = side_to_move;
+            make_move(side_to_move, move_0, 1 as i32);
+            new_pv_depth += 1
+        } else {
+            hash1 ^= hash_flip_color1;
+            hash2 ^= hash_flip_color2;
+            pass_count += 1
+        }
+        side_to_move = 0 as i32 + 2 as i32 - side_to_move
+    }
+    i = new_pv_depth - 1 as i32;
+    while i >= 0 as i32 {
+        unmake_move(new_side_to_move[i as usize], new_pv[i as usize]);
+        i -= 1
+    }
+    i = 0 as i32;
+    while i < new_pv_depth {
+        pv[0 as i32 as usize][i as usize] = new_pv[i as usize];
+        i += 1
+    }
+    pv_depth[0 as i32 as usize] = new_pv_depth;
 }
