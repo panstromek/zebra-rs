@@ -22,6 +22,7 @@ use crate::{
     }
 };
 pub use engine::src::osfbook::*;
+use engine::src::game::{engine_game_init, setup_non_file_based_game};
 
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
@@ -39,7 +40,8 @@ pub type __compar_fn_t
 unsafe fn prepare_tree_traversal() {
     let mut side_to_move: i32 = 0;
     toggle_experimental(0 as i32);
-    game_init(0 as *const i8, &mut side_to_move);
+    setup_non_file_based_game(&mut side_to_move);
+    engine_game_init();
     toggle_midgame_hash_usage(1 as i32, 1 as i32);
     toggle_abort_check(0 as i32);
     toggle_midgame_abort_check(0 as i32);
