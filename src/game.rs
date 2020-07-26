@@ -84,17 +84,11 @@ pub unsafe fn global_setup(mut use_random: i32,
 */
 unsafe fn setup_game(mut file_name: *const i8,
                                 mut side_to_move: *mut i32) {
-    let mut buffer: [i8; 65] = [0; 65];
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut pos: i32 = 0;
-    let mut token: i32 = 0;
-    let mut stream = 0 as *mut FILE;
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i < 10 as i32 {
-        j = 0 as i32;
+        let mut j = 0 as i32;
         while j < 10 as i32 {
-            pos = 10 as i32 * i + j;
+            let mut pos = 10 as i32 * i + j;
             if i == 0 as i32 || i == 9 as i32 ||
                    j == 0 as i32 || j == 9 as i32 {
                 board[pos as usize] = 3 as i32
@@ -110,7 +104,7 @@ unsafe fn setup_game(mut file_name: *const i8,
         board[44 as i32 as usize] = board[55 as i32 as usize];
         *side_to_move = 0 as i32
     } else {
-        stream =
+        let mut stream =
             fopen(file_name, b"r\x00" as *const u8 as *const i8);
         if stream.is_null() {
             fatal_error(b"%s \'%s\'\n\x00" as *const u8 as
@@ -118,13 +112,14 @@ unsafe fn setup_game(mut file_name: *const i8,
                         b"Cannot open game file\x00" as *const u8 as
                             *const i8, file_name);
         }
+        let mut buffer: [i8; 65] = [0; 65];
         fgets(buffer.as_mut_ptr(), 70 as i32, stream);
-        token = 0 as i32;
-        i = 1 as i32;
+        let mut token = 0 as i32;
+        let mut i = 1 as i32;
         while i <= 8 as i32 {
-            j = 1 as i32;
+            let mut j = 1 as i32;
             while j <= 8 as i32 {
-                pos = 10 as i32 * i + j;
+                let mut pos = 10 as i32 * i + j;
                 match buffer[token as usize] as i32 {
                     42 | 88 => { board[pos as usize] = 0 as i32 }
                     79 | 48 => { board[pos as usize] = 2 as i32 }
