@@ -2351,3 +2351,14 @@ pub unsafe fn prepare_tree_traversal() {
     toggle_abort_check(0 as i32);
     toggle_midgame_abort_check(0 as i32);
 }
+
+/*
+  VALIDATE_TREE
+  Makes sure all nodes are either exhausted, solved or have a deviation.
+  The number of positions evaluated is returned.
+*/
+
+pub unsafe fn validate_tree() -> i32 {
+    prepare_tree_traversal();
+    validate_prepared_tree()
+}
