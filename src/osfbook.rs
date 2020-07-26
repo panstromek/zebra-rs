@@ -33,20 +33,6 @@ pub type __compar_fn_t
                                 _: *const libc::c_void) -> i32>;
 
 /*
-   PREPATE_TREE_TRAVERSAL
-   Prepares all relevant data structures for a tree search
-   or traversal.
-*/
-unsafe fn prepare_tree_traversal() {
-    let mut side_to_move: i32 = 0;
-    toggle_experimental(0 as i32);
-    setup_non_file_based_game(&mut side_to_move);
-    engine_game_init();
-    toggle_midgame_hash_usage(1 as i32, 1 as i32);
-    toggle_abort_check(0 as i32);
-    toggle_midgame_abort_check(0 as i32);
-}
-/*
    MINIMAX_TREE
    Calculates the minimax values of all nodes in the tree.
 */
