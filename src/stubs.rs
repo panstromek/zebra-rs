@@ -2,14 +2,12 @@ use crate::src::libc;
 use crate::src::game::{FILE, time_t, size_t};
 use crate::src::osfbook::__compar_fn_t;
 use crate::src::getcoeff::gzFile;
-pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs, time, strlen};
+pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs, time, strlen, tolower};
 
 extern "C" {
     pub type _IO_wide_data;
     pub type _IO_codecvt;
     pub type _IO_marker;
-    #[no_mangle]
-    pub fn tolower(_: i32) -> i32;
     #[no_mangle]
     pub static mut stdout: *mut FILE;
     #[no_mangle]
