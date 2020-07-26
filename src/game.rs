@@ -94,6 +94,7 @@ unsafe fn setup_game(mut file_name: *const i8,
 }
 
 unsafe fn setup_game_from_file(mut file_name: *const i8, side_to_move: *mut i32) {
+    assert!(!file_name.is_null());
     let mut stream =
         fopen(file_name, b"r\x00" as *const u8 as *const i8);
     if stream.is_null() {
