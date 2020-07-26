@@ -263,3 +263,10 @@ pub unsafe fn setup_game_finalize(side_to_move:  *mut i32) {
         score_sheet_row = 0 as i32
     };
 }
+
+
+pub unsafe fn setup_non_file_based_game(mut side_to_move: *mut i32) {
+    setup_game_clear_board();
+    setup_game_board_normal(side_to_move);
+    setup_game_finalize(side_to_move);
+}

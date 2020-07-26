@@ -84,16 +84,20 @@ pub unsafe fn global_setup(mut use_random: i32,
 */
 unsafe fn setup_game(mut file_name: *const i8,
                                 mut side_to_move: *mut i32) {
-    setup_game_clear_board();
     if file_name.is_null() {
-        setup_game_board_normal(side_to_move)
+        setup_non_file_based_game(side_to_move);
     } else {
-        setup_game_from_file(file_name, side_to_move)
+        setup_file_based_game(file_name, side_to_move);
     }
+}
+
+unsafe fn setup_file_based_game(mut file_name: *const i8, mut side_to_move: *mut i32) {
+    setup_game_clear_board();
+    setup_game_board_from_file(file_name, side_to_move);
     setup_game_finalize(side_to_move);
 }
 
-unsafe fn setup_game_from_file(mut file_name: *const i8, side_to_move: *mut i32) {
+unsafe fn setup_game_board_from_file(mut file_name: *const i8, side_to_move: *mut i32) {
     assert!(!file_name.is_null());
     let mut stream =
         fopen(file_name, b"r\x00" as *const u8 as *const i8);
