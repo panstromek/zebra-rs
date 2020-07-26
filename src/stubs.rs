@@ -2,7 +2,7 @@ use crate::src::libc;
 use crate::src::game::{FILE, time_t, size_t};
 use crate::src::osfbook::__compar_fn_t;
 use crate::src::getcoeff::gzFile;
-pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs, time, strlen, tolower};
+pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs, time, strlen, tolower, toupper};
 
 extern "C" {
     pub type _IO_wide_data;
@@ -57,14 +57,11 @@ extern "C" {
     #[no_mangle]
     pub fn __ctype_b_loc() -> *mut *const u16;
     #[no_mangle]
-    pub fn toupper(_: i32) -> i32;
-    #[no_mangle]
     pub static mut stderr: *mut FILE;
     #[no_mangle]
     pub fn fflush(__stream: *mut FILE) -> i32;
     #[no_mangle]
     pub fn fscanf(_: *mut FILE, _: *const i8, _: ...) -> i32;
-
     #[no_mangle]
     pub fn putc(__c: i32, __stream: *mut FILE) -> i32;
     #[no_mangle]
@@ -90,10 +87,6 @@ extern "C" {
     pub fn getc(__stream: *mut FILE) -> i32;
     #[no_mangle]
     pub fn strdup(_: *const i8) -> *mut i8;
-    #[no_mangle]
-    pub fn __assert_fail(__assertion: *const i8,
-                     __file: *const i8, __line: u32,
-                     __function: *const i8) -> !;
     #[no_mangle]
     pub fn vfprintf(_: *mut FILE, _: *const i8, _: ::std::ffi::VaList)
                 -> i32;
