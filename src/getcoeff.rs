@@ -485,7 +485,6 @@ pub unsafe fn init_coeffs() {
     let mut j: i32 = 0;
     let mut word1: i32 = 0;
     let mut word2: i32 = 0;
-    let mut subsequent_stage: i32 = 0;
     let mut curr_stage: i32 = 0;
     let mut coeff_stream = 0 as *mut gzFile_s;
     let mut adjust_stream = 0 as *mut FILE;
@@ -590,34 +589,5 @@ pub unsafe fn init_coeffs() {
         eval_adjustment(disc_adjust, edge_adjust, corner_adjust, x_adjust);
         fclose(adjust_stream);
     }
-    /* For each of number of disks played, decide on what set of evaluation
-       patterns to use.
-       The following rules apply:
-       - Stages from the tuning are used as evaluation stages
-       - Intermediate evaluation stages are introduced 2 stages before
-       each tuning stage.
-       - Other stages are mapped onto the next evaluation stage
-       (which may be either from the tuning or an intermediate stage).
-    */
-    i = 0 as i32;
-    while i < stage[0 as i32 as usize] {
-        eval_map[i as usize] = stage[0 as i32 as usize];
-        i += 1
-    }
-    i = 0 as i32;
-    while i < stage_count {
-        eval_map[stage[i as usize] as usize] = stage[i as usize];
-        i += 1
-    }
-    subsequent_stage = 60 as i32;
-    i = subsequent_stage;
-    while i >= stage[0 as i32 as usize] {
-        if eval_map[i as usize] == i {
-            subsequent_stage = i
-        } else if i == subsequent_stage - 2 as i32 {
-            eval_map[i as usize] = i;
-            subsequent_stage = i
-        } else { eval_map[i as usize] = subsequent_stage }
-        i -= 1
-    };
+    post_init_coeffs();
 }
