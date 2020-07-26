@@ -22,6 +22,10 @@ use std::ffi::c_void;
 use crate::src::midgame::tree_search;
 use crate::src::timer::{last_panic_check, clear_panic_abort};
 
+extern "C" {
+    #[no_mangle]
+    fn report_do_evaluate(evaluation_stage_: i32);
+}
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -1532,4 +1536,53 @@ pub unsafe fn do_validate(mut index: i32) {
     }
     let ref mut fresh19 = (*node.offset(index as isize)).flags;
     *fresh19 = (*fresh19 as i32 ^ 8 as i32) as u16;
+}
+
+/*
+   DO_EVALUATE
+   Recursively makes sure a subtree is evaluated to
+   the specified depth.
+*/
+pub unsafe fn do_evaluate(mut index: i32) {
+    let mut i: i32 = 0;
+    let mut child: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    if evaluated_count >= max_eval_count { return }
+    if (*node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        return
+    }
+    if (*node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    generate_all(side_to_move);
+    if (*node.offset(index as isize)).flags as i32 &
+        (16 as i32 | 4 as i32) == 0 {
+        evaluate_node(index);
+    }
+    if evaluated_count >=
+        (evaluation_stage + 1 as i32) * max_eval_count /
+            25 as i32 {
+        evaluation_stage += 1;
+        report_do_evaluate(evaluation_stage);
+    }
+    i = 0 as i32;
+    while i < move_count[disks_played as usize] {
+        this_move = move_list[disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2);
+        child = *book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) { do_evaluate(child); }
+        unmake_move(side_to_move, this_move);
+        i += 1
+    }
+    let ref mut fresh17 = (*node.offset(index as isize)).flags;
+    *fresh17 = (*fresh17 as i32 ^ 8 as i32) as u16;
 }
