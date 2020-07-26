@@ -128,16 +128,6 @@ pub unsafe fn evaluate_tree() {
     puts(b"\x00" as *const u8 as *const i8);
 }
 /*
-  VALIDATE_TREE
-  Makes sure all nodes are either exhausted, solved or have a deviation.
-  The number of positions evaluated is returned.
-*/
-
-pub unsafe fn validate_tree() -> i32 {
-    prepare_tree_traversal();
-    validate_prepared_tree()
-}
-/*
    EXAMINE_TREE
    Generates some statistics about the book tree.
 */
