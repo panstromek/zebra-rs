@@ -1,10 +1,15 @@
 use crate::src::zebra::EvaluationType;
-use crate::src::counter::{adjust_counter, counter_value};
-use crate::src::search::nodes;
+use crate::src::counter::{adjust_counter, counter_value, reset_counter};
+use crate::src::search::{nodes, total_time, total_evaluations, total_nodes, setup_search};
 use crate::src::globals::{pv_depth, pv};
 use crate::src::osfbook::clear_osf;
 use crate::src::getcoeff::clear_coeffs;
 use crate::src::hash::free_hash;
+use crate::src::unflip::init_flip_stack;
+use crate::src::timer::clear_ponder_times;
+use crate::src::eval::init_eval;
+use crate::src::end::setup_end;
+use crate::src::midgame::setup_midgame;
 
 
 pub type EvalType = u32;
@@ -201,4 +206,21 @@ pub unsafe fn global_terminate() {
     free_hash();
     clear_coeffs();
     clear_osf();
+}
+
+pub unsafe fn engine_game_init() {
+    setup_search();
+    setup_midgame();
+    setup_end();
+    init_eval();
+    clear_ponder_times();
+    reset_counter(&mut total_nodes);
+    reset_counter(&mut total_evaluations);
+    init_flip_stack();
+    total_time = 0.0f64;
+    max_depth_reached = 0 as i32;
+    last_time_used = 0.0f64;
+    endgame_performed[2 as i32 as usize] = 0 as i32;
+    endgame_performed[0 as i32 as usize] =
+        endgame_performed[2 as i32 as usize];
 }
