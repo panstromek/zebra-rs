@@ -86,49 +86,11 @@ unsafe fn setup_game(mut file_name: *const i8,
                                 mut side_to_move: *mut i32) {
     setup_game_clear_board();
     if file_name.is_null() {
-        setup_normal_game(side_to_move)
+        setup_game_board_normal(side_to_move)
     } else {
         setup_game_from_file(file_name, side_to_move)
     }
     setup_game_finalize(side_to_move);
-}
-
-pub unsafe fn setup_game_finalize(side_to_move:  *mut i32) {
-    disks_played =
-        disc_count(0 as i32) + disc_count(2 as i32) -
-            4 as i32;
-    determine_hash_values(*side_to_move, board.as_mut_ptr());
-    /* Make the game score look right */
-    if *side_to_move == 0 as i32 {
-        score_sheet_row = -(1 as i32)
-    } else {
-        black_moves[0 as i32 as usize] = -(1 as i32);
-        score_sheet_row = 0 as i32
-    };
-}
-
-pub unsafe fn setup_game_clear_board() {
-    let mut i = 0 as i32;
-    while i < 10 as i32 {
-        let mut j = 0 as i32;
-        while j < 10 as i32 {
-            let mut pos = 10 as i32 * i + j;
-            if i == 0 as i32 || i == 9 as i32 ||
-                   j == 0 as i32 || j == 9 as i32 {
-                board[pos as usize] = 3 as i32
-            } else { board[pos as usize] = 1 as i32 }
-            j += 1
-        }
-        i += 1
-    }
-}
-
-pub unsafe fn setup_normal_game(side_to_move: *mut i32) {
-    board[54 as i32 as usize] = 0 as i32;
-    board[45 as i32 as usize] = board[54 as i32 as usize];
-    board[55 as i32 as usize] = 2 as i32;
-    board[44 as i32 as usize] = board[55 as i32 as usize];
-    *side_to_move = 0 as i32
 }
 
 unsafe fn setup_game_from_file(mut file_name: *const i8, side_to_move: *mut i32) {
