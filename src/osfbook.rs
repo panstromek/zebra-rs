@@ -2272,302 +2272,45 @@ pub unsafe fn print_move_alternatives(mut side_to_move:
         }
     };
 }
-/*
-   GET_BOOK_MOVE
-   Chooses a book move from the list of candidates
-   which don't worsen the negamaxed out-of-book
-   evaluation by too much.
-*/
 
-pub unsafe fn get_book_move(mut side_to_move: i32,
-                                       mut update_slack: i32,
-                                       mut eval_info: *mut EvaluationType)
- -> i32 {
-    let mut i: i32 = 0;
-    let mut original_side_to_move: i32 = 0;
-    let mut remaining_slack: i32 = 0;
-    let mut score: i32 = 0;
-    let mut chosen_score: i32 = 0;
-    let mut best_score: i32 = 0;
-    let mut alternative_score: i32 = 0;
-    let mut feasible_count: i32 = 0;
-    let mut index: i32 = 0;
-    let mut chosen_index: i32 = 0;
-    let mut flags: i32 = 0;
-    let mut base_flags: i32 = 0;
-    let mut random_point: i32 = 0;
-    let mut level: i32 = 0;
-    let mut continuation: i32 = 0;
-    let mut is_feasible: i32 = 0;
-    let mut acc_weight: i32 = 0;
-    let mut total_weight: i32 = 0;
-    let mut best_move: i32 = 0;
-    let mut this_move: i32 = 0;
-    let mut alternative_move: i32 = 0;
-    let mut sign: i32 = 0;
-    let mut val1: i32 = 0;
-    let mut val2: i32 = 0;
-    let mut orientation: i32 = 0;
-    let mut slot: i32 = 0;
-    let mut weight: [i32; 60] = [0; 60];
-    let mut temp_move: [i32; 60] = [0; 60];
-    let mut temp_stm: [i32; 60] = [0; 60];
-    /* Disable opening book randomness unless the move is going to
-       be played on the board by Zebra */
-    if update_slack != 0 {
-        remaining_slack =
-            if max_slack - used_slack[side_to_move as usize] >
-                   0 as i32 {
-                (max_slack) - used_slack[side_to_move as usize]
-            } else { 0 as i32 }
-    } else { remaining_slack = 0 as i32 }
-    if echo != 0 && candidate_count > 0 as i32 &&
-           get_ponder_move() == 0 {
-        printf(b"Slack left is %.2f. \x00" as *const u8 as
-                   *const i8,
-               remaining_slack as f64 / 128.0f64);
-        print_move_alternatives(side_to_move);
-    }
-    /* No book move found? */
-    if candidate_count == 0 as i32 { return -(1 as i32) }
-    /* Find the book flags of the original position. */
-    get_hash(&mut val1, &mut val2, &mut orientation);
-    slot = probe_hash_table(val1, val2);
-    if slot == -(1 as i32) ||
-           *book_hash_table.offset(slot as isize) == -(1 as i32) {
-        fatal_error(b"Internal error in book code.\x00" as *const u8 as
-                        *const i8);
-    }
-    base_flags =
-        (*node.offset(*book_hash_table.offset(slot as isize) as isize)).flags
-            as i32;
-    /* If we have an endgame score for the position, we only want to
-       consult the book if there is at least one move realizing that score. */
-    index = *book_hash_table.offset(slot as isize);
-    if (*node.offset(index as isize)).flags as i32 & 16 as i32
-           != 0 {
-        if candidate_list[0 as i32 as usize].score <
-               (*node.offset(index as isize)).black_minimax_score as
-                   i32 {
-            return -(1 as i32)
-        }
-    } else if (*node.offset(index as isize)).flags as i32 &
-                  4 as i32 != 0 {
-        if (*node.offset(index as isize)).black_minimax_score as i32 >
-               0 as i32 &&
-               candidate_list[0 as i32 as usize].score <=
-                   0 as i32 {
-            return -(1 as i32)
-        }
-    }
-    /* Don't randomize among solved moves */
-    score = candidate_list[0 as i32 as usize].score;
-    if score >= 30000 as i32 { remaining_slack = 0 as i32 }
-    feasible_count = 0 as i32;
-    total_weight = 0 as i32;
-    while feasible_count < candidate_count &&
-              candidate_list[feasible_count as usize].score >=
-                  score - remaining_slack {
-        weight[feasible_count as usize] =
-            2 as i32 * remaining_slack + 1 as i32 -
-                (score - candidate_list[feasible_count as usize].score);
-        total_weight += weight[feasible_count as usize];
-        feasible_count += 1
-    }
-    /* Chose a move at random from the moves which don't worsen
-       the position by more than the allowed slack (and, optionally,
-       update it). A simple weighting scheme makes the moves with
-       scores close to the best move most likely to be chosen. */
-    if feasible_count == 1 as i32 {
-        chosen_index = 0 as i32
+#[no_mangle]
+pub unsafe extern "C" fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32) {
+    printf(b"Slack left is %.2f. \x00" as *const u8 as
+               *const i8,
+           remaining_slack as f64 / 128.0f64);
+    print_move_alternatives(side_to_move);
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32) {
+    send_status(b"-->   Book     \x00" as *const u8 as
+        *const i8);
+    if flags & 16 as i32 != 0 {
+        send_status(b"%+3d (exact)   \x00" as *const u8 as
+                        *const i8,
+                    chosen_score / 128 as i32);
+    } else if flags & 4 as i32 != 0 {
+        send_status(b"%+3d (WLD)     \x00" as *const u8 as
+                        *const i8,
+                    chosen_score / 128 as i32);
     } else {
-        random_point =
-            ((my_random() >> 10 as i32) %
-                 total_weight as i64) as i32;
-        chosen_index = 0 as i32;
-        acc_weight = weight[chosen_index as usize];
-        while random_point > acc_weight {
-            chosen_index += 1;
-            acc_weight += weight[chosen_index as usize]
-        }
+        send_status(b"%+6.2f        \x00" as *const u8 as
+                        *const i8,
+                    chosen_score as f64 / 128.0f64);
     }
-    chosen_score = candidate_list[chosen_index as usize].score;
-    if update_slack != 0 {
-        used_slack[side_to_move as usize] += score - chosen_score
+    if get_ponder_move() != 0 {
+        send_status(b"{%c%c} \x00" as *const u8 as *const i8,
+                    'a' as i32 + get_ponder_move() % 10 as i32 -
+                        1 as i32,
+                    '0' as i32 + get_ponder_move() / 10 as i32);
     }
-    /* Convert the book score to the normal form.
-       Note that this should work also for old-style book values. */
-    if chosen_score >= 30000 as i32 {
-        chosen_score -= 30000 as i32;
-        if chosen_score <= 64 as i32 {
-            chosen_score *= 128 as i32
-        }
-    }
-    if chosen_score <= -(30000 as i32) {
-        chosen_score += 30000 as i32;
-        if chosen_score >= -(64 as i32) {
-            chosen_score *= 128 as i32
-        }
-    }
-    /* Return the score via the EvaluationType structure */
-    flags = candidate_list[chosen_index as usize].flags;
-    *eval_info =
-        create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION, chosen_score,
-                         0.0f64, 0 as i32, 1 as i32);
-    if base_flags & (16 as i32 | 4 as i32) != 0 &&
-           flags & (16 as i32 | 4 as i32) != 0 {
-        /* Both the base position and the position after the book move
-           are solved. */
-        if base_flags & 16 as i32 != 0 &&
-               flags & 16 as i32 != 0 {
-            (*eval_info).type_0 = EXACT_EVAL
-        } else { (*eval_info).type_0 = WLD_EVAL }
-        if chosen_score > 0 as i32 {
-            (*eval_info).res = WON_POSITION
-        } else if chosen_score == 0 as i32 {
-            (*eval_info).res = DRAWN_POSITION
-        } else { (*eval_info).res = LOST_POSITION }
-    } else if flags & 4 as i32 != 0 && chosen_score > 0 as i32
-     {
-        /* The base position is unknown but the move played leads
-           to a won position. */
-        (*eval_info).type_0 = WLD_EVAL;
-        (*eval_info).res = WON_POSITION
-    } else {
-        /* No endgame information available. */
-        (*eval_info).type_0 = MIDGAME_EVAL
-    }
-    if echo != 0 {
-        send_status(b"-->   Book     \x00" as *const u8 as
-                        *const i8);
-        if flags & 16 as i32 != 0 {
-            send_status(b"%+3d (exact)   \x00" as *const u8 as
-                            *const i8,
-                        chosen_score / 128 as i32);
-        } else if flags & 4 as i32 != 0 {
-            send_status(b"%+3d (WLD)     \x00" as *const u8 as
-                            *const i8,
-                        chosen_score / 128 as i32);
-        } else {
-            send_status(b"%+6.2f        \x00" as *const u8 as
-                            *const i8,
-                        chosen_score as f64 / 128.0f64);
-        }
-        if get_ponder_move() != 0 {
-            send_status(b"{%c%c} \x00" as *const u8 as *const i8,
-                        'a' as i32 + get_ponder_move() % 10 as i32 -
-                            1 as i32,
-                        '0' as i32 + get_ponder_move() / 10 as i32);
-        }
-        send_status(b"%c%c\x00" as *const u8 as *const i8,
-                    'a' as i32 +
-                        candidate_list[chosen_index as usize].move_0 %
-                            10 as i32 - 1 as i32,
-                    '0' as i32 +
-                        candidate_list[chosen_index as usize].move_0 /
-                            10 as i32);
-    }
-    /* Fill the PV structure with the optimal book line */
-    original_side_to_move = side_to_move;
-    level = 0 as i32;
-    temp_move[0 as i32 as usize] =
-        candidate_list[chosen_index as usize].move_0;
-    loop  {
-        temp_stm[level as usize] = side_to_move;
-        make_move(side_to_move, temp_move[level as usize], 1 as i32);
-        level += 1;
-        get_hash(&mut val1, &mut val2, &mut orientation);
-        slot = probe_hash_table(val1, val2);
-        continuation = 1 as i32;
-        if slot == -(1 as i32) ||
-               *book_hash_table.offset(slot as isize) == -(1 as i32) {
-            continuation = 0 as i32
-        } else {
-            alternative_move =
-                (*node.offset(*book_hash_table.offset(slot as isize) as
-                                  isize)).best_alternative_move as
-                    i32;
-            if alternative_move > 0 as i32 {
-                alternative_move =
-                    *inv_symmetry_map[orientation as
-                                          usize].offset(alternative_move as
-                                                            isize);
-                alternative_score =
-                    adjust_score((*node.offset(*book_hash_table.offset(slot as
-                                                                           isize)
-                                                   as
-                                                   isize)).alternative_score
-                                     as i32, side_to_move)
-            } else { alternative_score = -(12345678 as i32) }
-            if (*node.offset(*book_hash_table.offset(slot as isize) as
-                                 isize)).flags as i32 &
-                   1 as i32 != 0 {
-                side_to_move = 0 as i32;
-                sign = 1 as i32
-            } else {
-                side_to_move = 2 as i32;
-                sign = -(1 as i32)
-            }
-            generate_all(side_to_move);
-            best_score = -(12345678 as i32);
-            best_move = -(1 as i32);
-            i = 0 as i32;
-            while i < move_count[disks_played as usize] {
-                this_move = move_list[disks_played as usize][i as usize];
-                make_move(side_to_move, this_move, 1 as i32);
-                get_hash(&mut val1, &mut val2, &mut orientation);
-                slot = probe_hash_table(val1, val2);
-                unmake_move(side_to_move, this_move);
-                if slot == -(1 as i32) ||
-                       *book_hash_table.offset(slot as isize) ==
-                           -(1 as i32) {
-                    if this_move == alternative_move {
-                        score = alternative_score;
-                        is_feasible = 1 as i32
-                    } else { is_feasible = 0 as i32 }
-                } else {
-                    if original_side_to_move == 0 as i32 {
-                        score =
-                            (*node.offset(*book_hash_table.offset(slot as
-                                                                      isize)
-                                              as isize)).black_minimax_score
-                                as i32
-                    } else {
-                        score =
-                            (*node.offset(*book_hash_table.offset(slot as
-                                                                      isize)
-                                              as isize)).white_minimax_score
-                                as i32
-                    }
-                    is_feasible = 1 as i32
-                }
-                if is_feasible != 0 {
-                    score *= sign;
-                    if score > best_score {
-                        best_score = score;
-                        best_move = this_move
-                    }
-                }
-                i += 1
-            }
-            if best_move == -(1 as i32) {
-                continuation = 0 as i32
-            } else { temp_move[level as usize] = best_move }
-        }
-        if !(continuation != 0) { break ; }
-    }
-    pv_depth[0 as i32 as usize] = level;
-    i = 0 as i32;
-    while i < level {
-        pv[0 as i32 as usize][i as usize] = temp_move[i as usize];
-        i += 1
-    }
-    loop  {
-        level -= 1;
-        unmake_move(temp_stm[level as usize], temp_move[level as usize]);
-        if !(level > 0 as i32) { break ; }
-    }
-    return candidate_list[chosen_index as usize].move_0;
+    send_status(b"%c%c\x00" as *const u8 as *const i8,
+                'a' as i32 +
+                    candidate_list[chosen_index as usize].move_0 %
+                        10 as i32 - 1 as i32,
+                '0' as i32 +
+                    candidate_list[chosen_index as usize].move_0 /
+                        10 as i32);
 }
 /*
   DUPSTR
