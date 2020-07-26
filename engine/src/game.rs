@@ -1,15 +1,16 @@
 use crate::src::zebra::EvaluationType;
 use crate::src::counter::{adjust_counter, counter_value, reset_counter};
-use crate::src::search::{nodes, total_time, total_evaluations, total_nodes, setup_search};
-use crate::src::globals::{pv_depth, pv};
+use crate::src::search::{nodes, total_time, total_evaluations, total_nodes, setup_search, disc_count};
+use crate::src::globals::{pv_depth, pv, board, score_sheet_row, black_moves};
 use crate::src::osfbook::clear_osf;
 use crate::src::getcoeff::clear_coeffs;
-use crate::src::hash::free_hash;
+use crate::src::hash::{free_hash, determine_hash_values};
 use crate::src::unflip::init_flip_stack;
 use crate::src::timer::clear_ponder_times;
 use crate::src::eval::init_eval;
 use crate::src::end::setup_end;
 use crate::src::midgame::setup_midgame;
+use crate::src::moves::disks_played;
 
 
 pub type EvalType = u32;
@@ -223,4 +224,42 @@ pub unsafe fn engine_game_init() {
     endgame_performed[2 as i32 as usize] = 0 as i32;
     endgame_performed[0 as i32 as usize] =
         endgame_performed[2 as i32 as usize];
+}
+
+pub unsafe fn setup_game_clear_board() {
+    let mut i = 0 as i32;
+    while i < 10 as i32 {
+        let mut j = 0 as i32;
+        while j < 10 as i32 {
+            let mut pos = 10 as i32 * i + j;
+            if i == 0 as i32 || i == 9 as i32 ||
+                j == 0 as i32 || j == 9 as i32 {
+                board[pos as usize] = 3 as i32
+            } else { board[pos as usize] = 1 as i32 }
+            j += 1
+        }
+        i += 1
+    }
+}
+
+pub unsafe fn setup_game_board_normal(side_to_move: *mut i32) {
+    board[54 as i32 as usize] = 0 as i32;
+    board[45 as i32 as usize] = board[54 as i32 as usize];
+    board[55 as i32 as usize] = 2 as i32;
+    board[44 as i32 as usize] = board[55 as i32 as usize];
+    *side_to_move = 0 as i32
+}
+
+pub unsafe fn setup_game_finalize(side_to_move:  *mut i32) {
+    disks_played =
+        disc_count(0 as i32) + disc_count(2 as i32) -
+            4 as i32;
+    determine_hash_values(*side_to_move, board.as_mut_ptr());
+    /* Make the game score look right */
+    if *side_to_move == 0 as i32 {
+        score_sheet_row = -(1 as i32)
+    } else {
+        black_moves[0 as i32 as usize] = -(1 as i32);
+        score_sheet_row = 0 as i32
+    };
 }
