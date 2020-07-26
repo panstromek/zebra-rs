@@ -182,22 +182,8 @@ unsafe fn setup_game(mut file_name: *const i8,
 pub unsafe fn game_init(mut file_name: *const i8,
                                    mut side_to_move: *mut i32) {
     setup_game(file_name, side_to_move);
-    setup_search();
-    setup_midgame();
-    setup_end();
-    init_eval();
-    clear_ponder_times();
-    reset_counter(&mut total_nodes);
-    reset_counter(&mut total_evaluations);
-    init_flip_stack();
-    total_time = 0.0f64;
-    max_depth_reached = 0 as i32;
-    last_time_used = 0.0f64;
-    endgame_performed[2 as i32 as usize] = 0 as i32;
-    endgame_performed[0 as i32 as usize] =
-        endgame_performed[2 as i32 as usize];
+    engine_game_init();
 }
-
 /*
   PONDER_MOVE
   Perform searches in response to the opponent's next move.
