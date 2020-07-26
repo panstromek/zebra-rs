@@ -2714,3 +2714,37 @@ pub unsafe fn pattern_evaluation(mut side_to_move: i32)
     }
     return score as i32;
 }
+
+
+pub unsafe fn post_init_coeffs() {
+    /* For each of number of disks played, decide on what set of evaluation
+           patterns to use.
+           The following rules apply:
+           - Stages from the tuning are used as evaluation stages
+           - Intermediate evaluation stages are introduced 2 stages before
+           each tuning stage.
+           - Other stages are mapped onto the next evaluation stage
+           (which may be either from the tuning or an intermediate stage).
+        */
+    let mut i = 0 as i32;
+    while i < stage[0 as i32 as usize] {
+        eval_map[i as usize] = stage[0 as i32 as usize];
+        i += 1
+    }
+    i = 0 as i32;
+    while i < stage_count {
+        eval_map[stage[i as usize] as usize] = stage[i as usize];
+        i += 1
+    }
+    let mut subsequent_stage = 60 as i32;
+    i = subsequent_stage;
+    while i >= stage[0 as i32 as usize] {
+        if eval_map[i as usize] == i {
+            subsequent_stage = i
+        } else if i == subsequent_stage - 2 as i32 {
+            eval_map[i as usize] = i;
+            subsequent_stage = i
+        } else { eval_map[i as usize] = subsequent_stage }
+        i -= 1
+    };
+}
