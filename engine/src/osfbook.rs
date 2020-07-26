@@ -21,7 +21,7 @@ use crate::src::safemem::{safe_malloc, safe_realloc};
 use std::ffi::c_void;
 use crate::src::midgame::tree_search;
 use crate::src::timer::{last_panic_check, clear_panic_abort};
-use crate::src::hash::add_hash;
+use crate::src::hash::{add_hash, setup_hash};
 
 extern "C" {
     #[no_mangle]
@@ -1873,4 +1873,25 @@ pub unsafe fn do_examine(mut index: i32) {
     }
     let ref mut fresh21 = (*node.offset(index as isize)).flags;
     *fresh21 = (*fresh21 as i32 ^ 8 as i32) as u16;
+}
+
+
+pub unsafe fn engine_init_osf() {
+    init_maps();
+    prepare_hash();
+    setup_hash(1 as i32);
+    init_book_tree();
+    reset_book_search();
+    search_depth = 2 as i32;
+    max_slack = 0 as i32;
+    low_deviation_threshold = 60 as i32;
+    high_deviation_threshold = 60 as i32;
+    deviation_bonus = 0.0f64;
+    min_eval_span = 0 as i32;
+    max_eval_span = 1000 as i32 * 128 as i32;
+    min_negamax_span = 0 as i32;
+    max_negamax_span = 1000 as i32 * 128 as i32;
+    max_batch_size = 10000000 as i32;
+    force_black = 0 as i32;
+    force_white = 0 as i32;
 }

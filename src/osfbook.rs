@@ -2969,23 +2969,7 @@ pub unsafe fn convert_opening_list(mut base_file:
 */
 
 pub unsafe fn init_osf(mut do_global_setup: i32) {
-    init_maps();
-    prepare_hash();
-    setup_hash(1 as i32);
-    init_book_tree();
-    reset_book_search();
-    search_depth = 2 as i32;
-    max_slack = 0 as i32;
-    low_deviation_threshold = 60 as i32;
-    high_deviation_threshold = 60 as i32;
-    deviation_bonus = 0.0f64;
-    min_eval_span = 0 as i32;
-    max_eval_span = 1000 as i32 * 128 as i32;
-    min_negamax_span = 0 as i32;
-    max_negamax_span = 1000 as i32 * 128 as i32;
-    max_batch_size = 10000000 as i32;
-    force_black = 0 as i32;
-    force_white = 0 as i32;
+    engine_init_osf();
     if do_global_setup != 0 {
         global_setup(0 as i32, 19 as i32);
     };
