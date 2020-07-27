@@ -59,7 +59,7 @@ unsafe fn get_word(mut stream: gzFile) -> i16 {
 unsafe fn unpack_batch(mut item: *mut i16,
                                   mut mirror: *mut i32,
                                   mut count: i32,
-                                  mut stream: gzFile) {
+                        next_word: &mut impl FnMut() -> i16) {
     let mut i: i32 = 0;
     let mut buffer = 0 as *mut i16;
     buffer =
@@ -72,8 +72,9 @@ unsafe fn unpack_batch(mut item: *mut i16,
     i = 0 as i32;
     while i < count {
         if mirror.is_null() || *mirror.offset(i as isize) == i {
+            let i1 = next_word();
             *buffer.offset(i as isize) =
-                (get_word(stream) as i32 / 4 as i32) as
+                (i1 as i32 / 4 as i32) as
                     i16
         } else {
             *buffer.offset(i as isize) =
@@ -114,7 +115,7 @@ unsafe fn unpack_batch(mut item: *mut i16,
    Reads all feature values for a certain stage. To take care of
    symmetric patterns, mirror tables are calculated.
 */
-unsafe fn unpack_coeffs(mut stream: gzFile) {
+unsafe fn unpack_coeffs(next_word: &mut impl FnMut() -> i16) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -416,10 +417,10 @@ unsafe fn unpack_coeffs(mut stream: gzFile) {
     i = 0 as i32;
     while i < stage_count - 1 as i32 {
         set[stage[i as usize] as usize].constant =
-            (get_word(stream) as i32 / 4 as i32) as
+            (next_word() as i32 / 4 as i32) as
                 i16;
         set[stage[i as usize] as usize].parity =
-            (get_word(stream) as i32 / 4 as i32) as
+            (next_word() as i32 / 4 as i32) as
                 i16;
         set[stage[i as usize] as
                 usize].parity_constant[0 as i32 as usize] =
@@ -430,27 +431,27 @@ unsafe fn unpack_coeffs(mut stream: gzFile) {
                  set[stage[i as usize] as usize].parity as i32) as
                 i16;
         unpack_batch(set[stage[i as usize] as usize].afile2x, map_mirror8x2,
-                     59049 as i32, stream);
+                     59049 as i32, next_word);
         unpack_batch(set[stage[i as usize] as usize].bfile, map_mirror8,
-                     6561 as i32, stream);
+                     6561 as i32, next_word);
         unpack_batch(set[stage[i as usize] as usize].cfile, map_mirror8,
-                     6561 as i32, stream);
+                     6561 as i32, next_word);
         unpack_batch(set[stage[i as usize] as usize].dfile, map_mirror8,
-                     6561 as i32, stream);
+                     6561 as i32, next_word);
         unpack_batch(set[stage[i as usize] as usize].diag8, map_mirror8,
-                     6561 as i32, stream);
+                     6561 as i32, next_word);
         unpack_batch(set[stage[i as usize] as usize].diag7, map_mirror7,
-                     2187 as i32, stream);
+                     2187 as i32, next_word);
         unpack_batch(set[stage[i as usize] as usize].diag6, map_mirror6,
-                     729 as i32, stream);
+                     729 as i32, next_word);
         unpack_batch(set[stage[i as usize] as usize].diag5, map_mirror5,
-                     243 as i32, stream);
+                     243 as i32, next_word);
         unpack_batch(set[stage[i as usize] as usize].diag4, map_mirror4,
-                     81 as i32, stream);
+                     81 as i32, next_word);
         unpack_batch(set[stage[i as usize] as usize].corner33, map_mirror33,
-                     19683 as i32, stream);
+                     19683 as i32, next_word);
         unpack_batch(set[stage[i as usize] as usize].corner52,
-                     0 as *mut i32, 59049 as i32, stream);
+                     0 as *mut i32, 59049 as i32, next_word);
         i += 1
     }
     /* Free the mirror tables - the symmetries are now implicit
@@ -494,10 +495,11 @@ pub unsafe fn init_coeffs() {
                     b"Unable to open coefficient file\x00" as *const u8 as
                         *const i8, sPatternFile.as_mut_ptr());
     }
+    let mut next_word = || get_word(coeff_stream);
     /* Check the magic values in the beginning of the file to make sure
        the file format is right */
-    let mut word1 = get_word(coeff_stream) as i32;
-    let mut word2 = get_word(coeff_stream) as i32;
+    let mut word1 = next_word() as i32;
+    let mut word2 = next_word() as i32;
     if word1 != 5358 as i32 || word2 != 9793 as i32 {
         fatal_error(b"%s: %s\x00" as *const u8 as *const i8,
                     sPatternFile.as_mut_ptr(),
@@ -513,12 +515,12 @@ pub unsafe fn init_coeffs() {
         set[i as usize].loaded = 0 as i32;
         i += 1
     }
-    stage_count = get_word(coeff_stream) as i32;
+    stage_count = next_word() as i32;
     let mut i = 0 as i32;
     let mut j: i32 = 0;
     let mut curr_stage: i32 = 0;
     while i < stage_count - 1 as i32 {
-        stage[i as usize] = get_word(coeff_stream) as i32;
+        stage[i as usize] = next_word() as i32;
         curr_stage = stage[i as usize];
         if i == 0 as i32 {
             j = 0 as i32;
@@ -550,7 +552,7 @@ pub unsafe fn init_coeffs() {
     set[60 as i32 as usize].permanent = 1 as i32;
     allocate_set(60 as i32);
     /* Read the pattern values */
-    unpack_coeffs(coeff_stream);
+    unpack_coeffs(&mut next_word);
     gzclose(coeff_stream);
     /* Calculate the patterns which correspond to the board being filled */
     terminal_patterns();
