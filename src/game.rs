@@ -39,13 +39,12 @@ pub static mut log_file_path: [i8; 2048] = [0; 2048];
 
 pub unsafe fn global_setup(mut use_random: i32,
                                       mut hash_bits: i32) {
-    let mut log_file = 0 as *mut FILE;
     let mut timer: time_t = 0;
     /* Clear the log file. No error handling done. */
     strcpy(log_file_path.as_mut_ptr(),
            b"zebra.log\x00" as *const u8 as *const i8);
     if use_log_file != 0 {
-        log_file =
+        let mut log_file =
             fopen(log_file_path.as_mut_ptr(),
                   b"w\x00" as *const u8 as *const i8);
         if !log_file.is_null() {
