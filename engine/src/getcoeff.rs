@@ -1,9 +1,11 @@
 use crate::src::globals::{board, piece_count};
 use crate::src::moves::disks_played;
 use crate::src::patterns::{flip8, pow3};
-use crate::src::stubs::floor;
+use crate::src::stubs::{floor, free};
 use crate::src::safemem::safe_malloc;
 use crate::src::error::fatal_error;
+use std::ffi::c_void;
+use std::process::exit;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -2747,4 +2749,417 @@ pub unsafe fn post_init_coeffs() {
         } else { eval_map[i as usize] = subsequent_stage }
         i -= 1
     };
+}
+
+
+/*
+   UNPACK_BATCH
+   Reads feature values for one specific pattern
+*/
+pub unsafe fn unpack_batch(mut item: *mut i16,
+                           mut mirror: *mut i32,
+                           mut count: i32,
+                           next_word: &mut impl FnMut() -> i16) {
+    let mut i: i32 = 0;
+    let mut buffer = 0 as *mut i16;
+    buffer =
+        safe_malloc((count as
+            u64).wrapping_mul(::std::mem::size_of::<i16>()
+            as u64)) as
+            *mut i16;
+    /* Unpack the coefficient block where the score is scaled
+       so that 512 units corresponds to one disk. */
+    i = 0 as i32;
+    while i < count {
+        if mirror.is_null() || *mirror.offset(i as isize) == i {
+            let i1 = next_word();
+            *buffer.offset(i as isize) =
+                (i1 as i32 / 4 as i32) as
+                    i16
+        } else {
+            *buffer.offset(i as isize) =
+                *buffer.offset(*mirror.offset(i as isize) as isize)
+        }
+        i += 1
+    }
+    i = 0 as i32;
+    while i < count {
+        *item.offset(i as isize) = *buffer.offset(i as isize);
+        i += 1
+    }
+    if !mirror.is_null() {
+        i = 0 as i32;
+        while i < count {
+            if *item.offset(i as isize) as i32 !=
+                *item.offset(*mirror.offset(i as isize) as isize) as
+                    i32 {
+                let first_mirror_offset = *mirror.offset(i as isize);
+                let first_item = *item.offset(i as isize) as i32;
+                let second_item = *item.offset(first_mirror_offset as isize) as i32;
+
+                report_mirror_symetry_error(count, i, first_mirror_offset, first_item, second_item);
+                exit(1 as i32);
+            }
+            i += 1
+        }
+    }
+    free(buffer as *mut c_void);
+}
+extern "C" {
+    fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32);
+}
+/*
+   UNPACK_COEFFS
+   Reads all feature values for a certain stage. To take care of
+   symmetric patterns, mirror tables are calculated.
+*/
+pub unsafe fn unpack_coeffs(next_word: &mut impl FnMut() -> i16) {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut k: i32 = 0;
+    let mut mirror_pattern: i32 = 0;
+    let mut row: [i32; 10] = [0; 10];
+    let mut map_mirror3 = 0 as *mut i32;
+    let mut map_mirror4 = 0 as *mut i32;
+    let mut map_mirror5 = 0 as *mut i32;
+    let mut map_mirror6 = 0 as *mut i32;
+    let mut map_mirror7 = 0 as *mut i32;
+    let mut map_mirror8 = 0 as *mut i32;
+    let mut map_mirror33 = 0 as *mut i32;
+    let mut map_mirror8x2 = 0 as *mut i32;
+    /* Allocate the memory needed for the temporary mirror maps from the
+       heap rather than the stack to reduce memory requirements. */
+    map_mirror3 =
+        safe_malloc((27 as i32 as
+            u64).wrapping_mul(::std::mem::size_of::<i32>()
+            as u64)) as
+            *mut i32;
+    map_mirror4 =
+        safe_malloc((81 as i32 as
+            u64).wrapping_mul(::std::mem::size_of::<i32>()
+            as u64)) as
+            *mut i32;
+    map_mirror5 =
+        safe_malloc((243 as i32 as
+            u64).wrapping_mul(::std::mem::size_of::<i32>()
+            as u64)) as
+            *mut i32;
+    map_mirror6 =
+        safe_malloc((729 as i32 as
+            u64).wrapping_mul(::std::mem::size_of::<i32>()
+            as u64)) as
+            *mut i32;
+    map_mirror7 =
+        safe_malloc((2187 as i32 as
+            u64).wrapping_mul(::std::mem::size_of::<i32>()
+            as u64)) as
+            *mut i32;
+    map_mirror8 =
+        safe_malloc((6561 as i32 as
+            u64).wrapping_mul(::std::mem::size_of::<i32>()
+            as u64)) as
+            *mut i32;
+    map_mirror33 =
+        safe_malloc((19683 as i32 as
+            u64).wrapping_mul(::std::mem::size_of::<i32>()
+            as u64)) as
+            *mut i32;
+    map_mirror8x2 =
+        safe_malloc((59049 as i32 as
+            u64).wrapping_mul(::std::mem::size_of::<i32>()
+            as u64)) as
+            *mut i32;
+    /* Build the pattern tables for 8*1-patterns */
+    i = 0 as i32;
+    while i < 8 as i32 { row[i as usize] = 0 as i32; i += 1 }
+    i = 0 as i32;
+    while i < 6561 as i32 {
+        mirror_pattern = 0 as i32;
+        j = 0 as i32;
+        while j < 8 as i32 {
+            mirror_pattern +=
+                row[j as usize] * pow3[(7 as i32 - j) as usize];
+            j += 1
+        }
+        /* Create the symmetry map */
+        *map_mirror8.offset(i as isize) =
+            if i < mirror_pattern { i } else { mirror_pattern };
+        /* Next configuration */
+        j = 0 as i32;
+        loop  {
+            /* The odometer principle */
+            row[j as usize] += 1;
+            if row[j as usize] == 3 as i32 {
+                row[j as usize] = 0 as i32
+            }
+            j += 1;
+            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
+                j < 8 as i32) {
+                break ;
+            }
+        }
+        i += 1
+    }
+    /* Build the tables for 7*1-patterns */
+    i = 0 as i32;
+    while i < 7 as i32 { row[i as usize] = 0 as i32; i += 1 }
+    i = 0 as i32;
+    while i < 2187 as i32 {
+        mirror_pattern = 0 as i32;
+        j = 0 as i32;
+        while j < 7 as i32 {
+            mirror_pattern +=
+                row[j as usize] * pow3[(6 as i32 - j) as usize];
+            j += 1
+        }
+        *map_mirror7.offset(i as isize) =
+            if i < mirror_pattern { i } else { mirror_pattern };
+        /* Next configuration */
+        j = 0 as i32;
+        loop  {
+            /* The odometer principle */
+            row[j as usize] += 1;
+            if row[j as usize] == 3 as i32 {
+                row[j as usize] = 0 as i32
+            }
+            j += 1;
+            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
+                j < 7 as i32) {
+                break ;
+            }
+        }
+        i += 1
+    }
+    /* Build the tables for 6*1-patterns */
+    i = 0 as i32;
+    while i < 6 as i32 { row[i as usize] = 0 as i32; i += 1 }
+    i = 0 as i32;
+    while i < 729 as i32 {
+        mirror_pattern = 0 as i32;
+        j = 0 as i32;
+        while j < 6 as i32 {
+            mirror_pattern +=
+                row[j as usize] * pow3[(5 as i32 - j) as usize];
+            j += 1
+        }
+        *map_mirror6.offset(i as isize) =
+            if i < mirror_pattern { i } else { mirror_pattern };
+        /* Next configuration */
+        j = 0 as i32;
+        loop  {
+            /* The odometer principle */
+            row[j as usize] += 1;
+            if row[j as usize] == 3 as i32 {
+                row[j as usize] = 0 as i32
+            }
+            j += 1;
+            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
+                j < 6 as i32) {
+                break ;
+            }
+        }
+        i += 1
+    }
+    /* Build the tables for 5*1-patterns */
+    i = 0 as i32;
+    while i < 5 as i32 { row[i as usize] = 0 as i32; i += 1 }
+    i = 0 as i32;
+    while i < 243 as i32 {
+        mirror_pattern = 0 as i32;
+        j = 0 as i32;
+        while j < 5 as i32 {
+            mirror_pattern +=
+                row[j as usize] * pow3[(4 as i32 - j) as usize];
+            j += 1
+        }
+        *map_mirror5.offset(i as isize) =
+            if mirror_pattern < i { mirror_pattern } else { i };
+        /* Next configuration */
+        j = 0 as i32;
+        loop  {
+            /* The odometer principle */
+            row[j as usize] += 1;
+            if row[j as usize] == 3 as i32 {
+                row[j as usize] = 0 as i32
+            }
+            j += 1;
+            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
+                j < 5 as i32) {
+                break ;
+            }
+        }
+        i += 1
+    }
+    /* Build the tables for 4*1-patterns */
+    i = 0 as i32;
+    while i < 4 as i32 { row[i as usize] = 0 as i32; i += 1 }
+    i = 0 as i32;
+    while i < 81 as i32 {
+        mirror_pattern = 0 as i32;
+        j = 0 as i32;
+        while j < 4 as i32 {
+            mirror_pattern +=
+                row[j as usize] * pow3[(3 as i32 - j) as usize];
+            j += 1
+        }
+        *map_mirror4.offset(i as isize) =
+            if i < mirror_pattern { i } else { mirror_pattern };
+        /* Next configuration */
+        j = 0 as i32;
+        loop  {
+            /* The odometer principle */
+            row[j as usize] += 1;
+            if row[j as usize] == 3 as i32 {
+                row[j as usize] = 0 as i32
+            }
+            j += 1;
+            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
+                j < 4 as i32) {
+                break ;
+            }
+        }
+        i += 1
+    }
+    /* Build the tables for 3*1-patterns */
+    i = 0 as i32;
+    while i < 3 as i32 { row[i as usize] = 0 as i32; i += 1 }
+    i = 0 as i32;
+    while i < 27 as i32 {
+        mirror_pattern = 0 as i32;
+        j = 0 as i32;
+        while j < 3 as i32 {
+            mirror_pattern +=
+                row[j as usize] * pow3[(2 as i32 - j) as usize];
+            j += 1
+        }
+        *map_mirror3.offset(i as isize) =
+            if i < mirror_pattern { i } else { mirror_pattern };
+        /* Next configuration */
+        j = 0 as i32;
+        loop  {
+            /* The odometer principle */
+            row[j as usize] += 1;
+            if row[j as usize] == 3 as i32 {
+                row[j as usize] = 0 as i32
+            }
+            j += 1;
+            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
+                j < 3 as i32) {
+                break ;
+            }
+        }
+        i += 1
+    }
+    /* Build the tables for 5*2-patterns */
+    /* --- none needed --- */
+    /* Build the tables for edge2X-patterns */
+    i = 0 as i32;
+    while i < 6561 as i32 {
+        j = 0 as i32;
+        while j < 3 as i32 {
+            k = 0 as i32;
+            while k < 3 as i32 {
+                *map_mirror8x2.offset((i + 6561 as i32 * j +
+                    19683 as i32 * k) as isize)
+                    =
+                    if flip8[i as usize] + 6561 as i32 * k +
+                        19683 as i32 * j <
+                        i + 6561 as i32 * j +
+                            19683 as i32 * k {
+                        (flip8[i as usize] + 6561 as i32 * k) +
+                            19683 as i32 * j
+                    } else {
+                        (i + 6561 as i32 * j) +
+                            19683 as i32 * k
+                    };
+                k += 1
+            }
+            j += 1
+        }
+        i += 1
+    }
+    /* Build the tables for 3*3-patterns */
+    i = 0 as i32;
+    while i < 9 as i32 { row[i as usize] = 0 as i32; i += 1 }
+    i = 0 as i32;
+    while i < 19683 as i32 {
+        mirror_pattern =
+            row[0 as i32 as usize] +
+                3 as i32 * row[3 as i32 as usize] +
+                9 as i32 * row[6 as i32 as usize] +
+                27 as i32 * row[1 as i32 as usize] +
+                81 as i32 * row[4 as i32 as usize] +
+                243 as i32 * row[7 as i32 as usize] +
+                729 as i32 * row[2 as i32 as usize] +
+                2187 as i32 * row[5 as i32 as usize] +
+                6561 as i32 * row[8 as i32 as usize];
+        *map_mirror33.offset(i as isize) =
+            if i < mirror_pattern { i } else { mirror_pattern };
+        /* Next configuration */
+        j = 0 as i32;
+        loop  {
+            /* The odometer principle */
+            row[j as usize] += 1;
+            if row[j as usize] == 3 as i32 {
+                row[j as usize] = 0 as i32
+            }
+            j += 1;
+            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
+                j < 9 as i32) {
+                break ;
+            }
+        }
+        i += 1
+    }
+    /* Read and unpack - using symmetries - the coefficient tables. */
+    i = 0 as i32;
+    while i < stage_count - 1 as i32 {
+        set[stage[i as usize] as usize].constant =
+            (next_word() as i32 / 4 as i32) as
+                i16;
+        set[stage[i as usize] as usize].parity =
+            (next_word() as i32 / 4 as i32) as
+                i16;
+        set[stage[i as usize] as
+            usize].parity_constant[0 as i32 as usize] =
+            set[stage[i as usize] as usize].constant;
+        set[stage[i as usize] as
+            usize].parity_constant[1 as i32 as usize] =
+            (set[stage[i as usize] as usize].constant as i32 +
+                set[stage[i as usize] as usize].parity as i32) as
+                i16;
+        unpack_batch(set[stage[i as usize] as usize].afile2x, map_mirror8x2,
+                     59049 as i32, next_word);
+        unpack_batch(set[stage[i as usize] as usize].bfile, map_mirror8,
+                     6561 as i32, next_word);
+        unpack_batch(set[stage[i as usize] as usize].cfile, map_mirror8,
+                     6561 as i32, next_word);
+        unpack_batch(set[stage[i as usize] as usize].dfile, map_mirror8,
+                     6561 as i32, next_word);
+        unpack_batch(set[stage[i as usize] as usize].diag8, map_mirror8,
+                     6561 as i32, next_word);
+        unpack_batch(set[stage[i as usize] as usize].diag7, map_mirror7,
+                     2187 as i32, next_word);
+        unpack_batch(set[stage[i as usize] as usize].diag6, map_mirror6,
+                     729 as i32, next_word);
+        unpack_batch(set[stage[i as usize] as usize].diag5, map_mirror5,
+                     243 as i32, next_word);
+        unpack_batch(set[stage[i as usize] as usize].diag4, map_mirror4,
+                     81 as i32, next_word);
+        unpack_batch(set[stage[i as usize] as usize].corner33, map_mirror33,
+                     19683 as i32, next_word);
+        unpack_batch(set[stage[i as usize] as usize].corner52,
+                     0 as *mut i32, 59049 as i32, next_word);
+        i += 1
+    }
+    /* Free the mirror tables - the symmetries are now implicit
+       in the coefficient tables. */
+    free(map_mirror3 as *mut c_void);
+    free(map_mirror4 as *mut c_void);
+    free(map_mirror5 as *mut c_void);
+    free(map_mirror6 as *mut c_void);
+    free(map_mirror7 as *mut c_void);
+    free(map_mirror8 as *mut c_void);
+    free(map_mirror33 as *mut c_void);
+    free(map_mirror8x2 as *mut c_void);
 }
