@@ -89,77 +89,10 @@ pub unsafe fn init_coeffs() {
     //  fallible (but initial version can panic I guess, because the midgame solver
     //  doesn't really make sense without these coeffs, as far as I can tell)
     let mut next_word = || get_word(coeff_stream);
-    /* Check the magic values in the beginning of the file to make sure
-       the file format is right */
-    let mut word1 = next_word() as i32;
-    let mut word2 = next_word() as i32;
-    if word1 != 5358 as i32 || word2 != 9793 as i32 {
-        fatal_error(b"%s: %s\x00" as *const u8 as *const i8,
-                    sPatternFile.as_mut_ptr(),
-                    b"Wrong checksum in , might be an old version\x00" as
-                        *const u8 as *const i8);
-    }
-    /* Read the different stages for which the evaluation function
-       was tuned and mark the other stages with pointers to the previous
-       and next stages. */
-    let mut i = 0 as i32;
-    while i <= 60 as i32 {
-        set[i as usize].permanent = 0 as i32;
-        set[i as usize].loaded = 0 as i32;
-        i += 1
-    }
-    stage_count = next_word() as i32;
-    let mut i = 0 as i32;
-    let mut j: i32 = 0;
-    let mut curr_stage: i32 = 0;
-    while i < stage_count - 1 as i32 {
-        stage[i as usize] = next_word() as i32;
-        curr_stage = stage[i as usize];
-        if i == 0 as i32 {
-            j = 0 as i32;
-            while j < stage[0 as i32 as usize] {
-                set[j as usize].prev = stage[0 as i32 as usize];
-                set[j as usize].next = stage[0 as i32 as usize];
-                j += 1
-            }
-        } else {
-            j = stage[(i - 1 as i32) as usize];
-            while j < stage[i as usize] {
-                set[j as usize].prev = stage[(i - 1 as i32) as usize];
-                set[j as usize].next = stage[i as usize];
-                j += 1
-            }
-        }
-        set[curr_stage as usize].permanent = 1 as i32;
-        allocate_set(curr_stage);
-        i += 1
-    }
-    stage[(stage_count - 1 as i32) as usize] = 60 as i32;
-    j = stage[(stage_count - 2 as i32) as usize];
-    while j < 60 as i32 {
-        set[j as usize].prev =
-            stage[(stage_count - 2 as i32) as usize];
-        set[j as usize].next = 60 as i32;
-        j += 1
-    }
-    set[60 as i32 as usize].permanent = 1 as i32;
-    allocate_set(60 as i32);
-    /* Read the pattern values */
-    unpack_coeffs(&mut next_word);
+    let filename_to_report = sPatternFile.as_mut_ptr();
+    process_coeffs_from_fn_source(&mut next_word, filename_to_report);
     gzclose(coeff_stream);
-    /* Calculate the patterns which correspond to the board being filled */
-    terminal_patterns();
-    set[60 as i32 as usize].constant =
-        0 as i32 as i16;
-    set[60 as i32 as usize].parity =
-        0 as i32 as i16;
-    set[60 as i32 as usize].parity_constant[0 as i32 as usize]
-        = set[60 as i32 as usize].constant;
-    set[60 as i32 as usize].parity_constant[1 as i32 as usize]
-        =
-        (set[60 as i32 as usize].constant as i32 +
-             set[60 as i32 as usize].parity as i32) as
-            i16;
+    init_coeffs_calculate_patterns();
     /* Adjust the coefficients so as to reflect the encouragement for
        having lots of discs */
     let mut adjust_stream =
@@ -181,7 +114,6 @@ pub unsafe fn init_coeffs() {
     }
     post_init_coeffs();
 }
-
 
 #[no_mangle]
 pub unsafe extern "C"  fn report_mirror_symetry_error(mut count: i32, mut i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
