@@ -82,6 +82,12 @@ pub unsafe fn init_coeffs() {
                     b"Unable to open coefficient file\x00" as *const u8 as
                         *const i8, sPatternFile.as_mut_ptr());
     }
+    // FIXME
+    //  If the file doesn't have more data, the error is handled by assert in
+    //  get_word function. I we want to have a different source, it would probably
+    //  be better to make the closure return result instead and make the initializaiton
+    //  fallible (but initial version can panic I guess, because the midgame solver
+    //  doesn't really make sense without these coeffs, as far as I can tell)
     let mut next_word = || get_word(coeff_stream);
     /* Check the magic values in the beginning of the file to make sure
        the file format is right */
