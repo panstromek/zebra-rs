@@ -481,19 +481,12 @@ unsafe fn unpack_coeffs(mut stream: gzFile) {
 */
 
 pub unsafe fn init_coeffs() {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut word1: i32 = 0;
-    let mut word2: i32 = 0;
-    let mut curr_stage: i32 = 0;
-    let mut coeff_stream = 0 as *mut gzFile_s;
-    let mut adjust_stream = 0 as *mut FILE;
     let mut sPatternFile: [i8; 260] = [0; 260];
     init_memory_handler();
     /* Linux don't support current directory. */
     strcpy(sPatternFile.as_mut_ptr(),
            b"coeffs2.bin\x00" as *const u8 as *const i8);
-    coeff_stream =
+    let mut coeff_stream =
         gzopen(sPatternFile.as_mut_ptr(),
                b"rb\x00" as *const u8 as *const i8);
     if coeff_stream.is_null() {
@@ -503,8 +496,8 @@ pub unsafe fn init_coeffs() {
     }
     /* Check the magic values in the beginning of the file to make sure
        the file format is right */
-    word1 = get_word(coeff_stream) as i32;
-    word2 = get_word(coeff_stream) as i32;
+    let mut word1 = get_word(coeff_stream) as i32;
+    let mut word2 = get_word(coeff_stream) as i32;
     if word1 != 5358 as i32 || word2 != 9793 as i32 {
         fatal_error(b"%s: %s\x00" as *const u8 as *const i8,
                     sPatternFile.as_mut_ptr(),
@@ -514,14 +507,16 @@ pub unsafe fn init_coeffs() {
     /* Read the different stages for which the evaluation function
        was tuned and mark the other stages with pointers to the previous
        and next stages. */
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i <= 60 as i32 {
         set[i as usize].permanent = 0 as i32;
         set[i as usize].loaded = 0 as i32;
         i += 1
     }
     stage_count = get_word(coeff_stream) as i32;
-    i = 0 as i32;
+    let mut i = 0 as i32;
+    let mut j: i32 = 0;
+    let mut curr_stage: i32 = 0;
     while i < stage_count - 1 as i32 {
         stage[i as usize] = get_word(coeff_stream) as i32;
         curr_stage = stage[i as usize];
@@ -572,7 +567,7 @@ pub unsafe fn init_coeffs() {
             i16;
     /* Adjust the coefficients so as to reflect the encouragement for
        having lots of discs */
-    adjust_stream =
+    let mut adjust_stream =
         fopen(b"adjust.txt\x00" as *const u8 as *const i8,
               b"r\x00" as *const u8 as *const i8);
     if !adjust_stream.is_null() {
