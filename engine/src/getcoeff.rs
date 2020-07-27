@@ -3171,6 +3171,7 @@ pub unsafe fn process_coeffs_from_fn_source(mut next_word: &mut impl FnMut() -> 
     let mut word1 = next_word() as i32;
     let mut word2 = next_word() as i32;
     if word1 != 5358 as i32 || word2 != 9793 as i32 {
+        // FIXME this probably shouldn't be in the engine
         fatal_error(b"%s: %s\x00" as *const u8 as *const i8,
                     filename_to_report_eror_for,
                     b"Wrong checksum in , might be an old version\x00" as
