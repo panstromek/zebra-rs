@@ -87,8 +87,6 @@ static mut thor_max_games: i32 = 0;
 static mut tournament_skill: [[i32; 3]; 8] = [[0; 3]; 8];
 static mut wld_skill: [i32; 3] = [0; 3];
 static mut exact_skill: [i32; 3] = [0; 3];
-static mut log_file_name: *mut i8 =
-    0 as *const i8 as *mut i8;
 static mut player_time: [f64; 3] = [0.; 3];
 static mut player_increment: [f64; 3] = [0.; 3];
 static mut skill: [i32; 3] = [0; 3];
@@ -134,7 +132,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     skill[0 as i32 as usize] = skill[2 as i32 as usize];
     hash_bits = 18 as i32;
     game_file_name = 0 as *const i8;
-    log_file_name = 0 as *mut i8;
+    let mut log_file_name = 0 as *mut i8;
     run_script = 0 as i32;
     script_out_file = 0 as *const i8;
     script_in_file = script_out_file;
@@ -713,11 +711,11 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line);
     } else if tournament != 0 {
-        play_tournament(move_sequence);
+        play_tournament(move_sequence, log_file_name);
     } else if only_analyze != 0 {
         analyze_game(move_sequence);
     } else {
-        play_game(game_file_name, move_sequence, move_file_name, repeat);
+        play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name);
     }
     global_terminate();
     return 0 as i32;
@@ -727,7 +725,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
    Administrates the tournament between different levels
    of the program.
 */
-unsafe fn play_tournament(mut move_sequence: *const i8) {
+unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut result: [[[i32; 3]; 8]; 8] = [[[0; 3]; 8]; 8];
@@ -759,7 +757,7 @@ unsafe fn play_tournament(mut move_sequence: *const i8) {
             wld_skill[2 as i32 as usize] =
                 tournament_skill[j as usize][2 as i32 as usize];
             play_game(0 as *const i8, move_sequence,
-                      0 as *const i8, 1 as i32);
+                      0 as *const i8, 1 as i32, log_file_name_);
             add_counter(&mut tourney_nodes, &mut total_nodes);
             tourney_time += total_time;
             result[i as usize][j as usize][0 as i32 as usize] =
@@ -832,9 +830,9 @@ unsafe fn play_tournament(mut move_sequence: *const i8) {
    Administrates the game between two players, humans or computers.
 */
 unsafe fn play_game(mut file_name: *const i8,
-                               mut move_string: *const i8,
-                               mut move_file_name: *const i8,
-                               mut repeat: i32) {
+                    mut move_string: *const i8,
+                    mut move_file_name: *const i8,
+                    mut repeat: i32, log_file_name_: *mut i8) {
     let mut eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
                        res: WON_POSITION,
@@ -1248,9 +1246,9 @@ unsafe fn play_game(mut file_name: *const i8,
                    *const i8, eval_val);
         printf(b"Total time: %.1f s\n\x00" as *const u8 as
                    *const i8, total_time);
-        if !log_file_name.is_null() && one_position_only == 0 {
+        if !log_file_name_.is_null() && one_position_only == 0 {
             log_file =
-                fopen(log_file_name,
+                fopen(log_file_name_,
                       b"a\x00" as *const u8 as *const i8);
             if !log_file.is_null() {
                 timer = time(0 as *mut time_t);
