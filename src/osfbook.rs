@@ -1239,15 +1239,12 @@ pub unsafe fn merge_binary_database(mut file_name:
 
 pub unsafe fn write_text_database(mut file_name:
                                                  *const i8) {
-    let mut i: i32 = 0;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
-    let mut stream = 0 as *mut FILE;
     time(&mut start_time);
-    printf(b"Writing text database... \x00" as *const u8 as
-               *const i8);
+    printf(b"Writing text database... \x00" as *const u8 as *const i8);
     fflush(stdout);
-    stream = fopen(file_name, b"w\x00" as *const u8 as *const i8);
+    let stream = fopen(file_name, b"w\x00" as *const u8 as *const i8);
     if stream.is_null() {
         fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
                     b"Could not create database file\x00" as *const u8 as
@@ -1257,7 +1254,7 @@ pub unsafe fn write_text_database(mut file_name:
             2718 as i32, 2818 as i32);
     fprintf(stream, b"%d\n\x00" as *const u8 as *const i8,
             book_node_count);
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i < book_node_count {
         fprintf(stream,
                 b"%d %d %d %d %d %d %d\n\x00" as *const u8 as
@@ -1284,33 +1281,29 @@ pub unsafe fn write_text_database(mut file_name:
 
 pub unsafe fn write_binary_database(mut file_name:
                                                    *const i8) {
-    let mut i: i32 = 0;
-    let mut magic: i16 = 0;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
-    let mut stream = 0 as *mut FILE;
     time(&mut start_time);
-    printf(b"Writing binary database... \x00" as *const u8 as
-               *const i8);
+    printf(b"Writing binary database... \x00" as *const u8 as *const i8);
     fflush(stdout);
-    stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
+    let stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
     if stream.is_null() {
         fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
                     b"Could not create database file\x00" as *const u8 as
                         *const i8, file_name);
     }
-    magic = 2718 as i32 as i16;
+    let mut magic = 2718 as i32 as i16;
     fwrite(&mut magic as *mut i16 as *const libc::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
-    magic = 2818 as i32 as i16;
+    let mut magic = 2818 as i32 as i16;
     fwrite(&mut magic as *mut i16 as *const libc::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
     fwrite(&mut book_node_count as *mut i32 as *const libc::c_void,
            ::std::mem::size_of::<i32>() as u64,
            1 as i32 as size_t, stream);
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i < book_node_count {
         fwrite(&mut (*node.offset(i as isize)).hash_val1 as *mut i32
                    as *const libc::c_void,
@@ -1356,50 +1349,42 @@ pub unsafe fn write_binary_database(mut file_name:
 
 pub unsafe fn write_compressed_database(mut file_name:
                                                        *const i8) {
-    let mut i: i32 = 0;
-    let mut node_index: i32 = 0;
-    let mut child_index: i32 = 0;
-    let mut node_order = 0 as *mut i32;
-    let mut child_count = 0 as *mut i16;
-    let mut child = 0 as *mut i16;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
-    let mut stream = 0 as *mut FILE;
     time(&mut start_time);
-    printf(b"Writing compressed database... \x00" as *const u8 as
-               *const i8);
+    printf(b"Writing compressed database... \x00" as *const u8 as *const i8);
     fflush(stdout);
-    stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
+    let stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
     if stream.is_null() {
         fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
                     b"Could not create database file\x00" as *const u8 as
                         *const i8, file_name);
     }
     prepare_tree_traversal();
-    node_order =
+    let node_order =
         safe_malloc((book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i32>()
                                                          as u64)) as
             *mut i32;
-    child_count =
+    let child_count =
         safe_malloc((book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
-    child =
+    let child =
         malloc((book_node_count as
                     u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                     as u64)) as
             *mut i16;
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i < book_node_count {
         let ref mut fresh45 = (*node.offset(i as isize)).flags;
         *fresh45 =
             (*fresh45 as i32 | 8 as i32) as u16;
         i += 1
     }
-    node_index = 0 as i32;
-    child_index = 0 as i32;
+    let mut node_index = 0 as i32;
+    let mut child_index = 0 as i32;
     do_compress(0 as i32, node_order, child_count, &mut node_index,
                 child, &mut child_index);
     fwrite(&mut book_node_count as *mut i32 as *const libc::c_void,
