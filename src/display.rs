@@ -22,21 +22,6 @@ pub type va_list = __builtin_va_list;
 pub type size_t = u64;
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
-pub type EvalType = u32;
-pub const UNINITIALIZED_EVAL: EvalType = 8;
-pub const INTERRUPTED_EVAL: EvalType = 7;
-pub const UNDEFINED_EVAL: EvalType = 6;
-pub const PASS_EVAL: EvalType = 5;
-pub const FORCED_EVAL: EvalType = 4;
-pub const SELECTIVE_EVAL: EvalType = 3;
-pub const WLD_EVAL: EvalType = 2;
-pub const EXACT_EVAL: EvalType = 1;
-pub const MIDGAME_EVAL: EvalType = 0;
-pub type EvalResult = u32;
-pub const UNSOLVED_POSITION: EvalResult = 3;
-pub const LOST_POSITION: EvalResult = 2;
-pub const DRAWN_POSITION: EvalResult = 1;
-pub const WON_POSITION: EvalResult = 0;
 
 /*
    File:           display.c
@@ -51,31 +36,6 @@ pub const WON_POSITION: EvalResult = 0;
 */
 /* Global variables */
 
-/* Local variables */
-static mut black_player: *mut i8 =
-    0 as *const i8 as *mut i8;
-static mut white_player: *mut i8 =
-    0 as *const i8 as *mut i8;
-static mut status_buffer: [i8; 256] = [0; 256];
-static mut sweep_buffer: [i8; 256] = [0; 256];
-static mut stored_status_buffer: [i8; 256] = [0; 256];
-static mut black_eval: f64 = 0.0f64;
-static mut white_eval: f64 = 0.0f64;
-static mut last_output: f64 = 0.0f64;
-static mut interval1: f64 = 0.;
-static mut interval2: f64 = 0.;
-static mut black_time: i32 = 0;
-static mut white_time: i32 = 0;
-static mut current_row: i32 = 0;
-static mut status_modified: i32 = 0 as i32;
-static mut sweep_modified: i32 = 0 as i32;
-static mut timed_buffer_management: i32 = 1 as i32;
-static mut status_pos: i32 = 0;
-static mut sweep_pos: i32 = 0;
-static mut black_list: *mut i32 =
-    0 as *const i32 as *mut i32;
-static mut white_list: *mut i32 =
-    0 as *const i32 as *mut i32;
 /*
    File:         display.h
 
@@ -100,42 +60,6 @@ pub unsafe fn dumpch() {
     let mut ch: i8 = 0;
     ch = getc(stdin) as i8;
     if ch as i32 == ' ' as i32 { exit(1 as i32); };
-}
-/*
-  SET_NAMES
-  SET_TIMES
-  SET_EVALS
-  SET_MOVE_LIST
-  Specify some information to be output along with the
-  board by DISPLAY_BOARD.
-*/
-
-pub unsafe fn set_names(mut black_name: *const i8,
-                                   mut white_name: *const i8) {
-    if !black_player.is_null() { free(black_player as *mut libc::c_void); }
-    if !white_player.is_null() { free(white_player as *mut libc::c_void); }
-    black_player = strdup(black_name);
-    white_player = strdup(white_name);
-}
-
-pub unsafe fn set_times(mut black: i32,
-                                   mut white: i32) {
-    black_time = black;
-    white_time = white;
-}
-
-pub unsafe fn set_evals(mut black: f64,
-                                   mut white: f64) {
-    black_eval = black;
-    white_eval = white;
-}
-
-pub unsafe fn set_move_list(mut black: *mut i32,
-                                       mut white: *mut i32,
-                                       mut row: i32) {
-    black_list = black;
-    white_list = white;
-    current_row = row;
 }
 /*
    DISPLAY_BOARD
@@ -474,17 +398,6 @@ pub unsafe fn send_status_pv(mut pv: *mut i32,
     send_status(b" \x00" as *const u8 as *const i8);
 }
 /*
-  CLEAR_STATUS
-  Clear the current status information.
-*/
-
-pub unsafe fn clear_status() {
-    status_pos = 0 as i32;
-    status_buffer[0 as i32 as usize] =
-        0 as i32 as i8;
-    status_modified = 1 as i32;
-}
-/*
   DISPLAY_STATUS
   Output and clear the stored status information.
 */
@@ -500,10 +413,6 @@ pub unsafe fn display_status(mut stream: *mut FILE,
     }
     status_pos = 0 as i32;
 }
-
-pub unsafe fn get_last_status() -> *const i8 {
-    return stored_status_buffer.as_mut_ptr();
-}
 /*
   SEND_SWEEP
   Store information about the current search.
@@ -518,17 +427,6 @@ pub unsafe extern "C" fn send_sweep(mut format: *const i8,
         vsprintf(sweep_buffer.as_mut_ptr().offset(sweep_pos as isize), format,
                  arg_ptr.as_va_list());
     sweep_pos += written;
-    sweep_modified = 1 as i32;
-}
-/*
-  CLEAR_SWEEP
-  Clear the search information.
-*/
-
-pub unsafe fn clear_sweep() {
-    sweep_pos = 0 as i32;
-    sweep_buffer[0 as i32 as usize] =
-        0 as i32 as i8;
     sweep_modified = 1 as i32;
 }
 /*
@@ -579,17 +477,6 @@ pub unsafe extern "C" fn display_buffers() {
             interval2 = new_interval
         }
     };
-}
-/*
-  TOGGLE_SMART_BUFFER_MANAGEMENT
-  Allow the user between timed, "smart", buffer management
-  and the simple "you asked for it, you got it"-approach which
-  displays everything that is fed to the buffer.
-*/
-
-pub unsafe fn toggle_smart_buffer_management(mut use_smart:
-                                                            i32) {
-    timed_buffer_management = use_smart;
 }
 /*
   PRODUCE_EVAL_TEXT
