@@ -88,16 +88,12 @@ pub unsafe fn full_learn_public_game(mut length: i32,
                                                     i32,
                                                 mut exact: i32,
                                                 mut wld: i32) {
-    let mut i: i32 = 0;
-    let mut dummy: i32 = 0;
-    let mut side_to_move: i32 = 0;
-    let mut stream = 0 as *mut FILE;
-    stream =
+    let mut stream =
         fopen(b"learn.log\x00" as *const u8 as *const i8,
               b"a\x00" as *const u8 as *const i8);
     if !stream.is_null() {
         /* Write the game learned to a log file. */
-        i = 0 as i32;
+        let mut i = 0 as i32;
         while i < length {
             fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
                     'a' as i32 + *moves.offset(i as isize) % 10 as i32
@@ -112,15 +108,16 @@ pub unsafe fn full_learn_public_game(mut length: i32,
     clear_panic_abort();
     toggle_abort_check(0 as i32);
     /* Copy the move list from the caller as it is modified below. */
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i < length {
         game_move[i as usize] = *moves.offset(i as isize) as i16;
         i += 1
     }
+    let mut dummy: i32 = 0;
     /* Determine side to move for all positions */
     game_init(0 as *const i8, &mut dummy);
-    side_to_move = 0 as i32;
-    i = 0 as i32;
+    let mut side_to_move = 0 as i32;
+    let mut i = 0 as i32;
     while i < length {
         generate_all(side_to_move);
         if move_count[disks_played as usize] == 0 as i32 {
