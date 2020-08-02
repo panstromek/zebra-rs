@@ -2,7 +2,7 @@ use crate::src::libc;
 use crate::src::game::{FILE, time_t, size_t};
 use crate::src::osfbook::__compar_fn_t;
 use crate::src::getcoeff::gzFile;
-pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs, time, strlen, tolower, toupper};
+pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs, time, strlen, tolower, toupper, strdup};
 
 extern "C" {
     pub type _IO_wide_data;
@@ -85,8 +85,6 @@ extern "C" {
                 _: ::std::ffi::VaList) -> i32;
     #[no_mangle]
     pub fn getc(__stream: *mut FILE) -> i32;
-    #[no_mangle]
-    pub fn strdup(_: *const i8) -> *mut i8;
     #[no_mangle]
     pub fn vfprintf(_: *mut FILE, _: *const i8, _: ::std::ffi::VaList)
                 -> i32;

@@ -38,4 +38,6 @@ extern "C" {
     pub fn tolower(num: i32) -> i32;
     #[no_mangle]
     pub fn toupper(_: i32) -> i32;
+    #[no_mangle]
+    pub fn strdup(_: *const i8) -> *mut i8;
 }
