@@ -2064,7 +2064,7 @@ unsafe fn dump_game_score(mut side_to_move: i32) {
     }
     fclose(stream);
 }
-#[main]
+
 pub fn main() {
     let mut args: Vec<*mut i8> = Vec::new();
     for arg in ::std::env::args() {
