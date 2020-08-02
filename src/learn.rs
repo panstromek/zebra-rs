@@ -18,8 +18,7 @@ pub type FILE = _IO_FILE;
    Initialize the learning module.
 */
 
-pub unsafe fn init_learn(mut file_name: *const i8,
-                                    mut is_binary: i32) {
+pub unsafe fn init_learn(file_name: *const i8, is_binary: i32) {
     init_osf(0 as i32);
     if is_binary != 0 {
         read_binary_database(file_name);
@@ -37,18 +36,14 @@ pub unsafe fn init_learn(mut file_name: *const i8,
 pub unsafe fn learn_game(mut game_length: i32,
                                     mut private_game: i32,
                                     mut save_database: i32) {
-    let mut i: i32 = 0;
-    let mut dummy: i32 = 0;
-    let mut side_to_move: i32 = 0;
-    let mut full_solve: i32 = 0;
-    let mut wld_solve: i32 = 0;
     clear_panic_abort();
     toggle_abort_check(0 as i32);
-    full_solve = get_earliest_full_solve();
-    wld_solve = get_earliest_wld_solve();
+    let full_solve = get_earliest_full_solve();
+    let wld_solve = get_earliest_wld_solve();
+    let mut dummy: i32 = 0;
     game_init(0 as *const i8, &mut dummy);
-    side_to_move = 0 as i32;
-    i = 0 as i32;
+    let mut side_to_move = 0 as i32;
+    let mut i = 0 as i32;
     while i < game_length {
         generate_all(side_to_move);
         if move_count[disks_played as usize] == 0 as i32 {
