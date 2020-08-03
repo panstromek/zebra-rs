@@ -3164,8 +3164,12 @@ pub unsafe fn unpack_coeffs(next_word: &mut impl FnMut() -> i16) {
     free(map_mirror8x2 as *mut c_void);
 }
 
+pub trait CoeffSource {
+    fn next_word(&mut self) -> i16;
+}
 
-pub unsafe fn process_coeffs_from_fn_source(mut next_word: &mut impl FnMut() -> i16) {
+pub unsafe fn process_coeffs_from_fn_source(mut coeffs: impl CoeffSource) {
+    let mut next_word = || coeffs.next_word();
     /* Read the different stages for which the evaluation function
        was tuned and mark the other stages with pointers to the previous
        and next stages. */
