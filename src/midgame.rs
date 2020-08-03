@@ -5,7 +5,7 @@ use crate::{
         display::{send_status, send_status_time, send_status_pv, send_status_nodes, produce_eval_text, clear_status, display_sweep, echo, send_sweep, clear_sweep, display_buffers},
         counter::{counter_value, adjust_counter},
         stubs::{free, sprintf, abs, stdout},
-        libc,
+
         moves::{valid_move, disks_played, unmake_move, make_move, move_list, move_count, generate_all, unmake_move_no_hash, make_move_no_hash},
         hash::{find_hash, HashEntry, hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended, add_hash},
         globals::{piece_count, board, pv, pv_depth},
@@ -96,7 +96,7 @@ pub unsafe extern "C" fn midgame_display_status(mut side_to_move: i32, mut max_d
     eval_str = produce_eval_text(*eval_info, 1 as i32);
     send_status(b"%-10s  \x00" as *const u8 as *const i8,
                 eval_str);
-    free(eval_str as *mut libc::c_void);
+    free(eval_str as *mut std::ffi::c_void);
     node_val = counter_value(&mut nodes);
     send_status_nodes(node_val);
     if get_ponder_move() != 0 {

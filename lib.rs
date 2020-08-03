@@ -35,7 +35,6 @@ pub mod search;
 pub mod thordb;
 pub mod timer;
 pub mod stubs;
-pub mod libc;
 pub mod zebra;
 } // mod src
 

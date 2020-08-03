@@ -19,7 +19,7 @@ use engine::{
 };
 use crate::{
     src::{
-        libc,
+
         stubs::{ceil, abs, printf, free, fflush, sprintf, puts, stdout},
         display::{display_status, echo, reset_buffer_display, send_status, send_status_time, send_status_pv, send_status_nodes, produce_eval_text, clear_status, display_sweep, send_sweep, display_buffers, clear_sweep},
         timer::{clear_panic_abort, get_elapsed_time, is_panic_abort, check_panic_abort, check_threshold, set_panic_threshold, last_panic_check},
@@ -173,7 +173,7 @@ pub unsafe extern "C" fn send_solve_status(mut empties: i32,
                 empties);
     eval_str = produce_eval_text(*eval_info, 1 as i32);
     send_status(b"%-10s  \x00" as *const u8 as *const i8, eval_str);
-    free(eval_str as *mut libc::c_void);
+    free(eval_str as *mut std::ffi::c_void);
     node_val = counter_value(&mut nodes);
     send_status_nodes(node_val);
     if get_ponder_move() != 0 {

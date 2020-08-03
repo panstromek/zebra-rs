@@ -25,9 +25,9 @@ use crate::{
     }
 };
 
-pub type _IO_wide_data = libc::c_void;
-pub type _IO_codecvt = libc::c_void;
-pub type _IO_marker = libc::c_void;
+pub type _IO_wide_data = std::ffi::c_void;
+pub type _IO_codecvt = std::ffi::c_void;
+pub type _IO_marker = std::ffi::c_void;
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -54,14 +54,14 @@ pub struct _IO_FILE {
     pub _flags2: i32,
     pub _old_offset: __off_t,
     pub _cur_column: u16,
-    pub _vtable_offset: libc::c_schar,
+    pub _vtable_offset: i8,
     pub _shortbuf: [i8; 1],
-    pub _lock: *mut libc::c_void,
+    pub _lock: *mut std::ffi::c_void,
     pub _offset: __off64_t,
     pub _codecvt: *mut _IO_codecvt,
     pub _wide_data: *mut _IO_wide_data,
     pub _freeres_list: *mut _IO_FILE,
-    pub _freeres_buf: *mut libc::c_void,
+    pub _freeres_buf: *mut std::ffi::c_void,
     pub __pad5: size_t,
     pub _mode: i32,
     pub _unused2: [i8; 20],
