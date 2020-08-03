@@ -92,6 +92,11 @@ pub unsafe fn init_coeffs() {
     process_coeffs_from_fn_source(&mut next_word, filename_to_report);
     gzclose(coeff_stream);
     init_coeffs_calculate_patterns();
+    load_and_apply_adjustments();
+    post_init_coeffs();
+}
+
+unsafe fn load_and_apply_adjustments() {
     /* Adjust the coefficients so as to reflect the encouragement for
        having lots of discs */
     let mut adjust_stream =
@@ -111,7 +116,6 @@ pub unsafe fn init_coeffs() {
         eval_adjustment(disc_adjust, edge_adjust, corner_adjust, x_adjust);
         fclose(adjust_stream);
     }
-    post_init_coeffs();
 }
 
 #[no_mangle]
