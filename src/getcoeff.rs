@@ -63,7 +63,7 @@ unsafe fn get_word(mut stream: gzFile) -> i16 {
 
    Contents:
 */
-mod zlib_source {
+pub mod zlib_source {
     use crate::src::stubs::{gzopen, strcpy, gzclose};
     use crate::src::getcoeff::{get_word, gzFile_s, CoeffSource};
     use crate::src::error::fatal_error;
@@ -127,7 +127,7 @@ pub unsafe fn init_coeffs() {
     post_init_coeffs();
 }
 
-unsafe fn load_and_apply_adjustments() {
+pub unsafe fn load_and_apply_adjustments() {
     /* Adjust the coefficients so as to reflect the encouragement for
        having lots of discs */
     let mut adjust_stream =
