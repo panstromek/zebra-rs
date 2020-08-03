@@ -7,7 +7,7 @@ use crate::{
         hash::{setup_hash, determine_hash_values, add_hash, clear_hash_drafts},
         game::{global_setup, game_init, CandidateMove},
         stubs::*,
-        libc,
+
         myrandom::{my_random},
         error::fatal_error,
         globals::{board, piece_count, pv, pv_depth},
@@ -29,8 +29,8 @@ pub type FILE = _IO_FILE;
 pub type time_t = __time_t;
 pub type __compar_fn_t
     =
-    Option<unsafe extern "C" fn(_: *const libc::c_void,
-                                _: *const libc::c_void) -> i32>;
+    Option<unsafe extern "C" fn(_: *const std::ffi::c_void,
+                                _: *const std::ffi::c_void) -> i32>;
 
 /*
    MINIMAX_TREE
@@ -177,8 +177,8 @@ pub unsafe fn examine_tree() {
            (stop_time - start_time) as i32);
     puts(b"\x00" as *const u8 as *const i8);
 }
-unsafe extern "C" fn int_compare(mut i1: *const libc::c_void,
-                                 mut i2: *const libc::c_void) -> i32 {
+unsafe extern "C" fn int_compare(mut i1: *const std::ffi::c_void,
+                                 mut i2: *const std::ffi::c_void) -> i32 {
     return *(i1 as *mut i32) - *(i2 as *mut i32);
 }
 /*
@@ -265,17 +265,17 @@ pub unsafe fn book_statistics(mut full_statistics: i32) {
         }
         i += 1
     }
-    qsort(evals as *mut libc::c_void, eval_count as size_t,
+    qsort(evals as *mut std::ffi::c_void, eval_count as size_t,
           ::std::mem::size_of::<i32>() as u64,
           Some(int_compare as
-                   unsafe extern "C" fn(_: *const libc::c_void,
-                                        _: *const libc::c_void)
+                   unsafe extern "C" fn(_: *const std::ffi::c_void,
+                                        _: *const std::ffi::c_void)
                        -> i32));
-    qsort(negamax as *mut libc::c_void, negamax_count as size_t,
+    qsort(negamax as *mut std::ffi::c_void, negamax_count as size_t,
           ::std::mem::size_of::<i32>() as u64,
           Some(int_compare as
-                   unsafe extern "C" fn(_: *const libc::c_void,
-                                        _: *const libc::c_void)
+                   unsafe extern "C" fn(_: *const std::ffi::c_void,
+                                        _: *const std::ffi::c_void)
                        -> i32));
     puts(b"\x00" as *const u8 as *const i8);
     printf(b"#nodes:       %d\x00" as *const u8 as *const i8,
@@ -344,8 +344,8 @@ pub unsafe fn book_statistics(mut full_statistics: i32) {
         i += 1
     }
     puts(b"\x00" as *const u8 as *const i8);
-    free(negamax as *mut libc::c_void);
-    free(evals as *mut libc::c_void);
+    free(negamax as *mut std::ffi::c_void);
+    free(evals as *mut std::ffi::c_void);
     if full_statistics != 0 {
         examine_tree();
         first = 61 as i32;
@@ -1062,10 +1062,10 @@ pub unsafe fn read_binary_database(mut file_name:
                     b"Could not open database file\x00" as *const u8 as
                         *const i8, file_name);
     }
-    fread(&mut magic1 as *mut i16 as *mut libc::c_void,
+    fread(&mut magic1 as *mut i16 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i16>() as u64,
           1 as i32 as size_t, stream);
-    fread(&mut magic2 as *mut i16 as *mut libc::c_void,
+    fread(&mut magic2 as *mut i16 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i16>() as u64,
           1 as i32 as size_t, stream);
     if magic1 as i32 != 2718 as i32 ||
@@ -1074,38 +1074,38 @@ pub unsafe fn read_binary_database(mut file_name:
                     b"Wrong checksum, might be an old version\x00" as
                         *const u8 as *const i8, file_name);
     }
-    fread(&mut new_book_node_count as *mut i32 as *mut libc::c_void,
+    fread(&mut new_book_node_count as *mut i32 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
     set_allocation(new_book_node_count + 1000 as i32);
     i = 0 as i32;
     while i < new_book_node_count {
         fread(&mut (*node.offset(i as isize)).hash_val1 as *mut i32 as
-                  *mut libc::c_void,
+                  *mut std::ffi::c_void,
               ::std::mem::size_of::<i32>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut (*node.offset(i as isize)).hash_val2 as *mut i32 as
-                  *mut libc::c_void,
+                  *mut std::ffi::c_void,
               ::std::mem::size_of::<i32>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut (*node.offset(i as isize)).black_minimax_score as
-                  *mut i16 as *mut libc::c_void,
+                  *mut i16 as *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut (*node.offset(i as isize)).white_minimax_score as
-                  *mut i16 as *mut libc::c_void,
+                  *mut i16 as *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut (*node.offset(i as isize)).best_alternative_move as
-                  *mut i16 as *mut libc::c_void,
+                  *mut i16 as *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut (*node.offset(i as isize)).alternative_score as
-                  *mut i16 as *mut libc::c_void,
+                  *mut i16 as *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut (*node.offset(i as isize)).flags as *mut u16 as
-                  *mut libc::c_void,
+                  *mut std::ffi::c_void,
               ::std::mem::size_of::<u16>() as u64,
               1 as i32 as size_t, stream);
         i += 1
@@ -1138,10 +1138,10 @@ pub unsafe fn merge_binary_database(mut file_name:
     }
     let mut magic1: i16 = 0;
     let mut magic2: i16 = 0;
-    fread(&mut magic1 as *mut i16 as *mut libc::c_void,
+    fread(&mut magic1 as *mut i16 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i16>() as u64,
           1 as i32 as size_t, stream);
-    fread(&mut magic2 as *mut i16 as *mut libc::c_void,
+    fread(&mut magic2 as *mut i16 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i16>() as u64,
           1 as i32 as size_t, stream);
     if magic1 as i32 != 2718 as i32 ||
@@ -1151,7 +1151,7 @@ pub unsafe fn merge_binary_database(mut file_name:
                         *const u8 as *const i8, file_name);
     }
     let mut merge_book_node_count: i32 = 0;
-    fread(&mut merge_book_node_count as *mut i32 as *mut libc::c_void,
+    fread(&mut merge_book_node_count as *mut i32 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
     let mut merge_use_count = 0 as i32;
@@ -1168,31 +1168,31 @@ pub unsafe fn merge_binary_database(mut file_name:
                      flags: 0,};
         /* Read node. */
         fread(&mut merge_node.hash_val1 as *mut i32 as
-                  *mut libc::c_void,
+                  *mut std::ffi::c_void,
               ::std::mem::size_of::<i32>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut merge_node.hash_val2 as *mut i32 as
-                  *mut libc::c_void,
+                  *mut std::ffi::c_void,
               ::std::mem::size_of::<i32>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut merge_node.black_minimax_score as *mut i16 as
-                  *mut libc::c_void,
+                  *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut merge_node.white_minimax_score as *mut i16 as
-                  *mut libc::c_void,
+                  *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut merge_node.best_alternative_move as *mut i16 as
-                  *mut libc::c_void,
+                  *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut merge_node.alternative_score as *mut i16 as
-                  *mut libc::c_void,
+                  *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut merge_node.flags as *mut u16 as
-                  *mut libc::c_void,
+                  *mut std::ffi::c_void,
               ::std::mem::size_of::<u16>() as u64,
               1 as i32 as size_t, stream);
         /* Look up node in existing database. */
@@ -1293,44 +1293,44 @@ pub unsafe fn write_binary_database(mut file_name:
                         *const i8, file_name);
     }
     let mut magic = 2718 as i32 as i16;
-    fwrite(&mut magic as *mut i16 as *const libc::c_void,
+    fwrite(&mut magic as *mut i16 as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
     let mut magic = 2818 as i32 as i16;
-    fwrite(&mut magic as *mut i16 as *const libc::c_void,
+    fwrite(&mut magic as *mut i16 as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
-    fwrite(&mut book_node_count as *mut i32 as *const libc::c_void,
+    fwrite(&mut book_node_count as *mut i32 as *const std::ffi::c_void,
            ::std::mem::size_of::<i32>() as u64,
            1 as i32 as size_t, stream);
     let mut i = 0 as i32;
     while i < book_node_count {
         fwrite(&mut (*node.offset(i as isize)).hash_val1 as *mut i32
-                   as *const libc::c_void,
+                   as *const std::ffi::c_void,
                ::std::mem::size_of::<i32>() as u64,
                1 as i32 as size_t, stream);
         fwrite(&mut (*node.offset(i as isize)).hash_val2 as *mut i32
-                   as *const libc::c_void,
+                   as *const std::ffi::c_void,
                ::std::mem::size_of::<i32>() as u64,
                1 as i32 as size_t, stream);
         fwrite(&mut (*node.offset(i as isize)).black_minimax_score as
-                   *mut i16 as *const libc::c_void,
+                   *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
         fwrite(&mut (*node.offset(i as isize)).white_minimax_score as
-                   *mut i16 as *const libc::c_void,
+                   *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
         fwrite(&mut (*node.offset(i as isize)).best_alternative_move as
-                   *mut i16 as *const libc::c_void,
+                   *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
         fwrite(&mut (*node.offset(i as isize)).alternative_score as
-                   *mut i16 as *const libc::c_void,
+                   *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
         fwrite(&mut (*node.offset(i as isize)).flags as *mut u16 as
-                   *const libc::c_void,
+                   *const std::ffi::c_void,
                ::std::mem::size_of::<u16>() as u64,
                1 as i32 as size_t, stream);
         i += 1
@@ -1387,28 +1387,28 @@ pub unsafe fn write_compressed_database(mut file_name:
     let mut child_index = 0 as i32;
     do_compress(0 as i32, node_order, child_count, &mut node_index,
                 child, &mut child_index);
-    fwrite(&mut book_node_count as *mut i32 as *const libc::c_void,
+    fwrite(&mut book_node_count as *mut i32 as *const std::ffi::c_void,
            ::std::mem::size_of::<i32>() as u64,
            1 as i32 as size_t, stream);
-    fwrite(&mut child_index as *mut i32 as *const libc::c_void,
+    fwrite(&mut child_index as *mut i32 as *const std::ffi::c_void,
            ::std::mem::size_of::<i32>() as u64,
            1 as i32 as size_t, stream);
-    fwrite(child_count as *const libc::c_void,
+    fwrite(child_count as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            book_node_count as size_t, stream);
-    fwrite(child as *const libc::c_void,
+    fwrite(child as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            child_index as size_t, stream);
     i = 0 as i32;
     while i < book_node_count {
         fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
                                       isize)).black_minimax_score as
-                   *mut i16 as *const libc::c_void,
+                   *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
         fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
                                       isize)).white_minimax_score as
-                   *mut i16 as *const libc::c_void,
+                   *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
         i += 1
@@ -1417,7 +1417,7 @@ pub unsafe fn write_compressed_database(mut file_name:
     while i < book_node_count {
         fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
                                       isize)).best_alternative_move as
-                   *mut i16 as *const libc::c_void,
+                   *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
         i += 1
@@ -1426,7 +1426,7 @@ pub unsafe fn write_compressed_database(mut file_name:
     while i < book_node_count {
         fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
                                       isize)).alternative_score as
-                   *mut i16 as *const libc::c_void,
+                   *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
         i += 1
@@ -1435,15 +1435,15 @@ pub unsafe fn write_compressed_database(mut file_name:
     while i < book_node_count {
         fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
                                       isize)).flags as *mut u16 as
-                   *const libc::c_void,
+                   *const std::ffi::c_void,
                ::std::mem::size_of::<u16>() as u64,
                1 as i32 as size_t, stream);
         i += 1
     }
     fclose(stream);
-    free(node_order as *mut libc::c_void);
-    free(child_count as *mut libc::c_void);
-    free(child as *mut libc::c_void);
+    free(node_order as *mut std::ffi::c_void);
+    free(child_count as *mut std::ffi::c_void);
+    free(child as *mut std::ffi::c_void);
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
@@ -1483,30 +1483,30 @@ unsafe fn do_uncompress(mut depth: i32,
     *child_index += saved_child_count;
     /* Write the data for the current node */
     get_hash(&mut val1, &mut val2, &mut orientation);
-    fwrite(&mut val1 as *mut i32 as *const libc::c_void,
+    fwrite(&mut val1 as *mut i32 as *const std::ffi::c_void,
            ::std::mem::size_of::<i32>() as u64,
            1 as i32 as size_t, stream);
-    fwrite(&mut val2 as *mut i32 as *const libc::c_void,
+    fwrite(&mut val2 as *mut i32 as *const std::ffi::c_void,
            ::std::mem::size_of::<i32>() as u64,
            1 as i32 as size_t, stream);
     fwrite(&mut *black_score.offset(*node_index as isize) as
-               *mut i16 as *const libc::c_void,
+               *mut i16 as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
     fwrite(&mut *white_score.offset(*node_index as isize) as
-               *mut i16 as *const libc::c_void,
+               *mut i16 as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
     fwrite(&mut *alt_move.offset(*node_index as isize) as *mut i16
-               as *const libc::c_void,
+               as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
     fwrite(&mut *alt_score.offset(*node_index as isize) as *mut i16
-               as *const libc::c_void,
+               as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
     fwrite(&mut *flags.offset(*node_index as isize) as *mut u16 as
-               *const libc::c_void,
+               *const std::ffi::c_void,
            ::std::mem::size_of::<u16>() as u64,
            1 as i32 as size_t, stream);
     *node_index += 1;
@@ -1570,10 +1570,10 @@ pub unsafe fn unpack_compressed_database(mut in_name:
                     b"Could not open database file\x00" as *const u8 as
                         *const i8, in_name);
     }
-    fread(&mut node_count as *mut i32 as *mut libc::c_void,
+    fread(&mut node_count as *mut i32 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
-    fread(&mut child_list_size as *mut i32 as *mut libc::c_void,
+    fread(&mut child_list_size as *mut i32 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
     child_count =
@@ -1586,10 +1586,10 @@ pub unsafe fn unpack_compressed_database(mut in_name:
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
-    fread(child_count as *mut libc::c_void,
+    fread(child_count as *mut std::ffi::c_void,
           ::std::mem::size_of::<i16>() as u64,
           node_count as size_t, stream);
-    fread(child as *mut libc::c_void,
+    fread(child as *mut std::ffi::c_void,
           ::std::mem::size_of::<i16>() as u64,
           child_list_size as size_t, stream);
     black_score =
@@ -1620,22 +1620,22 @@ pub unsafe fn unpack_compressed_database(mut in_name:
     i = 0 as i32;
     while i < node_count {
         fread(&mut *black_score.offset(i as isize) as *mut i16 as
-                  *mut libc::c_void,
+                  *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
         fread(&mut *white_score.offset(i as isize) as *mut i16 as
-                  *mut libc::c_void,
+                  *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
         i += 1
     }
-    fread(alt_move as *mut libc::c_void,
+    fread(alt_move as *mut std::ffi::c_void,
           ::std::mem::size_of::<i16>() as u64,
           node_count as size_t, stream);
-    fread(alt_score as *mut libc::c_void,
+    fread(alt_score as *mut std::ffi::c_void,
           ::std::mem::size_of::<i16>() as u64,
           node_count as size_t, stream);
-    fread(flags as *mut libc::c_void,
+    fread(flags as *mut std::ffi::c_void,
           ::std::mem::size_of::<u16>() as u64,
           node_count as size_t, stream);
     fclose(stream);
@@ -1652,14 +1652,14 @@ pub unsafe fn unpack_compressed_database(mut in_name:
     toggle_abort_check(0 as i32);
     toggle_midgame_abort_check(0 as i32);
     magic = 2718 as i32 as i16;
-    fwrite(&mut magic as *mut i16 as *const libc::c_void,
+    fwrite(&mut magic as *mut i16 as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
     magic = 2818 as i32 as i16;
-    fwrite(&mut magic as *mut i16 as *const libc::c_void,
+    fwrite(&mut magic as *mut i16 as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
-    fwrite(&mut node_count as *mut i32 as *const libc::c_void,
+    fwrite(&mut node_count as *mut i32 as *const std::ffi::c_void,
            ::std::mem::size_of::<i32>() as u64,
            1 as i32 as size_t, stream);
     node_index = 0 as i32;
@@ -1669,13 +1669,13 @@ pub unsafe fn unpack_compressed_database(mut in_name:
                   alt_score, flags);
     fclose(stream);
     /* Free tables */
-    free(child_count as *mut libc::c_void);
-    free(child as *mut libc::c_void);
-    free(black_score as *mut libc::c_void);
-    free(white_score as *mut libc::c_void);
-    free(alt_move as *mut libc::c_void);
-    free(alt_score as *mut libc::c_void);
-    free(flags as *mut libc::c_void);
+    free(child_count as *mut std::ffi::c_void);
+    free(child as *mut std::ffi::c_void);
+    free(black_score as *mut std::ffi::c_void);
+    free(white_score as *mut std::ffi::c_void);
+    free(alt_move as *mut std::ffi::c_void);
+    free(alt_score as *mut std::ffi::c_void);
+    free(flags as *mut std::ffi::c_void);
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
@@ -2455,7 +2455,7 @@ pub unsafe fn convert_opening_list(mut base_file:
                          parent[(level - 1 as i32) as usize]) !=
                       move_seq.as_mut_ptr() {
             level -= 1;
-            free(parent[level as usize] as *mut libc::c_void);
+            free(parent[level as usize] as *mut std::ffi::c_void);
         }
         parent[level as usize] = dupstr(move_seq.as_mut_ptr());
         level += 1;
@@ -2495,7 +2495,7 @@ pub unsafe fn convert_opening_list(mut base_file:
     /* Remove the hierarchy data */
     while level > 0 as i32 {
         level -= 1;
-        free(parent[level as usize] as *mut libc::c_void);
+        free(parent[level as usize] as *mut std::ffi::c_void);
     }
     fclose(out_stream);
     fclose(in_stream);

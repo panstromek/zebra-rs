@@ -1,4 +1,3 @@
-use crate::src::libc;
 use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit};
 use crate::src::zebra::_IO_FILE;
 
@@ -8,8 +7,8 @@ pub type __builtin_va_list = [__va_list_tag; 1];
 pub struct __va_list_tag {
     pub gp_offset: u32,
     pub fp_offset: u32,
-    pub overflow_arg_area: *mut libc::c_void,
-    pub reg_save_area: *mut libc::c_void,
+    pub overflow_arg_area: *mut std::ffi::c_void,
+    pub reg_save_area: *mut std::ffi::c_void,
 }
 pub type va_list = __builtin_va_list;
 pub type size_t = u64;

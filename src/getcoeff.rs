@@ -1,4 +1,3 @@
-use crate::src::libc;
 use crate::src::stubs::{fclose, fscanf, fopen, gzclose, gzopen, strcpy, free, printf, gzgetc, exit};
 use crate::src::globals::{board, piece_count};
 use crate::src::moves::disks_played;

@@ -1,4 +1,3 @@
-use crate::src::libc;
 use crate::src::stubs::{puts, strlen, abs, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, tolower};
 use crate::src::safemem::{safe_malloc, safe_realloc};
 use crate::src::bitboard::bit_reverse_32;
@@ -15,8 +14,8 @@ pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 pub type __compar_fn_t
     =
-    Option<unsafe fn(_: *const libc::c_void,
-                                _: *const libc::c_void) -> i32>;
+    Option<unsafe fn(_: *const std::ffi::c_void,
+                                _: *const std::ffi::c_void) -> i32>;
 /*
   GET_INT_8
   Reads an 8-bit signed integer from STREAM. Returns TRUE upon
@@ -26,7 +25,7 @@ unsafe fn get_int_8(mut stream: *mut FILE, mut value: *mut int_8)
  -> i32 {
     let mut actually_read: i32 = 0;
     actually_read =
-        fread(value as *mut libc::c_void,
+        fread(value as *mut std::ffi::c_void,
               ::std::mem::size_of::<int_8>() as u64,
               1 as i32 as size_t, stream) as i32;
     return (actually_read == 1 as i32) as i32;
@@ -40,7 +39,7 @@ unsafe fn get_int_16(mut stream: *mut FILE, mut value: *mut int_16)
  -> i32 {
     let mut actually_read: i32 = 0;
     actually_read =
-        fread(value as *mut libc::c_void,
+        fread(value as *mut std::ffi::c_void,
               ::std::mem::size_of::<int_16>() as u64,
               1 as i32 as size_t, stream) as i32;
     return (actually_read == 1 as i32) as i32;
@@ -54,7 +53,7 @@ unsafe fn get_int_32(mut stream: *mut FILE, mut value: *mut int_32)
  -> i32 {
     let mut actually_read: i32 = 0;
     actually_read =
-        fread(value as *mut libc::c_void,
+        fread(value as *mut std::ffi::c_void,
               ::std::mem::size_of::<int_32>() as u64,
               1 as i32 as size_t, stream) as i32;
     return (actually_read == 1 as i32) as i32;
@@ -109,8 +108,8 @@ unsafe fn read_prolog(mut stream: *mut FILE,
   Lexicographically compares the names of two tournaments
   represented by pointers.
 */
-unsafe extern "C" fn thor_compare_tournaments(mut t1: *const libc::c_void,
-                                              mut t2: *const libc::c_void)
+unsafe extern "C" fn thor_compare_tournaments(mut t1: *const std::ffi::c_void,
+                                              mut t2: *const std::ffi::c_void)
  -> i32 {
     let mut tournament1 = *(t1 as *mut *mut TournamentType);
     let mut tournament2 = *(t2 as *mut *mut TournamentType);
@@ -136,18 +135,18 @@ unsafe extern "C" fn sort_tournament_database() {
                 *mut TournamentType;
         i += 1
     }
-    qsort(tournament_buffer as *mut libc::c_void, tournaments.count as size_t,
+    qsort(tournament_buffer as *mut std::ffi::c_void, tournaments.count as size_t,
           ::std::mem::size_of::<*mut TournamentType>() as u64,
           Some(thor_compare_tournaments as
-                   unsafe extern "C" fn(_: *const libc::c_void,
-                                        _: *const libc::c_void)
+                   unsafe extern "C" fn(_: *const std::ffi::c_void,
+                                        _: *const std::ffi::c_void)
                        -> i32));
     i = 0 as i32;
     while i < tournaments.count {
         (**tournament_buffer.offset(i as isize)).lex_order = i;
         i += 1
     }
-    free(tournament_buffer as *mut libc::c_void);
+    free(tournament_buffer as *mut std::ffi::c_void);
 }
 /*
   READ_TOURNAMENT_DATABASE
@@ -172,17 +171,17 @@ pub unsafe fn read_tournament_database(mut file_name:
     tournaments.count = tournaments.prolog.item_count;
     buffer_size = 26 as i32 * tournaments.prolog.item_count;
     tournaments.name_buffer =
-        safe_realloc(tournaments.name_buffer as *mut libc::c_void,
+        safe_realloc(tournaments.name_buffer as *mut std::ffi::c_void,
                      buffer_size as size_t) as *mut i8;
     actually_read =
-        fread(tournaments.name_buffer as *mut libc::c_void,
+        fread(tournaments.name_buffer as *mut std::ffi::c_void,
               1 as i32 as size_t, buffer_size as size_t, stream) as
             i32;
     success = (actually_read == buffer_size) as i32;
     fclose(stream);
     if success != 0 {
         tournaments.tournament_list =
-            safe_realloc(tournaments.tournament_list as *mut libc::c_void,
+            safe_realloc(tournaments.tournament_list as *mut std::ffi::c_void,
                          (tournaments.count as
                               u64).wrapping_mul(::std::mem::size_of::<TournamentType>()
                                                               as
@@ -208,8 +207,8 @@ pub unsafe fn read_tournament_database(mut file_name:
   Lexicographically compares the names of two players
   represented by pointers.
 */
-unsafe extern "C" fn thor_compare_players(mut p1: *const libc::c_void,
-                                          mut p2: *const libc::c_void)
+unsafe extern "C" fn thor_compare_players(mut p1: *const std::ffi::c_void,
+                                          mut p2: *const std::ffi::c_void)
  -> i32 {
     let mut ch: i8 = 0;
     let mut buffer1: [i8; 20] = [0; 20];
@@ -260,18 +259,18 @@ unsafe fn sort_player_database() {
             &mut *players.player_list.offset(i as isize) as *mut PlayerType;
         i += 1
     }
-    qsort(player_buffer as *mut libc::c_void, players.count as size_t,
+    qsort(player_buffer as *mut std::ffi::c_void, players.count as size_t,
           ::std::mem::size_of::<*mut PlayerType>() as u64,
           Some(thor_compare_players as
-                   unsafe extern "C" fn(_: *const libc::c_void,
-                                        _: *const libc::c_void)
+                   unsafe extern "C" fn(_: *const std::ffi::c_void,
+                                        _: *const std::ffi::c_void)
                        -> i32));
     i = 0 as i32;
     while i < players.count {
         (**player_buffer.offset(i as isize)).lex_order = i;
         i += 1
     }
-    free(player_buffer as *mut libc::c_void);
+    free(player_buffer as *mut std::ffi::c_void);
 }
 /*
   READ_PLAYER_DATABASE
@@ -296,17 +295,17 @@ pub unsafe fn read_player_database(mut file_name:
     players.count = players.prolog.item_count;
     buffer_size = 20 as i32 * players.count;
     players.name_buffer =
-        safe_realloc(players.name_buffer as *mut libc::c_void,
+        safe_realloc(players.name_buffer as *mut std::ffi::c_void,
                      buffer_size as size_t) as *mut i8;
     actually_read =
-        fread(players.name_buffer as *mut libc::c_void,
+        fread(players.name_buffer as *mut std::ffi::c_void,
               1 as i32 as size_t, buffer_size as size_t, stream) as
             i32;
     success = (actually_read == buffer_size) as i32;
     fclose(stream);
     if success != 0 {
         players.player_list =
-            safe_realloc(players.player_list as *mut libc::c_void,
+            safe_realloc(players.player_list as *mut std::ffi::c_void,
                          (players.count as
                               u64).wrapping_mul(::std::mem::size_of::<PlayerType>()
                                                               as
@@ -370,7 +369,7 @@ unsafe fn read_game(mut stream: *mut FILE, mut game: *mut GameType)
     (*game).perfect_black_score = byte_val as i16;
     actually_read =
         fread(&mut (*game).moves as *mut [i8; 60] as
-                  *mut libc::c_void, 1 as i32 as size_t,
+                  *mut std::ffi::c_void, 1 as i32 as size_t,
               60 as i32 as size_t, stream) as i32;
     prepare_game(game);
     return (success != 0 && actually_read == 60 as i32) as
@@ -522,11 +521,11 @@ unsafe extern "C" fn sort_thor_games(mut count: i32) {
         /* No need to sort 0 or 1 games. */
         return
     }
-    qsort(thor_search.match_list as *mut libc::c_void, count as size_t,
+    qsort(thor_search.match_list as *mut std::ffi::c_void, count as size_t,
           ::std::mem::size_of::<*mut GameType>() as u64,
           Some(thor_compare as
-                   unsafe extern "C" fn(_: *const libc::c_void,
-                                        _: *const libc::c_void)
+                   unsafe extern "C" fn(_: *const std::ffi::c_void,
+                                        _: *const std::ffi::c_void)
                        -> i32));
 }
 

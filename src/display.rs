@@ -3,7 +3,6 @@ use crate::src::safemem::safe_malloc;
 use crate::src::timer::get_real_timer;
 use crate::src::search::{full_pv, full_pv_depth, disc_count};
 use crate::src::globals::{white_moves, black_moves, pv_depth};
-use crate::src::libc;
 use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub use engine::src::display::*;
 
@@ -13,8 +12,8 @@ pub type __builtin_va_list = [__va_list_tag; 1];
 pub struct __va_list_tag {
     pub gp_offset: u32,
     pub fp_offset: u32,
-    pub overflow_arg_area: *mut libc::c_void,
-    pub reg_save_area: *mut libc::c_void,
+    pub overflow_arg_area: *mut std::ffi::c_void,
+    pub reg_save_area: *mut std::ffi::c_void,
 }
 pub type __off_t = i64;
 pub type __off64_t = i64;

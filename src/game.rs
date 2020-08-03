@@ -1,4 +1,3 @@
-use crate::src::libc;
 use crate::src::globals::{pv_depth, pv, board, piece_count, score_sheet_row, black_moves};
 use crate::src::search::{nodes, complete_pv, get_ponder_move, total_nodes, evaluations, total_evaluations, total_time, set_current_eval, create_eval_info, root_eval, force_return, clear_pv, evals, disc_count, negate_current_eval, clear_ponder_move, set_ponder_move, float_move, sort_moves, setup_search};
 use crate::src::counter::{counter_value, add_counter, reset_counter};
@@ -1218,7 +1217,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
             send_status(b"%-8s  \x00" as *const u8 as *const i8,
                         eval_str);
             display_status(stdout, 0 as i32);
-            free(eval_str as *mut libc::c_void);
+            free(eval_str as *mut std::ffi::c_void);
         }
         if !log_file.is_null() {
             fprintf(log_file,
@@ -1249,7 +1248,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                             *const i8);
             send_status(b"%-8s  \x00" as *const u8 as *const i8,
                         eval_str);
-            free(eval_str as *mut libc::c_void);
+            free(eval_str as *mut std::ffi::c_void);
             send_status(b"%c%c \x00" as *const u8 as *const i8,
                         'a' as i32 +
                             move_list[disks_played as
@@ -1576,7 +1575,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
             eval_str = produce_eval_text(*eval_info, 1 as i32);
             send_status(b"%10s  \x00" as *const u8 as *const i8,
                         eval_str);
-            free(eval_str as *mut libc::c_void);
+            free(eval_str as *mut std::ffi::c_void);
             send_status_nodes(counter_value(&mut nodes));
             send_status_pv(pv[0 as i32 as usize].as_mut_ptr(),
                            interrupted_depth);
@@ -1613,7 +1612,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                         1 as i32,
                     '0' as i32 + curr_move / 10 as i32, eval_str);
         }
-        free(eval_str as *mut libc::c_void);
+        free(eval_str as *mut std::ffi::c_void);
     } else if !log_file.is_null() {
         display_status(log_file, 1 as i32);
     }

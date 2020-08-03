@@ -1,4 +1,3 @@
-use crate::src::libc;
 use crate::src::game::{FILE, time_t, size_t};
 use crate::src::osfbook::__compar_fn_t;
 use crate::src::getcoeff::gzFile;
@@ -65,13 +64,13 @@ extern "C" {
     #[no_mangle]
     pub fn putc(__c: i32, __stream: *mut FILE) -> i32;
     #[no_mangle]
-    pub fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t,
+    pub fn fread(__ptr: *mut std::ffi::c_void, __size: size_t, __n: size_t,
              __stream: *mut FILE) -> size_t;
     #[no_mangle]
-    pub fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t,
+    pub fn fwrite(__ptr: *const std::ffi::c_void, __size: size_t, __n: size_t,
               __s: *mut FILE) -> size_t;
     #[no_mangle]
-    pub fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t,
+    pub fn qsort(__base: *mut std::ffi::c_void, __nmemb: size_t, __size: size_t,
              __compar: __compar_fn_t);
     #[no_mangle]
     pub fn strcpy(_: *mut i8, _: *const i8)
