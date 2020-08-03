@@ -1123,7 +1123,6 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                                       mut search_forced: i32,
                                       mut eval_info: *mut EvaluationType)
  -> i32 {
-    let mut log_file = 0 as *mut FILE;
     let mut book_eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
                        res: WON_POSITION,
@@ -1147,18 +1146,12 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                        is_book: 0,};
     let mut eval_str = 0 as *mut i8;
     let mut midgame_diff: f64 = 0.;
-    let mut move_type = INTERRUPTED_MOVE;
     let mut i: i32 = 0;
-    let mut curr_move: i32 = 0;
-    let mut midgame_move: i32 = 0;
-    let mut empties: i32 = 0;
     let mut midgame_depth: i32 = 0;
-    let mut interrupted_depth: i32 = 0;
     let mut max_depth: i32 = 0;
-    let mut book_move_found: i32 = 0;
     let mut endgame_reached: i32 = 0;
     let mut offset: i32 = 0;
-    log_file = 0 as *mut FILE;
+    let mut log_file = 0 as *mut FILE;
     if use_log_file != 0 {
         log_file =
             fopen(log_file_path.as_mut_ptr(),
@@ -1199,13 +1192,13 @@ pub unsafe fn compute_move(mut side_to_move: i32,
         reset_counter(&mut evaluations);
         reset_counter(&mut nodes);
     }
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i < 100 as i32 {
         evals[disks_played as usize][i as usize] = 0 as i32;
         i += 1
     }
     max_depth_reached = 1 as i32;
-    empties = 60 as i32 - disks_played;
+    let mut empties = 60 as i32 - disks_played;
     reset_buffer_display();
     determine_move_time(my_time as f64, my_incr as f64,
                         disks_played + 4 as i32);
@@ -1289,12 +1282,12 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     }
     /* Mark the search as interrupted until a successful search
        has been performed. */
-    move_type = INTERRUPTED_MOVE;
-    interrupted_depth = 0 as i32;
-    curr_move = move_list[disks_played as usize][0 as i32 as usize];
+    let mut move_type = INTERRUPTED_MOVE;
+    let mut interrupted_depth = 0 as i32;
+    let mut curr_move = move_list[disks_played as usize][0 as i32 as usize];
     /* Check the opening book for midgame moves */
-    book_move_found = 0 as i32;
-    midgame_move = -(1 as i32);
+    let mut book_move_found = 0 as i32;
+    let mut midgame_move = -(1 as i32);
     if !forced_opening.is_null() {
         /* Check if the position fits the currently forced opening */
         curr_move = check_forced_opening(side_to_move, forced_opening);
@@ -1537,7 +1530,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
             /* compensate for increment */
         } else { move_type = MIDGAME_MOVE }
     }
-    curr_move = midgame_move;
+    let mut curr_move = midgame_move;
     /* If the endgame has been reached, solve the position */
     if force_return == 0 {
         if timed_depth != 0 && endgame_reached != 0 ||
