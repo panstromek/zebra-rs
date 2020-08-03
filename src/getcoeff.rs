@@ -63,9 +63,6 @@ unsafe fn get_word(mut stream: gzFile) -> i16 {
 
    Contents:
 */
-pub trait CoeffSource {
-    fn next_word(&mut self) -> i16;
-}
 mod zlib_source {
     use crate::src::stubs::{gzopen, strcpy, gzclose};
     use crate::src::getcoeff::{get_word, gzFile_s, CoeffSource};
@@ -104,7 +101,6 @@ mod zlib_source {
                 let mut word1 = get_word(coeff_stream) as i32;
                 let mut word2 = get_word(coeff_stream) as i32;
                 if word1 != 5358 as i32 || word2 != 9793 as i32 {
-                    // FIXME this probably shouldn't be in the engine
                     fatal_error(b"%s: %s\x00" as *const u8 as *const i8,
                                 filename_to_report,
                                 b"Wrong checksum in , might be an old version\x00" as
@@ -125,11 +121,7 @@ mod zlib_source {
 
 pub unsafe fn init_coeffs() {
     init_memory_handler();
-    let mut source = ZLibSource::new();
-    let mut next_word = || source.next_word();
-
-    process_coeffs_from_fn_source(&mut next_word);
-    drop(source);
+    process_coeffs_from_fn_source(ZLibSource::new());
     init_coeffs_calculate_patterns();
     load_and_apply_adjustments();
     post_init_coeffs();
