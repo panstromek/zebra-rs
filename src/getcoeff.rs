@@ -6,6 +6,7 @@ use crate::src::safemem::safe_malloc;
 use crate::src::patterns::{flip8, pow3};
 use crate::src::zebra::_IO_FILE;
 pub use engine::src::getcoeff::*;
+use crate::src::getcoeff::zlib_source::ZLibSource;
 
 pub type size_t = u64;
 pub type __off_t = i64;
@@ -62,35 +63,73 @@ unsafe fn get_word(mut stream: gzFile) -> i16 {
 
    Contents:
 */
+pub trait CoeffSource {
+    fn next_word(&mut self) -> i16;
+}
+mod zlib_source {
+    use crate::src::stubs::{gzopen, strcpy, gzclose};
+    use crate::src::getcoeff::{get_word, gzFile_s, CoeffSource};
+    use crate::src::error::fatal_error;
+
+    pub struct ZLibSource {
+        coeff_stream: *mut gzFile_s
+    }
+
+    impl Drop for ZLibSource {
+        fn drop(&mut self) {
+            unsafe { gzclose(self.coeff_stream); }
+        }
+    }
+
+    impl CoeffSource for ZLibSource {
+        fn next_word(&mut self) -> i16 {
+            unsafe { get_word(self.coeff_stream) }
+        }
+    }
+    impl ZLibSource {
+        pub fn new() -> Self {
+            let mut sPatternFile: [i8; 260] = [0; 260];
+            unsafe {
+                /* Linux don't support current directory. */
+                strcpy(sPatternFile.as_mut_ptr(), b"coeffs2.bin\x00" as *const u8 as *const i8);
+                let mut coeff_stream = gzopen(sPatternFile.as_mut_ptr(), b"rb\x00" as *const u8 as *const i8);
+                if coeff_stream.is_null() {
+                    fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
+                                b"Unable to open coefficient file\x00" as *const u8 as
+                                    *const i8, sPatternFile.as_mut_ptr());
+                }
+                let filename_to_report = sPatternFile.as_mut_ptr();
+                /* Check the magic values in the beginning of the file to make sure
+                       the file format is right */
+                let mut word1 = get_word(coeff_stream) as i32;
+                let mut word2 = get_word(coeff_stream) as i32;
+                if word1 != 5358 as i32 || word2 != 9793 as i32 {
+                    // FIXME this probably shouldn't be in the engine
+                    fatal_error(b"%s: %s\x00" as *const u8 as *const i8,
+                                filename_to_report,
+                                b"Wrong checksum in , might be an old version\x00" as
+                                    *const u8 as *const i8);
+                }
+
+                ZLibSource {
+                    coeff_stream
+                }
+            }
+        }
+    }
+}
 /*
    INIT_COEFFS
    Manages the initialization of all relevant tables.
 */
 
 pub unsafe fn init_coeffs() {
-    let mut sPatternFile: [i8; 260] = [0; 260];
     init_memory_handler();
-    /* Linux don't support current directory. */
-    strcpy(sPatternFile.as_mut_ptr(),
-           b"coeffs2.bin\x00" as *const u8 as *const i8);
-    let mut coeff_stream =
-        gzopen(sPatternFile.as_mut_ptr(),
-               b"rb\x00" as *const u8 as *const i8);
-    if coeff_stream.is_null() {
-        fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
-                    b"Unable to open coefficient file\x00" as *const u8 as
-                        *const i8, sPatternFile.as_mut_ptr());
-    }
-    // FIXME
-    //  If the file doesn't have more data, the error is handled by assert in
-    //  get_word function. I we want to have a different source, it would probably
-    //  be better to make the closure return result instead and make the initializaiton
-    //  fallible (but initial version can panic I guess, because the midgame solver
-    //  doesn't really make sense without these coeffs, as far as I can tell)
-    let mut next_word = || get_word(coeff_stream);
-    let filename_to_report = sPatternFile.as_mut_ptr();
-    process_coeffs_from_fn_source(&mut next_word, filename_to_report);
-    gzclose(coeff_stream);
+    let mut source = ZLibSource::new();
+    let mut next_word = || source.next_word();
+
+    process_coeffs_from_fn_source(&mut next_word);
+    drop(source);
     init_coeffs_calculate_patterns();
     load_and_apply_adjustments();
     post_init_coeffs();
