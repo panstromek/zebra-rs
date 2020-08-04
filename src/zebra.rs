@@ -840,28 +840,18 @@ unsafe fn play_game(mut file_name: *const i8,
                        confidence: 0.,
                        search_depth: 0,
                        is_book: 0,};
-    let mut opening_name = 0 as *const i8;
-    let mut node_val: f64 = 0.;
-    let mut eval_val: f64 = 0.;
-    let mut move_start: f64 = 0.;
-    let mut move_stop: f64 = 0.;
     let mut database_start: f64 = 0.;
     let mut database_stop: f64 = 0.;
     let mut total_search_time = 0.0f64;
     let mut i: i32 = 0;
     let mut side_to_move: i32 = 0;
     let mut curr_move: i32 = 0;
-    let mut timed_search: i32 = 0;
     let mut rand_color = 0 as i32;
     let mut provided_move_count: i32 = 0;
-    let mut col: i32 = 0;
-    let mut row: i32 = 0;
     let mut thor_position_count: i32 = 0;
     let mut provided_move: [i32; 61] = [0; 61];
     let mut move_vec: [i8; 121] = [0; 121];
     let mut line_buffer: [i8; 1000] = [0; 1000];
-    let mut timer: time_t = 0;
-    let mut log_file = 0 as *mut FILE;
     let move_file = if !move_file_name.is_null() {
         fopen(move_file_name, b"r\x00" as *const u8 as *const i8)
     } else {
@@ -897,11 +887,11 @@ unsafe fn play_game(mut file_name: *const i8,
             }
             i = 0 as i32;
             while i < provided_move_count {
-                col =
+                let col =
                     tolower(*move_string.offset((2 as i32 * i) as
                                                     isize) as i32) -
                         'a' as i32 + 1 as i32;
-                row =
+                let row =
                     *move_string.offset((2 as i32 * i +
                                              1 as i32) as isize) as
                         i32 - '0' as i32;
@@ -1010,7 +1000,7 @@ unsafe fn play_game(mut file_name: *const i8,
             generate_all(side_to_move);
             if side_to_move == 0 as i32 { score_sheet_row += 1 }
             if move_count[disks_played as usize] != 0 as i32 {
-                move_start = get_real_timer();
+                let move_start = get_real_timer();
                 clear_panic_abort();
                 if echo != 0 {
                     set_move_list(black_moves.as_mut_ptr(),
@@ -1019,7 +1009,7 @@ unsafe fn play_game(mut file_name: *const i8,
                                   i32,
                               floor(player_time[2 as i32 as usize]) as
                                   i32);
-                    opening_name = find_opening_name();
+                    let opening_name = find_opening_name();
                     if !opening_name.is_null() {
                         printf(b"\nOpening: %s\n\x00" as *const u8 as
                                    *const i8, opening_name);
@@ -1082,7 +1072,7 @@ unsafe fn play_game(mut file_name: *const i8,
                                             player_increment[side_to_move as
                                                                  usize],
                                             disks_played + 4 as i32);
-                        timed_search =
+                        let timed_search =
                             (skill[side_to_move as usize] >=
                                  60 as i32) as i32;
                         toggle_experimental(0 as i32);
@@ -1136,7 +1126,7 @@ unsafe fn play_game(mut file_name: *const i8,
                                         curr_move / 10 as i32);
                     }
                 }
-                move_stop = get_real_timer();
+                let move_stop = get_real_timer();
                 if player_time[side_to_move as usize] != 10000000.0f64 {
                     player_time[side_to_move as usize] -=
                         move_stop - move_start
@@ -1220,9 +1210,9 @@ unsafe fn play_game(mut file_name: *const i8,
                           1 as i32, use_timer, 1 as i32);
         }
         adjust_counter(&mut total_nodes);
-        node_val = counter_value(&mut total_nodes);
+        let node_val = counter_value(&mut total_nodes);
         adjust_counter(&mut total_evaluations);
-        eval_val = counter_value(&mut total_evaluations);
+        let eval_val = counter_value(&mut total_evaluations);
         printf(b"\nBlack: %d   White: %d\n\x00" as *const u8 as
                    *const i8, disc_count(0 as i32),
                disc_count(2 as i32));
@@ -1233,11 +1223,11 @@ unsafe fn play_game(mut file_name: *const i8,
         printf(b"Total time: %.1f s\n\x00" as *const u8 as
                    *const i8, total_time);
         if !log_file_name_.is_null() && one_position_only == 0 {
-            log_file =
+            let log_file =
                 fopen(log_file_name_,
                       b"a\x00" as *const u8 as *const i8);
             if !log_file.is_null() {
-                timer = time(0 as *mut time_t);
+                let mut timer = time(0 as *mut time_t);
                 fprintf(log_file,
                         b"# %s#     %2d - %2d\n\x00" as *const u8 as
                             *const i8, ctime(&mut timer),
