@@ -1056,13 +1056,7 @@ unsafe fn play_game(mut file_name: *const i8,
                         move_stop - move_start
                 }
                 store_move(disks_played, curr_move);
-                sprintf(move_vec.as_mut_ptr().offset((2 as i32 *
-                                                          disks_played) as
-                                                         isize),
-                        b"%c%c\x00" as *const u8 as *const i8,
-                        'a' as i32 + curr_move % 10 as i32 -
-                            1 as i32,
-                        '0' as i32 + curr_move / 10 as i32);
+                push_move(&mut move_vec, curr_move, disks_played);
                 make_move(side_to_move, curr_move, 1 as i32);
                 if side_to_move == 0 as i32 {
                     black_moves[score_sheet_row as usize] = curr_move
@@ -1139,21 +1133,10 @@ unsafe fn play_game(mut file_name: *const i8,
         report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
         if !log_file_name_.is_null() && one_position_only == 0 {
-            let log_file =
-                fopen(log_file_name_,
-                      b"a\x00" as *const u8 as *const i8);
-            if !log_file.is_null() {
-                let mut timer = time(0 as *mut time_t);
-                fprintf(log_file,
-                        b"# %s#     %2d - %2d\n\x00" as *const u8 as
-                            *const i8, ctime(&mut timer),
-                        disc_count(0 as i32),
-                        disc_count(2 as i32));
-                fprintf(log_file,
-                        b"%s\n\x00" as *const u8 as *const i8,
-                        move_vec.as_mut_ptr());
-                fclose(log_file);
-            }
+            log_game_ending(log_file_name_,
+                            &mut move_vec,
+                            disc_count(0 as i32),
+                            disc_count(2 as i32))
         }
         repeat -= 1;
         toggle_abort_check(0 as i32);
@@ -1169,6 +1152,38 @@ unsafe fn play_game(mut file_name: *const i8,
         if !(repeat > 0 as i32) { break ; }
     }
     if !move_file.is_null() { fclose(move_file); };
+}
+
+unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &mut [i8; 121],
+                          first_side_to_move: i32, second_side_to_move: i32) {
+    let log_file = fopen(log_file_name_,
+              b"a\x00" as *const u8 as *const i8);
+
+    if !log_file.is_null() {
+        let mut timer = time(0 as *mut time_t);
+        fprintf(log_file,
+                b"# %s#     %2d - %2d\n\x00" as *const u8 as
+                    *const i8, ctime(&mut timer),
+                first_side_to_move,
+                second_side_to_move);
+        fprintf(log_file,
+                b"%s\n\x00" as *const u8 as *const i8,
+                move_vec.as_mut_ptr());
+        fclose(log_file);
+    }
+}
+
+unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32) {
+    // TODO replace offset with index
+    unsafe {
+        sprintf(move_vec.as_mut_ptr().offset((2 as i32 *
+            disks_played_) as
+            isize),
+                b"%c%c\x00" as *const u8 as *const i8,
+                'a' as i32 + curr_move % 10 as i32 -
+                    1 as i32,
+                '0' as i32 + curr_move / 10 as i32);
+    }
 }
 
 fn get_pass() {
