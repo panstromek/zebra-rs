@@ -128,10 +128,10 @@ pub unsafe fn init_coeffs() {
 }
 
 pub struct CoeffAdjustments {
-    disc_adjust: f64,
-    edge_adjust: f64,
-    corner_adjust: f64,
-    x_adjust: f64,
+    pub disc_adjust: f64,
+    pub edge_adjust: f64,
+    pub corner_adjust: f64,
+    pub x_adjust: f64,
 }
 
 pub unsafe fn load_and_apply_adjustments() {
