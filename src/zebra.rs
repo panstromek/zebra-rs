@@ -840,8 +840,6 @@ unsafe fn play_game(mut file_name: *const i8,
                        confidence: 0.,
                        search_depth: 0,
                        is_book: 0,};
-    let mut database_start: f64 = 0.;
-    let mut database_stop: f64 = 0.;
     let mut total_search_time = 0.0f64;
     let mut side_to_move: i32 = 0;
     let mut curr_move: i32 = 0;
@@ -920,7 +918,7 @@ unsafe fn play_game(mut file_name: *const i8,
         set_deviation_value(low_thresh, high_thresh, dev_bonus);
         if use_thor != 0 {
             /* No error checking done as it's only for testing purposes */
-            database_start = get_real_timer();
+            let database_start = get_real_timer();
             read_player_database(b"thor\\wthor.jou\x00" as *const u8 as
                                      *const i8);
             read_tournament_database(b"thor\\wthor.trn\x00" as *const u8 as
@@ -969,7 +967,7 @@ unsafe fn play_game(mut file_name: *const i8,
                                    *const i8);
             read_game_database(b"thor\\wth_1980.wtb\x00" as *const u8 as
                                    *const i8);
-            database_stop = get_real_timer();
+            let database_stop = get_real_timer();
             printf(b"Loaded %d games in %.3f s.\n\x00" as *const u8 as
                        *const i8, get_total_game_count(),
                    database_stop - database_start);
@@ -1014,10 +1012,10 @@ unsafe fn play_game(mut file_name: *const i8,
                                    *const i8, opening_name);
                     }
                     if use_thor != 0 {
-                        database_start = get_real_timer();
+                        let database_start = get_real_timer();
                         database_search(board.as_mut_ptr(), side_to_move);
                         thor_position_count = get_match_count();
-                        database_stop = get_real_timer();
+                        let database_stop = get_real_timer();
                         total_search_time += database_stop - database_start;
                         printf(b"%d matching games  (%.3f s search time, %.3f s total)\n\x00"
                                    as *const u8 as *const i8,
@@ -1178,10 +1176,10 @@ unsafe fn play_game(mut file_name: *const i8,
             set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                           score_sheet_row);
             if use_thor != 0 {
-                database_start = get_real_timer();
+                let database_start = get_real_timer();
                 database_search(board.as_mut_ptr(), side_to_move);
                 thor_position_count = get_match_count();
-                database_stop = get_real_timer();
+                let database_stop = get_real_timer();
                 total_search_time += database_stop - database_start;
                 printf(b"%d matching games  (%.3f s search time, %.3f s total)\n\x00"
                            as *const u8 as *const i8,
