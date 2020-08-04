@@ -151,6 +151,8 @@ pub unsafe fn init_memory_handler() {
 /*
   DISC_COUNT_ADJUSTMENT
 */
+/* Adjust the coefficients so as to reflect the encouragement for
+       having lots of discs */
 pub unsafe fn eval_adjustment(mut disc_adjust: f64,
                           mut edge_adjust: f64,
                           mut corner_adjust: f64,

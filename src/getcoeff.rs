@@ -135,33 +135,38 @@ pub struct CoeffAdjustments {
 }
 
 pub unsafe fn load_and_apply_adjustments() {
-    /* Adjust the coefficients so as to reflect the encouragement for
-       having lots of discs */
-    let mut adjusts : Option<CoeffAdjustments> = None;
-    let mut adjust_stream =
+    if let Some(adjusts) = load_coeff_adjustments() {
+        eval_adjustment(adjusts.disc_adjust, adjusts.edge_adjust, adjusts.corner_adjust, adjusts.x_adjust);
+    }
+}
+
+pub fn load_coeff_adjustments() -> Option<CoeffAdjustments> {
+    let mut adjust_stream = unsafe {
         fopen(b"adjust.txt\x00" as *const u8 as *const i8,
-              b"r\x00" as *const u8 as *const i8);
+              b"r\x00" as *const u8 as *const i8)
+    };
     if !adjust_stream.is_null() {
         let mut disc_adjust = 0.0f64;
         let mut edge_adjust = 0.0f64;
         let mut corner_adjust = 0.0f64;
         let mut x_adjust = 0.0f64;
-        fscanf(adjust_stream,
-               b"%lf %lf %lf %lf\x00" as *const u8 as *const i8,
-               &mut disc_adjust as *mut f64,
-               &mut edge_adjust as *mut f64,
-               &mut corner_adjust as *mut f64,
-               &mut x_adjust as *mut f64);
-        fclose(adjust_stream);
-        adjusts = Some(CoeffAdjustments {
+        unsafe {
+            fscanf(adjust_stream,
+                   b"%lf %lf %lf %lf\x00" as *const u8 as *const i8,
+                   &mut disc_adjust as *mut f64,
+                   &mut edge_adjust as *mut f64,
+                   &mut corner_adjust as *mut f64,
+                   &mut x_adjust as *mut f64);
+            fclose(adjust_stream);
+        }
+        Some(CoeffAdjustments {
             disc_adjust,
             edge_adjust,
             corner_adjust,
             x_adjust
-        });
-    }
-    if let Some(CoeffAdjustments { disc_adjust, edge_adjust, corner_adjust, x_adjust }) = adjusts {
-        eval_adjustment(disc_adjust, edge_adjust, corner_adjust, x_adjust);
+        })
+    } else {
+        None
     }
 }
 
