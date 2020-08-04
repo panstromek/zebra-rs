@@ -847,7 +847,6 @@ unsafe fn play_game(mut file_name: *const i8,
     let mut side_to_move: i32 = 0;
     let mut curr_move: i32 = 0;
     let mut rand_color = 0 as i32;
-    let mut provided_move_count: i32 = 0;
     let mut thor_position_count: i32 = 0;
     let mut provided_move: [i32; 61] = [0; 61];
     let mut move_vec: [i8; 121] = [0; 121];
@@ -871,6 +870,7 @@ unsafe fn play_game(mut file_name: *const i8,
             }
             move_string = line_buffer.as_mut_ptr()
         }
+        let mut provided_move_count = 0 as i32;
         if move_string.is_null() {
             provided_move_count = 0 as i32
         } else {
