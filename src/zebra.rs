@@ -843,7 +843,6 @@ unsafe fn play_game(mut file_name: *const i8,
     let mut database_start: f64 = 0.;
     let mut database_stop: f64 = 0.;
     let mut total_search_time = 0.0f64;
-    let mut i: i32 = 0;
     let mut side_to_move: i32 = 0;
     let mut curr_move: i32 = 0;
     let mut rand_color = 0 as i32;
@@ -885,7 +884,7 @@ unsafe fn play_game(mut file_name: *const i8,
                 fatal_error(b"Invalid move string provided\x00" as *const u8
                                 as *const i8);
             }
-            i = 0 as i32;
+            let mut i = 0 as i32;
             while i < provided_move_count {
                 let col =
                     tolower(*move_string.offset((2 as i32 * i) as
@@ -981,7 +980,7 @@ unsafe fn play_game(mut file_name: *const i8,
         set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
         set_evals(0.0f64, 0.0f64);
-        i = 0 as i32;
+        let mut i = 0 as i32;
         while i < 60 as i32 {
             black_moves[i as usize] = -(1 as i32);
             white_moves[i as usize] = -(1 as i32);
