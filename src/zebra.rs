@@ -917,62 +917,7 @@ unsafe fn play_game(mut file_name: *const i8,
         reset_book_search();
         set_deviation_value(low_thresh, high_thresh, dev_bonus);
         if use_thor != 0 {
-            /* No error checking done as it's only for testing purposes */
-            let database_start = get_real_timer();
-            read_player_database(b"thor\\wthor.jou\x00" as *const u8 as
-                                     *const i8);
-            read_tournament_database(b"thor\\wthor.trn\x00" as *const u8 as
-                                         *const i8);
-            read_game_database(b"thor\\wth_2001.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_2000.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1999.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1998.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1997.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1996.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1995.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1994.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1993.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1992.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1991.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1990.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1989.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1988.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1987.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1986.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1985.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1984.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1983.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1982.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1981.wtb\x00" as *const u8 as
-                                   *const i8);
-            read_game_database(b"thor\\wth_1980.wtb\x00" as *const u8 as
-                                   *const i8);
-            let database_stop = get_real_timer();
-            printf(b"Loaded %d games in %.3f s.\n\x00" as *const u8 as
-                       *const i8, get_total_game_count(),
-                   database_stop - database_start);
-            printf(b"Each Thor game occupies %d bytes.\n\x00" as *const u8 as
-                       *const i8, get_thor_game_size());
+            load_thor_files();
         }
         set_names_from_skills();
         set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
@@ -1250,6 +1195,65 @@ unsafe fn play_game(mut file_name: *const i8,
         if !(repeat > 0 as i32) { break ; }
     }
     if !move_file.is_null() { fclose(move_file); };
+}
+
+unsafe fn load_thor_files() {
+    /* No error checking done as it's only for testing purposes */
+    let database_start = get_real_timer();
+    read_player_database(b"thor\\wthor.jou\x00" as *const u8 as
+        *const i8);
+    read_tournament_database(b"thor\\wthor.trn\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_2001.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_2000.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1999.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1998.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1997.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1996.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1995.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1994.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1993.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1992.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1991.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1990.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1989.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1988.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1987.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1986.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1985.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1984.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1983.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1982.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1981.wtb\x00" as *const u8 as
+        *const i8);
+    read_game_database(b"thor\\wth_1980.wtb\x00" as *const u8 as
+        *const i8);
+    let database_stop = get_real_timer();
+    printf(b"Loaded %d games in %.3f s.\n\x00" as *const u8 as
+               *const i8, get_total_game_count(),
+           database_stop - database_start);
+    printf(b"Each Thor game occupies %d bytes.\n\x00" as *const u8 as
+               *const i8, get_thor_game_size());
 }
 
 pub unsafe fn set_names_from_skills() {
