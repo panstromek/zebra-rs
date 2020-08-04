@@ -855,10 +855,6 @@ unsafe fn play_game(mut file_name: *const i8,
     let mut curr_move: i32 = 0;
     let mut timed_search: i32 = 0;
     let mut rand_color = 0 as i32;
-    let mut black_hash1: i32 = 0;
-    let mut black_hash2: i32 = 0;
-    let mut white_hash1: i32 = 0;
-    let mut white_hash2: i32 = 0;
     let mut provided_move_count: i32 = 0;
     let mut col: i32 = 0;
     let mut row: i32 = 0;
@@ -868,12 +864,12 @@ unsafe fn play_game(mut file_name: *const i8,
     let mut line_buffer: [i8; 1000] = [0; 1000];
     let mut timer: time_t = 0;
     let mut log_file = 0 as *mut FILE;
-    let mut move_file = 0 as *mut FILE;
-    if !move_file_name.is_null() {
-        move_file =
-            fopen(move_file_name,
-                  b"r\x00" as *const u8 as *const i8)
-    } else { move_file = 0 as *mut FILE }
+    let move_file = if !move_file_name.is_null() {
+        fopen(move_file_name, b"r\x00" as *const u8 as *const i8)
+    } else {
+        0 as *mut FILE
+    };
+
     loop  {
         /* Decode the predefined move sequence */
         if !move_file.is_null() {
@@ -1015,10 +1011,12 @@ unsafe fn play_game(mut file_name: *const i8,
         }
         move_vec[0 as i32 as usize] =
             0 as i32 as i8;
-        black_hash1 = my_random() as i32;
-        black_hash2 = my_random() as i32;
-        white_hash1 = my_random() as i32;
-        white_hash2 = my_random() as i32;
+        // these are not used because their usage was disabled by preprocessor
+        // byt for deterministic testing, we need to call random the same way, so we keep them.
+        let _black_hash1 = my_random() as i32;
+        let _black_hash2 = my_random() as i32;
+        let _white_hash1 = my_random() as i32;
+        let _white_hash2 = my_random() as i32;
         while game_in_progress() != 0 {
             remove_coeffs(disks_played);
             generate_all(side_to_move);
