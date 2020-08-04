@@ -11,7 +11,7 @@ use crate::src::osfbook::{get_book_move, fill_move_alternatives, check_forced_op
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_move, get_match_count, database_search};
 use crate::src::error::fatal_error;
 use crate::src::myrandom::{my_random, my_srandom};
-use crate::src::getcoeff::{remove_coeffs, pattern_evaluation, clear_coeffs, load_and_apply_adjustments, load_coeff_adjustments};
+use crate::src::getcoeff::{remove_coeffs, pattern_evaluation, clear_coeffs, load_and_apply_adjustments, load_coeff_adjustments, CoeffAdjustments};
 use crate::src::hash::{determine_hash_values, set_hash_transformation, find_hash, HashEntry, free_hash, init_hash};
 use crate::src::unflip::init_flip_stack;
 use crate::src::eval::init_eval;
@@ -40,30 +40,13 @@ pub static mut log_file_path: [i8; 2048] = [0; 2048];
 
 pub unsafe fn global_setup(mut use_random: i32,
                                       mut hash_bits: i32) {
-    let mut timer: time_t = 0;
-    /* Clear the log file. No error handling done. */
-    strcpy(log_file_path.as_mut_ptr(),
-           b"zebra.log\x00" as *const u8 as *const i8);
-    if use_log_file != 0 {
-        let mut log_file =
-            fopen(log_file_path.as_mut_ptr(),
-                  b"w\x00" as *const u8 as *const i8);
-        if !log_file.is_null() {
-            time(&mut timer);
-            fprintf(log_file,
-                    b"%s %s\n\x00" as *const u8 as *const i8,
-                    b"Log file created\x00" as *const u8 as
-                        *const i8, ctime(&mut timer));
-            fprintf(log_file,
-                    b"%s %s %s\n\x00" as *const u8 as *const i8,
-                    b"Engine compiled\x00" as *const u8 as
-                        *const i8,
-                    b"Jul  2 2020\x00" as *const u8 as *const i8,
-                    b"19:33:59\x00" as *const u8 as *const i8);
-            fclose(log_file);
-        }
-    }
+    setup_log_file();
     let coeff_adjustments = load_coeff_adjustments();
+    engine_global_setup(&use_random, hash_bits, coeff_adjustments);
+}
+
+pub unsafe fn engine_global_setup(use_random: &i32, hash_bits: i32, coeff_adjustments: Option<CoeffAdjustments>) {
+    let mut timer: time_t = 0;
     if use_random != 0 {
         time(&mut timer);
         my_srandom(timer as i32);
@@ -86,6 +69,32 @@ pub unsafe fn global_setup(mut use_random: i32,
     init_probcut();
     init_stable();
     setup_search();
+}
+
+unsafe fn setup_log_file() {
+    /* Clear the log file. No error handling done. */
+    strcpy(log_file_path.as_mut_ptr(),
+           b"zebra.log\x00" as *const u8 as *const i8);
+    if use_log_file != 0 {
+        let mut log_file =
+            fopen(log_file_path.as_mut_ptr(),
+                  b"w\x00" as *const u8 as *const i8);
+        if !log_file.is_null() {
+            let mut timer: time_t = 0;
+            time(&mut timer);
+            fprintf(log_file,
+                    b"%s %s\n\x00" as *const u8 as *const i8,
+                    b"Log file created\x00" as *const u8 as
+                        *const i8, ctime(&mut timer));
+            fprintf(log_file,
+                    b"%s %s %s\n\x00" as *const u8 as *const i8,
+                    b"Engine compiled\x00" as *const u8 as
+                        *const i8,
+                    b"Jul  2 2020\x00" as *const u8 as *const i8,
+                    b"19:33:59\x00" as *const u8 as *const i8);
+            fclose(log_file);
+        }
+    }
 }
 
 /*
