@@ -11,7 +11,7 @@ use crate::src::osfbook::{get_book_move, fill_move_alternatives, check_forced_op
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_move, get_match_count, database_search};
 use crate::src::error::fatal_error;
 use crate::src::myrandom::{my_random, my_srandom};
-use crate::src::getcoeff::{remove_coeffs, pattern_evaluation, clear_coeffs, load_and_apply_adjustments};
+use crate::src::getcoeff::{remove_coeffs, pattern_evaluation, clear_coeffs, load_and_apply_adjustments, load_coeff_adjustments};
 use crate::src::hash::{determine_hash_values, set_hash_transformation, find_hash, HashEntry, free_hash, init_hash};
 use crate::src::unflip::init_flip_stack;
 use crate::src::eval::init_eval;
@@ -21,7 +21,7 @@ use crate::src::patterns::init_patterns;
 use crate::src::bitboard::init_bitboard;
 use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub use engine::src::game::*;
-use engine::src::getcoeff::{init_memory_handler, process_coeffs_from_fn_source, init_coeffs_calculate_patterns, post_init_coeffs};
+use engine::src::getcoeff::{init_memory_handler, process_coeffs_from_fn_source, init_coeffs_calculate_patterns, post_init_coeffs, eval_adjustment};
 use crate::src::getcoeff::zlib_source::ZLibSource;
 
 pub type __off_t = i64;
@@ -63,6 +63,7 @@ pub unsafe fn global_setup(mut use_random: i32,
             fclose(log_file);
         }
     }
+    let coeff_adjustments = load_coeff_adjustments();
     if use_random != 0 {
         time(&mut timer);
         my_srandom(timer as i32);
@@ -76,7 +77,9 @@ pub unsafe fn global_setup(mut use_random: i32,
     init_memory_handler();
     process_coeffs_from_fn_source(ZLibSource::new());
     init_coeffs_calculate_patterns();
-    load_and_apply_adjustments();
+    if let Some(adjusts) = coeff_adjustments {
+        eval_adjustment(adjusts.disc_adjust, adjusts.edge_adjust, adjusts.corner_adjust, adjusts.x_adjust);
+    };
     post_init_coeffs();
 
     init_timer();
