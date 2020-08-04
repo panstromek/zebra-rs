@@ -906,8 +906,8 @@ unsafe fn play_game(mut file_name: *const i8,
         setup_hash(1 as i32);
         clear_stored_game();
         if echo != 0 && use_book != 0 {
-            printf(b"Book randomness: %.2f disks\n\x00" as *const u8 as
-                       *const i8, slack);
+            let slack_ = slack;
+            report_book_randomness(slack_);
         }
         set_slack(floor(slack * 128.0f64) as i32);
         toggle_human_openings(0 as i32);
@@ -953,8 +953,7 @@ unsafe fn play_game(mut file_name: *const i8,
                                   i32);
                     let opening_name = find_opening_name();
                     if !opening_name.is_null() {
-                        printf(b"\nOpening: %s\n\x00" as *const u8 as
-                                   *const i8, opening_name);
+                        report_opening_name(opening_name);
                     }
                     if use_thor != 0 {
                         let database_start = get_real_timer();
@@ -968,19 +967,13 @@ unsafe fn play_game(mut file_name: *const i8,
                                database_stop - database_start,
                                total_search_time);
                         if thor_position_count > 0 as i32 {
-                            printf(b"%d black wins, %d draws, %d white wins\n\x00"
-                                       as *const u8 as *const i8,
-                                   get_black_win_count(), get_draw_count(),
-                                   get_white_win_count());
-                            printf(b"Median score %d-%d\x00" as *const u8 as
-                                       *const i8,
-                                   get_black_median_score(),
-                                   64 as i32 -
-                                       get_black_median_score());
-                            printf(b", average score %.2f-%.2f\n\x00" as
-                                       *const u8 as *const i8,
-                                   get_black_average_score(),
-                                   64.0f64 - get_black_average_score());
+                            let black_win_count = get_black_win_count();
+                            let draw_count = get_draw_count();
+                            let white_win_count = get_white_win_count();
+                            let black_median_score = get_black_median_score();
+                            let black_average_score = get_black_average_score();
+
+                            report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                         }
                         print_thor_matches(stdout, thor_max_games);
                     }
@@ -1195,6 +1188,32 @@ unsafe fn play_game(mut file_name: *const i8,
         if !(repeat > 0 as i32) { break ; }
     }
     if !move_file.is_null() { fclose(move_file); };
+}
+
+pub fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
+    unsafe {
+        printf(b"%d black wins, %d draws, %d white wins\n\x00"
+                   as *const u8 as *const i8,
+               black_win_count, draw_count,
+               white_win_count);
+    printf(b"Median score %d-%d\x00" as *const u8 as
+               *const i8,
+           black_median_score,
+           64 as i32 -
+               black_median_score);
+    printf(b", average score %.2f-%.2f\n\x00" as
+               *const u8 as *const i8,
+           black_average_score,
+           64.0f64 - black_average_score);
+    }
+}
+
+pub unsafe fn report_opening_name(opening_name: *const i8) {
+    printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8, opening_name);
+}
+
+pub fn report_book_randomness(slack_: f64) {
+    unsafe { printf(b"Book randomness: %.2f disks\n\x00" as *const u8 as *const i8, slack_); }
 }
 
 unsafe fn load_thor_files() {
