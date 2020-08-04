@@ -923,14 +923,8 @@ unsafe fn play_game(mut file_name: *const i8,
         set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
         set_evals(0.0f64, 0.0f64);
-        let mut i = 0 as i32;
-        while i < 60 as i32 {
-            black_moves[i as usize] = -(1 as i32);
-            white_moves[i as usize] = -(1 as i32);
-            i += 1
-        }
-        move_vec[0 as i32 as usize] =
-            0 as i32 as i8;
+        clear_moves();
+        move_vec[0 as i32 as usize] = 0 as i32 as i8;
         // these are not used because their usage was disabled by preprocessor
         // byt for deterministic testing, we need to call random the same way, so we keep them.
         let _black_hash1 = my_random() as i32;
@@ -960,12 +954,9 @@ unsafe fn play_game(mut file_name: *const i8,
                         database_search(board.as_mut_ptr(), side_to_move);
                         thor_position_count = get_match_count();
                         let database_stop = get_real_timer();
-                        total_search_time += database_stop - database_start;
-                        printf(b"%d matching games  (%.3f s search time, %.3f s total)\n\x00"
-                                   as *const u8 as *const i8,
-                               thor_position_count,
-                               database_stop - database_start,
-                               total_search_time);
+                        let database_time = database_stop - database_start;
+                        total_search_time += database_time;
+                        report_thor_matching_games_stats(total_search_time, thor_position_count, database_time);
                         if thor_position_count > 0 as i32 {
                             let black_win_count = get_black_win_count();
                             let draw_count = get_draw_count();
@@ -1102,11 +1093,9 @@ unsafe fn play_game(mut file_name: *const i8,
             if one_position_only != 0 { break ; }
         }
         if echo == 0 && one_position_only == 0 {
-            printf(b"\n\x00" as *const u8 as *const i8);
-            printf(b"Black level: %d\n\x00" as *const u8 as
-                       *const i8, skill[0 as i32 as usize]);
-            printf(b"White level: %d\n\x00" as *const u8 as
-                       *const i8, skill[2 as i32 as usize]);
+            let black_level = skill[0 as i32 as usize];
+            let white_level = skill[2 as i32 as usize];
+            report_skill_levels(black_level, white_level);
         }
         if side_to_move == 0 as i32 { score_sheet_row += 1 }
         dump_game_score(side_to_move);
@@ -1148,15 +1137,11 @@ unsafe fn play_game(mut file_name: *const i8,
         let node_val = counter_value(&mut total_nodes);
         adjust_counter(&mut total_evaluations);
         let eval_val = counter_value(&mut total_evaluations);
-        printf(b"\nBlack: %d   White: %d\n\x00" as *const u8 as
-                   *const i8, disc_count(0 as i32),
-               disc_count(2 as i32));
-        printf(b"Nodes searched:        %-10.0f\n\x00" as *const u8 as
-                   *const i8, node_val);
-        printf(b"Positions evaluated:   %-10.0f\n\x00" as *const u8 as
-                   *const i8, eval_val);
-        printf(b"Total time: %.1f s\n\x00" as *const u8 as
-                   *const i8, total_time);
+        let black_disc_count = disc_count(0 as i32);
+        let white_disc_count = disc_count(2 as i32);
+        let total_time_ = total_time;
+        report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
+
         if !log_file_name_.is_null() && one_position_only == 0 {
             let log_file =
                 fopen(log_file_name_,
@@ -1188,6 +1173,48 @@ unsafe fn play_game(mut file_name: *const i8,
         if !(repeat > 0 as i32) { break ; }
     }
     if !move_file.is_null() { fclose(move_file); };
+}
+
+fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {
+    unsafe {
+        printf(b"\nBlack: %d   White: %d\n\x00" as *const u8 as
+                   *const i8, black_disc_count,
+               white_disc_count);
+        printf(b"Nodes searched:        %-10.0f\n\x00" as *const u8 as
+                   *const i8, node_val);
+        printf(b"Positions evaluated:   %-10.0f\n\x00" as *const u8 as
+                   *const i8, eval_val);
+
+        printf(b"Total time: %.1f s\n\x00" as *const u8 as
+                   *const i8, total_time_);
+    }
+}
+
+fn report_skill_levels(black_level: i32, white_level: i32) {
+    unsafe {
+        printf(b"\n\x00" as *const u8 as *const i8);
+        printf(b"Black level: %d\n\x00" as *const u8 as *const i8, black_level);
+        printf(b"White level: %d\n\x00" as *const u8 as *const i8, white_level);
+    }
+}
+
+fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64) {
+    unsafe {
+        printf(b"%d matching games  (%.3f s search time, %.3f s total)\n\x00"
+                   as *const u8 as *const i8,
+               thor_position_count,
+               database_time,
+               total_search_time);
+    }
+}
+
+pub unsafe fn clear_moves() {
+    let mut i = 0 as i32;
+    while i < 60 as i32 {
+        black_moves[i as usize] = -(1 as i32);
+        white_moves[i as usize] = -(1 as i32);
+        i += 1
+    }
 }
 
 pub fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
