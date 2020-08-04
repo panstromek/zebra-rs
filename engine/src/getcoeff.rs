@@ -7,6 +7,13 @@ use crate::src::error::fatal_error;
 use std::ffi::c_void;
 use std::process::exit;
 
+pub struct CoeffAdjustments {
+    pub disc_adjust: f64,
+    pub edge_adjust: f64,
+    pub corner_adjust: f64,
+    pub x_adjust: f64,
+}
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct CoeffSet {

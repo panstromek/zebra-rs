@@ -3,14 +3,20 @@ use crate::src::counter::{adjust_counter, counter_value, reset_counter};
 use crate::src::search::{nodes, total_time, total_evaluations, total_nodes, setup_search, disc_count};
 use crate::src::globals::{pv_depth, pv, board, score_sheet_row, black_moves};
 use crate::src::osfbook::clear_osf;
-use crate::src::getcoeff::clear_coeffs;
-use crate::src::hash::{free_hash, determine_hash_values};
+use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, init_memory_handler, CoeffAdjustments, CoeffSource};
+use crate::src::hash::{free_hash, determine_hash_values, init_hash};
 use crate::src::unflip::init_flip_stack;
-use crate::src::timer::clear_ponder_times;
+use crate::src::timer::{clear_ponder_times, init_timer, time_t};
 use crate::src::eval::init_eval;
 use crate::src::end::setup_end;
 use crate::src::midgame::setup_midgame;
-use crate::src::moves::disks_played;
+use crate::src::moves::{disks_played, init_moves};
+use crate::src::stable::init_stable;
+use crate::src::probcut::init_probcut;
+use crate::src::patterns::init_patterns;
+use crate::src::bitboard::init_bitboard;
+use crate::src::myrandom::my_srandom;
+use crate::src::stubs::time;
 
 
 pub type EvalType = u32;
@@ -269,4 +275,31 @@ pub unsafe fn setup_non_file_based_game(mut side_to_move: *mut i32) {
     setup_game_clear_board();
     setup_game_board_normal(side_to_move);
     setup_game_finalize(side_to_move);
+}
+
+
+pub unsafe fn engine_global_setup(use_random: i32, hash_bits: i32, coeff_adjustments: Option<CoeffAdjustments>, mut coeffs: impl CoeffSource) {
+    let mut timer: time_t = 0;
+    if use_random != 0 {
+        time(&mut timer);
+        my_srandom(timer as i32);
+    } else { my_srandom(1 as i32); }
+    init_hash(hash_bits);
+    init_bitboard();
+    init_moves();
+    init_patterns();
+
+    // inlined init_coeffs
+    init_memory_handler();
+    process_coeffs_from_fn_source(coeffs);
+    init_coeffs_calculate_patterns();
+    if let Some(adjusts) = coeff_adjustments {
+        eval_adjustment(adjusts.disc_adjust, adjusts.edge_adjust, adjusts.corner_adjust, adjusts.x_adjust);
+    };
+    post_init_coeffs();
+
+    init_timer();
+    init_probcut();
+    init_stable();
+    setup_search();
 }

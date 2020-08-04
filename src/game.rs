@@ -42,33 +42,7 @@ pub unsafe fn global_setup(mut use_random: i32,
                                       mut hash_bits: i32) {
     setup_log_file();
     let coeff_adjustments = load_coeff_adjustments();
-    engine_global_setup(&use_random, hash_bits, coeff_adjustments);
-}
-
-pub unsafe fn engine_global_setup(use_random: &i32, hash_bits: i32, coeff_adjustments: Option<CoeffAdjustments>) {
-    let mut timer: time_t = 0;
-    if use_random != 0 {
-        time(&mut timer);
-        my_srandom(timer as i32);
-    } else { my_srandom(1 as i32); }
-    init_hash(hash_bits);
-    init_bitboard();
-    init_moves();
-    init_patterns();
-
-    // inlined init_coeffs
-    init_memory_handler();
-    process_coeffs_from_fn_source(ZLibSource::new());
-    init_coeffs_calculate_patterns();
-    if let Some(adjusts) = coeff_adjustments {
-        eval_adjustment(adjusts.disc_adjust, adjusts.edge_adjust, adjusts.corner_adjust, adjusts.x_adjust);
-    };
-    post_init_coeffs();
-
-    init_timer();
-    init_probcut();
-    init_stable();
-    setup_search();
+    engine_global_setup(use_random, hash_bits, coeff_adjustments, ZLibSource::new());
 }
 
 unsafe fn setup_log_file() {

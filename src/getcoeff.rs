@@ -127,13 +127,6 @@ pub unsafe fn init_coeffs() {
     post_init_coeffs();
 }
 
-pub struct CoeffAdjustments {
-    pub disc_adjust: f64,
-    pub edge_adjust: f64,
-    pub corner_adjust: f64,
-    pub x_adjust: f64,
-}
-
 pub unsafe fn load_and_apply_adjustments() {
     if let Some(adjusts) = load_coeff_adjustments() {
         eval_adjustment(adjusts.disc_adjust, adjusts.edge_adjust, adjusts.corner_adjust, adjusts.x_adjust);
