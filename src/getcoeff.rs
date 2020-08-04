@@ -127,9 +127,17 @@ pub unsafe fn init_coeffs() {
     post_init_coeffs();
 }
 
+pub struct CoeffAdjustments {
+    disc_adjust: f64,
+    edge_adjust: f64,
+    corner_adjust: f64,
+    x_adjust: f64,
+}
+
 pub unsafe fn load_and_apply_adjustments() {
     /* Adjust the coefficients so as to reflect the encouragement for
        having lots of discs */
+    let mut adjusts : Option<CoeffAdjustments> = None;
     let mut adjust_stream =
         fopen(b"adjust.txt\x00" as *const u8 as *const i8,
               b"r\x00" as *const u8 as *const i8);
@@ -144,8 +152,16 @@ pub unsafe fn load_and_apply_adjustments() {
                &mut edge_adjust as *mut f64,
                &mut corner_adjust as *mut f64,
                &mut x_adjust as *mut f64);
-        eval_adjustment(disc_adjust, edge_adjust, corner_adjust, x_adjust);
         fclose(adjust_stream);
+        adjusts = Some(CoeffAdjustments {
+            disc_adjust,
+            edge_adjust,
+            corner_adjust,
+            x_adjust
+        });
+    }
+    if let Some(CoeffAdjustments { disc_adjust, edge_adjust, corner_adjust, x_adjust }) = adjusts {
+        eval_adjustment(disc_adjust, edge_adjust, corner_adjust, x_adjust);
     }
 }
 
