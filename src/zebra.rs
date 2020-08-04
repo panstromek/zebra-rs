@@ -840,8 +840,6 @@ unsafe fn play_game(mut file_name: *const i8,
                        confidence: 0.,
                        search_depth: 0,
                        is_book: 0,};
-    let mut black_name = 0 as *const i8;
-    let mut white_name = 0 as *const i8;
     let mut opening_name = 0 as *const i8;
     let mut node_val: f64 = 0.;
     let mut eval_val: f64 = 0.;
@@ -989,17 +987,7 @@ unsafe fn play_game(mut file_name: *const i8,
             printf(b"Each Thor game occupies %d bytes.\n\x00" as *const u8 as
                        *const i8, get_thor_game_size());
         }
-        if skill[0 as i32 as usize] == 0 as i32 {
-            black_name = b"Player\x00" as *const u8 as *const i8
-        } else {
-            black_name = b"Zebra\x00" as *const u8 as *const i8
-        }
-        if skill[2 as i32 as usize] == 0 as i32 {
-            white_name = b"Player\x00" as *const u8 as *const i8
-        } else {
-            white_name = b"Zebra\x00" as *const u8 as *const i8
-        }
-        set_names(black_name, white_name);
+        set_names_from_skills();
         set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
         set_evals(0.0f64, 0.0f64);
@@ -1275,6 +1263,22 @@ unsafe fn play_game(mut file_name: *const i8,
         if !(repeat > 0 as i32) { break ; }
     }
     if !move_file.is_null() { fclose(move_file); };
+}
+
+pub unsafe fn set_names_from_skills() {
+    let mut black_name = 0 as *const i8;
+    if skill[0 as i32 as usize] == 0 as i32 {
+        black_name = b"Player\x00" as *const u8 as *const i8
+    } else {
+        black_name = b"Zebra\x00" as *const u8 as *const i8
+    }
+    let mut white_name = 0 as *const i8;
+    if skill[2 as i32 as usize] == 0 as i32 {
+        white_name = b"Player\x00" as *const u8 as *const i8
+    } else {
+        white_name = b"Zebra\x00" as *const u8 as *const i8
+    }
+    set_names(black_name, white_name);
 }
 /*
    ANALYZE_GAME
