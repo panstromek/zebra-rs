@@ -5,11 +5,6 @@ use crate::src::unflip::flip_stack;
 use crate::src::hash::{hash_stored2, hash2, hash_stored1, hash1, hash_put_value2, hash_put_value1};
 use crate::src::search::sorted_move_order;
 
-extern "C" {
-    #[no_mangle]
-    pub fn get_move(side_to_move: i32) -> i32;
-}
-
 pub static mut disks_played: i32 = 0;
 
 pub static mut move_count: [i32; 64] = [0; 64];

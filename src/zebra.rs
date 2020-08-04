@@ -987,8 +987,7 @@ unsafe fn play_game(mut file_name: *const i8,
                                 print_move_alternatives(side_to_move);
                             }
                         }
-                        puts(b"\x00" as *const u8 as *const i8);
-                        curr_move = get_move(side_to_move)
+                        curr_move = ui_get_move(side_to_move);
                     } else {
                         start_move(player_time[side_to_move as usize],
                                    player_increment[side_to_move as usize],
@@ -1026,8 +1025,7 @@ unsafe fn play_game(mut file_name: *const i8,
                                side_to_move == rand_color &&
                                my_random() % rand_move_freq as i64 ==
                                    0 as i32 as i64 {
-                            puts(b"Engine override: Random move selected.\x00"
-                                     as *const u8 as *const i8);
+                            report_engine_override();
                             rand_color =
                                 0 as i32 + 2 as i32 -
                                     rand_color;
@@ -1084,9 +1082,7 @@ unsafe fn play_game(mut file_name: *const i8,
                         -(1 as i32)
                 }
                 if skill[side_to_move as usize] == 0 as i32 {
-                    puts(b"You must pass - please press Enter\x00" as
-                             *const u8 as *const i8);
-                    dumpch();
+                    get_pass();
                 }
             }
             side_to_move = 0 as i32 + 2 as i32 - side_to_move;
@@ -1173,6 +1169,29 @@ unsafe fn play_game(mut file_name: *const i8,
         if !(repeat > 0 as i32) { break ; }
     }
     if !move_file.is_null() { fclose(move_file); };
+}
+
+fn get_pass() {
+    unsafe {
+        puts(b"You must pass - please press Enter\x00" as
+            *const u8 as *const i8);
+        dumpch();
+    }
+}
+
+fn report_engine_override() {
+    unsafe {
+        puts(b"Engine override: Random move selected.\x00"
+            as *const u8 as *const i8);
+    }
+}
+
+pub fn ui_get_move(side_to_move: i32) -> i32 {
+    unsafe {
+        puts(b"\x00" as *const u8 as *const i8);
+        let mm = get_move(side_to_move);
+        mm
+    }
 }
 
 fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {
