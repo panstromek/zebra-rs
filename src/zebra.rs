@@ -966,11 +966,9 @@ unsafe fn play_game(mut file_name: *const i8,
 
                             report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                         }
-                        print_thor_matches(stdout, thor_max_games);
+                        print_out_thor_matches();
                     }
-                    display_board(stdout, board.as_mut_ptr(), side_to_move,
-                                  1 as i32, use_timer,
-                                  1 as i32);
+                    display_board_after_thor(side_to_move);
                 }
                 dump_position(side_to_move);
                 dump_game_score(side_to_move);
@@ -1097,24 +1095,18 @@ unsafe fn play_game(mut file_name: *const i8,
                 database_search(board.as_mut_ptr(), side_to_move);
                 thor_position_count = get_match_count();
                 let database_stop = get_real_timer();
-                total_search_time += database_stop - database_start;
-                printf(b"%d matching games  (%.3f s search time, %.3f s total)\n\x00"
-                           as *const u8 as *const i8,
-                       thor_position_count, database_stop - database_start,
-                       total_search_time);
+                let db_search_time = database_stop - database_start;
+                total_search_time += db_search_time;
+                report_some_thor_stats(total_search_time, thor_position_count, db_search_time);
                 if thor_position_count > 0 as i32 {
-                    printf(b"%d black wins,  %d draws,  %d white wins\n\x00"
-                               as *const u8 as *const i8,
-                           get_black_win_count(), get_draw_count(),
-                           get_white_win_count());
-                    printf(b"Median score %d-%d\n\x00" as *const u8 as
-                               *const i8, get_black_median_score(),
-                           64 as i32 - get_black_median_score());
-                    printf(b", average score %.2f-%.2f\n\x00" as *const u8 as
-                               *const i8, get_black_average_score(),
-                           64.0f64 - get_black_average_score());
+                    let black_win_count = get_black_win_count();
+                    let draw_count = get_draw_count();
+                    let white_win_count = get_white_win_count();
+                    let black_median_score = get_black_median_score();
+                    let black_average_score = get_black_average_score();
+                    report_some_thor_scores(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                 }
-                print_thor_matches(stdout, thor_max_games);
+                print_out_thor_matches();
             }
             set_times(floor(player_time[0 as i32 as usize]) as
                           i32,
@@ -1152,6 +1144,40 @@ unsafe fn play_game(mut file_name: *const i8,
         if !(repeat > 0 as i32) { break ; }
     }
     if !move_file.is_null() { fclose(move_file); };
+}
+
+fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
+    unsafe {
+        printf(b"%d black wins,  %d draws,  %d white wins\n\x00"
+                   as *const u8 as *const i8,
+               black_win_count, draw_count,
+               white_win_count);
+        printf(b"Median score %d-%d\n\x00" as *const u8 as
+                   *const i8, black_median_score,
+               64 as i32 - black_median_score);
+        printf(b", average score %.2f-%.2f\n\x00" as *const u8 as
+                   *const i8, black_average_score,
+               64.0f64 - black_average_score);
+    }
+}
+
+fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64) {
+    unsafe {
+        printf(b"%d matching games  (%.3f s search time, %.3f s total)\n\x00"
+                   as *const u8 as *const i8,
+               thor_position_count, db_search_time,
+               total_search_time);
+    }
+}
+
+unsafe fn display_board_after_thor(side_to_move: i32) {
+    display_board(stdout, board.as_mut_ptr(), side_to_move,
+                  1 as i32, use_timer,
+                  1 as i32);
+}
+
+unsafe fn print_out_thor_matches() {
+    print_thor_matches(stdout, thor_max_games);
 }
 
 unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &mut [i8; 121],
