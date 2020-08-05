@@ -40,4 +40,6 @@ extern "C" {
     pub fn toupper(_: i32) -> i32;
     #[no_mangle]
     pub fn strdup(_: *const i8) -> *mut i8;
+    #[no_mangle]
+    pub fn strchr(_: *const i8, _: i32) -> *mut i8;
 }

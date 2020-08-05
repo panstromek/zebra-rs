@@ -1,7 +1,7 @@
 use crate::src::game::{FILE, time_t, size_t};
 use crate::src::osfbook::__compar_fn_t;
 use crate::src::getcoeff::gzFile;
-pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs, time, strlen, tolower, toupper, strdup};
+pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs, time, strlen, tolower, toupper, strdup, strchr};
 
 extern "C" {
     pub type _IO_wide_data;
@@ -43,8 +43,6 @@ extern "C" {
     pub fn atoi(__nptr: *const i8) -> i32;
     #[no_mangle]
     pub fn exit(_: i32) -> !;
-    #[no_mangle]
-    pub fn strchr(_: *const i8, _: i32) -> *mut i8;
     #[no_mangle]
     pub fn strstr(_: *const i8, _: *const i8)
                   -> *mut i8;
