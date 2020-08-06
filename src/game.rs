@@ -89,19 +89,53 @@ unsafe fn setup_file_based_game(mut file_name: *const i8, mut side_to_move: *mut
     setup_game_board_from_file(file_name, side_to_move);
     setup_game_finalize(side_to_move);
 }
+struct LibcBoardFileSource {
+    stream: *mut FILE
+}
+trait BoardSource {
+    fn fill_board_buffer(&mut self, buffer: &mut [i8; 70]);
+    fn fill_buffer_with_side_to_move(&mut self, buffer: &mut [i8; 70]);
+}
+impl LibcBoardFileSource {
+    unsafe fn open(file_name: *const i8) -> Option<LibcBoardFileSource> {
+        let stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
+        if stream.is_null() {
+            return None;
+        }
+        Some(LibcBoardFileSource {
+            stream
+        })
+    }
+}
+impl BoardSource for LibcBoardFileSource {
+    // These methods and this whole scheme of loading the data honestly doesn't make any sense
+    // but I don't want to refactor it for the better at the moment.
+    fn fill_board_buffer(&mut self, buffer: &mut [i8; 70]) {
+        unsafe {
+            fgets(buffer.as_mut_ptr(), 70 as i32, self.stream);
+        }
+    }
 
+    fn fill_buffer_with_side_to_move(&mut self, buffer: &mut [i8; 70]) {
+        unsafe {
+            fgets(buffer.as_mut_ptr(), 10 as i32, self.stream);
+        }
+    }
+}
 unsafe fn setup_game_board_from_file(mut file_name: *const i8, side_to_move: *mut i32) {
     assert!(!file_name.is_null());
-    let mut stream =
-        fopen(file_name, b"r\x00" as *const u8 as *const i8);
-    if stream.is_null() {
-        fatal_error(b"%s \'%s\'\n\x00" as *const u8 as
-                        *const i8,
-                    b"Cannot open game file\x00" as *const u8 as
-                        *const i8, file_name);
-    }
-    let mut buffer: [i8; 65] = [0; 65];
-    fgets(buffer.as_mut_ptr(), 70 as i32, stream);
+    let mut file_source = match LibcBoardFileSource::open(file_name) {
+        Some(s) => s,
+        None => {
+            fatal_error(b"%s \'%s\'\n\x00" as *const u8 as
+                            *const i8,
+                        b"Cannot open game file\x00" as *const u8 as
+                            *const i8, file_name);
+        },
+    };
+
+    let mut buffer: [i8; 70] = [0; 70];
+    file_source.fill_board_buffer(&mut buffer);
     let mut token = 0 as i32;
     let mut i = 1 as i32;
     while i <= 8 as i32 {
@@ -127,7 +161,7 @@ unsafe fn setup_game_board_from_file(mut file_name: *const i8, side_to_move: *mu
         }
         i += 1
     }
-    fgets(buffer.as_mut_ptr(), 10 as i32, stream);
+    file_source.fill_buffer_with_side_to_move(&mut buffer);
     if buffer[0 as i32 as usize] as i32 == 'B' as i32 {
         *side_to_move = 0 as i32
     } else if buffer[0 as i32 as usize] as i32 ==
