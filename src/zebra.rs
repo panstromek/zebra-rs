@@ -887,6 +887,12 @@ unsafe fn play_game(mut file_name: *const i8,
                     mut move_string: *const i8,
                     mut move_file_name: *const i8,
                     mut repeat: i32, log_file_name_: *mut i8) {
+    let mut move_file = LibcFileMoveSource::open(move_file_name);
+
+    engine_play_game(file_name, move_string, repeat, log_file_name_, move_file)
+}
+
+unsafe fn engine_play_game(mut file_name: *const i8, mut move_string: *const i8, mut repeat: i32, log_file_name_: *mut i8, mut move_file: Option<LibcFileMoveSource>) {
     let mut eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
                        res: WON_POSITION,
@@ -902,7 +908,6 @@ unsafe fn play_game(mut file_name: *const i8,
     let mut provided_move: [i32; 61] = [0; 61];
     let mut move_vec: [i8; 121] = [0; 121];
     let mut line_buffer: [i8; 1000] = [0; 1000];
-    let mut move_file = LibcFileMoveSource::open(move_file_name);
 
     loop  {
         /* Decode the predefined move sequence */
@@ -1155,8 +1160,7 @@ unsafe fn play_game(mut file_name: *const i8,
                           i32,
                       floor(player_time[2 as i32 as usize]) as
                           i32);
-            display_board(stdout, board.as_mut_ptr(), side_to_move,
-                          1 as i32, use_timer, 1 as i32);
+            display_board_after_thor(side_to_move);
         }
         adjust_counter(&mut total_nodes);
         let node_val = counter_value(&mut total_nodes);
@@ -1188,10 +1192,6 @@ unsafe fn play_game(mut file_name: *const i8,
     }
 }
 
-unsafe fn fill_line_buffer(mut line_buffer: &mut [i8; 1000], move_file: *mut _IO_FILE) {
-
-}
-
 fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
     unsafe {
         printf(b"%d black wins,  %d draws,  %d white wins\n\x00"
@@ -1217,9 +1217,7 @@ fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_s
 }
 
 unsafe fn display_board_after_thor(side_to_move: i32) {
-    display_board(stdout, board.as_mut_ptr(), side_to_move,
-                  1 as i32, use_timer,
-                  1 as i32);
+    display_board(stdout, board.as_mut_ptr(), side_to_move, 1 as i32, use_timer, 1 as i32);
 }
 
 unsafe fn print_out_thor_matches() {
