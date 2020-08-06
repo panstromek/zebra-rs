@@ -24,6 +24,7 @@ use crate::{
         myrandom::{my_random, my_srandom}
     }
 };
+use std::ptr::null_mut;
 
 pub type _IO_wide_data = std::ffi::c_void;
 pub type _IO_codecvt = std::ffi::c_void;
@@ -825,6 +826,59 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8)
            color_score[2 as i32 as usize]);
     puts(b"\x00" as *const u8 as *const i8);
 }
+
+/// This trait is unsafe because line buffer is used as a c-style string later
+/// so this function needs to ensure that the line_buffer contains at
+/// least one null character (there's definitely better way to do this, but I
+/// don't want to deviate from the original source for first implementation)
+unsafe trait InitialMoveSource {
+    fn fill_line_buffer(&mut self, line_buffer: &mut [i8; 1000]);
+}
+
+impl Drop for LibcFileMoveSource {
+    fn drop(&mut self) {
+        if !self.move_file.is_null() {
+            unsafe { fclose(self.move_file); }
+        };
+    }
+}
+
+unsafe impl InitialMoveSource for LibcFileMoveSource {
+    fn fill_line_buffer(&mut self, line_buffer: &mut [i8; 1000]) {
+        if !self.move_file.is_null() {
+            unsafe {
+                let mut newline_pos = 0 as *mut i8;
+                fgets(line_buffer.as_mut_ptr(),
+                      ::std::mem::size_of::<[i8; 1000]>() as
+                          u64 as i32,self.move_file);
+                newline_pos = strchr(line_buffer.as_mut_ptr(), '\n' as i32);
+                if !newline_pos.is_null() {
+                    *newline_pos = 0 as i32 as i8
+                }
+            }
+        }
+    }
+}
+
+struct LibcFileMoveSource {
+    move_file: *mut FILE
+}
+
+impl LibcFileMoveSource {
+    pub unsafe fn open(move_file_name: *const i8) -> Option<LibcFileMoveSource> {
+        let move_file = if !move_file_name.is_null() {
+            fopen(move_file_name, b"r\x00" as *const u8 as *const i8)
+        } else {
+            null_mut()
+        };
+        if move_file.is_null() {
+            return None;
+        }
+        Some(LibcFileMoveSource {
+            move_file
+        })
+    }
+}
 /*
    PLAY_GAME
    Administrates the game between two players, humans or computers.
@@ -848,23 +902,12 @@ unsafe fn play_game(mut file_name: *const i8,
     let mut provided_move: [i32; 61] = [0; 61];
     let mut move_vec: [i8; 121] = [0; 121];
     let mut line_buffer: [i8; 1000] = [0; 1000];
-    let move_file = if !move_file_name.is_null() {
-        fopen(move_file_name, b"r\x00" as *const u8 as *const i8)
-    } else {
-        0 as *mut FILE
-    };
+    let mut move_file = LibcFileMoveSource::open(move_file_name);
 
     loop  {
         /* Decode the predefined move sequence */
-        if !move_file.is_null() {
-            let mut newline_pos = 0 as *mut i8;
-            fgets(line_buffer.as_mut_ptr(),
-                  ::std::mem::size_of::<[i8; 1000]>() as
-                      u64 as i32, move_file);
-            newline_pos = strchr(line_buffer.as_mut_ptr(), '\n' as i32);
-            if !newline_pos.is_null() {
-                *newline_pos = 0 as i32 as i8
-            }
+        if let Some(ref mut move_file) = &mut move_file {
+            move_file.fill_line_buffer(&mut line_buffer);
             move_string = line_buffer.as_mut_ptr()
         }
         let mut provided_move_count = 0 as i32;
@@ -1143,7 +1186,10 @@ unsafe fn play_game(mut file_name: *const i8,
         toggle_abort_check(1 as i32);
         if !(repeat > 0 as i32) { break ; }
     }
-    if !move_file.is_null() { fclose(move_file); };
+}
+
+unsafe fn fill_line_buffer(mut line_buffer: &mut [i8; 1000], move_file: *mut _IO_FILE) {
+
 }
 
 fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
