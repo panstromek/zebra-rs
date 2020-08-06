@@ -889,10 +889,16 @@ unsafe fn play_game(mut file_name: *const i8,
                     mut repeat: i32, log_file_name_: *mut i8) {
     let mut move_file = LibcFileMoveSource::open(move_file_name);
 
-    engine_play_game(file_name, move_string, repeat, log_file_name_, move_file)
+    engine_play_game::<LibcFrontend, _>(file_name, move_string, repeat, log_file_name_, move_file)
 }
+struct LibcFrontend {}
+trait ZebraFrontend {}
+impl ZebraFrontend for LibcFrontend {}
 
-unsafe fn engine_play_game(mut file_name: *const i8, mut move_string: *const i8, mut repeat: i32, log_file_name_: *mut i8, mut move_file: Option<LibcFileMoveSource>) {
+unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
+    mut file_name: *const i8, mut move_string: *const i8,
+    mut repeat: i32, log_file_name_: *mut i8,
+    mut move_file: Option<Source>) {
     let mut eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
                        res: WON_POSITION,
