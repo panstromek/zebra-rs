@@ -71,31 +71,6 @@ pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 pub type time_t = __time_t;
 
-/* Local variables */
-static mut slack: f64 = 0.25f64;
-static mut dev_bonus: f64 = 0.0f64;
-static mut low_thresh: i32 = 0 as i32;
-static mut high_thresh: i32 = 0 as i32;
-static mut rand_move_freq: i32 = 0 as i32;
-static mut tournament: i32 = 0 as i32;
-static mut tournament_levels: i32 = 0;
-static mut deviation_depth: i32 = 0;
-static mut cutoff_empty: i32 = 0;
-static mut one_position_only: i32 = 0 as i32;
-static mut use_timer: i32 = 0 as i32;
-static mut only_analyze: i32 = 0 as i32;
-static mut thor_max_games: i32 = 0;
-static mut tournament_skill: [[i32; 3]; 8] = [[0; 3]; 8];
-static mut wld_skill: [i32; 3] = [0; 3];
-static mut exact_skill: [i32; 3] = [0; 3];
-static mut player_time: [f64; 3] = [0.; 3];
-static mut player_increment: [f64; 3] = [0.; 3];
-static mut skill: [i32; 3] = [0; 3];
-static mut wait: i32 = 0;
-static mut use_book: i32 = 1 as i32;
-static mut wld_only: i32 = 0 as i32;
-static mut use_learning: i32 = 0;
-static mut use_thor: i32 = 0;
 /* ------------------- Function prototypes ---------------------- */
 /* Administrative routines */
 /* ---------------------- Functions ------------------------ */
@@ -827,14 +802,6 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8)
     puts(b"\x00" as *const u8 as *const i8);
 }
 
-/// This trait is unsafe because line buffer is used as a c-style string later
-/// so this function needs to ensure that the line_buffer contains at
-/// least one null character (there's definitely better way to do this, but I
-/// don't want to deviate from the original source for first implementation)
-unsafe trait InitialMoveSource {
-    fn fill_line_buffer(&mut self, line_buffer: &mut [i8; 1000]);
-}
-
 impl Drop for LibcFileMoveSource {
     fn drop(&mut self) {
         if !self.move_file.is_null() {
@@ -891,9 +858,6 @@ unsafe fn play_game(mut file_name: *const i8,
 
     engine_play_game::<LibcFrontend, _>(file_name, move_string, repeat, log_file_name_, move_file)
 }
-struct LibcFrontend {}
-trait ZebraFrontend {}
-impl ZebraFrontend for LibcFrontend {}
 
 unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
     mut file_name: *const i8, mut move_string: *const i8,
@@ -961,7 +925,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
         clear_stored_game();
         if echo != 0 && use_book != 0 {
             let slack_ = slack;
-            report_book_randomness(slack_);
+            ZF::report_book_randomness(slack_);
         }
         set_slack(floor(slack * 128.0f64) as i32);
         toggle_human_openings(0 as i32);
@@ -971,13 +935,13 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
         reset_book_search();
         set_deviation_value(low_thresh, high_thresh, dev_bonus);
         if use_thor != 0 {
-            load_thor_files();
+            ZF::load_thor_files();
         }
         set_names_from_skills();
         set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
         set_evals(0.0f64, 0.0f64);
-        clear_moves();
+        ZF::clear_moves();
         move_vec[0 as i32 as usize] = 0 as i32 as i8;
         // these are not used because their usage was disabled by preprocessor
         // byt for deterministic testing, we need to call random the same way, so we keep them.
@@ -1001,7 +965,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
                                   i32);
                     let opening_name = find_opening_name();
                     if !opening_name.is_null() {
-                        report_opening_name(opening_name);
+                        ZF::report_opening_name(opening_name);
                     }
                     if use_thor != 0 {
                         let database_start = get_real_timer();
@@ -1010,7 +974,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
                         let database_stop = get_real_timer();
                         let database_time = database_stop - database_start;
                         total_search_time += database_time;
-                        report_thor_matching_games_stats(total_search_time, thor_position_count, database_time);
+                        ZF::report_thor_matching_games_stats(total_search_time, thor_position_count, database_time);
                         if thor_position_count > 0 as i32 {
                             let black_win_count = get_black_win_count();
                             let draw_count = get_draw_count();
@@ -1018,11 +982,11 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
                             let black_median_score = get_black_median_score();
                             let black_average_score = get_black_average_score();
 
-                            report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
+                            ZF::report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                         }
-                        print_out_thor_matches();
+                        ZF::print_out_thor_matches();
                     }
-                    display_board_after_thor(side_to_move);
+                    ZF::display_board_after_thor(side_to_move);
                 }
                 dump_position(side_to_move);
                 dump_game_score(side_to_move);
@@ -1039,7 +1003,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
                                 print_move_alternatives(side_to_move);
                             }
                         }
-                        curr_move = ui_get_move(side_to_move);
+                        curr_move = ZF::ui_get_move(side_to_move);
                     } else {
                         start_move(player_time[side_to_move as usize],
                                    player_increment[side_to_move as usize],
@@ -1077,7 +1041,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
                                side_to_move == rand_color &&
                                my_random() % rand_move_freq as i64 ==
                                    0 as i32 as i64 {
-                            report_engine_override();
+                            ZF::report_engine_override();
                             rand_color =
                                 0 as i32 + 2 as i32 -
                                     rand_color;
@@ -1108,7 +1072,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
                         move_stop - move_start
                 }
                 store_move(disks_played, curr_move);
-                push_move(&mut move_vec, curr_move, disks_played);
+                ZF::push_move(&mut move_vec, curr_move, disks_played);
                 make_move(side_to_move, curr_move, 1 as i32);
                 if side_to_move == 0 as i32 {
                     black_moves[score_sheet_row as usize] = curr_move
@@ -1128,7 +1092,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
                         -(1 as i32)
                 }
                 if skill[side_to_move as usize] == 0 as i32 {
-                    get_pass();
+                    ZF::get_pass();
                 }
             }
             side_to_move = 0 as i32 + 2 as i32 - side_to_move;
@@ -1137,7 +1101,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
         if echo == 0 && one_position_only == 0 {
             let black_level = skill[0 as i32 as usize];
             let white_level = skill[2 as i32 as usize];
-            report_skill_levels(black_level, white_level);
+            ZF::report_skill_levels(black_level, white_level);
         }
         if side_to_move == 0 as i32 { score_sheet_row += 1 }
         dump_game_score(side_to_move);
@@ -1151,22 +1115,22 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
                 let database_stop = get_real_timer();
                 let db_search_time = database_stop - database_start;
                 total_search_time += db_search_time;
-                report_some_thor_stats(total_search_time, thor_position_count, db_search_time);
+                ZF::report_some_thor_stats(total_search_time, thor_position_count, db_search_time);
                 if thor_position_count > 0 as i32 {
                     let black_win_count = get_black_win_count();
                     let draw_count = get_draw_count();
                     let white_win_count = get_white_win_count();
                     let black_median_score = get_black_median_score();
                     let black_average_score = get_black_average_score();
-                    report_some_thor_scores(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
+                    ZF::report_some_thor_scores(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                 }
-                print_out_thor_matches();
+                ZF::print_out_thor_matches();
             }
             set_times(floor(player_time[0 as i32 as usize]) as
                           i32,
                       floor(player_time[2 as i32 as usize]) as
                           i32);
-            display_board_after_thor(side_to_move);
+            ZF::display_board_after_thor(side_to_move);
         }
         adjust_counter(&mut total_nodes);
         let node_val = counter_value(&mut total_nodes);
@@ -1175,10 +1139,10 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
         let black_disc_count = disc_count(0 as i32);
         let white_disc_count = disc_count(2 as i32);
         let total_time_ = total_time;
-        report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
+        ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
         if !log_file_name_.is_null() && one_position_only == 0 {
-            log_game_ending(log_file_name_,
+            ZF::log_game_ending(log_file_name_,
                             &mut move_vec,
                             disc_count(0 as i32),
                             disc_count(2 as i32))
@@ -1198,235 +1162,229 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
     }
 }
 
-fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
-    unsafe {
-        printf(b"%d black wins,  %d draws,  %d white wins\n\x00"
-                   as *const u8 as *const i8,
-               black_win_count, draw_count,
-               white_win_count);
-        printf(b"Median score %d-%d\n\x00" as *const u8 as
-                   *const i8, black_median_score,
-               64 as i32 - black_median_score);
-        printf(b", average score %.2f-%.2f\n\x00" as *const u8 as
-                   *const i8, black_average_score,
-               64.0f64 - black_average_score);
+trait ZebraFrontend {
+    fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
+    fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64);
+    fn display_board_after_thor(side_to_move: i32);
+    fn print_out_thor_matches();
+    unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &mut [i8; 121], first_side_to_move: i32, second_side_to_move: i32);
+    unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32);
+    fn get_pass();
+    fn report_engine_override();
+    fn ui_get_move(side_to_move: i32) -> i32;
+    fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64);
+    fn report_skill_levels(black_level: i32, white_level: i32);
+    fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64);
+    unsafe fn clear_moves();
+    fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
+    unsafe fn report_opening_name(opening_name: *const i8);
+    fn report_book_randomness(slack_: f64);
+    unsafe fn load_thor_files();
+}
+
+struct LibcFrontend {}
+impl ZebraFrontend for LibcFrontend {
+
+    fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
+        unsafe {
+            printf(b"%d black wins,  %d draws,  %d white wins\n\x00"
+                       as *const u8 as *const i8,
+                   black_win_count, draw_count,
+                   white_win_count);
+            printf(b"Median score %d-%d\n\x00" as *const u8 as
+                       *const i8, black_median_score,
+                   64 as i32 - black_median_score);
+            printf(b", average score %.2f-%.2f\n\x00" as *const u8 as
+                       *const i8, black_average_score,
+                   64.0f64 - black_average_score);
+        }
     }
-}
-
-fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64) {
-    unsafe {
-        printf(b"%d matching games  (%.3f s search time, %.3f s total)\n\x00"
-                   as *const u8 as *const i8,
-               thor_position_count, db_search_time,
-               total_search_time);
+    fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64) {
+        unsafe {
+            printf(b"%d matching games  (%.3f s search time, %.3f s total)\n\x00"
+                       as *const u8 as *const i8,
+                   thor_position_count, db_search_time,
+                   total_search_time);
+        }
     }
-}
-
-unsafe fn display_board_after_thor(side_to_move: i32) {
-    display_board(stdout, board.as_mut_ptr(), side_to_move, 1 as i32, use_timer, 1 as i32);
-}
-
-unsafe fn print_out_thor_matches() {
-    print_thor_matches(stdout, thor_max_games);
-}
-
-unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &mut [i8; 121],
-                          first_side_to_move: i32, second_side_to_move: i32) {
-    let log_file = fopen(log_file_name_,
-              b"a\x00" as *const u8 as *const i8);
-
-    if !log_file.is_null() {
-        let mut timer = time(0 as *mut time_t);
-        fprintf(log_file,
-                b"# %s#     %2d - %2d\n\x00" as *const u8 as
-                    *const i8, ctime(&mut timer),
-                first_side_to_move,
-                second_side_to_move);
-        fprintf(log_file,
-                b"%s\n\x00" as *const u8 as *const i8,
-                move_vec.as_mut_ptr());
-        fclose(log_file);
+    fn display_board_after_thor(side_to_move: i32) {
+        unsafe { display_board(stdout, board.as_mut_ptr(), side_to_move, 1 as i32, use_timer, 1 as i32); }
     }
-}
-
-unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32) {
-    // TODO replace offset with index
-    unsafe {
-        sprintf(move_vec.as_mut_ptr().offset((2 as i32 *
-            disks_played_) as
-            isize),
-                b"%c%c\x00" as *const u8 as *const i8,
-                'a' as i32 + curr_move % 10 as i32 -
-                    1 as i32,
-                '0' as i32 + curr_move / 10 as i32);
+    fn print_out_thor_matches() {
+        unsafe { print_thor_matches(stdout, thor_max_games); }
     }
-}
+    unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &mut [i8; 121],
+                              first_side_to_move: i32, second_side_to_move: i32) {
+        let log_file = fopen(log_file_name_,
+                             b"a\x00" as *const u8 as *const i8);
 
-fn get_pass() {
-    unsafe {
-        puts(b"You must pass - please press Enter\x00" as
-            *const u8 as *const i8);
-        dumpch();
+        if !log_file.is_null() {
+            let mut timer = time(0 as *mut time_t);
+            fprintf(log_file,
+                    b"# %s#     %2d - %2d\n\x00" as *const u8 as
+                        *const i8, ctime(&mut timer),
+                    first_side_to_move,
+                    second_side_to_move);
+            fprintf(log_file,
+                    b"%s\n\x00" as *const u8 as *const i8,
+                    move_vec.as_mut_ptr());
+            fclose(log_file);
+        }
     }
-}
-
-fn report_engine_override() {
-    unsafe {
-        puts(b"Engine override: Random move selected.\x00"
-            as *const u8 as *const i8);
+    unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32) {
+        // TODO replace offset with index
+        unsafe {
+            sprintf(move_vec.as_mut_ptr().offset((2 as i32 *
+                disks_played_) as
+                isize),
+                    b"%c%c\x00" as *const u8 as *const i8,
+                    'a' as i32 + curr_move % 10 as i32 -
+                        1 as i32,
+                    '0' as i32 + curr_move / 10 as i32);
+        }
     }
-}
-
-pub fn ui_get_move(side_to_move: i32) -> i32 {
-    unsafe {
-        puts(b"\x00" as *const u8 as *const i8);
-        let mm = get_move(side_to_move);
-        mm
+    fn get_pass() {
+        unsafe {
+            puts(b"You must pass - please press Enter\x00" as
+                *const u8 as *const i8);
+            dumpch();
+        }
     }
-}
-
-fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {
-    unsafe {
-        printf(b"\nBlack: %d   White: %d\n\x00" as *const u8 as
-                   *const i8, black_disc_count,
-               white_disc_count);
-        printf(b"Nodes searched:        %-10.0f\n\x00" as *const u8 as
-                   *const i8, node_val);
-        printf(b"Positions evaluated:   %-10.0f\n\x00" as *const u8 as
-                   *const i8, eval_val);
-
-        printf(b"Total time: %.1f s\n\x00" as *const u8 as
-                   *const i8, total_time_);
+    fn report_engine_override() {
+        unsafe {
+            puts(b"Engine override: Random move selected.\x00"
+                as *const u8 as *const i8);
+        }
     }
-}
-
-fn report_skill_levels(black_level: i32, white_level: i32) {
-    unsafe {
-        printf(b"\n\x00" as *const u8 as *const i8);
-        printf(b"Black level: %d\n\x00" as *const u8 as *const i8, black_level);
-        printf(b"White level: %d\n\x00" as *const u8 as *const i8, white_level);
+    fn ui_get_move(side_to_move: i32) -> i32 {
+        unsafe {
+            puts(b"\x00" as *const u8 as *const i8);
+            let mm = get_move(side_to_move);
+            mm
+        }
     }
-}
+    fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {
+        unsafe {
+            printf(b"\nBlack: %d   White: %d\n\x00" as *const u8 as
+                       *const i8, black_disc_count,
+                   white_disc_count);
+            printf(b"Nodes searched:        %-10.0f\n\x00" as *const u8 as
+                       *const i8, node_val);
+            printf(b"Positions evaluated:   %-10.0f\n\x00" as *const u8 as
+                       *const i8, eval_val);
 
-fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64) {
-    unsafe {
-        printf(b"%d matching games  (%.3f s search time, %.3f s total)\n\x00"
-                   as *const u8 as *const i8,
-               thor_position_count,
-               database_time,
-               total_search_time);
+            printf(b"Total time: %.1f s\n\x00" as *const u8 as
+                       *const i8, total_time_);
+        }
     }
-}
-
-pub unsafe fn clear_moves() {
-    let mut i = 0 as i32;
-    while i < 60 as i32 {
-        black_moves[i as usize] = -(1 as i32);
-        white_moves[i as usize] = -(1 as i32);
-        i += 1
+    fn report_skill_levels(black_level: i32, white_level: i32) {
+        unsafe {
+            printf(b"\n\x00" as *const u8 as *const i8);
+            printf(b"Black level: %d\n\x00" as *const u8 as *const i8, black_level);
+            printf(b"White level: %d\n\x00" as *const u8 as *const i8, white_level);
+        }
     }
-}
-
-pub fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
-    unsafe {
-        printf(b"%d black wins, %d draws, %d white wins\n\x00"
-                   as *const u8 as *const i8,
-               black_win_count, draw_count,
-               white_win_count);
-    printf(b"Median score %d-%d\x00" as *const u8 as
-               *const i8,
-           black_median_score,
-           64 as i32 -
-               black_median_score);
-    printf(b", average score %.2f-%.2f\n\x00" as
-               *const u8 as *const i8,
-           black_average_score,
-           64.0f64 - black_average_score);
+    fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64) {
+        unsafe {
+            printf(b"%d matching games  (%.3f s search time, %.3f s total)\n\x00"
+                       as *const u8 as *const i8,
+                   thor_position_count,
+                   database_time,
+                   total_search_time);
+        }
     }
-}
-
-pub unsafe fn report_opening_name(opening_name: *const i8) {
-    printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8, opening_name);
-}
-
-pub fn report_book_randomness(slack_: f64) {
-    unsafe { printf(b"Book randomness: %.2f disks\n\x00" as *const u8 as *const i8, slack_); }
-}
-
-unsafe fn load_thor_files() {
-    /* No error checking done as it's only for testing purposes */
-    let database_start = get_real_timer();
-    read_player_database(b"thor\\wthor.jou\x00" as *const u8 as
-        *const i8);
-    read_tournament_database(b"thor\\wthor.trn\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_2001.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_2000.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1999.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1998.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1997.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1996.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1995.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1994.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1993.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1992.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1991.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1990.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1989.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1988.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1987.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1986.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1985.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1984.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1983.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1982.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1981.wtb\x00" as *const u8 as
-        *const i8);
-    read_game_database(b"thor\\wth_1980.wtb\x00" as *const u8 as
-        *const i8);
-    let database_stop = get_real_timer();
-    printf(b"Loaded %d games in %.3f s.\n\x00" as *const u8 as
-               *const i8, get_total_game_count(),
-           database_stop - database_start);
-    printf(b"Each Thor game occupies %d bytes.\n\x00" as *const u8 as
-               *const i8, get_thor_game_size());
-}
-
-pub unsafe fn set_names_from_skills() {
-    let mut black_name = 0 as *const i8;
-    if skill[0 as i32 as usize] == 0 as i32 {
-        black_name = b"Player\x00" as *const u8 as *const i8
-    } else {
-        black_name = b"Zebra\x00" as *const u8 as *const i8
+    unsafe fn clear_moves() {
+        let mut i = 0 as i32;
+        while i < 60 as i32 {
+            black_moves[i as usize] = -(1 as i32);
+            white_moves[i as usize] = -(1 as i32);
+            i += 1
+        }
     }
-    let mut white_name = 0 as *const i8;
-    if skill[2 as i32 as usize] == 0 as i32 {
-        white_name = b"Player\x00" as *const u8 as *const i8
-    } else {
-        white_name = b"Zebra\x00" as *const u8 as *const i8
+    fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
+        unsafe {
+            printf(b"%d black wins, %d draws, %d white wins\n\x00"
+                       as *const u8 as *const i8,
+                   black_win_count, draw_count,
+                   white_win_count);
+            printf(b"Median score %d-%d\x00" as *const u8 as
+                       *const i8,
+                   black_median_score,
+                   64 as i32 -
+                       black_median_score);
+            printf(b", average score %.2f-%.2f\n\x00" as
+                       *const u8 as *const i8,
+                   black_average_score,
+                   64.0f64 - black_average_score);
+        }
     }
-    set_names(black_name, white_name);
+    unsafe fn report_opening_name(opening_name: *const i8) {
+        printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8, opening_name);
+    }
+    fn report_book_randomness(slack_: f64) {
+        unsafe { printf(b"Book randomness: %.2f disks\n\x00" as *const u8 as *const i8, slack_); }
+    }
+    unsafe fn load_thor_files() {
+        /* No error checking done as it's only for testing purposes */
+        let database_start = get_real_timer();
+        read_player_database(b"thor\\wthor.jou\x00" as *const u8 as
+            *const i8);
+        read_tournament_database(b"thor\\wthor.trn\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_2001.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_2000.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1999.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1998.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1997.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1996.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1995.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1994.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1993.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1992.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1991.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1990.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1989.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1988.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1987.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1986.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1985.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1984.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1983.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1982.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1981.wtb\x00" as *const u8 as
+            *const i8);
+        read_game_database(b"thor\\wth_1980.wtb\x00" as *const u8 as
+            *const i8);
+        let database_stop = get_real_timer();
+        printf(b"Loaded %d games in %.3f s.\n\x00" as *const u8 as
+                   *const i8, get_total_game_count(),
+               database_stop - database_start);
+        printf(b"Each Thor game occupies %d bytes.\n\x00" as *const u8 as
+                   *const i8, get_thor_game_size());
+    }
+
 }
+
 /*
    ANALYZE_GAME
    Analyzes all positions arising from a given move sequence.
