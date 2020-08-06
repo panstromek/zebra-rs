@@ -44,7 +44,7 @@ pub type time_t = __time_t;
 /* not Windows CE */
 #[no_mangle]
 pub unsafe extern "C" fn fatal_error(mut format: *const i8,
-                                     mut args: ...) {
+                                     mut args: ...) -> ! {
     let mut stream = 0 as *mut FILE;
     let mut timer: time_t = 0;
     let mut arg_ptr: ::std::ffi::VaListImpl;
