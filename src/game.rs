@@ -1129,15 +1129,19 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     let mut max_depth: i32 = 0;
     let mut endgame_reached: i32 = 0;
     let mut offset: i32 = 0;
-    // struct LogFileHandler {}
-    let mut log_file = 0 as *mut FILE;
+    let mut logger = LogFileHandler {
+        log_file : 0 as *mut FILE
+    };
+
     if use_log_file != 0 {
-        log_file =
+        logger.log_file =
             fopen(log_file_path.as_mut_ptr(),
                   b"a\x00" as *const u8 as *const i8)
     }
-    if !log_file.is_null() {
-        display_board(log_file, board.as_mut_ptr(), side_to_move,
+    if !logger.log_file.is_null() {
+        let board_ = &mut board;
+        let side_to_move_ = side_to_move;
+        display_board(logger.log_file, board_.as_mut_ptr(), side_to_move_,
                       0 as i32, 0 as i32, 0 as i32);
     }
     /* Initialize various components of the move system */
@@ -1149,16 +1153,16 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     generate_all(side_to_move);
     determine_hash_values(side_to_move, board.as_mut_ptr());
     calculate_perturbation();
-    if !log_file.is_null() {
+    if !logger.log_file.is_null() {
         let moves_generated = move_count[disks_played as usize];
         let move_list_for_disks_played = move_list[disks_played as usize];
 
-        fprintf(log_file, b"%d %s: \x00" as *const u8 as *const i8,
+        fprintf(logger.log_file, b"%d %s: \x00" as *const u8 as *const i8,
                 moves_generated,
                 b"moves generated\x00" as *const u8 as *const i8);
         i = 0 as i32;
         while i < moves_generated {
-            fprintf(log_file,
+            fprintf(logger.log_file,
                     b"%c%c \x00" as *const u8 as *const i8,
                     'a' as i32 +
                         move_list_for_disks_played[i as usize] %
@@ -1168,7 +1172,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                             10 as i32);
             i += 1
         }
-        fputs(b"\n\x00" as *const u8 as *const i8, log_file);
+        fputs(b"\n\x00" as *const u8 as *const i8, logger.log_file);
     }
     if update_all != 0 {
         reset_counter(&mut evaluations);
@@ -1202,12 +1206,12 @@ pub unsafe fn compute_move(mut side_to_move: i32,
             display_status(stdout, 0 as i32);
             free(eval_str as *mut std::ffi::c_void);
         }
-        if !log_file.is_null() {
-            fprintf(log_file,
+        if !logger.log_file.is_null() {
+            fprintf(logger.log_file,
                     b"%s: %s\n\x00" as *const u8 as *const i8,
                     b"Best move\x00" as *const u8 as *const i8,
                     b"pass\x00" as *const u8 as *const i8);
-            fclose(log_file);
+            fclose(logger.log_file);
         }
         last_time_used = 0.0f64;
         clear_pv();
@@ -1243,8 +1247,8 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                                 10 as i32);
             display_status(stdout, 0 as i32);
         }
-        if !log_file.is_null() {
-            fprintf(log_file,
+        if !logger.log_file.is_null() {
+            fprintf(logger.log_file,
                     b"%s: %c%c  (%s)\n\x00" as *const u8 as
                         *const i8,
                     b"Best move\x00" as *const u8 as *const i8,
@@ -1257,7 +1261,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                                       usize][0 as i32 as usize] /
                             10 as i32,
                     b"forced\x00" as *const u8 as *const i8);
-            fclose(log_file);
+            fclose(logger.log_file);
         }
         last_time_used = 0.0f64;
         return move_list[disks_played as usize][0 as i32 as usize]
@@ -1587,8 +1591,8 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     /* Write the contents of the status buffer to the log file. */
     if move_type as u32 == BOOK_MOVE as i32 as u32 {
         let eval_str = produce_eval_text(*eval_info, 0 as i32);
-        if !log_file.is_null() {
-            fprintf(log_file,
+        if !logger.log_file.is_null() {
+            fprintf(logger.log_file,
                     b"%s: %c%c  %s\n\x00" as *const u8 as *const i8,
                     b"Move chosen\x00" as *const u8 as *const i8,
                     'a' as i32 + curr_move % 10 as i32 -
@@ -1596,16 +1600,16 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                     '0' as i32 + curr_move / 10 as i32, eval_str);
         }
         free(eval_str as *mut std::ffi::c_void);
-    } else if !log_file.is_null() {
-        display_status(log_file, 1 as i32);
+    } else if !logger.log_file.is_null() {
+        display_status(logger.log_file, 1 as i32);
     }
     /* Write the principal variation, if available, to the log file
        and, optionally, to screen. */
     if get_ponder_move() == 0 {
         complete_pv(side_to_move);
         if display_pv != 0 && echo != 0 { display_optimal_line(stdout); }
-        if !log_file.is_null() { display_optimal_line(log_file); }
+        if !logger.log_file.is_null() { display_optimal_line(logger.log_file); }
     }
-    if !log_file.is_null() { fclose(log_file); }
+    if !logger.log_file.is_null() { fclose(logger.log_file); }
     return curr_move;
 }
