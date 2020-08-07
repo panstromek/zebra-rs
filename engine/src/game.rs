@@ -380,3 +380,8 @@ pub unsafe fn generic_setup_game<Source: FileBoardSource>(mut file_name: *const 
         setup_file_based_game::<Source>(file_name, side_to_move);
     }
 }
+
+pub unsafe fn generic_game_init<Source: FileBoardSource>(mut file_name: *const i8, mut side_to_move: *mut i32) {
+    generic_setup_game::<Source>(file_name, side_to_move);
+    engine_game_init();
+}
