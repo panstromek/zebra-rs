@@ -47,7 +47,9 @@ pub unsafe fn global_setup(mut use_random: i32,
 trait Logger {
     fn on_global_setup();
 }
-struct LogFileHandler;
+struct LogFileHandler {
+    log_file: *mut FILE
+}
 impl Logger for LogFileHandler {
     fn on_global_setup() {
         unsafe { setup_log_file() }
@@ -1128,6 +1130,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     let mut max_depth: i32 = 0;
     let mut endgame_reached: i32 = 0;
     let mut offset: i32 = 0;
+    // struct LogFileHandler {}
     let mut log_file = 0 as *mut FILE;
     if use_log_file != 0 {
         log_file =
@@ -1148,18 +1151,21 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     determine_hash_values(side_to_move, board.as_mut_ptr());
     calculate_perturbation();
     if !log_file.is_null() {
+        let moves_generated = move_count[disks_played as usize];
+        let move_list_for_disks_played = move_list[disks_played as usize];
+
         fprintf(log_file, b"%d %s: \x00" as *const u8 as *const i8,
-                move_count[disks_played as usize],
+                moves_generated,
                 b"moves generated\x00" as *const u8 as *const i8);
         i = 0 as i32;
-        while i < move_count[disks_played as usize] {
+        while i < moves_generated {
             fprintf(log_file,
                     b"%c%c \x00" as *const u8 as *const i8,
                     'a' as i32 +
-                        move_list[disks_played as usize][i as usize] %
+                        move_list_for_disks_played[i as usize] %
                             10 as i32 - 1 as i32,
                     '0' as i32 +
-                        move_list[disks_played as usize][i as usize] /
+                        move_list_for_disks_played[i as usize] /
                             10 as i32);
             i += 1
         }
