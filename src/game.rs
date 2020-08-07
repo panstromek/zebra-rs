@@ -86,7 +86,16 @@ unsafe fn setup_game(mut file_name: *const i8,
 
 unsafe fn setup_file_based_game(mut file_name: *const i8, mut side_to_move: *mut i32) {
     setup_game_clear_board();
-    setup_game_board_from_file(file_name, side_to_move);
+    assert!(!file_name.is_null());
+    match LibcBoardFileSource::open(file_name) {
+        Some(file_source) => process_board_source(side_to_move, file_source),
+        None => {
+            fatal_error(b"%s \'%s\'\n\x00" as *const u8 as
+                            *const i8,
+                        b"Cannot open game file\x00" as *const u8 as
+                            *const i8, file_name);
+        },
+    };
     setup_game_finalize(side_to_move);
 }
 struct LibcBoardFileSource {
@@ -129,20 +138,6 @@ impl BoardSource for LibcBoardFileSource {
                        *const i8);
         }
     }
-}
-unsafe fn setup_game_board_from_file(mut file_name: *const i8, side_to_move: *mut i32) {
-    assert!(!file_name.is_null());
-    let mut file_source = match LibcBoardFileSource::open(file_name) {
-        Some(s) => s,
-        None => {
-            fatal_error(b"%s \'%s\'\n\x00" as *const u8 as
-                            *const i8,
-                        b"Cannot open game file\x00" as *const u8 as
-                            *const i8, file_name);
-        },
-    };
-
-    process_board_source(side_to_move, file_source)
 }
 /*
    GAME_INIT
