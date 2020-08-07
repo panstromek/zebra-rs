@@ -352,3 +352,23 @@ pub unsafe fn process_board_source<S: BoardSource>(side_to_move: *mut i32, mut f
                         *const i8);
     }
 }
+
+
+pub trait FileBoardSource : BoardSource {
+    unsafe fn open(file_name: *const i8) -> Option<Self> where Self: Sized;
+}
+
+pub unsafe fn setup_file_based_game<S: FileBoardSource>(mut file_name: *const i8, mut side_to_move: *mut i32) {
+    setup_game_clear_board();
+    assert!(!file_name.is_null());
+    match S::open(file_name) {
+        Some(file_source) => process_board_source(side_to_move, file_source),
+        None => {
+            fatal_error(b"%s \'%s\'\n\x00" as *const u8 as
+                            *const i8,
+                        b"Cannot open game file\x00" as *const u8 as
+                            *const i8, file_name);
+        },
+    };
+    setup_game_finalize(side_to_move);
+}
