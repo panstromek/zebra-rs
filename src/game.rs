@@ -1129,7 +1129,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     let mut max_depth: i32 = 0;
     let mut endgame_reached: i32 = 0;
     let mut offset: i32 = 0;
-    let mut logger = LogFileHandler {
+    let mut logger = &mut LogFileHandler {
         log_file : 0 as *mut FILE
     };
 
@@ -1141,8 +1141,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     if !logger.log_file.is_null() {
         let board_ = &mut board;
         let side_to_move_ = side_to_move;
-        display_board(logger.log_file, board_.as_mut_ptr(), side_to_move_,
-                      0 as i32, 0 as i32, 0 as i32);
+        log_board(logger, board_, side_to_move_);
     }
     /* Initialize various components of the move system */
     piece_count[0 as i32 as usize][disks_played as usize] =
@@ -1155,7 +1154,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     calculate_perturbation();
     if !logger.log_file.is_null() {
         let moves_generated = move_count[disks_played as usize];
-        let move_list_for_disks_played = move_list[disks_played as usize];
+        let move_list_for_disks_played = &move_list[disks_played as usize];
 
         fprintf(logger.log_file, b"%d %s: \x00" as *const u8 as *const i8,
                 moves_generated,
@@ -1207,11 +1206,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
             free(eval_str as *mut std::ffi::c_void);
         }
         if !logger.log_file.is_null() {
-            fprintf(logger.log_file,
-                    b"%s: %s\n\x00" as *const u8 as *const i8,
-                    b"Best move\x00" as *const u8 as *const i8,
-                    b"pass\x00" as *const u8 as *const i8);
-            fclose(logger.log_file);
+            log_best_move_pass(logger);
         }
         last_time_used = 0.0f64;
         clear_pv();
@@ -1248,20 +1243,8 @@ pub unsafe fn compute_move(mut side_to_move: i32,
             display_status(stdout, 0 as i32);
         }
         if !logger.log_file.is_null() {
-            fprintf(logger.log_file,
-                    b"%s: %c%c  (%s)\n\x00" as *const u8 as
-                        *const i8,
-                    b"Best move\x00" as *const u8 as *const i8,
-                    'a' as i32 +
-                        move_list[disks_played as
-                                      usize][0 as i32 as usize] %
-                            10 as i32 - 1 as i32,
-                    '0' as i32 +
-                        move_list[disks_played as
-                                      usize][0 as i32 as usize] /
-                            10 as i32,
-                    b"forced\x00" as *const u8 as *const i8);
-            fclose(logger.log_file);
+            let best_move = move_list[disks_played as usize][0 as i32 as usize];
+            log_best_move(logger, best_move);
         }
         last_time_used = 0.0f64;
         return move_list[disks_played as usize][0 as i32 as usize]
@@ -1592,24 +1575,73 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     if move_type as u32 == BOOK_MOVE as i32 as u32 {
         let eval_str = produce_eval_text(*eval_info, 0 as i32);
         if !logger.log_file.is_null() {
-            fprintf(logger.log_file,
-                    b"%s: %c%c  %s\n\x00" as *const u8 as *const i8,
-                    b"Move chosen\x00" as *const u8 as *const i8,
-                    'a' as i32 + curr_move % 10 as i32 -
-                        1 as i32,
-                    '0' as i32 + curr_move / 10 as i32, eval_str);
+            log_chosen_move(logger, curr_move, eval_str);
         }
         free(eval_str as *mut std::ffi::c_void);
     } else if !logger.log_file.is_null() {
-        display_status(logger.log_file, 1 as i32);
+        log_status(logger);
     }
     /* Write the principal variation, if available, to the log file
        and, optionally, to screen. */
     if get_ponder_move() == 0 {
         complete_pv(side_to_move);
         if display_pv != 0 && echo != 0 { display_optimal_line(stdout); }
-        if !logger.log_file.is_null() { display_optimal_line(logger.log_file); }
+        if !logger.log_file.is_null() { log_optimal_line(logger); }
     }
-    if !logger.log_file.is_null() { fclose(logger.log_file); }
+    close_logger(logger);
     return curr_move;
+}
+
+fn log_best_move_pass(mut logger: &mut LogFileHandler) {
+   unsafe{ fprintf(logger.log_file,
+            b"%s: %s\n\x00" as *const u8 as *const i8,
+            b"Best move\x00" as *const u8 as *const i8,
+            b"pass\x00" as *const u8 as *const i8);
+     fclose(logger.log_file);
+   }
+}
+
+fn log_best_move(mut logger: &mut LogFileHandler, best_move: i32) {
+    unsafe {
+        fprintf(logger.log_file,
+                b"%s: %c%c  (%s)\n\x00" as *const u8 as
+                    *const i8,
+                b"Best move\x00" as *const u8 as *const i8,
+                'a' as i32 +
+                    best_move %
+                        10 as i32 - 1 as i32,
+                '0' as i32 +
+                    best_move /
+                        10 as i32,
+                b"forced\x00" as *const u8 as *const i8);
+        fclose(logger.log_file);
+    }
+}
+
+unsafe fn log_chosen_move(mut logger: &mut LogFileHandler, mut curr_move: i32, eval_str: *mut i8) {
+    fprintf(logger.log_file,
+            b"%s: %c%c  %s\n\x00" as *const u8 as *const i8,
+            b"Move chosen\x00" as *const u8 as *const i8,
+            'a' as i32 + curr_move % 10 as i32 -
+                1 as i32,
+            '0' as i32 + curr_move / 10 as i32, eval_str);
+}
+
+fn log_status(mut logger: &mut LogFileHandler) {
+    unsafe { display_status(logger.log_file, 1 as i32); }
+}
+
+fn log_optimal_line(mut logger: &mut LogFileHandler) {
+    unsafe { display_optimal_line(logger.log_file); }
+}
+
+fn close_logger(mut logger: &mut LogFileHandler) {
+    if !logger.log_file.is_null() { unsafe { fclose(logger.log_file); } }
+}
+
+fn log_board(mut logger: &mut LogFileHandler, board_: &mut [i32; 128], side_to_move_: i32) {
+    unsafe {
+        display_board(logger.log_file, board_.as_mut_ptr(), side_to_move_,
+                      0 as i32, 0 as i32, 0 as i32);
+    }
 }
