@@ -17,6 +17,7 @@ use crate::src::patterns::init_patterns;
 use crate::src::bitboard::init_bitboard;
 use crate::src::myrandom::my_srandom;
 use crate::src::stubs::time;
+use crate::src::error::fatal_error;
 
 
 pub type EvalType = u32;
@@ -302,4 +303,52 @@ pub unsafe fn engine_global_setup(use_random: i32, hash_bits: i32, coeff_adjustm
     init_probcut();
     init_stable();
     setup_search();
+}
+
+pub trait BoardSource {
+    fn fill_board_buffer(&mut self, buffer: &mut [i8; 70]);
+    fn fill_buffer_with_side_to_move(&mut self, buffer: &mut [i8; 70]);
+    fn report_unrecognized_character(unrecognized: i8);
+}
+
+
+pub unsafe fn process_board_source<S: BoardSource>(side_to_move: *mut i32, mut file_source: S) {
+    let mut buffer: [i8; 70] = [0; 70];
+    file_source.fill_board_buffer(&mut buffer);
+    let mut token = 0 as i32;
+    let mut i = 1 as i32;
+    while i <= 8 as i32 {
+        let mut j = 1 as i32;
+        while j <= 8 as i32 {
+            let mut pos = 10 as i32 * i + j;
+            match buffer[token as usize] as i32 {
+                42 | 88 => { board[pos as usize] = 0 as i32 }
+                79 | 48 => { board[pos as usize] = 2 as i32 }
+                45 | 46 => {}
+                _ => {
+                    let unrecognized = buffer[pos as usize];
+                    S::report_unrecognized_character(unrecognized);
+                }
+            }
+            token += 1;
+            j += 1
+        }
+        i += 1
+    }
+    file_source.fill_buffer_with_side_to_move(&mut buffer);
+    if buffer[0 as i32 as usize] as i32 == 'B' as i32 {
+        *side_to_move = 0 as i32
+    } else if buffer[0 as i32 as usize] as i32 ==
+        'W' as i32 {
+        *side_to_move = 2 as i32
+    } else {
+        let unrecognized = buffer[0 as i32 as usize];
+        fatal_error(b"%s \'%c\' %s\n\x00" as *const u8 as
+                        *const i8,
+                    b"Unrecognized character\x00" as *const u8 as
+                        *const i8,
+                    unrecognized as i32,
+                    b"in game file\x00" as *const u8 as
+                        *const i8);
+    }
 }
