@@ -127,10 +127,8 @@ impl BoardSource for LibcBoardFileSource {
    specified by FILE_NAME.
 */
 
-pub unsafe fn game_init(mut file_name: *const i8,
-                                   mut side_to_move: *mut i32) {
-    generic_setup_game::<LibcBoardFileSource>(file_name, side_to_move);
-    engine_game_init();
+pub unsafe fn game_init(mut file_name: *const i8, mut side_to_move: *mut i32) {
+    generic_game_init::<LibcBoardFileSource>(file_name, side_to_move);
 }
 /*
   PONDER_MOVE
