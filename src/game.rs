@@ -80,14 +80,18 @@ unsafe fn setup_game(mut file_name: *const i8,
     if file_name.is_null() {
         setup_non_file_based_game(side_to_move);
     } else {
-        setup_file_based_game(file_name, side_to_move);
+        setup_file_based_game::<LibcBoardFileSource>(file_name, side_to_move);
     }
 }
 
-unsafe fn setup_file_based_game(mut file_name: *const i8, mut side_to_move: *mut i32) {
+trait FileBoardSource : BoardSource {
+    unsafe fn open(file_name: *const i8) -> Option<Self> where Self: Sized;
+}
+
+unsafe fn setup_file_based_game<S: FileBoardSource>(mut file_name: *const i8, mut side_to_move: *mut i32) {
     setup_game_clear_board();
     assert!(!file_name.is_null());
-    match LibcBoardFileSource::open(file_name) {
+    match S::open(file_name) {
         Some(file_source) => process_board_source(side_to_move, file_source),
         None => {
             fatal_error(b"%s \'%s\'\n\x00" as *const u8 as
@@ -101,7 +105,7 @@ unsafe fn setup_file_based_game(mut file_name: *const i8, mut side_to_move: *mut
 struct LibcBoardFileSource {
     stream: *mut FILE
 }
-impl LibcBoardFileSource {
+impl FileBoardSource for LibcBoardFileSource {
     unsafe fn open(file_name: *const i8) -> Option<LibcBoardFileSource> {
         let stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
         if stream.is_null() {
