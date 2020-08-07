@@ -40,11 +40,19 @@ pub static mut log_file_path: [i8; 2048] = [0; 2048];
 
 pub unsafe fn global_setup(mut use_random: i32,
                                       mut hash_bits: i32) {
-    setup_log_file();
+    LogFileHandler::on_global_setup();
     let coeff_adjustments = load_coeff_adjustments();
     engine_global_setup(use_random, hash_bits, coeff_adjustments, ZLibSource::new());
 }
-
+trait Logger {
+    fn on_global_setup();
+}
+struct LogFileHandler;
+impl Logger for LogFileHandler {
+    fn on_global_setup() {
+        unsafe { setup_log_file() }
+    }
+}
 unsafe fn setup_log_file() {
     /* Clear the log file. No error handling done. */
     strcpy(log_file_path.as_mut_ptr(),
