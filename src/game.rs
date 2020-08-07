@@ -1123,7 +1123,6 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                        confidence: 0.,
                        search_depth: 0,
                        is_book: 0,};
-    let mut eval_str = 0 as *mut i8;
     let mut midgame_diff: f64 = 0.;
     let mut i: i32 = 0;
     let mut midgame_depth: i32 = 0;
@@ -1195,7 +1194,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                              0 as i32);
         set_current_eval(*eval_info);
         if echo != 0 {
-            eval_str = produce_eval_text(*eval_info, 0 as i32);
+            let eval_str = produce_eval_text(*eval_info, 0 as i32);
             send_status(b"-->         \x00" as *const u8 as
                             *const i8);
             send_status(b"%-8s  \x00" as *const u8 as *const i8,
@@ -1227,7 +1226,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                              0 as i32);
         set_current_eval(*eval_info);
         if echo != 0 {
-            eval_str = produce_eval_text(*eval_info, 0 as i32);
+            let eval_str = produce_eval_text(*eval_info, 0 as i32);
             send_status(b"-->         \x00" as *const u8 as
                             *const i8);
             send_status(b"%-8s  \x00" as *const u8 as *const i8,
@@ -1556,7 +1555,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
             clear_status();
             send_status(b"--> *%2d\x00" as *const u8 as *const i8,
                         interrupted_depth);
-            eval_str = produce_eval_text(*eval_info, 1 as i32);
+            let eval_str = produce_eval_text(*eval_info, 1 as i32);
             send_status(b"%10s  \x00" as *const u8 as *const i8,
                         eval_str);
             free(eval_str as *mut std::ffi::c_void);
@@ -1587,7 +1586,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     clear_panic_abort();
     /* Write the contents of the status buffer to the log file. */
     if move_type as u32 == BOOK_MOVE as i32 as u32 {
-        eval_str = produce_eval_text(*eval_info, 0 as i32);
+        let eval_str = produce_eval_text(*eval_info, 0 as i32);
         if !log_file.is_null() {
             fprintf(log_file,
                     b"%s: %c%c  %s\n\x00" as *const u8 as *const i8,
