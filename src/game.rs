@@ -77,11 +77,7 @@ unsafe fn setup_log_file() {
 */
 unsafe fn setup_game(mut file_name: *const i8,
                                 mut side_to_move: *mut i32) {
-    if file_name.is_null() {
-        setup_non_file_based_game(side_to_move);
-    } else {
-        setup_file_based_game::<LibcBoardFileSource>(file_name, side_to_move);
-    }
+    generic_setup_game::<LibcBoardFileSource>(file_name, side_to_move)
 }
 struct LibcBoardFileSource {
     stream: *mut FILE
@@ -133,7 +129,7 @@ impl BoardSource for LibcBoardFileSource {
 
 pub unsafe fn game_init(mut file_name: *const i8,
                                    mut side_to_move: *mut i32) {
-    setup_game(file_name, side_to_move);
+    generic_setup_game::<LibcBoardFileSource>(file_name, side_to_move);
     engine_game_init();
 }
 /*
