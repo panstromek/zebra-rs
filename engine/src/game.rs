@@ -372,3 +372,11 @@ pub unsafe fn setup_file_based_game<S: FileBoardSource>(mut file_name: *const i8
     };
     setup_game_finalize(side_to_move);
 }
+
+pub unsafe fn generic_setup_game<Source: FileBoardSource>(mut file_name: *const i8, mut side_to_move: *mut i32) {
+    if file_name.is_null() {
+        setup_non_file_based_game(side_to_move);
+    } else {
+        setup_file_based_game::<Source>(file_name, side_to_move);
+    }
+}
