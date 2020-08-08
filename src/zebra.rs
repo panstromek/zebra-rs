@@ -1004,7 +1004,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend,
                             fill_move_alternatives(side_to_move,
                                                    0 as i32);
                             if echo != 0 {
-                                print_move_alternatives(side_to_move);
+                                ZF::print_move_alternatives(side_to_move);
                             }
                         }
                         curr_move = ZF::ui_get_move(side_to_move);
@@ -1184,6 +1184,7 @@ trait ZebraFrontend {
     unsafe fn report_opening_name(opening_name: *const i8);
     fn report_book_randomness(slack_: f64);
     unsafe fn load_thor_files();
+    fn print_move_alternatives(side_to_move: i32);
 }
 
 struct LibcFrontend {}
@@ -1387,6 +1388,9 @@ impl ZebraFrontend for LibcFrontend {
                    *const i8, get_thor_game_size());
     }
 
+    fn print_move_alternatives(side_to_move: i32) {
+        unsafe { print_move_alternatives(side_to_move) }
+    }
 }
 
 /*
