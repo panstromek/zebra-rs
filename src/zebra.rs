@@ -858,10 +858,10 @@ unsafe fn play_game(mut file_name: *const i8,
                     mut repeat: i32, log_file_name_: *mut i8) {
     let mut move_file = LibcFileMoveSource::open(move_file_name);
 
-    engine_play_game::<LibcFrontend, _>(file_name, move_string, repeat, log_file_name_, move_file)
+    engine_play_game::<LibcFrontend, _, LibcDumpHandler>(file_name, move_string, repeat, log_file_name_, move_file)
 }
 
-unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
+unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource, Dump: DumpHandler>(
     mut file_name: *const i8, mut move_string: *const i8,
     mut repeat: i32, log_file_name_: *mut i8,
     mut move_file: Option<Source>) {
@@ -990,8 +990,8 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
                     }
                     ZF::display_board_after_thor(side_to_move);
                 }
-                DumpHandler::dump_position(side_to_move);
-                DumpHandler::dump_game_score(side_to_move);
+                Dump::dump_position(side_to_move);
+                Dump::dump_game_score(side_to_move);
                 /* Check what the Thor opening statistics has to say */
                 choose_thor_opening_move(board.as_mut_ptr(), side_to_move,
                                          echo);
@@ -1106,7 +1106,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
             ZF::report_skill_levels(black_level, white_level);
         }
         if side_to_move == 0 as i32 { score_sheet_row += 1 }
-        DumpHandler::dump_game_score(side_to_move);
+        Dump::dump_game_score(side_to_move);
         if echo != 0 && one_position_only == 0 {
             set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                           score_sheet_row);
@@ -1729,7 +1729,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                skill[2 as i32 as usize]);
     }
     if side_to_move == 0 as i32 { score_sheet_row += 1 }
-    DumpHandler::dump_game_score(side_to_move);
+    LibcDumpHandler::dump_game_score(side_to_move);
     if echo != 0 && one_position_only == 0 {
         set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
@@ -2082,8 +2082,22 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     puts(b"\x00" as *const u8 as *const i8);
 }
 /* File handling procedures */
-struct DumpHandler;
-impl DumpHandler {
+trait DumpHandler {
+    fn dump_position(side_to_move: i32);
+    fn dump_game_score(side_to_move: i32);
+}
+impl DumpHandler for LibcDumpHandler {
+    fn dump_position(side_to_move: i32) {
+        unsafe { LibcDumpHandler::dump_position(side_to_move); }
+    }
+
+    fn dump_game_score(side_to_move: i32) {
+        unsafe { LibcDumpHandler::dump_game_score(side_to_move); }
+    }
+}
+
+struct LibcDumpHandler;
+impl LibcDumpHandler {
     /*
    DUMP_POSITION
    Saves the current board position to disk.
@@ -2179,14 +2193,14 @@ impl DumpHandler {
    Saves the current board position to disk.
 */
 unsafe fn dump_position(side_to_move: i32) {
-    DumpHandler::dump_position(side_to_move);
+    LibcDumpHandler::dump_position(side_to_move);
 }
 /*
   DUMP_GAME_SCORE
   Writes the current game score to disk.
 */
 unsafe fn dump_game_score(side_to_move: i32) {
-    DumpHandler::dump_game_score(side_to_move)
+    LibcDumpHandler::dump_game_score(side_to_move)
 }
 
 pub fn main() {
