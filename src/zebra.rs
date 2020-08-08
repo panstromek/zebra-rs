@@ -1178,28 +1178,6 @@ unsafe fn engine_play_game<
     }
 }
 
-trait ZebraFrontend {
-    fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
-    fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64);
-    fn display_board_after_thor(side_to_move: i32);
-    fn print_out_thor_matches();
-    unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &mut [i8; 121], first_side_to_move: i32, second_side_to_move: i32);
-    unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32);
-    fn get_pass();
-    fn report_engine_override();
-    fn ui_get_move(side_to_move: i32) -> i32;
-    fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64);
-    fn report_skill_levels(black_level: i32, white_level: i32);
-    fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64);
-    unsafe fn clear_moves();
-    fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
-    unsafe fn report_opening_name(opening_name: *const i8);
-    fn report_book_randomness(slack_: f64);
-    unsafe fn load_thor_files();
-    fn print_move_alternatives(side_to_move: i32);
-    fn dumpch();
-}
-
 struct LibcFrontend {}
 impl ZebraFrontend for LibcFrontend {
 
@@ -2105,10 +2083,6 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     puts(b"\x00" as *const u8 as *const i8);
 }
 /* File handling procedures */
-trait DumpHandler {
-    fn dump_position(side_to_move: i32);
-    fn dump_game_score(side_to_move: i32);
-}
 impl DumpHandler for LibcDumpHandler {
     fn dump_position(side_to_move: i32) {
         unsafe { LibcDumpHandler::dump_position(side_to_move); }
