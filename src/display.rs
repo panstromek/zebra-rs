@@ -441,20 +441,6 @@ pub unsafe fn display_sweep(mut stream: *mut FILE) {
     sweep_modified = 0 as i32;
 }
 /*
-  RESET_BUFFER_DISPLAY
-  Clear all buffers and initialize time variables.
-*/
-
-#[no_mangle]
-pub unsafe extern "C"  fn reset_buffer_display() {
-    /* The first two Fibonacci numbers */
-    clear_status();
-    clear_sweep();
-    interval1 = 0.0f64;
-    interval2 = 1.0f64;
-    last_output = get_real_timer();
-}
-/*
   DISPLAY_BUFFERS
   If an update has happened and the last display was long enough ago,
   output relevant buffers.
