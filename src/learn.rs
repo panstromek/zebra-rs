@@ -27,6 +27,15 @@ pub unsafe fn init_learn(file_name: *const i8, is_binary: i32) {
     strcpy(database_name.as_mut_ptr(), file_name);
     binary_database = is_binary;
 }
+
+pub struct LibcLearner;
+impl Learner for LibcLearner {
+    fn learn_game(game_length: i32, private_game: i32, save_database: i32) {
+        unsafe {
+            learn_game(game_length, private_game, save_database)
+        }
+    }
+}
 /*
    LEARN_GAME
    Play through the game and obtain an end result which assumes

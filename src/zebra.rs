@@ -27,6 +27,8 @@ use crate::{
 use std::ptr::null_mut;
 use engine::src::game::{generic_game_init, BoardSource, FileBoardSource, generic_compute_move, ComputeMoveLogger, ComputeMoveOutput};
 use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler};
+use crate::src::learn::LibcLearner;
+use engine::src::learn::Learner;
 
 pub type _IO_wide_data = std::ffi::c_void;
 pub type _IO_codecvt = std::ffi::c_void;
@@ -859,22 +861,18 @@ unsafe fn play_game(mut file_name: *const i8,
     let mut move_file = LibcFileMoveSource::open(move_file_name);
 
     engine_play_game
-        ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput>
+        ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner>
         (file_name, move_string, repeat, log_file_name_, move_file)
 }
 
-/* still missing in engine
---> engine/src/zebra.rs:249:33
-error[E0425]: cannot find function `compute_move` in this scope
---> engine/src/zebra.rs:267:29
-error[E0425]: cannot find function `learn_game` in this scope
-*/
-unsafe fn engine_play_game<ZF: ZebraFrontend,
+unsafe fn engine_play_game<
+    ZF: ZebraFrontend,
     Source: InitialMoveSource,
     Dump: DumpHandler,
     BoardSrc : FileBoardSource,
     ComputeMoveLog: ComputeMoveLogger,
-    ComputeMoveOut: ComputeMoveOutput
+    ComputeMoveOut: ComputeMoveOutput,
+    Learn: Learner
 >(
     mut file_name: *const i8, mut move_string: *const i8,
     mut repeat: i32, log_file_name_: *mut i8,
@@ -1168,7 +1166,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend,
         repeat -= 1;
         toggle_abort_check(0 as i32);
         if use_learning != 0 && one_position_only == 0 {
-            learn_game(disks_played,
+            Learn::learn_game(disks_played,
                        (skill[0 as i32 as usize] != 0 as i32
                             &&
                             skill[2 as i32 as usize] !=
