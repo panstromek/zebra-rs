@@ -1101,7 +1101,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                            mut search_forced: i32,
                            mut eval_info: *mut EvaluationType)
                            -> i32 {
-    let logger = &mut LogFileHandler {
+    let mut logger = LogFileHandler {
         log_file: 0 as *mut FILE
     };
     if use_log_file != 0 {
@@ -1109,11 +1109,17 @@ pub unsafe fn compute_move(mut side_to_move: i32,
             fopen(log_file_path.as_mut_ptr(),
                   b"a\x00" as *const u8 as *const i8)
     }
+    let has_log_file = !logger.log_file.is_null();
+    let mut logger = if has_log_file {
+      Some(logger)
+    }else {
+        None
+    };
     return generic_compute_move(side_to_move, update_all, my_time,
                                 my_incr, timed_depth,
                                 book, mid,
                                 exact, wld,
-                                search_forced, eval_info, logger);
+                                search_forced, eval_info, &mut logger);
 }
 
 pub unsafe fn generic_compute_move(mut side_to_move: i32,
@@ -1127,7 +1133,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
                                       mut wld: i32,
                                       mut search_forced: i32,
                                       mut eval_info: *mut EvaluationType,
-                                   logger: &mut LogFileHandler)
+                                   logger: &mut Option<LogFileHandler>)
  -> i32 {
     let mut book_eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
@@ -1156,8 +1162,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
     let mut endgame_reached: i32 = 0;
     let mut offset: i32 = 0;
 
-    let has_log_file = !logger.log_file.is_null();
-    if has_log_file {
+    if let Some(logger) = logger {
         let board_ = &mut board;
         let side_to_move_ = side_to_move;
         log_board(logger, board_, side_to_move_);
@@ -1171,7 +1176,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
     generate_all(side_to_move);
     determine_hash_values(side_to_move, board.as_mut_ptr());
     calculate_perturbation();
-    if has_log_file {
+    if let Some(logger) = logger {
         let moves_generated = move_count[disks_played as usize];
         let move_list_for_disks_played = &move_list[disks_played as usize];
 
@@ -1209,7 +1214,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
             display_status(stdout, 0 as i32);
             free(eval_str as *mut std::ffi::c_void);
         }
-        if has_log_file {
+        if let Some(logger) = logger {
             log_best_move_pass(logger);
         }
         last_time_used = 0.0f64;
@@ -1246,7 +1251,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
                                 10 as i32);
             display_status(stdout, 0 as i32);
         }
-        if has_log_file {
+        if let Some(logger) = logger {
             let best_move = move_list[disks_played as usize][0 as i32 as usize];
             log_best_move(logger, best_move);
         }
@@ -1578,11 +1583,11 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
     /* Write the contents of the status buffer to the log file. */
     if move_type as u32 == BOOK_MOVE as i32 as u32 {
         let eval_str = produce_eval_text(*eval_info, 0 as i32);
-        if has_log_file {
+        if let Some(logger) = logger {
             log_chosen_move(logger, curr_move, eval_str);
         }
         free(eval_str as *mut std::ffi::c_void);
-    } else if has_log_file {
+    } else if let Some(logger) = logger {
         log_status(logger);
     }
     /* Write the principal variation, if available, to the log file
@@ -1590,9 +1595,11 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
     if get_ponder_move() == 0 {
         complete_pv(side_to_move);
         if display_pv != 0 && echo != 0 { display_optimal_line(stdout); }
-        if has_log_file { log_optimal_line(logger); }
+        if let Some(logger) = logger { log_optimal_line(logger); }
     }
-    close_logger(logger);
+    if let Some(logger) = logger {
+        close_logger(logger);
+    }
     return curr_move;
 }
 
