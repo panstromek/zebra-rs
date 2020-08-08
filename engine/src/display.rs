@@ -1,11 +1,10 @@
 use crate::src::stubs::{free, strdup};
 use std::ffi::c_void;
+use crate::src::timer::get_real_timer;
 
 extern "C" {
     #[no_mangle]
     pub fn display_buffers();
-    #[no_mangle]
-    pub fn reset_buffer_display();
 }
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
@@ -127,4 +126,17 @@ pub unsafe fn clear_sweep() {
 pub unsafe fn toggle_smart_buffer_management(mut use_smart:
                                              i32) {
     timed_buffer_management = use_smart;
+}
+/*
+  RESET_BUFFER_DISPLAY
+  Clear all buffers and initialize time variables.
+*/
+
+pub unsafe fn reset_buffer_display() {
+    /* The first two Fibonacci numbers */
+    clear_status();
+    clear_sweep();
+    interval1 = 0.0f64;
+    interval2 = 1.0f64;
+    last_output = get_real_timer();
 }
