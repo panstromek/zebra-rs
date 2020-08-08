@@ -1131,7 +1131,7 @@ impl LogFileHandler {
         }
     }
 }
-struct LibcZebraOutput;
+pub struct LibcZebraOutput;
 impl ComputeMoveOutput for LibcZebraOutput {
 fn display_out_optimal_line() {
     unsafe { display_optimal_line(stdout) }
