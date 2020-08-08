@@ -1161,7 +1161,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
     let mut max_depth: i32 = 0;
     let mut endgame_reached: i32 = 0;
     let mut offset: i32 = 0;
-
+    type Out = LibcZebraOutput;
     if let Some(logger) = logger {
         let board_ = &mut board;
         let side_to_move_ = side_to_move;
@@ -1207,7 +1207,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
         set_current_eval(*eval_info);
         if echo != 0 {
             let info = &*eval_info;
-            echo_compute_move_1(info);
+            Out::echo_compute_move_1(info);
         }
         if let Some(logger) = logger {
             L::log_best_move_pass(logger);
@@ -1231,7 +1231,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
         if echo != 0 {
             let info = &*eval_info;
             let disk = move_list[disks_played as usize][0 as i32 as usize];
-            echo_compute_move_2(info, disk);
+            Out::echo_compute_move_2(info, disk);
         }
         if let Some(logger) = logger {
             let best_move = move_list[disks_played as usize][0 as i32 as usize];
@@ -1261,7 +1261,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
             move_type = BOOK_MOVE;
             if echo != 0 {
                 let ponder_move = get_ponder_move();
-                echo_ponder_move(curr_move, ponder_move);
+                Out::echo_ponder_move(curr_move, ponder_move);
             }
             clear_pv();
             pv_depth[0 as i32 as usize] = 1 as i32;
@@ -1288,7 +1288,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
                 move_type = BOOK_MOVE;
                 if echo != 0 {
                     let ponder_move = get_ponder_move();
-                    echo_ponder_move_2(curr_move, ponder_move);
+                    Out::echo_ponder_move_2(curr_move, ponder_move);
                 }
                 clear_pv();
                 pv_depth[0 as i32 as usize] = 1 as i32;
@@ -1315,7 +1315,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
             move_type = BOOK_MOVE;
             if echo != 0 {
                 let ponder_move = get_ponder_move();
-                echo_ponder_move_4(curr_move, ponder_move);
+                Out::echo_ponder_move_4(curr_move, ponder_move);
             }
             clear_pv();
             pv_depth[0 as i32 as usize] = 1 as i32;
@@ -1338,7 +1338,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
             midgame_move = curr_move;
             book_move_found = 1 as i32;
             move_type = BOOK_MOVE;
-            display_status_out();
+            Out::display_status_out();
         }
     }
     /* Use iterative deepening in the midgame searches until the endgame
@@ -1435,7 +1435,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
                 break ;
             }
         }
-        if echo != 0 { display_status_out(); }
+        if echo != 0 { Out::display_status_out(); }
         if abs(mid_eval_info.score) == abs(-(27000 as i32)) {
             move_type = INTERRUPTED_MOVE;
             interrupted_depth = midgame_depth - 1 as i32
@@ -1485,7 +1485,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
             let info = &*eval_info;
             let counter_value = counter_value(&mut nodes);
             let elapsed_time = get_elapsed_time();
-            send_move_type_0_status(interrupted_depth, info, counter_value, elapsed_time);
+            Out::send_move_type_0_status(interrupted_depth, info, counter_value, elapsed_time);
         }
         1 => { *eval_info = book_eval_info }
         2 => { *eval_info = mid_eval_info }
@@ -1513,7 +1513,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
        and, optionally, to screen. */
     if get_ponder_move() == 0 {
         complete_pv(side_to_move);
-        if display_pv != 0 && echo != 0 { display_out_optimal_line(); }
+        if display_pv != 0 && echo != 0 { Out::display_out_optimal_line(); }
         if let Some(logger) = logger { L::log_optimal_line(logger); }
     }
     if let Some(logger) = logger {
@@ -1521,7 +1521,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
     }
     return curr_move;
 }
-
+struct LibcZebraOutput;
+impl LibcZebraOutput {
 fn display_out_optimal_line() {
     unsafe { display_optimal_line(stdout) }
 }
@@ -1652,7 +1653,7 @@ fn echo_compute_move_1(info: &EvaluationType) {
         free(eval_str as *mut std::ffi::c_void);
     }
 }
-
+}
 pub trait ComputeMoveLogger {
     fn log_moves_generated(logger: &mut Self, moves_generated: i32, move_list_for_disks_played: &[i32; 64]);
     fn log_best_move_pass(logger: &mut Self);
