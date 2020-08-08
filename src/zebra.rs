@@ -2082,94 +2082,111 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     puts(b"\x00" as *const u8 as *const i8);
 }
 /* File handling procedures */
+struct DumpHandler;
+impl DumpHandler {
+    /*
+   DUMP_POSITION
+   Saves the current board position to disk.
+*/
+    unsafe fn dump_position(mut side_to_move: i32) {
+        let mut i: i32 = 0;
+        let mut j: i32 = 0;
+        let mut stream = 0 as *mut FILE;
+        stream =
+            fopen(b"current.gam\x00" as *const u8 as *const i8,
+                  b"w\x00" as *const u8 as *const i8);
+        if stream.is_null() {
+            fatal_error(b"File creation error when writing CURRENT.GAM\n\x00" as
+                *const u8 as *const i8);
+        }
+        i = 1 as i32;
+        while i <= 8 as i32 {
+            j = 1 as i32;
+            while j <= 8 as i32 {
+                match board[(10 as i32 * i + j) as usize] {
+                    0 => { fputc('X' as i32, stream); }
+                    2 => { fputc('O' as i32, stream); }
+                    1 => { fputc('-' as i32, stream); }
+                    _ => {
+                        /* This really can't happen but shouldn't cause a crash */
+                        fputc('?' as i32, stream);
+                    }
+                }
+                j += 1
+            }
+            i += 1
+        }
+        fputs(b"\n\x00" as *const u8 as *const i8, stream);
+        if side_to_move == 0 as i32 {
+            fputs(b"Black\x00" as *const u8 as *const i8, stream);
+        } else {
+            fputs(b"White\x00" as *const u8 as *const i8, stream);
+        }
+        fputs(b" to move\nThis file was automatically generated\n\x00" as
+                  *const u8 as *const i8, stream);
+        fclose(stream);
+    }
+    /*
+      DUMP_GAME_SCORE
+      Writes the current game score to disk.
+    */
+    unsafe fn dump_game_score(mut side_to_move: i32) {
+        let mut stream = 0 as *mut FILE;
+        let mut i: i32 = 0;
+        stream =
+            fopen(b"current.mov\x00" as *const u8 as *const i8,
+                  b"w\x00" as *const u8 as *const i8);
+        if stream.is_null() {
+            fatal_error(b"File creation error when writing CURRENT.MOV\n\x00" as
+                *const u8 as *const i8);
+        }
+        i = 0 as i32;
+        while i <= score_sheet_row {
+            fprintf(stream,
+                    b"   %2d.    \x00" as *const u8 as *const i8,
+                    i + 1 as i32);
+            if black_moves[i as usize] == -(1 as i32) {
+                fputs(b"- \x00" as *const u8 as *const i8, stream);
+            } else {
+                fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
+                        'a' as i32 + black_moves[i as usize] % 10 as i32 -
+                            1 as i32,
+                        '0' as i32 + black_moves[i as usize] / 10 as i32);
+            }
+            fputs(b"  \x00" as *const u8 as *const i8, stream);
+            if i < score_sheet_row ||
+                i == score_sheet_row && side_to_move == 0 as i32 {
+                if white_moves[i as usize] == -(1 as i32) {
+                    fputs(b"- \x00" as *const u8 as *const i8, stream);
+                } else {
+                    fprintf(stream,
+                            b"%c%c\x00" as *const u8 as *const i8,
+                            'a' as i32 +
+                                white_moves[i as usize] % 10 as i32 -
+                                1 as i32,
+                            '0' as i32 +
+                                white_moves[i as usize] / 10 as i32);
+                }
+            }
+            fputs(b"\n\x00" as *const u8 as *const i8, stream);
+            i += 1
+        }
+        fclose(stream);
+    }
+}
 /*
    DUMP_POSITION
    Saves the current board position to disk.
 */
-unsafe fn dump_position(mut side_to_move: i32) {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut stream = 0 as *mut FILE;
-    stream =
-        fopen(b"current.gam\x00" as *const u8 as *const i8,
-              b"w\x00" as *const u8 as *const i8);
-    if stream.is_null() {
-        fatal_error(b"File creation error when writing CURRENT.GAM\n\x00" as
-                        *const u8 as *const i8);
-    }
-    i = 1 as i32;
-    while i <= 8 as i32 {
-        j = 1 as i32;
-        while j <= 8 as i32 {
-            match board[(10 as i32 * i + j) as usize] {
-                0 => { fputc('X' as i32, stream); }
-                2 => { fputc('O' as i32, stream); }
-                1 => { fputc('-' as i32, stream); }
-                _ => {
-                    /* This really can't happen but shouldn't cause a crash */
-                    fputc('?' as i32, stream);
-                }
-            }
-            j += 1
-        }
-        i += 1
-    }
-    fputs(b"\n\x00" as *const u8 as *const i8, stream);
-    if side_to_move == 0 as i32 {
-        fputs(b"Black\x00" as *const u8 as *const i8, stream);
-    } else {
-        fputs(b"White\x00" as *const u8 as *const i8, stream);
-    }
-    fputs(b" to move\nThis file was automatically generated\n\x00" as
-              *const u8 as *const i8, stream);
-    fclose(stream);
+unsafe fn dump_position(side_to_move: i32) {
+    DumpHandler::dump_position(side_to_move);
 }
 /*
   DUMP_GAME_SCORE
   Writes the current game score to disk.
 */
-unsafe fn dump_game_score(mut side_to_move: i32) {
-    let mut stream = 0 as *mut FILE;
-    let mut i: i32 = 0;
-    stream =
-        fopen(b"current.mov\x00" as *const u8 as *const i8,
-              b"w\x00" as *const u8 as *const i8);
-    if stream.is_null() {
-        fatal_error(b"File creation error when writing CURRENT.MOV\n\x00" as
-                        *const u8 as *const i8);
-    }
-    i = 0 as i32;
-    while i <= score_sheet_row {
-        fprintf(stream,
-                b"   %2d.    \x00" as *const u8 as *const i8,
-                i + 1 as i32);
-        if black_moves[i as usize] == -(1 as i32) {
-            fputs(b"- \x00" as *const u8 as *const i8, stream);
-        } else {
-            fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
-                    'a' as i32 + black_moves[i as usize] % 10 as i32 -
-                        1 as i32,
-                    '0' as i32 + black_moves[i as usize] / 10 as i32);
-        }
-        fputs(b"  \x00" as *const u8 as *const i8, stream);
-        if i < score_sheet_row ||
-               i == score_sheet_row && side_to_move == 0 as i32 {
-            if white_moves[i as usize] == -(1 as i32) {
-                fputs(b"- \x00" as *const u8 as *const i8, stream);
-            } else {
-                fprintf(stream,
-                        b"%c%c\x00" as *const u8 as *const i8,
-                        'a' as i32 +
-                            white_moves[i as usize] % 10 as i32 -
-                            1 as i32,
-                        '0' as i32 +
-                            white_moves[i as usize] / 10 as i32);
-            }
-        }
-        fputs(b"\n\x00" as *const u8 as *const i8, stream);
-        i += 1
-    }
-    fclose(stream);
+unsafe fn dump_game_score(side_to_move: i32) {
+    DumpHandler::dump_game_score(side_to_move)
 }
 
 pub fn main() {
