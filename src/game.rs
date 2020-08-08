@@ -1521,8 +1521,18 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
     }
     return curr_move;
 }
+trait ComputeMoveOutput {
+    fn display_out_optimal_line();
+    fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64);
+    fn display_status_out();
+    fn echo_ponder_move_4(curr_move: i32, ponder_move: i32);
+    fn echo_ponder_move_2(curr_move: i32, ponder_move: i32);
+    fn echo_ponder_move(curr_move: i32, ponder_move: i32);
+    fn echo_compute_move_2(info: &EvaluationType, disk: i32);
+    fn echo_compute_move_1(info: &EvaluationType);
+}
 struct LibcZebraOutput;
-impl LibcZebraOutput {
+impl ComputeMoveOutput for LibcZebraOutput {
 fn display_out_optimal_line() {
     unsafe { display_optimal_line(stdout) }
 }
