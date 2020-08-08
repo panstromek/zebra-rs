@@ -77,3 +77,7 @@ pub unsafe fn game_learnable(mut finished: i32,
             move_count_0 >= 60 as i32 - cutoff_empty)) as
         i32;
 }
+
+pub trait Learner {
+    fn learn_game(game_length: i32, private_game: i32, save_database: i32);
+}
