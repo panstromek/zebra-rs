@@ -25,7 +25,7 @@ use crate::{
     }
 };
 use std::ptr::null_mut;
-use engine::src::game::{generic_game_init, BoardSource, FileBoardSource, generic_compute_move, ComputeMoveLogger};
+use engine::src::game::{generic_game_init, BoardSource, FileBoardSource, generic_compute_move, ComputeMoveLogger, ComputeMoveOutput};
 use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler};
 
 pub type _IO_wide_data = std::ffi::c_void;
@@ -858,7 +858,9 @@ unsafe fn play_game(mut file_name: *const i8,
                     mut repeat: i32, log_file_name_: *mut i8) {
     let mut move_file = LibcFileMoveSource::open(move_file_name);
 
-    engine_play_game::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource>(file_name, move_string, repeat, log_file_name_, move_file)
+    engine_play_game
+        ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput>
+        (file_name, move_string, repeat, log_file_name_, move_file)
 }
 
 /* still missing in engine
@@ -869,7 +871,11 @@ error[E0425]: cannot find function `learn_game` in this scope
 */
 unsafe fn engine_play_game<ZF: ZebraFrontend,
     Source: InitialMoveSource,
-    Dump: DumpHandler, BoardSrc : FileBoardSource>(
+    Dump: DumpHandler,
+    BoardSrc : FileBoardSource,
+    ComputeMoveLog: ComputeMoveLogger,
+    ComputeMoveOut: ComputeMoveOutput
+>(
     mut file_name: *const i8, mut move_string: *const i8,
     mut repeat: i32, log_file_name_: *mut i8,
     mut move_file: Option<Source>) {
@@ -1028,18 +1034,19 @@ unsafe fn engine_play_game<ZF: ZebraFrontend,
                                  60 as i32) as i32;
                         toggle_experimental(0 as i32);
                         curr_move =
-                            generic_compute_move::<LogFileHandler, LibcZebraOutput>(side_to_move, 1 as i32,
-                                         player_time[side_to_move as usize] as
-                                             i32,
-                                         player_increment[side_to_move as
-                                                              usize] as
-                                             i32, timed_search,
-                                         use_book,
-                                         skill[side_to_move as usize],
-                                         exact_skill[side_to_move as usize],
-                                         wld_skill[side_to_move as usize],
-                                         0 as i32, &mut eval_info,
-                                         &mut LogFileHandler::create_log_file_if_needed());
+                            generic_compute_move::<ComputeMoveLog, ComputeMoveOut>(
+                                side_to_move, 1 as i32,
+                                player_time[side_to_move as usize] as
+                                    i32,
+                                player_increment[side_to_move as
+                                    usize] as
+                                    i32, timed_search,
+                                use_book,
+                                skill[side_to_move as usize],
+                                exact_skill[side_to_move as usize],
+                                wld_skill[side_to_move as usize],
+                                0 as i32, &mut eval_info,
+                                &mut ComputeMoveLog::create_log_file_if_needed());
                         if side_to_move == 0 as i32 {
                             set_evals(produce_compact_eval(eval_info),
                                       0.0f64);
