@@ -1101,18 +1101,10 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                            mut search_forced: i32,
                            mut eval_info: *mut EvaluationType)
                            -> i32 {
-    let mut logger = LogFileHandler {
-        log_file: 0 as *mut FILE
-    };
-    if use_log_file != 0 {
-        logger.log_file =
-            fopen(log_file_path.as_mut_ptr(),
-                  b"a\x00" as *const u8 as *const i8)
-    }
-    let has_log_file = !logger.log_file.is_null();
-    let mut logger = if has_log_file {
-      Some(logger)
-    }else {
+    let mut logger = if use_log_file != 0 {
+        let mut log_file_path_ = &mut log_file_path as &mut [i8];
+        LogFileHandler::create(log_file_path_)
+    } else {
         None
     };
 
@@ -1122,7 +1114,20 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                                 exact, wld,
                                 search_forced, eval_info, &mut logger);
 }
-
+impl LogFileHandler {
+    fn create(mut log_file_path_: &mut [i8]) -> Option<LogFileHandler> {
+        let log_file = unsafe {
+            fopen(log_file_path_.as_mut_ptr(),
+                  b"a\x00" as *const u8 as *const i8)
+        };
+        if !log_file.is_null() {
+            let mut logger = LogFileHandler { log_file };
+            Some(logger)
+        } else {
+            None
+        }
+    }
+}
 struct LibcZebraOutput;
 impl ComputeMoveOutput for LibcZebraOutput {
 fn display_out_optimal_line() {
