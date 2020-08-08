@@ -1206,7 +1206,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
                              0 as i32);
         set_current_eval(*eval_info);
         if echo != 0 {
-            let eval_str = produce_eval_text(*eval_info, 0 as i32);
+            let eval_str = produce_eval_text(&*eval_info, 0 as i32);
             send_status(b"-->         \x00" as *const u8 as
                             *const i8);
             send_status(b"%-8s  \x00" as *const u8 as *const i8,
@@ -1234,7 +1234,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
                              0 as i32);
         set_current_eval(*eval_info);
         if echo != 0 {
-            let eval_str = produce_eval_text(*eval_info, 0 as i32);
+            let eval_str = produce_eval_text(&*eval_info, 0 as i32);
             send_status(b"-->         \x00" as *const u8 as
                             *const i8);
             send_status(b"%-8s  \x00" as *const u8 as *const i8,
@@ -1551,7 +1551,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
             clear_status();
             send_status(b"--> *%2d\x00" as *const u8 as *const i8,
                         interrupted_depth);
-            let eval_str = produce_eval_text(*eval_info, 1 as i32);
+            let eval_str = produce_eval_text(&*eval_info, 1 as i32);
             send_status(b"%10s  \x00" as *const u8 as *const i8,
                         eval_str);
             free(eval_str as *mut std::ffi::c_void);
@@ -1582,7 +1582,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
     clear_panic_abort();
     /* Write the contents of the status buffer to the log file. */
     if move_type as u32 == BOOK_MOVE as i32 as u32 {
-        let eval_str = produce_eval_text(*eval_info, 0 as i32);
+        let eval_str = produce_eval_text(&*eval_info, 0 as i32);
         if let Some(logger) = logger {
             L::log_chosen_move(logger, curr_move, eval_str);
         }

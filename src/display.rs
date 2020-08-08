@@ -468,7 +468,7 @@ pub unsafe extern "C" fn display_buffers() {
   Convert a result descriptor into a string intended for output.
 */
 
-pub unsafe fn produce_eval_text(mut eval_info: EvaluationType,
+pub unsafe fn produce_eval_text(mut eval_info: &EvaluationType,
                                            mut short_output: i32)
  -> *mut i8 {
     let mut buffer = 0 as *mut i8;

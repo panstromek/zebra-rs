@@ -171,7 +171,7 @@ pub unsafe extern "C" fn send_solve_status(mut empties: i32,
     clear_status();
     send_status(b"-->  %2d  \x00" as *const u8 as *const i8,
                 empties);
-    eval_str = produce_eval_text(*eval_info, 1 as i32);
+    eval_str = produce_eval_text(&*eval_info, 1 as i32);
     send_status(b"%-10s  \x00" as *const u8 as *const i8, eval_str);
     free(eval_str as *mut std::ffi::c_void);
     node_val = counter_value(&mut nodes);
