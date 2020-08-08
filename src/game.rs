@@ -89,7 +89,7 @@ unsafe fn setup_game(mut file_name: *const i8,
                                 mut side_to_move: *mut i32) {
     generic_setup_game::<LibcBoardFileSource>(file_name, side_to_move)
 }
-struct LibcBoardFileSource {
+pub struct LibcBoardFileSource {
     stream: *mut FILE
 }
 impl FileBoardSource for LibcBoardFileSource {
