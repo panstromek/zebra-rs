@@ -1124,7 +1124,6 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                        search_depth: 0,
                        is_book: 0,};
     let mut midgame_diff: f64 = 0.;
-    let mut i: i32 = 0;
     let mut midgame_depth: i32 = 0;
     let mut max_depth: i32 = 0;
     let mut endgame_reached: i32 = 0;
@@ -1156,22 +1155,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
         let moves_generated = move_count[disks_played as usize];
         let move_list_for_disks_played = &move_list[disks_played as usize];
 
-        fprintf(logger.log_file, b"%d %s: \x00" as *const u8 as *const i8,
-                moves_generated,
-                b"moves generated\x00" as *const u8 as *const i8);
-        i = 0 as i32;
-        while i < moves_generated {
-            fprintf(logger.log_file,
-                    b"%c%c \x00" as *const u8 as *const i8,
-                    'a' as i32 +
-                        move_list_for_disks_played[i as usize] %
-                            10 as i32 - 1 as i32,
-                    '0' as i32 +
-                        move_list_for_disks_played[i as usize] /
-                            10 as i32);
-            i += 1
-        }
-        fputs(b"\n\x00" as *const u8 as *const i8, logger.log_file);
+        log_moves_generated(logger, moves_generated, move_list_for_disks_played);
     }
     if update_all != 0 {
         reset_counter(&mut evaluations);
@@ -1590,6 +1574,27 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     }
     close_logger(logger);
     return curr_move;
+}
+
+fn log_moves_generated(mut logger: &mut LogFileHandler, moves_generated: i32, move_list_for_disks_played: &[i32; 64]) {
+    unsafe {
+        fprintf(logger.log_file, b"%d %s: \x00" as *const u8 as *const i8,
+                moves_generated,
+                b"moves generated\x00" as *const u8 as *const i8);
+        let mut i = 0 as i32;
+        while i < moves_generated {
+            fprintf(logger.log_file,
+                    b"%c%c \x00" as *const u8 as *const i8,
+                    'a' as i32 +
+                        move_list_for_disks_played[i as usize] %
+                            10 as i32 - 1 as i32,
+                    '0' as i32 +
+                        move_list_for_disks_played[i as usize] /
+                            10 as i32);
+            i += 1
+        }
+        fputs(b"\n\x00" as *const u8 as *const i8, logger.log_file);
+    }
 }
 
 fn log_best_move_pass(mut logger: &mut LogFileHandler) {
