@@ -26,7 +26,7 @@ use crate::{
 };
 use std::ptr::null_mut;
 use engine::src::game::{generic_game_init, BoardSource, FileBoardSource, generic_compute_move};
-use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler, create_log_file_if_needed};
+use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler};
 
 pub type _IO_wide_data = std::ffi::c_void;
 pub type _IO_codecvt = std::ffi::c_void;
@@ -1039,7 +1039,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend,
                                          exact_skill[side_to_move as usize],
                                          wld_skill[side_to_move as usize],
                                          0 as i32, &mut eval_info,
-                                         &mut create_log_file_if_needed());
+                                         &mut LogFileHandler::create_log_file_if_needed());
                         if side_to_move == 0 as i32 {
                             set_evals(produce_compact_eval(eval_info),
                                       0.0f64);
