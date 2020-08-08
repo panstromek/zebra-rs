@@ -1122,7 +1122,7 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                                 search_forced, eval_info, &mut logger);
 }
 
-pub unsafe fn generic_compute_move<L>(mut side_to_move: i32,
+pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
                                       mut update_all: i32,
                                       mut my_time: i32,
                                       mut my_incr: i32,
@@ -1133,9 +1133,8 @@ pub unsafe fn generic_compute_move<L>(mut side_to_move: i32,
                                       mut wld: i32,
                                       mut search_forced: i32,
                                       mut eval_info: *mut EvaluationType,
-                                   logger: &mut Option<LogFileHandler>)
+                                   logger: &mut Option<L>)
  -> i32 {
-    type L = LogFileHandler;
     let mut book_eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
                        res: WON_POSITION,
@@ -1603,7 +1602,17 @@ pub unsafe fn generic_compute_move<L>(mut side_to_move: i32,
     }
     return curr_move;
 }
-impl LogFileHandler {
+pub trait ComputeMoveLogger {
+    fn log_moves_generated(logger: &mut Self, moves_generated: i32, move_list_for_disks_played: &[i32; 64]);
+    fn log_best_move_pass(logger: &mut Self);
+    fn log_best_move(logger: &mut Self, best_move: i32);
+    unsafe fn log_chosen_move(logger: &mut Self, curr_move: i32, eval_str: *mut i8);
+    fn log_status(logger: &mut Self);
+    fn log_optimal_line(logger: &mut Self);
+    fn close_logger(logger: &mut Self);
+    fn log_board(logger: &mut Self, board_: &mut [i32; 128], side_to_move_: i32);
+}
+impl ComputeMoveLogger for LogFileHandler {
 fn log_moves_generated(mut logger: &mut LogFileHandler, moves_generated: i32, move_list_for_disks_played: &[i32; 64]) {
     unsafe {
         fprintf(logger.log_file, b"%d %s: \x00" as *const u8 as *const i8,
