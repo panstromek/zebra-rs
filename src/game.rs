@@ -47,7 +47,7 @@ pub unsafe fn global_setup(mut use_random: i32,
 trait Logger {
     fn on_global_setup();
 }
-struct LogFileHandler {
+pub struct LogFileHandler {
     log_file: *mut FILE
 }
 impl Logger for LogFileHandler {
@@ -1101,11 +1101,19 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                            mut search_forced: i32,
                            mut eval_info: *mut EvaluationType)
                            -> i32 {
+    let logger = &mut LogFileHandler {
+        log_file: 0 as *mut FILE
+    };
+    if use_log_file != 0 {
+        logger.log_file =
+            fopen(log_file_path.as_mut_ptr(),
+                  b"a\x00" as *const u8 as *const i8)
+    }
     return generic_compute_move(side_to_move, update_all, my_time,
                                 my_incr, timed_depth,
                                 book, mid,
                                 exact, wld,
-                                search_forced, eval_info);
+                                search_forced, eval_info, logger);
 }
 
 pub unsafe fn generic_compute_move(mut side_to_move: i32,
@@ -1118,7 +1126,8 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
                                       mut exact: i32,
                                       mut wld: i32,
                                       mut search_forced: i32,
-                                      mut eval_info: *mut EvaluationType)
+                                      mut eval_info: *mut EvaluationType,
+                                   logger: &mut LogFileHandler)
  -> i32 {
     let mut book_eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
@@ -1146,16 +1155,9 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
     let mut max_depth: i32 = 0;
     let mut endgame_reached: i32 = 0;
     let mut offset: i32 = 0;
-    let mut logger = &mut LogFileHandler {
-        log_file : 0 as *mut FILE
-    };
 
-    if use_log_file != 0 {
-        logger.log_file =
-            fopen(log_file_path.as_mut_ptr(),
-                  b"a\x00" as *const u8 as *const i8)
-    }
-    if !logger.log_file.is_null() {
+    let has_log_file = !logger.log_file.is_null();
+    if has_log_file {
         let board_ = &mut board;
         let side_to_move_ = side_to_move;
         log_board(logger, board_, side_to_move_);
@@ -1169,7 +1171,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
     generate_all(side_to_move);
     determine_hash_values(side_to_move, board.as_mut_ptr());
     calculate_perturbation();
-    if !logger.log_file.is_null() {
+    if has_log_file {
         let moves_generated = move_count[disks_played as usize];
         let move_list_for_disks_played = &move_list[disks_played as usize];
 
@@ -1207,7 +1209,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
             display_status(stdout, 0 as i32);
             free(eval_str as *mut std::ffi::c_void);
         }
-        if !logger.log_file.is_null() {
+        if has_log_file {
             log_best_move_pass(logger);
         }
         last_time_used = 0.0f64;
@@ -1244,7 +1246,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
                                 10 as i32);
             display_status(stdout, 0 as i32);
         }
-        if !logger.log_file.is_null() {
+        if has_log_file {
             let best_move = move_list[disks_played as usize][0 as i32 as usize];
             log_best_move(logger, best_move);
         }
@@ -1576,11 +1578,11 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
     /* Write the contents of the status buffer to the log file. */
     if move_type as u32 == BOOK_MOVE as i32 as u32 {
         let eval_str = produce_eval_text(*eval_info, 0 as i32);
-        if !logger.log_file.is_null() {
+        if has_log_file {
             log_chosen_move(logger, curr_move, eval_str);
         }
         free(eval_str as *mut std::ffi::c_void);
-    } else if !logger.log_file.is_null() {
+    } else if has_log_file {
         log_status(logger);
     }
     /* Write the principal variation, if available, to the log file
@@ -1588,7 +1590,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
     if get_ponder_move() == 0 {
         complete_pv(side_to_move);
         if display_pv != 0 && echo != 0 { display_optimal_line(stdout); }
-        if !logger.log_file.is_null() { log_optimal_line(logger); }
+        if has_log_file { log_optimal_line(logger); }
     }
     close_logger(logger);
     return curr_move;
