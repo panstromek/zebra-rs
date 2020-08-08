@@ -1089,8 +1089,26 @@ pub unsafe fn perform_extended_solve(mut side_to_move: i32,
    COMPUTE_MOVE
    Returns the best move in a position given search parameters.
 */
-
 pub unsafe fn compute_move(mut side_to_move: i32,
+                           mut update_all: i32,
+                           mut my_time: i32,
+                           mut my_incr: i32,
+                           mut timed_depth: i32,
+                           mut book: i32,
+                           mut mid: i32,
+                           mut exact: i32,
+                           mut wld: i32,
+                           mut search_forced: i32,
+                           mut eval_info: *mut EvaluationType)
+                           -> i32 {
+    return generic_compute_move(side_to_move, update_all, my_time,
+                                my_incr, timed_depth,
+                                book, mid,
+                                exact, wld,
+                                search_forced, eval_info);
+}
+
+pub unsafe fn generic_compute_move(mut side_to_move: i32,
                                       mut update_all: i32,
                                       mut my_time: i32,
                                       mut my_incr: i32,
