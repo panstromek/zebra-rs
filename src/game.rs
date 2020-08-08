@@ -1101,19 +1101,22 @@ pub unsafe fn compute_move(mut side_to_move: i32,
                            mut search_forced: i32,
                            mut eval_info: *mut EvaluationType)
                            -> i32 {
-    let mut logger = if use_log_file != 0 {
-        let mut log_file_path_ = &mut log_file_path as &mut [i8];
-        LogFileHandler::create(log_file_path_)
-    } else {
-        None
-    };
-
     return generic_compute_move::<LogFileHandler, LibcZebraOutput>(side_to_move, update_all, my_time,
                                 my_incr, timed_depth,
                                 book, mid,
                                 exact, wld,
-                                search_forced, eval_info, &mut logger);
+                                search_forced, eval_info, &mut create_log_file_if_needed());
 }
+
+pub unsafe fn create_log_file_if_needed() -> Option<LogFileHandler> {
+    if use_log_file != 0 {
+        let mut log_file_path_ = &mut log_file_path as &mut [i8];
+        LogFileHandler::create(log_file_path_)
+    } else {
+        None
+    }
+}
+
 impl LogFileHandler {
     fn create(mut log_file_path_: &mut [i8]) -> Option<LogFileHandler> {
         let log_file = unsafe {
