@@ -1115,14 +1115,14 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     }else {
         None
     };
-    return generic_compute_move(side_to_move, update_all, my_time,
+    return generic_compute_move::<LogFileHandler>(side_to_move, update_all, my_time,
                                 my_incr, timed_depth,
                                 book, mid,
                                 exact, wld,
                                 search_forced, eval_info, &mut logger);
 }
 
-pub unsafe fn generic_compute_move(mut side_to_move: i32,
+pub unsafe fn generic_compute_move<L>(mut side_to_move: i32,
                                       mut update_all: i32,
                                       mut my_time: i32,
                                       mut my_incr: i32,
@@ -1135,6 +1135,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
                                       mut eval_info: *mut EvaluationType,
                                    logger: &mut Option<LogFileHandler>)
  -> i32 {
+    type L = LogFileHandler;
     let mut book_eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
                        res: WON_POSITION,
@@ -1165,7 +1166,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
     if let Some(logger) = logger {
         let board_ = &mut board;
         let side_to_move_ = side_to_move;
-        log_board(logger, board_, side_to_move_);
+        L::log_board(logger, board_, side_to_move_);
     }
     /* Initialize various components of the move system */
     piece_count[0 as i32 as usize][disks_played as usize] =
@@ -1180,7 +1181,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
         let moves_generated = move_count[disks_played as usize];
         let move_list_for_disks_played = &move_list[disks_played as usize];
 
-        log_moves_generated(logger, moves_generated, move_list_for_disks_played);
+        L::log_moves_generated(logger, moves_generated, move_list_for_disks_played);
     }
     if update_all != 0 {
         reset_counter(&mut evaluations);
@@ -1215,7 +1216,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
             free(eval_str as *mut std::ffi::c_void);
         }
         if let Some(logger) = logger {
-            log_best_move_pass(logger);
+            L::log_best_move_pass(logger);
         }
         last_time_used = 0.0f64;
         clear_pv();
@@ -1253,7 +1254,7 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
         }
         if let Some(logger) = logger {
             let best_move = move_list[disks_played as usize][0 as i32 as usize];
-            log_best_move(logger, best_move);
+            L::log_best_move(logger, best_move);
         }
         last_time_used = 0.0f64;
         return move_list[disks_played as usize][0 as i32 as usize]
@@ -1584,25 +1585,25 @@ pub unsafe fn generic_compute_move(mut side_to_move: i32,
     if move_type as u32 == BOOK_MOVE as i32 as u32 {
         let eval_str = produce_eval_text(*eval_info, 0 as i32);
         if let Some(logger) = logger {
-            log_chosen_move(logger, curr_move, eval_str);
+            L::log_chosen_move(logger, curr_move, eval_str);
         }
         free(eval_str as *mut std::ffi::c_void);
     } else if let Some(logger) = logger {
-        log_status(logger);
+        L::log_status(logger);
     }
     /* Write the principal variation, if available, to the log file
        and, optionally, to screen. */
     if get_ponder_move() == 0 {
         complete_pv(side_to_move);
         if display_pv != 0 && echo != 0 { display_optimal_line(stdout); }
-        if let Some(logger) = logger { log_optimal_line(logger); }
+        if let Some(logger) = logger { L::log_optimal_line(logger); }
     }
     if let Some(logger) = logger {
-        close_logger(logger);
+        L::close_logger(logger);
     }
     return curr_move;
 }
-
+impl LogFileHandler {
 fn log_moves_generated(mut logger: &mut LogFileHandler, moves_generated: i32, move_list_for_disks_played: &[i32; 64]) {
     unsafe {
         fprintf(logger.log_file, b"%d %s: \x00" as *const u8 as *const i8,
@@ -1676,4 +1677,5 @@ fn log_board(mut logger: &mut LogFileHandler, board_: &mut [i32; 128], side_to_m
         display_board(logger.log_file, board_.as_mut_ptr(), side_to_move_,
                       0 as i32, 0 as i32, 0 as i32);
     }
+}
 }
