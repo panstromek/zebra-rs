@@ -1206,13 +1206,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
                              0 as i32);
         set_current_eval(*eval_info);
         if echo != 0 {
-            let eval_str = produce_eval_text(&*eval_info, 0 as i32);
-            send_status(b"-->         \x00" as *const u8 as
-                            *const i8);
-            send_status(b"%-8s  \x00" as *const u8 as *const i8,
-                        eval_str);
-            display_status(stdout, 0 as i32);
-            free(eval_str as *mut std::ffi::c_void);
+            let info = &*eval_info;
+            echo_compute_move_1(info);
         }
         if let Some(logger) = logger {
             L::log_best_move_pass(logger);
@@ -1234,22 +1229,9 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
                              0 as i32);
         set_current_eval(*eval_info);
         if echo != 0 {
-            let eval_str = produce_eval_text(&*eval_info, 0 as i32);
-            send_status(b"-->         \x00" as *const u8 as
-                            *const i8);
-            send_status(b"%-8s  \x00" as *const u8 as *const i8,
-                        eval_str);
-            free(eval_str as *mut std::ffi::c_void);
-            send_status(b"%c%c \x00" as *const u8 as *const i8,
-                        'a' as i32 +
-                            move_list[disks_played as
-                                          usize][0 as i32 as usize] %
-                                10 as i32 - 1 as i32,
-                        '0' as i32 +
-                            move_list[disks_played as
-                                          usize][0 as i32 as usize] /
-                                10 as i32);
-            display_status(stdout, 0 as i32);
+            let info = &*eval_info;
+            let disk = move_list[disks_played as usize][0 as i32 as usize];
+            echo_compute_move_2(info, disk);
         }
         if let Some(logger) = logger {
             let best_move = move_list[disks_played as usize][0 as i32 as usize];
@@ -1278,22 +1260,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
             book_move_found = 1 as i32;
             move_type = BOOK_MOVE;
             if echo != 0 {
-                send_status(b"-->   Forced opening move        \x00" as
-                                *const u8 as *const i8);
-                if get_ponder_move() != 0 {
-                    send_status(b"{%c%c} \x00" as *const u8 as
-                                    *const i8,
-                                'a' as i32 +
-                                    get_ponder_move() % 10 as i32 -
-                                    1 as i32,
-                                '0' as i32 +
-                                    get_ponder_move() / 10 as i32);
-                }
-                send_status(b"%c%c\x00" as *const u8 as *const i8,
-                            'a' as i32 + curr_move % 10 as i32 -
-                                1 as i32,
-                            '0' as i32 + curr_move / 10 as i32);
-                display_status(stdout, 0 as i32);
+                let ponder_move = get_ponder_move();
+                echo_ponder_move(curr_move, ponder_move);
             }
             clear_pv();
             pv_depth[0 as i32 as usize] = 1 as i32;
@@ -1319,26 +1287,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
                 book_move_found = 1 as i32;
                 move_type = BOOK_MOVE;
                 if echo != 0 {
-                    send_status(b"-->   %s        \x00" as *const u8 as
-                                    *const i8,
-                                b"Thor database\x00" as *const u8 as
-                                    *const i8);
-                    if get_ponder_move() != 0 {
-                        send_status(b"{%c%c} \x00" as *const u8 as
-                                        *const i8,
-                                    'a' as i32 +
-                                        get_ponder_move() % 10 as i32
-                                        - 1 as i32,
-                                    '0' as i32 +
-                                        get_ponder_move() /
-                                            10 as i32);
-                    }
-                    send_status(b"%c%c\x00" as *const u8 as
-                                    *const i8,
-                                'a' as i32 + curr_move % 10 as i32 -
-                                    1 as i32,
-                                '0' as i32 + curr_move / 10 as i32);
-                    display_status(stdout, 0 as i32);
+                    let ponder_move = get_ponder_move();
+                    echo_ponder_move_2(curr_move, ponder_move);
                 }
                 clear_pv();
                 pv_depth[0 as i32 as usize] = 1 as i32;
@@ -1364,24 +1314,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
             book_move_found = 1 as i32;
             move_type = BOOK_MOVE;
             if echo != 0 {
-                send_status(b"-->   %s        \x00" as *const u8 as
-                                *const i8,
-                            b"Thor database\x00" as *const u8 as
-                                *const i8);
-                if get_ponder_move() != 0 {
-                    send_status(b"{%c%c} \x00" as *const u8 as
-                                    *const i8,
-                                'a' as i32 +
-                                    get_ponder_move() % 10 as i32 -
-                                    1 as i32,
-                                '0' as i32 +
-                                    get_ponder_move() / 10 as i32);
-                }
-                send_status(b"%c%c\x00" as *const u8 as *const i8,
-                            'a' as i32 + curr_move % 10 as i32 -
-                                1 as i32,
-                            '0' as i32 + curr_move / 10 as i32);
-                display_status(stdout, 0 as i32);
+                let ponder_move = get_ponder_move();
+                echo_ponder_move_4(curr_move, ponder_move);
             }
             clear_pv();
             pv_depth[0 as i32 as usize] = 1 as i32;
@@ -1404,7 +1338,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
             midgame_move = curr_move;
             book_move_found = 1 as i32;
             move_type = BOOK_MOVE;
-            display_status(stdout, 0 as i32);
+            display_status_out();
         }
     }
     /* Use iterative deepening in the midgame searches until the endgame
@@ -1501,7 +1435,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
                 break ;
             }
         }
-        if echo != 0 { display_status(stdout, 0 as i32); }
+        if echo != 0 { display_status_out(); }
         if abs(mid_eval_info.score) == abs(-(27000 as i32)) {
             move_type = INTERRUPTED_MOVE;
             interrupted_depth = midgame_depth - 1 as i32
@@ -1548,24 +1482,10 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
                 create_eval_info(INTERRUPTED_EVAL, UNSOLVED_POSITION,
                                  0.0f64 as i32, 0.0f64,
                                  0 as i32, 0 as i32);
-            clear_status();
-            send_status(b"--> *%2d\x00" as *const u8 as *const i8,
-                        interrupted_depth);
-            let eval_str = produce_eval_text(&*eval_info, 1 as i32);
-            send_status(b"%10s  \x00" as *const u8 as *const i8,
-                        eval_str);
-            free(eval_str as *mut std::ffi::c_void);
-            send_status_nodes(counter_value(&mut nodes));
-            send_status_pv(pv[0 as i32 as usize].as_mut_ptr(),
-                           interrupted_depth);
-            send_status_time(get_elapsed_time());
-            if get_elapsed_time() != 0.0f64 {
-                send_status(b"%6.0f %s\x00" as *const u8 as
-                                *const i8,
-                            counter_value(&mut nodes) /
-                                (get_elapsed_time() + 0.001f64),
-                            b"nps\x00" as *const u8 as *const i8);
-            }
+            let info = &*eval_info;
+            let counter_value = counter_value(&mut nodes);
+            let elapsed_time = get_elapsed_time();
+            send_move_type_0_status(interrupted_depth, info, counter_value, elapsed_time);
         }
         1 => { *eval_info = book_eval_info }
         2 => { *eval_info = mid_eval_info }
@@ -1582,11 +1502,10 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
     clear_panic_abort();
     /* Write the contents of the status buffer to the log file. */
     if move_type as u32 == BOOK_MOVE as i32 as u32 {
-        let eval_str = produce_eval_text(&*eval_info, 0 as i32);
         if let Some(logger) = logger {
-            L::log_chosen_move(logger, curr_move, eval_str);
+            let info = &*eval_info;
+            L::log_chosen_move(logger, curr_move, info);
         }
-        free(eval_str as *mut std::ffi::c_void);
     } else if let Some(logger) = logger {
         L::log_status(logger);
     }
@@ -1594,7 +1513,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
        and, optionally, to screen. */
     if get_ponder_move() == 0 {
         complete_pv(side_to_move);
-        if display_pv != 0 && echo != 0 { display_optimal_line(stdout); }
+        if display_pv != 0 && echo != 0 { display_out_optimal_line(); }
         if let Some(logger) = logger { L::log_optimal_line(logger); }
     }
     if let Some(logger) = logger {
@@ -1602,11 +1521,143 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
     }
     return curr_move;
 }
+
+fn display_out_optimal_line() {
+    unsafe { display_optimal_line(stdout) }
+}
+
+fn send_move_type_0_status(mut interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64) {
+    unsafe {
+        clear_status();
+        send_status(b"--> *%2d\x00" as *const u8 as *const i8,
+                    interrupted_depth);
+        let eval_str = produce_eval_text(info, 1 as i32);
+        send_status(b"%10s  \x00" as *const u8 as *const i8,
+                    eval_str);
+        free(eval_str as *mut std::ffi::c_void);
+        send_status_nodes(counter_value);
+        send_status_pv(pv[0 as i32 as usize].as_mut_ptr(),
+                       interrupted_depth);
+        send_status_time(elapsed_time);
+        if elapsed_time != 0.0f64 {
+            send_status(b"%6.0f %s\x00" as *const u8 as
+                            *const i8,
+                        counter_value /
+                            (elapsed_time + 0.001f64),
+                        b"nps\x00" as *const u8 as *const i8);
+        }
+    }
+}
+
+fn display_status_out() {
+    unsafe { display_status(stdout, 0 as i32); }
+}
+
+fn echo_ponder_move_4(curr_move: i32, ponder_move: i32) {
+    unsafe {
+        send_status(b"-->   %s        \x00" as *const u8 as
+                        *const i8,
+                    b"Thor database\x00" as *const u8 as
+                        *const i8);
+        if ponder_move != 0 {
+            send_status(b"{%c%c} \x00" as *const u8 as
+                            *const i8,
+                        'a' as i32 +
+                            ponder_move % 10 as i32 -
+                            1 as i32,
+                        '0' as i32 +
+                            ponder_move / 10 as i32);
+        }
+        send_status(b"%c%c\x00" as *const u8 as *const i8,
+                    'a' as i32 + curr_move % 10 as i32 -
+                        1 as i32,
+                    '0' as i32 + curr_move / 10 as i32);
+        display_status(stdout, 0 as i32);
+    }
+}
+
+fn echo_ponder_move_2(curr_move: i32, ponder_move: i32) {
+    unsafe {
+        send_status(b"-->   %s        \x00" as *const u8 as
+                        *const i8,
+                    b"Thor database\x00" as *const u8 as
+                        *const i8);
+        if ponder_move != 0 {
+            send_status(b"{%c%c} \x00" as *const u8 as
+                            *const i8,
+                        'a' as i32 +
+                            ponder_move % 10 as i32
+                            - 1 as i32,
+                        '0' as i32 +
+                            ponder_move /
+                                10 as i32);
+        }
+        send_status(b"%c%c\x00" as *const u8 as
+                        *const i8,
+                    'a' as i32 + curr_move % 10 as i32 -
+                        1 as i32,
+                    '0' as i32 + curr_move / 10 as i32);
+        display_status(stdout, 0 as i32);
+    }
+}
+
+fn echo_ponder_move(curr_move: i32, ponder_move: i32) {
+    unsafe {
+        send_status(b"-->   Forced opening move        \x00" as
+            *const u8 as *const i8);
+        if ponder_move != 0 {
+            send_status(b"{%c%c} \x00" as *const u8 as
+                            *const i8,
+                        'a' as i32 +
+                            ponder_move % 10 as i32 -
+                            1 as i32,
+                        '0' as i32 +
+                            ponder_move / 10 as i32);
+        }
+        send_status(b"%c%c\x00" as *const u8 as *const i8,
+                    'a' as i32 + curr_move % 10 as i32 -
+                        1 as i32,
+                    '0' as i32 + curr_move / 10 as i32);
+        display_status(stdout, 0 as i32);
+    }
+}
+
+fn echo_compute_move_2(info: &EvaluationType, disk: i32) {
+    unsafe {
+        let eval_str = produce_eval_text(info, 0 as i32);
+        send_status(b"-->         \x00" as *const u8 as
+            *const i8);
+        send_status(b"%-8s  \x00" as *const u8 as *const i8,
+                    eval_str);
+        free(eval_str as *mut std::ffi::c_void);
+        send_status(b"%c%c \x00" as *const u8 as *const i8,
+                    'a' as i32 +
+                        disk %
+                            10 as i32 - 1 as i32,
+                    '0' as i32 +
+                        disk /
+                            10 as i32);
+        display_status(stdout, 0 as i32);
+    }
+}
+
+fn echo_compute_move_1(info: &EvaluationType) {
+    unsafe {
+        let eval_str = produce_eval_text(info, 0 as i32);
+        send_status(b"-->         \x00" as *const u8 as
+            *const i8);
+        send_status(b"%-8s  \x00" as *const u8 as *const i8,
+                    eval_str);
+        display_status(stdout, 0 as i32);
+        free(eval_str as *mut std::ffi::c_void);
+    }
+}
+
 pub trait ComputeMoveLogger {
     fn log_moves_generated(logger: &mut Self, moves_generated: i32, move_list_for_disks_played: &[i32; 64]);
     fn log_best_move_pass(logger: &mut Self);
     fn log_best_move(logger: &mut Self, best_move: i32);
-    unsafe fn log_chosen_move(logger: &mut Self, curr_move: i32, eval_str: *mut i8);
+    fn log_chosen_move(logger: &mut Self, curr_move: i32, info: &EvaluationType);
     fn log_status(logger: &mut Self);
     fn log_optimal_line(logger: &mut Self);
     fn close_logger(logger: &mut Self);
@@ -1660,13 +1711,17 @@ fn log_best_move(mut logger: &mut LogFileHandler, best_move: i32) {
     }
 }
 
-unsafe fn log_chosen_move(mut logger: &mut LogFileHandler, mut curr_move: i32, eval_str: *mut i8) {
-    fprintf(logger.log_file,
-            b"%s: %c%c  %s\n\x00" as *const u8 as *const i8,
-            b"Move chosen\x00" as *const u8 as *const i8,
-            'a' as i32 + curr_move % 10 as i32 -
-                1 as i32,
-            '0' as i32 + curr_move / 10 as i32, eval_str);
+fn log_chosen_move(logger: &mut LogFileHandler, curr_move: i32, info: &EvaluationType) {
+    unsafe {
+        let eval_str = produce_eval_text(info, 0 as i32);
+        fprintf(logger.log_file,
+                b"%s: %c%c  %s\n\x00" as *const u8 as *const i8,
+                b"Move chosen\x00" as *const u8 as *const i8,
+                'a' as i32 + curr_move % 10 as i32 -
+                    1 as i32,
+                '0' as i32 + curr_move / 10 as i32, eval_str);
+        free(eval_str as *mut std::ffi::c_void);
+    }
 }
 
 fn log_status(mut logger: &mut LogFileHandler) {
