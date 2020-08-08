@@ -1115,14 +1115,15 @@ pub unsafe fn compute_move(mut side_to_move: i32,
     }else {
         None
     };
-    return generic_compute_move::<LogFileHandler>(side_to_move, update_all, my_time,
+
+    return generic_compute_move::<LogFileHandler, LibcZebraOutput>(side_to_move, update_all, my_time,
                                 my_incr, timed_depth,
                                 book, mid,
                                 exact, wld,
                                 search_forced, eval_info, &mut logger);
 }
 
-pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
+pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput>(mut side_to_move: i32,
                                       mut update_all: i32,
                                       mut my_time: i32,
                                       mut my_incr: i32,
@@ -1161,7 +1162,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
     let mut max_depth: i32 = 0;
     let mut endgame_reached: i32 = 0;
     let mut offset: i32 = 0;
-    type Out = LibcZebraOutput;
+
     if let Some(logger) = logger {
         let board_ = &mut board;
         let side_to_move_ = side_to_move;
@@ -1521,7 +1522,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger>(mut side_to_move: i32,
     }
     return curr_move;
 }
-trait ComputeMoveOutput {
+pub trait ComputeMoveOutput {
     fn display_out_optimal_line();
     fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64);
     fn display_status_out();
