@@ -25,7 +25,7 @@ use crate::{
     }
 };
 use std::ptr::null_mut;
-use engine::src::game::{generic_game_init, BoardSource, FileBoardSource, generic_compute_move};
+use engine::src::game::{generic_game_init, BoardSource, FileBoardSource, generic_compute_move, ComputeMoveLogger};
 use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler};
 
 pub type _IO_wide_data = std::ffi::c_void;
