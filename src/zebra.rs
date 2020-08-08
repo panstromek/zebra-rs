@@ -84,25 +84,18 @@ Interprets the command-line parameters and starts the game.
 */
 unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
  -> i32 {
-    let mut game_file_name = 0 as *const i8;
-    let mut script_in_file = 0 as *const i8;
-    let mut script_out_file = 0 as *const i8;
-    let mut move_sequence = 0 as *const i8;
-    let mut move_file_name = 0 as *const i8;
-    let mut arg_index: i32 = 0;
-    let mut help: i32 = 0;
-    let mut hash_bits: i32 = 0;
-    let mut use_random: i32 = 0;
-    let mut repeat = 1 as i32;
-    let mut run_script: i32 = 0;
-    let mut script_optimal_line = 0 as i32;
-    let mut komi: i32 = 0;
-    let mut timer: time_t = 0;
     printf(b"\nZebra (c) 1997-2005 Gunnar Andersson, compile date %s at %s\n\n\x00"
                as *const u8 as *const i8,
+           // TODO add macro or smth for these (it's in the C code)
            b"Jul  2 2020\x00" as *const u8 as *const i8,
            b"19:33:54\x00" as *const u8 as *const i8);
-    use_random = 1 as i32;
+
+    let mut move_sequence = 0 as *const i8;
+    let mut move_file_name = 0 as *const i8;
+    let mut repeat = 1 as i32;
+    let mut script_optimal_line = 0 as i32;
+    let mut timer: time_t = 0;
+    let mut use_random = 1 as i32;
     wait = 0 as i32;
     echo = 1 as i32;
     display_pv = 1 as i32;
@@ -110,13 +103,12 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     use_thor = 0 as i32;
     skill[2 as i32 as usize] = -(1 as i32);
     skill[0 as i32 as usize] = skill[2 as i32 as usize];
-    hash_bits = 18 as i32;
-    game_file_name = 0 as *const i8;
+    let mut hash_bits = 18 as i32;
+    let mut game_file_name = 0 as *const i8;
     let mut log_file_name = 0 as *mut i8;
-    run_script = 0 as i32;
-    script_out_file = 0 as *const i8;
-    script_in_file = script_out_file;
-    komi = 0 as i32;
+    let run_script = 0 as i32;
+    let script_out_file = 0 as *const i8;
+    let script_in_file = script_out_file;
     player_time[2 as i32 as usize] = 10000000.0f64;
     player_time[0 as i32 as usize] =
         player_time[2 as i32 as usize];
@@ -124,8 +116,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     player_increment[0 as i32 as usize] =
         player_increment[2 as i32 as usize];
     let mut current_block_107: u64;
-    arg_index = 1 as i32;
-    help = 0 as i32;
+    let mut arg_index = 1 as i32;
+    let mut help = 0 as i32;
     while arg_index < argc && help == 0 {
         if strcasecmp(*argv.offset(arg_index as isize),
                       b"-e\x00" as *const u8 as *const i8) == 0 {
