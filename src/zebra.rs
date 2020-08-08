@@ -25,8 +25,8 @@ use crate::{
     }
 };
 use std::ptr::null_mut;
-use engine::src::game::{generic_game_init, BoardSource, FileBoardSource};
-use crate::src::game::LibcBoardFileSource;
+use engine::src::game::{generic_game_init, BoardSource, FileBoardSource, generic_compute_move};
+use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler, create_log_file_if_needed};
 
 pub type _IO_wide_data = std::ffi::c_void;
 pub type _IO_codecvt = std::ffi::c_void;
@@ -1028,7 +1028,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend,
                                  60 as i32) as i32;
                         toggle_experimental(0 as i32);
                         curr_move =
-                            compute_move(side_to_move, 1 as i32,
+                            generic_compute_move::<LogFileHandler, LibcZebraOutput>(side_to_move, 1 as i32,
                                          player_time[side_to_move as usize] as
                                              i32,
                                          player_increment[side_to_move as
@@ -1038,7 +1038,8 @@ unsafe fn engine_play_game<ZF: ZebraFrontend,
                                          skill[side_to_move as usize],
                                          exact_skill[side_to_move as usize],
                                          wld_skill[side_to_move as usize],
-                                         0 as i32, &mut eval_info);
+                                         0 as i32, &mut eval_info,
+                                         &mut create_log_file_if_needed());
                         if side_to_move == 0 as i32 {
                             set_evals(produce_compact_eval(eval_info),
                                       0.0f64);
