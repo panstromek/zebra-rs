@@ -93,7 +93,7 @@ pub unsafe extern "C" fn midgame_display_status(mut side_to_move: i32, mut max_d
     }
     send_status(b"%2d  \x00" as *const u8 as *const i8,
                 depth);
-    eval_str = produce_eval_text(*eval_info, 1 as i32);
+    eval_str = produce_eval_text(&*eval_info, 1 as i32);
     send_status(b"%-10s  \x00" as *const u8 as *const i8,
                 eval_str);
     free(eval_str as *mut std::ffi::c_void);
