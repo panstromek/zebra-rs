@@ -861,6 +861,12 @@ unsafe fn play_game(mut file_name: *const i8,
     engine_play_game::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource>(file_name, move_string, repeat, log_file_name_, move_file)
 }
 
+/* still missing in engine
+--> engine/src/zebra.rs:249:33
+error[E0425]: cannot find function `compute_move` in this scope
+--> engine/src/zebra.rs:267:29
+error[E0425]: cannot find function `learn_game` in this scope
+*/
 unsafe fn engine_play_game<ZF: ZebraFrontend,
     Source: InitialMoveSource,
     Dump: DumpHandler, BoardSrc : FileBoardSource>(
@@ -997,7 +1003,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend,
                 /* Check what the Thor opening statistics has to say */
                 choose_thor_opening_move(board.as_mut_ptr(), side_to_move,
                                          echo);
-                if echo != 0 && wait != 0 { dumpch(); }
+                if echo != 0 && wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
                     if skill[side_to_move as usize] == 0 as i32 {
                         if use_book != 0 && display_pv != 0 {
@@ -1185,6 +1191,7 @@ trait ZebraFrontend {
     fn report_book_randomness(slack_: f64);
     unsafe fn load_thor_files();
     fn print_move_alternatives(side_to_move: i32);
+    fn dumpch();
 }
 
 struct LibcFrontend {}
@@ -1390,6 +1397,10 @@ impl ZebraFrontend for LibcFrontend {
 
     fn print_move_alternatives(side_to_move: i32) {
         unsafe { print_move_alternatives(side_to_move) }
+    }
+
+    fn dumpch() {
+        unsafe { dumpch() }
     }
 }
 
