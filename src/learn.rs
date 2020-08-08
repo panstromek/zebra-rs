@@ -1,11 +1,12 @@
 use crate::src::timer::{toggle_abort_check, clear_panic_abort};
 use crate::src::osfbook::{write_text_database, write_binary_database, add_new_game, set_search_depth, read_text_database, read_binary_database, init_osf};
 use crate::src::moves::{make_move, generate_all, disks_played, move_count};
-use crate::src::game::game_init;
+use crate::src::game::{game_init, LibcBoardFileSource};
 use crate::src::stubs::{fclose, fputs, fprintf, fopen, strcpy};
 use crate::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
 use crate::src::zebra::_IO_FILE;
 pub use engine::src::learn::*;
+use engine::src::game::generic_game_init;
 
 pub type size_t = u64;
 pub type __off_t = i64;
@@ -41,7 +42,7 @@ pub unsafe fn learn_game(mut game_length: i32,
     let full_solve = get_earliest_full_solve();
     let wld_solve = get_earliest_wld_solve();
     let mut dummy: i32 = 0;
-    game_init(0 as *const i8, &mut dummy);
+    generic_game_init::<LibcBoardFileSource>(0 as *const i8, &mut dummy);
     let mut side_to_move = 0 as i32;
     let mut i = 0 as i32;
     while i < game_length {

@@ -25,6 +25,8 @@ use crate::{
     }
 };
 use std::ptr::null_mut;
+use engine::src::game::generic_game_init;
+use crate::src::game::LibcBoardFileSource;
 
 pub type _IO_wide_data = std::ffi::c_void;
 pub type _IO_codecvt = std::ffi::c_void;
@@ -920,7 +922,7 @@ unsafe fn engine_play_game<ZF: ZebraFrontend, Source: InitialMoveSource>(
             }
         }
         /* Set up the position and the search engine */
-        game_init(file_name, &mut side_to_move);
+        generic_game_init::<LibcBoardFileSource>(file_name, &mut side_to_move);
         setup_hash(1 as i32);
         clear_stored_game();
         if echo != 0 && use_book != 0 {
@@ -1488,7 +1490,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         puts(b"Analyzing provided game...\x00" as *const u8 as
                  *const i8);
     }
-    game_init(0 as *const i8, &mut side_to_move);
+    generic_game_init::<LibcBoardFileSource>(0 as *const i8, &mut side_to_move);
     setup_hash(1 as i32);
     clear_stored_game();
     if echo != 0 && use_book != 0 {
@@ -1861,7 +1863,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 exit(1 as i32);
             }
             /* Parse the script line containing board and side to move */
-            game_init(0 as *const i8, &mut side_to_move);
+            generic_game_init::<LibcBoardFileSource>(0 as *const i8, &mut side_to_move);
             set_slack(0.0f64 as i32);
             toggle_human_openings(0 as i32);
             reset_book_search();
