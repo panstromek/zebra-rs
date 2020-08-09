@@ -3,7 +3,8 @@ members = [
     "engine",
     "booktool",
     "tune8db",
-    "scrzebra"
+    "scrzebra",
+    "practice"
 ]
 
 [package]
