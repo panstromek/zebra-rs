@@ -23,6 +23,10 @@ use crate::{
 };
 pub use engine::src::osfbook::*;
 use engine::src::game::{engine_game_init, setup_non_file_based_game};
+use crate::src::display::display_board;
+use engine::src::midgame::middle_game;
+use engine::src::myrandom::my_srandom;
+use engine::src::hash::set_hash_transformation;
 
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
@@ -2511,4 +2515,1073 @@ pub unsafe fn init_osf(mut do_global_setup: i32) {
     if do_global_setup != 0 {
         global_setup(0 as i32, 19 as i32);
     };
+}
+
+// #ifdef INCLUDE_BOOKTOOL
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct StatisticsSpec {
+    pub out_file_name: *const libc::c_char,
+    pub prob: libc::c_double,
+    pub max_diff: libc::c_int,
+    pub max_depth: libc::c_int,
+}
+static mut correction_script_name: *const libc::c_char = 0 as *const libc::c_char;
+/*
+  EXPORT_POSITION
+  Output the position and its value according to the database
+  to file.
+*/
+unsafe extern "C" fn export_position(mut side_to_move: libc::c_int,
+                                     mut score: libc::c_int,
+                                     mut target_file: *mut FILE) {
+    let mut i: libc::c_int = 0;
+    let mut j: libc::c_int = 0;
+    let mut pos: libc::c_int = 0;
+    let mut black_mask: libc::c_int = 0;
+    let mut white_mask: libc::c_int = 0;
+    let mut hi_mask: libc::c_int = 0;
+    let mut lo_mask: libc::c_int = 0;
+    i = 1 as libc::c_int;
+    while i <= 8 as libc::c_int {
+        black_mask = 0 as libc::c_int;
+        white_mask = 0 as libc::c_int;
+        j = 0 as libc::c_int;
+        pos = 10 as libc::c_int * i + 1 as libc::c_int;
+        while j < 8 as libc::c_int {
+            if board[pos as usize] == 0 as libc::c_int {
+                black_mask |= (1 as libc::c_int) << j
+            } else if board[pos as usize] == 2 as libc::c_int {
+                white_mask |= (1 as libc::c_int) << j
+            }
+            j += 1;
+            pos += 1
+        }
+        hi_mask = black_mask >> 4 as libc::c_int;
+        lo_mask = black_mask % 16 as libc::c_int;
+        fprintf(target_file, b"%c%c\x00" as *const u8 as *const libc::c_char,
+                hi_mask + ' ' as i32, lo_mask + ' ' as i32);
+        hi_mask = white_mask >> 4 as libc::c_int;
+        lo_mask = white_mask % 16 as libc::c_int;
+        fprintf(target_file, b"%c%c\x00" as *const u8 as *const libc::c_char,
+                hi_mask + ' ' as i32, lo_mask + ' ' as i32);
+        i += 1
+    }
+    fprintf(target_file, b" \x00" as *const u8 as *const libc::c_char);
+    if side_to_move == 0 as libc::c_int {
+        fputc('*' as i32, target_file);
+    } else { fputc('O' as i32, target_file); }
+    fprintf(target_file,
+            b" %2d %+d\n\x00" as *const u8 as *const libc::c_char,
+            disks_played, score);
+}
+/*
+   DO_RESTRICTED_MINIMAX
+   Calculates the book-only minimax value of node INDEX,
+   not caring about deviations from the database.
+*/
+unsafe extern "C" fn do_restricted_minimax(mut index: libc::c_int,
+                                           mut low: libc::c_int,
+                                           mut high: libc::c_int,
+                                           mut target_file: *mut FILE,
+                                           mut minimax_values:
+                                           *mut libc::c_int) {
+    let mut i: libc::c_int = 0;
+    let mut child: libc::c_int = 0;
+    let mut corrected_score: libc::c_int = 0;
+    let mut side_to_move: libc::c_int = 0;
+    let mut this_move: libc::c_int = 0;
+    let mut child_count: libc::c_int = 0;
+    let mut slot: libc::c_int = 0;
+    let mut val1: libc::c_int = 0;
+    let mut val2: libc::c_int = 0;
+    let mut orientation: libc::c_int = 0;
+    let mut best_score: libc::c_short = 0;
+    if (*node.offset(index as isize)).flags as libc::c_int & 8 as libc::c_int
+        == 0 {
+        return
+    }
+    /* Recursively minimax all children of the node */
+    if (*node.offset(index as isize)).flags as libc::c_int & 1 as libc::c_int
+        != 0 {
+        side_to_move = 0 as libc::c_int
+    } else { side_to_move = 2 as libc::c_int }
+    if side_to_move == 0 as libc::c_int {
+        best_score = -(32000 as libc::c_int) as libc::c_short
+    } else { best_score = 32000 as libc::c_int as libc::c_short }
+    generate_all(side_to_move);
+    child_count = 0 as libc::c_int;
+    i = 0 as libc::c_int;
+    while i < move_count[disks_played as usize] {
+        piece_count[0 as libc::c_int as usize][disks_played as usize] =
+            disc_count(0 as libc::c_int);
+        piece_count[2 as libc::c_int as usize][disks_played as usize] =
+            disc_count(2 as libc::c_int);
+        this_move = move_list[disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as libc::c_int);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2);
+        child = *book_hash_table.offset(slot as isize);
+        if child != -(1 as libc::c_int) {
+            do_restricted_minimax(child, low, high, target_file,
+                                  minimax_values);
+            corrected_score = *minimax_values.offset(child as isize);
+            if side_to_move == 0 as libc::c_int &&
+                corrected_score > best_score as libc::c_int ||
+                side_to_move == 2 as libc::c_int &&
+                    corrected_score < best_score as libc::c_int {
+                best_score = corrected_score as libc::c_short
+            }
+            child_count += 1
+        }
+        unmake_move(side_to_move, this_move);
+        i += 1
+    }
+    if (*node.offset(index as isize)).flags as libc::c_int & 16 as libc::c_int
+        != 0 ||
+        (*node.offset(index as isize)).flags as libc::c_int &
+            4 as libc::c_int != 0 && child_count == 0 as libc::c_int {
+        best_score = (*node.offset(index as isize)).black_minimax_score
+    } else if child_count == 0 as libc::c_int {
+        printf(b"%d disks played\n\x00" as *const u8 as *const libc::c_char,
+               disks_played);
+        printf(b"Node #%d has no children and lacks WLD status\n\x00" as
+                   *const u8 as *const libc::c_char, index);
+        exit(1 as libc::c_int);
+    }
+    if best_score as libc::c_int > 30000 as libc::c_int {
+        best_score =
+            (best_score as libc::c_int - 30000 as libc::c_int) as
+                libc::c_short
+    } else if (best_score as libc::c_int) < -(30000 as libc::c_int) {
+        best_score =
+            (best_score as libc::c_int + 30000 as libc::c_int) as
+                libc::c_short
+    }
+    *minimax_values.offset(index as isize) = best_score as libc::c_int;
+    let ref mut fresh16 = (*node.offset(index as isize)).flags;
+    *fresh16 = (*fresh16 as libc::c_int ^ 8 as libc::c_int) as libc::c_ushort;
+    if disks_played >= low && disks_played <= high {
+        export_position(side_to_move, best_score as libc::c_int, target_file);
+    };
+}
+/*
+   RESTRICTED_MINIMAX_TREE
+   Calculates the minimax values of all nodes in the tree,
+   not
+*/
+#[no_mangle]
+pub unsafe extern "C" fn restricted_minimax_tree(mut low: libc::c_int,
+                                                 mut high: libc::c_int,
+                                                 mut pos_file_name:
+                                                 *const libc::c_char) {
+    let mut pos_file: *mut FILE = 0 as *mut FILE;
+    let mut i: libc::c_int = 0;
+    let mut minimax_values: *mut libc::c_int = 0 as *mut libc::c_int;
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    printf(b"Calculating restricted minimax value... \x00" as *const u8 as
+        *const libc::c_char);
+    fflush(stdout);
+    prepare_tree_traversal();
+    time(&mut start_time);
+    /* Mark all nodes as not traversed */
+    i = 0 as libc::c_int;
+    while i < book_node_count {
+        let ref mut fresh17 = (*node.offset(i as isize)).flags;
+        *fresh17 =
+            (*fresh17 as libc::c_int | 8 as libc::c_int) as libc::c_ushort;
+        i += 1
+    }
+    minimax_values =
+        safe_malloc((book_node_count as
+            libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_int>()
+            as libc::c_ulong)) as
+            *mut libc::c_int;
+    pos_file =
+        fopen(pos_file_name, b"a\x00" as *const u8 as *const libc::c_char);
+    do_restricted_minimax(0 as libc::c_int, low, high, pos_file,
+                          minimax_values);
+    time(&mut stop_time);
+    printf(b"done (took %d s)\n\x00" as *const u8 as *const libc::c_char,
+           (stop_time - start_time) as libc::c_int);
+    puts(b"\x00" as *const u8 as *const libc::c_char);
+    free(minimax_values as *mut libc::c_void);
+    fclose(pos_file);
+}
+/*
+   DO_MIDGAME_STATISTICS
+   Recursively makes sure a subtree is evaluated to the specified depth.
+*/
+unsafe extern "C" fn do_midgame_statistics(mut index: libc::c_int,
+                                           mut spec: StatisticsSpec) {
+    let mut dummy_info: EvaluationType =
+        EvaluationType{type_0: MIDGAME_EVAL,
+            res: WON_POSITION,
+            score: 0,
+            confidence: 0.,
+            search_depth: 0,
+            is_book: 0,};
+    let mut i: libc::c_int = 0;
+    let mut depth: libc::c_int = 0;
+    let mut child: libc::c_int = 0;
+    let mut side_to_move: libc::c_int = 0;
+    let mut this_move: libc::c_int = 0;
+    let mut slot: libc::c_int = 0;
+    let mut val1: libc::c_int = 0;
+    let mut val2: libc::c_int = 0;
+    let mut orientation: libc::c_int = 0;
+    let mut eval_list: [libc::c_int; 64] = [0; 64];
+    let mut out_file: *mut FILE = 0 as *mut FILE;
+    if (*node.offset(index as isize)).flags as libc::c_int & 8 as libc::c_int
+        == 0 {
+        return
+    }
+    if (*node.offset(index as isize)).flags as libc::c_int & 1 as libc::c_int
+        != 0 {
+        side_to_move = 0 as libc::c_int
+    } else { side_to_move = 2 as libc::c_int }
+    generate_all(side_to_move);
+    /* With a certain probability, search the position to a variety
+     of different depths in order to determine correlations. */
+    if ((my_random() % 1000 as libc::c_int as libc::c_long) as libc::c_double)
+        < 1000.0f64 * spec.prob &&
+        abs((*node.offset(index as isize)).black_minimax_score as
+            libc::c_int) < spec.max_diff {
+        display_board(stdout, board.as_mut_ptr(), 0 as libc::c_int,
+                      0 as libc::c_int, 0 as libc::c_int, 0 as libc::c_int);
+        setup_hash(0 as libc::c_int);
+        determine_hash_values(side_to_move, board.as_mut_ptr());
+        depth = 1 as libc::c_int;
+        while depth <= spec.max_depth {
+            middle_game(side_to_move, depth, 0 as libc::c_int,
+                        &mut dummy_info);
+            eval_list[depth as usize] = root_eval;
+            printf(b"%2d: %-5d \x00" as *const u8 as *const libc::c_char,
+                   depth, eval_list[depth as usize]);
+            depth += 2 as libc::c_int
+        }
+        puts(b"\x00" as *const u8 as *const libc::c_char);
+        setup_hash(0 as libc::c_int);
+        determine_hash_values(side_to_move, board.as_mut_ptr());
+        depth = 2 as libc::c_int;
+        while depth <= spec.max_depth {
+            middle_game(side_to_move, depth, 0 as libc::c_int,
+                        &mut dummy_info);
+            eval_list[depth as usize] = root_eval;
+            printf(b"%2d: %-5d \x00" as *const u8 as *const libc::c_char,
+                   depth, eval_list[depth as usize]);
+            depth += 2 as libc::c_int
+        }
+        puts(b"\x00" as *const u8 as *const libc::c_char);
+        /* Store the scores if the last eval is in the range [-20,20] */
+        out_file =
+            fopen(spec.out_file_name,
+                  b"a\x00" as *const u8 as *const libc::c_char);
+        if !out_file.is_null() &&
+            abs(eval_list[spec.max_depth as usize]) <=
+                20 as libc::c_int * 128 as libc::c_int {
+            get_hash(&mut val1, &mut val2, &mut orientation);
+            fprintf(out_file,
+                    b"%08x%08x %2d \x00" as *const u8 as *const libc::c_char,
+                    val1, val2, disks_played);
+            fprintf(out_file,
+                    b"%2d %2d \x00" as *const u8 as *const libc::c_char,
+                    1 as libc::c_int, spec.max_depth);
+            i = 1 as libc::c_int;
+            while i <= spec.max_depth {
+                fprintf(out_file,
+                        b"%5d \x00" as *const u8 as *const libc::c_char,
+                        eval_list[i as usize]);
+                i += 1
+            }
+            fprintf(out_file, b"\n\x00" as *const u8 as *const libc::c_char);
+            fclose(out_file);
+        }
+    }
+    /* Recursively search the children of the node */
+    i = 0 as libc::c_int;
+    while i < move_count[disks_played as usize] {
+        this_move = move_list[disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as libc::c_int);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2);
+        child = *book_hash_table.offset(slot as isize);
+        if child != -(1 as libc::c_int) {
+            do_midgame_statistics(child, spec);
+        }
+        unmake_move(side_to_move, this_move);
+        i += 1
+    }
+    let ref mut fresh18 = (*node.offset(index as isize)).flags;
+    *fresh18 = (*fresh18 as libc::c_int ^ 8 as libc::c_int) as libc::c_ushort;
+}
+/*
+   GENERATE_MIDGAME_STATISTICS
+   Calculates the minimax values of all nodes in the tree.
+*/
+#[no_mangle]
+pub unsafe extern "C" fn generate_midgame_statistics(mut max_depth:
+                                                     libc::c_int,
+                                                     mut probability:
+                                                     libc::c_double,
+                                                     mut max_diff:
+                                                     libc::c_int,
+                                                     mut statistics_file_name:
+                                                     *const libc::c_char) {
+    let mut i: libc::c_int = 0;
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    let mut spec: StatisticsSpec =
+        StatisticsSpec{out_file_name: 0 as *const libc::c_char,
+            prob: 0.,
+            max_diff: 0,
+            max_depth: 0,};
+    puts(b"Generating statistics...\n\x00" as *const u8 as
+        *const libc::c_char);
+    prepare_tree_traversal();
+    toggle_abort_check(0 as libc::c_int);
+    time(&mut start_time);
+    i = 0 as libc::c_int;
+    while i < book_node_count {
+        let ref mut fresh19 = (*node.offset(i as isize)).flags;
+        *fresh19 =
+            (*fresh19 as libc::c_int | 8 as libc::c_int) as libc::c_ushort;
+        i += 1
+    }
+    spec.prob = probability;
+    spec.max_diff = max_diff;
+    spec.max_depth = max_depth;
+    spec.out_file_name = statistics_file_name;
+    my_srandom(start_time as libc::c_int);
+    do_midgame_statistics(0 as libc::c_int, spec);
+    time(&mut stop_time);
+    printf(b"\nDone (took %d s)\n\x00" as *const u8 as *const libc::c_char,
+           (stop_time - start_time) as libc::c_int);
+    puts(b"\x00" as *const u8 as *const libc::c_char);
+}
+/*
+   ENDGAME_CORRELATION
+   Compare the scores produced by shallow searches to the
+   exact score in an endgame position.
+*/
+unsafe extern "C" fn endgame_correlation(mut side_to_move: libc::c_int,
+                                         mut best_score: libc::c_int,
+                                         mut best_move: libc::c_int,
+                                         mut min_disks: libc::c_int,
+                                         mut max_disks: libc::c_int,
+                                         mut spec: StatisticsSpec) {
+    let mut dummy_info: EvaluationType =
+        EvaluationType{type_0: MIDGAME_EVAL,
+            res: WON_POSITION,
+            score: 0,
+            confidence: 0.,
+            search_depth: 0,
+            is_book: 0,};
+    let mut out_file: *mut FILE = 0 as *mut FILE;
+    let mut i: libc::c_int = 0;
+    let mut depth: libc::c_int = 0;
+    let mut stored_side_to_move: libc::c_int = 0;
+    let mut val1: libc::c_int = 0;
+    let mut val2: libc::c_int = 0;
+    let mut orientation: libc::c_int = 0;
+    let mut eval_list: [libc::c_int; 64] = [0; 64];
+    display_board(stdout, board.as_mut_ptr(), 0 as libc::c_int,
+                  0 as libc::c_int, 0 as libc::c_int, 0 as libc::c_int);
+    set_hash_transformation(abs(my_random() as libc::c_int) as libc::c_uint,
+                            abs(my_random() as libc::c_int) as libc::c_uint);
+    determine_hash_values(side_to_move, board.as_mut_ptr());
+    depth = 1 as libc::c_int;
+    while depth <= spec.max_depth {
+        middle_game(side_to_move, depth, 0 as libc::c_int, &mut dummy_info);
+        eval_list[depth as usize] = root_eval;
+        printf(b"%2d: %-6.2f \x00" as *const u8 as *const libc::c_char, depth,
+               eval_list[depth as usize] as libc::c_double / 128.0f64);
+        depth += 1
+    }
+    out_file =
+        fopen(spec.out_file_name,
+              b"a\x00" as *const u8 as *const libc::c_char);
+    if !out_file.is_null() {
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        fprintf(out_file,
+                b"%08x%08x %2d \x00" as *const u8 as *const libc::c_char,
+                val1, val2, disks_played);
+        fprintf(out_file, b"%+3d \x00" as *const u8 as *const libc::c_char,
+                best_score);
+        fprintf(out_file, b"%2d %2d \x00" as *const u8 as *const libc::c_char,
+                1 as libc::c_int, spec.max_depth);
+        i = 1 as libc::c_int;
+        while i <= spec.max_depth {
+            fprintf(out_file, b"%5d \x00" as *const u8 as *const libc::c_char,
+                    eval_list[i as usize]);
+            i += 1
+        }
+        fprintf(out_file, b"\n\x00" as *const u8 as *const libc::c_char);
+        fclose(out_file);
+    }
+    if disks_played < max_disks {
+        make_move(side_to_move, best_move, 1 as libc::c_int);
+        stored_side_to_move = side_to_move;
+        side_to_move = 0 as libc::c_int + 2 as libc::c_int - side_to_move;
+        generate_all(side_to_move);
+        if move_count[disks_played as usize] > 0 as libc::c_int {
+            printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
+                       *const libc::c_char, 60 as libc::c_int - disks_played);
+            fill_move_alternatives(side_to_move, 16 as libc::c_int);
+            if get_candidate_count() > 0 as libc::c_int ||
+                disks_played >= 40 as libc::c_int {
+                print_move_alternatives(side_to_move);
+                set_hash_transformation(0 as libc::c_int as libc::c_uint,
+                                        0 as libc::c_int as libc::c_uint);
+                end_game(side_to_move, 0 as libc::c_int, 1 as libc::c_int,
+                         1 as libc::c_int, 0 as libc::c_int, &mut dummy_info);
+                endgame_correlation(side_to_move, root_eval,
+                                    pv[0 as libc::c_int as
+                                        usize][0 as libc::c_int as usize],
+                                    min_disks, max_disks, spec);
+            }
+        }
+        unmake_move(stored_side_to_move, best_move);
+    };
+}
+/*
+   DO_ENDGAME_STATISTICS
+   Recursively makes sure a subtree is evaluated to
+   the specified depth.
+*/
+unsafe extern "C" fn do_endgame_statistics(mut index: libc::c_int,
+                                           mut spec: StatisticsSpec) {
+    let mut dummy_info: EvaluationType =
+        EvaluationType{type_0: MIDGAME_EVAL,
+            res: WON_POSITION,
+            score: 0,
+            confidence: 0.,
+            search_depth: 0,
+            is_book: 0,};
+    let mut i: libc::c_int = 0;
+    let mut child: libc::c_int = 0;
+    let mut side_to_move: libc::c_int = 0;
+    let mut this_move: libc::c_int = 0;
+    let mut slot: libc::c_int = 0;
+    let mut val1: libc::c_int = 0;
+    let mut val2: libc::c_int = 0;
+    let mut orientation: libc::c_int = 0;
+    if (*node.offset(index as isize)).flags as libc::c_int & 8 as libc::c_int
+        == 0 {
+        return
+    }
+    if (*node.offset(index as isize)).flags as libc::c_int & 1 as libc::c_int
+        != 0 {
+        side_to_move = 0 as libc::c_int
+    } else { side_to_move = 2 as libc::c_int }
+    generate_all(side_to_move);
+    /* With a certain probability, search the position to a variety
+     of different depths in order to determine correlations. */
+    if disks_played == 33 as libc::c_int &&
+        ((my_random() % 1000 as libc::c_int as libc::c_long) as
+            libc::c_double) < 1000.0f64 * spec.prob {
+        setup_hash(0 as libc::c_int);
+        determine_hash_values(side_to_move, board.as_mut_ptr());
+        printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
+                   *const libc::c_char, 60 as libc::c_int - disks_played);
+        fill_move_alternatives(side_to_move, 16 as libc::c_int);
+        if get_candidate_count() > 0 as libc::c_int ||
+            disks_played >= 40 as libc::c_int {
+            print_move_alternatives(side_to_move);
+            set_hash_transformation(0 as libc::c_int as libc::c_uint,
+                                    0 as libc::c_int as libc::c_uint);
+            end_game(side_to_move, 0 as libc::c_int, 1 as libc::c_int,
+                     1 as libc::c_int, 0 as libc::c_int, &mut dummy_info);
+            if abs(root_eval) <= spec.max_diff {
+                endgame_correlation(side_to_move, root_eval,
+                                    pv[0 as libc::c_int as
+                                        usize][0 as libc::c_int as usize],
+                                    disks_played, 48 as libc::c_int, spec);
+            }
+        }
+    }
+    /* Recursively search the children of the node */
+    i = 0 as libc::c_int;
+    while i < move_count[disks_played as usize] {
+        this_move = move_list[disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as libc::c_int);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2);
+        child = *book_hash_table.offset(slot as isize);
+        if child != -(1 as libc::c_int) {
+            do_endgame_statistics(child, spec);
+        }
+        unmake_move(side_to_move, this_move);
+        i += 1
+    }
+    let ref mut fresh20 = (*node.offset(index as isize)).flags;
+    *fresh20 = (*fresh20 as libc::c_int ^ 8 as libc::c_int) as libc::c_ushort;
+}
+/*
+   GENERATE_ENDGAME_STATISTICS
+   Calculates the minimax values of all nodes in the tree.
+*/
+#[no_mangle]
+pub unsafe extern "C" fn generate_endgame_statistics(mut max_depth:
+                                                     libc::c_int,
+                                                     mut probability:
+                                                     libc::c_double,
+                                                     mut max_diff:
+                                                     libc::c_int,
+                                                     mut statistics_file_name:
+                                                     *const libc::c_char) {
+    let mut i: libc::c_int = 0;
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    let mut spec: StatisticsSpec =
+        StatisticsSpec{out_file_name: 0 as *const libc::c_char,
+            prob: 0.,
+            max_diff: 0,
+            max_depth: 0,};
+    puts(b"Generating endgame statistics...\x00" as *const u8 as
+        *const libc::c_char);
+    prepare_tree_traversal();
+    toggle_abort_check(0 as libc::c_int);
+    time(&mut start_time);
+    i = 0 as libc::c_int;
+    while i < book_node_count {
+        let ref mut fresh21 = (*node.offset(i as isize)).flags;
+        *fresh21 =
+            (*fresh21 as libc::c_int | 8 as libc::c_int) as libc::c_ushort;
+        i += 1
+    }
+    spec.prob = probability;
+    spec.max_diff = max_diff;
+    spec.max_depth = max_depth;
+    spec.out_file_name = statistics_file_name;
+    my_srandom(start_time as libc::c_int);
+    do_endgame_statistics(0 as libc::c_int, spec);
+    time(&mut stop_time);
+    printf(b"\nDone (took %d s)\n\x00" as *const u8 as *const libc::c_char,
+           (stop_time - start_time) as libc::c_int);
+    puts(b"\x00" as *const u8 as *const libc::c_char);
+}
+// #ifdef INCLUDE_BOOKTOOL
+/*
+   DO_CLEAR
+   Clears depth and flag information for all nodes with >= LOW
+   and <= HIGH discs played. FLAGS specifies what kind of information
+   is to be cleared - midgame, WLD or exact.
+*/
+unsafe extern "C" fn do_clear(mut index: libc::c_int, mut low: libc::c_int,
+                              mut high: libc::c_int, mut flags: libc::c_int) {
+    let mut i: libc::c_int = 0;
+    let mut child: libc::c_int = 0;
+    let mut side_to_move: libc::c_int = 0;
+    let mut this_move: libc::c_int = 0;
+    let mut slot: libc::c_int = 0;
+    let mut val1: libc::c_int = 0;
+    let mut val2: libc::c_int = 0;
+    let mut orientation: libc::c_int = 0;
+    if (*node.offset(index as isize)).flags as libc::c_int & 8 as libc::c_int
+        == 0 {
+        return
+    }
+    if disks_played >= low && disks_played <= high {
+        if flags & 1 as libc::c_int != 0 { clear_node_depth(index); }
+        if (*node.offset(index as isize)).flags as libc::c_int &
+            4 as libc::c_int != 0 && flags & 2 as libc::c_int != 0 {
+            let ref mut fresh27 = (*node.offset(index as isize)).flags;
+            *fresh27 =
+                (*fresh27 as libc::c_int ^ 4 as libc::c_int) as libc::c_ushort
+        }
+        if (*node.offset(index as isize)).flags as libc::c_int &
+            16 as libc::c_int != 0 && flags & 4 as libc::c_int != 0 {
+            let ref mut fresh28 = (*node.offset(index as isize)).flags;
+            *fresh28 =
+                (*fresh28 as libc::c_int ^ 16 as libc::c_int) as
+                    libc::c_ushort
+        }
+    }
+    if disks_played <= high {
+        if (*node.offset(index as isize)).flags as libc::c_int &
+            1 as libc::c_int != 0 {
+            side_to_move = 0 as libc::c_int
+        } else { side_to_move = 2 as libc::c_int }
+        generate_all(side_to_move);
+        i = 0 as libc::c_int;
+        while i < move_count[disks_played as usize] {
+            this_move = move_list[disks_played as usize][i as usize];
+            make_move(side_to_move, this_move, 1 as libc::c_int);
+            get_hash(&mut val1, &mut val2, &mut orientation);
+            slot = probe_hash_table(val1, val2);
+            child = *book_hash_table.offset(slot as isize);
+            if child != -(1 as libc::c_int) {
+                do_clear(child, low, high, flags);
+            }
+            unmake_move(side_to_move, this_move);
+            i += 1
+        }
+    }
+    let ref mut fresh29 = (*node.offset(index as isize)).flags;
+    *fresh29 = (*fresh29 as libc::c_int ^ 8 as libc::c_int) as libc::c_ushort;
+}
+/*
+   CLEAR_TREE
+   Resets the labels on nodes satisfying certain conditions.
+*/
+#[no_mangle]
+pub unsafe extern "C" fn clear_tree(mut low: libc::c_int,
+                                    mut high: libc::c_int,
+                                    mut flags: libc::c_int) {
+    let mut i: libc::c_int = 0;
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    prepare_tree_traversal();
+    printf(b"Clearing from %d moves to %d modes: \x00" as *const u8 as
+               *const libc::c_char, low, high);
+    if flags & 1 as libc::c_int != 0 {
+        printf(b"midgame \x00" as *const u8 as *const libc::c_char);
+    }
+    if flags & 2 as libc::c_int != 0 {
+        printf(b"wld \x00" as *const u8 as *const libc::c_char);
+    }
+    if flags & 4 as libc::c_int != 0 {
+        printf(b"exact \x00" as *const u8 as *const libc::c_char);
+    }
+    puts(b"\x00" as *const u8 as *const libc::c_char);
+    time(&mut start_time);
+    i = 0 as libc::c_int;
+    while i < book_node_count {
+        let ref mut fresh30 = (*node.offset(i as isize)).flags;
+        *fresh30 =
+            (*fresh30 as libc::c_int | 8 as libc::c_int) as libc::c_ushort;
+        i += 1
+    }
+    do_clear(0 as libc::c_int, low, high, flags);
+    time(&mut stop_time);
+    printf(b"(took %d s)\n\x00" as *const u8 as *const libc::c_char,
+           (stop_time - start_time) as libc::c_int);
+    puts(b"\x00" as *const u8 as *const libc::c_char);
+}
+/*
+   DO_CORRECT
+   Performs endgame correction (WLD or full solve) of a node
+   and (recursively) the subtree below it.
+*/
+unsafe extern "C" fn do_correct(mut index: libc::c_int,
+                                mut max_empty: libc::c_int,
+                                mut full_solve: libc::c_int,
+                                mut target_name: *const libc::c_char,
+                                mut move_hist: *mut libc::c_char) {
+    let mut dummy_info: EvaluationType =
+        EvaluationType{type_0: MIDGAME_EVAL,
+            res: WON_POSITION,
+            score: 0,
+            confidence: 0.,
+            search_depth: 0,
+            is_book: 0,};
+    let mut i: libc::c_int = 0;
+    let mut j: libc::c_int = 0;
+    let mut pos: libc::c_int = 0;
+    let mut child: libc::c_int = 0;
+    let mut side_to_move: libc::c_int = 0;
+    let mut this_move: libc::c_int = 0;
+    let mut outcome: libc::c_int = 0;
+    let mut really_evaluate: libc::c_int = 0;
+    let mut slot: libc::c_int = 0;
+    let mut val1: libc::c_int = 0;
+    let mut val2: libc::c_int = 0;
+    let mut orientation: libc::c_int = 0;
+    let mut child_count: libc::c_int = 0;
+    let mut child_move: [libc::c_int; 64] = [0; 64];
+    let mut child_node: [libc::c_int; 64] = [0; 64];
+    if evaluated_count >= max_eval_count { return }
+    if (*node.offset(index as isize)).flags as libc::c_int & 8 as libc::c_int
+        == 0 {
+        return
+    }
+    if (*node.offset(index as isize)).flags as libc::c_int & 1 as libc::c_int
+        != 0 {
+        side_to_move = 0 as libc::c_int
+    } else { side_to_move = 2 as libc::c_int }
+    /* First correct the children */
+    generate_all(side_to_move);
+    child_count = 0 as libc::c_int;
+    i = 0 as libc::c_int;
+    while i < move_count[disks_played as usize] {
+        this_move = move_list[disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as libc::c_int);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2);
+        child = *book_hash_table.offset(slot as isize);
+        if child != -(1 as libc::c_int) {
+            child_move[child_count as usize] = this_move;
+            child_node[child_count as usize] = child;
+            child_count += 1
+        }
+        unmake_move(side_to_move, this_move);
+        i += 1
+    }
+    let mut current_block_29: u64;
+    i = 0 as libc::c_int;
+    while i < child_count {
+        if side_to_move == 0 as libc::c_int {
+            if force_black != 0 &&
+                (*node.offset(child_node[i as usize] as
+                    isize)).black_minimax_score as
+                    libc::c_int !=
+                    (*node.offset(index as isize)).black_minimax_score as
+                        libc::c_int {
+                current_block_29 = 14818589718467733107;
+            } else { current_block_29 = 11913429853522160501; }
+        } else if force_white != 0 &&
+            (*node.offset(child_node[i as usize] as
+                isize)).white_minimax_score as
+                libc::c_int !=
+                (*node.offset(index as isize)).white_minimax_score
+                    as libc::c_int {
+            current_block_29 = 14818589718467733107;
+        } else { current_block_29 = 11913429853522160501; }
+        match current_block_29 {
+            11913429853522160501 => {
+                this_move = child_move[i as usize];
+                sprintf(move_hist.offset((2 as libc::c_int * disks_played) as
+                    isize),
+                        b"%c%c\x00" as *const u8 as *const libc::c_char,
+                        'a' as i32 + this_move % 10 as libc::c_int -
+                            1 as libc::c_int,
+                        '0' as i32 + this_move / 10 as libc::c_int);
+                make_move(side_to_move, this_move, 1 as libc::c_int);
+                do_correct(child_node[i as usize], max_empty, full_solve,
+                           target_name, move_hist);
+                unmake_move(side_to_move, this_move);
+                *move_hist.offset((2 as libc::c_int * disks_played) as isize)
+                    = '\u{0}' as i32 as libc::c_char
+            }
+            _ => { }
+        }
+        i += 1
+    }
+    /* Then correct the node itself (hopefully exploiting lots
+     of useful information in the hash table) */
+    generate_all(side_to_move);
+    determine_hash_values(side_to_move, board.as_mut_ptr());
+    if disks_played >= 60 as libc::c_int - max_empty {
+        really_evaluate =
+            (full_solve != 0 &&
+                (*node.offset(index as isize)).flags as libc::c_int &
+                    16 as libc::c_int == 0 ||
+                full_solve == 0 &&
+                    (*node.offset(index as isize)).flags as libc::c_int &
+                        (4 as libc::c_int | 16 as libc::c_int) == 0) as
+                libc::c_int;
+        if abs((*node.offset(index as isize)).alternative_score as
+            libc::c_int) < min_eval_span ||
+            abs((*node.offset(index as isize)).alternative_score as
+                libc::c_int) > max_eval_span {
+            really_evaluate = 0 as libc::c_int
+        }
+        if abs((*node.offset(index as isize)).black_minimax_score as
+            libc::c_int) < min_negamax_span ||
+            abs((*node.offset(index as isize)).black_minimax_score as
+                libc::c_int) > max_negamax_span {
+            really_evaluate = 0 as libc::c_int
+        }
+        if really_evaluate != 0 {
+            if target_name.is_null() {
+                /* Solve now */
+                reset_counter(&mut nodes);
+                end_game(side_to_move, (full_solve == 0) as libc::c_int,
+                         0 as libc::c_int, 1 as libc::c_int, 0 as libc::c_int,
+                         &mut dummy_info);
+                if side_to_move == 0 as libc::c_int {
+                    outcome = root_eval
+                } else { outcome = -root_eval }
+                let ref mut fresh31 =
+                    (*node.offset(index as isize)).white_minimax_score;
+                *fresh31 = outcome as libc::c_short;
+                (*node.offset(index as isize)).black_minimax_score = *fresh31;
+                if outcome > 0 as libc::c_int {
+                    let ref mut fresh32 =
+                        (*node.offset(index as isize)).black_minimax_score;
+                    *fresh32 =
+                        (*fresh32 as libc::c_int + 30000 as libc::c_int) as
+                            libc::c_short;
+                    let ref mut fresh33 =
+                        (*node.offset(index as isize)).white_minimax_score;
+                    *fresh33 =
+                        (*fresh33 as libc::c_int + 30000 as libc::c_int) as
+                            libc::c_short
+                }
+                if outcome < 0 as libc::c_int {
+                    let ref mut fresh34 =
+                        (*node.offset(index as isize)).black_minimax_score;
+                    *fresh34 =
+                        (*fresh34 as libc::c_int - 30000 as libc::c_int) as
+                            libc::c_short;
+                    let ref mut fresh35 =
+                        (*node.offset(index as isize)).white_minimax_score;
+                    *fresh35 =
+                        (*fresh35 as libc::c_int - 30000 as libc::c_int) as
+                            libc::c_short
+                }
+                if full_solve != 0 {
+                    let ref mut fresh36 =
+                        (*node.offset(index as isize)).flags;
+                    *fresh36 =
+                        (*fresh36 as libc::c_int | 16 as libc::c_int) as
+                            libc::c_ushort
+                } else {
+                    let ref mut fresh37 =
+                        (*node.offset(index as isize)).flags;
+                    *fresh37 =
+                        (*fresh37 as libc::c_int | 4 as libc::c_int) as
+                            libc::c_ushort
+                }
+            } else {
+                /* Defer solving to a standalone scripted solver */
+                let mut target_file: *mut FILE =
+                    fopen(target_name,
+                          b"a\x00" as *const u8 as *const libc::c_char);
+                if !target_file.is_null() {
+                    fprintf(target_file,
+                            b"%% %s\n\x00" as *const u8 as
+                                *const libc::c_char, move_hist);
+                    get_hash(&mut val1, &mut val2, &mut orientation);
+                    fprintf(target_file,
+                            b"%% %d %d\n\x00" as *const u8 as
+                                *const libc::c_char, val1, val2);
+                    i = 1 as libc::c_int;
+                    while i <= 8 as libc::c_int {
+                        j = 1 as libc::c_int;
+                        while j <= 8 as libc::c_int {
+                            pos = 10 as libc::c_int * i + j;
+                            if board[pos as usize] == 0 as libc::c_int {
+                                putc('X' as i32, target_file);
+                            } else if board[pos as usize] == 2 as libc::c_int
+                            {
+                                putc('O' as i32, target_file);
+                            } else { putc('-' as i32, target_file); }
+                            j += 1
+                        }
+                        i += 1
+                    }
+                    if side_to_move == 0 as libc::c_int {
+                        fputs(b" X\n\x00" as *const u8 as *const libc::c_char,
+                              target_file);
+                    } else {
+                        fputs(b" O\n\x00" as *const u8 as *const libc::c_char,
+                              target_file);
+                    }
+                    fputs(b"%\n\x00" as *const u8 as *const libc::c_char,
+                          target_file);
+                    fclose(target_file);
+                }
+            }
+            evaluated_count += 1
+        }
+    }
+    if evaluated_count >=
+        (evaluation_stage + 1 as libc::c_int) * max_eval_count /
+            25 as libc::c_int {
+        evaluation_stage += 1;
+        putc('|' as i32, stdout);
+        if evaluation_stage % 5 as libc::c_int == 0 as libc::c_int {
+            printf(b" %d%% \x00" as *const u8 as *const libc::c_char,
+                   4 as libc::c_int * evaluation_stage);
+        }
+        fflush(stdout);
+    }
+    let ref mut fresh38 = (*node.offset(index as isize)).flags;
+    *fresh38 = (*fresh38 as libc::c_int ^ 8 as libc::c_int) as libc::c_ushort;
+}
+/*
+  SET_OUTPUT_SCRIPT_NAME
+  Makes SCRIPT_NAME the target for the positions generated by
+  do_correct() (instead of the positions being solved, the normal
+  mode of operation).
+*/
+#[no_mangle]
+pub unsafe extern "C" fn set_output_script_name(mut script_name:
+                                                *const libc::c_char) {
+    correction_script_name = script_name;
+}
+/*
+   CORRECT_TREE
+   Endgame-correct the lowest levels of the tree.
+*/
+#[no_mangle]
+pub unsafe extern "C" fn correct_tree(mut max_empty: libc::c_int,
+                                      mut full_solve: libc::c_int) {
+    let mut move_buffer: [libc::c_char; 150] = [0; 150];
+    let mut i: libc::c_int = 0;
+    let mut feasible_count: libc::c_int = 0;
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    prepare_tree_traversal();
+    exhausted_node_count = 0 as libc::c_int;
+    evaluated_count = 0 as libc::c_int;
+    evaluation_stage = 0 as libc::c_int;
+    time(&mut start_time);
+    i = 0 as libc::c_int;
+    while i < book_node_count {
+        let ref mut fresh39 = (*node.offset(i as isize)).flags;
+        *fresh39 =
+            (*fresh39 as libc::c_int | 8 as libc::c_int) as libc::c_ushort;
+        i += 1
+    }
+    feasible_count = 0 as libc::c_int;
+    i = 0 as libc::c_int;
+    while i < book_node_count {
+        let ref mut fresh40 = (*node.offset(i as isize)).flags;
+        *fresh40 =
+            (*fresh40 as libc::c_int | 8 as libc::c_int) as libc::c_ushort;
+        if get_node_depth(i) < max_empty &&
+            abs((*node.offset(i as isize)).alternative_score as
+                libc::c_int) >= min_eval_span &&
+            abs((*node.offset(i as isize)).alternative_score as
+                libc::c_int) <= max_eval_span &&
+            abs((*node.offset(i as isize)).black_minimax_score as
+                libc::c_int) >= min_negamax_span &&
+            abs((*node.offset(i as isize)).black_minimax_score as
+                libc::c_int) <= max_negamax_span {
+            feasible_count += 1
+        }
+        i += 1
+    }
+    max_eval_count =
+        if feasible_count < max_batch_size {
+            feasible_count
+        } else { max_batch_size };
+    printf(b"Correcting <= %d empty \x00" as *const u8 as *const libc::c_char,
+           max_empty);
+    if full_solve != 0 {
+        printf(b"(full solve). \x00" as *const u8 as *const libc::c_char);
+    } else {
+        printf(b"(WLD solve). \x00" as *const u8 as *const libc::c_char);
+    }
+    if min_eval_span > 0 as libc::c_int ||
+        max_eval_span < 1000 as libc::c_int * 128 as libc::c_int {
+        printf(b"Eval interval is [%.2f,%.2f]. \x00" as *const u8 as
+                   *const libc::c_char,
+               min_eval_span as libc::c_double / 128.0f64,
+               max_eval_span as libc::c_double / 128.0f64);
+    }
+    if min_negamax_span > 0 as libc::c_int ||
+        max_negamax_span < 1000 as libc::c_int * 128 as libc::c_int {
+        printf(b"Negamax interval is [%.2f,%.2f]. \x00" as *const u8 as
+                   *const libc::c_char,
+               min_negamax_span as libc::c_double / 128.0f64,
+               max_negamax_span as libc::c_double / 128.0f64);
+    }
+    if max_eval_count == feasible_count {
+        printf(b"\n%d relevant nodes.\x00" as *const u8 as
+                   *const libc::c_char, feasible_count);
+    } else {
+        printf(b"\nMax batch size is %d.\x00" as *const u8 as
+                   *const libc::c_char, max_batch_size);
+    }
+    puts(b"\x00" as *const u8 as *const libc::c_char);
+    printf(b"Progress: \x00" as *const u8 as *const libc::c_char);
+    fflush(stdout);
+    move_buffer[0 as libc::c_int as usize] = '\u{0}' as i32 as libc::c_char;
+    do_correct(0 as libc::c_int, max_empty, full_solve,
+               correction_script_name, move_buffer.as_mut_ptr());
+    time(&mut stop_time);
+    printf(b"(took %d s)\n\x00" as *const u8 as *const libc::c_char,
+           (stop_time - start_time) as libc::c_int);
+    if correction_script_name.is_null() {
+        /* Positions solved */
+        printf(b"%d nodes solved\n\x00" as *const u8 as *const libc::c_char,
+               evaluated_count);
+    } else {
+        printf(b"%d nodes exported to %s\n\x00" as *const u8 as
+                   *const libc::c_char, evaluated_count,
+               correction_script_name);
+    }
+    puts(b"\x00" as *const u8 as *const libc::c_char);
+}
+/*
+   DO_EXPORT
+   Recursively exports all variations rooted at book position # INDEX.
+*/
+unsafe extern "C" fn do_export(mut index: libc::c_int, mut stream: *mut FILE,
+                               mut move_vec: *mut libc::c_int) {
+    let mut i: libc::c_int = 0;
+    let mut child_count: libc::c_int = 0;
+    let mut allow_branch: libc::c_int = 0;
+    let mut side_to_move: libc::c_int = 0;
+    allow_branch =
+        (*node.offset(index as isize)).flags as libc::c_int &
+            8 as libc::c_int;
+    if (*node.offset(index as isize)).flags as libc::c_int & 1 as libc::c_int
+        != 0 {
+        side_to_move = 0 as libc::c_int
+    } else { side_to_move = 2 as libc::c_int }
+    generate_all(side_to_move);
+    child_count = 0 as libc::c_int;
+    i = 0 as libc::c_int;
+    while i < move_count[disks_played as usize] {
+        let mut child: libc::c_int = 0;
+        let mut slot: libc::c_int = 0;
+        let mut val1: libc::c_int = 0;
+        let mut val2: libc::c_int = 0;
+        let mut orientation: libc::c_int = 0;
+        let mut this_move: libc::c_int =
+            move_list[disks_played as usize][i as usize];
+        *move_vec.offset(disks_played as isize) = this_move;
+        make_move(side_to_move, this_move, 1 as libc::c_int);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2);
+        child = *book_hash_table.offset(slot as isize);
+        if child != -(1 as libc::c_int) {
+            do_export(child, stream, move_vec);
+            child_count += 1
+        }
+        unmake_move(side_to_move, this_move);
+        if child_count == 1 as libc::c_int && allow_branch == 0 { break ; }
+        i += 1
+    }
+    if child_count == 0 as libc::c_int {
+        /* We've reached a leaf in the opening tree. */
+        i = 0 as libc::c_int;
+        while i < disks_played {
+            fprintf(stream, b"%c%c\x00" as *const u8 as *const libc::c_char,
+                    'a' as i32 +
+                        *move_vec.offset(i as isize) % 10 as libc::c_int -
+                        1 as libc::c_int,
+                    '0' as i32 +
+                        *move_vec.offset(i as isize) / 10 as libc::c_int);
+            i += 1
+        }
+        fprintf(stream, b"\n\x00" as *const u8 as *const libc::c_char);
+    }
+    let ref mut fresh41 = (*node.offset(index as isize)).flags;
+    *fresh41 =
+        (*fresh41 as libc::c_int & !(8 as libc::c_int)) as libc::c_ushort;
+}
+
+/*
+  EXPORT_TREE
+  Exports a set of lines that cover the tree.
+*/
+#[no_mangle]
+pub unsafe extern "C" fn export_tree(mut file_name: *const libc::c_char) {
+    let mut i: libc::c_int = 0;
+    let mut move_vec: [libc::c_int; 60] = [0; 60];
+    let mut stream: *mut FILE = 0 as *mut FILE;
+    stream = fopen(file_name, b"w\x00" as *const u8 as *const libc::c_char);
+    if stream.is_null() {
+        fprintf(stderr,
+                b"Cannot open %s for writing.\n\x00" as *const u8 as
+                    *const libc::c_char, file_name);
+        return
+    }
+    prepare_tree_traversal();
+    i = 0 as libc::c_int;
+    while i < book_node_count {
+        let ref mut fresh42 = (*node.offset(i as isize)).flags;
+        *fresh42 =
+            (*fresh42 as libc::c_int | 8 as libc::c_int) as libc::c_ushort;
+        i += 1
+    }
+    do_export(0 as libc::c_int, stream, move_vec.as_mut_ptr());
+    fclose(stream);
 }
