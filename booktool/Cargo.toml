@@ -1,0 +1,17 @@
+[package]
+name = "booktool"
+version = "0.1.0"
+authors = ["panstromek <panstromek@seznam.cz>"]
+edition = "2018"
+
+
+[[bin]]
+path = "src/booktool.rs"
+name = "booktool"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+engine = { path= "./../engine" }
+c2rust_out = { path= "./../" }
+libc = "0.2"
