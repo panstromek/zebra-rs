@@ -115,7 +115,6 @@ pub trait ZebraFrontend {
     fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64);
     fn report_skill_levels(black_level: i32, white_level: i32);
     fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64);
-    unsafe fn clear_moves();
     fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
     unsafe fn report_opening_name(opening_name: *const i8);
     fn report_book_randomness(slack_: f64);
@@ -219,7 +218,7 @@ pub unsafe fn engine_play_game<
         set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
         set_evals(0.0f64, 0.0f64);
-        ZF::clear_moves();
+        clear_moves();
         move_vec[0 as i32 as usize] = 0 as i32 as i8;
         // these are not used because their usage was disabled by preprocessor
         // byt for deterministic testing, we need to call random the same way, so we keep them.
@@ -439,5 +438,14 @@ pub unsafe fn engine_play_game<
         }
         toggle_abort_check(1 as i32);
         if !(repeat > 0 as i32) { break ; }
+    }
+}
+
+unsafe fn clear_moves() {
+    let mut i = 0 as i32;
+    while i < 60 as i32 {
+        black_moves[i as usize] = -(1 as i32);
+        white_moves[i as usize] = -(1 as i32);
+        i += 1
     }
 }

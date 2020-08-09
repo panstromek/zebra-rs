@@ -968,14 +968,6 @@ impl ZebraFrontend for LibcFrontend {
                    total_search_time);
         }
     }
-    unsafe fn clear_moves() {
-        let mut i = 0 as i32;
-        while i < 60 as i32 {
-            black_moves[i as usize] = -(1 as i32);
-            white_moves[i as usize] = -(1 as i32);
-            i += 1
-        }
-    }
     fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
         unsafe {
             printf(b"%d black wins, %d draws, %d white wins\n\x00"
