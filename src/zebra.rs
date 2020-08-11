@@ -75,6 +75,9 @@ pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 pub type time_t = __time_t;
 
+pub static mut use_thor: i32 = 0;
+pub static mut use_learning: i32 = 0;
+
 /* ------------------- Function prototypes ---------------------- */
 /* Administrative routines */
 /* ---------------------- Functions ------------------------ */
@@ -854,7 +857,7 @@ unsafe fn play_game(mut file_name: *const i8,
 
     engine_play_game
         ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner>
-        (file_name, move_string, repeat, log_file_name_, move_file)
+        (file_name, move_string, repeat, log_file_name_, move_file, use_thor != 0, use_learning != 0)
 }
 
 struct LibcFrontend {}

@@ -73,8 +73,6 @@ pub static mut skill: [i32; 3] = [0; 3];
 pub static mut wait: i32 = 0;
 pub static mut use_book: i32 = 1 as i32;
 pub static mut wld_only: i32 = 0 as i32;
-pub static mut use_learning: i32 = 0;
-pub static mut use_thor: i32 = 0;
 
 
 /// This trait is unsafe because line buffer is used as a c-style string later
@@ -139,7 +137,7 @@ pub unsafe fn engine_play_game<
 >(
     mut file_name: *const i8, mut move_string: *const i8,
     mut repeat: i32, log_file_name_: *mut i8,
-    mut move_file: Option<Source>) {
+    mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool) {
     let mut eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -206,12 +204,12 @@ pub unsafe fn engine_play_game<
         }
         set_slack(floor(slack * 128.0f64) as i32);
         toggle_human_openings(0 as i32);
-        if use_learning != 0 {
+        if use_learning_ {
             set_learning_parameters(deviation_depth, cutoff_empty);
         }
         reset_book_search();
         set_deviation_value(low_thresh, high_thresh, dev_bonus);
-        if use_thor != 0 {
+        if use_thor_ {
             ZF::load_thor_files();
         }
         set_names_from_skills();
@@ -244,7 +242,7 @@ pub unsafe fn engine_play_game<
                     if !opening_name.is_null() {
                         ZF::report_opening_name(opening_name);
                     }
-                    if use_thor != 0 {
+                    if use_thor_ {
                         let database_start = get_real_timer();
                         database_search(board.as_mut_ptr(), side_to_move);
                         thor_position_count = get_match_count();
@@ -387,7 +385,7 @@ pub unsafe fn engine_play_game<
         if echo != 0 && one_position_only == 0 {
             set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                           score_sheet_row);
-            if use_thor != 0 {
+            if use_thor_ {
                 let database_start = get_real_timer();
                 database_search(board.as_mut_ptr(), side_to_move);
                 thor_position_count = get_match_count();
@@ -428,7 +426,7 @@ pub unsafe fn engine_play_game<
         }
         repeat -= 1;
         toggle_abort_check(0 as i32);
-        if use_learning != 0 && one_position_only == 0 {
+        if use_learning_ && one_position_only == 0 {
             Learn::learn_game(disks_played,
                               (skill[0 as i32 as usize] != 0 as i32
                                   &&
