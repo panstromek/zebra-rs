@@ -1,4 +1,4 @@
-use crate::src::stubs::{sprintf, floor, fprintf, vsprintf, strlen, ceil, fputs, fputc, strdup, exit, abs, strcpy, free, getc, stdout, stdin};
+use crate::src::stubs::{sprintf, floor, fprintf, vsprintf, strlen, ceil, fputs, fputc, exit, abs, strcpy, getc, stdout, stdin};
 use crate::src::safemem::safe_malloc;
 use crate::src::timer::get_real_timer;
 use crate::src::search::{full_pv, full_pv_depth, disc_count};

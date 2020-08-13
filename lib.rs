@@ -14,7 +14,7 @@
 #![feature(register_tool)]
 #![register_tool(c2rust)]
 
-
+#![allow(clippy::missing_safety_doc)]
 
 extern crate libc;
 
