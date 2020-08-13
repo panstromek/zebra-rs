@@ -87,7 +87,7 @@ unsafe fn transformation_setup() {
   ADD_SINGLE
   Mark board position POS as depending on pattern # MASK.
 */
-unsafe fn add_single(mut mask: i32, mut pos: i32) {
+unsafe fn add_single(mask: i32, pos: i32) {
     if mask < 32 as i32 {
         depend_lo[pos as usize] |=
             ((1 as i32) << mask) as u32
@@ -101,9 +101,9 @@ unsafe fn add_single(mut mask: i32, mut pos: i32) {
   Mark board positions POS, POS+STEP, ..., POS+(COUNT-1)STEP as
   depending on pattern # MASK.
 */
-unsafe fn add_multiple(mut mask: i32, mut pos: i32,
-                                  mut count: i32,
-                                  mut step: i32) {
+unsafe fn add_multiple(mask: i32, pos: i32,
+                                  count: i32,
+                                  step: i32) {
     let mut i: i32 = 0;
     i = 0 as i32;
     while i < count { add_single(mask, pos + i * step); i += 1 };
@@ -333,7 +333,7 @@ pub unsafe fn init_patterns() {
    Translate the current board configuration into patterns.
 */
 
-pub unsafe fn compute_line_patterns(mut in_board:
+pub unsafe fn compute_line_patterns(in_board:
                                                    *mut i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;

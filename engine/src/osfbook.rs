@@ -149,7 +149,7 @@ pub static mut candidate_list: [CandidateMove; 60] =
    Finds a slot in the hash table for the node INDEX
    using linear probing.
 */
-pub unsafe fn select_hash_slot(mut index: i32) {
+pub unsafe fn select_hash_slot(index: i32) {
     let mut slot: i32 = 0;
     slot = (*node.offset(index as isize)).hash_val1 % hash_table_size;
     while *book_hash_table.offset(slot as isize) != -(1 as i32) {
@@ -161,8 +161,8 @@ pub unsafe fn select_hash_slot(mut index: i32) {
    PROBE_HASH_TABLE
    Search for a certain hash code in the hash table.
 */
-pub unsafe fn probe_hash_table(mut val1: i32,
-                           mut val2: i32) -> i32 {
+pub unsafe fn probe_hash_table(val1: i32,
+                           val2: i32) -> i32 {
     let mut slot: i32 = 0;
     if hash_table_size == 0 as i32 {
         return -(1 as i32)
@@ -237,7 +237,7 @@ pub unsafe fn init_book_tree() {
    Changes the flags of a node so that the search depth
    bits are cleared.
 */
-pub unsafe fn clear_node_depth(mut index: i32) {
+pub unsafe fn clear_node_depth(index: i32) {
     let mut depth: i32 = 0;
     depth =
         (*node.offset(index as isize)).flags as i32 >>
@@ -250,7 +250,7 @@ pub unsafe fn clear_node_depth(mut index: i32) {
 /*
    GET_NODE_DEPTH
 */
-pub unsafe fn get_node_depth(mut index: i32) -> i32 {
+pub unsafe fn get_node_depth(index: i32) -> i32 {
     return (*node.offset(index as isize)).flags as i32 >>
         10 as i32;
 }
@@ -258,8 +258,8 @@ pub unsafe fn get_node_depth(mut index: i32) -> i32 {
    SET_NODE_DEPTH
    Marks a node as being searched to a certain depth.
 */
-pub unsafe fn set_node_depth(mut index: i32,
-                         mut depth: i32) {
+pub unsafe fn set_node_depth(index: i32,
+                         depth: i32) {
     let ref mut fresh1 = (*node.offset(index as isize)).flags;
     *fresh1 =
         (*fresh1 as i32 | depth << 10 as i32) as
@@ -271,7 +271,7 @@ pub unsafe fn set_node_depth(mut index: i32,
   Specify the maximum number of nodes to evaluate.
 */
 
-pub unsafe fn set_max_batch_size(mut size: i32) {
+pub unsafe fn set_max_batch_size(size: i32) {
     max_batch_size = size;
 }
 /*
@@ -281,9 +281,9 @@ pub unsafe fn set_max_batch_size(mut size: i32) {
    stage; also set the punishment per move after the threshold.
 */
 
-pub unsafe fn set_deviation_value(mut low_threshold: i32,
-                                  mut high_threshold: i32,
-                                  mut bonus: f64) {
+pub unsafe fn set_deviation_value(low_threshold: i32,
+                                  high_threshold: i32,
+                                  bonus: f64) {
     low_deviation_threshold = low_threshold;
     high_deviation_threshold = high_threshold;
     deviation_bonus = bonus;
@@ -304,7 +304,7 @@ pub unsafe fn reset_book_search() {
    the program is willing to trade for randomness.
 */
 
-pub unsafe fn set_slack(mut slack: i32) {
+pub unsafe fn set_slack(slack: i32) {
     max_slack = slack;
 }
 /*
@@ -312,7 +312,7 @@ pub unsafe fn set_slack(mut slack: i32) {
   Specifies how book draws should be treated.
 */
 
-pub unsafe fn set_draw_mode(mut mode: DrawMode) {
+pub unsafe fn set_draw_mode(mode: DrawMode) {
     draw_mode = mode;
 }
 /*
@@ -320,7 +320,7 @@ pub unsafe fn set_draw_mode(mut mode: DrawMode) {
   Specifies if the book is in private or public mode.
 */
 
-pub unsafe fn set_game_mode(mut mode: GameMode) {
+pub unsafe fn set_game_mode(mode: GameMode) {
     game_mode = mode;
 }
 /*
@@ -330,11 +330,11 @@ pub unsafe fn set_game_mode(mut mode: GameMode) {
   be forced when recursing the tree.
 */
 
-pub unsafe fn set_black_force(mut force: i32) {
+pub unsafe fn set_black_force(force: i32) {
     force_black = force;
 }
 
-pub unsafe fn set_white_force(mut force: i32) {
+pub unsafe fn set_white_force(force: i32) {
     force_white = force;
 }
 
@@ -349,7 +349,7 @@ pub unsafe fn get_candidate_count() -> i32 {
     return candidate_count;
 }
 
-pub unsafe fn get_candidate(mut index: i32)
+pub unsafe fn get_candidate(index: i32)
                             -> CandidateMove {
     return candidate_list[index as usize];
 }
@@ -364,9 +364,9 @@ pub unsafe fn get_candidate(mut index: i32)
    See also init_maps().
 */
 
-pub unsafe fn get_hash(mut val0: *mut i32,
-                       mut val1: *mut i32,
-                       mut orientation: *mut i32) {
+pub unsafe fn get_hash(val0: *mut i32,
+                       val1: *mut i32,
+                       orientation: *mut i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut min_map: i32 = 0;
@@ -515,12 +515,12 @@ pub unsafe fn get_hash(mut val0: *mut i32,
    DO_COMPRESS
    Compresses the subtree below the current node.
 */
-pub unsafe fn do_compress(mut index: i32,
-                      mut node_order: *mut i32,
-                      mut child_count: *mut i16,
-                      mut node_index: *mut i32,
-                      mut child_list: *mut i16,
-                      mut child_index: *mut i32) {
+pub unsafe fn do_compress(index: i32,
+                      node_order: *mut i32,
+                      child_count: *mut i16,
+                      node_index: *mut i32,
+                      child_list: *mut i16,
+                      child_index: *mut i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut child: i32 = 0;
@@ -597,7 +597,7 @@ pub unsafe fn do_compress(mut index: i32,
    will be performed.
 */
 
-pub unsafe fn set_search_depth(mut depth: i32) {
+pub unsafe fn set_search_depth(depth: i32) {
     search_depth = depth;
 }
 /*
@@ -605,8 +605,8 @@ pub unsafe fn set_search_depth(mut depth: i32) {
   Specify the evaluation value interval where nodes are re-evaluated.
 */
 
-pub unsafe fn set_eval_span(mut min_span: f64,
-                            mut max_span: f64) {
+pub unsafe fn set_eval_span(min_span: f64,
+                            max_span: f64) {
     min_eval_span = ceil(min_span * 128.0f64) as i32;
     max_eval_span = ceil(max_span * 128.0f64) as i32;
 }
@@ -615,8 +615,8 @@ pub unsafe fn set_eval_span(mut min_span: f64,
   Specify the negamax value interval where nodes are re-evaluated.
 */
 
-pub unsafe fn set_negamax_span(mut min_span: f64,
-                               mut max_span: f64) {
+pub unsafe fn set_negamax_span(min_span: f64,
+                               max_span: f64) {
     min_negamax_span = ceil(min_span * 128.0f64) as i32;
     max_negamax_span = ceil(max_span * 128.0f64) as i32;
 }
@@ -624,8 +624,8 @@ pub unsafe fn set_negamax_span(mut min_span: f64,
    ADJUST_SCORE
    Tweak a score as to encourage early deviations.
 */
-pub unsafe fn adjust_score(mut score: i32,
-                       mut side_to_move: i32)
+pub unsafe fn adjust_score(score: i32,
+                       side_to_move: i32)
                        -> i32 {
     let mut adjustment: i32 = 0;
     let mut adjust_steps: i32 = 0;
@@ -647,9 +647,9 @@ pub unsafe fn adjust_score(mut score: i32,
    DO_MINIMAX
    Calculates the minimax value of node INDEX.
 */
-pub unsafe fn do_minimax(mut index: i32,
-                         mut black_score: *mut i32,
-                         mut white_score: *mut i32) {
+pub unsafe fn do_minimax(index: i32,
+                         black_score: *mut i32,
+                         white_score: *mut i32) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut child_black_score: i32 = 0;
@@ -1025,7 +1025,7 @@ pub unsafe fn init_maps() {
    REBUILD_HASH_TABLE
    Resize the hash table for a requested number of nodes.
 */
-pub unsafe fn rebuild_hash_table(mut requested_items: i32) {
+pub unsafe fn rebuild_hash_table(requested_items: i32) {
     let mut new_size: i32 = 0;
     let mut new_memory: i32 = 0;
     new_size = 2 as i32 * requested_items;
@@ -1056,7 +1056,7 @@ pub unsafe fn rebuild_hash_table(mut requested_items: i32) {
    SET_ALLOCATION
    Changes the number of nodes for which memory is allocated.
 */
-pub unsafe fn set_allocation(mut size: i32) {
+pub unsafe fn set_allocation(size: i32) {
     if node.is_null() {
         node =
             safe_malloc((size as
@@ -1100,9 +1100,9 @@ pub unsafe fn increase_allocation() {
    Creates a new book node without any connections whatsoever
    to the rest of the tree.
 */
-pub unsafe fn create_BookNode(mut val1: i32,
-                          mut val2: i32,
-                          mut flags: u16)
+pub unsafe fn create_BookNode(val1: i32,
+                          val2: i32,
+                          flags: u16)
                           -> i32 {
     let mut index: i32 = 0;
     if book_node_count == node_table_size { increase_allocation(); }
@@ -1167,8 +1167,8 @@ pub unsafe fn clear_osf() {
   otherwise PASS is returned.
 */
 
-pub unsafe fn check_forced_opening(mut side_to_move: i32,
-                                   mut opening:
+pub unsafe fn check_forced_opening(side_to_move: i32,
+                                   opening:
                                    *const i8)
                                    -> i32 {
     let mut i: i32 = 0;
@@ -1182,7 +1182,7 @@ pub unsafe fn check_forced_opening(mut side_to_move: i32,
     let mut symmetry: i32 = 0;
     let mut move_0: [i32; 60] = [0; 60];
     let mut local_board: [i32; 100] = [0; 100];
-    let mut move_offset: [i32; 8] =
+    let move_offset: [i32; 8] =
         [1 as i32, -(1 as i32), 9 as i32,
             -(9 as i32), 10 as i32, -(10 as i32),
             11 as i32, -(11 as i32)];
@@ -1282,14 +1282,14 @@ pub unsafe fn check_forced_opening(mut side_to_move: i32,
   This wrapper on top of TREE_SEARCH is used by EVALUATE_NODE
   to search the possible deviations.
 */
-pub unsafe fn nega_scout(mut depth: i32,
-                     mut allow_mpc: i32,
-                     mut side_to_move: i32,
-                     mut allowed_count: i32,
-                     mut allowed_moves: *mut i32,
-                     mut alpha: i32, mut beta: i32,
-                     mut best_score: *mut i32,
-                     mut best_index: *mut i32) {
+pub unsafe fn nega_scout(depth: i32,
+                     allow_mpc: i32,
+                     side_to_move: i32,
+                     allowed_count: i32,
+                     allowed_moves: *mut i32,
+                     _alpha: i32, _beta: i32,
+                     best_score: *mut i32,
+                     best_index: *mut i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut curr_alpha: i32 = 0;
@@ -1402,7 +1402,7 @@ pub unsafe fn nega_scout(mut depth: i32,
    Note: This function assumes that generate_all() has been
          called prior to it being called.
 */
-pub unsafe fn evaluate_node(mut index: i32) {
+pub unsafe fn evaluate_node(index: i32) {
     let mut i: i32 = 0;
     let mut side_to_move: i32 = 0;
     let mut alternative_move_count: i32 = 0;
@@ -1506,7 +1506,7 @@ pub unsafe fn evaluate_node(mut index: i32) {
    Recursively makes sure a subtree doesn't contain any midgame
    node without a deviation move.
 */
-pub unsafe fn do_validate(mut index: i32) {
+pub unsafe fn do_validate(index: i32) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
@@ -1553,7 +1553,7 @@ pub unsafe fn do_validate(mut index: i32) {
    Recursively makes sure a subtree is evaluated to
    the specified depth.
 */
-pub unsafe fn do_evaluate(mut index: i32) {
+pub unsafe fn do_evaluate(index: i32) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
@@ -1667,8 +1667,8 @@ pub unsafe fn validate_prepared_tree() -> i32 {
   book hash table to the game hash table.
 */
 
-pub unsafe fn fill_endgame_hash(mut cutoff: i32,
-                                mut level: i32) {
+pub unsafe fn fill_endgame_hash(cutoff: i32,
+                                level: i32) {
     let mut i: i32 = 0;
     let mut this_index: i32 = 0;
     let mut child_index: i32 = 0;
@@ -1788,7 +1788,7 @@ pub unsafe fn fill_endgame_hash(mut cutoff: i32,
    and recursively traverse the subtree of the node, doing the same
    thing in all nodes.
 */
-pub unsafe fn do_examine(mut index: i32) {
+pub unsafe fn do_examine(index: i32) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
@@ -1893,8 +1893,8 @@ pub unsafe fn do_examine(mut index: i32) {
   any flag combination.
 */
 
-pub unsafe fn fill_move_alternatives(mut side_to_move: i32,
-                                     mut flags: i32) {
+pub unsafe fn fill_move_alternatives(side_to_move: i32,
+                                     flags: i32) {
     let mut temp =
         CandidateMove{move_0: 0, score: 0, flags: 0, parent_flags: 0,};
     let mut sign: i32 = 0;
@@ -2057,7 +2057,7 @@ pub unsafe fn fill_move_alternatives(mut side_to_move: i32,
 */
 
 pub unsafe fn get_book_move(mut side_to_move: i32,
-                            mut update_slack: i32,
+                            update_slack: i32,
                             mut eval_info: *mut EvaluationType)
                             -> i32 {
     let mut i: i32 = 0;

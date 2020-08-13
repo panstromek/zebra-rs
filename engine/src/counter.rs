@@ -30,7 +30,7 @@ pub unsafe fn adjust_counter(mut counter: *mut CounterType) {
   Converts a counter to a single floating-point value.
 */
 
-pub unsafe fn counter_value(mut counter: *mut CounterType)
+pub unsafe fn counter_value(counter: *mut CounterType)
  -> f64 {
     adjust_counter(counter);
     return 100000000 as i32 as f64 *
@@ -42,7 +42,7 @@ pub unsafe fn counter_value(mut counter: *mut CounterType)
   Adds the value of the counter TERM to the counter SUM.
 */
 pub unsafe fn add_counter(mut sum: *mut CounterType,
-                                     mut term: *mut CounterType) {
+                                     term: *mut CounterType) {
     (*sum).lo = (*sum).lo.wrapping_add((*term).lo);
     (*sum).hi = (*sum).hi.wrapping_add((*term).hi);
     adjust_counter(sum);

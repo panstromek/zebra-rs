@@ -22,7 +22,7 @@ static mut use_experimental: i32 = 0;
    Toggles usage of novelties in the evaluation function on/off.
 */
 
-pub unsafe fn toggle_experimental(mut use_0: i32) {
+pub unsafe fn toggle_experimental(use_0: i32) {
     use_experimental = use_0;
 }
 /*
@@ -60,7 +60,7 @@ pub unsafe fn init_eval() { }
   Evaluates the position when no player has any legal moves.
 */
 
-pub unsafe fn terminal_evaluation(mut side_to_move: i32)
+pub unsafe fn terminal_evaluation(side_to_move: i32)
  -> i32 {
     let mut disc_diff: i32 = 0;
     let mut my_discs: i32 = 0;

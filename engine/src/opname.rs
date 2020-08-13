@@ -15,7 +15,7 @@ pub struct OpeningDescriptor {
 
 pub static mut opening_list: [OpeningDescriptor; 76] =
     [{
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Diagonal Opening\x00" as *const u8 as
                                        *const i8,
@@ -28,7 +28,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"X-square Opening\x00" as *const u8 as
                                        *const i8,
@@ -41,7 +41,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Snake / Peasant\x00" as *const u8 as
                                        *const i8,
@@ -54,7 +54,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Pyramid / Checkerboarding Peasant\x00" as
                                        *const u8 as *const i8,
@@ -67,7 +67,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Heath / Tobidashi\x00" as *const u8 as
                                        *const i8,
@@ -80,7 +80,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Mimura variation II\x00" as *const u8 as
                                        *const i8,
@@ -93,7 +93,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Heath-Bat\x00" as *const u8 as
                                        *const i8,
@@ -106,7 +106,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Iwasaki variation\x00" as *const u8 as
                                        *const i8,
@@ -119,7 +119,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Heath-Chimney\x00" as *const u8 as
                                        *const i8,
@@ -132,7 +132,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Raccoon Dog\x00" as *const u8 as
                                        *const i8,
@@ -145,7 +145,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Rocket\x00" as *const u8 as
                                        *const i8,
@@ -158,7 +158,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Hamilton\x00" as *const u8 as
                                        *const i8,
@@ -171,7 +171,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Lollipop\x00" as *const u8 as
                                        *const i8,
@@ -184,7 +184,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Cow\x00" as *const u8 as
                                        *const i8,
@@ -197,7 +197,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Chimney\x00" as *const u8 as
                                        *const i8,
@@ -210,7 +210,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Cow Bat / Bat / Cambridge\x00" as
                                        *const u8 as *const i8,
@@ -223,7 +223,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Bat (Piau Continuation 2)\x00" as
                                        *const u8 as *const i8,
@@ -236,7 +236,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Melnikov / Bat (Piau Continuation 1)\x00"
                                        as *const u8 as *const i8,
@@ -249,7 +249,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Bat (Kling Continuation)\x00" as
                                        *const u8 as *const i8,
@@ -262,7 +262,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Bat (Kling Alternative)\x00" as *const u8
                                        as *const i8,
@@ -275,7 +275,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Rose-v-Toth\x00" as *const u8 as
                                        *const i8,
@@ -288,7 +288,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Tanida\x00" as *const u8 as
                                        *const i8,
@@ -301,7 +301,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Aircraft / Feldborg\x00" as *const u8 as
                                        *const i8,
@@ -314,7 +314,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Sailboat\x00" as *const u8 as
                                        *const i8,
@@ -327,7 +327,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Maruoka\x00" as *const u8 as
                                        *const i8,
@@ -340,7 +340,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Landau\x00" as *const u8 as
                                        *const i8,
@@ -353,7 +353,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Buffalo / Kenichi Variation\x00" as
                                        *const u8 as *const i8,
@@ -366,7 +366,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Maruoka Buffalo\x00" as *const u8 as
                                        *const i8,
@@ -379,7 +379,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Tanida Buffalo\x00" as *const u8 as
                                        *const i8,
@@ -392,7 +392,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Hokuriku Buffalo\x00" as *const u8 as
                                        *const i8,
@@ -405,7 +405,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Lysons\x00" as *const u8 as
                                        *const i8,
@@ -418,7 +418,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Wing Variation\x00" as *const u8 as
                                        *const i8,
@@ -431,7 +431,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Semi-Wing Variation\x00" as *const u8 as
                                        *const i8,
@@ -444,7 +444,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Parallel Opening\x00" as *const u8 as
                                        *const i8,
@@ -457,7 +457,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Perpendicular Opening\x00" as *const u8
                                        as *const i8,
@@ -470,7 +470,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Shaman / Danish\x00" as *const u8 as
                                        *const i8,
@@ -483,7 +483,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Inoue\x00" as *const u8 as
                                        *const i8,
@@ -496,7 +496,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Iago\x00" as *const u8 as
                                        *const i8,
@@ -509,7 +509,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Bhagat\x00" as *const u8 as
                                        *const i8,
@@ -522,7 +522,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Rose\x00" as *const u8 as
                                        *const i8,
@@ -535,7 +535,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Flat\x00" as *const u8 as
                                        *const i8,
@@ -548,7 +548,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Rotating Flat\x00" as *const u8 as
                                        *const i8,
@@ -561,7 +561,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Murakami Variation\x00" as *const u8 as
                                        *const i8,
@@ -574,7 +574,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Rotating Flat (Kling Continuation)\x00"
                                        as *const u8 as *const i8,
@@ -587,7 +587,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Rose-Birth\x00" as *const u8 as
                                        *const i8,
@@ -600,7 +600,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Brightstein\x00" as *const u8 as
                                        *const i8,
@@ -613,7 +613,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Rose-birdie / Rose-Tamenori\x00" as
                                        *const u8 as *const i8,
@@ -626,7 +626,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Rose-Tamenori-Kling\x00" as *const u8 as
                                        *const i8,
@@ -639,7 +639,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Greenberg / Dawg\x00" as *const u8 as
                                        *const i8,
@@ -652,7 +652,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Ralle\x00" as *const u8 as
                                        *const i8,
@@ -665,7 +665,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Horse\x00" as *const u8 as
                                        *const i8,
@@ -678,7 +678,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Ganglion / No-Cat\x00" as *const u8 as
                                        *const i8,
@@ -691,7 +691,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Swallow\x00" as *const u8 as
                                        *const i8,
@@ -704,7 +704,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"No-Cat (Continuation)\x00" as *const u8
                                        as *const i8,
@@ -717,7 +717,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Italian\x00" as *const u8 as
                                        *const i8,
@@ -730,7 +730,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Cat\x00" as *const u8 as
                                        *const i8,
@@ -743,7 +743,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Sakaguchi\x00" as *const u8 as
                                        *const i8,
@@ -756,7 +756,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Berner\x00" as *const u8 as
                                        *const i8,
@@ -769,7 +769,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Bent ganglion\x00" as *const u8 as
                                        *const i8,
@@ -782,7 +782,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Tiger\x00" as *const u8 as
                                        *const i8,
@@ -795,7 +795,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Stephenson\x00" as *const u8 as
                                        *const i8,
@@ -808,7 +808,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"No-Kung\x00" as *const u8 as
                                        *const i8,
@@ -821,7 +821,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"No-Kung (Continuation)\x00" as *const u8
                                        as *const i8,
@@ -834,7 +834,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Comp\'Oth\x00" as *const u8 as
                                        *const i8,
@@ -847,7 +847,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"F.A.T. draw\x00" as *const u8 as
                                        *const i8,
@@ -860,7 +860,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Lightning bolt\x00" as *const u8 as
                                        *const i8,
@@ -873,7 +873,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Kung\x00" as *const u8 as
                                        *const i8,
@@ -886,7 +886,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Leader\'s Tiger\x00" as *const u8 as
                                        *const i8,
@@ -899,7 +899,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Brightwell\x00" as *const u8 as
                                        *const i8,
@@ -912,7 +912,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Ishii\x00" as *const u8 as
                                        *const i8,
@@ -925,7 +925,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Mainline Tiger\x00" as *const u8 as
                                        *const i8,
@@ -938,7 +938,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Rose-Bill\x00" as *const u8 as
                                        *const i8,
@@ -951,7 +951,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Central Rose-Bill / Dead draw\x00" as
                                        *const u8 as *const i8,
@@ -964,7 +964,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Tamenori\x00" as *const u8 as
                                        *const i8,
@@ -977,7 +977,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Aubrey / Tanaka\x00" as *const u8 as
                                        *const i8,
@@ -990,7 +990,7 @@ pub static mut opening_list: [OpeningDescriptor; 76] =
          init
      },
      {
-         let mut init =
+         let init =
              OpeningDescriptor{name:
                                    b"Aubrey (Feldborg continuation)\x00" as
                                        *const u8 as *const i8,

@@ -5,10 +5,10 @@ use crate::src::moves::first_flip_direction;
 
    Last modified:     November 1, 2000
 */
-unsafe fn AnyDrctnlFlips(mut sq: *mut i32,
-                                    mut inc: i32,
-                                    mut color: i32,
-                                    mut oppcol: i32) -> i32 {
+unsafe fn AnyDrctnlFlips(sq: *mut i32,
+                                    inc: i32,
+                                    color: i32,
+                                    oppcol: i32) -> i32 {
     let mut pt = sq.offset(inc as isize);
     if *pt == oppcol {
         pt = pt.offset(inc as isize);
@@ -37,10 +37,10 @@ unsafe fn AnyDrctnlFlips(mut sq: *mut i32,
    Last modified:   December 25, 1999
 */
 
-pub unsafe fn AnyFlips_compact(mut board: *mut i32,
-                                          mut sqnum: i32,
-                                          mut color: i32,
-                                          mut oppcol: i32)
+pub unsafe fn AnyFlips_compact(board: *mut i32,
+                                          sqnum: i32,
+                                          color: i32,
+                                          oppcol: i32)
  -> i32 {
     let mut sq = 0 as *mut i32;
     let mut inc = 0 as *mut i32;

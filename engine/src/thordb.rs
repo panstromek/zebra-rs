@@ -169,7 +169,7 @@ pub struct ThorOpening {
 
 pub static mut thor_opening_list: [ThorOpening; 741] =
     [{
-        let mut init =
+        let init =
             ThorOpening{first_unique: 0 as i32,
                 frequency: 39 as i32,
                 move_str:
@@ -178,7 +178,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
         init
     },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -187,7 +187,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 2 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -196,7 +196,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -205,7 +205,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 2 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -214,7 +214,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -223,7 +223,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -232,7 +232,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -240,7 +240,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -248,7 +248,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -256,7 +256,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -264,7 +264,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -273,7 +273,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -282,7 +282,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -291,7 +291,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -300,7 +300,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -309,7 +309,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -318,7 +318,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -327,7 +327,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -336,7 +336,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -345,7 +345,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -354,7 +354,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -363,7 +363,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -371,7 +371,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -380,7 +380,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -389,7 +389,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -398,7 +398,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -407,7 +407,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -415,7 +415,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -424,7 +424,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -432,7 +432,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -441,7 +441,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -449,7 +449,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -458,7 +458,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -466,7 +466,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -475,7 +475,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -483,7 +483,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -492,7 +492,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 89 as i32,
                     move_str:
@@ -501,7 +501,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -510,7 +510,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -519,7 +519,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -528,7 +528,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -537,7 +537,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -546,7 +546,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -555,7 +555,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -563,7 +563,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 50 as i32,
                     move_str:
@@ -572,7 +572,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -581,7 +581,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -589,7 +589,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 62 as i32,
                     move_str:
@@ -598,7 +598,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -607,7 +607,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -616,7 +616,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -625,7 +625,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -634,7 +634,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -642,7 +642,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -651,7 +651,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -660,7 +660,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -668,7 +668,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -677,7 +677,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -686,7 +686,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -694,7 +694,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -703,7 +703,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -712,7 +712,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -721,7 +721,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -730,7 +730,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -739,7 +739,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -748,7 +748,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -757,7 +757,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 54 as i32,
                     move_str:
@@ -766,7 +766,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -775,7 +775,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -784,7 +784,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -792,7 +792,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -801,7 +801,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 56 as i32,
                     move_str:
@@ -810,7 +810,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -819,7 +819,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -828,7 +828,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -837,7 +837,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -846,7 +846,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -855,7 +855,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -863,7 +863,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -872,7 +872,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -881,7 +881,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 50 as i32,
                     move_str:
@@ -889,7 +889,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 56 as i32,
                     move_str:
@@ -898,7 +898,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -907,7 +907,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -916,7 +916,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -924,7 +924,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -932,7 +932,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -941,7 +941,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -949,7 +949,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 55 as i32,
                     move_str:
@@ -957,7 +957,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 66 as i32,
                     move_str:
@@ -966,7 +966,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -975,7 +975,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -984,7 +984,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -993,7 +993,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1002,7 +1002,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -1010,7 +1010,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -1019,7 +1019,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -1028,7 +1028,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 59 as i32,
                     move_str:
@@ -1037,7 +1037,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -1045,7 +1045,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 78 as i32,
                     move_str:
@@ -1054,7 +1054,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -1062,7 +1062,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -1071,7 +1071,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 58 as i32,
                     move_str:
@@ -1080,7 +1080,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 55 as i32,
                     move_str:
@@ -1089,7 +1089,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -1097,7 +1097,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -1106,7 +1106,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -1115,7 +1115,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -1124,7 +1124,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 65 as i32,
                     move_str:
@@ -1133,7 +1133,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -1142,7 +1142,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -1151,7 +1151,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 70 as i32,
                     move_str:
@@ -1160,7 +1160,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -1169,7 +1169,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 63 as i32,
                     move_str:
@@ -1178,7 +1178,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -1187,7 +1187,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 61 as i32,
                     move_str:
@@ -1196,7 +1196,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -1204,7 +1204,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 53 as i32,
                     move_str:
@@ -1213,7 +1213,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -1221,7 +1221,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -1230,7 +1230,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -1239,7 +1239,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -1248,7 +1248,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1257,7 +1257,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -1266,7 +1266,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -1275,7 +1275,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1283,7 +1283,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -1291,7 +1291,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -1300,7 +1300,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -1309,7 +1309,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1318,7 +1318,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -1327,7 +1327,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -1336,7 +1336,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 59 as i32,
                     move_str:
@@ -1344,7 +1344,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -1352,7 +1352,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1361,7 +1361,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -1369,7 +1369,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -1378,7 +1378,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -1387,7 +1387,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1395,7 +1395,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 56 as i32,
                     move_str:
@@ -1404,7 +1404,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1412,7 +1412,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -1421,7 +1421,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 57 as i32,
                     move_str:
@@ -1430,7 +1430,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -1439,7 +1439,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1448,7 +1448,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -1457,7 +1457,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -1465,7 +1465,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -1474,7 +1474,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1483,7 +1483,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -1492,7 +1492,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -1501,7 +1501,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 57 as i32,
                     move_str:
@@ -1510,7 +1510,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -1518,7 +1518,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -1527,7 +1527,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -1536,7 +1536,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -1545,7 +1545,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -1554,7 +1554,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 50 as i32,
                     move_str:
@@ -1562,7 +1562,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -1571,7 +1571,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1580,7 +1580,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -1589,7 +1589,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -1597,7 +1597,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -1606,7 +1606,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 98 as i32,
                     move_str:
@@ -1614,7 +1614,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -1622,7 +1622,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1631,7 +1631,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1640,7 +1640,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -1649,7 +1649,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 51 as i32,
                     move_str:
@@ -1658,7 +1658,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -1666,7 +1666,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 61 as i32,
                     move_str:
@@ -1675,7 +1675,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -1684,7 +1684,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -1693,7 +1693,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 81 as i32,
                     move_str:
@@ -1701,7 +1701,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -1709,7 +1709,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -1718,7 +1718,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -1727,7 +1727,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -1735,7 +1735,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -1744,7 +1744,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -1752,7 +1752,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -1761,7 +1761,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 71 as i32,
                     move_str:
@@ -1770,7 +1770,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -1779,7 +1779,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -1788,7 +1788,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -1797,7 +1797,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -1806,7 +1806,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -1815,7 +1815,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -1824,7 +1824,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -1833,7 +1833,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -1841,7 +1841,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -1849,7 +1849,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -1857,7 +1857,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -1866,7 +1866,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -1875,7 +1875,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 87 as i32,
                     move_str:
@@ -1884,7 +1884,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 53 as i32,
                     move_str:
@@ -1892,7 +1892,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -1901,7 +1901,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -1909,7 +1909,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -1918,7 +1918,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -1926,7 +1926,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -1935,7 +1935,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -1944,7 +1944,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 54 as i32,
                     move_str:
@@ -1953,7 +1953,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -1962,7 +1962,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -1971,7 +1971,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -1979,7 +1979,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -1988,7 +1988,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 56 as i32,
                     move_str:
@@ -1997,7 +1997,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 73 as i32,
                     move_str:
@@ -2006,7 +2006,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -2014,7 +2014,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -2023,7 +2023,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -2031,7 +2031,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -2040,7 +2040,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -2049,7 +2049,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -2058,7 +2058,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -2066,7 +2066,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -2075,7 +2075,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -2084,7 +2084,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 63 as i32,
                     move_str:
@@ -2092,7 +2092,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -2101,7 +2101,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -2110,7 +2110,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -2118,7 +2118,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 58 as i32,
                     move_str:
@@ -2127,7 +2127,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -2136,7 +2136,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -2145,7 +2145,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 66 as i32,
                     move_str:
@@ -2153,7 +2153,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -2162,7 +2162,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -2171,7 +2171,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -2180,7 +2180,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 67 as i32,
                     move_str:
@@ -2189,7 +2189,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 57 as i32,
                     move_str:
@@ -2198,7 +2198,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -2207,7 +2207,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 59 as i32,
                     move_str:
@@ -2216,7 +2216,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 55 as i32,
                     move_str:
@@ -2224,7 +2224,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -2232,7 +2232,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -2240,7 +2240,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 2 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -2248,7 +2248,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 1 as i32,
                     frequency: 51 as i32,
                     move_str:
@@ -2257,7 +2257,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -2266,7 +2266,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 51 as i32,
                     move_str:
@@ -2275,7 +2275,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -2284,7 +2284,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -2293,7 +2293,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -2301,7 +2301,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -2310,7 +2310,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -2318,7 +2318,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -2327,7 +2327,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -2336,7 +2336,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -2344,7 +2344,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -2353,7 +2353,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -2362,7 +2362,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -2370,7 +2370,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -2379,7 +2379,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -2388,7 +2388,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -2397,7 +2397,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -2405,7 +2405,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -2414,7 +2414,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -2423,7 +2423,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -2432,7 +2432,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -2441,7 +2441,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -2450,7 +2450,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 57 as i32,
                     move_str:
@@ -2458,7 +2458,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -2467,7 +2467,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -2475,7 +2475,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 56 as i32,
                     move_str:
@@ -2484,7 +2484,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 65 as i32,
                     move_str:
@@ -2493,7 +2493,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -2501,7 +2501,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 66 as i32,
                     move_str:
@@ -2509,7 +2509,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 62 as i32,
                     move_str:
@@ -2518,7 +2518,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 56 as i32,
                     move_str:
@@ -2527,7 +2527,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -2536,7 +2536,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 55 as i32,
                     move_str:
@@ -2545,7 +2545,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -2554,7 +2554,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -2563,7 +2563,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -2572,7 +2572,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -2581,7 +2581,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -2590,7 +2590,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 55 as i32,
                     move_str:
@@ -2599,7 +2599,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 57 as i32,
                     move_str:
@@ -2608,7 +2608,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -2617,7 +2617,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -2626,7 +2626,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -2635,7 +2635,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -2644,7 +2644,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -2653,7 +2653,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 18 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -2662,7 +2662,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 18 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -2670,7 +2670,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -2679,7 +2679,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -2688,7 +2688,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -2697,7 +2697,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -2706,7 +2706,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -2715,7 +2715,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -2724,7 +2724,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -2733,7 +2733,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -2741,7 +2741,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -2750,7 +2750,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -2759,7 +2759,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -2768,7 +2768,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -2777,7 +2777,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -2786,7 +2786,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 24 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -2794,7 +2794,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 21 as i32,
                     frequency: 60 as i32,
                     move_str:
@@ -2803,7 +2803,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 21 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -2812,7 +2812,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 19 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -2821,7 +2821,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 53 as i32,
                     move_str:
@@ -2830,7 +2830,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -2839,7 +2839,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -2847,7 +2847,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -2856,7 +2856,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 106 as i32,
                     move_str:
@@ -2865,7 +2865,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -2874,7 +2874,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -2883,7 +2883,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -2892,7 +2892,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -2901,7 +2901,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -2910,7 +2910,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -2919,7 +2919,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -2928,7 +2928,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -2937,7 +2937,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -2945,7 +2945,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -2954,7 +2954,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 19 as i32,
                     frequency: 55 as i32,
                     move_str:
@@ -2963,7 +2963,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 23 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -2972,7 +2972,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 24 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -2981,7 +2981,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 27 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -2990,7 +2990,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 21 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -2999,7 +2999,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 56 as i32,
                     move_str:
@@ -3008,7 +3008,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 55 as i32,
                     move_str:
@@ -3017,7 +3017,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -3026,7 +3026,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3035,7 +3035,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -3044,7 +3044,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -3053,7 +3053,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -3062,7 +3062,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 51 as i32,
                     move_str:
@@ -3070,7 +3070,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -3079,7 +3079,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -3088,7 +3088,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -3097,7 +3097,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -3106,7 +3106,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -3115,7 +3115,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3124,7 +3124,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 20 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -3133,7 +3133,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -3142,7 +3142,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -3151,7 +3151,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3160,7 +3160,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -3169,7 +3169,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3178,7 +3178,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -3187,7 +3187,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -3195,7 +3195,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -3204,7 +3204,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -3213,7 +3213,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -3222,7 +3222,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -3230,7 +3230,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -3239,7 +3239,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -3248,7 +3248,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 18 as i32,
                     frequency: 50 as i32,
                     move_str:
@@ -3257,7 +3257,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 19 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -3266,7 +3266,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -3275,7 +3275,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -3284,7 +3284,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -3293,7 +3293,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 53 as i32,
                     move_str:
@@ -3302,7 +3302,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -3311,7 +3311,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 61 as i32,
                     move_str:
@@ -3320,7 +3320,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -3329,7 +3329,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 70 as i32,
                     move_str:
@@ -3338,7 +3338,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -3347,7 +3347,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 59 as i32,
                     move_str:
@@ -3355,7 +3355,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -3364,7 +3364,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -3373,7 +3373,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -3381,7 +3381,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 50 as i32,
                     move_str:
@@ -3390,7 +3390,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -3399,7 +3399,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -3407,7 +3407,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3415,7 +3415,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 53 as i32,
                     move_str:
@@ -3424,7 +3424,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 59 as i32,
                     move_str:
@@ -3432,7 +3432,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -3441,7 +3441,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 57 as i32,
                     move_str:
@@ -3450,7 +3450,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -3459,7 +3459,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -3468,7 +3468,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -3477,7 +3477,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 58 as i32,
                     move_str:
@@ -3486,7 +3486,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -3495,7 +3495,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -3504,7 +3504,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3513,7 +3513,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -3522,7 +3522,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -3530,7 +3530,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -3539,7 +3539,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -3547,7 +3547,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3556,7 +3556,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 50 as i32,
                     move_str:
@@ -3565,7 +3565,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -3574,7 +3574,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3583,7 +3583,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -3592,7 +3592,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 57 as i32,
                     move_str:
@@ -3601,7 +3601,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3610,7 +3610,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -3619,7 +3619,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -3628,7 +3628,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -3637,7 +3637,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -3645,7 +3645,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -3654,7 +3654,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 50 as i32,
                     move_str:
@@ -3662,7 +3662,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -3671,7 +3671,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 55 as i32,
                     move_str:
@@ -3680,7 +3680,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 61 as i32,
                     move_str:
@@ -3689,7 +3689,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 63 as i32,
                     move_str:
@@ -3698,7 +3698,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -3706,7 +3706,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -3715,7 +3715,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -3724,7 +3724,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -3733,7 +3733,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -3742,7 +3742,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -3751,7 +3751,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3760,7 +3760,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3769,7 +3769,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -3777,7 +3777,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -3786,7 +3786,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -3794,7 +3794,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 54 as i32,
                     move_str:
@@ -3803,7 +3803,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -3812,7 +3812,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -3821,7 +3821,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -3830,7 +3830,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -3839,7 +3839,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -3848,7 +3848,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3857,7 +3857,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -3866,7 +3866,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -3875,7 +3875,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -3884,7 +3884,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -3893,7 +3893,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -3902,7 +3902,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -3911,7 +3911,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -3920,7 +3920,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -3929,7 +3929,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -3938,7 +3938,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -3946,7 +3946,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -3955,7 +3955,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 63 as i32,
                     move_str:
@@ -3964,7 +3964,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 56 as i32,
                     move_str:
@@ -3973,7 +3973,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -3982,7 +3982,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -3991,7 +3991,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -4000,7 +4000,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 82 as i32,
                     move_str:
@@ -4009,7 +4009,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -4018,7 +4018,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -4027,7 +4027,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 19 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -4035,7 +4035,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -4044,7 +4044,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 18 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -4053,7 +4053,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -4062,7 +4062,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -4070,7 +4070,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -4079,7 +4079,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -4088,7 +4088,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -4097,7 +4097,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -4106,7 +4106,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -4114,7 +4114,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 80 as i32,
                     move_str:
@@ -4123,7 +4123,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -4132,7 +4132,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -4141,7 +4141,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -4150,7 +4150,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 64 as i32,
                     move_str:
@@ -4158,7 +4158,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -4167,7 +4167,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -4176,7 +4176,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -4184,7 +4184,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -4193,7 +4193,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -4201,7 +4201,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -4210,7 +4210,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -4219,7 +4219,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 72 as i32,
                     move_str:
@@ -4227,7 +4227,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -4236,7 +4236,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -4245,7 +4245,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 55 as i32,
                     move_str:
@@ -4254,7 +4254,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -4263,7 +4263,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -4272,7 +4272,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -4281,7 +4281,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -4290,7 +4290,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -4299,7 +4299,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 66 as i32,
                     move_str:
@@ -4308,7 +4308,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 2 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -4317,7 +4317,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -4326,7 +4326,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -4335,7 +4335,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 50 as i32,
                     move_str:
@@ -4343,7 +4343,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -4352,7 +4352,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -4361,7 +4361,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -4370,7 +4370,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -4379,7 +4379,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -4388,7 +4388,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -4397,7 +4397,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -4406,7 +4406,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -4415,7 +4415,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -4424,7 +4424,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -4432,7 +4432,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 72 as i32,
                     move_str:
@@ -4440,7 +4440,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -4449,7 +4449,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 67 as i32,
                     move_str:
@@ -4458,7 +4458,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -4467,7 +4467,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -4475,7 +4475,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 51 as i32,
                     move_str:
@@ -4484,7 +4484,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -4492,7 +4492,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -4501,7 +4501,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 54 as i32,
                     move_str:
@@ -4510,7 +4510,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -4519,7 +4519,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -4528,7 +4528,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -4537,7 +4537,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -4546,7 +4546,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 21 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -4555,7 +4555,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -4564,7 +4564,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -4573,7 +4573,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 23 as i32,
                     frequency: 64 as i32,
                     move_str:
@@ -4582,7 +4582,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -4591,7 +4591,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -4600,7 +4600,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -4609,7 +4609,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -4618,7 +4618,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -4627,7 +4627,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -4636,7 +4636,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -4645,7 +4645,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -4654,7 +4654,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -4663,7 +4663,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -4671,7 +4671,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -4680,7 +4680,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -4689,7 +4689,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -4698,7 +4698,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -4707,7 +4707,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -4715,7 +4715,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 50 as i32,
                     move_str:
@@ -4724,7 +4724,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 68 as i32,
                     move_str:
@@ -4732,7 +4732,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -4741,7 +4741,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -4750,7 +4750,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -4759,7 +4759,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -4768,7 +4768,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -4777,7 +4777,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -4786,7 +4786,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -4795,7 +4795,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -4804,7 +4804,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -4813,7 +4813,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -4822,7 +4822,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -4831,7 +4831,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -4840,7 +4840,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -4849,7 +4849,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -4858,7 +4858,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -4866,7 +4866,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -4874,7 +4874,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -4883,7 +4883,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -4892,7 +4892,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -4900,7 +4900,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -4909,7 +4909,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -4918,7 +4918,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -4926,7 +4926,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -4934,7 +4934,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -4943,7 +4943,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -4952,7 +4952,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -4961,7 +4961,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -4970,7 +4970,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -4979,7 +4979,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -4987,7 +4987,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 73 as i32,
                     move_str:
@@ -4995,7 +4995,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -5004,7 +5004,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -5013,7 +5013,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -5021,7 +5021,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -5029,7 +5029,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -5038,7 +5038,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -5047,7 +5047,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -5056,7 +5056,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -5065,7 +5065,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 79 as i32,
                     move_str:
@@ -5073,7 +5073,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -5082,7 +5082,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -5091,7 +5091,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -5100,7 +5100,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -5109,7 +5109,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -5118,7 +5118,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -5127,7 +5127,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -5136,7 +5136,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -5144,7 +5144,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -5153,7 +5153,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -5161,7 +5161,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -5170,7 +5170,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -5179,7 +5179,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 57 as i32,
                     move_str:
@@ -5188,7 +5188,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -5196,7 +5196,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -5205,7 +5205,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 2 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -5214,7 +5214,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -5223,7 +5223,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 67 as i32,
                     move_str:
@@ -5232,7 +5232,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -5241,7 +5241,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 53 as i32,
                     move_str:
@@ -5250,7 +5250,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -5259,7 +5259,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -5267,7 +5267,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -5275,7 +5275,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -5284,7 +5284,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 58 as i32,
                     move_str:
@@ -5293,7 +5293,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 76 as i32,
                     move_str:
@@ -5301,7 +5301,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -5310,7 +5310,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 62 as i32,
                     move_str:
@@ -5319,7 +5319,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -5328,7 +5328,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -5336,7 +5336,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -5345,7 +5345,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 61 as i32,
                     move_str:
@@ -5353,7 +5353,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -5362,7 +5362,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -5370,7 +5370,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 54 as i32,
                     move_str:
@@ -5378,7 +5378,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 74 as i32,
                     move_str:
@@ -5387,7 +5387,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 66 as i32,
                     move_str:
@@ -5396,7 +5396,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -5405,7 +5405,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -5414,7 +5414,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -5423,7 +5423,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -5432,7 +5432,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -5441,7 +5441,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 21 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -5450,7 +5450,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 23 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -5459,7 +5459,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 23 as i32,
                     frequency: 55 as i32,
                     move_str:
@@ -5468,7 +5468,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -5477,7 +5477,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 18 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -5486,7 +5486,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 18 as i32,
                     frequency: 65 as i32,
                     move_str:
@@ -5495,7 +5495,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 20 as i32,
                     frequency: 72 as i32,
                     move_str:
@@ -5504,7 +5504,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 57 as i32,
                     move_str:
@@ -5513,7 +5513,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 56 as i32,
                     move_str:
@@ -5522,7 +5522,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 18 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -5530,7 +5530,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 91 as i32,
                     move_str:
@@ -5538,7 +5538,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -5547,7 +5547,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -5555,7 +5555,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 77 as i32,
                     move_str:
@@ -5564,7 +5564,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -5572,7 +5572,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -5580,7 +5580,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -5588,7 +5588,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -5597,7 +5597,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -5606,7 +5606,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -5615,7 +5615,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -5623,7 +5623,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -5632,7 +5632,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -5641,7 +5641,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -5650,7 +5650,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 18 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -5659,7 +5659,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 18 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -5668,7 +5668,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -5677,7 +5677,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -5685,7 +5685,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -5694,7 +5694,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -5703,7 +5703,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 50 as i32,
                     move_str:
@@ -5712,7 +5712,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -5721,7 +5721,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -5730,7 +5730,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -5738,7 +5738,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -5747,7 +5747,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 58 as i32,
                     move_str:
@@ -5756,7 +5756,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -5765,7 +5765,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -5774,7 +5774,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 15 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -5783,7 +5783,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 17 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -5792,7 +5792,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 18 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -5801,7 +5801,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -5810,7 +5810,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 19 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -5819,7 +5819,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 18 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -5828,7 +5828,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 23 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -5837,7 +5837,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 23 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -5846,7 +5846,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 22 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -5855,7 +5855,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 26 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -5863,7 +5863,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 25 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -5871,7 +5871,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 21 as i32,
                     frequency: 70 as i32,
                     move_str:
@@ -5879,7 +5879,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -5888,7 +5888,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -5897,7 +5897,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 73 as i32,
                     move_str:
@@ -5906,7 +5906,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -5915,7 +5915,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -5924,7 +5924,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -5933,7 +5933,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -5942,7 +5942,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 60 as i32,
                     move_str:
@@ -5951,7 +5951,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -5960,7 +5960,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -5969,7 +5969,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -5978,7 +5978,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -5986,7 +5986,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 13 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -5995,7 +5995,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 14 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -6004,7 +6004,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -6013,7 +6013,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -6021,7 +6021,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -6030,7 +6030,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 16 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -6038,7 +6038,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 35 as i32,
                     move_str:
@@ -6047,7 +6047,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 51 as i32,
                     move_str:
@@ -6056,7 +6056,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -6065,7 +6065,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -6074,7 +6074,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 61 as i32,
                     move_str:
@@ -6083,7 +6083,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 60 as i32,
                     move_str:
@@ -6092,7 +6092,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -6100,7 +6100,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 65 as i32,
                     move_str:
@@ -6109,7 +6109,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 62 as i32,
                     move_str:
@@ -6118,7 +6118,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 11 as i32,
                     frequency: 53 as i32,
                     move_str:
@@ -6126,7 +6126,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -6134,7 +6134,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -6143,7 +6143,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -6152,7 +6152,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -6161,7 +6161,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -6170,7 +6170,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -6178,7 +6178,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -6187,7 +6187,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -6195,7 +6195,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -6204,7 +6204,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 58 as i32,
                     move_str:
@@ -6213,7 +6213,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -6222,7 +6222,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -6231,7 +6231,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -6239,7 +6239,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -6248,7 +6248,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -6257,7 +6257,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 61 as i32,
                     move_str:
@@ -6266,7 +6266,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -6275,7 +6275,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -6284,7 +6284,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 10 as i32,
                     frequency: 51 as i32,
                     move_str:
@@ -6293,7 +6293,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 12 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -6302,7 +6302,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 9 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -6310,7 +6310,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -6319,7 +6319,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 58 as i32,
                     move_str:
@@ -6327,7 +6327,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 8 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -6336,7 +6336,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -6345,7 +6345,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -6354,7 +6354,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 52 as i32,
                     move_str:
@@ -6363,7 +6363,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -6372,7 +6372,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 44 as i32,
                     move_str:
@@ -6381,7 +6381,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -6390,7 +6390,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 68 as i32,
                     move_str:
@@ -6399,7 +6399,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 45 as i32,
                     move_str:
@@ -6408,7 +6408,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -6417,7 +6417,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -6426,7 +6426,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 41 as i32,
                     move_str:
@@ -6434,7 +6434,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -6443,7 +6443,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 58 as i32,
                     move_str:
@@ -6452,7 +6452,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -6461,7 +6461,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 73 as i32,
                     move_str:
@@ -6469,7 +6469,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 40 as i32,
                     move_str:
@@ -6477,7 +6477,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -6486,7 +6486,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -6494,7 +6494,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 2 as i32,
                     frequency: 49 as i32,
                     move_str:
@@ -6503,7 +6503,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -6512,7 +6512,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 42 as i32,
                     move_str:
@@ -6521,7 +6521,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 51 as i32,
                     move_str:
@@ -6530,7 +6530,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -6539,7 +6539,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -6548,7 +6548,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -6557,7 +6557,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 47 as i32,
                     move_str:
@@ -6565,7 +6565,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 2 as i32,
                     frequency: 56 as i32,
                     move_str:
@@ -6574,7 +6574,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 37 as i32,
                     move_str:
@@ -6582,7 +6582,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 1 as i32,
                     frequency: 46 as i32,
                     move_str:
@@ -6591,7 +6591,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -6600,7 +6600,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -6609,7 +6609,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 6 as i32,
                     frequency: 38 as i32,
                     move_str:
@@ -6618,7 +6618,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 7 as i32,
                     frequency: 43 as i32,
                     move_str:
@@ -6626,7 +6626,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 4 as i32,
                     frequency: 68 as i32,
                     move_str:
@@ -6634,7 +6634,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 33 as i32,
                     move_str:
@@ -6643,7 +6643,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 48 as i32,
                     move_str:
@@ -6651,7 +6651,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 5 as i32,
                     frequency: 36 as i32,
                     move_str:
@@ -6659,7 +6659,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 34 as i32,
                     move_str:
@@ -6668,7 +6668,7 @@ pub static mut thor_opening_list: [ThorOpening; 741] =
             init
         },
         {
-            let mut init =
+            let init =
                 ThorOpening{first_unique: 3 as i32,
                     frequency: 39 as i32,
                     move_str:
@@ -6807,10 +6807,10 @@ pub unsafe fn prepare_thor_board() {
   Count the number of discs flipped in the direction given by INC
   when SQ is played by COLOR and flip those discs.
 */
-pub unsafe fn directional_flip_count(mut sq: i32,
-                                 mut inc: i32,
-                                 mut color: i32,
-                                 mut oppcol: i32)
+pub unsafe fn directional_flip_count(sq: i32,
+                                 inc: i32,
+                                 color: i32,
+                                 oppcol: i32)
                                  -> i32 {
     let mut count = 1 as i32;
     let mut pt = sq + inc;
@@ -6854,10 +6854,10 @@ pub unsafe fn directional_flip_count(mut sq: i32,
   Returns 1 if SQ is feasible for COLOR in the direction given by INC
   and flip the discs which are flipped if SQ is played.
 */
-pub unsafe fn directional_flip_any(mut sq: i32,
-                               mut inc: i32,
-                               mut color: i32,
-                               mut oppcol: i32)
+pub unsafe fn directional_flip_any(sq: i32,
+                               inc: i32,
+                               color: i32,
+                               oppcol: i32)
                                -> i32 {
     let mut pt = sq + inc;
     if thor_board[pt as usize] == oppcol {
@@ -6892,9 +6892,9 @@ pub unsafe fn directional_flip_any(mut sq: i32,
   Returns the number of discs flipped if SQNUM is played by COLOR
   and flips those discs (if there are any).
 */
-pub unsafe fn count_flips(mut sqnum: i32,
-                      mut color: i32,
-                      mut oppcol: i32) -> i32 {
+pub unsafe fn count_flips(sqnum: i32,
+                      color: i32,
+                      oppcol: i32) -> i32 {
     let mut count: i32 = 0;
     let mut mask: i32 = 0;
     count = 0 as i32;
@@ -6938,8 +6938,8 @@ pub unsafe fn count_flips(mut sqnum: i32,
   Returns 1 if SQNUM flips any discs for COLOR, otherwise 0, and
   flips those discs.
 */
-pub unsafe fn any_flips(mut sqnum: i32, mut color: i32,
-                    mut oppcol: i32) -> i32 {
+pub unsafe fn any_flips(sqnum: i32, color: i32,
+                    oppcol: i32) -> i32 {
     let mut count: i32 = 0;
     let mut mask: i32 = 0;
     count = 0 as i32;
@@ -6979,7 +6979,7 @@ pub unsafe fn any_flips(mut sqnum: i32, mut color: i32,
   Computes the row and column patterns.
 
 */
-pub unsafe fn compute_thor_patterns(mut in_board: *mut i32) {
+pub unsafe fn compute_thor_patterns(in_board: *mut i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -7016,10 +7016,10 @@ pub unsafe fn compute_thor_patterns(mut in_board: *mut i32) {
   one corner has been played (obvious generalization for one or two
   corners).
 */
-pub unsafe fn get_corner_mask(mut disc_a1: i32,
-                          mut disc_a8: i32,
-                          mut disc_h1: i32,
-                          mut disc_h8: i32)
+pub unsafe fn get_corner_mask(disc_a1: i32,
+                          disc_a8: i32,
+                          disc_h1: i32,
+                          disc_h8: i32)
                           -> u32 {
     let mut i: i32 = 0;
     let mut count: i32 = 0;
@@ -7091,7 +7091,7 @@ pub unsafe fn get_corner_mask(mut disc_a1: i32,
   TOURNAMENT_NAME
   Returns the name of the INDEXth tournament if available.
 */
-pub unsafe fn tournament_name(mut index: i32)
+pub unsafe fn tournament_name(index: i32)
                           -> *const i8 {
     if index < 0 as i32 || index >= tournaments.count {
         return b"<Not available>\x00" as *const u8 as *const i8
@@ -7106,7 +7106,7 @@ pub unsafe fn tournament_name(mut index: i32)
   Returns the name of the INDEXth player if available.
 */
 
-pub unsafe fn get_player_name(mut index: i32)
+pub unsafe fn get_player_name(index: i32)
                               -> *const i8 {
     if index < 0 as i32 || index >= players.count {
         return b"< Not available >\x00" as *const u8 as *const i8
@@ -7128,7 +7128,7 @@ pub unsafe fn get_player_count() -> i32 {
   Returns the index into the lexicographical order of the
   INDEXth player if available, otherwise the last index + 1.
 */
-pub unsafe fn player_lex_order(mut index: i32) -> i32 {
+pub unsafe fn player_lex_order(index: i32) -> i32 {
     if index < 0 as i32 || index >= players.count {
         return players.count
     } else { return (*players.player_list.offset(index as isize)).lex_order };
@@ -7139,7 +7139,7 @@ pub unsafe fn player_lex_order(mut index: i32) -> i32 {
   Returns the name of the INDEXth tournament if available.
 */
 
-pub unsafe fn get_tournament_name(mut index: i32)
+pub unsafe fn get_tournament_name(index: i32)
                                   -> *const i8 {
     if index < 0 as i32 || index >= tournaments.count {
         return b"< Not available >\x00" as *const u8 as *const i8
@@ -7174,7 +7174,7 @@ pub unsafe fn get_database_count() -> i32 {
   above.
 */
 
-pub unsafe fn get_database_info(mut info: *mut DatabaseInfoType) {
+pub unsafe fn get_database_info(info: *mut DatabaseInfoType) {
     let mut i: i32 = 0;
     let mut change: i32 = 0;
     let mut temp = DatabaseInfoType{year: 0, count: 0,};
@@ -7212,8 +7212,8 @@ pub unsafe fn get_database_info(mut info: *mut DatabaseInfoType) {
   Computes the primary and secondary hash values for the
   unit element in the rotation group.
 */
-pub unsafe fn compute_partial_hash(mut hash_val1: *mut u32,
-                               mut hash_val2: *mut u32) {
+pub unsafe fn compute_partial_hash(hash_val1: *mut u32,
+                               hash_val2: *mut u32) {
     let mut i: i32 = 0;
     *hash_val1 = 0 as i32 as u32;
     *hash_val2 = 0 as i32 as u32;
@@ -7234,7 +7234,7 @@ pub unsafe fn compute_partial_hash(mut hash_val1: *mut u32,
   Note: The order of the hash codes must coincide with the
         definitions in INIT_SYMMETRY_MAPS().
 */
-pub unsafe fn compute_full_primary_hash(mut hash_val:
+pub unsafe fn compute_full_primary_hash(hash_val:
                                     *mut u32) {
     let mut i: i32 = 0;
     i = 0 as i32;
@@ -7275,7 +7275,7 @@ pub unsafe fn compute_full_primary_hash(mut hash_val:
     *hash_val.offset(7 as i32 as isize) =
         bit_reverse_32(*hash_val.offset(3 as i32 as isize));
 }
-pub unsafe fn compute_full_secondary_hash(mut hash_val:
+pub unsafe fn compute_full_secondary_hash(hash_val:
                                       *mut u32) {
     let mut i: i32 = 0;
     i = 0 as i32;
@@ -7324,7 +7324,7 @@ pub unsafe fn compute_full_secondary_hash(mut hash_val:
   Checks if any of the rotations of the current pattern set
   match the primary hash code TARGET_HASH.
 */
-pub unsafe fn primary_hash_lookup(mut target_hash: u32)
+pub unsafe fn primary_hash_lookup(target_hash: u32)
                               -> i32 {
     let mut i: i32 = 0;
     let mut hit_mask: i32 = 0;
@@ -7345,7 +7345,7 @@ pub unsafe fn primary_hash_lookup(mut target_hash: u32)
   Checks if any of the rotations of the current pattern set
   match the secondary hash code TARGET_HASH.
 */
-pub unsafe fn secondary_hash_lookup(mut target_hash: u32)
+pub unsafe fn secondary_hash_lookup(target_hash: u32)
                                 -> i32 {
     let mut i: i32 = 0;
     let mut hit_mask: i32 = 0;
@@ -7366,7 +7366,7 @@ pub unsafe fn secondary_hash_lookup(mut target_hash: u32)
   FILTER_DATABASE
   Applies the current filter rules to the database DB.
 */
-pub unsafe fn filter_database(mut db: *mut DatabaseType) {
+pub unsafe fn filter_database(db: *mut DatabaseType) {
     let mut i: i32 = 0;
     let mut category: i32 = 0;
     let mut passes_filter: i32 = 0;
@@ -7469,7 +7469,7 @@ pub unsafe fn filter_all_databases() {
   GET_PLAYER_COUNT() if necessary.
 */
 
-pub unsafe fn set_player_filter(mut selected: *mut i32) {
+pub unsafe fn set_player_filter(selected: *mut i32) {
     let mut i: i32 = 0;
     i = 0 as i32;
     while i < players.count {
@@ -7485,7 +7485,7 @@ pub unsafe fn set_player_filter(mut selected: *mut i32) {
   player or if both players have to be selected for it be displayed.
 */
 
-pub unsafe fn set_player_filter_type(mut player_filter:
+pub unsafe fn set_player_filter_type(player_filter:
                                      PlayerFilterType) {
     filter.player_filter = player_filter;
 }
@@ -7496,7 +7496,7 @@ pub unsafe fn set_player_filter_type(mut player_filter:
   GET_TOURNAMENT_COUNT() if necessary.
 */
 
-pub unsafe fn set_tournament_filter(mut selected:
+pub unsafe fn set_tournament_filter(selected:
                                     *mut i32) {
     let mut i: i32 = 0;
     i = 0 as i32;
@@ -7512,8 +7512,8 @@ pub unsafe fn set_tournament_filter(mut selected:
   Specify the interval of years to which the search will be confined.
 */
 
-pub unsafe fn set_year_filter(mut first_year: i32,
-                              mut last_year: i32) {
+pub unsafe fn set_year_filter(first_year: i32,
+                              last_year: i32) {
     filter.first_year = first_year;
     filter.last_year = last_year;
     thor_games_filtered = 0 as i32;
@@ -7525,7 +7525,7 @@ pub unsafe fn set_year_filter(mut first_year: i32,
   OR of the flags for the types enabled.
 */
 
-pub unsafe fn specify_game_categories(mut categories:
+pub unsafe fn specify_game_categories(categories:
                                       i32) {
     if categories != filter.game_categories {
         filter.game_categories = categories;
@@ -7542,7 +7542,7 @@ pub unsafe fn specify_game_categories(mut categories:
 */
 
 pub unsafe fn specify_thor_sort_order(mut count: i32,
-                                      mut sort_order:
+                                      sort_order:
                                       *mut i32) {
     let mut i: i32 = 0;
     /* Truncate the input vector if it is too long */
@@ -7575,11 +7575,11 @@ pub unsafe fn specify_thor_sort_order(mut count: i32,
   rotations.
 */
 pub unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
-                                 mut depth: i32,
-                                 mut moves_played: i32,
-                                 mut primary_hash_0:
+                                 depth: i32,
+                                 moves_played: i32,
+                                 primary_hash_0:
                                  *mut u32,
-                                 mut secondary_hash_0:
+                                 secondary_hash_0:
                                  *mut u32) {
     let mut i: i32 = 0;
     let mut match_0: i32 = 0;
@@ -7625,7 +7625,7 @@ pub unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
   Fills the opening tree with information on how well
   the current pattern configuration matches the openings.
 */
-pub unsafe fn opening_scan(mut moves_played: i32) {
+pub unsafe fn opening_scan(moves_played: i32) {
     let mut primary_hash_0: [u32; 8] = [0; 8];
     let mut secondary_hash_0: [u32; 8] = [0; 8];
     compute_full_primary_hash(primary_hash_0.as_mut_ptr());
@@ -7640,16 +7640,16 @@ pub unsafe fn opening_scan(mut moves_played: i32) {
   the number of times each move has been played according to the
   trimmed set of openings from the Thor database.
 */
-pub unsafe fn recursive_frequency_count(mut node: *mut ThorOpeningNode,
-                                    mut freq_count:
+pub unsafe fn recursive_frequency_count(node: *mut ThorOpeningNode,
+                                    freq_count:
                                     *mut i32,
-                                    mut depth: i32,
-                                    mut moves_played: i32,
-                                    mut symmetries:
+                                    depth: i32,
+                                    moves_played: i32,
+                                    symmetries:
                                     *mut i32,
-                                    mut primary_hash_0:
+                                    primary_hash_0:
                                     *mut u32,
-                                    mut secondary_hash_0:
+                                    secondary_hash_0:
                                     *mut u32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -7693,7 +7693,7 @@ pub unsafe fn recursive_frequency_count(mut node: *mut ThorOpeningNode,
   in the list of matching games generated by DATABASE_SEARCH.
 */
 
-pub unsafe fn get_thor_game(mut index: i32)
+pub unsafe fn get_thor_game(index: i32)
                             -> GameInfoType {
     let mut info =
         GameInfoType{black_name: 0 as *const i8,
@@ -7732,7 +7732,7 @@ pub unsafe fn get_thor_game(mut index: i32)
   in the list of matching games generated by DATABASE_SEARCH.
 */
 
-pub unsafe fn get_thor_game_move_count(mut index: i32)
+pub unsafe fn get_thor_game_move_count(index: i32)
                                        -> i32 {
     if index < 0 as i32 || index >= thor_search.match_count {
         /* Bad index */
@@ -7785,12 +7785,12 @@ pub unsafe fn get_black_average_score() -> f64 {
     return thor_search.average_black_score;
 }
 
-pub unsafe fn get_move_frequency(mut move_0: i32)
+pub unsafe fn get_move_frequency(move_0: i32)
                                  -> i32 {
     return thor_search.next_move_frequency[move_0 as usize];
 }
 
-pub unsafe fn get_move_win_rate(mut move_0: i32)
+pub unsafe fn get_move_win_rate(move_0: i32)
                                 -> f64 {
     if thor_search.next_move_frequency[move_0 as usize] == 0 as i32 {
         return 0.0f64
@@ -7971,8 +7971,8 @@ pub unsafe fn init_symmetry_maps() {
   Play the MAX_MOVES first moves of GAME and update THOR_BOARD
   and THOR_SIDE_TO_MOVE to represent the position after those moves.
 */
-pub unsafe fn play_through_game(mut game: *mut GameType,
-                                mut max_moves: i32)
+pub unsafe fn play_through_game(game: *mut GameType,
+                                max_moves: i32)
                                 -> i32 {
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
@@ -8212,7 +8212,7 @@ pub unsafe fn init_thor_hash() {
   NEW_THOR_OPENING_NODE
   Creates and initializes a new node for use in the opening tree.
 */
-pub unsafe fn new_thor_opening_node(mut parent: *mut ThorOpeningNode)
+pub unsafe fn new_thor_opening_node(parent: *mut ThorOpeningNode)
                                 -> *mut ThorOpeningNode {
     let mut node = 0 as *mut ThorOpeningNode;
     node =
@@ -8445,9 +8445,9 @@ pub unsafe fn init_thor_database() {
   on what rotation that gave a match.
 */
 
-pub unsafe fn get_thor_game_moves(mut index: i32,
-                                  mut move_count: *mut i32,
-                                  mut moves: *mut i32) {
+pub unsafe fn get_thor_game_moves(index: i32,
+                                  move_count: *mut i32,
+                                  moves: *mut i32) {
     let mut i: i32 = 0;
     let mut game = 0 as *mut GameType;
     if index < 0 as i32 || index >= thor_search.match_count {
@@ -8489,13 +8489,13 @@ pub unsafe fn get_thor_game_moves(mut index: i32,
   in the list of matching games generated by DATABASE_SEARCH.
 */
 
-pub unsafe fn get_thor_game_move(mut index: i32,
-                                 mut move_number: i32)
+pub unsafe fn get_thor_game_move(index: i32,
+                                 move_number: i32)
                                  -> i32 {
     if index < 0 as i32 || index >= thor_search.match_count {
         return -(1 as i32)
     } else {
-        let mut game = *thor_search.match_list.offset(index as isize);
+        let game = *thor_search.match_list.offset(index as isize);
         if move_number < 0 as i32 ||
             move_number >= (*game).move_count as i32 {
             return -(1 as i32)
@@ -8517,13 +8517,13 @@ pub unsafe fn get_thor_game_move(mut index: i32,
   IN_HASH1 and IN_HASH2, otherwise FALSE.
 */
 pub unsafe fn position_match(mut game: *mut GameType,
-                         mut move_count: i32,
-                         mut side_to_move: i32,
-                         mut shape_lo: *mut u32,
-                         mut shape_hi: *mut u32,
-                         mut corner_mask: u32,
-                         mut in_hash1: u32,
-                         mut in_hash2: u32)
+                         move_count: i32,
+                         side_to_move: i32,
+                         shape_lo: *mut u32,
+                         shape_hi: *mut u32,
+                         corner_mask: u32,
+                         in_hash1: u32,
+                         in_hash2: u32)
                          -> i32 {
     let mut i: i32 = 0;
     let mut shape_match: i32 = 0;
@@ -8652,7 +8652,7 @@ pub unsafe fn position_match(mut game: *mut GameType,
   INDEXth tournament if available, otherwise the last
   index + 1.
 */
-pub unsafe fn tournament_lex_order(mut index: i32)
+pub unsafe fn tournament_lex_order(index: i32)
                                    -> i32 {
     if index < 0 as i32 || index >= tournaments.count {
         return tournaments.count
@@ -8668,13 +8668,13 @@ pub unsafe fn tournament_lex_order(mut index: i32)
   Only to be called by QSORT. A full comparison is
   performed using the priority order from THOR_SORT_ORDER.
 */
-pub unsafe extern "C" fn thor_compare(mut g1: *const c_void,
-                                  mut g2: *const c_void)
+pub unsafe extern "C" fn thor_compare(g1: *const c_void,
+                                  g2: *const c_void)
                                   -> i32 {
     let mut i: i32 = 0;
     let mut result: i32 = 0;
-    let mut game1 = *(g1 as *mut *mut GameType);
-    let mut game2 = *(g2 as *mut *mut GameType);
+    let game1 = *(g1 as *mut *mut GameType);
+    let game2 = *(g2 as *mut *mut GameType);
     i = 0 as i32;
     while i < thor_sort_criteria_count {
         match thor_sort_order[i as usize] {
@@ -8733,11 +8733,11 @@ pub unsafe extern "C" fn thor_compare(mut g1: *const c_void,
   towards common moves. (If no moves are found, PASS is returned.)
 */
 
-pub unsafe fn choose_thor_opening_move(mut in_board:
+pub unsafe fn choose_thor_opening_move(in_board:
                                        *mut i32,
-                                       mut side_to_move:
+                                       side_to_move:
                                        i32,
-                                       mut echo: i32)
+                                       echo: i32)
                                        -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -8877,8 +8877,8 @@ pub unsafe fn choose_thor_opening_move(mut in_board:
   given by IN_BOARD with SIDE_TO_MOVE being the player whose turn it is.
 */
 
-pub unsafe fn database_search(mut in_board: *mut i32,
-                              mut side_to_move: i32) {
+pub unsafe fn database_search(in_board: *mut i32,
+                              side_to_move: i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut index: i32 = 0;
