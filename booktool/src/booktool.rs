@@ -1,4 +1,4 @@
-#![allow(dead_code, mutable_transmutes, non_camel_case_types, non_snake_case,
+#![allow(dead_code,  non_camel_case_types, non_snake_case,
 non_upper_case_globals, unused_assignments, unused_mut)]
 
 use c2rust_out::src::osfbook::{write_text_database, write_compressed_database, write_binary_database, generate_endgame_statistics, generate_midgame_statistics, display_doubly_optimal_line, export_tree, restricted_minimax_tree, minimax_tree, merge_position_list, correct_tree, evaluate_tree, merge_binary_database, clear_tree, book_statistics, convert_opening_list, set_output_script_name, unpack_compressed_database, read_text_database, read_binary_database, build_tree, init_osf};

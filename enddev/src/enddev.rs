@@ -1,4 +1,4 @@
-#![allow(dead_code, mutable_transmutes, non_camel_case_types, non_snake_case,
+#![allow(dead_code,  non_camel_case_types, non_snake_case,
 non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, label_break_value, register_tool)]
 
