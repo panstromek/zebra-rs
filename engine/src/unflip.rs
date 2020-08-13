@@ -36,10 +36,10 @@ pub static mut flip_stack: *mut *mut i32 =
   of the time.
 */
 
-pub unsafe fn UndoFlips(mut flip_count: i32,
-                                   mut oppcol: i32) {
+pub unsafe fn UndoFlips(flip_count: i32,
+                                   oppcol: i32) {
     let mut UndoFlips__flip_count = flip_count;
-    let mut UndoFlips__oppcol = oppcol;
+    let UndoFlips__oppcol = oppcol;
     if UndoFlips__flip_count & 1 as i32 != 0 {
         UndoFlips__flip_count -= 1;
         flip_stack = flip_stack.offset(-1);

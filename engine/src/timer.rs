@@ -55,9 +55,9 @@ pub unsafe fn set_default_panic() {
   Initializes the timing subsystem and allocates time for the current move.
 */
 
-pub unsafe fn determine_move_time(mut time_left: f64,
-                                  mut incr: f64,
-                                  mut discs: i32) {
+pub unsafe fn determine_move_time(time_left: f64,
+                                  incr: f64,
+                                  discs: i32) {
     let mut time_available: f64 = 0.;
     let mut moves_left: i32 = 0;
     frozen_ponder_time = current_ponder_time;
@@ -92,7 +92,7 @@ pub unsafe fn determine_move_time(mut time_left: f64,
   Enables/disables panic time abort checking.
 */
 
-pub unsafe fn toggle_abort_check(mut enable: i32) {
+pub unsafe fn toggle_abort_check(enable: i32) {
     do_check_abort = enable;
 }
 /*
@@ -134,8 +134,8 @@ pub unsafe fn clear_ponder_times() {
   a certain move.
 */
 
-pub unsafe fn add_ponder_time(mut move_0: i32,
-                              mut time_0: f64) {
+pub unsafe fn add_ponder_time(move_0: i32,
+                              time_0: f64) {
     ponder_time[move_0 as usize] += time_0;
 }
 /*
@@ -144,7 +144,7 @@ pub unsafe fn add_ponder_time(mut move_0: i32,
   before the panic timeout kicks in.
 */
 
-pub unsafe fn set_panic_threshold(mut value: f64) {
+pub unsafe fn set_panic_threshold(value: f64) {
     panic_value = value;
 }
 
@@ -185,9 +185,9 @@ pub unsafe fn get_elapsed_time() -> f64 {
   START_MOVE
 */
 
-pub unsafe fn start_move(mut in_total_time: f64,
-                         mut increment: f64,
-                         mut discs: i32) {
+pub unsafe fn start_move(in_total_time: f64,
+                         _increment: f64,
+                         _discs: i32) {
     /*
       This is a possible approach in time control games with increment:
         available_time = in_total_time + increment * (65 - discs) / 2.0;
@@ -221,7 +221,7 @@ pub unsafe fn check_panic_abort() {
   Checks if a certain fraction of the panic time has been used.
 */
 
-pub unsafe fn check_threshold(mut threshold: f64)
+pub unsafe fn check_threshold(threshold: f64)
                               -> i32 {
     let mut curr_time: f64 = 0.;
     let mut adjusted_total_time: f64 = 0.;
@@ -237,7 +237,7 @@ pub unsafe fn check_threshold(mut threshold: f64)
   pondering was made is stored.
 */
 
-pub unsafe fn adjust_current_ponder_time(mut move_0: i32) {
+pub unsafe fn adjust_current_ponder_time(move_0: i32) {
     current_ponder_time = ponder_time[move_0 as usize];
     current_ponder_depth = ponder_depth[move_0 as usize];
     report_ponder_time();

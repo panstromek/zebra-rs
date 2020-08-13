@@ -135,7 +135,7 @@ pub unsafe fn engine_play_game<
     ComputeMoveOut: ComputeMoveOutput,
     Learn: Learner
 >(
-    mut file_name: *const i8, mut move_string: *const i8,
+    file_name: *const i8, mut move_string: *const i8,
     mut repeat: i32, log_file_name_: *mut i8,
     mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool) {
     let mut eval_info =

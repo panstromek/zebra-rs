@@ -60,29 +60,29 @@ pub static mut white_list: *mut i32 = 0 as *const i32 as *mut i32;
   board by DISPLAY_BOARD.
 */
 
-pub unsafe fn set_names(mut black_name: *const i8,
-                        mut white_name: *const i8) {
+pub unsafe fn set_names(black_name: *const i8,
+                        white_name: *const i8) {
     if !black_player.is_null() { free(black_player as *mut c_void); }
     if !white_player.is_null() { free(white_player as *mut c_void); }
     black_player = strdup(black_name);
     white_player = strdup(white_name);
 }
 
-pub unsafe fn set_times(mut black: i32,
-                        mut white: i32) {
+pub unsafe fn set_times(black: i32,
+                        white: i32) {
     black_time = black;
     white_time = white;
 }
 
-pub unsafe fn set_evals(mut black: f64,
-                        mut white: f64) {
+pub unsafe fn set_evals(black: f64,
+                        white: f64) {
     black_eval = black;
     white_eval = white;
 }
 
-pub unsafe fn set_move_list(mut black: *mut i32,
-                            mut white: *mut i32,
-                            mut row: i32) {
+pub unsafe fn set_move_list(black: *mut i32,
+                            white: *mut i32,
+                            row: i32) {
     black_list = black;
     white_list = white;
     current_row = row;
@@ -123,7 +123,7 @@ pub unsafe fn clear_sweep() {
   displays everything that is fed to the buffer.
 */
 
-pub unsafe fn toggle_smart_buffer_management(mut use_smart:
+pub unsafe fn toggle_smart_buffer_management(use_smart:
                                              i32) {
     timed_buffer_management = use_smart;
 }

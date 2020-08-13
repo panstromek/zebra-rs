@@ -98,7 +98,7 @@ static mut my_end_ptr: *mut i64 =
  * values produced by this routine.
  */
 
-pub unsafe fn my_srandom(mut x: i32) -> i32 {
+pub unsafe fn my_srandom(x: i32) -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     if my_rand_type == 0 as i32 {
@@ -140,11 +140,11 @@ pub unsafe fn my_srandom(mut x: i32) -> i32 {
  * Returns a pointer to the old state.
  */
 
-pub unsafe fn my_initstate(mut seed: u32,
-                                      mut arg_state: *mut i8,
-                                      mut n: i32)
+pub unsafe fn my_initstate(seed: u32,
+                                      arg_state: *mut i8,
+                                      n: i32)
  -> *mut i8 {
-    let mut ostate =
+    let ostate =
         &mut *my_state.offset(-(1 as i32) as isize) as
             *mut i64 as *mut i8; /* first location */
     if my_rand_type == 0 as i32 {
@@ -208,16 +208,16 @@ pub unsafe fn my_initstate(mut seed: u32,
  * Returns a pointer to the old state information.
  */
 
-pub unsafe fn my_setstate(mut arg_state: *mut i8)
+pub unsafe fn my_setstate(arg_state: *mut i8)
  -> *mut i8 {
-    let mut new_state = arg_state as *mut i64; /* set end_ptr too */
-    let mut type_0 =
+    let new_state = arg_state as *mut i64; /* set end_ptr too */
+    let type_0 =
         (*new_state.offset(0 as i32 as isize) %
              5 as i32 as i64) as i32;
-    let mut rear =
+    let rear =
         (*new_state.offset(0 as i32 as isize) /
              5 as i32 as i64) as i32;
-    let mut ostate =
+    let ostate =
         &mut *my_state.offset(-(1 as i32) as isize) as
             *mut i64 as *mut i8;
     if my_rand_type == 0 as i32 {

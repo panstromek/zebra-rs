@@ -91,7 +91,7 @@ pub static mut evaluated_list: [EvaluatedMove; 60] =
   text version of Zebra would output to the screen.
 */
 
-pub unsafe fn toggle_status_log(mut write_log: i32) {
+pub unsafe fn toggle_status_log(write_log: i32) {
     use_log_file = write_log;
 }
 
@@ -100,7 +100,7 @@ pub unsafe fn toggle_status_log(mut write_log: i32) {
   Set the endgame komi value.
 */
 
-pub unsafe fn set_komi(mut in_komi: i32) {
+pub unsafe fn set_komi(in_komi: i32) {
     komi = in_komi;
 }
 /*
@@ -109,7 +109,7 @@ pub unsafe fn set_komi(mut in_komi: i32) {
   openings moves before resorting to the usual opening book.
 */
 
-pub unsafe fn toggle_human_openings(mut toggle: i32) {
+pub unsafe fn toggle_human_openings(toggle: i32) {
     play_human_openings = toggle;
 }
 /*
@@ -118,7 +118,7 @@ pub unsafe fn toggle_human_openings(mut toggle: i32) {
   before resorting to the usual opening book.
 */
 
-pub unsafe fn toggle_thor_match_openings(mut toggle: i32) {
+pub unsafe fn toggle_thor_match_openings(toggle: i32) {
     play_thor_match_openings = toggle;
 }
 /*
@@ -126,7 +126,7 @@ pub unsafe fn toggle_thor_match_openings(mut toggle: i32) {
   Specifies an opening line that Zebra is forced to follow when playing.
 */
 
-pub unsafe fn set_forced_opening(mut opening_str:
+pub unsafe fn set_forced_opening(opening_str:
                                  *const i8) {
     forced_opening = opening_str;
 }
@@ -161,7 +161,7 @@ pub unsafe fn get_evaluated_count() -> i32 {
     return game_evaluated_count;
 }
 
-pub unsafe fn get_evaluated(mut index: i32)
+pub unsafe fn get_evaluated(index: i32)
                             -> EvaluatedMove {
     return evaluated_list[index as usize];
 }
@@ -170,9 +170,9 @@ pub unsafe fn get_evaluated(mut index: i32)
   Returns some statistics about the last search made.
 */
 
-pub unsafe fn get_search_statistics(mut max_depth:
+pub unsafe fn get_search_statistics(max_depth:
                                     *mut i32,
-                                    mut node_count:
+                                    node_count:
                                     *mut f64) {
     *max_depth = max_depth_reached;
     if prefix_move != 0 as i32 { *max_depth += 1 }
@@ -186,7 +186,7 @@ pub unsafe fn get_search_statistics(mut max_depth:
   Returns the principal variation.
 */
 
-pub unsafe fn get_pv(mut destin: *mut i32) -> i32 {
+pub unsafe fn get_pv(destin: *mut i32) -> i32 {
     let mut i: i32 = 0;
     if prefix_move == 0 as i32 {
         i = 0 as i32;
@@ -240,7 +240,7 @@ pub unsafe fn setup_game_clear_board() {
     while i < 10 as i32 {
         let mut j = 0 as i32;
         while j < 10 as i32 {
-            let mut pos = 10 as i32 * i + j;
+            let pos = 10 as i32 * i + j;
             if i == 0 as i32 || i == 9 as i32 ||
                 j == 0 as i32 || j == 9 as i32 {
                 board[pos as usize] = 3 as i32
@@ -274,14 +274,14 @@ pub unsafe fn setup_game_finalize(side_to_move:  *mut i32) {
 }
 
 
-pub unsafe fn setup_non_file_based_game(mut side_to_move: *mut i32) {
+pub unsafe fn setup_non_file_based_game(side_to_move: *mut i32) {
     setup_game_clear_board();
     setup_game_board_normal(side_to_move);
     setup_game_finalize(side_to_move);
 }
 
 
-pub unsafe fn engine_global_setup(use_random: i32, hash_bits: i32, coeff_adjustments: Option<CoeffAdjustments>, mut coeffs: impl CoeffSource) {
+pub unsafe fn engine_global_setup(use_random: i32, hash_bits: i32, coeff_adjustments: Option<CoeffAdjustments>, coeffs: impl CoeffSource) {
     let mut timer: time_t = 0;
     if use_random != 0 {
         time(&mut timer);
@@ -322,7 +322,7 @@ pub unsafe fn process_board_source<S: BoardSource>(side_to_move: *mut i32, mut f
     while i <= 8 as i32 {
         let mut j = 1 as i32;
         while j <= 8 as i32 {
-            let mut pos = 10 as i32 * i + j;
+            let pos = 10 as i32 * i + j;
             match buffer[token as usize] as i32 {
                 42 | 88 => { board[pos as usize] = 0 as i32 }
                 79 | 48 => { board[pos as usize] = 2 as i32 }
@@ -360,7 +360,7 @@ pub trait FileBoardSource : BoardSource {
     unsafe fn open(file_name: *const i8) -> Option<Self> where Self: Sized;
 }
 
-pub unsafe fn setup_file_based_game<S: FileBoardSource>(mut file_name: *const i8, mut side_to_move: *mut i32) {
+pub unsafe fn setup_file_based_game<S: FileBoardSource>(file_name: *const i8, side_to_move: *mut i32) {
     setup_game_clear_board();
     assert!(!file_name.is_null());
     match S::open(file_name) {
@@ -375,7 +375,7 @@ pub unsafe fn setup_file_based_game<S: FileBoardSource>(mut file_name: *const i8
     setup_game_finalize(side_to_move);
 }
 
-pub unsafe fn generic_setup_game<Source: FileBoardSource>(mut file_name: *const i8, mut side_to_move: *mut i32) {
+pub unsafe fn generic_setup_game<Source: FileBoardSource>(file_name: *const i8, side_to_move: *mut i32) {
     if file_name.is_null() {
         setup_non_file_based_game(side_to_move);
     } else {
@@ -383,24 +383,24 @@ pub unsafe fn generic_setup_game<Source: FileBoardSource>(mut file_name: *const 
     }
 }
 
-pub unsafe fn generic_game_init<Source: FileBoardSource>(mut file_name: *const i8, mut side_to_move: *mut i32) {
+pub unsafe fn generic_game_init<Source: FileBoardSource>(file_name: *const i8, side_to_move: *mut i32) {
     generic_setup_game::<Source>(file_name, side_to_move);
     engine_game_init();
 }
 
 
 
-pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput>(mut side_to_move: i32,
-                                                                                 mut update_all: i32,
-                                                                                 mut my_time: i32,
-                                                                                 mut my_incr: i32,
-                                                                                 mut timed_depth: i32,
-                                                                                 mut book: i32,
+pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput>(side_to_move: i32,
+                                                                                 update_all: i32,
+                                                                                 my_time: i32,
+                                                                                 my_incr: i32,
+                                                                                 timed_depth: i32,
+                                                                                 book: i32,
                                                                                  mut mid: i32,
-                                                                                 mut exact: i32,
-                                                                                 mut wld: i32,
-                                                                                 mut search_forced: i32,
-                                                                                 mut eval_info: *mut EvaluationType,
+                                                                                 exact: i32,
+                                                                                 wld: i32,
+                                                                                 search_forced: i32,
+                                                                                 eval_info: *mut EvaluationType,
                                                                                  logger: &mut Option<L>)
                                                                                  -> i32 {
     let mut book_eval_info =
@@ -460,7 +460,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput>
         i += 1
     }
     max_depth_reached = 1 as i32;
-    let mut empties = 60 as i32 - disks_played;
+    let empties = 60 as i32 - disks_played;
     reset_buffer_display();
     determine_move_time(my_time as f64, my_incr as f64,
                         disks_played + 4 as i32);
@@ -539,10 +539,10 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput>
     }
     if book_move_found == 0 && play_thor_match_openings != 0 {
         /* Optionally use the Thor database as opening book. */
-        let mut threshold = 2 as i32;
+        let threshold = 2 as i32;
         database_search(board.as_mut_ptr(), side_to_move);
         if get_match_count() >= threshold {
-            let mut game_index =
+            let game_index =
                 ((my_random() >> 8 as i32) %
                     get_match_count() as i64) as i32;
             curr_move = get_thor_game_move(game_index, disks_played);
@@ -621,9 +621,9 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput>
                 mid
             } else { (empties) - 7 as i32 }) <
                 28 as i32 {
-                (if mid < empties - 7 as i32 {
+                if mid < empties - 7 as i32 {
                     mid
-                } else { (empties) - 7 as i32 })
+                } else { (empties) - 7 as i32 }
             } else { 28 as i32 }) > 2 as i32 {
                 if (if mid < empties - 7 as i32 {
                     mid
@@ -651,9 +651,9 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput>
                     mid
                 } else { (empties) - 12 as i32 }) <
                     18 as i32 {
-                    (if mid < empties - 12 as i32 {
+                    if mid < empties - 12 as i32 {
                         mid
-                    } else { (empties) - 12 as i32 })
+                    } else { (empties) - 12 as i32 }
                 } else { 18 as i32 }) > 2 as i32 {
                     if (if mid < empties - 12 as i32 {
                         mid

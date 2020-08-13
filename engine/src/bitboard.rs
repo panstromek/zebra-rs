@@ -96,10 +96,10 @@ pub unsafe fn bit_reverse_32(mut val: u32)
   Converts the vector board representation to the bitboard representation.
 */
 
-pub unsafe fn set_bitboards(mut board: *mut i32,
-                                       mut side_to_move: i32,
-                                       mut my_out: *mut BitBoard,
-                                       mut opp_out: *mut BitBoard) {
+pub unsafe fn set_bitboards(board: *mut i32,
+                                       side_to_move: i32,
+                                       my_out: *mut BitBoard,
+                                       opp_out: *mut BitBoard) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -155,8 +155,8 @@ pub unsafe fn init_bitboard() {
     while i <= 8 as i32 {
         j = 1 as i32;
         while j <= 8 as i32 {
-            let mut pos = 10 as i32 * i + j;
-            let mut shift =
+            let pos = 10 as i32 * i + j;
+            let shift =
                 (8 as i32 * (i - 1 as i32) +
                      (j - 1 as i32)) as u32;
             if shift < 32 as i32 as u32 {

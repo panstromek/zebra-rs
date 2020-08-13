@@ -28,8 +28,8 @@ pub static mut mpc_cut: [DepthInfo; 23] =
    Specifies that endgame searches with EMPTY empty disks
    are to be estimated using searches to depth SHALLOW_DEPTH.
 */
-pub unsafe fn set_end_probcut(mut empty: i32,
-                          mut shallow_depth: i32) {
+pub unsafe fn set_end_probcut(empty: i32,
+                          shallow_depth: i32) {
     let mut stage: i32 = 0;
     stage = 60 as i32 - empty;
     if shallow_depth <= 14 as i32 {
@@ -46,8 +46,8 @@ pub unsafe fn set_end_probcut(mut empty: i32,
    Specifies that searches to depth DEPTH are to be
    estimated using searches to depth SHALLOW_DEPTH.
 */
-unsafe fn set_probcut(mut depth: i32,
-                      mut shallow: i32) {
+unsafe fn set_probcut(depth: i32,
+                      shallow: i32) {
     let mut i: i32 = 0;
     let mut this_try: i32 = 0;
     this_try = mpc_cut[depth as usize].cut_tries;

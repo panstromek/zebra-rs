@@ -121,12 +121,12 @@ pub unsafe fn init_moves() {
    RESET_GENERATION
    Prepare for move generation at a given level in the tree.
 */
-unsafe fn reset_generation(mut side_to_move: i32) {
+unsafe fn reset_generation(_side_to_move: i32) {
     sweep_status[disks_played as usize] = 0 as i32;
 }
-pub unsafe fn make_move(mut side_to_move: i32,
-                        mut move_0: i32,
-                        mut update_hash: i32)
+pub unsafe fn make_move(side_to_move: i32,
+                        move_0: i32,
+                        update_hash: i32)
                         -> i32 {
     let mut flipped: i32 = 0;
     let mut diff1: u32 = 0;
@@ -180,14 +180,14 @@ pub unsafe fn make_move(mut side_to_move: i32,
   Takes back a move.
 */
 
-pub unsafe fn unmake_move(mut side_to_move: i32,
-                          mut move_0: i32) {
+pub unsafe fn unmake_move(side_to_move: i32,
+                          move_0: i32) {
     board[move_0 as usize] = 1 as i32;
     disks_played -= 1;
     hash1 = hash_stored1[disks_played as usize];
     hash2 = hash_stored2[disks_played as usize];
     let mut UndoFlips__flip_count = flip_count[disks_played as usize];
-    let mut UndoFlips__oppcol =
+    let UndoFlips__oppcol =
         0 as i32 + 2 as i32 - side_to_move;
     if UndoFlips__flip_count & 1 as i32 != 0 {
         UndoFlips__flip_count -= 1;
@@ -208,8 +208,8 @@ pub unsafe fn unmake_move(mut side_to_move: i32,
    GENERATE_SPECIFIC
 */
 
-pub unsafe fn generate_specific(mut curr_move: i32,
-                                mut side_to_move: i32)
+pub unsafe fn generate_specific(curr_move: i32,
+                                side_to_move: i32)
                                 -> i32 {
     return AnyFlips_compact(board.as_mut_ptr(), curr_move, side_to_move,
                             0 as i32 + 2 as i32 -
@@ -223,7 +223,7 @@ pub unsafe fn generate_specific(mut curr_move: i32,
    in a position are generated, only those who need be considered.
 */
 
-pub unsafe fn generate_move(mut side_to_move: i32)
+pub unsafe fn generate_move(side_to_move: i32)
                             -> i32 {
     let mut move_0: i32 = 0;
     let mut move_index = 0 as i32;
@@ -246,7 +246,7 @@ pub unsafe fn generate_move(mut side_to_move: i32)
    Generates a list containing all the moves possible in a position.
 */
 
-pub unsafe fn generate_all(mut side_to_move: i32) {
+pub unsafe fn generate_all(side_to_move: i32) {
     let mut count: i32 = 0;
     let mut curr_move: i32 = 0;
     reset_generation(side_to_move);
@@ -265,8 +265,8 @@ pub unsafe fn generate_all(mut side_to_move: i32) {
   Counts the number of moves for one player.
 */
 
-pub unsafe fn count_all(mut side_to_move: i32,
-                        mut empty: i32) -> i32 {
+pub unsafe fn count_all(side_to_move: i32,
+                        empty: i32) -> i32 {
     let mut move_0: i32 = 0;
     let mut move_index: i32 = 0;
     let mut mobility: i32 = 0;
@@ -311,8 +311,8 @@ pub unsafe fn game_in_progress() -> i32 {
    is not updated - the move has to be unmade using UNMAKE_MOVE_NO_HASH().
 */
 
-pub unsafe fn make_move_no_hash(mut side_to_move: i32,
-                                mut move_0: i32)
+pub unsafe fn make_move_no_hash(side_to_move: i32,
+                                move_0: i32)
                                 -> i32 {
     let mut flipped: i32 = 0;
     flipped = DoFlips_no_hash(move_0, side_to_move);
@@ -349,12 +349,12 @@ pub unsafe fn make_move_no_hash(mut side_to_move: i32,
   updating hash table, preferrable through MAKE_MOVE_NO_HASH().
 */
 
-pub unsafe fn unmake_move_no_hash(mut side_to_move: i32,
-                                  mut move_0: i32) {
+pub unsafe fn unmake_move_no_hash(side_to_move: i32,
+                                  move_0: i32) {
     board[move_0 as usize] = 1 as i32;
     disks_played -= 1;
     let mut UndoFlips__flip_count = flip_count[disks_played as usize];
-    let mut UndoFlips__oppcol =
+    let UndoFlips__oppcol =
         0 as i32 + 2 as i32 - side_to_move;
     if UndoFlips__flip_count & 1 as i32 != 0 {
         UndoFlips__flip_count -= 1;
@@ -374,8 +374,8 @@ pub unsafe fn unmake_move_no_hash(mut side_to_move: i32,
    Determines if a move is legal.
 */
 
-pub unsafe fn valid_move(mut move_0: i32,
-                         mut side_to_move: i32)
+pub unsafe fn valid_move(move_0: i32,
+                         side_to_move: i32)
                          -> i32 {
     let mut i: i32 = 0;
     let mut pos: i32 = 0;

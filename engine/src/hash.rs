@@ -73,8 +73,8 @@ pub static mut hash_table: *mut CompactHashEntry =
    Calculates the hash codes for the given board position.
 */
 
-pub unsafe fn determine_hash_values(mut side_to_move: i32,
-                                    mut board:
+pub unsafe fn determine_hash_values(side_to_move: i32,
+                                    board:
                                     *const i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -84,7 +84,7 @@ pub unsafe fn determine_hash_values(mut side_to_move: i32,
     while i <= 8 as i32 {
         j = 1 as i32;
         while j <= 8 as i32 {
-            let mut pos = 10 as i32 * i + j;
+            let pos = 10 as i32 * i + j;
             match *board.offset(pos as isize) {
                 0 => {
                     hash1 ^=
@@ -115,7 +115,7 @@ pub unsafe fn determine_hash_values(mut side_to_move: i32,
 */
 
 pub unsafe fn find_hash(mut entry: *mut HashEntry,
-                        mut reverse_mode: i32) {
+                        reverse_mode: i32) {
     let mut index1: i32 = 0;
     let mut index2: i32 = 0;
     let mut code1: u32 = 0;
@@ -155,7 +155,7 @@ pub unsafe fn find_hash(mut entry: *mut HashEntry,
    Expand the compact internal representation of entries
    in the hash table to something more usable.
 */
-unsafe fn compact_to_wide(mut compact_entry:
+unsafe fn compact_to_wide(compact_entry:
                           *const CompactHashEntry,
                           mut entry: *mut HashEntry) {
     (*entry).key2 = (*compact_entry).key2;
@@ -193,7 +193,7 @@ unsafe fn compact_to_wide(mut compact_entry:
    Convert the easily readable representation to the more
    compact one actually stored in the hash table.
 */
-pub unsafe fn wide_to_compact(mut entry: *const HashEntry,
+pub unsafe fn wide_to_compact(entry: *const HashEntry,
                           mut compact_entry:
                           *mut CompactHashEntry) {
     (*compact_entry).key2 = (*entry).key2;
@@ -232,8 +232,8 @@ pub unsafe fn wide_to_compact(mut entry: *const HashEntry,
   table.
 */
 
-pub unsafe fn set_hash_transformation(mut trans1: u32,
-                                      mut trans2: u32) {
+pub unsafe fn set_hash_transformation(trans1: u32,
+                                      trans2: u32) {
     hash_trans1 = trans1;
     hash_trans2 = trans2;
 }
@@ -243,12 +243,12 @@ pub unsafe fn set_hash_transformation(mut trans1: u32,
    and the most shallow search is replaced.
 */
 
-pub unsafe fn add_hash_extended(mut reverse_mode: i32,
-                                mut score: i32,
-                                mut best: *mut i32,
-                                mut flags: i32,
-                                mut draft: i32,
-                                mut selectivity: i32) {
+pub unsafe fn add_hash_extended(reverse_mode: i32,
+                                score: i32,
+                                best: *mut i32,
+                                flags: i32,
+                                draft: i32,
+                                selectivity: i32) {
     let mut i: i32 = 0;
     let mut old_draft: i32 = 0;
     let mut change_encouragment: i32 = 0;
@@ -344,8 +344,8 @@ pub fn popcount(mut b: u32) -> u32 {
   Returns the closeness between the 64-bit integers (a0,a1) and (b0,b1).
   A closeness of 0 means that 32 bits differ.
 */
-pub unsafe fn get_closeness(mut a0: u32, mut a1: u32,
-                        mut b0: u32, mut b1: u32)
+pub unsafe fn get_closeness(a0: u32, a1: u32,
+                        b0: u32, b1: u32)
                         -> u32 {
     return abs(popcount(a0 ^
         b0).wrapping_add(popcount(a1 ^
@@ -362,7 +362,7 @@ pub unsafe fn get_closeness(mut a0: u32, mut a1: u32,
    Determine randomized hash masks.
 */
 
-pub unsafe fn setup_hash(mut clear: i32) {
+pub unsafe fn setup_hash(clear: i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -520,12 +520,12 @@ pub unsafe fn setup_hash(mut clear: i32) {
    and the most shallow search is replaced.
 */
 
-pub unsafe fn add_hash(mut reverse_mode: i32,
-                       mut score: i32,
-                       mut best: i32,
-                       mut flags: i32,
-                       mut draft: i32,
-                       mut selectivity: i32) {
+pub unsafe fn add_hash(reverse_mode: i32,
+                       score: i32,
+                       best: i32,
+                       flags: i32,
+                       draft: i32,
+                       selectivity: i32) {
     let mut old_draft: i32 = 0;
     let mut change_encouragment: i32 = 0;
     let mut index: u32 = 0;
@@ -612,7 +612,7 @@ pub unsafe fn add_hash(mut reverse_mode: i32,
    Allocate memory for the hash table.
 */
 
-pub unsafe fn init_hash(mut in_hash_bits: i32) {
+pub unsafe fn init_hash(in_hash_bits: i32) {
     hash_bits = in_hash_bits;
     hash_size = (1 as i32) << hash_bits;
     hash_mask = hash_size - 1 as i32;
@@ -628,7 +628,7 @@ pub unsafe fn init_hash(mut in_hash_bits: i32) {
   Changes the size of the hash table.
 */
 
-pub unsafe fn resize_hash(mut new_hash_bits: i32) {
+pub unsafe fn resize_hash(new_hash_bits: i32) {
     free(hash_table as *mut c_void);
     init_hash(new_hash_bits);
     setup_hash(1 as i32);

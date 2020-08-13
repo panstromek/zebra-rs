@@ -114,12 +114,12 @@ pub static mut set: [CoeffSet; 61] =
    GENERATE_BATCH
    Interpolates between two stages.
 */
-pub unsafe fn generate_batch(mut target: *mut i16,
-                         mut count: i32,
-                         mut source1: *mut i16,
-                         mut weight1: i32,
-                         mut source2: *mut i16,
-                         mut weight2: i32) {
+pub unsafe fn generate_batch(target: *mut i16,
+                         count: i32,
+                         source1: *mut i16,
+                         weight1: i32,
+                         source2: *mut i16,
+                         weight2: i32) {
     let mut i: i32 = 0;
     let mut total_weight: i32 = 0;
     total_weight = weight1 + weight2;
@@ -137,7 +137,7 @@ pub unsafe fn generate_batch(mut target: *mut i16,
    FREE_MEMORY_BLOCK
    Marks a memory block as no longer in use.
 */
-pub unsafe fn free_memory_block(mut block: i32) {
+pub unsafe fn free_memory_block(block: i32) {
     block_allocated[block as usize] = 0 as i32;
 }
 /*
@@ -160,10 +160,10 @@ pub unsafe fn init_memory_handler() {
 */
 /* Adjust the coefficients so as to reflect the encouragement for
        having lots of discs */
-pub unsafe fn eval_adjustment(mut disc_adjust: f64,
-                          mut edge_adjust: f64,
-                          mut corner_adjust: f64,
-                          mut x_adjust: f64) {
+pub unsafe fn eval_adjustment(disc_adjust: f64,
+                          edge_adjust: f64,
+                          corner_adjust: f64,
+                          x_adjust: f64) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -374,7 +374,7 @@ pub unsafe fn eval_adjustment(mut disc_adjust: f64,
    Removes the interpolated coefficients for a
    specific game phase from memory.
 */
-pub unsafe fn remove_specific_coeffs(mut phase: i32) {
+pub unsafe fn remove_specific_coeffs(phase: i32) {
     if set[phase as usize].loaded != 0 {
         if set[phase as usize].permanent == 0 {
             free_memory_block(set[phase as usize].block);
@@ -387,7 +387,7 @@ pub unsafe fn remove_specific_coeffs(mut phase: i32) {
    Removes pattern tables which have gone out of scope from memory.
 */
 
-pub unsafe fn remove_coeffs(mut phase: i32) {
+pub unsafe fn remove_coeffs(phase: i32) {
     let mut i: i32 = 0;
     i = 0 as i32;
     while i < phase { remove_specific_coeffs(i); i += 1 };
@@ -755,18 +755,18 @@ pub unsafe fn terminal_patterns() {
    Maintains an internal memory handler to boost
    performance and avoid heap fragmentation.
 */
-pub unsafe fn find_memory_block(mut afile2x: *mut *mut i16,
-                            mut bfile: *mut *mut i16,
-                            mut cfile: *mut *mut i16,
-                            mut dfile: *mut *mut i16,
-                            mut diag8: *mut *mut i16,
-                            mut diag7: *mut *mut i16,
-                            mut diag6: *mut *mut i16,
-                            mut diag5: *mut *mut i16,
-                            mut diag4: *mut *mut i16,
-                            mut corner33: *mut *mut i16,
-                            mut corner52: *mut *mut i16,
-                            mut index: i32)
+pub unsafe fn find_memory_block(afile2x: *mut *mut i16,
+                            bfile: *mut *mut i16,
+                            cfile: *mut *mut i16,
+                            dfile: *mut *mut i16,
+                            diag8: *mut *mut i16,
+                            diag7: *mut *mut i16,
+                            diag6: *mut *mut i16,
+                            diag5: *mut *mut i16,
+                            diag4: *mut *mut i16,
+                            corner33: *mut *mut i16,
+                            corner52: *mut *mut i16,
+                            index: i32)
                             -> i32 {
     let mut i: i32 = 0;
     let mut found_free: i32 = 0;
@@ -817,7 +817,7 @@ pub unsafe fn find_memory_block(mut afile2x: *mut *mut i16,
    ALLOCATE_SET
    Finds memory for all patterns belonging to a certain stage.
 */
-pub unsafe fn allocate_set(mut index: i32) {
+pub unsafe fn allocate_set(index: i32) {
     set[index as usize].block =
         find_memory_block(&mut (*set.as_mut_ptr().offset(index as
             isize)).afile2x,
@@ -850,7 +850,7 @@ pub unsafe fn allocate_set(mut index: i32) {
    Also calculates the offset pointers to the last elements in each block
    (used for the inverted patterns when white is to move).
 */
-pub unsafe fn load_set(mut index: i32) {
+pub unsafe fn load_set(index: i32) {
     let mut prev: i32 = 0;
     let mut next: i32 = 0;
     let mut weight1: i32 = 0;
@@ -945,7 +945,7 @@ pub static mut pattern_score: i16 = 0;
    the statistically optimized pattern tables.
 */
 
-pub unsafe fn pattern_evaluation(mut side_to_move: i32)
+pub unsafe fn pattern_evaluation(side_to_move: i32)
                                  -> i32 {
     let mut eval_phase: i32 = 0;
     let mut score: i16 = 0;
@@ -2765,9 +2765,9 @@ pub unsafe fn post_init_coeffs() {
    UNPACK_BATCH
    Reads feature values for one specific pattern
 */
-pub unsafe fn unpack_batch(mut item: *mut i16,
-                           mut mirror: *mut i32,
-                           mut count: i32,
+pub unsafe fn unpack_batch(item: *mut i16,
+                           mirror: *mut i32,
+                           count: i32,
                            next_word: &mut impl FnMut() -> i16) {
     let mut i: i32 = 0;
     let mut buffer = 0 as *mut i16;

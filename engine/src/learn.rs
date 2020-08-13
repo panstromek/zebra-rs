@@ -1,5 +1,5 @@
-use crate::src::moves::{make_move, generate_all, disks_played, move_count};
-use crate::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
+
+
 
 pub static mut database_name: [i8; 256] = [0; 256];
 pub static mut binary_database: i32 = 0;
@@ -36,8 +36,8 @@ pub unsafe fn clear_stored_game() {
    had been played.
 */
 
-pub unsafe fn store_move(mut disks_played_0: i32,
-                         mut move_0: i32) {
+pub unsafe fn store_move(disks_played_0: i32,
+                         move_0: i32) {
     game_move[disks_played_0 as usize] = move_0 as i16;
 }
 /*
@@ -46,8 +46,8 @@ pub unsafe fn store_move(mut disks_played_0: i32,
    of empty squares at which the game is considered over.
 */
 
-pub unsafe fn set_learning_parameters(mut depth: i32,
-                                      mut cutoff: i32) {
+pub unsafe fn set_learning_parameters(depth: i32,
+                                      cutoff: i32) {
     learn_depth = depth;
     cutoff_empty = cutoff;
 }
@@ -59,8 +59,8 @@ pub unsafe fn set_learning_parameters(mut depth: i32,
    moves to be learned anyway.
 */
 
-pub unsafe fn game_learnable(mut finished: i32,
-                             mut move_count_0: i32)
+pub unsafe fn game_learnable(finished: i32,
+                             move_count_0: i32)
                              -> i32 {
     let mut i: i32 = 0;
     let mut moves_available: i32 = 0;

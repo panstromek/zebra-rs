@@ -40,8 +40,8 @@ static mut edge_h1h8: i32 = 0;
 pub static mut stab_move_list: [MoveLink; 100] =
     [MoveLink{pred: 0, succ: 0,}; 100];
 unsafe fn and_line_shift_64(mut target: *mut BitBoard,
-                                       mut base: BitBoard,
-                                       mut shift: i32,
+                                       base: BitBoard,
+                                       shift: i32,
                                        mut dir_ss: BitBoard) {
     /* Shift to the left */
     dir_ss.high |= base.high << shift | base.low >> 32 as i32 - shift;
@@ -58,7 +58,7 @@ unsafe fn and_line_shift_64(mut target: *mut BitBoard,
   Zardoz' algorithm + edge tables is used.
 */
 unsafe fn edge_zardoz_stable(mut ss: *mut BitBoard,
-                                        mut dd: BitBoard, mut od: BitBoard) {
+                                        dd: BitBoard, od: BitBoard) {
     /* dd is the disks of the side we are looking for stable disks for
        od is the opponent
        ss are the stable disks */
@@ -187,9 +187,9 @@ unsafe fn edge_zardoz_stable(mut ss: *mut BitBoard,
   by COUNT_STABLE below.
 */
 
-pub unsafe fn count_edge_stable(mut color: i32,
-                                           mut col_bits: BitBoard,
-                                           mut opp_bits: BitBoard)
+pub unsafe fn count_edge_stable(color: i32,
+                                           col_bits: BitBoard,
+                                           opp_bits: BitBoard)
  -> i32 {
     let mut col_mask: u32 = 0;
     let mut opp_mask: u32 = 0;
@@ -318,9 +318,9 @@ pub unsafe fn count_edge_stable(mut color: i32,
         before this function is called *or you lose big*.
 */
 
-pub unsafe fn count_stable(mut color: i32,
-                                      mut col_bits: BitBoard,
-                                      mut opp_bits: BitBoard) -> i32 {
+pub unsafe fn count_stable(color: i32,
+                                      col_bits: BitBoard,
+                                      opp_bits: BitBoard) -> i32 {
     let mut t: u32 = 0;
     let mut col_stable = BitBoard{high: 0, low: 0,};
     let mut common_stable = BitBoard{high: 0, low: 0,};
@@ -373,13 +373,13 @@ pub unsafe fn count_stable(mut color: i32,
   find variations in which the discs in CANDIDATE_BITS are
   flipped. Aborts if all those discs are stable in the subtree.
 */
-unsafe fn stability_search(mut my_bits: BitBoard,
-                                      mut opp_bits: BitBoard,
-                                      mut side_to_move: i32,
+unsafe fn stability_search(my_bits: BitBoard,
+                                      opp_bits: BitBoard,
+                                      side_to_move: i32,
                                       mut candidate_bits: *mut BitBoard,
-                                      mut max_depth: i32,
-                                      mut last_was_pass: i32,
-                                      mut stability_nodes: *mut i32) {
+                                      max_depth: i32,
+                                      last_was_pass: i32,
+                                      stability_nodes: *mut i32) {
     let mut sq: i32 = 0;
     let mut old_sq: i32 = 0;
     let mut mobility: i32 = 0;
@@ -461,8 +461,8 @@ unsafe fn stability_search(mut my_bits: BitBoard,
   Tries to compute all stable discs by search the entire game tree.
   The actual work is performed by STABILITY_SEARCH above.
 */
-unsafe fn complete_stability_search(mut board: *mut i32,
-                                               mut side_to_move: i32,
+unsafe fn complete_stability_search(board: *mut i32,
+                                               side_to_move: i32,
                                                mut stable_bits:
                                                    *mut BitBoard) {
     let mut i: i32 = 0;
@@ -480,7 +480,7 @@ unsafe fn complete_stability_search(mut board: *mut i32,
     let mut last_sq = 0 as i32;
     i = 0 as i32;
     while i < 60 as i32 {
-        let mut sq = position_list[i as usize];
+        let sq = position_list[i as usize];
         if *board.offset(sq as isize) == 1 as i32 {
             stab_move_list[last_sq as usize].succ = sq;
             stab_move_list[sq as usize].pred = last_sq;
@@ -525,7 +525,7 @@ unsafe fn complete_stability_search(mut board: *mut i32,
     while i <= 8 as i32 && abort == 0 {
         j = 1 as i32;
         while j <= 8 as i32 && abort == 0 {
-            let mut sq_0 = 10 as i32 * i + j;
+            let sq_0 = 10 as i32 * i + j;
             test_bits = square_mask[sq_0 as usize];
             if test_bits.high & candidate_bits.high |
                    test_bits.low & candidate_bits.low != 0 {
@@ -553,9 +553,9 @@ unsafe fn complete_stability_search(mut board: *mut i32,
   is returned in the boolean vector IS_STABLE.
 */
 
-pub unsafe fn get_stable(mut board: *mut i32,
-                                    mut side_to_move: i32,
-                                    mut is_stable: *mut i32) {
+pub unsafe fn get_stable(board: *mut i32,
+                                    side_to_move: i32,
+                                    is_stable: *mut i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut mask: u32 = 0;
@@ -625,7 +625,7 @@ pub unsafe fn get_stable(mut board: *mut i32,
   edge PATTERN. When a bit mask is calculated, it's stored in
   a table so that any particular bit mask only is generated once.
 */
-unsafe fn recursive_find_stable(mut pattern: i32)
+unsafe fn recursive_find_stable(pattern: i32)
  -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;

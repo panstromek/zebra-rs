@@ -2,7 +2,7 @@ use crate::{
     src:: {
         epcstat::{end_sigma, end_mean, end_stats_available},
         moves::{dir_mask, disks_played, unmake_move, make_move, move_count, generate_all, move_list, valid_move},
-        search::{force_return, hash_expand_pv, root_eval, store_pv, restore_pv, nodes, create_eval_info, disc_count, get_ponder_move, set_current_eval, select_move, evals, sorted_move_order},
+        search::{force_return, hash_expand_pv, root_eval, store_pv, restore_pv, nodes, create_eval_info, disc_count, get_ponder_move, select_move, evals, sorted_move_order},
         hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended, find_hash, HashEntry, hash_put_value2, hash_put_value1},
         unflip::UndoFlips,
         doflip::{hash_update2, hash_update1, DoFlips_hash},
@@ -147,9 +147,9 @@ pub static mut komi_shift: i32 = 0;
   (1) verifying that there exists a neighboring opponent disc,
   (2) verifying that the move flips some disc.
 */
-pub unsafe fn TestFlips_wrapper(mut sq: i32,
-                            mut my_bits: BitBoard,
-                            mut opp_bits: BitBoard)
+pub unsafe fn TestFlips_wrapper(sq: i32,
+                            my_bits: BitBoard,
+                            opp_bits: BitBoard)
                             -> i32 {
     let mut flipped: i32 = 0;
     if neighborhood_mask[sq as usize].high & opp_bits.high |
@@ -168,7 +168,7 @@ pub unsafe fn TestFlips_wrapper(mut sq: i32,
   PREPARE_TO_SOLVE
   Create the list of empty squares.
 */
-pub unsafe fn prepare_to_solve(mut board_0: *const i32) {
+pub unsafe fn prepare_to_solve(board_0: *const i32) {
     /* fixed square ordering: */
     /* jcw's order, which is the best of 4 tried (according to Warren Smith) */
     static mut worst2best: [u8; 64] =
@@ -242,7 +242,7 @@ pub unsafe fn prepare_to_solve(mut board_0: *const i32) {
     last_sq = 0 as i32;
     i = 59 as i32;
     while i >= 0 as i32 {
-        let mut sq = worst2best[i as usize] as i32;
+        let sq = worst2best[i as usize] as i32;
         if *board_0.offset(sq as isize) == 1 as i32 {
             end_move_list[last_sq as usize].succ = sq;
             end_move_list[sq as usize].pred = last_sq;
@@ -273,14 +273,14 @@ pub unsafe fn prepare_to_solve(mut board_0: *const i32) {
   * SOLVE_PARITY_HASH_HIGH uses stability, hash table and (non-thresholded)
     fastest first
 */
-unsafe fn solve_two_empty(mut my_bits: BitBoard,
-                          mut opp_bits: BitBoard,
-                          mut sq1: i32,
-                          mut sq2: i32,
+unsafe fn solve_two_empty(my_bits: BitBoard,
+                          opp_bits: BitBoard,
+                          sq1: i32,
+                          sq2: i32,
                           mut alpha: i32,
-                          mut beta: i32,
-                          mut disc_diff: i32,
-                          mut pass_legal: i32)
+                          beta: i32,
+                          disc_diff: i32,
+                          pass_legal: i32)
                           -> i32 {
     // BitBoard new_opp_bits;
     let mut score = -(12345678 as i32);
@@ -398,15 +398,15 @@ unsafe fn solve_two_empty(mut my_bits: BitBoard,
         }
     } else { return score };
 }
-unsafe fn solve_three_empty(mut my_bits: BitBoard,
-                            mut opp_bits: BitBoard,
-                            mut sq1: i32,
-                            mut sq2: i32,
-                            mut sq3: i32,
+unsafe fn solve_three_empty(my_bits: BitBoard,
+                            opp_bits: BitBoard,
+                            sq1: i32,
+                            sq2: i32,
+                            sq3: i32,
                             mut alpha: i32,
-                            mut beta: i32,
-                            mut disc_diff: i32,
-                            mut pass_legal: i32)
+                            beta: i32,
+                            disc_diff: i32,
+                            pass_legal: i32)
                             -> i32 {
     let mut new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut score = -(12345678 as i32);
@@ -471,16 +471,16 @@ unsafe fn solve_three_empty(mut my_bits: BitBoard,
     }
     return score;
 }
-pub unsafe fn solve_four_empty(mut my_bits: BitBoard,
-                           mut opp_bits: BitBoard,
-                           mut sq1: i32,
-                           mut sq2: i32,
-                           mut sq3: i32,
-                           mut sq4: i32,
+pub unsafe fn solve_four_empty(my_bits: BitBoard,
+                           opp_bits: BitBoard,
+                           sq1: i32,
+                           sq2: i32,
+                           sq3: i32,
+                           sq4: i32,
                            mut alpha: i32,
-                           mut beta: i32,
-                           mut disc_diff: i32,
-                           mut pass_legal: i32)
+                           beta: i32,
+                           disc_diff: i32,
+                           pass_legal: i32)
                            -> i32 {
     let mut new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut score = -(12345678 as i32);
@@ -592,23 +592,23 @@ pub unsafe fn get_earliest_full_solve() -> i32 {
   Toggles output of intermediate search status on/off.
 */
 
-pub unsafe fn set_output_mode(mut full: i32) {
+pub unsafe fn set_output_mode(full: i32) {
     full_output_mode = full;
 }
 
 
-pub unsafe fn solve_parity(mut my_bits: BitBoard,
-                       mut opp_bits: BitBoard,
+pub unsafe fn solve_parity(my_bits: BitBoard,
+                       opp_bits: BitBoard,
                        mut alpha: i32,
                        mut beta: i32,
-                       mut color: i32,
-                       mut empties: i32,
-                       mut disc_diff: i32,
-                       mut pass_legal: i32)
+                       color: i32,
+                       empties: i32,
+                       disc_diff: i32,
+                       pass_legal: i32)
                        -> i32 {
     let mut new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut score = -(12345678 as i32);
-    let mut oppcol = 0 as i32 + 2 as i32 - color;
+    let oppcol = 0 as i32 + 2 as i32 - color;
     let mut ev: i32 = 0;
     let mut flipped: i32 = 0;
     let mut new_disc_diff: i32 = 0;
@@ -640,7 +640,7 @@ pub unsafe fn solve_parity(mut my_bits: BitBoard,
         old_sq = 0 as i32;
         sq = end_move_list[old_sq as usize].succ;
         while sq != 99 as i32 {
-            let mut holepar = quadrant_mask[sq as usize];
+            let holepar = quadrant_mask[sq as usize];
             if holepar & parity_mask != 0 {
                 flipped = TestFlips_wrapper(sq, my_bits, opp_bits);
                 if flipped != 0 as i32 {
@@ -652,11 +652,11 @@ pub unsafe fn solve_parity(mut my_bits: BitBoard,
                         -disc_diff - 2 as i32 * flipped -
                             1 as i32;
                     if empties == 5 as i32 {
-                        let mut sq1 =
+                        let sq1 =
                             end_move_list[0 as i32 as usize].succ;
-                        let mut sq2 = end_move_list[sq1 as usize].succ;
-                        let mut sq3 = end_move_list[sq2 as usize].succ;
-                        let mut sq4 = end_move_list[sq3 as usize].succ;
+                        let sq2 = end_move_list[sq1 as usize].succ;
+                        let sq3 = end_move_list[sq2 as usize].succ;
+                        let sq4 = end_move_list[sq3 as usize].succ;
                         ev =
                             -solve_four_empty(new_opp_bits, bb_flips, sq1,
                                               sq2, sq3, sq4, -beta, -alpha,
@@ -690,7 +690,7 @@ pub unsafe fn solve_parity(mut my_bits: BitBoard,
     old_sq = 0 as i32;
     sq = end_move_list[old_sq as usize].succ;
     while sq != 99 as i32 {
-        let mut holepar_0 = quadrant_mask[sq as usize];
+        let holepar_0 = quadrant_mask[sq as usize];
         if holepar_0 & parity_mask != 0 {
             flipped = TestFlips_wrapper(sq, my_bits, opp_bits);
             if flipped != 0 as i32 {
@@ -702,11 +702,11 @@ pub unsafe fn solve_parity(mut my_bits: BitBoard,
                     -disc_diff - 2 as i32 * flipped -
                         1 as i32;
                 if empties == 5 as i32 {
-                    let mut sq1_0 =
+                    let sq1_0 =
                         end_move_list[0 as i32 as usize].succ;
-                    let mut sq2_0 = end_move_list[sq1_0 as usize].succ;
-                    let mut sq3_0 = end_move_list[sq2_0 as usize].succ;
-                    let mut sq4_0 = end_move_list[sq3_0 as usize].succ;
+                    let sq2_0 = end_move_list[sq1_0 as usize].succ;
+                    let sq3_0 = end_move_list[sq2_0 as usize].succ;
+                    let sq4_0 = end_move_list[sq3_0 as usize].succ;
                     ev =
                         -solve_four_empty(new_opp_bits, bb_flips, sq1_0,
                                           sq2_0, sq3_0, sq4_0, -beta, -alpha,
@@ -771,8 +771,8 @@ pub unsafe fn setup_end() {
         j = 1 as i32;
         while j <= 8 as i32 {
             /* Create the neighborhood mask for the square POS */
-            let mut pos = 10 as i32 * i + j;
-            let mut shift =
+            let pos = 10 as i32 * i + j;
+            let shift =
                 8 as i32 * (i - 1 as i32) +
                     (j - 1 as i32);
             let mut k: u32 = 0;
@@ -783,7 +783,7 @@ pub unsafe fn setup_end() {
             k = 0 as i32 as u32;
             while k < 8 as i32 as u32 {
                 if dir_mask[pos as usize] & (1 as i32) << k != 0 {
-                    let mut neighbor =
+                    let neighbor =
                         (shift + dir_shift[k as usize]) as u32;
                     if neighbor < 32 as i32 as u32 {
                         neighborhood_mask[pos as usize].low |=
@@ -859,19 +859,19 @@ pub unsafe fn setup_end() {
 }
 
 
-pub unsafe fn solve_parity_hash(mut my_bits: BitBoard,
-                                mut opp_bits: BitBoard,
+pub unsafe fn solve_parity_hash(my_bits: BitBoard,
+                                opp_bits: BitBoard,
                                 mut alpha: i32,
                                 mut beta: i32,
-                                mut color: i32,
-                                mut empties: i32,
-                                mut disc_diff: i32,
-                                mut pass_legal: i32)
+                                color: i32,
+                                empties: i32,
+                                disc_diff: i32,
+                                pass_legal: i32)
                                 -> i32 {
     let mut new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut score = -(12345678 as i32);
-    let mut oppcol = 0 as i32 + 2 as i32 - color;
-    let mut in_alpha = alpha;
+    let oppcol = 0 as i32 + 2 as i32 - color;
+    let in_alpha = alpha;
     let mut ev: i32 = 0;
     let mut flipped: i32 = 0;
     let mut new_disc_diff: i32 = 0;
@@ -924,7 +924,7 @@ pub unsafe fn solve_parity_hash(mut my_bits: BitBoard,
         old_sq = 0 as i32;
         sq = end_move_list[old_sq as usize].succ;
         while sq != 99 as i32 {
-            let mut holepar = quadrant_mask[sq as usize];
+            let holepar = quadrant_mask[sq as usize];
             if holepar & parity_mask != 0 {
                 flipped = TestFlips_wrapper(sq, my_bits, opp_bits);
                 if flipped != 0 as i32 {
@@ -967,7 +967,7 @@ pub unsafe fn solve_parity_hash(mut my_bits: BitBoard,
     old_sq = 0 as i32;
     sq = end_move_list[old_sq as usize].succ;
     while sq != 99 as i32 {
-        let mut holepar_0 = quadrant_mask[sq as usize];
+        let holepar_0 = quadrant_mask[sq as usize];
         if holepar_0 & parity_mask != 0 {
             flipped = TestFlips_wrapper(sq, my_bits, opp_bits);
             if flipped != 0 as i32 {
@@ -1033,14 +1033,14 @@ pub unsafe fn solve_parity_hash(mut my_bits: BitBoard,
     return score;
 }
 
-pub unsafe fn solve_parity_hash_high(mut my_bits: BitBoard,
-                                     mut opp_bits: BitBoard,
+pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
+                                     opp_bits: BitBoard,
                                      mut alpha: i32,
                                      mut beta: i32,
-                                     mut color: i32,
-                                     mut empties: i32,
-                                     mut disc_diff: i32,
-                                     mut pass_legal: i32)
+                                     color: i32,
+                                     empties: i32,
+                                     disc_diff: i32,
+                                     pass_legal: i32)
                                      -> i32 {
     /* Move bonuses without and with parity for the squares.
        These are only used when sorting moves in the 9-12 empties
@@ -1307,8 +1307,8 @@ pub unsafe fn solve_parity_hash_high(mut my_bits: BitBoard,
     let mut best_new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut i: i32 = 0;
     let mut score: i32 = 0;
-    let mut in_alpha = alpha;
-    let mut oppcol = 0 as i32 + 2 as i32 - color;
+    let in_alpha = alpha;
+    let oppcol = 0 as i32 + 2 as i32 - color;
     let mut flipped: i32 = 0;
     let mut best_flipped: i32 = 0;
     let mut new_disc_diff: i32 = 0;
@@ -1562,12 +1562,12 @@ pub unsafe fn solve_parity_hash_high(mut my_bits: BitBoard,
   PREPARE_TO_SOLVE(). Returns difference between disc count for
   COLOR and disc count for the opponent of COLOR.
 */
-pub unsafe fn end_solve(mut my_bits: BitBoard, mut opp_bits: BitBoard,
-                    mut alpha: i32, mut beta: i32,
-                    mut color: i32,
-                    mut empties: i32,
-                    mut discdiff: i32,
-                    mut prevmove: i32) -> i32 {
+pub unsafe fn end_solve(my_bits: BitBoard, opp_bits: BitBoard,
+                    alpha: i32, beta: i32,
+                    color: i32,
+                    empties: i32,
+                    discdiff: i32,
+                    prevmove: i32) -> i32 {
     let mut result: i32 = 0;
     if empties <= 8 as i32 {
         result =
@@ -1585,10 +1585,10 @@ pub unsafe fn end_solve(mut my_bits: BitBoard, mut opp_bits: BitBoard,
 /*
   UPDATE_BEST_LIST
 */
-pub unsafe fn update_best_list(mut best_list: *mut i32,
-                           mut move_0: i32,
-                           mut best_list_index: i32,
-                           mut best_list_length: *mut i32,
+pub unsafe fn update_best_list(best_list: *mut i32,
+                           move_0: i32,
+                           best_list_index: i32,
+                           best_list_length: *mut i32,
                            mut verbose: i32) {
     verbose = 0 as i32;
     if verbose != 0 {
@@ -1621,16 +1621,16 @@ pub unsafe fn update_best_list(mut best_list: *mut i32,
   END_TREE_SEARCH
   Plain nega-scout with fastest-first move ordering.
 */
-pub unsafe fn end_tree_search(mut level: i32,
-                              mut max_depth: i32,
-                              mut my_bits: BitBoard,
-                              mut opp_bits: BitBoard,
-                              mut side_to_move: i32,
-                              mut alpha: i32,
+pub unsafe fn end_tree_search(level: i32,
+                              max_depth: i32,
+                              my_bits: BitBoard,
+                              opp_bits: BitBoard,
+                              side_to_move: i32,
+                              alpha: i32,
                               mut beta: i32,
-                              mut selectivity: i32,
-                              mut selective_cutoff: *mut i32,
-                              mut void_legal: i32)
+                              selectivity: i32,
+                              selective_cutoff: *mut i32,
+                              void_legal: i32)
                               -> i32 {
     let mut node_val: f64 = 0.;
     let mut i: i32 = 0;
@@ -1784,21 +1784,21 @@ pub unsafe fn end_tree_search(mut level: i32,
         let mut cut: i32 = 0;
         cut = 0 as i32;
         while cut < use_end_cut[disks_played as usize] {
-            let mut shallow_remains =
+            let shallow_remains =
                 end_mpc_depth[disks_played as usize][cut as usize];
-            let mut mpc_bias =
+            let mpc_bias =
                 ceil(end_mean[disks_played as usize][shallow_remains as usize]
                     as f64 * 128.0f64) as i32;
-            let mut mpc_window =
+            let mpc_window =
                 ceil(end_sigma[disks_played as
                     usize][shallow_remains as usize] as
                     f64 * end_percentile[selectivity as usize]
                     * 128.0f64) as i32;
-            let mut beta_bound =
+            let beta_bound =
                 128 as i32 * beta + mpc_bias + mpc_window;
-            let mut alpha_bound =
+            let alpha_bound =
                 128 as i32 * alpha + mpc_bias - mpc_window;
-            let mut shallow_val =
+            let shallow_val =
                 tree_search(level, level + shallow_remains, side_to_move,
                             alpha_bound, beta_bound, use_hash,
                             0 as i32, void_legal);
@@ -2232,13 +2232,13 @@ pub unsafe fn end_tree_search(mut level: i32,
   Wrapper onto END_TREE_SEARCH which applies the knowledge that
   the range of valid scores is [-64,+64].  Komi, if any, is accounted for.
 */
-pub unsafe fn end_tree_wrapper(mut level: i32,
-                           mut max_depth: i32,
-                           mut side_to_move: i32,
-                           mut alpha: i32,
-                           mut beta: i32,
-                           mut selectivity: i32,
-                           mut void_legal: i32)
+pub unsafe fn end_tree_wrapper(level: i32,
+                           max_depth: i32,
+                           side_to_move: i32,
+                           alpha: i32,
+                           beta: i32,
+                           selectivity: i32,
+                           void_legal: i32)
                            -> i32 {
     let mut selective_cutoff: i32 = 0;
     let mut my_bits = BitBoard{high: 0, low: 0,};
@@ -2247,12 +2247,12 @@ pub unsafe fn end_tree_wrapper(mut level: i32,
     set_bitboards(board.as_mut_ptr(), side_to_move, &mut my_bits,
                   &mut opp_bits);
     return end_tree_search(level, max_depth, my_bits, opp_bits, side_to_move,
-                           (if alpha - komi_shift > -(64 as i32) {
+                           if alpha - komi_shift > -(64 as i32) {
                                (alpha) - komi_shift
-                           } else { -(64 as i32) }),
-                           (if beta - komi_shift < 64 as i32 {
+                           } else { -(64 as i32) },
+                           if beta - komi_shift < 64 as i32 {
                                (beta) - komi_shift
-                           } else { 64 as i32 }), selectivity,
+                           } else { 64 as i32 }, selectivity,
                            &mut selective_cutoff, void_legal) + komi_shift;
 }
 /*
@@ -2260,7 +2260,7 @@ pub unsafe fn end_tree_wrapper(mut level: i32,
    Pad the PV with optimal moves in the low-level phase.
 */
 pub unsafe fn full_expand_pv(mut side_to_move: i32,
-                         mut selectivity: i32) {
+                         selectivity: i32) {
     let mut i: i32 = 0;
     let mut pass_count: i32 = 0;
     let mut new_pv_depth: i32 = 0;
@@ -2272,7 +2272,7 @@ pub unsafe fn full_expand_pv(mut side_to_move: i32,
         let mut move_0: i32 = 0;
         generate_all(side_to_move);
         if move_count[disks_played as usize] > 0 as i32 {
-            let mut empties =
+            let empties =
                 64 as i32 - disc_count(0 as i32) -
                     disc_count(2 as i32);
             end_tree_wrapper(new_pv_depth, empties, side_to_move,
@@ -2309,11 +2309,11 @@ pub unsafe fn full_expand_pv(mut side_to_move: i32,
   Provides an interface to the fast endgame solver.
 */
 
-pub unsafe fn end_game(mut side_to_move: i32,
-                       mut wld: i32,
-                       mut force_echo: i32,
-                       mut allow_book: i32,
-                       mut komi: i32,
+pub unsafe fn end_game(side_to_move: i32,
+                       wld: i32,
+                       force_echo: i32,
+                       allow_book: i32,
+                       komi: i32,
                        mut eval_info: *mut EvaluationType)
                        -> i32 {
     let mut current_confidence: f64 = 0.;

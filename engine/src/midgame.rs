@@ -100,7 +100,7 @@ pub unsafe fn set_midgame_abort() {
     midgame_abort = do_check_midgame_abort;
 }
 
-pub unsafe fn toggle_midgame_abort_check(mut toggle: i32) {
+pub unsafe fn toggle_midgame_abort_check(toggle: i32) {
     do_check_midgame_abort = toggle;
 }
 /*
@@ -108,9 +108,9 @@ pub unsafe fn toggle_midgame_abort_check(mut toggle: i32) {
    Toggles hash table access in the midgame search on/off.
 */
 
-pub unsafe fn toggle_midgame_hash_usage(mut allow_read:
+pub unsafe fn toggle_midgame_hash_usage(allow_read:
                                         i32,
-                                        mut allow_write:
+                                        allow_write:
                                         i32) {
     allow_midgame_hash_probe = allow_read;
     allow_midgame_hash_update = allow_write;
@@ -122,7 +122,7 @@ pub unsafe fn toggle_midgame_hash_usage(mut allow_read:
   CALCULATE_PERTURBATION.
 */
 
-pub unsafe fn set_perturbation(mut amplitude: i32) {
+pub unsafe fn set_perturbation(amplitude: i32) {
     perturbation_amplitude = amplitude;
 }
 /*
@@ -130,7 +130,7 @@ pub unsafe fn set_perturbation(mut amplitude: i32) {
   Toggle usage of score perturbations on/off.
 */
 
-pub unsafe fn toggle_perturbation_usage(mut toggle: i32) {
+pub unsafe fn toggle_perturbation_usage(toggle: i32) {
     apply_perturbation = toggle;
 }
 
@@ -139,7 +139,7 @@ pub unsafe fn toggle_perturbation_usage(mut toggle: i32) {
   Swaps a move and its predecessor in the move list if it's
   not already first in the list.
 */
-pub unsafe fn advance_move(mut index: i32) {
+pub unsafe fn advance_move(index: i32) {
     let mut temp_move: i32 = 0;
     if index > 0 as i32 {
         temp_move = sorted_move_order[disks_played as usize][index as usize];
@@ -154,12 +154,12 @@ pub unsafe fn advance_move(mut index: i32) {
 /*
   midgame_c__update_best_list
 */
-pub unsafe fn midgame_c__update_best_list(mut best_list:
+pub unsafe fn midgame_c__update_best_list(best_list:
                                       *mut i32,
-                                      mut move_0: i32,
-                                      mut best_list_index:
+                                      move_0: i32,
+                                      best_list_index:
                                       i32,
-                                      mut best_list_length:
+                                      best_list_length:
                                       i32) {
     let mut i: i32 = 0;
     if best_list_index < best_list_length {
@@ -186,7 +186,7 @@ pub unsafe fn midgame_c__update_best_list(mut best_list:
   Invokes the proper evaluation function depending on whether the
   board is filled or not.
 */
-pub unsafe fn static_or_terminal_evaluation(mut side_to_move:
+pub unsafe fn static_or_terminal_evaluation(side_to_move:
                                             i32)
                                             -> i32 {
     if disks_played == 60 as i32 {
@@ -244,7 +244,7 @@ pub unsafe fn calculate_perturbation() {
   while avoiding all moves which allow an immediate loss
   (if that is possible).
 */
-pub unsafe fn protected_one_ply_search(mut side_to_move: i32)
+pub unsafe fn protected_one_ply_search(side_to_move: i32)
                                    -> i32 {
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
@@ -305,14 +305,14 @@ pub unsafe fn protected_one_ply_search(mut side_to_move: i32)
    tree pruning.
 */
 
-pub unsafe fn tree_search(mut level: i32,
-                          mut max_depth: i32,
-                          mut side_to_move: i32,
-                          mut alpha: i32,
-                          mut beta: i32,
-                          mut allow_hash: i32,
-                          mut allow_mpc: i32,
-                          mut void_legal: i32)
+pub unsafe fn tree_search(level: i32,
+                          max_depth: i32,
+                          side_to_move: i32,
+                          alpha: i32,
+                          beta: i32,
+                          allow_hash: i32,
+                          allow_mpc: i32,
+                          void_legal: i32)
                           -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -401,15 +401,15 @@ pub unsafe fn tree_search(mut level: i32,
         cut = 0 as i32;
         while cut < mpc_cut[remains as usize].cut_tries {
             /* Determine the fail-high and fail-low bounds */
-            let mut bias =
+            let bias =
                 mpc_cut[remains as
                     usize].bias[cut as usize][disks_played as usize];
-            let mut window =
+            let window =
                 mpc_cut[remains as
                     usize].window[cut as
                     usize][disks_played as usize];
-            let mut alpha_bound = alpha + bias - window;
-            let mut beta_bound = beta + bias + window;
+            let alpha_bound = alpha + bias - window;
+            let beta_bound = beta + bias + window;
             /* Don't use an MPC cut which results in the full-width depth
             being less than some predefined constant */
             shallow_remains =
@@ -421,7 +421,7 @@ pub unsafe fn tree_search(mut level: i32,
                         /* Use static eval to decide if a one- or two-sided
                        MPC test is to be performed. */
                         evaluations.lo = evaluations.lo.wrapping_add(1);
-                        let mut static_eval =
+                        let static_eval =
                             pattern_evaluation(side_to_move);
                         if static_eval <= alpha_bound {
                             beta_test = 0 as i32
@@ -432,7 +432,7 @@ pub unsafe fn tree_search(mut level: i32,
                     assert!(alpha_test != 0 || beta_test != 0);
                     if alpha_test != 0 && beta_test != 0 {
                         /* Test for likely fail-low or likely fail-high. */
-                        let mut shallow_val =
+                        let shallow_val =
                             tree_search(level, level + shallow_remains,
                                         side_to_move, alpha_bound, beta_bound,
                                         allow_hash, 0 as i32,
@@ -458,12 +458,12 @@ pub unsafe fn tree_search(mut level: i32,
                         } else {
                             /* Use information learned from the failed cut test to decide
                            if a one or a two-sided test is to be performed next. */
-                            let mut mid =
+                            let mid =
                                 (alpha_bound + beta_bound) / 2 as i32;
-                            let mut low_threshold =
+                            let low_threshold =
                                 (2 as i32 * mid + alpha_bound) /
                                     3 as i32;
-                            let mut high_threshold =
+                            let high_threshold =
                                 (2 as i32 * mid + beta_bound) /
                                     3 as i32;
                             if shallow_val <= low_threshold {
@@ -852,13 +852,13 @@ pub unsafe fn tree_search(mut level: i32,
    The recursive tree search function. It uses negascout for
    tree pruning.
 */
-unsafe fn fast_tree_search(mut level: i32,
-                           mut max_depth: i32,
-                           mut side_to_move: i32,
-                           mut alpha: i32,
-                           mut beta: i32,
-                           mut allow_hash: i32,
-                           mut void_legal: i32)
+unsafe fn fast_tree_search(level: i32,
+                           max_depth: i32,
+                           side_to_move: i32,
+                           alpha: i32,
+                           beta: i32,
+                           allow_hash: i32,
+                           void_legal: i32)
                            -> i32 {
     let mut curr_val: i32 = 0;
     let mut best: i32 = 0;
@@ -1068,8 +1068,8 @@ unsafe fn fast_tree_search(mut level: i32,
   Perturbs SCORE by PERTURBATION if it doesn't appear to be
   a midgame win.
 */
-pub unsafe fn perturb_score(mut score: i32,
-                        mut perturbation: i32)
+pub unsafe fn perturb_score(score: i32,
+                        perturbation: i32)
                         -> i32 {
     if abs(score) < 29000 as i32 - 4000 as i32 {
         return score + perturbation
@@ -1083,14 +1083,14 @@ pub unsafe fn perturb_score(mut score: i32,
    for the root of the search tree.
 */
 
-pub unsafe fn root_tree_search(mut level: i32,
-                               mut max_depth: i32,
-                               mut side_to_move: i32,
-                               mut alpha: i32,
-                               mut beta: i32,
-                               mut allow_hash: i32,
-                               mut allow_mpc: i32,
-                               mut void_legal: i32)
+pub unsafe fn root_tree_search(level: i32,
+                               max_depth: i32,
+                               side_to_move: i32,
+                               alpha: i32,
+                               beta: i32,
+                               allow_hash: i32,
+                               allow_mpc: i32,
+                               void_legal: i32)
                                -> i32 {
     let mut buffer: [i8; 32] = [0; 32];
     let mut i: i32 = 0;
@@ -1413,14 +1413,14 @@ pub unsafe fn root_tree_search(mut level: i32,
    side_to_move = the side whose turn it is to move
 */
 
-pub unsafe fn middle_game(mut side_to_move: i32,
-                          mut max_depth: i32,
-                          mut update_evals: i32,
-                          mut eval_info: *mut EvaluationType)
+pub unsafe fn middle_game(side_to_move: i32,
+                          max_depth: i32,
+                          update_evals: i32,
+                          eval_info: *mut EvaluationType)
                           -> i32 {
-    let mut eval_str =
+    let eval_str =
         0 as *mut i8; /* Disable I.D. in this function */
-    let mut node_val: f64 = 0.;
+    let node_val: f64 = 0.;
     let mut val: i32 = 0;
     let mut old_val: i32 = 0;
     let mut adjusted_val: i32 = 0;

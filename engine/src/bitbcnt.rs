@@ -274,8 +274,8 @@ static center_count: [i8; 256] =
      0 as i32 as i8, 0 as i32 as i8,
      0 as i32 as i8, 0 as i32 as i8,
      0 as i32 as i8, 0 as i32 as i8];
-fn CountFlips_bitboard_a1(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_a1(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -313,8 +313,8 @@ fn CountFlips_bitboard_a1(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_h1(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_h1(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Left */
@@ -347,8 +347,8 @@ fn CountFlips_bitboard_h1(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_a8(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_a8(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -382,8 +382,8 @@ fn CountFlips_bitboard_a8(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_h8(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_h8(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Left */
@@ -420,8 +420,8 @@ fn CountFlips_bitboard_h8(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_b1(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_b1(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -458,8 +458,8 @@ fn CountFlips_bitboard_b1(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_g1(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_g1(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Left */
@@ -492,8 +492,8 @@ fn CountFlips_bitboard_g1(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_a2(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_a2(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -531,8 +531,8 @@ fn CountFlips_bitboard_a2(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_h2(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_h2(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Left */
@@ -565,8 +565,8 @@ fn CountFlips_bitboard_h2(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_a7(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_a7(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -599,8 +599,8 @@ fn CountFlips_bitboard_a7(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_h7(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_h7(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Left */
@@ -637,8 +637,8 @@ fn CountFlips_bitboard_h7(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_b8(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_b8(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -672,8 +672,8 @@ fn CountFlips_bitboard_b8(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_g8(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_g8(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Left */
@@ -710,8 +710,8 @@ fn CountFlips_bitboard_g8(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_b2(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_b2(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -749,8 +749,8 @@ fn CountFlips_bitboard_b2(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_g2(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_g2(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Left */
@@ -783,8 +783,8 @@ fn CountFlips_bitboard_g2(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_b7(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_b7(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -818,8 +818,8 @@ fn CountFlips_bitboard_b7(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_g7(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_g7(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Left */
@@ -856,8 +856,8 @@ fn CountFlips_bitboard_g7(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_c1(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_c1(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down */
@@ -904,8 +904,8 @@ fn CountFlips_bitboard_c1(mut my_bits_high: u32,
                  i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_f1(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_f1(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down */
@@ -951,8 +951,8 @@ fn CountFlips_bitboard_f1(mut my_bits_high: u32,
                  i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_a3(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_a3(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down */
@@ -999,8 +999,8 @@ fn CountFlips_bitboard_a3(mut my_bits_high: u32,
                  i32 as i8 as i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_h3(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_h3(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down */
@@ -1046,8 +1046,8 @@ fn CountFlips_bitboard_h3(mut my_bits_high: u32,
                  i32 as i8 as i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_a6(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_a6(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Up */
@@ -1095,8 +1095,8 @@ fn CountFlips_bitboard_a6(mut my_bits_high: u32,
                  i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_h6(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_h6(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Up */
@@ -1144,8 +1144,8 @@ fn CountFlips_bitboard_h6(mut my_bits_high: u32,
                  as i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_c8(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_c8(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Up */
@@ -1194,8 +1194,8 @@ fn CountFlips_bitboard_c8(mut my_bits_high: u32,
             i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_f8(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_f8(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Up */
@@ -1243,8 +1243,8 @@ fn CountFlips_bitboard_f8(mut my_bits_high: u32,
                  i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_d1(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_d1(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -1291,8 +1291,8 @@ fn CountFlips_bitboard_d1(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_e1(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_e1(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -1335,8 +1335,8 @@ fn CountFlips_bitboard_e1(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_a4(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_a4(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -1379,8 +1379,8 @@ fn CountFlips_bitboard_a4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_h4(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_h4(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down / Up */
@@ -1422,8 +1422,8 @@ fn CountFlips_bitboard_h4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_a5(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_a5(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -1466,8 +1466,8 @@ fn CountFlips_bitboard_a5(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_h5(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_h5(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down / Up */
@@ -1509,8 +1509,8 @@ fn CountFlips_bitboard_h5(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_d8(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_d8(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -1556,8 +1556,8 @@ fn CountFlips_bitboard_d8(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_e8(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_e8(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -1605,8 +1605,8 @@ fn CountFlips_bitboard_e8(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_c2(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_c2(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down */
@@ -1653,8 +1653,8 @@ fn CountFlips_bitboard_c2(mut my_bits_high: u32,
                  i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_f2(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_f2(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down */
@@ -1702,8 +1702,8 @@ fn CountFlips_bitboard_f2(mut my_bits_high: u32,
                  as i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_b3(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_b3(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down */
@@ -1750,8 +1750,8 @@ fn CountFlips_bitboard_b3(mut my_bits_high: u32,
                  i32 as i8 as i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_g3(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_g3(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down */
@@ -1797,8 +1797,8 @@ fn CountFlips_bitboard_g3(mut my_bits_high: u32,
                  i32 as i8 as i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_b6(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_b6(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Up */
@@ -1846,8 +1846,8 @@ fn CountFlips_bitboard_b6(mut my_bits_high: u32,
                  i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_g6(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_g6(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Up */
@@ -1895,8 +1895,8 @@ fn CountFlips_bitboard_g6(mut my_bits_high: u32,
                  as i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_c7(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_c7(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Up */
@@ -1944,8 +1944,8 @@ fn CountFlips_bitboard_c7(mut my_bits_high: u32,
                  i32 as i8 as i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_f7(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_f7(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Up */
@@ -1993,8 +1993,8 @@ fn CountFlips_bitboard_f7(mut my_bits_high: u32,
             i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_d2(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_d2(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -2045,8 +2045,8 @@ fn CountFlips_bitboard_d2(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_e2(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_e2(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -2092,8 +2092,8 @@ fn CountFlips_bitboard_e2(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_b4(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_b4(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -2136,8 +2136,8 @@ fn CountFlips_bitboard_b4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_g4(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_g4(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down / Up */
@@ -2179,8 +2179,8 @@ fn CountFlips_bitboard_g4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_b5(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_b5(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -2219,8 +2219,8 @@ fn CountFlips_bitboard_b5(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_g5(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_g5(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down / Up */
@@ -2262,8 +2262,8 @@ fn CountFlips_bitboard_g5(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_d7(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_d7(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -2313,8 +2313,8 @@ fn CountFlips_bitboard_d7(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_e7(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_e7(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -2368,8 +2368,8 @@ fn CountFlips_bitboard_e7(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_c3(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_c3(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down */
@@ -2434,8 +2434,8 @@ fn CountFlips_bitboard_c3(mut my_bits_high: u32,
             as i8 as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_f3(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_f3(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down */
@@ -2499,8 +2499,8 @@ fn CountFlips_bitboard_f3(mut my_bits_high: u32,
             as i8 as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_c6(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_c6(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Up */
@@ -2568,8 +2568,8 @@ fn CountFlips_bitboard_c6(mut my_bits_high: u32,
             as i8 as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_f6(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_f6(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Up */
@@ -2636,8 +2636,8 @@ fn CountFlips_bitboard_f6(mut my_bits_high: u32,
             as i8 as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_d3(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_d3(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -2702,8 +2702,8 @@ fn CountFlips_bitboard_d3(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_e3(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_e3(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -2763,8 +2763,8 @@ fn CountFlips_bitboard_e3(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_c4(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_c4(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -2825,8 +2825,8 @@ fn CountFlips_bitboard_c4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_f4(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_f4(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down left / Up right */
@@ -2888,8 +2888,8 @@ fn CountFlips_bitboard_f4(mut my_bits_high: u32,
                  as i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_c5(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_c5(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right */
@@ -2950,8 +2950,8 @@ fn CountFlips_bitboard_c5(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_f5(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_f5(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Down left / Up right */
@@ -3012,8 +3012,8 @@ fn CountFlips_bitboard_f5(mut my_bits_high: u32,
                  i32 as i8 as i32) as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_d6(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_d6(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -3076,8 +3076,8 @@ fn CountFlips_bitboard_d6(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_e6(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_e6(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -3144,8 +3144,8 @@ fn CountFlips_bitboard_e6(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_d4(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_d4(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -3201,8 +3201,8 @@ fn CountFlips_bitboard_d4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_e4(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_e4(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -3256,8 +3256,8 @@ fn CountFlips_bitboard_e4(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_d5(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_d5(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */
@@ -3315,8 +3315,8 @@ fn CountFlips_bitboard_d5(mut my_bits_high: u32,
             as i8;
     return flipped as i32;
 }
-fn CountFlips_bitboard_e5(mut my_bits_high: u32,
-                                            mut my_bits_low: u32)
+fn CountFlips_bitboard_e5(my_bits_high: u32,
+                                            my_bits_low: u32)
  -> i32 {
     let mut flipped: i8 = 0;
     /* Right / Left */

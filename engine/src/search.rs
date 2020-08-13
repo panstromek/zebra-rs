@@ -143,7 +143,7 @@ unsafe fn init_move_lists() {
   corresponding to the same parity (i.e., in practice side to move).
 */
 
-pub unsafe fn inherit_move_lists(mut stage: i32) {
+pub unsafe fn inherit_move_lists(stage: i32) {
     let mut i: i32 = 0;
     let mut last: i32 = 0;
 
@@ -172,7 +172,7 @@ pub unsafe fn inherit_move_lists(mut stage: i32) {
   in many variations in the tree.
 */
 
-pub unsafe fn reorder_move_list(mut stage: i32) {
+pub unsafe fn reorder_move_list(stage: i32) {
     let dont_touch = 24 as i32;
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
@@ -230,7 +230,7 @@ pub unsafe fn setup_search() {
    Returns the number of disks of a specified color.
 */
 
-pub unsafe fn disc_count(mut side_to_move: i32)
+pub unsafe fn disc_count(side_to_move: i32)
                          -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -253,7 +253,7 @@ pub unsafe fn disc_count(mut side_to_move: i32)
    from a shallow search.
 */
 
-pub unsafe fn sort_moves(mut list_size: i32) {
+pub unsafe fn sort_moves(list_size: i32) {
     let mut i: i32 = 0;
     let mut modified: i32 = 0;
     let mut temp_move: i32 = 0;
@@ -291,8 +291,8 @@ pub unsafe fn sort_moves(mut list_size: i32) {
   Moves this move to the front of the sub-list.
 */
 
-pub unsafe fn select_move(mut first: i32,
-                          mut list_size: i32)
+pub unsafe fn select_move(first: i32,
+                          list_size: i32)
                           -> i32 {
     let mut i: i32 = 0;
     let mut temp_move: i32 = 0;
@@ -331,8 +331,8 @@ pub unsafe fn select_move(mut first: i32,
   Return 1 if the move was found, 0 otherwise.
 */
 
-pub unsafe fn float_move(mut move_0: i32,
-                         mut list_size: i32)
+pub unsafe fn float_move(move_0: i32,
+                         list_size: i32)
                          -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -359,8 +359,8 @@ pub unsafe fn float_move(mut move_0: i32,
    Saves the principal variation (the first row of the PV matrix).
 */
 
-pub unsafe fn store_pv(mut pv_buffer: *mut i32,
-                       mut depth_buffer: *mut i32) {
+pub unsafe fn store_pv(pv_buffer: *mut i32,
+                       depth_buffer: *mut i32) {
     let mut i: i32 = 0;
     i = 0 as i32;
     while i < pv_depth[0 as i32 as usize] {
@@ -375,8 +375,8 @@ pub unsafe fn store_pv(mut pv_buffer: *mut i32,
    Put the stored principal variation back into the PV matrix.
 */
 
-pub unsafe fn restore_pv(mut pv_buffer: *mut i32,
-                         mut depth_buffer: i32) {
+pub unsafe fn restore_pv(pv_buffer: *mut i32,
+                         depth_buffer: i32) {
     let mut i: i32 = 0;
     i = 0 as i32;
     while i < depth_buffer {
@@ -403,7 +403,7 @@ pub unsafe fn clear_pv() {
   been made.
 */
 
-pub unsafe fn set_ponder_move(mut move_0: i32) {
+pub unsafe fn set_ponder_move(move_0: i32) {
     pondered_move = move_0;
 }
 
@@ -420,12 +420,12 @@ pub unsafe fn get_ponder_move() -> i32 {
   about the last search.
 */
 
-pub unsafe fn create_eval_info(mut in_type: EvalType,
-                               mut in_res: EvalResult,
-                               mut in_score: i32,
-                               mut in_conf: f64,
-                               mut in_depth: i32,
-                               mut in_book: i32)
+pub unsafe fn create_eval_info(in_type: EvalType,
+                               in_res: EvalResult,
+                               in_score: i32,
+                               in_conf: f64,
+                               in_depth: i32,
+                               in_book: i32)
                                -> EvaluationType {
     let mut out =
         EvaluationType{type_0: MIDGAME_EVAL,
@@ -447,12 +447,12 @@ pub unsafe fn create_eval_info(mut in_type: EvalType,
   Converts a result descriptor into a number between -99.99 and 99.99 a la GGS.
 */
 
-pub unsafe fn produce_compact_eval(mut eval_info: EvaluationType)
+pub unsafe fn produce_compact_eval(eval_info: EvaluationType)
                                    -> f64 {
     let mut eval: f64 = 0.;
     's_97:
         {
-            let mut current_block_17: u64;
+            let current_block_17: u64;
             match eval_info.type_0 as u32 {
                 0 => {
                     /*
@@ -522,7 +522,7 @@ pub unsafe fn produce_compact_eval(mut eval_info: EvaluationType)
   holding the last available position evaluation.
 */
 
-pub unsafe fn set_current_eval(mut eval: EvaluationType) {
+pub unsafe fn set_current_eval(eval: EvaluationType) {
     last_eval = eval;
     if negate_eval != 0 {
         last_eval.score = -last_eval.score;
@@ -540,7 +540,7 @@ pub unsafe fn get_current_eval() -> EvaluationType {
     return last_eval;
 }
 
-pub unsafe fn negate_current_eval(mut negate: i32) {
+pub unsafe fn negate_current_eval(negate: i32) {
     negate_eval = negate;
 }
 
@@ -550,9 +550,9 @@ pub unsafe fn negate_current_eval(mut negate: i32) {
 */
 
 pub unsafe fn hash_expand_pv(mut side_to_move: i32,
-                             mut mode: i32,
-                             mut flags: i32,
-                             mut max_selectivity: i32) {
+                             mode: i32,
+                             flags: i32,
+                             max_selectivity: i32) {
     let mut i: i32 = 0;
     let mut pass_count: i32 = 0;
     let mut new_pv_depth: i32 = 0;
