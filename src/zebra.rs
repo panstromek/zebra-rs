@@ -911,8 +911,11 @@ impl ZebraFrontend for LibcFrontend {
         }
     }
     unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32) {
-        // TODO replace offset with index
-        unsafe {
+        // FIXME replace offset with index
+        //  this function is unsafe because it relies on disks_played to be in bounds
+        //  We can make it safe once we add a proper validation and replace
+        //  the pointer operation with indexing (or I don't know, some better mechanism)
+        {
             sprintf(move_vec.as_mut_ptr().offset((2 as i32 *
                 disks_played_) as
                 isize),
