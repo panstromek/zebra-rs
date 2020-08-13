@@ -1,22 +1,19 @@
 use crate::{
     src::{
-        search::{get_ponder_move, create_eval_info, root_eval, disc_count, nodes},
+        search::{get_ponder_move, root_eval, disc_count, nodes},
         display::{send_status, echo},
         moves::{unmake_move, make_move, generate_specific, disks_played, move_list, move_count, generate_all, unmake_move_no_hash, make_move_no_hash},
-        opname::opening_list,
-        hash::{setup_hash, determine_hash_values, add_hash, clear_hash_drafts},
-        game::{global_setup, game_init, CandidateMove},
+        hash::{setup_hash, determine_hash_values},
+        game::{global_setup, game_init},
         stubs::*,
-
         myrandom::{my_random},
         error::fatal_error,
-        globals::{board, piece_count, pv, pv_depth},
-        midgame::{toggle_midgame_abort_check, toggle_midgame_hash_usage, tree_search},
-        timer::{toggle_abort_check, clear_panic_abort, last_panic_check},
+        globals::{board, piece_count, pv},
+        midgame::{toggle_midgame_abort_check, toggle_midgame_hash_usage},
+        timer::{toggle_abort_check},
         eval::toggle_experimental,
-        safemem::{safe_malloc, safe_realloc},
+        safemem::{safe_malloc},
         end::end_game,
-        getcoeff::remove_coeffs,
         counter::reset_counter,
         zebra::{EvaluationType, _IO_FILE}
     }
