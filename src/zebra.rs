@@ -19,15 +19,16 @@ use crate::{
         osfbook::{set_deviation_value, reset_book_search, set_slack, find_opening_name, print_move_alternatives, fill_move_alternatives, set_draw_mode, set_game_mode},
         learn::{store_move, clear_stored_game, learn_game, set_learning_parameters, init_learn},
         eval::toggle_experimental,
-        thordb::{choose_thor_opening_move, print_thor_matches, get_black_average_score, get_black_median_score, get_white_win_count, get_draw_count, get_black_win_count, get_match_count, database_search, get_thor_game_size, get_total_game_count, read_game_database, read_tournament_database, read_player_database, init_thor_database},
         getcoeff::remove_coeffs,
         myrandom::{my_random, my_srandom}
     }
 };
 use std::ptr::null_mut;
-use engine::src::game::{generic_game_init, BoardSource, FileBoardSource, generic_compute_move, ComputeMoveLogger, ComputeMoveOutput};
+use engine::src::game::{generic_game_init};
 use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler};
 use crate::src::learn::LibcLearner;
+use crate::src::thordb::{read_game_database, read_tournament_database, read_player_database, print_thor_matches};
+use engine::src::thordb::{init_thor_database, get_total_game_count, get_thor_game_size, choose_thor_opening_move};
 
 
 pub type _IO_wide_data = std::ffi::c_void;
@@ -1106,19 +1107,11 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     let mut curr_move: i32 = 0;
     let mut resp_move: i32 = 0;
     let mut timed_search: i32 = 0;
-    let mut black_hash1: i32 = 0;
-    let mut black_hash2: i32 = 0;
-    let mut white_hash1: i32 = 0;
-    let mut white_hash2: i32 = 0;
     let mut provided_move_count: i32 = 0;
     let mut col: i32 = 0;
     let mut row: i32 = 0;
     let mut empties: i32 = 0;
     let mut provided_move: [i32; 61] = [0; 61];
-    let mut best_trans1: u32 = 0;
-    let mut best_trans2: u32 = 0;
-    let mut played_trans1: u32 = 0;
-    let mut played_trans2: u32 = 0;
     let mut output_stream = 0 as *mut FILE;
     /* Decode the predefined move sequence */
     if move_string.is_null() {
@@ -1186,14 +1179,14 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         white_moves[i as usize] = -(1 as i32);
         i += 1
     }
-    black_hash1 = my_random() as i32;
-    black_hash2 = my_random() as i32;
-    white_hash1 = my_random() as i32;
-    white_hash2 = my_random() as i32;
-    best_trans1 = my_random() as u32;
-    best_trans2 = my_random() as u32;
-    played_trans1 = my_random() as u32;
-    played_trans2 = my_random() as u32;
+    let _black_hash1 = my_random() as i32;
+    let _black_hash2 = my_random() as i32;
+    let _white_hash1 = my_random() as i32;
+    let _white_hash2 = my_random() as i32;
+    let best_trans1 = my_random() as u32;
+    let best_trans2 = my_random() as u32;
+    let played_trans1 = my_random() as u32;
+    let played_trans2 = my_random() as u32;
     while game_in_progress() != 0 && disks_played < provided_move_count {
         remove_coeffs(disks_played);
         generate_all(side_to_move);
