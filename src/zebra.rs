@@ -6,18 +6,18 @@ pub use ::engine::src::zebra::*;
 
 use crate::{
     src::{
-        game::{compute_move, toggle_human_openings, game_init, toggle_status_log, global_terminate, global_setup},
-        search::{full_pv, full_pv_depth, nodes, disc_count, produce_compact_eval, total_time, total_evaluations, total_nodes},
+        game::{compute_move, toggle_human_openings, toggle_status_log, global_terminate, global_setup},
+        search::{full_pv, full_pv_depth, nodes, disc_count, produce_compact_eval, total_time, total_nodes},
         display::{echo, display_move, display_board, set_move_list, set_evals, set_names, set_times, dumpch, display_pv, toggle_smart_buffer_management},
-        timer::{get_real_timer, determine_move_time, start_move, clear_panic_abort, toggle_abort_check},
+        timer::{get_real_timer, determine_move_time, start_move, clear_panic_abort},
         counter::{counter_value, add_counter, reset_counter, adjust_counter, CounterType},
         error::fatal_error,
         globals::{white_moves, score_sheet_row, black_moves, board},
         stubs::*,
-        moves::{disks_played, make_move, valid_move, unmake_move, move_count, generate_all, game_in_progress, move_list, get_move},
+        moves::{disks_played, make_move, valid_move, unmake_move, move_count, generate_all, game_in_progress, get_move},
         hash::{setup_hash, set_hash_transformation},
-        osfbook::{set_deviation_value, reset_book_search, set_slack, find_opening_name, print_move_alternatives, fill_move_alternatives, set_draw_mode, set_game_mode},
-        learn::{store_move, clear_stored_game, learn_game, set_learning_parameters, init_learn},
+        osfbook::{set_deviation_value, reset_book_search, set_slack, find_opening_name, print_move_alternatives, set_draw_mode, set_game_mode},
+        learn::{store_move, clear_stored_game, init_learn},
         eval::toggle_experimental,
         getcoeff::remove_coeffs,
         myrandom::{my_random, my_srandom}
