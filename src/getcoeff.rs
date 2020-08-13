@@ -1,9 +1,4 @@
-use crate::src::stubs::{fclose, fscanf, fopen, gzclose, gzopen, strcpy, free, printf, gzgetc, exit};
-
-
-
-
-
+use crate::src::stubs::{fclose, fscanf, fopen, printf, gzgetc};
 use crate::src::zebra::_IO_FILE;
 pub use engine::src::getcoeff::*;
 use crate::src::getcoeff::zlib_source::ZLibSource;
