@@ -5,7 +5,8 @@ members = [
     "tune8db",
     "scrzebra",
     "practice",
-    "enddev"
+    "enddev",
+    "wasm-simple"
 ]
 
 [package]

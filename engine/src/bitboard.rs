@@ -25,9 +25,7 @@ pub static mut square_mask: [BitBoard; 100] =
   This is done using some bitfiddling tricks.
 */
 
-pub unsafe fn non_iterative_popcount(mut n1: u32,
-                                                mut n2: u32)
- -> u32 {
+pub fn non_iterative_popcount(mut n1: u32, mut n2: u32) -> u32 {
     n1 = n1.wrapping_sub(n1 >> 1 as i32 & 0x55555555 as u32);
     n2 = n2.wrapping_sub(n2 >> 1 as i32 & 0x55555555 as u32);
     n1 =
