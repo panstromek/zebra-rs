@@ -2266,7 +2266,7 @@ pub unsafe extern "C" fn write_log(mut iteration: libc::c_int) {
 pub unsafe extern "C" fn initialize_solution(mut base: *const libc::c_char,
                                              mut item: *mut InfoItem,
                                              mut count: libc::c_int,
-                                             mut my_mirror:
+                                             _my_mirror:
                                              *mut libc::c_int) {
     let mut file_name: [libc::c_char; 32] = [0; 32];
     let mut vals: *mut libc::c_float = 0 as *mut libc::c_float;

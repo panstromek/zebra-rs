@@ -1,4 +1,4 @@
-use crate::src::stubs::{printf, fabs};
+use crate::src::stubs::{printf};
 pub use engine::src::timer::*;
 
 #[no_mangle]

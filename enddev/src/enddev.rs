@@ -169,13 +169,13 @@ unsafe extern "C" fn read_game(mut stream: *mut FILE,
                                 buffer[(2 as libc::c_int * i) as usize] as
                                     libc::c_int;
                             __res =
-                                (if __c < -(128 as libc::c_int) ||
+                                if __c < -(128 as libc::c_int) ||
                                     __c > 255 as libc::c_int {
                                     __c
                                 } else {
                                     *(*__ctype_tolower_loc()).offset(__c as
                                         isize)
-                                })
+                                }
                         } else {
                             __res =
                                 tolower(buffer[(2 as libc::c_int * i) as

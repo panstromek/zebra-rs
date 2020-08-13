@@ -1,9 +1,9 @@
 use crate::src::stubs::{fclose, fscanf, fopen, gzclose, gzopen, strcpy, free, printf, gzgetc, exit};
-use crate::src::globals::{board, piece_count};
-use crate::src::moves::disks_played;
-use crate::src::error::fatal_error;
-use crate::src::safemem::safe_malloc;
-use crate::src::patterns::{flip8, pow3};
+
+
+
+
+
 use crate::src::zebra::_IO_FILE;
 pub use engine::src::getcoeff::*;
 use crate::src::getcoeff::zlib_source::ZLibSource;

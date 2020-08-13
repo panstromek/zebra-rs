@@ -1,27 +1,20 @@
-use crate::src::globals::{pv_depth, pv, board, piece_count, score_sheet_row, black_moves};
+use crate::src::globals::{pv_depth, pv, board, piece_count};
 use crate::src::search::{nodes, complete_pv, get_ponder_move, total_nodes, evaluations, total_evaluations, total_time, set_current_eval, create_eval_info, root_eval, force_return, clear_pv, evals, disc_count, negate_current_eval, clear_ponder_move, set_ponder_move, float_move, sort_moves, setup_search};
-use crate::src::counter::{counter_value, add_counter, reset_counter};
+use crate::src::counter::{reset_counter};
 use crate::src::stubs::{fclose, free, fprintf, abs, fputs, fopen, puts, printf, fgets, time, ctime, strcpy, stdout};
 use crate::src::display::{display_optimal_line, echo, display_pv, display_status, produce_eval_text, send_status, send_status_time, send_status_pv, send_status_nodes, clear_status, reset_buffer_display, display_board};
 use crate::src::timer::{clear_panic_abort, get_elapsed_time, is_panic_abort, clear_ponder_times, determine_move_time, toggle_abort_check, start_move, ponder_depth, add_ponder_time, get_real_timer, init_timer};
-use crate::src::end::{end_game, setup_end};
+
 use crate::src::moves::{disks_played, valid_move, move_list, move_count, generate_all, init_moves, unmake_move, make_move};
 use crate::src::midgame::{is_midgame_abort, middle_game, toggle_midgame_hash_usage, toggle_midgame_abort_check, clear_midgame_abort, calculate_perturbation, toggle_perturbation_usage, setup_midgame};
 use crate::src::osfbook::{get_book_move, fill_move_alternatives, check_forced_opening, get_candidate, get_candidate_count, clear_osf};
-use crate::src::thordb::{choose_thor_opening_move, get_thor_game_move, get_match_count, database_search};
-use crate::src::error::fatal_error;
-use crate::src::myrandom::{my_random, my_srandom};
+
+
+use crate::src::myrandom::{my_random};
 use crate::src::getcoeff::{remove_coeffs, pattern_evaluation, clear_coeffs, load_and_apply_adjustments, load_coeff_adjustments, CoeffAdjustments};
-use crate::src::hash::{determine_hash_values, set_hash_transformation, find_hash, HashEntry, free_hash, init_hash};
-use crate::src::unflip::init_flip_stack;
-use crate::src::eval::init_eval;
-use crate::src::stable::init_stable;
-use crate::src::probcut::init_probcut;
-use crate::src::patterns::init_patterns;
-use crate::src::bitboard::init_bitboard;
+use crate::src::hash::{determine_hash_values, set_hash_transformation, find_hash, HashEntry};
 use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub use engine::src::game::*;
-use engine::src::getcoeff::{init_memory_handler, process_coeffs_from_fn_source, init_coeffs_calculate_patterns, post_init_coeffs, eval_adjustment};
 use crate::src::getcoeff::zlib_source::ZLibSource;
 
 pub type __off_t = i64;
@@ -148,7 +141,7 @@ pub unsafe fn game_init(mut file_name: *const i8, mut side_to_move: *mut i32) {
 */
 
 pub unsafe fn ponder_move(mut side_to_move: i32,
-                                     mut book: i32,
+                                     _book: i32,
                                      mut mid: i32,
                                      mut exact: i32,
                                      mut wld: i32) {
