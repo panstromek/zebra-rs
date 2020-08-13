@@ -22,7 +22,7 @@ use crate::{
     }
 };
 pub use engine::src::osfbook::*;
-use engine::src::game::{engine_game_init, setup_non_file_based_game};
+
 use crate::src::display::display_board;
 use engine::src::midgame::middle_game;
 use engine::src::myrandom::my_srandom;

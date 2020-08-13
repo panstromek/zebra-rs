@@ -163,7 +163,7 @@ pub unsafe extern "C" fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
 */
 #[no_mangle]
 pub unsafe extern "C" fn send_solve_status(mut empties: i32,
-                                       mut side_to_move: i32,
+                                       _side_to_move: i32,
                                        mut eval_info: *mut EvaluationType) {
     let mut eval_str = 0 as *mut i8;
     let mut node_val: f64 = 0.;

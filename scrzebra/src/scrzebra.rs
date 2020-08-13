@@ -1,7 +1,7 @@
 #![allow(dead_code, mutable_transmutes, non_camel_case_types, non_snake_case,
 non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types)]
-use ::c2rust_out::*;
+
 use engine::src::game::{global_terminate, set_komi, toggle_human_openings, toggle_status_log};
 use engine::src::myrandom::my_srandom;
 use engine::src::stubs::{time, strlen};
@@ -14,7 +14,7 @@ use engine::src::moves::disks_played;
 use engine::src::globals::{board, score_sheet_row, white_moves, black_moves};
 use engine::src::hash::setup_hash;
 use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack};
-use c2rust_out::src::zebra::{_IO_codecvt, _IO_wide_data, _IO_marker, _IO_FILE};
+use c2rust_out::src::zebra::{_IO_FILE};
 use c2rust_out::src::learn::init_learn;
 use c2rust_out::src::game::{global_setup, compute_move, game_init};
 use c2rust_out::src::stubs::strstr;
