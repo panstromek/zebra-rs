@@ -18,7 +18,7 @@ pub use engine::src::moves::*;
    Prompts the user to enter a move and checks if the move is legal.
 */
 #[no_mangle]
-pub unsafe extern "C" fn get_move(mut side_to_move: i32)
+pub unsafe extern "C" fn get_move(side_to_move: i32)
  -> i32 {
     let mut buffer: [i8; 255] = [0; 255];
     let mut ready = 0 as i32;

@@ -76,7 +76,7 @@ pub unsafe extern "C" fn midgame_display_ponder_move(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn midgame_display_status(mut side_to_move: i32, mut max_depth: i32, eval_info: *mut EvaluationType, mut eval_str: *mut i8, mut node_val: f64, mut depth: i32) {
+pub unsafe extern "C" fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: *mut EvaluationType, mut eval_str: *mut i8, mut node_val: f64, depth: i32) {
     clear_status();
     send_status(b"--> \x00" as *const u8 as *const i8);
     if is_panic_abort() != 0 || force_return != 0 {

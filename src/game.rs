@@ -31,8 +31,8 @@ pub static mut log_file_path: [i8; 2048] = [0; 2048];
    Initialize the different sub-systems.
 */
 
-pub unsafe fn global_setup(mut use_random: i32,
-                                      mut hash_bits: i32) {
+pub unsafe fn global_setup(use_random: i32,
+                                      hash_bits: i32) {
     LogFileHandler::on_global_setup();
     let coeff_adjustments = load_coeff_adjustments();
     engine_global_setup(use_random, hash_bits, coeff_adjustments, ZLibSource::new());
@@ -53,7 +53,7 @@ unsafe fn setup_log_file() {
     strcpy(log_file_path.as_mut_ptr(),
            b"zebra.log\x00" as *const u8 as *const i8);
     if use_log_file != 0 {
-        let mut log_file =
+        let log_file =
             fopen(log_file_path.as_mut_ptr(),
                   b"w\x00" as *const u8 as *const i8);
         if !log_file.is_null() {
@@ -78,8 +78,8 @@ unsafe fn setup_log_file() {
    SETUP_GAME
    Prepares the board.
 */
-unsafe fn setup_game(mut file_name: *const i8,
-                                mut side_to_move: *mut i32) {
+unsafe fn setup_game(file_name: *const i8,
+                                side_to_move: *mut i32) {
     generic_setup_game::<LibcBoardFileSource>(file_name, side_to_move)
 }
 pub struct LibcBoardFileSource {
@@ -130,7 +130,7 @@ impl BoardSource for LibcBoardFileSource {
    specified by FILE_NAME.
 */
 
-pub unsafe fn game_init(mut file_name: *const i8, mut side_to_move: *mut i32) {
+pub unsafe fn game_init(file_name: *const i8, side_to_move: *mut i32) {
     generic_game_init::<LibcBoardFileSource>(file_name, side_to_move);
 }
 /*
@@ -140,11 +140,11 @@ pub unsafe fn game_init(mut file_name: *const i8, mut side_to_move: *mut i32) {
   with useful scores and moves.
 */
 
-pub unsafe fn ponder_move(mut side_to_move: i32,
+pub unsafe fn ponder_move(side_to_move: i32,
                                      _book: i32,
-                                     mut mid: i32,
-                                     mut exact: i32,
-                                     mut wld: i32) {
+                                     mid: i32,
+                                     exact: i32,
+                                     wld: i32) {
     let mut eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
                        res: WON_POSITION,
@@ -303,8 +303,8 @@ pub unsafe fn ponder_move(mut side_to_move: i32,
   except for the best.
 */
 
-pub unsafe fn extended_compute_move(mut side_to_move: i32,
-                                               mut book_only: i32,
+pub unsafe fn extended_compute_move(side_to_move: i32,
+                                               book_only: i32,
                                                mut book: i32,
                                                mut mid: i32,
                                                mut exact: i32,
@@ -437,7 +437,7 @@ pub unsafe fn extended_compute_move(mut side_to_move: i32,
     } else {
         /* Make searches for moves not in the database */
         let mut shallow_depth: i32 = 0;
-        let mut empties_0 = 60 as i32 - disks_played;
+        let empties_0 = 60 as i32 - disks_played;
         book = 0 as i32;
         best_score = -(12345678 as i32);
         if game_evaluated_count > 0 as i32 {
@@ -451,7 +451,7 @@ pub unsafe fn extended_compute_move(mut side_to_move: i32,
         if empties_0 < 12 as i32 {
             shallow_depth = 1 as i32
         } else {
-            let mut max_depth =
+            let max_depth =
                 if mid > (if exact > wld { exact } else { wld }) {
                     mid
                 } else if exact > wld { exact } else { wld };
@@ -838,7 +838,7 @@ pub unsafe fn extended_compute_move(mut side_to_move: i32,
              sorted w.r.t. the order in evaluated_list. */
             i = game_evaluated_count - 1 as i32;
             while i >= 0 as i32 {
-                let mut this_move_0 = evaluated_list[i as usize].move_0;
+                let this_move_0 = evaluated_list[i as usize].move_0;
                 j = 0 as i32;
                 while j != unsearched_count &&
                           unsearched_move[j as usize] != this_move_0 {
@@ -896,10 +896,10 @@ pub unsafe fn extended_compute_move(mut side_to_move: i32,
   well as for the best move in the position (if it is any other move).
 */
 
-pub unsafe fn perform_extended_solve(mut side_to_move: i32,
-                                                mut actual_move: i32,
-                                                mut book: i32,
-                                                mut exact_solve:
+pub unsafe fn perform_extended_solve(side_to_move: i32,
+                                                actual_move: i32,
+                                                book: i32,
+                                                exact_solve:
                                                     i32) {
     let mut i: i32 = 0;
     let mut mid: i32 = 0;
@@ -1082,17 +1082,17 @@ pub unsafe fn perform_extended_solve(mut side_to_move: i32,
    COMPUTE_MOVE
    Returns the best move in a position given search parameters.
 */
-pub unsafe fn compute_move(mut side_to_move: i32,
-                           mut update_all: i32,
-                           mut my_time: i32,
-                           mut my_incr: i32,
-                           mut timed_depth: i32,
-                           mut book: i32,
-                           mut mid: i32,
-                           mut exact: i32,
-                           mut wld: i32,
-                           mut search_forced: i32,
-                           mut eval_info: *mut EvaluationType)
+pub unsafe fn compute_move(side_to_move: i32,
+                           update_all: i32,
+                           my_time: i32,
+                           my_incr: i32,
+                           timed_depth: i32,
+                           book: i32,
+                           mid: i32,
+                           exact: i32,
+                           wld: i32,
+                           search_forced: i32,
+                           eval_info: *mut EvaluationType)
                            -> i32 {
     return generic_compute_move::<LogFileHandler, LibcZebraOutput>(side_to_move, update_all, my_time,
                                 my_incr, timed_depth,
@@ -1107,7 +1107,7 @@ fn display_out_optimal_line() {
     unsafe { display_optimal_line(stdout) }
 }
 
-fn send_move_type_0_status(mut interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64) {
+fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64) {
     unsafe {
         clear_status();
         send_status(b"--> *%2d\x00" as *const u8 as *const i8,
@@ -1235,13 +1235,13 @@ fn echo_compute_move_1(info: &EvaluationType) {
 }
 }
 impl ComputeMoveLogger for LogFileHandler {
-fn create(mut log_file_path_: &mut [i8]) -> Option<Self> {
+fn create(log_file_path_: &mut [i8]) -> Option<Self> {
     let log_file = unsafe {
         fopen(log_file_path_.as_mut_ptr(),
               b"a\x00" as *const u8 as *const i8)
     };
     if !log_file.is_null() {
-        let mut logger = LogFileHandler { log_file };
+        let logger = LogFileHandler { log_file };
         Some(logger)
     } else {
         None
@@ -1251,7 +1251,7 @@ fn create(mut log_file_path_: &mut [i8]) -> Option<Self> {
 fn create_log_file_if_needed() -> Option<Self> {
     unsafe {
         if use_log_file != 0 {
-            let mut log_file_path_ = &mut log_file_path as &mut [i8];
+            let log_file_path_ = &mut log_file_path as &mut [i8];
             Self::create(log_file_path_)
         } else {
             None
@@ -1259,7 +1259,7 @@ fn create_log_file_if_needed() -> Option<Self> {
     }
 }
 
-fn log_moves_generated(mut logger: &mut LogFileHandler, moves_generated: i32, move_list_for_disks_played: &[i32; 64]) {
+fn log_moves_generated(logger: &mut LogFileHandler, moves_generated: i32, move_list_for_disks_played: &[i32; 64]) {
     unsafe {
         fprintf(logger.log_file, b"%d %s: \x00" as *const u8 as *const i8,
                 moves_generated,
@@ -1280,7 +1280,7 @@ fn log_moves_generated(mut logger: &mut LogFileHandler, moves_generated: i32, mo
     }
 }
 
-fn log_best_move_pass(mut logger: &mut LogFileHandler) {
+fn log_best_move_pass(logger: &mut LogFileHandler) {
    unsafe{ fprintf(logger.log_file,
             b"%s: %s\n\x00" as *const u8 as *const i8,
             b"Best move\x00" as *const u8 as *const i8,
@@ -1289,7 +1289,7 @@ fn log_best_move_pass(mut logger: &mut LogFileHandler) {
    }
 }
 
-fn log_best_move(mut logger: &mut LogFileHandler, best_move: i32) {
+fn log_best_move(logger: &mut LogFileHandler, best_move: i32) {
     unsafe {
         fprintf(logger.log_file,
                 b"%s: %c%c  (%s)\n\x00" as *const u8 as
@@ -1319,19 +1319,19 @@ fn log_chosen_move(logger: &mut LogFileHandler, curr_move: i32, info: &Evaluatio
     }
 }
 
-fn log_status(mut logger: &mut LogFileHandler) {
+fn log_status(logger: &mut LogFileHandler) {
     unsafe { display_status(logger.log_file, 1 as i32); }
 }
 
-fn log_optimal_line(mut logger: &mut LogFileHandler) {
+fn log_optimal_line(logger: &mut LogFileHandler) {
     unsafe { display_optimal_line(logger.log_file); }
 }
 
-fn close_logger(mut logger: &mut LogFileHandler) {
+fn close_logger(logger: &mut LogFileHandler) {
     if !logger.log_file.is_null() { unsafe { fclose(logger.log_file); } }
 }
 
-fn log_board(mut logger: &mut LogFileHandler, board_: &mut [i32; 128], side_to_move_: i32) {
+fn log_board(logger: &mut LogFileHandler, board_: &mut [i32; 128], side_to_move_: i32) {
     unsafe {
         display_board(logger.log_file, board_.as_mut_ptr(), side_to_move_,
                       0 as i32, 0 as i32, 0 as i32);
