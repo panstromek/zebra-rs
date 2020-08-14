@@ -84,7 +84,7 @@ pub mod zlib_source {
             unsafe {
                 /* Linux don't support current directory. */
                 strcpy(sPatternFile.as_mut_ptr(), b"coeffs2.bin\x00" as *const u8 as *const i8);
-                let mut coeff_stream = gzopen(sPatternFile.as_mut_ptr(), b"rb\x00" as *const u8 as *const i8);
+                let coeff_stream = gzopen(sPatternFile.as_mut_ptr(), b"rb\x00" as *const u8 as *const i8);
                 if coeff_stream.is_null() {
                     fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
                                 b"Unable to open coefficient file\x00" as *const u8 as
@@ -93,8 +93,8 @@ pub mod zlib_source {
                 let filename_to_report = sPatternFile.as_mut_ptr();
                 /* Check the magic values in the beginning of the file to make sure
                        the file format is right */
-                let mut word1 = get_word(coeff_stream) as i32;
-                let mut word2 = get_word(coeff_stream) as i32;
+                let word1 = get_word(coeff_stream) as i32;
+                let word2 = get_word(coeff_stream) as i32;
                 if word1 != 5358 as i32 || word2 != 9793 as i32 {
                     fatal_error(b"%s: %s\x00" as *const u8 as *const i8,
                                 filename_to_report,
@@ -129,7 +129,7 @@ pub unsafe fn load_and_apply_adjustments() {
 }
 
 pub fn load_coeff_adjustments() -> Option<CoeffAdjustments> {
-    let mut adjust_stream = unsafe {
+    let adjust_stream = unsafe {
         fopen(b"adjust.txt\x00" as *const u8 as *const i8,
               b"r\x00" as *const u8 as *const i8)
     };
@@ -159,7 +159,7 @@ pub fn load_coeff_adjustments() -> Option<CoeffAdjustments> {
 }
 
 #[no_mangle]
-pub unsafe extern "C"  fn report_mirror_symetry_error(mut count: i32, mut i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
+pub unsafe extern "C"  fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
     printf(b"%s @ %d <--> %d of %d\n\x00" as *const u8 as
                *const i8,
            b"Mirror symmetry error\x00" as *const u8 as

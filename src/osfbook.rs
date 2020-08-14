@@ -178,8 +178,8 @@ pub unsafe fn examine_tree() {
            (stop_time - start_time) as i32);
     puts(b"\x00" as *const u8 as *const i8);
 }
-unsafe extern "C" fn int_compare(mut i1: *const std::ffi::c_void,
-                                 mut i2: *const std::ffi::c_void) -> i32 {
+unsafe extern "C" fn int_compare(i1: *const std::ffi::c_void,
+                                 i2: *const std::ffi::c_void) -> i32 {
     return *(i1 as *mut i32) - *(i2 as *mut i32);
 }
 /*
@@ -187,8 +187,8 @@ unsafe extern "C" fn int_compare(mut i1: *const std::ffi::c_void,
    Describe the status of the nodes in the tree.
 */
 
-pub unsafe fn book_statistics(mut full_statistics: i32) {
-    let mut strata: [f64; 11] =
+pub unsafe fn book_statistics(full_statistics: i32) {
+    let strata: [f64; 11] =
         [0.01f64, 0.02f64, 0.03f64, 0.05f64, 0.10f64, 0.30f64, 0.50f64,
          0.70f64, 0.90f64, 0.99f64, 1.01f64];
     let mut eval_strata: [f64; 10] = [0.; 10];
@@ -417,7 +417,7 @@ pub unsafe fn book_statistics(mut full_statistics: i32) {
    to both players.
 */
 
-pub unsafe fn display_doubly_optimal_line(mut original_side_to_move:
+pub unsafe fn display_doubly_optimal_line(original_side_to_move:
                                                          i32) {
     let mut i: i32 = 0;
     let mut done: i32 = 0;
@@ -531,13 +531,13 @@ pub unsafe fn display_doubly_optimal_line(mut original_side_to_move:
   Adds a new game to the game tree.
 */
 
-pub unsafe fn add_new_game(mut move_count_0: i32,
-                                      mut game_move_list: *mut i16,
-                                      mut min_empties: i32,
-                                      mut max_full_solve: i32,
-                                      mut max_wld_solve: i32,
-                                      mut update_path: i32,
-                                      mut private_game: i32) {
+pub unsafe fn add_new_game(move_count_0: i32,
+                                      game_move_list: *mut i16,
+                                      min_empties: i32,
+                                      max_full_solve: i32,
+                                      max_wld_solve: i32,
+                                      update_path: i32,
+                                      private_game: i32) {
     let mut dummy_info =
         EvaluationType{type_0: MIDGAME_EVAL,
                        res: WON_POSITION,
@@ -891,10 +891,10 @@ pub unsafe fn add_new_game(mut move_count_0: i32,
    incorporates them into the game tree.
 */
 
-pub unsafe fn build_tree(mut file_name: *const i8,
-                                    mut max_game_count: i32,
-                                    mut max_diff: i32,
-                                    mut min_empties: i32) {
+pub unsafe fn build_tree(file_name: *const i8,
+                                    max_game_count: i32,
+                                    max_diff: i32,
+                                    min_empties: i32) {
     let mut move_string: [i8; 200] = [0; 200];
     let mut line_buffer: [i8; 1000] = [0; 1000];
     let mut sign: i8 = 0;
@@ -982,7 +982,7 @@ pub unsafe fn build_tree(mut file_name: *const i8,
    Reads an existing ASCII database file.
 */
 
-pub unsafe fn read_text_database(mut file_name:
+pub unsafe fn read_text_database(file_name:
                                                 *const i8) {
     let mut i: i32 = 0;
     let mut magic1: i32 = 0;
@@ -1044,7 +1044,7 @@ pub unsafe fn read_text_database(mut file_name:
    Reads a binary database file.
 */
 
-pub unsafe fn read_binary_database(mut file_name:
+pub unsafe fn read_binary_database(file_name:
                                                   *const i8) {
     let mut i: i32 = 0;
     let mut new_book_node_count: i32 = 0;
@@ -1123,14 +1123,14 @@ pub unsafe fn read_binary_database(mut file_name:
    Merges a binary database file with the current book.
 */
 
-pub unsafe fn merge_binary_database(mut file_name:
+pub unsafe fn merge_binary_database(file_name:
                                                    *const i8) {
     let mut start_time: time_t = 0;
     time(&mut start_time);
     printf(b"Importing binary opening database... \x00" as *const u8 as
                *const i8);
     fflush(stdout);
-    let mut stream =
+    let stream =
         fopen(file_name, b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() {
         fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
@@ -1197,12 +1197,12 @@ pub unsafe fn merge_binary_database(mut file_name:
               ::std::mem::size_of::<u16>() as u64,
               1 as i32 as size_t, stream);
         /* Look up node in existing database. */
-        let mut slot =
+        let slot =
             probe_hash_table(merge_node.hash_val1, merge_node.hash_val2);
         if slot == -(1 as i32) ||
                *book_hash_table.offset(slot as isize) == -(1 as i32) {
             /* New position, add it without modifications. */
-            let mut this_node =
+            let this_node =
                 create_BookNode(merge_node.hash_val1, merge_node.hash_val2,
                                 merge_node.flags);
             *node.offset(this_node as isize) = merge_node;
@@ -1210,7 +1210,7 @@ pub unsafe fn merge_binary_database(mut file_name:
         } else {
             /* Existing position, use the book from the merge file if it contains
             better endgame information. */
-            let mut index = *book_hash_table.offset(slot as isize);
+            let index = *book_hash_table.offset(slot as isize);
             if merge_node.flags as i32 & 16 as i32 != 0 &&
                    (*node.offset(index as isize)).flags as i32 &
                        16 as i32 == 0 ||
@@ -1238,7 +1238,7 @@ pub unsafe fn merge_binary_database(mut file_name:
    Writes the database to an ASCII file.
 */
 
-pub unsafe fn write_text_database(mut file_name:
+pub unsafe fn write_text_database(file_name:
                                                  *const i8) {
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
@@ -1280,7 +1280,7 @@ pub unsafe fn write_text_database(mut file_name:
    Writes the database to a binary file.
 */
 
-pub unsafe fn write_binary_database(mut file_name:
+pub unsafe fn write_binary_database(file_name:
                                                    *const i8) {
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
@@ -1348,7 +1348,7 @@ pub unsafe fn write_binary_database(mut file_name:
    Creates and saves a compressed database file.
 */
 
-pub unsafe fn write_compressed_database(mut file_name:
+pub unsafe fn write_compressed_database(file_name:
                                                        *const i8) {
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
@@ -1455,17 +1455,17 @@ pub unsafe fn write_compressed_database(mut file_name:
   Uncompress the subtree below the current node. This is done
   in preorder.
 */
-unsafe fn do_uncompress(mut depth: i32,
-                                   mut stream: *mut FILE,
-                                   mut node_index: *mut i32,
-                                   mut child_index: *mut i32,
-                                   mut child_count: *mut i16,
-                                   mut child: *mut i16,
-                                   mut black_score: *mut i16,
-                                   mut white_score: *mut i16,
-                                   mut alt_move: *mut i16,
-                                   mut alt_score: *mut i16,
-                                   mut flags: *mut u16) {
+unsafe fn do_uncompress(depth: i32,
+                                   stream: *mut FILE,
+                                   node_index: *mut i32,
+                                   child_index: *mut i32,
+                                   child_count: *mut i16,
+                                   child: *mut i16,
+                                   black_score: *mut i16,
+                                   white_score: *mut i16,
+                                   alt_move: *mut i16,
+                                   alt_score: *mut i16,
+                                   flags: *mut u16) {
     let mut i: i32 = 0;
     let mut side_to_move: i32 = 0;
     let mut saved_child_index: i32 = 0;
@@ -1539,9 +1539,9 @@ unsafe fn do_uncompress(mut depth: i32,
   and unpacks it into an ordinary .bin file.
 */
 
-pub unsafe fn unpack_compressed_database(mut in_name:
+pub unsafe fn unpack_compressed_database(in_name:
                                                         *const i8,
-                                                    mut out_name:
+                                                    out_name:
                                                         *const i8) {
     let mut i: i32 = 0;
     let mut dummy: i32 = 0;
@@ -1689,9 +1689,9 @@ pub unsafe fn unpack_compressed_database(mut in_name:
   if they don't describe the same set of positions, something has gone awry.
 */
 
-pub unsafe fn merge_position_list(mut script_file:
+pub unsafe fn merge_position_list(script_file:
                                                  *const i8,
-                                             mut output_file:
+                                             output_file:
                                                  *const i8) {
     let mut script_buffer: [i8; 1024] = [0; 1024];
     let mut result_buffer: [i8; 1024] = [0; 1024];
@@ -2143,7 +2143,7 @@ pub unsafe extern "C" fn report_unwanted_book_draw(this_move: i32) {
    any flag combination.
 */
 
-pub unsafe fn print_move_alternatives(mut side_to_move:
+pub unsafe fn print_move_alternatives(side_to_move:
                                                      i32) {
     let mut i: i32 = 0;
     let mut sign: i32 = 0;
@@ -2280,9 +2280,9 @@ pub unsafe extern "C" fn report_in_get_book_move_2(chosen_score: i32, chosen_ind
   DUPSTR
   A strdup clone.
 */
-unsafe fn dupstr(mut str: *const i8)
+unsafe fn dupstr(str: *const i8)
  -> *mut i8 {
-    let mut new_str =
+    let new_str =
         malloc(strlen(str).wrapping_add(1 as i32 as u64)) as
             *mut i8;
     strcpy(new_str, str);
@@ -2294,7 +2294,7 @@ unsafe fn dupstr(mut str: *const i8)
   to a hash table representation containing the same information.
 */
 
-pub unsafe fn convert_opening_list(mut base_file:
+pub unsafe fn convert_opening_list(base_file:
                                                   *const i8) {
     let mut in_stream =
         0 as *mut FILE; /* Max number of opening names occurring */
@@ -2507,7 +2507,7 @@ pub unsafe fn convert_opening_list(mut base_file:
    Makes sure all data structures are initialized.
 */
 
-pub unsafe fn init_osf(mut do_global_setup: i32) {
+pub unsafe fn init_osf(do_global_setup: i32) {
     engine_init_osf();
     if do_global_setup != 0 {
         global_setup(0 as i32, 19 as i32);
@@ -2529,9 +2529,9 @@ static mut correction_script_name: *const libc::c_char = 0 as *const libc::c_cha
   Output the position and its value according to the database
   to file.
 */
-unsafe extern "C" fn export_position(mut side_to_move: libc::c_int,
-                                     mut score: libc::c_int,
-                                     mut target_file: *mut FILE) {
+unsafe extern "C" fn export_position(side_to_move: libc::c_int,
+                                     score: libc::c_int,
+                                     target_file: *mut FILE) {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut pos: libc::c_int = 0;
@@ -2577,11 +2577,11 @@ unsafe extern "C" fn export_position(mut side_to_move: libc::c_int,
    Calculates the book-only minimax value of node INDEX,
    not caring about deviations from the database.
 */
-unsafe extern "C" fn do_restricted_minimax(mut index: libc::c_int,
-                                           mut low: libc::c_int,
-                                           mut high: libc::c_int,
-                                           mut target_file: *mut FILE,
-                                           mut minimax_values:
+unsafe extern "C" fn do_restricted_minimax(index: libc::c_int,
+                                           low: libc::c_int,
+                                           high: libc::c_int,
+                                           target_file: *mut FILE,
+                                           minimax_values:
                                            *mut libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut child: libc::c_int = 0;
@@ -2668,9 +2668,9 @@ unsafe extern "C" fn do_restricted_minimax(mut index: libc::c_int,
    not
 */
 #[no_mangle]
-pub unsafe extern "C" fn restricted_minimax_tree(mut low: libc::c_int,
-                                                 mut high: libc::c_int,
-                                                 mut pos_file_name:
+pub unsafe extern "C" fn restricted_minimax_tree(low: libc::c_int,
+                                                 high: libc::c_int,
+                                                 pos_file_name:
                                                  *const libc::c_char) {
     let mut pos_file: *mut FILE = 0 as *mut FILE;
     let mut i: libc::c_int = 0;
@@ -2710,8 +2710,8 @@ pub unsafe extern "C" fn restricted_minimax_tree(mut low: libc::c_int,
    DO_MIDGAME_STATISTICS
    Recursively makes sure a subtree is evaluated to the specified depth.
 */
-unsafe extern "C" fn do_midgame_statistics(mut index: libc::c_int,
-                                           mut spec: StatisticsSpec) {
+unsafe extern "C" fn do_midgame_statistics(index: libc::c_int,
+                                           spec: StatisticsSpec) {
     let mut dummy_info: EvaluationType =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -2818,13 +2818,13 @@ unsafe extern "C" fn do_midgame_statistics(mut index: libc::c_int,
    Calculates the minimax values of all nodes in the tree.
 */
 #[no_mangle]
-pub unsafe extern "C" fn generate_midgame_statistics(mut max_depth:
+pub unsafe extern "C" fn generate_midgame_statistics(max_depth:
                                                      libc::c_int,
-                                                     mut probability:
+                                                     probability:
                                                      libc::c_double,
-                                                     mut max_diff:
+                                                     max_diff:
                                                      libc::c_int,
-                                                     mut statistics_file_name:
+                                                     statistics_file_name:
                                                      *const libc::c_char) {
     let mut i: libc::c_int = 0;
     let mut start_time: time_t = 0;
@@ -2863,11 +2863,11 @@ pub unsafe extern "C" fn generate_midgame_statistics(mut max_depth:
    exact score in an endgame position.
 */
 unsafe extern "C" fn endgame_correlation(mut side_to_move: libc::c_int,
-                                         mut best_score: libc::c_int,
-                                         mut best_move: libc::c_int,
-                                         mut min_disks: libc::c_int,
-                                         mut max_disks: libc::c_int,
-                                         mut spec: StatisticsSpec) {
+                                         best_score: libc::c_int,
+                                         best_move: libc::c_int,
+                                         min_disks: libc::c_int,
+                                         max_disks: libc::c_int,
+                                         spec: StatisticsSpec) {
     let mut dummy_info: EvaluationType =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -2947,8 +2947,8 @@ unsafe extern "C" fn endgame_correlation(mut side_to_move: libc::c_int,
    Recursively makes sure a subtree is evaluated to
    the specified depth.
 */
-unsafe extern "C" fn do_endgame_statistics(mut index: libc::c_int,
-                                           mut spec: StatisticsSpec) {
+unsafe extern "C" fn do_endgame_statistics(index: libc::c_int,
+                                           spec: StatisticsSpec) {
     let mut dummy_info: EvaluationType =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -3020,13 +3020,13 @@ unsafe extern "C" fn do_endgame_statistics(mut index: libc::c_int,
    Calculates the minimax values of all nodes in the tree.
 */
 #[no_mangle]
-pub unsafe extern "C" fn generate_endgame_statistics(mut max_depth:
+pub unsafe extern "C" fn generate_endgame_statistics(max_depth:
                                                      libc::c_int,
-                                                     mut probability:
+                                                     probability:
                                                      libc::c_double,
-                                                     mut max_diff:
+                                                     max_diff:
                                                      libc::c_int,
-                                                     mut statistics_file_name:
+                                                     statistics_file_name:
                                                      *const libc::c_char) {
     let mut i: libc::c_int = 0;
     let mut start_time: time_t = 0;
@@ -3066,8 +3066,8 @@ pub unsafe extern "C" fn generate_endgame_statistics(mut max_depth:
    and <= HIGH discs played. FLAGS specifies what kind of information
    is to be cleared - midgame, WLD or exact.
 */
-unsafe extern "C" fn do_clear(mut index: libc::c_int, mut low: libc::c_int,
-                              mut high: libc::c_int, mut flags: libc::c_int) {
+unsafe extern "C" fn do_clear(index: libc::c_int, low: libc::c_int,
+                              high: libc::c_int, flags: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut child: libc::c_int = 0;
     let mut side_to_move: libc::c_int = 0;
@@ -3124,9 +3124,9 @@ unsafe extern "C" fn do_clear(mut index: libc::c_int, mut low: libc::c_int,
    Resets the labels on nodes satisfying certain conditions.
 */
 #[no_mangle]
-pub unsafe extern "C" fn clear_tree(mut low: libc::c_int,
-                                    mut high: libc::c_int,
-                                    mut flags: libc::c_int) {
+pub unsafe extern "C" fn clear_tree(low: libc::c_int,
+                                    high: libc::c_int,
+                                    flags: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
@@ -3162,11 +3162,11 @@ pub unsafe extern "C" fn clear_tree(mut low: libc::c_int,
    Performs endgame correction (WLD or full solve) of a node
    and (recursively) the subtree below it.
 */
-unsafe extern "C" fn do_correct(mut index: libc::c_int,
-                                mut max_empty: libc::c_int,
-                                mut full_solve: libc::c_int,
-                                mut target_name: *const libc::c_char,
-                                mut move_hist: *mut libc::c_char) {
+unsafe extern "C" fn do_correct(index: libc::c_int,
+                                max_empty: libc::c_int,
+                                full_solve: libc::c_int,
+                                target_name: *const libc::c_char,
+                                move_hist: *mut libc::c_char) {
     let mut dummy_info: EvaluationType =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -3334,7 +3334,7 @@ unsafe extern "C" fn do_correct(mut index: libc::c_int,
                 }
             } else {
                 /* Defer solving to a standalone scripted solver */
-                let mut target_file: *mut FILE =
+                let target_file: *mut FILE =
                     fopen(target_name,
                           b"a\x00" as *const u8 as *const libc::c_char);
                 if !target_file.is_null() {
@@ -3396,7 +3396,7 @@ unsafe extern "C" fn do_correct(mut index: libc::c_int,
   mode of operation).
 */
 #[no_mangle]
-pub unsafe extern "C" fn set_output_script_name(mut script_name:
+pub unsafe extern "C" fn set_output_script_name(script_name:
                                                 *const libc::c_char) {
     correction_script_name = script_name;
 }
@@ -3405,8 +3405,8 @@ pub unsafe extern "C" fn set_output_script_name(mut script_name:
    Endgame-correct the lowest levels of the tree.
 */
 #[no_mangle]
-pub unsafe extern "C" fn correct_tree(mut max_empty: libc::c_int,
-                                      mut full_solve: libc::c_int) {
+pub unsafe extern "C" fn correct_tree(max_empty: libc::c_int,
+                                      full_solve: libc::c_int) {
     let mut move_buffer: [libc::c_char; 150] = [0; 150];
     let mut i: libc::c_int = 0;
     let mut feasible_count: libc::c_int = 0;
@@ -3499,8 +3499,8 @@ pub unsafe extern "C" fn correct_tree(mut max_empty: libc::c_int,
    DO_EXPORT
    Recursively exports all variations rooted at book position # INDEX.
 */
-unsafe extern "C" fn do_export(mut index: libc::c_int, mut stream: *mut FILE,
-                               mut move_vec: *mut libc::c_int) {
+unsafe extern "C" fn do_export(index: libc::c_int, stream: *mut FILE,
+                               move_vec: *mut libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut child_count: libc::c_int = 0;
     let mut allow_branch: libc::c_int = 0;
@@ -3521,7 +3521,7 @@ unsafe extern "C" fn do_export(mut index: libc::c_int, mut stream: *mut FILE,
         let mut val1: libc::c_int = 0;
         let mut val2: libc::c_int = 0;
         let mut orientation: libc::c_int = 0;
-        let mut this_move: libc::c_int =
+        let this_move: libc::c_int =
             move_list[disks_played as usize][i as usize];
         *move_vec.offset(disks_played as isize) = this_move;
         make_move(side_to_move, this_move, 1 as libc::c_int);
@@ -3560,7 +3560,7 @@ unsafe extern "C" fn do_export(mut index: libc::c_int, mut stream: *mut FILE,
   Exports a set of lines that cover the tree.
 */
 #[no_mangle]
-pub unsafe extern "C" fn export_tree(mut file_name: *const libc::c_char) {
+pub unsafe extern "C" fn export_tree(file_name: *const libc::c_char) {
     let mut i: libc::c_int = 0;
     let mut move_vec: [libc::c_int; 60] = [0; 60];
     let mut stream: *mut FILE = 0 as *mut FILE;

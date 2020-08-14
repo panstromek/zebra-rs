@@ -21,7 +21,7 @@ pub type __compar_fn_t
   Reads an 8-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe fn get_int_8(mut stream: *mut FILE, mut value: *mut int_8)
+unsafe fn get_int_8(stream: *mut FILE, value: *mut int_8)
  -> i32 {
     let mut actually_read: i32 = 0;
     actually_read =
@@ -35,7 +35,7 @@ unsafe fn get_int_8(mut stream: *mut FILE, mut value: *mut int_8)
   Reads a 16-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe fn get_int_16(mut stream: *mut FILE, mut value: *mut int_16)
+unsafe fn get_int_16(stream: *mut FILE, value: *mut int_16)
  -> i32 {
     let mut actually_read: i32 = 0;
     actually_read =
@@ -49,7 +49,7 @@ unsafe fn get_int_16(mut stream: *mut FILE, mut value: *mut int_16)
   Reads a 32-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe fn get_int_32(mut stream: *mut FILE, mut value: *mut int_32)
+unsafe fn get_int_32(stream: *mut FILE, value: *mut int_32)
  -> i32 {
     let mut actually_read: i32 = 0;
     actually_read =
@@ -65,7 +65,7 @@ unsafe fn get_int_32(mut stream: *mut FILE, mut value: *mut int_32)
   values which aren't used are read.
   Returns TRUE upon success, otherwise FALSE.
 */
-unsafe fn read_prolog(mut stream: *mut FILE,
+unsafe fn read_prolog(stream: *mut FILE,
                                  mut prolog: *mut PrologType) -> i32 {
     let mut success: i32 = 0;
     let mut byte_val: int_8 = 0;
@@ -108,11 +108,11 @@ unsafe fn read_prolog(mut stream: *mut FILE,
   Lexicographically compares the names of two tournaments
   represented by pointers.
 */
-unsafe extern "C" fn thor_compare_tournaments(mut t1: *const std::ffi::c_void,
-                                              mut t2: *const std::ffi::c_void)
+unsafe extern "C" fn thor_compare_tournaments(t1: *const std::ffi::c_void,
+                                              t2: *const std::ffi::c_void)
  -> i32 {
-    let mut tournament1 = *(t1 as *mut *mut TournamentType);
-    let mut tournament2 = *(t2 as *mut *mut TournamentType);
+    let tournament1 = *(t1 as *mut *mut TournamentType);
+    let tournament2 = *(t2 as *mut *mut TournamentType);
     return strcmp((*tournament1).name, (*tournament2).name);
 }
 /*
@@ -154,7 +154,7 @@ unsafe extern "C" fn sort_tournament_database() {
   Returns TRUE if all went well, otherwise FALSE.
 */
 
-pub unsafe fn read_tournament_database(mut file_name:
+pub unsafe fn read_tournament_database(file_name:
                                                       *const i8)
  -> i32 {
     let mut stream = 0 as *mut FILE;
@@ -207,15 +207,15 @@ pub unsafe fn read_tournament_database(mut file_name:
   Lexicographically compares the names of two players
   represented by pointers.
 */
-unsafe extern "C" fn thor_compare_players(mut p1: *const std::ffi::c_void,
-                                          mut p2: *const std::ffi::c_void)
+unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
+                                          p2: *const std::ffi::c_void)
  -> i32 {
     let mut ch: i8 = 0;
     let mut buffer1: [i8; 20] = [0; 20];
     let mut buffer2: [i8; 20] = [0; 20];
     let mut i: i32 = 0;
-    let mut player1 = *(p1 as *mut *mut PlayerType);
-    let mut player2 = *(p2 as *mut *mut PlayerType);
+    let player1 = *(p1 as *mut *mut PlayerType);
+    let player2 = *(p2 as *mut *mut PlayerType);
     i = 0 as i32;
     loop  {
         ch = *(*player1).name.offset(i as isize);
@@ -278,7 +278,7 @@ unsafe fn sort_player_database() {
   Returns TRUE if all went well, otherwise FALSE.
 */
 
-pub unsafe fn read_player_database(mut file_name:
+pub unsafe fn read_player_database(file_name:
                                                   *const i8)
  -> i32 {
     let mut stream = 0 as *mut FILE;
@@ -343,7 +343,7 @@ pub unsafe fn read_player_database(mut file_name:
   for database questions. Returns TRUE upon success,
   otherwise FALSE.
 */
-unsafe fn read_game(mut stream: *mut FILE, mut game: *mut GameType)
+unsafe fn read_game(stream: *mut FILE, mut game: *mut GameType)
  -> i32 {
     let mut success: i32 = 0;
     let mut actually_read: i32 = 0;
@@ -380,7 +380,7 @@ unsafe fn read_game(mut stream: *mut FILE, mut game: *mut GameType)
   Reads a game database from FILE_NAME.
 */
 
-pub unsafe fn read_game_database(mut file_name:
+pub unsafe fn read_game_database(file_name:
                                                 *const i8)
  -> i32 {
     let mut stream = 0 as *mut FILE;
@@ -431,7 +431,7 @@ pub unsafe fn read_game_database(mut file_name:
   according to the specification of the database format).
 */
 
-pub unsafe fn game_database_already_loaded(mut file_name:
+pub unsafe fn game_database_already_loaded(file_name:
                                                           *const i8)
  -> i32 {
     let mut stream = 0 as *mut FILE;
@@ -477,9 +477,9 @@ pub unsafe fn game_database_already_loaded(mut file_name:
   The flag DISPLAY_MOVES specifies if the moves of the
   game are to be output or not.
 */
-unsafe fn print_game(mut stream: *mut FILE,
-                                mut game: *mut GameType,
-                                mut display_moves: i32) {
+unsafe fn print_game(stream: *mut FILE,
+                                game: *mut GameType,
+                                display_moves: i32) {
     let mut i: i32 = 0;
     fprintf(stream, b"%s  %d\n\x00" as *const u8 as *const i8,
             tournament_name((*game).tournament_no as i32),
@@ -516,7 +516,7 @@ unsafe fn print_game(mut stream: *mut FILE,
   used (in order) to sort the matches.
 */
 #[no_mangle]
-unsafe extern "C" fn sort_thor_games(mut count: i32) {
+unsafe extern "C" fn sort_thor_games(count: i32) {
     if count <= 1 as i32 {
         /* No need to sort 0 or 1 games. */
         return
@@ -561,8 +561,8 @@ pub unsafe extern "C" fn choose_thor_opening_move_report(
   database search to STREAM.
 */
 
-pub unsafe fn print_thor_matches(mut stream: *mut FILE,
-                                            mut max_games: i32) {
+pub unsafe fn print_thor_matches(stream: *mut FILE,
+                                            max_games: i32) {
     let mut i: i32 = 0;
     i = 0 as i32;
     while i <

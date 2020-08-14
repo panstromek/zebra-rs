@@ -43,9 +43,9 @@ impl Learner for LibcLearner {
    the database.
 */
 
-pub unsafe fn learn_game(mut game_length: i32,
-                                    mut private_game: i32,
-                                    mut save_database: i32) {
+pub unsafe fn learn_game(game_length: i32,
+                                    private_game: i32,
+                                    save_database: i32) {
     clear_panic_abort();
     toggle_abort_check(0 as i32);
     let full_solve = get_earliest_full_solve();
@@ -86,14 +86,14 @@ pub unsafe fn learn_game(mut game_length: i32,
   interpretation as in a call to set_learning_parameters().
 */
 
-pub unsafe fn full_learn_public_game(mut length: i32,
-                                                mut moves: *mut i32,
-                                                mut cutoff: i32,
-                                                mut deviation_depth:
+pub unsafe fn full_learn_public_game(length: i32,
+                                                moves: *mut i32,
+                                                cutoff: i32,
+                                                deviation_depth:
                                                     i32,
-                                                mut exact: i32,
-                                                mut wld: i32) {
-    let mut stream =
+                                                exact: i32,
+                                                wld: i32) {
+    let stream =
         fopen(b"learn.log\x00" as *const u8 as *const i8,
               b"a\x00" as *const u8 as *const i8);
     if !stream.is_null() {

@@ -70,12 +70,12 @@ pub unsafe fn dumpch() {
    The board is displayed using '*' for black and 'O' for white.
 */
 
-pub unsafe fn display_board(mut stream: *mut FILE,
-                                       mut board: *mut i32,
-                                       mut side_to_move: i32,
-                                       mut give_game_score: i32,
-                                       mut give_time: i32,
-                                       mut give_evals: i32) {
+pub unsafe fn display_board(stream: *mut FILE,
+                                       board: *mut i32,
+                                       side_to_move: i32,
+                                       give_game_score: i32,
+                                       give_time: i32,
+                                       give_evals: i32) {
     let mut buffer: [i8; 16] = [0; 16];
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -281,8 +281,8 @@ pub unsafe fn display_board(mut stream: *mut FILE,
   Outputs a move or a pass to STREAM.
 */
 
-pub unsafe fn display_move(mut stream: *mut FILE,
-                                      mut move_0: i32) {
+pub unsafe fn display_move(stream: *mut FILE,
+                                      move_0: i32) {
     if move_0 == -(1 as i32) {
         fprintf(stream, b"--\x00" as *const u8 as *const i8);
     } else {
@@ -296,7 +296,7 @@ pub unsafe fn display_move(mut stream: *mut FILE,
    Displays the principal variation found during the tree search.
 */
 
-pub unsafe fn display_optimal_line(mut stream: *mut FILE) {
+pub unsafe fn display_optimal_line(stream: *mut FILE) {
     let mut i: i32 = 0;
     if full_pv_depth == 0 as i32 { return }
     fprintf(stream, b"%s: \x00" as *const u8 as *const i8,
@@ -319,8 +319,8 @@ pub unsafe fn display_optimal_line(mut stream: *mut FILE) {
   Store information about the last completed search.
 */
 
-pub unsafe extern "C" fn send_status(mut format: *const i8,
-                                     mut args: ...) {
+pub unsafe extern "C" fn send_status(format: *const i8,
+                                     args: ...) {
     let mut written: i32 = 0;
     let mut arg_ptr: ::std::ffi::VaListImpl;
     arg_ptr = args.clone();
@@ -337,7 +337,7 @@ pub unsafe extern "C" fn send_status(mut format: *const i8,
   the time string.
 */
 
-pub unsafe fn send_status_time(mut elapsed_time: f64) {
+pub unsafe fn send_status_time(elapsed_time: f64) {
     if elapsed_time < 10000.0f64 {
         send_status(b"%6.1f %c\x00" as *const u8 as *const i8,
                     elapsed_time, 's' as i32);
@@ -354,7 +354,7 @@ pub unsafe fn send_status_time(mut elapsed_time: f64) {
   the number of nodes.
 */
 
-pub unsafe fn send_status_nodes(mut node_count: f64) {
+pub unsafe fn send_status_nodes(node_count: f64) {
     if node_count < 1.0e8f64 {
         send_status(b"%8.0f  \x00" as *const u8 as *const i8,
                     node_count);
@@ -374,8 +374,8 @@ pub unsafe fn send_status_nodes(mut node_count: f64) {
   Pipes the principal variation to SEND_STATUS.
 */
 
-pub unsafe fn send_status_pv(mut pv: *mut i32,
-                                        mut max_depth: i32) {
+pub unsafe fn send_status_pv(pv: *mut i32,
+                                        max_depth: i32) {
     let mut i: i32 = 0;
     i = 0 as i32;
     while i <
@@ -401,8 +401,8 @@ pub unsafe fn send_status_pv(mut pv: *mut i32,
   Output and clear the stored status information.
 */
 
-pub unsafe fn display_status(mut stream: *mut FILE,
-                                        mut allow_repeat: i32) {
+pub unsafe fn display_status(stream: *mut FILE,
+                                        allow_repeat: i32) {
     if (status_pos != 0 as i32 || allow_repeat != 0) &&
            strlen(status_buffer.as_mut_ptr()) >
                0 as i32 as u64 {
@@ -417,8 +417,8 @@ pub unsafe fn display_status(mut stream: *mut FILE,
   Store information about the current search.
 */
 
-pub unsafe extern "C" fn send_sweep(mut format: *const i8,
-                                    mut args: ...) {
+pub unsafe extern "C" fn send_sweep(format: *const i8,
+                                    args: ...) {
     let mut written: i32 = 0;
     let mut arg_ptr: ::std::ffi::VaListImpl;
     arg_ptr = args.clone();
@@ -433,7 +433,7 @@ pub unsafe extern "C" fn send_sweep(mut format: *const i8,
   Display and clear the current search information.
 */
 
-pub unsafe fn display_sweep(mut stream: *mut FILE) {
+pub unsafe fn display_sweep(stream: *mut FILE) {
     if sweep_pos != 0 as i32 {
         fprintf(stream, b"%s\n\x00" as *const u8 as *const i8,
                 sweep_buffer.as_mut_ptr());
@@ -468,8 +468,8 @@ pub unsafe extern "C" fn display_buffers() {
   Convert a result descriptor into a string intended for output.
 */
 
-pub unsafe fn produce_eval_text(mut eval_info: &EvaluationType,
-                                           mut short_output: i32)
+pub unsafe fn produce_eval_text(eval_info: &EvaluationType,
+                                           short_output: i32)
  -> *mut i8 {
     let mut buffer = 0 as *mut i8;
     let mut disk_diff: f64 = 0.;

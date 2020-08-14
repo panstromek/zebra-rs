@@ -35,7 +35,7 @@ pub unsafe extern "C" fn after_update_best_list_verbose(best_list: *mut i32) {
     puts(b"\x00" as *const u8 as *const i8);
 }
 #[no_mangle]
-pub unsafe extern "C"  fn before_update_best_list_verbose(best_list: *mut i32, mut move_0: i32, mut best_list_index: i32, best_list_length: *mut i32) {
+pub unsafe extern "C"  fn before_update_best_list_verbose(best_list: *mut i32, move_0: i32, best_list_index: i32, best_list_length: *mut i32) {
     let mut i: i32 = 0;
     printf(b"move=%2d  index=%d  length=%d      \x00" as *const u8 as
                *const i8, move_0, best_list_index,
@@ -148,9 +148,9 @@ pub unsafe extern "C" fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
   Displays endgame results - partial or full.
 */
 #[no_mangle]
-pub unsafe extern "C" fn send_solve_status(mut empties: i32,
+pub unsafe extern "C" fn send_solve_status(empties: i32,
                                        _side_to_move: i32,
-                                       mut eval_info: *mut EvaluationType) {
+                                       eval_info: *mut EvaluationType) {
     let mut eval_str = 0 as *mut i8;
     let mut node_val: f64 = 0.;
     set_current_eval(*eval_info);
