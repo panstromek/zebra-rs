@@ -78,7 +78,7 @@ pub unsafe extern "C" fn fatal_error(format: *const i8, args: ...) -> ! {
     exit(1 as i32);
 }
 
-pub struct LibcFatalError;
+pub struct LibcFatalError; // FIXME rename this, it's not only error anymore
 pub type FE = LibcFatalError;
 
 

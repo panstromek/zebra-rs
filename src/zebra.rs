@@ -103,25 +103,15 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let mut script_optimal_line = 0 as i32;
     let mut timer: time_t = 0;
     let mut use_random = 1 as i32;
-    wait = 0 as i32;
-    echo = 1 as i32;
-    display_pv = 1 as i32;
-    use_learning = 0 as i32;
-    use_thor = 0 as i32;
-    skill[2 as i32 as usize] = -(1 as i32);
-    skill[0 as i32 as usize] = skill[2 as i32 as usize];
     let mut hash_bits = 18 as i32;
     let mut game_file_name = 0 as *const i8;
     let mut log_file_name = 0 as *mut i8;
     let run_script = 0 as i32;
     let script_out_file = 0 as *const i8;
     let script_in_file = script_out_file;
-    player_time[2 as i32 as usize] = 10000000.0f64;
-    player_time[0 as i32 as usize] =
-        player_time[2 as i32 as usize];
-    player_increment[2 as i32 as usize] = 0.0f64;
-    player_increment[0 as i32 as usize] =
-        player_increment[2 as i32 as usize];
+    use_learning = 0 as i32;
+    use_thor = 0 as i32;
+    set_default_engine_globals();
     let mut current_block_107: u64;
     let mut arg_index = 1 as i32;
     let mut help = 0 as i32;
@@ -812,7 +802,7 @@ impl Drop for LibcFileMoveSource {
         };
     }
 }
-
+//TODO test this trait and impl
 unsafe impl InitialMoveSource for LibcFileMoveSource {
     fn fill_line_buffer(&mut self, line_buffer: &mut [i8; 1000]) {
         if !self.move_file.is_null() {
@@ -864,7 +854,7 @@ unsafe fn play_game(mut file_name: *const i8,
         (file_name, move_string, repeat, log_file_name_, move_file, use_thor != 0, use_learning != 0)
 }
 
-struct LibcFrontend {}
+struct LibcFrontend {} //TODO this could probably be merged with the FrontEnd trait or something
 impl ZebraFrontend for LibcFrontend {
 
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
@@ -1875,6 +1865,10 @@ unsafe fn dump_game_score(side_to_move: i32) {
 
 pub fn main() {
     unsafe {
+        //TODO is this actually safe now? Since they don't run in init array,
+        // is there some observable change in behaviour? Is there UB?
+        /// FIXME also figure out a way to run these in the engine,
+        /// or just somehow initialize those vars a better way
         unflip::run_static_initializers();
         myrandom::run_static_initializers();
     }

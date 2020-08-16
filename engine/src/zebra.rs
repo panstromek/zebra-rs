@@ -75,6 +75,17 @@ pub static mut use_book: i32 = 1 as i32;
 pub static mut wld_only: i32 = 0 as i32;
 
 
+pub unsafe fn set_default_engine_globals() {
+    wait = 0 as i32;
+    echo = 1 as i32;
+    display_pv = 1 as i32;
+    skill[2 as i32 as usize] = -(1 as i32);
+    skill[0 as i32 as usize] = skill[2 as i32 as usize];
+    player_time[2 as i32 as usize] = 10000000.0f64;
+    player_time[0 as i32 as usize] = player_time[2 as i32 as usize];
+    player_increment[2 as i32 as usize] = 0.0f64;
+    player_increment[0 as i32 as usize] = player_increment[2 as i32 as usize];
+}
 /// This trait is unsafe because line buffer is used as a c-style string later
 /// so this function needs to ensure that the line_buffer contains at
 /// least one null character (there's definitely better way to do this, but I
