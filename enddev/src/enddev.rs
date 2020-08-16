@@ -14,7 +14,7 @@ use c2rust_out::src::display::display_board;
 use c2rust_out::src::game::{extended_compute_move, compute_move, game_init, global_setup};
 use c2rust_out::src::learn::init_learn;
 use c2rust_out::src::zebra::_IO_FILE;
-use engine::src::error::LibcFatalError;
+use c2rust_out::src::error::LibcFatalError;
 
 extern "C" {
     #[no_mangle]

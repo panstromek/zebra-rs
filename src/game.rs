@@ -16,7 +16,8 @@ use crate::src::hash::{determine_hash_values, set_hash_transformation, find_hash
 use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub use engine::src::game::*;
 use crate::src::getcoeff::zlib_source::ZLibSource;
-use engine::src::error::{LibcFatalError, FatalError};
+use engine::src::error::{FatalError};
+use crate::src::error::LibcFatalError;
 
 pub type __off_t = i64;
 pub type __off64_t = i64;

@@ -29,7 +29,7 @@ use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler};
 use crate::src::learn::LibcLearner;
 use crate::src::thordb::{read_game_database, read_tournament_database, read_player_database, print_thor_matches};
 use engine::src::thordb::{init_thor_database, get_total_game_count, get_thor_game_size, choose_thor_opening_move};
-use engine::src::error::LibcFatalError;
+use crate::src::error::LibcFatalError;
 
 
 pub type _IO_wide_data = std::ffi::c_void;
