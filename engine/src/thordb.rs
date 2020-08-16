@@ -5,7 +5,7 @@ use crate::src::moves::dir_mask;
 use crate::src::stubs::{abs, strlen, free};
 use crate::src::safemem::safe_malloc;
 use std::ffi::c_void;
-use crate::src::error::error_in_map_thor;
+use crate::src::error::{FE};
 
 extern "C" {
     #[no_mangle]
@@ -7955,7 +7955,7 @@ pub unsafe fn init_symmetry_maps() {
                         isize)
                         as
                         isize);
-                    error_in_map_thor(i, pos, to_report);
+                    FE::error_in_map_thor(i, pos, to_report);
                 }
                 k += 1
             }

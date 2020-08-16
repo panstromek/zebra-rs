@@ -10,6 +10,7 @@ pub trait FatalError {
 }
 
 pub struct LibcFatalError;
+pub type FE = LibcFatalError;
 
 impl FatalError for LibcFatalError {
   fn invalid_move(curr_move: i32) -> ! {
@@ -19,6 +20,8 @@ impl FatalError for LibcFatalError {
     }
   }
 }
+
+impl LibcFatalError {
 
 pub fn unrecognized_character(unrecognized: i8) -> ! {
   unsafe {
@@ -128,4 +131,5 @@ pub fn invalid_move_string_provided() -> ! {
         fatal_error(b"Invalid move string provided\x00" as *const u8
             as *const i8);
     }
+}
 }

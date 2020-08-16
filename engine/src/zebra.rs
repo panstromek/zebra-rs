@@ -7,7 +7,7 @@ use crate::src::stubs::{floor, tolower, strlen};
 use crate::src::thordb::{get_black_average_score, get_black_median_score, get_white_win_count, get_draw_count, get_black_win_count, get_match_count, database_search, choose_thor_opening_move, C2RustUnnamed};
 use crate::src::globals::{board, score_sheet_row, white_moves, black_moves};
 use crate::src::learn::{store_move, set_learning_parameters, clear_stored_game, Learner};
-use crate::src::error::{LibcFatalError, invalid_move_in_move_sequence, unexpected_character_in_a_move_string, invalid_move_string_provided};
+use crate::src::error::{LibcFatalError, FE};
 use crate::src::myrandom::my_random;
 use crate::src::eval::toggle_experimental;
 use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, set_slack};
@@ -173,7 +173,7 @@ pub unsafe fn engine_play_game<
                 strlen(move_string).wrapping_rem(2 as i32 as
                     u64) ==
                     1 as i32 as u64 {
-                invalid_move_string_provided();
+                FE::invalid_move_string_provided();
             }
             let mut i = 0 as i32;
             while i < provided_move_count {
@@ -187,7 +187,7 @@ pub unsafe fn engine_play_game<
                         i32 - '0' as i32;
                 if col < 1 as i32 || col > 8 as i32 ||
                     row < 1 as i32 || row > 8 as i32 {
-                    unexpected_character_in_a_move_string();
+                    FE::unexpected_character_in_a_move_string();
                 }
                 provided_move[i as usize] = 10 as i32 * row + col;
                 i += 1
@@ -334,7 +334,7 @@ pub unsafe fn engine_play_game<
                 } else {
                     curr_move = provided_move[disks_played as usize];
                     if valid_move(curr_move, side_to_move) == 0 {
-                        invalid_move_in_move_sequence(curr_move);
+                        FE::invalid_move_in_move_sequence(curr_move);
                     }
                 }
                 let move_stop = get_real_timer();
