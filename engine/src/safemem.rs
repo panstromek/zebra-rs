@@ -21,7 +21,7 @@
    Contents:        Provides safer memory allocation than malloc().
 */
 use crate::src::stubs::{malloc, realloc};
-use crate::src::error::fatal_error;
+use crate::src::error::{safe_realloc_failure, safe_malloc_failure};
 use std::ffi::c_void;
 
 pub type size_t = u64;
@@ -29,9 +29,7 @@ pub unsafe fn safe_malloc(size: size_t) -> *mut c_void {
     let mut block = 0 as *mut c_void;
     block = malloc(size);
     if block.is_null() {
-        fatal_error(b"%s %d\n\x00" as *const u8 as *const i8,
-                    b"Memory allocation failure when allocating\x00" as
-                        *const u8 as *const i8, size);
+        safe_malloc_failure(size);
     }
     return block;
 }
@@ -41,9 +39,7 @@ pub unsafe fn safe_realloc(ptr: *mut c_void,
     let mut block = 0 as *mut c_void;
     block = realloc(ptr, size);
     if block.is_null() {
-        fatal_error(b"%s %d\n\x00" as *const u8 as *const i8,
-                    b"Memory allocation failure when allocating\x00" as
-                        *const u8 as *const i8, size);
+        safe_realloc_failure(size);
     }
     return block;
 }

@@ -17,7 +17,7 @@ use crate::src::patterns::init_patterns;
 use crate::src::bitboard::init_bitboard;
 use crate::src::myrandom::{my_srandom, my_random};
 use crate::src::stubs::{time, abs};
-use crate::src::error::fatal_error;
+use crate::src::error::{FatalError, unrecognized_character, cannot_open_game_file};
 use crate::src::display::{echo, display_pv, reset_buffer_display};
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_move, get_match_count, database_search};
 
@@ -345,13 +345,7 @@ pub unsafe fn process_board_source<S: BoardSource>(side_to_move: *mut i32, mut f
         *side_to_move = 2 as i32
     } else {
         let unrecognized = buffer[0 as i32 as usize];
-        fatal_error(b"%s \'%c\' %s\n\x00" as *const u8 as
-                        *const i8,
-                    b"Unrecognized character\x00" as *const u8 as
-                        *const i8,
-                    unrecognized as i32,
-                    b"in game file\x00" as *const u8 as
-                        *const i8);
+        unrecognized_character(unrecognized);
     }
 }
 
@@ -366,10 +360,7 @@ pub unsafe fn setup_file_based_game<S: FileBoardSource>(file_name: *const i8, si
     match S::open(file_name) {
         Some(file_source) => process_board_source(side_to_move, file_source),
         None => {
-            fatal_error(b"%s \'%s\'\n\x00" as *const u8 as
-                            *const i8,
-                        b"Cannot open game file\x00" as *const u8 as
-                            *const i8, file_name);
+            cannot_open_game_file(file_name);
         },
     };
     setup_game_finalize(side_to_move);
@@ -388,9 +379,7 @@ pub unsafe fn generic_game_init<Source: FileBoardSource>(file_name: *const i8, s
     engine_game_init();
 }
 
-
-
-pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput>(side_to_move: i32,
+pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FatalError>(side_to_move: i32,
                                                                                  update_all: i32,
                                                                                  my_time: i32,
                                                                                  my_incr: i32,
@@ -563,8 +552,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput>
                 pv[0 as i32 as usize][0 as i32 as usize] =
                     curr_move
             } else {
-                fatal_error(b"Thor book move %d is invalid!\x00" as *const u8
-                                as *const i8, curr_move);
+                FE::invalid_move(curr_move);
             }
         }
     }

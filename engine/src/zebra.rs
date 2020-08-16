@@ -1,19 +1,20 @@
 use crate::src::display::{set_names, set_times, set_move_list, echo, set_evals, display_pv};
-use crate::src::timer::{toggle_abort_check, get_real_timer, determine_move_time, start_move, clear_panic_abort};
+use crate::src::timer::{toggle_abort_check, get_real_timer, determine_move_time, start_move, clear_panic_abort, time_t};
 use crate::src::moves::{disks_played, make_move, valid_move, move_count, move_list, generate_all, game_in_progress};
 use crate::src::search::{disc_count, total_time, total_evaluations, total_nodes, produce_compact_eval};
 use crate::src::counter::{counter_value, adjust_counter};
 use crate::src::stubs::{floor, tolower, strlen};
-use crate::src::thordb::{get_black_average_score, get_black_median_score, get_white_win_count, get_draw_count, get_black_win_count, get_match_count, database_search, choose_thor_opening_move};
+use crate::src::thordb::{get_black_average_score, get_black_median_score, get_white_win_count, get_draw_count, get_black_win_count, get_match_count, database_search, choose_thor_opening_move, C2RustUnnamed};
 use crate::src::globals::{board, score_sheet_row, white_moves, black_moves};
 use crate::src::learn::{store_move, set_learning_parameters, clear_stored_game, Learner};
-use crate::src::error::fatal_error;
+use crate::src::error::{LibcFatalError, invalid_move_in_move_sequence, unexpected_character_in_a_move_string, invalid_move_string_provided};
 use crate::src::myrandom::my_random;
 use crate::src::eval::toggle_experimental;
 use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, set_slack};
 use crate::src::getcoeff::remove_coeffs;
 use crate::src::game::{toggle_human_openings, generic_game_init, FileBoardSource, generic_compute_move, ComputeMoveOutput, ComputeMoveLogger};
-use crate::src::hash::setup_hash;
+use crate::src::hash::{setup_hash, HashEntry};
+use std::ffi::c_void;
 
 pub type Board = [i32; 128];
 pub type EvalType = u32;
@@ -172,8 +173,7 @@ pub unsafe fn engine_play_game<
                 strlen(move_string).wrapping_rem(2 as i32 as
                     u64) ==
                     1 as i32 as u64 {
-                fatal_error(b"Invalid move string provided\x00" as *const u8
-                    as *const i8);
+                invalid_move_string_provided();
             }
             let mut i = 0 as i32;
             while i < provided_move_count {
@@ -187,8 +187,7 @@ pub unsafe fn engine_play_game<
                         i32 - '0' as i32;
                 if col < 1 as i32 || col > 8 as i32 ||
                     row < 1 as i32 || row > 8 as i32 {
-                    fatal_error(b"Unexpected character in move string\x00" as
-                        *const u8 as *const i8);
+                    unexpected_character_in_a_move_string();
                 }
                 provided_move[i as usize] = 10 as i32 * row + col;
                 i += 1
@@ -293,7 +292,7 @@ pub unsafe fn engine_play_game<
                                 60 as i32) as i32;
                         toggle_experimental(0 as i32);
                         curr_move =
-                            generic_compute_move::<ComputeMoveLog, ComputeMoveOut>(
+                            generic_compute_move::<ComputeMoveLog, ComputeMoveOut, LibcFatalError>(
                                 side_to_move, 1 as i32,
                                 player_time[side_to_move as usize] as
                                     i32,
@@ -335,12 +334,7 @@ pub unsafe fn engine_play_game<
                 } else {
                     curr_move = provided_move[disks_played as usize];
                     if valid_move(curr_move, side_to_move) == 0 {
-                        fatal_error(b"Invalid move %c%c in move sequence\x00"
-                                        as *const u8 as *const i8,
-                                    'a' as i32 + curr_move % 10 as i32
-                                        - 1 as i32,
-                                    '0' as i32 +
-                                        curr_move / 10 as i32);
+                        invalid_move_in_move_sequence(curr_move);
                     }
                 }
                 let move_stop = get_real_timer();
@@ -446,4 +440,52 @@ unsafe fn clear_moves() {
         white_moves[i as usize] = -(1 as i32);
         i += 1
     }
+}
+
+trait Extern {
+    fn display_buffers();
+    fn report_ponder_time();
+    fn after_update_best_list_verbose(best_list: *mut i32);
+    fn before_update_best_list_verbose(best_list: *mut i32, move_0: i32, best_list_index: i32, best_list_length: *mut i32);
+    fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32);
+    fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32);
+    fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32);
+    fn end_tree_search_output_some_stats(entry: &HashEntry);
+    fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32);
+    fn end_tree_search_level_0_report(alpha: i32, beta: i32);
+    fn send_solve_status(empties: i32, side_to_move: i32, eval_info: *mut EvaluationType);
+    fn end_report_panic_abort_2();
+    fn end_report_semi_panic_abort_3();
+    fn end_report_semi_panic_abort_2();
+    fn end_report_panic_abort();
+    fn end_report_semi_panic_abort();
+    fn end_display_zero_status();
+    // unsafe extern "C" fn fatal_error(_: *const i8, _: ...) -> !;
+    fn handle_fatal_pv_error(i: i32);
+    unsafe fn malloc(_: u64) -> *mut c_void;
+    unsafe fn realloc(_: *mut c_void, _: u64) -> *mut c_void;
+    unsafe fn free(__ptr: *mut c_void);
+    unsafe fn time(__timer: *mut time_t) -> time_t;
+    unsafe fn strlen(_: *const i8) -> u64;
+    unsafe fn tolower(num: i32) -> i32;
+    unsafe fn toupper(_: i32) -> i32;
+    unsafe fn strdup(_: *const i8) -> *mut i8;
+    unsafe fn strchr(_: *const i8, _: i32) -> *mut i8;
+    fn report_do_evaluate(evaluation_stage_: i32);
+    fn report_unwanted_book_draw(this_move: i32);
+    fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32);
+    fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32);
+    fn midgame_display_simple_ponder_move(move_0: i32);
+    fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, buffer: &mut [i8; 32]);
+    fn midgame_display_ponder_move(
+        max_depth: i32, alpha: i32, beta: i32,
+        curr_val: i32, searched: i32, update_pv: i32);
+    unsafe fn midgame_display_status(side_to_move: i32, max_depth: i32,
+                              eval_info: *mut EvaluationType, eval_str: *mut i8,
+                              node_val: f64, depth: i32);
+    fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32);
+    fn thordb_report_flipped_0_first();
+    fn thordb_report_flipped_0_second();
+    fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]);
+    fn sort_thor_games(count: i32);
 }
