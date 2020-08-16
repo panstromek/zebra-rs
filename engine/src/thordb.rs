@@ -5,7 +5,7 @@ use crate::src::moves::dir_mask;
 use crate::src::stubs::{abs, strlen, free};
 use crate::src::safemem::safe_malloc;
 use std::ffi::c_void;
-use crate::src::error::{FE};
+use crate::src::error::{FE, FatalError};
 
 extern "C" {
     #[no_mangle]

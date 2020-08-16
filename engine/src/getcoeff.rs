@@ -3,7 +3,7 @@ use crate::src::moves::disks_played;
 use crate::src::patterns::{flip8, pow3};
 use crate::src::stubs::{floor, free};
 use crate::src::safemem::safe_malloc;
-use crate::src::error::{FE};
+use crate::src::error::{FE, FatalError};
 use std::ffi::c_void;
 use std::process::exit;
 
