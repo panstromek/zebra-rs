@@ -5,7 +5,7 @@ use crate::src::moves::dir_mask;
 use crate::src::stubs::{abs, strlen, free};
 use crate::src::safemem::safe_malloc;
 use std::ffi::c_void;
-use crate::src::error::{FatalError};
+use crate::src::error::{FrontEnd};
 
 extern "C" {
     #[no_mangle]
@@ -7888,7 +7888,7 @@ pub unsafe fn get_thor_game_size() -> i32 {
         in which they are calculated in COMPUTE_FULL_PRIMARY_HASH()
     and COMPUTE_FULL_SECONDARY_HASH().
 */
-pub unsafe fn init_symmetry_maps<FE: FatalError>() {
+pub unsafe fn init_symmetry_maps<FE: FrontEnd>() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -8211,8 +8211,8 @@ pub unsafe fn init_thor_hash() {
   NEW_THOR_OPENING_NODE
   Creates and initializes a new node for use in the opening tree.
 */
-pub unsafe fn new_thor_opening_node<FE:FatalError>(parent: *mut ThorOpeningNode)
-                                -> *mut ThorOpeningNode {
+pub unsafe fn new_thor_opening_node<FE: FrontEnd>(parent: *mut ThorOpeningNode)
+                                                  -> *mut ThorOpeningNode {
     let mut node = 0 as *mut ThorOpeningNode;
     node =
         safe_malloc::<FE>(::std::mem::size_of::<ThorOpeningNode>() as u64)
@@ -8230,7 +8230,7 @@ pub unsafe fn new_thor_opening_node<FE:FatalError>(parent: *mut ThorOpeningNode)
   Builds the opening tree from the statically computed
   structure THOR_OPENING_LIST (see thorop.c).
 */
-pub unsafe fn build_thor_opening_tree<FE:FatalError>() {
+pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
     let mut thor_move_list: [i8; 61] = [0; 61];
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -8396,7 +8396,7 @@ pub unsafe fn build_thor_opening_tree<FE:FatalError>() {
   must be called.
 */
 
-pub unsafe fn init_thor_database<FE:FatalError>() {
+pub unsafe fn init_thor_database<FE: FrontEnd>() {
     let mut i: i32 = 0; /* "infinity" */
     thor_game_count = 0 as i32;
     thor_database_count = 0 as i32;
@@ -8876,8 +8876,8 @@ pub unsafe fn choose_thor_opening_move(in_board:
   given by IN_BOARD with SIDE_TO_MOVE being the player whose turn it is.
 */
 
-pub unsafe fn database_search<FE:FatalError>(in_board: *mut i32,
-                              side_to_move: i32) {
+pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
+                                            side_to_move: i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut index: i32 = 0;

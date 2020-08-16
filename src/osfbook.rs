@@ -24,7 +24,7 @@ use crate::src::display::display_board;
 use engine::src::midgame::middle_game;
 use engine::src::myrandom::my_srandom;
 use engine::src::hash::set_hash_transformation;
-use engine::src::error::{FatalError};
+use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError};
 pub type FE = LibcFatalError;
 
@@ -1692,9 +1692,9 @@ pub unsafe fn unpack_compressed_database(in_name:
   if they don't describe the same set of positions, something has gone awry.
 */
 
-pub unsafe fn merge_position_list<FE: FatalError>(script_file:
+pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                                                  *const i8,
-                                             output_file:
+                                                output_file:
                                                  *const i8) {
     let mut script_buffer: [i8; 1024] = [0; 1024];
     let mut result_buffer: [i8; 1024] = [0; 1024];

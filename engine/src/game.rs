@@ -17,7 +17,7 @@ use crate::src::patterns::init_patterns;
 use crate::src::bitboard::init_bitboard;
 use crate::src::myrandom::{my_srandom, my_random};
 use crate::src::stubs::{time, abs};
-use crate::src::error::{FatalError};
+use crate::src::error::{FrontEnd};
 use crate::src::display::{echo, display_pv, reset_buffer_display};
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_move, get_match_count, database_search};
 
@@ -281,7 +281,7 @@ pub unsafe fn setup_non_file_based_game(side_to_move: *mut i32) {
 }
 
 
-pub unsafe fn engine_global_setup<S:CoeffSource, FE:FatalError>(
+pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     use_random: i32, hash_bits: i32, coeff_adjustments:
     Option<CoeffAdjustments>, coeffs: S) {
     let mut timer: time_t = 0;
@@ -316,7 +316,7 @@ pub trait BoardSource {
 }
 
 
-pub unsafe fn process_board_source<S: BoardSource, FE: FatalError>(side_to_move: *mut i32, mut file_source: S) {
+pub unsafe fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: *mut i32, mut file_source: S) {
     let mut buffer: [i8; 70] = [0; 70];
     file_source.fill_board_buffer(&mut buffer);
     let mut token = 0 as i32;
@@ -356,7 +356,7 @@ pub trait FileBoardSource : BoardSource {
     unsafe fn open(file_name: *const i8) -> Option<Self> where Self: Sized;
 }
 
-pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FatalError>(file_name: *const i8, side_to_move: *mut i32) {
+pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: *mut i32) {
     setup_game_clear_board();
     assert!(!file_name.is_null());
     match S::open(file_name) {
@@ -368,7 +368,7 @@ pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FatalError>(file_nam
     setup_game_finalize(side_to_move);
 }
 
-pub unsafe fn generic_setup_game<Source: FileBoardSource, FE: FatalError>(file_name: *const i8, side_to_move: *mut i32) {
+pub unsafe fn generic_setup_game<Source: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: *mut i32) {
     if file_name.is_null() {
         setup_non_file_based_game(side_to_move);
     } else {
@@ -376,24 +376,24 @@ pub unsafe fn generic_setup_game<Source: FileBoardSource, FE: FatalError>(file_n
     }
 }
 
-pub unsafe fn generic_game_init<Source: FileBoardSource, FE: FatalError>(file_name: *const i8, side_to_move: *mut i32) {
+pub unsafe fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: *mut i32) {
     generic_setup_game::<Source, FE>(file_name, side_to_move);
     engine_game_init();
 }
 
-pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FatalError>(side_to_move: i32,
-                                                                                 update_all: i32,
-                                                                                 my_time: i32,
-                                                                                 my_incr: i32,
-                                                                                 timed_depth: i32,
-                                                                                 book: i32,
-                                                                                 mut mid: i32,
-                                                                                 exact: i32,
-                                                                                 wld: i32,
-                                                                                 search_forced: i32,
-                                                                                 eval_info: *mut EvaluationType,
-                                                                                 logger: &mut Option<L>)
-                                                                                 -> i32 {
+pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd>(side_to_move: i32,
+                                                                                               update_all: i32,
+                                                                                               my_time: i32,
+                                                                                               my_incr: i32,
+                                                                                               timed_depth: i32,
+                                                                                               book: i32,
+                                                                                               mut mid: i32,
+                                                                                               exact: i32,
+                                                                                               wld: i32,
+                                                                                               search_forced: i32,
+                                                                                               eval_info: *mut EvaluationType,
+                                                                                               logger: &mut Option<L>)
+                                                                                               -> i32 {
     let mut book_eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,

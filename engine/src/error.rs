@@ -1,4 +1,7 @@
 
+pub trait FrontEnd : FatalError {
+
+}
 pub trait FatalError {
     fn invalid_move(curr_move: i32) -> !;
     fn unrecognized_character(unrecognized: i8) -> !;
