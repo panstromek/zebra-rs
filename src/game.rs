@@ -17,7 +17,7 @@ use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub use engine::src::game::*;
 use crate::src::getcoeff::zlib_source::ZLibSource;
 use engine::src::error::{FrontEnd};
-use crate::src::error::LibcFatalError;
+use crate::src::error::{LibcFatalError, FE};
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -177,7 +177,7 @@ pub unsafe fn ponder_move(side_to_move: i32,
        time we're using */
     toggle_abort_check(0 as i32);
     toggle_midgame_abort_check(0 as i32);
-    start_move(0 as i32 as f64,
+    start_move::<FE>(0 as i32 as f64,
                0 as i32 as f64,
                disc_count(0 as i32) + disc_count(2 as i32));
     clear_ponder_times();
@@ -244,7 +244,7 @@ pub unsafe fn ponder_move(side_to_move: i32,
     best_pv_depth = 0 as i32;
     i = 0 as i32;
     while force_return == 0 && i < expect_count {
-        move_start_time = get_real_timer();
+        move_start_time = get_real_timer::<FE>();
         set_ponder_move(expect_list[i as usize]);
         this_move = expect_list[i as usize];
         prefix_move = this_move;
@@ -255,7 +255,7 @@ pub unsafe fn ponder_move(side_to_move: i32,
                      0 as i32, &mut eval_info);
         unmake_move(side_to_move, this_move);
         clear_ponder_move();
-        move_stop_time = get_real_timer();
+        move_stop_time = get_real_timer::<FE>();
         add_ponder_time(expect_list[i as usize],
                         move_stop_time - move_start_time);
         ponder_depth[expect_list[i as usize] as usize] =
@@ -362,7 +362,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
     toggle_abort_check(0 as i32);
     toggle_midgame_abort_check(0 as i32);
     toggle_perturbation_usage(0 as i32);
-    start_move(0 as i32 as f64,
+    start_move::<FE>(0 as i32 as f64,
                0 as i32 as f64,
                disc_count(0 as i32) + disc_count(2 as i32));
     clear_ponder_times();
@@ -378,7 +378,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
         if empties <= exact {
             flags = 16 as i32
         } else if empties <= wld { flags = 4 as i32 }
-        fill_move_alternatives(side_to_move, flags);
+        fill_move_alternatives::<FE>(side_to_move, flags);
         game_evaluated_count = get_candidate_count();
         i = 0 as i32;
         while i < game_evaluated_count {
@@ -927,7 +927,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     toggle_abort_check(0 as i32);
     toggle_midgame_abort_check(0 as i32);
     toggle_perturbation_usage(0 as i32);
-    start_move(0 as i32 as f64,
+    start_move::<FE>(0 as i32 as f64,
                0 as i32 as f64,
                disc_count(0 as i32) + disc_count(2 as i32));
     clear_ponder_times();

@@ -3,7 +3,7 @@ use crate::src::timer::{toggle_abort_check, get_real_timer, determine_move_time,
 use crate::src::moves::{disks_played, make_move, valid_move, move_count, move_list, generate_all, game_in_progress};
 use crate::src::search::{disc_count, total_time, total_evaluations, total_nodes, produce_compact_eval};
 use crate::src::counter::{counter_value, adjust_counter};
-use crate::src::stubs::{floor, tolower, strlen};
+use crate::src::stubs::{floor};
 use crate::src::thordb::{get_black_average_score, get_black_median_score, get_white_win_count, get_draw_count, get_black_win_count, get_match_count, database_search, choose_thor_opening_move, C2RustUnnamed};
 use crate::src::globals::{board, score_sheet_row, white_moves, black_moves};
 use crate::src::learn::{store_move, set_learning_parameters, clear_stored_game, Learner};
@@ -85,7 +85,7 @@ pub unsafe trait InitialMoveSource {
 }
 
 
-pub unsafe fn set_names_from_skills() {
+pub unsafe fn set_names_from_skills<FE :FrontEnd>() {
     let mut black_name = 0 as *const i8;
     if skill[0 as i32 as usize] == 0 as i32 {
         black_name = b"Player\x00" as *const u8 as *const i8
@@ -98,7 +98,7 @@ pub unsafe fn set_names_from_skills() {
     } else {
         white_name = b"Zebra\x00" as *const u8 as *const i8
     }
-    set_names(black_name, white_name);
+    set_names::<FE>(black_name, white_name);
 }
 
 pub trait ZebraFrontend {
@@ -167,11 +167,11 @@ pub unsafe fn engine_play_game<
             provided_move_count = 0 as i32
         } else {
             provided_move_count =
-                strlen(move_string).wrapping_div(2 as i32 as
+                FE::strlen(move_string).wrapping_div(2 as i32 as
                     u64) as
                     i32;
             if provided_move_count > 60 as i32 ||
-                strlen(move_string).wrapping_rem(2 as i32 as
+                FE::strlen(move_string).wrapping_rem(2 as i32 as
                     u64) ==
                     1 as i32 as u64 {
                 FE::invalid_move_string_provided();
@@ -179,7 +179,7 @@ pub unsafe fn engine_play_game<
             let mut i = 0 as i32;
             while i < provided_move_count {
                 let col =
-                    tolower(*move_string.offset((2 as i32 * i) as
+                   FE::tolower(*move_string.offset((2 as i32 * i) as
                         isize) as i32) -
                         'a' as i32 + 1 as i32;
                 let row =
@@ -212,7 +212,7 @@ pub unsafe fn engine_play_game<
         if use_thor_ {
             ZF::load_thor_files();
         }
-        set_names_from_skills();
+        set_names_from_skills::<FE>();
         set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
         set_evals(0.0f64, 0.0f64);
@@ -229,7 +229,7 @@ pub unsafe fn engine_play_game<
             generate_all(side_to_move);
             if side_to_move == 0 as i32 { score_sheet_row += 1 }
             if move_count[disks_played as usize] != 0 as i32 {
-                let move_start = get_real_timer();
+                let move_start = get_real_timer::<FE>();
                 clear_panic_abort();
                 if echo != 0 {
                     set_move_list(black_moves.as_mut_ptr(),
@@ -243,10 +243,10 @@ pub unsafe fn engine_play_game<
                         ZF::report_opening_name(opening_name);
                     }
                     if use_thor_ {
-                        let database_start = get_real_timer();
+                        let database_start = get_real_timer::<FE>();
                         database_search::<FE>(board.as_mut_ptr(), side_to_move);
                         thor_position_count = get_match_count();
-                        let database_stop = get_real_timer();
+                        let database_stop = get_real_timer::<FE>();
                         let database_time = database_stop - database_start;
                         total_search_time += database_time;
                         ZF::report_thor_matching_games_stats(total_search_time, thor_position_count, database_time);
@@ -266,13 +266,13 @@ pub unsafe fn engine_play_game<
                 Dump::dump_position(side_to_move);
                 Dump::dump_game_score(side_to_move);
                 /* Check what the Thor opening statistics has to say */
-                choose_thor_opening_move(board.as_mut_ptr(), side_to_move,
+                choose_thor_opening_move::<FE>(board.as_mut_ptr(), side_to_move,
                                          echo);
                 if echo != 0 && wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
                     if skill[side_to_move as usize] == 0 as i32 {
                         if use_book != 0 && display_pv != 0 {
-                            fill_move_alternatives(side_to_move,
+                            fill_move_alternatives::<FE>(side_to_move,
                                                    0 as i32);
                             if echo != 0 {
                                 ZF::print_move_alternatives(side_to_move);
@@ -280,7 +280,7 @@ pub unsafe fn engine_play_game<
                         }
                         curr_move = ZF::ui_get_move(side_to_move);
                     } else {
-                        start_move(player_time[side_to_move as usize],
+                        start_move::<FE>(player_time[side_to_move as usize],
                                    player_increment[side_to_move as usize],
                                    disks_played + 4 as i32);
                         determine_move_time(player_time[side_to_move as
@@ -338,7 +338,7 @@ pub unsafe fn engine_play_game<
                         FE::invalid_move_in_move_sequence(curr_move);
                     }
                 }
-                let move_stop = get_real_timer();
+                let move_stop = get_real_timer::<FE>();
                 if player_time[side_to_move as usize] != 10000000.0f64 {
                     player_time[side_to_move as usize] -=
                         move_stop - move_start
@@ -381,10 +381,10 @@ pub unsafe fn engine_play_game<
             set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                           score_sheet_row);
             if use_thor_ {
-                let database_start = get_real_timer();
+                let database_start = get_real_timer::<FE>();
                 database_search::<FE>(board.as_mut_ptr(), side_to_move);
                 thor_position_count = get_match_count();
-                let database_stop = get_real_timer();
+                let database_stop = get_real_timer::<FE>();
                 let db_search_time = database_stop - database_start;
                 total_search_time += db_search_time;
                 ZF::report_some_thor_stats(total_search_time, thor_position_count, db_search_time);

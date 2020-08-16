@@ -10,6 +10,7 @@ use crate::{
     }
 };
 pub use engine::src::midgame::*;
+use crate::src::error::FE;
 
 #[no_mangle]
 pub unsafe extern "C" fn midgame_display_simple_ponder_move(move_0: i32) {
@@ -104,11 +105,11 @@ pub unsafe extern "C" fn midgame_display_status(side_to_move: i32, max_depth: i3
                    12345678 as i32);
     send_status_pv(pv[0 as i32 as usize].as_mut_ptr(),
                    max_depth);
-    send_status_time(get_elapsed_time());
-    if get_elapsed_time() != 0.0f64 {
+    send_status_time(get_elapsed_time::<FE>());
+    if get_elapsed_time::<FE>() != 0.0f64 {
         send_status(b"%6.0f %s\x00" as *const u8 as
                         *const i8,
-                    node_val / (get_elapsed_time() + 0.001f64),
+                    node_val / (get_elapsed_time::<FE>() + 0.001f64),
                     b"nps\x00" as *const u8 as *const i8);
     }
 }

@@ -15,24 +15,8 @@ use crate::src::getcoeff::pattern_evaluation;
 use crate::src::stubs::abs;
 use crate::src::timer::{is_panic_abort, last_panic_check, check_panic_abort, above_recommended, extended_above_recommended, frozen_ponder_depth};
 use crate::src::hash::add_hash;
-use crate::src::display::{echo, display_buffers};
+use crate::src::display::{echo};
 use crate::src::error::FrontEnd;
-
-
-extern "C" {
-    #[no_mangle]
-    fn midgame_display_simple_ponder_move(move_0: i32);
-    #[no_mangle]
-     fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, buffer: &mut [i8; 32]);
-    #[no_mangle]
-     fn midgame_display_ponder_move(
-        max_depth: i32, alpha: i32, beta:  i32,
-        curr_val: i32, searched:  i32, update_pv:  i32);
-
-    #[no_mangle]
-    fn midgame_display_status( side_to_move: i32,  max_depth: i32, eval_info:
-     *mut EvaluationType,  eval_str: *mut i8,  node_val: f64, depth: i32);
-}
 
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
@@ -735,9 +719,9 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                 100000 as i32 as f64 {
                 /* Time abort? */
                 last_panic_check = node_val;
-                check_panic_abort();
+                check_panic_abort::<FE>();
                 /* Display available search information */
-                if echo != 0 { display_buffers(); }
+                if echo != 0 { FE::display_buffers(); }
                 /* Check for events */
                 if is_panic_abort() != 0 || force_return != 0 {
                     return -(27000 as i32)
@@ -1145,7 +1129,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
     }
     pre_search_done = 0 as i32;
     if get_ponder_move() == 0 {
-        midgame_display_initial_ponder_move(alpha, beta, &mut buffer);
+        FE::midgame_display_initial_ponder_move(alpha, beta, &mut buffer);
     }
     /* Full negascout search */
     searched = 0 as i32;
@@ -1274,7 +1258,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
         move_0 =
             sorted_move_order[disks_played as usize][move_index as usize];
         if get_ponder_move() == 0 {
-            midgame_display_simple_ponder_move(move_0);
+            FE::midgame_display_simple_ponder_move(move_0);
         }
         make_move(side_to_move, move_0, 1 as i32);
         update_pv = 0 as i32;
@@ -1336,7 +1320,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
         }
         evals[disks_played as usize][move_0 as usize] = curr_val;
         if get_ponder_move() == 0 {
-            midgame_display_ponder_move(max_depth, alpha, beta, curr_val, searched, update_pv)
+            FE::midgame_display_ponder_move(max_depth, alpha, beta, curr_val, searched, update_pv)
         }
         if update_pv != 0 {
             midgame_c__update_best_list(best_list.as_mut_ptr(), move_0,
@@ -1583,15 +1567,15 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         }
         /* Display and store search info */
         if depth == max_depth {
-            midgame_display_status(side_to_move, max_depth, eval_info, eval_str, node_val, depth)
+            FE::midgame_display_status(side_to_move, max_depth, eval_info, eval_str, node_val, depth)
         }
         if is_panic_abort() != 0 || force_return != 0 { break ; }
         /* Check if search time or adjusted search time are long enough
            for the search to be discontinued */
         old_val = adjusted_val;
         if do_check_midgame_abort != 0 {
-            if above_recommended() != 0 ||
-                extended_above_recommended() != 0 &&
+            if above_recommended::<FE>() != 0 ||
+                extended_above_recommended::<FE>() != 0 &&
                     depth >= frozen_ponder_depth {
                 set_midgame_abort();
                 break ;

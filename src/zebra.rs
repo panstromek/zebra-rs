@@ -29,7 +29,8 @@ use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler};
 use crate::src::learn::LibcLearner;
 use crate::src::thordb::{read_game_database, read_tournament_database, read_player_database, print_thor_matches};
 use engine::src::thordb::{init_thor_database, get_total_game_count, get_thor_game_size, choose_thor_opening_move};
-use crate::src::error::LibcFatalError;
+use crate::src::error::{LibcFatalError, FE};
+use engine::src::error::FrontEnd;
 
 
 pub type _IO_wide_data = std::ffi::c_void;
@@ -694,7 +695,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     } else {
         play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name);
     }
-    global_terminate();
+    global_terminate::<LibcFatalError>();
     return 0 as i32;
 }
 /*
@@ -1001,7 +1002,7 @@ impl ZebraFrontend for LibcFrontend {
     }
     unsafe fn load_thor_files() {
         /* No error checking done as it's only for testing purposes */
-        let database_start = get_real_timer();
+        let database_start = get_real_timer::<FE>();
         read_player_database(b"thor\\wthor.jou\x00" as *const u8 as
             *const i8);
         read_tournament_database(b"thor\\wthor.trn\x00" as *const u8 as
@@ -1050,7 +1051,7 @@ impl ZebraFrontend for LibcFrontend {
             *const i8);
         read_game_database(b"thor\\wth_1980.wtb\x00" as *const u8 as
             *const i8);
-        let database_stop = get_real_timer();
+        let database_stop = get_real_timer::<FE>();
         printf(b"Loaded %d games in %.3f s.\n\x00" as *const u8 as
                    *const i8, get_total_game_count(),
                database_stop - database_start);
@@ -1122,11 +1123,11 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         provided_move_count = 0 as i32
     } else {
         provided_move_count =
-            strlen(move_string).wrapping_div(2 as i32 as
+              FE::strlen(move_string).wrapping_div(2 as i32 as
                                                  u64) as
                 i32;
         if provided_move_count > 60 as i32 ||
-               strlen(move_string).wrapping_rem(2 as i32 as
+                 FE::strlen(move_string).wrapping_rem(2 as i32 as
                                                     u64) ==
                    1 as i32 as u64 {
             fatal_error(b"Invalid move string provided\x00" as *const u8 as
@@ -1135,7 +1136,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         i = 0 as i32;
         while i < provided_move_count {
             col =
-                tolower(*move_string.offset((2 as i32 * i) as isize)
+               FE::tolower(*move_string.offset((2 as i32 * i) as isize)
                             as i32) - 'a' as i32 + 1 as i32;
             row =
                 *move_string.offset((2 as i32 * i + 1 as i32)
@@ -1173,7 +1174,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     reset_book_search();
     black_name = b"Zebra\x00" as *const u8 as *const i8;
     white_name = b"Zebra\x00" as *const u8 as *const i8;
-    set_names(black_name, white_name);
+    set_names::<FE>(black_name, white_name);
     set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                   score_sheet_row);
     set_evals(0.0f64, 0.0f64);
@@ -1196,7 +1197,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         generate_all(side_to_move);
         if side_to_move == 0 as i32 { score_sheet_row += 1 }
         if move_count[disks_played as usize] != 0 as i32 {
-            move_start = get_real_timer();
+            move_start = get_real_timer::<FE>();
             clear_panic_abort();
             if echo != 0 {
                 set_move_list(black_moves.as_mut_ptr(),
@@ -1214,9 +1215,9 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                               1 as i32, use_timer, 1 as i32);
             }
             /* Check what the Thor opening statistics has to say */
-            choose_thor_opening_move(board.as_mut_ptr(), side_to_move, echo);
+            choose_thor_opening_move::<FE>(board.as_mut_ptr(), side_to_move, echo);
             if echo != 0 && wait != 0 { dumpch(); }
-            start_move(player_time[side_to_move as usize],
+            start_move::<FE>(player_time[side_to_move as usize],
                        player_increment[side_to_move as usize],
                        disks_played + 4 as i32);
             determine_move_time(player_time[side_to_move as usize],
@@ -1373,7 +1374,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                                 1 as i32,
                             '0' as i32 + curr_move / 10 as i32);
             }
-            move_stop = get_real_timer();
+            move_stop = get_real_timer::<FE>();
             if player_time[side_to_move as usize] != 10000000.0f64 {
                 player_time[side_to_move as usize] -= move_stop - move_start
             }
@@ -1477,7 +1478,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     }
     fclose(output_stream);
     /* Initialize display subsystem and search parameters */
-    set_names(b"\x00" as *const u8 as *const i8,
+    set_names::<FE>(b"\x00" as *const u8 as *const i8,
               b"\x00" as *const u8 as *const i8);
     set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                   score_sheet_row);
@@ -1501,7 +1502,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     reset_counter(&mut script_nodes);
     position_count = 0 as i32;
     max_search = -0.0f64;
-    start_time = get_real_timer();
+    start_time = get_real_timer::<FE>();
     /* Scan through the script file */
     i = 0 as i32;
     loop  {
@@ -1552,7 +1553,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                        i + 1 as i32);
                 exit(1 as i32);
             }
-            if strlen(stm_string.as_mut_ptr()) !=
+            if   FE::strlen(stm_string.as_mut_ptr()) !=
                    1 as i32 as u64 {
                 printf(b"\nAmbiguous side to move on line %d - aborting\n\n\x00"
                            as *const u8 as *const i8,
@@ -1568,7 +1569,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                            i + 1 as i32);
                 }
             }
-            if strlen(board_string.as_mut_ptr()) !=
+            if  FE::strlen(board_string.as_mut_ptr()) !=
                    64 as i32 as u64 {
                 printf(b"\nBoard on line %d doesn\'t contain 64 positions - aborting\n\n\x00"
                            as *const u8 as *const i8,
@@ -1612,8 +1613,8 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                               1 as i32, 0 as i32,
                               1 as i32);
             }
-            search_start = get_real_timer();
-            start_move(my_time as f64, my_incr as f64,
+            search_start = get_real_timer::<FE>();
+            start_move::<FE>(my_time as f64, my_incr as f64,
                        disks_played + 4 as i32);
             determine_move_time(my_time as f64,
                                 my_incr as f64,
@@ -1651,7 +1652,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 }
             }
             score = eval_info.score / 128 as i32;
-            search_stop = get_real_timer();
+            search_stop = get_real_timer::<FE>();
             if search_stop - search_start > max_search {
                 max_search = search_stop - search_start
             }
@@ -1734,7 +1735,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     }
     /* Clean up and terminate */
     fclose(script_stream);
-    stop_time = get_real_timer();
+    stop_time = get_real_timer::<FE>();
     printf(b"Total positions solved:   %d\n\x00" as *const u8 as
                *const i8, position_count);
     printf(b"Total time:               %.1f s\n\x00" as *const u8 as

@@ -12,7 +12,8 @@ use c2rust_out::src::display::{produce_eval_text, display_board};
 use c2rust_out::src::game::{extended_compute_move, game_init};
 use c2rust_out::src::osfbook::{read_binary_database, init_osf};
 use c2rust_out::src::zebra::_IO_FILE;
-use c2rust_out::src::error::LibcFatalError;
+use c2rust_out::src::error::{LibcFatalError, FE};
+use engine::src::error::FrontEnd;
 
 extern "C" {
 
@@ -119,7 +120,7 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
     read_binary_database(book_name);
     game_init(0 as *const libc::c_char, &mut side_to_move);
     toggle_human_openings(0 as libc::c_int);
-    set_names(b"\x00" as *const u8 as *const libc::c_char,
+    set_names::<LibcFatalError>(b"\x00" as *const u8 as *const libc::c_char,
               b"\x00" as *const u8 as *const libc::c_char);
     quit = 0 as libc::c_int;
     while quit == 0 {
@@ -152,7 +153,7 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
                        1 as libc::c_int,
                    '0' as i32 + get_evaluated(i).move_0 / 10 as libc::c_int,
                    buffer);
-            free(buffer as *mut libc::c_void);
+            FE::free(buffer as *mut libc::c_void);
             i += 1
         }
         puts(b"\x00" as *const u8 as *const libc::c_char);

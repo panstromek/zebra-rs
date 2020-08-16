@@ -1,8 +1,5 @@
-use crate::src::stubs::{fabs, time};
-extern "C" {
-    #[no_mangle]
-    fn report_ponder_time();
-}
+use crate::src::stubs::{fabs};
+use crate::src::error::FrontEnd;
 
 pub type __time_t = i64;
 pub type time_t = __time_t;
@@ -152,7 +149,7 @@ pub unsafe fn set_panic_threshold(value: f64) {
   RESET_REAL_TIMER
 */
 
-pub unsafe fn reset_real_timer() { time(&mut init_time); }
+pub unsafe fn reset_real_timer<FE: FrontEnd>() { FE::time(&mut init_time); }
 /*
   INIT_TIMER
   Initializes the timer. This is really only needed when
@@ -160,15 +157,15 @@ pub unsafe fn reset_real_timer() { time(&mut init_time); }
   is used for timing.
 */
 
-pub unsafe fn init_timer() { reset_real_timer(); }
+pub unsafe fn init_timer<FE: FrontEnd>() { reset_real_timer::<FE>(); }
 /*
   GET_REAL_TIMER
   Returns the time passed since the last call to init_timer() or reset_timer().
 */
 
-pub unsafe fn get_real_timer() -> f64 {
+pub unsafe fn get_real_timer<FE :FrontEnd>() -> f64 {
     let mut curr_time: time_t = 0;
-    time(&mut curr_time);
+    FE::time(&mut curr_time);
     return (curr_time - init_time) as f64;
 }
 
@@ -178,14 +175,14 @@ pub unsafe fn get_real_timer() -> f64 {
   This is the actual time, not adjusted for pondering.
 */
 
-pub unsafe fn get_elapsed_time() -> f64 {
-    return fabs(get_real_timer() - start_time);
+pub unsafe fn get_elapsed_time<FE:FrontEnd>() -> f64 {
+    return fabs(get_real_timer::<FE>() - start_time);
 }
 /*
   START_MOVE
 */
 
-pub unsafe fn start_move(in_total_time: f64,
+pub unsafe fn start_move<FE: FrontEnd>(in_total_time: f64,
                          _increment: f64,
                          _discs: i32) {
     /*
@@ -199,7 +196,7 @@ pub unsafe fn start_move(in_total_time: f64,
             (in_total_time) - 10.0f64
         } else { 0.1f64 };
     panic_abort = 0 as i32;
-    start_time = get_real_timer();
+    start_time = get_real_timer::<FE>();
 }
 /*
   CHECK_PANIC_ABORT
@@ -207,10 +204,10 @@ pub unsafe fn start_move(in_total_time: f64,
   sets the PANIC_ABORT flags.
 */
 
-pub unsafe fn check_panic_abort() {
+pub unsafe fn check_panic_abort<FE: FrontEnd>() {
     let mut curr_time: f64 = 0.;
     let mut adjusted_total_time: f64 = 0.;
-    curr_time = get_elapsed_time();
+    curr_time = get_elapsed_time::<FE>();
     adjusted_total_time = total_move_time;
     if do_check_abort != 0 && curr_time >= panic_value * adjusted_total_time {
         panic_abort = 1 as i32
@@ -221,11 +218,11 @@ pub unsafe fn check_panic_abort() {
   Checks if a certain fraction of the panic time has been used.
 */
 
-pub unsafe fn check_threshold(threshold: f64)
+pub unsafe fn check_threshold<FE: FrontEnd>(threshold: f64)
                               -> i32 {
     let mut curr_time: f64 = 0.;
     let mut adjusted_total_time: f64 = 0.;
-    curr_time = get_elapsed_time();
+    curr_time = get_elapsed_time::<FE>();
     adjusted_total_time = total_move_time;
     return (do_check_abort != 0 &&
         curr_time >= panic_value * threshold * adjusted_total_time) as
@@ -237,10 +234,10 @@ pub unsafe fn check_threshold(threshold: f64)
   pondering was made is stored.
 */
 
-pub unsafe fn adjust_current_ponder_time(move_0: i32) {
+pub unsafe fn adjust_current_ponder_time<FE: FrontEnd>(move_0: i32) {
     current_ponder_time = ponder_time[move_0 as usize];
     current_ponder_depth = ponder_depth[move_0 as usize];
-    report_ponder_time();
+    FE::report_ponder_time();
 }
 /*
   ABOVE_RECOMMENDED
@@ -250,11 +247,11 @@ pub unsafe fn adjust_current_ponder_time(move_0: i32) {
   The extended version takes the ponder time into account.
 */
 
-pub unsafe fn above_recommended() -> i32 {
-    return (get_elapsed_time() >= time_per_move) as i32;
+pub unsafe fn above_recommended<FE: FrontEnd>() -> i32 {
+    return (get_elapsed_time::<FE>() >= time_per_move) as i32;
 }
 
-pub unsafe fn extended_above_recommended() -> i32 {
-    return (get_elapsed_time() + frozen_ponder_time >= 1.5f64 * time_per_move)
+pub unsafe fn extended_above_recommended<FE: FrontEnd>() -> i32 {
+    return (get_elapsed_time::<FE>() + frozen_ponder_time >= 1.5f64 * time_per_move)
         as i32;
 }

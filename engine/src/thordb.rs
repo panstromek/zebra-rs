@@ -2,21 +2,11 @@ use crate::src::bitboard::bit_reverse_32;
 use crate::src::myrandom::my_random;
 use crate::src::patterns::pow3;
 use crate::src::moves::dir_mask;
-use crate::src::stubs::{abs, strlen, free};
+use crate::src::stubs::{abs};
 use crate::src::safemem::safe_malloc;
 use std::ffi::c_void;
 use crate::src::error::{FrontEnd};
 
-extern "C" {
-    #[no_mangle]
-    fn thordb_report_flipped_0_first();
-    #[no_mangle]
-    fn thordb_report_flipped_0_second();
-    #[no_mangle]
-    fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]);
-    #[no_mangle]
-    fn sort_thor_games(count: i32);
-}
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct GameInfoType {
@@ -8259,7 +8249,7 @@ pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
         branch_depth = thor_opening_list[i as usize].first_unique;
         end_depth =
             (branch_depth as
-                u64).wrapping_add(strlen(thor_opening_list[i as
+                u64).wrapping_add(FE::strlen(thor_opening_list[i as
                 usize].move_str).wrapping_div(2
                 as
                 i32
@@ -8317,7 +8307,7 @@ pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
                         0 as i32 + 2 as i32 -
                             thor_side_to_move
                 } else {
-                    thordb_report_flipped_0_first();
+                    FE::thordb_report_flipped_0_first();
                 }
             }
             j += 1
@@ -8367,7 +8357,7 @@ pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
                         0 as i32 + 2 as i32 -
                             thor_side_to_move
                 } else {
-                    thordb_report_flipped_0_second();
+                    FE::thordb_report_flipped_0_second();
                 }
             }
             parent = new_child;
@@ -8667,7 +8657,8 @@ pub unsafe fn tournament_lex_order(index: i32)
   Only to be called by QSORT. A full comparison is
   performed using the priority order from THOR_SORT_ORDER.
 */
-pub unsafe extern "C" fn thor_compare(g1: *const c_void,
+
+pub unsafe fn thor_compare(g1: *const c_void,
                                   g2: *const c_void)
                                   -> i32 {
     let mut i: i32 = 0;
@@ -8732,7 +8723,7 @@ pub unsafe extern "C" fn thor_compare(g1: *const c_void,
   towards common moves. (If no moves are found, PASS is returned.)
 */
 
-pub unsafe fn choose_thor_opening_move(in_board:
+pub unsafe fn choose_thor_opening_move<FE:FrontEnd>(in_board:
                                        *mut i32,
                                        side_to_move:
                                        i32,
@@ -8863,7 +8854,7 @@ pub unsafe fn choose_thor_opening_move(in_board:
                 }
                 i += 1
             }
-            choose_thor_opening_move_report(freq_sum, match_count, &move_list)
+            FE::choose_thor_opening_move_report(freq_sum, match_count, &move_list)
         }
         return random_move
     }
@@ -8913,7 +8904,7 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
                 as *mut *mut GameType;
         thor_search.allocation = thor_game_count
     } else if thor_search.allocation < thor_game_count {
-        free(thor_search.match_list as *mut c_void);
+        FE::free(thor_search.match_list as *mut c_void);
         thor_search.match_list =
             safe_malloc::<FE>((thor_game_count as
                 u64).wrapping_mul(::std::mem::size_of::<*mut GameType>()
@@ -8944,7 +8935,7 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
             }
             current_db = (*current_db).next
         }
-        sort_thor_games(thor_game_count);
+        FE::sort_thor_games(thor_game_count);
         j = 0 as i32;
         while j < thor_game_count {
             (**thor_search.match_list.offset(j as isize)).sort_order = j;

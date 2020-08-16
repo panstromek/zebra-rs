@@ -1,11 +1,7 @@
-use crate::src::stubs::{free, strdup};
 use std::ffi::c_void;
 use crate::src::timer::get_real_timer;
+use crate::src::error::FrontEnd;
 
-extern "C" {
-    #[no_mangle]
-    pub fn display_buffers();
-}
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
 pub const INTERRUPTED_EVAL: EvalType = 7;
@@ -60,12 +56,12 @@ pub static mut white_list: *mut i32 = 0 as *const i32 as *mut i32;
   board by DISPLAY_BOARD.
 */
 
-pub unsafe fn set_names(black_name: *const i8,
+pub unsafe fn set_names<FE: FrontEnd>(black_name: *const i8,
                         white_name: *const i8) {
-    if !black_player.is_null() { free(black_player as *mut c_void); }
-    if !white_player.is_null() { free(white_player as *mut c_void); }
-    black_player = strdup(black_name);
-    white_player = strdup(white_name);
+    if !black_player.is_null() { FE::free(black_player as *mut c_void); }
+    if !white_player.is_null() { FE::free(white_player as *mut c_void); }
+    black_player = FE::strdup(black_name);
+    white_player = FE::strdup(white_name);
 }
 
 pub unsafe fn set_times(black: i32,
@@ -132,11 +128,11 @@ pub unsafe fn toggle_smart_buffer_management(use_smart:
   Clear all buffers and initialize time variables.
 */
 
-pub unsafe fn reset_buffer_display() {
+pub unsafe fn reset_buffer_display<FE: FrontEnd>() {
     /* The first two Fibonacci numbers */
     clear_status();
     clear_sweep();
     interval1 = 0.0f64;
     interval2 = 1.0f64;
-    last_output = get_real_timer();
+    last_output = get_real_timer::<FE>();
 }

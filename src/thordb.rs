@@ -6,6 +6,8 @@ use crate::src::safemem::{safe_malloc, safe_realloc};
 use crate::src::zebra::_IO_FILE;
 pub use engine::src::thordb::*;
 use crate::src::error::LibcFatalError;
+use engine::src::error::FrontEnd;
+
 pub type FE = LibcFatalError;
 
 pub type __off_t = i64;
@@ -221,7 +223,7 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
     i = 0 as i32;
     loop  {
         ch = *(*player1).name.offset(i as isize);
-        buffer1[i as usize] = tolower(ch as i32) as i8;
+        buffer1[i as usize] =FE::tolower(ch as i32) as i8;
         i += 1;
         if !(ch as i32 != 0 as i32) { break ; }
     }
@@ -232,7 +234,7 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
     i = 0 as i32;
     loop  {
         ch = *(*player2).name.offset(i as isize);
-        buffer2[i as usize] = tolower(ch as i32) as i8;
+        buffer2[i as usize] =FE::tolower(ch as i32) as i8;
         i += 1;
         if !(ch as i32 != 0 as i32) { break ; }
     }
@@ -511,6 +513,14 @@ unsafe fn print_game(stream: *mut FILE,
     }
     fputs(b"\n\x00" as *const u8 as *const i8, stream);
 }
+// This is a wrapper around thor_compare that has C linkage,
+// because we don't want any C linkage in the engine
+pub unsafe extern "C" fn extern_thor_compare(g1: *const std::ffi::c_void,
+                                             g2: *const std::ffi::c_void)
+                                             -> i32 {
+    thor_compare(g1, g2)
+}
+
 /*
   SORT_THOR_GAMES
   Sorts the COUNT first games in the list THOR_SEARCH.MATCH_LIST.
@@ -518,14 +528,14 @@ unsafe fn print_game(stream: *mut FILE,
   used (in order) to sort the matches.
 */
 #[no_mangle]
-unsafe extern "C" fn sort_thor_games(count: i32) {
+pub unsafe extern "C" fn sort_thor_games(count: i32) {
     if count <= 1 as i32 {
         /* No need to sort 0 or 1 games. */
         return
     }
     qsort(thor_search.match_list as *mut std::ffi::c_void, count as size_t,
           ::std::mem::size_of::<*mut GameType>() as u64,
-          Some(thor_compare as
+          Some(extern_thor_compare as
                    unsafe extern "C" fn(_: *const std::ffi::c_void,
                                         _: *const std::ffi::c_void)
                        -> i32));
