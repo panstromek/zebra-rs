@@ -1,10 +1,4 @@
 
-
-extern "C" {
-  #[no_mangle]
-  pub fn fatal_error(_: *const i8, _: ...) -> !;
-}
-
 pub trait FatalError {
     fn invalid_move(curr_move: i32) -> !;
     fn unrecognized_character(unrecognized: i8) -> !;
