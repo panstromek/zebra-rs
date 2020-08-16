@@ -4,6 +4,8 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 use c2rust_out::src::osfbook::{write_text_database, write_compressed_database, write_binary_database, generate_endgame_statistics, generate_midgame_statistics, display_doubly_optimal_line, export_tree, restricted_minimax_tree, minimax_tree, merge_position_list, correct_tree, evaluate_tree, merge_binary_database, clear_tree, book_statistics, convert_opening_list, set_output_script_name, unpack_compressed_database, read_text_database, read_binary_database, build_tree, init_osf};
 use engine::src::osfbook::{set_draw_mode, set_black_force, set_white_force, set_deviation_value, set_search_depth, set_eval_span, set_negamax_span, set_max_batch_size, set_game_mode};
 use engine::src::hash::resize_hash;
+use engine::src::error::{LibcFatalError};
+pub type FE = LibcFatalError;
 
 extern "C" {
     #[no_mangle]
@@ -377,7 +379,7 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
                 arg_index += 1;
                 let mut hash_bits: libc::c_int =
                     atoi(*argv.offset(arg_index as isize));
-                resize_hash(hash_bits);
+                resize_hash::<FE>(hash_bits);
                 printf(b"Hash table size changed to %d elements\n\x00" as
                            *const u8 as *const libc::c_char,
                        (1 as libc::c_int) << hash_bits);
@@ -568,7 +570,7 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
     if evaluate_all != 0 { evaluate_tree(); }
     if endgame_correct != 0 { correct_tree(max_empty, full_solve); }
     if !merge_script_file.is_null() && !merge_output_file.is_null() {
-        merge_position_list(merge_script_file, merge_output_file);
+        merge_position_list::<LibcFatalError>(merge_script_file, merge_output_file);
     }
     if calculate_minimax != 0 { minimax_tree(); }
     if dump_positions != 0 {

@@ -5,6 +5,8 @@ use crate::src::search::{full_pv, full_pv_depth, disc_count};
 use crate::src::globals::{white_moves, black_moves, pv_depth};
 use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub use engine::src::display::*;
+use engine::src::error::LibcFatalError;
+pub type FE = LibcFatalError;
 
 pub type __builtin_va_list = [__va_list_tag; 1];
 #[derive(Copy, Clone)]
@@ -475,7 +477,7 @@ pub unsafe fn produce_eval_text(eval_info: &EvaluationType,
     let mut disk_diff: f64 = 0.;
     let mut len: i32 = 0;
     let mut int_confidence: i32 = 0;
-    buffer = safe_malloc(32 as i32 as size_t) as *mut i8;
+    buffer = safe_malloc::<FE>(32 as i32 as size_t) as *mut i8;
     len = 0 as i32;
     match eval_info.type_0 as u32 {
         0 => {

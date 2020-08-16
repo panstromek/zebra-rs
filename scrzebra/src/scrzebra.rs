@@ -20,6 +20,7 @@ use c2rust_out::src::game::{global_setup, compute_move, game_init};
 use c2rust_out::src::stubs::strstr;
 use c2rust_out::src::display::{display_move, display_board};
 use engine::src::zebra::EvaluationType;
+use engine::src::error::LibcFatalError;
 
 extern "C" {
     #[no_mangle]
@@ -630,7 +631,7 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
         exit(1 as libc::c_int);
     }
     global_setup(use_random, hash_bits);
-    init_thor_database();
+    init_thor_database::<LibcFatalError>();
     if use_book != 0 {
         init_learn(b"book.bin\x00" as *const u8 as *const libc::c_char,
                    1 as libc::c_int);

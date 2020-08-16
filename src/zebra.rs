@@ -29,6 +29,7 @@ use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler};
 use crate::src::learn::LibcLearner;
 use crate::src::thordb::{read_game_database, read_tournament_database, read_player_database, print_thor_matches};
 use engine::src::thordb::{init_thor_database, get_total_game_count, get_thor_game_size, choose_thor_opening_move};
+use engine::src::error::LibcFatalError;
 
 
 pub type _IO_wide_data = std::ffi::c_void;
@@ -637,7 +638,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         exit(1 as i32);
     }
     global_setup(use_random, hash_bits);
-    init_thor_database();
+    init_thor_database::<LibcFatalError>();
     if use_book != 0 {
         init_learn(b"book.bin\x00" as *const u8 as *const i8,
                    1 as i32);
@@ -857,7 +858,7 @@ unsafe fn play_game(mut file_name: *const i8,
     let mut move_file = LibcFileMoveSource::open(move_file_name);
 
     engine_play_game
-        ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner>
+        ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner, LibcFatalError>
         (file_name, move_string, repeat, log_file_name_, move_file, use_thor != 0, use_learning != 0)
 }
 
@@ -1161,7 +1162,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         puts(b"Analyzing provided game...\x00" as *const u8 as
                  *const i8);
     }
-    generic_game_init::<LibcBoardFileSource>(0 as *const i8, &mut side_to_move);
+    generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move);
     setup_hash(1 as i32);
     clear_stored_game();
     if echo != 0 && use_book != 0 {
@@ -1534,7 +1535,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 exit(1 as i32);
             }
             /* Parse the script line containing board and side to move */
-            generic_game_init::<LibcBoardFileSource>(0 as *const i8, &mut side_to_move);
+            generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move);
             set_slack(0.0f64 as i32);
             toggle_human_openings(0 as i32);
             reset_book_search();

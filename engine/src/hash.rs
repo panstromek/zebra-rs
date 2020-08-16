@@ -3,6 +3,7 @@ use crate::src::myrandom::my_random;
 use crate::src::safemem::safe_malloc;
 use crate::src::stubs::{free};
 use std::ffi::c_void;
+use crate::src::error::FatalError;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -612,12 +613,12 @@ pub unsafe fn add_hash(reverse_mode: i32,
    Allocate memory for the hash table.
 */
 
-pub unsafe fn init_hash(in_hash_bits: i32) {
+pub unsafe fn init_hash<FE:FatalError>(in_hash_bits: i32) {
     hash_bits = in_hash_bits;
     hash_size = (1 as i32) << hash_bits;
     hash_mask = hash_size - 1 as i32;
     hash_table =
-        safe_malloc((hash_size as
+        safe_malloc::<FE>((hash_size as
             u64).wrapping_mul(::std::mem::size_of::<CompactHashEntry>()
             as u64)) as
             *mut CompactHashEntry;
@@ -628,9 +629,9 @@ pub unsafe fn init_hash(in_hash_bits: i32) {
   Changes the size of the hash table.
 */
 
-pub unsafe fn resize_hash(new_hash_bits: i32) {
+pub unsafe fn resize_hash<FE:FatalError>(new_hash_bits: i32) {
     free(hash_table as *mut c_void);
-    init_hash(new_hash_bits);
+    init_hash::<FE>(new_hash_bits);
     setup_hash(1 as i32);
 }
 /*

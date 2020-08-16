@@ -23,7 +23,6 @@ pub trait FatalError {
 }
 
 pub struct LibcFatalError;
-pub type FE = LibcFatalError;
 
 impl FatalError for LibcFatalError {
   fn invalid_move(curr_move: i32) -> ! {

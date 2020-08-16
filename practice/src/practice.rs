@@ -12,6 +12,7 @@ use c2rust_out::src::display::{produce_eval_text, display_board};
 use c2rust_out::src::game::{extended_compute_move, game_init};
 use c2rust_out::src::osfbook::{read_binary_database, init_osf};
 use c2rust_out::src::zebra::_IO_FILE;
+use engine::src::error::LibcFatalError;
 
 extern "C" {
 
@@ -137,7 +138,7 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
                       1 as libc::c_int, 0 as libc::c_int, 0 as libc::c_int);
         printf(b"Book hash: %d %d (%d)\n\n\x00" as *const u8 as
                    *const libc::c_char, val0, val1, orientation);
-        extended_compute_move(side_to_move, 0 as libc::c_int,
+        extended_compute_move::<LibcFatalError>(side_to_move, 0 as libc::c_int,
                               1 as libc::c_int, 6 as libc::c_int,
                               16 as libc::c_int, 18 as libc::c_int);
         printf(b"Scores for the %d moves:\n\x00" as *const u8 as

@@ -7,6 +7,7 @@ use crate::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
 use crate::src::zebra::_IO_FILE;
 pub use engine::src::learn::*;
 use engine::src::game::generic_game_init;
+use engine::src::error::LibcFatalError;
 
 pub type size_t = u64;
 pub type __off_t = i64;
@@ -51,7 +52,7 @@ pub unsafe fn learn_game(game_length: i32,
     let full_solve = get_earliest_full_solve();
     let wld_solve = get_earliest_wld_solve();
     let mut dummy: i32 = 0;
-    generic_game_init::<LibcBoardFileSource>(0 as *const i8, &mut dummy);
+    generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut dummy);
     let mut side_to_move = 0 as i32;
     let mut i = 0 as i32;
     while i < game_length {

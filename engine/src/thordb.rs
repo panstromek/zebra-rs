@@ -5,7 +5,7 @@ use crate::src::moves::dir_mask;
 use crate::src::stubs::{abs, strlen, free};
 use crate::src::safemem::safe_malloc;
 use std::ffi::c_void;
-use crate::src::error::{FE, FatalError};
+use crate::src::error::{FatalError};
 
 extern "C" {
     #[no_mangle]
@@ -7888,7 +7888,7 @@ pub unsafe fn get_thor_game_size() -> i32 {
         in which they are calculated in COMPUTE_FULL_PRIMARY_HASH()
     and COMPUTE_FULL_SECONDARY_HASH().
 */
-pub unsafe fn init_symmetry_maps() {
+pub unsafe fn init_symmetry_maps<FE: FatalError>() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -8211,11 +8211,11 @@ pub unsafe fn init_thor_hash() {
   NEW_THOR_OPENING_NODE
   Creates and initializes a new node for use in the opening tree.
 */
-pub unsafe fn new_thor_opening_node(parent: *mut ThorOpeningNode)
+pub unsafe fn new_thor_opening_node<FE:FatalError>(parent: *mut ThorOpeningNode)
                                 -> *mut ThorOpeningNode {
     let mut node = 0 as *mut ThorOpeningNode;
     node =
-        safe_malloc(::std::mem::size_of::<ThorOpeningNode>() as u64)
+        safe_malloc::<FE>(::std::mem::size_of::<ThorOpeningNode>() as u64)
             as *mut ThorOpeningNode;
     (*node).child_move = 0 as i32 as i8;
     (*node).sibling_move = 0 as i32 as i8;
@@ -8230,7 +8230,7 @@ pub unsafe fn new_thor_opening_node(parent: *mut ThorOpeningNode)
   Builds the opening tree from the statically computed
   structure THOR_OPENING_LIST (see thorop.c).
 */
-pub unsafe fn build_thor_opening_tree() {
+pub unsafe fn build_thor_opening_tree<FE:FatalError>() {
     let mut thor_move_list: [i8; 61] = [0; 61];
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -8246,7 +8246,7 @@ pub unsafe fn build_thor_opening_tree() {
     let mut node_list: [*mut ThorOpeningNode; 61] =
         [0 as *mut ThorOpeningNode; 61];
     /* Create the root node and compute its hash value */
-    root_node = new_thor_opening_node(0 as *mut ThorOpeningNode);
+    root_node = new_thor_opening_node::<FE>(0 as *mut ThorOpeningNode);
     clear_thor_board();
     compute_thor_patterns(thor_board.as_mut_ptr());
     compute_partial_hash(&mut hash1, &mut hash2);
@@ -8324,7 +8324,7 @@ pub unsafe fn build_thor_opening_tree() {
         }
         /* Create the branch from the previous node */
         parent = node_list[branch_depth as usize];
-        new_child = new_thor_opening_node(parent);
+        new_child = new_thor_opening_node::<FE>(parent);
         compute_thor_patterns(thor_board.as_mut_ptr());
         compute_partial_hash(&mut hash1, &mut hash2);
         (*new_child).hash1 = hash1;
@@ -8371,7 +8371,7 @@ pub unsafe fn build_thor_opening_tree() {
                 }
             }
             parent = new_child;
-            new_child = new_thor_opening_node(parent);
+            new_child = new_thor_opening_node::<FE>(parent);
             compute_thor_patterns(thor_board.as_mut_ptr());
             compute_partial_hash(&mut hash1, &mut hash2);
             (*new_child).hash1 = hash1;
@@ -8396,7 +8396,7 @@ pub unsafe fn build_thor_opening_tree() {
   must be called.
 */
 
-pub unsafe fn init_thor_database() {
+pub unsafe fn init_thor_database<FE:FatalError>() {
     let mut i: i32 = 0; /* "infinity" */
     thor_game_count = 0 as i32;
     thor_database_count = 0 as i32;
@@ -8424,10 +8424,10 @@ pub unsafe fn init_thor_database() {
     thor_games_sorted = 0 as i32;
     thor_games_filtered = 0 as i32;
     init_move_masks();
-    init_symmetry_maps();
+    init_symmetry_maps::<FE>();
     init_thor_hash();
     prepare_thor_board();
-    build_thor_opening_tree();
+    build_thor_opening_tree::<FE>();
     filter.game_categories =
         1 as i32 | 2 as i32 | 4 as i32;
     filter.player_filter = EitherSelectedFilter;
@@ -8876,7 +8876,7 @@ pub unsafe fn choose_thor_opening_move(in_board:
   given by IN_BOARD with SIDE_TO_MOVE being the player whose turn it is.
 */
 
-pub unsafe fn database_search(in_board: *mut i32,
+pub unsafe fn database_search<FE:FatalError>(in_board: *mut i32,
                               side_to_move: i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -8906,7 +8906,7 @@ pub unsafe fn database_search(in_board: *mut i32,
        in all databases match the position */
     if thor_search.allocation == 0 as i32 {
         thor_search.match_list =
-            safe_malloc((thor_game_count as
+            safe_malloc::<FE>((thor_game_count as
                 u64).wrapping_mul(::std::mem::size_of::<*mut GameType>()
                 as
                 u64))
@@ -8915,7 +8915,7 @@ pub unsafe fn database_search(in_board: *mut i32,
     } else if thor_search.allocation < thor_game_count {
         free(thor_search.match_list as *mut c_void);
         thor_search.match_list =
-            safe_malloc((thor_game_count as
+            safe_malloc::<FE>((thor_game_count as
                 u64).wrapping_mul(::std::mem::size_of::<*mut GameType>()
                 as
                 u64))

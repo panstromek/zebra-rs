@@ -3,7 +3,7 @@ use crate::src::moves::disks_played;
 use crate::src::patterns::{flip8, pow3};
 use crate::src::stubs::{floor, free};
 use crate::src::safemem::safe_malloc;
-use crate::src::error::{FE, FatalError};
+use crate::src::error::{FatalError};
 use std::ffi::c_void;
 use std::process::exit;
 
@@ -755,7 +755,7 @@ pub unsafe fn terminal_patterns() {
    Maintains an internal memory handler to boost
    performance and avoid heap fragmentation.
 */
-pub unsafe fn find_memory_block(afile2x: *mut *mut i16,
+pub unsafe fn find_memory_block<FE: FatalError>(afile2x: *mut *mut i16,
                             bfile: *mut *mut i16,
                             cfile: *mut *mut i16,
                             dfile: *mut *mut i16,
@@ -784,7 +784,7 @@ pub unsafe fn find_memory_block(afile2x: *mut *mut i16,
     if found_free == 0 {
         if block_count < 200 as i32 {
             block_list[block_count as usize] =
-                safe_malloc(::std::mem::size_of::<AllocationBlock>() as
+                safe_malloc::<FE>(::std::mem::size_of::<AllocationBlock>() as
                     u64) as *mut AllocationBlock
         }
         if block_count == 200 as i32 ||
@@ -816,9 +816,9 @@ pub unsafe fn find_memory_block(afile2x: *mut *mut i16,
    ALLOCATE_SET
    Finds memory for all patterns belonging to a certain stage.
 */
-pub unsafe fn allocate_set(index: i32) {
+pub unsafe fn allocate_set<FE: FatalError>(index: i32) {
     set[index as usize].block =
-        find_memory_block(&mut (*set.as_mut_ptr().offset(index as
+        find_memory_block::<FE>(&mut (*set.as_mut_ptr().offset(index as
             isize)).afile2x,
                           &mut (*set.as_mut_ptr().offset(index as
                               isize)).bfile,
@@ -849,7 +849,7 @@ pub unsafe fn allocate_set(index: i32) {
    Also calculates the offset pointers to the last elements in each block
    (used for the inverted patterns when white is to move).
 */
-pub unsafe fn load_set(index: i32) {
+pub unsafe fn load_set<FE: FatalError>(index: i32) {
     let mut prev: i32 = 0;
     let mut next: i32 = 0;
     let mut weight1: i32 = 0;
@@ -876,7 +876,7 @@ pub unsafe fn load_set(index: i32) {
         set[index as usize].parity_constant[1 as i32 as usize] =
             (set[index as usize].constant as i32 +
                 set[index as usize].parity as i32) as i16;
-        allocate_set(index);
+        allocate_set::<FE>(index);
         generate_batch(set[index as usize].afile2x, 59049 as i32,
                        set[prev as usize].afile2x, weight1,
                        set[next as usize].afile2x, weight2);
@@ -944,7 +944,7 @@ pub static mut pattern_score: i16 = 0;
    the statistically optimized pattern tables.
 */
 
-pub unsafe fn pattern_evaluation(side_to_move: i32)
+pub unsafe fn pattern_evaluation<FE: FatalError>(side_to_move: i32)
                                  -> i32 {
     let mut eval_phase: i32 = 0;
     let mut score: i16 = 0;
@@ -964,7 +964,7 @@ pub unsafe fn pattern_evaluation(side_to_move: i32)
     }
     /* Load and/or initialize the pattern coefficients */
     eval_phase = eval_map[disks_played as usize];
-    if set[eval_phase as usize].loaded == 0 { load_set(eval_phase); }
+    if set[eval_phase as usize].loaded == 0 { load_set::<FE>(eval_phase); }
     /* The constant feature and the parity feature */
     score =
         set[eval_phase as
@@ -2764,14 +2764,14 @@ pub unsafe fn post_init_coeffs() {
    UNPACK_BATCH
    Reads feature values for one specific pattern
 */
-pub unsafe fn unpack_batch(item: *mut i16,
+pub unsafe fn unpack_batch<FE:FatalError, S:FnMut() -> i16>(item: *mut i16,
                            mirror: *mut i32,
                            count: i32,
-                           next_word: &mut impl FnMut() -> i16) {
+                           next_word: &mut S) {
     let mut i: i32 = 0;
     let mut buffer = 0 as *mut i16;
     buffer =
-        safe_malloc((count as
+        safe_malloc::<FE>((count as
             u64).wrapping_mul(::std::mem::size_of::<i16>()
             as u64)) as
             *mut i16;
@@ -2821,7 +2821,7 @@ extern "C" {
    Reads all feature values for a certain stage. To take care of
    symmetric patterns, mirror tables are calculated.
 */
-pub unsafe fn unpack_coeffs(next_word: &mut impl FnMut() -> i16) {
+pub unsafe fn unpack_coeffs<FE:FatalError, S: FnMut() -> i16 >(next_word: &mut S) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -2838,42 +2838,42 @@ pub unsafe fn unpack_coeffs(next_word: &mut impl FnMut() -> i16) {
     /* Allocate the memory needed for the temporary mirror maps from the
        heap rather than the stack to reduce memory requirements. */
     map_mirror3 =
-        safe_malloc((27 as i32 as
+        safe_malloc::<FE>((27 as i32 as
             u64).wrapping_mul(::std::mem::size_of::<i32>()
             as u64)) as
             *mut i32;
     map_mirror4 =
-        safe_malloc((81 as i32 as
+        safe_malloc::<FE>((81 as i32 as
             u64).wrapping_mul(::std::mem::size_of::<i32>()
             as u64)) as
             *mut i32;
     map_mirror5 =
-        safe_malloc((243 as i32 as
+        safe_malloc::<FE>((243 as i32 as
             u64).wrapping_mul(::std::mem::size_of::<i32>()
             as u64)) as
             *mut i32;
     map_mirror6 =
-        safe_malloc((729 as i32 as
+        safe_malloc::<FE>((729 as i32 as
             u64).wrapping_mul(::std::mem::size_of::<i32>()
             as u64)) as
             *mut i32;
     map_mirror7 =
-        safe_malloc((2187 as i32 as
+        safe_malloc::<FE>((2187 as i32 as
             u64).wrapping_mul(::std::mem::size_of::<i32>()
             as u64)) as
             *mut i32;
     map_mirror8 =
-        safe_malloc((6561 as i32 as
+        safe_malloc::<FE>((6561 as i32 as
             u64).wrapping_mul(::std::mem::size_of::<i32>()
             as u64)) as
             *mut i32;
     map_mirror33 =
-        safe_malloc((19683 as i32 as
+        safe_malloc::<FE>((19683 as i32 as
             u64).wrapping_mul(::std::mem::size_of::<i32>()
             as u64)) as
             *mut i32;
     map_mirror8x2 =
-        safe_malloc((59049 as i32 as
+        safe_malloc::<FE>((59049 as i32 as
             u64).wrapping_mul(::std::mem::size_of::<i32>()
             as u64)) as
             *mut i32;
@@ -3136,27 +3136,27 @@ pub unsafe fn unpack_coeffs(next_word: &mut impl FnMut() -> i16) {
             (set[stage[i as usize] as usize].constant as i32 +
                 set[stage[i as usize] as usize].parity as i32) as
                 i16;
-        unpack_batch(set[stage[i as usize] as usize].afile2x, map_mirror8x2,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].afile2x, map_mirror8x2,
                      59049 as i32, next_word);
-        unpack_batch(set[stage[i as usize] as usize].bfile, map_mirror8,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].bfile, map_mirror8,
                      6561 as i32, next_word);
-        unpack_batch(set[stage[i as usize] as usize].cfile, map_mirror8,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].cfile, map_mirror8,
                      6561 as i32, next_word);
-        unpack_batch(set[stage[i as usize] as usize].dfile, map_mirror8,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].dfile, map_mirror8,
                      6561 as i32, next_word);
-        unpack_batch(set[stage[i as usize] as usize].diag8, map_mirror8,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag8, map_mirror8,
                      6561 as i32, next_word);
-        unpack_batch(set[stage[i as usize] as usize].diag7, map_mirror7,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag7, map_mirror7,
                      2187 as i32, next_word);
-        unpack_batch(set[stage[i as usize] as usize].diag6, map_mirror6,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag6, map_mirror6,
                      729 as i32, next_word);
-        unpack_batch(set[stage[i as usize] as usize].diag5, map_mirror5,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag5, map_mirror5,
                      243 as i32, next_word);
-        unpack_batch(set[stage[i as usize] as usize].diag4, map_mirror4,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag4, map_mirror4,
                      81 as i32, next_word);
-        unpack_batch(set[stage[i as usize] as usize].corner33, map_mirror33,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].corner33, map_mirror33,
                      19683 as i32, next_word);
-        unpack_batch(set[stage[i as usize] as usize].corner52,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].corner52,
                      0 as *mut i32, 59049 as i32, next_word);
         i += 1
     }
@@ -3176,7 +3176,7 @@ pub trait CoeffSource {
     fn next_word(&mut self) -> i16;
 }
 
-pub unsafe fn process_coeffs_from_fn_source(mut coeffs: impl CoeffSource) {
+pub unsafe fn process_coeffs_from_fn_source<FE:FatalError, Source:CoeffSource>(mut coeffs: Source) {
     let mut next_word = || coeffs.next_word();
     /* Read the different stages for which the evaluation function
        was tuned and mark the other stages with pointers to the previous
@@ -3210,7 +3210,7 @@ pub unsafe fn process_coeffs_from_fn_source(mut coeffs: impl CoeffSource) {
             }
         }
         set[curr_stage as usize].permanent = 1 as i32;
-        allocate_set(curr_stage);
+        allocate_set::<FE>(curr_stage);
         i += 1
     }
     stage[(stage_count - 1 as i32) as usize] = 60 as i32;
@@ -3222,9 +3222,9 @@ pub unsafe fn process_coeffs_from_fn_source(mut coeffs: impl CoeffSource) {
         j += 1
     }
     set[60 as i32 as usize].permanent = 1 as i32;
-    allocate_set(60 as i32);
+    allocate_set::<FE>(60 as i32);
     /* Read the pattern values */
-    unpack_coeffs(&mut next_word);
+    unpack_coeffs::<FE, _>(&mut next_word);
 }
 
 

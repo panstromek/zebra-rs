@@ -16,7 +16,7 @@ use crate::src::hash::{determine_hash_values, set_hash_transformation, find_hash
 use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub use engine::src::game::*;
 use crate::src::getcoeff::zlib_source::ZLibSource;
-use engine::src::error::LibcFatalError;
+use engine::src::error::{LibcFatalError, FatalError};
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -36,7 +36,7 @@ pub unsafe fn global_setup(use_random: i32,
                                       hash_bits: i32) {
     LogFileHandler::on_global_setup();
     let coeff_adjustments = load_coeff_adjustments();
-    engine_global_setup(use_random, hash_bits, coeff_adjustments, ZLibSource::new());
+    engine_global_setup::<_,LibcFatalError>(use_random, hash_bits, coeff_adjustments, ZLibSource::new());
 }
 trait Logger {
     fn on_global_setup();
@@ -81,7 +81,7 @@ unsafe fn setup_log_file() {
 */
 unsafe fn setup_game(file_name: *const i8,
                                 side_to_move: *mut i32) {
-    generic_setup_game::<LibcBoardFileSource>(file_name, side_to_move)
+    generic_setup_game::<LibcBoardFileSource, LibcFatalError>(file_name, side_to_move)
 }
 pub struct LibcBoardFileSource {
     stream: *mut FILE
@@ -132,7 +132,7 @@ impl BoardSource for LibcBoardFileSource {
 */
 
 pub unsafe fn game_init(file_name: *const i8, side_to_move: *mut i32) {
-    generic_game_init::<LibcBoardFileSource>(file_name, side_to_move);
+    generic_game_init::<LibcBoardFileSource, LibcFatalError>(file_name, side_to_move);
 }
 /*
   PONDER_MOVE
@@ -304,7 +304,7 @@ pub unsafe fn ponder_move(side_to_move: i32,
   except for the best.
 */
 
-pub unsafe fn extended_compute_move(side_to_move: i32,
+pub unsafe fn extended_compute_move<FE: FatalError>(side_to_move: i32,
                                                book_only: i32,
                                                mut book: i32,
                                                mut mid: i32,
@@ -423,7 +423,7 @@ pub unsafe fn extended_compute_move(side_to_move: i32,
         /* Only book moves are to be considered */
         if game_evaluated_count > 0 as i32 {
             best_move =
-                get_book_move(side_to_move, 0 as i32,
+                 get_book_move::<FE>(side_to_move, 0 as i32,
                               &mut book_eval_info);
             set_current_eval(book_eval_info);
         } else {
@@ -480,7 +480,7 @@ pub unsafe fn extended_compute_move(side_to_move: i32,
                     /* Compute move doesn't allow depth 0 */
                     evaluations.lo = evaluations.lo.wrapping_add(1);
                     shallow_eval =
-                        -pattern_evaluation(0 as i32 +
+                        -pattern_evaluation::<FE>(0 as i32 +
                                                 2 as i32 -
                                                 side_to_move)
                 } else {
@@ -675,7 +675,7 @@ pub unsafe fn extended_compute_move(side_to_move: i32,
                     /* compute_move doesn't like 0-ply searches */
                     evaluations.lo = evaluations.lo.wrapping_add(1);
                     shallow_eval =
-                        pattern_evaluation(0 as i32 + 2 as i32
+                        pattern_evaluation::<FE>(0 as i32 + 2 as i32
                                                - side_to_move);
                     this_eval =
                         create_eval_info(MIDGAME_EVAL, UNSOLVED_POSITION,
@@ -706,7 +706,7 @@ pub unsafe fn extended_compute_move(side_to_move: i32,
                         if current_mid == 1 as i32 {
                             /* compute_move doesn't like 0-ply searches */
                             evaluations.lo = evaluations.lo.wrapping_add(1);
-                            shallow_eval = pattern_evaluation(side_to_move);
+                            shallow_eval = pattern_evaluation::<FE>(side_to_move);
                             this_eval =
                                 create_eval_info(MIDGAME_EVAL,
                                                  UNSOLVED_POSITION,

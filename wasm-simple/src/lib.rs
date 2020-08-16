@@ -18,7 +18,7 @@ impl CoeffSource for CoeffSourceWasm {
 #[wasm_bindgen]
 pub fn greet(name: &str) {
     let coeffs = CoeffSourceWasm {};
-    unsafe { engine_global_setup(0, 7, None, coeffs); }
+    // unsafe { engine_global_setup(0, 7, None, coeffs); }
 
     alert(&format!("Hello, {}!", name));
 }
