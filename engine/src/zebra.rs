@@ -16,7 +16,6 @@ use crate::src::game::{toggle_human_openings, generic_game_init, FileBoardSource
 use crate::src::hash::{setup_hash};
 
 
-pub type Board = [i32; 128];
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
 pub const INTERRUPTED_EVAL: EvalType = 7;

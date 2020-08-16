@@ -1,8 +1,5 @@
 use crate::src::stubs::{puts, abs, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp};
 use crate::src::safemem::{safe_malloc, safe_realloc};
-
-
-
 use crate::src::zebra::_IO_FILE;
 pub use engine::src::thordb::*;
 use crate::src::error::LibcFatalError;
@@ -10,11 +7,8 @@ use engine::src::error::FrontEnd;
 
 pub type FE = LibcFatalError;
 
-pub type __off_t = i64;
-pub type __off64_t = i64;
 pub type size_t = u64;
 
-pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 pub type __compar_fn_t
     =
