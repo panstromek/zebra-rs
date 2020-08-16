@@ -24,8 +24,7 @@ pub type size_t = u64;
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 
-#[no_mangle]
-pub unsafe extern "C" fn after_update_best_list_verbose(best_list: *mut i32) {
+pub unsafe fn after_update_best_list_verbose(best_list: *mut i32) {
     printf(b"      After:  \x00" as *const u8 as *const i8);
     let mut i = 0 as i32;
     while i < 4 as i32 {
@@ -35,8 +34,7 @@ pub unsafe extern "C" fn after_update_best_list_verbose(best_list: *mut i32) {
     }
     puts(b"\x00" as *const u8 as *const i8);
 }
-#[no_mangle]
-pub unsafe extern "C"  fn before_update_best_list_verbose(best_list: *mut i32, move_0: i32, best_list_index: i32, best_list_length: *mut i32) {
+pub unsafe  fn before_update_best_list_verbose(best_list: *mut i32, move_0: i32, best_list_index: i32, best_list_length: *mut i32) {
     let mut i: i32 = 0;
     printf(b"move=%2d  index=%d  length=%d      \x00" as *const u8 as
                *const i8, move_0, best_list_index,
@@ -52,8 +50,7 @@ pub unsafe extern "C"  fn before_update_best_list_verbose(best_list: *mut i32, m
 
 static mut buffer: [i8; 16] = [0; 16];
 
-#[no_mangle]
-pub unsafe extern "C" fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32) {
+pub unsafe fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32) {
     if update_pv != 0 {
         end_tree_search_some_pv_stats_report(alpha, beta, curr_val)
     }
@@ -63,8 +60,7 @@ pub unsafe extern "C" fn end_tree_search_output_some_second_stats(alpha: i32, be
     }
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32) {
+pub unsafe fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32) {
     if curr_val <= alpha {
         send_sweep(b"<%d\x00" as *const u8 as *const i8,
                    curr_val + 1 as i32);
@@ -80,8 +76,7 @@ pub unsafe extern "C" fn end_tree_search_some_pv_stats_report(alpha: i32, beta: 
     }
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32) {
+pub unsafe fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32) {
     if first != 0 {
         send_sweep(b"%-10s \x00" as *const u8 as *const i8,
                    buffer.as_mut_ptr());
@@ -92,8 +87,7 @@ pub unsafe extern "C" fn end_tree_search_level_0_ponder_0_short_report(move_0: i
                '0' as i32 + move_0 / 10 as i32);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn end_tree_search_output_some_stats(entry: &HashEntry) {
+pub unsafe fn end_tree_search_output_some_stats(entry: &HashEntry) {
     /* Output some stats */
     send_sweep(b"%c%c\x00" as *const u8 as *const i8,
                'a' as i32 +
@@ -119,8 +113,7 @@ pub unsafe extern "C" fn end_tree_search_output_some_stats(entry: &HashEntry) {
     fflush(stdout);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32) {
+pub unsafe fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32) {
     send_sweep(b"%-10s \x00" as *const u8 as *const i8,
                buffer.as_mut_ptr());
     send_sweep(b"%c%c\x00" as *const u8 as *const i8,
@@ -139,8 +132,7 @@ pub unsafe extern "C" fn end_tree_search_level_0_ponder_0_report(alpha: i32, bet
     }
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
+pub unsafe fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
     sprintf(buffer.as_mut_ptr(), b"[%d,%d]:\x00" as *const u8 as *const i8, alpha, beta);
     clear_sweep();
 }
@@ -148,8 +140,7 @@ pub unsafe extern "C" fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
   SEND_SOLVE_STATUS
   Displays endgame results - partial or full.
 */
-#[no_mangle]
-pub unsafe extern "C" fn send_solve_status(empties: i32,
+pub unsafe fn send_solve_status(empties: i32,
                                        _side_to_move: i32,
                                        eval_info: *mut EvaluationType) {
     let mut eval_str = 0 as *mut i8;
@@ -178,8 +169,7 @@ pub unsafe extern "C" fn send_solve_status(empties: i32,
     };
 }
 
-#[no_mangle]
-pub unsafe extern "C"  fn end_report_panic_abort_2() {
+pub unsafe  fn end_report_panic_abort_2() {
     printf(b"%s %.1f %c %s\n\x00" as *const u8 as
                *const i8,
            b"Panic abort after\x00" as *const u8 as
@@ -189,8 +179,7 @@ pub unsafe extern "C"  fn end_report_panic_abort_2() {
                *const i8);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn end_report_semi_panic_abort_3() {
+pub unsafe fn end_report_semi_panic_abort_3() {
     printf(b"%s %.1f %c %s\n\x00" as *const u8 as
                *const i8,
            b"Semi-panic abort after\x00" as *const u8 as
@@ -200,8 +189,7 @@ pub unsafe extern "C" fn end_report_semi_panic_abort_3() {
                *const i8);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn end_report_semi_panic_abort_2() {
+pub unsafe fn end_report_semi_panic_abort_2() {
     printf(b"%s %.1f %c %s\n\x00" as *const u8 as *const i8,
            b"Semi-panic abort after\x00" as *const u8 as
                *const i8, get_elapsed_time::<FE>(), 's' as i32,
@@ -209,8 +197,7 @@ pub unsafe extern "C" fn end_report_semi_panic_abort_2() {
                *const i8);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn end_report_panic_abort() {
+pub unsafe fn end_report_panic_abort() {
     printf(b"%s %.1f %c %s\n\x00" as *const u8 as
                *const i8,
            b"Panic abort after\x00" as *const u8 as
@@ -220,8 +207,7 @@ pub unsafe extern "C" fn end_report_panic_abort() {
                *const i8);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn end_report_semi_panic_abort() {
+pub unsafe fn end_report_semi_panic_abort() {
     printf(b"%s %.1f %c %s\n\x00" as *const u8 as
                *const i8,
            b"Semi-panic abort after\x00" as *const u8 as
@@ -231,7 +217,6 @@ pub unsafe extern "C" fn end_report_semi_panic_abort() {
                *const i8);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn end_display_zero_status() {
+pub unsafe fn end_display_zero_status() {
     display_status(stdout, 0 as i32);
 }

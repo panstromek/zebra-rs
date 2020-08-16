@@ -15,8 +15,7 @@ pub use ::engine::src::search::*;
 
    Contents:      Common search routines and variables.
 */
-#[no_mangle]
-pub unsafe extern "C" fn handle_fatal_pv_error(i: i32) {
+pub unsafe fn handle_fatal_pv_error(i: i32) {
     printf(b"pv_depth[0] = %d\n\x00" as *const u8 as
                *const i8,
            pv_depth[0 as i32 as usize]);

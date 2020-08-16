@@ -527,8 +527,7 @@ pub unsafe extern "C" fn extern_thor_compare(g1: *const std::ffi::c_void,
   The first THOR_SORT_CRITERIA_COUNT entries of THOR_SORT_ORDER are
   used (in order) to sort the matches.
 */
-#[no_mangle]
-pub unsafe extern "C" fn sort_thor_games(count: i32) {
+pub unsafe fn sort_thor_games(count: i32) {
     if count <= 1 as i32 {
         /* No need to sort 0 or 1 games. */
         return
@@ -541,8 +540,7 @@ pub unsafe extern "C" fn sort_thor_games(count: i32) {
                        -> i32));
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn choose_thor_opening_move_report(
+pub unsafe fn choose_thor_opening_move_report(
     freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
     printf(b"%s:        \x00" as *const u8 as *const i8,
            b"Thor database\x00" as *const u8 as *const i8);
@@ -590,12 +588,10 @@ pub unsafe fn print_thor_matches(stream: *mut FILE,
     };
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn thordb_report_flipped_0_second() {
+pub unsafe fn thordb_report_flipped_0_second() {
     puts(b"This COULD happen (2) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn thordb_report_flipped_0_first() {
+pub unsafe fn thordb_report_flipped_0_first() {
     puts(b"This COULD happen (1) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
 }
