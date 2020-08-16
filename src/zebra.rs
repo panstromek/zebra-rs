@@ -31,6 +31,7 @@ use crate::src::thordb::{read_game_database, read_tournament_database, read_play
 use engine::src::thordb::{init_thor_database, get_total_game_count, get_thor_game_size, choose_thor_opening_move};
 use crate::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
+use engine::src::{unflip, myrandom};
 
 
 pub type _IO_wide_data = std::ffi::c_void;
@@ -1873,6 +1874,10 @@ unsafe fn dump_game_score(side_to_move: i32) {
 }
 
 pub fn main() {
+    unsafe {
+        unflip::run_static_initializers();
+        myrandom::run_static_initializers();
+    }
     let mut args: Vec<*mut i8> = Vec::new();
     for arg in ::std::env::args() {
         args.push(::std::ffi::CString::new(arg).expect("Failed to convert argument into CString.").into_raw());

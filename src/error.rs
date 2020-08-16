@@ -1,7 +1,6 @@
 use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc};
 use crate::src::zebra::_IO_FILE;
 use engine::src::error::{FrontEnd, FatalError};
-use engine::src::stubs::c_void;
 use engine::src::hash::HashEntry;
 use engine::src::thordb::C2RustUnnamed;
 use engine::src::zebra::EvaluationType;
@@ -13,6 +12,7 @@ use crate::src::getcoeff::report_mirror_symetry_error;
 use crate::src::midgame::{midgame_display_status, midgame_display_ponder_move, midgame_display_initial_ponder_move, midgame_display_simple_ponder_move};
 use crate::src::osfbook::{report_in_get_book_move_2, report_in_get_book_move_1, report_unwanted_book_draw, report_do_evaluate};
 use crate::src::search::handle_fatal_pv_error;
+use std::ffi::c_void;
 
 pub type __builtin_va_list = [__va_list_tag; 1];
 #[derive(Copy, Clone)]
