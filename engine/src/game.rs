@@ -17,7 +17,7 @@ use crate::src::patterns::init_patterns;
 use crate::src::bitboard::init_bitboard;
 use crate::src::myrandom::{my_srandom, my_random};
 use crate::src::stubs::{time, abs};
-use crate::src::error::{FatalError, unrecognized_character, cannot_open_game_file};
+use crate::src::error::{FatalError, FE};
 use crate::src::display::{echo, display_pv, reset_buffer_display};
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_move, get_match_count, database_search};
 
@@ -345,7 +345,7 @@ pub unsafe fn process_board_source<S: BoardSource>(side_to_move: *mut i32, mut f
         *side_to_move = 2 as i32
     } else {
         let unrecognized = buffer[0 as i32 as usize];
-        unrecognized_character(unrecognized);
+        FE::unrecognized_character(unrecognized);
     }
 }
 
@@ -360,7 +360,7 @@ pub unsafe fn setup_file_based_game<S: FileBoardSource>(file_name: *const i8, si
     match S::open(file_name) {
         Some(file_source) => process_board_source(side_to_move, file_source),
         None => {
-            cannot_open_game_file(file_name);
+            FE::cannot_open_game_file(file_name);
         },
     };
     setup_game_finalize(side_to_move);

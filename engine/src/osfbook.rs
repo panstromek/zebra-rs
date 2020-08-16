@@ -16,7 +16,7 @@ use crate::{
     }
 };
 use crate::src::stubs::{abs, ceil, floor, free, strlen, tolower};
-use crate::src::error::{error_in_map, internal_error_in_book_code, book_node_list_allocation_failure, book_hash_table_allocaiton_failure};
+use crate::src::error::{FE};
 use crate::src::safemem::{safe_malloc, safe_realloc};
 use std::ffi::c_void;
 use crate::src::midgame::tree_search;
@@ -1009,7 +1009,7 @@ pub unsafe fn init_maps() {
                         isize)
                         as
                         isize);
-                    error_in_map(i, pos, symmetry_map_item);
+                    FE::error_in_map(i, pos, symmetry_map_item);
                 }
                 k += 1
             }
@@ -1041,7 +1041,7 @@ pub unsafe fn rebuild_hash_table(requested_items: i32) {
                          new_memory as size_t) as *mut i32
     }
     if book_hash_table.is_null() {
-        book_hash_table_allocaiton_failure(new_size, new_memory);
+        FE::book_hash_table_allocaiton_failure(new_size, new_memory);
     }
     hash_table_size = new_size;
     create_hash_reference();
@@ -1075,7 +1075,7 @@ pub unsafe fn set_allocation(size: i32) {
         let to_report = (size as
             u64).wrapping_mul(::std::mem::size_of::<BookNode>()
             as u64);
-        book_node_list_allocation_failure(size, to_report);
+        FE::book_node_list_allocation_failure(size, to_report);
     }
     node_table_size = size;
     if node_table_size as f64 >
@@ -2104,7 +2104,7 @@ pub unsafe fn get_book_move(mut side_to_move: i32,
     slot = probe_hash_table(val1, val2);
     if slot == -(1 as i32) ||
         *book_hash_table.offset(slot as isize) == -(1 as i32) {
-        internal_error_in_book_code();
+        FE::internal_error_in_book_code();
     }
     base_flags =
         (*node.offset(*book_hash_table.offset(slot as isize) as isize)).flags

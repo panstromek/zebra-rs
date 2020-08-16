@@ -3,7 +3,7 @@ use crate::src::moves::disks_played;
 use crate::src::patterns::{flip8, pow3};
 use crate::src::stubs::{floor, free};
 use crate::src::safemem::safe_malloc;
-use crate::src::error::{memory_allocation_failure};
+use crate::src::error::{FE};
 use std::ffi::c_void;
 use std::process::exit;
 
@@ -790,7 +790,7 @@ pub unsafe fn find_memory_block(afile2x: *mut *mut i16,
         if block_count == 200 as i32 ||
             block_list[block_count as usize].is_null() {
             let block_count_ = block_count;
-            memory_allocation_failure(block_count_);
+            FE::memory_allocation_failure(block_count_);
         }
         free_block = block_count;
         block_count += 1
