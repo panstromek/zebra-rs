@@ -16,7 +16,7 @@ use crate::src::stubs::abs;
 use crate::src::timer::{is_panic_abort, last_panic_check, check_panic_abort, above_recommended, extended_above_recommended, frozen_ponder_depth};
 use crate::src::hash::add_hash;
 use crate::src::display::{echo, display_buffers};
-use crate::src::error::FatalError;
+use crate::src::error::FrontEnd;
 
 
 extern "C" {
@@ -187,9 +187,9 @@ pub unsafe fn midgame_c__update_best_list(best_list:
   Invokes the proper evaluation function depending on whether the
   board is filled or not.
 */
-pub unsafe fn static_or_terminal_evaluation<FE : FatalError>(side_to_move:
+pub unsafe fn static_or_terminal_evaluation<FE : FrontEnd>(side_to_move:
                                             i32)
-                                            -> i32 {
+                                                           -> i32 {
     if disks_played == 60 as i32 {
         return terminal_evaluation(side_to_move)
     } else {
@@ -245,8 +245,8 @@ pub unsafe fn calculate_perturbation() {
   while avoiding all moves which allow an immediate loss
   (if that is possible).
 */
-pub unsafe fn protected_one_ply_search<FE:FatalError>(side_to_move: i32)
-                                   -> i32 {
+pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32)
+                                                     -> i32 {
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
     let mut depth_one_score: i32 = 0;
@@ -306,15 +306,15 @@ pub unsafe fn protected_one_ply_search<FE:FatalError>(side_to_move: i32)
    tree pruning.
 */
 
-pub unsafe fn tree_search<FE:FatalError>(level: i32,
-                          max_depth: i32,
-                          side_to_move: i32,
-                          alpha: i32,
-                          beta: i32,
-                          allow_hash: i32,
-                          allow_mpc: i32,
-                          void_legal: i32)
-                          -> i32 {
+pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
+                                        max_depth: i32,
+                                        side_to_move: i32,
+                                        alpha: i32,
+                                        beta: i32,
+                                        allow_hash: i32,
+                                        allow_mpc: i32,
+                                        void_legal: i32)
+                                        -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut curr_val: i32 = 0;
@@ -853,14 +853,14 @@ pub unsafe fn tree_search<FE:FatalError>(level: i32,
    The recursive tree search function. It uses negascout for
    tree pruning.
 */
-unsafe fn fast_tree_search<FE:FatalError>(level: i32,
-                           max_depth: i32,
-                           side_to_move: i32,
-                           alpha: i32,
-                           beta: i32,
-                           allow_hash: i32,
-                           void_legal: i32)
-                           -> i32 {
+unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
+                                         max_depth: i32,
+                                         side_to_move: i32,
+                                         alpha: i32,
+                                         beta: i32,
+                                         allow_hash: i32,
+                                         void_legal: i32)
+                                         -> i32 {
     let mut curr_val: i32 = 0;
     let mut best: i32 = 0;
     let mut move_index: i32 = 0;
@@ -1084,15 +1084,15 @@ pub unsafe fn perturb_score(score: i32,
    for the root of the search tree.
 */
 
-pub unsafe fn root_tree_search<FE:FatalError>(level: i32,
-                               max_depth: i32,
-                               side_to_move: i32,
-                               alpha: i32,
-                               beta: i32,
-                               allow_hash: i32,
-                               allow_mpc: i32,
-                               void_legal: i32)
-                               -> i32 {
+pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
+                                             max_depth: i32,
+                                             side_to_move: i32,
+                                             alpha: i32,
+                                             beta: i32,
+                                             allow_hash: i32,
+                                             allow_mpc: i32,
+                                             void_legal: i32)
+                                             -> i32 {
     let mut buffer: [i8; 32] = [0; 32];
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -1414,11 +1414,11 @@ pub unsafe fn root_tree_search<FE:FatalError>(level: i32,
    side_to_move = the side whose turn it is to move
 */
 
-pub unsafe fn middle_game<FE :FatalError>(side_to_move: i32,
-                          max_depth: i32,
-                          update_evals: i32,
-                          eval_info: *mut EvaluationType)
-                          -> i32 {
+pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
+                                         max_depth: i32,
+                                         update_evals: i32,
+                                         eval_info: *mut EvaluationType)
+                                         -> i32 {
     let eval_str =
         0 as *mut i8; /* Disable I.D. in this function */
     let node_val: f64 = 0.;

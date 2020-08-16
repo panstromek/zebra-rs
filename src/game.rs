@@ -16,7 +16,7 @@ use crate::src::hash::{determine_hash_values, set_hash_transformation, find_hash
 use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub use engine::src::game::*;
 use crate::src::getcoeff::zlib_source::ZLibSource;
-use engine::src::error::{FatalError};
+use engine::src::error::{FrontEnd};
 use crate::src::error::LibcFatalError;
 
 pub type __off_t = i64;
@@ -305,13 +305,13 @@ pub unsafe fn ponder_move(side_to_move: i32,
   except for the best.
 */
 
-pub unsafe fn extended_compute_move<FE: FatalError>(side_to_move: i32,
-                                               book_only: i32,
-                                               mut book: i32,
-                                               mut mid: i32,
-                                               mut exact: i32,
-                                               mut wld: i32)
- -> i32 {
+pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
+                                                  book_only: i32,
+                                                  mut book: i32,
+                                                  mut mid: i32,
+                                                  mut exact: i32,
+                                                  mut wld: i32)
+                                                  -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut index: i32 = 0;

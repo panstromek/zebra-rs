@@ -16,7 +16,7 @@ use crate::{
     }
 };
 use crate::src::stubs::{abs, ceil, floor, free, strlen, tolower};
-use crate::src::error::{FatalError};
+use crate::src::error::{FrontEnd};
 use crate::src::safemem::{safe_malloc, safe_realloc};
 use std::ffi::c_void;
 use crate::src::midgame::tree_search;
@@ -936,7 +936,7 @@ pub unsafe fn do_minimax(index: i32,
    Notice that the order of these MUST coincide with the returned
    orientation value from get_hash() OR YOU WILL LOSE BIG.
 */
-pub unsafe fn init_maps<FE: FatalError>() {
+pub unsafe fn init_maps<FE: FrontEnd>() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -1024,7 +1024,7 @@ pub unsafe fn init_maps<FE: FatalError>() {
    REBUILD_HASH_TABLE
    Resize the hash table for a requested number of nodes.
 */
-pub unsafe fn rebuild_hash_table<FE: FatalError>(requested_items: i32) {
+pub unsafe fn rebuild_hash_table<FE: FrontEnd>(requested_items: i32) {
     let mut new_size: i32 = 0;
     let mut new_memory: i32 = 0;
     new_size = 2 as i32 * requested_items;
@@ -1053,7 +1053,7 @@ pub unsafe fn rebuild_hash_table<FE: FatalError>(requested_items: i32) {
    SET_ALLOCATION
    Changes the number of nodes for which memory is allocated.
 */
-pub unsafe fn set_allocation<FE:FatalError>(size: i32) {
+pub unsafe fn set_allocation<FE: FrontEnd>(size: i32) {
     if node.is_null() {
         node =
             safe_malloc::<FE>((size as
@@ -1087,7 +1087,7 @@ pub unsafe fn set_allocation<FE:FatalError>(size: i32) {
    INCREASE_ALLOCATION
    Allocate more memory for the book tree.
 */
-pub unsafe fn increase_allocation<FE: FatalError>() {
+pub unsafe fn increase_allocation<FE: FrontEnd>() {
     set_allocation::<FE>(node_table_size + 50000 as i32);
 }
 /*
@@ -1095,10 +1095,10 @@ pub unsafe fn increase_allocation<FE: FatalError>() {
    Creates a new book node without any connections whatsoever
    to the rest of the tree.
 */
-pub unsafe fn create_BookNode<FE:FatalError>(val1: i32,
-                          val2: i32,
-                          flags: u16)
-                          -> i32 {
+pub unsafe fn create_BookNode<FE: FrontEnd>(val1: i32,
+                                            val2: i32,
+                                            flags: u16)
+                                            -> i32 {
     let mut index: i32 = 0;
     if book_node_count == node_table_size { increase_allocation::<FE>(); }
     index = book_node_count;
@@ -1277,14 +1277,14 @@ pub unsafe fn check_forced_opening(side_to_move: i32,
   This wrapper on top of TREE_SEARCH is used by EVALUATE_NODE
   to search the possible deviations.
 */
-pub unsafe fn nega_scout<FE: FatalError>(depth: i32,
-                     allow_mpc: i32,
-                     side_to_move: i32,
-                     allowed_count: i32,
-                     allowed_moves: *mut i32,
-                     _alpha: i32, _beta: i32,
-                     best_score: *mut i32,
-                     best_index: *mut i32) {
+pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
+                                       allow_mpc: i32,
+                                       side_to_move: i32,
+                                       allowed_count: i32,
+                                       allowed_moves: *mut i32,
+                                       _alpha: i32, _beta: i32,
+                                       best_score: *mut i32,
+                                       best_index: *mut i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut curr_alpha: i32 = 0;
@@ -1397,7 +1397,7 @@ pub unsafe fn nega_scout<FE: FatalError>(depth: i32,
    Note: This function assumes that generate_all() has been
          called prior to it being called.
 */
-pub unsafe fn evaluate_node<FE: FatalError>(index: i32) {
+pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32) {
     let mut i: i32 = 0;
     let mut side_to_move: i32 = 0;
     let mut alternative_move_count: i32 = 0;
@@ -1501,7 +1501,7 @@ pub unsafe fn evaluate_node<FE: FatalError>(index: i32) {
    Recursively makes sure a subtree doesn't contain any midgame
    node without a deviation move.
 */
-pub unsafe fn do_validate<FE:FatalError>(index: i32) {
+pub unsafe fn do_validate<FE: FrontEnd>(index: i32) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
@@ -1548,7 +1548,7 @@ pub unsafe fn do_validate<FE:FatalError>(index: i32) {
    Recursively makes sure a subtree is evaluated to
    the specified depth.
 */
-pub unsafe fn do_evaluate<FE:FatalError>(index: i32) {
+pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
@@ -1621,7 +1621,7 @@ pub unsafe fn compute_feasible_count() -> i32 {
 }
 
 // extracted from validate_tree
-pub unsafe fn validate_prepared_tree<FE:FatalError>() -> i32 {
+pub unsafe fn validate_prepared_tree<FE: FrontEnd>() -> i32 {
     exhausted_node_count = 0 as i32;
     evaluated_count = 0 as i32;
     evaluation_stage = 0 as i32;
@@ -2051,10 +2051,10 @@ pub unsafe fn fill_move_alternatives(side_to_move: i32,
    evaluation by too much.
 */
 
-pub unsafe fn get_book_move<FE:FatalError>(mut side_to_move: i32,
-                            update_slack: i32,
-                            mut eval_info: *mut EvaluationType)
-                            -> i32 {
+pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
+                                          update_slack: i32,
+                                          mut eval_info: *mut EvaluationType)
+                                          -> i32 {
     let mut i: i32 = 0;
     let mut original_side_to_move: i32 = 0;
     let mut remaining_slack: i32 = 0;
@@ -2312,7 +2312,7 @@ pub unsafe fn get_book_move<FE:FatalError>(mut side_to_move: i32,
 }
 
 
-pub unsafe fn engine_init_osf<FE:FatalError>() {
+pub unsafe fn engine_init_osf<FE: FrontEnd>() {
     init_maps::<FE>();
     prepare_hash();
     setup_hash(1 as i32);
@@ -2352,7 +2352,7 @@ pub unsafe fn prepare_tree_traversal() {
   The number of positions evaluated is returned.
 */
 
-pub unsafe fn validate_tree<FE:FatalError>() -> i32 {
+pub unsafe fn validate_tree<FE: FrontEnd>() -> i32 {
     prepare_tree_traversal();
     validate_prepared_tree::<FE>()
 }

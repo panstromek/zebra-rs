@@ -1,6 +1,6 @@
 use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit};
 use crate::src::zebra::_IO_FILE;
-use engine::src::error::FatalError;
+use engine::src::error::{FrontEnd, FatalError};
 use std::env::args;
 
 pub type __builtin_va_list = [__va_list_tag; 1];
@@ -70,6 +70,7 @@ pub unsafe extern "C" fn fatal_error(format: *const i8,
 }
 
 pub struct LibcFatalError;
+impl FrontEnd for LibcFatalError {}
 impl FatalError for LibcFatalError {
   fn invalid_move(curr_move: i32) -> ! {
     unsafe {

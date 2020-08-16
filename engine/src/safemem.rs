@@ -21,11 +21,11 @@
    Contents:        Provides safer memory allocation than malloc().
 */
 use crate::src::stubs::{malloc, realloc};
-use crate::src::error::{FatalError};
+use crate::src::error::{FrontEnd};
 use std::ffi::c_void;
 
 pub type size_t = u64;
-pub unsafe fn safe_malloc<FE:FatalError>(size: size_t) -> *mut c_void {
+pub unsafe fn safe_malloc<FE: FrontEnd>(size: size_t) -> *mut c_void {
     let mut block = 0 as *mut c_void;
     block = malloc(size);
     if block.is_null() {
@@ -34,8 +34,8 @@ pub unsafe fn safe_malloc<FE:FatalError>(size: size_t) -> *mut c_void {
     return block;
 }
 
-pub unsafe fn safe_realloc<FE:FatalError>(ptr: *mut c_void,
-                                      size: size_t) -> *mut c_void {
+pub unsafe fn safe_realloc<FE: FrontEnd>(ptr: *mut c_void,
+                                         size: size_t) -> *mut c_void {
     let mut block = 0 as *mut c_void;
     block = realloc(ptr, size);
     if block.is_null() {

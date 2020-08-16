@@ -23,7 +23,7 @@ use crate::src::timer::{is_panic_abort, check_panic_abort, last_panic_check, cle
 use crate::src::display::{display_buffers, echo, reset_buffer_display};
 use crate::src::zebra::EvaluationType;
 use crate::src::osfbook::{fill_endgame_hash, get_book_move, fill_move_alternatives};
-use crate::src::error::FatalError;
+use crate::src::error::FrontEnd;
 
 extern "C" {
     #[no_mangle]
@@ -1622,17 +1622,17 @@ pub unsafe fn update_best_list(best_list: *mut i32,
   END_TREE_SEARCH
   Plain nega-scout with fastest-first move ordering.
 */
-pub unsafe fn end_tree_search<FE:FatalError>(level: i32,
-                              max_depth: i32,
-                              my_bits: BitBoard,
-                              opp_bits: BitBoard,
-                              side_to_move: i32,
-                              alpha: i32,
-                              mut beta: i32,
-                              selectivity: i32,
-                              selective_cutoff: *mut i32,
-                              void_legal: i32)
-                              -> i32 {
+pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
+                                            max_depth: i32,
+                                            my_bits: BitBoard,
+                                            opp_bits: BitBoard,
+                                            side_to_move: i32,
+                                            alpha: i32,
+                                            mut beta: i32,
+                                            selectivity: i32,
+                                            selective_cutoff: *mut i32,
+                                            void_legal: i32)
+                                            -> i32 {
     let mut node_val: f64 = 0.;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -2233,14 +2233,14 @@ pub unsafe fn end_tree_search<FE:FatalError>(level: i32,
   Wrapper onto END_TREE_SEARCH which applies the knowledge that
   the range of valid scores is [-64,+64].  Komi, if any, is accounted for.
 */
-pub unsafe fn end_tree_wrapper<FE: FatalError>(level: i32,
-                           max_depth: i32,
-                           side_to_move: i32,
-                           alpha: i32,
-                           beta: i32,
-                           selectivity: i32,
-                           void_legal: i32)
-                           -> i32 {
+pub unsafe fn end_tree_wrapper<FE: FrontEnd>(level: i32,
+                                             max_depth: i32,
+                                             side_to_move: i32,
+                                             alpha: i32,
+                                             beta: i32,
+                                             selectivity: i32,
+                                             void_legal: i32)
+                                             -> i32 {
     let mut selective_cutoff: i32 = 0;
     let mut my_bits = BitBoard{high: 0, low: 0,};
     let mut opp_bits = BitBoard{high: 0, low: 0,};
@@ -2260,8 +2260,8 @@ pub unsafe fn end_tree_wrapper<FE: FatalError>(level: i32,
    FULL_EXPAND_PV
    Pad the PV with optimal moves in the low-level phase.
 */
-pub unsafe fn full_expand_pv<FE:FatalError>(mut side_to_move: i32,
-                         selectivity: i32) {
+pub unsafe fn full_expand_pv<FE: FrontEnd>(mut side_to_move: i32,
+                                           selectivity: i32) {
     let mut i: i32 = 0;
     let mut pass_count: i32 = 0;
     let mut new_pv_depth: i32 = 0;
@@ -2310,13 +2310,13 @@ pub unsafe fn full_expand_pv<FE:FatalError>(mut side_to_move: i32,
   Provides an interface to the fast endgame solver.
 */
 
-pub unsafe fn end_game<FE:FatalError>(side_to_move: i32,
-                       wld: i32,
-                       force_echo: i32,
-                       allow_book: i32,
-                       komi: i32,
-                       mut eval_info: *mut EvaluationType)
-                       -> i32 {
+pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
+                                     wld: i32,
+                                     force_echo: i32,
+                                     allow_book: i32,
+                                     komi: i32,
+                                     mut eval_info: *mut EvaluationType)
+                                     -> i32 {
     let mut current_confidence: f64 = 0.;
     let mut solve_status = WIN;
     let mut book_move: i32 = 0;

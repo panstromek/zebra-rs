@@ -3,7 +3,7 @@ use crate::src::moves::disks_played;
 use crate::src::patterns::{flip8, pow3};
 use crate::src::stubs::{floor, free};
 use crate::src::safemem::safe_malloc;
-use crate::src::error::{FatalError};
+use crate::src::error::{FrontEnd};
 use std::ffi::c_void;
 use std::process::exit;
 
@@ -755,19 +755,19 @@ pub unsafe fn terminal_patterns() {
    Maintains an internal memory handler to boost
    performance and avoid heap fragmentation.
 */
-pub unsafe fn find_memory_block<FE: FatalError>(afile2x: *mut *mut i16,
-                            bfile: *mut *mut i16,
-                            cfile: *mut *mut i16,
-                            dfile: *mut *mut i16,
-                            diag8: *mut *mut i16,
-                            diag7: *mut *mut i16,
-                            diag6: *mut *mut i16,
-                            diag5: *mut *mut i16,
-                            diag4: *mut *mut i16,
-                            corner33: *mut *mut i16,
-                            corner52: *mut *mut i16,
-                            index: i32)
-                            -> i32 {
+pub unsafe fn find_memory_block<FE: FrontEnd>(afile2x: *mut *mut i16,
+                                              bfile: *mut *mut i16,
+                                              cfile: *mut *mut i16,
+                                              dfile: *mut *mut i16,
+                                              diag8: *mut *mut i16,
+                                              diag7: *mut *mut i16,
+                                              diag6: *mut *mut i16,
+                                              diag5: *mut *mut i16,
+                                              diag4: *mut *mut i16,
+                                              corner33: *mut *mut i16,
+                                              corner52: *mut *mut i16,
+                                              index: i32)
+                                              -> i32 {
     let mut i: i32 = 0;
     let mut found_free: i32 = 0;
     let mut free_block: i32 = 0;
@@ -816,7 +816,7 @@ pub unsafe fn find_memory_block<FE: FatalError>(afile2x: *mut *mut i16,
    ALLOCATE_SET
    Finds memory for all patterns belonging to a certain stage.
 */
-pub unsafe fn allocate_set<FE: FatalError>(index: i32) {
+pub unsafe fn allocate_set<FE: FrontEnd>(index: i32) {
     set[index as usize].block =
         find_memory_block::<FE>(&mut (*set.as_mut_ptr().offset(index as
             isize)).afile2x,
@@ -849,7 +849,7 @@ pub unsafe fn allocate_set<FE: FatalError>(index: i32) {
    Also calculates the offset pointers to the last elements in each block
    (used for the inverted patterns when white is to move).
 */
-pub unsafe fn load_set<FE: FatalError>(index: i32) {
+pub unsafe fn load_set<FE: FrontEnd>(index: i32) {
     let mut prev: i32 = 0;
     let mut next: i32 = 0;
     let mut weight1: i32 = 0;
@@ -944,8 +944,8 @@ pub static mut pattern_score: i16 = 0;
    the statistically optimized pattern tables.
 */
 
-pub unsafe fn pattern_evaluation<FE: FatalError>(side_to_move: i32)
-                                 -> i32 {
+pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32)
+                                               -> i32 {
     let mut eval_phase: i32 = 0;
     let mut score: i16 = 0;
     /* Any player wiped out? Game over then... */
@@ -2764,10 +2764,10 @@ pub unsafe fn post_init_coeffs() {
    UNPACK_BATCH
    Reads feature values for one specific pattern
 */
-pub unsafe fn unpack_batch<FE:FatalError, S:FnMut() -> i16>(item: *mut i16,
-                           mirror: *mut i32,
-                           count: i32,
-                           next_word: &mut S) {
+pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
+                                                           mirror: *mut i32,
+                                                           count: i32,
+                                                           next_word: &mut S) {
     let mut i: i32 = 0;
     let mut buffer = 0 as *mut i16;
     buffer =
@@ -2821,7 +2821,7 @@ extern "C" {
    Reads all feature values for a certain stage. To take care of
    symmetric patterns, mirror tables are calculated.
 */
-pub unsafe fn unpack_coeffs<FE:FatalError, S: FnMut() -> i16 >(next_word: &mut S) {
+pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -3176,7 +3176,7 @@ pub trait CoeffSource {
     fn next_word(&mut self) -> i16;
 }
 
-pub unsafe fn process_coeffs_from_fn_source<FE:FatalError, Source:CoeffSource>(mut coeffs: Source) {
+pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mut coeffs: Source) {
     let mut next_word = || coeffs.next_word();
     /* Read the different stages for which the evaluation function
        was tuned and mark the other stages with pointers to the previous
