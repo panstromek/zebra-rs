@@ -2,6 +2,10 @@ use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit};
 use crate::src::zebra::_IO_FILE;
 use engine::src::error::{FrontEnd, FatalError};
 use std::env::args;
+use engine::src::stubs::c_void;
+use engine::src::hash::HashEntry;
+use engine::src::thordb::C2RustUnnamed;
+use engine::src::zebra::EvaluationType;
 
 pub type __builtin_va_list = [__va_list_tag; 1];
 #[derive(Copy, Clone)]
@@ -70,7 +74,169 @@ pub unsafe extern "C" fn fatal_error(format: *const i8,
 }
 
 pub struct LibcFatalError;
-impl FrontEnd for LibcFatalError {}
+
+impl FrontEnd for LibcFatalError {
+    fn display_buffers() {
+        unimplemented!()
+    }
+
+    fn report_ponder_time() {
+        unimplemented!()
+    }
+
+    fn after_update_best_list_verbose(best_list: *mut i32) {
+        unimplemented!()
+    }
+
+    fn before_update_best_list_verbose(best_list: *mut i32, move_0: i32, best_list_index: i32, best_list_length: *mut i32) {
+        unimplemented!()
+    }
+
+    fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32) {
+        unimplemented!()
+    }
+
+    fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32) {
+        unimplemented!()
+    }
+
+    fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32) {
+        unimplemented!()
+    }
+
+    fn end_tree_search_output_some_stats(entry: &HashEntry) {
+        unimplemented!()
+    }
+
+    fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32) {
+        unimplemented!()
+    }
+
+    fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
+        unimplemented!()
+    }
+
+    fn send_solve_status(empties: i32, side_to_move: i32, eval_info: *mut EvaluationType) {
+        unimplemented!()
+    }
+
+    fn end_report_panic_abort_2() {
+        unimplemented!()
+    }
+
+    fn end_report_semi_panic_abort_3() {
+        unimplemented!()
+    }
+
+    fn end_report_semi_panic_abort_2() {
+        unimplemented!()
+    }
+
+    fn end_report_panic_abort() {
+        unimplemented!()
+    }
+
+    fn end_report_semi_panic_abort() {
+        unimplemented!()
+    }
+
+    fn end_display_zero_status() {
+        unimplemented!()
+    }
+
+    fn handle_fatal_pv_error(i: i32) {
+        unimplemented!()
+    }
+
+    unsafe fn malloc(_: u64) -> *mut c_void {
+        unimplemented!()
+    }
+
+    unsafe fn realloc(_: *mut c_void, _: u64) -> *mut c_void {
+        unimplemented!()
+    }
+
+    unsafe fn free(__ptr: *mut c_void) {
+        unimplemented!()
+    }
+
+    unsafe fn time(__timer: *mut i64) -> i64 {
+        unimplemented!()
+    }
+
+    unsafe fn strlen(_: *const i8) -> u64 {
+        unimplemented!()
+    }
+
+    unsafe fn tolower(num: i32) -> i32 {
+        unimplemented!()
+    }
+
+    unsafe fn toupper(_: i32) -> i32 {
+        unimplemented!()
+    }
+
+    unsafe fn strdup(_: *const i8) -> *mut i8 {
+        unimplemented!()
+    }
+
+    unsafe fn strchr(_: *const i8, _: i32) -> *mut i8 {
+        unimplemented!()
+    }
+
+    fn report_do_evaluate(evaluation_stage_: i32) {
+        unimplemented!()
+    }
+
+    fn report_unwanted_book_draw(this_move: i32) {
+        unimplemented!()
+    }
+
+    fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32) {
+        unimplemented!()
+    }
+
+    fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32) {
+        unimplemented!()
+    }
+
+    fn midgame_display_simple_ponder_move(move_0: i32) {
+        unimplemented!()
+    }
+
+    fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, buffer: &mut [i8; 32]) {
+        unimplemented!()
+    }
+
+    fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32, searched: i32, update_pv: i32) {
+        unimplemented!()
+    }
+
+    unsafe fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: *mut EvaluationType, eval_str: *mut i8, node_val: f64, depth: i32) {
+        unimplemented!()
+    }
+
+    fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
+        unimplemented!()
+    }
+
+    fn thordb_report_flipped_0_first() {
+        unimplemented!()
+    }
+
+    fn thordb_report_flipped_0_second() {
+        unimplemented!()
+    }
+
+    fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
+        unimplemented!()
+    }
+
+    fn sort_thor_games(count: i32) {
+        unimplemented!()
+    }
+}
+
 impl FatalError for LibcFatalError {
   fn invalid_move(curr_move: i32) -> ! {
     unsafe {
