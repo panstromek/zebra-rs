@@ -291,7 +291,7 @@ pub unsafe fn my_random() -> i64 {
     }
     return i;
 }
-unsafe fn run_static_initializers() {
+pub unsafe fn run_static_initializers() {
     my_fptr =
         &mut *my_randtbl.as_mut_ptr().offset((3 as i32 +
                                                   1 as i32) as isize)
@@ -307,8 +307,8 @@ unsafe fn run_static_initializers() {
                                                   1 as i32) as isize)
             as *mut u64 as *mut i64
 }
-#[used]
-#[cfg_attr(target_os = "linux", link_section = ".init_array")]
-#[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
-#[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
-static INIT_ARRAY: [unsafe fn(); 1] = [run_static_initializers];
+// #[used]
+// #[cfg_attr(target_os = "linux", link_section = ".init_array")]
+// #[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
+// #[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
+// static INIT_ARRAY: [unsafe fn(); 1] = [run_static_initializers];
