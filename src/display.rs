@@ -1,11 +1,11 @@
-use crate::src::stubs::{sprintf, floor, fprintf, vsprintf, strlen, ceil, fputs, fputc, exit, abs, strcpy, getc, stdout, stdin};
+use crate::src::stubs::{sprintf, floor, fprintf, vsprintf, ceil, fputs, fputc, exit, abs, strcpy, getc, stdout, stdin};
 use crate::src::safemem::safe_malloc;
 use crate::src::timer::get_real_timer;
 use crate::src::search::{full_pv, full_pv_depth, disc_count};
 use crate::src::globals::{white_moves, black_moves, pv_depth};
 use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub use engine::src::display::*;
-use crate::src::error::{LibcFatalError, FE};
+use crate::src::error::{FE};
 use engine::src::error::FrontEnd;
 
 pub type __builtin_va_list = [__va_list_tag; 1];

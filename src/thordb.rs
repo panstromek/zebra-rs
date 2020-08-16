@@ -1,4 +1,4 @@
-use crate::src::stubs::{puts, abs, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, tolower};
+use crate::src::stubs::{puts, abs, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp};
 use crate::src::safemem::{safe_malloc, safe_realloc};
 
 

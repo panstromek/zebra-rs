@@ -21,7 +21,7 @@ use crate::src::hash::add_hash;
 use crate::src::midgame::{tree_search, toggle_midgame_hash_usage};
 use crate::src::timer::{is_panic_abort, check_panic_abort, last_panic_check, clear_panic_abort, check_threshold, set_panic_threshold};
 use crate::src::display::{echo, reset_buffer_display};
-use crate::src::zebra::{EvaluationType, ZebraFrontend};
+use crate::src::zebra::{EvaluationType};
 use crate::src::osfbook::{fill_endgame_hash, get_book_move, fill_move_alternatives};
 use crate::src::error::FrontEnd;
 

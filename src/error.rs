@@ -1,7 +1,6 @@
 use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc};
 use crate::src::zebra::_IO_FILE;
 use engine::src::error::{FrontEnd, FatalError};
-use std::env::args;
 use engine::src::stubs::c_void;
 use engine::src::hash::HashEntry;
 use engine::src::thordb::C2RustUnnamed;
