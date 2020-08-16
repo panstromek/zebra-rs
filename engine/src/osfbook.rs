@@ -24,7 +24,7 @@ use crate::src::timer::{last_panic_check, clear_panic_abort, toggle_abort_check}
 use crate::src::hash::{add_hash, setup_hash};
 use crate::src::display::echo;
 use crate::src::game::{engine_game_init, setup_non_file_based_game};
-use std::cell::UnsafeCell;
+
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
