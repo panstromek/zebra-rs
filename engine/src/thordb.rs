@@ -2,10 +2,10 @@ use crate::src::bitboard::bit_reverse_32;
 use crate::src::myrandom::my_random;
 use crate::src::patterns::pow3;
 use crate::src::moves::dir_mask;
-use crate::src::error::fatal_error;
 use crate::src::stubs::{abs, strlen, free};
 use crate::src::safemem::safe_malloc;
 use std::ffi::c_void;
+use crate::src::error::error_in_map_thor;
 
 extern "C" {
     #[no_mangle]
@@ -7947,16 +7947,15 @@ pub unsafe fn init_symmetry_maps() {
                     as
                     isize)
                     as isize) != pos {
-                    fatal_error(b"Error in map %d: inv(map(%d))=%d\n\x00" as
-                                    *const u8 as *const i8, i, pos,
-                                *inv_symmetry_map[i as
-                                    usize].offset(*symmetry_map[i
-                                    as
-                                    usize].offset(pos
-                                    as
-                                    isize)
-                                    as
-                                    isize));
+                    let to_report = *inv_symmetry_map[i as
+                        usize].offset(*symmetry_map[i
+                        as
+                        usize].offset(pos
+                        as
+                        isize)
+                        as
+                        isize);
+                    error_in_map_thor(i, pos, to_report);
                 }
                 k += 1
             }

@@ -16,6 +16,7 @@ use crate::src::hash::{determine_hash_values, set_hash_transformation, find_hash
 use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub use engine::src::game::*;
 use crate::src::getcoeff::zlib_source::ZLibSource;
+use engine::src::error::LibcFatalError;
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -1094,7 +1095,7 @@ pub unsafe fn compute_move(side_to_move: i32,
                            search_forced: i32,
                            eval_info: *mut EvaluationType)
                            -> i32 {
-    return generic_compute_move::<LogFileHandler, LibcZebraOutput>(side_to_move, update_all, my_time,
+    return generic_compute_move::<LogFileHandler, LibcZebraOutput, LibcFatalError>(side_to_move, update_all, my_time,
                                 my_incr, timed_depth,
                                 book, mid,
                                 exact, wld,
