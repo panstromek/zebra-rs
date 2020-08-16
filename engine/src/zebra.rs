@@ -7,7 +7,7 @@ use crate::src::stubs::{floor, tolower, strlen};
 use crate::src::thordb::{get_black_average_score, get_black_median_score, get_white_win_count, get_draw_count, get_black_win_count, get_match_count, database_search, choose_thor_opening_move, C2RustUnnamed};
 use crate::src::globals::{board, score_sheet_row, white_moves, black_moves};
 use crate::src::learn::{store_move, set_learning_parameters, clear_stored_game, Learner};
-use crate::src::error::{LibcFatalError, FE, FatalError};
+use crate::src::error::{FatalError};
 use crate::src::myrandom::my_random;
 use crate::src::eval::toggle_experimental;
 use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, set_slack};
@@ -134,7 +134,8 @@ pub unsafe fn engine_play_game<
     BoardSrc : FileBoardSource,
     ComputeMoveLog: ComputeMoveLogger,
     ComputeMoveOut: ComputeMoveOutput,
-    Learn: Learner
+    Learn: Learner,
+    FE: FatalError
 >(
     file_name: *const i8, mut move_string: *const i8,
     mut repeat: i32, log_file_name_: *mut i8,
@@ -194,7 +195,7 @@ pub unsafe fn engine_play_game<
             }
         }
         /* Set up the position and the search engine */
-        generic_game_init::<BoardSrc>(file_name, &mut side_to_move);
+        generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move);
         setup_hash(1 as i32);
         clear_stored_game();
         if echo != 0 && use_book != 0 {
@@ -243,7 +244,7 @@ pub unsafe fn engine_play_game<
                     }
                     if use_thor_ {
                         let database_start = get_real_timer();
-                        database_search(board.as_mut_ptr(), side_to_move);
+                        database_search::<FE>(board.as_mut_ptr(), side_to_move);
                         thor_position_count = get_match_count();
                         let database_stop = get_real_timer();
                         let database_time = database_stop - database_start;
@@ -292,7 +293,7 @@ pub unsafe fn engine_play_game<
                                 60 as i32) as i32;
                         toggle_experimental(0 as i32);
                         curr_move =
-                            generic_compute_move::<ComputeMoveLog, ComputeMoveOut, LibcFatalError>(
+                            generic_compute_move::<ComputeMoveLog, ComputeMoveOut, FE>(
                                 side_to_move, 1 as i32,
                                 player_time[side_to_move as usize] as
                                     i32,
@@ -381,7 +382,7 @@ pub unsafe fn engine_play_game<
                           score_sheet_row);
             if use_thor_ {
                 let database_start = get_real_timer();
-                database_search(board.as_mut_ptr(), side_to_move);
+                database_search::<FE>(board.as_mut_ptr(), side_to_move);
                 thor_position_count = get_match_count();
                 let database_stop = get_real_timer();
                 let db_search_time = database_stop - database_start;

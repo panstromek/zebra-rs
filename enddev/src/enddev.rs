@@ -14,6 +14,7 @@ use c2rust_out::src::display::display_board;
 use c2rust_out::src::game::{extended_compute_move, compute_move, game_init, global_setup};
 use c2rust_out::src::learn::init_learn;
 use c2rust_out::src::zebra::_IO_FILE;
+use engine::src::error::LibcFatalError;
 
 extern "C" {
     #[no_mangle]
@@ -348,7 +349,7 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
                                     as *const u8 as *const libc::c_char,
                                 games_read, disks_played);
                     }
-                    extended_compute_move(side_to_move, 0 as libc::c_int,
+                    extended_compute_move::<LibcFatalError>(side_to_move, 0 as libc::c_int,
                                           0 as libc::c_int, 8 as libc::c_int,
                                           60 as libc::c_int,
                                           60 as libc::c_int);

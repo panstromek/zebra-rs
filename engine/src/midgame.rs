@@ -16,6 +16,7 @@ use crate::src::stubs::abs;
 use crate::src::timer::{is_panic_abort, last_panic_check, check_panic_abort, above_recommended, extended_above_recommended, frozen_ponder_depth};
 use crate::src::hash::add_hash;
 use crate::src::display::{echo, display_buffers};
+use crate::src::error::FatalError;
 
 
 extern "C" {
@@ -186,14 +187,14 @@ pub unsafe fn midgame_c__update_best_list(best_list:
   Invokes the proper evaluation function depending on whether the
   board is filled or not.
 */
-pub unsafe fn static_or_terminal_evaluation(side_to_move:
+pub unsafe fn static_or_terminal_evaluation<FE : FatalError>(side_to_move:
                                             i32)
                                             -> i32 {
     if disks_played == 60 as i32 {
         return terminal_evaluation(side_to_move)
     } else {
         evaluations.lo = evaluations.lo.wrapping_add(1);
-        return pattern_evaluation(side_to_move)
+        return pattern_evaluation::<FE>(side_to_move)
     };
 }
 
@@ -244,7 +245,7 @@ pub unsafe fn calculate_perturbation() {
   while avoiding all moves which allow an immediate loss
   (if that is possible).
 */
-pub unsafe fn protected_one_ply_search(side_to_move: i32)
+pub unsafe fn protected_one_ply_search<FE:FatalError>(side_to_move: i32)
                                    -> i32 {
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
@@ -266,10 +267,10 @@ pub unsafe fn protected_one_ply_search(side_to_move: i32)
         make_move(side_to_move, move_0, 1 as i32);
         evaluations.lo = evaluations.lo.wrapping_add(1);
         depth_one_score =
-            -pattern_evaluation(0 as i32 + 2 as i32 -
+            -pattern_evaluation::<FE>(0 as i32 + 2 as i32 -
                 side_to_move);
         depth_two_score =
-            -tree_search(1 as i32, 2 as i32,
+            -tree_search::<FE>(1 as i32, 2 as i32,
                          0 as i32 + 2 as i32 - side_to_move,
                          -(12345678 as i32), 12345678 as i32,
                          0 as i32, 0 as i32,
@@ -305,7 +306,7 @@ pub unsafe fn protected_one_ply_search(side_to_move: i32)
    tree pruning.
 */
 
-pub unsafe fn tree_search(level: i32,
+pub unsafe fn tree_search<FE:FatalError>(level: i32,
                           max_depth: i32,
                           side_to_move: i32,
                           alpha: i32,
@@ -350,12 +351,12 @@ pub unsafe fn tree_search(level: i32,
             flags: 0,};
     if level >= max_depth {
         nodes.lo = nodes.lo.wrapping_add(1);
-        return static_or_terminal_evaluation(side_to_move)
+        return static_or_terminal_evaluation::<FE>(side_to_move)
     }
     remains = max_depth - level;
     if remains < 3 as i32 {
         curr_val =
-            fast_tree_search(level, max_depth, side_to_move, alpha, beta,
+            fast_tree_search::<FE>(level, max_depth, side_to_move, alpha, beta,
                              allow_hash, void_legal);
         pv_depth[level as usize] = level + 1 as i32;
         pv[level as usize][level as usize] = best_mid_move;
@@ -422,7 +423,7 @@ pub unsafe fn tree_search(level: i32,
                        MPC test is to be performed. */
                         evaluations.lo = evaluations.lo.wrapping_add(1);
                         let static_eval =
-                            pattern_evaluation(side_to_move);
+                            pattern_evaluation::<FE>(side_to_move);
                         if static_eval <= alpha_bound {
                             beta_test = 0 as i32
                         } else if static_eval >= beta_bound {
@@ -433,7 +434,7 @@ pub unsafe fn tree_search(level: i32,
                     if alpha_test != 0 && beta_test != 0 {
                         /* Test for likely fail-low or likely fail-high. */
                         let shallow_val =
-                            tree_search(level, level + shallow_remains,
+                            tree_search::<FE>(level, level + shallow_remains,
                                         side_to_move, alpha_bound, beta_bound,
                                         allow_hash, 0 as i32,
                                         void_legal);
@@ -478,7 +479,7 @@ pub unsafe fn tree_search(level: i32,
                         }
                     } else if beta_test != 0 {
                         /* Fail-high with high probability? */
-                        if tree_search(level, level + shallow_remains,
+                        if tree_search::<FE>(level, level + shallow_remains,
                                        side_to_move,
                                        beta_bound - 1 as i32,
                                        beta_bound, allow_hash,
@@ -495,7 +496,7 @@ pub unsafe fn tree_search(level: i32,
                         }
                     } else if alpha_test != 0 {
                         /* Fail-low with high probability? */
-                        if tree_search(level, level + shallow_remains,
+                        if tree_search::<FE>(level, level + shallow_remains,
                                        side_to_move, alpha_bound,
                                        alpha_bound + 1 as i32,
                                        allow_hash, 0 as i32,
@@ -524,7 +525,7 @@ pub unsafe fn tree_search(level: i32,
                             if make_move_no_hash(side_to_move, move_0) !=
                                 0 as i32 {
                                 curr_val =
-                                    -static_or_terminal_evaluation(0 as
+                                    -static_or_terminal_evaluation::<FE>(0 as
                                         i32
                                         +
                                         2 as
@@ -656,7 +657,7 @@ pub unsafe fn tree_search(level: i32,
                                       1 as i32) != 0 as i32
                         {
                             curr_val =
-                                -tree_search(level + 1 as i32,
+                                -tree_search::<FE>(level + 1 as i32,
                                              level + pre_depth,
                                              0 as i32 +
                                                  2 as i32 -
@@ -747,7 +748,7 @@ pub unsafe fn tree_search(level: i32,
         update_pv = 0 as i32;
         if searched == 0 as i32 {
             curr_val =
-                -tree_search(level + 1 as i32, max_depth,
+                -tree_search::<FE>(level + 1 as i32, max_depth,
                              0 as i32 + 2 as i32 -
                                  side_to_move, -beta, -curr_alpha, allow_hash,
                              allow_mpc, 1 as i32);
@@ -757,14 +758,14 @@ pub unsafe fn tree_search(level: i32,
         } else {
             curr_alpha = if best > curr_alpha { best } else { curr_alpha };
             curr_val =
-                -tree_search(level + 1 as i32, max_depth,
+                -tree_search::<FE>(level + 1 as i32, max_depth,
                              0 as i32 + 2 as i32 -
                                  side_to_move,
                              -(curr_alpha + 1 as i32), -curr_alpha,
                              allow_hash, allow_mpc, 1 as i32);
             if curr_val > curr_alpha && curr_val < beta {
                 curr_val =
-                    -tree_search(level + 1 as i32, max_depth,
+                    -tree_search::<FE>(level + 1 as i32, max_depth,
                                  0 as i32 + 2 as i32 -
                                      side_to_move, -beta,
                                  12345678 as i32, allow_hash,
@@ -834,7 +835,7 @@ pub unsafe fn tree_search(level: i32,
         hash1 ^= hash_flip_color1;
         hash2 ^= hash_flip_color2;
         curr_val =
-            -tree_search(level, max_depth,
+            -tree_search::<FE>(level, max_depth,
                          0 as i32 + 2 as i32 - side_to_move,
                          -beta, -alpha, allow_hash, allow_mpc,
                          0 as i32);
@@ -852,7 +853,7 @@ pub unsafe fn tree_search(level: i32,
    The recursive tree search function. It uses negascout for
    tree pruning.
 */
-unsafe fn fast_tree_search(level: i32,
+unsafe fn fast_tree_search<FE:FatalError>(level: i32,
                            max_depth: i32,
                            side_to_move: i32,
                            alpha: i32,
@@ -882,7 +883,7 @@ unsafe fn fast_tree_search(level: i32,
             flags: 0,};
     nodes.lo = nodes.lo.wrapping_add(1);
     if level >= max_depth {
-        return static_or_terminal_evaluation(side_to_move)
+        return static_or_terminal_evaluation::<FE>(side_to_move)
     }
     /* Check the hash table */
     remains = max_depth - level;
@@ -926,7 +927,7 @@ unsafe fn fast_tree_search(level: i32,
                 if make_move_no_hash(side_to_move, move_0) != 0 as i32
                 {
                     curr_val =
-                        -static_or_terminal_evaluation(0 as i32 +
+                        -static_or_terminal_evaluation::<FE>(0 as i32 +
                             2 as i32 -
                             side_to_move);
                     unmake_move_no_hash(side_to_move, move_0);
@@ -970,7 +971,7 @@ unsafe fn fast_tree_search(level: i32,
                     0 as i32 {
                     if first != 0 {
                         curr_val =
-                            -fast_tree_search(level + 1 as i32,
+                            -fast_tree_search::<FE>(level + 1 as i32,
                                               max_depth,
                                               0 as i32 +
                                                   2 as i32 -
@@ -984,7 +985,7 @@ unsafe fn fast_tree_search(level: i32,
                         curr_alpha =
                             if best > curr_alpha { best } else { curr_alpha };
                         curr_val =
-                            -fast_tree_search(level + 1 as i32,
+                            -fast_tree_search::<FE>(level + 1 as i32,
                                               max_depth,
                                               0 as i32 +
                                                   2 as i32 -
@@ -995,7 +996,7 @@ unsafe fn fast_tree_search(level: i32,
                                               1 as i32);
                         if curr_val > curr_alpha && curr_val < beta {
                             curr_val =
-                                -fast_tree_search(level + 1 as i32,
+                                -fast_tree_search::<FE>(level + 1 as i32,
                                                   max_depth,
                                                   0 as i32 +
                                                       2 as i32 -
@@ -1049,7 +1050,7 @@ unsafe fn fast_tree_search(level: i32,
         hash1 ^= hash_flip_color1;
         hash2 ^= hash_flip_color2;
         curr_val =
-            -fast_tree_search(level, max_depth,
+            -fast_tree_search::<FE>(level, max_depth,
                               0 as i32 + 2 as i32 -
                                   side_to_move, -beta, -alpha, allow_hash,
                               0 as i32);
@@ -1083,7 +1084,7 @@ pub unsafe fn perturb_score(score: i32,
    for the root of the search tree.
 */
 
-pub unsafe fn root_tree_search(level: i32,
+pub unsafe fn root_tree_search<FE:FatalError>(level: i32,
                                max_depth: i32,
                                side_to_move: i32,
                                alpha: i32,
@@ -1210,7 +1211,7 @@ pub unsafe fn root_tree_search(level: i32,
                         make_move(side_to_move, move_0, 1 as i32)
                             != 0 as i32 {
                         curr_val =
-                            -tree_search(level + 1 as i32,
+                            -tree_search::<FE>(level + 1 as i32,
                                          level + pre_depth,
                                          0 as i32 + 2 as i32 -
                                              side_to_move,
@@ -1280,7 +1281,7 @@ pub unsafe fn root_tree_search(level: i32,
         offset = score_perturbation[move_0 as usize];
         if searched == 0 as i32 {
             curr_val =
-                perturb_score(-tree_search(level + 1 as i32,
+                perturb_score(-tree_search::<FE>(level + 1 as i32,
                                            max_depth,
                                            0 as i32 + 2 as i32
                                                - side_to_move,
@@ -1295,7 +1296,7 @@ pub unsafe fn root_tree_search(level: i32,
         } else {
             curr_alpha = if best > curr_alpha { best } else { curr_alpha };
             curr_val =
-                perturb_score(-tree_search(level + 1 as i32,
+                perturb_score(-tree_search::<FE>(level + 1 as i32,
                                            max_depth,
                                            0 as i32 + 2 as i32
                                                - side_to_move,
@@ -1306,7 +1307,7 @@ pub unsafe fn root_tree_search(level: i32,
                               offset);
             if curr_val > curr_alpha && curr_val < beta {
                 curr_val =
-                    perturb_score(-tree_search(level + 1 as i32,
+                    perturb_score(-tree_search::<FE>(level + 1 as i32,
                                                max_depth,
                                                0 as i32 +
                                                    2 as i32 -
@@ -1394,7 +1395,7 @@ pub unsafe fn root_tree_search(level: i32,
         hash1 ^= hash_flip_color1;
         hash2 ^= hash_flip_color2;
         curr_val =
-            -root_tree_search(level, max_depth,
+            -root_tree_search::<FE>(level, max_depth,
                               0 as i32 + 2 as i32 -
                                   side_to_move, -beta, -alpha, allow_hash,
                               allow_mpc, 0 as i32);
@@ -1413,7 +1414,7 @@ pub unsafe fn root_tree_search(level: i32,
    side_to_move = the side whose turn it is to move
 */
 
-pub unsafe fn middle_game(side_to_move: i32,
+pub unsafe fn middle_game<FE :FatalError>(side_to_move: i32,
                           max_depth: i32,
                           update_evals: i32,
                           eval_info: *mut EvaluationType)
@@ -1467,16 +1468,16 @@ pub unsafe fn middle_game(side_to_move: i32,
         /* The actual search */
         if depth == 1 as i32 {
             /* Fix to make it harder to wipe out depth-1 Zebra */
-            val = protected_one_ply_search(side_to_move)
+            val = protected_one_ply_search::<FE>(side_to_move)
         } else if enable_mpc != 0 {
             val =
-                root_tree_search(0 as i32, depth, side_to_move, alpha,
+                root_tree_search::<FE>(0 as i32, depth, side_to_move, alpha,
                                  beta, 1 as i32, 1 as i32,
                                  1 as i32);
             if force_return == 0 && is_panic_abort() == 0 &&
                 (val <= alpha || val >= beta) {
                 val =
-                    root_tree_search(0 as i32, depth, side_to_move,
+                    root_tree_search::<FE>(0 as i32, depth, side_to_move,
                                      -(12345678 as i32),
                                      12345678 as i32,
                                      1 as i32, 1 as i32,
@@ -1484,20 +1485,20 @@ pub unsafe fn middle_game(side_to_move: i32,
             }
         } else {
             val =
-                root_tree_search(0 as i32, depth, side_to_move, alpha,
+                root_tree_search::<FE>(0 as i32, depth, side_to_move, alpha,
                                  beta, 1 as i32, 0 as i32,
                                  1 as i32);
             if is_panic_abort() == 0 && force_return == 0 {
                 if val <= alpha {
                     val =
-                        root_tree_search(0 as i32, depth,
+                        root_tree_search::<FE>(0 as i32, depth,
                                          side_to_move,
                                          -(29000 as i32), alpha,
                                          1 as i32, 0 as i32,
                                          1 as i32)
                 } else if val >= beta {
                     val =
-                        root_tree_search(0 as i32, depth,
+                        root_tree_search::<FE>(0 as i32, depth,
                                          side_to_move, beta,
                                          29000 as i32,
                                          1 as i32, 0 as i32,

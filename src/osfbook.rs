@@ -24,6 +24,8 @@ use crate::src::display::display_board;
 use engine::src::midgame::middle_game;
 use engine::src::myrandom::my_srandom;
 use engine::src::hash::set_hash_transformation;
+use engine::src::error::{LibcFatalError, FatalError};
+pub type FE = LibcFatalError;
 
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
@@ -118,7 +120,7 @@ pub unsafe fn evaluate_tree() {
     puts(b"\x00" as *const u8 as *const i8);
     printf(b"Progress: \x00" as *const u8 as *const i8);
     fflush(stdout);
-    if feasible_count > 0 as i32 { do_evaluate(0 as i32); }
+    if feasible_count > 0 as i32 { do_evaluate::<LibcFatalError>(0 as i32); }
     time(&mut stop_time);
     printf(b"(took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
@@ -209,12 +211,12 @@ pub unsafe fn book_statistics(full_statistics: i32) {
     let mut depth: [i32; 60] = [0; 60];
     let mut total_count: [i32; 61] = [0; 61];
     evals =
-        safe_malloc((book_node_count as
+        safe_malloc::<FE>((book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i32>()
                                                          as u64)) as
             *mut i32;
     negamax =
-        safe_malloc((book_node_count as
+        safe_malloc::<FE>((book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i32>()
                                                          as u64)) as
             *mut i32;
@@ -591,7 +593,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
         slot = probe_hash_table(val1, val2);
         if slot == -(1 as i32) ||
                *book_hash_table.offset(slot as isize) == -(1 as i32) {
-            this_node = create_BookNode(val1, val2, flags[i as usize]);
+            this_node = create_BookNode::<FE>(val1, val2, flags[i as usize]);
             if private_game != 0 {
                 let ref mut fresh26 =
                     (*node.offset(this_node as isize)).flags;
@@ -662,7 +664,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                        60 as i32 - disks_played);
             }
         }
-        end_game(side_to_move, 0 as i32, 0 as i32,
+       end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
                  1 as i32, 0 as i32, &mut dummy_info);
         outcome = root_eval;
         if side_to_move == 2 as i32 { outcome = -outcome }
@@ -748,7 +750,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 /* Only solve the position if it hasn't been solved already */
                 if (*node.offset(this_node as isize)).flags as i32 &
                        16 as i32 == 0 {
-                    end_game(side_to_move, 0 as i32, 0 as i32,
+                   end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
                              1 as i32, 0 as i32,
                              &mut dummy_info);
                     if side_to_move == 0 as i32 {
@@ -796,7 +798,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 /* Only solve the position if its WLD status is unknown */
                 if (*node.offset(this_node as isize)).flags as i32 &
                        4 as i32 == 0 {
-                    end_game(side_to_move, 1 as i32, 0 as i32,
+                   end_game::<FE>(side_to_move, 1 as i32, 0 as i32,
                              1 as i32, 0 as i32,
                              &mut dummy_info);
                     if side_to_move == 0 as i32 {
@@ -855,7 +857,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 }
                 midgame_eval_done = 1 as i32;
                 if force_eval != 0 { clear_node_depth(this_node); }
-                evaluate_node(this_node);
+                evaluate_node::<LibcFatalError>(this_node);
                 printf(b"|\x00" as *const u8 as *const i8);
                 fflush(stdout);
             }
@@ -873,7 +875,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                        i32 == 9999 as i32 {
                 /* Minimax discovered that the node hasn't got a deviation any
                    longer because that move has been played. */
-                evaluate_node(this_node);
+                evaluate_node::<FE>(this_node);
                 printf(b"-|-\x00" as *const u8 as *const i8);
                 do_minimax(this_node, &mut dummy_black_score,
                            &mut dummy_white_score);
@@ -1012,7 +1014,7 @@ pub unsafe fn read_text_database(file_name:
     }
     fscanf(stream, b"%d\x00" as *const u8 as *const i8,
            &mut new_book_node_count as *mut i32);
-    set_allocation(new_book_node_count + 1000 as i32);
+    set_allocation::<FE>(new_book_node_count + 1000 as i32);
     i = 0 as i32;
     while i < new_book_node_count {
         fscanf(stream,
@@ -1078,7 +1080,7 @@ pub unsafe fn read_binary_database(file_name:
     fread(&mut new_book_node_count as *mut i32 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
-    set_allocation(new_book_node_count + 1000 as i32);
+    set_allocation::<FE>(new_book_node_count + 1000 as i32);
     i = 0 as i32;
     while i < new_book_node_count {
         fread(&mut (*node.offset(i as isize)).hash_val1 as *mut i32 as
@@ -1203,7 +1205,7 @@ pub unsafe fn merge_binary_database(file_name:
                *book_hash_table.offset(slot as isize) == -(1 as i32) {
             /* New position, add it without modifications. */
             let this_node =
-                create_BookNode(merge_node.hash_val1, merge_node.hash_val2,
+                create_BookNode::<FE>(merge_node.hash_val1, merge_node.hash_val2,
                                 merge_node.flags);
             *node.offset(this_node as isize) = merge_node;
             merge_use_count += 1
@@ -1363,12 +1365,12 @@ pub unsafe fn write_compressed_database(file_name:
     }
     prepare_tree_traversal();
     let node_order =
-        safe_malloc((book_node_count as
+        safe_malloc::<FE>((book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i32>()
                                                          as u64)) as
             *mut i32;
     let child_count =
-        safe_malloc((book_node_count as
+        safe_malloc::<FE>((book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
@@ -1578,12 +1580,12 @@ pub unsafe fn unpack_compressed_database(in_name:
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
     child_count =
-        safe_malloc((node_count as
+        safe_malloc::<FE>((node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
     child =
-        safe_malloc((child_list_size as
+        safe_malloc::<FE>((child_list_size as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
@@ -1594,27 +1596,27 @@ pub unsafe fn unpack_compressed_database(in_name:
           ::std::mem::size_of::<i16>() as u64,
           child_list_size as size_t, stream);
     black_score =
-        safe_malloc((node_count as
+        safe_malloc::<FE>((node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
     white_score =
-        safe_malloc((node_count as
+        safe_malloc::<FE>((node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
     alt_move =
-        safe_malloc((node_count as
+        safe_malloc::<FE>((node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
     alt_score =
-        safe_malloc((node_count as
+        safe_malloc::<FE>((node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
     flags =
-        safe_malloc((node_count as
+        safe_malloc::<FE>((node_count as
                          u64).wrapping_mul(::std::mem::size_of::<u16>()
                                                          as u64)) as
             *mut u16;
@@ -1689,7 +1691,7 @@ pub unsafe fn unpack_compressed_database(in_name:
   if they don't describe the same set of positions, something has gone awry.
 */
 
-pub unsafe fn merge_position_list(script_file:
+pub unsafe fn merge_position_list<FE: FatalError>(script_file:
                                                  *const i8,
                                              output_file:
                                                  *const i8) {
@@ -1978,7 +1980,7 @@ pub unsafe fn merge_position_list(script_file:
                     index = *book_hash_table.offset(slot as isize);
                     if index == -(1 as i32) {
                         index =
-                            create_BookNode(val1, val2,
+                            create_BookNode::<FE>(val1, val2,
                                             32 as i32 as
                                                 u16);
                         let ref mut fresh50 =
@@ -2508,7 +2510,7 @@ pub unsafe fn convert_opening_list(base_file:
 */
 
 pub unsafe fn init_osf(do_global_setup: i32) {
-    engine_init_osf();
+    engine_init_osf::<LibcFatalError>();
     if do_global_setup != 0 {
         global_setup(0 as i32, 19 as i32);
     };
@@ -2691,7 +2693,7 @@ pub unsafe extern "C" fn restricted_minimax_tree(low: libc::c_int,
         i += 1
     }
     minimax_values =
-        safe_malloc((book_node_count as
+        safe_malloc::<FE>((book_node_count as
             libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_int>()
             as libc::c_ulong)) as
             *mut libc::c_int;
@@ -2751,7 +2753,7 @@ unsafe extern "C" fn do_midgame_statistics(index: libc::c_int,
         determine_hash_values(side_to_move, board.as_mut_ptr());
         depth = 1 as libc::c_int;
         while depth <= spec.max_depth {
-            middle_game(side_to_move, depth, 0 as libc::c_int,
+            middle_game::<FE>(side_to_move, depth, 0 as libc::c_int,
                         &mut dummy_info);
             eval_list[depth as usize] = root_eval;
             printf(b"%2d: %-5d \x00" as *const u8 as *const libc::c_char,
@@ -2763,7 +2765,7 @@ unsafe extern "C" fn do_midgame_statistics(index: libc::c_int,
         determine_hash_values(side_to_move, board.as_mut_ptr());
         depth = 2 as libc::c_int;
         while depth <= spec.max_depth {
-            middle_game(side_to_move, depth, 0 as libc::c_int,
+            middle_game::<FE>(side_to_move, depth, 0 as libc::c_int,
                         &mut dummy_info);
             eval_list[depth as usize] = root_eval;
             printf(b"%2d: %-5d \x00" as *const u8 as *const libc::c_char,
@@ -2890,7 +2892,7 @@ unsafe extern "C" fn endgame_correlation(mut side_to_move: libc::c_int,
     determine_hash_values(side_to_move, board.as_mut_ptr());
     depth = 1 as libc::c_int;
     while depth <= spec.max_depth {
-        middle_game(side_to_move, depth, 0 as libc::c_int, &mut dummy_info);
+        middle_game::<FE>(side_to_move, depth, 0 as libc::c_int, &mut dummy_info);
         eval_list[depth as usize] = root_eval;
         printf(b"%2d: %-6.2f \x00" as *const u8 as *const libc::c_char, depth,
                eval_list[depth as usize] as libc::c_double / 128.0f64);
@@ -2931,7 +2933,7 @@ unsafe extern "C" fn endgame_correlation(mut side_to_move: libc::c_int,
                 print_move_alternatives(side_to_move);
                 set_hash_transformation(0 as libc::c_int as libc::c_uint,
                                         0 as libc::c_int as libc::c_uint);
-                end_game(side_to_move, 0 as libc::c_int, 1 as libc::c_int,
+               end_game::<FE>(side_to_move, 0 as libc::c_int, 1 as libc::c_int,
                          1 as libc::c_int, 0 as libc::c_int, &mut dummy_info);
                 endgame_correlation(side_to_move, root_eval,
                                     pv[0 as libc::c_int as
@@ -2988,7 +2990,7 @@ unsafe extern "C" fn do_endgame_statistics(index: libc::c_int,
             print_move_alternatives(side_to_move);
             set_hash_transformation(0 as libc::c_int as libc::c_uint,
                                     0 as libc::c_int as libc::c_uint);
-            end_game(side_to_move, 0 as libc::c_int, 1 as libc::c_int,
+           end_game::<FE>(side_to_move, 0 as libc::c_int, 1 as libc::c_int,
                      1 as libc::c_int, 0 as libc::c_int, &mut dummy_info);
             if abs(root_eval) <= spec.max_diff {
                 endgame_correlation(side_to_move, root_eval,
@@ -3285,7 +3287,7 @@ unsafe extern "C" fn do_correct(index: libc::c_int,
             if target_name.is_null() {
                 /* Solve now */
                 reset_counter(&mut nodes);
-                end_game(side_to_move, (full_solve == 0) as libc::c_int,
+               end_game::<FE>(side_to_move, (full_solve == 0) as libc::c_int,
                          0 as libc::c_int, 1 as libc::c_int, 0 as libc::c_int,
                          &mut dummy_info);
                 if side_to_move == 0 as libc::c_int {

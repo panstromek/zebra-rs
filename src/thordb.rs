@@ -5,6 +5,8 @@ use crate::src::safemem::{safe_malloc, safe_realloc};
 
 use crate::src::zebra::_IO_FILE;
 pub use engine::src::thordb::*;
+use engine::src::error::LibcFatalError;
+pub type FE = LibcFatalError;
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -123,7 +125,7 @@ unsafe extern "C" fn sort_tournament_database() {
     let mut tournament_buffer = 0 as *mut *mut TournamentType;
     let mut i: i32 = 0;
     tournament_buffer =
-        safe_malloc((tournaments.count as
+        safe_malloc::<FE>((tournaments.count as
                          u64).wrapping_mul(::std::mem::size_of::<*mut TournamentType>()
                                                          as u64)) as
             *mut *mut TournamentType;
@@ -171,7 +173,7 @@ pub unsafe fn read_tournament_database(file_name:
     tournaments.count = tournaments.prolog.item_count;
     buffer_size = 26 as i32 * tournaments.prolog.item_count;
     tournaments.name_buffer =
-        safe_realloc(tournaments.name_buffer as *mut std::ffi::c_void,
+        safe_realloc::<FE>(tournaments.name_buffer as *mut std::ffi::c_void,
                      buffer_size as size_t) as *mut i8;
     actually_read =
         fread(tournaments.name_buffer as *mut std::ffi::c_void,
@@ -181,7 +183,7 @@ pub unsafe fn read_tournament_database(file_name:
     fclose(stream);
     if success != 0 {
         tournaments.tournament_list =
-            safe_realloc(tournaments.tournament_list as *mut std::ffi::c_void,
+            safe_realloc::<FE>(tournaments.tournament_list as *mut std::ffi::c_void,
                          (tournaments.count as
                               u64).wrapping_mul(::std::mem::size_of::<TournamentType>()
                                                               as
@@ -248,7 +250,7 @@ unsafe fn sort_player_database() {
     let mut player_buffer = 0 as *mut *mut PlayerType;
     let mut i: i32 = 0;
     player_buffer =
-        safe_malloc((players.count as
+        safe_malloc::<FE>((players.count as
                          u64).wrapping_mul(::std::mem::size_of::<*mut PlayerType>()
                                                          as u64)) as
             *mut *mut PlayerType;
@@ -295,7 +297,7 @@ pub unsafe fn read_player_database(file_name:
     players.count = players.prolog.item_count;
     buffer_size = 20 as i32 * players.count;
     players.name_buffer =
-        safe_realloc(players.name_buffer as *mut std::ffi::c_void,
+        safe_realloc::<FE>(players.name_buffer as *mut std::ffi::c_void,
                      buffer_size as size_t) as *mut i8;
     actually_read =
         fread(players.name_buffer as *mut std::ffi::c_void,
@@ -305,7 +307,7 @@ pub unsafe fn read_player_database(file_name:
     fclose(stream);
     if success != 0 {
         players.player_list =
-            safe_realloc(players.player_list as *mut std::ffi::c_void,
+            safe_realloc::<FE>(players.player_list as *mut std::ffi::c_void,
                          (players.count as
                               u64).wrapping_mul(::std::mem::size_of::<PlayerType>()
                                                               as
@@ -391,7 +393,7 @@ pub unsafe fn read_game_database(file_name:
     if stream.is_null() { return 0 as i32 }
     old_database_head = database_head;
     database_head =
-        safe_malloc(::std::mem::size_of::<DatabaseType>() as u64) as
+        safe_malloc::<FE>(::std::mem::size_of::<DatabaseType>() as u64) as
             *mut DatabaseType;
     (*database_head).next = old_database_head;
     if read_prolog(stream, &mut (*database_head).prolog) == 0 {
@@ -401,7 +403,7 @@ pub unsafe fn read_game_database(file_name:
     success = 1 as i32;
     (*database_head).count = (*database_head).prolog.game_count;
     (*database_head).games =
-        safe_malloc(((*database_head).count as
+        safe_malloc::<FE>(((*database_head).count as
                          u64).wrapping_mul(::std::mem::size_of::<GameType>()
                                                          as u64)) as
             *mut GameType;

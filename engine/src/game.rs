@@ -17,7 +17,7 @@ use crate::src::patterns::init_patterns;
 use crate::src::bitboard::init_bitboard;
 use crate::src::myrandom::{my_srandom, my_random};
 use crate::src::stubs::{time, abs};
-use crate::src::error::{FatalError, FE};
+use crate::src::error::{FatalError};
 use crate::src::display::{echo, display_pv, reset_buffer_display};
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_move, get_match_count, database_search};
 
@@ -281,20 +281,22 @@ pub unsafe fn setup_non_file_based_game(side_to_move: *mut i32) {
 }
 
 
-pub unsafe fn engine_global_setup(use_random: i32, hash_bits: i32, coeff_adjustments: Option<CoeffAdjustments>, coeffs: impl CoeffSource) {
+pub unsafe fn engine_global_setup<S:CoeffSource, FE:FatalError>(
+    use_random: i32, hash_bits: i32, coeff_adjustments:
+    Option<CoeffAdjustments>, coeffs: S) {
     let mut timer: time_t = 0;
     if use_random != 0 {
         time(&mut timer);
         my_srandom(timer as i32);
     } else { my_srandom(1 as i32); }
-    init_hash(hash_bits);
+    init_hash::<FE>(hash_bits);
     init_bitboard();
     init_moves();
     init_patterns();
 
     // inlined init_coeffs
     init_memory_handler();
-    process_coeffs_from_fn_source(coeffs);
+    process_coeffs_from_fn_source::<FE, _>(coeffs);
     init_coeffs_calculate_patterns();
     if let Some(adjusts) = coeff_adjustments {
         eval_adjustment(adjusts.disc_adjust, adjusts.edge_adjust, adjusts.corner_adjust, adjusts.x_adjust);
@@ -314,7 +316,7 @@ pub trait BoardSource {
 }
 
 
-pub unsafe fn process_board_source<S: BoardSource>(side_to_move: *mut i32, mut file_source: S) {
+pub unsafe fn process_board_source<S: BoardSource, FE: FatalError>(side_to_move: *mut i32, mut file_source: S) {
     let mut buffer: [i8; 70] = [0; 70];
     file_source.fill_board_buffer(&mut buffer);
     let mut token = 0 as i32;
@@ -354,11 +356,11 @@ pub trait FileBoardSource : BoardSource {
     unsafe fn open(file_name: *const i8) -> Option<Self> where Self: Sized;
 }
 
-pub unsafe fn setup_file_based_game<S: FileBoardSource>(file_name: *const i8, side_to_move: *mut i32) {
+pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FatalError>(file_name: *const i8, side_to_move: *mut i32) {
     setup_game_clear_board();
     assert!(!file_name.is_null());
     match S::open(file_name) {
-        Some(file_source) => process_board_source(side_to_move, file_source),
+        Some(file_source) => process_board_source::<_, FE>(side_to_move, file_source),
         None => {
             FE::cannot_open_game_file(file_name);
         },
@@ -366,16 +368,16 @@ pub unsafe fn setup_file_based_game<S: FileBoardSource>(file_name: *const i8, si
     setup_game_finalize(side_to_move);
 }
 
-pub unsafe fn generic_setup_game<Source: FileBoardSource>(file_name: *const i8, side_to_move: *mut i32) {
+pub unsafe fn generic_setup_game<Source: FileBoardSource, FE: FatalError>(file_name: *const i8, side_to_move: *mut i32) {
     if file_name.is_null() {
         setup_non_file_based_game(side_to_move);
     } else {
-        setup_file_based_game::<Source>(file_name, side_to_move);
+        setup_file_based_game::<Source, FE>(file_name, side_to_move);
     }
 }
 
-pub unsafe fn generic_game_init<Source: FileBoardSource>(file_name: *const i8, side_to_move: *mut i32) {
-    generic_setup_game::<Source>(file_name, side_to_move);
+pub unsafe fn generic_game_init<Source: FileBoardSource, FE: FatalError>(file_name: *const i8, side_to_move: *mut i32) {
+    generic_setup_game::<Source, FE>(file_name, side_to_move);
     engine_game_init();
 }
 
@@ -529,7 +531,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     if book_move_found == 0 && play_thor_match_openings != 0 {
         /* Optionally use the Thor database as opening book. */
         let threshold = 2 as i32;
-        database_search(board.as_mut_ptr(), side_to_move);
+        database_search::<FE>(board.as_mut_ptr(), side_to_move);
         if get_match_count() >= threshold {
             let game_index =
                 ((my_random() >> 8 as i32) %
@@ -588,7 +590,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         }
         fill_move_alternatives(side_to_move, flags);
         curr_move =
-            get_book_move(side_to_move, update_all, &mut book_eval_info);
+             get_book_move::<FE>(side_to_move, update_all, &mut book_eval_info);
         if curr_move != -(1 as i32) {
             set_current_eval(book_eval_info);
             midgame_move = curr_move;
@@ -660,7 +662,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         loop  {
             max_depth_reached = midgame_depth;
             midgame_move =
-                middle_game(side_to_move, midgame_depth, update_all,
+                middle_game::<FE>(side_to_move, midgame_depth, update_all,
                             &mut mid_eval_info);
             set_current_eval(mid_eval_info);
             midgame_diff =
@@ -710,17 +712,17 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             clear_panic_abort();
             if timed_depth != 0 {
                 curr_move =
-                    end_game(side_to_move,
+                   end_game::<FE>(side_to_move,
                              (disks_played < 60 as i32 - exact) as
                                  i32, 0 as i32, book, komi,
                              &mut end_eval_info)
             } else if empties <= exact {
                 curr_move =
-                    end_game(side_to_move, 0 as i32, 0 as i32,
+                   end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
                              book, komi, &mut end_eval_info)
             } else {
                 curr_move =
-                    end_game(side_to_move, 1 as i32, 0 as i32,
+                   end_game::<FE>(side_to_move, 1 as i32, 0 as i32,
                              book, komi, &mut end_eval_info)
             }
             set_current_eval(end_eval_info);
