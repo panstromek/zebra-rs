@@ -4,7 +4,6 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 
 use engine::src::game::{global_terminate, set_komi, toggle_human_openings, toggle_status_log};
 use engine::src::myrandom::my_srandom;
-use engine::src::stubs::{time, strlen};
 use engine::src::thordb::init_thor_database;
 use engine::src::display::{echo, display_pv, set_move_list, set_evals, set_names};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
@@ -20,7 +19,8 @@ use c2rust_out::src::game::{global_setup, compute_move, game_init};
 use c2rust_out::src::stubs::strstr;
 use c2rust_out::src::display::{display_move, display_board};
 use engine::src::zebra::EvaluationType;
-use c2rust_out::src::error::LibcFatalError;
+use c2rust_out::src::error::{LibcFatalError, FE};
+use engine::src::error::FrontEnd;
 
 extern "C" {
     #[no_mangle]
@@ -172,7 +172,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const libc::c_char,
     }
     fclose(output_stream);
     /* Initialize display subsystem and search parameters */
-    set_names(b"\x00" as *const u8 as *const libc::c_char,
+    set_names::<FE>(b"\x00" as *const u8 as *const libc::c_char,
               b"\x00" as *const u8 as *const libc::c_char);
     set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                   score_sheet_row);
@@ -196,7 +196,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const libc::c_char,
     reset_counter(&mut script_nodes);
     position_count = 0 as libc::c_int;
     max_search = -0.0f64;
-    start_time = get_real_timer();
+    start_time = get_real_timer::<FE>();
     /* Scan through the script file */
     i = 0 as libc::c_int;
     loop  {
@@ -247,7 +247,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const libc::c_char,
                        i + 1 as libc::c_int);
                 exit(1 as libc::c_int);
             }
-            if strlen(stm_string.as_mut_ptr()) !=
+            if   FE::strlen(stm_string.as_mut_ptr()) !=
                 1 as libc::c_int as libc::c_ulong {
                 printf(b"\nAmbiguous side to move on line %d - aborting\n\n\x00"
                            as *const u8 as *const libc::c_char,
@@ -263,7 +263,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const libc::c_char,
                            i + 1 as libc::c_int);
                 }
             }
-            if strlen(board_string.as_mut_ptr()) !=
+            if   FE::strlen(board_string.as_mut_ptr()) !=
                 64 as libc::c_int as libc::c_ulong {
                 printf(b"\nBoard on line %d doesn\'t contain 64 positions - aborting\n\n\x00"
                            as *const u8 as *const libc::c_char,
@@ -307,8 +307,8 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const libc::c_char,
                               1 as libc::c_int, 0 as libc::c_int,
                               1 as libc::c_int);
             }
-            search_start = get_real_timer();
-            start_move(my_time as libc::c_double, my_incr as libc::c_double,
+            search_start = get_real_timer::<FE>();
+            start_move::<FE>(my_time as libc::c_double, my_incr as libc::c_double,
                        disks_played + 4 as libc::c_int);
             determine_move_time(my_time as libc::c_double,
                                 my_incr as libc::c_double,
@@ -346,7 +346,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const libc::c_char,
                 }
             }
             score = eval_info.score / 128 as libc::c_int;
-            search_stop = get_real_timer();
+            search_stop = get_real_timer::<FE>();
             if search_stop - search_start > max_search {
                 max_search = search_stop - search_start
             }
@@ -429,7 +429,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const libc::c_char,
     }
     /* Clean up and terminate */
     fclose(script_stream);
-    stop_time = get_real_timer();
+    stop_time = get_real_timer::<FE>();
     printf(b"Total positions solved:   %d\n\x00" as *const u8 as
                *const libc::c_char, position_count);
     printf(b"Total time:               %.1f s\n\x00" as *const u8 as
@@ -637,14 +637,14 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
                    1 as libc::c_int);
     }
     if use_random != 0 && 1 as libc::c_int == 0 {
-        time(&mut timer);
+        FE::time(&mut timer);
         my_srandom(timer as libc::c_int);
     } else { my_srandom(1 as libc::c_int); }
     if run_script != 0 {
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line);
     }
-    global_terminate();
+    global_terminate::<LibcFatalError>();
     return 0 as libc::c_int;
 }
 static mut use_thor: libc::c_int = 0;

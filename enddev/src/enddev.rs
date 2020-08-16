@@ -14,7 +14,8 @@ use c2rust_out::src::display::display_board;
 use c2rust_out::src::game::{extended_compute_move, compute_move, game_init, global_setup};
 use c2rust_out::src::learn::init_learn;
 use c2rust_out::src::zebra::_IO_FILE;
-use c2rust_out::src::error::LibcFatalError;
+use c2rust_out::src::error::{LibcFatalError, FE};
+use engine::src::error::FrontEnd;
 
 extern "C" {
     #[no_mangle]
@@ -146,11 +147,11 @@ unsafe extern "C" fn read_game(mut stream: *mut FILE,
         }
         *ch = 0 as libc::c_int as libc::c_char;
         *game_length =
-            strlen(buffer.as_mut_ptr()).wrapping_div(2 as libc::c_int as
+              FE::strlen(buffer.as_mut_ptr()).wrapping_div(2 as libc::c_int as
                 libc::c_ulong) as
                 libc::c_int;
         if *game_length > 60 as libc::c_int ||
-            strlen(buffer.as_mut_ptr()).wrapping_rem(2 as libc::c_int as
+              FE::strlen(buffer.as_mut_ptr()).wrapping_rem(2 as libc::c_int as
                 libc::c_ulong) ==
                 1 as libc::c_int as libc::c_ulong {
             fprintf(stderr,
@@ -179,7 +180,7 @@ unsafe extern "C" fn read_game(mut stream: *mut FILE,
                                 }
                         } else {
                             __res =
-                                tolower(buffer[(2 as libc::c_int * i) as
+                               FE::tolower(buffer[(2 as libc::c_int * i) as
                                     usize] as libc::c_int)
                         }
                     } else {
@@ -310,7 +311,7 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
             }
         } else {
             let mut move_0: libc::c_int = 0;
-            start_move(100000 as libc::c_int as libc::c_double,
+            start_move::<FE>(100000 as libc::c_int as libc::c_double,
                        0 as libc::c_int as libc::c_double,
                        disks_played + 4 as libc::c_int);
             if in_branch != 0 {

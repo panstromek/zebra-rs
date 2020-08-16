@@ -15,6 +15,7 @@ use crate::{
         zebra::{EvaluationType, _IO_FILE}
     }
 };
+use crate::src::error::FE;
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -169,10 +170,10 @@ pub unsafe extern "C" fn send_solve_status(empties: i32,
                     '0' as i32 + get_ponder_move() / 10 as i32);
     }
     send_status_pv(pv[0 as i32 as usize].as_mut_ptr(), empties);
-    send_status_time(get_elapsed_time());
-    if get_elapsed_time() > 0.0001f64 {
+    send_status_time(get_elapsed_time::<FE>());
+    if get_elapsed_time::<FE>() > 0.0001f64 {
         send_status(b"%6.0f %s  \x00" as *const u8 as *const i8,
-                    node_val / (get_elapsed_time() + 0.0001f64),
+                    node_val / (get_elapsed_time::<FE>() + 0.0001f64),
                     b"nps\x00" as *const u8 as *const i8);
     };
 }
@@ -182,7 +183,7 @@ pub unsafe extern "C"  fn end_report_panic_abort_2() {
     printf(b"%s %.1f %c %s\n\x00" as *const u8 as
                *const i8,
            b"Panic abort after\x00" as *const u8 as
-               *const i8, get_elapsed_time(),
+               *const i8, get_elapsed_time::<FE>(),
            's' as i32,
            b"in selective search\x00" as *const u8 as
                *const i8);
@@ -193,7 +194,7 @@ pub unsafe extern "C" fn end_report_semi_panic_abort_3() {
     printf(b"%s %.1f %c %s\n\x00" as *const u8 as
                *const i8,
            b"Semi-panic abort after\x00" as *const u8 as
-               *const i8, get_elapsed_time(),
+               *const i8, get_elapsed_time::<FE>(),
            's' as i32,
            b"in WLD search\x00" as *const u8 as
                *const i8);
@@ -203,7 +204,7 @@ pub unsafe extern "C" fn end_report_semi_panic_abort_3() {
 pub unsafe extern "C" fn end_report_semi_panic_abort_2() {
     printf(b"%s %.1f %c %s\n\x00" as *const u8 as *const i8,
            b"Semi-panic abort after\x00" as *const u8 as
-               *const i8, get_elapsed_time(), 's' as i32,
+               *const i8, get_elapsed_time::<FE>(), 's' as i32,
            b"in exact search\x00" as *const u8 as
                *const i8);
 }
@@ -213,7 +214,7 @@ pub unsafe extern "C" fn end_report_panic_abort() {
     printf(b"%s %.1f %c %s\n\x00" as *const u8 as
                *const i8,
            b"Panic abort after\x00" as *const u8 as
-               *const i8, get_elapsed_time(),
+               *const i8, get_elapsed_time::<FE>(),
            's' as i32,
            b"in WLD search\x00" as *const u8 as
                *const i8);
@@ -224,7 +225,7 @@ pub unsafe extern "C" fn end_report_semi_panic_abort() {
     printf(b"%s %.1f %c %s\n\x00" as *const u8 as
                *const i8,
            b"Semi-panic abort after\x00" as *const u8 as
-               *const i8, get_elapsed_time(), // FIXME resolve if we should extract this as param??
+               *const i8, get_elapsed_time::<FE>(), // FIXME resolve if we should extract this as param??
            's' as i32,
            b"in selective search\x00" as *const u8 as
                *const i8);

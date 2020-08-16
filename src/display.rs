@@ -5,8 +5,8 @@ use crate::src::search::{full_pv, full_pv_depth, disc_count};
 use crate::src::globals::{white_moves, black_moves, pv_depth};
 use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub use engine::src::display::*;
-use crate::src::error::LibcFatalError;
-pub type FE = LibcFatalError;
+use crate::src::error::{LibcFatalError, FE};
+use engine::src::error::FrontEnd;
 
 pub type __builtin_va_list = [__va_list_tag; 1];
 #[derive(Copy, Clone)]
@@ -406,7 +406,7 @@ pub unsafe fn send_status_pv(pv: *mut i32,
 pub unsafe fn display_status(stream: *mut FILE,
                                         allow_repeat: i32) {
     if (status_pos != 0 as i32 || allow_repeat != 0) &&
-           strlen(status_buffer.as_mut_ptr()) >
+             FE::strlen(status_buffer.as_mut_ptr()) >
                0 as i32 as u64 {
         fprintf(stream, b"%s\n\x00" as *const u8 as *const i8,
                 status_buffer.as_mut_ptr());
@@ -451,7 +451,7 @@ pub unsafe fn display_sweep(stream: *mut FILE) {
 pub unsafe extern "C" fn display_buffers() {
     let mut timer: f64 = 0.;
     let mut new_interval: f64 = 0.;
-    timer = get_real_timer();
+    timer = get_real_timer::<FE>();
     if timer - last_output >= interval2 || timed_buffer_management == 0 {
         display_status(stdout, 0 as i32);
         status_modified = 0 as i32;

@@ -20,45 +20,11 @@ use crate::src::stubs::{ceil, abs};
 use crate::src::hash::add_hash;
 use crate::src::midgame::{tree_search, toggle_midgame_hash_usage};
 use crate::src::timer::{is_panic_abort, check_panic_abort, last_panic_check, clear_panic_abort, check_threshold, set_panic_threshold};
-use crate::src::display::{display_buffers, echo, reset_buffer_display};
-use crate::src::zebra::EvaluationType;
+use crate::src::display::{echo, reset_buffer_display};
+use crate::src::zebra::{EvaluationType, ZebraFrontend};
 use crate::src::osfbook::{fill_endgame_hash, get_book_move, fill_move_alternatives};
 use crate::src::error::FrontEnd;
 
-extern "C" {
-    #[no_mangle]
-    fn after_update_best_list_verbose(best_list: *mut i32);
-
-    #[no_mangle]
-     fn before_update_best_list_verbose(best_list: *mut i32, move_0: i32, best_list_index: i32, best_list_length: *mut i32);
-
-    #[no_mangle]
-    pub  fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32);
-    #[no_mangle]
-    pub fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32);
-    #[no_mangle]
-    pub  fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32);
-    #[no_mangle]
-    pub  fn end_tree_search_output_some_stats(entry: &HashEntry);
-    #[no_mangle]
-    pub  fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32);
-    #[no_mangle]
-    pub  fn end_tree_search_level_0_report(alpha: i32, beta: i32);
-    #[no_mangle]
-    pub fn send_solve_status(empties: i32, side_to_move: i32, eval_info: *mut EvaluationType);
-    #[no_mangle]
-    pub fn end_report_panic_abort_2();
-    #[no_mangle]
-    pub fn end_report_semi_panic_abort_3();
-    #[no_mangle]
-    pub fn end_report_semi_panic_abort_2();
-    #[no_mangle]
-    pub fn end_report_panic_abort();
-    #[no_mangle]
-    pub fn end_report_semi_panic_abort();
-    #[no_mangle]
-    pub fn end_display_zero_status();
-}
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
 pub const INTERRUPTED_EVAL: EvalType = 7;
@@ -1586,14 +1552,14 @@ pub unsafe fn end_solve(my_bits: BitBoard, opp_bits: BitBoard,
 /*
   UPDATE_BEST_LIST
 */
-pub unsafe fn update_best_list(best_list: *mut i32,
+pub unsafe fn update_best_list<FE: FrontEnd>(best_list: *mut i32,
                            move_0: i32,
                            best_list_index: i32,
                            best_list_length: *mut i32,
                            mut verbose: i32) {
     verbose = 0 as i32;
     if verbose != 0 {
-        before_update_best_list_verbose(best_list, move_0, best_list_index, best_list_length)
+        FE::before_update_best_list_verbose(best_list, move_0, best_list_index, best_list_length)
     }
     if best_list_index < *best_list_length {
         let mut i = best_list_index;
@@ -1613,7 +1579,7 @@ pub unsafe fn update_best_list(best_list: *mut i32,
     }
     *best_list.offset(0 as i32 as isize) = move_0;
     if verbose != 0 {
-        after_update_best_list_verbose(best_list);
+        FE::after_update_best_list_verbose(best_list);
     };
 }
 
@@ -1678,7 +1644,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
             flags: 0,};
     let mut stability_bound: i32 = 0;
     if level == 0 as i32 {
-        end_tree_search_level_0_report(alpha, beta);
+        FE::end_tree_search_level_0_report(alpha, beta);
     }
     remains = max_depth - level;
     *selective_cutoff = 0 as i32;
@@ -1727,7 +1693,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
         pv_depth[level as usize] = level + 1 as i32;
         pv[level as usize][level as usize] = best_move;
         if level == 0 as i32 && get_ponder_move() == 0 {
-            end_tree_search_level_0_ponder_0_report(alpha, beta, result)
+            FE::end_tree_search_level_0_ponder_0_report(alpha, beta, result)
         }
         return result
     }
@@ -1751,7 +1717,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                 entry.move_0[0 as i32 as usize];
             pv_depth[level as usize] = level + 1 as i32;
             if level == 0 as i32 && get_ponder_move() == 0 {
-                end_tree_search_output_some_stats(&entry);
+                FE::end_tree_search_output_some_stats(&entry);
             }
             if entry.selectivity as i32 > 0 as i32 {
                 *selective_cutoff = 1 as i32
@@ -2055,16 +2021,16 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
         if node_val - last_panic_check >= 250000.0f64 {
             /* Check for time abort */
             last_panic_check = node_val;
-            check_panic_abort();
+            check_panic_abort::<FE>();
             /* Output status buffers if in interactive mode */
-            if echo != 0 { display_buffers(); }
+            if echo != 0 { FE::display_buffers(); }
             /* Check for events */
             if is_panic_abort() != 0 || force_return != 0 {
                 return -(27000 as i32)
             }
         }
         if level == 0 as i32 && get_ponder_move() == 0 {
-            end_tree_search_level_0_ponder_0_short_report(move_0, first);
+            FE::end_tree_search_level_0_ponder_0_short_report(move_0, first);
         }
         make_move(side_to_move, move_0, use_hash);
         TestFlips_wrapper(move_0, my_bits, opp_bits);
@@ -2145,10 +2111,10 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
         }
         if level == 0 as i32 && get_ponder_move() == 0 {
             /* Output some stats */
-            end_tree_search_output_some_second_stats(alpha, beta, curr_val, update_pv, move_index)
+            FE::end_tree_search_output_some_second_stats(alpha, beta, curr_val, update_pv, move_index)
         }
         if update_pv != 0 {
-            update_best_list(best_list.as_mut_ptr(), move_0, best_list_index,
+            update_best_list::<FE>(best_list.as_mut_ptr(), move_0, best_list_index,
                              &mut best_list_length,
                              (level == 0 as i32) as i32);
             pv[level as usize][level as usize] = move_0;
@@ -2350,17 +2316,17 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     book_move = -(1 as i32);
     if allow_book != 0 {
         /* Is the exact score known? */
-        fill_move_alternatives(side_to_move, 16 as i32);
+        fill_move_alternatives::<FE>(side_to_move, 16 as i32);
         book_move = get_book_move::<FE>(side_to_move, 0 as i32, eval_info);
         if book_move != -(1 as i32) {
             root_eval = (*eval_info).score / 128 as i32;
             hash_expand_pv(side_to_move, 1 as i32, 4 as i32,
                            0 as i32);
-            send_solve_status(empties, side_to_move, eval_info);
+            FE::send_solve_status(empties, side_to_move, eval_info);
             return book_move
         }
         /* Is the WLD status known? */
-        fill_move_alternatives(side_to_move, 4 as i32);
+        fill_move_alternatives::<FE>(side_to_move, 4 as i32);
         if komi_shift == 0 as i32 {
             book_move =
                  get_book_move::<FE>(side_to_move, 0 as i32, eval_info);
@@ -2370,7 +2336,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     hash_expand_pv(side_to_move, 1 as i32,
                                    4 as i32 | 2 as i32 |
                                        1 as i32, 0 as i32);
-                    send_solve_status(empties, side_to_move, eval_info);
+                    FE::send_solve_status(empties, side_to_move, eval_info);
                     return book_move
                 } else { book_eval_info = *eval_info }
             }
@@ -2395,7 +2361,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             (empties - 22 as i32) as
                 f64 * 0.03f64);
     }
-    reset_buffer_display();
+    reset_buffer_display::<FE>();
     /* Make sure the pre-searches don't mess up the hash table */
     toggle_midgame_hash_usage(1 as i32, 0 as i32);
     incomplete_search = 0 as i32;
@@ -2439,7 +2405,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 if full_output_mode != 0 {
                     hash_expand_pv(side_to_move, 1 as i32,
                                    flags as i32, selectivity);
-                    send_solve_status(empties, side_to_move, eval_info);
+                    FE::send_solve_status(empties, side_to_move, eval_info);
                 }
                 selectivity -= 1
             }
@@ -2500,7 +2466,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     if full_output_mode != 0 {
                         hash_expand_pv(side_to_move, 1 as i32,
                                        4 as i32, selectivity);
-                        send_solve_status(empties, side_to_move, eval_info);
+                        FE::send_solve_status(empties, side_to_move, eval_info);
                     }
                 }
                 selectivity -= 1
@@ -2509,17 +2475,17 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     } else { selectivity = 0 as i32 }
     /* Check if the selective search took more than 40% of the allocated
          time. If this is the case, there is no point attempting WLD. */
-    long_selective_search = check_threshold(0.35f64);
+    long_selective_search = check_threshold::<FE>(0.35f64);
     /* Make sure the panic abort flag is set properly; it must match
        the status of long_selective_search. This is not automatic as
        it is not guaranteed that any selective search was performed. */
-    check_panic_abort();
+    check_panic_abort::<FE>();
     if is_panic_abort() != 0 || force_return != 0 ||
         long_selective_search != 0 {
         /* Don't try non-selective solve. */
         if any_search_result != 0 {
             if echo != 0 && (is_panic_abort() != 0 || force_return != 0) {
-                end_report_semi_panic_abort();
+                FE::end_report_semi_panic_abort();
                 if full_output_mode != 0 {
                     let mut flags_0: u32 = 0;
                     flags_0 = 4 as i32 as u32;
@@ -2531,7 +2497,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     }
                     hash_expand_pv(side_to_move, 1 as i32,
                                    flags_0 as i32, selectivity);
-                    send_solve_status(empties, side_to_move, eval_info);
+                    FE::send_solve_status(empties, side_to_move, eval_info);
                 }
             }
             pv[0 as i32 as usize][0 as i32 as usize] =
@@ -2541,12 +2507,12 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             clear_panic_abort();
         } else {
             if echo != 0 {
-                end_report_panic_abort_2();
+                FE::end_report_panic_abort_2();
             }
             root_eval = -(27000 as i32)
         }
         if echo != 0 || force_echo != 0 {
-            end_display_zero_status();
+            FE::end_display_zero_status();
         }
         if book_move != -(1 as i32) &&
             (book_eval_info.res as u32 ==
@@ -2627,7 +2593,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 if full_output_mode != 0 {
                     hash_expand_pv(side_to_move, 1 as i32,
                                    flags_1 as i32, 0 as i32);
-                    send_solve_status(empties, side_to_move, eval_info);
+                    FE::send_solve_status(empties, side_to_move, eval_info);
                 }
             } else {
                 *eval_info =
@@ -2637,7 +2603,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 if full_output_mode != 0 {
                     hash_expand_pv(side_to_move, 1 as i32,
                                    4 as i32, 0 as i32);
-                    send_solve_status(empties, side_to_move, eval_info);
+                    FE::send_solve_status(empties, side_to_move, eval_info);
                 }
             }
         }
@@ -2647,7 +2613,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     if is_panic_abort() != 0 || force_return != 0 {
         if any_search_result != 0 {
             if echo != 0 {
-                end_report_semi_panic_abort_3();
+                FE::end_report_semi_panic_abort_3();
                 if full_output_mode != 0 {
                     let mut flags_2: u32 = 0;
                     flags_2 = 4 as i32 as u32;
@@ -2658,10 +2624,10 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     }
                     hash_expand_pv(side_to_move, 1 as i32,
                                    flags_2 as i32, 0 as i32);
-                    send_solve_status(empties, side_to_move, eval_info);
+                    FE::send_solve_status(empties, side_to_move, eval_info);
                 }
                 if echo != 0 || force_echo != 0 {
-                    end_display_zero_status();
+                    FE::end_display_zero_status();
                 }
             }
             restore_pv(old_pv.as_mut_ptr(), old_depth);
@@ -2669,7 +2635,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             clear_panic_abort();
         } else {
             if echo != 0 {
-                end_report_panic_abort();
+                FE::end_report_panic_abort();
             }
             root_eval = -(27000 as i32)
         }
@@ -2686,14 +2652,14 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     exact_score_failed = 0 as i32;
     if incomplete_search != 0 {
         if echo != 0 {
-            end_report_semi_panic_abort_2();
+            FE::end_report_semi_panic_abort_2();
             if full_output_mode != 0 {
                 hash_expand_pv(side_to_move, 1 as i32,
                                4 as i32, 0 as i32);
-                send_solve_status(empties, side_to_move, eval_info);
+                FE::send_solve_status(empties, side_to_move, eval_info);
             }
             if echo != 0 || force_echo != 0 {
-                end_display_zero_status();
+                FE::end_display_zero_status();
             }
         }
         pv[0 as i32 as usize][0 as i32 as usize] =
@@ -2718,10 +2684,10 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     if wld == 0 && exact_score_failed == 0 {
         hash_expand_pv(side_to_move, 1 as i32, 4 as i32,
                        0 as i32);
-        send_solve_status(empties, side_to_move, eval_info);
+        FE::send_solve_status(empties, side_to_move, eval_info);
     }
     if echo != 0 || force_echo != 0 {
-        end_display_zero_status();
+        FE::end_display_zero_status();
     }
     /* For shallow endgames, we can afford to compute the entire PV
        move by move. */

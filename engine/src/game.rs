@@ -16,7 +16,7 @@ use crate::src::probcut::init_probcut;
 use crate::src::patterns::init_patterns;
 use crate::src::bitboard::init_bitboard;
 use crate::src::myrandom::{my_srandom, my_random};
-use crate::src::stubs::{time, abs};
+use crate::src::stubs::{abs};
 use crate::src::error::{FrontEnd};
 use crate::src::display::{echo, display_pv, reset_buffer_display};
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_move, get_match_count, database_search};
@@ -212,10 +212,10 @@ pub unsafe fn get_pv(destin: *mut i32) -> i32 {
    Free all dynamically allocated memory.
 */
 
-pub unsafe fn global_terminate() {
-    free_hash();
+pub unsafe fn global_terminate<FE: FrontEnd>() {
+    free_hash::<FE>();
     clear_coeffs();
-    clear_osf();
+    clear_osf::<FE>();
 }
 
 pub unsafe fn engine_game_init() {
@@ -286,7 +286,7 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     Option<CoeffAdjustments>, coeffs: S) {
     let mut timer: time_t = 0;
     if use_random != 0 {
-        time(&mut timer);
+        FE::time(&mut timer);
         my_srandom(timer as i32);
     } else { my_srandom(1 as i32); }
     init_hash::<FE>(hash_bits);
@@ -303,7 +303,7 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     };
     post_init_coeffs();
 
-    init_timer();
+    init_timer::<FE>();
     init_probcut();
     init_stable();
     setup_search();
@@ -452,7 +452,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     }
     max_depth_reached = 1 as i32;
     let empties = 60 as i32 - disks_played;
-    reset_buffer_display();
+    reset_buffer_display::<FE>();
     determine_move_time(my_time as f64, my_incr as f64,
                         disks_played + 4 as i32);
     if get_ponder_move() == 0 { clear_ponder_times(); }
@@ -509,7 +509,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     let mut midgame_move = -(1 as i32);
     if !forced_opening.is_null() {
         /* Check if the position fits the currently forced opening */
-        curr_move = check_forced_opening(side_to_move, forced_opening);
+        curr_move = check_forced_opening::<FE>(side_to_move, forced_opening);
         if curr_move != -(1 as i32) {
             book_eval_info =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
@@ -561,7 +561,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     if book_move_found == 0 && play_human_openings != 0 && book != 0 {
         /* Check Thor statistics for a move */
         curr_move =
-            choose_thor_opening_move(board.as_mut_ptr(), side_to_move,
+            choose_thor_opening_move::<FE>(board.as_mut_ptr(), side_to_move,
                                      0 as i32);
         if curr_move != -(1 as i32) {
             book_eval_info =
@@ -588,7 +588,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             if empties <= wld { flags = 4 as i32 }
             if empties <= exact { flags = 16 as i32 }
         }
-        fill_move_alternatives(side_to_move, flags);
+        fill_move_alternatives::<FE>(side_to_move, flags);
         curr_move =
              get_book_move::<FE>(side_to_move, update_all, &mut book_eval_info);
         if curr_move != -(1 as i32) {
@@ -742,7 +742,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                                  0 as i32, 0 as i32);
             let info = &*eval_info;
             let counter_value = counter_value(&mut nodes);
-            let elapsed_time = get_elapsed_time();
+            let elapsed_time = get_elapsed_time::<FE>();
             Out::send_move_type_0_status(interrupted_depth, info, counter_value, elapsed_time);
         }
         1 => { *eval_info = book_eval_info }
@@ -751,7 +751,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         _ => { }
     }
     set_current_eval(*eval_info);
-    last_time_used = get_elapsed_time();
+    last_time_used = get_elapsed_time::<FE>();
     if update_all != 0 {
         total_time += last_time_used;
         add_counter(&mut total_evaluations, &mut evaluations);
@@ -770,7 +770,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     /* Write the principal variation, if available, to the log file
        and, optionally, to screen. */
     if get_ponder_move() == 0 {
-        complete_pv(side_to_move);
+        complete_pv::<FE>(side_to_move);
         if display_pv != 0 && echo != 0 { Out::display_out_optimal_line(); }
         if let Some(logger) = logger { L::log_optimal_line(logger); }
     }

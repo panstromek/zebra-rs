@@ -1,7 +1,6 @@
 use crate::src::stubs::abs;
 use crate::src::myrandom::my_random;
 use crate::src::safemem::safe_malloc;
-use crate::src::stubs::{free};
 use std::ffi::c_void;
 use crate::src::error::FrontEnd;
 
@@ -630,7 +629,7 @@ pub unsafe fn init_hash<FE: FrontEnd>(in_hash_bits: i32) {
 */
 
 pub unsafe fn resize_hash<FE: FrontEnd>(new_hash_bits: i32) {
-    free(hash_table as *mut c_void);
+    FE::free(hash_table as *mut c_void);
     init_hash::<FE>(new_hash_bits);
     setup_hash(1 as i32);
 }
@@ -639,6 +638,6 @@ pub unsafe fn resize_hash<FE: FrontEnd>(new_hash_bits: i32) {
    Remove the hash table.
 */
 
-pub unsafe fn free_hash() {
-    free(hash_table as *mut c_void);
+pub unsafe fn free_hash<FE: FrontEnd>() {
+    FE::free(hash_table as *mut c_void);
 }

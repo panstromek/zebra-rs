@@ -3,11 +3,7 @@ use crate::src::counter::CounterType;
 use crate::src::zebra::EvaluationType;
 use crate::src::moves::{unmake_move, make_move, disks_played, move_list};
 use crate::src::hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, find_hash, determine_hash_values, HashEntry};
-
-extern "C" {
-    #[no_mangle]
-    fn handle_fatal_pv_error(i: i32);
-}
+use crate::src::error::FrontEnd;
 
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
@@ -629,7 +625,7 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
   Complete the principal variation with passes (if any there are any).
 */
 
-pub unsafe fn complete_pv(mut side_to_move: i32) {
+pub unsafe fn complete_pv<FE:FrontEnd>(mut side_to_move: i32) {
     let mut i: i32 = 0;
     let mut actual_side_to_move: [i32; 60] = [0; 60];
     full_pv_depth = 0 as i32;
@@ -653,7 +649,7 @@ pub unsafe fn complete_pv(mut side_to_move: i32) {
                     pv[0 as i32 as usize][i as usize];
                 full_pv_depth += 1
             } else {
-                handle_fatal_pv_error(i);
+                FE::handle_fatal_pv_error(i);
             }
         }
         side_to_move = 0 as i32 + 2 as i32 - side_to_move;

@@ -1,12 +1,33 @@
 use crate::src::game::{FILE, time_t, size_t};
 use crate::src::osfbook::__compar_fn_t;
 use crate::src::getcoeff::gzFile;
-pub use engine::src::stubs::{malloc, realloc, free, abs, floor, ceil, fabs, time, strlen, tolower, toupper, strdup, strchr};
+pub use engine::src::stubs::{abs, floor, ceil, fabs};
+use std::ffi::c_void;
 
 extern "C" {
     pub type _IO_wide_data;
     pub type _IO_codecvt;
     pub type _IO_marker;
+    #[no_mangle]
+    pub fn malloc(_: u64) -> *mut c_void;
+    #[no_mangle]
+    pub fn realloc(_: *mut c_void, _: u64) -> *mut c_void;
+
+    #[no_mangle]
+    pub fn free(__ptr: *mut c_void);
+    #[no_mangle]
+    pub fn time(__timer: *mut time_t) -> time_t;
+    #[no_mangle]
+    pub fn strlen(_: *const i8) -> u64;
+    #[no_mangle]
+    pub fn tolower(num: i32) -> i32;
+    #[no_mangle]
+    pub fn toupper(_: i32) -> i32;
+    #[no_mangle]
+    pub fn strdup(_: *const i8) -> *mut i8;
+    #[no_mangle]
+    pub fn strchr(_: *const i8, _: i32) -> *mut i8;
+
     #[no_mangle]
     pub static mut stdout: *mut FILE;
     #[no_mangle]

@@ -15,7 +15,7 @@ use crate::{
         zebra::{EvaluationType}
     }
 };
-use crate::src::stubs::{abs, ceil, floor, free, strlen, tolower};
+use crate::src::stubs::{abs, ceil, floor};
 use crate::src::error::{FrontEnd};
 use crate::src::safemem::{safe_malloc, safe_realloc};
 use std::ffi::c_void;
@@ -24,18 +24,7 @@ use crate::src::timer::{last_panic_check, clear_panic_abort, toggle_abort_check}
 use crate::src::hash::{add_hash, setup_hash};
 use crate::src::display::echo;
 use crate::src::game::{engine_game_init, setup_non_file_based_game};
-
-extern "C" {
-    #[no_mangle]
-    fn report_do_evaluate(evaluation_stage_: i32);
-    #[no_mangle]
-    fn report_unwanted_book_draw(this_move: i32);
-
-    #[no_mangle]
-    fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32);
-    #[no_mangle]
-    fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32);
-}
+use std::cell::UnsafeCell;
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -1147,10 +1136,10 @@ pub unsafe fn find_opening_name() -> *const i8 {
   Free all dynamically allocated memory.
 */
 
-pub unsafe fn clear_osf() {
-    free(book_hash_table as *mut c_void);
+pub unsafe fn clear_osf<FE: FrontEnd>() {
+    FE::free(book_hash_table as *mut c_void);
     book_hash_table = 0 as *mut i32;
-    free(node as *mut c_void);
+    FE::free(node as *mut c_void);
     node = 0 as *mut BookNode;
 }
 
@@ -1162,7 +1151,7 @@ pub unsafe fn clear_osf() {
   otherwise PASS is returned.
 */
 
-pub unsafe fn check_forced_opening(side_to_move: i32,
+pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
                                    opening:
                                    *const i8)
                                    -> i32 {
@@ -1182,7 +1171,7 @@ pub unsafe fn check_forced_opening(side_to_move: i32,
             -(9 as i32), 10 as i32, -(10 as i32),
             11 as i32, -(11 as i32)];
     move_count_0 =
-        strlen(opening).wrapping_div(2 as i32 as u64) as
+         FE::strlen(opening).wrapping_div(2 as i32 as u64) as
             i32;
     if move_count_0 <= disks_played { return -(1 as i32) }
     i = 0 as i32;
@@ -1191,7 +1180,7 @@ pub unsafe fn check_forced_opening(side_to_move: i32,
             10 as i32 *
                 (*opening.offset((2 as i32 * i + 1 as i32) as
                     isize) as i32 - '0' as i32) +
-                tolower(*opening.offset((2 as i32 * i) as isize) as
+               FE::tolower(*opening.offset((2 as i32 * i) as isize) as
                     i32) - 'a' as i32 + 1 as i32;
         i += 1
     }
@@ -1575,7 +1564,7 @@ pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32) {
         (evaluation_stage + 1 as i32) * max_eval_count /
             25 as i32 {
         evaluation_stage += 1;
-        report_do_evaluate(evaluation_stage);
+        FE::report_do_evaluate(evaluation_stage);
     }
     i = 0 as i32;
     while i < move_count[disks_played as usize] {
@@ -1888,7 +1877,7 @@ pub unsafe fn do_examine(index: i32) {
   any flag combination.
 */
 
-pub unsafe fn fill_move_alternatives(side_to_move: i32,
+pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                                      flags: i32) {
     let mut temp =
         CandidateMove{move_0: 0, score: 0, flags: 0, parent_flags: 0,};
@@ -1992,14 +1981,14 @@ pub unsafe fn fill_move_alternatives(side_to_move: i32,
                         WHITE_WINS as i32 as u32 ||
                         draw_mode as u32 ==
                             OPPONENT_WINS as i32 as u32 {
-                        report_unwanted_book_draw(this_move);
+                        FE::report_unwanted_book_draw(this_move);
                         child_feasible = 0 as i32
                     }
                 } else if draw_mode as u32 ==
                     BLACK_WINS as i32 as u32 ||
                     draw_mode as u32 ==
                         OPPONENT_WINS as i32 as u32 {
-                    report_unwanted_book_draw(this_move);
+                    FE::report_unwanted_book_draw(this_move);
                     child_feasible = 0 as i32
                 }
             }
@@ -2095,7 +2084,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     } else { remaining_slack = 0 as i32 }
     if echo != 0 && candidate_count > 0 as i32 &&
         get_ponder_move() == 0 {
-        report_in_get_book_move_1(side_to_move, remaining_slack);
+        FE::report_in_get_book_move_1(side_to_move, remaining_slack);
     }
     /* No book move found? */
     if candidate_count == 0 as i32 { return -(1 as i32) }
@@ -2206,7 +2195,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         (*eval_info).type_0 = MIDGAME_EVAL
     }
     if echo != 0 {
-        report_in_get_book_move_2(chosen_score, chosen_index, &flags);
+        FE::report_in_get_book_move_2(chosen_score, chosen_index, &flags);
     }
     /* Fill the PV structure with the optimal book line */
     original_side_to_move = side_to_move;

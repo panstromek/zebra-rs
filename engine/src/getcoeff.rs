@@ -1,7 +1,7 @@
 use crate::src::globals::{board, piece_count};
 use crate::src::moves::disks_played;
 use crate::src::patterns::{flip8, pow3};
-use crate::src::stubs::{floor, free};
+use crate::src::stubs::{floor};
 use crate::src::safemem::safe_malloc;
 use crate::src::error::{FrontEnd};
 use std::ffi::c_void;
@@ -2805,16 +2805,13 @@ pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
                 let first_item = *item.offset(i as isize) as i32;
                 let second_item = *item.offset(first_mirror_offset as isize) as i32;
 
-                report_mirror_symetry_error(count, i, first_mirror_offset, first_item, second_item);
+                FE::report_mirror_symetry_error(count, i, first_mirror_offset, first_item, second_item);
                 exit(1 as i32);
             }
             i += 1
         }
     }
-    free(buffer as *mut c_void);
-}
-extern "C" {
-    fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32);
+    FE::free(buffer as *mut c_void);
 }
 /*
    UNPACK_COEFFS
@@ -3162,14 +3159,14 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
     }
     /* Free the mirror tables - the symmetries are now implicit
        in the coefficient tables. */
-    free(map_mirror3 as *mut c_void);
-    free(map_mirror4 as *mut c_void);
-    free(map_mirror5 as *mut c_void);
-    free(map_mirror6 as *mut c_void);
-    free(map_mirror7 as *mut c_void);
-    free(map_mirror8 as *mut c_void);
-    free(map_mirror33 as *mut c_void);
-    free(map_mirror8x2 as *mut c_void);
+    FE::free(map_mirror3 as *mut c_void);
+    FE::free(map_mirror4 as *mut c_void);
+    FE::free(map_mirror5 as *mut c_void);
+    FE::free(map_mirror6 as *mut c_void);
+    FE::free(map_mirror7 as *mut c_void);
+    FE::free(map_mirror8 as *mut c_void);
+    FE::free(map_mirror33 as *mut c_void);
+    FE::free(map_mirror8x2 as *mut c_void);
 }
 
 pub trait CoeffSource {

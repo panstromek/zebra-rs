@@ -929,7 +929,7 @@ pub unsafe fn build_tree(file_name: *const i8,
                b"%s %d\x00" as *const u8 as *const i8,
                move_string.as_mut_ptr(), &mut diff as *mut i32);
         move_count_0 =
-            strlen(move_string.as_mut_ptr()).wrapping_sub(1 as i32 as
+              FE::strlen(move_string.as_mut_ptr()).wrapping_sub(1 as i32 as
                                                               u64).wrapping_div(3
                                                                                               as
                                                                                               i32
@@ -1964,7 +1964,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                     move_buffer[1 as i32 as usize] as i32 -
                         '0' as i32;
                 col_0 =
-                    tolower(move_buffer[0 as i32 as usize] as
+                   FE::tolower(move_buffer[0 as i32 as usize] as
                                 i32) - 'a' as i32 + 1 as i32;
                 move_0 = 10 as i32 * row + col_0;
                 if row >= 1 as i32 && row <= 8 as i32 &&
@@ -2431,7 +2431,7 @@ pub unsafe fn convert_opening_list(base_file:
         }
         *scan_ptr = 0 as i32 as i8;
         op_move_count =
-            strlen(move_seq.as_mut_ptr()).wrapping_div(2 as i32 as
+              FE::strlen(move_seq.as_mut_ptr()).wrapping_div(2 as i32 as
                                                            u64) as
                 i32;
         j = 0 as i32;
@@ -2928,7 +2928,7 @@ unsafe extern "C" fn endgame_correlation(mut side_to_move: libc::c_int,
         if move_count[disks_played as usize] > 0 as libc::c_int {
             printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
                        *const libc::c_char, 60 as libc::c_int - disks_played);
-            fill_move_alternatives(side_to_move, 16 as libc::c_int);
+            fill_move_alternatives::<FE>(side_to_move, 16 as libc::c_int);
             if get_candidate_count() > 0 as libc::c_int ||
                 disks_played >= 40 as libc::c_int {
                 print_move_alternatives(side_to_move);
@@ -2985,7 +2985,7 @@ unsafe extern "C" fn do_endgame_statistics(index: libc::c_int,
         determine_hash_values(side_to_move, board.as_mut_ptr());
         printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
                    *const libc::c_char, 60 as libc::c_int - disks_played);
-        fill_move_alternatives(side_to_move, 16 as libc::c_int);
+        fill_move_alternatives::<FE>(side_to_move, 16 as libc::c_int);
         if get_candidate_count() > 0 as libc::c_int ||
             disks_played >= 40 as libc::c_int {
             print_move_alternatives(side_to_move);
