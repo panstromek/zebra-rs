@@ -1,12 +1,7 @@
-pub use std::ffi::c_void;
-
-
 #[inline(always)]
 pub fn abs(num: i32) -> i32 {
     num.abs()
 }
-type __time_t = i64;
-type time_t = __time_t;
 
 // FIXME verify: are these replacements equivalent to their libc counterparts???
 //  if not, does it matter??
