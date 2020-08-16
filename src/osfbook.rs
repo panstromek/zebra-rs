@@ -24,7 +24,8 @@ use crate::src::display::display_board;
 use engine::src::midgame::middle_game;
 use engine::src::myrandom::my_srandom;
 use engine::src::hash::set_hash_transformation;
-use engine::src::error::{LibcFatalError, FatalError};
+use engine::src::error::{FatalError};
+use crate::src::error::{LibcFatalError};
 pub type FE = LibcFatalError;
 
 pub type _IO_lock_t = ();

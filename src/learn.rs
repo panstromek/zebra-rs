@@ -7,7 +7,7 @@ use crate::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
 use crate::src::zebra::_IO_FILE;
 pub use engine::src::learn::*;
 use engine::src::game::generic_game_init;
-use engine::src::error::LibcFatalError;
+use crate::src::error::LibcFatalError;
 
 pub type size_t = u64;
 pub type __off_t = i64;

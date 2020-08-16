@@ -12,7 +12,7 @@ use c2rust_out::src::display::{produce_eval_text, display_board};
 use c2rust_out::src::game::{extended_compute_move, game_init};
 use c2rust_out::src::osfbook::{read_binary_database, init_osf};
 use c2rust_out::src::zebra::_IO_FILE;
-use engine::src::error::LibcFatalError;
+use c2rust_out::src::error::LibcFatalError;
 
 extern "C" {
 

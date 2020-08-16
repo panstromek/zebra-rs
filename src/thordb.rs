@@ -5,7 +5,7 @@ use crate::src::safemem::{safe_malloc, safe_realloc};
 
 use crate::src::zebra::_IO_FILE;
 pub use engine::src::thordb::*;
-use engine::src::error::LibcFatalError;
+use crate::src::error::LibcFatalError;
 pub type FE = LibcFatalError;
 
 pub type __off_t = i64;

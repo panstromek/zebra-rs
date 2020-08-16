@@ -20,7 +20,7 @@ use c2rust_out::src::game::{global_setup, compute_move, game_init};
 use c2rust_out::src::stubs::strstr;
 use c2rust_out::src::display::{display_move, display_board};
 use engine::src::zebra::EvaluationType;
-use engine::src::error::LibcFatalError;
+use c2rust_out::src::error::LibcFatalError;
 
 extern "C" {
     #[no_mangle]
