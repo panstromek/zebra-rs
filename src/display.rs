@@ -447,8 +447,7 @@ pub unsafe fn display_sweep(stream: *mut FILE) {
   If an update has happened and the last display was long enough ago,
   output relevant buffers.
 */
-#[no_mangle]
-pub unsafe extern "C" fn display_buffers() {
+pub unsafe fn display_buffers() {
     let mut timer: f64 = 0.;
     let mut new_interval: f64 = 0.;
     timer = get_real_timer::<FE>();

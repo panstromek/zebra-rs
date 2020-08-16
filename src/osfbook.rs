@@ -68,8 +68,7 @@ pub unsafe fn minimax_tree() {
     puts(b"\x00" as *const u8 as *const i8);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn report_do_evaluate(evaluation_stage_: i32) {
+pub unsafe fn report_do_evaluate(evaluation_stage_: i32) {
     putc('|' as i32, stdout);
     if evaluation_stage_ % 5 as i32 == 0 as i32 {
         printf(b" %d%% \x00" as *const u8 as *const i8,
@@ -2134,8 +2133,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
     fclose(result_stream);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn report_unwanted_book_draw(this_move: i32) {
+pub unsafe fn report_unwanted_book_draw(this_move: i32) {
     printf(b"%c%c leads to an unwanted book draw\n\x00" as *const u8 as *const i8, 'a' as i32 + this_move % 10 as i32 - 1 as i32, '0' as i32 + this_move / 10 as i32);
 }
 /*
@@ -2240,16 +2238,14 @@ pub unsafe fn print_move_alternatives(side_to_move:
     };
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32) {
+pub unsafe fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32) {
     printf(b"Slack left is %.2f. \x00" as *const u8 as
                *const i8,
            remaining_slack as f64 / 128.0f64);
     print_move_alternatives(side_to_move);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32) {
+pub unsafe fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32) {
     send_status(b"-->   Book     \x00" as *const u8 as
         *const i8);
     if flags & 16 as i32 != 0 {
@@ -2670,8 +2666,7 @@ unsafe extern "C" fn do_restricted_minimax(index: libc::c_int,
    Calculates the minimax values of all nodes in the tree,
    not
 */
-#[no_mangle]
-pub unsafe extern "C" fn restricted_minimax_tree(low: libc::c_int,
+pub unsafe fn restricted_minimax_tree(low: libc::c_int,
                                                  high: libc::c_int,
                                                  pos_file_name:
                                                  *const libc::c_char) {
@@ -2820,8 +2815,7 @@ unsafe extern "C" fn do_midgame_statistics(index: libc::c_int,
    GENERATE_MIDGAME_STATISTICS
    Calculates the minimax values of all nodes in the tree.
 */
-#[no_mangle]
-pub unsafe extern "C" fn generate_midgame_statistics(max_depth:
+pub unsafe fn generate_midgame_statistics(max_depth:
                                                      libc::c_int,
                                                      probability:
                                                      libc::c_double,
@@ -3022,8 +3016,7 @@ unsafe extern "C" fn do_endgame_statistics(index: libc::c_int,
    GENERATE_ENDGAME_STATISTICS
    Calculates the minimax values of all nodes in the tree.
 */
-#[no_mangle]
-pub unsafe extern "C" fn generate_endgame_statistics(max_depth:
+pub unsafe fn generate_endgame_statistics(max_depth:
                                                      libc::c_int,
                                                      probability:
                                                      libc::c_double,
@@ -3126,8 +3119,7 @@ unsafe extern "C" fn do_clear(index: libc::c_int, low: libc::c_int,
    CLEAR_TREE
    Resets the labels on nodes satisfying certain conditions.
 */
-#[no_mangle]
-pub unsafe extern "C" fn clear_tree(low: libc::c_int,
+pub unsafe fn clear_tree(low: libc::c_int,
                                     high: libc::c_int,
                                     flags: libc::c_int) {
     let mut i: libc::c_int = 0;
@@ -3398,8 +3390,7 @@ unsafe extern "C" fn do_correct(index: libc::c_int,
   do_correct() (instead of the positions being solved, the normal
   mode of operation).
 */
-#[no_mangle]
-pub unsafe extern "C" fn set_output_script_name(script_name:
+pub unsafe fn set_output_script_name(script_name:
                                                 *const libc::c_char) {
     correction_script_name = script_name;
 }
@@ -3407,8 +3398,7 @@ pub unsafe extern "C" fn set_output_script_name(script_name:
    CORRECT_TREE
    Endgame-correct the lowest levels of the tree.
 */
-#[no_mangle]
-pub unsafe extern "C" fn correct_tree(max_empty: libc::c_int,
+pub unsafe fn correct_tree(max_empty: libc::c_int,
                                       full_solve: libc::c_int) {
     let mut move_buffer: [libc::c_char; 150] = [0; 150];
     let mut i: libc::c_int = 0;
@@ -3562,8 +3552,7 @@ unsafe extern "C" fn do_export(index: libc::c_int, stream: *mut FILE,
   EXPORT_TREE
   Exports a set of lines that cover the tree.
 */
-#[no_mangle]
-pub unsafe extern "C" fn export_tree(file_name: *const libc::c_char) {
+pub unsafe fn export_tree(file_name: *const libc::c_char) {
     let mut i: libc::c_int = 0;
     let mut move_vec: [libc::c_int; 60] = [0; 60];
     let mut stream: *mut FILE = 0 as *mut FILE;

@@ -12,16 +12,14 @@ use crate::{
 pub use engine::src::midgame::*;
 use crate::src::error::FE;
 
-#[no_mangle]
-pub unsafe extern "C" fn midgame_display_simple_ponder_move(move_0: i32) {
+pub unsafe fn midgame_display_simple_ponder_move(move_0: i32) {
     send_sweep(b"%c%c\x00" as *const u8 as *const i8,
                'a' as i32 + move_0 % 10 as i32 -
                    1 as i32,
                '0' as i32 + move_0 / 10 as i32);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, buffer: &mut [i8; 32]) {
+pub unsafe fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, buffer: &mut [i8; 32]) {
 
     if alpha <= -(29000 as i32) && beta >= 29000 as i32 {
         sprintf(buffer.as_mut_ptr(),
@@ -47,8 +45,7 @@ pub unsafe extern "C" fn midgame_display_initial_ponder_move(alpha: i32, beta: i
                buffer.as_mut_ptr());
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn midgame_display_ponder_move(
+pub unsafe fn midgame_display_ponder_move(
     max_depth: i32, alpha: i32, beta:  i32,
     curr_val: i32, searched:  i32, update_pv:  i32) {
 
@@ -76,8 +73,7 @@ pub unsafe extern "C" fn midgame_display_ponder_move(
     }
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: *mut EvaluationType, mut eval_str: *mut i8, mut node_val: f64, depth: i32) {
+pub unsafe fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: *mut EvaluationType, mut eval_str: *mut i8, mut node_val: f64, depth: i32) {
     clear_status();
     send_status(b"--> \x00" as *const u8 as *const i8);
     if is_panic_abort() != 0 || force_return != 0 {

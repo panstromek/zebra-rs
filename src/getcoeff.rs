@@ -159,8 +159,7 @@ pub fn load_coeff_adjustments() -> Option<CoeffAdjustments> {
     }
 }
 
-#[no_mangle]
-pub unsafe extern "C"  fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
+pub unsafe  fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
     printf(b"%s @ %d <--> %d of %d\n\x00" as *const u8 as
                *const i8,
            b"Mirror symmetry error\x00" as *const u8 as

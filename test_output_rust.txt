@@ -612,7 +612,9 @@ PV: e7 a3 h2 h1 h6 d8 a5 d2 e2 d1 a6 b7 c1 b1 g1
       7      * * * O           (O)     20 discs     15. g2  e8
       8          O O                                16. e7  
 
--->  16  +1.75         476138  a3 h2 h1 h6 d8     0.0 s  
+-->  15  +3.05          73808  a3 h2 h1 h6 d8     0.0 s  
+[-inf,inf]:    a3
+-->  16  +1.75         476138  a3 h2 h1 h6 d8     1.0 s  475662 nps
 PV: a3 h2 h1 h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 a7 g8
 
          a b c d e f g h
@@ -626,9 +628,7 @@ PV: a3 h2 h1 h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 a7 g8
       7      * * O O          +1.75    25 discs     15. g2  e8
       8          O O                                16. e7  a3
 
--->  15  -0.45          60754  h2 h1 h6 d8 c8     1.0 s   60693 nps
-[-inf,inf]:    h2
--->  16  -1.39         212772  h2 h1 h6 d8 a5     1.0 s  212559 nps
+-->  16  -1.39         212772  h2 h1 h6 d8 a5     0.0 s  
 PV: h2 h1 h6 d8 a5 d2 e2 d1 c1 b1 g1 e1 a1 h7 g7
 
          a b c d e f g h
