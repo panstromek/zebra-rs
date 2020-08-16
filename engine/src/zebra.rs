@@ -7,7 +7,7 @@ use crate::src::stubs::{floor, tolower, strlen};
 use crate::src::thordb::{get_black_average_score, get_black_median_score, get_white_win_count, get_draw_count, get_black_win_count, get_match_count, database_search, choose_thor_opening_move, C2RustUnnamed};
 use crate::src::globals::{board, score_sheet_row, white_moves, black_moves};
 use crate::src::learn::{store_move, set_learning_parameters, clear_stored_game, Learner};
-use crate::src::error::{LibcFatalError, FE};
+use crate::src::error::{LibcFatalError, FE, FatalError};
 use crate::src::myrandom::my_random;
 use crate::src::eval::toggle_experimental;
 use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, set_slack};

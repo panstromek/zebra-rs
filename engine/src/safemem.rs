@@ -21,7 +21,7 @@
    Contents:        Provides safer memory allocation than malloc().
 */
 use crate::src::stubs::{malloc, realloc};
-use crate::src::error::{FE};
+use crate::src::error::{FE, FatalError};
 use std::ffi::c_void;
 
 pub type size_t = u64;

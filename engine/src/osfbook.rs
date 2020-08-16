@@ -16,7 +16,7 @@ use crate::{
     }
 };
 use crate::src::stubs::{abs, ceil, floor, free, strlen, tolower};
-use crate::src::error::{FE};
+use crate::src::error::{FE, FatalError};
 use crate::src::safemem::{safe_malloc, safe_realloc};
 use std::ffi::c_void;
 use crate::src::midgame::tree_search;
