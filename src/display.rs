@@ -73,7 +73,7 @@ pub unsafe fn dumpch() {
 */
 
 pub unsafe fn display_board(stream: *mut FILE,
-                                       board: *mut i32,
+                                       board: *const i32,
                                        side_to_move: i32,
                                        give_game_score: i32,
                                        give_time: i32,
