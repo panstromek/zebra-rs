@@ -2,24 +2,6 @@ use std::ffi::c_void;
 use crate::src::timer::get_real_timer;
 use crate::src::error::FrontEnd;
 
-pub type EvalType = u32;
-pub const UNINITIALIZED_EVAL: EvalType = 8;
-pub const INTERRUPTED_EVAL: EvalType = 7;
-pub const UNDEFINED_EVAL: EvalType = 6;
-pub const PASS_EVAL: EvalType = 5;
-pub const FORCED_EVAL: EvalType = 4;
-pub const SELECTIVE_EVAL: EvalType = 3;
-pub const WLD_EVAL: EvalType = 2;
-pub const EXACT_EVAL: EvalType = 1;
-pub const MIDGAME_EVAL: EvalType = 0;
-pub type EvalResult = u32;
-pub const UNSOLVED_POSITION: EvalResult = 3;
-pub const LOST_POSITION: EvalResult = 2;
-pub const DRAWN_POSITION: EvalResult = 1;
-pub const WON_POSITION: EvalResult = 0;
-
-
-
 pub static mut echo: i32 = 0;
 pub static mut display_pv: i32 = 0;
 
@@ -96,10 +78,6 @@ pub unsafe fn clear_status() {
     status_modified = 1 as i32;
 }
 
-pub unsafe fn get_last_status() -> *const i8 {
-    return stored_status_buffer.as_mut_ptr();
-}
-
 /*
   CLEAR_SWEEP
   Clear the search information.
@@ -119,8 +97,7 @@ pub unsafe fn clear_sweep() {
   displays everything that is fed to the buffer.
 */
 
-pub unsafe fn toggle_smart_buffer_management(use_smart:
-                                             i32) {
+pub unsafe fn toggle_smart_buffer_management(use_smart: i32) {
     timed_buffer_management = use_smart;
 }
 /*
