@@ -1,4 +1,4 @@
-use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc};
+use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc, puts};
 use crate::src::zebra::_IO_FILE;
 use engine::src::error::{FrontEnd, FatalError};
 use engine::src::hash::HashEntry;
@@ -7,7 +7,7 @@ use engine::src::zebra::EvaluationType;
 use crate::src::display::display_buffers;
 use crate::src::timer::report_ponder_time;
 use crate::src::end::{after_update_best_list_verbose, before_update_best_list_verbose, end_tree_search_output_some_second_stats, end_display_zero_status, end_report_semi_panic_abort, end_report_panic_abort, end_report_semi_panic_abort_2, end_report_semi_panic_abort_3, end_report_panic_abort_2, send_solve_status, end_tree_search_level_0_report, end_tree_search_level_0_ponder_0_report, end_tree_search_output_some_stats, end_tree_search_level_0_ponder_0_short_report, end_tree_search_some_pv_stats_report};
-use crate::src::thordb::{sort_thor_games, choose_thor_opening_move_report, thordb_report_flipped_0_second, thordb_report_flipped_0_first};
+use crate::src::thordb::{sort_thor_games, choose_thor_opening_move_report};
 use crate::src::getcoeff::report_mirror_symetry_error;
 use crate::src::midgame::{midgame_display_status, midgame_display_ponder_move, midgame_display_initial_ponder_move, midgame_display_simple_ponder_move};
 use crate::src::osfbook::{report_in_get_book_move_2, report_in_get_book_move_1, report_unwanted_book_draw, report_do_evaluate};
@@ -238,11 +238,15 @@ impl FrontEnd for LibcFatalError {
     }
     #[inline(always)]
     fn thordb_report_flipped_0_first() {
-        unsafe { thordb_report_flipped_0_first() }
+        unsafe {
+            puts(b"This COULD happen (1) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
+        }
     }
     #[inline(always)]
     fn thordb_report_flipped_0_second() {
-        unsafe { thordb_report_flipped_0_second() }
+        unsafe {
+            puts(b"This COULD happen (2) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
+        }
     }
     #[inline(always)]
     fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {

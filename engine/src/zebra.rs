@@ -114,9 +114,9 @@ pub unsafe fn set_names_from_skills<FE :FrontEnd>() {
 pub trait ZebraFrontend {
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
     fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64);
-    fn display_board_after_thor(side_to_move: i32);
-    fn print_out_thor_matches();
-    unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &mut [i8; 121], first_side_to_move: i32, second_side_to_move: i32);
+    fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128]);
+    fn print_out_thor_matches(thor_max_games_: i32);
+    unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32);
     unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32);
     fn get_pass();
     fn report_engine_override();
@@ -269,9 +269,9 @@ pub unsafe fn engine_play_game<
 
                             ZF::report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                         }
-                        ZF::print_out_thor_matches();
+                        ZF::print_out_thor_matches(thor_max_games);
                     }
-                    ZF::display_board_after_thor(side_to_move);
+                    ZF::display_board_after_thor(side_to_move, use_timer, &board);
                 }
                 Dump::dump_position(side_to_move);
                 Dump::dump_game_score(side_to_move);
@@ -406,13 +406,13 @@ pub unsafe fn engine_play_game<
                     let black_average_score = get_black_average_score();
                     ZF::report_some_thor_scores(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                 }
-                ZF::print_out_thor_matches();
+                ZF::print_out_thor_matches(thor_max_games);
             }
             set_times(floor(player_time[0 as i32 as usize]) as
                           i32,
                       floor(player_time[2 as i32 as usize]) as
                           i32);
-            ZF::display_board_after_thor(side_to_move);
+            ZF::display_board_after_thor(side_to_move, use_timer, &board);
         }
         adjust_counter(&mut total_nodes);
         let node_val = counter_value(&mut total_nodes);

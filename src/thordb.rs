@@ -581,11 +581,3 @@ pub unsafe fn print_thor_matches(stream: *mut FILE,
         i += 1
     };
 }
-
-pub unsafe fn thordb_report_flipped_0_second() {
-    puts(b"This COULD happen (2) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
-}
-
-pub unsafe fn thordb_report_flipped_0_first() {
-    puts(b"This COULD happen (1) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
-}
