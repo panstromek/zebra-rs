@@ -197,16 +197,8 @@ impl FrontEnd for LibcFatalError {
         unsafe { tolower(num) }
     }
     #[inline(always)]
-    unsafe fn toupper(s: i32) -> i32 {
-        unsafe { toupper(s) }
-    }
-    #[inline(always)]
     unsafe fn strdup(s: *const i8) -> *mut i8 {
         unsafe { strdup(s) }
-    }
-    #[inline(always)]
-    unsafe fn strchr(s: *const i8, c: i32) -> *mut i8 {
-        unsafe { strchr(s, c) }
     }
     #[inline(always)]
     fn report_do_evaluate(evaluation_stage_: i32) {

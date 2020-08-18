@@ -29,9 +29,7 @@ pub trait FrontEnd : FatalError {
     unsafe fn time(__timer: *mut time_t) -> time_t;
     unsafe fn strlen(_: *const i8) -> u64;
     unsafe fn tolower(num: i32) -> i32;
-    unsafe fn toupper(_: i32) -> i32;
     unsafe fn strdup(_: *const i8) -> *mut i8;
-    unsafe fn strchr(_: *const i8, _: i32) -> *mut i8;
     fn report_do_evaluate(evaluation_stage_: i32);
     fn report_unwanted_book_draw(this_move: i32);
     fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32);
