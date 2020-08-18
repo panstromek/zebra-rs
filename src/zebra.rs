@@ -879,13 +879,17 @@ impl ZebraFrontend for LibcFrontend {
                    total_search_time);
         }
     }
-    fn display_board_after_thor(side_to_move: i32) {
-        unsafe { display_board(stdout, board.as_mut_ptr(), side_to_move, 1 as i32, use_timer, 1 as i32); }
+    fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128]) {
+        unsafe {
+            display_board(stdout, board_.as_ptr() as *mut _,
+                          side_to_move, 1 as i32,
+                          give_time_, 1 as i32);
+        }
     }
-    fn print_out_thor_matches() {
-        unsafe { print_thor_matches(stdout, thor_max_games); }
+    fn print_out_thor_matches(thor_max_games_: i32) {
+        unsafe { print_thor_matches(stdout, thor_max_games_); }
     }
-    unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &mut [i8; 121],
+    unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &[i8; 121],
                               first_side_to_move: i32, second_side_to_move: i32) {
         let log_file = fopen(log_file_name_,
                              b"a\x00" as *const u8 as *const i8);
@@ -899,7 +903,7 @@ impl ZebraFrontend for LibcFrontend {
                     second_side_to_move);
             fprintf(log_file,
                     b"%s\n\x00" as *const u8 as *const i8,
-                    move_vec.as_mut_ptr());
+                    move_vec.as_ptr() as *mut i8);
             fclose(log_file);
         }
     }
