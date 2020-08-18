@@ -189,6 +189,5 @@ name = "wasm-simple"
 version = "0.1.0"
 dependencies = [
  "engine",
- "libc",
  "wasm-bindgen",
 ]
