@@ -1,6 +1,6 @@
 use crate::src::display::{set_names, set_times, set_move_list, echo, set_evals, display_pv};
 use crate::src::timer::{toggle_abort_check, get_real_timer, determine_move_time, start_move, clear_panic_abort};
-use crate::src::moves::{disks_played, make_move, valid_move, move_count, move_list, generate_all, game_in_progress};
+use crate::src::moves::{disks_played, make_move, valid_move, move_count, move_list, generate_all, game_in_progress, get_move};
 use crate::src::search::{disc_count, total_time, total_evaluations, total_nodes, produce_compact_eval};
 use crate::src::counter::{counter_value, adjust_counter};
 use crate::src::stubs::{floor};
@@ -120,7 +120,8 @@ pub trait ZebraFrontend {
     unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32);
     fn get_pass();
     fn report_engine_override();
-    fn ui_get_move(side_to_move: i32) -> i32;
+    fn prompt_get_move(side_to_move: i32, buffer: &mut [i8; 255]) -> i32;
+    fn before_get_move();
     fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64);
     fn report_skill_levels(black_level: i32, white_level: i32);
     fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64);
@@ -288,7 +289,8 @@ pub unsafe fn engine_play_game<
                                 ZF::print_move_alternatives(side_to_move);
                             }
                         }
-                        curr_move = ZF::ui_get_move(side_to_move);
+                        ZF::before_get_move();
+                        curr_move = get_move::<ZF>(side_to_move);
                     } else {
                         start_move::<FE>(player_time[side_to_move as usize],
                                    player_increment[side_to_move as usize],

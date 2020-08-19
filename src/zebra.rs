@@ -935,11 +935,24 @@ impl ZebraFrontend for LibcFrontend {
                 as *const u8 as *const i8);
         }
     }
-    fn ui_get_move(side_to_move: i32) -> i32 {
+
+    fn prompt_get_move(side_to_move: i32, buffer: &mut [i8; 255]) -> i32 {
+        unsafe {
+            if side_to_move == 0 as i32 {
+                printf(b"%s: \x00" as *const u8 as *const i8,
+                       b"Black move\x00" as *const u8 as *const i8);
+            } else {
+                printf(b"%s: \x00" as *const u8 as *const i8,
+                       b"White move\x00" as *const u8 as *const i8);
+            }
+            scanf(b"%s\x00" as *const u8 as *const i8, buffer.as_mut_ptr());
+            atoi(buffer.as_mut_ptr())
+        }
+    }
+
+    fn before_get_move()  {
         unsafe {
             puts(b"\x00" as *const u8 as *const i8);
-            let mm = get_move(side_to_move);
-            mm
         }
     }
     fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {

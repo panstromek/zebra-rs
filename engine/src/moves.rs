@@ -4,6 +4,18 @@ use crate::src::globals::{board, piece_count};
 use crate::src::unflip::flip_stack;
 use crate::src::hash::{hash_stored2, hash2, hash_stored1, hash1, hash_put_value2, hash_put_value1};
 use crate::src::search::sorted_move_order;
+use crate::src::zebra::ZebraFrontend;
+/*
+   File:              moves.c
+
+   Created:           June 30, 1997
+
+   Modified:          April 24, 2001
+
+   Author:            Gunnar Andersson (gunnar@radagast.se)
+
+   Contents:          The move generator.
+*/
 
 pub static mut disks_played: i32 = 0;
 
@@ -401,4 +413,29 @@ pub unsafe fn valid_move(move_0: i32,
         i += 1
     }
     return 0 as i32;
+}
+
+
+/*
+   GET_MOVE
+   Prompts the user to enter a move and checks if the move is legal.
+*/
+pub unsafe fn get_move<ZFE: ZebraFrontend>(side_to_move: i32) -> i32 {
+    let mut buffer: [i8; 255] = [0; 255];
+    let mut ready = 0 as i32;
+    let mut curr_move: i32 = 0;
+    while ready == 0 {
+        ZFE::prompt_get_move(side_to_move, &mut buffer);
+        ready = valid_move(curr_move, side_to_move);
+        if ready == 0 {
+            curr_move =
+                buffer[0 as i32 as usize] as i32 - 'a' as i32
+                    + 1 as i32 +
+                    10 as i32 *
+                        (buffer[1 as i32 as usize] as i32 -
+                            '0' as i32);
+            ready = valid_move(curr_move, side_to_move)
+        }
+    }
+    curr_move
 }
