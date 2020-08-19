@@ -39,8 +39,8 @@ pub trait FrontEnd : FatalError {
     fn midgame_display_ponder_move(
         max_depth: i32, alpha: i32, beta: i32,
         curr_val: i32, searched: i32, update_pv: i32);
-    unsafe fn midgame_display_status(side_to_move: i32, max_depth: i32,
-                                     eval_info: &mut EvaluationType, eval_str: *mut i8,
+    fn midgame_display_status(side_to_move: i32, max_depth: i32,
+                                     eval_info: &mut EvaluationType,
                                      node_val: f64, depth: i32);
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32);
     fn thordb_report_flipped_0_first();
