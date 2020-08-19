@@ -5,6 +5,18 @@ use crate::src::moves::{unmake_move, make_move, disks_played, move_list};
 use crate::src::hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, find_hash, determine_hash_values, HashEntry};
 use crate::src::error::FrontEnd;
 
+/*
+   File:          search.c
+
+   Created:       July 1, 1997
+
+   Modified:      January 2, 2003
+
+   Author:        Gunnar Andersson (gunnar@radagast.se)
+
+   Contents:      Common search routines and variables.
+*/
+
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
 pub const INTERRUPTED_EVAL: EvalType = 7;
@@ -649,7 +661,9 @@ pub unsafe fn complete_pv<FE:FrontEnd>(mut side_to_move: i32) {
                     pv[0 as i32 as usize][i as usize];
                 full_pv_depth += 1
             } else {
-                FE::handle_fatal_pv_error(i);
+                let pv_0_depth: i32  = pv_depth[0 as i32 as usize];
+                let pv_0: &[i32; 64] = &pv[0 as i32 as usize];
+                FE::handle_fatal_pv_error(i, pv_0_depth, pv_0);
             }
         }
         side_to_move = 0 as i32 + 2 as i32 - side_to_move;
