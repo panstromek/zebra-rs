@@ -1555,7 +1555,7 @@ pub unsafe fn end_solve(my_bits: BitBoard, opp_bits: BitBoard,
 pub unsafe fn update_best_list<FE: FrontEnd>(best_list: &mut [i32; 4],
                            move_0: i32,
                            best_list_index: i32,
-                           best_list_length: *mut i32,
+                           best_list_length: &mut i32,
                            mut verbose: i32) {
     let best_list: *mut i32 = best_list.as_mut_ptr();
     verbose = 0 as i32;
