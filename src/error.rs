@@ -167,7 +167,7 @@ impl FrontEnd for LibcFatalError {
         unsafe { free(__ptr) }
     }
     #[inline(always)]
-    unsafe fn time(__timer: *mut i64) -> i64 {
+    fn time(__timer: &mut i64) -> i64 {
         unsafe { time(__timer) }
     }
     #[inline(always)]
@@ -175,7 +175,7 @@ impl FrontEnd for LibcFatalError {
         unsafe { strlen(s) }
     }
     #[inline(always)]
-    unsafe fn tolower(num: i32) -> i32 {
+    fn tolower(num: i32) -> i32 {
         unsafe { tolower(num) }
     }
     #[inline(always)]

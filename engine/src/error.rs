@@ -26,9 +26,9 @@ pub trait FrontEnd : FatalError {
     unsafe fn malloc(_: u64) -> *mut c_void;
     unsafe fn realloc(_: *mut c_void, _: u64) -> *mut c_void;
     unsafe fn free(__ptr: *mut c_void);
-    unsafe fn time(__timer: *mut time_t) -> time_t;
+    fn time(__timer: &mut time_t) -> time_t;
     unsafe fn strlen(_: *const i8) -> u64;
-    unsafe fn tolower(num: i32) -> i32;
+    fn tolower(num: i32) -> i32;
     unsafe fn strdup(_: *const i8) -> *mut i8;
     fn report_do_evaluate(evaluation_stage_: i32);
     fn report_unwanted_book_draw(this_move: i32);
