@@ -17,13 +17,6 @@ use crate::{
 };
 use crate::src::error::FE;
 
-pub type __off_t = i64;
-pub type __off64_t = i64;
-pub type size_t = u64;
-
-pub type _IO_lock_t = ();
-pub type FILE = _IO_FILE;
-
 pub unsafe fn after_update_best_list_verbose(best_list: *mut i32) {
     printf(b"      After:  \x00" as *const u8 as *const i8);
     let mut i = 0 as i32;
