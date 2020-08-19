@@ -73,7 +73,7 @@ pub unsafe fn midgame_display_ponder_move(
     }
 }
 
-pub unsafe fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: *mut EvaluationType, mut eval_str: *mut i8, mut node_val: f64, depth: i32) {
+pub unsafe fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: *mut EvaluationType, mut node_val: f64, depth: i32) {
     clear_status();
     send_status(b"--> \x00" as *const u8 as *const i8);
     if is_panic_abort() != 0 || force_return != 0 {
@@ -83,7 +83,7 @@ pub unsafe fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_inf
     }
     send_status(b"%2d  \x00" as *const u8 as *const i8,
                 depth);
-    eval_str = produce_eval_text(&*eval_info, 1 as i32);
+    let eval_str = produce_eval_text(&*eval_info, 1 as i32);
     send_status(b"%-10s  \x00" as *const u8 as *const i8,
                 eval_str);
     free(eval_str as *mut std::ffi::c_void);

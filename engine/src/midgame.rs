@@ -1403,8 +1403,6 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                          update_evals: i32,
                                          eval_info: &mut EvaluationType)
                                          -> i32 {
-    let eval_str =
-        0 as *mut i8; /* Disable I.D. in this function */
     let node_val: f64 = 0.;
     let mut val: i32 = 0;
     let mut old_val: i32 = 0;
@@ -1567,7 +1565,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         }
         /* Display and store search info */
         if depth == max_depth {
-            FE::midgame_display_status(side_to_move, max_depth, eval_info, eval_str, node_val, depth)
+            FE::midgame_display_status(side_to_move, max_depth, eval_info, node_val, depth)
         }
         if is_panic_abort() != 0 || force_return != 0 { break ; }
         /* Check if search time or adjusted search time are long enough

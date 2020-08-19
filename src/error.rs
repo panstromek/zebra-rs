@@ -211,8 +211,8 @@ impl FrontEnd for LibcFatalError {
         unsafe { midgame_display_ponder_move(max_depth, alpha, beta, curr_val, searched, update_pv) }
     }
     #[inline(always)]
-    unsafe fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: &mut EvaluationType, eval_str: *mut i8, node_val: f64, depth: i32) {
-        unsafe { midgame_display_status(side_to_move, max_depth, eval_info, eval_str, node_val, depth) }
+    fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: &mut EvaluationType, node_val: f64, depth: i32) {
+        unsafe { midgame_display_status(side_to_move, max_depth, eval_info,  node_val, depth) }
     }
     #[inline(always)]
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
