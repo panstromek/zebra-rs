@@ -1,8 +1,7 @@
 use crate::src::stubs::{fabs};
 use crate::src::error::FrontEnd;
 
-pub type __time_t = i64;
-pub type time_t = __time_t;
+pub type time_t = i64;
 /* Global variables */
 
 pub static mut last_panic_check: f64 = 0.;
@@ -16,15 +15,15 @@ pub static mut frozen_ponder_depth: i32 = 0;
 
 pub static mut current_ponder_time: f64 = 0.;
 
-pub static mut frozen_ponder_time: f64 = 0.;
-pub static mut panic_value: f64 = 0.;
-pub static mut time_per_move: f64 = 0.;
-pub static mut start_time: f64 = 0.;
-pub static mut total_move_time: f64 = 0.;
-pub static mut ponder_time: [f64; 100] = [0.; 100];
-pub static mut panic_abort: i32 = 0;
-pub static mut do_check_abort: i32 = 1 as i32;
-pub static mut init_time: time_t = 0;
+static mut frozen_ponder_time: f64 = 0.;
+static mut panic_value: f64 = 0.;
+static mut time_per_move: f64 = 0.;
+static mut start_time: f64 = 0.;
+static mut total_move_time: f64 = 0.;
+static mut ponder_time: [f64; 100] = [0.; 100];
+static mut panic_abort: i32 = 0;
+static mut do_check_abort: i32 = 1 as i32;
+static mut init_time: time_t = 0;
 
 /*
   SET_DEFAULT_PANIC
