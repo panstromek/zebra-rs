@@ -6,7 +6,7 @@ use crate::src::thordb::C2RustUnnamed;
 
 pub trait FrontEnd : FatalError {
     fn display_buffers();
-    fn report_ponder_time();
+    fn report_ponder_time(current_ponder_time_: f64, current_ponder_depth_: i32);
     fn after_update_best_list_verbose(best_list: &mut [i32; 4]);
     fn before_update_best_list_verbose(best_list: &mut [i32; 4], move_0: i32, best_list_index: i32, best_list_length: &mut i32);
     fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32);

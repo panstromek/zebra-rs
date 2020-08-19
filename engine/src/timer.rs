@@ -236,7 +236,7 @@ pub unsafe fn check_threshold<FE: FrontEnd>(threshold: f64)
 pub unsafe fn adjust_current_ponder_time<FE: FrontEnd>(move_0: i32) {
     current_ponder_time = ponder_time[move_0 as usize];
     current_ponder_depth = ponder_depth[move_0 as usize];
-    FE::report_ponder_time();
+    FE::report_ponder_time(current_ponder_time, current_ponder_depth);
 }
 /*
   ABOVE_RECOMMENDED

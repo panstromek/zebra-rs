@@ -1,11 +1,10 @@
-use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc, puts};
+use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc, puts, printf};
 use crate::src::zebra::_IO_FILE;
 use engine::src::error::{FrontEnd, FatalError};
 use engine::src::hash::HashEntry;
 use engine::src::thordb::C2RustUnnamed;
 use engine::src::zebra::EvaluationType;
 use crate::src::display::display_buffers;
-use crate::src::timer::report_ponder_time;
 use crate::src::end::{after_update_best_list_verbose, before_update_best_list_verbose, end_tree_search_output_some_second_stats, end_display_zero_status, end_report_semi_panic_abort, end_report_panic_abort, end_report_semi_panic_abort_2, end_report_semi_panic_abort_3, end_report_panic_abort_2, send_solve_status, end_tree_search_level_0_report, end_tree_search_level_0_ponder_0_report, end_tree_search_output_some_stats, end_tree_search_level_0_ponder_0_short_report, end_tree_search_some_pv_stats_report};
 use crate::src::thordb::{sort_thor_games, choose_thor_opening_move_report};
 use crate::src::getcoeff::report_mirror_symetry_error;
@@ -71,8 +70,11 @@ impl FrontEnd for LibcFatalError {
     }
 
     #[inline(always)]
-    fn report_ponder_time() {
-        unsafe { report_ponder_time() }
+    fn report_ponder_time(current_ponder_time_: f64, current_ponder_depth_: i32) {
+        unsafe {
+            printf(b"Ponder time: %.1f s\n\x00" as *const u8 as *const i8, current_ponder_time_);
+            printf(b"Ponder depth: %d\n\x00" as *const u8 as *const i8, current_ponder_depth_);
+        }
     }
 
     #[inline(always)]
