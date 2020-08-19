@@ -1401,7 +1401,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
 pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                          max_depth: i32,
                                          update_evals: i32,
-                                         eval_info: *mut EvaluationType)
+                                         eval_info: &mut EvaluationType)
                                          -> i32 {
     let eval_str =
         0 as *mut i8; /* Disable I.D. in this function */

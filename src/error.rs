@@ -76,13 +76,13 @@ impl FrontEnd for LibcFatalError {
     }
 
     #[inline(always)]
-    fn after_update_best_list_verbose(best_list: *mut i32) {
-        unsafe { after_update_best_list_verbose(best_list) }
+    fn after_update_best_list_verbose(best_list: &mut [i32; 4]) {
+        unsafe { after_update_best_list_verbose(best_list.as_mut_ptr()) }
     }
 
     #[inline(always)]
-    fn before_update_best_list_verbose(best_list: *mut i32, move_0: i32, best_list_index: i32, best_list_length: *mut i32) {
-        unsafe { before_update_best_list_verbose(best_list, move_0, best_list_index, best_list_length) }
+    fn before_update_best_list_verbose(best_list: &mut [i32; 4], move_0: i32, best_list_index: i32, best_list_length: &mut i32) {
+        unsafe { before_update_best_list_verbose(best_list.as_mut_ptr(), move_0, best_list_index, best_list_length) }
     }
 
     #[inline(always)]
@@ -116,7 +116,7 @@ impl FrontEnd for LibcFatalError {
     }
 
     #[inline(always)]
-    fn send_solve_status(empties: i32, side_to_move: i32, eval_info: *mut EvaluationType) {
+    fn send_solve_status(empties: i32, side_to_move: i32, eval_info: &mut EvaluationType) {
         unsafe { send_solve_status(empties, side_to_move, eval_info) }
     }
 
@@ -211,7 +211,7 @@ impl FrontEnd for LibcFatalError {
         unsafe { midgame_display_ponder_move(max_depth, alpha, beta, curr_val, searched, update_pv) }
     }
     #[inline(always)]
-    unsafe fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: *mut EvaluationType, eval_str: *mut i8, node_val: f64, depth: i32) {
+    unsafe fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: &mut EvaluationType, eval_str: *mut i8, node_val: f64, depth: i32) {
         unsafe { midgame_display_status(side_to_move, max_depth, eval_info, eval_str, node_val, depth) }
     }
     #[inline(always)]
