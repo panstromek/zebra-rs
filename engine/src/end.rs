@@ -1552,11 +1552,12 @@ pub unsafe fn end_solve(my_bits: BitBoard, opp_bits: BitBoard,
 /*
   UPDATE_BEST_LIST
 */
-pub unsafe fn update_best_list<FE: FrontEnd>(best_list: *mut i32,
+pub unsafe fn update_best_list<FE: FrontEnd>(best_list: &mut [i32; 4],
                            move_0: i32,
                            best_list_index: i32,
                            best_list_length: *mut i32,
                            mut verbose: i32) {
+    let best_list: *mut i32 = best_list.as_mut_ptr();
     verbose = 0 as i32;
     if verbose != 0 {
         FE::before_update_best_list_verbose(best_list, move_0, best_list_index, best_list_length)
@@ -2114,7 +2115,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
             FE::end_tree_search_output_some_second_stats(alpha, beta, curr_val, update_pv, move_index)
         }
         if update_pv != 0 {
-            update_best_list::<FE>(best_list.as_mut_ptr(), move_0, best_list_index,
+            update_best_list::<FE>(&mut best_list, move_0, best_list_index,
                              &mut best_list_length,
                              (level == 0 as i32) as i32);
             pv[level as usize][level as usize] = move_0;
