@@ -58,8 +58,7 @@ pub type FILE = _IO_FILE;
 */
 
 pub unsafe fn dumpch() {
-    let mut ch: i8 = 0;
-    ch = getc(stdin) as i8;
+    let ch = getc(stdin) as i8;
     if ch as i32 == ' ' as i32 { exit(1 as i32); };
 }
 /*
@@ -79,11 +78,11 @@ pub unsafe fn display_board(stream: *mut FILE,
                                        give_time: i32,
                                        give_evals: i32) {
     let mut buffer: [i8; 16] = [0; 16];
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut written: i32 = 0;
-    let mut first_row: i32 = 0;
-    let mut row: i32 = 0;
+    let mut i: i32;
+    let mut j: i32;
+    let mut written: i32;
+    let first_row: i32;
+    let mut row: i32;
     if side_to_move == 0 as i32 {
         first_row =
             if 0 as i32 > current_row - 8 as i32 {
@@ -321,12 +320,9 @@ pub unsafe fn display_optimal_line(stream: *mut FILE) {
   Store information about the last completed search.
 */
 
-pub unsafe extern "C" fn send_status(format: *const i8,
-                                     args: ...) {
-    let mut written: i32 = 0;
-    let mut arg_ptr: ::std::ffi::VaListImpl;
-    arg_ptr = args.clone();
-    written =
+pub unsafe extern "C" fn send_status(format: *const i8, args: ...) {
+    let mut arg_ptr = args.clone();
+    let written =
         vsprintf(status_buffer.as_mut_ptr().offset(status_pos as isize),
                  format, arg_ptr.as_va_list());
     status_pos += written;
@@ -378,8 +374,7 @@ pub unsafe fn send_status_nodes(node_count: f64) {
 
 pub unsafe fn send_status_pv(pv: *mut i32,
                                         max_depth: i32) {
-    let mut i: i32 = 0;
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i <
               (if max_depth < 5 as i32 {
                    max_depth
@@ -421,10 +416,8 @@ pub unsafe fn display_status(stream: *mut FILE,
 
 pub unsafe extern "C" fn send_sweep(format: *const i8,
                                     args: ...) {
-    let mut written: i32 = 0;
-    let mut arg_ptr: ::std::ffi::VaListImpl;
-    arg_ptr = args.clone();
-    written =
+    let mut arg_ptr = args.clone();
+    let written =
         vsprintf(sweep_buffer.as_mut_ptr().offset(sweep_pos as isize), format,
                  arg_ptr.as_va_list());
     sweep_pos += written;
@@ -448,9 +441,7 @@ pub unsafe fn display_sweep(stream: *mut FILE) {
   output relevant buffers.
 */
 pub unsafe fn display_buffers() {
-    let mut timer: f64 = 0.;
-    let mut new_interval: f64 = 0.;
-    timer = get_real_timer::<FE>();
+    let timer = get_real_timer::<FE>();
     if timer - last_output >= interval2 || timed_buffer_management == 0 {
         display_status(stdout, 0 as i32);
         status_modified = 0 as i32;
@@ -458,7 +449,7 @@ pub unsafe fn display_buffers() {
             if sweep_modified != 0 { display_sweep(stdout); }
             last_output = timer;
             /* Display the sweep at Fibonacci-spaced times */
-            new_interval = interval1 + interval2;
+            let new_interval = interval1 + interval2;
             interval1 = interval2;
             interval2 = new_interval
         }
@@ -472,12 +463,10 @@ pub unsafe fn display_buffers() {
 pub unsafe fn produce_eval_text(eval_info: &EvaluationType,
                                            short_output: i32)
  -> *mut i8 {
-    let mut buffer = 0 as *mut i8;
-    let mut disk_diff: f64 = 0.;
-    let mut len: i32 = 0;
-    let mut int_confidence: i32 = 0;
-    buffer = safe_malloc::<FE>(32 as i32 as size_t) as *mut i8;
-    len = 0 as i32;
+    let disk_diff: f64;
+    let int_confidence: i32;
+    let buffer = safe_malloc::<FE>(32 as i32 as size_t) as *mut i8;
+    let mut len = 0 as i32;
     match eval_info.type_0 as u32 {
         0 => {
             if eval_info.score >= 29000 as i32 {
@@ -742,5 +731,5 @@ pub unsafe fn produce_eval_text(eval_info: &EvaluationType,
                     b" (%s)\x00" as *const u8 as *const i8,
                     b"book\x00" as *const u8 as *const i8)
     }
-    return buffer;
+    buffer
 }

@@ -14,24 +14,8 @@ use crate::src::osfbook::{report_in_get_book_move_2, report_in_get_book_move_1, 
 use crate::src::search::handle_fatal_pv_error;
 use std::ffi::c_void;
 
-pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct __va_list_tag {
-    pub gp_offset: u32,
-    pub fp_offset: u32,
-    pub overflow_arg_area: *mut std::ffi::c_void,
-    pub reg_save_area: *mut std::ffi::c_void,
-}
-pub type va_list = __builtin_va_list;
-pub type size_t = u64;
-pub type __off_t = i64;
-pub type __off64_t = i64;
-pub type __time_t = i64;
-
-pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
-pub type time_t = __time_t;
+pub type time_t = i64;
 /*
    File:       error.h
 
@@ -56,14 +40,12 @@ pub type time_t = __time_t;
 */
 
 pub unsafe extern "C" fn fatal_error(format: *const i8, args: ...) -> ! {
-    let mut stream = 0 as *mut FILE;
     let mut timer: time_t = 0;
-    let mut arg_ptr: ::std::ffi::VaListImpl;
-    arg_ptr = args.clone();
+    let mut arg_ptr = args.clone();
     fprintf(stderr, b"\n%s: \x00" as *const u8 as *const i8,
             b"Fatal error\x00" as *const u8 as *const i8);
     vfprintf(stderr, format, arg_ptr.as_va_list());
-    stream =
+    let mut stream =
         fopen(b"zebra.err\x00" as *const u8 as *const i8,
               b"a\x00" as *const u8 as *const i8);
     if !stream.is_null() {

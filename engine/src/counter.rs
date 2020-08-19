@@ -41,8 +41,7 @@ pub unsafe fn counter_value(counter: *mut CounterType)
   ADD_COUNTER
   Adds the value of the counter TERM to the counter SUM.
 */
-pub unsafe fn add_counter(mut sum: *mut CounterType,
-                                     term: *mut CounterType) {
+pub unsafe fn add_counter(sum: *mut CounterType, term: *mut CounterType) {
     (*sum).lo = (*sum).lo.wrapping_add((*term).lo);
     (*sum).hi = (*sum).hi.wrapping_add((*term).hi);
     adjust_counter(sum);
