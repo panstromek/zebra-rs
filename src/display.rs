@@ -8,20 +8,7 @@ pub use engine::src::display::*;
 use crate::src::error::{FE};
 use engine::src::error::FrontEnd;
 
-pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct __va_list_tag {
-    pub gp_offset: u32,
-    pub fp_offset: u32,
-    pub overflow_arg_area: *mut std::ffi::c_void,
-    pub reg_save_area: *mut std::ffi::c_void,
-}
-pub type __off_t = i64;
-pub type __off64_t = i64;
-pub type va_list = __builtin_va_list;
 pub type size_t = u64;
-pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 
 /*

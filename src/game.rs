@@ -19,8 +19,6 @@ use crate::src::getcoeff::zlib_source::ZLibSource;
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError, FE};
 
-pub type __off_t = i64;
-pub type __off64_t = i64;
 pub type __time_t = i64;
 pub type size_t = u64;
 
@@ -76,14 +74,6 @@ unsafe fn setup_log_file() {
     }
 }
 
-/*
-   SETUP_GAME
-   Prepares the board.
-*/
-unsafe fn setup_game(file_name: *const i8,
-                                side_to_move: *mut i32) {
-    generic_setup_game::<LibcBoardFileSource, LibcFatalError>(file_name, side_to_move)
-}
 pub struct LibcBoardFileSource {
     stream: *mut FILE
 }
@@ -167,10 +157,7 @@ pub unsafe fn ponder_move(side_to_move: i32,
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut this_move: i32 = 0;
-    let mut hash_move: i32 = 0;
     let mut expect_count: i32 = 0;
-    let mut stored_echo: i32 = 0;
-    let mut best_pv_depth: i32 = 0;
     let mut expect_list: [i32; 64] = [0; 64];
     let mut best_pv: [i32; 61] = [0; 61];
     /* Disable all time control mechanisms as it's the opponent's
@@ -184,7 +171,7 @@ pub unsafe fn ponder_move(side_to_move: i32,
     determine_hash_values(side_to_move, board.as_mut_ptr());
     reset_counter(&mut nodes);
     /* Find the scores for the moves available to the opponent. */
-    hash_move = 0 as i32;
+    let mut hash_move = 0 as i32;
     find_hash(&mut entry, 1 as i32);
     if entry.draft as i32 != 0 as i32 {
         hash_move = entry.move_0[0 as i32 as usize]
@@ -194,7 +181,7 @@ pub unsafe fn ponder_move(side_to_move: i32,
             hash_move = entry.move_0[0 as i32 as usize]
         }
     }
-    stored_echo = echo;
+    let stored_echo = echo;
     echo = 0 as i32;
     compute_move(side_to_move, 0 as i32, 0 as i32,
                  0 as i32, 0 as i32, 0 as i32,
@@ -241,8 +228,8 @@ pub unsafe fn ponder_move(side_to_move: i32,
         }
     }
     /* Go through the expected moves in order and prepare responses. */
-    best_pv_depth = 0 as i32;
-    i = 0 as i32;
+    let mut best_pv_depth = 0 as i32;
+    let mut i = 0 as i32;
     while force_return == 0 && i < expect_count {
         move_start_time = get_real_timer::<FE>();
         set_ponder_move(expect_list[i as usize]);
