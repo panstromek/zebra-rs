@@ -143,16 +143,13 @@ pub unsafe fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
 pub unsafe fn send_solve_status(empties: i32,
                                        _side_to_move: i32,
                                        eval_info: *mut EvaluationType) {
-    let mut eval_str = 0 as *mut i8;
-    let mut node_val: f64 = 0.;
     set_current_eval(*eval_info);
     clear_status();
-    send_status(b"-->  %2d  \x00" as *const u8 as *const i8,
-                empties);
-    eval_str = produce_eval_text(&*eval_info, 1 as i32);
+    send_status(b"-->  %2d  \x00" as *const u8 as *const i8, empties);
+    let eval_str = produce_eval_text(&*eval_info, 1 as i32);
     send_status(b"%-10s  \x00" as *const u8 as *const i8, eval_str);
     free(eval_str as *mut std::ffi::c_void);
-    node_val = counter_value(&mut nodes);
+    let node_val = counter_value(&mut nodes);
     send_status_nodes(node_val);
     if get_ponder_move() != 0 {
         send_status(b"{%c%c} \x00" as *const u8 as *const i8,

@@ -44,5 +44,5 @@ pub unsafe fn get_move(side_to_move: i32)
             ready = valid_move(curr_move, side_to_move)
         }
     }
-    return curr_move;
+    curr_move
 }

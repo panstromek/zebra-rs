@@ -3,6 +3,7 @@
 #![feature(c_variadic)]
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
+#![allow(clippy::missing_safety_doc)]
 
 pub mod src {
     pub mod bitbcnt;
