@@ -10,7 +10,6 @@ use crate::src::thordb::{sort_thor_games, choose_thor_opening_move_report};
 use crate::src::getcoeff::report_mirror_symetry_error;
 use crate::src::midgame::{midgame_display_status, midgame_display_ponder_move, midgame_display_initial_ponder_move, midgame_display_simple_ponder_move};
 use crate::src::osfbook::{report_in_get_book_move_2, report_in_get_book_move_1, report_unwanted_book_draw, report_do_evaluate};
-use crate::src::search::handle_fatal_pv_error;
 use std::ffi::c_void;
 
 pub type FILE = _IO_FILE;
@@ -153,9 +152,29 @@ impl FrontEnd for LibcFatalError {
     }
 
     #[inline(always)]
-    fn handle_fatal_pv_error(i: i32) {
-        unsafe { handle_fatal_pv_error(i) }
+    fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i32; 64]) {
+        unsafe {
+            printf(b"pv_depth[0] = %d\n\x00" as *const u8 as
+                       *const i8,
+                   pv_0_depth);
+            let mut j = 0 as i32;
+            while j < pv_0_depth {
+                printf(b"%c%c \x00" as *const u8 as *const i8,
+                       'a' as i32 +
+                           pv_0[j as usize] %
+                               10 as i32 - 1 as i32,
+                       '0' as i32 +
+                           pv_0[j as usize] /
+                               10 as i32);
+                j += 1
+            }
+            puts(b"\x00" as *const u8 as *const i8);
+            printf(b"i=%d\n\x00" as *const u8 as *const i8, i);
+            fatal_error(b"Error in PV completion\x00" as *const u8 as
+                *const i8);
+        }
     }
+
     #[inline(always)]
     unsafe fn malloc(size: u64) -> *mut c_void {
         unsafe { malloc(size) }

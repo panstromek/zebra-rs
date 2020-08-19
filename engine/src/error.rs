@@ -22,7 +22,7 @@ pub trait FrontEnd : FatalError {
     fn end_report_panic_abort();
     fn end_report_semi_panic_abort();
     fn end_display_zero_status();
-    fn handle_fatal_pv_error(i: i32);
+    fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i32; 64]);
     unsafe fn malloc(_: u64) -> *mut c_void;
     unsafe fn realloc(_: *mut c_void, _: u64) -> *mut c_void;
     unsafe fn free(__ptr: *mut c_void);
