@@ -1552,15 +1552,15 @@ pub unsafe fn end_solve(my_bits: BitBoard, opp_bits: BitBoard,
 /*
   UPDATE_BEST_LIST
 */
-pub unsafe fn update_best_list<FE: FrontEnd>(best_list: &mut [i32; 4],
+pub unsafe fn update_best_list<FE: FrontEnd>(best_list_: &mut [i32; 4],
                            move_0: i32,
                            best_list_index: i32,
                            best_list_length: &mut i32,
                            mut verbose: i32) {
-    let best_list: *mut i32 = best_list.as_mut_ptr();
+    let best_list: *mut i32 = best_list_.as_mut_ptr();
     verbose = 0 as i32;
     if verbose != 0 {
-        FE::before_update_best_list_verbose(best_list, move_0, best_list_index, best_list_length)
+        FE::before_update_best_list_verbose(best_list_, move_0, best_list_index, best_list_length)
     }
     if best_list_index < *best_list_length {
         let mut i = best_list_index;
@@ -1580,7 +1580,7 @@ pub unsafe fn update_best_list<FE: FrontEnd>(best_list: &mut [i32; 4],
     }
     *best_list.offset(0 as i32 as isize) = move_0;
     if verbose != 0 {
-        FE::after_update_best_list_verbose(best_list);
+        FE::after_update_best_list_verbose(best_list_);
     };
 }
 
@@ -2282,7 +2282,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                                      force_echo: i32,
                                      allow_book: i32,
                                      komi: i32,
-                                     mut eval_info: *mut EvaluationType)
+                                     mut eval_info: &mut EvaluationType)
                                      -> i32 {
     let mut current_confidence: f64 = 0.;
     let mut solve_status = WIN;

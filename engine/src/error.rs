@@ -7,15 +7,15 @@ use crate::src::thordb::C2RustUnnamed;
 pub trait FrontEnd : FatalError {
     fn display_buffers();
     fn report_ponder_time();
-    fn after_update_best_list_verbose(best_list: *mut i32);
-    fn before_update_best_list_verbose(best_list: *mut i32, move_0: i32, best_list_index: i32, best_list_length: *mut i32);
+    fn after_update_best_list_verbose(best_list: &mut [i32; 4]);
+    fn before_update_best_list_verbose(best_list: &mut [i32; 4], move_0: i32, best_list_index: i32, best_list_length: &mut i32);
     fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32);
     fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32);
     fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32);
     fn end_tree_search_output_some_stats(entry: &HashEntry);
     fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32);
     fn end_tree_search_level_0_report(alpha: i32, beta: i32);
-    fn send_solve_status(empties: i32, side_to_move: i32, eval_info: *mut EvaluationType);
+    fn send_solve_status(empties: i32, side_to_move: i32, eval_info: &mut EvaluationType);
     fn end_report_panic_abort_2();
     fn end_report_semi_panic_abort_3();
     fn end_report_semi_panic_abort_2();
@@ -40,7 +40,7 @@ pub trait FrontEnd : FatalError {
         max_depth: i32, alpha: i32, beta: i32,
         curr_val: i32, searched: i32, update_pv: i32);
     unsafe fn midgame_display_status(side_to_move: i32, max_depth: i32,
-                                     eval_info: *mut EvaluationType, eval_str: *mut i8,
+                                     eval_info: &mut EvaluationType, eval_str: *mut i8,
                                      node_val: f64, depth: i32);
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32);
     fn thordb_report_flipped_0_first();
