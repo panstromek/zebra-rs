@@ -1403,17 +1403,10 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                          update_evals: i32,
                                          eval_info: &mut EvaluationType)
                                          -> i32 {
-    let node_val: f64 = 0.;
-    let mut val: i32 = 0;
-    let mut old_val: i32 = 0;
-    let mut adjusted_val: i32 = 0;
-    let mut initial_depth: i32 = 0;
-    let mut depth: i32 = 0;
-    let mut alpha: i32 = 0;
-    let mut beta: i32 = 0;
-    let mut enable_mpc: i32 = 0;
-    let mut base_stage: i32 = 0;
-    let mut full_length_line: i32 = 0;
+    let mut adjusted_val: i32;
+    let mut alpha: i32;
+    let mut beta: i32;
+    let mut full_length_line: i32;
     let mut entry =
         HashEntry{key1: 0,
             key2: 0,
@@ -1428,21 +1421,21 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         disc_count(0 as i32);
     piece_count[2 as i32 as usize][disks_played as usize] =
         disc_count(2 as i32);
-    base_stage =
+    let base_stage =
         disc_count(0 as i32) + disc_count(2 as i32) -
             4 as i32;
-    val = 0 as i32;
-    old_val = --(27000 as i32);
-    enable_mpc = (max_depth >= 9 as i32) as i32;
-    initial_depth =
+    let mut val = 0 as i32;
+    let mut old_val = --(27000 as i32);
+    let enable_mpc = (max_depth >= 9 as i32) as i32;
+    let initial_depth =
         if 1 as i32 > max_depth - 2 as i32 {
             1 as i32
         } else { (max_depth) - 2 as i32 };
-    initial_depth = max_depth;
+    let initial_depth = max_depth;
     *eval_info =
         create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION, 0 as i32,
                          0.0f64, 0 as i32, 0 as i32);
-    depth = initial_depth;
+    let mut depth = initial_depth;
     while depth <= max_depth {
         alpha = -(12345678 as i32);
         beta = 12345678 as i32;
@@ -1565,7 +1558,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         }
         /* Display and store search info */
         if depth == max_depth {
-            FE::midgame_display_status(side_to_move, max_depth, eval_info, node_val, depth)
+            FE::midgame_display_status(side_to_move, max_depth, eval_info, depth)
         }
         if is_panic_abort() != 0 || force_return != 0 { break ; }
         /* Check if search time or adjusted search time are long enough
