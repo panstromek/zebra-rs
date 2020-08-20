@@ -6,7 +6,8 @@ members = [
     "scrzebra",
     "practice",
     "enddev",
-    "wasm-simple"
+    "wasm-simple",
+    "engine/bitboard"
 ]
 
 [package]
