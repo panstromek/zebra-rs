@@ -7,7 +7,9 @@ members = [
     "practice",
     "enddev",
     "wasm-simple",
-    "engine/bitboard"
+    "engine/bitboard",
+    "engine/pcstat",
+    "engine/epcstat",
 ]
 
 [package]

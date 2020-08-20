@@ -48,7 +48,13 @@ name = "engine"
 version = "0.1.0"
 dependencies = [
  "bitboard",
+ "epcstat",
+ "pcstat",
 ]
+
+[[package]]
+name = "epcstat"
+version = "0.1.0"
 
 [[package]]
 name = "lazy_static"
@@ -70,6 +76,10 @@ checksum = "4fabed175da42fed1fa0746b0ea71f412aa9d35e76e95e59b192c64b9dc2bf8b"
 dependencies = [
  "cfg-if",
 ]
+
+[[package]]
+name = "pcstat"
+version = "0.1.0"
 
 [[package]]
 name = "pkg-config"
