@@ -6,7 +6,7 @@
 #![allow(clippy::missing_safety_doc)]
 
 pub mod src {
-    pub use ::bitboard::bitbcnt;
+    pub use ::bitbcnt::bitbcnt;
     pub use ::bitboard::bitboard;
     pub use ::bitboard::bitbmob;
     pub use ::bitboard::bitbtest;
