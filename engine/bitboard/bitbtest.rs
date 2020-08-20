@@ -1,4 +1,4 @@
-use crate::src::bitboard::BitBoard;
+use crate::bitboard::BitBoard;
 /*
    File:          bitbtest.c
 

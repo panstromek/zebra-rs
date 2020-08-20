@@ -6,10 +6,11 @@
 #![allow(clippy::missing_safety_doc)]
 
 pub mod src {
-    pub mod bitbcnt;
-    pub mod bitboard;
-    pub mod bitbmob;
-    pub mod bitbtest;
+    pub use ::bitboard::bitbcnt;
+    pub use ::bitboard::bitboard;
+    pub use ::bitboard::bitbmob;
+    pub use ::bitboard::bitbtest;
+
     pub mod counter;
     pub mod opname;
     pub mod patterns;
