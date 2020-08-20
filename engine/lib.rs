@@ -14,11 +14,11 @@ pub mod src {
     pub mod counter;
     pub mod opname;
     pub mod patterns;
-    pub mod pcstat;
+    pub use ::pcstat::pcstat;
     pub mod unflip;
     pub mod globals;
     pub mod myrandom;
-    pub mod epcstat;
+    pub use ::epcstat::epcstat;
     pub mod search;
     pub mod zebra;
     pub mod moves;

@@ -68,8 +68,3 @@ pub unsafe fn run_static_initializers() {
         &mut *global_flip_stack.as_mut_ptr().offset(0 as i32 as isize)
             as *mut *mut i32
 }
-// #[used]
-// #[cfg_attr(target_os = "linux", link_section = ".init_array")]
-// #[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
-// #[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
-// static INIT_ARRAY: [unsafe fn(); 1] = [run_static_initializers];
