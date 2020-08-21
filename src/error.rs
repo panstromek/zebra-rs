@@ -367,15 +367,13 @@ fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
 
  fn unexpected_character_in_a_move_string() -> ! {
     unsafe {
-        fatal_error(b"Unexpected character in move string\x00" as
-            *const u8 as *const i8);
+        fatal_error(b"Unexpected character in move string\x00" as *const u8 as *const i8);
     }
 }
 
  fn invalid_move_string_provided() -> ! {
     unsafe {
-        fatal_error(b"Invalid move string provided\x00" as *const u8
-            as *const i8);
+        fatal_error(b"Invalid move string provided\x00" as *const u8 as *const i8);
     }
 }
 }

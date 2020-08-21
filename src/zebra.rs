@@ -11,7 +11,7 @@ use crate::src::learn::{LibcLearner, init_learn};
 use crate::src::thordb::{read_game_database, read_tournament_database, read_player_database, print_thor_matches};
 use engine::src::thordb::{init_thor_database, get_total_game_count, get_thor_game_size, choose_thor_opening_move};
 use crate::src::error::{LibcFatalError, FE, fatal_error};
-use engine::src::error::FrontEnd;
+use engine::src::error::{FrontEnd, FatalError};
 use engine::src::display::{white_time, black_time, current_row, black_player, white_player, white_eval, black_eval, echo, set_move_list, set_evals, set_names, set_times, toggle_smart_buffer_management, display_pv};
 use engine::src::{myrandom, unflip};
 use crate::src::stubs::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, sscanf, feof, fgets, atoi, scanf, sprintf, ctime, time, strchr, strcasecmp, atof, stdout};
@@ -1139,8 +1139,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                  FE::strlen(move_string).wrapping_rem(2 as i32 as
                                                     u64) ==
                    1 as i32 as u64 {
-            fatal_error(b"Invalid move string provided\x00" as *const u8 as
-                            *const i8);
+            FE::invalid_move_string_provided();
         }
         i = 0 as i32;
         while i < provided_move_count {
@@ -1152,8 +1151,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                                         as isize) as i32 - '0' as i32;
             if col < 1 as i32 || col > 8 as i32 ||
                    row < 1 as i32 || row > 8 as i32 {
-                fatal_error(b"Unexpected character in move string\x00" as
-                                *const u8 as *const i8);
+                FE::unexpected_character_in_a_move_string();
             }
             provided_move[i as usize] = 10 as i32 * row + col;
             i += 1
