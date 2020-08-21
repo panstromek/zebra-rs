@@ -7,7 +7,7 @@ use engine::src::globals::{score_sheet_row, white_moves, black_moves, board};
 use engine::src::moves::{make_move, disks_played, valid_move, generate_all, unmake_move};
 use engine::src::game::{get_evaluated, get_evaluated_count, toggle_human_openings};
 use engine::src::osfbook::{get_hash, find_opening_name};
-use engine::src::display::{set_move_list, set_names};
+use engine::src::display::{set_move_list, set_names, white_time, black_time, black_eval, white_eval, black_player, current_row, white_player};
 use c2rust_out::src::display::{produce_eval_text, display_board};
 use c2rust_out::src::game::{extended_compute_move, game_init};
 use c2rust_out::src::osfbook::{read_binary_database, init_osf};
@@ -136,7 +136,12 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
         }
         get_hash(&mut val0, &mut val1, &mut orientation);
         display_board(stdout, board.as_mut_ptr(), side_to_move,
-                      1 as libc::c_int, 0 as libc::c_int, 0 as libc::c_int);
+                      1 as libc::c_int, 0 as libc::c_int, 0 as libc::c_int,
+                      current_row,
+                      black_player, black_time, black_eval,
+                      white_player, white_time, white_eval,
+                      &black_moves, &white_moves
+        );
         printf(b"Book hash: %d %d (%d)\n\n\x00" as *const u8 as
                    *const libc::c_char, val0, val1, orientation);
         extended_compute_move::<LibcFatalError>(side_to_move, 0 as libc::c_int,

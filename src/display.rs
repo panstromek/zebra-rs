@@ -57,20 +57,7 @@ pub unsafe fn dumpch() {
 
    The board is displayed using '*' for black and 'O' for white.
 */
-
-pub unsafe fn display_board(stream: *mut FILE,
-                            board: *const i32,
-                            side_to_move: i32,
-                            give_game_score: i32,
-                            give_time: i32,
-                            give_evals: i32) {
-    display_board_impl(stream, board, side_to_move, give_game_score, give_time, give_evals, current_row,
-                       black_player, black_time, black_eval,
-                       white_player, white_time, white_eval,
-                       &black_moves, &white_moves);
-}
-
-pub unsafe fn display_board_impl(stream: *mut FILE, board: *const i32,
+pub unsafe fn display_board(stream: *mut FILE, board: *const i32,
                                  side_to_move: i32, give_game_score: i32,
                                  give_time: i32, give_evals: i32, current_row_: i32,
                                  black_player_: *mut i8, black_time_: i32, black_eval_: f64,

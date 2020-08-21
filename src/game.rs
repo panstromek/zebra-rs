@@ -18,6 +18,8 @@ pub use engine::src::game::*;
 use crate::src::getcoeff::zlib_source::ZLibSource;
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError, FE};
+use engine::src::globals::{white_moves, black_moves};
+use engine::src::display::{current_row, black_player, white_player, white_time, white_eval, black_eval, black_time};
 
 pub type __time_t = i64;
 pub type size_t = u64;
@@ -1323,7 +1325,12 @@ fn close_logger(logger: &mut LogFileHandler) {
 fn log_board(logger: &mut LogFileHandler, board_: &mut [i32; 128], side_to_move_: i32) {
     unsafe {
         display_board(logger.log_file, board_.as_mut_ptr(), side_to_move_,
-                      0 as i32, 0 as i32, 0 as i32);
+                      0 as i32, 0 as i32, 0 as i32,
+        current_row,
+        black_player, black_time, black_eval,
+        white_player, white_time, white_eval,
+        &black_moves, &white_moves
+        );
     }
 }
 }
