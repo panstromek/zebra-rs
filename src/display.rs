@@ -59,11 +59,23 @@ pub unsafe fn dumpch() {
 */
 
 pub unsafe fn display_board(stream: *mut FILE,
-                                       board: *const i32,
-                                       side_to_move: i32,
-                                       give_game_score: i32,
-                                       give_time: i32,
-                                       give_evals: i32) {
+                            board: *const i32,
+                            side_to_move: i32,
+                            give_game_score: i32,
+                            give_time: i32,
+                            give_evals: i32) {
+    display_board_impl(stream, board, side_to_move, give_game_score, give_time, give_evals, current_row,
+                       black_player, black_time, black_eval,
+                       white_player, white_time, white_eval,
+                       &black_moves, &white_moves);
+}
+
+pub unsafe fn display_board_impl(stream: *mut FILE, board: *const i32,
+                                 side_to_move: i32, give_game_score: i32,
+                                 give_time: i32, give_evals: i32, current_row_: i32,
+                                 black_player_: *mut i8, black_time_: i32, black_eval_: f64,
+                                 white_player_: *mut i8, white_time_: i32, white_eval_: f64,
+                                 black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
     let mut buffer: [i8; 16] = [0; 16];
     let mut i: i32;
     let mut j: i32;
@@ -72,14 +84,14 @@ pub unsafe fn display_board(stream: *mut FILE,
     let mut row: i32;
     if side_to_move == 0 as i32 {
         first_row =
-            if 0 as i32 > current_row - 8 as i32 {
+            if 0 as i32 > current_row_ - 8 as i32 {
                 0 as i32
-            } else { (current_row) - 8 as i32 }
+            } else { (current_row_) - 8 as i32 }
     } else {
         first_row =
-            if 0 as i32 > current_row - 7 as i32 {
+            if 0 as i32 > current_row_ - 7 as i32 {
                 0 as i32
-            } else { (current_row) - 7 as i32 }
+            } else { (current_row_) - 7 as i32 }
     }
     buffer[15 as i32 as usize] = 0 as i32 as i8;
     fputs(b"\n\x00" as *const u8 as *const i8, stream);
@@ -122,11 +134,11 @@ pub unsafe fn display_board(stream: *mut FILE,
                 fprintf(stream,
                         b"%-9s\x00" as *const u8 as *const i8,
                         b"Black\x00" as *const u8 as *const i8);
-            if !black_player.is_null() {
+            if !black_player_.is_null() {
                 written +=
                     fprintf(stream,
                             b"%s\x00" as *const u8 as *const i8,
-                            black_player)
+                            black_player_)
             }
         }
         if i == 2 as i32 && give_time != 0 {
@@ -134,25 +146,25 @@ pub unsafe fn display_board(stream: *mut FILE,
                 fprintf(stream,
                         b"         %02d:%02d\x00" as *const u8 as
                             *const i8,
-                        black_time / 60 as i32,
-                        black_time % 60 as i32)
+                        black_time_ / 60 as i32,
+                        black_time_ % 60 as i32)
         }
         if i == 3 as i32 {
             if side_to_move == 0 as i32 {
                 written +=
                     fprintf(stream,
                             b" (*)  \x00" as *const u8 as *const i8)
-            } else if give_evals != 0 && black_eval != 0.0f64 {
-                if black_eval >= 0.0f64 && black_eval <= 1.0f64 {
+            } else if give_evals != 0 && black_eval_ != 0.0f64 {
+                if black_eval_ >= 0.0f64 && black_eval_ <= 1.0f64 {
                     written +=
                         fprintf(stream,
                                 b"%-6.2f\x00" as *const u8 as
-                                    *const i8, black_eval)
+                                    *const i8, black_eval_)
                 } else {
                     written +=
                         fprintf(stream,
                                 b"%+-6.2f\x00" as *const u8 as
-                                    *const i8, black_eval)
+                                    *const i8, black_eval_)
                 }
             } else {
                 written +=
@@ -170,11 +182,11 @@ pub unsafe fn display_board(stream: *mut FILE,
                 fprintf(stream,
                         b"%-9s\x00" as *const u8 as *const i8,
                         b"White\x00" as *const u8 as *const i8);
-            if !white_player.is_null() {
+            if !white_player_.is_null() {
                 written +=
                     fprintf(stream,
                             b"%s\x00" as *const u8 as *const i8,
-                            white_player)
+                            white_player_)
             }
         }
         if i == 6 as i32 && give_time != 0 {
@@ -182,25 +194,25 @@ pub unsafe fn display_board(stream: *mut FILE,
                 fprintf(stream,
                         b"         %02d:%02d\x00" as *const u8 as
                             *const i8,
-                        white_time / 60 as i32,
-                        white_time % 60 as i32)
+                        white_time_ / 60 as i32,
+                        white_time_ % 60 as i32)
         }
         if i == 7 as i32 {
             if side_to_move == 2 as i32 {
                 written +=
                     fprintf(stream,
                             b" (O)  \x00" as *const u8 as *const i8)
-            } else if give_evals != 0 && white_eval != 0.0f64 {
-                if white_eval >= 0.0f64 && white_eval <= 1.0f64 {
+            } else if give_evals != 0 && white_eval_ != 0.0f64 {
+                if white_eval_ >= 0.0f64 && white_eval_ <= 1.0f64 {
                     written +=
                         fprintf(stream,
                                 b"%-6.2f\x00" as *const u8 as
-                                    *const i8, white_eval)
+                                    *const i8, white_eval_)
                 } else {
                     written +=
                         fprintf(stream,
                                 b"%+-6.2f\x00" as *const u8 as
-                                    *const i8, white_eval)
+                                    *const i8, white_eval_)
                 }
             } else {
                 written +=
@@ -218,30 +230,30 @@ pub unsafe fn display_board(stream: *mut FILE,
                     22 as i32 - written,
                     b"\x00" as *const u8 as *const i8);
             row = first_row + (i - 1 as i32);
-            if row < current_row ||
-                   row == current_row && side_to_move == 2 as i32 {
+            if row < current_row_ ||
+                   row == current_row_ && side_to_move == 2 as i32 {
                 fprintf(stream,
                         b"%2d. \x00" as *const u8 as *const i8,
                         row + 1 as i32);
-                if black_moves[row as usize] == -(1 as i32) {
+                if black_moves_[row as usize] == -(1 as i32) {
                     fprintf(stream,
                             b"- \x00" as *const u8 as *const i8);
                 } else {
                     fprintf(stream,
                             b"%c%c\x00" as *const u8 as *const i8,
                             'a' as i32 +
-                                black_moves[row as usize] % 10 as i32
+                                black_moves_[row as usize] % 10 as i32
                                 - 1 as i32,
                             '0' as i32 +
-                                black_moves[row as usize] /
+                                black_moves_[row as usize] /
                                     10 as i32);
                 }
                 fprintf(stream,
                         b"  \x00" as *const u8 as *const i8);
-                if row < current_row ||
-                       row == current_row && side_to_move == 0 as i32
+                if row < current_row_ ||
+                       row == current_row_ && side_to_move == 0 as i32
                    {
-                    if white_moves[row as usize] == -(1 as i32) {
+                    if white_moves_[row as usize] == -(1 as i32) {
                         fprintf(stream,
                                 b"- \x00" as *const u8 as
                                     *const i8);
@@ -250,10 +262,10 @@ pub unsafe fn display_board(stream: *mut FILE,
                                 b"%c%c\x00" as *const u8 as
                                     *const i8,
                                 'a' as i32 +
-                                    white_moves[row as usize] %
+                                    white_moves_[row as usize] %
                                         10 as i32 - 1 as i32,
                                 '0' as i32 +
-                                    white_moves[row as usize] /
+                                    white_moves_[row as usize] /
                                         10 as i32);
                     }
                 }
