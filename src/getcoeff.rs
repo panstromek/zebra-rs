@@ -110,18 +110,6 @@ pub mod zlib_source {
         }
     }
 }
-/*
-   INIT_COEFFS
-   Manages the initialization of all relevant tables.
-*/
-
-pub unsafe fn init_coeffs() {
-    init_memory_handler();
-    process_coeffs_from_fn_source::<LibcFatalError, _>(ZLibSource::new());
-    init_coeffs_calculate_patterns();
-    load_and_apply_adjustments();
-    post_init_coeffs();
-}
 
 pub unsafe fn load_and_apply_adjustments() {
     if let Some(adjusts) = load_coeff_adjustments() {
