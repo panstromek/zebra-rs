@@ -1,7 +1,7 @@
 use crate::src::game::{FILE, time_t, size_t};
 use crate::src::osfbook::__compar_fn_t;
 use crate::src::getcoeff::gzFile;
-pub use engine::src::stubs::{abs, floor, ceil, fabs};
+use engine::src::stubs::{abs, floor, ceil, fabs};
 use std::ffi::c_void;
 
 extern "C" {
