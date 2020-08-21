@@ -32,6 +32,7 @@ use engine::src::thordb::{init_thor_database, get_total_game_count, get_thor_gam
 use crate::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
 use engine::src::{unflip, myrandom};
+use engine::src::display::{white_time, black_time, current_row, black_player, white_player, white_eval, black_eval};
 
 
 pub type _IO_wide_data = std::ffi::c_void;
@@ -883,7 +884,11 @@ impl ZebraFrontend for LibcFrontend {
         unsafe {
             display_board(stdout, board_.as_ptr() as *mut _,
                           side_to_move, 1 as i32,
-                          give_time_, 1 as i32);
+                          give_time_, 1 as i32,
+                          current_row,
+                          black_player, black_time, black_eval,
+                          white_player, white_time, white_eval,
+                          &black_moves, &white_moves);
         }
     }
     fn print_out_thor_matches(thor_max_games_: i32) {
@@ -1220,7 +1225,11 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                                *const i8, opening_name);
                 }
                 display_board(stdout, board.as_mut_ptr(), side_to_move,
-                              1 as i32, use_timer, 1 as i32);
+                              1 as i32, use_timer, 1 as i32,
+                              current_row,
+                              black_player, black_time, black_eval,
+                              white_player, white_time, white_eval,
+                              &black_moves, &white_moves);
             }
             /* Check what the Thor opening statistics has to say */
             choose_thor_opening_move::<FE>(board.as_mut_ptr(), side_to_move, echo);
@@ -1419,7 +1428,11 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                   floor(player_time[2 as i32 as usize]) as
                       i32);
         display_board(stdout, board.as_mut_ptr(), side_to_move,
-                      1 as i32, use_timer, 1 as i32);
+                      1 as i32, use_timer, 1 as i32,
+                      current_row,
+                      black_player, black_time, black_eval,
+                      white_player, white_time, white_eval,
+                      &black_moves, &white_moves);
     }
     fclose(output_stream);
 }
@@ -1619,7 +1632,10 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                               white_moves.as_mut_ptr(), score_sheet_row);
                 display_board(stdout, board.as_mut_ptr(), side_to_move,
                               1 as i32, 0 as i32,
-                              1 as i32);
+                              1 as i32, current_row,
+                              black_player, black_time, black_eval,
+                              white_player, white_time, white_eval,
+                              &black_moves, &white_moves);
             }
             search_start = get_real_timer::<FE>();
             start_move::<FE>(my_time as f64, my_incr as f64,

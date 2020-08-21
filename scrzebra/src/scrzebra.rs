@@ -5,7 +5,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 use engine::src::game::{global_terminate, set_komi, toggle_human_openings, toggle_status_log};
 use engine::src::myrandom::my_srandom;
 use engine::src::thordb::init_thor_database;
-use engine::src::display::{echo, display_pv, set_move_list, set_evals, set_names};
+use engine::src::display::{echo, display_pv, set_move_list, set_evals, set_names, current_row, black_player, black_time, black_eval, white_eval, white_time, white_player};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
 use engine::src::timer::{get_real_timer, determine_move_time, start_move};
 use engine::src::search::{full_pv, full_pv_depth, nodes, disc_count};
@@ -305,7 +305,10 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const libc::c_char,
                               white_moves.as_mut_ptr(), score_sheet_row);
                 display_board(stdout, board.as_mut_ptr(), side_to_move,
                               1 as libc::c_int, 0 as libc::c_int,
-                              1 as libc::c_int);
+                              1 as libc::c_int, current_row,
+                              black_player, black_time, black_eval,
+                              white_player, white_time, white_eval,
+                              &black_moves, &white_moves);
             }
             search_start = get_real_timer::<FE>();
             start_move::<FE>(my_time as libc::c_double, my_incr as libc::c_double,

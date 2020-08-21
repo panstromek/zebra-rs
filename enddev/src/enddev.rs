@@ -3,7 +3,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, label_break_value, register_tool)]
 
 use engine::src::moves::{disks_played, make_move, valid_move, move_count, generate_all};
-use engine::src::globals::board;
+use engine::src::globals::{board, white_moves, black_moves};
 use engine::src::myrandom::my_random;
 use engine::src::game::{get_evaluated_count, get_evaluated, EvaluatedMove};
 use engine::src::zebra::EvaluationType;
@@ -16,6 +16,7 @@ use c2rust_out::src::learn::init_learn;
 use c2rust_out::src::zebra::_IO_FILE;
 use c2rust_out::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
+use engine::src::display::{current_row, white_time, black_time, black_eval, white_eval, black_player, white_player};
 
 extern "C" {
     #[no_mangle]
@@ -469,7 +470,10 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
                         move_0, disks_played);
                 display_board(stderr, board.as_mut_ptr(), side_to_move,
                               0 as libc::c_int, 0 as libc::c_int,
-                              0 as libc::c_int);
+                              0 as libc::c_int, current_row,
+                              black_player, black_time, black_eval,
+                              white_player, white_time, white_eval,
+                              &black_moves, &white_moves);
                 exit(1 as libc::c_int);
             }
             game_moves[disks_played as usize] = move_0;

@@ -19,13 +19,16 @@ use crate::{
     }
 };
 pub use engine::src::osfbook::*;
-
+use engine::src::display::{display_pv, current_row, black_player, black_time,
+                           black_eval, white_eval, white_time, white_player};
 use crate::src::display::display_board;
 use engine::src::midgame::middle_game;
 use engine::src::myrandom::my_srandom;
 use engine::src::hash::set_hash_transformation;
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError};
+use engine::src::globals::{white_moves, black_moves};
+
 pub type FE = LibcFatalError;
 
 pub type _IO_lock_t = ();
@@ -2744,7 +2747,12 @@ unsafe extern "C" fn do_midgame_statistics(index: libc::c_int,
         abs((*node.offset(index as isize)).black_minimax_score as
             libc::c_int) < spec.max_diff {
         display_board(stdout, board.as_mut_ptr(), 0 as libc::c_int,
-                      0 as libc::c_int, 0 as libc::c_int, 0 as libc::c_int);
+                      0 as libc::c_int, 0 as libc::c_int, 0 as libc::c_int,
+                      current_row,
+                      black_player, black_time, black_eval,
+                      white_player, white_time, white_eval,
+                      &black_moves, &white_moves
+        );
         setup_hash(0 as libc::c_int);
         determine_hash_values(side_to_move, board.as_mut_ptr());
         depth = 1 as libc::c_int;
@@ -2881,7 +2889,12 @@ unsafe extern "C" fn endgame_correlation(mut side_to_move: libc::c_int,
     let mut orientation: libc::c_int = 0;
     let mut eval_list: [libc::c_int; 64] = [0; 64];
     display_board(stdout, board.as_mut_ptr(), 0 as libc::c_int,
-                  0 as libc::c_int, 0 as libc::c_int, 0 as libc::c_int);
+                  0 as libc::c_int, 0 as libc::c_int, 0 as libc::c_int,
+                  current_row,
+                  black_player, black_time, black_eval,
+                  white_player, white_time, white_eval,
+                  &black_moves, &white_moves
+    );
     set_hash_transformation(abs(my_random() as libc::c_int) as libc::c_uint,
                             abs(my_random() as libc::c_int) as libc::c_uint);
     determine_hash_values(side_to_move, board.as_mut_ptr());
