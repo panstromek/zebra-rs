@@ -20,6 +20,7 @@ use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError, FE};
 use engine::src::globals::{white_moves, black_moves};
 use engine::src::display::{current_row, black_player, white_player, white_time, white_eval, black_eval, black_time};
+use engine::src::search::{full_pv_depth, full_pv};
 
 pub type __time_t = i64;
 pub type size_t = u64;
@@ -1095,7 +1096,7 @@ pub unsafe fn compute_move(side_to_move: i32,
 pub struct LibcZebraOutput;
 impl ComputeMoveOutput for LibcZebraOutput {
 fn display_out_optimal_line() {
-    unsafe { display_optimal_line(stdout) }
+    unsafe { display_optimal_line(stdout, full_pv_depth, full_pv) }
 }
 
 fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64) {
@@ -1315,7 +1316,7 @@ fn log_status(logger: &mut LogFileHandler) {
 }
 
 fn log_optimal_line(logger: &mut LogFileHandler) {
-    unsafe { display_optimal_line(logger.log_file); }
+    unsafe { display_optimal_line(logger.log_file, full_pv_depth, full_pv); }
 }
 
 fn close_logger(logger: &mut LogFileHandler) {

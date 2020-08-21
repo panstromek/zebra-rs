@@ -1,8 +1,8 @@
 use crate::src::stubs::{sprintf, floor, fprintf, vsprintf, ceil, fputs, fputc, exit, abs, strcpy, getc, stdout, stdin};
 use crate::src::safemem::safe_malloc;
 use crate::src::timer::get_real_timer;
-use crate::src::search::{full_pv, full_pv_depth, disc_count};
-use crate::src::globals::{white_moves, black_moves, pv_depth};
+use crate::src::search::{disc_count};
+use crate::src::globals::{pv_depth};
 use crate::src::zebra::{EvaluationType, _IO_FILE};
 pub use engine::src::display::*;
 use crate::src::error::{FE};
@@ -283,20 +283,20 @@ pub unsafe fn display_move(stream: *mut FILE,
    Displays the principal variation found during the tree search.
 */
 
-pub unsafe fn display_optimal_line(stream: *mut FILE) {
+pub unsafe fn display_optimal_line(stream: *mut FILE, full_pv_depth_: i32, full_pv_: [i32; 120]) {
     let mut i: i32 = 0;
-    if full_pv_depth == 0 as i32 { return }
+    if full_pv_depth_ == 0 as i32 { return }
     fprintf(stream, b"%s: \x00" as *const u8 as *const i8,
             b"PV\x00" as *const u8 as *const i8);
     i = 0 as i32;
-    while i < full_pv_depth {
+    while i < full_pv_depth_ {
         if i % 25 as i32 != 0 as i32 {
             fputc(' ' as i32, stream);
         } else if i > 0 as i32 {
             fprintf(stream,
                     b"\n    \x00" as *const u8 as *const i8);
         }
-        display_move(stream, full_pv[i as usize]);
+        display_move(stream, full_pv_[i as usize]);
         i += 1
     }
     fputs(b"\n\x00" as *const u8 as *const i8, stream);
