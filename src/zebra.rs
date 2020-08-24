@@ -1110,8 +1110,6 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                        confidence: 0.,
                        search_depth: 0,
                        is_book: 0,};
-    let mut black_name = 0 as *const i8;
-    let mut white_name = 0 as *const i8;
     let mut opening_name = 0 as *const i8;
     let mut move_start: f64 = 0.;
     let mut move_stop: f64 = 0.;
@@ -1126,7 +1124,6 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     let mut row: i32 = 0;
     let mut empties: i32 = 0;
     let mut provided_move: [i32; 61] = [0; 61];
-    let mut output_stream = 0 as *mut FILE;
     /* Decode the predefined move sequence */
     if move_string.is_null() {
         provided_move_count = 0 as i32
@@ -1158,7 +1155,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         }
     }
     /* Open the output log file */
-    output_stream =
+    let output_stream =
         fopen(b"analysis.log\x00" as *const u8 as *const i8,
               b"w\x00" as *const u8 as *const i8);
     if output_stream.is_null() {
@@ -1179,13 +1176,13 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     }
     use_book = 0 as i32;
     reset_book_search();
-    black_name = b"Zebra\x00" as *const u8 as *const i8;
-    white_name = b"Zebra\x00" as *const u8 as *const i8;
+    let black_name = b"Zebra\x00" as *const u8 as *const i8;
+    let white_name = b"Zebra\x00" as *const u8 as *const i8;
     set_names::<FE>(black_name, white_name);
     set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                   score_sheet_row);
     set_evals(0.0f64, 0.0f64);
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i < 60 as i32 {
         black_moves[i as usize] = -(1 as i32);
         white_moves[i as usize] = -(1 as i32);
