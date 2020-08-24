@@ -3503,7 +3503,7 @@ pub unsafe fn correct_tree(max_empty: i32,
    Recursively exports all variations rooted at book position # INDEX.
 */
 unsafe extern "C" fn do_export(index: i32, stream: *mut FILE,
-                               move_vec: *mut i32) {
+                               move_vec: &mut [i32; 60]) {
     let mut i: i32 = 0;
     let mut child_count: i32 = 0;
     let mut allow_branch: i32 = 0;
@@ -3526,7 +3526,7 @@ unsafe extern "C" fn do_export(index: i32, stream: *mut FILE,
         let mut orientation: i32 = 0;
         let this_move: i32 =
             move_list[disks_played as usize][i as usize];
-        *move_vec.offset(disks_played as isize) = this_move;
+        *(move_vec.as_mut_ptr()).offset(disks_played as isize) = this_move;
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
         slot = probe_hash_table(val1, val2);
@@ -3545,10 +3545,10 @@ unsafe extern "C" fn do_export(index: i32, stream: *mut FILE,
         while i < disks_played {
             fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
                     'a' as i32 +
-                        *move_vec.offset(i as isize) % 10 as i32 -
+                        *(move_vec.as_mut_ptr()).offset(i as isize) % 10 as i32 -
                         1 as i32,
                     '0' as i32 +
-                        *move_vec.offset(i as isize) / 10 as i32);
+                        *(move_vec.as_mut_ptr()).offset(i as isize) / 10 as i32);
             i += 1
         }
         fprintf(stream, b"\n\x00" as *const u8 as *const i8);
@@ -3563,10 +3563,7 @@ unsafe extern "C" fn do_export(index: i32, stream: *mut FILE,
   Exports a set of lines that cover the tree.
 */
 pub unsafe fn export_tree(file_name: *const i8) {
-    let mut i: i32 = 0;
-    let mut move_vec: [i32; 60] = [0; 60];
-    let mut stream: *mut FILE = 0 as *mut FILE;
-    stream = fopen(file_name, b"w\x00" as *const u8 as *const i8);
+    let stream = fopen(file_name, b"w\x00" as *const u8 as *const i8);
     if stream.is_null() {
         fprintf(stderr,
                 b"Cannot open %s for writing.\n\x00" as *const u8 as
@@ -3574,13 +3571,14 @@ pub unsafe fn export_tree(file_name: *const i8) {
         return
     }
     prepare_tree_traversal();
-    i = 0 as i32;
+    let mut move_vec: [i32; 60] = [0; 60];
+    let mut i = 0 as i32;
     while i < book_node_count {
         let ref mut fresh42 = (*node.offset(i as isize)).flags;
         *fresh42 =
             (*fresh42 as i32 | 8 as i32) as u16;
         i += 1
     }
-    do_export(0 as i32, stream, move_vec.as_mut_ptr());
+    do_export(0 as i32, stream, &mut move_vec);
     fclose(stream);
 }
