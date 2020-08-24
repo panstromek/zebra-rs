@@ -1,13 +1,12 @@
-use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc, puts, printf};
+use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc, puts, printf, putc};
 use crate::src::zebra::_IO_FILE;
 use engine::src::error::{FrontEnd, FatalError};
 use engine::src::hash::HashEntry;
 use engine::src::thordb::C2RustUnnamed;
 use engine::src::zebra::EvaluationType;
 use crate::src::display::display_buffers;
-use crate::src::thordb::{sort_thor_games, choose_thor_opening_move_report};
-use crate::src::midgame::{midgame_display_status, midgame_display_ponder_move, midgame_display_initial_ponder_move, midgame_display_simple_ponder_move};
-use crate::src::osfbook::{report_in_get_book_move_2, report_in_get_book_move_1, report_unwanted_book_draw, report_do_evaluate};
+use crate::src::thordb::{sort_thor_games};
+use crate::src::osfbook::{print_move_alternatives};
 use std::ffi::c_void;
 use engine::src::end::*;
 use engine::{
@@ -23,8 +22,11 @@ use crate::{
         display::{display_status, send_status, send_status_time, send_status_pv, send_status_nodes, produce_eval_text, display_sweep, send_sweep},
     }
 };
-use engine::src::timer::get_elapsed_time;
-use engine::src::display::{clear_status, clear_sweep, echo};
+use engine::src::osfbook::candidate_list;
+use engine::src::midgame::*;
+use engine::src::display::{clear_status, echo, clear_sweep};
+use engine::src::timer::{get_elapsed_time, is_panic_abort};
+use engine::src::search::{hash_expand_pv, force_return};
 
 static mut buffer: [i8; 16] = [0; 16];
 
@@ -366,38 +368,168 @@ impl FrontEnd for LibcFatalError {
     unsafe fn strdup(s: *const i8) -> *mut i8 {
         unsafe { strdup(s) }
     }
-    #[inline(always)]
     fn report_do_evaluate(evaluation_stage_: i32) {
-        unsafe { report_do_evaluate(evaluation_stage_) }
+        unsafe {
+            putc('|' as i32, stdout);
+            if evaluation_stage_ % 5 as i32 == 0 as i32 {
+                printf(b" %d%% \x00" as *const u8 as *const i8,
+                       4 as i32 * evaluation_stage_);
+            }
+            fflush(stdout);
+        }
     }
-    #[inline(always)]
     fn report_unwanted_book_draw(this_move: i32) {
-        unsafe { report_unwanted_book_draw(this_move) }
+        unsafe {
+            printf(b"%c%c leads to an unwanted book draw\n\x00" as *const u8 as *const i8, 'a' as i32 + this_move % 10 as i32 - 1 as i32, '0' as i32 + this_move / 10 as i32);
+        }
     }
-    #[inline(always)]
+
     fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32) {
-        unsafe { report_in_get_book_move_1(side_to_move, remaining_slack) }
+        unsafe {
+            printf(b"Slack left is %.2f. \x00" as *const u8 as
+                       *const i8,
+                   remaining_slack as f64 / 128.0f64);
+            print_move_alternatives(side_to_move);
+        }
     }
-    #[inline(always)]
     fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32) {
-        unsafe { report_in_get_book_move_2(chosen_score, chosen_index, flags) }
+        unsafe {
+            send_status(b"-->   Book     \x00" as *const u8 as
+                *const i8);
+            if flags & 16 as i32 != 0 {
+                send_status(b"%+3d (exact)   \x00" as *const u8 as
+                                *const i8,
+                            chosen_score / 128 as i32);
+            } else if flags & 4 as i32 != 0 {
+                send_status(b"%+3d (WLD)     \x00" as *const u8 as
+                                *const i8,
+                            chosen_score / 128 as i32);
+            } else {
+                send_status(b"%+6.2f        \x00" as *const u8 as
+                                *const i8,
+                            chosen_score as f64 / 128.0f64);
+            }
+            if get_ponder_move() != 0 {
+                send_status(b"{%c%c} \x00" as *const u8 as *const i8,
+                            'a' as i32 + get_ponder_move() % 10 as i32 -
+                                1 as i32,
+                            '0' as i32 + get_ponder_move() / 10 as i32);
+            }
+            send_status(b"%c%c\x00" as *const u8 as *const i8,
+                        'a' as i32 +
+                            candidate_list[chosen_index as usize].move_0 %
+                                10 as i32 - 1 as i32,
+                        '0' as i32 +
+                            candidate_list[chosen_index as usize].move_0 /
+                                10 as i32);
+        }
     }
-    #[inline(always)]
     fn midgame_display_simple_ponder_move(move_0: i32) {
-        unsafe { midgame_display_simple_ponder_move(move_0) }
+        unsafe {
+            send_sweep(b"%c%c\x00" as *const u8 as *const i8,
+                       'a' as i32 + move_0 % 10 as i32 -
+                           1 as i32,
+                       '0' as i32 + move_0 / 10 as i32);
+        }
     }
-    #[inline(always)]
+
     fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, buffer_: &mut [i8; 32]) {
-        unsafe { midgame_display_initial_ponder_move(alpha, beta, buffer_) }
+        unsafe {
+            if alpha <= -(29000 as i32) && beta >= 29000 as i32 {
+                sprintf(buffer_.as_mut_ptr(),
+                        b"[-inf,inf]:\x00" as *const u8 as *const i8);
+            } else if alpha <= -(29000 as i32) &&
+                beta < 29000 as i32 {
+                sprintf(buffer_.as_mut_ptr(),
+                        b"[-inf,%.1f]:\x00" as *const u8 as *const i8,
+                        beta as f64 / 128.0f64);
+            } else if alpha > -(29000 as i32) &&
+                beta >= 29000 as i32 {
+                sprintf(buffer_.as_mut_ptr(),
+                        b"[%.1f,inf]:\x00" as *const u8 as *const i8,
+                        alpha as f64 / 128.0f64);
+            } else {
+                sprintf(buffer_.as_mut_ptr(),
+                        b"[%.1f,%.1f]:\x00" as *const u8 as *const i8,
+                        alpha as f64 / 128.0f64,
+                        beta as f64 / 128.0f64);
+            }
+            clear_sweep();
+            send_sweep(b"%-14s \x00" as *const u8 as *const i8,
+                       buffer_.as_mut_ptr());
+        }
     }
-    #[inline(always)]
-    fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32, searched: i32, update_pv: i32) {
-        unsafe { midgame_display_ponder_move(max_depth, alpha, beta, curr_val, searched, update_pv) }
+
+    fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32,
+                                   searched: i32, update_pv: i32) {
+        unsafe {
+            if update_pv != 0 {
+                if curr_val <= alpha {
+                    send_sweep(b"<%.2f\x00" as *const u8 as
+                                   *const i8,
+                               (curr_val + 1 as i32) as f64
+                                   / 128.0f64);
+                } else if curr_val >= beta {
+                    send_sweep(b">%.2f\x00" as *const u8 as
+                                   *const i8,
+                               (curr_val - 1 as i32) as f64
+                                   / 128.0f64);
+                } else {
+                    send_sweep(b"=%.2f\x00" as *const u8 as
+                                   *const i8,
+                               curr_val as f64 / 128.0f64);
+                }
+            }
+            send_sweep(b" \x00" as *const u8 as *const i8);
+            if update_pv != 0 && searched > 0 as i32 && echo != 0 &&
+                max_depth >= 10 as i32 {
+                display_sweep(stdout);
+            }
+        }
     }
-    #[inline(always)]
-    fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: &EvaluationType, depth: i32) {
-        unsafe { midgame_display_status(side_to_move, max_depth, eval_info,   depth) }
+
+     fn midgame_display_status(side_to_move: i32, max_depth: i32,
+                                         eval_info: &EvaluationType,
+                                         depth: i32) {
+         unsafe {
+             clear_status();
+             send_status(b"--> \x00" as *const u8 as *const i8);
+             if is_panic_abort() != 0 || force_return != 0 {
+                 send_status(b"*\x00" as *const u8 as *const i8);
+             } else {
+                 send_status(b" \x00" as *const u8 as *const i8);
+             }
+             send_status(b"%2d  \x00" as *const u8 as *const i8,
+                         depth);
+             let eval_str = produce_eval_text(eval_info, 1 as i32);
+             send_status(b"%-10s  \x00" as *const u8 as *const i8,
+                         eval_str);
+             free(eval_str as *mut std::ffi::c_void);
+             let node_val = counter_value(&mut nodes);
+             send_status_nodes(node_val);
+             if get_ponder_move() != 0 {
+                 send_status(b"{%c%c} \x00" as *const u8 as
+                                 *const i8,
+                             'a' as i32 + get_ponder_move() % 10 as i32
+                                 - 1 as i32,
+                             '0' as i32 +
+                                 get_ponder_move() / 10 as i32);
+             }
+             hash_expand_pv(side_to_move, 0 as i32, 4 as i32,
+                            12345678 as i32);
+             send_status_pv(pv[0 as i32 as usize].as_mut_ptr(),
+                            max_depth);
+             send_status_time(get_elapsed_time::<FE>());
+             if get_elapsed_time::<FE>() != 0.0f64 {
+                 send_status(b"%6.0f %s\x00" as *const u8 as
+                                 *const i8,
+                             node_val / (get_elapsed_time::<FE>() + 0.001f64),
+                             b"nps\x00" as *const u8 as *const i8);
+             }
+
+         }
     }
+
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
         unsafe {
             printf(b"%s @ %d <--> %d of %d\n\x00" as *const u8 as
@@ -423,9 +555,31 @@ impl FrontEnd for LibcFatalError {
             puts(b"This COULD happen (2) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
         }
     }
-    #[inline(always)]
     fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
-        unsafe { choose_thor_opening_move_report(freq_sum, match_count, move_list) }
+        unsafe {
+            printf(b"%s:        \x00" as *const u8 as *const i8,
+                   b"Thor database\x00" as *const u8 as *const i8);
+            let mut i = 0 as i32;
+            while i < match_count {
+                printf(b"%c%c: %4.1f%%    \x00" as *const u8 as
+                           *const i8,
+                       'a' as i32 +
+                           move_list[i as usize].move_0 % 10 as i32 -
+                           1 as i32,
+                       '0' as i32 +
+                           move_list[i as usize].move_0 / 10 as i32,
+                       100.0f64 *
+                           move_list[i as usize].frequency as f64 /
+                           freq_sum as f64);
+                if i % 6 as i32 == 4 as i32 {
+                    puts(b"\x00" as *const u8 as *const i8);
+                }
+                i += 1
+            }
+            if match_count % 6 as i32 != 5 as i32 {
+                puts(b"\x00" as *const u8 as *const i8);
+            }
+        }
     }
     #[inline(always)]
     fn sort_thor_games(count: i32) {

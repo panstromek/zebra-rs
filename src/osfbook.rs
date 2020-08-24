@@ -68,14 +68,6 @@ pub unsafe fn minimax_tree() {
     puts(b"\x00" as *const u8 as *const i8);
 }
 
-pub unsafe fn report_do_evaluate(evaluation_stage_: i32) {
-    putc('|' as i32, stdout);
-    if evaluation_stage_ % 5 as i32 == 0 as i32 {
-        printf(b" %d%% \x00" as *const u8 as *const i8,
-               4 as i32 * evaluation_stage_);
-    }
-    fflush(stdout);
-}
 /*
    EVALUATE_TREE
    Finds the most promising deviations from all nodes in the tree.
@@ -2133,9 +2125,6 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
     fclose(result_stream);
 }
 
-pub unsafe fn report_unwanted_book_draw(this_move: i32) {
-    printf(b"%c%c leads to an unwanted book draw\n\x00" as *const u8 as *const i8, 'a' as i32 + this_move % 10 as i32 - 1 as i32, '0' as i32 + this_move / 10 as i32);
-}
 /*
    PRINT_MOVE_ALTERNATIVES
    Displays all available book moves from a position.
@@ -2236,44 +2225,6 @@ pub unsafe fn print_move_alternatives(side_to_move:
             i += 1
         }
     };
-}
-
-pub unsafe fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32) {
-    printf(b"Slack left is %.2f. \x00" as *const u8 as
-               *const i8,
-           remaining_slack as f64 / 128.0f64);
-    print_move_alternatives(side_to_move);
-}
-
-pub unsafe fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32) {
-    send_status(b"-->   Book     \x00" as *const u8 as
-        *const i8);
-    if flags & 16 as i32 != 0 {
-        send_status(b"%+3d (exact)   \x00" as *const u8 as
-                        *const i8,
-                    chosen_score / 128 as i32);
-    } else if flags & 4 as i32 != 0 {
-        send_status(b"%+3d (WLD)     \x00" as *const u8 as
-                        *const i8,
-                    chosen_score / 128 as i32);
-    } else {
-        send_status(b"%+6.2f        \x00" as *const u8 as
-                        *const i8,
-                    chosen_score as f64 / 128.0f64);
-    }
-    if get_ponder_move() != 0 {
-        send_status(b"{%c%c} \x00" as *const u8 as *const i8,
-                    'a' as i32 + get_ponder_move() % 10 as i32 -
-                        1 as i32,
-                    '0' as i32 + get_ponder_move() / 10 as i32);
-    }
-    send_status(b"%c%c\x00" as *const u8 as *const i8,
-                'a' as i32 +
-                    candidate_list[chosen_index as usize].move_0 %
-                        10 as i32 - 1 as i32,
-                '0' as i32 +
-                    candidate_list[chosen_index as usize].move_0 /
-                        10 as i32);
 }
 /*
   DUPSTR
