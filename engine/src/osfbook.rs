@@ -152,11 +152,10 @@ pub unsafe fn select_hash_slot(index: i32) {
 */
 pub unsafe fn probe_hash_table(val1: i32,
                            val2: i32) -> i32 {
-    let mut slot: i32 = 0;
     if hash_table_size == 0 as i32 {
-        return -(1 as i32)
+        -(1 as i32)
     } else {
-        slot = val1 % hash_table_size;
+        let mut slot = val1 % hash_table_size;
         while *book_hash_table.offset(slot as isize) != -(1 as i32) &&
             ((*node.offset(*book_hash_table.offset(slot as isize) as
                 isize)).hash_val2 != val2 ||
@@ -164,8 +163,8 @@ pub unsafe fn probe_hash_table(val1: i32,
                     isize)).hash_val1 != val1) {
             slot = (slot + 1 as i32) % hash_table_size
         }
-        return slot
-    };
+        slot
+    }
 }
 /*
    CREATE_HASH_REFERENCEE
@@ -173,14 +172,16 @@ pub unsafe fn probe_hash_table(val1: i32,
    into the node list.
 */
 pub unsafe fn create_hash_reference() {
-    let mut i: i32 = 0;
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i < hash_table_size {
         *book_hash_table.offset(i as isize) = -(1 as i32);
         i += 1
     }
-    i = 0 as i32;
-    while i < book_node_count { select_hash_slot(i); i += 1 };
+    let mut i = 0 as i32;
+    while i < book_node_count {
+        select_hash_slot(i);
+        i += 1
+    };
 }
 /*
    PREPARE_HASH
@@ -338,8 +339,7 @@ pub unsafe fn get_candidate_count() -> i32 {
     return candidate_count;
 }
 
-pub unsafe fn get_candidate(index: i32)
-                            -> CandidateMove {
+pub unsafe fn get_candidate(index: i32) -> CandidateMove {
     return candidate_list[index as usize];
 }
 
