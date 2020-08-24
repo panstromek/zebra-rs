@@ -19,7 +19,7 @@ use crate::{
 use crate::src::stubs::{ceil, abs};
 use crate::src::hash::add_hash;
 use crate::src::midgame::{tree_search, toggle_midgame_hash_usage};
-use crate::src::timer::{is_panic_abort, check_panic_abort, last_panic_check, clear_panic_abort, check_threshold, set_panic_threshold};
+use crate::src::timer::{is_panic_abort, check_panic_abort, last_panic_check, clear_panic_abort, check_threshold, set_panic_threshold, get_elapsed_time};
 use crate::src::display::{echo, reset_buffer_display};
 use crate::src::zebra::{EvaluationType};
 use crate::src::osfbook::{fill_endgame_hash, get_book_move, fill_move_alternatives};
@@ -2484,7 +2484,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         /* Don't try non-selective solve. */
         if any_search_result != 0 {
             if echo != 0 && (is_panic_abort() != 0 || force_return != 0) {
-                FE::end_report_semi_panic_abort();
+                FE::end_report_semi_panic_abort(get_elapsed_time::<FE>());
                 if full_output_mode != 0 {
                     let mut flags_0: u32 = 0;
                     flags_0 = 4 as i32 as u32;
@@ -2506,7 +2506,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             clear_panic_abort();
         } else {
             if echo != 0 {
-                FE::end_report_panic_abort_2();
+                FE::end_report_panic_abort_2(get_elapsed_time::<FE>());
             }
             root_eval = -(27000 as i32)
         }
@@ -2612,7 +2612,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     if is_panic_abort() != 0 || force_return != 0 {
         if any_search_result != 0 {
             if echo != 0 {
-                FE::end_report_semi_panic_abort_3();
+                FE::end_report_semi_panic_abort_3(get_elapsed_time::<FE>());
                 if full_output_mode != 0 {
                     let mut flags_2: u32 = 0;
                     flags_2 = 4 as i32 as u32;
@@ -2634,7 +2634,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             clear_panic_abort();
         } else {
             if echo != 0 {
-                FE::end_report_panic_abort();
+                FE::end_report_panic_abort(get_elapsed_time::<FE>());
             }
             root_eval = -(27000 as i32)
         }
@@ -2651,7 +2651,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     exact_score_failed = 0 as i32;
     if incomplete_search != 0 {
         if echo != 0 {
-            FE::end_report_semi_panic_abort_2();
+            FE::end_report_semi_panic_abort_2(get_elapsed_time::<FE>());
             if full_output_mode != 0 {
                 hash_expand_pv(side_to_move, 1 as i32,
                                4 as i32, 0 as i32);

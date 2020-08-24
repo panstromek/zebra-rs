@@ -27,6 +27,7 @@ use engine::src::display::{clear_status, echo, clear_sweep, interval2, interval1
 use engine::src::timer::{get_elapsed_time, is_panic_abort, get_real_timer};
 use engine::src::search::{hash_expand_pv, force_return};
 use std::env::args;
+use engine::src::game::CandidateMove;
 
 static mut buffer: [i8; 16] = [0; 16];
 
@@ -276,58 +277,54 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-    fn end_report_panic_abort_2() {
+    fn end_report_panic_abort_2(elapsed_time: f64) {
         unsafe {
-            printf(b"%s %.1f %c %s\n\x00" as *const u8 as
-                       *const i8,
-                   b"Panic abort after\x00" as *const u8 as
-                       *const i8, get_elapsed_time::<FE>(),
-                   's' as i32,
-                   b"in selective search\x00" as *const u8 as
-                       *const i8);
+            printf(b"%s %.1f %c %s\n\x00" as *const u8 as *const i8,
+                   b"Panic abort after\x00" as *const u8 as *const i8, elapsed_time, 's' as i32,
+                   b"in selective search\x00" as *const u8 as *const i8);
         }
     }
 
-     fn end_report_semi_panic_abort_3() {
+     fn end_report_semi_panic_abort_3(elapsed_time: f64) {
          unsafe {
              printf(b"%s %.1f %c %s\n\x00" as *const u8 as
                         *const i8,
                     b"Semi-panic abort after\x00" as *const u8 as
-                        *const i8, get_elapsed_time::<FE>(),
+                        *const i8, elapsed_time,
                     's' as i32,
                     b"in WLD search\x00" as *const u8 as
                         *const i8);
          }
     }
 
-    fn end_report_semi_panic_abort_2() {
+    fn end_report_semi_panic_abort_2(elapsed_time: f64) {
         unsafe {
             printf(b"%s %.1f %c %s\n\x00" as *const u8 as *const i8,
                    b"Semi-panic abort after\x00" as *const u8 as
-                       *const i8, get_elapsed_time::<FE>(), 's' as i32,
+                       *const i8, elapsed_time, 's' as i32,
                    b"in exact search\x00" as *const u8 as
                        *const i8);
         }
     }
 
-    fn end_report_panic_abort() {
+    fn end_report_panic_abort(elapsed_time: f64) {
         unsafe {
             printf(b"%s %.1f %c %s\n\x00" as *const u8 as
                        *const i8,
                    b"Panic abort after\x00" as *const u8 as
-                       *const i8, get_elapsed_time::<FE>(),
+                       *const i8, elapsed_time,
                    's' as i32,
                    b"in WLD search\x00" as *const u8 as
                        *const i8);
         }
     }
 
-    fn end_report_semi_panic_abort() {
+    fn end_report_semi_panic_abort(elapsed_time: f64) {
         unsafe {
             printf(b"%s %.1f %c %s\n\x00" as *const u8 as
                        *const i8,
                    b"Semi-panic abort after\x00" as *const u8 as
-                       *const i8, get_elapsed_time::<FE>(), // FIXME resolve if we should extract this as param??
+                       *const i8, elapsed_time,
                    's' as i32,
                    b"in selective search\x00" as *const u8 as
                        *const i8);
@@ -340,7 +337,6 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-    #[inline(always)]
     fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i32; 64]) {
         unsafe {
             printf(b"pv_depth[0] = %d\n\x00" as *const u8 as
@@ -416,7 +412,7 @@ impl FrontEnd for LibcFatalError {
             print_move_alternatives(side_to_move);
         }
     }
-    fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32) {
+    fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, candidate_list_: &[CandidateMove; 60]) {
         unsafe {
             send_status(b"-->   Book     \x00" as *const u8 as
                 *const i8);
@@ -441,10 +437,10 @@ impl FrontEnd for LibcFatalError {
             }
             send_status(b"%c%c\x00" as *const u8 as *const i8,
                         'a' as i32 +
-                            candidate_list[chosen_index as usize].move_0 %
+                            candidate_list_[chosen_index as usize].move_0 %
                                 10 as i32 - 1 as i32,
                         '0' as i32 +
-                            candidate_list[chosen_index as usize].move_0 /
+                            candidate_list_[chosen_index as usize].move_0 /
                                 10 as i32);
         }
     }
