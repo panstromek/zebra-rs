@@ -5,12 +5,28 @@ use engine::src::hash::HashEntry;
 use engine::src::thordb::C2RustUnnamed;
 use engine::src::zebra::EvaluationType;
 use crate::src::display::display_buffers;
-use crate::src::end::{after_update_best_list_verbose, before_update_best_list_verbose, end_tree_search_output_some_second_stats, end_display_zero_status, end_report_semi_panic_abort, end_report_panic_abort, end_report_semi_panic_abort_2, end_report_semi_panic_abort_3, end_report_panic_abort_2, send_solve_status, end_tree_search_level_0_report, end_tree_search_level_0_ponder_0_report, end_tree_search_output_some_stats, end_tree_search_level_0_ponder_0_short_report, end_tree_search_some_pv_stats_report};
 use crate::src::thordb::{sort_thor_games, choose_thor_opening_move_report};
-use crate::src::getcoeff::report_mirror_symetry_error;
 use crate::src::midgame::{midgame_display_status, midgame_display_ponder_move, midgame_display_initial_ponder_move, midgame_display_simple_ponder_move};
 use crate::src::osfbook::{report_in_get_book_move_2, report_in_get_book_move_1, report_unwanted_book_draw, report_do_evaluate};
 use std::ffi::c_void;
+use engine::src::end::*;
+use engine::{
+    src:: {
+        search::{nodes, get_ponder_move, set_current_eval},
+        counter::{counter_value},
+        globals::{pv},
+    }
+};
+use crate::{
+    src::{
+        stubs::{fflush, sprintf, stdout},
+        display::{display_status, send_status, send_status_time, send_status_pv, send_status_nodes, produce_eval_text, display_sweep, send_sweep},
+    }
+};
+use engine::src::timer::get_elapsed_time;
+use engine::src::display::{clear_status, clear_sweep, echo};
+
+static mut buffer: [i8; 16] = [0; 16];
 
 pub type FILE = _IO_FILE;
 pub type time_t = i64;
@@ -76,79 +92,226 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-    #[inline(always)]
     fn after_update_best_list_verbose(best_list: &mut [i32; 4]) {
-        unsafe { after_update_best_list_verbose(best_list.as_mut_ptr()) }
+        unsafe {
+            let best_list = best_list.as_mut_ptr();
+            printf(b"      After:  \x00" as *const u8 as *const i8);
+            let mut i = 0 as i32;
+            while i < 4 as i32 {
+                printf(b"%2d \x00" as *const u8 as *const i8,
+                       *best_list.offset(i as isize));
+                i += 1
+            }
+            puts(b"\x00" as *const u8 as *const i8);
+        }
     }
-
-    #[inline(always)]
     fn before_update_best_list_verbose(best_list: &mut [i32; 4], move_0: i32, best_list_index: i32, best_list_length: &mut i32) {
-        unsafe { before_update_best_list_verbose(best_list.as_mut_ptr(), move_0, best_list_index, best_list_length) }
+        let best_list = best_list.as_mut_ptr();
+        unsafe {
+            let mut i: i32 = 0;
+            printf(b"move=%2d  index=%d  length=%d      \x00" as *const u8 as
+                       *const i8, move_0, best_list_index,
+                   *best_list_length);
+            printf(b"Before:  \x00" as *const u8 as *const i8);
+            i = 0 as i32;
+            while i < 4 as i32 {
+                printf(b"%2d \x00" as *const u8 as *const i8,
+                       *best_list.offset(i as isize));
+                i += 1
+            }
+        }
     }
 
-    #[inline(always)]
     fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32) {
-        unsafe { end_tree_search_output_some_second_stats(alpha, beta, curr_val, update_pv, move_index) }
+        unsafe {
+            if update_pv != 0 {
+                Self::end_tree_search_some_pv_stats_report(alpha, beta, curr_val)
+            }
+            send_sweep(b" \x00" as *const u8 as *const i8);
+            if update_pv != 0 && move_index > 0 as i32 && echo != 0 {
+                display_sweep(stdout);
+            }
+        }
     }
 
-    #[inline(always)]
     fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32) {
-        unsafe { end_tree_search_some_pv_stats_report(alpha, beta, curr_val) }
+        unsafe {
+            if curr_val <= alpha {
+                send_sweep(b"<%d\x00" as *const u8 as *const i8,
+                           curr_val + 1 as i32);
+            } else if curr_val >= beta {
+                send_sweep(b">%d\x00" as *const u8 as *const i8,
+                           curr_val - 1 as i32);
+            } else {
+                send_sweep(b"=%d\x00" as *const u8 as *const i8,
+                           curr_val);
+                // TODO wtf are these???? they are not used...
+                true_found = 1 as i32;
+                true_val = curr_val
+            }
+        }
     }
 
-    #[inline(always)]
     fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32) {
-        unsafe { end_tree_search_level_0_ponder_0_short_report(move_0, first) }
+        unsafe {
+            if first != 0 {
+                send_sweep(b"%-10s \x00" as *const u8 as *const i8,
+                           buffer.as_mut_ptr());
+            }
+            send_sweep(b"%c%c\x00" as *const u8 as *const i8,
+                       'a' as i32 + move_0 % 10 as i32 -
+                           1 as i32,
+                       '0' as i32 + move_0 / 10 as i32);
+        }
     }
 
-    #[inline(always)]
     fn end_tree_search_output_some_stats(entry: &HashEntry) {
-        unsafe { end_tree_search_output_some_stats(entry) }
+        /* Output some stats */
+        unsafe {
+            send_sweep(b"%c%c\x00" as *const u8 as *const i8,
+                       'a' as i32 +
+                           entry.move_0[0 as i32 as usize] %
+                               10 as i32 - 1 as i32,
+                       '0' as i32 +
+                           entry.move_0[0 as i32 as usize] /
+                               10 as i32);
+            if entry.flags as i32 & 16 as i32 != 0 &&
+                entry.flags as i32 & 4 as i32 != 0 {
+                send_sweep(b"=%d\x00" as *const u8 as *const i8,
+                           entry.eval);
+            } else if entry.flags as i32 & 16 as i32 != 0
+                &&
+                entry.flags as i32 & 1 as i32 !=
+                    0 {
+                send_sweep(b">%d\x00" as *const u8 as *const i8,
+                           entry.eval - 1 as i32);
+            } else {
+                send_sweep(b"<%d\x00" as *const u8 as *const i8,
+                           entry.eval + 1 as i32);
+            }
+            fflush(stdout);
+        }
     }
 
-    #[inline(always)]
-    fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32) {
-        unsafe { end_tree_search_level_0_ponder_0_report(alpha, beta, result) }
+     fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32) {
+         unsafe {
+             send_sweep(b"%-10s \x00" as *const u8 as *const i8,
+                        buffer.as_mut_ptr());
+             send_sweep(b"%c%c\x00" as *const u8 as *const i8,
+                        'a' as i32 + best_move % 10 as i32 -
+                            1 as i32,
+                        '0' as i32 + best_move / 10 as i32);
+             if result <= alpha {
+                 send_sweep(b"<%d\x00" as *const u8 as *const i8,
+                            result + 1 as i32);
+             } else if result >= beta {
+                 send_sweep(b">%d\x00" as *const u8 as *const i8,
+                            result - 1 as i32);
+             } else {
+                 send_sweep(b"=%d\x00" as *const u8 as *const i8,
+                            result);
+             }
+         }
     }
 
-    #[inline(always)]
     fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
-        unsafe { end_tree_search_level_0_report(alpha, beta) }
+        unsafe {
+            sprintf(buffer.as_mut_ptr(), b"[%d,%d]:\x00" as *const u8 as *const i8, alpha, beta);
+            clear_sweep();
+        }
+    }
+    /*
+      SEND_SOLVE_STATUS
+      Displays endgame results - partial or full.
+    */
+    fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType) {
+        unsafe {
+            set_current_eval(*eval_info);
+            clear_status();
+            send_status(b"-->  %2d  \x00" as *const u8 as *const i8, empties);
+            let eval_str = produce_eval_text(&*eval_info, 1 as i32);
+            send_status(b"%-10s  \x00" as *const u8 as *const i8, eval_str);
+            free(eval_str as *mut std::ffi::c_void);
+            let node_val = counter_value(&mut nodes);
+            send_status_nodes(node_val);
+            if get_ponder_move() != 0 {
+                send_status(b"{%c%c} \x00" as *const u8 as *const i8,
+                            'a' as i32 + get_ponder_move() % 10 as i32 -
+                                1 as i32,
+                            '0' as i32 + get_ponder_move() / 10 as i32);
+            }
+            send_status_pv(pv[0 as i32 as usize].as_mut_ptr(), empties);
+            send_status_time(get_elapsed_time::<FE>());
+            if get_elapsed_time::<FE>() > 0.0001f64 {
+                send_status(b"%6.0f %s  \x00" as *const u8 as *const i8,
+                            node_val / (get_elapsed_time::<FE>() + 0.0001f64),
+                            b"nps\x00" as *const u8 as *const i8);
+            };
+        }
     }
 
-    #[inline(always)]
-    fn send_solve_status(empties: i32, side_to_move: i32, eval_info: &mut EvaluationType) {
-        unsafe { send_solve_status(empties, side_to_move, eval_info) }
-    }
-
-    #[inline(always)]
     fn end_report_panic_abort_2() {
-        unsafe { end_report_panic_abort_2() }
+        unsafe {
+            printf(b"%s %.1f %c %s\n\x00" as *const u8 as
+                       *const i8,
+                   b"Panic abort after\x00" as *const u8 as
+                       *const i8, get_elapsed_time::<FE>(),
+                   's' as i32,
+                   b"in selective search\x00" as *const u8 as
+                       *const i8);
+        }
     }
 
-    #[inline(always)]
-    fn end_report_semi_panic_abort_3() {
-        unsafe { end_report_semi_panic_abort_3() }
+     fn end_report_semi_panic_abort_3() {
+         unsafe {
+             printf(b"%s %.1f %c %s\n\x00" as *const u8 as
+                        *const i8,
+                    b"Semi-panic abort after\x00" as *const u8 as
+                        *const i8, get_elapsed_time::<FE>(),
+                    's' as i32,
+                    b"in WLD search\x00" as *const u8 as
+                        *const i8);
+         }
     }
 
-    #[inline(always)]
     fn end_report_semi_panic_abort_2() {
-        unsafe { end_report_semi_panic_abort_2() }
+        unsafe {
+            printf(b"%s %.1f %c %s\n\x00" as *const u8 as *const i8,
+                   b"Semi-panic abort after\x00" as *const u8 as
+                       *const i8, get_elapsed_time::<FE>(), 's' as i32,
+                   b"in exact search\x00" as *const u8 as
+                       *const i8);
+        }
     }
 
-    #[inline(always)]
     fn end_report_panic_abort() {
-        unsafe { end_report_panic_abort() }
+        unsafe {
+            printf(b"%s %.1f %c %s\n\x00" as *const u8 as
+                       *const i8,
+                   b"Panic abort after\x00" as *const u8 as
+                       *const i8, get_elapsed_time::<FE>(),
+                   's' as i32,
+                   b"in WLD search\x00" as *const u8 as
+                       *const i8);
+        }
     }
 
-    #[inline(always)]
     fn end_report_semi_panic_abort() {
-        unsafe { end_report_semi_panic_abort() }
+        unsafe {
+            printf(b"%s %.1f %c %s\n\x00" as *const u8 as
+                       *const i8,
+                   b"Semi-panic abort after\x00" as *const u8 as
+                       *const i8, get_elapsed_time::<FE>(), // FIXME resolve if we should extract this as param??
+                   's' as i32,
+                   b"in selective search\x00" as *const u8 as
+                       *const i8);
+        }
     }
 
-    #[inline(always)]
     fn end_display_zero_status() {
-        unsafe { end_display_zero_status() }
+        unsafe {
+            display_status(stdout, 0 as i32);
+        }
     }
 
     #[inline(always)]
@@ -224,8 +387,8 @@ impl FrontEnd for LibcFatalError {
         unsafe { midgame_display_simple_ponder_move(move_0) }
     }
     #[inline(always)]
-    fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, buffer: &mut [i8; 32]) {
-        unsafe { midgame_display_initial_ponder_move(alpha, beta, buffer) }
+    fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, buffer_: &mut [i8; 32]) {
+        unsafe { midgame_display_initial_ponder_move(alpha, beta, buffer_) }
     }
     #[inline(always)]
     fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32, searched: i32, update_pv: i32) {
@@ -235,9 +398,18 @@ impl FrontEnd for LibcFatalError {
     fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: &EvaluationType, depth: i32) {
         unsafe { midgame_display_status(side_to_move, max_depth, eval_info,   depth) }
     }
-    #[inline(always)]
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
-        unsafe { report_mirror_symetry_error(count, i, first_mirror_offset, first_item, second_item) }
+        unsafe {
+            printf(b"%s @ %d <--> %d of %d\n\x00" as *const u8 as
+                       *const i8,
+                   b"Mirror symmetry error\x00" as *const u8 as
+                       *const i8, i, first_mirror_offset,
+                   count);
+            printf(b"%d <--> %d\n\x00" as *const u8 as
+                       *const i8,
+                   first_item,
+                   second_item);
+        }
     }
     #[inline(always)]
     fn thordb_report_flipped_0_first() {
