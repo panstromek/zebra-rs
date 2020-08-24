@@ -425,26 +425,6 @@ pub unsafe fn display_sweep(stream: *mut FILE) {
     sweep_modified = 0 as i32;
 }
 /*
-  DISPLAY_BUFFERS
-  If an update has happened and the last display was long enough ago,
-  output relevant buffers.
-*/
-pub unsafe fn display_buffers() {
-    let timer = get_real_timer::<FE>();
-    if timer - last_output >= interval2 || timed_buffer_management == 0 {
-        display_status(stdout, 0 as i32);
-        status_modified = 0 as i32;
-        if timer - last_output >= interval2 {
-            if sweep_modified != 0 { display_sweep(stdout); }
-            last_output = timer;
-            /* Display the sweep at Fibonacci-spaced times */
-            let new_interval = interval1 + interval2;
-            interval1 = interval2;
-            interval2 = new_interval
-        }
-    };
-}
-/*
   PRODUCE_EVAL_TEXT
   Convert a result descriptor into a string intended for output.
 */
