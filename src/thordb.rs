@@ -535,31 +535,6 @@ pub unsafe fn sort_thor_games(count: i32) {
                        -> i32));
 }
 
-pub unsafe fn choose_thor_opening_move_report(
-    freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
-    printf(b"%s:        \x00" as *const u8 as *const i8,
-           b"Thor database\x00" as *const u8 as *const i8);
-    let mut i = 0 as i32;
-    while i < match_count {
-        printf(b"%c%c: %4.1f%%    \x00" as *const u8 as
-                   *const i8,
-               'a' as i32 +
-                   move_list[i as usize].move_0 % 10 as i32 -
-                   1 as i32,
-               '0' as i32 +
-                   move_list[i as usize].move_0 / 10 as i32,
-               100.0f64 *
-                   move_list[i as usize].frequency as f64 /
-                   freq_sum as f64);
-        if i % 6 as i32 == 4 as i32 {
-            puts(b"\x00" as *const u8 as *const i8);
-        }
-        i += 1
-    }
-    if match_count % 6 as i32 != 5 as i32 {
-        puts(b"\x00" as *const u8 as *const i8);
-    }
-}
 /*
   PRINT_THOR_MATCHES
   Outputs the MAX_GAMES first games found by the latest
