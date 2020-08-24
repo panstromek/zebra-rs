@@ -127,117 +127,117 @@ unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
     return strtol(__nptr, 0 as *mut ::std::ffi::c_void as *mut *mut i8,
                   10 as i32) as i32;
 }
-#[no_mangle]
+
 pub static mut objective: f64 = 0.;
-#[no_mangle]
+
 pub static mut abs_error_sum: f64 = 0.;
-#[no_mangle]
+
 pub static mut max_delta: f64 = 0.;
-#[no_mangle]
+
 pub static mut average_delta: f64 = 0.;
-#[no_mangle]
+
 pub static mut delta_sum: f64 = 0.;
-#[no_mangle]
+
 pub static mut quad_coeff: f64 = 0.;
-#[no_mangle]
+
 pub static mut lin_coeff: f64 = 0.;
-#[no_mangle]
+
 pub static mut const_coeff: f64 = 0.;
-#[no_mangle]
+
 pub static mut total_weight: f64 = 0.;
-#[no_mangle]
+
 pub static mut weight: [f64; 61] = [0.; 61];
-#[no_mangle]
+
 pub static mut stage_count: i32 = 0;
-#[no_mangle]
+
 pub static mut analysis_stage: i32 = 0;
-#[no_mangle]
+
 pub static mut update_count: i32 = 0;
-#[no_mangle]
+
 pub static mut last_active: i32 = 0;
-#[no_mangle]
+
 pub static mut max_positions: i32 = 0;
-#[no_mangle]
+
 pub static mut position_count: i32 = 0;
-#[no_mangle]
+
 pub static mut max_diff: i32 = 0;
-#[no_mangle]
+
 pub static mut relevant_count: i32 = 0;
-#[no_mangle]
+
 pub static mut node_count: i32 = 0;
-#[no_mangle]
+
 pub static mut interval: i32 = 0;
-#[no_mangle]
+
 pub static mut buffer_size: i32 = 0;
-#[no_mangle]
+
 pub static mut node_buffer_pos: i32 = 0;
-#[no_mangle]
+
 pub static mut short_buffer_pos: i32 = 0;
-#[no_mangle]
+
 pub static mut node_allocations: i32 = 0;
-#[no_mangle]
+
 pub static mut short_allocations: i32 = 0;
-#[no_mangle]
+
 pub static mut stage: [i32; 64] = [0; 64];
-#[no_mangle]
+
 pub static mut active: [i32; 61] = [0; 61];
-#[no_mangle]
+
 pub static mut compact: [i32; 1048576] = [0; 1048576];
-#[no_mangle]
+
 pub static mut mirror: [i32; 6561] = [0; 6561];
-#[no_mangle]
+
 pub static mut flip52: [i32; 59049] = [0; 59049];
-#[no_mangle]
+
 pub static mut mirror7: [i32; 2187] = [0; 2187];
-#[no_mangle]
+
 pub static mut mirror6: [i32; 729] = [0; 729];
-#[no_mangle]
+
 pub static mut mirror5: [i32; 243] = [0; 243];
-#[no_mangle]
+
 pub static mut mirror4: [i32; 81] = [0; 81];
-#[no_mangle]
+
 pub static mut mirror3: [i32; 27] = [0; 27];
-#[no_mangle]
+
 pub static mut mirror82x: [i32; 59049] = [0; 59049];
-#[no_mangle]
+
 pub static mut identity10: [i32; 59049] = [0; 59049];
-#[no_mangle]
+
 pub static mut flip33: [i32; 19683] = [0; 19683];
-#[no_mangle]
+
 pub static mut mirror33: [i32; 19683] = [0; 19683];
-#[no_mangle]
+
 pub static mut board: [i32; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut row_pattern: [i32; 8] = [0; 8];
-#[no_mangle]
+
 pub static mut col_pattern: [i32; 8] = [0; 8];
-#[no_mangle]
+
 pub static mut diag1_pattern: [i32; 15] = [0; 15];
-#[no_mangle]
+
 pub static mut diag2_pattern: [i32; 15] = [0; 15];
-#[no_mangle]
+
 pub static mut row_no: [i32; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut row_index: [i32; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut col_no: [i32; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut col_index: [i32; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut diag1_no: [i32; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut diag1_index: [i32; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut diag2_no: [i32; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut diag2_index: [i32; 100] = [0; 100];
-#[no_mangle]
+
 pub static mut short_buffer: *mut i16 =
     0 as *const i16 as *mut i16;
-#[no_mangle]
+
 pub static mut position_list: *mut CompactPosition =
     0 as *const CompactPosition as *mut CompactPosition;
-#[no_mangle]
+
 pub static mut constant: InfoItem =
     InfoItem{solution: 0.,
         gradient: 0.,
@@ -245,7 +245,7 @@ pub static mut constant: InfoItem =
         pattern: 0,
         frequency: 0,
         most_common: 0,};
-#[no_mangle]
+
 pub static mut parity: InfoItem =
     InfoItem{solution: 0.,
         gradient: 0.,
@@ -253,7 +253,7 @@ pub static mut parity: InfoItem =
         pattern: 0,
         frequency: 0,
         most_common: 0,};
-#[no_mangle]
+
 pub static mut afile: [InfoItem; 6561] =
     [InfoItem{solution: 0.,
         gradient: 0.,
@@ -261,7 +261,7 @@ pub static mut afile: [InfoItem; 6561] =
         pattern: 0,
         frequency: 0,
         most_common: 0,}; 6561];
-#[no_mangle]
+
 pub static mut bfile: [InfoItem; 6561] =
     [InfoItem{solution: 0.,
         gradient: 0.,
@@ -269,7 +269,7 @@ pub static mut bfile: [InfoItem; 6561] =
         pattern: 0,
         frequency: 0,
         most_common: 0,}; 6561];
-#[no_mangle]
+
 pub static mut cfile: [InfoItem; 6561] =
     [InfoItem{solution: 0.,
         gradient: 0.,
@@ -277,7 +277,7 @@ pub static mut cfile: [InfoItem; 6561] =
         pattern: 0,
         frequency: 0,
         most_common: 0,}; 6561];
-#[no_mangle]
+
 pub static mut dfile: [InfoItem; 6561] =
     [InfoItem{solution: 0.,
         gradient: 0.,
@@ -285,7 +285,7 @@ pub static mut dfile: [InfoItem; 6561] =
         pattern: 0,
         frequency: 0,
         most_common: 0,}; 6561];
-#[no_mangle]
+
 pub static mut corner52: [InfoItem; 59049] =
     [InfoItem{solution: 0.,
         gradient: 0.,
@@ -293,7 +293,7 @@ pub static mut corner52: [InfoItem; 59049] =
         pattern: 0,
         frequency: 0,
         most_common: 0,}; 59049];
-#[no_mangle]
+
 pub static mut diag8: [InfoItem; 6561] =
     [InfoItem{solution: 0.,
         gradient: 0.,
@@ -301,7 +301,7 @@ pub static mut diag8: [InfoItem; 6561] =
         pattern: 0,
         frequency: 0,
         most_common: 0,}; 6561];
-#[no_mangle]
+
 pub static mut diag7: [InfoItem; 2187] =
     [InfoItem{solution: 0.,
         gradient: 0.,
@@ -309,7 +309,7 @@ pub static mut diag7: [InfoItem; 2187] =
         pattern: 0,
         frequency: 0,
         most_common: 0,}; 2187];
-#[no_mangle]
+
 pub static mut diag6: [InfoItem; 729] =
     [InfoItem{solution: 0.,
         gradient: 0.,
@@ -317,7 +317,7 @@ pub static mut diag6: [InfoItem; 729] =
         pattern: 0,
         frequency: 0,
         most_common: 0,}; 729];
-#[no_mangle]
+
 pub static mut diag5: [InfoItem; 243] =
     [InfoItem{solution: 0.,
         gradient: 0.,
@@ -325,7 +325,7 @@ pub static mut diag5: [InfoItem; 243] =
         pattern: 0,
         frequency: 0,
         most_common: 0,}; 243];
-#[no_mangle]
+
 pub static mut diag4: [InfoItem; 81] =
     [InfoItem{solution: 0.,
         gradient: 0.,
@@ -333,7 +333,7 @@ pub static mut diag4: [InfoItem; 81] =
         pattern: 0,
         frequency: 0,
         most_common: 0,}; 81];
-#[no_mangle]
+
 pub static mut corner33: [InfoItem; 19683] =
     [InfoItem{solution: 0.,
         gradient: 0.,
@@ -341,7 +341,7 @@ pub static mut corner33: [InfoItem; 19683] =
         pattern: 0,
         frequency: 0,
         most_common: 0,}; 19683];
-#[no_mangle]
+
 pub static mut afile2x: [InfoItem; 59049] =
     [InfoItem{solution: 0.,
         gradient: 0.,
@@ -349,19 +349,19 @@ pub static mut afile2x: [InfoItem; 59049] =
         pattern: 0,
         frequency: 0,
         most_common: 0,}; 59049];
-#[no_mangle]
+
 pub static mut inverse4: [i32; 81] = [0; 81];
-#[no_mangle]
+
 pub static mut inverse5: [i32; 243] = [0; 243];
-#[no_mangle]
+
 pub static mut inverse6: [i32; 729] = [0; 729];
-#[no_mangle]
+
 pub static mut inverse7: [i32; 2187] = [0; 2187];
-#[no_mangle]
+
 pub static mut inverse8: [i32; 6561] = [0; 6561];
-#[no_mangle]
+
 pub static mut inverse9: [i32; 19683] = [0; 19683];
-#[no_mangle]
+
 pub static mut inverse10: [i32; 59049] = [0; 59049];
 /*
   PACK_POSITION
@@ -369,8 +369,8 @@ pub static mut inverse10: [i32; 59049] = [0; 59049];
   in POSITION_LIST. Returns 1 if the position was incorporated,
   otherwise 0.
 */
-#[no_mangle]
-pub unsafe extern "C" fn pack_position(mut buffer: *mut i8,
+
+pub unsafe  fn pack_position(mut buffer: *mut i8,
                                        mut index: i32)
                                        -> i32 {
     let mut black_mask: i32 = 0;
@@ -447,8 +447,8 @@ pub unsafe extern "C" fn pack_position(mut buffer: *mut i8,
   UNPACK_POSITION
   Expand the 128-bit compressed position into a full board.
 */
-#[no_mangle]
-pub unsafe extern "C" fn unpack_position(mut index: i32) {
+
+pub unsafe  fn unpack_position(mut index: i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -475,8 +475,8 @@ pub unsafe extern "C" fn unpack_position(mut index: i32) {
   DISPLAY_BOARD
   Provides a crude position dump.
 */
-#[no_mangle]
-pub unsafe extern "C" fn display_board(mut index: i32) {
+
+pub unsafe  fn display_board(mut index: i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     puts(b"\x00" as *const u8 as *const i8);
@@ -509,8 +509,8 @@ pub unsafe extern "C" fn display_board(mut index: i32) {
    READ_POSITION_FILE
    Reads a game database and creates a game tree containing its games.
 */
-#[no_mangle]
-pub unsafe extern "C" fn read_position_file(mut file_name:
+
+pub unsafe  fn read_position_file(mut file_name:
                                             *mut i8) {
     let mut stream: *mut FILE = 0 as *mut FILE;
     let mut buffer: [i8; 100] = [0; 100];
@@ -555,8 +555,8 @@ pub unsafe extern "C" fn read_position_file(mut file_name:
   Computes the board patterns corresponding to rows, columns
   and diagonals.
 */
-#[no_mangle]
-pub unsafe extern "C" fn compute_patterns() {
+
+pub unsafe  fn compute_patterns() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -599,7 +599,7 @@ pub unsafe extern "C" fn compute_patterns() {
    Sorts an integer vector using bubble-sort.
 */
 #[inline]
-unsafe extern "C" fn sort(mut vec: *mut i32, mut count: i32) {
+unsafe  fn sort(mut vec: *mut i32, mut count: i32) {
     let mut i: i32 = 0;
     let mut temp: i32 = 0;
     let mut changed: i32 = 0;
@@ -625,8 +625,8 @@ unsafe extern "C" fn sort(mut vec: *mut i32, mut count: i32) {
    Takes a position and determines the values of all
    active features
 */
-#[no_mangle]
-pub unsafe extern "C" fn determine_features(mut side_to_move: i32,
+
+pub unsafe  fn determine_features(mut side_to_move: i32,
                                             mut stage_0: i32,
                                             mut global_parity:
                                             *mut i32,
@@ -1123,8 +1123,8 @@ pub unsafe extern "C" fn determine_features(mut side_to_move: i32,
    PERFORM_ANALYSIS
    Updates frequency counts.
 */
-#[no_mangle]
-pub unsafe extern "C" fn perform_analysis(mut index: i32) {
+
+pub unsafe  fn perform_analysis(mut index: i32) {
     let mut coeff: i32 = 0;
     let mut start: i32 = 0;
     let mut stop: i32 = 0;
@@ -1311,8 +1311,8 @@ pub unsafe extern "C" fn perform_analysis(mut index: i32) {
    PERFORM_EVALUATION
    Updates the gradient based on the position BRANCH.
 */
-#[no_mangle]
-pub unsafe extern "C" fn perform_evaluation(mut index: i32) {
+
+pub unsafe  fn perform_evaluation(mut index: i32) {
     let mut error: f64 = 0.;
     let mut grad_contrib: f64 = 0.;
     let mut curr_weight: f64 = 0.;
@@ -1472,8 +1472,8 @@ pub unsafe extern "C" fn perform_evaluation(mut index: i32) {
    Updates the parameters used to determine the optimal step length
    based on the position BRANCH.
 */
-#[no_mangle]
-pub unsafe extern "C" fn perform_step_update(mut index: i32) {
+
+pub unsafe  fn perform_step_update(mut index: i32) {
     let mut error: f64 = 0.;
     let mut grad_contrib: f64 = 0.;
     let mut curr_weight: f64 = 0.;
@@ -1591,11 +1591,7 @@ pub unsafe extern "C" fn perform_step_update(mut index: i32) {
    A wrapper to the function given by the function pointer BFUNC.
 */
 #[inline]
-unsafe extern "C" fn perform_action(mut bfunc:
-                                    Option<unsafe extern "C" fn(_:
-                                                                i32)
-                                                                -> ()>,
-                                    mut index: i32) {
+unsafe fn perform_action(mut bfunc: Option<unsafe fn(_: i32) -> ()>, mut index: i32) {
     node_count += 1;
     if active[(*position_list.offset(index as isize)).stage as usize] != 0 {
         relevant_count += 1;
@@ -1614,11 +1610,7 @@ unsafe extern "C" fn perform_action(mut bfunc:
    Applies the function BFUNC to all the (relevant)
    positions in the position list.
 */
-#[no_mangle]
-pub unsafe extern "C" fn iterate(mut bfunc:
-                                 Option<unsafe extern "C" fn(_:
-                                                             i32)
-                                                             -> ()>) {
+pub unsafe fn iterate(mut bfunc: Option<unsafe fn(_: i32) -> ()>) {
     let mut index: i32 = 0;
     index = 0 as i32;
     while index < position_count { perform_action(bfunc, index); index += 1 };
@@ -1627,42 +1619,36 @@ pub unsafe extern "C" fn iterate(mut bfunc:
    ANALYZE_GAMES
    Creates frequency statistics.
 */
-#[no_mangle]
-pub unsafe extern "C" fn analyze_games() {
+pub unsafe fn analyze_games() {
     node_count = 0 as i32;
     relevant_count = 0 as i32;
     interval = 0 as i32;
     iterate(Some(perform_analysis as
-        unsafe extern "C" fn(_: i32) -> ()));
+        unsafe  fn(_: i32) -> ()));
 }
 /*
    EVALUATE_GAMES
    Determines the gradient for all patterns.
 */
-#[no_mangle]
-pub unsafe extern "C" fn evaluate_games() {
+pub unsafe  fn evaluate_games() {
     node_count = 0 as i32;
     relevant_count = 0 as i32;
-    iterate(Some(perform_evaluation as
-        unsafe extern "C" fn(_: i32) -> ()));
+    iterate(Some(perform_evaluation as unsafe fn(_: i32) -> ()));
 }
 /*
    DETERMINE_GAMES
    Determines the optimal step length.
 */
-#[no_mangle]
-pub unsafe extern "C" fn determine_games() {
+pub unsafe  fn determine_games() {
     node_count = 0 as i32;
     relevant_count = 0 as i32;
-    iterate(Some(perform_step_update as
-        unsafe extern "C" fn(_: i32) -> ()));
+    iterate(Some(perform_step_update as unsafe fn(_: i32) -> ()));
 }
 /*
    PATTERN_SETUP
    Creates a bunch of maps between patterns.
 */
-#[no_mangle]
-pub unsafe extern "C" fn pattern_setup() {
+pub unsafe fn pattern_setup() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -2128,8 +2114,8 @@ pub unsafe extern "C" fn pattern_setup() {
    SAVE
    Writes a set of pattern values to disc.
 */
-#[no_mangle]
-pub unsafe extern "C" fn save(mut base: *const i8,
+
+pub unsafe  fn save(mut base: *const i8,
                               mut suffix: *mut i8,
                               mut items: *mut InfoItem,
                               mut count: i32) {
@@ -2167,8 +2153,8 @@ pub unsafe extern "C" fn save(mut base: *const i8,
    STORE_PATTERNS
    Writes all sets of feature values to disc.
 */
-#[no_mangle]
-pub unsafe extern "C" fn store_patterns() {
+
+pub unsafe  fn store_patterns() {
     let mut suffix: [i8; 8] = [0; 8];
     let mut file_name: [i8; 16] = [0; 16];
     let mut stream: *mut FILE = 0 as *mut FILE;
@@ -2233,8 +2219,8 @@ pub unsafe extern "C" fn store_patterns() {
    WRITE_LOG
    Saves info on the state of the optimization to disc.
 */
-#[no_mangle]
-pub unsafe extern "C" fn write_log(mut iteration: i32) {
+
+pub unsafe  fn write_log(mut iteration: i32) {
     let mut file_name: [i8; 32] = [0; 32];
     let mut stream: *mut FILE = 0 as *mut FILE;
     sprintf(file_name.as_mut_ptr(),
@@ -2261,8 +2247,8 @@ pub unsafe extern "C" fn write_log(mut iteration: i32) {
    Note: One-dimensional linear regression is no longer performed
    due to its poor performance.
 */
-#[no_mangle]
-pub unsafe extern "C" fn initialize_solution(mut base: *const i8,
+
+pub unsafe  fn initialize_solution(mut base: *const i8,
                                              mut item: *mut InfoItem,
                                              mut count: i32,
                                              _my_mirror:
@@ -2324,8 +2310,8 @@ pub unsafe extern "C" fn initialize_solution(mut base: *const i8,
    FIND_MOST_COMMON
    Finds and marks the most common pattern of a feature.
 */
-#[no_mangle]
-pub unsafe extern "C" fn find_most_common(mut item: *mut InfoItem,
+
+pub unsafe  fn find_most_common(mut item: *mut InfoItem,
                                           mut count: i32) {
     let mut i: i32 = 0;
     let mut index: i32 = 0;
@@ -2348,8 +2334,8 @@ pub unsafe extern "C" fn find_most_common(mut item: *mut InfoItem,
    Reads or calculates the starting point for features not
    corresponding to patterns in the board.
 */
-#[no_mangle]
-pub unsafe extern "C" fn initialize_non_patterns(mut base:
+
+pub unsafe  fn initialize_non_patterns(mut base:
                                                  *const i8) {
     let mut file_name: [i8; 32] = [0; 32];
     let mut stream: *mut FILE = 0 as *mut FILE;
@@ -2374,8 +2360,8 @@ pub unsafe extern "C" fn initialize_non_patterns(mut base:
    LIMIT_CHANGE
    Change one feature value, but not more than the damping specifies.
 */
-#[no_mangle]
-pub unsafe extern "C" fn limit_change(mut value: *mut f64,
+
+pub unsafe  fn limit_change(mut value: *mut f64,
                                       mut change: f32) {
     if change as f64 > 0.50f64 {
         change = 0.50f64 as f32
@@ -2390,8 +2376,8 @@ pub unsafe extern "C" fn limit_change(mut value: *mut f64,
    Notice that pattern 0 is not updated; it is removed to
    obtain linear independence,
 */
-#[no_mangle]
-pub unsafe extern "C" fn update_solution(mut item: *mut InfoItem,
+
+pub unsafe  fn update_solution(mut item: *mut InfoItem,
                                          mut count: i32,
                                          mut scale: f64) {
     let mut change: f64 = 0.;
@@ -2420,8 +2406,8 @@ pub unsafe extern "C" fn update_solution(mut item: *mut InfoItem,
    Update the search direction for a set of pattern using
    Fletcher-Reeves' update rule.
 */
-#[no_mangle]
-pub unsafe extern "C" fn update_search_direction(mut item: *mut InfoItem,
+
+pub unsafe  fn update_search_direction(mut item: *mut InfoItem,
                                                  mut count: i32,
                                                  mut beta: f64) {
     let mut i: i32 = 0;

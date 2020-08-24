@@ -2528,7 +2528,7 @@ static mut correction_script_name: *const i8 = 0 as *const i8;
   Output the position and its value according to the database
   to file.
 */
-unsafe extern "C" fn export_position(side_to_move: i32,
+unsafe fn export_position(side_to_move: i32,
                                      score: i32,
                                      target_file: *mut FILE) {
     let mut i: i32 = 0;
@@ -2576,7 +2576,7 @@ unsafe extern "C" fn export_position(side_to_move: i32,
    Calculates the book-only minimax value of node INDEX,
    not caring about deviations from the database.
 */
-unsafe extern "C" fn do_restricted_minimax(index: i32,
+unsafe fn do_restricted_minimax(index: i32,
                                            low: i32,
                                            high: i32,
                                            target_file: *mut FILE,
@@ -2708,7 +2708,7 @@ pub unsafe fn restricted_minimax_tree(low: i32,
    DO_MIDGAME_STATISTICS
    Recursively makes sure a subtree is evaluated to the specified depth.
 */
-unsafe extern "C" fn do_midgame_statistics(index: i32,
+unsafe fn do_midgame_statistics(index: i32,
                                            spec: StatisticsSpec) {
     let mut dummy_info: EvaluationType =
         EvaluationType{type_0: MIDGAME_EVAL,
@@ -2864,7 +2864,7 @@ pub unsafe fn generate_midgame_statistics(max_depth:
    Compare the scores produced by shallow searches to the
    exact score in an endgame position.
 */
-unsafe extern "C" fn endgame_correlation(mut side_to_move: i32,
+unsafe fn endgame_correlation(mut side_to_move: i32,
                                          best_score: i32,
                                          best_move: i32,
                                          min_disks: i32,
@@ -2954,7 +2954,7 @@ unsafe extern "C" fn endgame_correlation(mut side_to_move: i32,
    Recursively makes sure a subtree is evaluated to
    the specified depth.
 */
-unsafe extern "C" fn do_endgame_statistics(index: i32,
+unsafe fn do_endgame_statistics(index: i32,
                                            spec: StatisticsSpec) {
     let mut dummy_info: EvaluationType =
         EvaluationType{type_0: MIDGAME_EVAL,
@@ -3072,7 +3072,7 @@ pub unsafe fn generate_endgame_statistics(max_depth:
    and <= HIGH discs played. FLAGS specifies what kind of information
    is to be cleared - midgame, WLD or exact.
 */
-unsafe extern "C" fn do_clear(index: i32, low: i32,
+unsafe fn do_clear(index: i32, low: i32,
                               high: i32, flags: i32) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
@@ -3167,7 +3167,7 @@ pub unsafe fn clear_tree(low: i32,
    Performs endgame correction (WLD or full solve) of a node
    and (recursively) the subtree below it.
 */
-unsafe extern "C" fn do_correct(index: i32,
+unsafe fn do_correct(index: i32,
                                 max_empty: i32,
                                 full_solve: i32,
                                 target_name: *const i8,
@@ -3502,7 +3502,7 @@ pub unsafe fn correct_tree(max_empty: i32,
    DO_EXPORT
    Recursively exports all variations rooted at book position # INDEX.
 */
-unsafe extern "C" fn do_export(index: i32, stream: *mut FILE,
+unsafe fn do_export(index: i32, stream: *mut FILE,
                                move_vec: &mut [i32; 60]) {
     let mut i: i32 = 0;
     let mut child_count: i32 = 0;
