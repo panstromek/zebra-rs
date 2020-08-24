@@ -4,7 +4,6 @@ use engine::src::error::{FrontEnd, FatalError};
 use engine::src::hash::HashEntry;
 use engine::src::thordb::C2RustUnnamed;
 use engine::src::zebra::EvaluationType;
-use crate::src::display::display_buffers;
 use crate::src::thordb::{sort_thor_games};
 use crate::src::osfbook::{print_move_alternatives};
 use std::ffi::c_void;
@@ -24,9 +23,10 @@ use crate::{
 };
 use engine::src::osfbook::candidate_list;
 use engine::src::midgame::*;
-use engine::src::display::{clear_status, echo, clear_sweep};
-use engine::src::timer::{get_elapsed_time, is_panic_abort};
+use engine::src::display::{clear_status, echo, clear_sweep, interval2, interval1, last_output, sweep_modified, status_modified, timed_buffer_management};
+use engine::src::timer::{get_elapsed_time, is_panic_abort, get_real_timer};
 use engine::src::search::{hash_expand_pv, force_return};
+use std::env::args;
 
 static mut buffer: [i8; 16] = [0; 16];
 
@@ -81,9 +81,27 @@ pub type FE = LibcFatalError;
 
 
 impl FrontEnd for LibcFatalError {
-    #[inline(always)]
+    /*
+      DISPLAY_BUFFERS
+      If an update has happened and the last display was long enough ago,
+      output relevant buffers.
+    */
     fn display_buffers() {
-        unsafe { display_buffers() }
+        unsafe {
+            let timer = get_real_timer::<FE>();
+            if timer - last_output >= interval2 || timed_buffer_management == 0 {
+                display_status(stdout, 0 as i32);
+                status_modified = 0 as i32;
+                if timer - last_output >= interval2 {
+                    if sweep_modified != 0 { display_sweep(stdout); }
+                    last_output = timer;
+                    /* Display the sweep at Fibonacci-spaced times */
+                    let new_interval = interval1 + interval2;
+                    interval1 = interval2;
+                    interval2 = new_interval
+                }
+            };
+        }
     }
 
     #[inline(always)]
