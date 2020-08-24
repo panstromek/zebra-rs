@@ -167,7 +167,7 @@ extern "C" {
 //     return num;
 // }
 
-// pub unsafe extern "C" fn strlen(string: *const libc::c_char) -> libc::c_ulong {
+// pub unsafe extern "C" fn strlen(string: *const i8) -> u64 {
 //     // std::sys::strlen(string)
-//     std::ffi::CStr::from_ptr(string).to_bytes().len() as libc::c_ulong
+//     std::ffi::CStr::from_ptr(string).to_bytes().len() as u64
 // }
