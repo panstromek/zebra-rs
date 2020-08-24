@@ -2195,7 +2195,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         (*eval_info).type_0 = MIDGAME_EVAL
     }
     if echo != 0 {
-        FE::report_in_get_book_move_2(chosen_score, chosen_index, &flags);
+        FE::report_in_get_book_move_2(chosen_score, chosen_index, &flags, &candidate_list);
     }
     /* Fill the PV structure with the optimal book line */
     original_side_to_move = side_to_move;

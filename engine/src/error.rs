@@ -3,6 +3,7 @@ use crate::src::hash::HashEntry;
 use std::ffi::c_void;
 use crate::src::timer::time_t;
 use crate::src::thordb::C2RustUnnamed;
+use crate::src::game::CandidateMove;
 
 pub trait FrontEnd : FatalError {
     fn display_buffers();
@@ -16,11 +17,11 @@ pub trait FrontEnd : FatalError {
     fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32);
     fn end_tree_search_level_0_report(alpha: i32, beta: i32);
     fn send_solve_status(empties: i32, side_to_move: i32, eval_info: &mut EvaluationType);
-    fn end_report_panic_abort_2();
-    fn end_report_semi_panic_abort_3();
-    fn end_report_semi_panic_abort_2();
-    fn end_report_panic_abort();
-    fn end_report_semi_panic_abort();
+    fn end_report_panic_abort_2(elapsed_time: f64);
+    fn end_report_semi_panic_abort_3(elapsed_time: f64);
+    fn end_report_semi_panic_abort_2(elapsed_time: f64);
+    fn end_report_panic_abort(elapsed_time: f64);
+    fn end_report_semi_panic_abort(elapsed_time: f64);
     fn end_display_zero_status();
     fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i32; 64]);
     unsafe fn malloc(_: u64) -> *mut c_void;
@@ -33,7 +34,7 @@ pub trait FrontEnd : FatalError {
     fn report_do_evaluate(evaluation_stage_: i32);
     fn report_unwanted_book_draw(this_move: i32);
     fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32);
-    fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32);
+    fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, x: &[CandidateMove; 60]);
     fn midgame_display_simple_ponder_move(move_0: i32);
     fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, buffer: &mut [i8; 32]);
     fn midgame_display_ponder_move(
