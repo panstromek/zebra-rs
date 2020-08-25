@@ -1109,8 +1109,7 @@ fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counte
                     eval_str);
         free(eval_str as *mut std::ffi::c_void);
         send_status_nodes(counter_value);
-        send_status_pv(pv[0 as i32 as usize].as_mut_ptr(),
-                       interrupted_depth);
+        send_status_pv(&mut pv[0 as i32 as usize], interrupted_depth);
         send_status_time(elapsed_time);
         if elapsed_time != 0.0f64 {
             send_status(b"%6.0f %s\x00" as *const u8 as
