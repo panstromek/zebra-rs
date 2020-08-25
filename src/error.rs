@@ -29,7 +29,6 @@ use engine::src::search::{hash_expand_pv};
 use std::env::args;
 use engine::src::game::CandidateMove;
 use engine::src::counter::CounterType;
-use engine::src::globals::pv_depth;
 
 static mut buffer: [i8; 16] = [0; 16];
 
@@ -254,7 +253,7 @@ impl FrontEnd for LibcFatalError {
       Displays endgame results - partial or full.
     */
     fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType,
-                         nodes_counter: &mut CounterType, pv_zero: &mut [i32; 64]) {
+                         nodes_counter: &mut CounterType, pv_zero: &mut [i32; 64], pv_depth_zero: i32) {
         unsafe {
             set_current_eval(*eval_info);
             clear_status();
@@ -270,7 +269,7 @@ impl FrontEnd for LibcFatalError {
                                 1 as i32,
                             '0' as i32 + get_ponder_move() / 10 as i32);
             }
-            send_status_pv(pv_zero, empties, pv_depth[0 as i32 as usize]);
+            send_status_pv(pv_zero, empties, pv_depth_zero);
             send_status_time(get_elapsed_time::<FE>());
             if get_elapsed_time::<FE>() > 0.0001f64 {
                 send_status(b"%6.0f %s  \x00" as *const u8 as *const i8,
@@ -513,7 +512,8 @@ impl FrontEnd for LibcFatalError {
 
      fn midgame_display_status(side_to_move: i32, max_depth: i32,
                                eval_info: &EvaluationType, depth: i32,
-                               force_return_: bool, nodes_counter: &mut CounterType, pv_zero: &mut [i32; 64]) {
+                               force_return_: bool, nodes_counter: &mut CounterType,
+                               pv_zero: &mut [i32; 64], pv_depth_zero: i32) {
          unsafe {
              clear_status();
              send_status(b"--> \x00" as *const u8 as *const i8);
@@ -540,7 +540,7 @@ impl FrontEnd for LibcFatalError {
              }
              hash_expand_pv(side_to_move, 0 as i32, 4 as i32,
                             12345678 as i32);
-             send_status_pv(pv_zero, max_depth,pv_depth[0 as i32 as usize]);
+             send_status_pv(pv_zero, max_depth, pv_depth_zero);
              send_status_time(get_elapsed_time::<FE>());
              if get_elapsed_time::<FE>() != 0.0f64 {
                  send_status(b"%6.0f %s\x00" as *const u8 as

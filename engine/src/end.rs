@@ -2321,7 +2321,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             root_eval = (*eval_info).score / 128 as i32;
             hash_expand_pv(side_to_move, 1 as i32, 4 as i32,
                            0 as i32);
-            FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize]);
+            FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
             return book_move
         }
         /* Is the WLD status known? */
@@ -2335,7 +2335,10 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     hash_expand_pv(side_to_move, 1 as i32,
                                    4 as i32 | 2 as i32 |
                                        1 as i32, 0 as i32);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize]);
+                    FE::send_solve_status(empties, side_to_move, eval_info,
+                                          &mut nodes,
+                                          &mut pv[0 as i32 as usize],
+                                          pv_depth[0 as i32 as usize]);
                     return book_move
                 } else { book_eval_info = *eval_info }
             }
@@ -2404,7 +2407,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 if full_output_mode != 0 {
                     hash_expand_pv(side_to_move, 1 as i32,
                                    flags as i32, selectivity);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize]);
+                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
                 }
                 selectivity -= 1
             }
@@ -2465,7 +2468,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     if full_output_mode != 0 {
                         hash_expand_pv(side_to_move, 1 as i32,
                                        4 as i32, selectivity);
-                        FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize]);
+                        FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
                     }
                 }
                 selectivity -= 1
@@ -2496,7 +2499,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     }
                     hash_expand_pv(side_to_move, 1 as i32,
                                    flags_0 as i32, selectivity);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize]);
+                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
                 }
             }
             pv[0 as i32 as usize][0 as i32 as usize] =
@@ -2592,7 +2595,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 if full_output_mode != 0 {
                     hash_expand_pv(side_to_move, 1 as i32,
                                    flags_1 as i32, 0 as i32);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize]);
+                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
                 }
             } else {
                 *eval_info =
@@ -2602,7 +2605,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 if full_output_mode != 0 {
                     hash_expand_pv(side_to_move, 1 as i32,
                                    4 as i32, 0 as i32);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize]);
+                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
                 }
             }
         }
@@ -2623,7 +2626,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     }
                     hash_expand_pv(side_to_move, 1 as i32,
                                    flags_2 as i32, 0 as i32);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize]);
+                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
                 }
                 if echo != 0 || force_echo != 0 {
                     FE::end_display_zero_status();
@@ -2655,7 +2658,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             if full_output_mode != 0 {
                 hash_expand_pv(side_to_move, 1 as i32,
                                4 as i32, 0 as i32);
-                FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize]);
+                FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
             }
             if echo != 0 || force_echo != 0 {
                 FE::end_display_zero_status();
@@ -2683,7 +2686,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     if wld == 0 && exact_score_failed == 0 {
         hash_expand_pv(side_to_move, 1 as i32, 4 as i32,
                        0 as i32);
-        FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize]);
+        FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
     }
     if echo != 0 || force_echo != 0 {
         FE::end_display_zero_status();
