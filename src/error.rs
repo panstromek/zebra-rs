@@ -29,6 +29,7 @@ use engine::src::search::{hash_expand_pv};
 use std::env::args;
 use engine::src::game::CandidateMove;
 use engine::src::counter::CounterType;
+use engine::src::globals::pv_depth;
 
 static mut buffer: [i8; 16] = [0; 16];
 
@@ -269,7 +270,7 @@ impl FrontEnd for LibcFatalError {
                                 1 as i32,
                             '0' as i32 + get_ponder_move() / 10 as i32);
             }
-            send_status_pv(pv_zero, empties);
+            send_status_pv(pv_zero, empties, pv_depth[0 as i32 as usize]);
             send_status_time(get_elapsed_time::<FE>());
             if get_elapsed_time::<FE>() > 0.0001f64 {
                 send_status(b"%6.0f %s  \x00" as *const u8 as *const i8,
@@ -539,7 +540,7 @@ impl FrontEnd for LibcFatalError {
              }
              hash_expand_pv(side_to_move, 0 as i32, 4 as i32,
                             12345678 as i32);
-             send_status_pv(pv_zero, max_depth);
+             send_status_pv(pv_zero, max_depth,pv_depth[0 as i32 as usize]);
              send_status_time(get_elapsed_time::<FE>());
              if get_elapsed_time::<FE>() != 0.0f64 {
                  send_status(b"%6.0f %s\x00" as *const u8 as

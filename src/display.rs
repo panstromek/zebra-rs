@@ -361,13 +361,13 @@ pub unsafe fn send_status_nodes(node_count: f64) {
   Pipes the principal variation to SEND_STATUS.
 */
 
-pub unsafe fn send_status_pv(pv: &[i32; 64], max_depth: i32) {
+pub unsafe fn send_status_pv(pv: &[i32; 64], max_depth: i32, pv_depth_zero: i32) {
     let mut i = 0 as i32;
     while i <
               (if max_depth < 5 as i32 {
                    max_depth
                } else { 5 as i32 }) {
-        if i < pv_depth[0 as i32 as usize] {
+        if i < pv_depth_zero {
             send_status(b"%c%c \x00" as *const u8 as *const i8,
                         'a' as i32 +
                             pv[i as usize] % 10 as i32 -
