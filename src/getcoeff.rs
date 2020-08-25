@@ -1,8 +1,8 @@
 use crate::src::stubs::{fclose, fscanf, fopen, printf, gzgetc};
 use crate::src::zebra::_IO_FILE;
-use engine::src::getcoeff::*;
 use crate::src::getcoeff::zlib_source::ZLibSource;
 use crate::src::error::LibcFatalError;
+use engine::src::getcoeff::{CoeffAdjustments, eval_adjustment, C2RustUnnamed};
 
 pub type size_t = u64;
 pub type __off_t = i64;
@@ -61,8 +61,9 @@ unsafe fn get_word(mut stream: gzFile) -> i16 {
 */
 pub mod zlib_source {
     use crate::src::stubs::{gzopen, strcpy, gzclose};
-    use crate::src::getcoeff::{get_word, gzFile_s, CoeffSource};
+    use crate::src::getcoeff::{get_word, gzFile_s};
     use crate::src::error::fatal_error;
+    use engine::src::getcoeff::CoeffSource;
 
     pub struct ZLibSource {
         coeff_stream: *mut gzFile_s

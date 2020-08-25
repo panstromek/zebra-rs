@@ -4,7 +4,6 @@ use crate::src::display::{display_optimal_line, display_status, produce_eval_tex
 
 use crate::src::getcoeff::{load_coeff_adjustments};
 use crate::src::zebra::{_IO_FILE};
-use engine::src::game::*;
 use crate::src::getcoeff::zlib_source::ZLibSource;
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError, FE};
@@ -21,6 +20,7 @@ use engine::src::getcoeff::pattern_evaluation;
 use engine::src::myrandom::my_random;
 use engine::src::stubs::abs;
 use engine::src::osfbook::{get_book_move, get_candidate, get_candidate_count, fill_move_alternatives};
+use engine::src::game::{use_log_file, ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, evaluated_list, game_evaluated_count, max_depth_reached, prefix_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, MIDGAME_EVAL, WON_POSITION, UNDEFINED_EVAL, UNSOLVED_POSITION, EXACT_EVAL, WLD_EVAL, DRAWN_POSITION, LOST_POSITION, PASS_EVAL};
 
 pub type __time_t = i64;
 pub type size_t = u64;

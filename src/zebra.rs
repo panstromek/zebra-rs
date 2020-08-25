@@ -2,8 +2,6 @@
          non_upper_case_globals, unused_assignments, unused_mut)]
 
 use std::process::exit;
-use ::engine::src::zebra::*;
-
 use std::ptr::null_mut;
 use engine::src::game::{generic_game_init, toggle_human_openings, toggle_status_log, global_terminate};
 use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler, compute_move, global_setup};
@@ -29,6 +27,7 @@ use engine::src::eval::toggle_experimental;
 use engine::src::getcoeff::remove_coeffs;
 use engine::src::myrandom::{my_random, my_srandom};
 use crate::src::osfbook::print_move_alternatives;
+use engine::src::zebra::{set_default_engine_globals, DumpHandler, wld_only, use_book, EvaluationType, use_timer, player_time, one_position_only, skill, wld_skill, exact_skill, player_increment, wait, ZebraFrontend, engine_play_game, InitialMoveSource, tournament_levels, tournament_skill, only_analyze, tournament, rand_move_freq, thor_max_games, dev_bonus, high_thresh, low_thresh, slack, deviation_depth, cutoff_empty, PRIVATE_GAME, PUBLIC_GAME, NEUTRAL, BLACK_WINS, WHITE_WINS, OPPONENT_WINS, MIDGAME_EVAL, WON_POSITION, LOST_POSITION};
 
 
 pub type _IO_wide_data = std::ffi::c_void;

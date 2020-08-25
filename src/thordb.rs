@@ -1,10 +1,10 @@
 use crate::src::stubs::{puts, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp};
 use crate::src::zebra::_IO_FILE;
-use engine::src::thordb::*;
 use crate::src::error::LibcFatalError;
 use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
 use engine::src::safemem::{safe_malloc, safe_realloc};
+use engine::src::thordb::{thor_search, GameType, thor_compare, get_player_name, tournament_name, database_head, PrologType, DatabaseType, thor_games_filtered, thor_games_sorted, thor_game_count, thor_database_count, prepare_game, int_16, int_8, players, PlayerType, tournaments, TournamentType, int_32};
 
 pub type FE = LibcFatalError;
 
