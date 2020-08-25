@@ -7,7 +7,6 @@ use engine::src::zebra::EvaluationType;
 use crate::src::thordb::{sort_thor_games};
 use crate::src::osfbook::{print_move_alternatives};
 use std::ffi::c_void;
-use engine::src::end::*;
 use engine::{
     src:: {
         search::{get_ponder_move, set_current_eval},
@@ -21,7 +20,6 @@ use crate::{
                   send_status_pv, send_status_nodes, produce_eval_text, display_sweep, send_sweep},
     }
 };
-use engine::src::midgame::*;
 use engine::src::display::{clear_status, echo, clear_sweep, interval2, interval1,
                            last_output, sweep_modified, status_modified, timed_buffer_management};
 use engine::src::timer::{get_elapsed_time, is_panic_abort, get_real_timer};
@@ -29,6 +27,7 @@ use engine::src::search::{hash_expand_pv};
 use std::env::args;
 use engine::src::game::CandidateMove;
 use engine::src::counter::CounterType;
+use engine::src::end::best_move;
 
 static mut buffer: [i8; 16] = [0; 16];
 
