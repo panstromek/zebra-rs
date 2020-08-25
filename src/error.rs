@@ -18,16 +18,18 @@ use engine::{
 use crate::{
     src::{
         stubs::{fflush, sprintf, stdout},
-        display::{display_status, send_status, send_status_time, send_status_pv, send_status_nodes, produce_eval_text, display_sweep, send_sweep},
+        display::{display_status, send_status, send_status_time,
+                  send_status_pv, send_status_nodes, produce_eval_text, display_sweep, send_sweep},
     }
 };
-use engine::src::osfbook::candidate_list;
 use engine::src::midgame::*;
-use engine::src::display::{clear_status, echo, clear_sweep, interval2, interval1, last_output, sweep_modified, status_modified, timed_buffer_management};
+use engine::src::display::{clear_status, echo, clear_sweep, interval2, interval1,
+                           last_output, sweep_modified, status_modified, timed_buffer_management};
 use engine::src::timer::{get_elapsed_time, is_panic_abort, get_real_timer};
-use engine::src::search::{hash_expand_pv, force_return};
+use engine::src::search::{hash_expand_pv};
 use std::env::args;
 use engine::src::game::CandidateMove;
+use engine::src::counter::CounterType;
 
 static mut buffer: [i8; 16] = [0; 16];
 
@@ -509,12 +511,12 @@ impl FrontEnd for LibcFatalError {
     }
 
      fn midgame_display_status(side_to_move: i32, max_depth: i32,
-                                         eval_info: &EvaluationType,
-                                         depth: i32) {
+                               eval_info: &EvaluationType, depth: i32,
+                               force_return_: bool, nodes_counter: &mut CounterType, pv_zero: &mut [i32; 64]) {
          unsafe {
              clear_status();
              send_status(b"--> \x00" as *const u8 as *const i8);
-             if is_panic_abort() != 0 || force_return != 0 {
+             if is_panic_abort() != 0 || force_return_ {
                  send_status(b"*\x00" as *const u8 as *const i8);
              } else {
                  send_status(b" \x00" as *const u8 as *const i8);
@@ -525,7 +527,7 @@ impl FrontEnd for LibcFatalError {
              send_status(b"%-10s  \x00" as *const u8 as *const i8,
                          eval_str);
              free(eval_str as *mut std::ffi::c_void);
-             let node_val = counter_value(&mut nodes);
+             let node_val = counter_value(nodes_counter);
              send_status_nodes(node_val);
              if get_ponder_move() != 0 {
                  send_status(b"{%c%c} \x00" as *const u8 as
@@ -537,7 +539,7 @@ impl FrontEnd for LibcFatalError {
              }
              hash_expand_pv(side_to_move, 0 as i32, 4 as i32,
                             12345678 as i32);
-             send_status_pv(pv[0 as i32 as usize].as_mut_ptr(),
+             send_status_pv(pv_zero.as_mut_ptr(),
                             max_depth);
              send_status_time(get_elapsed_time::<FE>());
              if get_elapsed_time::<FE>() != 0.0f64 {

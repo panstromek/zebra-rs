@@ -4,6 +4,7 @@ use std::ffi::c_void;
 use crate::src::timer::time_t;
 use crate::src::thordb::C2RustUnnamed;
 use crate::src::game::CandidateMove;
+use crate::src::counter::CounterType;
 
 pub trait FrontEnd : FatalError {
     fn display_buffers();
@@ -41,8 +42,8 @@ pub trait FrontEnd : FatalError {
         max_depth: i32, alpha: i32, beta: i32,
         curr_val: i32, searched: i32, update_pv: i32);
     fn midgame_display_status(side_to_move: i32, max_depth: i32,
-                                     eval_info: &EvaluationType,
-                                     depth: i32);
+                              eval_info: &EvaluationType, depth: i32, force_return_: bool,
+                              counter: &mut CounterType, pv_zero: &mut [i32; 64]);
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32);
     fn thordb_report_flipped_0_first();
     fn thordb_report_flipped_0_second();

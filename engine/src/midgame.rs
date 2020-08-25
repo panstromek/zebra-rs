@@ -1558,7 +1558,8 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         }
         /* Display and store search info */
         if depth == max_depth {
-            FE::midgame_display_status(side_to_move, max_depth, eval_info, depth)
+            FE::midgame_display_status(side_to_move, max_depth, eval_info, depth,
+                                       force_return != 0, &mut nodes, &mut pv[0 as i32 as usize])
         }
         if is_panic_abort() != 0 || force_return != 0 { break ; }
         /* Check if search time or adjusted search time are long enough
