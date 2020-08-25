@@ -10,9 +10,8 @@ use std::ffi::c_void;
 use engine::src::end::*;
 use engine::{
     src:: {
-        search::{nodes, get_ponder_move, set_current_eval},
+        search::{get_ponder_move, set_current_eval},
         counter::{counter_value},
-        globals::{pv},
     }
 };
 use crate::{
@@ -253,7 +252,8 @@ impl FrontEnd for LibcFatalError {
       SEND_SOLVE_STATUS
       Displays endgame results - partial or full.
     */
-    fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType) {
+    fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType,
+                         nodes_counter: &mut CounterType, pv_zero: &mut [i32; 64]) {
         unsafe {
             set_current_eval(*eval_info);
             clear_status();
@@ -261,7 +261,7 @@ impl FrontEnd for LibcFatalError {
             let eval_str = produce_eval_text(&*eval_info, 1 as i32);
             send_status(b"%-10s  \x00" as *const u8 as *const i8, eval_str);
             free(eval_str as *mut std::ffi::c_void);
-            let node_val = counter_value(&mut nodes);
+            let node_val = counter_value(nodes_counter);
             send_status_nodes(node_val);
             if get_ponder_move() != 0 {
                 send_status(b"{%c%c} \x00" as *const u8 as *const i8,
@@ -269,7 +269,7 @@ impl FrontEnd for LibcFatalError {
                                 1 as i32,
                             '0' as i32 + get_ponder_move() / 10 as i32);
             }
-            send_status_pv(pv[0 as i32 as usize].as_mut_ptr(), empties);
+            send_status_pv(pv_zero.as_mut_ptr(), empties);
             send_status_time(get_elapsed_time::<FE>());
             if get_elapsed_time::<FE>() > 0.0001f64 {
                 send_status(b"%6.0f %s  \x00" as *const u8 as *const i8,
