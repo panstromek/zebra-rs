@@ -1871,20 +1871,6 @@ impl LibcDumpHandler {
         fclose(stream);
     }
 }
-/*
-   DUMP_POSITION
-   Saves the current board position to disk.
-*/
-unsafe fn dump_position(side_to_move: i32) {
-    LibcDumpHandler::dump_position(side_to_move);
-}
-/*
-  DUMP_GAME_SCORE
-  Writes the current game score to disk.
-*/
-unsafe fn dump_game_score(side_to_move: i32) {
-    LibcDumpHandler::dump_game_score(side_to_move)
-}
 
 pub fn main() {
     unsafe {
