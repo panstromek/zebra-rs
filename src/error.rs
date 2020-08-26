@@ -125,17 +125,13 @@ impl FrontEnd for LibcFatalError {
         }
     }
     fn before_update_best_list_verbose(best_list: &mut [i32; 4], move_0: i32, best_list_index: i32, best_list_length: &mut i32) {
-        let best_list = best_list.as_mut_ptr();
         unsafe {
-            let mut i: i32 = 0;
             printf(b"move=%2d  index=%d  length=%d      \x00" as *const u8 as
-                       *const i8, move_0, best_list_index,
-                   *best_list_length);
+                       *const i8, move_0, best_list_index, *best_list_length);
             printf(b"Before:  \x00" as *const u8 as *const i8);
-            i = 0 as i32;
-            while i < 4 as i32 {
-                printf(b"%2d \x00" as *const u8 as *const i8,
-                       *best_list.offset(i as isize));
+            let mut i = 0;
+            while i < 4 {
+                printf(b"%2d \x00" as *const u8 as *const i8, best_list[i]);
                 i += 1
             }
         }
