@@ -1,4 +1,4 @@
-use crate::src::display::{set_names, set_times, set_move_list, echo, set_evals, display_pv};
+use crate::src::display::{set_names, set_times, set_move_list, echo, set_evals, display_pv, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use crate::src::timer::{toggle_abort_check, get_real_timer, determine_move_time, start_move, clear_panic_abort};
 use crate::src::moves::{disks_played, make_move, valid_move, move_count, move_list, generate_all, game_in_progress, get_move};
 use crate::src::search::{disc_count, total_time, total_evaluations, total_nodes, produce_compact_eval};
@@ -114,7 +114,10 @@ pub unsafe fn set_names_from_skills<FE :FrontEnd>() {
 pub trait ZebraFrontend {
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
     fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64);
-    fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128]);
+    unsafe fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128], current_row_: i32,
+                                black_player_: *mut i8, black_time_: i32, black_eval_: f64,
+                                white_player_: *mut i8, white_time_: i32, white_eval_: f64,
+                                black_moves_: &[i32; 60], white_moves_: &[i32; 60]);
     fn print_out_thor_matches(thor_max_games_: i32);
     unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32);
     unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32);
@@ -272,13 +275,17 @@ pub unsafe fn engine_play_game<
                         }
                         ZF::print_out_thor_matches(thor_max_games);
                     }
-                    ZF::display_board_after_thor(side_to_move, use_timer, &board);
+                    ZF::display_board_after_thor(side_to_move, use_timer,
+                                                 &board, current_row,
+                                                 black_player, black_time,
+                                                 black_eval, white_player,
+                                                 white_time, white_eval,
+                                                 &black_moves, &white_moves);
                 }
                 Dump::dump_position(side_to_move);
                 Dump::dump_game_score(side_to_move);
                 /* Check what the Thor opening statistics has to say */
-                choose_thor_opening_move::<FE>(board.as_mut_ptr(), side_to_move,
-                                         echo);
+                choose_thor_opening_move::<FE>(board.as_mut_ptr(), side_to_move, echo);
                 if echo != 0 && wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
                     if skill[side_to_move as usize] == 0 as i32 {
@@ -414,7 +421,13 @@ pub unsafe fn engine_play_game<
                           i32,
                       floor(player_time[2 as i32 as usize]) as
                           i32);
-            ZF::display_board_after_thor(side_to_move, use_timer, &board);
+            ZF::display_board_after_thor(side_to_move, use_timer, &board,
+                                         current_row, black_player,
+                                         black_time, black_eval,
+                                         white_player, white_time,
+                                         white_eval, &black_moves,
+                                         &white_moves,
+            );
         }
         adjust_counter(&mut total_nodes);
         let node_val = counter_value(&mut total_nodes);
