@@ -875,15 +875,17 @@ impl ZebraFrontend for LibcFrontend {
                    total_search_time);
         }
     }
-    fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128]) {
+    unsafe fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
+                                current_row_: i32,
+                                black_player_: *mut i8, black_time_: i32, black_eval_: f64,
+                                white_player_: *mut i8, white_time_: i32, white_eval_: f64,
+                                black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
         unsafe {
             display_board(stdout, board_.as_ptr() as *mut _,
                           side_to_move, 1 as i32,
                           give_time_, 1 as i32,
-                          current_row,
-                          black_player, black_time, black_eval,
-                          white_player, white_time, white_eval,
-                          &black_moves, &white_moves);
+                          current_row_, black_player_, black_time_, black_eval_,
+                          white_player_, white_time_, white_eval_, black_moves_, white_moves_);
         }
     }
     fn print_out_thor_matches(thor_max_games_: i32) {
@@ -1785,7 +1787,7 @@ impl LibcDumpHandler {
    DUMP_POSITION
    Saves the current board position to disk.
 */
-    unsafe fn dump_position(mut side_to_move: i32) {
+    unsafe fn dump_position(side_to_move: i32) {
         let mut i: i32 = 0;
         let mut j: i32 = 0;
         let mut stream = 0 as *mut FILE;
@@ -1827,7 +1829,7 @@ impl LibcDumpHandler {
       DUMP_GAME_SCORE
       Writes the current game score to disk.
     */
-    unsafe fn dump_game_score(mut side_to_move: i32) {
+    unsafe fn dump_game_score(side_to_move: i32) {
         let mut stream = 0 as *mut FILE;
         let mut i: i32 = 0;
         stream =
