@@ -105,7 +105,6 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-    #[inline(always)]
     fn report_ponder_time(current_ponder_time_: f64, current_ponder_depth_: i32) {
         unsafe {
             printf(b"Ponder time: %.1f s\n\x00" as *const u8 as *const i8, current_ponder_time_);
@@ -115,12 +114,11 @@ impl FrontEnd for LibcFatalError {
 
     fn after_update_best_list_verbose(best_list: &mut [i32; 4]) {
         unsafe {
-            let best_list = best_list.as_mut_ptr();
+            // let best_list = best_list.as_mut_ptr();
             printf(b"      After:  \x00" as *const u8 as *const i8);
-            let mut i = 0 as i32;
-            while i < 4 as i32 {
-                printf(b"%2d \x00" as *const u8 as *const i8,
-                       *best_list.offset(i as isize));
+            let mut i = 0;
+            while i < 4 {
+                printf(b"%2d \x00" as *const u8 as *const i8, best_list[i]);
                 i += 1
             }
             puts(b"\x00" as *const u8 as *const i8);
