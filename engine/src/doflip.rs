@@ -1,6 +1,7 @@
 use crate::src::globals::{board};
 use crate::src::unflip::flip_stack;
 use crate::src::hash::{hash_flip2, hash_flip1};
+use core::mem;
 
 /*
    File:           globals.h
@@ -49,6 +50,31 @@ static mut board_region: [i8; 100] = [
     0, 7, 7, 8, 8, 8, 8, 9, 9, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 ];
+// These methods were temporarily copied from standard library
+// because they got removed, but I can't replaces their usages
+// with something better, yet.
+pub trait WrappingOffsetFrom<T> {
+    fn wrapping_offset_from_(self, origin: *const T) -> isize;
+}
+impl<T> WrappingOffsetFrom<T> for *const T {
+    #[inline]
+    fn wrapping_offset_from_(self, origin: *const T) -> isize
+        where T: Sized,
+    {
+        let pointee_size = mem::size_of::<T>();
+        assert!(0 < pointee_size && pointee_size <= isize::MAX as usize);
+
+        let d = isize::wrapping_sub(self as _, origin as _);
+        d.wrapping_div(pointee_size as _)
+    }
+}
+impl<T> WrappingOffsetFrom<T> for *mut T {
+    #[inline]
+    fn wrapping_offset_from_(self, origin: *const T) -> isize
+        where T: Sized {
+        (self as *const T).wrapping_offset_from_(origin)
+    }
+}
 
 pub unsafe fn DoFlips_no_hash(sqnum: i32,
                                          color: i32)
@@ -1211,7 +1237,7 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
         _ => { }
     }
     flip_stack = t_flip_stack;
-    return t_flip_stack.wrapping_offset_from(old_flip_stack) as i64
+    return t_flip_stack.wrapping_offset_from_(old_flip_stack) as i64
                as i32;
 }
 /*
@@ -1260,12 +1286,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt = color;
@@ -1303,12 +1329,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_0.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_0.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_0.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_0.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_0 = color;
@@ -1346,12 +1372,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_1.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_1.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_1.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_1.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_1 = color;
@@ -1382,12 +1408,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_2.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_2.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_2.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_2.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_2 = color;
@@ -1416,12 +1442,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_3.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_3.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_3.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_3.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_3 = color;
@@ -1459,12 +1485,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_4.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_4.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_4.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_4.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_4 = color;
@@ -1493,12 +1519,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_5.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_5.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_5.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_5.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_5 = color;
@@ -1527,12 +1553,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_6.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_6.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_6.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_6.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_6 = color;
@@ -1572,12 +1598,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_7.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_7.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_7.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_7.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_7 = color;
@@ -1613,12 +1639,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_8.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_8.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_8.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_8.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_8 = color;
@@ -1656,12 +1682,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_9.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_9.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_9.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_9.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_9 = color;
@@ -1693,12 +1719,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_10.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_10.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_10.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_10.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_10 = color;
@@ -1728,12 +1754,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_11.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_11.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_11.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_11.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_11 = color;
@@ -1771,12 +1797,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_12.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_12.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_12.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_12.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_12 = color;
@@ -1805,12 +1831,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_13.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_13.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_13.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_13.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_13 = color;
@@ -1839,12 +1865,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_14.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_14.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_14.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_14.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_14 = color;
@@ -1876,12 +1902,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_15.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_15.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_15.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_15.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_15 = color;
@@ -1912,12 +1938,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_16.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_16.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_16.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_16.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_16 = color;
@@ -1947,12 +1973,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_17.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_17.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_17.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_17.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_17 = color;
@@ -1981,12 +2007,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_18.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_18.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_18.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_18.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_18 = color;
@@ -2015,12 +2041,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_19.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_19.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_19.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_19.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_19 = color;
@@ -2049,12 +2075,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_20.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_20.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_20.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_20.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_20 = color;
@@ -2083,12 +2109,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_21.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_21.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_21.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_21.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_21 = color;
@@ -2117,12 +2143,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_22.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_22.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_22.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_22.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_22 = color;
@@ -2154,12 +2180,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_23.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_23.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_23.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_23.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_23 = color;
@@ -2190,12 +2216,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_24.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_24.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_24.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_24.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_24 = color;
@@ -2236,12 +2262,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_25.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_25.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_25.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_25.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_25 = color;
@@ -2270,12 +2296,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_26.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_26.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_26.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_26.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_26 = color;
@@ -2304,12 +2330,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_27.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_27.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_27.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_27.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_27 = color;
@@ -2351,12 +2377,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_28.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_28.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_28.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_28.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_28 = color;
@@ -2397,12 +2423,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_29.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_29.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_29.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_29.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_29 = color;
@@ -2440,12 +2466,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_30.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_30.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_30.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_30.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_30 = color;
@@ -2476,12 +2502,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_31.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_31.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_31.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_31.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_31 = color;
@@ -2511,12 +2537,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_32.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_32.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_32.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_32.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_32 = color;
@@ -2557,12 +2583,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_33.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_33.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_33.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_33.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_33 = color;
@@ -2592,12 +2618,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_34.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_34.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_34.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_34.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_34 = color;
@@ -2626,12 +2652,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_35.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_35.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_35.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_35.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_35 = color;
@@ -2673,12 +2699,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_36.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_36.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_36.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_36.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_36 = color;
@@ -2719,12 +2745,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_37.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_37.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_37.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_37.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_37 = color;
@@ -2765,12 +2791,12 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_38.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip1[pt_38.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_38.wrapping_offset_from(board.as_mut_ptr())
+                                 hash_flip2[pt_38.wrapping_offset_from_(board.as_mut_ptr())
                                                 as i64 as usize]) as
                                 i32;
                         *pt_38 = color;
@@ -2788,6 +2814,6 @@ pub unsafe fn DoFlips_hash(sqnum: i32,
     hash_update1 = t_hash_update1 as u32;
     hash_update2 = t_hash_update2 as u32;
     flip_stack = t_flip_stack;
-    return t_flip_stack.wrapping_offset_from(old_flip_stack) as i64
+    return t_flip_stack.wrapping_offset_from_(old_flip_stack) as i64
                as i32;
 }

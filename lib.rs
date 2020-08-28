@@ -4,7 +4,6 @@
 #![allow(non_upper_case_globals)]
 #![feature(c_variadic)]
 #![feature(extern_types)]
-#![feature(ptr_wrapping_offset_from)]
 #![allow(clippy::missing_safety_doc)]
 
 extern crate libc;

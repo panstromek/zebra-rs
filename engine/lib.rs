@@ -1,4 +1,3 @@
-#![feature(ptr_wrapping_offset_from)]
 #![feature(label_break_value)]
 #![feature(c_variadic)]
 #![allow(non_upper_case_globals)]
