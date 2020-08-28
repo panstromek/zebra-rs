@@ -566,11 +566,13 @@ PV: f1
       7      * *   O          -0.02    20 discs     13. h4  h5
       8            O                                14. f2  f1
 
+-->   8  +1.35         157604  g7 e8 h7 e7 c8     0.0 s  
+[-inf,inf]:    g7=0.22 g2
 [-inf,inf]:    g2=0.48 g7=0.69 
 [-inf,inf]:    g7=-0.21 g2=0.48 
 [-inf,inf]:    g2=-3.10 g7=-2.19 
 [-inf,inf]:    g7=-0.45 g2=0.27 
--->  16  -0.82        1930032  g2 e8 e7 a3 h2     0.0 s  
+-->  16  -0.82        1930032  g2 e8 e7 a3 h2     1.0 s  1928104 nps
 PV: g2 e8 e7 a3 h2 h1 h6 d8 c8 b8 g7 b7 a4 h7 a8
 
          a b c d e f g h
@@ -796,7 +798,7 @@ PV: a7 h8 h7 a5 a6 a2 e2 d2 b2 b3 c1 b1 a1 g1 e1
       7  O O O * * O O        -0.48    30 discs     21. a4  g8
       8  * O O O O O O                              22. a8  a7
 
--->   4  -1.38            295  h8 h7 a5 a6     0.0 s  
+-->   4  -1.38            295  h8 h7 a5        0.0 s  
 -->  16  -2            145839  h8                 0.0 s  
 PV: h8 h7 g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
 
@@ -811,7 +813,7 @@ PV: h8 h7 g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
       7  O O O * * O *         (O)     23 discs     22. a8  a7
       8  * * * * * * * *                            23. h8  
 
--->   3  +1.38             88  h7 a5 a6     0.0 s  
+-->   3  +1.38             88  h7 a5        0.0 s  
 -->  15  +2               114  h7 g1 e1 e2 d1     0.0 s  
 PV: h7 g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
 
@@ -1026,4 +1028,4 @@ PV: b1
 Black: 31   White: 33
 Nodes searched:        4196548   
 Positions evaluated:   2756433   
-Total time: 0.0 s
+Total time: 1.0 s
