@@ -1,5 +1,4 @@
 #![feature(label_break_value)]
-#![feature(c_variadic)]
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
 #![allow(clippy::missing_safety_doc)]
