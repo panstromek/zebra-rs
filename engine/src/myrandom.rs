@@ -1,4 +1,6 @@
 /* max number of types above */
+use crate::src::doflip::WrappingOffsetFrom;
+
 static mut my_degrees: [i32; 5] =
     [0 as i32, 7 as i32, 15 as i32, 31 as i32,
      63 as i32];
@@ -153,7 +155,7 @@ pub unsafe fn my_initstate(seed: u32,
     } else {
         *my_state.offset(-(1 as i32) as isize) =
             5 as i32 as i64 *
-                my_rptr.wrapping_offset_from(my_state) as i64 +
+                my_rptr.wrapping_offset_from_(my_state) as i64 +
                 my_rand_type as i64
     } /* must set end_ptr before srandom */
     if n < 32 as i32 {
@@ -191,7 +193,7 @@ pub unsafe fn my_initstate(seed: u32,
     } else {
         *my_state.offset(-(1 as i32) as isize) =
             5 as i32 as i64 *
-                my_rptr.wrapping_offset_from(my_state) as i64 +
+                my_rptr.wrapping_offset_from_(my_state) as i64 +
                 my_rand_type as i64
     }
     return ostate;
@@ -226,7 +228,7 @@ pub unsafe fn my_setstate(arg_state: *mut i8)
     } else {
         *my_state.offset(-(1 as i32) as isize) =
             5 as i32 as i64 *
-                my_rptr.wrapping_offset_from(my_state) as i64 +
+                my_rptr.wrapping_offset_from_(my_state) as i64 +
                 my_rand_type as i64
     }
     match type_0 {

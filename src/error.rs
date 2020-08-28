@@ -558,13 +558,11 @@ impl FrontEnd for LibcFatalError {
                    second_item);
         }
     }
-    #[inline(always)]
     fn thordb_report_flipped_0_first() {
         unsafe {
             puts(b"This COULD happen (1) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
         }
     }
-    #[inline(always)]
     fn thordb_report_flipped_0_second() {
         unsafe {
             puts(b"This COULD happen (2) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
