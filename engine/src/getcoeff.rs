@@ -64,12 +64,6 @@ pub struct AllocationBlock {
     pub corner33_block: [i16; 19683],
     pub corner52_block: [i16; 59049],
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-    pub signed_val: i16,
-    pub unsigned_val: u16,
-}
 pub static mut stage_count: i32 = 0;
 pub static mut block_count: i32 = 0;
 pub static mut stage: [i32; 61] = [0; 61];
