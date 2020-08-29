@@ -2359,3 +2359,38 @@ pub unsafe fn engine_minimax_tree() {
     let mut dummy_white_score: i32 = 0;
     do_minimax(0 as i32, &mut dummy_black_score, &mut dummy_white_score);
 }
+
+pub unsafe fn engine_examine_tree() {
+    let mut i = 0 as i32;
+    while i <= 60 as i32 {
+        exact_count[i as usize] = 0 as i32;
+        wld_count[i as usize] = 0 as i32;
+        exhausted_count[i as usize] = 0 as i32;
+        common_count[i as usize] = 0 as i32;
+        i += 1
+    }
+    unreachable_count = 0 as i32;
+    leaf_count = 0 as i32;
+    bad_leaf_count = 0 as i32;
+    /* Mark all nodes as not traversed and examine the tree */
+    i = 0 as i32;
+    while i < book_node_count {
+        let ref mut fresh22 = (*node.offset(i as isize)).flags;
+        *fresh22 =
+            (*fresh22 as i32 | 8 as i32) as u16;
+        i += 1
+    }
+    do_examine(0 as i32);
+    /* Any nodes not reached by the walkthrough? */
+    i = 0 as i32;
+    while i < book_node_count {
+        if (*node.offset(i as isize)).flags as i32 & 8 as i32
+            != 0 {
+            unreachable_count += 1;
+            let ref mut fresh23 = (*node.offset(i as isize)).flags;
+            *fresh23 =
+                (*fresh23 as i32 ^ 8 as i32) as u16
+        }
+        i += 1
+    }
+}

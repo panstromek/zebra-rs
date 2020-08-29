@@ -39,7 +39,7 @@ use engine::src::osfbook::{
     evaluate_node, adjust_score, exhausted_count, exact_count, wld_count, common_count,
     really_bad_leaf_count, bad_leaf_count, leaf_count, unreachable_count, do_examine,
     do_evaluate, search_depth, compute_feasible_count, size_t, inv_symmetry_map,
-    MIDGAME_EVAL, WON_POSITION, engine_minimax_tree
+    MIDGAME_EVAL, WON_POSITION, engine_minimax_tree, engine_examine_tree
 };
 
 pub type FE = LibcFatalError;
@@ -131,45 +131,13 @@ pub unsafe fn evaluate_tree() {
 */
 
 pub unsafe fn examine_tree() {
-    let mut i: i32 = 0;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     printf(b"Examining tree... \x00" as *const u8 as *const i8);
     fflush(stdout);
     prepare_tree_traversal();
     time(&mut start_time);
-    i = 0 as i32;
-    while i <= 60 as i32 {
-        exact_count[i as usize] = 0 as i32;
-        wld_count[i as usize] = 0 as i32;
-        exhausted_count[i as usize] = 0 as i32;
-        common_count[i as usize] = 0 as i32;
-        i += 1
-    }
-    unreachable_count = 0 as i32;
-    leaf_count = 0 as i32;
-    bad_leaf_count = 0 as i32;
-    /* Mark all nodes as not traversed and examine the tree */
-    i = 0 as i32;
-    while i < book_node_count {
-        let ref mut fresh22 = (*node.offset(i as isize)).flags;
-        *fresh22 =
-            (*fresh22 as i32 | 8 as i32) as u16;
-        i += 1
-    }
-    do_examine(0 as i32);
-    /* Any nodes not reached by the walkthrough? */
-    i = 0 as i32;
-    while i < book_node_count {
-        if (*node.offset(i as isize)).flags as i32 & 8 as i32
-               != 0 {
-            unreachable_count += 1;
-            let ref mut fresh23 = (*node.offset(i as isize)).flags;
-            *fresh23 =
-                (*fresh23 as i32 ^ 8 as i32) as u16
-        }
-        i += 1
-    }
+    engine_examine_tree();
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
