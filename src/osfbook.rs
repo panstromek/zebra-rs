@@ -39,7 +39,7 @@ use engine::src::osfbook::{
     evaluate_node, adjust_score, exhausted_count, exact_count, wld_count, common_count,
     really_bad_leaf_count, bad_leaf_count, leaf_count, unreachable_count, do_examine,
     do_evaluate, search_depth, compute_feasible_count, size_t, inv_symmetry_map,
-    MIDGAME_EVAL, WON_POSITION,
+    MIDGAME_EVAL, WON_POSITION, engine_minimax_tree
 };
 
 pub type FE = LibcFatalError;
@@ -65,18 +65,7 @@ pub unsafe fn minimax_tree() {
     fflush(stdout);
     prepare_tree_traversal();
     time(&mut start_time);
-    /* Mark all nodes as not traversed */
-    let mut i = 0 as i32;
-    while i < book_node_count {
-        let ref mut fresh15 = (*node.offset(i as isize)).flags;
-        *fresh15 =
-            (*fresh15 as i32 | 8 as i32) as u16;
-        i += 1
-    }
-    let mut dummy_black_score: i32 = 0;
-    let mut dummy_white_score: i32 = 0;
-    do_minimax(0 as i32, &mut dummy_black_score, &mut dummy_white_score);
-
+    engine_minimax_tree();
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8, stop_time - start_time);
     puts(b"\x00" as *const u8 as *const i8);
