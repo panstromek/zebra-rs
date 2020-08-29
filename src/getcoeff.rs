@@ -147,10 +147,11 @@ struct Flate2Source { data: Vec<u8>, index: usize }
 
 impl Flate2Source {
     fn new() -> Flate2Source {
+        Flate2Source::new_from_data(&std::fs::read("coeffs2.bin").unwrap())
+    }
 
-        let file = std::fs::read("coeffs2.bin").unwrap();
-        // println!("path {}, size {}", path, file.len());
-        let mut decoder = GzDecoder::new(&*file);
+    fn new_from_data(data: &[u8]) -> Flate2Source {
+        let mut decoder = GzDecoder::new(data);
         let mut decoded = Vec::new();
         decoder.read_to_end(&mut decoded).unwrap();
 
