@@ -13,11 +13,11 @@ use engine::src::moves::disks_played;
 use engine::src::globals::{board, score_sheet_row, white_moves, black_moves};
 use engine::src::hash::setup_hash;
 use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack};
-use c2rust_out::src::learn::init_learn;
-use c2rust_out::src::game::{global_setup, compute_move, game_init};
-use c2rust_out::src::display::{display_move, display_board};
+use legacy_zebra::src::learn::init_learn;
+use legacy_zebra::src::game::{global_setup, compute_move, game_init};
+use legacy_zebra::src::display::{display_move, display_board};
 use engine::src::zebra::EvaluationType;
-use c2rust_out::src::error::{LibcFatalError, FE};
+use legacy_zebra::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
 use libc_wrapper::{strstr, FILE};
 

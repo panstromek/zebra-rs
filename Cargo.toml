@@ -14,16 +14,9 @@ members = [
     "libc-wrapper",
     "engine/engine-traits",
     "flate2-coeff-source",
+    "legacy-zebra",
     "tests"
 ]
-
-[package]
-name = "c2rust_out"
-authors = ["C2Rust"]
-version = "0.0.0"
-publish = false
-edition = "2018"
-autobins = false
 
 [profile.release]
 opt-level = 3
@@ -32,22 +25,3 @@ lto = "fat"
 [profile.dev]
 opt-level = 0
 lto="thin"
-
-[lib]
-name = "c2rust_out"
-path = "lib.rs"
-crate-type = ["staticlib", "rlib"]
-
-
-[[bin]]
-path = "src/main.rs"
-name = "zebra"
-
-[dependencies]
-engine = { path = "./engine" }
-libc-wrapper = { path = "./libc-wrapper" }
-engine-traits = { path = "./engine/engine-traits" }
-
-[build-dependencies]
-pkg-config = "0.3.16"
-

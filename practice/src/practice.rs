@@ -8,10 +8,10 @@ use engine::src::moves::{make_move, disks_played, valid_move, generate_all, unma
 use engine::src::game::{get_evaluated, get_evaluated_count, toggle_human_openings};
 use engine::src::osfbook::{get_hash, find_opening_name};
 use engine::src::display::{set_move_list, set_names, white_time, black_time, black_eval, white_eval, black_player, current_row, white_player};
-use c2rust_out::src::display::{produce_eval_text, display_board};
-use c2rust_out::src::game::{extended_compute_move, game_init};
-use c2rust_out::src::osfbook::{read_binary_database, init_osf};
-use c2rust_out::src::error::{LibcFatalError, FE};
+use legacy_zebra::src::display::{produce_eval_text, display_board};
+use legacy_zebra::src::game::{extended_compute_move, game_init};
+use legacy_zebra::src::osfbook::{read_binary_database, init_osf};
+use legacy_zebra::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
 use libc_wrapper::_IO_FILE;
 

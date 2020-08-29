@@ -5,7 +5,7 @@ fn main() {}
 
 #[test]
 fn coeff_source_test () {
-    use c2rust_out::src::getcoeff::zlib_source::ZLibSource;
+    use legacy_zebra::src::getcoeff::zlib_source::ZLibSource;
     use engine_traits::CoeffSource;
     let file_name: &CStr = CStr::from_bytes_with_nul(b"./../coeffs2.bin\x00").unwrap();
 
