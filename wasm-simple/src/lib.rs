@@ -1,6 +1,5 @@
 use wasm_bindgen::prelude::*;
 
-use engine::src::getcoeff::CoeffSource;
 use engine::src::zebra::{set_default_engine_globals, EvaluationType, skill, exact_skill, wld_skill, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler};
 use engine::src::{unflip, myrandom};
 use engine::src::game::{engine_global_setup, global_terminate, BoardSource, FileBoardSource, ComputeMoveLogger, ComputeMoveOutput, CandidateMove};
@@ -14,6 +13,7 @@ use engine::src::learn::Learner;
 use wasm_bindgen::__rt::std::ffi::CStr;
 use std::convert::TryFrom;
 use engine::src::counter::CounterType;
+use engine_traits::CoeffSource;
 
 extern crate engine;
 

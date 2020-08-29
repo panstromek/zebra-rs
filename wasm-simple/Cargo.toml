@@ -18,4 +18,4 @@ crate-type = ["cdylib"]
 [dependencies]
 wasm-bindgen = "0.2.67"
 engine = { path= "./../engine" }
-#libc = "0.2"
+engine-traits = { path = "./../engine/engine-traits" }

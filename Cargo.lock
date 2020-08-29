@@ -35,6 +35,7 @@ name = "c2rust_out"
 version = "0.0.0"
 dependencies = [
  "engine",
+ "engine-traits",
  "flate2",
  "libc-wrapper",
  "pkg-config",
@@ -71,9 +72,14 @@ version = "0.1.0"
 dependencies = [
  "bitbcnt",
  "bitboard",
+ "engine-traits",
  "epcstat",
  "pcstat",
 ]
+
+[[package]]
+name = "engine-traits"
+version = "0.1.0"
 
 [[package]]
 name = "epcstat"
@@ -259,5 +265,6 @@ name = "wasm-simple"
 version = "0.1.0"
 dependencies = [
  "engine",
+ "engine-traits",
  "wasm-bindgen",
 ]

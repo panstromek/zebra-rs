@@ -6,6 +6,7 @@ use crate::src::safemem::safe_malloc;
 use crate::src::error::{FrontEnd};
 use std::ffi::c_void;
 use std::process::exit;
+use engine_traits::CoeffSource;
 
 pub struct CoeffAdjustments {
     pub disc_adjust: f64,
@@ -3161,11 +3162,6 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
     FE::free(map_mirror8 as *mut c_void);
     FE::free(map_mirror33 as *mut c_void);
     FE::free(map_mirror8x2 as *mut c_void);
-}
-
-pub trait CoeffSource {
-    fn next_word(&mut self) -> i16;
-    fn try_next_word(&mut self) -> Option<i16>;
 }
 
 pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mut coeffs: Source) {
