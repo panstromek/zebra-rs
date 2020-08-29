@@ -1,5 +1,5 @@
 use libc_wrapper::{fclose, fscanf, fopen, printf, gzgetc, gzFile};
-use engine::src::getcoeff::{CoeffAdjustments, eval_adjustment, C2RustUnnamed};
+use engine::src::getcoeff::{CoeffAdjustments, C2RustUnnamed};
 
 /*
    GET_WORD
@@ -88,12 +88,6 @@ pub mod zlib_source {
                 }
             }
         }
-    }
-}
-
-pub unsafe fn load_and_apply_adjustments() {
-    if let Some(adjusts) = load_coeff_adjustments() {
-        eval_adjustment(adjusts.disc_adjust, adjusts.edge_adjust, adjusts.corner_adjust, adjusts.x_adjust);
     }
 }
 
