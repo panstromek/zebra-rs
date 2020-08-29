@@ -11,7 +11,8 @@ members = [
     "engine/pcstat",
     "engine/epcstat",
     "engine/bitbcnt",
-    "libc-wrapper"
+    "libc-wrapper",
+    "engine/engine-traits"
 ]
 
 [package]
@@ -44,6 +45,7 @@ name = "zebra"
 engine = { path = "./engine" }
 libc-wrapper = { path = "./libc-wrapper" }
 flate2 = "1.0"
+engine-traits = { path = "./engine/engine-traits" }
 
 [build-dependencies]
 pkg-config = "0.3.16"

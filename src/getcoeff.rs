@@ -1,7 +1,8 @@
 use libc_wrapper::{fclose, fscanf, fopen, printf, gzgetc, gzFile};
-use engine::src::getcoeff::{CoeffAdjustments, CoeffSource};
+use engine::src::getcoeff::{CoeffAdjustments};
 use flate2::read::GzDecoder;
 use std::io::Read;
+use engine_traits::CoeffSource;
 
 /*
    GET_WORD
@@ -61,7 +62,7 @@ pub mod zlib_source {
     use libc_wrapper::{gzopen, strcpy, gzclose, gzFile_s};
     use crate::src::getcoeff::{get_word, try_get_word};
     use crate::src::error::fatal_error;
-    use engine::src::getcoeff::CoeffSource;
+    use engine_traits::CoeffSource;
 
     pub struct ZLibSource {
         coeff_stream: *mut gzFile_s
