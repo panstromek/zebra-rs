@@ -6,6 +6,13 @@ use engine::src::getcoeff::{CoeffAdjustments, CoeffSource};
    Reads a 16-bit signed integer from a file.
 */
 unsafe fn get_word(mut stream: gzFile) -> i16 {
+    match try_get_word(stream) {
+        Some(w) => w,
+        None => panic!("No word in the input stream.")
+    }
+}
+
+unsafe fn try_get_word(mut stream: gzFile) -> Option<i16> {
     #[derive(Copy, Clone)]
     #[repr(C)]
     pub union C2RustUnnamed {
@@ -21,7 +28,9 @@ unsafe fn get_word(mut stream: gzFile) -> i16 {
             (*stream).next = (*stream).next.offset(1);
             *fresh0 as i32
         } else { gzgetc(stream) };
-    assert_ne!(hi, -(1 as i32));
+    if hi == -1 {
+        return None;
+    }
     let lo = if (*stream).have != 0 {
             (*stream).have = (*stream).have.wrapping_sub(1);
             (*stream).pos += 1;
@@ -29,9 +38,11 @@ unsafe fn get_word(mut stream: gzFile) -> i16 {
             (*stream).next = (*stream).next.offset(1);
             *fresh1 as i32
         } else { gzgetc(stream) };
-    assert_ne!(lo, -(1 as i32));
+    if lo == -1 {
+        return None;
+    }
     val.unsigned_val = ((hi << 8 as i32) + lo) as u16;
-    val.signed_val
+    Some(val.signed_val)
 }
 /*
    File:         getcoeff.h
@@ -125,4 +136,12 @@ pub fn load_coeff_adjustments() -> Option<CoeffAdjustments> {
     } else {
         None
     }
+}
+
+#[test]
+fn coeff_source_test () {
+    use crate::src::getcoeff::zlib_source::ZLibSource;
+
+    let mut z_lib_source = ZLibSource::new();
+    z_lib_source.next_word();
 }
