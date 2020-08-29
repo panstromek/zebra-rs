@@ -58,9 +58,6 @@ pub type __compar_fn_t
 */
 
 pub unsafe fn minimax_tree() {
-    let mut i: i32 = 0;
-    let mut dummy_black_score: i32 = 0;
-    let mut dummy_white_score: i32 = 0;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     printf(b"Calculating minimax value... \x00" as *const u8 as
@@ -69,18 +66,19 @@ pub unsafe fn minimax_tree() {
     prepare_tree_traversal();
     time(&mut start_time);
     /* Mark all nodes as not traversed */
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i < book_node_count {
         let ref mut fresh15 = (*node.offset(i as isize)).flags;
         *fresh15 =
             (*fresh15 as i32 | 8 as i32) as u16;
         i += 1
     }
-    do_minimax(0 as i32, &mut dummy_black_score,
-               &mut dummy_white_score);
+    let mut dummy_black_score: i32 = 0;
+    let mut dummy_white_score: i32 = 0;
+    do_minimax(0 as i32, &mut dummy_black_score, &mut dummy_white_score);
+
     time(&mut stop_time);
-    printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
-           (stop_time - start_time) as i32);
+    printf(b"done (took %d s)\n\x00" as *const u8 as *const i8, stop_time - start_time);
     puts(b"\x00" as *const u8 as *const i8);
 }
 
