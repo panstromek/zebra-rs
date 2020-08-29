@@ -1,12 +1,11 @@
 use crate::{
     src::{
-        display::{send_status},
         game::{global_setup, game_init},
         error::fatal_error,
         zebra::{ _IO_FILE}
     }
 };
-use engine::src::display::{display_pv, current_row, black_player, black_time, black_eval, white_eval, white_time, white_player, echo};
+use engine::src::display::{current_row, black_player, black_time, black_eval, white_eval, white_time, white_player, echo};
 use crate::src::display::display_board;
 use engine::src::midgame::{middle_game, toggle_midgame_abort_check, toggle_midgame_hash_usage};
 use engine::src::myrandom::{my_srandom, my_random};
@@ -14,17 +13,34 @@ use engine::src::hash::{set_hash_transformation, determine_hash_values, setup_ha
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError};
 use engine::src::globals::{white_moves, black_moves, board, pv, piece_count};
-use engine::src::moves::{disks_played, unmake_move, make_move, move_list, move_count, generate_all, generate_specific, unmake_move_no_hash, make_move_no_hash};
+use engine::src::moves::{disks_played, unmake_move, make_move, move_list, move_count,
+                         generate_all, generate_specific, unmake_move_no_hash, make_move_no_hash};
 use engine::src::stubs::{abs, floor};
-use engine::src::search::{root_eval, nodes, disc_count, get_ponder_move};
+use engine::src::search::{root_eval, nodes, disc_count};
 use engine::src::end::end_game;
 use engine::src::counter::reset_counter;
 use engine::src::zebra::EvaluationType;
 use engine::src::timer::toggle_abort_check;
 use engine::src::safemem::safe_malloc;
 use engine::src::eval::toggle_experimental;
-use crate::src::stubs::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit};
-use engine::src::osfbook::{__time_t, node, book_node_count, prepare_tree_traversal, book_hash_table, probe_hash_table, get_hash, evaluated_count, max_batch_size, max_eval_count, max_negamax_span, min_negamax_span, max_eval_span, min_eval_span, get_node_depth, evaluation_stage, exhausted_node_count, force_white, force_black, clear_node_depth, get_candidate_count, fill_move_alternatives, engine_init_osf, _ISupper, _ISprint, _ISspace, candidate_list, candidate_count, create_BookNode, _ISgraph, do_compress, BookNode, create_hash_reference, set_allocation, total_game_count, do_minimax, evaluate_node, adjust_score, exhausted_count, exact_count, wld_count, common_count, really_bad_leaf_count, bad_leaf_count, leaf_count, unreachable_count, do_examine, do_evaluate, search_depth, compute_feasible_count, size_t, inv_symmetry_map, MIDGAME_EVAL, WON_POSITION};
+use crate::src::stubs::{
+    fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf,
+    free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf,
+    fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit,
+};
+use engine::src::osfbook::{
+    __time_t, node, book_node_count, prepare_tree_traversal, book_hash_table,
+    probe_hash_table, get_hash, evaluated_count, max_batch_size, max_eval_count,
+    max_negamax_span, min_negamax_span, max_eval_span, min_eval_span, get_node_depth,
+    evaluation_stage, exhausted_node_count, force_white, force_black, clear_node_depth,
+    get_candidate_count, fill_move_alternatives, engine_init_osf, _ISupper, _ISprint,
+    _ISspace, candidate_list, candidate_count, create_BookNode, _ISgraph, do_compress,
+    BookNode, create_hash_reference, set_allocation, total_game_count, do_minimax,
+    evaluate_node, adjust_score, exhausted_count, exact_count, wld_count, common_count,
+    really_bad_leaf_count, bad_leaf_count, leaf_count, unreachable_count, do_examine,
+    do_evaluate, search_depth, compute_feasible_count, size_t, inv_symmetry_map,
+    MIDGAME_EVAL, WON_POSITION,
+};
 
 pub type FE = LibcFatalError;
 
