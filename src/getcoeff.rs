@@ -1,11 +1,17 @@
 use libc_wrapper::{fclose, fscanf, fopen, printf, gzgetc, gzFile};
-use engine::src::getcoeff::{CoeffAdjustments, C2RustUnnamed};
+use engine::src::getcoeff::{CoeffAdjustments, CoeffSource};
 
 /*
    GET_WORD
    Reads a 16-bit signed integer from a file.
 */
 unsafe fn get_word(mut stream: gzFile) -> i16 {
+    #[derive(Copy, Clone)]
+    #[repr(C)]
+    pub union C2RustUnnamed {
+        pub signed_val: i16,
+        pub unsigned_val: u16,
+    }
     let mut val = C2RustUnnamed { signed_val: 0 };
     let hi =
         if (*stream).have != 0 {
