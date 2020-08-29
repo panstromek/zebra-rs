@@ -9,8 +9,8 @@ pub struct CounterType {
 */
 
 pub fn reset_counter(counter: &mut CounterType) {
-    (*counter).lo = 0 as i32 as u32;
-    (*counter).hi = 0 as i32 as u32;
+    counter.lo = 0;
+    counter.hi = 0;
 }
 /*
   ADJUST_COUNTER
@@ -18,11 +18,9 @@ pub fn reset_counter(counter: &mut CounterType) {
 */
 
 pub fn adjust_counter(counter: &mut CounterType) {
-    while (*counter).lo >= 100000000 as i32 as u32 {
-        (*counter).lo =
-            (*counter).lo.wrapping_sub(100000000 as i32 as
-                                           u32);
-        (*counter).hi = (*counter).hi.wrapping_add(1)
+    while counter.lo >= 100000000 {
+        counter.lo = counter.lo.wrapping_sub(100000000);
+        counter.hi = counter.hi.wrapping_add(1)
     };
 }
 /*
@@ -33,14 +31,14 @@ pub fn adjust_counter(counter: &mut CounterType) {
 pub fn counter_value(counter: &mut CounterType)
  -> f64 {
     adjust_counter(counter);
-    100000000f64 * (*counter).hi as f64 + (*counter).lo as f64
+    100000000f64 * counter.hi as f64 + counter.lo as f64
 }
 /*
   ADD_COUNTER
   Adds the value of the counter TERM to the counter SUM.
 */
-pub fn add_counter(sum: &mut CounterType, term: &mut CounterType) {
-    (*sum).lo = (*sum).lo.wrapping_add((*term).lo);
-    (*sum).hi = (*sum).hi.wrapping_add((*term).hi);
+pub fn add_counter(sum: &mut CounterType, term: &CounterType) {
+    sum.lo = sum.lo.wrapping_add(term.lo);
+    sum.hi = sum.hi.wrapping_add(term.hi);
     adjust_counter(sum);
 }
