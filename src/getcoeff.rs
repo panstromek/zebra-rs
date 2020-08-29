@@ -1,12 +1,8 @@
 use crate::src::stubs::{fclose, fscanf, fopen, printf, gzgetc};
 use crate::src::zebra::_IO_FILE;
-use crate::src::getcoeff::zlib_source::ZLibSource;
-use crate::src::error::LibcFatalError;
 use engine::src::getcoeff::{CoeffAdjustments, eval_adjustment, C2RustUnnamed};
 
-pub type size_t = u64;
 pub type __off_t = i64;
-pub type __off64_t = i64;
 pub type off_t = __off_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -24,10 +20,8 @@ pub type FILE = _IO_FILE;
    Reads a 16-bit signed integer from a file.
 */
 unsafe fn get_word(mut stream: gzFile) -> i16 {
-    let mut val = C2RustUnnamed{signed_val: 0,};
-    let mut hi: i32 = 0;
-    let mut lo: i32 = 0;
-    hi =
+    let mut val = C2RustUnnamed { signed_val: 0 };
+    let hi =
         if (*stream).have != 0 {
             (*stream).have = (*stream).have.wrapping_sub(1);
             (*stream).pos += 1;
@@ -36,8 +30,7 @@ unsafe fn get_word(mut stream: gzFile) -> i16 {
             *fresh0 as i32
         } else { gzgetc(stream) };
     assert_ne!(hi, -(1 as i32));
-    lo =
-        if (*stream).have != 0 {
+    let lo = if (*stream).have != 0 {
             (*stream).have = (*stream).have.wrapping_sub(1);
             (*stream).pos += 1;
             let fresh1 = (*stream).next;
@@ -46,7 +39,7 @@ unsafe fn get_word(mut stream: gzFile) -> i16 {
         } else { gzgetc(stream) };
     assert_ne!(lo, -(1 as i32));
     val.unsigned_val = ((hi << 8 as i32) + lo) as u16;
-    return val.signed_val;
+    val.signed_val
 }
 /*
    File:         getcoeff.h
