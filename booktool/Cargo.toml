@@ -15,3 +15,4 @@ name = "booktool"
 engine = { path= "./../engine" }
 c2rust_out = { path= "./../" }
 libc = "0.2"
+libc-wrapper = { path = "./../libc-wrapper"}

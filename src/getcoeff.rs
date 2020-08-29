@@ -1,19 +1,5 @@
-use crate::src::stubs::{fclose, fscanf, fopen, printf, gzgetc};
-use crate::src::zebra::_IO_FILE;
+use libc_wrapper::{fclose, fscanf, fopen, printf, gzgetc, gzFile};
 use engine::src::getcoeff::{CoeffAdjustments, eval_adjustment, C2RustUnnamed};
-
-pub type __off_t = i64;
-pub type off_t = __off_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct gzFile_s {
-    pub have: u32,
-    pub next: *mut u8,
-    pub pos: off_t,
-}
-pub type gzFile = *mut gzFile_s;
-pub type _IO_lock_t = ();
-pub type FILE = _IO_FILE;
 
 /*
    GET_WORD
@@ -53,8 +39,8 @@ unsafe fn get_word(mut stream: gzFile) -> i16 {
    Contents:
 */
 pub mod zlib_source {
-    use crate::src::stubs::{gzopen, strcpy, gzclose};
-    use crate::src::getcoeff::{get_word, gzFile_s};
+    use libc_wrapper::{gzopen, strcpy, gzclose, gzFile_s};
+    use crate::src::getcoeff::{get_word};
     use crate::src::error::fatal_error;
     use engine::src::getcoeff::CoeffSource;
 

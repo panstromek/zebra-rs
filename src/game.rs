@@ -1,9 +1,8 @@
-use crate::src::stubs::{fclose, free, fprintf, fputs, fopen, puts, printf, fgets, time, ctime, strcpy, stdout};
+use libc_wrapper::{fclose, free, fprintf, fputs, fopen, puts, printf, fgets, time, ctime, strcpy, stdout, FILE, time_t};
 use crate::src::display::{display_optimal_line, display_status, produce_eval_text, send_status,
                           send_status_time, send_status_pv, send_status_nodes, display_board};
 
 use crate::src::getcoeff::{load_coeff_adjustments};
-use crate::src::zebra::{_IO_FILE};
 use crate::src::getcoeff::zlib_source::ZLibSource;
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError, FE};
@@ -22,12 +21,6 @@ use engine::src::stubs::abs;
 use engine::src::osfbook::{get_book_move, get_candidate, get_candidate_count, fill_move_alternatives};
 use engine::src::game::{use_log_file, ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, evaluated_list, game_evaluated_count, max_depth_reached, prefix_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, MIDGAME_EVAL, WON_POSITION, UNDEFINED_EVAL, UNSOLVED_POSITION, EXACT_EVAL, WLD_EVAL, DRAWN_POSITION, LOST_POSITION, PASS_EVAL};
 
-pub type __time_t = i64;
-pub type size_t = u64;
-
-pub type _IO_lock_t = ();
-pub type FILE = _IO_FILE;
-pub type time_t = __time_t;
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
 /*
    GLOBAL_SETUP

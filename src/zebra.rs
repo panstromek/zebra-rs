@@ -12,7 +12,7 @@ use crate::src::error::{LibcFatalError, FE, fatal_error};
 use engine::src::error::{FrontEnd, FatalError};
 use engine::src::display::{white_time, black_time, current_row, black_player, white_player, white_eval, black_eval, echo, set_move_list, set_evals, set_names, set_times, toggle_smart_buffer_management, display_pv};
 use engine::src::{myrandom, unflip};
-use crate::src::stubs::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, sscanf, feof, fgets, atoi, scanf, sprintf, ctime, time, strchr, strcasecmp, atof, stdout};
+use libc_wrapper::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, sscanf, feof, fgets, atoi, scanf, sprintf, ctime, time, strchr, strcasecmp, atof, stdout};
 use engine::src::globals::{white_moves, score_sheet_row, black_moves, board};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType, adjust_counter};
 use engine::src::timer::{get_real_timer, determine_move_time, start_move, clear_panic_abort};
@@ -28,52 +28,8 @@ use engine::src::getcoeff::remove_coeffs;
 use engine::src::myrandom::{my_random, my_srandom};
 use crate::src::osfbook::print_move_alternatives;
 use engine::src::zebra::{set_default_engine_globals, DumpHandler, wld_only, use_book, EvaluationType, use_timer, player_time, one_position_only, skill, wld_skill, exact_skill, player_increment, wait, ZebraFrontend, engine_play_game, InitialMoveSource, tournament_levels, tournament_skill, only_analyze, tournament, rand_move_freq, thor_max_games, dev_bonus, high_thresh, low_thresh, slack, deviation_depth, cutoff_empty, PRIVATE_GAME, PUBLIC_GAME, NEUTRAL, BLACK_WINS, WHITE_WINS, OPPONENT_WINS, MIDGAME_EVAL, WON_POSITION, LOST_POSITION};
+use libc_wrapper::{FILE, time_t};
 
-
-pub type _IO_wide_data = std::ffi::c_void;
-pub type _IO_codecvt = std::ffi::c_void;
-pub type _IO_marker = std::ffi::c_void;
-
-pub type __off_t = i64;
-pub type __off64_t = i64;
-pub type __time_t = i64;
-pub type size_t = u64;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-    pub _flags: i32,
-    pub _IO_read_ptr: *mut i8,
-    pub _IO_read_end: *mut i8,
-    pub _IO_read_base: *mut i8,
-    pub _IO_write_base: *mut i8,
-    pub _IO_write_ptr: *mut i8,
-    pub _IO_write_end: *mut i8,
-    pub _IO_buf_base: *mut i8,
-    pub _IO_buf_end: *mut i8,
-    pub _IO_save_base: *mut i8,
-    pub _IO_backup_base: *mut i8,
-    pub _IO_save_end: *mut i8,
-    pub _markers: *mut _IO_marker,
-    pub _chain: *mut _IO_FILE,
-    pub _fileno: i32,
-    pub _flags2: i32,
-    pub _old_offset: __off_t,
-    pub _cur_column: u16,
-    pub _vtable_offset: i8,
-    pub _shortbuf: [i8; 1],
-    pub _lock: *mut std::ffi::c_void,
-    pub _offset: __off64_t,
-    pub _codecvt: *mut _IO_codecvt,
-    pub _wide_data: *mut _IO_wide_data,
-    pub _freeres_list: *mut _IO_FILE,
-    pub _freeres_buf: *mut std::ffi::c_void,
-    pub __pad5: size_t,
-    pub _mode: i32,
-    pub _unused2: [i8; 20],
-}
-pub type _IO_lock_t = ();
-pub type FILE = _IO_FILE;
-pub type time_t = __time_t;
 
 pub static mut use_thor: i32 = 0;
 pub static mut use_learning: i32 = 0;

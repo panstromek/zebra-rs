@@ -1,5 +1,4 @@
-use crate::src::stubs::{puts, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp};
-use crate::src::zebra::_IO_FILE;
+use libc_wrapper::{puts, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FILE, size_t};
 use crate::src::error::LibcFatalError;
 use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
@@ -8,13 +7,6 @@ use engine::src::thordb::{thor_search, GameType, thor_compare, get_player_name, 
 
 pub type FE = LibcFatalError;
 
-pub type size_t = u64;
-
-pub type FILE = _IO_FILE;
-pub type __compar_fn_t
-    =
-    Option<unsafe fn(_: *const std::ffi::c_void,
-                                _: *const std::ffi::c_void) -> i32>;
 /*
   GET_INT_8
   Reads an 8-bit signed integer from STREAM. Returns TRUE upon

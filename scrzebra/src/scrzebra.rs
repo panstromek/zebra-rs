@@ -13,14 +13,13 @@ use engine::src::moves::disks_played;
 use engine::src::globals::{board, score_sheet_row, white_moves, black_moves};
 use engine::src::hash::setup_hash;
 use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack};
-use c2rust_out::src::zebra::{_IO_FILE};
 use c2rust_out::src::learn::init_learn;
 use c2rust_out::src::game::{global_setup, compute_move, game_init};
-use c2rust_out::src::stubs::strstr;
 use c2rust_out::src::display::{display_move, display_board};
 use engine::src::zebra::EvaluationType;
 use c2rust_out::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
+use libc_wrapper::{strstr, FILE};
 
 extern "C" {
     #[no_mangle]
@@ -60,7 +59,6 @@ pub type __off64_t = i64;
 pub type __time_t = i64;
 pub type size_t = u64;
 pub type _IO_lock_t = ();
-pub type FILE = _IO_FILE;
 pub type time_t = __time_t;
 
 /* The basic board type. One index for each position;
