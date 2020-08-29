@@ -20,6 +20,4 @@ name = "zebra"
 engine = { path = "./../engine" }
 libc-wrapper = { path = "./../libc-wrapper" }
 engine-traits = { path = "./../engine/engine-traits" }
-
-[build-dependencies]
-pkg-config = "0.3.16"
+zlib-coeff-source = { path = "./zlib-coeff-source" }

@@ -2,8 +2,7 @@ use libc_wrapper::{fclose, free, fprintf, fputs, fopen, puts, printf, fgets, tim
 use crate::src::display::{display_optimal_line, display_status, produce_eval_text, send_status,
                           send_status_time, send_status_pv, send_status_nodes, display_board};
 
-use crate::src::getcoeff::{load_coeff_adjustments};
-use crate::src::getcoeff::zlib_source::ZLibSource;
+use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError, FE};
 use engine::src::globals::{white_moves, black_moves, pv, pv_depth, board, piece_count};
@@ -34,7 +33,7 @@ pub unsafe fn global_setup(use_random: i32,
     let coeff_adjustments = load_coeff_adjustments();
     let file_name = CStr::from_bytes_with_nul(b"./coeffs2.bin\x00").unwrap();
 
-    engine_global_setup::<_,LibcFatalError>(use_random, hash_bits, coeff_adjustments, ZLibSource::new(file_name));
+    engine_global_setup::<_,LibcFatalError>(use_random, hash_bits, coeff_adjustments, new_z_lib_source(file_name));
 }
 trait Logger {
     fn on_global_setup();
