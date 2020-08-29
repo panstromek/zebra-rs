@@ -27,6 +27,10 @@ impl CoeffSource for CoeffSourceWasm {
         // unimplemented!()
         4 // fixme
     }
+
+    fn try_next_word(&mut self) -> Option<i16> {
+        None
+    }
 }
 #[wasm_bindgen]
 pub fn greet(name: &str) {
