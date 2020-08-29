@@ -12,7 +12,9 @@ members = [
     "engine/epcstat",
     "engine/bitbcnt",
     "libc-wrapper",
-    "engine/engine-traits"
+    "engine/engine-traits",
+    "flate2-coeff-source",
+    "tests"
 ]
 
 [package]
@@ -44,7 +46,6 @@ name = "zebra"
 [dependencies]
 engine = { path = "./engine" }
 libc-wrapper = { path = "./libc-wrapper" }
-flate2 = "1.0"
 engine-traits = { path = "./engine/engine-traits" }
 
 [build-dependencies]
