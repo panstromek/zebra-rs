@@ -6,8 +6,6 @@
 #![feature(extern_types)]
 #![allow(clippy::missing_safety_doc)]
 
-extern crate libc;
-
 pub mod src {
     pub mod display;
     pub mod error;
@@ -16,6 +14,5 @@ pub mod src {
     pub mod learn;
     pub mod osfbook;
     pub mod thordb;
-    pub mod stubs;
     pub mod zebra;
 }

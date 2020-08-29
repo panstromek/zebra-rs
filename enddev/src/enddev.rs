@@ -13,10 +13,10 @@ use engine::src::search::disc_count;
 use c2rust_out::src::display::display_board;
 use c2rust_out::src::game::{extended_compute_move, compute_move, game_init, global_setup};
 use c2rust_out::src::learn::init_learn;
-use c2rust_out::src::zebra::_IO_FILE;
 use c2rust_out::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
 use engine::src::display::{current_row, white_time, black_time, black_eval, white_eval, black_player, white_player};
+use libc_wrapper::_IO_FILE;
 
 extern "C" {
     #[no_mangle]

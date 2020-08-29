@@ -1,7 +1,6 @@
 use crate::src::osfbook::{write_text_database, write_binary_database, add_new_game, read_text_database, read_binary_database, init_osf};
 use crate::src::game::{game_init, LibcBoardFileSource};
-use crate::src::stubs::{fclose, fputs, fprintf, fopen, strcpy};
-use crate::src::zebra::_IO_FILE;
+use libc_wrapper::{fclose, fputs, fprintf, fopen, strcpy};
 use engine::src::game::generic_game_init;
 use crate::src::error::LibcFatalError;
 use engine::src::timer::{clear_panic_abort, toggle_abort_check};
@@ -10,12 +9,6 @@ use engine::src::moves::{make_move, generate_all, disks_played, move_count};
 use engine::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
 use engine::src::learn::{database_name, binary_database, game_move, learn_depth, Learner, cutoff_empty};
 
-pub type size_t = u64;
-pub type __off_t = i64;
-pub type __off64_t = i64;
-
-pub type _IO_lock_t = ();
-pub type FILE = _IO_FILE;
 /*
    INIT_LEARN
    Initialize the learning module.

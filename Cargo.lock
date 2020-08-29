@@ -15,6 +15,7 @@ dependencies = [
  "c2rust_out",
  "engine",
  "libc",
+ "libc-wrapper",
 ]
 
 [[package]]
@@ -28,7 +29,7 @@ name = "c2rust_out"
 version = "0.0.0"
 dependencies = [
  "engine",
- "libc",
+ "libc-wrapper",
  "pkg-config",
 ]
 
@@ -45,6 +46,7 @@ dependencies = [
  "c2rust_out",
  "engine",
  "libc",
+ "libc-wrapper",
 ]
 
 [[package]]
@@ -74,6 +76,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9457b06509d27052635f90d6466700c65095fdf75409b3fbdd903e988b886f49"
 
 [[package]]
+name = "libc-wrapper"
+version = "0.1.0"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "log"
 version = "0.4.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -99,6 +108,7 @@ dependencies = [
  "c2rust_out",
  "engine",
  "libc",
+ "libc-wrapper",
 ]
 
 [[package]]
@@ -126,6 +136,7 @@ dependencies = [
  "c2rust_out",
  "engine",
  "libc",
+ "libc-wrapper",
 ]
 
 [[package]]

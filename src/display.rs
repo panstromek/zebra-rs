@@ -1,5 +1,4 @@
-use crate::src::stubs::{sprintf, fprintf, vsprintf, fputs, fputc, exit, strcpy, getc, stdout, stdin};
-use crate::src::zebra::{_IO_FILE};
+use libc_wrapper::{sprintf, fprintf, vsprintf, fputs, fputc, exit, strcpy, getc, stdout, stdin, FILE, size_t};
 use crate::src::error::{FE};
 use engine::src::error::FrontEnd;
 use engine::src::stubs::{floor, abs, ceil};
@@ -12,9 +11,6 @@ use engine::src::display::{
     sweep_modified, sweep_buffer, sweep_pos, status_pos,
     status_buffer, stored_status_buffer, status_modified,
 };
-
-pub type size_t = u64;
-pub type FILE = _IO_FILE;
 
 /*
    File:           display.c

@@ -10,7 +10,8 @@ members = [
     "engine/bitboard",
     "engine/pcstat",
     "engine/epcstat",
-    "engine/bitbcnt"
+    "engine/bitbcnt",
+    "libc-wrapper"
 ]
 
 [package]
@@ -40,8 +41,8 @@ path = "src/main.rs"
 name = "zebra"
 
 [dependencies]
-libc = "0.2"
-engine = { path= "./engine" }
+engine = { path = "./engine" }
+libc-wrapper = { path = "./libc-wrapper" }
 
 [build-dependencies]
 pkg-config = "0.3.16"

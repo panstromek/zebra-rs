@@ -1,5 +1,4 @@
-use crate::src::stubs::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc, puts, printf, putc};
-use crate::src::zebra::_IO_FILE;
+use libc_wrapper::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc, puts, printf, putc, sprintf, fflush, time_t, stdout};
 use engine::src::error::{FrontEnd, FatalError};
 use engine::src::hash::HashEntry;
 use engine::src::thordb::C2RustUnnamed;
@@ -15,7 +14,6 @@ use engine::{
 };
 use crate::{
     src::{
-        stubs::{fflush, sprintf, stdout},
         display::{display_status, send_status, send_status_time,
                   send_status_pv, send_status_nodes, produce_eval_text, display_sweep, send_sweep},
     }
@@ -31,8 +29,6 @@ use engine::src::end::best_move;
 
 static mut buffer: [i8; 16] = [0; 16];
 
-pub type FILE = _IO_FILE;
-pub type time_t = i64;
 /*
    File:       error.h
 

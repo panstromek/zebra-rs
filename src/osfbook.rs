@@ -1,8 +1,7 @@
 use crate::{
     src::{
         game::{global_setup, game_init},
-        error::fatal_error,
-        zebra::{ _IO_FILE}
+        error::fatal_error
     }
 };
 use engine::src::display::{current_row, black_player, black_time, black_eval, white_eval, white_time, white_player, echo};
@@ -23,11 +22,7 @@ use engine::src::zebra::EvaluationType;
 use engine::src::timer::toggle_abort_check;
 use engine::src::safemem::safe_malloc;
 use engine::src::eval::toggle_experimental;
-use crate::src::stubs::{
-    fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf,
-    free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf,
-    fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit,
-};
+use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit, FILE};
 use engine::src::osfbook::{
     __time_t, node, book_node_count, prepare_tree_traversal, book_hash_table,
     probe_hash_table, get_hash, evaluated_count, max_batch_size, max_eval_count,
@@ -45,12 +40,7 @@ use engine::src::osfbook::{
 pub type FE = LibcFatalError;
 
 pub type _IO_lock_t = ();
-pub type FILE = _IO_FILE;
 pub type time_t = __time_t;
-pub type __compar_fn_t
-    =
-    Option<unsafe extern "C" fn(_: *const std::ffi::c_void,
-                                _: *const std::ffi::c_void) -> i32>;
 
 /*
    MINIMAX_TREE
