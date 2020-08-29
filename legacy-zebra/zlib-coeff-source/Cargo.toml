@@ -1,17 +1,14 @@
 [package]
-name = "libc-wrapper"
+name = "zlib-coeff-source"
 version = "0.1.0"
 authors = ["panstromek <panstromek@seznam.cz>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [lib]
-name = "libc_wrapper"
+name = "zlib_coeff_source"
 path = "lib.rs"
 
 [dependencies]
-libc = "0.2"
-
-[build-dependencies]
-pkg-config = "0.3.16"
+engine-traits = { path = "./../../engine/engine-traits"}
+libc-wrapper = { path = "./../../libc-wrapper"}

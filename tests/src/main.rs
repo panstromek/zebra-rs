@@ -1,15 +1,15 @@
 use flate2_coeff_source::Flate2Source;
 use std::ffi::CStr;
+use legacy_zebra::src::getcoeff::new_z_lib_source;
 
 fn main() {}
 
 #[test]
 fn coeff_source_test () {
-    use legacy_zebra::src::getcoeff::zlib_source::ZLibSource;
     use engine_traits::CoeffSource;
     let file_name: &CStr = CStr::from_bytes_with_nul(b"./../coeffs2.bin\x00").unwrap();
 
-    let mut z_lib_source = ZLibSource::new(file_name);
+    let mut z_lib_source = new_z_lib_source(file_name);
 
     let mut flate2_source = Flate2Source::new_from_data(&std::fs::read("./../coeffs2.bin").unwrap());
 

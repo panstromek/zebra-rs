@@ -15,7 +15,8 @@ members = [
     "engine/engine-traits",
     "flate2-coeff-source",
     "legacy-zebra",
-    "tests"
+    "tests",
+    "legacy-zebra/zlib-coeff-source"
 ]
 
 [profile.release]
