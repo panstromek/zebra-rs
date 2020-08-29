@@ -43,6 +43,7 @@ name = "zebra"
 [dependencies]
 engine = { path = "./engine" }
 libc-wrapper = { path = "./libc-wrapper" }
+flate2 = "1.0"
 
 [build-dependencies]
 pkg-config = "0.3.16"

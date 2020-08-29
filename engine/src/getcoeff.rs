@@ -3165,6 +3165,7 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
 
 pub trait CoeffSource {
     fn next_word(&mut self) -> i16;
+    fn try_next_word(&mut self) -> Option<i16>;
 }
 
 pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mut coeffs: Source) {
