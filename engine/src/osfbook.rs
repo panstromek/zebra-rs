@@ -2345,3 +2345,17 @@ pub unsafe fn validate_tree<FE: FrontEnd>() -> i32 {
     prepare_tree_traversal();
     validate_prepared_tree::<FE>()
 }
+
+pub unsafe fn engine_minimax_tree() {
+    /* Mark all nodes as not traversed */
+    let mut i = 0 as i32;
+    while i < book_node_count {
+        let ref mut fresh15 = (*node.offset(i as isize)).flags;
+        *fresh15 =
+            (*fresh15 as i32 | 8 as i32) as u16;
+        i += 1
+    }
+    let mut dummy_black_score: i32 = 0;
+    let mut dummy_white_score: i32 = 0;
+    do_minimax(0 as i32, &mut dummy_black_score, &mut dummy_white_score);
+}
