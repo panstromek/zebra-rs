@@ -36,7 +36,6 @@ version = "0.0.0"
 dependencies = [
  "engine",
  "engine-traits",
- "flate2",
  "libc-wrapper",
  "pkg-config",
 ]
@@ -95,6 +94,14 @@ dependencies = [
  "crc32fast",
  "libc",
  "miniz_oxide",
+]
+
+[[package]]
+name = "flate2-coeff-source"
+version = "0.1.0"
+dependencies = [
+ "engine-traits",
+ "flate2",
 ]
 
 [[package]]
@@ -191,6 +198,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-xid",
+]
+
+[[package]]
+name = "tests"
+version = "0.1.0"
+dependencies = [
+ "c2rust_out",
+ "engine-traits",
+ "flate2-coeff-source",
 ]
 
 [[package]]

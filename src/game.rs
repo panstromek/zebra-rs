@@ -20,6 +20,7 @@ use engine::src::myrandom::my_random;
 use engine::src::stubs::abs;
 use engine::src::osfbook::{get_book_move, get_candidate, get_candidate_count, fill_move_alternatives};
 use engine::src::game::{use_log_file, ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, evaluated_list, game_evaluated_count, max_depth_reached, prefix_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, MIDGAME_EVAL, WON_POSITION, UNDEFINED_EVAL, UNSOLVED_POSITION, EXACT_EVAL, WLD_EVAL, DRAWN_POSITION, LOST_POSITION, PASS_EVAL};
+use std::ffi::CStr;
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
 /*
@@ -31,7 +32,9 @@ pub unsafe fn global_setup(use_random: i32,
                                       hash_bits: i32) {
     LogFileHandler::on_global_setup();
     let coeff_adjustments = load_coeff_adjustments();
-    engine_global_setup::<_,LibcFatalError>(use_random, hash_bits, coeff_adjustments, ZLibSource::new());
+    let file_name = CStr::from_bytes_with_nul(b"./coeffs2.bin\x00").unwrap();
+
+    engine_global_setup::<_,LibcFatalError>(use_random, hash_bits, coeff_adjustments, ZLibSource::new(file_name));
 }
 trait Logger {
     fn on_global_setup();

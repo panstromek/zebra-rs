@@ -739,7 +739,7 @@ PV: b7 a4 g8 a8 a7 a2 e2 d2 d1 h8 h7 c1 b3 c2 e1
       7    O O * * * *        +1.53    26 discs     19. c8  b8
       8    O O O O O                                20. g7  b7
 
--->  16  -1.32          66784  a4 g8 a8 a7 a2     0.0 s  
+-->  16  -1.32          66784  a4 g8 a8 a7 a2     1.0 s   66717 nps
 PV: a4 g8 a8 a7 a2 e2 d2 d1 c1 a5 a6 h7 h8 b1 g1
 
          a b c d e f g h
@@ -1026,4 +1026,4 @@ PV: b1
 Black: 31   White: 33
 Nodes searched:        4196548   
 Positions evaluated:   2756433   
-Total time: 0.0 s
+Total time: 1.0 s

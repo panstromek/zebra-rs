@@ -1,6 +1,5 @@
 use libc_wrapper::{fclose, fscanf, fopen, printf, gzgetc, gzFile};
 use engine::src::getcoeff::{CoeffAdjustments};
-use flate2::read::GzDecoder;
 use std::io::Read;
 use engine_traits::CoeffSource;
 
@@ -63,6 +62,7 @@ pub mod zlib_source {
     use crate::src::getcoeff::{get_word, try_get_word};
     use crate::src::error::fatal_error;
     use engine_traits::CoeffSource;
+    use std::ffi::CStr;
 
     pub struct ZLibSource {
         coeff_stream: *mut gzFile_s
@@ -83,11 +83,11 @@ pub mod zlib_source {
         }
     }
     impl ZLibSource {
-        pub fn new() -> Self {
+        pub fn new(file_name: &CStr) -> Self {
             let mut sPatternFile: [i8; 260] = [0; 260];
             unsafe {
                 /* Linux don't support current directory. */
-                strcpy(sPatternFile.as_mut_ptr(), b"coeffs2.bin\x00" as *const u8 as *const i8);
+                strcpy(sPatternFile.as_mut_ptr(), file_name.as_ptr() as *const u8 as *const i8);
                 let coeff_stream = gzopen(sPatternFile.as_mut_ptr(), b"rb\x00" as *const u8 as *const i8);
                 if coeff_stream.is_null() {
                     fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
@@ -142,65 +142,4 @@ pub fn load_coeff_adjustments() -> Option<CoeffAdjustments> {
     } else {
         None
     }
-}
-
-struct Flate2Source { data: Vec<u8>, index: usize }
-
-impl Flate2Source {
-    fn new() -> Flate2Source {
-        Flate2Source::new_from_data(&std::fs::read("coeffs2.bin").unwrap())
-    }
-
-    fn new_from_data(data: &[u8]) -> Flate2Source {
-        let mut decoder = GzDecoder::new(data);
-        let mut decoded = Vec::new();
-        decoder.read_to_end(&mut decoded).unwrap();
-
-        let mut source = Flate2Source {
-            data: decoded,
-            index: 0,
-        };
-
-        let word1 = source.next_word();
-        let word2 = source.next_word();
-
-        if word1 != 5358 || word2 != 9793 {
-            panic!("Magic words are incorrect in coeff source file.");
-        }
-        source
-    }
-}
-
-impl CoeffSource for Flate2Source {
-    fn next_word(&mut self) -> i16 {
-        self.try_next_word().unwrap()
-    }
-
-    fn try_next_word(&mut self) -> Option<i16> {
-        let mut val = C2RustUnnamed { signed_val: 0 };
-
-        let hi = *self.data.get(self.index)? as i32;
-        self.index += 1;
-        let lo = *self.data.get(self.index)? as i32;
-        self.index += 1;
-
-        val.unsigned_val = ((hi << 8 as i32) + lo) as u16;
-        return Some(unsafe { val.signed_val });
-    }
-}
-
-
-#[test]
-fn coeff_source_test () {
-    use crate::src::getcoeff::zlib_source::ZLibSource;
-
-    let mut z_lib_source = ZLibSource::new();
-    let mut flate2_source = Flate2Source::new();
-
-    while let Some(word) = z_lib_source.try_next_word() {
-        let flate_word = flate2_source.try_next_word().unwrap();
-        assert_eq!(word, flate_word)
-    }
-
-    assert!(flate2_source.try_next_word().is_none());
 }

@@ -1,0 +1,14 @@
+[package]
+name = "libc-wrapper"
+version = "0.1.0"
+authors = ["panstromek <panstromek@seznam.cz>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "libc_wrapper"
+path = "lib.rs"
+
+[dependencies]
+libc = "0.2"
