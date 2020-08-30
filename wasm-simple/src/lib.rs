@@ -197,7 +197,7 @@ unsafe impl InitialMoveSource for WasmInitialMoveSource{
 }
 struct WasmFrontend;
 impl DumpHandler for WasmFrontend {
-    fn dump_position(side_to_move: i32) {
+    fn dump_position(side_to_move: i32, board_: &[i32; 128]) {
         // unimplemented!()
     }
 

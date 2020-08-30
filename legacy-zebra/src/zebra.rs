@@ -1733,7 +1733,7 @@ impl DumpHandler for LibcDumpHandler {
        DUMP_POSITION
        Saves the current board position to disk.
     */
-    fn dump_position(side_to_move: i32) { unsafe {
+    fn dump_position(side_to_move: i32, board_: &[i32; 128]) { unsafe {
         let mut i: i32 = 0;
         let mut j: i32 = 0;
         let mut stream = 0 as *mut FILE;
@@ -1748,7 +1748,7 @@ impl DumpHandler for LibcDumpHandler {
         while i <= 8 as i32 {
             j = 1 as i32;
             while j <= 8 as i32 {
-                match board[(10 as i32 * i + j) as usize] {
+                match board_[(10 as i32 * i + j) as usize] {
                     0 => { fputc('X' as i32, stream); }
                     2 => { fputc('O' as i32, stream); }
                     1 => { fputc('-' as i32, stream); }

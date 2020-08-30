@@ -137,7 +137,7 @@ pub trait ZebraFrontend {
 }
 /* File handling procedures */
 pub trait DumpHandler {
-    fn dump_position(side_to_move: i32);
+    fn dump_position(side_to_move: i32, board_: &[i32; 128]);
     fn dump_game_score(side_to_move: i32);
 }
 
@@ -283,7 +283,7 @@ pub unsafe fn engine_play_game<
                                                  white_time, white_eval,
                                                  &black_moves, &white_moves);
                 }
-                Dump::dump_position(side_to_move);
+                Dump::dump_position(side_to_move, &board);
                 Dump::dump_game_score(side_to_move);
                 /* Check what the Thor opening statistics has to say */
                 choose_thor_opening_move::<FE>(board.as_mut_ptr(), side_to_move, echo);
