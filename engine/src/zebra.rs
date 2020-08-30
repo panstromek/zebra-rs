@@ -138,7 +138,7 @@ pub trait ZebraFrontend {
 /* File handling procedures */
 pub trait DumpHandler {
     fn dump_position(side_to_move: i32, board_: &[i32; 128]);
-    fn dump_game_score(side_to_move: i32);
+    fn dump_game_score(side_to_move: i32, score_sheet_row_: i32, x: &[i32; 60], x: &[i32; 60]);
 }
 
 
@@ -284,7 +284,7 @@ pub unsafe fn engine_play_game<
                                                  &black_moves, &white_moves);
                 }
                 Dump::dump_position(side_to_move, &board);
-                Dump::dump_game_score(side_to_move);
+                Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
                 /* Check what the Thor opening statistics has to say */
                 choose_thor_opening_move::<FE>(board.as_mut_ptr(), side_to_move, echo);
                 if echo != 0 && wait != 0 { ZF::dumpch(); }
@@ -396,7 +396,7 @@ pub unsafe fn engine_play_game<
             ZF::report_skill_levels(black_level, white_level);
         }
         if side_to_move == 0 as i32 { score_sheet_row += 1 }
-        Dump::dump_game_score(side_to_move);
+        Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
         if echo != 0 && one_position_only == 0 {
             set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                           score_sheet_row);

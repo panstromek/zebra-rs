@@ -1367,7 +1367,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                skill[2 as i32 as usize]);
     }
     if side_to_move == 0 as i32 { score_sheet_row += 1 }
-    LibcDumpHandler::dump_game_score(side_to_move);
+    LibcDumpHandler::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
     if echo != 0 && one_position_only == 0 {
         set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
@@ -1775,7 +1775,8 @@ impl DumpHandler for LibcDumpHandler {
       DUMP_GAME_SCORE
       Writes the current game score to disk.
     */
-    fn dump_game_score(side_to_move: i32) { unsafe {
+    fn dump_game_score(side_to_move: i32, score_sheet_row_: i32,
+                       black_moves_: &[i32; 60], white_moves_: &[i32; 60]) { unsafe {
         let mut stream = 0 as *mut FILE;
         let mut i: i32 = 0;
         stream =
@@ -1786,31 +1787,31 @@ impl DumpHandler for LibcDumpHandler {
                 *const u8 as *const i8);
         }
         i = 0 as i32;
-        while i <= score_sheet_row {
+        while i <= score_sheet_row_ {
             fprintf(stream,
                     b"   %2d.    \x00" as *const u8 as *const i8,
                     i + 1 as i32);
-            if black_moves[i as usize] == -(1 as i32) {
+            if black_moves_[i as usize] == -(1 as i32) {
                 fputs(b"- \x00" as *const u8 as *const i8, stream);
             } else {
                 fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
-                        'a' as i32 + black_moves[i as usize] % 10 as i32 -
+                        'a' as i32 + black_moves_[i as usize] % 10 as i32 -
                             1 as i32,
-                        '0' as i32 + black_moves[i as usize] / 10 as i32);
+                        '0' as i32 + black_moves_[i as usize] / 10 as i32);
             }
             fputs(b"  \x00" as *const u8 as *const i8, stream);
-            if i < score_sheet_row ||
-                i == score_sheet_row && side_to_move == 0 as i32 {
-                if white_moves[i as usize] == -(1 as i32) {
+            if i < score_sheet_row_ ||
+                i == score_sheet_row_ && side_to_move == 0 as i32 {
+                if white_moves_[i as usize] == -(1 as i32) {
                     fputs(b"- \x00" as *const u8 as *const i8, stream);
                 } else {
                     fprintf(stream,
                             b"%c%c\x00" as *const u8 as *const i8,
                             'a' as i32 +
-                                white_moves[i as usize] % 10 as i32 -
+                                white_moves_[i as usize] % 10 as i32 -
                                 1 as i32,
                             '0' as i32 +
-                                white_moves[i as usize] / 10 as i32);
+                                white_moves_[i as usize] / 10 as i32);
                 }
             }
             fputs(b"\n\x00" as *const u8 as *const i8, stream);
