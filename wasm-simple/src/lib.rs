@@ -1,6 +1,9 @@
+extern crate console_error_panic_hook;
+use std::panic;
+
 use wasm_bindgen::prelude::*;
 
-use engine::src::zebra::{set_default_engine_globals, EvaluationType, skill, exact_skill, wld_skill, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler};
+use engine::src::zebra::{set_default_engine_globals, EvaluationType, skill, exact_skill, wld_skill, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, use_book};
 use engine::src::{unflip, myrandom};
 use engine::src::game::{engine_global_setup, global_terminate, BoardSource, FileBoardSource, ComputeMoveLogger, ComputeMoveOutput, CandidateMove};
 use engine::src::error::{FrontEnd, FatalError};
@@ -14,13 +17,21 @@ use wasm_bindgen::__rt::std::ffi::CStr;
 use std::convert::TryFrom;
 use engine::src::counter::CounterType;
 use engine_traits::CoeffSource;
+use flate2_coeff_source::Flate2Source;
 
 extern crate engine;
 
 #[wasm_bindgen]
 extern "C" {
     fn alert(s: &str);
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
 }
+
+macro_rules! c_log {
+    ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
+}
+
 struct CoeffSourceWasm;
 impl CoeffSource for CoeffSourceWasm {
     fn next_word(&mut self) -> i16 {
@@ -32,13 +43,19 @@ impl CoeffSource for CoeffSourceWasm {
         None
     }
 }
+
 #[wasm_bindgen]
 pub fn greet(name: &str) {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
     unsafe {
         unflip::run_static_initializers();
         myrandom::run_static_initializers();
         set_default_engine_globals();
-        let coeffs = CoeffSourceWasm {};
+        use_book = 0;
+
+        const COEFFS: &[u8; 1336662] = include_bytes!("./../../coeffs2.bin");
+
+        let coeffs = Flate2Source::new_from_data(COEFFS);
 
         engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs);
         init_thor_database::<WasmFrontend>();
@@ -76,8 +93,7 @@ pub fn greet(name: &str) {
         global_terminate::<WasmFrontend>();
 
     }
-
-    alert(&format!("Hello, {}!", name));
+    c_log!("Zebra ended");
 }
 
 struct WasmLearner;
@@ -385,7 +401,11 @@ impl FrontEnd for WasmFrontend {
     }
 
     unsafe fn free(mem: *mut c_void) {
-        let start = (mem as *mut u64).offset(-1);
+        if mem == null_mut() {
+            return;
+        }
+        let orig = mem as *mut u64;
+        let start = (orig).offset(-1);
         let size = (*start) as usize;
         let vec = Vec::from_raw_parts(start, size, size);
         drop(vec)

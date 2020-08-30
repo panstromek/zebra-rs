@@ -19,3 +19,5 @@ crate-type = ["cdylib"]
 wasm-bindgen = "0.2.67"
 engine = { path= "./../engine" }
 engine-traits = { path = "./../engine/engine-traits" }
+flate2-coeff-source = { path = "./../flate2-coeff-source"}
+console_error_panic_hook = "0.1.6"
