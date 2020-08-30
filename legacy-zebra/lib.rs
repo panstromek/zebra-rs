@@ -5,6 +5,7 @@
 #![feature(c_variadic)]
 #![feature(extern_types)]
 #![allow(clippy::missing_safety_doc)]
+#![allow(unused_unsafe)]
 
 pub mod src {
     pub mod display;

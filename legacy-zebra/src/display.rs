@@ -1,11 +1,11 @@
-use libc_wrapper::{sprintf, fprintf, vsprintf, fputs, fputc, exit, strcpy, getc, stdout, stdin, FILE, size_t};
+use libc_wrapper::{sprintf, fprintf, vsprintf, fputs, fputc, exit, strcpy, getc, stdin, FILE, size_t};
 use crate::src::error::{FE};
 use engine::src::error::FrontEnd;
 use engine::src::stubs::{floor, abs, ceil};
 use engine::src::safemem::safe_malloc;
 use engine::src::zebra::EvaluationType;
-use engine::src::timer::get_real_timer;
-use std::env::args;
+
+
 use engine::src::search::disc_count;
 use engine::src::display::{
     sweep_modified, sweep_buffer, sweep_pos, status_pos,
