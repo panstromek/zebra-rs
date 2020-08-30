@@ -643,7 +643,6 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
    of the program.
 */
 unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8, use_thor_: bool, use_learning_: bool) {
-    let mut j: i32 = 0;
     let mut result: [[[i32; 3]; 8]; 8] = [[[0; 3]; 8]; 8];
     let mut tourney_time: f64 = 0.;
     let mut score: [f64; 8] = [0.; 8];
@@ -660,6 +659,7 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
     color_score[0 as i32 as usize] = color_score[2 as i32 as usize];
 
     let mut i = 0 as i32;
+    let mut j = 0 as i32;
     let tournament_levels_ = tournament_levels;
     while i < tournament_levels_ {
         j = 0 as i32;
@@ -703,10 +703,11 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
     }
     adjust_counter(&mut tourney_nodes);
     let tournament_skill_ = &tournament_skill;
+    let tourney_counter_value = counter_value(&mut tourney_nodes);
 
     printf(b"\n\nTime:  %.1f s\nNodes: %.0f\n\x00" as *const u8 as
                *const i8, tourney_time,
-           counter_value(&mut tourney_nodes));
+           tourney_counter_value);
     puts(b"\nCompetitors:\x00" as *const u8 as *const i8);
     let mut i = 0 as i32;
     while i < tournament_levels_ {
@@ -726,6 +727,7 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
     }
     puts(b"  Score\x00" as *const u8 as *const i8);
     let mut i = 0 as i32;
+    let mut j = 0 as i32;
     while i < tournament_levels_ {
         printf(b"  %2d   \x00" as *const u8 as *const i8,
                i + 1 as i32);
