@@ -22,7 +22,7 @@ use engine::src::display::{clear_status, echo, clear_sweep, interval2, interval1
                            last_output, sweep_modified, status_modified, timed_buffer_management};
 use engine::src::timer::{get_elapsed_time, is_panic_abort, get_real_timer};
 use engine::src::search::{hash_expand_pv};
-use std::env::args;
+
 use engine::src::game::CandidateMove;
 use engine::src::counter::CounterType;
 use engine::src::end::best_move;
@@ -58,7 +58,7 @@ pub unsafe extern "C" fn fatal_error(format: *const i8, args: ...) -> ! {
     fprintf(stderr, b"\n%s: \x00" as *const u8 as *const i8,
             b"Fatal error\x00" as *const u8 as *const i8);
     vfprintf(stderr, format, arg_ptr.as_va_list());
-    let mut stream =
+    let stream =
         fopen(b"zebra.err\x00" as *const u8 as *const i8,
               b"a\x00" as *const u8 as *const i8);
     if !stream.is_null() {

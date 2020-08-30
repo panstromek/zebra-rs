@@ -1,7 +1,7 @@
-use libc_wrapper::{fclose, fscanf, fopen, printf, gzgetc, gzFile};
+use libc_wrapper::{fclose, fscanf, fopen};
 use engine::src::getcoeff::{CoeffAdjustments};
-use std::io::Read;
-use engine_traits::CoeffSource;
+
+
 use crate::src::error::fatal_error;
 use std::ffi::CStr;
 use zlib_coeff_source::{ZLibSource, LoadError};

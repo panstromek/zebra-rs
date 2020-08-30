@@ -32,7 +32,7 @@ use engine::src::osfbook::{
     _ISspace, candidate_list, candidate_count, create_BookNode, _ISgraph, do_compress,
     BookNode, create_hash_reference, set_allocation, total_game_count, do_minimax,
     evaluate_node, adjust_score, exhausted_count, exact_count, wld_count, common_count,
-    really_bad_leaf_count, bad_leaf_count, leaf_count, unreachable_count, do_examine,
+    really_bad_leaf_count, bad_leaf_count, leaf_count, unreachable_count,
     do_evaluate, search_depth, compute_feasible_count, size_t, inv_symmetry_map,
     MIDGAME_EVAL, WON_POSITION, engine_minimax_tree, engine_examine_tree
 };
