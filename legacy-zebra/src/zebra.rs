@@ -1726,24 +1726,14 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
            counter_value(&mut script_nodes) / (stop_time - start_time));
     puts(b"\x00" as *const u8 as *const i8);
 }
-/* File handling procedures */
-impl DumpHandler for LibcDumpHandler {
-    fn dump_position(side_to_move: i32) {
-        unsafe { LibcDumpHandler::dump_position(side_to_move); }
-    }
-
-    fn dump_game_score(side_to_move: i32) {
-        unsafe { LibcDumpHandler::dump_game_score(side_to_move); }
-    }
-}
 
 struct LibcDumpHandler;
-impl LibcDumpHandler {
+impl DumpHandler for LibcDumpHandler {
     /*
-   DUMP_POSITION
-   Saves the current board position to disk.
-*/
-    unsafe fn dump_position(side_to_move: i32) {
+       DUMP_POSITION
+       Saves the current board position to disk.
+    */
+    fn dump_position(side_to_move: i32) { unsafe {
         let mut i: i32 = 0;
         let mut j: i32 = 0;
         let mut stream = 0 as *mut FILE;
@@ -1780,12 +1770,12 @@ impl LibcDumpHandler {
         fputs(b" to move\nThis file was automatically generated\n\x00" as
                   *const u8 as *const i8, stream);
         fclose(stream);
-    }
+    }}
     /*
       DUMP_GAME_SCORE
       Writes the current game score to disk.
     */
-    unsafe fn dump_game_score(side_to_move: i32) {
+    fn dump_game_score(side_to_move: i32) { unsafe {
         let mut stream = 0 as *mut FILE;
         let mut i: i32 = 0;
         stream =
@@ -1827,7 +1817,7 @@ impl LibcDumpHandler {
             i += 1
         }
         fclose(stream);
-    }
+    }}
 }
 
 pub fn main() {

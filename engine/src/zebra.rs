@@ -135,6 +135,7 @@ pub trait ZebraFrontend {
     fn print_move_alternatives(side_to_move: i32);
     fn dumpch();
 }
+/* File handling procedures */
 pub trait DumpHandler {
     fn dump_position(side_to_move: i32);
     fn dump_game_score(side_to_move: i32);
