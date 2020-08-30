@@ -3,8 +3,11 @@
    Reads a 16-bit signed integer from a file.
 */
 use libc_wrapper::{gzgetc, gzFile};
+use libc_wrapper::{gzopen, strcpy, gzclose, gzFile_s};
+use engine_traits::CoeffSource;
+use std::ffi::CStr;
 
-unsafe fn get_word(mut stream: gzFile) -> i16 {
+unsafe fn get_word(stream: gzFile) -> i16 {
     match try_get_word(stream) {
         Some(w) => w,
         None => panic!("No word in the input stream.")
@@ -18,7 +21,7 @@ pub union C2RustUnnamed {
     pub unsigned_val: u16,
 }
 
-unsafe fn try_get_word(mut stream: gzFile) -> Option<i16> {
+unsafe fn try_get_word(stream: gzFile) -> Option<i16> {
     let mut val = C2RustUnnamed { signed_val: 0 };
     let hi =
         if (*stream).have != 0 {
@@ -44,20 +47,6 @@ unsafe fn try_get_word(mut stream: gzFile) -> Option<i16> {
     val.unsigned_val = ((hi << 8 as i32) + lo) as u16;
     Some(val.signed_val)
 }
-/*
-   File:         getcoeff.h
-
-   Created:      November 20, 1997
-
-   Modified:     August 1, 2002
-
-   Author:       Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:
-*/
-use libc_wrapper::{gzopen, strcpy, gzclose, gzFile_s};
-use engine_traits::CoeffSource;
-use std::ffi::CStr;
 
 
 pub struct ZLibSource {
@@ -86,11 +75,11 @@ pub enum LoadError {
 
 impl ZLibSource {
     pub fn try_new(file_name: &CStr) -> Result<Self, LoadError> {
-        let mut sPatternFile: [i8; 260] = [0; 260];
+        let mut file_name_copy: [i8; 260] = [0; 260];
         unsafe {
             /* Linux don't support current directory. */
-            strcpy(sPatternFile.as_mut_ptr(), file_name.as_ptr() as *const u8 as *const i8);
-            let coeff_stream = gzopen(sPatternFile.as_mut_ptr(), b"rb\x00" as *const u8 as *const i8);
+            strcpy(file_name_copy.as_mut_ptr(), file_name.as_ptr() as *const u8 as *const i8);
+            let coeff_stream = gzopen(file_name_copy.as_mut_ptr(), b"rb\x00" as *const u8 as *const i8);
             if coeff_stream.is_null() {
                 return Err(LoadError::UnableToOpenCoefficientFile);
             }
