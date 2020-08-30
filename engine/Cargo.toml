@@ -16,4 +16,6 @@ pcstat = { path = "pcstat"}
 epcstat = { path = "epcstat"}
 bitbcnt = { path = "bitbcnt"}
 patterns = { path = "patterns"}
+thordb-types = { path = "thordb-types"}
+thor-opening-list = { path = "thor-opening-list"}
 engine-traits = { path = "engine-traits" }

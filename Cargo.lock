@@ -75,6 +75,8 @@ dependencies = [
  "epcstat",
  "patterns",
  "pcstat",
+ "thor-opening-list",
+ "thordb-types",
 ]
 
 [[package]]
@@ -118,6 +120,7 @@ dependencies = [
  "engine",
  "engine-traits",
  "libc-wrapper",
+ "thordb-types",
  "zlib-coeff-source",
 ]
 
@@ -224,6 +227,17 @@ dependencies = [
  "flate2-coeff-source",
  "legacy-zebra",
 ]
+
+[[package]]
+name = "thor-opening-list"
+version = "0.1.0"
+dependencies = [
+ "thordb-types",
+]
+
+[[package]]
+name = "thordb-types"
+version = "0.1.0"
 
 [[package]]
 name = "tune8db"
