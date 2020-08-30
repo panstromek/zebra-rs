@@ -15,7 +15,7 @@ pub trait FrontEnd : FatalError {
     fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32);
     fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32);
     fn end_tree_search_output_some_stats(entry: &HashEntry);
-    fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32);
+    fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32, best_move_: i32);
     fn end_tree_search_level_0_report(alpha: i32, beta: i32);
     fn send_solve_status(empties: i32, side_to_move: i32, eval_info: &mut EvaluationType, counter: &mut CounterType, pv_zero: &mut [i32; 64], pv_depth_zero: i32);
     fn end_report_panic_abort_2(elapsed_time: f64);

@@ -1692,7 +1692,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
         pv_depth[level as usize] = level + 1 as i32;
         pv[level as usize][level as usize] = best_move;
         if level == 0 as i32 && get_ponder_move() == 0 {
-            FE::end_tree_search_level_0_ponder_0_report(alpha, beta, result)
+            FE::end_tree_search_level_0_ponder_0_report(alpha, beta, result, best_move)
         }
         return result
     }

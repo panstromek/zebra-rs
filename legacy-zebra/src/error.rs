@@ -25,7 +25,6 @@ use engine::src::search::{hash_expand_pv};
 
 use engine::src::game::CandidateMove;
 use engine::src::counter::CounterType;
-use engine::src::end::best_move;
 
 static mut buffer: [i8; 16] = [0; 16];
 
@@ -210,14 +209,14 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-     fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32) {
+     fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32, best_move_: i32) {
          unsafe {
              send_sweep(b"%-10s \x00" as *const u8 as *const i8,
                         buffer.as_mut_ptr());
              send_sweep(b"%c%c\x00" as *const u8 as *const i8,
-                        'a' as i32 + best_move % 10 as i32 -
+                        'a' as i32 + best_move_ % 10 as i32 -
                             1 as i32,
-                        '0' as i32 + best_move / 10 as i32);
+                        '0' as i32 + best_move_ / 10 as i32);
              if result <= alpha {
                  send_sweep(b"<%d\x00" as *const u8 as *const i8,
                             result + 1 as i32);
