@@ -30,10 +30,6 @@ use crate::src::osfbook::print_move_alternatives;
 use engine::src::zebra::{set_default_engine_globals, DumpHandler, wld_only, use_book, EvaluationType, use_timer, player_time, one_position_only, skill, wld_skill, exact_skill, player_increment, wait, ZebraFrontend, engine_play_game, InitialMoveSource, tournament_levels, tournament_skill, only_analyze, tournament, rand_move_freq, thor_max_games, dev_bonus, high_thresh, low_thresh, slack, deviation_depth, cutoff_empty, PRIVATE_GAME, PUBLIC_GAME, NEUTRAL, BLACK_WINS, WHITE_WINS, OPPONENT_WINS, MIDGAME_EVAL, WON_POSITION, LOST_POSITION};
 use libc_wrapper::{FILE, time_t};
 
-
-pub static mut use_thor: i32 = 0;
-pub static mut use_learning: i32 = 0;
-
 /* ------------------- Function prototypes ---------------------- */
 /* Administrative routines */
 /* ---------------------- Functions ------------------------ */
@@ -61,8 +57,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let run_script = 0 as i32;
     let script_out_file = 0 as *const i8;
     let script_in_file = script_out_file;
-    use_learning = 0 as i32;
-    use_thor = 0 as i32;
+    let mut use_learning = 0 as i32;
+    let mut use_thor = 0 as i32;
     set_default_engine_globals();
     let mut current_block_107: u64;
     let mut arg_index = 1 as i32;
@@ -632,11 +628,11 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line);
     } else if tournament != 0 {
-        play_tournament(move_sequence, log_file_name);
+        play_tournament(move_sequence, log_file_name, use_thor != 0, use_learning != 0);
     } else if only_analyze != 0 {
         analyze_game(move_sequence);
     } else {
-        play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name);
+        play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name, use_thor != 0, use_learning != 0);
     }
     global_terminate::<LibcFatalError>();
     return 0 as i32;
@@ -646,7 +642,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
    Administrates the tournament between different levels
    of the program.
 */
-unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8) {
+unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8, use_thor_: bool, use_learning_: bool) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut result: [[[i32; 3]; 8]; 8] = [[[0; 3]; 8]; 8];
@@ -678,7 +674,7 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8)
             wld_skill[2 as i32 as usize] =
                 tournament_skill[j as usize][2 as i32 as usize];
             play_game(0 as *const i8, move_sequence,
-                      0 as *const i8, 1 as i32, log_file_name_);
+                      0 as *const i8, 1 as i32, log_file_name_, use_thor_, use_learning_);
             add_counter(&mut tourney_nodes, &mut total_nodes);
             tourney_time += total_time;
             result[i as usize][j as usize][0 as i32 as usize] =
@@ -798,12 +794,12 @@ impl LibcFileMoveSource {
 unsafe fn play_game(mut file_name: *const i8,
                     mut move_string: *const i8,
                     mut move_file_name: *const i8,
-                    mut repeat: i32, log_file_name_: *mut i8) {
+                    mut repeat: i32, log_file_name_: *mut i8, use_thor_: bool, use_learning_: bool) {
     let mut move_file = LibcFileMoveSource::open(move_file_name);
 
     engine_play_game
         ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner, LibcFatalError>
-        (file_name, move_string, repeat, log_file_name_, move_file, use_thor != 0, use_learning != 0)
+        (file_name, move_string, repeat, log_file_name_, move_file, use_thor_, use_learning_)
 }
 
 struct LibcFrontend {} //TODO this could probably be merged with the FrontEnd trait or something
