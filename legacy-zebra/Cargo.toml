@@ -18,6 +18,7 @@ name = "zebra"
 
 [dependencies]
 engine = { path = "./../engine" }
+thordb-types = { path = "./../engine/thordb-types" }
 libc-wrapper = { path = "./../libc-wrapper" }
 engine-traits = { path = "./../engine/engine-traits" }
 zlib-coeff-source = { path = "./zlib-coeff-source" }

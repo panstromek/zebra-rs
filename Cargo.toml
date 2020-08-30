@@ -12,6 +12,8 @@ members = [
     "engine/epcstat",
     "engine/bitbcnt",
     "engine/patterns",
+    "engine/thordb-types",
+    "engine/thor-opening-list",
     "libc-wrapper",
     "engine/engine-traits",
     "flate2-coeff-source",
