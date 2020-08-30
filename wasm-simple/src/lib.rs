@@ -201,7 +201,7 @@ impl DumpHandler for WasmFrontend {
         // unimplemented!()
     }
 
-    fn dump_game_score(side_to_move: i32) {
+    fn dump_game_score(side_to_move: i32, score_sheet_row_: i32, black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
         // unimplemented!()
     }
 }
