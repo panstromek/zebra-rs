@@ -32,18 +32,6 @@ macro_rules! c_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
 }
 
-struct CoeffSourceWasm;
-impl CoeffSource for CoeffSourceWasm {
-    fn next_word(&mut self) -> i16 {
-        // unimplemented!()
-        4 // fixme
-    }
-
-    fn try_next_word(&mut self) -> Option<i16> {
-        None
-    }
-}
-
 #[wasm_bindgen]
 pub fn greet(name: &str) {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
