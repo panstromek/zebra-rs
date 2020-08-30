@@ -73,6 +73,7 @@ dependencies = [
  "bitboard",
  "engine-traits",
  "epcstat",
+ "patterns",
  "pcstat",
 ]
 
@@ -151,6 +152,10 @@ checksum = "4d7559a8a40d0f97e1edea3220f698f78b1c5ab67532e49f68fde3910323b722"
 dependencies = [
  "adler",
 ]
+
+[[package]]
+name = "patterns"
+version = "0.1.0"
 
 [[package]]
 name = "pcstat"

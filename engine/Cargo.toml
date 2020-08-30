@@ -15,4 +15,5 @@ bitboard = { path = "bitboard"}
 pcstat = { path = "pcstat"}
 epcstat = { path = "epcstat"}
 bitbcnt = { path = "bitbcnt"}
+patterns = { path = "patterns"}
 engine-traits = { path = "engine-traits" }
