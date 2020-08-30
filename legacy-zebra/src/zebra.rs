@@ -643,7 +643,6 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
    of the program.
 */
 unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8, use_thor_: bool, use_learning_: bool) {
-    let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut result: [[[i32; 3]; 8]; 8] = [[[0; 3]; 8]; 8];
     let mut tourney_time: f64 = 0.;
@@ -652,12 +651,15 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
     let mut tourney_nodes = CounterType{hi: 0, lo: 0,};
     reset_counter(&mut tourney_nodes);
     tourney_time = 0.0f64;
-    i = 0 as i32;
-    while i < 8 as i32 { score[i as usize] = 0.0f64; i += 1 }
+    let mut i = 0 as i32;
+    while i < 8 as i32 {
+        score[i as usize] = 0.0f64;
+        i += 1
+    }
     color_score[2 as i32 as usize] = 0.0f64;
-    color_score[0 as i32 as usize] =
-        color_score[2 as i32 as usize];
-    i = 0 as i32;
+    color_score[0 as i32 as usize] = color_score[2 as i32 as usize];
+
+    let mut i = 0 as i32;
     while i < tournament_levels {
         j = 0 as i32;
         while j < tournament_levels {
@@ -703,7 +705,7 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
                *const i8, tourney_time,
            counter_value(&mut tourney_nodes));
     puts(b"\nCompetitors:\x00" as *const u8 as *const i8);
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i < tournament_levels {
         printf(b"  Player %2d: %d-%d-%d\n\x00" as *const u8 as
                    *const i8, i + 1 as i32,
@@ -713,14 +715,14 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
         i += 1
     }
     printf(b"\n       \x00" as *const u8 as *const i8);
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i < tournament_levels {
         printf(b" %2d    \x00" as *const u8 as *const i8,
                i + 1 as i32);
         i += 1
     }
     puts(b"  Score\x00" as *const u8 as *const i8);
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i < tournament_levels {
         printf(b"  %2d   \x00" as *const u8 as *const i8,
                i + 1 as i32);
