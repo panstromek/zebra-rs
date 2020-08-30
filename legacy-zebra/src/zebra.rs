@@ -1834,8 +1834,9 @@ pub fn main() {
     unsafe {
         //TODO is this actually safe now? Since they don't run in init array,
         // is there some observable change in behaviour? Is there UB?
-        /// FIXME also figure out a way to run these in the engine,
-        /// or just somehow initialize those vars a better way
+        //  FIXME also figure out a way to run these in the engine,
+        //  or just somehow initialize those vars a better way
+        //  fixme!! I need to run these in other binaries, too
         unflip::run_static_initializers();
         myrandom::run_static_initializers();
     }
