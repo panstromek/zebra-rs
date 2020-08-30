@@ -11,7 +11,7 @@ pub mod src {
 
     pub mod counter;
     pub mod opname;
-    pub mod patterns;
+    pub use ::patterns;
     pub use ::pcstat::pcstat;
     pub mod unflip;
     pub mod globals;

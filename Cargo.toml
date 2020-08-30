@@ -11,6 +11,7 @@ members = [
     "engine/pcstat",
     "engine/epcstat",
     "engine/bitbcnt",
+    "engine/patterns",
     "libc-wrapper",
     "engine/engine-traits",
     "flate2-coeff-source",
