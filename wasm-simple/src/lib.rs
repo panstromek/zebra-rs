@@ -317,7 +317,7 @@ impl FrontEnd for WasmFrontend {
 //        unimplemented!()
     }
 
-    fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32) {
+    fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32, best_move_: i32) {
 //        unimplemented!()
     }
 
