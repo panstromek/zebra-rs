@@ -135,7 +135,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                    opening_name);
         }
         get_hash(&mut val0, &mut val1, &mut orientation);
-        display_board(stdout, board.as_mut_ptr(), side_to_move,
+        display_board(stdout, &board, side_to_move,
                       1 as i32, 0 as i32, 0 as i32,
                       current_row,
                       black_player, black_time, black_eval,

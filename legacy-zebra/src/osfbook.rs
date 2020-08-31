@@ -2655,7 +2655,7 @@ unsafe fn do_midgame_statistics(index: i32,
         < 1000.0f64 * spec.prob &&
         abs((*node.offset(index as isize)).black_minimax_score as
             i32) < spec.max_diff {
-        display_board(stdout, board.as_mut_ptr(), 0 as i32,
+        display_board(stdout, &board, 0 as i32,
                       0 as i32, 0 as i32, 0 as i32,
                       current_row,
                       black_player, black_time, black_eval,
@@ -2797,7 +2797,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
     let mut eval_list: [i32; 64] = [0; 64];
-    display_board(stdout, board.as_mut_ptr(), 0 as i32,
+    display_board(stdout, &board, 0 as i32,
                   0 as i32, 0 as i32, 0 as i32,
                   current_row,
                   black_player, black_time, black_eval,

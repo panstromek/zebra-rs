@@ -423,7 +423,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     let mut offset: i32 = 0;
 
     if let Some(logger) = logger {
-        let board_ = &mut board;
+        let board_ = &board;
         let side_to_move_ = side_to_move;
         L::log_board(logger, board_, side_to_move_);
     }
@@ -798,7 +798,7 @@ pub trait ComputeMoveLogger {
     fn log_status(logger: &mut Self);
     fn log_optimal_line(logger: &mut Self);
     fn close_logger(logger: &mut Self);
-    fn log_board(logger: &mut Self, board_: &mut [i32; 128], side_to_move_: i32);
+    fn log_board(logger: &mut Self, board_: &[i32; 128], side_to_move_: i32);
     fn create(log_file_path_: &mut [i8]) -> Option<Self> where Self:Sized;
     fn create_log_file_if_needed() -> Option<Self> where Self:Sized;
 }

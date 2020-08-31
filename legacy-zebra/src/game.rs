@@ -1317,9 +1317,9 @@ fn close_logger(logger: &mut LogFileHandler) {
     if !logger.log_file.is_null() { unsafe { fclose(logger.log_file); } }
 }
 
-fn log_board(logger: &mut LogFileHandler, board_: &mut [i32; 128], side_to_move_: i32) {
+fn log_board(logger: &mut LogFileHandler, board_: &[i32; 128], side_to_move_: i32) {
     unsafe {
-        display_board(logger.log_file, board_.as_mut_ptr(), side_to_move_,
+        display_board(logger.log_file, board_, side_to_move_,
                       0 as i32, 0 as i32, 0 as i32,
         current_row,
         black_player, black_time, black_eval,
