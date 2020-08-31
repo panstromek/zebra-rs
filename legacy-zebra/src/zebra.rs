@@ -840,7 +840,7 @@ impl ZebraFrontend for LibcFrontend {
                                 white_player_: *mut i8, white_time_: i32, white_eval_: f64,
                                 black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
         unsafe {
-            display_board(stdout, board_.as_ptr() as *mut _,
+            display_board(stdout, board_,
                           side_to_move, 1 as i32,
                           give_time_, 1 as i32,
                           current_row_, black_player_, black_time_, black_eval_,
@@ -1175,7 +1175,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                     printf(b"\nOpening: %s\n\x00" as *const u8 as
                                *const i8, opening_name);
                 }
-                display_board(stdout, board.as_mut_ptr(), side_to_move,
+                display_board(stdout, &board, side_to_move,
                               1 as i32, use_timer, 1 as i32,
                               current_row,
                               black_player, black_time, black_eval,
@@ -1378,7 +1378,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                       i32,
                   floor(player_time[2 as i32 as usize]) as
                       i32);
-        display_board(stdout, board.as_mut_ptr(), side_to_move,
+        display_board(stdout, &board, side_to_move,
                       1 as i32, use_timer, 1 as i32,
                       current_row,
                       black_player, black_time, black_eval,
@@ -1581,7 +1581,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             if echo != 0 {
                 set_move_list(black_moves.as_mut_ptr(),
                               white_moves.as_mut_ptr(), score_sheet_row);
-                display_board(stdout, board.as_mut_ptr(), side_to_move,
+                display_board(stdout, &board, side_to_move,
                               1 as i32, 0 as i32,
                               1 as i32, current_row,
                               black_player, black_time, black_eval,

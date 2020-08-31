@@ -153,7 +153,7 @@ impl ComputeMoveLogger for WasmComputeMoveLogger {
         // unimplemented!()
     }
 
-    fn log_board(logger: &mut Self, board_: &mut [i32; 128], side_to_move_: i32) {
+    fn log_board(logger: &mut Self, board_: &[i32; 128], side_to_move_: i32) {
         // unimplemented!()
     }
 

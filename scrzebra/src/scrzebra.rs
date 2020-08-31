@@ -301,7 +301,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
             if echo != 0 {
                 set_move_list(black_moves.as_mut_ptr(),
                               white_moves.as_mut_ptr(), score_sheet_row);
-                display_board(stdout, board.as_mut_ptr(), side_to_move,
+                display_board(stdout, &board, side_to_move,
                               1 as i32, 0 as i32,
                               1 as i32, current_row,
                               black_player, black_time, black_eval,
