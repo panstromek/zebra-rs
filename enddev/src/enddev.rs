@@ -273,7 +273,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             restart = 0 as i32;
             in_branch = 0 as i32
         }
-        if disc_count(0 as i32) + disc_count(2 as i32) ==
+        if disc_count(0 as i32, &board) + disc_count(2 as i32, &board) ==
             disks_played + 4 as i32 {
         } else {
             __assert_fail(b"disc_count( BLACKSQ ) + disc_count( WHITESQ ) == disks_played + 4\x00"

@@ -164,7 +164,7 @@ pub unsafe fn ponder_move(side_to_move: i32,
     toggle_midgame_abort_check(0 as i32);
     start_move::<FE>(0 as i32 as f64,
                0 as i32 as f64,
-               disc_count(0 as i32) + disc_count(2 as i32));
+               disc_count(0 as i32, &board) + disc_count(2 as i32, &board));
     clear_ponder_times();
     determine_hash_values(side_to_move, board.as_mut_ptr());
     reset_counter(&mut nodes);
@@ -349,7 +349,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
     toggle_perturbation_usage(0 as i32);
     start_move::<FE>(0 as i32 as f64,
                0 as i32 as f64,
-               disc_count(0 as i32) + disc_count(2 as i32));
+               disc_count(0 as i32, &board) + disc_count(2 as i32, &board));
     clear_ponder_times();
     determine_hash_values(side_to_move, board.as_mut_ptr());
     empties = 60 as i32 - disks_played;
@@ -497,23 +497,23 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                                PASS_EVAL as i32 as u32 {
                             /* Game over */
                             disc_diff =
-                                disc_count(side_to_move) -
+                                disc_count(side_to_move, &board) -
                                     disc_count(0 as i32 +
                                                    2 as i32 -
-                                                   side_to_move);
+                                                   side_to_move, &board);
                             if disc_diff > 0 as i32 {
                                 corrected_diff =
                                     64 as i32 -
                                         2 as i32 *
                                             disc_count(0 as i32 +
                                                            2 as i32 -
-                                                           side_to_move)
+                                                           side_to_move, &board)
                             } else if disc_diff == 0 as i32 {
                                 corrected_diff = 0 as i32
                             } else {
                                 corrected_diff =
                                     2 as i32 *
-                                        disc_count(side_to_move) -
+                                        disc_count(side_to_move, &board) -
                                         64 as i32
                             }
                             shallow_eval = 128 as i32 * corrected_diff
@@ -583,9 +583,9 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
             /* compute_move won't be called */
             pv_depth[0 as i32 as usize] = 0 as i32;
             piece_count[0 as i32 as usize][disks_played as usize] =
-                disc_count(0 as i32);
+                disc_count(0 as i32, &board);
             piece_count[2 as i32 as usize][disks_played as usize] =
-                disc_count(2 as i32)
+                disc_count(2 as i32, &board)
         }
         /* Perform iterative deepening if the search depth is large enough */
         if exact > empties_0 { exact = empties_0 }
@@ -712,17 +712,17 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                                PASS_EVAL as i32 as u32 {
                             /* Game over */
                             disc_diff =
-                                disc_count(side_to_move) -
+                                disc_count(side_to_move, &board) -
                                     disc_count(0 as i32 +
                                                    2 as i32 -
-                                                   side_to_move);
+                                                   side_to_move, &board);
                             if disc_diff > 0 as i32 {
                                 corrected_diff =
                                     64 as i32 -
                                         2 as i32 *
                                             disc_count(0 as i32 +
                                                            2 as i32 -
-                                                           side_to_move);
+                                                           side_to_move, &board);
                                 res = WON_POSITION
                             } else if disc_diff == 0 as i32 {
                                 corrected_diff = 0 as i32;
@@ -730,7 +730,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                             } else {
                                 corrected_diff =
                                     2 as i32 *
-                                        disc_count(side_to_move) -
+                                        disc_count(side_to_move, &board) -
                                         64 as i32;
                                 res = LOST_POSITION
                             }
@@ -914,7 +914,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     toggle_perturbation_usage(0 as i32);
     start_move::<FE>(0 as i32 as f64,
                0 as i32 as f64,
-               disc_count(0 as i32) + disc_count(2 as i32));
+               disc_count(0 as i32, &board) + disc_count(2 as i32, &board));
     clear_ponder_times();
     determine_hash_values(side_to_move, board.as_mut_ptr());
     reset_counter(&mut nodes);
@@ -960,22 +960,22 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
                u32 == PASS_EVAL as i32 as u32 {
             /* Game has ended */
             disc_diff =
-                disc_count(side_to_move) -
+                disc_count(side_to_move, &board) -
                     disc_count(0 as i32 + 2 as i32 -
-                                   side_to_move);
+                                   side_to_move, &board);
             if disc_diff > 0 as i32 {
                 corrected_diff =
                     64 as i32 -
                         2 as i32 *
                             disc_count(0 as i32 + 2 as i32 -
-                                           side_to_move);
+                                           side_to_move, &board);
                 res = WON_POSITION
             } else if disc_diff == 0 as i32 {
                 corrected_diff = 0 as i32;
                 res = DRAWN_POSITION
             } else {
                 corrected_diff =
-                    2 as i32 * disc_count(side_to_move) -
+                    2 as i32 * disc_count(side_to_move, &board) -
                         64 as i32;
                 res = LOST_POSITION
             }

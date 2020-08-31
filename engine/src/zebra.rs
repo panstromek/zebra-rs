@@ -434,16 +434,16 @@ pub unsafe fn engine_play_game<
         let node_val = counter_value(&mut total_nodes);
         adjust_counter(&mut total_evaluations);
         let eval_val = counter_value(&mut total_evaluations);
-        let black_disc_count = disc_count(0 as i32);
-        let white_disc_count = disc_count(2 as i32);
+        let black_disc_count = disc_count(0 as i32, &board);
+        let white_disc_count = disc_count(2 as i32, &board);
         let total_time_ = total_time;
         ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
         if !log_file_name_.is_null() && one_position_only == 0 {
             ZF::log_game_ending(log_file_name_,
                                 &mut move_vec,
-                                disc_count(0 as i32),
-                                disc_count(2 as i32))
+                                disc_count(0 as i32, &board),
+                                disc_count(2 as i32, &board))
         }
         repeat -= 1;
         toggle_abort_check(0 as i32);

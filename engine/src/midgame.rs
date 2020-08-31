@@ -1418,11 +1418,11 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
     last_panic_check = 0.0f64;
     counter_phase = 0 as i32;
     piece_count[0 as i32 as usize][disks_played as usize] =
-        disc_count(0 as i32);
+        disc_count(0 as i32, &board);
     piece_count[2 as i32 as usize][disks_played as usize] =
-        disc_count(2 as i32);
+        disc_count(2 as i32, &board);
     let base_stage =
-        disc_count(0 as i32) + disc_count(2 as i32) -
+        disc_count(0 as i32, &board) + disc_count(2 as i32, &board) -
             4 as i32;
     let mut val = 0 as i32;
     let mut old_val = --(27000 as i32);

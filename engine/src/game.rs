@@ -262,7 +262,7 @@ pub unsafe fn setup_game_board_normal(side_to_move: *mut i32) {
 
 pub unsafe fn setup_game_finalize(side_to_move:  *mut i32) {
     disks_played =
-        disc_count(0 as i32) + disc_count(2 as i32) -
+        disc_count(0 as i32, &board) + disc_count(2 as i32, &board) -
             4 as i32;
     determine_hash_values(*side_to_move, board.as_mut_ptr());
     /* Make the game score look right */
@@ -429,9 +429,9 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     }
     /* Initialize various components of the move system */
     piece_count[0 as i32 as usize][disks_played as usize] =
-        disc_count(0 as i32);
+        disc_count(0 as i32, &board);
     piece_count[2 as i32 as usize][disks_played as usize] =
-        disc_count(2 as i32);
+        disc_count(2 as i32, &board);
     init_moves();
     generate_all(side_to_move);
     determine_hash_values(side_to_move, board.as_mut_ptr());

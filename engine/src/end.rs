@@ -2239,8 +2239,8 @@ pub unsafe fn full_expand_pv<FE: FrontEnd>(mut side_to_move: i32,
         generate_all(side_to_move);
         if move_count[disks_played as usize] > 0 as i32 {
             let empties =
-                64 as i32 - disc_count(0 as i32) -
-                    disc_count(2 as i32);
+                64 as i32 - disc_count(0 as i32, &board) -
+                    disc_count(2 as i32, &board);
             end_tree_wrapper::<FE>(new_pv_depth, empties, side_to_move,
                              -(64 as i32), 64 as i32,
                              selectivity, 1 as i32);
@@ -2305,8 +2305,8 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             search_depth: 0,
             is_book: 0,};
     empties =
-        64 as i32 - disc_count(0 as i32) -
-            disc_count(2 as i32);
+        64 as i32 - disc_count(0 as i32, &board) -
+            disc_count(2 as i32, &board);
     /* In komi games, the WLD window is adjusted. */
     if side_to_move == 0 as i32 {
         komi_shift = komi
@@ -2351,9 +2351,9 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     old_eval = 0 as i32;
     /* Prepare for the shallow searches using the midgame eval */
     piece_count[0 as i32 as usize][disks_played as usize] =
-        disc_count(0 as i32);
+        disc_count(0 as i32, &board);
     piece_count[2 as i32 as usize][disks_played as usize] =
-        disc_count(2 as i32);
+        disc_count(2 as i32, &board);
     if empties > 32 as i32 {
         set_panic_threshold(0.20f64);
     } else if empties < 22 as i32 {
