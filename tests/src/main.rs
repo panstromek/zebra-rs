@@ -1,11 +1,12 @@
 use flate2_coeff_source::Flate2Source;
 use std::ffi::CStr;
 use legacy_zebra::src::getcoeff::new_z_lib_source;
+use std::process::Command;
 
 fn main() {}
 
 #[test]
-fn coeff_source_test () {
+fn coeff_source_test() {
     use engine_traits::CoeffSource;
     let file_name: &CStr = CStr::from_bytes_with_nul(b"./../coeffs2.bin\x00").unwrap();
 
@@ -20,3 +21,56 @@ fn coeff_source_test () {
 
     assert!(flate2_source.try_next_word().is_none());
 }
+
+#[test]
+fn full_game_test() {
+    let output = Command::new("./target/release/zebra")
+        .current_dir("./../")
+        .args("-l 16 16 16 16 16 16".split_whitespace())
+        .arg("-r")
+        .arg("0")
+        .output()
+        .unwrap();
+
+    assert!(
+        std::fs::read_to_string("./../zebra.log-snapshot")
+            .unwrap()
+            .lines()
+            .skip(1)
+            .filter(|line| !line.starts_with("-->"))
+            .eq(std::fs::read_to_string("./../zebra.log")
+                .unwrap()
+                .lines()
+                .skip(1)
+                .filter(|line| !line.starts_with("-->")))
+    );
+}
+
+#[test]
+fn help_works() {
+    let output = Command::new("./../target/release/zebra")
+        .arg("-h")
+        .output()
+        .unwrap();
+
+    assert_eq!(
+        std::fs::read("./../help-snapshot.txt").unwrap(),
+        output.stdout
+    );
+}
+//
+// #[test]
+// fn full_game_test_2() {
+//     let output = Command::new("./../target/release/zebra")
+//         .arg("-l 6 6 6 6 6 6")
+//         .arg("-r 0 ")
+//         .output()
+//         .unwrap();
+//
+//     assert_eq!("dd".to_string(),  String::from_utf8(output.stdout).unwrap());
+//     //
+//     // assert_eq!(
+//     //     std::fs::read("./../zebra.log-snapshot").unwrap(),
+//     //     std::fs::read("./../zebra.log").unwrap()
+//     // );
+// }
