@@ -595,8 +595,8 @@ pub unsafe fn add_new_game(move_count_0: i32,
         /* No cutoff applies */
         let mut black_count: i32 = 0;
         let mut white_count: i32 = 0;
-        black_count = disc_count(0 as i32);
-        white_count = disc_count(2 as i32);
+        black_count = disc_count(0 as i32, &board);
+        white_count = disc_count(2 as i32, &board);
         if black_count > white_count {
             outcome = 64 as i32 - 2 as i32 * white_count
         } else if white_count > black_count {
@@ -2522,9 +2522,9 @@ unsafe fn do_restricted_minimax(index: i32,
     i = 0 as i32;
     while i < move_count[disks_played as usize] {
         piece_count[0 as i32 as usize][disks_played as usize] =
-            disc_count(0 as i32);
+            disc_count(0 as i32, &board);
         piece_count[2 as i32 as usize][disks_played as usize] =
-            disc_count(2 as i32);
+            disc_count(2 as i32, &board);
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);

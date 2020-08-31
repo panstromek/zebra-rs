@@ -740,9 +740,9 @@ pub unsafe fn do_minimax(index: i32,
     i = 0 as i32;
     while i < move_count[disks_played as usize] {
         piece_count[0 as i32 as usize][disks_played as usize] =
-            disc_count(0 as i32);
+            disc_count(0 as i32, &board);
         piece_count[2 as i32 as usize][disks_played as usize] =
-            disc_count(2 as i32);
+            disc_count(2 as i32, &board);
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
@@ -1301,9 +1301,9 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
             make_move(side_to_move, *allowed_moves.offset(i as isize),
                       1 as i32);
             piece_count[0 as i32 as usize][disks_played as usize] =
-                disc_count(0 as i32);
+                disc_count(0 as i32, &board);
             piece_count[2 as i32 as usize][disks_played as usize] =
-                disc_count(2 as i32);
+                disc_count(2 as i32, &board);
             last_panic_check = 0.0f64;
             if i == 0 as i32 {
                 current_score =
@@ -1364,9 +1364,9 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
     make_move(side_to_move, *allowed_moves.offset(*best_index as isize),
               1 as i32);
     piece_count[0 as i32 as usize][disks_played as usize] =
-        disc_count(0 as i32);
+        disc_count(0 as i32, &board);
     piece_count[2 as i32 as usize][disks_played as usize] =
-        disc_count(2 as i32);
+        disc_count(2 as i32, &board);
     last_panic_check = 0.0f64;
     high_score =
         -tree_search::<FE>(1 as i32, depth + 1 as i32,
@@ -1433,9 +1433,9 @@ pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32) {
     remove_coeffs(disks_played - 8 as i32);
     clear_panic_abort();
     piece_count[0 as i32 as usize][disks_played as usize] =
-        disc_count(0 as i32);
+        disc_count(0 as i32, &board);
     piece_count[2 as i32 as usize][disks_played as usize] =
-        disc_count(2 as i32);
+        disc_count(2 as i32, &board);
     /* Find the moves which haven't been tried from this position */
     alternative_move_count = 0 as i32;
     i = 0 as i32;

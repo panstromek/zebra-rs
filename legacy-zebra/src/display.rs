@@ -64,7 +64,6 @@ pub unsafe fn display_board(stream: *mut FILE, board: &[i32; 128],
                                  black_player_: *mut i8, black_time_: i32, black_eval_: f64,
                                  white_player_: *mut i8, white_time_: i32, white_eval_: f64,
                                  black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
-    let board = board.as_ptr();
     let mut buffer: [i8; 16] = [0; 16];
     let mut i: i32;
     let mut j: i32;
@@ -97,7 +96,7 @@ pub unsafe fn display_board(stream: *mut FILE, board: &[i32; 128],
         }
         j = 1 as i32;
         while j <= 8 as i32 {
-            match *board.offset((10 as i32 * i + j) as isize) {
+            match *(board.as_ptr()).offset((10 as i32 * i + j) as isize) {
                 0 => {
                     buffer[(2 as i32 * (j - 1 as i32)) as
                                usize] = '*' as i32 as i8
@@ -163,7 +162,7 @@ pub unsafe fn display_board(stream: *mut FILE, board: &[i32; 128],
             written +=
                 fprintf(stream,
                         b"   %d %s\x00" as *const u8 as *const i8,
-                        disc_count(0 as i32),
+                        disc_count(0 as i32, &board),
                         b"discs\x00" as *const u8 as *const i8)
         }
         if i == 5 as i32 {
@@ -211,7 +210,7 @@ pub unsafe fn display_board(stream: *mut FILE, board: &[i32; 128],
             written +=
                 fprintf(stream,
                         b"   %d %s\x00" as *const u8 as *const i8,
-                        disc_count(2 as i32),
+                        disc_count(2 as i32, &board),
                         b"discs\x00" as *const u8 as *const i8)
         }
         if give_game_score != 0 {

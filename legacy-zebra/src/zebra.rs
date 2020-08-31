@@ -681,14 +681,14 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
             add_counter(&mut tourney_nodes, &mut total_nodes);
             tourney_time += total_time;
             result[i as usize][j as usize][0 as i32 as usize] =
-                disc_count(0 as i32);
+                disc_count(0 as i32, &board);
             result[i as usize][j as usize][2 as i32 as usize] =
-                disc_count(2 as i32);
-            if disc_count(0 as i32) > disc_count(2 as i32) {
+                disc_count(2 as i32, &board);
+            if disc_count(0 as i32, &board) > disc_count(2 as i32, &board) {
                 score[i as usize] += 1.0f64;
                 color_score[0 as i32 as usize] += 1.0f64
-            } else if disc_count(0 as i32) ==
-                          disc_count(2 as i32) {
+            } else if disc_count(0 as i32, &board) ==
+                          disc_count(2 as i32, &board) {
                 score[i as usize] += 0.5f64;
                 score[j as usize] += 0.5f64;
                 color_score[0 as i32 as usize] += 0.5f64;
@@ -1575,7 +1575,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 row += 1
             }
             disks_played =
-                disc_count(0 as i32) + disc_count(2 as i32) -
+                disc_count(0 as i32, &board) + disc_count(2 as i32, &board) -
                     4 as i32;
             /* Search the position */
             if echo != 0 {
@@ -1609,10 +1609,10 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                                  1 as i32, &mut eval_info);
                 if move_0 == -(1 as i32) {
                     /* Both pass, game over. */
-                    let mut my_discs = disc_count(side_to_move);
+                    let mut my_discs = disc_count(side_to_move, &board);
                     let mut opp_discs =
                         disc_count(0 as i32 + 2 as i32 -
-                                       side_to_move);
+                                       side_to_move, &board);
                     if my_discs > opp_discs {
                         my_discs = 64 as i32 - opp_discs
                     } else if opp_discs > my_discs {
