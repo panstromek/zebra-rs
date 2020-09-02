@@ -43,7 +43,24 @@ mod tests {
         );
     }
 
-   #[test]
+    macro_rules! snap_test {
+        ($id:ident, $args:literal) => {
+            #[test]
+            fn $id() {
+                snapshot_test(
+                    "./target/release/zebra",
+                    $args,
+                    &("./snapshots/zebra.log".to_owned() + stringify!($id)),
+                );
+            }
+        };
+    }
+
+    snap_test!(minus_p_zero, "-l 6 6 6 6 6 6 -r 0 -p 0");
+
+    snap_test!(minus_p_zero_without_book, "-l 6 6 6 6 6 6 -r 0 -p 0 -b 0");
+
+    #[test]
     fn small_game_test_without_book() {
         snapshot_test(
             "./target/release/zebra",
@@ -69,7 +86,7 @@ mod tests {
             std::fs::copy(log_path, snapshot_path).unwrap();
             panic!("WARNING: Snapshot doesn't exists, creating new one. Rerun the tests to make them green again.");
         }
-        let x = |line:&&str| !(line.starts_with("-->") || line.starts_with("Log file created"));
+        let x = |line: &&str| !(line.starts_with("-->") || line.starts_with("Log file created"));
         assert!(
             std::fs::read_to_string(snapshot_path)
                 .unwrap()
