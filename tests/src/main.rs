@@ -43,6 +43,15 @@ mod tests {
         );
     }
 
+   #[test]
+    fn small_game_test_without_book() {
+        snapshot_test(
+            "./target/release/zebra",
+            "-l 6 6 6 6 6 6 -r 0 -b 0",
+            "./snapshots/zebra.log-small_game_test_without_book",
+        );
+    }
+
     fn snapshot_test(binary: &str, arguments: &str, snapshot_path: &str) {
         Command::new(binary)
             .current_dir("./../")
