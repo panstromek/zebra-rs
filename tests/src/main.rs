@@ -27,7 +27,7 @@ fn full_game_test() {
     snapshot_test(
         "./target/release/zebra",
         "-l 16 16 16 16 16 16 -r 0",
-        "./../zebra.log-snapshot"
+        "./snapshots/zebra.log-full_game_test"
     );
 }
 
@@ -64,7 +64,7 @@ fn help_works() {
         .unwrap();
 
     assert_eq!(
-        std::fs::read("./../help-snapshot.txt").unwrap(),
+        std::fs::read("./snapshots/zebra.log-help_works").unwrap(),
         output.stdout
     );
 }
