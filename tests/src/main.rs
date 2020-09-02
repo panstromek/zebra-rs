@@ -24,16 +24,26 @@ fn coeff_source_test() {
 
 #[test]
 fn full_game_test() {
-    let output = Command::new("./target/release/zebra")
+    snapshot_test(
+        "./target/release/zebra",
+        "-l 16 16 16 16 16 16 -r 0",
+        "./../zebra.log-snapshot"
+    );
+}
+
+fn snapshot_test(binary: &str, arguments: &str, snapshot_path: &str) {
+    Command::new(binary)
         .current_dir("./../")
-        .args("-l 16 16 16 16 16 16".split_whitespace())
-        .arg("-r")
-        .arg("0")
+        .args(arguments.split_whitespace())
         .output()
         .unwrap();
 
+    assert_log_file(snapshot_path);
+}
+
+fn assert_log_file(snapshot_path: &str) {
     assert!(
-        std::fs::read_to_string("./../zebra.log-snapshot")
+        std::fs::read_to_string(snapshot_path)
             .unwrap()
             .lines()
             .skip(1)
