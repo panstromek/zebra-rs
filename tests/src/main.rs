@@ -49,7 +49,7 @@ fn full_game_test() {
 #[test]
 fn help_works() {
     let output = Command::new("./../target/release/zebra")
-        .arg("-h")
+        .arg("?")
         .output()
         .unwrap();
 
