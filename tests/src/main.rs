@@ -114,20 +114,4 @@ mod tests {
             output.stdout
         );
     }
-//
-// #[test]
-// fn full_game_test_2() {
-//     let output = Command::new("./../target/release/zebra")
-//         .arg("-l 6 6 6 6 6 6")
-//         .arg("-r 0 ")
-//         .output()
-//         .unwrap();
-//
-//     assert_eq!("dd".to_string(),  String::from_utf8(output.stdout).unwrap());
-//     //
-//     // assert_eq!(
-//     //     std::fs::read("./../zebra.log-snapshot").unwrap(),
-//     //     std::fs::read("./../zebra.log").unwrap()
-//     // );
-// }
 }
