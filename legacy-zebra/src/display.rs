@@ -65,196 +65,130 @@ pub unsafe fn display_board(stream: *mut FILE, board: &[i32; 128],
                                  white_player_: *mut i8, white_time_: i32, white_eval_: f64,
                                  black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
     let mut buffer: [i8; 16] = [0; 16];
-    let mut i: i32;
-    let mut j: i32;
-    let mut written: i32;
-    let first_row: i32;
-    let mut row: i32;
-    if side_to_move == 0 as i32 {
-        first_row =
-            if 0 as i32 > current_row_ - 8 as i32 {
-                0 as i32
-            } else { (current_row_) - 8 as i32 }
+    let mut j;
+    let mut written;
+    let first_row;
+    let mut row;
+    if side_to_move == 0 {
+        first_row = if 0 > current_row_ - 8 {
+            0
+        } else {
+            current_row_ - 8
+        }
     } else {
-        first_row =
-            if 0 as i32 > current_row_ - 7 as i32 {
-                0 as i32
-            } else { (current_row_) - 7 as i32 }
+        first_row = if 0 > current_row_ - 7 {
+            0
+        } else {
+            current_row_ - 7
+        }
     }
-    buffer[15 as i32 as usize] = 0 as i32 as i8;
+    buffer[15] = 0;
     fputs(b"\n\x00" as *const u8 as *const i8, stream);
-    fprintf(stream,
-            b"%s   a b c d e f g h\n\x00" as *const u8 as *const i8,
+    fprintf(stream, b"%s   a b c d e f g h\n\x00" as *const u8 as *const i8,
             b"      \x00" as *const u8 as *const i8);
     fputs(b"\n\x00" as *const u8 as *const i8, stream);
-    i = 1 as i32;
-    while i <= 8 as i32 {
-        j = 0 as i32;
-        while j < 15 as i32 {
+    let mut i = 1;
+    while i <= 8 {
+        j = 0;
+        while j < 15 {
             buffer[j as usize] = ' ' as i32 as i8;
             j += 1
         }
-        j = 1 as i32;
-        while j <= 8 as i32 {
-            match *(board.as_ptr()).offset((10 as i32 * i + j) as isize) {
+        j = 1;
+        while j <= 8 {
+            match board[(10 * i + j) as usize] {
                 0 => {
-                    buffer[(2 as i32 * (j - 1 as i32)) as
-                               usize] = '*' as i32 as i8
+                    buffer[(2 * (j - 1)) as usize] = '*' as i32 as i8
                 }
                 2 => {
-                    buffer[(2 as i32 * (j - 1 as i32)) as
-                               usize] = 'O' as i32 as i8
+                    buffer[(2 * (j - 1)) as usize] = 'O' as i32 as i8
                 }
                 _ => {
-                    buffer[(2 as i32 * (j - 1 as i32)) as
-                               usize] = ' ' as i32 as i8
+                    buffer[(2 * (j - 1)) as usize] = ' ' as i32 as i8
                 }
             }
             j += 1
         }
-        fprintf(stream,
-                b"%s%d  %s      \x00" as *const u8 as *const i8,
-                b"      \x00" as *const u8 as *const i8, i,
-                buffer.as_mut_ptr());
-        written = 0 as i32;
-        if i == 1 as i32 {
-            written +=
-                fprintf(stream,
+        fprintf(stream, b"%s%d  %s      \x00" as *const u8 as *const i8,
+                b"      \x00" as *const u8 as *const i8, i, buffer.as_mut_ptr());
+        written = 0;
+        if i == 1 {
+            written += fprintf(stream,
                         b"%-9s\x00" as *const u8 as *const i8,
                         b"Black\x00" as *const u8 as *const i8);
             if !black_player_.is_null() {
-                written +=
-                    fprintf(stream,
-                            b"%s\x00" as *const u8 as *const i8,
-                            black_player_)
+                written += fprintf(stream, b"%s\x00" as *const u8 as *const i8, black_player_)
             }
         }
-        if i == 2 as i32 && give_time != 0 {
-            written +=
-                fprintf(stream,
-                        b"         %02d:%02d\x00" as *const u8 as
-                            *const i8,
-                        black_time_ / 60 as i32,
-                        black_time_ % 60 as i32)
+        if i == 2 && give_time != 0 {
+            written += fprintf(stream, b"         %02d:%02d\x00" as *const u8 as *const i8,
+                        black_time_ / 60, black_time_ % 60)
         }
-        if i == 3 as i32 {
-            if side_to_move == 0 as i32 {
-                written +=
-                    fprintf(stream,
-                            b" (*)  \x00" as *const u8 as *const i8)
+        if i == 3 {
+            if side_to_move == 0 {
+                written += fprintf(stream, b" (*)  \x00" as *const u8 as *const i8)
             } else if give_evals != 0 && black_eval_ != 0.0f64 {
                 if black_eval_ >= 0.0f64 && black_eval_ <= 1.0f64 {
-                    written +=
-                        fprintf(stream,
-                                b"%-6.2f\x00" as *const u8 as
-                                    *const i8, black_eval_)
+                    written += fprintf(stream, b"%-6.2f\x00" as *const u8 as *const i8, black_eval_)
                 } else {
-                    written +=
-                        fprintf(stream,
-                                b"%+-6.2f\x00" as *const u8 as
-                                    *const i8, black_eval_)
+                    written += fprintf(stream, b"%+-6.2f\x00" as *const u8 as *const i8, black_eval_)
                 }
             } else {
-                written +=
-                    fprintf(stream,
-                            b"      \x00" as *const u8 as *const i8)
+                written += fprintf(stream, b"      \x00" as *const u8 as *const i8)
             }
-            written +=
-                fprintf(stream,
-                        b"   %d %s\x00" as *const u8 as *const i8,
-                        disc_count(0 as i32, &board),
+            written += fprintf(stream, b"   %d %s\x00" as *const u8 as *const i8,
+                        disc_count(0, &board),
                         b"discs\x00" as *const u8 as *const i8)
         }
-        if i == 5 as i32 {
-            written +=
-                fprintf(stream,
+        if i == 5 {
+            written += fprintf(stream,
                         b"%-9s\x00" as *const u8 as *const i8,
                         b"White\x00" as *const u8 as *const i8);
             if !white_player_.is_null() {
-                written +=
-                    fprintf(stream,
-                            b"%s\x00" as *const u8 as *const i8,
-                            white_player_)
+                written += fprintf(stream, b"%s\x00" as *const u8 as *const i8, white_player_)
             }
         }
-        if i == 6 as i32 && give_time != 0 {
-            written +=
-                fprintf(stream,
-                        b"         %02d:%02d\x00" as *const u8 as
-                            *const i8,
-                        white_time_ / 60 as i32,
-                        white_time_ % 60 as i32)
+        if i == 6 && give_time != 0 {
+            written += fprintf(stream, b"         %02d:%02d\x00" as *const u8 as *const i8,
+                               white_time_ / 60, white_time_ % 60)
         }
-        if i == 7 as i32 {
-            if side_to_move == 2 as i32 {
-                written +=
-                    fprintf(stream,
-                            b" (O)  \x00" as *const u8 as *const i8)
+        if i == 7 {
+            if side_to_move == 2 {
+                written += fprintf(stream, b" (O)  \x00" as *const u8 as *const i8)
             } else if give_evals != 0 && white_eval_ != 0.0f64 {
                 if white_eval_ >= 0.0f64 && white_eval_ <= 1.0f64 {
-                    written +=
-                        fprintf(stream,
-                                b"%-6.2f\x00" as *const u8 as
-                                    *const i8, white_eval_)
+                    written += fprintf(stream, b"%-6.2f\x00" as *const u8 as *const i8, white_eval_)
                 } else {
-                    written +=
-                        fprintf(stream,
-                                b"%+-6.2f\x00" as *const u8 as
-                                    *const i8, white_eval_)
+                    written += fprintf(stream, b"%+-6.2f\x00" as *const u8 as *const i8, white_eval_)
                 }
             } else {
-                written +=
-                    fprintf(stream,
-                            b"      \x00" as *const u8 as *const i8)
+                written += fprintf(stream, b"      \x00" as *const u8 as *const i8)
             }
-            written +=
-                fprintf(stream,
-                        b"   %d %s\x00" as *const u8 as *const i8,
-                        disc_count(2 as i32, &board),
+            written += fprintf(stream, b"   %d %s\x00" as *const u8 as *const i8,
+                        disc_count(2, &board),
                         b"discs\x00" as *const u8 as *const i8)
         }
         if give_game_score != 0 {
             fprintf(stream, b"%*s\x00" as *const u8 as *const i8,
-                    22 as i32 - written,
-                    b"\x00" as *const u8 as *const i8);
-            row = first_row + (i - 1 as i32);
-            if row < current_row_ ||
-                   row == current_row_ && side_to_move == 2 as i32 {
-                fprintf(stream,
-                        b"%2d. \x00" as *const u8 as *const i8,
-                        row + 1 as i32);
-                if black_moves_[row as usize] == -(1 as i32) {
-                    fprintf(stream,
-                            b"- \x00" as *const u8 as *const i8);
+                    22 - written, b"\x00" as *const u8 as *const i8);
+            row = first_row + (i - 1);
+            if row < current_row_ || row == current_row_ && side_to_move == 2 {
+                fprintf(stream, b"%2d. \x00" as *const u8 as *const i8, row + 1);
+                if black_moves_[row as usize] == -1 {
+                    fprintf(stream, b"- \x00" as *const u8 as *const i8);
                 } else {
-                    fprintf(stream,
-                            b"%c%c\x00" as *const u8 as *const i8,
-                            'a' as i32 +
-                                black_moves_[row as usize] % 10 as i32
-                                - 1 as i32,
-                            '0' as i32 +
-                                black_moves_[row as usize] /
-                                    10 as i32);
+                    fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
+                            'a' as i32 + black_moves_[row as usize] % 10 - 1,
+                            '0' as i32 + black_moves_[row as usize] / 10);
                 }
-                fprintf(stream,
-                        b"  \x00" as *const u8 as *const i8);
-                if row < current_row_ ||
-                       row == current_row_ && side_to_move == 0 as i32
-                   {
-                    if white_moves_[row as usize] == -(1 as i32) {
-                        fprintf(stream,
-                                b"- \x00" as *const u8 as
-                                    *const i8);
+                fprintf(stream, b"  \x00" as *const u8 as *const i8);
+                if row < current_row_ || row == current_row_ && side_to_move == 0 {
+                    if white_moves_[row as usize] == -1 {
+                        fprintf(stream, b"- \x00" as *const u8 as *const i8);
                     } else {
-                        fprintf(stream,
-                                b"%c%c\x00" as *const u8 as
-                                    *const i8,
-                                'a' as i32 +
-                                    white_moves_[row as usize] %
-                                        10 as i32 - 1 as i32,
-                                '0' as i32 +
-                                    white_moves_[row as usize] /
-                                        10 as i32);
+                        fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
+                                'a' as i32 + white_moves_[row as usize] % 10 - 1,
+                                '0' as i32 + white_moves_[row as usize] / 10);
                     }
                 }
             }
