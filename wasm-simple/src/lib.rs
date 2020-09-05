@@ -26,6 +26,8 @@ extern "C" {
     fn alert(s: &str);
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
+
+    fn js_time()-> f64;
 }
 
 macro_rules! c_log {
@@ -407,7 +409,9 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn time(__timer: &mut i64) -> i64 {
-        unimplemented!()
+        let time = js_time().round() as i64;
+        *__timer = time;
+        return time;
     }
 
     unsafe fn strlen(s: *const i8) -> u64 {
