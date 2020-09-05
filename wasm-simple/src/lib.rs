@@ -252,27 +252,38 @@ impl ZebraFrontend for WasmFrontend {
     }
 
     fn report_skill_levels(black_level: i32, white_level: i32) {
-//        unimplemented!()
+        c_log!("\n");
+        c_log!("Black level: {}\n", black_level);
+        c_log!("White level: {}\n", white_level);
     }
 
     fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64) {
-//        unimplemented!()
+        c_log!("{} matching games  ({} s search time, {} s total)\n",
+                       thor_position_count, database_time, total_search_time);
     }
 
     fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
-//        unimplemented!()
+        c_log!("{} black wins, {} draws, {} white wins\n",
+               black_win_count, draw_count,
+               white_win_count);
+        c_log!("Median score {}-{}",
+               black_median_score,
+               64 as i32 -                   black_median_score);
+        c_log!(", average score {}-{}\n",
+               black_average_score,
+               64.0f64 - black_average_score);
     }
 
     unsafe fn report_opening_name(opening_name: *const i8) {
-//        unimplemented!()
+        c_log!("\nOpening: {}\n", CStr::from_ptr(opening_name).to_str().unwrap() );
     }
 
     fn report_book_randomness(slack_: f64) {
-//        unimplemented!()
+       c_log!("Book randomness: {} disks\n", slack_);
     }
 
     unsafe fn load_thor_files() {
-//        unimplemented!()
+        c_log!("load_thor_files - ignored \n");
     }
 
     fn print_move_alternatives(side_to_move: i32) {
