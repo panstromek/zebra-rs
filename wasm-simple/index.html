@@ -7,6 +7,7 @@
 
 </head>
 <body>
+<canvas id="board-canvas" width="800" height="800"></canvas>
 <!-- Note the usage of `type=module` here as this is an ES6 module -->
 <script type="module">
     // Use ES module import syntax to import functionality from the module
@@ -17,6 +18,20 @@
     // don't support natively imported WebAssembly as an ES module, but
     // eventually the manual initialization won't be required!
     import init, { greet } from './pkg/wasm_simple.js';
+
+    /** @type {HTMLCanvasElement} */
+    const canvas = document.getElementById('board-canvas');
+    const ctx = canvas.getContext('2d')
+
+    function drawBoard(board = []) {
+        ctx.fillStyle = 'green'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        board.forEach((piece) => {
+            switch (piece) {
+
+            }
+        })
+    }
 
     async function run() {
         // First up we need to actually load the wasm file, so we use the
@@ -47,6 +62,11 @@
         // modes
         window.js_time = function(){
             return Math.round(Date.now() / 1000)
+        }
+        window.zebra = {
+            display_board(arr) {
+                console.log(arr)
+            }
         }
         await init();
         greet('heyyy')

@@ -429,11 +429,7 @@ pub unsafe fn get_move<ZFE: ZebraFrontend>(side_to_move: i32) -> i32 {
         ready = valid_move(curr_move, side_to_move);
         if ready == 0 {
             curr_move =
-                buffer[0 as i32 as usize] as i32 - 'a' as i32
-                    + 1 as i32 +
-                    10 as i32 *
-                        (buffer[1 as i32 as usize] as i32 -
-                            '0' as i32);
+                buffer[0] as i32 - 'a' as i32 + 1 + 10 * (buffer[1] as i32 - '0' as i32);
             ready = valid_move(curr_move, side_to_move)
         }
     }
