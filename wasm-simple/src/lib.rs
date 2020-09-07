@@ -26,8 +26,9 @@ extern "C" {
     fn alert(s: &str);
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
-
     fn js_time()-> f64;
+    #[wasm_bindgen(js_namespace = zebra)]
+    fn display_board(board : &[i32]);
 }
 
 macro_rules! c_log {
@@ -214,7 +215,9 @@ impl ZebraFrontend for WasmFrontend {
     }
 
     unsafe fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128], current_row_: i32, black_player_: *mut i8, black_time_: i32, black_eval_: f64, white_player_: *mut i8, white_time_: i32, white_eval_: f64, black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
-        unimplemented!()
+        display_board(board_);
+
+        // unimplemented!()
     }
 
     fn print_out_thor_matches(thor_max_games_: i32) {

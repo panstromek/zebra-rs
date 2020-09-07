@@ -150,26 +150,25 @@ pub unsafe fn engine_play_game<
     ComputeMoveLog: ComputeMoveLogger,
     ComputeMoveOut: ComputeMoveOutput,
     Learn: Learner,
-    FE: FrontEnd
->(
-    file_name: *const i8, mut move_string: *const i8,
-    mut repeat: i32, log_file_name_: *mut i8,
-    mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool) {
-    let mut eval_info =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
+    FE: FrontEnd>(file_name: *const i8, mut move_string: *const i8,
+                  mut repeat: i32, log_file_name_: *mut i8,
+                  mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool) {
+    let mut eval_info = EvaluationType {
+        type_0: MIDGAME_EVAL,
+        res: WON_POSITION,
+        score: 0,
+        confidence: 0.,
+        search_depth: 0,
+        is_book: 0,
+    };
     let mut total_search_time = 0.0f64;
-    let mut side_to_move: i32 = 0;
-    let mut curr_move: i32 = 0;
-    let mut rand_color = 0 as i32;
-    let mut thor_position_count: i32 = 0;
-    let mut provided_move: [i32; 61] = [0; 61];
-    let mut move_vec: [i8; 121] = [0; 121];
-    let mut line_buffer: [i8; 1000] = [0; 1000];
+    let mut side_to_move = 0;
+    let mut curr_move = 0;
+    let mut rand_color = 0;
+    let mut thor_position_count= 0;
+    let mut provided_move = [0; 61];
+    let mut move_vec = [0; 121];
+    let mut line_buffer = [0; 1000];
 
     loop  {
         /* Decode the predefined move sequence */
@@ -177,48 +176,38 @@ pub unsafe fn engine_play_game<
             move_file.fill_line_buffer(&mut line_buffer);
             move_string = line_buffer.as_mut_ptr()
         }
-        let mut provided_move_count = 0 as i32;
+        let mut provided_move_count = 0;
         if move_string.is_null() {
-            provided_move_count = 0 as i32
+            provided_move_count = 0
         } else {
-            provided_move_count =
-                FE::strlen(move_string).wrapping_div(2 as i32 as
-                    u64) as
-                    i32;
-            if provided_move_count > 60 as i32 ||
-                FE::strlen(move_string).wrapping_rem(2 as i32 as
-                    u64) ==
-                    1 as i32 as u64 {
+            provided_move_count = FE::strlen(move_string).wrapping_div(2) as i32;
+            if provided_move_count > 60 ||
+                FE::strlen(move_string).wrapping_rem(2) == 1 {
                 FE::invalid_move_string_provided();
             }
-            let mut i = 0 as i32;
+            let mut i = 0;
             while i < provided_move_count {
-                let col =
-                   FE::tolower(*move_string.offset((2 as i32 * i) as
-                        isize) as i32) -
-                        'a' as i32 + 1 as i32;
+                let col = FE::tolower(
+                    *move_string.offset((2 * i) as _) as i32) - 'a' as i32 + 1;
                 let row =
-                    *move_string.offset((2 as i32 * i +
-                        1 as i32) as isize) as
-                        i32 - '0' as i32;
-                if col < 1 as i32 || col > 8 as i32 ||
-                    row < 1 as i32 || row > 8 as i32 {
+                    *move_string.offset((2 * i + 1) as _) as i32 - '0' as i32;
+                if col < 1 || col > 8 || row < 1 || row > 8 {
                     FE::unexpected_character_in_a_move_string();
                 }
-                provided_move[i as usize] = 10 as i32 * row + col;
+                provided_move[i as usize] = 10 * row + col;
                 i += 1
             }
         }
         /* Set up the position and the search engine */
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move);
-        setup_hash(1 as i32);
+        setup_hash(1);
         clear_stored_game();
         if echo != 0 && use_book != 0 {
             let slack_ = slack;
             ZF::report_book_randomness(slack_);
         }
         set_slack(floor(slack * 128.0f64) as i32);
-        toggle_human_openings(0 as i32);
+        toggle_human_openings(0);
         if use_learning_ {
             set_learning_parameters(deviation_depth, cutoff_empty);
         }
@@ -232,27 +221,27 @@ pub unsafe fn engine_play_game<
                       score_sheet_row);
         set_evals(0.0f64, 0.0f64);
         clear_moves();
-        move_vec[0 as i32 as usize] = 0 as i32 as i8;
+        move_vec[0] = 0;
         // these are not used because their usage was disabled by preprocessor
         // byt for deterministic testing, we need to call random the same way, so we keep them.
-        let _black_hash1 = my_random() as i32;
-        let _black_hash2 = my_random() as i32;
-        let _white_hash1 = my_random() as i32;
-        let _white_hash2 = my_random() as i32;
+        let _black_hash1 = my_random();
+        let _black_hash2 = my_random();
+        let _white_hash1 = my_random();
+        let _white_hash2 = my_random();
         while game_in_progress() != 0 {
             remove_coeffs(disks_played);
             generate_all(side_to_move);
-            if side_to_move == 0 as i32 { score_sheet_row += 1 }
-            if move_count[disks_played as usize] != 0 as i32 {
+            if side_to_move == 0 {
+                score_sheet_row += 1
+            }
+            if move_count[disks_played as usize] != 0 {
                 let move_start = get_real_timer::<FE>();
                 clear_panic_abort();
                 if echo != 0 {
                     set_move_list(black_moves.as_mut_ptr(),
                                   white_moves.as_mut_ptr(), score_sheet_row);
-                    set_times(floor(player_time[0 as i32 as usize]) as
-                                  i32,
-                              floor(player_time[2 as i32 as usize]) as
-                                  i32);
+                    set_times(floor(player_time[0]) as i32,
+                              floor(player_time[2]) as i32);
                     let opening_name = find_opening_name();
                     if !opening_name.is_null() {
                         ZF::report_opening_name(opening_name);
@@ -302,24 +291,17 @@ pub unsafe fn engine_play_game<
                     } else {
                         start_move::<FE>(player_time[side_to_move as usize],
                                    player_increment[side_to_move as usize],
-                                   disks_played + 4 as i32);
-                        determine_move_time(player_time[side_to_move as
-                            usize],
-                                            player_increment[side_to_move as
-                                                usize],
-                                            disks_played + 4 as i32);
-                        let timed_search =
-                            (skill[side_to_move as usize] >=
-                                60 as i32) as i32;
-                        toggle_experimental(0 as i32);
+                                   disks_played + 4);
+                        determine_move_time(player_time[side_to_move as usize],
+                                            player_increment[side_to_move as usize],
+                                            disks_played + 4);
+                        let timed_search = (skill[side_to_move as usize] >= 60) as i32;
+                        toggle_experimental(0);
                         curr_move =
                             generic_compute_move::<ComputeMoveLog, ComputeMoveOut, FE>(
-                                side_to_move, 1 as i32,
-                                player_time[side_to_move as usize] as
-                                    i32,
-                                player_increment[side_to_move as
-                                    usize] as
-                                    i32, timed_search,
+                                side_to_move, 1,
+                                player_time[side_to_move as usize] as i32,
+                                player_increment[side_to_move as usize] as i32, timed_search,
                                 use_book,
                                 skill[side_to_move as usize],
                                 exact_skill[side_to_move as usize],
@@ -327,29 +309,18 @@ pub unsafe fn engine_play_game<
                                 0 as i32, &mut eval_info,
                                 &mut ComputeMoveLog::create_log_file_if_needed());
                         if side_to_move == 0 as i32 {
-                            set_evals(produce_compact_eval(eval_info),
-                                      0.0f64);
+                            set_evals(produce_compact_eval(eval_info), 0.0f64);
                         } else {
-                            set_evals(0.0f64,
-                                      produce_compact_eval(eval_info));
+                            set_evals(0.0f64, produce_compact_eval(eval_info));
                         }
                         if eval_info.is_book != 0 &&
-                            rand_move_freq > 0 as i32 &&
+                            rand_move_freq > 0 &&
                             side_to_move == rand_color &&
-                            my_random() % rand_move_freq as i64 ==
-                                0 as i32 as i64 {
+                            my_random() % rand_move_freq as i64 == 0 {
                             ZF::report_engine_override();
-                            rand_color =
-                                0 as i32 + 2 as i32 -
-                                    rand_color;
-                            curr_move =
-                                move_list[disks_played as
-                                    usize][(my_random() %
-                                    move_count[disks_played
-                                        as
-                                        usize]
-                                        as i64)
-                                    as usize]
+                            rand_color = 2 - rand_color;
+                            curr_move = move_list[disks_played as usize]
+                                [(my_random() % move_count[disks_played as usize] as i64) as usize]
                         }
                     }
                 } else {
@@ -360,39 +331,35 @@ pub unsafe fn engine_play_game<
                 }
                 let move_stop = get_real_timer::<FE>();
                 if player_time[side_to_move as usize] != 10000000.0f64 {
-                    player_time[side_to_move as usize] -=
-                        move_stop - move_start
+                    player_time[side_to_move as usize] -= move_stop - move_start
                 }
                 store_move(disks_played, curr_move);
                 ZF::push_move(&mut move_vec, curr_move, disks_played);
-                make_move(side_to_move, curr_move, 1 as i32);
+                make_move(side_to_move, curr_move, 1);
                 if side_to_move == 0 as i32 {
                     black_moves[score_sheet_row as usize] = curr_move
                 } else {
-                    if white_moves[score_sheet_row as usize] !=
-                        -(1 as i32) {
+                    if white_moves[score_sheet_row as usize] != -(1) {
                         score_sheet_row += 1
                     }
                     white_moves[score_sheet_row as usize] = curr_move
                 }
             } else {
-                if side_to_move == 0 as i32 {
-                    black_moves[score_sheet_row as usize] =
-                        -(1 as i32)
+                if side_to_move == 0 {
+                    black_moves[score_sheet_row as usize] = -(1)
                 } else {
-                    white_moves[score_sheet_row as usize] =
-                        -(1 as i32)
+                    white_moves[score_sheet_row as usize] = -(1)
                 }
-                if skill[side_to_move as usize] == 0 as i32 {
+                if skill[side_to_move as usize] == 0 {
                     ZF::get_pass();
                 }
             }
-            side_to_move = 0 as i32 + 2 as i32 - side_to_move;
-            if one_position_only != 0 { break ; }
+            side_to_move = 2 - side_to_move;
+            if one_position_only != 0 { break; }
         }
         if echo == 0 && one_position_only == 0 {
-            let black_level = skill[0 as i32 as usize];
-            let white_level = skill[2 as i32 as usize];
+            let black_level = skill[0];
+            let white_level = skill[2];
             ZF::report_skill_levels(black_level, white_level);
         }
         if side_to_move == 0 as i32 { score_sheet_row += 1 }
@@ -408,7 +375,7 @@ pub unsafe fn engine_play_game<
                 let db_search_time = database_stop - database_start;
                 total_search_time += db_search_time;
                 ZF::report_some_thor_stats(total_search_time, thor_position_count, db_search_time);
-                if thor_position_count > 0 as i32 {
+                if thor_position_count > 0 {
                     let black_win_count = get_black_win_count();
                     let draw_count = get_draw_count();
                     let white_win_count = get_white_win_count();
@@ -418,10 +385,7 @@ pub unsafe fn engine_play_game<
                 }
                 ZF::print_out_thor_matches(thor_max_games);
             }
-            set_times(floor(player_time[0 as i32 as usize]) as
-                          i32,
-                      floor(player_time[2 as i32 as usize]) as
-                          i32);
+            set_times(floor(player_time[0]) as _, floor(player_time[2]) as _);
             ZF::display_board_after_thor(side_to_move, use_timer, &board,
                                          current_row, black_player,
                                          black_time, black_eval,
@@ -434,37 +398,34 @@ pub unsafe fn engine_play_game<
         let node_val = counter_value(&mut total_nodes);
         adjust_counter(&mut total_evaluations);
         let eval_val = counter_value(&mut total_evaluations);
-        let black_disc_count = disc_count(0 as i32, &board);
-        let white_disc_count = disc_count(2 as i32, &board);
+        let black_disc_count = disc_count(0, &board);
+        let white_disc_count = disc_count(2, &board);
         let total_time_ = total_time;
         ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
         if !log_file_name_.is_null() && one_position_only == 0 {
             ZF::log_game_ending(log_file_name_,
                                 &mut move_vec,
-                                disc_count(0 as i32, &board),
-                                disc_count(2 as i32, &board))
+                                disc_count(0, &board),
+                                disc_count(2, &board))
         }
         repeat -= 1;
         toggle_abort_check(0 as i32);
         if use_learning_ && one_position_only == 0 {
             Learn::learn_game(disks_played,
-                              (skill[0 as i32 as usize] != 0 as i32
-                                  &&
-                                  skill[2 as i32 as usize] !=
-                                      0 as i32) as i32,
+                              (skill[0] != 0 && skill[2] != 0) as i32,
                               (repeat == 0 as i32) as i32);
         }
-        toggle_abort_check(1 as i32);
-        if !(repeat > 0 as i32) { break ; }
+        toggle_abort_check(1);
+        if !(repeat > 0) { break; }
     }
 }
 
 unsafe fn clear_moves() {
-    let mut i = 0 as i32;
-    while i < 60 as i32 {
-        black_moves[i as usize] = -(1 as i32);
-        white_moves[i as usize] = -(1 as i32);
+    let mut i = 0;
+    while i < 60 {
+        black_moves[i] = -1;
+        white_moves[i] = -1;
         i += 1
     }
 }
