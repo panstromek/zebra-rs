@@ -3,7 +3,7 @@ use std::panic;
 
 use wasm_bindgen::prelude::*;
 
-use engine::src::zebra::{set_default_engine_globals, EvaluationType, skill, exact_skill, wld_skill, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, use_book};
+use engine::src::zebra::{set_default_engine_globals, EvaluationType, skill, exact_skill, wld_skill, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, use_book, engine_play_game_async};
 use engine::src::{unflip, myrandom};
 use engine::src::game::{engine_global_setup, global_terminate, BoardSource, FileBoardSource, ComputeMoveLogger, ComputeMoveOutput, CandidateMove};
 use engine::src::error::{FrontEnd, FatalError};
@@ -29,14 +29,20 @@ extern "C" {
     fn js_time()-> f64;
     #[wasm_bindgen(js_namespace = zebra)]
     fn display_board(board : &[i32]);
+    #[wasm_bindgen(catch)]
+    pub async fn get_move_from_js(side_to_move: i32) -> Result<JsValue,JsValue>;
 }
 
+async fn get_move_from_wasm(side_to_move: i32) -> i32 {
+    get_move_from_js(side_to_move).await
+        .unwrap().as_f64().unwrap() as i32
+}
 macro_rules! c_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
 }
 
 #[wasm_bindgen]
-pub fn greet(name: &str) {
+pub async fn greet() {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
     unsafe {
         unflip::run_static_initializers();
@@ -70,15 +76,17 @@ pub fn greet(name: &str) {
         let repeat  =1;
         // let mut move_file = LibcFileMoveSource::open(move_file_name);
 
-        engine_play_game::<
+        engine_play_game_async::<
             WasmFrontend, WasmInitialMoveSource, WasmFrontend, WasmBoardSource,
-            WasmComputeMoveLogger, WasmFrontend, WasmLearner, WasmFrontend
+            WasmComputeMoveLogger, WasmFrontend, WasmLearner, WasmFrontend,
+            _, _
         >(null_mut(),
           null_mut(),
           repeat,
           null_mut(),
           None,
-          false, false);
+          false, false,
+          get_move_from_wasm).await;
 
 
         global_terminate::<WasmFrontend>();
