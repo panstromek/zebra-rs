@@ -6,7 +6,9 @@ const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
 const appConfig = {
   entry: "./main.js",
   devServer: {
-    contentBase: dist
+    contentBase: dist,
+    port: 8080,
+    host: "0.0.0.0"
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -27,7 +29,8 @@ const workerConfig = {
   target: "webworker",
   plugins: [
     new WasmPackPlugin({
-      crateDirectory: path.resolve(__dirname, "./")
+      crateDirectory: path.resolve(__dirname, "./"),
+      forceMode: 'production'
     })
   ],
   resolve: {
