@@ -1091,6 +1091,7 @@ pub unsafe fn compute_move(side_to_move: i32,
 pub struct LibcZebraOutput;
 impl ComputeMoveOutput for LibcZebraOutput {
 fn display_out_optimal_line() {
+    //FIXME parametrize, this touches global state
     unsafe { display_optimal_line(stdout, full_pv_depth, full_pv) }
 }
 
