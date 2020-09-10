@@ -18,6 +18,7 @@ use std::convert::TryFrom;
 use engine::src::counter::CounterType;
 use engine_traits::CoeffSource;
 use flate2_coeff_source::Flate2Source;
+use engine::src::display::clear_sweep;
 
 extern crate engine;
 
@@ -103,7 +104,7 @@ impl Learner for WasmLearner{
 }
 impl ComputeMoveOutput for WasmFrontend {
     fn display_out_optimal_line() {
-        unimplemented!()
+        c_log!("Display out optimal line")
     }
 
     fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64) {
@@ -111,7 +112,7 @@ impl ComputeMoveOutput for WasmFrontend {
     }
 
     fn display_status_out() {
-        unimplemented!()
+        c_log!("todo display_status_out")
     }
 
     fn echo_ponder_move_4(curr_move: i32, ponder_move: i32) {
@@ -206,11 +207,12 @@ unsafe impl InitialMoveSource for WasmInitialMoveSource{
 struct WasmFrontend;
 impl DumpHandler for WasmFrontend {
     fn dump_position(side_to_move: i32, board_: &[i32; 128]) {
-        unimplemented!()
+        c_log!("dump position called")
+        // this probably isn't needed in web, in original it stores a position in a file
     }
 
     fn dump_game_score(side_to_move: i32, score_sheet_row_: i32, black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
-        unimplemented!()
+        c_log!("dump_game_score")
     }
 }
 impl ZebraFrontend for WasmFrontend {
@@ -237,7 +239,9 @@ impl ZebraFrontend for WasmFrontend {
     }
 
     unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32) {
-       unimplemented!()
+        //FIXME verify this actually works the same way as the original
+        move_vec[(2 as i32 * disks_played_) as usize] = 'a' as i8 + curr_move  as i8 % 10 as i8 - 1 as i8;
+        move_vec[(2 as i32 * disks_played_) as usize + 1] = '0' as i8 + curr_move  as i8 / 10 as i8;
     }
 
     fn get_pass() {
@@ -257,7 +261,10 @@ impl ZebraFrontend for WasmFrontend {
     }
 
     fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {
-       unimplemented!()
+        c_log!("\nBlack: {}   White: {}", black_disc_count, white_disc_count);
+        c_log!("Nodes searched:        {}", node_val);
+        c_log!("Positions evaluated:   {}", eval_val);
+        c_log!("Total time: {} s", total_time_);
     }
 
     fn report_skill_levels(black_level: i32, white_level: i32) {
@@ -303,6 +310,12 @@ impl ZebraFrontend for WasmFrontend {
        unimplemented!()
     }
 }
+// #define TO_SQUARE(index)        'a'+(index % 10)-1,'0'+(index / 10)
+macro_rules! to_square {
+    ($index:expr) => {
+       ( ('a' as u8 +($index as u8 % 10 as u8) - 1 as u8) as char, ('0' as u8 +($index as u8 / 10 as u8)) as char )
+    };
+}
 
 impl FrontEnd for WasmFrontend {
     fn display_buffers() {
@@ -338,15 +351,15 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32, best_move_: i32) {
-       unimplemented!()
+       c_log!("end_tree_search_level_0_ponder_0_report TODO")
     }
 
     fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
-       unimplemented!()
+        c_log!("[{},{}]", alpha, beta);
     }
 
     fn send_solve_status(empties: i32, side_to_move: i32, eval_info: &mut EvaluationType, counter: &mut CounterType, pv_zero: &mut [i32; 64], pv_depth_zero: i32) {
-        unimplemented!()
+        c_log!("TODO send_solve_status")
     }
 
     fn end_report_panic_abort_2(elapsed_time: f64) {
@@ -370,7 +383,7 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn end_display_zero_status() {
-       unimplemented!()
+       c_log!("end_display_zero_status")
     }
 
     fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i32; 64]) {
@@ -463,19 +476,22 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn midgame_display_simple_ponder_move(move_0: i32) {
-       unimplemented!()
+        c_log!("{}{}", ('a' as u8 + move_0 as u8 % 10 - 1) as char,
+                   ('0' as u8 + move_0 as u8 / 10) as char);
     }
 
-    fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, buffer: &mut [i8; 32]) {
-       unimplemented!()
+    //fixme remove this fricking buffer param
+    fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, _buffer: &mut [i8; 32]) {
+        c_log!("pondering move [{},{}] ", alpha, beta)
     }
 
     fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32, searched: i32, update_pv: i32) {
-       unimplemented!()
+        c_log!("TODO midgame_display_ponder_move")
     }
 
     fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: &EvaluationType, depth: i32, force_return_: bool, counter: &mut CounterType, pv_zero: &mut [i32; 64], pv_depth_zero: i32) {
-        unimplemented!()
+        // unimplemented!()
+        c_log!("TODO midgame_display_status")
     }
 
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
@@ -491,7 +507,21 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
-       unimplemented!()
+        c_log!("Thor database:");
+        let mut i = 0 as i32;
+        while i < match_count {
+            c_log!("{}{}: {}",
+                   ('a' as i32 + move_list[i as usize].move_0 % 10 - 1) as u8 as char,
+                   ('0' as i32 + move_list[i as usize].move_0 / 10 as i32) as u8 as char,
+                   100.0f64 *move_list[i as usize].frequency as f64 / freq_sum as f64);
+            if i % 6 as i32 == 4 as i32 {
+                c_log!("");
+            }
+            i += 1
+        }
+        if match_count % 6 as i32 != 5 as i32 {
+            c_log!("");
+        }
     }
 
     fn sort_thor_games(count: i32) {
