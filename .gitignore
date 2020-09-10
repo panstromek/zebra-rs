@@ -7,3 +7,5 @@ current.mov
 /booktool/zebra.log
 /practice/zebra.err
 /practice/zebra.log
+wasm-simple/pkg
+wasm-simple/node_modules
