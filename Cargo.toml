@@ -25,7 +25,7 @@ members = [
 
 [profile.release]
 opt-level = 3
-lto = "fat" 
+lto = "thin"
 
 [profile.dev]
 opt-level = 0
