@@ -5,7 +5,6 @@ use crate::src::globals::{pv_depth, pv, board, score_sheet_row, black_moves, pie
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, init_memory_handler, CoeffAdjustments, remove_coeffs};
 use crate::src::hash::{free_hash, determine_hash_values, init_hash};
-use crate::src::unflip::init_flip_stack;
 use crate::src::timer::{clear_ponder_times, init_timer, time_t, clear_panic_abort, get_elapsed_time, is_panic_abort, determine_move_time};
 use crate::src::eval::init_eval;
 use crate::src::end::{setup_end, end_game};
@@ -21,6 +20,7 @@ use crate::src::error::{FrontEnd};
 use crate::src::display::{echo, display_pv, reset_buffer_display};
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_move, get_match_count, database_search};
 use engine_traits::CoeffSource;
+use flip::unflip::init_flip_stack;
 
 
 pub type EvalType = u32;

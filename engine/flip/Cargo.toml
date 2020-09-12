@@ -1,0 +1,11 @@
+[package]
+name = "flip"
+version = "0.1.0"
+authors = ["panstromek <panstromek@seznam.cz>"]
+edition = "2018"
+
+[lib]
+name = "flip"
+path = "lib.rs"
+
+[dependencies]

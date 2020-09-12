@@ -15,7 +15,6 @@ pub mod src {
     pub mod opname;
     pub use ::patterns;
     pub use ::pcstat::pcstat;
-    pub mod unflip;
     pub mod globals;
     pub mod myrandom;
     pub use ::epcstat::epcstat;
@@ -24,7 +23,6 @@ pub mod src {
     pub mod moves;
     pub mod hash;
     pub mod cntflip;
-    pub mod doflip;
     pub mod eval;
     pub mod stable;
     pub mod probcut;

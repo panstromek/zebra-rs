@@ -5,7 +5,6 @@ extern crate console_error_panic_hook;
 use std::panic;
 use wasm_bindgen::prelude::*;
 use engine::src::zebra::{set_default_engine_globals, EvaluationType, skill, exact_skill, wld_skill, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, use_book, engine_play_game_async};
-use engine::src::{unflip, myrandom};
 use engine::src::game::{engine_global_setup, global_terminate, BoardSource, FileBoardSource, ComputeMoveLogger, ComputeMoveOutput, CandidateMove};
 use engine::src::error::{FrontEnd, FatalError};
 use wasm_bindgen::__rt::core::ffi::c_void;
@@ -20,6 +19,8 @@ use engine::src::counter::CounterType;
 use engine_traits::CoeffSource;
 use flate2_coeff_source::Flate2Source;
 use engine::src::display::clear_sweep;
+use flip::unflip;
+use engine::src::myrandom;
 
 extern crate engine;
 

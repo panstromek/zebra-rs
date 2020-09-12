@@ -11,7 +11,6 @@ use engine::src::thordb::{init_thor_database, get_total_game_count, get_thor_gam
 use crate::src::error::{LibcFatalError, FE, fatal_error};
 use engine::src::error::{FrontEnd, FatalError};
 use engine::src::display::{white_time, black_time, current_row, black_player, white_player, white_eval, black_eval, echo, set_move_list, set_evals, set_names, set_times, toggle_smart_buffer_management, display_pv};
-use engine::src::{myrandom, unflip};
 use libc_wrapper::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, sscanf, feof, fgets, atoi, scanf, sprintf, ctime, time, strchr, strcasecmp, atof, stdout};
 use engine::src::globals::{white_moves, score_sheet_row, black_moves, board};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType, adjust_counter};
@@ -29,6 +28,8 @@ use engine::src::myrandom::{my_random, my_srandom};
 use crate::src::osfbook::print_move_alternatives;
 use engine::src::zebra::{set_default_engine_globals, DumpHandler, wld_only, use_book, EvaluationType, use_timer, player_time, one_position_only, skill, wld_skill, exact_skill, player_increment, wait, ZebraFrontend, engine_play_game, InitialMoveSource, tournament_levels, tournament_skill, only_analyze, tournament, rand_move_freq, thor_max_games, dev_bonus, high_thresh, low_thresh, slack, deviation_depth, cutoff_empty, PRIVATE_GAME, PUBLIC_GAME, NEUTRAL, BLACK_WINS, WHITE_WINS, OPPONENT_WINS, MIDGAME_EVAL, WON_POSITION, LOST_POSITION};
 use libc_wrapper::{FILE, time_t};
+use engine::src::myrandom;
+use flip::unflip;
 
 /* ------------------- Function prototypes ---------------------- */
 /* Administrative routines */

@@ -4,8 +4,6 @@ use crate::{
         moves::{dir_mask, disks_played, unmake_move, make_move, move_count, generate_all, move_list, valid_move},
         search::{force_return, hash_expand_pv, root_eval, store_pv, restore_pv, nodes, create_eval_info, disc_count, get_ponder_move, select_move, evals, sorted_move_order},
         hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended, find_hash, HashEntry, hash_put_value2, hash_put_value1},
-        unflip::UndoFlips,
-        doflip::{hash_update2, hash_update1, DoFlips_hash},
         bitbcnt::CountFlips_bitboard,
         bitboard::{set_bitboards, BitBoard},
         bitbmob::{init_mmx, bitboard_mobility, weighted_mobility},
@@ -24,6 +22,8 @@ use crate::src::display::{echo, reset_buffer_display};
 use crate::src::zebra::{EvaluationType};
 use crate::src::osfbook::{fill_endgame_hash, get_book_move, fill_move_alternatives};
 use crate::src::error::FrontEnd;
+use flip::unflip::UndoFlips;
+use flip::doflip::{hash_update2, hash_update1, DoFlips_hash};
 
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
