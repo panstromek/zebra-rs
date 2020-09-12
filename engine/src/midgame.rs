@@ -1077,7 +1077,6 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                                              allow_mpc: i32,
                                              void_legal: i32)
                                              -> i32 {
-    let mut buffer: [i8; 32] = [0; 32];
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut curr_val: i32 = 0;
@@ -1129,7 +1128,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
     }
     pre_search_done = 0 as i32;
     if get_ponder_move() == 0 {
-        FE::midgame_display_initial_ponder_move(alpha, beta, &mut buffer);
+        FE::midgame_display_initial_ponder_move(alpha, beta);
     }
     /* Full negascout search */
     searched = 0 as i32;
