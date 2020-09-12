@@ -11,7 +11,6 @@ pub static mut black_player: *mut i8 = 0 as *const i8 as *mut i8;
 pub static mut white_player: *mut i8 = 0 as *const i8 as *mut i8;
 pub static mut status_buffer: [i8; 256] = [0; 256];
 pub static mut sweep_buffer: [i8; 256] = [0; 256];
-pub static mut stored_status_buffer: [i8; 256] = [0; 256];
 pub static mut black_eval: f64 = 0.0f64;
 pub static mut white_eval: f64 = 0.0f64;
 pub static mut last_output: f64 = 0.0f64;
