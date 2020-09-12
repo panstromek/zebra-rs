@@ -959,8 +959,12 @@ pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32)
     if set[eval_phase as usize].loaded == 0 {
         load_set::<FE>(eval_phase);
     }
+    constant_and_parity_feature(side_to_move, eval_phase)
+}
+
+pub unsafe fn constant_and_parity_feature(side_to_move: i32, mut eval_phase: i32) -> i32 {
     /* The constant feature and the parity feature */
-    score =
+    let mut score =
         set[eval_phase as
             usize].parity_constant[(disks_played & 1 as i32) as
             usize];
