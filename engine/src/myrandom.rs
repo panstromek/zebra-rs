@@ -1,5 +1,5 @@
 /* max number of types above */
-use crate::src::doflip::WrappingOffsetFrom;
+use flip::doflip::WrappingOffsetFrom;
 
 static mut my_degrees: [i32; 5] =
     [0 as i32, 7 as i32, 15 as i32, 31 as i32,
