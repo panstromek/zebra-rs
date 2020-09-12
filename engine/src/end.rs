@@ -1395,7 +1395,7 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
     }
     /* Try move with highest goodness value */
     sq = move_order[best_index as usize];
-    DoFlips_hash(sq, color);
+    DoFlips_hash(sq, color, &mut board);
     board[sq as usize] = color;
     diff1 = hash_update1 ^ hash_put_value1[color as usize][sq as usize];
     diff2 = hash_update2 ^ hash_put_value2[color as usize][sq as usize];
@@ -1460,7 +1460,7 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
         flipped = TestFlips_wrapper(sq, my_bits, opp_bits);
         new_opp_bits.high = opp_bits.high & !bb_flips.high;
         new_opp_bits.low = opp_bits.low & !bb_flips.low;
-        DoFlips_hash(sq, color);
+        DoFlips_hash(sq, color, &mut board);
         board[sq as usize] = color;
         diff1 = hash_update1 ^ hash_put_value1[color as usize][sq as usize];
         diff2 = hash_update2 ^ hash_put_value2[color as usize][sq as usize];
