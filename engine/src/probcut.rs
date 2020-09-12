@@ -1,5 +1,5 @@
-use crate::src::epcstat::end_stats_available;
-use crate::src::pcstat::mid_corr;
+use crate::src::epcstat::END_STATS_AVAILABLE;
+use crate::src::pcstat::MID_CORR;
 use crate::src::midgame::DepthInfo;
 use crate::src::stubs::floor;
 /*
@@ -33,7 +33,7 @@ pub unsafe fn set_end_probcut(empty: i32,
     let mut stage: i32 = 0;
     stage = 60 as i32 - empty;
     if shallow_depth <= 14 as i32 {
-        if end_stats_available[stage as usize][shallow_depth as usize] != 0 {
+        if END_STATS_AVAILABLE[stage as usize][shallow_depth as usize] != 0 {
             let fresh0 = use_end_cut[stage as usize];
             use_end_cut[stage as usize] = use_end_cut[stage as usize] + 1;
             end_mpc_depth[stage as usize][fresh0 as usize] = shallow_depth
@@ -56,14 +56,14 @@ unsafe fn set_probcut(depth: i32,
     while i <= 60 as i32 {
         mpc_cut[depth as usize].bias[this_try as usize][i as usize] =
             floor(128.0f64 *
-                (mid_corr[i as usize][shallow as usize].const_base +
-                    mid_corr[i as usize][shallow as usize].const_slope
+                (MID_CORR[i as usize][shallow as usize].const_base +
+                    MID_CORR[i as usize][shallow as usize].const_slope
                         * shallow as f32) as f64)
                 as i32;
         mpc_cut[depth as usize].window[this_try as usize][i as usize] =
             floor(128.0f64 *
-                (mid_corr[i as usize][shallow as usize].sigma_base +
-                    mid_corr[i as usize][shallow as usize].sigma_slope
+                (MID_CORR[i as usize][shallow as usize].sigma_base +
+                    MID_CORR[i as usize][shallow as usize].sigma_slope
                         * shallow as f32) as f64)
                 as i32;
         i += 1

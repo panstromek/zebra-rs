@@ -1,6 +1,6 @@
 use crate::{
     src:: {
-        epcstat::{end_sigma, end_mean, end_stats_available},
+        epcstat::{END_SIGMA, END_MEAN, END_STATS_AVAILABLE},
         moves::{dir_mask, disks_played, unmake_move, make_move, move_count, generate_all, move_list, valid_move},
         search::{force_return, hash_expand_pv, root_eval, store_pv, restore_pv, nodes, create_eval_info, disc_count, get_ponder_move, select_move, evals, sorted_move_order},
         hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended, find_hash, HashEntry, hash_put_value2, hash_put_value1},
@@ -786,12 +786,12 @@ pub unsafe fn setup_end() {
         last_mean = 0.0f64;
         i = 60 as i32;
         while i >= 0 as i32 {
-            if end_stats_available[i as usize][j as usize] != 0 {
+            if END_STATS_AVAILABLE[i as usize][j as usize] != 0 {
                 last_mean =
-                    end_mean[i as usize][j as usize] as f64;
+                    END_MEAN[i as usize][j as usize] as f64;
                 last_sigma =
                     ff_threshold[i as usize] *
-                        end_sigma[i as usize][j as usize] as f64
+                        END_SIGMA[i as usize][j as usize] as f64
             }
             fast_first_mean[i as usize][j as usize] = last_mean;
             fast_first_sigma[i as usize][j as usize] = last_sigma;
@@ -1753,10 +1753,10 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
             let shallow_remains =
                 end_mpc_depth[disks_played as usize][cut as usize];
             let mpc_bias =
-                ceil(end_mean[disks_played as usize][shallow_remains as usize]
+                ceil(END_MEAN[disks_played as usize][shallow_remains as usize]
                     as f64 * 128.0f64) as i32;
             let mpc_window =
-                ceil(end_sigma[disks_played as
+                ceil(END_SIGMA[disks_played as
                     usize][shallow_remains as usize] as
                     f64 * end_percentile[selectivity as usize]
                     * 128.0f64) as i32;
