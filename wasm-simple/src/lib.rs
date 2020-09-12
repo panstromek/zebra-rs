@@ -488,7 +488,7 @@ impl FrontEnd for WasmFrontend {
     }
 
     //fixme remove this fricking buffer param
-    fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, _buffer: &mut [i8; 32]) {
+    fn midgame_display_initial_ponder_move(alpha: i32, beta: i32) {
         c_log!("pondering move [{},{}] ", alpha, beta)
     }
 

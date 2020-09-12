@@ -443,7 +443,8 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-    fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, buffer_: &mut [i8; 32]) {
+    fn midgame_display_initial_ponder_move(alpha: i32, beta: i32) {
+        let buffer_: &mut [i8; 32] = &mut [0; 32];
         unsafe {
             if alpha <= -(29000 as i32) && beta >= 29000 as i32 {
                 sprintf(buffer_.as_mut_ptr(),

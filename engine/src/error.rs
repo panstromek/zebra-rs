@@ -37,7 +37,7 @@ pub trait FrontEnd : FatalError {
     fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32);
     fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, x: &[CandidateMove; 60]);
     fn midgame_display_simple_ponder_move(move_0: i32);
-    fn midgame_display_initial_ponder_move(alpha: i32, beta: i32, buffer: &mut [i8; 32]);
+    fn midgame_display_initial_ponder_move(alpha: i32, beta: i32);
     fn midgame_display_ponder_move(
         max_depth: i32, alpha: i32, beta: i32,
         curr_val: i32, searched: i32, update_pv: i32);
