@@ -1825,6 +1825,7 @@ impl DumpHandler for LibcDumpHandler {
 }
 
 pub fn main() {
+    // fixme do this also inside other root crates
     unsafe {
         //TODO is this actually safe now? Since they don't run in init array,
         // is there some observable change in behaviour? Is there UB?
