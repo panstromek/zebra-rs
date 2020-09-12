@@ -9,8 +9,9 @@ use engine::src::zebra::EvaluationType;
 use engine::src::search::disc_count;
 use engine::src::display::{
     sweep_modified, sweep_buffer, sweep_pos, status_pos,
-    status_buffer, stored_status_buffer, status_modified,
+    status_buffer, status_modified,
 };
+pub static mut stored_status_buffer: [i8; 256] = [0; 256];
 
 /*
    File:           display.c
