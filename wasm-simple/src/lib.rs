@@ -1,8 +1,7 @@
 extern crate console_error_panic_hook;
+
 use std::panic;
-
 use wasm_bindgen::prelude::*;
-
 use engine::src::zebra::{set_default_engine_globals, EvaluationType, skill, exact_skill, wld_skill, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, use_book, engine_play_game_async};
 use engine::src::{unflip, myrandom};
 use engine::src::game::{engine_global_setup, global_terminate, BoardSource, FileBoardSource, ComputeMoveLogger, ComputeMoveOutput, CandidateMove};
@@ -27,21 +26,16 @@ extern "C" {
     fn alert(s: &str);
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
-    fn js_time()-> f64;
+    fn js_time() -> f64;
     #[wasm_bindgen(js_namespace = zebra)]
-    fn display_board(board : &[i32]);
+    fn display_board(board: &[i32]);
     #[wasm_bindgen(catch)]
-    pub async fn get_move_from_js(side_to_move: i32) -> Result<JsValue,JsValue>;
+    pub async fn get_move_from_js(side_to_move: i32) -> Result<JsValue, JsValue>;
 }
 
-struct X{x:i32}
-
 async fn get_move_from_wasm(side_to_move: i32) -> i32 {
-    let x: X = X {x:56};
-    let res = get_move_from_js(side_to_move).await
-        .unwrap().as_f64().unwrap() as i32;
-    println!("{}", x.x);
-    return res;
+    get_move_from_js(side_to_move).await
+        .unwrap().as_f64().unwrap() as i32
 }
 macro_rules! c_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
@@ -63,23 +57,19 @@ pub async fn greet() {
         engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs);
         init_thor_database::<WasmFrontend>();
         my_srandom(1 as i32);
-        {
-            while skill[0 as i32 as usize] < 0 as i32 {
-                skill[0] = 6;
-                if skill[0] > 0 as i32 {
-                    exact_skill[0] = 6;
-                    wld_skill[0] = 6;
-                }
-            }
-            while skill[2] < 0 as i32 {
-                skill[2] = 6;
-                if skill[2] > 0 as i32 {
-                    exact_skill[2] = 6;
-                    wld_skill[2] = 6;
-                }
-            }
+
+        while skill[0 as i32 as usize] < 0 as i32 {
+            skill[0] = 6;
+            exact_skill[0] = 6;
+            wld_skill[0] = 6;
         }
-        let repeat  =1;
+        while skill[2] < 0 as i32 {
+            skill[2] = 6;
+            exact_skill[2] = 6;
+            wld_skill[2] = 6;
+        }
+
+        let repeat = 1;
         // let mut move_file = LibcFileMoveSource::open(move_file_name);
 
         engine_play_game_async::<
@@ -96,17 +86,18 @@ pub async fn greet() {
 
 
         global_terminate::<WasmFrontend>();
-
     }
     c_log!("Zebra ended");
 }
 
 struct WasmLearner;
-impl Learner for WasmLearner{
+
+impl Learner for WasmLearner {
     fn learn_game(game_length: i32, private_game: i32, save_database: i32) {
         unimplemented!()
     }
 }
+
 impl ComputeMoveOutput for WasmFrontend {
     fn display_out_optimal_line() {
         c_log!("Display out optimal line")
@@ -140,7 +131,9 @@ impl ComputeMoveOutput for WasmFrontend {
         unimplemented!()
     }
 }
+
 struct WasmComputeMoveLogger;
+
 impl ComputeMoveLogger for WasmComputeMoveLogger {
     fn log_moves_generated(logger: &mut Self, moves_generated: i32, move_list_for_disks_played: &[i32; 64]) {
         unimplemented!()
@@ -184,13 +177,15 @@ impl ComputeMoveLogger for WasmComputeMoveLogger {
 }
 
 struct WasmBoardSource;
+
 impl FileBoardSource for WasmBoardSource {
     unsafe fn open(file_name: *const i8) -> Option<Self> where Self: Sized {
 //        todo??
         None
     }
 }
-impl BoardSource for WasmBoardSource{
+
+impl BoardSource for WasmBoardSource {
     fn fill_board_buffer(&mut self, buffer: &mut [i8; 70]) {
         buffer[0] = 0
     }
@@ -200,16 +195,20 @@ impl BoardSource for WasmBoardSource{
     }
 
     fn report_unrecognized_character(unrecognized: i8) {
-       unimplemented!()
+        unimplemented!()
     }
 }
+
 struct WasmInitialMoveSource;
-unsafe impl InitialMoveSource for WasmInitialMoveSource{
+
+unsafe impl InitialMoveSource for WasmInitialMoveSource {
     fn fill_line_buffer(&mut self, line_buffer: &mut [i8; 1000]) {
         line_buffer[0] = 0;
     }
 }
+
 struct WasmFrontend;
+
 impl DumpHandler for WasmFrontend {
     fn dump_position(side_to_move: i32, board_: &[i32; 128]) {
         c_log!("dump position called")
@@ -220,13 +219,14 @@ impl DumpHandler for WasmFrontend {
         c_log!("dump_game_score")
     }
 }
+
 impl ZebraFrontend for WasmFrontend {
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64) {
-       unimplemented!()
+        unimplemented!()
     }
 
     unsafe fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128], current_row_: i32, black_player_: *mut i8, black_time_: i32, black_eval_: f64, white_player_: *mut i8, white_time_: i32, white_eval_: f64, black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
@@ -240,21 +240,21 @@ impl ZebraFrontend for WasmFrontend {
     }
 
     unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32) {
-       unimplemented!()
+        unimplemented!()
     }
 
     unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32) {
         //FIXME verify this actually works the same way as the original
-        move_vec[(2 as i32 * disks_played_) as usize] = 'a' as i8 + curr_move  as i8 % 10 as i8 - 1 as i8;
-        move_vec[(2 as i32 * disks_played_) as usize + 1] = '0' as i8 + curr_move  as i8 / 10 as i8;
+        move_vec[(2 as i32 * disks_played_) as usize] = 'a' as i8 + curr_move as i8 % 10 as i8 - 1 as i8;
+        move_vec[(2 as i32 * disks_played_) as usize + 1] = '0' as i8 + curr_move as i8 / 10 as i8;
     }
 
     fn get_pass() {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn report_engine_override() {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn prompt_get_move(side_to_move: i32, buffer: &mut [i8; 255]) -> i32 {
@@ -300,7 +300,7 @@ impl ZebraFrontend for WasmFrontend {
     }
 
     fn report_book_randomness(slack_: f64) {
-       c_log!("Book randomness: {} disks\n", slack_);
+        c_log!("Book randomness: {} disks\n", slack_);
     }
 
     unsafe fn load_thor_files() {
@@ -308,11 +308,11 @@ impl ZebraFrontend for WasmFrontend {
     }
 
     fn print_move_alternatives(side_to_move: i32) {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn dumpch() {
-       unimplemented!()
+        unimplemented!()
     }
 }
 // #define TO_SQUARE(index)        'a'+(index % 10)-1,'0'+(index / 10)
@@ -324,7 +324,7 @@ macro_rules! to_square {
 
 impl FrontEnd for WasmFrontend {
     fn display_buffers() {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn report_ponder_time(current_ponder_time_: f64, current_ponder_depth_: i32) {
@@ -332,31 +332,31 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn after_update_best_list_verbose(best_list: &mut [i32; 4]) {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn before_update_best_list_verbose(best_list: &mut [i32; 4], move_0: i32, best_list_index: i32, best_list_length: &mut i32) {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32) {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32) {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32) {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn end_tree_search_output_some_stats(entry: &HashEntry) {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32, best_move_: i32) {
-       c_log!("end_tree_search_level_0_ponder_0_report TODO")
+        c_log!("end_tree_search_level_0_ponder_0_report TODO")
     }
 
     fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
@@ -388,7 +388,7 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn end_display_zero_status() {
-       c_log!("end_display_zero_status")
+        c_log!("end_display_zero_status")
     }
 
     fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i32; 64]) {
@@ -465,15 +465,15 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn report_do_evaluate(evaluation_stage_: i32) {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn report_unwanted_book_draw(this_move: i32) {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32) {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, x: &[CandidateMove; 60]) {
@@ -500,15 +500,15 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn thordb_report_flipped_0_first() {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn thordb_report_flipped_0_second() {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
@@ -530,63 +530,64 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn sort_thor_games(count: i32) {
-       unimplemented!()
+        unimplemented!()
     }
 }
+
 impl FatalError for WasmFrontend {
     fn invalid_move(curr_move: i32) -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn unrecognized_character(unrecognized: i8) -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     unsafe fn cannot_open_game_file(file_name: *const i8) -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn memory_allocation_failure(block_count_: i32) -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn error_in_map(i: i32, pos: i32, symmetry_map_item: i32) -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn internal_error_in_book_code() -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn book_node_list_allocation_failure(size: i32, to_report: u64) -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn book_hash_table_allocaiton_failure(new_size: i32, new_memory: i32) -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn safe_malloc_failure(size: u64) -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn safe_realloc_failure(size: u64) -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn error_in_map_thor(i: i32, pos: i32, to_report: i32) -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn unexpected_character_in_a_move_string() -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 
     fn invalid_move_string_provided() -> ! {
-       unimplemented!()
+        unimplemented!()
     }
 }
