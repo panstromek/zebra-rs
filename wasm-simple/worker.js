@@ -4,9 +4,13 @@ let rejecter = identity
 
 
 self.addEventListener("message", ev => {
-    if (ev.data[1] === 'get_move_from_js') {
-        resolver(ev.data[2])
+    console.log('message recieved in worker', ev)
+    if (ev.data[0] === 'get_move_from_js') {
+        resolver(ev.data[1])
+    } else if (ev.data[0] === 'get_pass_from_js') {
+        resolver(ev.data[1])
     } else {
+        console.error('rejecting promise because message from from main doesn\'t have known name.')
         rejecter()
     }
 });
@@ -16,10 +20,15 @@ global.get_move_from_js = function (side_to_move) {
     return new Promise(((resolve, reject) => {
         resolver = resolve
         rejecter = reject
-        postMessage(['get_move_from_js'])
-    })).then(() => {
+        if (side_to_move === -1) {
+            postMessage(['get_pass_from_js'])
+        } else {
+            postMessage(['get_move_from_js'])
+        }
+    })).then(val => {
         resolver = identity
         rejecter = identity
+        return val
     })
 
 }
