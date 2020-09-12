@@ -72,10 +72,9 @@ pub unsafe fn set_move_list(black: *mut i32,
 */
 
 pub unsafe fn clear_status() {
-    status_pos = 0 as i32;
-    status_buffer[0 as i32 as usize] =
-        0 as i32 as i8;
-    status_modified = 1 as i32;
+    status_pos = 0;
+    status_buffer[0] = 0;
+    status_modified = 1;
 }
 
 /*
@@ -84,10 +83,9 @@ pub unsafe fn clear_status() {
 */
 
 pub unsafe fn clear_sweep() {
-    sweep_pos = 0 as i32;
-    sweep_buffer[0 as i32 as usize] =
-        0 as i32 as i8;
-    sweep_modified = 1 as i32;
+    sweep_pos = 0;
+    sweep_buffer[0] = 0;
+    sweep_modified = 1;
 }
 
 /*
