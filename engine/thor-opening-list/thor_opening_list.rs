@@ -1,6 +1,6 @@
 use thordb_types::ThorOpening;
 
-pub static mut thor_opening_list: [ThorOpening; 741] =
+pub static mut THOR_OPENING_LIST: [ThorOpening; 741] =
     [{
         let init =
             ThorOpening{first_unique: 0 as i32,

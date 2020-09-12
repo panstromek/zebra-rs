@@ -5,12 +5,12 @@ use crate::src::stubs::{abs};
 use crate::src::safemem::safe_malloc;
 use std::ffi::c_void;
 use crate::src::error::{FrontEnd};
-pub use thordb_types::{GameType, DatabaseType, C2RustUnnamed, EitherSelectedFilter,
+pub use thordb_types::{GameType, DatabaseType, C2RustUnnamed, EITHER_SELECTED_FILTER,
                        TournamentType, PlayerType, ThorOpeningNode, ThorOpeningNode_,
                        GameInfoType, PlayerFilterType, DatabaseInfoType, FilterType,
                        PrologType, TournamentDatabaseType, SearchResultType, PlayerDatabaseType};
 use patterns::pow3;
-use thor_opening_list::thor_opening_list;
+use thor_opening_list::THOR_OPENING_LIST;
 
 /* Local variables */
 pub static mut thor_game_count: i32 = 0;
@@ -95,7 +95,7 @@ pub static mut filter: FilterType =
     FilterType{game_categories: 0,
         first_year: 0,
         last_year: 0,
-        player_filter: EitherSelectedFilter,};
+        player_filter: EITHER_SELECTED_FILTER,};
 
 /*
   CLEAR_THOR_BOARD
@@ -1591,10 +1591,10 @@ pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
     /* Add each of the openings to the tree */
     i = 0 as i32;
     while i < 741 as i32 {
-        branch_depth = thor_opening_list[i as usize].first_unique;
+        branch_depth = THOR_OPENING_LIST[i as usize].first_unique;
         end_depth =
             (branch_depth as
-                u64).wrapping_add(FE::strlen(thor_opening_list[i as
+                u64).wrapping_add(FE::strlen(THOR_OPENING_LIST[i as
                 usize].move_str).wrapping_div(2
                 as
                 i32
@@ -1605,7 +1605,7 @@ pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
         while j < end_depth - branch_depth {
             thor_move_list[(branch_depth + j) as usize] =
                 (10 as i32 *
-                    (*thor_opening_list[i as
+                    (*THOR_OPENING_LIST[i as
                         usize].move_str.offset((2 as
                         i32
                         * j +
@@ -1614,7 +1614,7 @@ pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
                         as
                         isize)
                         as i32 - '0' as i32) +
-                    (*thor_opening_list[i as
+                    (*THOR_OPENING_LIST[i as
                         usize].move_str.offset((2 as
                         i32
                         * j)
@@ -1716,7 +1716,7 @@ pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
             node_list[(j + 1 as i32) as usize] = new_child;
             j += 1
         }
-        (*new_child).frequency = thor_opening_list[i as usize].frequency;
+        (*new_child).frequency = THOR_OPENING_LIST[i as usize].frequency;
         i += 1
     }
     /* Calculate opening frequencies also for interior nodes */
@@ -1765,7 +1765,7 @@ pub unsafe fn init_thor_database<FE: FrontEnd>() {
     build_thor_opening_tree::<FE>();
     filter.game_categories =
         1 as i32 | 2 as i32 | 4 as i32;
-    filter.player_filter = EitherSelectedFilter;
+    filter.player_filter = EITHER_SELECTED_FILTER;
     filter.first_year = -((1 as i32) << 25 as i32);
     filter.last_year = (1 as i32) << 25 as i32;
 }

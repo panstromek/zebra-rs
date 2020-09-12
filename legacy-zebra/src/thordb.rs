@@ -7,7 +7,7 @@ use engine::src::thordb::{thor_search, GameType, thor_compare, get_player_name, 
                           database_head, PrologType, DatabaseType, thor_games_filtered,
                           thor_games_sorted, thor_game_count, thor_database_count,
                           prepare_game, players, PlayerType, tournaments, TournamentType};
-use thordb_types::{int_8, int_16, int_32};
+use thordb_types::{Int8, Int16, Int32};
 
 pub type FE = LibcFatalError;
 
@@ -16,12 +16,12 @@ pub type FE = LibcFatalError;
   Reads an 8-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe fn get_int_8(stream: *mut FILE, value: *mut int_8)
+unsafe fn get_int_8(stream: *mut FILE, value: *mut Int8)
  -> i32 {
     let mut actually_read: i32 = 0;
     actually_read =
         fread(value as *mut std::ffi::c_void,
-              ::std::mem::size_of::<int_8>() as u64,
+              ::std::mem::size_of::<Int8>() as u64,
               1 as i32 as size_t, stream) as i32;
     return (actually_read == 1 as i32) as i32;
 }
@@ -30,12 +30,12 @@ unsafe fn get_int_8(stream: *mut FILE, value: *mut int_8)
   Reads a 16-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe fn get_int_16(stream: *mut FILE, value: *mut int_16)
+unsafe fn get_int_16(stream: *mut FILE, value: *mut Int16)
  -> i32 {
     let mut actually_read: i32 = 0;
     actually_read =
         fread(value as *mut std::ffi::c_void,
-              ::std::mem::size_of::<int_16>() as u64,
+              ::std::mem::size_of::<Int16>() as u64,
               1 as i32 as size_t, stream) as i32;
     return (actually_read == 1 as i32) as i32;
 }
@@ -44,12 +44,12 @@ unsafe fn get_int_16(stream: *mut FILE, value: *mut int_16)
   Reads a 32-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe fn get_int_32(stream: *mut FILE, value: *mut int_32)
+unsafe fn get_int_32(stream: *mut FILE, value: *mut Int32)
  -> i32 {
     let mut actually_read: i32 = 0;
     actually_read =
         fread(value as *mut std::ffi::c_void,
-              ::std::mem::size_of::<int_32>() as u64,
+              ::std::mem::size_of::<Int32>() as u64,
               1 as i32 as size_t, stream) as i32;
     return (actually_read == 1 as i32) as i32;
 }
@@ -63,9 +63,9 @@ unsafe fn get_int_32(stream: *mut FILE, value: *mut int_32)
 unsafe fn read_prolog(stream: *mut FILE,
                                  mut prolog: *mut PrologType) -> i32 {
     let mut success: i32 = 0;
-    let mut byte_val: int_8 = 0;
-    let mut word_val: int_16 = 0;
-    let mut longint_val: int_32 = 0;
+    let mut byte_val: Int8 = 0;
+    let mut word_val: Int16 = 0;
+    let mut longint_val: Int32 = 0;
     success = get_int_8(stream, &mut byte_val);
     (*prolog).creation_century = byte_val as i32;
     success =
@@ -342,8 +342,8 @@ unsafe fn read_game(stream: *mut FILE, mut game: *mut GameType)
  -> i32 {
     let mut success: i32 = 0;
     let mut actually_read: i32 = 0;
-    let mut byte_val: int_8 = 0;
-    let mut word_val: int_16 = 0;
+    let mut byte_val: Int8 = 0;
+    let mut word_val: Int16 = 0;
     success = get_int_16(stream, &mut word_val);
     (*game).tournament_no = word_val;
     success =

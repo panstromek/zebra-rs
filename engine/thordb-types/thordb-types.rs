@@ -16,10 +16,10 @@ pub struct DatabaseInfoType {
     pub count: i32,
 }
 pub type PlayerFilterType = u32;
-pub const WhiteSelectedFilter: PlayerFilterType = 3;
-pub const BlackSelectedFilter: PlayerFilterType = 2;
-pub const BothSelectedFilter: PlayerFilterType = 1;
-pub const EitherSelectedFilter: PlayerFilterType = 0;
+pub const WHITE_SELECTED_FILTER: PlayerFilterType = 3;
+pub const BLACK_SELECTED_FILTER: PlayerFilterType = 2;
+pub const BOTH_SELECTED_FILTER: PlayerFilterType = 1;
+pub const EITHER_SELECTED_FILTER: PlayerFilterType = 0;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PlayerType {
@@ -101,10 +101,11 @@ pub struct TournamentType {
     pub selected: i32,
     pub name: *const i8,
 }
-pub type int_32 = i32;
-pub type int_16 = i16;
-/* Type definitions */
-pub type int_8 = i8;
+
+pub type Int32 = i32;
+pub type Int16 = i16;
+pub type Int8 = i8;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct TournamentDatabaseType {
