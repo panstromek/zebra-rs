@@ -1,7 +1,9 @@
 #![feature(label_break_value)]
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
+#![allow(non_camel_case_types)]
 #![allow(clippy::missing_safety_doc)]
+#![allow(unused)]
 
 pub mod src {
     pub use ::bitbcnt::bitbcnt;
