@@ -7,7 +7,6 @@
 #![feature(const_raw_ptr_to_usize_cast)]
 #![feature(extern_types)]
 
-use ::libc;
 extern "C" {
     pub type _IO_wide_data;
     pub type _IO_codecvt;
@@ -1125,7 +1124,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
 */
 
 pub unsafe  fn perform_analysis(mut index: i32) {
-    let mut coeff: i32 = 0;
+    let mut _coeff: i32 = 0;
     let mut start: i32 = 0;
     let mut stop: i32 = 0;
     let mut global_parity: i32 = 0;
@@ -1161,7 +1160,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
             buffer_d[stop as usize] == buffer_d[start as usize] {
             stop += 1
         }
-        coeff = stop - start;
+        _coeff = stop - start;
         dfile[buffer_d[start as usize] as usize].frequency += 1;
         start = stop;
         if !(start < 4 as i32) { break ; }
@@ -1175,7 +1174,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
             buffer_c[stop as usize] == buffer_c[start as usize] {
             stop += 1
         }
-        coeff = stop - start;
+        _coeff = stop - start;
         cfile[buffer_c[start as usize] as usize].frequency += 1;
         start = stop;
         if !(start < 4 as i32) { break ; }
@@ -1189,7 +1188,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
             buffer_b[stop as usize] == buffer_b[start as usize] {
             stop += 1
         }
-        coeff = stop - start;
+        _coeff = stop - start;
         bfile[buffer_b[start as usize] as usize].frequency += 1;
         start = stop;
         if !(start < 4 as i32) { break ; }
@@ -1203,7 +1202,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
             buffer_a[stop as usize] == buffer_a[start as usize] {
             stop += 1
         }
-        coeff = stop - start;
+        _coeff = stop - start;
         afile2x[buffer_a[start as usize] as usize].frequency += 1;
         start = stop;
         if !(start < 4 as i32) { break ; }
@@ -1217,7 +1216,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
             buffer_8[stop as usize] == buffer_8[start as usize] {
             stop += 1
         }
-        coeff = stop - start;
+        _coeff = stop - start;
         diag8[buffer_8[start as usize] as usize].frequency += 1;
         start = stop;
         if !(start < 2 as i32) { break ; }
@@ -1231,7 +1230,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
             buffer_7[stop as usize] == buffer_7[start as usize] {
             stop += 1
         }
-        coeff = stop - start;
+        _coeff = stop - start;
         diag7[buffer_7[start as usize] as usize].frequency += 1;
         start = stop;
         if !(start < 4 as i32) { break ; }
@@ -1245,7 +1244,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
             buffer_6[stop as usize] == buffer_6[start as usize] {
             stop += 1
         }
-        coeff = stop - start;
+        _coeff = stop - start;
         diag6[buffer_6[start as usize] as usize].frequency += 1;
         start = stop;
         if !(start < 4 as i32) { break ; }
@@ -1259,7 +1258,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
             buffer_5[stop as usize] == buffer_5[start as usize] {
             stop += 1
         }
-        coeff = stop - start;
+        _coeff = stop - start;
         diag5[buffer_5[start as usize] as usize].frequency += 1;
         start = stop;
         if !(start < 4 as i32) { break ; }
@@ -1273,7 +1272,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
             buffer_4[stop as usize] == buffer_4[start as usize] {
             stop += 1
         }
-        coeff = stop - start;
+        _coeff = stop - start;
         diag4[buffer_4[start as usize] as usize].frequency += 1;
         start = stop;
         if !(start < 4 as i32) { break ; }
@@ -1287,7 +1286,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
             buffer_52[stop as usize] == buffer_52[start as usize] {
             stop += 1
         }
-        coeff = stop - start;
+        _coeff = stop - start;
         corner52[buffer_52[start as usize] as usize].frequency += 1;
         start = stop;
         if !(start < 8 as i32) { break ; }
@@ -1301,7 +1300,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
             buffer_33[stop as usize] == buffer_33[start as usize] {
             stop += 1
         }
-        coeff = stop - start;
+        _coeff = stop - start;
         corner33[buffer_33[start as usize] as usize].frequency += 1;
         start = stop;
         if !(start < 4 as i32) { break ; }
@@ -2434,7 +2433,6 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let mut i: i32 = 0;
     let mut iteration: i32 = 0;
     let mut max_iterations: i32 = 0;
-    let mut count: i32 = 0;
     let mut start_time: time_t = 0;
     let mut curr_time: time_t = 0;
     let mut option_stream: *mut FILE = 0 as *mut FILE;
@@ -2647,7 +2645,6 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         printf(b"\nDetermining gradient:      \x00" as *const u8 as
             *const i8);
         fflush(stdout);
-        count = 0 as i32;
         total_weight = 0.0f64;
         evaluate_games();
         printf(b" %d\n\x00" as *const u8 as *const i8,
@@ -2776,7 +2773,6 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         printf(b"Determining step:          \x00" as *const u8 as
             *const i8);
         fflush(stdout);
-        count = 0 as i32;
         quad_coeff = 0.0f64;
         lin_coeff = 0.0f64;
         const_coeff = 0.0f64;

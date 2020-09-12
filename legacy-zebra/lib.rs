@@ -6,6 +6,7 @@
 #![feature(extern_types)]
 #![allow(clippy::missing_safety_doc)]
 #![allow(unused_unsafe)]
+#![allow(unused)]
 
 pub mod src {
     pub mod display;
