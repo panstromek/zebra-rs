@@ -845,19 +845,16 @@ pub unsafe fn allocate_set<FE: FrontEnd>(index: i32) {
    (used for the inverted patterns when white is to move).
 */
 pub unsafe fn load_set<FE: FrontEnd>(index: i32) {
-    let mut prev: i32 = 0;
-    let mut next: i32 = 0;
-    let mut weight1: i32 = 0;
-    let mut weight2: i32 = 0;
-    let mut total_weight: i32 = 0;
     if set[index as usize].permanent == 0 {
-        prev = set[index as usize].prev;
-        next = set[index as usize].next;
+        let mut weight1: i32 = 0;
+        let mut weight2: i32 = 0;
+        let mut prev = set[index as usize].prev;
+        let mut next = set[index as usize].next;
         if prev == next {
             weight1 = 1 as i32;
             weight2 = 1 as i32
         } else { weight1 = next - index; weight2 = index - prev }
-        total_weight = weight1 + weight2;
+        let mut total_weight = weight1 + weight2;
         set[index as usize].constant =
             ((weight1 * set[prev as usize].constant as i32 +
                 weight2 * set[next as usize].constant as i32) /
@@ -959,7 +956,9 @@ pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32)
     }
     /* Load and/or initialize the pattern coefficients */
     eval_phase = eval_map[disks_played as usize];
-    if set[eval_phase as usize].loaded == 0 { load_set::<FE>(eval_phase); }
+    if set[eval_phase as usize].loaded == 0 {
+        load_set::<FE>(eval_phase);
+    }
     /* The constant feature and the parity feature */
     score =
         set[eval_phase as
