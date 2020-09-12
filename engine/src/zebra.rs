@@ -638,7 +638,7 @@ pub async unsafe fn engine_play_game_async<
                     white_moves[score_sheet_row as usize] = -(1)
                 }
                 if skill[side_to_move as usize] == 0 {
-                    ZF::get_pass();
+                    get_move_cb(-1).await;
                 }
             }
             side_to_move = 2 - side_to_move;

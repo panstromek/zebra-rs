@@ -35,7 +35,9 @@ extern "C" {
 
 async fn get_move_from_wasm(side_to_move: i32) -> i32 {
     get_move_from_js(side_to_move).await
-        .unwrap().as_f64().unwrap() as i32
+        .unwrap()
+        .as_f64()
+        .unwrap() as i32
 }
 macro_rules! c_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
@@ -64,9 +66,9 @@ pub async fn greet() {
             wld_skill[0] = 6;
         }
         while skill[2] < 0 as i32 {
-            skill[2] = 6;
-            exact_skill[2] = 6;
-            wld_skill[2] = 6;
+            skill[2] = 0;
+            exact_skill[2] = 0;
+            wld_skill[2] = 0;
         }
 
         let repeat = 1;
@@ -262,7 +264,7 @@ impl ZebraFrontend for WasmFrontend {
     }
 
     fn before_get_move() {
-        unimplemented!()
+        // this function is kinda nonsense in the original
     }
 
     fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {

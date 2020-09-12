@@ -43,12 +43,45 @@ function drawBoard(board = []) {
     }
 }
 
+let waitingForMove = false
+let waitingForPass = false
+
+canvas.addEventListener('click', /** @type {MouseEvent}*/e => {
+    const boardSize = Math.min(canvas.width, canvas.height)
+    const fieldSize = boardSize / 8
+
+    if(waitingForPass) {
+        worker.postMessage(['get_pass_from_js', -1])
+        waitingForPass = false
+    } else if (waitingForMove) {
+        let x = e.clientX
+        let y = e.clientY
+        let j = Math.floor(x / fieldSize) + 1
+        let i = Math.floor(y / fieldSize) + 1
+        let move = (10 * i + j)
+        console.log(x, y, i, j)
+        worker.postMessage(['get_move_from_js', move])
+        waitingForMove = false
+    }
+})
+
 worker.addEventListener("message", ev => {
     const [type, data] = ev.data;
+    console.log(ev)
     switch (type) {
         case 'display_board': {
             drawBoard(data)
+            break
+        }
+        case 'get_move_from_js' : {
+            console.log('waiting for move')
+            waitingForMove = true
+            break
+        }
+        case 'get_pass_from_js' : {
+            console.log('waiting for pass')
+            waitingForPass = true
+            break
         }
     }
-    console.log(ev)
 });
