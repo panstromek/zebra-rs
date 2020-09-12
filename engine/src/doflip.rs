@@ -1,5 +1,4 @@
 use crate::src::unflip::flip_stack;
-use crate::src::hash::{hash_flip2, hash_flip1};
 use core::mem;
 
 /*
@@ -1247,8 +1246,8 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
    Last modified:   October 25, 2005
 */
 
-pub unsafe fn DoFlips_hash(sqnum: i32,
-                           color: i32, board: &mut [i32; 128]) -> i32 {
+pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
+                           hash_flip1: &mut [u32; 128], hash_flip2: &mut [u32; 128]) -> i32 {
     let opp_color = 0 as i32 + 2 as i32 - color;
     let mut sq = 0 as *mut i32;
     let mut old_flip_stack = 0 as *mut *mut i32;
