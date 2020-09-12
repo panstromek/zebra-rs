@@ -24,6 +24,9 @@ mod tests {
 
         assert!(flate2_source.try_next_word().is_none());
     }
+    // TODO these snapshot tests don't test for the last position
+    //  (because zebra doesn't put it in the log file for some reason)
+    //  it'd be good to improve that and test that one as well
 
     #[test]
     fn full_game_test() {
