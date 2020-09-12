@@ -17,7 +17,7 @@ use crate::{
     }
 };
 use crate::src::stubs::{ceil, abs};
-use crate::src::hash::add_hash;
+use crate::src::hash::{add_hash, hash_flip2, hash_flip1};
 use crate::src::midgame::{tree_search, toggle_midgame_hash_usage};
 use crate::src::timer::{is_panic_abort, check_panic_abort, last_panic_check, clear_panic_abort, check_threshold, set_panic_threshold, get_elapsed_time};
 use crate::src::display::{echo, reset_buffer_display};
@@ -1395,7 +1395,7 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
     }
     /* Try move with highest goodness value */
     sq = move_order[best_index as usize];
-    DoFlips_hash(sq, color, &mut board);
+    DoFlips_hash(sq, color, &mut board, &mut hash_flip1, &mut hash_flip2);
     board[sq as usize] = color;
     diff1 = hash_update1 ^ hash_put_value1[color as usize][sq as usize];
     diff2 = hash_update2 ^ hash_put_value2[color as usize][sq as usize];
@@ -1460,7 +1460,7 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
         flipped = TestFlips_wrapper(sq, my_bits, opp_bits);
         new_opp_bits.high = opp_bits.high & !bb_flips.high;
         new_opp_bits.low = opp_bits.low & !bb_flips.low;
-        DoFlips_hash(sq, color, &mut board);
+        DoFlips_hash(sq, color, &mut board, &mut hash_flip1, &mut hash_flip2);
         board[sq as usize] = color;
         diff1 = hash_update1 ^ hash_put_value1[color as usize][sq as usize];
         diff2 = hash_update2 ^ hash_put_value2[color as usize][sq as usize];

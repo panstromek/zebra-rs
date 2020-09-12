@@ -2,7 +2,7 @@ use crate::src::doflip::{DoFlips_no_hash, hash_update2, hash_update1, DoFlips_ha
 use crate::src::cntflip::AnyFlips_compact;
 use crate::src::globals::{board, piece_count};
 use crate::src::unflip::flip_stack;
-use crate::src::hash::{hash_stored2, hash2, hash_stored1, hash1, hash_put_value2, hash_put_value1};
+use crate::src::hash::{hash_stored2, hash2, hash_stored1, hash1, hash_put_value2, hash_put_value1, hash_flip1, hash_flip2};
 use crate::src::search::sorted_move_order;
 use crate::src::zebra::ZebraFrontend;
 use std::future::Future;
@@ -145,7 +145,7 @@ pub unsafe fn make_move(side_to_move: i32,
     let mut diff1: u32 = 0;
     let mut diff2: u32 = 0;
     if update_hash != 0 {
-        flipped = DoFlips_hash(move_0, side_to_move, &mut board);
+        flipped = DoFlips_hash(move_0, side_to_move, &mut board, &mut hash_flip1, &mut hash_flip2);
         if flipped == 0 as i32 { return 0 as i32 }
         diff1 =
             hash_update1 ^
