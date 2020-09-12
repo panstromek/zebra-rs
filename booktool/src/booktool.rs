@@ -52,7 +52,6 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let mut statistics_file_name: *mut i8 = 0 as *mut i8;
     let mut opening_in_file: *mut i8 = 0 as *mut i8;
     let mut position_file: *mut i8 = 0 as *mut i8;
-    let mut opening_file: *mut i8 = 0 as *mut i8;
     let mut merge_script_file: *mut i8 = 0 as *mut i8;
     let mut merge_output_file: *mut i8 = 0 as *mut i8;
     let mut export_file: *mut i8 = 0 as *mut i8;
@@ -129,7 +128,6 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     opening_in_file = 0 as *mut i8;
     dump_positions = 0 as i32;
     position_file = 0 as *mut i8;
-    opening_file = 0 as *mut i8;
     merge_script_file = 0 as *mut i8;
     merge_output_file = 0 as *mut i8;
     export_file = 0 as *mut i8;

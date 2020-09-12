@@ -450,7 +450,6 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
 }
 unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                  -> i32 {
-    let mut game_file_name: *const i8 = 0 as *const i8;
     let mut script_in_file: *const i8 = 0 as *const i8;
     let mut script_out_file: *const i8 = 0 as *const i8;
     let mut arg_index: i32 = 0;
@@ -474,7 +473,6 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     skill[2 as i32 as usize] = -(1 as i32);
     skill[0 as i32 as usize] = skill[2 as i32 as usize];
     hash_bits = 18 as i32;
-    game_file_name = 0 as *const i8;
     log_file_name = 0 as *mut i8;
     run_script = 0 as i32;
     script_out_file = 0 as *const i8;
