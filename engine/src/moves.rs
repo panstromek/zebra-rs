@@ -443,7 +443,7 @@ pub unsafe fn get_move<ZFE: ZebraFrontend>(side_to_move: i32) -> i32 {
 */
 pub async unsafe fn get_move_async<GetMove, Fut>(side_to_move: i32, get_move: &mut GetMove) -> i32
     where
-        GetMove: FnMut(i32) -> Fut + Sized,
+        GetMove: FnMut(i32) -> Fut,
         Fut: Future<Output=i32>
 {
     let mut buffer: [i8; 255] = [0; 255];

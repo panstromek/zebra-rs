@@ -437,7 +437,7 @@ pub async unsafe fn engine_play_game_async<
   mut move_file: Option<Source>, use_thor_: bool,
   use_learning_: bool, mut get_move_cb: GetMove)
     where
-        GetMove: FnMut(i32) -> Fut + Sized + 'static,
+        GetMove: FnMut(i32) -> Fut,
         Fut: Future<Output=i32>
 {
     let mut eval_info = EvaluationType {

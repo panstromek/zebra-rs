@@ -34,9 +34,14 @@ extern "C" {
     pub async fn get_move_from_js(side_to_move: i32) -> Result<JsValue,JsValue>;
 }
 
+struct X{x:i32}
+
 async fn get_move_from_wasm(side_to_move: i32) -> i32 {
-    get_move_from_js(side_to_move).await
-        .unwrap().as_f64().unwrap() as i32
+    let x: X = X {x:56};
+    let res = get_move_from_js(side_to_move).await
+        .unwrap().as_f64().unwrap() as i32;
+    println!("{}", x.x);
+    return res;
 }
 macro_rules! c_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
