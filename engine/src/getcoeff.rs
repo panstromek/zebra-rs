@@ -66,15 +66,15 @@ pub struct AllocationBlock {
     pub corner33_block: [i16; 19683],
     pub corner52_block: [i16; 59049],
 }
-pub static mut stage_count: i32 = 0;
-pub static mut block_count: i32 = 0;
-pub static mut stage: [i32; 61] = [0; 61];
-pub static mut block_allocated: [i32; 200] = [0; 200];
-pub static mut block_set: [i32; 200] = [0; 200];
-pub static mut eval_map: [i32; 61] = [0; 61];
-pub static mut block_list: [*mut AllocationBlock; 200] =
+static mut stage_count: i32 = 0;
+static mut block_count: i32 = 0;
+static mut stage: [i32; 61] = [0; 61];
+static mut block_allocated: [i32; 200] = [0; 200];
+static mut block_set: [i32; 200] = [0; 200];
+static mut eval_map: [i32; 61] = [0; 61];
+static mut block_list: [*mut AllocationBlock; 200] =
     [0 as *const AllocationBlock as *mut AllocationBlock; 200];
-pub static mut set: [CoeffSet; 61] =
+static mut set: [CoeffSet; 61] =
     [CoeffSet{permanent: 0,
         loaded: 0,
         prev: 0,
