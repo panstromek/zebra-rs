@@ -1,12 +1,13 @@
-use crate::src::globals::{board, piece_count};
+use crate::src::globals::{piece_count, Board};
 use crate::src::moves::disks_played;
-use crate::src::patterns::{flip8, pow3};
+use ::patterns::{flip8, pow3};
 use crate::src::stubs::{floor};
 use crate::src::safemem::safe_malloc;
 use crate::src::error::{FrontEnd};
 use std::ffi::c_void;
 use std::process::exit;
 use engine_traits::CoeffSource;
+use crate::src::globals;
 
 pub struct CoeffAdjustments {
     pub disc_adjust: f64,
@@ -959,10 +960,10 @@ pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32)
     if set[eval_phase as usize].loaded == 0 {
         load_set::<FE>(eval_phase);
     }
-    constant_and_parity_feature(side_to_move, eval_phase)
+    constant_and_parity_feature(side_to_move, eval_phase, &mut globals::board)
 }
 
-pub unsafe fn constant_and_parity_feature(side_to_move: i32, mut eval_phase: i32) -> i32 {
+pub unsafe fn constant_and_parity_feature(side_to_move: i32, mut eval_phase: i32, board: &mut Board) -> i32 {
     /* The constant feature and the parity feature */
     let mut score =
         set[eval_phase as
