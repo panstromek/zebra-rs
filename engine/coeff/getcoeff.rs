@@ -1808,11 +1808,11 @@ pub fn floor(num: f64) -> f64{
    only counting discs.
 */
 pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
-    let mut result: f64 = 0.;
+    let mut result: f64;
     let mut value: [[f64; 8]; 8] = [[0.; 8]; 8];
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut i: i32;
+    let mut j: i32;
+    let mut k: i32;
     let mut row: [i32; 10] = [0; 10];
     let mut hit: [[i32; 8]; 8] = [[0; 8]; 8];
     /* Count the number of times each square is counted */
