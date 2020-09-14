@@ -118,12 +118,15 @@ pub unsafe fn TestFlips_wrapper(sq: i32, my_bits: BitBoard, opp_bits: BitBoard, 
     if neighborhood_mask[sq as usize].high & opp_bits.high |
         neighborhood_mask[sq as usize].low & opp_bits.low !=
         0 as i32 as u32 {
-        flipped =
+        let (flipped_, bb) =
             TestFlips_bitboard[(sq - 11 as i32) as
-                usize](bb_flips_, my_bits.high,
+                usize](my_bits.high,
                        my_bits.low,
                        opp_bits.high,
-                       opp_bits.low)
+                       opp_bits.low);
+        flipped = flipped_;
+        bb_flips_.low = bb.low;
+        bb_flips_.high = bb.high;
     } else { flipped = 0 as i32 }
     return flipped;
 }

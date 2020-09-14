@@ -421,12 +421,14 @@ unsafe fn stability_search(my_bits: BitBoard,
     old_sq = 0 as i32;
     sq = stab_move_list[old_sq as usize].succ;
     while sq != 99 as i32 {
-        if TestFlips_bitboard[(sq - 11 as i32) as
-                                  usize](bb_flips_, my_bits.high,
-                                         my_bits.low,
-                                         opp_bits.high,
-                                         opp_bits.low)
-               != 0 {
+        let flip_test_result = TestFlips_bitboard[(sq - 11 as i32) as
+            usize](my_bits.high,
+                   my_bits.low,
+                   opp_bits.high,
+                   opp_bits.low);
+        bb_flips_.high = flip_test_result.1.high;
+        bb_flips_.low = flip_test_result.1.low;
+        if flip_test_result.0 != 0 {
             new_my_bits = *bb_flips_;
             bb_flips_.high &= !my_bits.high;
             bb_flips_.low &= !my_bits.low;
