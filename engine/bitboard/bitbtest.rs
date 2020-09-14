@@ -13,7 +13,6 @@ use crate::bitboard::BitBoard;
    See the file COPYING for more information.
 */
 
-pub static mut bb_flips: BitBoard = BitBoard{high: 0, low: 0,};
 static right_contiguous: [u8; 64] =
     [0 as i32 as u8, 1 as i32 as u8,
      0 as i32 as u8, 2 as i32 as u8,
@@ -323,7 +322,7 @@ static  f_flip: [u8; 160] =
      0x3d as i32 as u8, 0 as i32 as u8,
      0 as i32 as u8];
 // //
-unsafe fn TestFlips_bitboard_a1(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_a1(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -466,7 +465,7 @@ unsafe fn TestFlips_bitboard_a1(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_h1(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_h1(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -611,7 +610,7 @@ unsafe fn TestFlips_bitboard_h1(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_a8(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_a8(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -759,7 +758,7 @@ unsafe fn TestFlips_bitboard_a8(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_h8(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_h8(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -906,7 +905,7 @@ unsafe fn TestFlips_bitboard_h8(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_b1(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_b1(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -1042,7 +1041,7 @@ unsafe fn TestFlips_bitboard_b1(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_g1(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_g1(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -1180,7 +1179,7 @@ unsafe fn TestFlips_bitboard_g1(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_a2(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_a2(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -1313,7 +1312,7 @@ unsafe fn TestFlips_bitboard_a2(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_h2(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_h2(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -1448,7 +1447,7 @@ unsafe fn TestFlips_bitboard_h2(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_a7(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_a7(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -1584,7 +1583,7 @@ unsafe fn TestFlips_bitboard_a7(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_h7(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_h7(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -1721,7 +1720,7 @@ unsafe fn TestFlips_bitboard_h7(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_b8(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_b8(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -1863,7 +1862,7 @@ unsafe fn TestFlips_bitboard_b8(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_g8(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_g8(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -2003,7 +2002,7 @@ unsafe fn TestFlips_bitboard_g8(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_b2(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_b2(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -2136,7 +2135,7 @@ unsafe fn TestFlips_bitboard_b2(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_g2(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_g2(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -2271,7 +2270,7 @@ unsafe fn TestFlips_bitboard_g2(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_b7(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_b7(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -2407,7 +2406,7 @@ unsafe fn TestFlips_bitboard_b7(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_g7(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_g7(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -2544,7 +2543,7 @@ unsafe fn TestFlips_bitboard_g7(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_c1(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_c1(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -2694,7 +2693,7 @@ unsafe fn TestFlips_bitboard_c1(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_f1(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_f1(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -2841,7 +2840,7 @@ unsafe fn TestFlips_bitboard_f1(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_a3(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_a3(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -2960,7 +2959,7 @@ unsafe fn TestFlips_bitboard_a3(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_h3(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_h3(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -3081,7 +3080,7 @@ unsafe fn TestFlips_bitboard_h3(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_a6(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_a6(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -3202,7 +3201,7 @@ unsafe fn TestFlips_bitboard_a6(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_h6(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_h6(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -3325,7 +3324,7 @@ unsafe fn TestFlips_bitboard_h6(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_c8(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_c8(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -3477,7 +3476,7 @@ unsafe fn TestFlips_bitboard_c8(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_f8(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_f8(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -3626,7 +3625,7 @@ unsafe fn TestFlips_bitboard_f8(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_d1(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_d1(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -3779,7 +3778,7 @@ unsafe fn TestFlips_bitboard_d1(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_e1(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_e1(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -3932,7 +3931,7 @@ unsafe fn TestFlips_bitboard_e1(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_a4(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_a4(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -4057,7 +4056,7 @@ unsafe fn TestFlips_bitboard_a4(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_h4(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_h4(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -4184,7 +4183,7 @@ unsafe fn TestFlips_bitboard_h4(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_a5(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_a5(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -4309,7 +4308,7 @@ unsafe fn TestFlips_bitboard_a5(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_h5(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_h5(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -4436,7 +4435,7 @@ unsafe fn TestFlips_bitboard_h5(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_d8(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_d8(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -4589,7 +4588,7 @@ unsafe fn TestFlips_bitboard_d8(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_e8(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_e8(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -4742,7 +4741,7 @@ unsafe fn TestFlips_bitboard_e8(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_c2(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_c2(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -4884,7 +4883,7 @@ unsafe fn TestFlips_bitboard_c2(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_f2(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_f2(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -5023,7 +5022,7 @@ unsafe fn TestFlips_bitboard_f2(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_b3(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_b3(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -5142,7 +5141,7 @@ unsafe fn TestFlips_bitboard_b3(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_g3(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_g3(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -5263,7 +5262,7 @@ unsafe fn TestFlips_bitboard_g3(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_b6(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_b6(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -5384,7 +5383,7 @@ unsafe fn TestFlips_bitboard_b6(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_g6(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_g6(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -5507,7 +5506,7 @@ unsafe fn TestFlips_bitboard_g6(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_c7(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_c7(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -5651,7 +5650,7 @@ unsafe fn TestFlips_bitboard_c7(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_f7(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_f7(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -5792,7 +5791,7 @@ unsafe fn TestFlips_bitboard_f7(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_d2(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_d2(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -5944,7 +5943,7 @@ unsafe fn TestFlips_bitboard_d2(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_e2(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_e2(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -6096,7 +6095,7 @@ unsafe fn TestFlips_bitboard_e2(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_b4(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_b4(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -6220,7 +6219,7 @@ unsafe fn TestFlips_bitboard_b4(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_g4(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_g4(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -6345,7 +6344,7 @@ unsafe fn TestFlips_bitboard_g4(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_b5(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_b5(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -6470,7 +6469,7 @@ unsafe fn TestFlips_bitboard_b5(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_g5(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_g5(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -6597,7 +6596,7 @@ unsafe fn TestFlips_bitboard_g5(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_d7(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_d7(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -6751,7 +6750,7 @@ unsafe fn TestFlips_bitboard_d7(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_e7(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_e7(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -6905,7 +6904,7 @@ unsafe fn TestFlips_bitboard_e7(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_c3(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_c3(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -7052,7 +7051,7 @@ unsafe fn TestFlips_bitboard_c3(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_f3(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_f3(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -7196,7 +7195,7 @@ unsafe fn TestFlips_bitboard_f3(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_c6(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_c6(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -7345,7 +7344,7 @@ unsafe fn TestFlips_bitboard_c6(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_f6(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_f6(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -7491,7 +7490,7 @@ unsafe fn TestFlips_bitboard_f6(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_d3(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_d3(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -7648,7 +7647,7 @@ unsafe fn TestFlips_bitboard_d3(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_e3(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_e3(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -7805,7 +7804,7 @@ unsafe fn TestFlips_bitboard_e3(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_c4(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_c4(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -7958,7 +7957,7 @@ unsafe fn TestFlips_bitboard_c4(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_f4(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_f4(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -8108,7 +8107,7 @@ unsafe fn TestFlips_bitboard_f4(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_c5(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_c5(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -8263,7 +8262,7 @@ unsafe fn TestFlips_bitboard_c5(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_f5(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_f5(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -8415,7 +8414,7 @@ unsafe fn TestFlips_bitboard_f5(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_d6(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_d6(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -8574,7 +8573,7 @@ unsafe fn TestFlips_bitboard_d6(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_e6(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_e6(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -8733,7 +8732,7 @@ unsafe fn TestFlips_bitboard_e6(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_d4(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_d4(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -8905,7 +8904,7 @@ unsafe fn TestFlips_bitboard_d4(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_e4(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_e4(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -9077,7 +9076,7 @@ unsafe fn TestFlips_bitboard_e4(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_d5(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_d5(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -9251,7 +9250,7 @@ unsafe fn TestFlips_bitboard_d5(mut my_bits_high: u32,
     bb_flips.low = my_bits_low;
     return flipped;
 }
-unsafe fn TestFlips_bitboard_e5(mut my_bits_high: u32,
+unsafe fn TestFlips_bitboard_e5(bb_flips: &mut BitBoard, mut my_bits_high: u32,
                                            mut my_bits_low: u32,
                                            opp_bits_high: u32,
                                            opp_bits_low: u32)
@@ -9426,11 +9425,11 @@ unsafe fn TestFlips_bitboard_e5(mut my_bits_high: u32,
     return flipped;
 }
 
-unsafe fn null(_: u32, _: u32, _: u32, _: u32) -> i32 {
+unsafe fn null(_: &mut BitBoard, _: u32, _: u32, _: u32, _: u32) -> i32 {
     // perf??
     unreachable!()
 }
-pub static TestFlips_bitboard: [unsafe fn(_: u32, _: u32, _: u32, _: u32) -> i32; 78] = [
+pub static TestFlips_bitboard: [unsafe fn(_ : &mut BitBoard, _: u32, _: u32, _: u32, _: u32) -> i32; 78] = [
     (TestFlips_bitboard_a1),
     (TestFlips_bitboard_b1),
     (TestFlips_bitboard_c1),
