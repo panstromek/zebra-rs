@@ -1,7 +1,7 @@
 use crate::src::bitboard::{BitBoard, non_iterative_popcount, set_bitboards, square_mask};
 use crate::src::patterns::pow3;
 use crate::src::search::position_list;
-use crate::src::bitbtest::{bb_flips, TestFlips_bitboard};
+use crate::src::bitbtest::{TestFlips_bitboard};
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -374,12 +374,12 @@ pub unsafe fn count_stable(color: i32,
   flipped. Aborts if all those discs are stable in the subtree.
 */
 unsafe fn stability_search(my_bits: BitBoard,
-                                      opp_bits: BitBoard,
-                                      side_to_move: i32,
-                                      mut candidate_bits: *mut BitBoard,
-                                      max_depth: i32,
-                                      last_was_pass: i32,
-                                      stability_nodes: *mut i32) {
+                           opp_bits: BitBoard,
+                           side_to_move: i32,
+                           mut candidate_bits: *mut BitBoard,
+                           max_depth: i32,
+                           last_was_pass: i32,
+                           stability_nodes: *mut i32, bb_flips_: &mut BitBoard) {
     let mut sq: i32 = 0;
     let mut old_sq: i32 = 0;
     let mut mobility: i32 = 0;
@@ -422,26 +422,26 @@ unsafe fn stability_search(my_bits: BitBoard,
     sq = stab_move_list[old_sq as usize].succ;
     while sq != 99 as i32 {
         if TestFlips_bitboard[(sq - 11 as i32) as
-                                  usize](my_bits.high,
-                                                                             my_bits.low,
-                                                                             opp_bits.high,
-                                                                             opp_bits.low)
+                                  usize](bb_flips_, my_bits.high,
+                                         my_bits.low,
+                                         opp_bits.high,
+                                         opp_bits.low)
                != 0 {
-            new_my_bits = bb_flips;
-            bb_flips.high &= !my_bits.high;
-            bb_flips.low &= !my_bits.low;
-            (*candidate_bits).high &= !bb_flips.high;
-            (*candidate_bits).low &= !bb_flips.low;
+            new_my_bits = *bb_flips_;
+            bb_flips_.high &= !my_bits.high;
+            bb_flips_.low &= !my_bits.low;
+            (*candidate_bits).high &= !bb_flips_.high;
+            (*candidate_bits).low &= !bb_flips_.low;
             if max_depth > 1 as i32 {
-                new_opp_bits.high = opp_bits.high & !bb_flips.high;
-                new_opp_bits.low = opp_bits.low & !bb_flips.low;
+                new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+                new_opp_bits.low = opp_bits.low & !bb_flips_.low;
                 stab_move_list[old_sq as usize].succ =
                     stab_move_list[sq as usize].succ;
                 stability_search(new_opp_bits, new_my_bits,
                                  0 as i32 + 2 as i32 -
                                      side_to_move, candidate_bits,
                                  max_depth - 1 as i32,
-                                 0 as i32, stability_nodes);
+                                 0 as i32, stability_nodes, bb_flips_);
                 stab_move_list[old_sq as usize].succ = sq
             }
             mobility += 1
@@ -453,7 +453,7 @@ unsafe fn stability_search(my_bits: BitBoard,
         stability_search(opp_bits, my_bits,
                          0 as i32 + 2 as i32 - side_to_move,
                          candidate_bits, max_depth, 1 as i32,
-                         stability_nodes);
+                         stability_nodes, bb_flips_);
     };
 }
 /*
@@ -464,7 +464,7 @@ unsafe fn stability_search(my_bits: BitBoard,
 unsafe fn complete_stability_search(board: *mut i32,
                                                side_to_move: i32,
                                                mut stable_bits:
-                                                   *mut BitBoard) {
+                                                   *mut BitBoard, bb_flips_: &mut BitBoard) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut empties: i32 = 0;
@@ -516,7 +516,7 @@ unsafe fn complete_stability_search(board: *mut i32,
                      if empties < shallow_depth {
                          empties
                      } else { shallow_depth }, 0 as i32,
-                     &mut stability_nodes);
+                     &mut stability_nodes,  bb_flips_);
     /* Scan through the rest of the discs one at a time until the
        maximum number of stability nodes is exceeded. Hopefully
        a subset of the stable discs is found also if this happens. */
@@ -531,7 +531,7 @@ unsafe fn complete_stability_search(board: *mut i32,
                    test_bits.low & candidate_bits.low != 0 {
                 stability_search(my_bits, opp_bits, side_to_move,
                                  &mut test_bits, empties, 0 as i32,
-                                 &mut stability_nodes);
+                                 &mut stability_nodes, bb_flips_);
                 abort =
                     (stability_nodes > 10000 as i32) as i32;
                 if abort == 0 {
@@ -554,8 +554,8 @@ unsafe fn complete_stability_search(board: *mut i32,
 */
 
 pub unsafe fn get_stable(board: *mut i32,
-                                    side_to_move: i32,
-                                    is_stable: *mut i32) {
+                         side_to_move: i32,
+                         is_stable: *mut i32, bb_flips_: &mut BitBoard) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut mask: u32 = 0;
@@ -588,7 +588,7 @@ pub unsafe fn get_stable(board: *mut i32,
         count_stable(2 as i32, white_bits, black_bits);
         all_stable.high = last_black_stable.high | last_white_stable.high;
         all_stable.low = last_black_stable.low | last_white_stable.low;
-        complete_stability_search(board, side_to_move, &mut all_stable);
+        complete_stability_search(board, side_to_move, &mut all_stable, bb_flips_);
         i = 1 as i32;
         mask = 1 as i32 as u32;
         while i <= 4 as i32 {

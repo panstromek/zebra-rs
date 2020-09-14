@@ -1,3 +1,6 @@
+use flip::doflip::{DoFlips_hash, hash_update1, hash_update2};
+use flip::unflip::UndoFlips;
+
 use crate::{
     src:: {
         epcstat::{END_SIGMA, END_MEAN, END_STATS_AVAILABLE},
@@ -7,23 +10,21 @@ use crate::{
         bitbcnt::CountFlips_bitboard,
         bitboard::{set_bitboards, BitBoard},
         bitbmob::{init_mmx, bitboard_mobility, weighted_mobility},
-        bitbtest::{bb_flips, TestFlips_bitboard},
+        bitbtest::{TestFlips_bitboard},
         probcut::{end_mpc_depth, use_end_cut},
         stable::{count_stable, count_edge_stable},
         counter::{adjust_counter, counter_value},
         globals::{piece_count, board, pv_depth, pv},
     }
 };
-use crate::src::stubs::{ceil, abs};
-use crate::src::hash::{add_hash, hash_flip2, hash_flip1};
-use crate::src::midgame::{tree_search, toggle_midgame_hash_usage};
-use crate::src::timer::{is_panic_abort, check_panic_abort, last_panic_check, clear_panic_abort, check_threshold, set_panic_threshold, get_elapsed_time};
 use crate::src::display::{echo, reset_buffer_display};
-use crate::src::zebra::{EvaluationType};
-use crate::src::osfbook::{fill_endgame_hash, get_book_move, fill_move_alternatives};
 use crate::src::error::FrontEnd;
-use flip::unflip::UndoFlips;
-use flip::doflip::{hash_update2, hash_update1, DoFlips_hash};
+use crate::src::hash::{add_hash, hash_flip1, hash_flip2};
+use crate::src::midgame::{toggle_midgame_hash_usage, tree_search};
+use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_move};
+use crate::src::stubs::{abs, ceil};
+use crate::src::timer::{check_panic_abort, check_threshold, clear_panic_abort, get_elapsed_time, is_panic_abort, last_panic_check, set_panic_threshold};
+use crate::src::zebra::EvaluationType;
 
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
@@ -112,17 +113,14 @@ pub static mut komi_shift: i32 = 0;
   (1) verifying that there exists a neighboring opponent disc,
   (2) verifying that the move flips some disc.
 */
-pub unsafe fn TestFlips_wrapper(sq: i32,
-                            my_bits: BitBoard,
-                            opp_bits: BitBoard)
-                            -> i32 {
+pub unsafe fn TestFlips_wrapper(sq: i32, my_bits: BitBoard, opp_bits: BitBoard, bb_flips_: &mut BitBoard) -> i32 {
     let mut flipped: i32 = 0;
     if neighborhood_mask[sq as usize].high & opp_bits.high |
         neighborhood_mask[sq as usize].low & opp_bits.low !=
         0 as i32 as u32 {
         flipped =
             TestFlips_bitboard[(sq - 11 as i32) as
-                usize](my_bits.high,
+                usize](bb_flips_, my_bits.high,
                        my_bits.low,
                        opp_bits.high,
                        opp_bits.low)
@@ -245,7 +243,7 @@ unsafe fn solve_two_empty(my_bits: BitBoard,
                           mut alpha: i32,
                           beta: i32,
                           disc_diff: i32,
-                          pass_legal: i32)
+                          pass_legal: i32, bb_flips_: &mut BitBoard)
                           -> i32 {
     // BitBoard new_opp_bits;
     let mut score = -(12345678 as i32);
@@ -257,7 +255,7 @@ unsafe fn solve_two_empty(my_bits: BitBoard,
        in order to perform strength reduction: Feasibility testing is
        faster than counting number of flips. */
     /* Try the first of the two empty squares... */
-    flipped = TestFlips_wrapper(sq1, my_bits, opp_bits);
+    flipped = TestFlips_wrapper(sq1, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
         /* SQ1 feasible for me */
         nodes.lo = nodes.lo.wrapping_add(1);
@@ -266,10 +264,10 @@ unsafe fn solve_two_empty(my_bits: BitBoard,
             CountFlips_bitboard[(sq2 - 11 as i32) as
                 usize](opp_bits.high
                            &
-                           !bb_flips.high,
+                           !bb_flips_.high,
                        opp_bits.low
                            &
-                           !bb_flips.low);
+                           !bb_flips_.low);
         if flipped != 0 as i32 {
             ev -= 2 as i32 * flipped
         } else if ev >= 0 as i32 {
@@ -281,15 +279,15 @@ unsafe fn solve_two_empty(my_bits: BitBoard,
                 ev +=
                     2 as i32 *
                         CountFlips_bitboard[(sq2 - 11 as i32) as
-                            usize](bb_flips.high,
-                                   bb_flips.low)
+                            usize](bb_flips_.high,
+                                   bb_flips_.low)
             }
         } else if ev < beta {
             /* Only bother if not fail-high already */
             flipped =
                 CountFlips_bitboard[(sq2 - 11 as i32) as
-                    usize](bb_flips.high,
-                           bb_flips.low);
+                    usize](bb_flips_.high,
+                           bb_flips_.low);
             if flipped != 0 as i32 {
                 /* ELSE: SQ2 will end up empty, game over */
                 /* SQ2 feasible for me, game over */
@@ -301,7 +299,7 @@ unsafe fn solve_two_empty(my_bits: BitBoard,
         if score > alpha { if score >= beta { return score } alpha = score }
     }
     /* ...and then the second */
-    flipped = TestFlips_wrapper(sq2, my_bits, opp_bits);
+    flipped = TestFlips_wrapper(sq2, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
         /* SQ2 feasible for me */
         nodes.lo = nodes.lo.wrapping_add(1);
@@ -310,10 +308,10 @@ unsafe fn solve_two_empty(my_bits: BitBoard,
             CountFlips_bitboard[(sq1 - 11 as i32) as
                 usize](opp_bits.high
                            &
-                           !bb_flips.high,
+                           !bb_flips_.high,
                        opp_bits.low
                            &
-                           !bb_flips.low);
+                           !bb_flips_.low);
         if flipped != 0 as i32 {
             /* SQ1 feasible for him, game over */
             ev -= 2 as i32 * flipped
@@ -326,15 +324,15 @@ unsafe fn solve_two_empty(my_bits: BitBoard,
                 ev +=
                     2 as i32 *
                         CountFlips_bitboard[(sq1 - 11 as i32) as
-                            usize](bb_flips.high,
-                                   bb_flips.low)
+                            usize](bb_flips_.high,
+                                   bb_flips_.low)
             }
         } else if ev < beta {
             /* Only bother if not fail-high already */
             flipped =
                 CountFlips_bitboard[(sq1 - 11 as i32) as
-                    usize](bb_flips.high,
-                           bb_flips.low);
+                    usize](bb_flips_.high,
+                           bb_flips_.low);
             if flipped != 0 as i32 {
                 /* ELSE: SQ1 will end up empty, game over */
                 /* SQ1 feasible for me, game over */
@@ -359,7 +357,7 @@ unsafe fn solve_two_empty(my_bits: BitBoard,
             return 0 as i32
         } else {
             return -solve_two_empty(opp_bits, my_bits, sq1, sq2, -beta,
-                                    -alpha, -disc_diff, 0 as i32)
+                                    -alpha, -disc_diff, 0 as i32, bb_flips_)
         }
     } else { return score };
 }
@@ -371,7 +369,7 @@ unsafe fn solve_three_empty(my_bits: BitBoard,
                             mut alpha: i32,
                             beta: i32,
                             disc_diff: i32,
-                            pass_legal: i32)
+                            pass_legal: i32, bb_flips_: &mut BitBoard)
                             -> i32 {
     let mut new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut score = -(12345678 as i32);
@@ -379,43 +377,43 @@ unsafe fn solve_three_empty(my_bits: BitBoard,
     let mut new_disc_diff: i32 = 0;
     let mut ev: i32 = 0;
     nodes.lo = nodes.lo.wrapping_add(1);
-    flipped = TestFlips_wrapper(sq1, my_bits, opp_bits);
+    flipped = TestFlips_wrapper(sq1, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
-        new_opp_bits.high = opp_bits.high & !bb_flips.high;
-        new_opp_bits.low = opp_bits.low & !bb_flips.low;
+        new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+        new_opp_bits.low = opp_bits.low & !bb_flips_.low;
         new_disc_diff =
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         score =
-            -solve_two_empty(new_opp_bits, bb_flips, sq2, sq3, -beta, -alpha,
-                             new_disc_diff, 1 as i32);
+            -solve_two_empty(new_opp_bits, *bb_flips_, sq2, sq3, -beta, -alpha,
+                             new_disc_diff, 1 as i32, bb_flips_);
         if score >= beta {
             return score
         } else { if score > alpha { alpha = score } }
     }
-    flipped = TestFlips_wrapper(sq2, my_bits, opp_bits);
+    flipped = TestFlips_wrapper(sq2, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
-        new_opp_bits.high = opp_bits.high & !bb_flips.high;
-        new_opp_bits.low = opp_bits.low & !bb_flips.low;
+        new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+        new_opp_bits.low = opp_bits.low & !bb_flips_.low;
         new_disc_diff =
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         ev =
-            -solve_two_empty(new_opp_bits, bb_flips, sq1, sq3, -beta, -alpha,
-                             new_disc_diff, 1 as i32);
+            -solve_two_empty(new_opp_bits, *bb_flips_, sq1, sq3, -beta, -alpha,
+                             new_disc_diff, 1 as i32, bb_flips_);
         if ev >= beta {
             return ev
         } else {
             if ev > score { score = ev; if score > alpha { alpha = score } }
         }
     }
-    flipped = TestFlips_wrapper(sq3, my_bits, opp_bits);
+    flipped = TestFlips_wrapper(sq3, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
-        new_opp_bits.high = opp_bits.high & !bb_flips.high;
-        new_opp_bits.low = opp_bits.low & !bb_flips.low;
+        new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+        new_opp_bits.low = opp_bits.low & !bb_flips_.low;
         new_disc_diff =
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         ev =
-            -solve_two_empty(new_opp_bits, bb_flips, sq1, sq2, -beta, -alpha,
-                             new_disc_diff, 1 as i32);
+            -solve_two_empty(new_opp_bits, *bb_flips_, sq1, sq2, -beta, -alpha,
+                             new_disc_diff, 1 as i32, bb_flips_);
         if ev >= score { return ev }
     }
     if score == -(12345678 as i32) {
@@ -431,80 +429,80 @@ unsafe fn solve_three_empty(my_bits: BitBoard,
             /* Can't reach this code, only keep it for symmetry */
         } else {
             return -solve_three_empty(opp_bits, my_bits, sq1, sq2, sq3, -beta,
-                                      -alpha, -disc_diff, 0 as i32)
+                                      -alpha, -disc_diff, 0 as i32, bb_flips_)
         }
     }
     return score;
 }
 pub unsafe fn solve_four_empty(my_bits: BitBoard,
-                           opp_bits: BitBoard,
-                           sq1: i32,
-                           sq2: i32,
-                           sq3: i32,
-                           sq4: i32,
-                           mut alpha: i32,
-                           beta: i32,
-                           disc_diff: i32,
-                           pass_legal: i32)
-                           -> i32 {
+                               opp_bits: BitBoard,
+                               sq1: i32,
+                               sq2: i32,
+                               sq3: i32,
+                               sq4: i32,
+                               mut alpha: i32,
+                               beta: i32,
+                               disc_diff: i32,
+                               pass_legal: i32, bb_flips_: &mut BitBoard)
+                               -> i32 {
     let mut new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut score = -(12345678 as i32);
     let mut flipped: i32 = 0;
     let mut new_disc_diff: i32 = 0;
     let mut ev: i32 = 0;
     nodes.lo = nodes.lo.wrapping_add(1);
-    flipped = TestFlips_wrapper(sq1, my_bits, opp_bits);
+    flipped = TestFlips_wrapper(sq1, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
-        new_opp_bits.high = opp_bits.high & !bb_flips.high;
-        new_opp_bits.low = opp_bits.low & !bb_flips.low;
+        new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+        new_opp_bits.low = opp_bits.low & !bb_flips_.low;
         new_disc_diff =
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         score =
-            -solve_three_empty(new_opp_bits, bb_flips, sq2, sq3, sq4, -beta,
-                               -alpha, new_disc_diff, 1 as i32);
+            -solve_three_empty(new_opp_bits, *bb_flips_, sq2, sq3, sq4, -beta,
+                               -alpha, new_disc_diff, 1 as i32, bb_flips_);
         if score >= beta {
             return score
         } else { if score > alpha { alpha = score } }
     }
-    flipped = TestFlips_wrapper(sq2, my_bits, opp_bits);
+    flipped = TestFlips_wrapper(sq2, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
-        new_opp_bits.high = opp_bits.high & !bb_flips.high;
-        new_opp_bits.low = opp_bits.low & !bb_flips.low;
+        new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+        new_opp_bits.low = opp_bits.low & !bb_flips_.low;
         new_disc_diff =
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         ev =
-            -solve_three_empty(new_opp_bits, bb_flips, sq1, sq3, sq4, -beta,
-                               -alpha, new_disc_diff, 1 as i32);
+            -solve_three_empty(new_opp_bits, *bb_flips_, sq1, sq3, sq4, -beta,
+                               -alpha, new_disc_diff, 1 as i32, bb_flips_);
         if ev >= beta {
             return ev
         } else {
             if ev > score { score = ev; if score > alpha { alpha = score } }
         }
     }
-    flipped = TestFlips_wrapper(sq3, my_bits, opp_bits);
+    flipped = TestFlips_wrapper(sq3, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
-        new_opp_bits.high = opp_bits.high & !bb_flips.high;
-        new_opp_bits.low = opp_bits.low & !bb_flips.low;
+        new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+        new_opp_bits.low = opp_bits.low & !bb_flips_.low;
         new_disc_diff =
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         ev =
-            -solve_three_empty(new_opp_bits, bb_flips, sq1, sq2, sq4, -beta,
-                               -alpha, new_disc_diff, 1 as i32);
+            -solve_three_empty(new_opp_bits, *bb_flips_, sq1, sq2, sq4, -beta,
+                               -alpha, new_disc_diff, 1 as i32, bb_flips_);
         if ev >= beta {
             return ev
         } else {
             if ev > score { score = ev; if score > alpha { alpha = score } }
         }
     }
-    flipped = TestFlips_wrapper(sq4, my_bits, opp_bits);
+    flipped = TestFlips_wrapper(sq4, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
-        new_opp_bits.high = opp_bits.high & !bb_flips.high;
-        new_opp_bits.low = opp_bits.low & !bb_flips.low;
+        new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+        new_opp_bits.low = opp_bits.low & !bb_flips_.low;
         new_disc_diff =
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         ev =
-            -solve_three_empty(new_opp_bits, bb_flips, sq1, sq2, sq3, -beta,
-                               -alpha, new_disc_diff, 1 as i32);
+            -solve_three_empty(new_opp_bits, *bb_flips_, sq1, sq2, sq3, -beta,
+                               -alpha, new_disc_diff, 1 as i32, bb_flips_);
         if ev >= score { return ev }
     }
     if score == -(12345678 as i32) {
@@ -520,7 +518,7 @@ pub unsafe fn solve_four_empty(my_bits: BitBoard,
         } else {
             return -solve_four_empty(opp_bits, my_bits, sq1, sq2, sq3, sq4,
                                      -beta, -alpha, -disc_diff,
-                                     0 as i32)
+                                     0 as i32, bb_flips_)
         }
     }
     return score;
@@ -563,14 +561,14 @@ pub unsafe fn set_output_mode(full: i32) {
 
 
 pub unsafe fn solve_parity(my_bits: BitBoard,
-                       opp_bits: BitBoard,
-                       mut alpha: i32,
-                       mut beta: i32,
-                       color: i32,
-                       empties: i32,
-                       disc_diff: i32,
-                       pass_legal: i32)
-                       -> i32 {
+                           opp_bits: BitBoard,
+                           mut alpha: i32,
+                           mut beta: i32,
+                           color: i32,
+                           empties: i32,
+                           disc_diff: i32,
+                           pass_legal: i32, bb_flips_: &mut BitBoard)
+                           -> i32 {
     let mut new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut score = -(12345678 as i32);
     let oppcol = 0 as i32 + 2 as i32 - color;
@@ -607,10 +605,10 @@ pub unsafe fn solve_parity(my_bits: BitBoard,
         while sq != 99 as i32 {
             let holepar = quadrant_mask[sq as usize];
             if holepar & parity_mask != 0 {
-                flipped = TestFlips_wrapper(sq, my_bits, opp_bits);
+                flipped = TestFlips_wrapper(sq, my_bits, opp_bits, bb_flips_);
                 if flipped != 0 as i32 {
-                    new_opp_bits.high = opp_bits.high & !bb_flips.high;
-                    new_opp_bits.low = opp_bits.low & !bb_flips.low;
+                    new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+                    new_opp_bits.low = opp_bits.low & !bb_flips_.low;
                     end_move_list[old_sq as usize].succ =
                         end_move_list[sq as usize].succ;
                     new_disc_diff =
@@ -623,16 +621,16 @@ pub unsafe fn solve_parity(my_bits: BitBoard,
                         let sq3 = end_move_list[sq2 as usize].succ;
                         let sq4 = end_move_list[sq3 as usize].succ;
                         ev =
-                            -solve_four_empty(new_opp_bits, bb_flips, sq1,
+                            -solve_four_empty(new_opp_bits, *bb_flips_, sq1,
                                               sq2, sq3, sq4, -beta, -alpha,
-                                              new_disc_diff, 1 as i32)
+                                              new_disc_diff, 1 as i32, bb_flips_)
                     } else {
                         region_parity ^= holepar;
                         ev =
-                            -solve_parity(new_opp_bits, bb_flips, -beta,
+                            -solve_parity(new_opp_bits, *bb_flips_, -beta,
                                           -alpha, oppcol,
                                           empties - 1 as i32,
-                                          new_disc_diff, 1 as i32);
+                                          new_disc_diff, 1 as i32, bb_flips_);
                         region_parity ^= holepar
                     }
                     end_move_list[old_sq as usize].succ = sq;
@@ -657,10 +655,10 @@ pub unsafe fn solve_parity(my_bits: BitBoard,
     while sq != 99 as i32 {
         let holepar_0 = quadrant_mask[sq as usize];
         if holepar_0 & parity_mask != 0 {
-            flipped = TestFlips_wrapper(sq, my_bits, opp_bits);
+            flipped = TestFlips_wrapper(sq, my_bits, opp_bits, bb_flips_);
             if flipped != 0 as i32 {
-                new_opp_bits.high = opp_bits.high & !bb_flips.high;
-                new_opp_bits.low = opp_bits.low & !bb_flips.low;
+                new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+                new_opp_bits.low = opp_bits.low & !bb_flips_.low;
                 end_move_list[old_sq as usize].succ =
                     end_move_list[sq as usize].succ;
                 new_disc_diff =
@@ -673,15 +671,15 @@ pub unsafe fn solve_parity(my_bits: BitBoard,
                     let sq3_0 = end_move_list[sq2_0 as usize].succ;
                     let sq4_0 = end_move_list[sq3_0 as usize].succ;
                     ev =
-                        -solve_four_empty(new_opp_bits, bb_flips, sq1_0,
+                        -solve_four_empty(new_opp_bits, *bb_flips_, sq1_0,
                                           sq2_0, sq3_0, sq4_0, -beta, -alpha,
-                                          new_disc_diff, 1 as i32)
+                                          new_disc_diff, 1 as i32, bb_flips_)
                 } else {
                     region_parity ^= holepar_0;
                     ev =
-                        -solve_parity(new_opp_bits, bb_flips, -beta, -alpha,
+                        -solve_parity(new_opp_bits, *bb_flips_, -beta, -alpha,
                                       oppcol, empties - 1 as i32,
-                                      new_disc_diff, 1 as i32);
+                                      new_disc_diff, 1 as i32, bb_flips_);
                     region_parity ^= holepar_0
                 }
                 end_move_list[old_sq as usize].succ = sq;
@@ -705,7 +703,7 @@ pub unsafe fn solve_parity(my_bits: BitBoard,
             return 0 as i32
         } else {
             return -solve_parity(opp_bits, my_bits, -beta, -alpha, oppcol,
-                                 empties, -disc_diff, 0 as i32)
+                                 empties, -disc_diff, 0 as i32, bb_flips_)
         }
     }
     best_move = best_sq;
@@ -831,7 +829,7 @@ pub unsafe fn solve_parity_hash(my_bits: BitBoard,
                                 color: i32,
                                 empties: i32,
                                 disc_diff: i32,
-                                pass_legal: i32)
+                                pass_legal: i32, bb_flips_: &mut BitBoard)
                                 -> i32 {
     let mut new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut score = -(12345678 as i32);
@@ -891,10 +889,10 @@ pub unsafe fn solve_parity_hash(my_bits: BitBoard,
         while sq != 99 as i32 {
             let holepar = quadrant_mask[sq as usize];
             if holepar & parity_mask != 0 {
-                flipped = TestFlips_wrapper(sq, my_bits, opp_bits);
+                flipped = TestFlips_wrapper(sq, my_bits, opp_bits, bb_flips_);
                 if flipped != 0 as i32 {
-                    new_opp_bits.high = opp_bits.high & !bb_flips.high;
-                    new_opp_bits.low = opp_bits.low & !bb_flips.low;
+                    new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+                    new_opp_bits.low = opp_bits.low & !bb_flips_.low;
                     region_parity ^= holepar;
                     end_move_list[old_sq as usize].succ =
                         end_move_list[sq as usize].succ;
@@ -902,9 +900,9 @@ pub unsafe fn solve_parity_hash(my_bits: BitBoard,
                         -disc_diff - 2 as i32 * flipped -
                             1 as i32;
                     ev =
-                        -solve_parity(new_opp_bits, bb_flips, -beta, -alpha,
+                        -solve_parity(new_opp_bits, *bb_flips_, -beta, -alpha,
                                       oppcol, empties - 1 as i32,
-                                      new_disc_diff, 1 as i32);
+                                      new_disc_diff, 1 as i32, bb_flips_);
                     region_parity ^= holepar;
                     end_move_list[old_sq as usize].succ = sq;
                     if ev > score {
@@ -934,10 +932,10 @@ pub unsafe fn solve_parity_hash(my_bits: BitBoard,
     while sq != 99 as i32 {
         let holepar_0 = quadrant_mask[sq as usize];
         if holepar_0 & parity_mask != 0 {
-            flipped = TestFlips_wrapper(sq, my_bits, opp_bits);
+            flipped = TestFlips_wrapper(sq, my_bits, opp_bits, bb_flips_);
             if flipped != 0 as i32 {
-                new_opp_bits.high = opp_bits.high & !bb_flips.high;
-                new_opp_bits.low = opp_bits.low & !bb_flips.low;
+                new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+                new_opp_bits.low = opp_bits.low & !bb_flips_.low;
                 region_parity ^= holepar_0;
                 end_move_list[old_sq as usize].succ =
                     end_move_list[sq as usize].succ;
@@ -945,9 +943,9 @@ pub unsafe fn solve_parity_hash(my_bits: BitBoard,
                     -disc_diff - 2 as i32 * flipped -
                         1 as i32;
                 ev =
-                    -solve_parity(new_opp_bits, bb_flips, -beta, -alpha,
+                    -solve_parity(new_opp_bits,*bb_flips_, -beta, -alpha,
                                   oppcol, empties - 1 as i32,
-                                  new_disc_diff, 1 as i32);
+                                  new_disc_diff, 1 as i32, bb_flips_);
                 region_parity ^= holepar_0;
                 end_move_list[old_sq as usize].succ = sq;
                 if ev > score {
@@ -979,7 +977,7 @@ pub unsafe fn solve_parity_hash(my_bits: BitBoard,
             hash2 ^= hash_flip_color2;
             score =
                 -solve_parity_hash(opp_bits, my_bits, -beta, -alpha, oppcol,
-                                   empties, -disc_diff, 0 as i32);
+                                   empties, -disc_diff, 0 as i32, bb_flips_);
             hash1 ^= hash_flip_color1;
             hash2 ^= hash_flip_color2
         }
@@ -1005,7 +1003,7 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
                                      color: i32,
                                      empties: i32,
                                      disc_diff: i32,
-                                     pass_legal: i32)
+                                     pass_legal: i32, bb_flips_: &mut BitBoard)
                                      -> i32 {
     /* Move bonuses without and with parity for the squares.
        These are only used when sorting moves in the 9-12 empties
@@ -1341,11 +1339,11 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
     old_sq = 0 as i32;
     sq = end_move_list[old_sq as usize].succ;
     while sq != 99 as i32 {
-        flipped = TestFlips_wrapper(sq, my_bits, opp_bits);
+        flipped = TestFlips_wrapper(sq, my_bits, opp_bits, bb_flips_);
         if flipped != 0 as i32 {
             nodes.lo = nodes.lo.wrapping_add(1);
-            new_opp_bits.high = opp_bits.high & !bb_flips.high;
-            new_opp_bits.low = opp_bits.low & !bb_flips.low;
+            new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+            new_opp_bits.low = opp_bits.low & !bb_flips_.low;
             end_move_list[old_sq as usize].succ =
                 end_move_list[sq as usize].succ;
             if quadrant_mask[sq as usize] & region_parity != 0 {
@@ -1357,11 +1355,11 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
                 goodness[moves as usize] += 128 as i32
             }
             goodness[moves as usize] -=
-                weighted_mobility(new_opp_bits, bb_flips);
+                weighted_mobility(new_opp_bits, *bb_flips_);
             if goodness[moves as usize] > best_value {
                 best_value = goodness[moves as usize];
                 best_index = moves;
-                best_new_my_bits = bb_flips;
+                best_new_my_bits = *bb_flips_;
                 best_new_opp_bits = new_opp_bits;
                 best_flipped = flipped
             }
@@ -1387,7 +1385,7 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
             score =
                 -solve_parity_hash_high(opp_bits, my_bits, -beta, -alpha,
                                         oppcol, empties, -disc_diff,
-                                        0 as i32);
+                                        0 as i32, bb_flips_);
             hash1 ^= hash_flip_color1;
             hash2 ^= hash_flip_color2;
             return score
@@ -1412,13 +1410,13 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
         score =
             -solve_parity_hash(best_new_opp_bits, best_new_my_bits, -beta,
                                -alpha, oppcol, empties - 1 as i32,
-                               new_disc_diff, 1 as i32)
+                               new_disc_diff, 1 as i32, bb_flips_)
     } else {
         score =
             -solve_parity_hash_high(best_new_opp_bits, best_new_my_bits,
                                     -beta, -alpha, oppcol,
                                     empties - 1 as i32, new_disc_diff,
-                                    1 as i32)
+                                    1 as i32, bb_flips_)
     }
     UndoFlips(best_flipped, oppcol);
     hash1 ^= diff1;
@@ -1457,9 +1455,9 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
         sq = move_order[best_index as usize];
         move_order[best_index as usize] = move_order[i as usize];
         goodness[best_index as usize] = goodness[i as usize];
-        flipped = TestFlips_wrapper(sq, my_bits, opp_bits);
-        new_opp_bits.high = opp_bits.high & !bb_flips.high;
-        new_opp_bits.low = opp_bits.low & !bb_flips.low;
+        flipped = TestFlips_wrapper(sq, my_bits, opp_bits, bb_flips_);
+        new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+        new_opp_bits.low = opp_bits.low & !bb_flips_.low;
         DoFlips_hash(sq, color, &mut board, &mut hash_flip1, &mut hash_flip2);
         board[sq as usize] = color;
         diff1 = hash_update1 ^ hash_put_value1[color as usize][sq as usize];
@@ -1476,14 +1474,14 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
         if empties <= 8 as i32 {
             /* Fail-high for opp is likely. */
             ev =
-                -solve_parity_hash(new_opp_bits, bb_flips, -beta, -alpha,
+                -solve_parity_hash(new_opp_bits, *bb_flips_, -beta, -alpha,
                                    oppcol, empties - 1 as i32,
-                                   new_disc_diff, 1 as i32)
+                                   new_disc_diff, 1 as i32, bb_flips_)
         } else {
             ev =
-                -solve_parity_hash_high(new_opp_bits, bb_flips, -beta, -alpha,
+                -solve_parity_hash_high(new_opp_bits, *bb_flips_, -beta, -alpha,
                                         oppcol, empties - 1 as i32,
-                                        new_disc_diff, 1 as i32)
+                                        new_disc_diff, 1 as i32, bb_flips_)
         }
         region_parity ^= quadrant_mask[sq as usize];
         UndoFlips(flipped, oppcol);
@@ -1532,16 +1530,16 @@ pub unsafe fn end_solve(my_bits: BitBoard, opp_bits: BitBoard,
                     color: i32,
                     empties: i32,
                     discdiff: i32,
-                    prevmove: i32) -> i32 {
+                    prevmove: i32, bb_flips_ : &mut BitBoard) -> i32 {
     let mut result: i32 = 0;
     if empties <= 8 as i32 {
         result =
             solve_parity(my_bits, opp_bits, alpha, beta, color, empties,
-                         discdiff, prevmove)
+                         discdiff, prevmove, bb_flips_)
     } else {
         result =
             solve_parity_hash_high(my_bits, opp_bits, alpha, beta, color,
-                                   empties, discdiff, prevmove)
+                                   empties, discdiff, prevmove, bb_flips_)
     }
     return result;
 }
@@ -1596,7 +1594,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                                             mut beta: i32,
                                             selectivity: i32,
                                             selective_cutoff: *mut i32,
-                                            void_legal: i32)
+                                            void_legal: i32, bb_flips_: &mut BitBoard)
                                             -> i32 {
     let mut node_val: f64 = 0.;
     let mut i: i32 = 0;
@@ -1688,7 +1686,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
         prepare_to_solve(board.as_mut_ptr());
         result =
             end_solve(my_bits, opp_bits, alpha, beta, side_to_move, empties,
-                      disk_diff, previous_move);
+                      disk_diff, previous_move, bb_flips_);
         pv_depth[level as usize] = level + 1 as i32;
         pv[level as usize][level as usize] = best_move;
         if level == 0 as i32 && get_ponder_move() == 0 {
@@ -1912,10 +1910,10 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                     }
                     if already_checked == 0 &&
                         board[move_0 as usize] == 1 as i32 &&
-                        TestFlips_wrapper(move_0, my_bits, opp_bits) >
+                        TestFlips_wrapper(move_0, my_bits, opp_bits, bb_flips_) >
                             0 as i32 {
-                        new_opp_bits.high = opp_bits.high & !bb_flips.high;
-                        new_opp_bits.low = opp_bits.low & !bb_flips.low;
+                        new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+                        new_opp_bits.low = opp_bits.low & !bb_flips_.low;
                         make_move(side_to_move, move_0, 1 as i32);
                         curr_val = 0 as i32;
                         /* Enhanced Transposition Cutoff: It's a good idea to
@@ -1982,7 +1980,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                             } else { curr_val += 1000000 as i32 }
                             if curr_val < 10000000 as i32 {
                                 mobility =
-                                    bitboard_mobility(new_opp_bits, bb_flips);
+                                    bitboard_mobility(new_opp_bits, *bb_flips_);
                                 if curr_val >
                                     2 as i32 *
                                         1000000 as i32 {
@@ -2032,19 +2030,19 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
             FE::end_tree_search_level_0_ponder_0_short_report(move_0, first);
         }
         make_move(side_to_move, move_0, use_hash);
-        TestFlips_wrapper(move_0, my_bits, opp_bits);
-        new_my_bits = bb_flips;
-        new_opp_bits.high = opp_bits.high & !bb_flips.high;
-        new_opp_bits.low = opp_bits.low & !bb_flips.low;
+        TestFlips_wrapper(move_0, my_bits, opp_bits, bb_flips_);
+        new_my_bits = *bb_flips_;
+        new_opp_bits.high = opp_bits.high & !bb_flips_.high;
+        new_opp_bits.low = opp_bits.low & !bb_flips_.low;
         update_pv = 0 as i32;
         if first != 0 {
             curr_val =
                 -end_tree_search::<FE>(level + 1 as i32, level + exp_depth,
-                                 new_opp_bits, new_my_bits,
-                                 0 as i32 + 2 as i32 -
+                                       new_opp_bits, new_my_bits,
+                                       0 as i32 + 2 as i32 -
                                      side_to_move, -beta, -curr_alpha,
-                                 selectivity, &mut child_selective_cutoff,
-                                 1 as i32);
+                                       selectivity, &mut child_selective_cutoff,
+                                       1 as i32, bb_flips_);
             best = curr_val;
             update_pv = 1 as i32;
             if level == 0 as i32 { best_end_root_move = move_0 }
@@ -2052,34 +2050,34 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
             curr_alpha = if best > curr_alpha { best } else { curr_alpha };
             curr_val =
                 -end_tree_search::<FE>(level + 1 as i32, level + exp_depth,
-                                 new_opp_bits, new_my_bits,
-                                 0 as i32 + 2 as i32 -
+                                       new_opp_bits, new_my_bits,
+                                       0 as i32 + 2 as i32 -
                                      side_to_move,
-                                 -(curr_alpha + 1 as i32),
-                                 -curr_alpha, selectivity,
-                                 &mut child_selective_cutoff,
-                                 1 as i32);
+                                       -(curr_alpha + 1 as i32),
+                                       -curr_alpha, selectivity,
+                                       &mut child_selective_cutoff,
+                                       1 as i32, bb_flips_);
             if curr_val > curr_alpha && curr_val < beta {
                 if selectivity > 0 as i32 {
                     curr_val =
                         -end_tree_search::<FE>(level + 1 as i32,
-                                         level + exp_depth, new_opp_bits,
-                                         new_my_bits,
-                                         0 as i32 + 2 as i32 -
+                                               level + exp_depth, new_opp_bits,
+                                               new_my_bits,
+                                               0 as i32 + 2 as i32 -
                                              side_to_move, -beta,
-                                         12345678 as i32, selectivity,
-                                         &mut child_selective_cutoff,
-                                         1 as i32)
+                                               12345678 as i32, selectivity,
+                                               &mut child_selective_cutoff,
+                                               1 as i32, bb_flips_)
                 } else {
                     curr_val =
                         -end_tree_search::<FE>(level + 1 as i32,
-                                         level + exp_depth, new_opp_bits,
-                                         new_my_bits,
-                                         0 as i32 + 2 as i32 -
+                                               level + exp_depth, new_opp_bits,
+                                               new_my_bits,
+                                               0 as i32 + 2 as i32 -
                                              side_to_move, -beta, -curr_val,
-                                         selectivity,
-                                         &mut child_selective_cutoff,
-                                         1 as i32)
+                                               selectivity,
+                                               &mut child_selective_cutoff,
+                                               1 as i32, bb_flips_)
                 }
                 if curr_val > best {
                     best = curr_val;
@@ -2169,9 +2167,9 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
         }
         curr_val =
             -end_tree_search::<FE>(level, max_depth, opp_bits, my_bits,
-                             0 as i32 + 2 as i32 -
+                                   0 as i32 + 2 as i32 -
                                  side_to_move, -beta, -alpha, selectivity,
-                             selective_cutoff, 0 as i32);
+                                   selective_cutoff, 0 as i32, bb_flips_);
         if use_hash != 0 {
             hash1 ^= hash_flip_color1;
             hash2 ^= hash_flip_color2
@@ -2206,6 +2204,7 @@ pub unsafe fn end_tree_wrapper<FE: FrontEnd>(level: i32,
                                              selectivity: i32,
                                              void_legal: i32)
                                              -> i32 {
+    static mut bb_flips: BitBoard = BitBoard { high: 0, low: 0 };
     let mut selective_cutoff: i32 = 0;
     let mut my_bits = BitBoard{high: 0, low: 0,};
     let mut opp_bits = BitBoard{high: 0, low: 0,};
@@ -2219,7 +2218,7 @@ pub unsafe fn end_tree_wrapper<FE: FrontEnd>(level: i32,
                            if beta - komi_shift < 64 as i32 {
                                (beta) - komi_shift
                            } else { 64 as i32 }, selectivity,
-                           &mut selective_cutoff, void_legal) + komi_shift;
+                                 &mut selective_cutoff, void_legal, &mut bb_flips) + komi_shift;
 }
 /*
    FULL_EXPAND_PV
