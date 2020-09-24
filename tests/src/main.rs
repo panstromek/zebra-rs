@@ -53,13 +53,15 @@ mod tests {
                 snapshot_test(
                     "./target/release/zebra",
                     $args,
-                    &("./snapshots/zebra.log".to_owned() + stringify!($id)),
+                    &("./snapshots/zebra.log-".to_owned() + stringify!($id)),
                 );
             }
         };
     }
 
     snap_test!(minus_p_zero, "-l 6 6 6 6 6 6 -r 0 -p 0");
+
+    snap_test!(with_repeat, "-l 6 6 6 6 6 6 -r 0 -repeat 2");
 
     snap_test!(minus_p_zero_without_book, "-l 6 6 6 6 6 6 -r 0 -p 0 -b 0");
 
