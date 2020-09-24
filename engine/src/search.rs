@@ -43,7 +43,7 @@ pub static mut full_pv_depth: i32 = 0;
 
 pub static mut full_pv: [i32; 120] = [0; 120];
 
-pub static mut list_inherited: [i32; 61] = [0; 61];
+pub static mut list_inherited: [i32; 62] = [0; 62];
 
 pub static mut sorted_move_order: [[i32; 64]; 64] = [[0; 64]; 64];
 /* 61*60 used */
