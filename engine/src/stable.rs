@@ -39,7 +39,7 @@ static mut edge_h1h8: i32 = 0;
 
 pub static mut stab_move_list: [MoveLink; 100] =
     [MoveLink{pred: 0, succ: 0,}; 100];
-unsafe fn and_line_shift_64(mut target: *mut BitBoard,
+fn and_line_shift_64(target: &mut BitBoard,
                                        base: BitBoard,
                                        shift: i32,
                                        mut dir_ss: BitBoard) {
@@ -57,8 +57,7 @@ unsafe fn and_line_shift_64(mut target: *mut BitBoard,
   Determines the bit mask for (a subset of) the stable discs in a position.
   Zardoz' algorithm + edge tables is used.
 */
-unsafe fn edge_zardoz_stable(mut ss: *mut BitBoard,
-                                        dd: BitBoard, od: BitBoard) {
+fn edge_zardoz_stable(ss: &mut BitBoard, dd: BitBoard, od: BitBoard) {
     /* dd is the disks of the side we are looking for stable disks for
        od is the opponent
        ss are the stable disks */
@@ -555,7 +554,7 @@ unsafe fn complete_stability_search(board: *mut i32,
   is returned in the boolean vector IS_STABLE.
 */
 
-pub unsafe fn get_stable(board: *mut i32,
+pub unsafe fn get_stable(board: &mut i32,
                          side_to_move: i32,
                          is_stable: *mut i32, bb_flips_: &mut BitBoard) {
     let mut i: i32 = 0;
