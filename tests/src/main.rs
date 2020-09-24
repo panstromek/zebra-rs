@@ -63,6 +63,10 @@ mod tests {
 
     snap_test!(with_repeat, "-l 6 6 6 6 6 6 -r 0 -repeat 2");
 
+    snap_test!(no_wld, "-l 6 6 0 6 6 0 -r 0 -repeat 2");
+
+    snap_test!(no_exact_no_wld, "-l 6 0 0 6 0 0 -r 0 -repeat 2");
+
     snap_test!(minus_p_zero_without_book, "-l 6 6 6 6 6 6 -r 0 -p 0 -b 0");
 
     #[test]
@@ -75,12 +79,12 @@ mod tests {
     }
 
     fn snapshot_test(binary: &str, arguments: &str, snapshot_path: &str) {
-        Command::new(binary)
+        let output = Command::new(binary)
             .current_dir("./../")
             .args(arguments.split_whitespace())
             .output()
             .unwrap();
-
+        assert!(String::from_utf8_lossy(&output.stderr).trim().is_empty());
         assert_log_file(snapshot_path);
     }
 

@@ -57,8 +57,8 @@ pub static mut do_check_midgame_abort: i32 = 1 as i32;
 pub static mut counter_phase: i32 = 0;
 pub static mut apply_perturbation: i32 = 1 as i32;
 pub static mut perturbation_amplitude: i32 = 0 as i32;
-pub static mut stage_reached: [i32; 61] = [0; 61];
-pub static mut stage_score: [i32; 61] = [0; 61];
+pub static mut stage_reached: [i32; 62] = [0; 62];
+pub static mut stage_score: [i32; 62] = [0; 62];
 pub static mut score_perturbation: [i32; 100] = [0; 100];
 pub static mut feas_index_list: [[i32; 64]; 64] = [[0; 64]; 64];
 
