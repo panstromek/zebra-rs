@@ -61,9 +61,17 @@ mod tests {
 
     snap_test!(minus_p_zero, "-l 6 6 6 6 6 6 -r 0 -p 0");
 
+    snap_test!(with_no_echo, "-l 6 6 6 6 6 6 -r 0 -e 0");
+
+    snap_test!(with_some_slack, "-l 6 6 6 6 6 6 -r 0 -slack 8");
+
+    snap_test!(with_hash_twelve, "-l 6 6 6 6 6 6 -r 0 -h 12");
+
     snap_test!(with_repeat, "-l 6 6 6 6 6 6 -r 0 -repeat 2");
 
     snap_test!(no_wld, "-l 6 6 0 6 6 0 -r 0 -repeat 2");
+
+    snap_test!(wld_only, "-l 6 6 6 6 6 6 -r 0 -repeat 2 -wld 1");
 
     snap_test!(no_exact_no_wld, "-l 6 0 0 6 0 0 -r 0 -repeat 2");
 
@@ -85,6 +93,7 @@ mod tests {
             .output()
             .unwrap();
         assert!(String::from_utf8_lossy(&output.stderr).trim().is_empty());
+        // TODO maybe assert stdout too?? for echo tests for example
         assert_log_file(snapshot_path);
     }
 
