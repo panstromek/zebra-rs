@@ -16,7 +16,7 @@
 */
 
 
-pub static mut pow3: [i32; 10] =
+pub const pow3: [i32; 10] =
     [1 as i32, 3 as i32, 9 as i32, 27 as i32,
      81 as i32, 243 as i32, 729 as i32,
      2187 as i32, 6561 as i32, 19683 as i32];
@@ -38,7 +38,7 @@ pub static mut row_pattern: [i32; 8] = [0; 8];
 pub static mut col_pattern: [i32; 8] = [0; 8];
 /* Symmetry maps */
 
-pub static mut flip8: [i32; 6561] = [0; 6561];
+pub const flip8: [i32; 6561] = transformation_setup();
 /* Bit masks which represent dependencies between discs and patterns */
 
 pub static mut depend_lo: [u32; 100] = [0; 100];
@@ -53,7 +53,8 @@ pub static mut modified_hi: u32 = 0;
    TRANSFORMATION_SET_UP
    Calculate the various symmetry and color transformations.
 */
-unsafe fn transformation_setup() {
+const fn transformation_setup() -> [i32; 6561] {
+    let mut flip8_: [i32; 6561] = [0;6561];
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut row: [i32; 10] = [0; 10];
@@ -63,10 +64,10 @@ unsafe fn transformation_setup() {
     i = 0 as i32;
     while i < 6561 as i32 {
         /* Create the symmetry map */
-        flip8[i as usize] = 0 as i32;
+        flip8_[i as usize] = 0 as i32;
         j = 0 as i32;
         while j < 8 as i32 {
-            flip8[i as usize] +=
+            flip8_[i as usize] +=
                 row[j as usize] * pow3[(7 as i32 - j) as usize];
             j += 1
         }
@@ -86,6 +87,7 @@ unsafe fn transformation_setup() {
         }
         i += 1
     };
+    return flip8_;
 }
 /*
   ADD_SINGLE
@@ -313,7 +315,6 @@ pub unsafe fn init_patterns() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
-    transformation_setup();
     i = 1 as i32;
     while i <= 8 as i32 {
         j = 1 as i32;
