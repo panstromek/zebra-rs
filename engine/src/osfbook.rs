@@ -10,7 +10,7 @@ use crate::{
         midgame::{toggle_midgame_abort_check, toggle_midgame_hash_usage},
         getcoeff::remove_coeffs,
         counter::reset_counter,
-        patterns::{col_pattern, flip8, row_pattern, compute_line_patterns},
+        patterns::{flip8, compute_line_patterns},
         zebra::{EvaluationType}
     }
 };
@@ -352,6 +352,9 @@ pub unsafe fn get_candidate(index: i32) -> CandidateMove {
    See also init_maps().
 */
 
+pub static mut row_pattern: [i32; 8] = [0; 8];
+pub static mut col_pattern: [i32; 8] = [0; 8];
+
 pub unsafe fn get_hash(val0: *mut i32,
                        val1: *mut i32,
                        orientation: *mut i32) {
@@ -363,7 +366,7 @@ pub unsafe fn get_hash(val0: *mut i32,
     let mut out: [[i32; 2]; 8] = [[0; 2]; 8];
     /* Calculate the 8 different 64-bit hash values for the
        different rotations. */
-    compute_line_patterns(&board);
+    compute_line_patterns(&board, &mut row_pattern, &mut col_pattern);
     i = 0 as i32;
     while i < 8 as i32 {
         j = 0 as i32;

@@ -29,10 +29,6 @@ pub static col_index: [i32; 100] = init_patterns()[3];
 // color_pattern[2] = 2;
 pub static color_pattern: [i32; 3] = [1, 0, 2];
 /* The patterns describing the current state of the board. */
-
-pub static mut row_pattern: [i32; 8] = [0; 8];
-
-pub static mut col_pattern: [i32; 8] = [0; 8];
 /* Symmetry maps */
 
 pub static flip8: [i32; 6561] = transformation_setup();
@@ -114,15 +110,15 @@ const fn init_patterns() -> [[i32; 100]; 4] {
    Translate the current board configuration into patterns.
 */
 
-pub unsafe fn compute_line_patterns(in_board: &[i32; 128]) {
+pub fn compute_line_patterns(in_board: &[i32; 128], row_pattern_: &mut [i32; 8], col_pattern_: &mut [i32; 8]) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
     let mut mask: i32 = 0;
     i = 0 as i32;
     while i < 8 as i32 {
-        row_pattern[i as usize] = 0 as i32;
-        col_pattern[i as usize] = 0 as i32;
+        row_pattern_[i as usize] = 0 as i32;
+        col_pattern_[i as usize] = 0 as i32;
         i += 1
     }
     i = 1 as i32;
@@ -135,9 +131,9 @@ pub unsafe fn compute_line_patterns(in_board: &[i32; 128]) {
             } else {
                 mask = color_pattern[in_board[pos as usize] as usize]
             }
-            row_pattern[row_no[pos as usize] as usize] +=
+            row_pattern_[row_no[pos as usize] as usize] +=
                 mask * pow3[row_index[pos as usize] as usize];
-            col_pattern[col_no[pos as usize] as usize] +=
+            col_pattern_[col_no[pos as usize] as usize] +=
                 mask * pow3[col_index[pos as usize] as usize];
             j += 1
         }
