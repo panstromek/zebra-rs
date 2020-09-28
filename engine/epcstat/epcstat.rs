@@ -6,7 +6,7 @@
 */
 
 
-pub static mut END_MEAN: [[f32; 9]; 61] =
+pub static END_MEAN: [[f32; 9]; 61] =
     [[0.0f64 as f32, 0.0f64 as f32,
       0.0f64 as f32, 0.0f64 as f32,
       0.0f64 as f32, 0.0f64 as f32,
@@ -265,7 +265,7 @@ pub static mut END_MEAN: [[f32; 9]; 61] =
       0.0f64 as f32, 0.0f64 as f32,
       0.0f64 as f32]];
 
-pub static mut END_SIGMA: [[f32; 9]; 61] =
+pub static END_SIGMA: [[f32; 9]; 61] =
     [[0.0f64 as f32, 0.0f64 as f32,
       0.0f64 as f32, 0.0f64 as f32,
       0.0f64 as f32, 0.0f64 as f32,
@@ -524,7 +524,7 @@ pub static mut END_SIGMA: [[f32; 9]; 61] =
       0.0f64 as f32, 0.0f64 as f32,
       0.0f64 as f32]];
 
-pub static mut END_STATS_AVAILABLE: [[i16; 9]; 61] =
+pub static END_STATS_AVAILABLE: [[i16; 9]; 61] =
     [[0 as i32 as i16, 0 as i32 as i16,
       0 as i32 as i16, 0 as i32 as i16,
       0 as i32 as i16, 0 as i32 as i16,

@@ -19,9 +19,9 @@ pub static mut interval2: f64 = 0.;
 pub static mut black_time: i32 = 0;
 pub static mut white_time: i32 = 0;
 pub static mut current_row: i32 = 0;
-pub static mut status_modified: i32 = 0 as i32;
-pub static mut sweep_modified: i32 = 0 as i32;
-pub static mut timed_buffer_management: i32 = 1 as i32;
+pub static mut status_modified: i32 = 0;
+pub static mut sweep_modified: i32 = 0;
+pub static mut timed_buffer_management: i32 = 1;
 pub static mut status_pos: i32 = 0;
 pub static mut sweep_pos: i32 = 0;
 pub static mut black_list: *mut i32 = 0 as *const i32 as *mut i32;
@@ -37,29 +37,24 @@ pub static mut white_list: *mut i32 = 0 as *const i32 as *mut i32;
   board by DISPLAY_BOARD.
 */
 
-pub unsafe fn set_names<FE: FrontEnd>(black_name: *const i8,
-                        white_name: *const i8) {
+pub unsafe fn set_names<FE: FrontEnd>(black_name: *const i8, white_name: *const i8) {
     if !black_player.is_null() { FE::free(black_player as *mut c_void); }
     if !white_player.is_null() { FE::free(white_player as *mut c_void); }
     black_player = FE::strdup(black_name);
     white_player = FE::strdup(white_name);
 }
 
-pub unsafe fn set_times(black: i32,
-                        white: i32) {
+pub unsafe fn set_times(black: i32, white: i32) {
     black_time = black;
     white_time = white;
 }
 
-pub unsafe fn set_evals(black: f64,
-                        white: f64) {
+pub unsafe fn set_evals(black: f64, white: f64) {
     black_eval = black;
     white_eval = white;
 }
 
-pub unsafe fn set_move_list(black: *mut i32,
-                            white: *mut i32,
-                            row: i32) {
+pub unsafe fn set_move_list(black: *mut i32, white: *mut i32, row: i32) {
     black_list = black;
     white_list = white;
     current_row = row;

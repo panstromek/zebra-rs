@@ -23,22 +23,18 @@
 use crate::src::error::{FrontEnd};
 use std::ffi::c_void;
 
-pub type size_t = u64;
-pub unsafe fn safe_malloc<FE: FrontEnd>(size: size_t) -> *mut c_void {
-    let mut block = 0 as *mut c_void;
-    block = FE::malloc(size);
+pub unsafe fn safe_malloc<FE: FrontEnd>(size: u64) -> *mut c_void {
+    let block = FE::malloc(size);
     if block.is_null() {
         FE::safe_malloc_failure(size);
     }
-    return block;
+    block
 }
 
-pub unsafe fn safe_realloc<FE: FrontEnd>(ptr: *mut c_void,
-                                         size: size_t) -> *mut c_void {
-    let mut block = 0 as *mut c_void;
-    block = FE::realloc(ptr, size);
+pub unsafe fn safe_realloc<FE: FrontEnd>(ptr: *mut c_void, size: u64) -> *mut c_void {
+    let block = FE::realloc(ptr, size);
     if block.is_null() {
         FE::safe_realloc_failure(size);
     }
-    return block;
+    block
 }
