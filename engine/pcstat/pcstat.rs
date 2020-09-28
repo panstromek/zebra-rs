@@ -12,7 +12,7 @@ pub struct Correlation {
    Automatically created by CORRELAT on Tue Sep 07 19:41:49 1999
 */
 
-pub static mut MID_CORR: [[Correlation; 9]; 61] =
+pub static MID_CORR: [[Correlation; 9]; 61] =
     [[{
           let init =
               Correlation{const_base: 0.000f64 as f32,

@@ -28,15 +28,13 @@ pub static mut mpc_cut: [DepthInfo; 23] =
    Specifies that endgame searches with EMPTY empty disks
    are to be estimated using searches to depth SHALLOW_DEPTH.
 */
-pub unsafe fn set_end_probcut(empty: i32,
-                          shallow_depth: i32) {
-    let mut stage: i32 = 0;
-    stage = 60 as i32 - empty;
-    if shallow_depth <= 14 as i32 {
-        if END_STATS_AVAILABLE[stage as usize][shallow_depth as usize] != 0 {
-            let fresh0 = use_end_cut[stage as usize];
-            use_end_cut[stage as usize] = use_end_cut[stage as usize] + 1;
-            end_mpc_depth[stage as usize][fresh0 as usize] = shallow_depth
+unsafe fn set_end_probcut(empty: usize, shallow_depth: i32) {
+    let mut stage = 60 - empty;
+    if shallow_depth <= 14 {
+        if END_STATS_AVAILABLE[stage][shallow_depth as usize] != 0 {
+            let fresh0 = use_end_cut[stage];
+            use_end_cut[stage] = use_end_cut[stage] + 1;
+            end_mpc_depth[stage][fresh0 as usize] = shallow_depth
         }
     };
 }
@@ -46,13 +44,10 @@ pub unsafe fn set_end_probcut(empty: i32,
    Specifies that searches to depth DEPTH are to be
    estimated using searches to depth SHALLOW_DEPTH.
 */
-unsafe fn set_probcut(depth: i32,
-                      shallow: i32) {
-    let mut i: i32 = 0;
-    let mut this_try: i32 = 0;
-    this_try = mpc_cut[depth as usize].cut_tries;
+unsafe fn set_probcut(depth: i32, shallow: i32) {
+    let mut this_try = mpc_cut[depth as usize].cut_tries;
     mpc_cut[depth as usize].cut_depth[this_try as usize] = shallow;
-    i = 0 as i32;
+    let mut i = 0 as i32;
     while i <= 60 as i32 {
         mpc_cut[depth as usize].bias[this_try as usize][i as usize] =
             floor(128.0f64 *
@@ -77,57 +72,56 @@ unsafe fn set_probcut(depth: i32,
 */
 
 pub unsafe fn init_probcut() {
-    let mut i: i32 = 0;
-    i = 0 as i32;
-    while i <= 22 as i32 {
-        mpc_cut[i as usize].cut_tries = 0 as i32;
+    let mut i = 0;
+    while i <= 22 {
+        mpc_cut[i].cut_tries = 0;
         i += 1
     }
-    i = 0 as i32;
-    while i <= 60 as i32 {
-        use_end_cut[i as usize] = 0 as i32;
+    let mut i = 0;
+    while i <= 60 {
+        use_end_cut[i] = 0;
         i += 1
     }
-    set_probcut(3 as i32, 1 as i32);
-    set_probcut(4 as i32, 2 as i32);
-    set_probcut(5 as i32, 1 as i32);
-    set_probcut(6 as i32, 2 as i32);
-    set_probcut(7 as i32, 3 as i32);
-    set_probcut(8 as i32, 4 as i32);
-    set_probcut(9 as i32, 3 as i32);
-    set_probcut(10 as i32, 4 as i32);
-    set_probcut(10 as i32, 6 as i32);
-    set_probcut(11 as i32, 3 as i32);
-    set_probcut(11 as i32, 5 as i32);
-    set_probcut(12 as i32, 4 as i32);
-    set_probcut(12 as i32, 6 as i32);
-    set_probcut(13 as i32, 5 as i32);
-    set_probcut(13 as i32, 7 as i32);
-    set_probcut(14 as i32, 6 as i32);
-    set_probcut(14 as i32, 8 as i32);
-    set_probcut(15 as i32, 5 as i32);
-    set_probcut(15 as i32, 7 as i32);
-    set_probcut(16 as i32, 6 as i32);
-    set_probcut(16 as i32, 8 as i32);
-    set_probcut(17 as i32, 5 as i32);
-    set_probcut(17 as i32, 7 as i32);
-    set_probcut(18 as i32, 6 as i32);
-    set_probcut(18 as i32, 8 as i32);
-    set_probcut(20 as i32, 8 as i32);
-    set_end_probcut(13 as i32, 1 as i32);
-    set_end_probcut(14 as i32, 1 as i32);
-    set_end_probcut(15 as i32, 2 as i32);
-    set_end_probcut(16 as i32, 2 as i32);
-    set_end_probcut(17 as i32, 2 as i32);
-    set_end_probcut(18 as i32, 2 as i32);
-    set_end_probcut(19 as i32, 3 as i32);
-    set_end_probcut(20 as i32, 3 as i32);
-    set_end_probcut(21 as i32, 4 as i32);
-    set_end_probcut(22 as i32, 4 as i32);
-    set_end_probcut(23 as i32, 4 as i32);
-    set_end_probcut(24 as i32, 4 as i32);
-    set_end_probcut(25 as i32, 4 as i32);
-    set_end_probcut(26 as i32, 4 as i32);
-    set_end_probcut(27 as i32, 4 as i32);
+    set_probcut(3, 1);
+    set_probcut(4, 2);
+    set_probcut(5, 1);
+    set_probcut(6, 2);
+    set_probcut(7, 3);
+    set_probcut(8, 4);
+    set_probcut(9, 3);
+    set_probcut(10, 4);
+    set_probcut(10, 6);
+    set_probcut(11, 3);
+    set_probcut(11, 5);
+    set_probcut(12, 4);
+    set_probcut(12, 6);
+    set_probcut(13, 5);
+    set_probcut(13, 7);
+    set_probcut(14, 6);
+    set_probcut(14, 8);
+    set_probcut(15, 5);
+    set_probcut(15, 7);
+    set_probcut(16, 6);
+    set_probcut(16, 8);
+    set_probcut(17, 5);
+    set_probcut(17, 7);
+    set_probcut(18, 6);
+    set_probcut(18, 8);
+    set_probcut(20, 8);
+    set_end_probcut(13, 1);
+    set_end_probcut(14, 1);
+    set_end_probcut(15, 2);
+    set_end_probcut(16, 2);
+    set_end_probcut(17, 2);
+    set_end_probcut(18, 2);
+    set_end_probcut(19, 3);
+    set_end_probcut(20, 3);
+    set_end_probcut(21, 4);
+    set_end_probcut(22, 4);
+    set_end_probcut(23, 4);
+    set_end_probcut(24, 4);
+    set_end_probcut(25, 4);
+    set_end_probcut(26, 4);
+    set_end_probcut(27, 4);
 }
 

@@ -53,16 +53,16 @@ pub const PRIVATE_GAME: GameMode = 0;
 /* Local variables */
 pub static mut slack: f64 = 0.25f64;
 pub static mut dev_bonus: f64 = 0.0f64;
-pub static mut low_thresh: i32 = 0 as i32;
-pub static mut high_thresh: i32 = 0 as i32;
-pub static mut rand_move_freq: i32 = 0 as i32;
-pub static mut tournament: i32 = 0 as i32;
+pub static mut low_thresh: i32 = 0;
+pub static mut high_thresh: i32 = 0;
+pub static mut rand_move_freq: i32 = 0;
+pub static mut tournament: i32 = 0;
 pub static mut tournament_levels: i32 = 0;
 pub static mut deviation_depth: i32 = 0;
 pub static mut cutoff_empty: i32 = 0;
-pub static mut one_position_only: i32 = 0 as i32;
-pub static mut use_timer: i32 = 0 as i32;
-pub static mut only_analyze: i32 = 0 as i32;
+pub static mut one_position_only: i32 = 0;
+pub static mut use_timer: i32 = 0;
+pub static mut only_analyze: i32 = 0;
 pub static mut thor_max_games: i32 = 0;
 pub static mut tournament_skill: [[i32; 3]; 8] = [[0; 3]; 8];
 pub static mut wld_skill: [i32; 3] = [0; 3];
@@ -71,20 +71,20 @@ pub static mut player_time: [f64; 3] = [0.; 3];
 pub static mut player_increment: [f64; 3] = [0.; 3];
 pub static mut skill: [i32; 3] = [0; 3];
 pub static mut wait: i32 = 0;
-pub static mut use_book: i32 = 1 as i32;
-pub static mut wld_only: i32 = 0 as i32;
+pub static mut use_book: i32 = 1;
+pub static mut wld_only: i32 = 0;
 
 
 pub unsafe fn set_default_engine_globals() {
-    wait = 0 as i32;
-    echo = 1 as i32;
-    display_pv = 1 as i32;
-    skill[2 as i32 as usize] = -(1 as i32);
-    skill[0 as i32 as usize] = skill[2 as i32 as usize];
-    player_time[2 as i32 as usize] = 10000000.0f64;
-    player_time[0 as i32 as usize] = player_time[2 as i32 as usize];
-    player_increment[2 as i32 as usize] = 0.0f64;
-    player_increment[0 as i32 as usize] = player_increment[2 as i32 as usize];
+    wait = 0;
+    echo = 1;
+    display_pv = 1;
+    skill[2] = -1;
+    skill[0] = -1;
+    player_time[2] = 10000000.0f64;
+    player_time[0] = 10000000.0f64;
+    player_increment[2] = 0.0f64;
+    player_increment[0] = 0.0f64;
 }
 /// This trait is unsafe because line buffer is used as a c-style string later
 /// so this function needs to ensure that the line_buffer contains at
@@ -96,18 +96,16 @@ pub unsafe trait InitialMoveSource {
 
 
 pub unsafe fn set_names_from_skills<FE :FrontEnd>() {
-    let mut black_name = 0 as *const i8;
-    if skill[0 as i32 as usize] == 0 as i32 {
-        black_name = b"Player\x00" as *const u8 as *const i8
+    let black_name = if skill[0] == 0 {
+        b"Player\x00" as *const u8 as *const i8
     } else {
-        black_name = b"Zebra\x00" as *const u8 as *const i8
-    }
-    let mut white_name = 0 as *const i8;
-    if skill[2 as i32 as usize] == 0 as i32 {
-        white_name = b"Player\x00" as *const u8 as *const i8
+        b"Zebra\x00" as *const u8 as *const i8
+    };
+    let white_name = if skill[2] == 0 {
+        b"Player\x00" as *const u8 as *const i8
     } else {
-        white_name = b"Zebra\x00" as *const u8 as *const i8
-    }
+        b"Zebra\x00" as *const u8 as *const i8
+    };
     set_names::<FE>(black_name, white_name);
 }
 
