@@ -618,7 +618,7 @@ pub unsafe fn solve_parity(my_bits: BitBoard,
                             1 as i32;
                     if empties == 5 as i32 {
                         let sq1 =
-                            end_move_list[0 as i32 as usize].succ;
+                            end_move_list[0].succ;
                         let sq2 = end_move_list[sq1 as usize].succ;
                         let sq3 = end_move_list[sq2 as usize].succ;
                         let sq4 = end_move_list[sq3 as usize].succ;
@@ -668,7 +668,7 @@ pub unsafe fn solve_parity(my_bits: BitBoard,
                         1 as i32;
                 if empties == 5 as i32 {
                     let sq1_0 =
-                        end_move_list[0 as i32 as usize].succ;
+                        end_move_list[0].succ;
                     let sq2_0 = end_move_list[sq1_0 as usize].succ;
                     let sq3_0 = end_move_list[sq2_0 as usize].succ;
                     let sq4_0 = end_move_list[sq3_0 as usize].succ;
@@ -805,7 +805,7 @@ pub unsafe fn setup_end() {
         i = 0 as i32;
         while i <= 60 as i32 {
             prelim_threshold[i as usize][j as usize] =
-                prelim_threshold[i as usize][8 as i32 as usize];
+                prelim_threshold[i as usize][8];
             i += 1
         }
         j += 1
@@ -856,14 +856,14 @@ pub unsafe fn solve_parity_hash(my_bits: BitBoard,
     find_hash(&mut entry, 1 as i32);
     if entry.draft as i32 == empties &&
         entry.selectivity as i32 == 0 as i32 &&
-        valid_move(entry.move_0[0 as i32 as usize], color) != 0 &&
+        valid_move(entry.move_0[0], color) != 0 &&
         entry.flags as i32 & 16 as i32 != 0 &&
         (entry.flags as i32 & 4 as i32 != 0 ||
             entry.flags as i32 & 1 as i32 != 0 &&
                 entry.eval >= beta ||
             entry.flags as i32 & 2 as i32 != 0 &&
                 entry.eval <= alpha) {
-        best_move = entry.move_0[0 as i32 as usize];
+        best_move = entry.move_0[0];
         return entry.eval
     }
     /* Check for stability cutoff */
@@ -1306,14 +1306,14 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
     if entry.draft as i32 == empties {
         if entry.selectivity as i32 == 0 as i32 &&
             entry.flags as i32 & 16 as i32 != 0 &&
-            valid_move(entry.move_0[0 as i32 as usize], color) != 0
+            valid_move(entry.move_0[0], color) != 0
             &&
             (entry.flags as i32 & 4 as i32 != 0 ||
                 entry.flags as i32 & 1 as i32 != 0 &&
                     entry.eval >= beta ||
                 entry.flags as i32 & 2 as i32 != 0 &&
                     entry.eval <= alpha) {
-            best_move = entry.move_0[0 as i32 as usize];
+            best_move = entry.move_0[0];
             return entry.eval
         }
     }
@@ -1439,8 +1439,8 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
         alpha = score
     }
     /* Play through the rest of the moves */
-    move_order[best_index as usize] = move_order[0 as i32 as usize];
-    goodness[best_index as usize] = goodness[0 as i32 as usize];
+    move_order[best_index as usize] = move_order[0];
+    goodness[best_index as usize] = goodness[0];
     i = 1 as i32;
     while i < moves {
         let mut j: i32 = 0;
@@ -1704,7 +1704,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
         find_hash(&mut entry, 1 as i32);
         if entry.draft as i32 == remains &&
             entry.selectivity as i32 <= selectivity &&
-            valid_move(entry.move_0[0 as i32 as usize],
+            valid_move(entry.move_0[0],
                        side_to_move) != 0 &&
             entry.flags as i32 & 16 as i32 != 0 &&
             (entry.flags as i32 & 4 as i32 != 0 ||
@@ -1713,7 +1713,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                 entry.flags as i32 & 2 as i32 != 0 &&
                     entry.eval <= alpha) {
             pv[level as usize][level as usize] =
-                entry.move_0[0 as i32 as usize];
+                entry.move_0[0];
             pv_depth[level as usize] = level + 1 as i32;
             if level == 0 as i32 && get_ponder_move() == 0 {
                 FE::end_tree_search_output_some_stats(&entry);
@@ -1860,7 +1860,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                                 best_list[(j - 1 as i32) as usize];
                             j -= 1
                         }
-                        best_list[0 as i32 as usize] =
+                        best_list[0] =
                             entry.move_0[i as usize]
                     }
                     unmake_move(side_to_move, entry.move_0[i as usize]);
@@ -1973,7 +1973,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                            opponent. */
                         if curr_val > threshold ||
                             move_0 ==
-                                mid_entry.move_0[0 as i32 as usize]
+                                mid_entry.move_0[0]
                         {
                             if curr_val >
                                 60 as i32 * 128 as i32 {
@@ -2264,10 +2264,10 @@ pub unsafe fn full_expand_pv<FE: FrontEnd>(mut side_to_move: i32,
     }
     i = 0 as i32;
     while i < new_pv_depth {
-        pv[0 as i32 as usize][i as usize] = new_pv[i as usize];
+        pv[0][i as usize] = new_pv[i as usize];
         i += 1
     }
-    pv_depth[0 as i32 as usize] = new_pv_depth;
+    pv_depth[0] = new_pv_depth;
 }
 
 
@@ -2321,7 +2321,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         if book_move != -(1 as i32) {
             root_eval = (*eval_info).score / 128;
             hash_expand_pv(side_to_move, 1, 4, 0);
-            FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
+            FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
             return book_move
         }
         /* Is the WLD status known? */
@@ -2394,7 +2394,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                                      0);
                 if full_output_mode != 0 {
                     hash_expand_pv(side_to_move, 1, flags as i32, selectivity);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
+                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
                 }
                 selectivity -= 1
             }
@@ -2454,7 +2454,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     if full_output_mode != 0 {
                         hash_expand_pv(side_to_move, 1,
                                        4, selectivity);
-                        FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
+                        FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
                     }
                 }
                 selectivity -= 1
@@ -2481,7 +2481,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     }
                     hash_expand_pv(side_to_move, 1,
                                    flags_0 as i32, selectivity);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
+                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
                 }
             }
             pv[0][0] = best_end_root_move;
@@ -2628,9 +2628,8 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         if echo != 0 {
             FE::end_report_semi_panic_abort_2(get_elapsed_time::<FE>());
             if full_output_mode != 0 {
-                hash_expand_pv(side_to_move, 1 as i32,
-                               4 as i32, 0 as i32);
-                FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize]);
+                hash_expand_pv(side_to_move, 1, 4, 0);
+                FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
             }
             if echo != 0 || force_echo != 0 {
                 FE::end_display_zero_status();

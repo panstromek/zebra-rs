@@ -336,7 +336,7 @@ pub unsafe fn float_move(move_0: i32,
                         usize][(j - 1 as i32) as usize];
                 j -= 1
             }
-            move_list[disks_played as usize][0 as i32 as usize] =
+            move_list[disks_played as usize][0] =
                 move_0;
             return 1 as i32
         }
@@ -353,12 +353,12 @@ pub unsafe fn store_pv(pv_buffer: *mut i32,
                        depth_buffer: *mut i32) {
     let mut i: i32 = 0;
     i = 0 as i32;
-    while i < pv_depth[0 as i32 as usize] {
+    while i < pv_depth[0] {
         *pv_buffer.offset(i as isize) =
-            pv[0 as i32 as usize][i as usize];
+            pv[0][i as usize];
         i += 1
     }
-    *depth_buffer = pv_depth[0 as i32 as usize];
+    *depth_buffer = pv_depth[0];
 }
 /*
    RESTORE_PV
@@ -370,11 +370,11 @@ pub unsafe fn restore_pv(pv_buffer: *mut i32,
     let mut i: i32 = 0;
     i = 0 as i32;
     while i < depth_buffer {
-        pv[0 as i32 as usize][i as usize] =
+        pv[0][i as usize] =
             *pv_buffer.offset(i as isize);
         i += 1
     }
-    pv_depth[0 as i32 as usize] = depth_buffer;
+    pv_depth[0] = depth_buffer;
 }
 /*
   CLEAR_PV
@@ -382,7 +382,7 @@ pub unsafe fn restore_pv(pv_buffer: *mut i32,
 */
 
 pub unsafe fn clear_pv() {
-    pv_depth[0 as i32 as usize] = 0 as i32;
+    pv_depth[0] = 0 as i32;
 }
 /*
   SET_PONDER_MOVE
@@ -541,38 +541,33 @@ pub unsafe fn negate_current_eval(negate: i32) {
 
 pub unsafe fn hash_expand_pv(mut side_to_move: i32,
                              mode: i32,
-                             flags: i32,
-                             max_selectivity: i32) {
-    let mut i: i32 = 0;
-    let mut pass_count: i32 = 0;
-    let mut new_pv_depth: i32 = 0;
-    let mut new_pv: [i32; 61] = [0; 61];
-    let mut new_side_to_move: [i32; 61] = [0; 61];
-    let mut entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
+                             flags: i32, max_selectivity: i32) {
+    let mut pass_count = 0;
+    let mut new_pv_depth = 0;
+    let mut new_pv = [0; 61];
+    let mut new_side_to_move = [0; 61];
+    let mut entry = HashEntry {
+        key1: 0,
+        key2: 0,
+        eval: 0,
+        move_0: [0; 4],
+        draft: 0,
+        selectivity: 0,
+        flags: 0,
+    };
     determine_hash_values(side_to_move, board.as_mut_ptr());
-    new_pv_depth = 0 as i32;
-    pass_count = 0 as i32;
-    while pass_count < 2 as i32 {
-        new_side_to_move[new_pv_depth as usize] = side_to_move;
-        if new_pv_depth < pv_depth[0 as i32 as usize] &&
-            new_pv_depth == 0 as i32 {
-            if board[pv[0 as i32 as usize][new_pv_depth as usize] as
-                usize] == 1 as i32 &&
-                make_move(side_to_move,
-                          pv[0 as i32 as
-                              usize][new_pv_depth as usize],
-                          1 as i32) != 0 {
-                new_pv[new_pv_depth as usize] =
-                    pv[0 as i32 as usize][new_pv_depth as usize];
+    new_pv_depth = 0;
+    pass_count = 0;
+    while pass_count < 2 {
+        new_side_to_move[new_pv_depth] = side_to_move;
+        if new_pv_depth < pv_depth[0] as usize &&
+            new_pv_depth == 0 {
+            if board[pv[0][new_pv_depth] as usize] == 1 &&
+                make_move(side_to_move, pv[0][new_pv_depth], 1) != 0 {
+                new_pv[new_pv_depth] =
+                    pv[0][new_pv_depth];
                 new_pv_depth += 1;
-                pass_count = 0 as i32
+                pass_count = 0
             } else {
                 hash1 ^= hash_flip_color1;
                 hash2 ^= hash_flip_color2;
@@ -583,34 +578,31 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
             if entry.draft as i32 != 0 as i32 &&
                 entry.flags as i32 & flags != 0 &&
                 entry.selectivity as i32 <= max_selectivity &&
-                board[entry.move_0[0 as i32 as usize] as usize] ==
-                    1 as i32 &&
-                make_move(side_to_move,
-                          entry.move_0[0 as i32 as usize],
-                          1 as i32) != 0 {
-                new_pv[new_pv_depth as usize] =
-                    entry.move_0[0 as i32 as usize];
+                board[entry.move_0[0] as usize] == 1 &&
+                make_move(side_to_move, entry.move_0[0], 1 ) != 0 {
+                new_pv[new_pv_depth] =
+                    entry.move_0[0];
                 new_pv_depth += 1;
-                pass_count = 0 as i32
+                pass_count = 0
             } else {
                 hash1 ^= hash_flip_color1;
                 hash2 ^= hash_flip_color2;
                 pass_count += 1
             }
         }
-        side_to_move = 0 as i32 + 2 as i32 - side_to_move
+        side_to_move = 2 - side_to_move
     }
-    i = new_pv_depth - 1 as i32;
-    while i >= 0 as i32 {
+    let mut i = new_pv_depth as i32 - 1 as i32;
+    while i >= 0 {
         unmake_move(new_side_to_move[i as usize], new_pv[i as usize]);
         i -= 1
     }
-    i = 0 as i32;
+    let mut i = 0;
     while i < new_pv_depth {
-        pv[0 as i32 as usize][i as usize] = new_pv[i as usize];
+        pv[0][i] = new_pv[i];
         i += 1
     }
-    pv_depth[0 as i32 as usize] = new_pv_depth;
+    pv_depth[0] = new_pv_depth as i32;
 }
 
 
@@ -620,41 +612,36 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
 */
 
 pub unsafe fn complete_pv<FE:FrontEnd>(mut side_to_move: i32) {
-    let mut i: i32 = 0;
-    let mut actual_side_to_move: [i32; 60] = [0; 60];
-    full_pv_depth = 0 as i32;
-    i = 0 as i32;
-    while i < pv_depth[0 as i32 as usize] {
-        if make_move(side_to_move, pv[0 as i32 as usize][i as usize],
-                     1 as i32) != 0 {
+    let mut actual_side_to_move = [0; 60];
+    full_pv_depth = 0;
+    let mut i = 0;
+    while i < pv_depth[0] {
+        if make_move(side_to_move, pv[0][i as usize], 1) != 0 {
             actual_side_to_move[i as usize] = side_to_move;
-            full_pv[full_pv_depth as usize] =
-                pv[0 as i32 as usize][i as usize];
+            full_pv[full_pv_depth as usize] = pv[0][i as usize];
             full_pv_depth += 1
         } else {
-            full_pv[full_pv_depth as usize] = -(1 as i32);
+            full_pv[full_pv_depth as usize] = -(1);
             full_pv_depth += 1;
-            side_to_move = 0 as i32 + 2 as i32 - side_to_move;
-            if make_move(side_to_move,
-                         pv[0 as i32 as usize][i as usize],
-                         1 as i32) != 0 {
+            side_to_move = 0 + 2 - side_to_move;
+            if make_move(side_to_move, pv[0][i as usize], 1) != 0 {
                 actual_side_to_move[i as usize] = side_to_move;
                 full_pv[full_pv_depth as usize] =
-                    pv[0 as i32 as usize][i as usize];
+                    pv[0][i as usize];
                 full_pv_depth += 1
             } else {
-                let pv_0_depth: i32  = pv_depth[0 as i32 as usize];
-                let pv_0: &[i32; 64] = &pv[0 as i32 as usize];
+                let pv_0_depth: i32  = pv_depth[0];
+                let pv_0: &[i32; 64] = &pv[0];
                 FE::handle_fatal_pv_error(i, pv_0_depth, pv_0);
             }
         }
         side_to_move = 0 as i32 + 2 as i32 - side_to_move;
         i += 1
     }
-    i = pv_depth[0 as i32 as usize] - 1 as i32;
+    i = pv_depth[0] - 1 as i32;
     while i >= 0 as i32 {
         unmake_move(actual_side_to_move[i as usize],
-                    pv[0 as i32 as usize][i as usize]);
+                    pv[0][i as usize]);
         i -= 1
     };
 }

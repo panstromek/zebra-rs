@@ -189,21 +189,21 @@ pub unsafe fn get_pv(destin: *mut i32) -> i32 {
     let mut i: i32 = 0;
     if prefix_move == 0 as i32 {
         i = 0 as i32;
-        while i < pv_depth[0 as i32 as usize] {
+        while i < pv_depth[0] {
             *destin.offset(i as isize) =
-                pv[0 as i32 as usize][i as usize];
+                pv[0][i as usize];
             i += 1
         }
-        return pv_depth[0 as i32 as usize]
+        return pv_depth[0]
     } else {
         *destin.offset(0 as i32 as isize) = prefix_move;
         i = 0 as i32;
-        while i < pv_depth[0 as i32 as usize] {
+        while i < pv_depth[0] {
             *destin.offset((i + 1 as i32) as isize) =
-                pv[0 as i32 as usize][i as usize];
+                pv[0][i as usize];
             i += 1
         }
-        return pv_depth[0 as i32 as usize] + 1 as i32
+        return pv_depth[0] + 1 as i32
     };
 }
 /*
@@ -258,7 +258,7 @@ pub unsafe fn setup_game_finalize(side_to_move:  *mut i32) {
     if *side_to_move == 0 as i32 {
         score_sheet_row = -(1 as i32)
     } else {
-        black_moves[0 as i32 as usize] = -(1 as i32);
+        black_moves[0] = -(1 as i32);
         score_sheet_row = 0 as i32
     };
 }
@@ -333,13 +333,13 @@ pub unsafe fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: *
         i += 1
     }
     file_source.fill_buffer_with_side_to_move(&mut buffer);
-    if buffer[0 as i32 as usize] as i32 == 'B' as i32 {
+    if buffer[0] as i32 == 'B' as i32 {
         *side_to_move = 0 as i32
-    } else if buffer[0 as i32 as usize] as i32 ==
+    } else if buffer[0] as i32 ==
         'W' as i32 {
         *side_to_move = 2 as i32
     } else {
-        let unrecognized = buffer[0 as i32 as usize];
+        let unrecognized = buffer[0];
         FE::unrecognized_character(unrecognized);
     }
 }
@@ -420,9 +420,9 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         L::log_board(logger, board_, side_to_move_);
     }
     /* Initialize various components of the move system */
-    piece_count[0 as i32 as usize][disks_played as usize] =
+    piece_count[0][disks_played as usize] =
         disc_count(0 as i32, &board);
-    piece_count[2 as i32 as usize][disks_played as usize] =
+    piece_count[2][disks_played as usize] =
         disc_count(2 as i32, &board);
     init_moves();
     generate_all(side_to_move);
@@ -482,21 +482,21 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         set_current_eval(*eval_info);
         if echo != 0 {
             let info = &*eval_info;
-            let disk = move_list[disks_played as usize][0 as i32 as usize];
+            let disk = move_list[disks_played as usize][0];
             Out::echo_compute_move_2(info, disk);
         }
         if let Some(logger) = logger {
-            let best_move = move_list[disks_played as usize][0 as i32 as usize];
+            let best_move = move_list[disks_played as usize][0];
             L::log_best_move(logger, best_move);
         }
         last_time_used = 0.0f64;
-        return move_list[disks_played as usize][0 as i32 as usize]
+        return move_list[disks_played as usize][0]
     }
     /* Mark the search as interrupted until a successful search
        has been performed. */
     let mut move_type = INTERRUPTED_MOVE;
     let mut interrupted_depth = 0 as i32;
-    let mut curr_move = move_list[disks_played as usize][0 as i32 as usize];
+    let mut curr_move = move_list[disks_played as usize][0];
     /* Check the opening book for midgame moves */
     let mut book_move_found = 0 as i32;
     let mut midgame_move = -(1 as i32);
@@ -516,8 +516,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 Out::echo_ponder_move(curr_move, ponder_move);
             }
             clear_pv();
-            pv_depth[0 as i32 as usize] = 1 as i32;
-            pv[0 as i32 as usize][0 as i32 as usize] =
+            pv_depth[0] = 1 as i32;
+            pv[0][0] =
                 curr_move
         }
     }
@@ -543,8 +543,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                     Out::echo_ponder_move_2(curr_move, ponder_move);
                 }
                 clear_pv();
-                pv_depth[0 as i32 as usize] = 1 as i32;
-                pv[0 as i32 as usize][0 as i32 as usize] =
+                pv_depth[0] = 1 as i32;
+                pv[0][0] =
                     curr_move
             } else {
                 FE::invalid_move(curr_move);
@@ -569,8 +569,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 Out::echo_ponder_move_4(curr_move, ponder_move);
             }
             clear_pv();
-            pv_depth[0 as i32 as usize] = 1 as i32;
-            pv[0 as i32 as usize][0 as i32 as usize] =
+            pv_depth[0] = 1 as i32;
+            pv[0][0] =
                 curr_move
         }
     }

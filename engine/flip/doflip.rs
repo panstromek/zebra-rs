@@ -86,19 +86,19 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
     sq = &mut *board.as_mut_ptr().offset(sqnum as isize) as *mut i32;
     match board_region[sqnum as usize] as i32 {
         1 => {
-            let mut pt = sq.offset(1 as i32 as isize);
+            let mut pt = sq.offset(1);
             if *pt == opp_color {
-                pt = pt.offset(1 as i32 as isize);
+                pt = pt.offset(1);
                 if *pt == opp_color {
-                    pt = pt.offset(1 as i32 as isize);
+                    pt = pt.offset(1);
                     if *pt == opp_color {
-                        pt = pt.offset(1 as i32 as isize);
+                        pt = pt.offset(1);
                         if *pt == opp_color {
-                            pt = pt.offset(1 as i32 as isize);
+                            pt = pt.offset(1);
                             if *pt == opp_color {
-                                pt = pt.offset(1 as i32 as isize);
+                                pt = pt.offset(1);
                                 if *pt == opp_color {
-                                    pt = pt.offset(1 as i32 as isize)
+                                    pt = pt.offset(1)
                                 }
                             }
                         }
@@ -116,22 +116,21 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_0 = sq.offset(11 as i32 as isize);
+            let mut pt_0 = sq.offset(11);
             if *pt_0 == opp_color {
-                pt_0 = pt_0.offset(11 as i32 as isize);
+                pt_0 = pt_0.offset(11);
                 if *pt_0 == opp_color {
-                    pt_0 = pt_0.offset(11 as i32 as isize);
+                    pt_0 = pt_0.offset(11);
                     if *pt_0 == opp_color {
-                        pt_0 = pt_0.offset(11 as i32 as isize);
+                        pt_0 = pt_0.offset(11);
                         if *pt_0 == opp_color {
-                            pt_0 = pt_0.offset(11 as i32 as isize);
+                            pt_0 = pt_0.offset(11);
                             if *pt_0 == opp_color {
                                 pt_0 =
-                                    pt_0.offset(11 as i32 as isize);
+                                    pt_0.offset(11);
                                 if *pt_0 == opp_color {
                                     pt_0 =
-                                        pt_0.offset(11 as i32 as
-                                                        isize)
+                                        pt_0.offset(11)
                                 }
                             }
                         }
@@ -149,22 +148,21 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_1 = sq.offset(10 as i32 as isize);
+            let mut pt_1 = sq.offset(10);
             if *pt_1 == opp_color {
-                pt_1 = pt_1.offset(10 as i32 as isize);
+                pt_1 = pt_1.offset(10);
                 if *pt_1 == opp_color {
-                    pt_1 = pt_1.offset(10 as i32 as isize);
+                    pt_1 = pt_1.offset(10);
                     if *pt_1 == opp_color {
-                        pt_1 = pt_1.offset(10 as i32 as isize);
+                        pt_1 = pt_1.offset(10);
                         if *pt_1 == opp_color {
-                            pt_1 = pt_1.offset(10 as i32 as isize);
+                            pt_1 = pt_1.offset(10);
                             if *pt_1 == opp_color {
                                 pt_1 =
-                                    pt_1.offset(10 as i32 as isize);
+                                    pt_1.offset(10);
                                 if *pt_1 == opp_color {
                                     pt_1 =
-                                        pt_1.offset(10 as i32 as
-                                                        isize)
+                                        pt_1.offset(10)
                                 }
                             }
                         }
@@ -184,15 +182,15 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
             }
         }
         2 => {
-            let mut pt_2 = sq.offset(1 as i32 as isize);
+            let mut pt_2 = sq.offset(1);
             if *pt_2 == opp_color {
-                pt_2 = pt_2.offset(1 as i32 as isize);
+                pt_2 = pt_2.offset(1);
                 if *pt_2 == opp_color {
-                    pt_2 = pt_2.offset(1 as i32 as isize);
+                    pt_2 = pt_2.offset(1);
                     if *pt_2 == opp_color {
-                        pt_2 = pt_2.offset(1 as i32 as isize);
+                        pt_2 = pt_2.offset(1);
                         if *pt_2 == opp_color {
-                            pt_2 = pt_2.offset(1 as i32 as isize)
+                            pt_2 = pt_2.offset(1)
                         }
                     }
                 }
@@ -208,15 +206,15 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_3 = sq.offset(11 as i32 as isize);
+            let mut pt_3 = sq.offset(11);
             if *pt_3 == opp_color {
-                pt_3 = pt_3.offset(11 as i32 as isize);
+                pt_3 = pt_3.offset(11);
                 if *pt_3 == opp_color {
-                    pt_3 = pt_3.offset(11 as i32 as isize);
+                    pt_3 = pt_3.offset(11);
                     if *pt_3 == opp_color {
-                        pt_3 = pt_3.offset(11 as i32 as isize);
+                        pt_3 = pt_3.offset(11);
                         if *pt_3 == opp_color {
-                            pt_3 = pt_3.offset(11 as i32 as isize)
+                            pt_3 = pt_3.offset(11)
                         }
                     }
                 }
@@ -232,22 +230,21 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_4 = sq.offset(10 as i32 as isize);
+            let mut pt_4 = sq.offset(10);
             if *pt_4 == opp_color {
-                pt_4 = pt_4.offset(10 as i32 as isize);
+                pt_4 = pt_4.offset(10);
                 if *pt_4 == opp_color {
-                    pt_4 = pt_4.offset(10 as i32 as isize);
+                    pt_4 = pt_4.offset(10);
                     if *pt_4 == opp_color {
-                        pt_4 = pt_4.offset(10 as i32 as isize);
+                        pt_4 = pt_4.offset(10);
                         if *pt_4 == opp_color {
-                            pt_4 = pt_4.offset(10 as i32 as isize);
+                            pt_4 = pt_4.offset(10);
                             if *pt_4 == opp_color {
                                 pt_4 =
-                                    pt_4.offset(10 as i32 as isize);
+                                    pt_4.offset(10);
                                 if *pt_4 == opp_color {
                                     pt_4 =
-                                        pt_4.offset(10 as i32 as
-                                                        isize)
+                                        pt_4.offset(10)
                                 }
                             }
                         }
@@ -265,15 +262,15 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_5 = sq.offset(9 as i32 as isize);
+            let mut pt_5 = sq.offset(9);
             if *pt_5 == opp_color {
-                pt_5 = pt_5.offset(9 as i32 as isize);
+                pt_5 = pt_5.offset(9);
                 if *pt_5 == opp_color {
-                    pt_5 = pt_5.offset(9 as i32 as isize);
+                    pt_5 = pt_5.offset(9);
                     if *pt_5 == opp_color {
-                        pt_5 = pt_5.offset(9 as i32 as isize);
+                        pt_5 = pt_5.offset(9);
                         if *pt_5 == opp_color {
-                            pt_5 = pt_5.offset(9 as i32 as isize)
+                            pt_5 = pt_5.offset(9)
                         }
                     }
                 }
@@ -315,22 +312,21 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
             }
         }
         3 => {
-            let mut pt_7 = sq.offset(10 as i32 as isize);
+            let mut pt_7 = sq.offset(10);
             if *pt_7 == opp_color {
-                pt_7 = pt_7.offset(10 as i32 as isize);
+                pt_7 = pt_7.offset(10);
                 if *pt_7 == opp_color {
-                    pt_7 = pt_7.offset(10 as i32 as isize);
+                    pt_7 = pt_7.offset(10);
                     if *pt_7 == opp_color {
-                        pt_7 = pt_7.offset(10 as i32 as isize);
+                        pt_7 = pt_7.offset(10);
                         if *pt_7 == opp_color {
-                            pt_7 = pt_7.offset(10 as i32 as isize);
+                            pt_7 = pt_7.offset(10);
                             if *pt_7 == opp_color {
                                 pt_7 =
-                                    pt_7.offset(10 as i32 as isize);
+                                    pt_7.offset(10);
                                 if *pt_7 == opp_color {
                                     pt_7 =
-                                        pt_7.offset(10 as i32 as
-                                                        isize)
+                                        pt_7.offset(10)
                                 }
                             }
                         }
@@ -348,20 +344,20 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_8 = sq.offset(9 as i32 as isize);
+            let mut pt_8 = sq.offset(9);
             if *pt_8 == opp_color {
-                pt_8 = pt_8.offset(9 as i32 as isize);
+                pt_8 = pt_8.offset(9);
                 if *pt_8 == opp_color {
-                    pt_8 = pt_8.offset(9 as i32 as isize);
+                    pt_8 = pt_8.offset(9);
                     if *pt_8 == opp_color {
-                        pt_8 = pt_8.offset(9 as i32 as isize);
+                        pt_8 = pt_8.offset(9);
                         if *pt_8 == opp_color {
-                            pt_8 = pt_8.offset(9 as i32 as isize);
+                            pt_8 = pt_8.offset(9);
                             if *pt_8 == opp_color {
-                                pt_8 = pt_8.offset(9 as i32 as isize);
+                                pt_8 = pt_8.offset(9);
                                 if *pt_8 == opp_color {
                                     pt_8 =
-                                        pt_8.offset(9 as i32 as isize)
+                                        pt_8.offset(9)
                                 }
                             }
                         }
@@ -464,22 +460,21 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_12 = sq.offset(1 as i32 as isize);
+            let mut pt_12 = sq.offset(1);
             if *pt_12 == opp_color {
-                pt_12 = pt_12.offset(1 as i32 as isize);
+                pt_12 = pt_12.offset(1);
                 if *pt_12 == opp_color {
-                    pt_12 = pt_12.offset(1 as i32 as isize);
+                    pt_12 = pt_12.offset(1);
                     if *pt_12 == opp_color {
-                        pt_12 = pt_12.offset(1 as i32 as isize);
+                        pt_12 = pt_12.offset(1);
                         if *pt_12 == opp_color {
-                            pt_12 = pt_12.offset(1 as i32 as isize);
+                            pt_12 = pt_12.offset(1);
                             if *pt_12 == opp_color {
                                 pt_12 =
-                                    pt_12.offset(1 as i32 as isize);
+                                    pt_12.offset(1);
                                 if *pt_12 == opp_color {
                                     pt_12 =
-                                        pt_12.offset(1 as i32 as
-                                                         isize)
+                                        pt_12.offset(1)
                                 }
                             }
                         }
@@ -497,15 +492,15 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_13 = sq.offset(11 as i32 as isize);
+            let mut pt_13 = sq.offset(11);
             if *pt_13 == opp_color {
-                pt_13 = pt_13.offset(11 as i32 as isize);
+                pt_13 = pt_13.offset(11);
                 if *pt_13 == opp_color {
-                    pt_13 = pt_13.offset(11 as i32 as isize);
+                    pt_13 = pt_13.offset(11);
                     if *pt_13 == opp_color {
-                        pt_13 = pt_13.offset(11 as i32 as isize);
+                        pt_13 = pt_13.offset(11);
                         if *pt_13 == opp_color {
-                            pt_13 = pt_13.offset(11 as i32 as isize)
+                            pt_13 = pt_13.offset(11)
                         }
                     }
                 }
@@ -521,15 +516,15 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_14 = sq.offset(10 as i32 as isize);
+            let mut pt_14 = sq.offset(10);
             if *pt_14 == opp_color {
-                pt_14 = pt_14.offset(10 as i32 as isize);
+                pt_14 = pt_14.offset(10);
                 if *pt_14 == opp_color {
-                    pt_14 = pt_14.offset(10 as i32 as isize);
+                    pt_14 = pt_14.offset(10);
                     if *pt_14 == opp_color {
-                        pt_14 = pt_14.offset(10 as i32 as isize);
+                        pt_14 = pt_14.offset(10);
                         if *pt_14 == opp_color {
-                            pt_14 = pt_14.offset(10 as i32 as isize)
+                            pt_14 = pt_14.offset(10)
                         }
                     }
                 }
@@ -623,15 +618,15 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_18 = sq.offset(1 as i32 as isize);
+            let mut pt_18 = sq.offset(1);
             if *pt_18 == opp_color {
-                pt_18 = pt_18.offset(1 as i32 as isize);
+                pt_18 = pt_18.offset(1);
                 if *pt_18 == opp_color {
-                    pt_18 = pt_18.offset(1 as i32 as isize);
+                    pt_18 = pt_18.offset(1);
                     if *pt_18 == opp_color {
-                        pt_18 = pt_18.offset(1 as i32 as isize);
+                        pt_18 = pt_18.offset(1);
                         if *pt_18 == opp_color {
-                            pt_18 = pt_18.offset(1 as i32 as isize)
+                            pt_18 = pt_18.offset(1)
                         }
                     }
                 }
@@ -647,15 +642,15 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_19 = sq.offset(11 as i32 as isize);
+            let mut pt_19 = sq.offset(11);
             if *pt_19 == opp_color {
-                pt_19 = pt_19.offset(11 as i32 as isize);
+                pt_19 = pt_19.offset(11);
                 if *pt_19 == opp_color {
-                    pt_19 = pt_19.offset(11 as i32 as isize);
+                    pt_19 = pt_19.offset(11);
                     if *pt_19 == opp_color {
-                        pt_19 = pt_19.offset(11 as i32 as isize);
+                        pt_19 = pt_19.offset(11);
                         if *pt_19 == opp_color {
-                            pt_19 = pt_19.offset(11 as i32 as isize)
+                            pt_19 = pt_19.offset(11)
                         }
                     }
                 }
@@ -671,15 +666,15 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_20 = sq.offset(10 as i32 as isize);
+            let mut pt_20 = sq.offset(10);
             if *pt_20 == opp_color {
-                pt_20 = pt_20.offset(10 as i32 as isize);
+                pt_20 = pt_20.offset(10);
                 if *pt_20 == opp_color {
-                    pt_20 = pt_20.offset(10 as i32 as isize);
+                    pt_20 = pt_20.offset(10);
                     if *pt_20 == opp_color {
-                        pt_20 = pt_20.offset(10 as i32 as isize);
+                        pt_20 = pt_20.offset(10);
                         if *pt_20 == opp_color {
-                            pt_20 = pt_20.offset(10 as i32 as isize)
+                            pt_20 = pt_20.offset(10)
                         }
                     }
                 }
@@ -695,15 +690,15 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_21 = sq.offset(9 as i32 as isize);
+            let mut pt_21 = sq.offset(9);
             if *pt_21 == opp_color {
-                pt_21 = pt_21.offset(9 as i32 as isize);
+                pt_21 = pt_21.offset(9);
                 if *pt_21 == opp_color {
-                    pt_21 = pt_21.offset(9 as i32 as isize);
+                    pt_21 = pt_21.offset(9);
                     if *pt_21 == opp_color {
-                        pt_21 = pt_21.offset(9 as i32 as isize);
+                        pt_21 = pt_21.offset(9);
                         if *pt_21 == opp_color {
-                            pt_21 = pt_21.offset(9 as i32 as isize)
+                            pt_21 = pt_21.offset(9)
                         }
                     }
                 }
@@ -832,15 +827,15 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_26 = sq.offset(9 as i32 as isize);
+            let mut pt_26 = sq.offset(9);
             if *pt_26 == opp_color {
-                pt_26 = pt_26.offset(9 as i32 as isize);
+                pt_26 = pt_26.offset(9);
                 if *pt_26 == opp_color {
-                    pt_26 = pt_26.offset(9 as i32 as isize);
+                    pt_26 = pt_26.offset(9);
                     if *pt_26 == opp_color {
-                        pt_26 = pt_26.offset(9 as i32 as isize);
+                        pt_26 = pt_26.offset(9);
                         if *pt_26 == opp_color {
-                            pt_26 = pt_26.offset(9 as i32 as isize)
+                            pt_26 = pt_26.offset(9)
                         }
                     }
                 }
@@ -856,15 +851,15 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_27 = sq.offset(10 as i32 as isize);
+            let mut pt_27 = sq.offset(10);
             if *pt_27 == opp_color {
-                pt_27 = pt_27.offset(10 as i32 as isize);
+                pt_27 = pt_27.offset(10);
                 if *pt_27 == opp_color {
-                    pt_27 = pt_27.offset(10 as i32 as isize);
+                    pt_27 = pt_27.offset(10);
                     if *pt_27 == opp_color {
-                        pt_27 = pt_27.offset(10 as i32 as isize);
+                        pt_27 = pt_27.offset(10);
                         if *pt_27 == opp_color {
-                            pt_27 = pt_27.offset(10 as i32 as isize)
+                            pt_27 = pt_27.offset(10)
                         }
                     }
                 }
@@ -953,22 +948,21 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_30 = sq.offset(1 as i32 as isize);
+            let mut pt_30 = sq.offset(1);
             if *pt_30 == opp_color {
-                pt_30 = pt_30.offset(1 as i32 as isize);
+                pt_30 = pt_30.offset(1);
                 if *pt_30 == opp_color {
-                    pt_30 = pt_30.offset(1 as i32 as isize);
+                    pt_30 = pt_30.offset(1);
                     if *pt_30 == opp_color {
-                        pt_30 = pt_30.offset(1 as i32 as isize);
+                        pt_30 = pt_30.offset(1);
                         if *pt_30 == opp_color {
-                            pt_30 = pt_30.offset(1 as i32 as isize);
+                            pt_30 = pt_30.offset(1);
                             if *pt_30 == opp_color {
                                 pt_30 =
-                                    pt_30.offset(1 as i32 as isize);
+                                    pt_30.offset(1);
                                 if *pt_30 == opp_color {
                                     pt_30 =
-                                        pt_30.offset(1 as i32 as
-                                                         isize)
+                                        pt_30.offset(1)
                                 }
                             }
                         }
@@ -1098,15 +1092,15 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                     }
                 }
             }
-            let mut pt_35 = sq.offset(1 as i32 as isize);
+            let mut pt_35 = sq.offset(1);
             if *pt_35 == opp_color {
-                pt_35 = pt_35.offset(1 as i32 as isize);
+                pt_35 = pt_35.offset(1);
                 if *pt_35 == opp_color {
-                    pt_35 = pt_35.offset(1 as i32 as isize);
+                    pt_35 = pt_35.offset(1);
                     if *pt_35 == opp_color {
-                        pt_35 = pt_35.offset(1 as i32 as isize);
+                        pt_35 = pt_35.offset(1);
                         if *pt_35 == opp_color {
-                            pt_35 = pt_35.offset(1 as i32 as isize)
+                            pt_35 = pt_35.offset(1)
                         }
                     }
                 }
@@ -1261,19 +1255,19 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
     sq = &mut *board.as_mut_ptr().offset(sqnum as isize) as *mut i32;
     match board_region[sqnum as usize] as i32 {
         1 => {
-            let mut pt = sq.offset(1 as i32 as isize);
+            let mut pt = sq.offset(1);
             if *pt == opp_color {
-                pt = pt.offset(1 as i32 as isize);
+                pt = pt.offset(1);
                 if *pt == opp_color {
-                    pt = pt.offset(1 as i32 as isize);
+                    pt = pt.offset(1);
                     if *pt == opp_color {
-                        pt = pt.offset(1 as i32 as isize);
+                        pt = pt.offset(1);
                         if *pt == opp_color {
-                            pt = pt.offset(1 as i32 as isize);
+                            pt = pt.offset(1);
                             if *pt == opp_color {
-                                pt = pt.offset(1 as i32 as isize);
+                                pt = pt.offset(1);
                                 if *pt == opp_color {
-                                    pt = pt.offset(1 as i32 as isize)
+                                    pt = pt.offset(1)
                                 }
                             }
                         }
@@ -1301,22 +1295,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_0 = sq.offset(11 as i32 as isize);
+            let mut pt_0 = sq.offset(11);
             if *pt_0 == opp_color {
-                pt_0 = pt_0.offset(11 as i32 as isize);
+                pt_0 = pt_0.offset(11);
                 if *pt_0 == opp_color {
-                    pt_0 = pt_0.offset(11 as i32 as isize);
+                    pt_0 = pt_0.offset(11);
                     if *pt_0 == opp_color {
-                        pt_0 = pt_0.offset(11 as i32 as isize);
+                        pt_0 = pt_0.offset(11);
                         if *pt_0 == opp_color {
-                            pt_0 = pt_0.offset(11 as i32 as isize);
+                            pt_0 = pt_0.offset(11);
                             if *pt_0 == opp_color {
                                 pt_0 =
-                                    pt_0.offset(11 as i32 as isize);
+                                    pt_0.offset(11);
                                 if *pt_0 == opp_color {
                                     pt_0 =
-                                        pt_0.offset(11 as i32 as
-                                                        isize)
+                                        pt_0.offset(11)
                                 }
                             }
                         }
@@ -1344,22 +1337,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_1 = sq.offset(10 as i32 as isize);
+            let mut pt_1 = sq.offset(10);
             if *pt_1 == opp_color {
-                pt_1 = pt_1.offset(10 as i32 as isize);
+                pt_1 = pt_1.offset(10);
                 if *pt_1 == opp_color {
-                    pt_1 = pt_1.offset(10 as i32 as isize);
+                    pt_1 = pt_1.offset(10);
                     if *pt_1 == opp_color {
-                        pt_1 = pt_1.offset(10 as i32 as isize);
+                        pt_1 = pt_1.offset(10);
                         if *pt_1 == opp_color {
-                            pt_1 = pt_1.offset(10 as i32 as isize);
+                            pt_1 = pt_1.offset(10);
                             if *pt_1 == opp_color {
                                 pt_1 =
-                                    pt_1.offset(10 as i32 as isize);
+                                    pt_1.offset(10);
                                 if *pt_1 == opp_color {
                                     pt_1 =
-                                        pt_1.offset(10 as i32 as
-                                                        isize)
+                                        pt_1.offset(10)
                                 }
                             }
                         }
@@ -1389,15 +1381,15 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
             }
         }
         2 => {
-            let mut pt_2 = sq.offset(1 as i32 as isize);
+            let mut pt_2 = sq.offset(1);
             if *pt_2 == opp_color {
-                pt_2 = pt_2.offset(1 as i32 as isize);
+                pt_2 = pt_2.offset(1);
                 if *pt_2 == opp_color {
-                    pt_2 = pt_2.offset(1 as i32 as isize);
+                    pt_2 = pt_2.offset(1);
                     if *pt_2 == opp_color {
-                        pt_2 = pt_2.offset(1 as i32 as isize);
+                        pt_2 = pt_2.offset(1);
                         if *pt_2 == opp_color {
-                            pt_2 = pt_2.offset(1 as i32 as isize)
+                            pt_2 = pt_2.offset(1)
                         }
                     }
                 }
@@ -1423,15 +1415,15 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_3 = sq.offset(11 as i32 as isize);
+            let mut pt_3 = sq.offset(11);
             if *pt_3 == opp_color {
-                pt_3 = pt_3.offset(11 as i32 as isize);
+                pt_3 = pt_3.offset(11);
                 if *pt_3 == opp_color {
-                    pt_3 = pt_3.offset(11 as i32 as isize);
+                    pt_3 = pt_3.offset(11);
                     if *pt_3 == opp_color {
-                        pt_3 = pt_3.offset(11 as i32 as isize);
+                        pt_3 = pt_3.offset(11);
                         if *pt_3 == opp_color {
-                            pt_3 = pt_3.offset(11 as i32 as isize)
+                            pt_3 = pt_3.offset(11)
                         }
                     }
                 }
@@ -1457,22 +1449,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_4 = sq.offset(10 as i32 as isize);
+            let mut pt_4 = sq.offset(10);
             if *pt_4 == opp_color {
-                pt_4 = pt_4.offset(10 as i32 as isize);
+                pt_4 = pt_4.offset(10);
                 if *pt_4 == opp_color {
-                    pt_4 = pt_4.offset(10 as i32 as isize);
+                    pt_4 = pt_4.offset(10);
                     if *pt_4 == opp_color {
-                        pt_4 = pt_4.offset(10 as i32 as isize);
+                        pt_4 = pt_4.offset(10);
                         if *pt_4 == opp_color {
-                            pt_4 = pt_4.offset(10 as i32 as isize);
+                            pt_4 = pt_4.offset(10);
                             if *pt_4 == opp_color {
                                 pt_4 =
-                                    pt_4.offset(10 as i32 as isize);
+                                    pt_4.offset(10);
                                 if *pt_4 == opp_color {
                                     pt_4 =
-                                        pt_4.offset(10 as i32 as
-                                                        isize)
+                                        pt_4.offset(10)
                                 }
                             }
                         }
@@ -1500,15 +1491,15 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_5 = sq.offset(9 as i32 as isize);
+            let mut pt_5 = sq.offset(9);
             if *pt_5 == opp_color {
-                pt_5 = pt_5.offset(9 as i32 as isize);
+                pt_5 = pt_5.offset(9);
                 if *pt_5 == opp_color {
-                    pt_5 = pt_5.offset(9 as i32 as isize);
+                    pt_5 = pt_5.offset(9);
                     if *pt_5 == opp_color {
-                        pt_5 = pt_5.offset(9 as i32 as isize);
+                        pt_5 = pt_5.offset(9);
                         if *pt_5 == opp_color {
-                            pt_5 = pt_5.offset(9 as i32 as isize)
+                            pt_5 = pt_5.offset(9)
                         }
                     }
                 }
@@ -1570,22 +1561,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
             }
         }
         3 => {
-            let mut pt_7 = sq.offset(10 as i32 as isize);
+            let mut pt_7 = sq.offset(10);
             if *pt_7 == opp_color {
-                pt_7 = pt_7.offset(10 as i32 as isize);
+                pt_7 = pt_7.offset(10);
                 if *pt_7 == opp_color {
-                    pt_7 = pt_7.offset(10 as i32 as isize);
+                    pt_7 = pt_7.offset(10);
                     if *pt_7 == opp_color {
-                        pt_7 = pt_7.offset(10 as i32 as isize);
+                        pt_7 = pt_7.offset(10);
                         if *pt_7 == opp_color {
-                            pt_7 = pt_7.offset(10 as i32 as isize);
+                            pt_7 = pt_7.offset(10);
                             if *pt_7 == opp_color {
                                 pt_7 =
-                                    pt_7.offset(10 as i32 as isize);
+                                    pt_7.offset(10);
                                 if *pt_7 == opp_color {
                                     pt_7 =
-                                        pt_7.offset(10 as i32 as
-                                                        isize)
+                                        pt_7.offset(10)
                                 }
                             }
                         }
@@ -1613,20 +1603,20 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_8 = sq.offset(9 as i32 as isize);
+            let mut pt_8 = sq.offset(9);
             if *pt_8 == opp_color {
-                pt_8 = pt_8.offset(9 as i32 as isize);
+                pt_8 = pt_8.offset(9);
                 if *pt_8 == opp_color {
-                    pt_8 = pt_8.offset(9 as i32 as isize);
+                    pt_8 = pt_8.offset(9);
                     if *pt_8 == opp_color {
-                        pt_8 = pt_8.offset(9 as i32 as isize);
+                        pt_8 = pt_8.offset(9);
                         if *pt_8 == opp_color {
-                            pt_8 = pt_8.offset(9 as i32 as isize);
+                            pt_8 = pt_8.offset(9);
                             if *pt_8 == opp_color {
-                                pt_8 = pt_8.offset(9 as i32 as isize);
+                                pt_8 = pt_8.offset(9);
                                 if *pt_8 == opp_color {
                                     pt_8 =
-                                        pt_8.offset(9 as i32 as isize)
+                                        pt_8.offset(9)
                                 }
                             }
                         }
@@ -1769,22 +1759,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_12 = sq.offset(1 as i32 as isize);
+            let mut pt_12 = sq.offset(1);
             if *pt_12 == opp_color {
-                pt_12 = pt_12.offset(1 as i32 as isize);
+                pt_12 = pt_12.offset(1);
                 if *pt_12 == opp_color {
-                    pt_12 = pt_12.offset(1 as i32 as isize);
+                    pt_12 = pt_12.offset(1);
                     if *pt_12 == opp_color {
-                        pt_12 = pt_12.offset(1 as i32 as isize);
+                        pt_12 = pt_12.offset(1);
                         if *pt_12 == opp_color {
-                            pt_12 = pt_12.offset(1 as i32 as isize);
+                            pt_12 = pt_12.offset(1);
                             if *pt_12 == opp_color {
                                 pt_12 =
-                                    pt_12.offset(1 as i32 as isize);
+                                    pt_12.offset(1);
                                 if *pt_12 == opp_color {
                                     pt_12 =
-                                        pt_12.offset(1 as i32 as
-                                                         isize)
+                                        pt_12.offset(1)
                                 }
                             }
                         }
@@ -1812,15 +1801,15 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_13 = sq.offset(11 as i32 as isize);
+            let mut pt_13 = sq.offset(11);
             if *pt_13 == opp_color {
-                pt_13 = pt_13.offset(11 as i32 as isize);
+                pt_13 = pt_13.offset(11);
                 if *pt_13 == opp_color {
-                    pt_13 = pt_13.offset(11 as i32 as isize);
+                    pt_13 = pt_13.offset(11);
                     if *pt_13 == opp_color {
-                        pt_13 = pt_13.offset(11 as i32 as isize);
+                        pt_13 = pt_13.offset(11);
                         if *pt_13 == opp_color {
-                            pt_13 = pt_13.offset(11 as i32 as isize)
+                            pt_13 = pt_13.offset(11)
                         }
                     }
                 }
@@ -1846,15 +1835,15 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_14 = sq.offset(10 as i32 as isize);
+            let mut pt_14 = sq.offset(10);
             if *pt_14 == opp_color {
-                pt_14 = pt_14.offset(10 as i32 as isize);
+                pt_14 = pt_14.offset(10);
                 if *pt_14 == opp_color {
-                    pt_14 = pt_14.offset(10 as i32 as isize);
+                    pt_14 = pt_14.offset(10);
                     if *pt_14 == opp_color {
-                        pt_14 = pt_14.offset(10 as i32 as isize);
+                        pt_14 = pt_14.offset(10);
                         if *pt_14 == opp_color {
-                            pt_14 = pt_14.offset(10 as i32 as isize)
+                            pt_14 = pt_14.offset(10)
                         }
                     }
                 }
@@ -1988,15 +1977,15 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_18 = sq.offset(1 as i32 as isize);
+            let mut pt_18 = sq.offset(1);
             if *pt_18 == opp_color {
-                pt_18 = pt_18.offset(1 as i32 as isize);
+                pt_18 = pt_18.offset(1);
                 if *pt_18 == opp_color {
-                    pt_18 = pt_18.offset(1 as i32 as isize);
+                    pt_18 = pt_18.offset(1);
                     if *pt_18 == opp_color {
-                        pt_18 = pt_18.offset(1 as i32 as isize);
+                        pt_18 = pt_18.offset(1);
                         if *pt_18 == opp_color {
-                            pt_18 = pt_18.offset(1 as i32 as isize)
+                            pt_18 = pt_18.offset(1)
                         }
                     }
                 }
@@ -2022,15 +2011,15 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_19 = sq.offset(11 as i32 as isize);
+            let mut pt_19 = sq.offset(11);
             if *pt_19 == opp_color {
-                pt_19 = pt_19.offset(11 as i32 as isize);
+                pt_19 = pt_19.offset(11);
                 if *pt_19 == opp_color {
-                    pt_19 = pt_19.offset(11 as i32 as isize);
+                    pt_19 = pt_19.offset(11);
                     if *pt_19 == opp_color {
-                        pt_19 = pt_19.offset(11 as i32 as isize);
+                        pt_19 = pt_19.offset(11);
                         if *pt_19 == opp_color {
-                            pt_19 = pt_19.offset(11 as i32 as isize)
+                            pt_19 = pt_19.offset(11)
                         }
                     }
                 }
@@ -2056,15 +2045,15 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_20 = sq.offset(10 as i32 as isize);
+            let mut pt_20 = sq.offset(10);
             if *pt_20 == opp_color {
-                pt_20 = pt_20.offset(10 as i32 as isize);
+                pt_20 = pt_20.offset(10);
                 if *pt_20 == opp_color {
-                    pt_20 = pt_20.offset(10 as i32 as isize);
+                    pt_20 = pt_20.offset(10);
                     if *pt_20 == opp_color {
-                        pt_20 = pt_20.offset(10 as i32 as isize);
+                        pt_20 = pt_20.offset(10);
                         if *pt_20 == opp_color {
-                            pt_20 = pt_20.offset(10 as i32 as isize)
+                            pt_20 = pt_20.offset(10)
                         }
                     }
                 }
@@ -2090,15 +2079,15 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_21 = sq.offset(9 as i32 as isize);
+            let mut pt_21 = sq.offset(9);
             if *pt_21 == opp_color {
-                pt_21 = pt_21.offset(9 as i32 as isize);
+                pt_21 = pt_21.offset(9);
                 if *pt_21 == opp_color {
-                    pt_21 = pt_21.offset(9 as i32 as isize);
+                    pt_21 = pt_21.offset(9);
                     if *pt_21 == opp_color {
-                        pt_21 = pt_21.offset(9 as i32 as isize);
+                        pt_21 = pt_21.offset(9);
                         if *pt_21 == opp_color {
-                            pt_21 = pt_21.offset(9 as i32 as isize)
+                            pt_21 = pt_21.offset(9)
                         }
                     }
                 }
@@ -2277,15 +2266,15 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_26 = sq.offset(9 as i32 as isize);
+            let mut pt_26 = sq.offset(9);
             if *pt_26 == opp_color {
-                pt_26 = pt_26.offset(9 as i32 as isize);
+                pt_26 = pt_26.offset(9);
                 if *pt_26 == opp_color {
-                    pt_26 = pt_26.offset(9 as i32 as isize);
+                    pt_26 = pt_26.offset(9);
                     if *pt_26 == opp_color {
-                        pt_26 = pt_26.offset(9 as i32 as isize);
+                        pt_26 = pt_26.offset(9);
                         if *pt_26 == opp_color {
-                            pt_26 = pt_26.offset(9 as i32 as isize)
+                            pt_26 = pt_26.offset(9)
                         }
                     }
                 }
@@ -2311,15 +2300,15 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_27 = sq.offset(10 as i32 as isize);
+            let mut pt_27 = sq.offset(10);
             if *pt_27 == opp_color {
-                pt_27 = pt_27.offset(10 as i32 as isize);
+                pt_27 = pt_27.offset(10);
                 if *pt_27 == opp_color {
-                    pt_27 = pt_27.offset(10 as i32 as isize);
+                    pt_27 = pt_27.offset(10);
                     if *pt_27 == opp_color {
-                        pt_27 = pt_27.offset(10 as i32 as isize);
+                        pt_27 = pt_27.offset(10);
                         if *pt_27 == opp_color {
-                            pt_27 = pt_27.offset(10 as i32 as isize)
+                            pt_27 = pt_27.offset(10)
                         }
                     }
                 }
@@ -2438,22 +2427,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_30 = sq.offset(1 as i32 as isize);
+            let mut pt_30 = sq.offset(1);
             if *pt_30 == opp_color {
-                pt_30 = pt_30.offset(1 as i32 as isize);
+                pt_30 = pt_30.offset(1);
                 if *pt_30 == opp_color {
-                    pt_30 = pt_30.offset(1 as i32 as isize);
+                    pt_30 = pt_30.offset(1);
                     if *pt_30 == opp_color {
-                        pt_30 = pt_30.offset(1 as i32 as isize);
+                        pt_30 = pt_30.offset(1);
                         if *pt_30 == opp_color {
-                            pt_30 = pt_30.offset(1 as i32 as isize);
+                            pt_30 = pt_30.offset(1);
                             if *pt_30 == opp_color {
                                 pt_30 =
-                                    pt_30.offset(1 as i32 as isize);
+                                    pt_30.offset(1);
                                 if *pt_30 == opp_color {
                                     pt_30 =
-                                        pt_30.offset(1 as i32 as
-                                                         isize)
+                                        pt_30.offset(1)
                                 }
                             }
                         }
@@ -2633,15 +2621,15 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                     }
                 }
             }
-            let mut pt_35 = sq.offset(1 as i32 as isize);
+            let mut pt_35 = sq.offset(1);
             if *pt_35 == opp_color {
-                pt_35 = pt_35.offset(1 as i32 as isize);
+                pt_35 = pt_35.offset(1);
                 if *pt_35 == opp_color {
-                    pt_35 = pt_35.offset(1 as i32 as isize);
+                    pt_35 = pt_35.offset(1);
                     if *pt_35 == opp_color {
-                        pt_35 = pt_35.offset(1 as i32 as isize);
+                        pt_35 = pt_35.offset(1);
                         if *pt_35 == opp_color {
-                            pt_35 = pt_35.offset(1 as i32 as isize)
+                            pt_35 = pt_35.offset(1)
                         }
                     }
                 }

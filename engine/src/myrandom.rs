@@ -182,7 +182,7 @@ pub unsafe fn my_initstate(seed: u32,
     }
     my_state =
         &mut *(arg_state as
-                   *mut i64).offset(1 as i32 as isize) as
+                   *mut i64).offset(1) as
             *mut i64;
     my_end_ptr =
         &mut *my_state.offset(my_rand_deg as isize) as *mut i64;
@@ -240,7 +240,7 @@ pub unsafe fn my_setstate(arg_state: *mut i8)
         _ => { }
     }
     my_state =
-        &mut *new_state.offset(1 as i32 as isize) as
+        &mut *new_state.offset(1) as
             *mut i64;
     if my_rand_type != 0 as i32 {
         my_rptr = &mut *my_state.offset(rear as isize) as *mut i64;

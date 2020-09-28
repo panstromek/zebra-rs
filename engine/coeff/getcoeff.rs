@@ -45,1749 +45,1749 @@ pub unsafe fn constant_and_parity_feature(side_to_move: i32, eval_phase: i32, di
     /* The pattern features. */
     if side_to_move == 0 as i32 {
         let mut pattern0: i32;
-        pattern0 = board[72 as i32 as usize];
+        pattern0 = board[72];
         pattern0 =
-            3 as i32 * pattern0 + board[22 as i32 as usize];
+            3 as i32 * pattern0 + board[22];
         pattern0 =
-            3 as i32 * pattern0 + board[81 as i32 as usize];
+            3 as i32 * pattern0 + board[81];
         pattern0 =
-            3 as i32 * pattern0 + board[71 as i32 as usize];
+            3 as i32 * pattern0 + board[71];
         pattern0 =
-            3 as i32 * pattern0 + board[61 as i32 as usize];
+            3 as i32 * pattern0 + board[61];
         pattern0 =
-            3 as i32 * pattern0 + board[51 as i32 as usize];
+            3 as i32 * pattern0 + board[51];
         pattern0 =
-            3 as i32 * pattern0 + board[41 as i32 as usize];
+            3 as i32 * pattern0 + board[41];
         pattern0 =
-            3 as i32 * pattern0 + board[31 as i32 as usize];
+            3 as i32 * pattern0 + board[31];
         pattern0 =
-            3 as i32 * pattern0 + board[21 as i32 as usize];
+            3 as i32 * pattern0 + board[21];
         pattern0 =
-            3 as i32 * pattern0 + board[11 as i32 as usize];
+            3 as i32 * pattern0 + board[11];
         score =
             (score as i32 +
                 *set[eval_phase as usize].afile2x.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[77 as i32 as usize];
+        pattern0 = board[77];
         pattern0 =
-            3 as i32 * pattern0 + board[27 as i32 as usize];
+            3 as i32 * pattern0 + board[27];
         pattern0 =
-            3 as i32 * pattern0 + board[88 as i32 as usize];
+            3 as i32 * pattern0 + board[88];
         pattern0 =
-            3 as i32 * pattern0 + board[78 as i32 as usize];
+            3 as i32 * pattern0 + board[78];
         pattern0 =
-            3 as i32 * pattern0 + board[68 as i32 as usize];
+            3 as i32 * pattern0 + board[68];
         pattern0 =
-            3 as i32 * pattern0 + board[58 as i32 as usize];
+            3 as i32 * pattern0 + board[58];
         pattern0 =
-            3 as i32 * pattern0 + board[48 as i32 as usize];
+            3 as i32 * pattern0 + board[48];
         pattern0 =
-            3 as i32 * pattern0 + board[38 as i32 as usize];
+            3 as i32 * pattern0 + board[38];
         pattern0 =
-            3 as i32 * pattern0 + board[28 as i32 as usize];
+            3 as i32 * pattern0 + board[28];
         pattern0 =
-            3 as i32 * pattern0 + board[18 as i32 as usize];
+            3 as i32 * pattern0 + board[18];
         score =
             (score as i32 +
                 *set[eval_phase as usize].afile2x.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[27 as i32 as usize];
+        pattern0 = board[27];
         pattern0 =
-            3 as i32 * pattern0 + board[22 as i32 as usize];
+            3 as i32 * pattern0 + board[22];
         pattern0 =
-            3 as i32 * pattern0 + board[18 as i32 as usize];
+            3 as i32 * pattern0 + board[18];
         pattern0 =
-            3 as i32 * pattern0 + board[17 as i32 as usize];
+            3 as i32 * pattern0 + board[17];
         pattern0 =
-            3 as i32 * pattern0 + board[16 as i32 as usize];
+            3 as i32 * pattern0 + board[16];
         pattern0 =
-            3 as i32 * pattern0 + board[15 as i32 as usize];
+            3 as i32 * pattern0 + board[15];
         pattern0 =
-            3 as i32 * pattern0 + board[14 as i32 as usize];
+            3 as i32 * pattern0 + board[14];
         pattern0 =
-            3 as i32 * pattern0 + board[13 as i32 as usize];
+            3 as i32 * pattern0 + board[13];
         pattern0 =
-            3 as i32 * pattern0 + board[12 as i32 as usize];
+            3 as i32 * pattern0 + board[12];
         pattern0 =
-            3 as i32 * pattern0 + board[11 as i32 as usize];
+            3 as i32 * pattern0 + board[11];
         score =
             (score as i32 +
                 *set[eval_phase as usize].afile2x.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[77 as i32 as usize];
+        pattern0 = board[77];
         pattern0 =
-            3 as i32 * pattern0 + board[72 as i32 as usize];
+            3 as i32 * pattern0 + board[72];
         pattern0 =
-            3 as i32 * pattern0 + board[88 as i32 as usize];
+            3 as i32 * pattern0 + board[88];
         pattern0 =
-            3 as i32 * pattern0 + board[87 as i32 as usize];
+            3 as i32 * pattern0 + board[87];
         pattern0 =
-            3 as i32 * pattern0 + board[86 as i32 as usize];
+            3 as i32 * pattern0 + board[86];
         pattern0 =
-            3 as i32 * pattern0 + board[85 as i32 as usize];
+            3 as i32 * pattern0 + board[85];
         pattern0 =
-            3 as i32 * pattern0 + board[84 as i32 as usize];
+            3 as i32 * pattern0 + board[84];
         pattern0 =
-            3 as i32 * pattern0 + board[83 as i32 as usize];
+            3 as i32 * pattern0 + board[83];
         pattern0 =
-            3 as i32 * pattern0 + board[82 as i32 as usize];
+            3 as i32 * pattern0 + board[82];
         pattern0 =
-            3 as i32 * pattern0 + board[81 as i32 as usize];
+            3 as i32 * pattern0 + board[81];
         score =
             (score as i32 +
                 *set[eval_phase as usize].afile2x.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[82 as i32 as usize];
+        pattern0 = board[82];
         pattern0 =
-            3 as i32 * pattern0 + board[72 as i32 as usize];
+            3 as i32 * pattern0 + board[72];
         pattern0 =
-            3 as i32 * pattern0 + board[62 as i32 as usize];
+            3 as i32 * pattern0 + board[62];
         pattern0 =
-            3 as i32 * pattern0 + board[52 as i32 as usize];
+            3 as i32 * pattern0 + board[52];
         pattern0 =
-            3 as i32 * pattern0 + board[42 as i32 as usize];
+            3 as i32 * pattern0 + board[42];
         pattern0 =
-            3 as i32 * pattern0 + board[32 as i32 as usize];
+            3 as i32 * pattern0 + board[32];
         pattern0 =
-            3 as i32 * pattern0 + board[22 as i32 as usize];
+            3 as i32 * pattern0 + board[22];
         pattern0 =
-            3 as i32 * pattern0 + board[12 as i32 as usize];
+            3 as i32 * pattern0 + board[12];
         score =
             (score as i32 +
                 *set[eval_phase as usize].bfile.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[87 as i32 as usize];
+        pattern0 = board[87];
         pattern0 =
-            3 as i32 * pattern0 + board[77 as i32 as usize];
+            3 as i32 * pattern0 + board[77];
         pattern0 =
-            3 as i32 * pattern0 + board[67 as i32 as usize];
+            3 as i32 * pattern0 + board[67];
         pattern0 =
-            3 as i32 * pattern0 + board[57 as i32 as usize];
+            3 as i32 * pattern0 + board[57];
         pattern0 =
-            3 as i32 * pattern0 + board[47 as i32 as usize];
+            3 as i32 * pattern0 + board[47];
         pattern0 =
-            3 as i32 * pattern0 + board[37 as i32 as usize];
+            3 as i32 * pattern0 + board[37];
         pattern0 =
-            3 as i32 * pattern0 + board[27 as i32 as usize];
+            3 as i32 * pattern0 + board[27];
         pattern0 =
-            3 as i32 * pattern0 + board[17 as i32 as usize];
+            3 as i32 * pattern0 + board[17];
         score =
             (score as i32 +
                 *set[eval_phase as usize].bfile.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[28 as i32 as usize];
+        pattern0 = board[28];
         pattern0 =
-            3 as i32 * pattern0 + board[27 as i32 as usize];
+            3 as i32 * pattern0 + board[27];
         pattern0 =
-            3 as i32 * pattern0 + board[26 as i32 as usize];
+            3 as i32 * pattern0 + board[26];
         pattern0 =
-            3 as i32 * pattern0 + board[25 as i32 as usize];
+            3 as i32 * pattern0 + board[25];
         pattern0 =
-            3 as i32 * pattern0 + board[24 as i32 as usize];
+            3 as i32 * pattern0 + board[24];
         pattern0 =
-            3 as i32 * pattern0 + board[23 as i32 as usize];
+            3 as i32 * pattern0 + board[23];
         pattern0 =
-            3 as i32 * pattern0 + board[22 as i32 as usize];
+            3 as i32 * pattern0 + board[22];
         pattern0 =
-            3 as i32 * pattern0 + board[21 as i32 as usize];
+            3 as i32 * pattern0 + board[21];
         score =
             (score as i32 +
                 *set[eval_phase as usize].bfile.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[78 as i32 as usize];
+        pattern0 = board[78];
         pattern0 =
-            3 as i32 * pattern0 + board[77 as i32 as usize];
+            3 as i32 * pattern0 + board[77];
         pattern0 =
-            3 as i32 * pattern0 + board[76 as i32 as usize];
+            3 as i32 * pattern0 + board[76];
         pattern0 =
-            3 as i32 * pattern0 + board[75 as i32 as usize];
+            3 as i32 * pattern0 + board[75];
         pattern0 =
-            3 as i32 * pattern0 + board[74 as i32 as usize];
+            3 as i32 * pattern0 + board[74];
         pattern0 =
-            3 as i32 * pattern0 + board[73 as i32 as usize];
+            3 as i32 * pattern0 + board[73];
         pattern0 =
-            3 as i32 * pattern0 + board[72 as i32 as usize];
+            3 as i32 * pattern0 + board[72];
         pattern0 =
-            3 as i32 * pattern0 + board[71 as i32 as usize];
+            3 as i32 * pattern0 + board[71];
         score =
             (score as i32 +
                 *set[eval_phase as usize].bfile.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[83 as i32 as usize];
+        pattern0 = board[83];
         pattern0 =
-            3 as i32 * pattern0 + board[73 as i32 as usize];
+            3 as i32 * pattern0 + board[73];
         pattern0 =
-            3 as i32 * pattern0 + board[63 as i32 as usize];
+            3 as i32 * pattern0 + board[63];
         pattern0 =
-            3 as i32 * pattern0 + board[53 as i32 as usize];
+            3 as i32 * pattern0 + board[53];
         pattern0 =
-            3 as i32 * pattern0 + board[43 as i32 as usize];
+            3 as i32 * pattern0 + board[43];
         pattern0 =
-            3 as i32 * pattern0 + board[33 as i32 as usize];
+            3 as i32 * pattern0 + board[33];
         pattern0 =
-            3 as i32 * pattern0 + board[23 as i32 as usize];
+            3 as i32 * pattern0 + board[23];
         pattern0 =
-            3 as i32 * pattern0 + board[13 as i32 as usize];
+            3 as i32 * pattern0 + board[13];
         score =
             (score as i32 +
                 *set[eval_phase as usize].cfile.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[86 as i32 as usize];
+        pattern0 = board[86];
         pattern0 =
-            3 as i32 * pattern0 + board[76 as i32 as usize];
+            3 as i32 * pattern0 + board[76];
         pattern0 =
-            3 as i32 * pattern0 + board[66 as i32 as usize];
+            3 as i32 * pattern0 + board[66];
         pattern0 =
-            3 as i32 * pattern0 + board[56 as i32 as usize];
+            3 as i32 * pattern0 + board[56];
         pattern0 =
-            3 as i32 * pattern0 + board[46 as i32 as usize];
+            3 as i32 * pattern0 + board[46];
         pattern0 =
-            3 as i32 * pattern0 + board[36 as i32 as usize];
+            3 as i32 * pattern0 + board[36];
         pattern0 =
-            3 as i32 * pattern0 + board[26 as i32 as usize];
+            3 as i32 * pattern0 + board[26];
         pattern0 =
-            3 as i32 * pattern0 + board[16 as i32 as usize];
+            3 as i32 * pattern0 + board[16];
         score =
             (score as i32 +
                 *set[eval_phase as usize].cfile.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[38 as i32 as usize];
+        pattern0 = board[38];
         pattern0 =
-            3 as i32 * pattern0 + board[37 as i32 as usize];
+            3 as i32 * pattern0 + board[37];
         pattern0 =
-            3 as i32 * pattern0 + board[36 as i32 as usize];
+            3 as i32 * pattern0 + board[36];
         pattern0 =
-            3 as i32 * pattern0 + board[35 as i32 as usize];
+            3 as i32 * pattern0 + board[35];
         pattern0 =
-            3 as i32 * pattern0 + board[34 as i32 as usize];
+            3 as i32 * pattern0 + board[34];
         pattern0 =
-            3 as i32 * pattern0 + board[33 as i32 as usize];
+            3 as i32 * pattern0 + board[33];
         pattern0 =
-            3 as i32 * pattern0 + board[32 as i32 as usize];
+            3 as i32 * pattern0 + board[32];
         pattern0 =
-            3 as i32 * pattern0 + board[31 as i32 as usize];
+            3 as i32 * pattern0 + board[31];
         score =
             (score as i32 +
                 *set[eval_phase as usize].cfile.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[68 as i32 as usize];
+        pattern0 = board[68];
         pattern0 =
-            3 as i32 * pattern0 + board[67 as i32 as usize];
+            3 as i32 * pattern0 + board[67];
         pattern0 =
-            3 as i32 * pattern0 + board[66 as i32 as usize];
+            3 as i32 * pattern0 + board[66];
         pattern0 =
-            3 as i32 * pattern0 + board[65 as i32 as usize];
+            3 as i32 * pattern0 + board[65];
         pattern0 =
-            3 as i32 * pattern0 + board[64 as i32 as usize];
+            3 as i32 * pattern0 + board[64];
         pattern0 =
-            3 as i32 * pattern0 + board[63 as i32 as usize];
+            3 as i32 * pattern0 + board[63];
         pattern0 =
-            3 as i32 * pattern0 + board[62 as i32 as usize];
+            3 as i32 * pattern0 + board[62];
         pattern0 =
-            3 as i32 * pattern0 + board[61 as i32 as usize];
+            3 as i32 * pattern0 + board[61];
         score =
             (score as i32 +
                 *set[eval_phase as usize].cfile.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[84 as i32 as usize];
+        pattern0 = board[84];
         pattern0 =
-            3 as i32 * pattern0 + board[74 as i32 as usize];
+            3 as i32 * pattern0 + board[74];
         pattern0 =
-            3 as i32 * pattern0 + board[64 as i32 as usize];
+            3 as i32 * pattern0 + board[64];
         pattern0 =
-            3 as i32 * pattern0 + board[54 as i32 as usize];
+            3 as i32 * pattern0 + board[54];
         pattern0 =
-            3 as i32 * pattern0 + board[44 as i32 as usize];
+            3 as i32 * pattern0 + board[44];
         pattern0 =
-            3 as i32 * pattern0 + board[34 as i32 as usize];
+            3 as i32 * pattern0 + board[34];
         pattern0 =
-            3 as i32 * pattern0 + board[24 as i32 as usize];
+            3 as i32 * pattern0 + board[24];
         pattern0 =
-            3 as i32 * pattern0 + board[14 as i32 as usize];
+            3 as i32 * pattern0 + board[14];
         score =
             (score as i32 +
                 *set[eval_phase as usize].dfile.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[85 as i32 as usize];
+        pattern0 = board[85];
         pattern0 =
-            3 as i32 * pattern0 + board[75 as i32 as usize];
+            3 as i32 * pattern0 + board[75];
         pattern0 =
-            3 as i32 * pattern0 + board[65 as i32 as usize];
+            3 as i32 * pattern0 + board[65];
         pattern0 =
-            3 as i32 * pattern0 + board[55 as i32 as usize];
+            3 as i32 * pattern0 + board[55];
         pattern0 =
-            3 as i32 * pattern0 + board[45 as i32 as usize];
+            3 as i32 * pattern0 + board[45];
         pattern0 =
-            3 as i32 * pattern0 + board[35 as i32 as usize];
+            3 as i32 * pattern0 + board[35];
         pattern0 =
-            3 as i32 * pattern0 + board[25 as i32 as usize];
+            3 as i32 * pattern0 + board[25];
         pattern0 =
-            3 as i32 * pattern0 + board[15 as i32 as usize];
+            3 as i32 * pattern0 + board[15];
         score =
             (score as i32 +
                 *set[eval_phase as usize].dfile.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[48 as i32 as usize];
+        pattern0 = board[48];
         pattern0 =
-            3 as i32 * pattern0 + board[47 as i32 as usize];
+            3 as i32 * pattern0 + board[47];
         pattern0 =
-            3 as i32 * pattern0 + board[46 as i32 as usize];
+            3 as i32 * pattern0 + board[46];
         pattern0 =
-            3 as i32 * pattern0 + board[45 as i32 as usize];
+            3 as i32 * pattern0 + board[45];
         pattern0 =
-            3 as i32 * pattern0 + board[44 as i32 as usize];
+            3 as i32 * pattern0 + board[44];
         pattern0 =
-            3 as i32 * pattern0 + board[43 as i32 as usize];
+            3 as i32 * pattern0 + board[43];
         pattern0 =
-            3 as i32 * pattern0 + board[42 as i32 as usize];
+            3 as i32 * pattern0 + board[42];
         pattern0 =
-            3 as i32 * pattern0 + board[41 as i32 as usize];
+            3 as i32 * pattern0 + board[41];
         score =
             (score as i32 +
                 *set[eval_phase as usize].dfile.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[58 as i32 as usize];
+        pattern0 = board[58];
         pattern0 =
-            3 as i32 * pattern0 + board[57 as i32 as usize];
+            3 as i32 * pattern0 + board[57];
         pattern0 =
-            3 as i32 * pattern0 + board[56 as i32 as usize];
+            3 as i32 * pattern0 + board[56];
         pattern0 =
-            3 as i32 * pattern0 + board[55 as i32 as usize];
+            3 as i32 * pattern0 + board[55];
         pattern0 =
-            3 as i32 * pattern0 + board[54 as i32 as usize];
+            3 as i32 * pattern0 + board[54];
         pattern0 =
-            3 as i32 * pattern0 + board[53 as i32 as usize];
+            3 as i32 * pattern0 + board[53];
         pattern0 =
-            3 as i32 * pattern0 + board[52 as i32 as usize];
+            3 as i32 * pattern0 + board[52];
         pattern0 =
-            3 as i32 * pattern0 + board[51 as i32 as usize];
+            3 as i32 * pattern0 + board[51];
         score =
             (score as i32 +
                 *set[eval_phase as usize].dfile.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[88 as i32 as usize];
+        pattern0 = board[88];
         pattern0 =
-            3 as i32 * pattern0 + board[77 as i32 as usize];
+            3 as i32 * pattern0 + board[77];
         pattern0 =
-            3 as i32 * pattern0 + board[66 as i32 as usize];
+            3 as i32 * pattern0 + board[66];
         pattern0 =
-            3 as i32 * pattern0 + board[55 as i32 as usize];
+            3 as i32 * pattern0 + board[55];
         pattern0 =
-            3 as i32 * pattern0 + board[44 as i32 as usize];
+            3 as i32 * pattern0 + board[44];
         pattern0 =
-            3 as i32 * pattern0 + board[33 as i32 as usize];
+            3 as i32 * pattern0 + board[33];
         pattern0 =
-            3 as i32 * pattern0 + board[22 as i32 as usize];
+            3 as i32 * pattern0 + board[22];
         pattern0 =
-            3 as i32 * pattern0 + board[11 as i32 as usize];
+            3 as i32 * pattern0 + board[11];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag8.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[81 as i32 as usize];
+        pattern0 = board[81];
         pattern0 =
-            3 as i32 * pattern0 + board[72 as i32 as usize];
+            3 as i32 * pattern0 + board[72];
         pattern0 =
-            3 as i32 * pattern0 + board[63 as i32 as usize];
+            3 as i32 * pattern0 + board[63];
         pattern0 =
-            3 as i32 * pattern0 + board[54 as i32 as usize];
+            3 as i32 * pattern0 + board[54];
         pattern0 =
-            3 as i32 * pattern0 + board[45 as i32 as usize];
+            3 as i32 * pattern0 + board[45];
         pattern0 =
-            3 as i32 * pattern0 + board[36 as i32 as usize];
+            3 as i32 * pattern0 + board[36];
         pattern0 =
-            3 as i32 * pattern0 + board[27 as i32 as usize];
+            3 as i32 * pattern0 + board[27];
         pattern0 =
-            3 as i32 * pattern0 + board[18 as i32 as usize];
+            3 as i32 * pattern0 + board[18];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag8.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[78 as i32 as usize];
+        pattern0 = board[78];
         pattern0 =
-            3 as i32 * pattern0 + board[67 as i32 as usize];
+            3 as i32 * pattern0 + board[67];
         pattern0 =
-            3 as i32 * pattern0 + board[56 as i32 as usize];
+            3 as i32 * pattern0 + board[56];
         pattern0 =
-            3 as i32 * pattern0 + board[45 as i32 as usize];
+            3 as i32 * pattern0 + board[45];
         pattern0 =
-            3 as i32 * pattern0 + board[34 as i32 as usize];
+            3 as i32 * pattern0 + board[34];
         pattern0 =
-            3 as i32 * pattern0 + board[23 as i32 as usize];
+            3 as i32 * pattern0 + board[23];
         pattern0 =
-            3 as i32 * pattern0 + board[12 as i32 as usize];
+            3 as i32 * pattern0 + board[12];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag7.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[87 as i32 as usize];
+        pattern0 = board[87];
         pattern0 =
-            3 as i32 * pattern0 + board[76 as i32 as usize];
+            3 as i32 * pattern0 + board[76];
         pattern0 =
-            3 as i32 * pattern0 + board[65 as i32 as usize];
+            3 as i32 * pattern0 + board[65];
         pattern0 =
-            3 as i32 * pattern0 + board[54 as i32 as usize];
+            3 as i32 * pattern0 + board[54];
         pattern0 =
-            3 as i32 * pattern0 + board[43 as i32 as usize];
+            3 as i32 * pattern0 + board[43];
         pattern0 =
-            3 as i32 * pattern0 + board[32 as i32 as usize];
+            3 as i32 * pattern0 + board[32];
         pattern0 =
-            3 as i32 * pattern0 + board[21 as i32 as usize];
+            3 as i32 * pattern0 + board[21];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag7.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[71 as i32 as usize];
+        pattern0 = board[71];
         pattern0 =
-            3 as i32 * pattern0 + board[62 as i32 as usize];
+            3 as i32 * pattern0 + board[62];
         pattern0 =
-            3 as i32 * pattern0 + board[53 as i32 as usize];
+            3 as i32 * pattern0 + board[53];
         pattern0 =
-            3 as i32 * pattern0 + board[44 as i32 as usize];
+            3 as i32 * pattern0 + board[44];
         pattern0 =
-            3 as i32 * pattern0 + board[35 as i32 as usize];
+            3 as i32 * pattern0 + board[35];
         pattern0 =
-            3 as i32 * pattern0 + board[26 as i32 as usize];
+            3 as i32 * pattern0 + board[26];
         pattern0 =
-            3 as i32 * pattern0 + board[17 as i32 as usize];
+            3 as i32 * pattern0 + board[17];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag7.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[82 as i32 as usize];
+        pattern0 = board[82];
         pattern0 =
-            3 as i32 * pattern0 + board[73 as i32 as usize];
+            3 as i32 * pattern0 + board[73];
         pattern0 =
-            3 as i32 * pattern0 + board[64 as i32 as usize];
+            3 as i32 * pattern0 + board[64];
         pattern0 =
-            3 as i32 * pattern0 + board[55 as i32 as usize];
+            3 as i32 * pattern0 + board[55];
         pattern0 =
-            3 as i32 * pattern0 + board[46 as i32 as usize];
+            3 as i32 * pattern0 + board[46];
         pattern0 =
-            3 as i32 * pattern0 + board[37 as i32 as usize];
+            3 as i32 * pattern0 + board[37];
         pattern0 =
-            3 as i32 * pattern0 + board[28 as i32 as usize];
+            3 as i32 * pattern0 + board[28];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag7.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[68 as i32 as usize];
+        pattern0 = board[68];
         pattern0 =
-            3 as i32 * pattern0 + board[57 as i32 as usize];
+            3 as i32 * pattern0 + board[57];
         pattern0 =
-            3 as i32 * pattern0 + board[46 as i32 as usize];
+            3 as i32 * pattern0 + board[46];
         pattern0 =
-            3 as i32 * pattern0 + board[35 as i32 as usize];
+            3 as i32 * pattern0 + board[35];
         pattern0 =
-            3 as i32 * pattern0 + board[24 as i32 as usize];
+            3 as i32 * pattern0 + board[24];
         pattern0 =
-            3 as i32 * pattern0 + board[13 as i32 as usize];
+            3 as i32 * pattern0 + board[13];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag6.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[86 as i32 as usize];
+        pattern0 = board[86];
         pattern0 =
-            3 as i32 * pattern0 + board[75 as i32 as usize];
+            3 as i32 * pattern0 + board[75];
         pattern0 =
-            3 as i32 * pattern0 + board[64 as i32 as usize];
+            3 as i32 * pattern0 + board[64];
         pattern0 =
-            3 as i32 * pattern0 + board[53 as i32 as usize];
+            3 as i32 * pattern0 + board[53];
         pattern0 =
-            3 as i32 * pattern0 + board[42 as i32 as usize];
+            3 as i32 * pattern0 + board[42];
         pattern0 =
-            3 as i32 * pattern0 + board[31 as i32 as usize];
+            3 as i32 * pattern0 + board[31];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag6.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[61 as i32 as usize];
+        pattern0 = board[61];
         pattern0 =
-            3 as i32 * pattern0 + board[52 as i32 as usize];
+            3 as i32 * pattern0 + board[52];
         pattern0 =
-            3 as i32 * pattern0 + board[43 as i32 as usize];
+            3 as i32 * pattern0 + board[43];
         pattern0 =
-            3 as i32 * pattern0 + board[34 as i32 as usize];
+            3 as i32 * pattern0 + board[34];
         pattern0 =
-            3 as i32 * pattern0 + board[25 as i32 as usize];
+            3 as i32 * pattern0 + board[25];
         pattern0 =
-            3 as i32 * pattern0 + board[16 as i32 as usize];
+            3 as i32 * pattern0 + board[16];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag6.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[83 as i32 as usize];
+        pattern0 = board[83];
         pattern0 =
-            3 as i32 * pattern0 + board[74 as i32 as usize];
+            3 as i32 * pattern0 + board[74];
         pattern0 =
-            3 as i32 * pattern0 + board[65 as i32 as usize];
+            3 as i32 * pattern0 + board[65];
         pattern0 =
-            3 as i32 * pattern0 + board[56 as i32 as usize];
+            3 as i32 * pattern0 + board[56];
         pattern0 =
-            3 as i32 * pattern0 + board[47 as i32 as usize];
+            3 as i32 * pattern0 + board[47];
         pattern0 =
-            3 as i32 * pattern0 + board[38 as i32 as usize];
+            3 as i32 * pattern0 + board[38];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag6.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[58 as i32 as usize];
+        pattern0 = board[58];
         pattern0 =
-            3 as i32 * pattern0 + board[47 as i32 as usize];
+            3 as i32 * pattern0 + board[47];
         pattern0 =
-            3 as i32 * pattern0 + board[36 as i32 as usize];
+            3 as i32 * pattern0 + board[36];
         pattern0 =
-            3 as i32 * pattern0 + board[25 as i32 as usize];
+            3 as i32 * pattern0 + board[25];
         pattern0 =
-            3 as i32 * pattern0 + board[14 as i32 as usize];
+            3 as i32 * pattern0 + board[14];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag5.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[85 as i32 as usize];
+        pattern0 = board[85];
         pattern0 =
-            3 as i32 * pattern0 + board[74 as i32 as usize];
+            3 as i32 * pattern0 + board[74];
         pattern0 =
-            3 as i32 * pattern0 + board[63 as i32 as usize];
+            3 as i32 * pattern0 + board[63];
         pattern0 =
-            3 as i32 * pattern0 + board[52 as i32 as usize];
+            3 as i32 * pattern0 + board[52];
         pattern0 =
-            3 as i32 * pattern0 + board[41 as i32 as usize];
+            3 as i32 * pattern0 + board[41];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag5.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[51 as i32 as usize];
+        pattern0 = board[51];
         pattern0 =
-            3 as i32 * pattern0 + board[42 as i32 as usize];
+            3 as i32 * pattern0 + board[42];
         pattern0 =
-            3 as i32 * pattern0 + board[33 as i32 as usize];
+            3 as i32 * pattern0 + board[33];
         pattern0 =
-            3 as i32 * pattern0 + board[24 as i32 as usize];
+            3 as i32 * pattern0 + board[24];
         pattern0 =
-            3 as i32 * pattern0 + board[15 as i32 as usize];
+            3 as i32 * pattern0 + board[15];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag5.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[84 as i32 as usize];
+        pattern0 = board[84];
         pattern0 =
-            3 as i32 * pattern0 + board[75 as i32 as usize];
+            3 as i32 * pattern0 + board[75];
         pattern0 =
-            3 as i32 * pattern0 + board[66 as i32 as usize];
+            3 as i32 * pattern0 + board[66];
         pattern0 =
-            3 as i32 * pattern0 + board[57 as i32 as usize];
+            3 as i32 * pattern0 + board[57];
         pattern0 =
-            3 as i32 * pattern0 + board[48 as i32 as usize];
+            3 as i32 * pattern0 + board[48];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag5.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[48 as i32 as usize];
+        pattern0 = board[48];
         pattern0 =
-            3 as i32 * pattern0 + board[37 as i32 as usize];
+            3 as i32 * pattern0 + board[37];
         pattern0 =
-            3 as i32 * pattern0 + board[26 as i32 as usize];
+            3 as i32 * pattern0 + board[26];
         pattern0 =
-            3 as i32 * pattern0 + board[15 as i32 as usize];
+            3 as i32 * pattern0 + board[15];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag4.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[84 as i32 as usize];
+        pattern0 = board[84];
         pattern0 =
-            3 as i32 * pattern0 + board[73 as i32 as usize];
+            3 as i32 * pattern0 + board[73];
         pattern0 =
-            3 as i32 * pattern0 + board[62 as i32 as usize];
+            3 as i32 * pattern0 + board[62];
         pattern0 =
-            3 as i32 * pattern0 + board[51 as i32 as usize];
+            3 as i32 * pattern0 + board[51];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag4.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[41 as i32 as usize];
+        pattern0 = board[41];
         pattern0 =
-            3 as i32 * pattern0 + board[32 as i32 as usize];
+            3 as i32 * pattern0 + board[32];
         pattern0 =
-            3 as i32 * pattern0 + board[23 as i32 as usize];
+            3 as i32 * pattern0 + board[23];
         pattern0 =
-            3 as i32 * pattern0 + board[14 as i32 as usize];
+            3 as i32 * pattern0 + board[14];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag4.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[85 as i32 as usize];
+        pattern0 = board[85];
         pattern0 =
-            3 as i32 * pattern0 + board[76 as i32 as usize];
+            3 as i32 * pattern0 + board[76];
         pattern0 =
-            3 as i32 * pattern0 + board[67 as i32 as usize];
+            3 as i32 * pattern0 + board[67];
         pattern0 =
-            3 as i32 * pattern0 + board[58 as i32 as usize];
+            3 as i32 * pattern0 + board[58];
         score =
             (score as i32 +
                 *set[eval_phase as usize].diag4.offset(pattern0 as isize) as
                     i32) as i16;
-        pattern0 = board[33 as i32 as usize];
+        pattern0 = board[33];
         pattern0 =
-            3 as i32 * pattern0 + board[32 as i32 as usize];
+            3 as i32 * pattern0 + board[32];
         pattern0 =
-            3 as i32 * pattern0 + board[31 as i32 as usize];
+            3 as i32 * pattern0 + board[31];
         pattern0 =
-            3 as i32 * pattern0 + board[23 as i32 as usize];
+            3 as i32 * pattern0 + board[23];
         pattern0 =
-            3 as i32 * pattern0 + board[22 as i32 as usize];
+            3 as i32 * pattern0 + board[22];
         pattern0 =
-            3 as i32 * pattern0 + board[21 as i32 as usize];
+            3 as i32 * pattern0 + board[21];
         pattern0 =
-            3 as i32 * pattern0 + board[13 as i32 as usize];
+            3 as i32 * pattern0 + board[13];
         pattern0 =
-            3 as i32 * pattern0 + board[12 as i32 as usize];
+            3 as i32 * pattern0 + board[12];
         pattern0 =
-            3 as i32 * pattern0 + board[11 as i32 as usize];
+            3 as i32 * pattern0 + board[11];
         score =
             (score as i32 +
                 *set[eval_phase as usize].corner33.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[63 as i32 as usize];
+        pattern0 = board[63];
         pattern0 =
-            3 as i32 * pattern0 + board[62 as i32 as usize];
+            3 as i32 * pattern0 + board[62];
         pattern0 =
-            3 as i32 * pattern0 + board[61 as i32 as usize];
+            3 as i32 * pattern0 + board[61];
         pattern0 =
-            3 as i32 * pattern0 + board[73 as i32 as usize];
+            3 as i32 * pattern0 + board[73];
         pattern0 =
-            3 as i32 * pattern0 + board[72 as i32 as usize];
+            3 as i32 * pattern0 + board[72];
         pattern0 =
-            3 as i32 * pattern0 + board[71 as i32 as usize];
+            3 as i32 * pattern0 + board[71];
         pattern0 =
-            3 as i32 * pattern0 + board[83 as i32 as usize];
+            3 as i32 * pattern0 + board[83];
         pattern0 =
-            3 as i32 * pattern0 + board[82 as i32 as usize];
+            3 as i32 * pattern0 + board[82];
         pattern0 =
-            3 as i32 * pattern0 + board[81 as i32 as usize];
+            3 as i32 * pattern0 + board[81];
         score =
             (score as i32 +
                 *set[eval_phase as usize].corner33.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[36 as i32 as usize];
+        pattern0 = board[36];
         pattern0 =
-            3 as i32 * pattern0 + board[37 as i32 as usize];
+            3 as i32 * pattern0 + board[37];
         pattern0 =
-            3 as i32 * pattern0 + board[38 as i32 as usize];
+            3 as i32 * pattern0 + board[38];
         pattern0 =
-            3 as i32 * pattern0 + board[26 as i32 as usize];
+            3 as i32 * pattern0 + board[26];
         pattern0 =
-            3 as i32 * pattern0 + board[27 as i32 as usize];
+            3 as i32 * pattern0 + board[27];
         pattern0 =
-            3 as i32 * pattern0 + board[28 as i32 as usize];
+            3 as i32 * pattern0 + board[28];
         pattern0 =
-            3 as i32 * pattern0 + board[16 as i32 as usize];
+            3 as i32 * pattern0 + board[16];
         pattern0 =
-            3 as i32 * pattern0 + board[17 as i32 as usize];
+            3 as i32 * pattern0 + board[17];
         pattern0 =
-            3 as i32 * pattern0 + board[18 as i32 as usize];
+            3 as i32 * pattern0 + board[18];
         score =
             (score as i32 +
                 *set[eval_phase as usize].corner33.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[66 as i32 as usize];
+        pattern0 = board[66];
         pattern0 =
-            3 as i32 * pattern0 + board[67 as i32 as usize];
+            3 as i32 * pattern0 + board[67];
         pattern0 =
-            3 as i32 * pattern0 + board[68 as i32 as usize];
+            3 as i32 * pattern0 + board[68];
         pattern0 =
-            3 as i32 * pattern0 + board[76 as i32 as usize];
+            3 as i32 * pattern0 + board[76];
         pattern0 =
-            3 as i32 * pattern0 + board[77 as i32 as usize];
+            3 as i32 * pattern0 + board[77];
         pattern0 =
-            3 as i32 * pattern0 + board[78 as i32 as usize];
+            3 as i32 * pattern0 + board[78];
         pattern0 =
-            3 as i32 * pattern0 + board[86 as i32 as usize];
+            3 as i32 * pattern0 + board[86];
         pattern0 =
-            3 as i32 * pattern0 + board[87 as i32 as usize];
+            3 as i32 * pattern0 + board[87];
         pattern0 =
-            3 as i32 * pattern0 + board[88 as i32 as usize];
+            3 as i32 * pattern0 + board[88];
         score =
             (score as i32 +
                 *set[eval_phase as usize].corner33.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[25 as i32 as usize];
+        pattern0 = board[25];
         pattern0 =
-            3 as i32 * pattern0 + board[24 as i32 as usize];
+            3 as i32 * pattern0 + board[24];
         pattern0 =
-            3 as i32 * pattern0 + board[23 as i32 as usize];
+            3 as i32 * pattern0 + board[23];
         pattern0 =
-            3 as i32 * pattern0 + board[22 as i32 as usize];
+            3 as i32 * pattern0 + board[22];
         pattern0 =
-            3 as i32 * pattern0 + board[21 as i32 as usize];
+            3 as i32 * pattern0 + board[21];
         pattern0 =
-            3 as i32 * pattern0 + board[15 as i32 as usize];
+            3 as i32 * pattern0 + board[15];
         pattern0 =
-            3 as i32 * pattern0 + board[14 as i32 as usize];
+            3 as i32 * pattern0 + board[14];
         pattern0 =
-            3 as i32 * pattern0 + board[13 as i32 as usize];
+            3 as i32 * pattern0 + board[13];
         pattern0 =
-            3 as i32 * pattern0 + board[12 as i32 as usize];
+            3 as i32 * pattern0 + board[12];
         pattern0 =
-            3 as i32 * pattern0 + board[11 as i32 as usize];
+            3 as i32 * pattern0 + board[11];
         score =
             (score as i32 +
                 *set[eval_phase as usize].corner52.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[75 as i32 as usize];
+        pattern0 = board[75];
         pattern0 =
-            3 as i32 * pattern0 + board[74 as i32 as usize];
+            3 as i32 * pattern0 + board[74];
         pattern0 =
-            3 as i32 * pattern0 + board[73 as i32 as usize];
+            3 as i32 * pattern0 + board[73];
         pattern0 =
-            3 as i32 * pattern0 + board[72 as i32 as usize];
+            3 as i32 * pattern0 + board[72];
         pattern0 =
-            3 as i32 * pattern0 + board[71 as i32 as usize];
+            3 as i32 * pattern0 + board[71];
         pattern0 =
-            3 as i32 * pattern0 + board[85 as i32 as usize];
+            3 as i32 * pattern0 + board[85];
         pattern0 =
-            3 as i32 * pattern0 + board[84 as i32 as usize];
+            3 as i32 * pattern0 + board[84];
         pattern0 =
-            3 as i32 * pattern0 + board[83 as i32 as usize];
+            3 as i32 * pattern0 + board[83];
         pattern0 =
-            3 as i32 * pattern0 + board[82 as i32 as usize];
+            3 as i32 * pattern0 + board[82];
         pattern0 =
-            3 as i32 * pattern0 + board[81 as i32 as usize];
+            3 as i32 * pattern0 + board[81];
         score =
             (score as i32 +
                 *set[eval_phase as usize].corner52.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[24 as i32 as usize];
+        pattern0 = board[24];
         pattern0 =
-            3 as i32 * pattern0 + board[25 as i32 as usize];
+            3 as i32 * pattern0 + board[25];
         pattern0 =
-            3 as i32 * pattern0 + board[26 as i32 as usize];
+            3 as i32 * pattern0 + board[26];
         pattern0 =
-            3 as i32 * pattern0 + board[27 as i32 as usize];
+            3 as i32 * pattern0 + board[27];
         pattern0 =
-            3 as i32 * pattern0 + board[28 as i32 as usize];
+            3 as i32 * pattern0 + board[28];
         pattern0 =
-            3 as i32 * pattern0 + board[14 as i32 as usize];
+            3 as i32 * pattern0 + board[14];
         pattern0 =
-            3 as i32 * pattern0 + board[15 as i32 as usize];
+            3 as i32 * pattern0 + board[15];
         pattern0 =
-            3 as i32 * pattern0 + board[16 as i32 as usize];
+            3 as i32 * pattern0 + board[16];
         pattern0 =
-            3 as i32 * pattern0 + board[17 as i32 as usize];
+            3 as i32 * pattern0 + board[17];
         pattern0 =
-            3 as i32 * pattern0 + board[18 as i32 as usize];
+            3 as i32 * pattern0 + board[18];
         score =
             (score as i32 +
                 *set[eval_phase as usize].corner52.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[74 as i32 as usize];
+        pattern0 = board[74];
         pattern0 =
-            3 as i32 * pattern0 + board[75 as i32 as usize];
+            3 as i32 * pattern0 + board[75];
         pattern0 =
-            3 as i32 * pattern0 + board[76 as i32 as usize];
+            3 as i32 * pattern0 + board[76];
         pattern0 =
-            3 as i32 * pattern0 + board[77 as i32 as usize];
+            3 as i32 * pattern0 + board[77];
         pattern0 =
-            3 as i32 * pattern0 + board[78 as i32 as usize];
+            3 as i32 * pattern0 + board[78];
         pattern0 =
-            3 as i32 * pattern0 + board[84 as i32 as usize];
+            3 as i32 * pattern0 + board[84];
         pattern0 =
-            3 as i32 * pattern0 + board[85 as i32 as usize];
+            3 as i32 * pattern0 + board[85];
         pattern0 =
-            3 as i32 * pattern0 + board[86 as i32 as usize];
+            3 as i32 * pattern0 + board[86];
         pattern0 =
-            3 as i32 * pattern0 + board[87 as i32 as usize];
+            3 as i32 * pattern0 + board[87];
         pattern0 =
-            3 as i32 * pattern0 + board[88 as i32 as usize];
+            3 as i32 * pattern0 + board[88];
         score =
             (score as i32 +
                 *set[eval_phase as usize].corner52.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[52 as i32 as usize];
+        pattern0 = board[52];
         pattern0 =
-            3 as i32 * pattern0 + board[42 as i32 as usize];
+            3 as i32 * pattern0 + board[42];
         pattern0 =
-            3 as i32 * pattern0 + board[32 as i32 as usize];
+            3 as i32 * pattern0 + board[32];
         pattern0 =
-            3 as i32 * pattern0 + board[22 as i32 as usize];
+            3 as i32 * pattern0 + board[22];
         pattern0 =
-            3 as i32 * pattern0 + board[12 as i32 as usize];
+            3 as i32 * pattern0 + board[12];
         pattern0 =
-            3 as i32 * pattern0 + board[51 as i32 as usize];
+            3 as i32 * pattern0 + board[51];
         pattern0 =
-            3 as i32 * pattern0 + board[41 as i32 as usize];
+            3 as i32 * pattern0 + board[41];
         pattern0 =
-            3 as i32 * pattern0 + board[31 as i32 as usize];
+            3 as i32 * pattern0 + board[31];
         pattern0 =
-            3 as i32 * pattern0 + board[21 as i32 as usize];
+            3 as i32 * pattern0 + board[21];
         pattern0 =
-            3 as i32 * pattern0 + board[11 as i32 as usize];
+            3 as i32 * pattern0 + board[11];
         score =
             (score as i32 +
                 *set[eval_phase as usize].corner52.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[57 as i32 as usize];
+        pattern0 = board[57];
         pattern0 =
-            3 as i32 * pattern0 + board[47 as i32 as usize];
+            3 as i32 * pattern0 + board[47];
         pattern0 =
-            3 as i32 * pattern0 + board[37 as i32 as usize];
+            3 as i32 * pattern0 + board[37];
         pattern0 =
-            3 as i32 * pattern0 + board[27 as i32 as usize];
+            3 as i32 * pattern0 + board[27];
         pattern0 =
-            3 as i32 * pattern0 + board[17 as i32 as usize];
+            3 as i32 * pattern0 + board[17];
         pattern0 =
-            3 as i32 * pattern0 + board[58 as i32 as usize];
+            3 as i32 * pattern0 + board[58];
         pattern0 =
-            3 as i32 * pattern0 + board[48 as i32 as usize];
+            3 as i32 * pattern0 + board[48];
         pattern0 =
-            3 as i32 * pattern0 + board[38 as i32 as usize];
+            3 as i32 * pattern0 + board[38];
         pattern0 =
-            3 as i32 * pattern0 + board[28 as i32 as usize];
+            3 as i32 * pattern0 + board[28];
         pattern0 =
-            3 as i32 * pattern0 + board[18 as i32 as usize];
+            3 as i32 * pattern0 + board[18];
         score =
             (score as i32 +
                 *set[eval_phase as usize].corner52.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[42 as i32 as usize];
+        pattern0 = board[42];
         pattern0 =
-            3 as i32 * pattern0 + board[52 as i32 as usize];
+            3 as i32 * pattern0 + board[52];
         pattern0 =
-            3 as i32 * pattern0 + board[62 as i32 as usize];
+            3 as i32 * pattern0 + board[62];
         pattern0 =
-            3 as i32 * pattern0 + board[72 as i32 as usize];
+            3 as i32 * pattern0 + board[72];
         pattern0 =
-            3 as i32 * pattern0 + board[82 as i32 as usize];
+            3 as i32 * pattern0 + board[82];
         pattern0 =
-            3 as i32 * pattern0 + board[41 as i32 as usize];
+            3 as i32 * pattern0 + board[41];
         pattern0 =
-            3 as i32 * pattern0 + board[51 as i32 as usize];
+            3 as i32 * pattern0 + board[51];
         pattern0 =
-            3 as i32 * pattern0 + board[61 as i32 as usize];
+            3 as i32 * pattern0 + board[61];
         pattern0 =
-            3 as i32 * pattern0 + board[71 as i32 as usize];
+            3 as i32 * pattern0 + board[71];
         pattern0 =
-            3 as i32 * pattern0 + board[81 as i32 as usize];
+            3 as i32 * pattern0 + board[81];
         score =
             (score as i32 +
                 *set[eval_phase as usize].corner52.offset(pattern0 as isize)
                     as i32) as i16;
-        pattern0 = board[47 as i32 as usize];
+        pattern0 = board[47];
         pattern0 =
-            3 as i32 * pattern0 + board[57 as i32 as usize];
+            3 as i32 * pattern0 + board[57];
         pattern0 =
-            3 as i32 * pattern0 + board[67 as i32 as usize];
+            3 as i32 * pattern0 + board[67];
         pattern0 =
-            3 as i32 * pattern0 + board[77 as i32 as usize];
+            3 as i32 * pattern0 + board[77];
         pattern0 =
-            3 as i32 * pattern0 + board[87 as i32 as usize];
+            3 as i32 * pattern0 + board[87];
         pattern0 =
-            3 as i32 * pattern0 + board[48 as i32 as usize];
+            3 as i32 * pattern0 + board[48];
         pattern0 =
-            3 as i32 * pattern0 + board[58 as i32 as usize];
+            3 as i32 * pattern0 + board[58];
         pattern0 =
-            3 as i32 * pattern0 + board[68 as i32 as usize];
+            3 as i32 * pattern0 + board[68];
         pattern0 =
-            3 as i32 * pattern0 + board[78 as i32 as usize];
+            3 as i32 * pattern0 + board[78];
         pattern0 =
-            3 as i32 * pattern0 + board[88 as i32 as usize];
+            3 as i32 * pattern0 + board[88];
         score =
             (score as i32 +
                 *set[eval_phase as usize].corner52.offset(pattern0 as isize)
                     as i32) as i16
     } else {
         let mut pattern0_0: i32;
-        pattern0_0 = board[72 as i32 as usize];
+        pattern0_0 = board[72];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[22 as i32 as usize];
+            3 as i32 * pattern0_0 + board[22];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[81 as i32 as usize];
+            3 as i32 * pattern0_0 + board[81];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[71 as i32 as usize];
+            3 as i32 * pattern0_0 + board[71];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[61 as i32 as usize];
+            3 as i32 * pattern0_0 + board[61];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[51 as i32 as usize];
+            3 as i32 * pattern0_0 + board[51];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[41 as i32 as usize];
+            3 as i32 * pattern0_0 + board[41];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[31 as i32 as usize];
+            3 as i32 * pattern0_0 + board[31];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[21 as i32 as usize];
+            3 as i32 * pattern0_0 + board[21];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[11 as i32 as usize];
+            3 as i32 * pattern0_0 + board[11];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].afile2x_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[77 as i32 as usize];
+        pattern0_0 = board[77];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[27 as i32 as usize];
+            3 as i32 * pattern0_0 + board[27];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[88 as i32 as usize];
+            3 as i32 * pattern0_0 + board[88];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[78 as i32 as usize];
+            3 as i32 * pattern0_0 + board[78];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[68 as i32 as usize];
+            3 as i32 * pattern0_0 + board[68];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[58 as i32 as usize];
+            3 as i32 * pattern0_0 + board[58];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[48 as i32 as usize];
+            3 as i32 * pattern0_0 + board[48];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[38 as i32 as usize];
+            3 as i32 * pattern0_0 + board[38];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[28 as i32 as usize];
+            3 as i32 * pattern0_0 + board[28];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[18 as i32 as usize];
+            3 as i32 * pattern0_0 + board[18];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].afile2x_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[27 as i32 as usize];
+        pattern0_0 = board[27];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[22 as i32 as usize];
+            3 as i32 * pattern0_0 + board[22];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[18 as i32 as usize];
+            3 as i32 * pattern0_0 + board[18];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[17 as i32 as usize];
+            3 as i32 * pattern0_0 + board[17];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[16 as i32 as usize];
+            3 as i32 * pattern0_0 + board[16];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[15 as i32 as usize];
+            3 as i32 * pattern0_0 + board[15];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[14 as i32 as usize];
+            3 as i32 * pattern0_0 + board[14];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[13 as i32 as usize];
+            3 as i32 * pattern0_0 + board[13];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[12 as i32 as usize];
+            3 as i32 * pattern0_0 + board[12];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[11 as i32 as usize];
+            3 as i32 * pattern0_0 + board[11];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].afile2x_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[77 as i32 as usize];
+        pattern0_0 = board[77];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[72 as i32 as usize];
+            3 as i32 * pattern0_0 + board[72];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[88 as i32 as usize];
+            3 as i32 * pattern0_0 + board[88];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[87 as i32 as usize];
+            3 as i32 * pattern0_0 + board[87];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[86 as i32 as usize];
+            3 as i32 * pattern0_0 + board[86];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[85 as i32 as usize];
+            3 as i32 * pattern0_0 + board[85];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[84 as i32 as usize];
+            3 as i32 * pattern0_0 + board[84];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[83 as i32 as usize];
+            3 as i32 * pattern0_0 + board[83];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[82 as i32 as usize];
+            3 as i32 * pattern0_0 + board[82];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[81 as i32 as usize];
+            3 as i32 * pattern0_0 + board[81];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].afile2x_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[82 as i32 as usize];
+        pattern0_0 = board[82];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[72 as i32 as usize];
+            3 as i32 * pattern0_0 + board[72];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[62 as i32 as usize];
+            3 as i32 * pattern0_0 + board[62];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[52 as i32 as usize];
+            3 as i32 * pattern0_0 + board[52];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[42 as i32 as usize];
+            3 as i32 * pattern0_0 + board[42];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[32 as i32 as usize];
+            3 as i32 * pattern0_0 + board[32];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[22 as i32 as usize];
+            3 as i32 * pattern0_0 + board[22];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[12 as i32 as usize];
+            3 as i32 * pattern0_0 + board[12];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].bfile_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[87 as i32 as usize];
+        pattern0_0 = board[87];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[77 as i32 as usize];
+            3 as i32 * pattern0_0 + board[77];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[67 as i32 as usize];
+            3 as i32 * pattern0_0 + board[67];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[57 as i32 as usize];
+            3 as i32 * pattern0_0 + board[57];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[47 as i32 as usize];
+            3 as i32 * pattern0_0 + board[47];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[37 as i32 as usize];
+            3 as i32 * pattern0_0 + board[37];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[27 as i32 as usize];
+            3 as i32 * pattern0_0 + board[27];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[17 as i32 as usize];
+            3 as i32 * pattern0_0 + board[17];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].bfile_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[28 as i32 as usize];
+        pattern0_0 = board[28];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[27 as i32 as usize];
+            3 as i32 * pattern0_0 + board[27];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[26 as i32 as usize];
+            3 as i32 * pattern0_0 + board[26];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[25 as i32 as usize];
+            3 as i32 * pattern0_0 + board[25];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[24 as i32 as usize];
+            3 as i32 * pattern0_0 + board[24];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[23 as i32 as usize];
+            3 as i32 * pattern0_0 + board[23];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[22 as i32 as usize];
+            3 as i32 * pattern0_0 + board[22];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[21 as i32 as usize];
+            3 as i32 * pattern0_0 + board[21];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].bfile_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[78 as i32 as usize];
+        pattern0_0 = board[78];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[77 as i32 as usize];
+            3 as i32 * pattern0_0 + board[77];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[76 as i32 as usize];
+            3 as i32 * pattern0_0 + board[76];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[75 as i32 as usize];
+            3 as i32 * pattern0_0 + board[75];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[74 as i32 as usize];
+            3 as i32 * pattern0_0 + board[74];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[73 as i32 as usize];
+            3 as i32 * pattern0_0 + board[73];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[72 as i32 as usize];
+            3 as i32 * pattern0_0 + board[72];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[71 as i32 as usize];
+            3 as i32 * pattern0_0 + board[71];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].bfile_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[83 as i32 as usize];
+        pattern0_0 = board[83];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[73 as i32 as usize];
+            3 as i32 * pattern0_0 + board[73];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[63 as i32 as usize];
+            3 as i32 * pattern0_0 + board[63];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[53 as i32 as usize];
+            3 as i32 * pattern0_0 + board[53];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[43 as i32 as usize];
+            3 as i32 * pattern0_0 + board[43];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[33 as i32 as usize];
+            3 as i32 * pattern0_0 + board[33];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[23 as i32 as usize];
+            3 as i32 * pattern0_0 + board[23];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[13 as i32 as usize];
+            3 as i32 * pattern0_0 + board[13];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].cfile_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[86 as i32 as usize];
+        pattern0_0 = board[86];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[76 as i32 as usize];
+            3 as i32 * pattern0_0 + board[76];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[66 as i32 as usize];
+            3 as i32 * pattern0_0 + board[66];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[56 as i32 as usize];
+            3 as i32 * pattern0_0 + board[56];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[46 as i32 as usize];
+            3 as i32 * pattern0_0 + board[46];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[36 as i32 as usize];
+            3 as i32 * pattern0_0 + board[36];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[26 as i32 as usize];
+            3 as i32 * pattern0_0 + board[26];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[16 as i32 as usize];
+            3 as i32 * pattern0_0 + board[16];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].cfile_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[38 as i32 as usize];
+        pattern0_0 = board[38];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[37 as i32 as usize];
+            3 as i32 * pattern0_0 + board[37];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[36 as i32 as usize];
+            3 as i32 * pattern0_0 + board[36];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[35 as i32 as usize];
+            3 as i32 * pattern0_0 + board[35];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[34 as i32 as usize];
+            3 as i32 * pattern0_0 + board[34];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[33 as i32 as usize];
+            3 as i32 * pattern0_0 + board[33];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[32 as i32 as usize];
+            3 as i32 * pattern0_0 + board[32];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[31 as i32 as usize];
+            3 as i32 * pattern0_0 + board[31];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].cfile_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[68 as i32 as usize];
+        pattern0_0 = board[68];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[67 as i32 as usize];
+            3 as i32 * pattern0_0 + board[67];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[66 as i32 as usize];
+            3 as i32 * pattern0_0 + board[66];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[65 as i32 as usize];
+            3 as i32 * pattern0_0 + board[65];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[64 as i32 as usize];
+            3 as i32 * pattern0_0 + board[64];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[63 as i32 as usize];
+            3 as i32 * pattern0_0 + board[63];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[62 as i32 as usize];
+            3 as i32 * pattern0_0 + board[62];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[61 as i32 as usize];
+            3 as i32 * pattern0_0 + board[61];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].cfile_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[84 as i32 as usize];
+        pattern0_0 = board[84];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[74 as i32 as usize];
+            3 as i32 * pattern0_0 + board[74];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[64 as i32 as usize];
+            3 as i32 * pattern0_0 + board[64];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[54 as i32 as usize];
+            3 as i32 * pattern0_0 + board[54];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[44 as i32 as usize];
+            3 as i32 * pattern0_0 + board[44];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[34 as i32 as usize];
+            3 as i32 * pattern0_0 + board[34];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[24 as i32 as usize];
+            3 as i32 * pattern0_0 + board[24];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[14 as i32 as usize];
+            3 as i32 * pattern0_0 + board[14];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].dfile_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[85 as i32 as usize];
+        pattern0_0 = board[85];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[75 as i32 as usize];
+            3 as i32 * pattern0_0 + board[75];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[65 as i32 as usize];
+            3 as i32 * pattern0_0 + board[65];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[55 as i32 as usize];
+            3 as i32 * pattern0_0 + board[55];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[45 as i32 as usize];
+            3 as i32 * pattern0_0 + board[45];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[35 as i32 as usize];
+            3 as i32 * pattern0_0 + board[35];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[25 as i32 as usize];
+            3 as i32 * pattern0_0 + board[25];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[15 as i32 as usize];
+            3 as i32 * pattern0_0 + board[15];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].dfile_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[48 as i32 as usize];
+        pattern0_0 = board[48];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[47 as i32 as usize];
+            3 as i32 * pattern0_0 + board[47];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[46 as i32 as usize];
+            3 as i32 * pattern0_0 + board[46];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[45 as i32 as usize];
+            3 as i32 * pattern0_0 + board[45];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[44 as i32 as usize];
+            3 as i32 * pattern0_0 + board[44];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[43 as i32 as usize];
+            3 as i32 * pattern0_0 + board[43];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[42 as i32 as usize];
+            3 as i32 * pattern0_0 + board[42];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[41 as i32 as usize];
+            3 as i32 * pattern0_0 + board[41];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].dfile_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[58 as i32 as usize];
+        pattern0_0 = board[58];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[57 as i32 as usize];
+            3 as i32 * pattern0_0 + board[57];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[56 as i32 as usize];
+            3 as i32 * pattern0_0 + board[56];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[55 as i32 as usize];
+            3 as i32 * pattern0_0 + board[55];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[54 as i32 as usize];
+            3 as i32 * pattern0_0 + board[54];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[53 as i32 as usize];
+            3 as i32 * pattern0_0 + board[53];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[52 as i32 as usize];
+            3 as i32 * pattern0_0 + board[52];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[51 as i32 as usize];
+            3 as i32 * pattern0_0 + board[51];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].dfile_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[88 as i32 as usize];
+        pattern0_0 = board[88];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[77 as i32 as usize];
+            3 as i32 * pattern0_0 + board[77];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[66 as i32 as usize];
+            3 as i32 * pattern0_0 + board[66];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[55 as i32 as usize];
+            3 as i32 * pattern0_0 + board[55];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[44 as i32 as usize];
+            3 as i32 * pattern0_0 + board[44];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[33 as i32 as usize];
+            3 as i32 * pattern0_0 + board[33];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[22 as i32 as usize];
+            3 as i32 * pattern0_0 + board[22];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[11 as i32 as usize];
+            3 as i32 * pattern0_0 + board[11];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag8_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[81 as i32 as usize];
+        pattern0_0 = board[81];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[72 as i32 as usize];
+            3 as i32 * pattern0_0 + board[72];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[63 as i32 as usize];
+            3 as i32 * pattern0_0 + board[63];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[54 as i32 as usize];
+            3 as i32 * pattern0_0 + board[54];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[45 as i32 as usize];
+            3 as i32 * pattern0_0 + board[45];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[36 as i32 as usize];
+            3 as i32 * pattern0_0 + board[36];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[27 as i32 as usize];
+            3 as i32 * pattern0_0 + board[27];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[18 as i32 as usize];
+            3 as i32 * pattern0_0 + board[18];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag8_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[78 as i32 as usize];
+        pattern0_0 = board[78];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[67 as i32 as usize];
+            3 as i32 * pattern0_0 + board[67];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[56 as i32 as usize];
+            3 as i32 * pattern0_0 + board[56];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[45 as i32 as usize];
+            3 as i32 * pattern0_0 + board[45];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[34 as i32 as usize];
+            3 as i32 * pattern0_0 + board[34];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[23 as i32 as usize];
+            3 as i32 * pattern0_0 + board[23];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[12 as i32 as usize];
+            3 as i32 * pattern0_0 + board[12];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag7_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[87 as i32 as usize];
+        pattern0_0 = board[87];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[76 as i32 as usize];
+            3 as i32 * pattern0_0 + board[76];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[65 as i32 as usize];
+            3 as i32 * pattern0_0 + board[65];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[54 as i32 as usize];
+            3 as i32 * pattern0_0 + board[54];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[43 as i32 as usize];
+            3 as i32 * pattern0_0 + board[43];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[32 as i32 as usize];
+            3 as i32 * pattern0_0 + board[32];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[21 as i32 as usize];
+            3 as i32 * pattern0_0 + board[21];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag7_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[71 as i32 as usize];
+        pattern0_0 = board[71];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[62 as i32 as usize];
+            3 as i32 * pattern0_0 + board[62];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[53 as i32 as usize];
+            3 as i32 * pattern0_0 + board[53];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[44 as i32 as usize];
+            3 as i32 * pattern0_0 + board[44];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[35 as i32 as usize];
+            3 as i32 * pattern0_0 + board[35];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[26 as i32 as usize];
+            3 as i32 * pattern0_0 + board[26];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[17 as i32 as usize];
+            3 as i32 * pattern0_0 + board[17];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag7_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[82 as i32 as usize];
+        pattern0_0 = board[82];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[73 as i32 as usize];
+            3 as i32 * pattern0_0 + board[73];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[64 as i32 as usize];
+            3 as i32 * pattern0_0 + board[64];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[55 as i32 as usize];
+            3 as i32 * pattern0_0 + board[55];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[46 as i32 as usize];
+            3 as i32 * pattern0_0 + board[46];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[37 as i32 as usize];
+            3 as i32 * pattern0_0 + board[37];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[28 as i32 as usize];
+            3 as i32 * pattern0_0 + board[28];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag7_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[68 as i32 as usize];
+        pattern0_0 = board[68];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[57 as i32 as usize];
+            3 as i32 * pattern0_0 + board[57];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[46 as i32 as usize];
+            3 as i32 * pattern0_0 + board[46];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[35 as i32 as usize];
+            3 as i32 * pattern0_0 + board[35];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[24 as i32 as usize];
+            3 as i32 * pattern0_0 + board[24];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[13 as i32 as usize];
+            3 as i32 * pattern0_0 + board[13];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag6_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[86 as i32 as usize];
+        pattern0_0 = board[86];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[75 as i32 as usize];
+            3 as i32 * pattern0_0 + board[75];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[64 as i32 as usize];
+            3 as i32 * pattern0_0 + board[64];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[53 as i32 as usize];
+            3 as i32 * pattern0_0 + board[53];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[42 as i32 as usize];
+            3 as i32 * pattern0_0 + board[42];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[31 as i32 as usize];
+            3 as i32 * pattern0_0 + board[31];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag6_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[61 as i32 as usize];
+        pattern0_0 = board[61];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[52 as i32 as usize];
+            3 as i32 * pattern0_0 + board[52];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[43 as i32 as usize];
+            3 as i32 * pattern0_0 + board[43];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[34 as i32 as usize];
+            3 as i32 * pattern0_0 + board[34];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[25 as i32 as usize];
+            3 as i32 * pattern0_0 + board[25];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[16 as i32 as usize];
+            3 as i32 * pattern0_0 + board[16];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag6_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[83 as i32 as usize];
+        pattern0_0 = board[83];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[74 as i32 as usize];
+            3 as i32 * pattern0_0 + board[74];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[65 as i32 as usize];
+            3 as i32 * pattern0_0 + board[65];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[56 as i32 as usize];
+            3 as i32 * pattern0_0 + board[56];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[47 as i32 as usize];
+            3 as i32 * pattern0_0 + board[47];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[38 as i32 as usize];
+            3 as i32 * pattern0_0 + board[38];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag6_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[58 as i32 as usize];
+        pattern0_0 = board[58];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[47 as i32 as usize];
+            3 as i32 * pattern0_0 + board[47];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[36 as i32 as usize];
+            3 as i32 * pattern0_0 + board[36];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[25 as i32 as usize];
+            3 as i32 * pattern0_0 + board[25];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[14 as i32 as usize];
+            3 as i32 * pattern0_0 + board[14];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag5_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[85 as i32 as usize];
+        pattern0_0 = board[85];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[74 as i32 as usize];
+            3 as i32 * pattern0_0 + board[74];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[63 as i32 as usize];
+            3 as i32 * pattern0_0 + board[63];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[52 as i32 as usize];
+            3 as i32 * pattern0_0 + board[52];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[41 as i32 as usize];
+            3 as i32 * pattern0_0 + board[41];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag5_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[51 as i32 as usize];
+        pattern0_0 = board[51];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[42 as i32 as usize];
+            3 as i32 * pattern0_0 + board[42];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[33 as i32 as usize];
+            3 as i32 * pattern0_0 + board[33];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[24 as i32 as usize];
+            3 as i32 * pattern0_0 + board[24];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[15 as i32 as usize];
+            3 as i32 * pattern0_0 + board[15];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag5_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[84 as i32 as usize];
+        pattern0_0 = board[84];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[75 as i32 as usize];
+            3 as i32 * pattern0_0 + board[75];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[66 as i32 as usize];
+            3 as i32 * pattern0_0 + board[66];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[57 as i32 as usize];
+            3 as i32 * pattern0_0 + board[57];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[48 as i32 as usize];
+            3 as i32 * pattern0_0 + board[48];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag5_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[48 as i32 as usize];
+        pattern0_0 = board[48];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[37 as i32 as usize];
+            3 as i32 * pattern0_0 + board[37];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[26 as i32 as usize];
+            3 as i32 * pattern0_0 + board[26];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[15 as i32 as usize];
+            3 as i32 * pattern0_0 + board[15];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag4_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[84 as i32 as usize];
+        pattern0_0 = board[84];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[73 as i32 as usize];
+            3 as i32 * pattern0_0 + board[73];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[62 as i32 as usize];
+            3 as i32 * pattern0_0 + board[62];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[51 as i32 as usize];
+            3 as i32 * pattern0_0 + board[51];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag4_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[41 as i32 as usize];
+        pattern0_0 = board[41];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[32 as i32 as usize];
+            3 as i32 * pattern0_0 + board[32];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[23 as i32 as usize];
+            3 as i32 * pattern0_0 + board[23];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[14 as i32 as usize];
+            3 as i32 * pattern0_0 + board[14];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag4_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[85 as i32 as usize];
+        pattern0_0 = board[85];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[76 as i32 as usize];
+            3 as i32 * pattern0_0 + board[76];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[67 as i32 as usize];
+            3 as i32 * pattern0_0 + board[67];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[58 as i32 as usize];
+            3 as i32 * pattern0_0 + board[58];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].diag4_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[33 as i32 as usize];
+        pattern0_0 = board[33];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[32 as i32 as usize];
+            3 as i32 * pattern0_0 + board[32];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[31 as i32 as usize];
+            3 as i32 * pattern0_0 + board[31];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[23 as i32 as usize];
+            3 as i32 * pattern0_0 + board[23];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[22 as i32 as usize];
+            3 as i32 * pattern0_0 + board[22];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[21 as i32 as usize];
+            3 as i32 * pattern0_0 + board[21];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[13 as i32 as usize];
+            3 as i32 * pattern0_0 + board[13];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[12 as i32 as usize];
+            3 as i32 * pattern0_0 + board[12];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[11 as i32 as usize];
+            3 as i32 * pattern0_0 + board[11];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].corner33_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[63 as i32 as usize];
+        pattern0_0 = board[63];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[62 as i32 as usize];
+            3 as i32 * pattern0_0 + board[62];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[61 as i32 as usize];
+            3 as i32 * pattern0_0 + board[61];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[73 as i32 as usize];
+            3 as i32 * pattern0_0 + board[73];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[72 as i32 as usize];
+            3 as i32 * pattern0_0 + board[72];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[71 as i32 as usize];
+            3 as i32 * pattern0_0 + board[71];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[83 as i32 as usize];
+            3 as i32 * pattern0_0 + board[83];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[82 as i32 as usize];
+            3 as i32 * pattern0_0 + board[82];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[81 as i32 as usize];
+            3 as i32 * pattern0_0 + board[81];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].corner33_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[36 as i32 as usize];
+        pattern0_0 = board[36];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[37 as i32 as usize];
+            3 as i32 * pattern0_0 + board[37];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[38 as i32 as usize];
+            3 as i32 * pattern0_0 + board[38];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[26 as i32 as usize];
+            3 as i32 * pattern0_0 + board[26];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[27 as i32 as usize];
+            3 as i32 * pattern0_0 + board[27];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[28 as i32 as usize];
+            3 as i32 * pattern0_0 + board[28];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[16 as i32 as usize];
+            3 as i32 * pattern0_0 + board[16];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[17 as i32 as usize];
+            3 as i32 * pattern0_0 + board[17];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[18 as i32 as usize];
+            3 as i32 * pattern0_0 + board[18];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].corner33_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[66 as i32 as usize];
+        pattern0_0 = board[66];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[67 as i32 as usize];
+            3 as i32 * pattern0_0 + board[67];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[68 as i32 as usize];
+            3 as i32 * pattern0_0 + board[68];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[76 as i32 as usize];
+            3 as i32 * pattern0_0 + board[76];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[77 as i32 as usize];
+            3 as i32 * pattern0_0 + board[77];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[78 as i32 as usize];
+            3 as i32 * pattern0_0 + board[78];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[86 as i32 as usize];
+            3 as i32 * pattern0_0 + board[86];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[87 as i32 as usize];
+            3 as i32 * pattern0_0 + board[87];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[88 as i32 as usize];
+            3 as i32 * pattern0_0 + board[88];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].corner33_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[25 as i32 as usize];
+        pattern0_0 = board[25];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[24 as i32 as usize];
+            3 as i32 * pattern0_0 + board[24];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[23 as i32 as usize];
+            3 as i32 * pattern0_0 + board[23];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[22 as i32 as usize];
+            3 as i32 * pattern0_0 + board[22];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[21 as i32 as usize];
+            3 as i32 * pattern0_0 + board[21];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[15 as i32 as usize];
+            3 as i32 * pattern0_0 + board[15];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[14 as i32 as usize];
+            3 as i32 * pattern0_0 + board[14];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[13 as i32 as usize];
+            3 as i32 * pattern0_0 + board[13];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[12 as i32 as usize];
+            3 as i32 * pattern0_0 + board[12];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[11 as i32 as usize];
+            3 as i32 * pattern0_0 + board[11];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].corner52_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[75 as i32 as usize];
+        pattern0_0 = board[75];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[74 as i32 as usize];
+            3 as i32 * pattern0_0 + board[74];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[73 as i32 as usize];
+            3 as i32 * pattern0_0 + board[73];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[72 as i32 as usize];
+            3 as i32 * pattern0_0 + board[72];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[71 as i32 as usize];
+            3 as i32 * pattern0_0 + board[71];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[85 as i32 as usize];
+            3 as i32 * pattern0_0 + board[85];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[84 as i32 as usize];
+            3 as i32 * pattern0_0 + board[84];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[83 as i32 as usize];
+            3 as i32 * pattern0_0 + board[83];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[82 as i32 as usize];
+            3 as i32 * pattern0_0 + board[82];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[81 as i32 as usize];
+            3 as i32 * pattern0_0 + board[81];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].corner52_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[24 as i32 as usize];
+        pattern0_0 = board[24];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[25 as i32 as usize];
+            3 as i32 * pattern0_0 + board[25];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[26 as i32 as usize];
+            3 as i32 * pattern0_0 + board[26];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[27 as i32 as usize];
+            3 as i32 * pattern0_0 + board[27];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[28 as i32 as usize];
+            3 as i32 * pattern0_0 + board[28];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[14 as i32 as usize];
+            3 as i32 * pattern0_0 + board[14];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[15 as i32 as usize];
+            3 as i32 * pattern0_0 + board[15];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[16 as i32 as usize];
+            3 as i32 * pattern0_0 + board[16];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[17 as i32 as usize];
+            3 as i32 * pattern0_0 + board[17];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[18 as i32 as usize];
+            3 as i32 * pattern0_0 + board[18];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].corner52_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[74 as i32 as usize];
+        pattern0_0 = board[74];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[75 as i32 as usize];
+            3 as i32 * pattern0_0 + board[75];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[76 as i32 as usize];
+            3 as i32 * pattern0_0 + board[76];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[77 as i32 as usize];
+            3 as i32 * pattern0_0 + board[77];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[78 as i32 as usize];
+            3 as i32 * pattern0_0 + board[78];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[84 as i32 as usize];
+            3 as i32 * pattern0_0 + board[84];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[85 as i32 as usize];
+            3 as i32 * pattern0_0 + board[85];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[86 as i32 as usize];
+            3 as i32 * pattern0_0 + board[86];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[87 as i32 as usize];
+            3 as i32 * pattern0_0 + board[87];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[88 as i32 as usize];
+            3 as i32 * pattern0_0 + board[88];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].corner52_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[52 as i32 as usize];
+        pattern0_0 = board[52];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[42 as i32 as usize];
+            3 as i32 * pattern0_0 + board[42];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[32 as i32 as usize];
+            3 as i32 * pattern0_0 + board[32];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[22 as i32 as usize];
+            3 as i32 * pattern0_0 + board[22];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[12 as i32 as usize];
+            3 as i32 * pattern0_0 + board[12];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[51 as i32 as usize];
+            3 as i32 * pattern0_0 + board[51];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[41 as i32 as usize];
+            3 as i32 * pattern0_0 + board[41];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[31 as i32 as usize];
+            3 as i32 * pattern0_0 + board[31];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[21 as i32 as usize];
+            3 as i32 * pattern0_0 + board[21];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[11 as i32 as usize];
+            3 as i32 * pattern0_0 + board[11];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].corner52_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[57 as i32 as usize];
+        pattern0_0 = board[57];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[47 as i32 as usize];
+            3 as i32 * pattern0_0 + board[47];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[37 as i32 as usize];
+            3 as i32 * pattern0_0 + board[37];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[27 as i32 as usize];
+            3 as i32 * pattern0_0 + board[27];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[17 as i32 as usize];
+            3 as i32 * pattern0_0 + board[17];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[58 as i32 as usize];
+            3 as i32 * pattern0_0 + board[58];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[48 as i32 as usize];
+            3 as i32 * pattern0_0 + board[48];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[38 as i32 as usize];
+            3 as i32 * pattern0_0 + board[38];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[28 as i32 as usize];
+            3 as i32 * pattern0_0 + board[28];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[18 as i32 as usize];
+            3 as i32 * pattern0_0 + board[18];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].corner52_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[42 as i32 as usize];
+        pattern0_0 = board[42];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[52 as i32 as usize];
+            3 as i32 * pattern0_0 + board[52];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[62 as i32 as usize];
+            3 as i32 * pattern0_0 + board[62];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[72 as i32 as usize];
+            3 as i32 * pattern0_0 + board[72];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[82 as i32 as usize];
+            3 as i32 * pattern0_0 + board[82];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[41 as i32 as usize];
+            3 as i32 * pattern0_0 + board[41];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[51 as i32 as usize];
+            3 as i32 * pattern0_0 + board[51];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[61 as i32 as usize];
+            3 as i32 * pattern0_0 + board[61];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[71 as i32 as usize];
+            3 as i32 * pattern0_0 + board[71];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[81 as i32 as usize];
+            3 as i32 * pattern0_0 + board[81];
         score =
             (score as i32 +
                 *set[eval_phase as
                     usize].corner52_last.offset(-pattern0_0 as isize) as
                     i32) as i16;
-        pattern0_0 = board[47 as i32 as usize];
+        pattern0_0 = board[47];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[57 as i32 as usize];
+            3 as i32 * pattern0_0 + board[57];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[67 as i32 as usize];
+            3 as i32 * pattern0_0 + board[67];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[77 as i32 as usize];
+            3 as i32 * pattern0_0 + board[77];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[87 as i32 as usize];
+            3 as i32 * pattern0_0 + board[87];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[48 as i32 as usize];
+            3 as i32 * pattern0_0 + board[48];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[58 as i32 as usize];
+            3 as i32 * pattern0_0 + board[58];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[68 as i32 as usize];
+            3 as i32 * pattern0_0 + board[68];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[78 as i32 as usize];
+            3 as i32 * pattern0_0 + board[78];
         pattern0_0 =
-            3 as i32 * pattern0_0 + board[88 as i32 as usize];
+            3 as i32 * pattern0_0 + board[88];
         score =
             (score as i32 +
                 *set[eval_phase as
@@ -1827,34 +1827,34 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
     }
     i = 0 as i32;
     while i < 8 as i32 {
-        hit[0 as i32 as usize][i as usize] += 1;
-        hit[i as usize][0 as i32 as usize] += 1;
-        hit[7 as i32 as usize][i as usize] += 1;
-        hit[i as usize][7 as i32 as usize] += 1;
+        hit[0][i as usize] += 1;
+        hit[i as usize][0] += 1;
+        hit[7][i as usize] += 1;
+        hit[i as usize][7] += 1;
         i += 1
     }
     i = 0 as i32;
     while i < 8 as i32 {
-        hit[1 as i32 as usize][i as usize] += 1;
-        hit[i as usize][1 as i32 as usize] += 1;
-        hit[6 as i32 as usize][i as usize] += 1;
-        hit[i as usize][6 as i32 as usize] += 1;
+        hit[1][i as usize] += 1;
+        hit[i as usize][1] += 1;
+        hit[6][i as usize] += 1;
+        hit[i as usize][6] += 1;
         i += 1
     }
     i = 0 as i32;
     while i < 8 as i32 {
-        hit[2 as i32 as usize][i as usize] += 1;
-        hit[i as usize][2 as i32 as usize] += 1;
-        hit[5 as i32 as usize][i as usize] += 1;
-        hit[i as usize][5 as i32 as usize] += 1;
+        hit[2][i as usize] += 1;
+        hit[i as usize][2] += 1;
+        hit[5][i as usize] += 1;
+        hit[i as usize][5] += 1;
         i += 1
     }
     i = 0 as i32;
     while i < 8 as i32 {
-        hit[3 as i32 as usize][i as usize] += 1;
-        hit[i as usize][3 as i32 as usize] += 1;
-        hit[4 as i32 as usize][i as usize] += 1;
-        hit[i as usize][4 as i32 as usize] += 1;
+        hit[3][i as usize] += 1;
+        hit[i as usize][3] += 1;
+        hit[4][i as usize] += 1;
+        hit[i as usize][4] += 1;
         i += 1
     }
     i = 0 as i32;
@@ -1930,13 +1930,13 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
             += 1;
         i += 1
     }
-    hit[1 as i32 as usize][1 as i32 as usize] +=
+    hit[1][1] +=
         2 as i32;
-    hit[1 as i32 as usize][6 as i32 as usize] +=
+    hit[1][6] +=
         2 as i32;
-    hit[6 as i32 as usize][1 as i32 as usize] +=
+    hit[6][1] +=
         2 as i32;
-    hit[6 as i32 as usize][6 as i32 as usize] +=
+    hit[6][6] +=
         2 as i32;
     i = 0 as i32;
     while i < 8 as i32 {
@@ -1956,27 +1956,27 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         j = 0 as i32;
         while j < 8 as i32 {
             if row[j as usize] == 0 as i32 {
-                result += value[0 as i32 as usize][j as usize]
+                result += value[0][j as usize]
             } else if row[j as usize] == 2 as i32 {
-                result -= value[0 as i32 as usize][j as usize]
+                result -= value[0][j as usize]
             }
             j += 1
         }
-        if row[8 as i32 as usize] == 0 as i32 {
+        if row[8] == 0 as i32 {
             result +=
-                value[1 as i32 as usize][1 as i32 as usize]
-        } else if row[8 as i32 as usize] == 2 as i32 {
+                value[1][1]
+        } else if row[8] == 2 as i32 {
             result -=
-                value[1 as i32 as usize][1 as i32 as usize]
+                value[1][1]
         }
-        if row[9 as i32 as usize] == 0 as i32 {
+        if row[9] == 0 as i32 {
             result +=
-                value[1 as i32 as usize][6 as i32 as usize]
-        } else if row[9 as i32 as usize] == 2 as i32 {
+                value[1][6]
+        } else if row[9] == 2 as i32 {
             result -=
-                value[1 as i32 as usize][6 as i32 as usize]
+                value[1][6]
         }
-        *set[60 as i32 as usize].afile2x.offset(i as isize) =
+        *set[60].afile2x.offset(i as isize) =
             floor(result * 128.0f64 + 0.5f64) as i16;
         result = 0.0f64;
         j = 0 as i32;
@@ -1994,7 +1994,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
             }
             j += 1
         }
-        *set[60 as i32 as usize].corner52.offset(i as isize) =
+        *set[60].corner52.offset(i as isize) =
             floor(result * 128.0f64 + 0.5f64) as i16;
         if i < 19683 as i32 {
             result = 0.0f64;
@@ -2013,7 +2013,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
                 }
                 j += 1
             }
-            *set[60 as i32 as usize].corner33.offset(i as isize) =
+            *set[60].corner33.offset(i as isize) =
                 floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 6561 as i32 {
@@ -2021,37 +2021,37 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
             j = 0 as i32;
             while j < 8 as i32 {
                 if row[j as usize] == 0 as i32 {
-                    result += value[1 as i32 as usize][j as usize]
+                    result += value[1][j as usize]
                 } else if row[j as usize] == 2 as i32 {
-                    result -= value[1 as i32 as usize][j as usize]
+                    result -= value[1][j as usize]
                 }
                 j += 1
             }
-            *set[60 as i32 as usize].bfile.offset(i as isize) =
+            *set[60].bfile.offset(i as isize) =
                 floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0 as i32;
             while j < 8 as i32 {
                 if row[j as usize] == 0 as i32 {
-                    result += value[2 as i32 as usize][j as usize]
+                    result += value[2][j as usize]
                 } else if row[j as usize] == 2 as i32 {
-                    result -= value[2 as i32 as usize][j as usize]
+                    result -= value[2][j as usize]
                 }
                 j += 1
             }
-            *set[60 as i32 as usize].cfile.offset(i as isize) =
+            *set[60].cfile.offset(i as isize) =
                 floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0 as i32;
             while j < 8 as i32 {
                 if row[j as usize] == 0 as i32 {
-                    result += value[3 as i32 as usize][j as usize]
+                    result += value[3][j as usize]
                 } else if row[j as usize] == 2 as i32 {
-                    result -= value[3 as i32 as usize][j as usize]
+                    result -= value[3][j as usize]
                 }
                 j += 1
             }
-            *set[60 as i32 as usize].dfile.offset(i as isize) =
+            *set[60].dfile.offset(i as isize) =
                 floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0 as i32;
@@ -2063,7 +2063,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
                 }
                 j += 1
             }
-            *set[60 as i32 as usize].diag8.offset(i as isize) =
+            *set[60].diag8.offset(i as isize) =
                 floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 2187 as i32 {
@@ -2079,7 +2079,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
                 }
                 j += 1
             }
-            *set[60 as i32 as usize].diag7.offset(i as isize) =
+            *set[60].diag7.offset(i as isize) =
                 floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 729 as i32 {
@@ -2095,7 +2095,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
                 }
                 j += 1
             }
-            *set[60 as i32 as usize].diag6.offset(i as isize) =
+            *set[60].diag6.offset(i as isize) =
                 floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 243 as i32 {
@@ -2111,7 +2111,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
                 }
                 j += 1
             }
-            *set[60 as i32 as usize].diag5.offset(i as isize) =
+            *set[60].diag5.offset(i as isize) =
                 floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 81 as i32 {
@@ -2127,7 +2127,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
                 }
                 j += 1
             }
-            *set[60 as i32 as usize].diag4.offset(i as isize) =
+            *set[60].diag4.offset(i as isize) =
                 floor(result * 128.0f64 + 0.5f64) as i16
         }
         /* Next configuration */

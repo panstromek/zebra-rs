@@ -93,7 +93,7 @@ mod tests {
             .args(arguments.split_whitespace())
             .output()
             .unwrap();
-        assert!(String::from_utf8_lossy(&output.stderr).trim().is_empty());
+        assert_eq!(String::from_utf8_lossy(&output.stderr).trim() , "");
         // TODO maybe assert stdout too?? for echo tests for example
         assert_log_file(snapshot_path);
     }

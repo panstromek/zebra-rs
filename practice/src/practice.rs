@@ -95,7 +95,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let mut move_list: [i32; 61] = [0; 61];
     let mut row: [i32; 61] = [0; 61];
     if argc == 2 as i32 {
-        book_name = *argv.offset(1 as i32 as isize)
+        book_name = *argv.offset(1)
     } else if argc == 1 as i32 {
         book_name =
             strdup(b"book.bin\x00" as *const u8 as *const i8)
@@ -198,18 +198,18 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 } else {
                     generate_all(side_to_move);
                     move_0 =
-                        move_string[0 as i32 as usize] as i32
+                        move_string[0] as i32
                             - 'a' as i32 + 1 as i32 +
                             10 as i32 *
-                                (move_string[1 as i32 as usize] as
+                                (move_string[1] as
                                     i32 - '0' as i32);
-                    if move_string[0 as i32 as usize] as i32
+                    if move_string[0] as i32
                         >= 'a' as i32 &&
-                        move_string[0 as i32 as usize] as
+                        move_string[0] as
                             i32 <= 'h' as i32 &&
-                        move_string[1 as i32 as usize] as
+                        move_string[1] as
                             i32 >= '1' as i32 &&
-                        move_string[1 as i32 as usize] as
+                        move_string[1] as
                             i32 <= '8' as i32 &&
                         valid_move(move_0, side_to_move) != 0 {
                         old_stm[disks_played as usize] = side_to_move;

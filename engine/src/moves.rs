@@ -166,23 +166,19 @@ pub unsafe fn make_move(side_to_move: i32,
     flip_count[disks_played as usize] = flipped;
     board[move_0 as usize] = side_to_move;
     if side_to_move == 0 as i32 {
-        piece_count[0 as i32 as
-            usize][(disks_played + 1 as i32) as usize] =
-            piece_count[0 as i32 as usize][disks_played as usize] +
+        piece_count[0][(disks_played + 1 as i32) as usize] =
+            piece_count[0][disks_played as usize] +
                 flipped + 1 as i32;
-        piece_count[2 as i32 as
-            usize][(disks_played + 1 as i32) as usize] =
-            piece_count[2 as i32 as usize][disks_played as usize] -
+        piece_count[2][(disks_played + 1 as i32) as usize] =
+            piece_count[2][disks_played as usize] -
                 flipped
     } else {
         /* side_to_move == WHITESQ */
-        piece_count[2 as i32 as
-            usize][(disks_played + 1 as i32) as usize] =
-            piece_count[2 as i32 as usize][disks_played as usize] +
+        piece_count[2][(disks_played + 1 as i32) as usize] =
+            piece_count[2][disks_played as usize] +
                 flipped + 1 as i32;
-        piece_count[0 as i32 as
-            usize][(disks_played + 1 as i32) as usize] =
-            piece_count[0 as i32 as usize][disks_played as usize] -
+        piece_count[0][(disks_played + 1 as i32) as usize] =
+            piece_count[0][disks_played as usize] -
                 flipped
     }
     disks_played += 1;
@@ -333,23 +329,19 @@ pub unsafe fn make_move_no_hash(side_to_move: i32,
     flip_count[disks_played as usize] = flipped;
     board[move_0 as usize] = side_to_move;
     if side_to_move == 0 as i32 {
-        piece_count[0 as i32 as
-            usize][(disks_played + 1 as i32) as usize] =
-            piece_count[0 as i32 as usize][disks_played as usize] +
+        piece_count[0][(disks_played + 1 as i32) as usize] =
+            piece_count[0][disks_played as usize] +
                 flipped + 1 as i32;
-        piece_count[2 as i32 as
-            usize][(disks_played + 1 as i32) as usize] =
-            piece_count[2 as i32 as usize][disks_played as usize] -
+        piece_count[2][(disks_played + 1 as i32) as usize] =
+            piece_count[2][disks_played as usize] -
                 flipped
     } else {
         /* side_to_move == WHITESQ */
-        piece_count[2 as i32 as
-            usize][(disks_played + 1 as i32) as usize] =
-            piece_count[2 as i32 as usize][disks_played as usize] +
+        piece_count[2][(disks_played + 1 as i32) as usize] =
+            piece_count[2][disks_played as usize] +
                 flipped + 1 as i32;
-        piece_count[0 as i32 as
-            usize][(disks_played + 1 as i32) as usize] =
-            piece_count[0 as i32 as usize][disks_played as usize] -
+        piece_count[0][(disks_played + 1 as i32) as usize] =
+            piece_count[0][disks_played as usize] -
                 flipped
     }
     disks_played += 1;

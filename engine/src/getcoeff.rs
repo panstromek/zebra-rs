@@ -140,15 +140,13 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].afile2x.offset(j as isize);
             *fresh2 =
                 (*fresh2 as f64 +
-                    *set[60 as i32 as
-                        usize].afile2x.offset(j as isize) as i32
+                    *set[60].afile2x.offset(j as isize) as i32
                         as f64 * disc_adjust) as i16;
             let ref mut fresh3 =
                 *set[stage[i as usize] as usize].corner52.offset(j as isize);
             *fresh3 =
                 (*fresh3 as f64 +
-                    *set[60 as i32 as
-                        usize].corner52.offset(j as isize) as
+                    *set[60].corner52.offset(j as isize) as
                         i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -159,8 +157,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].corner33.offset(j as isize);
             *fresh4 =
                 (*fresh4 as f64 +
-                    *set[60 as i32 as
-                        usize].corner33.offset(j as isize) as
+                    *set[60].corner33.offset(j as isize) as
                         i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -171,28 +168,28 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].bfile.offset(j as isize);
             *fresh5 =
                 (*fresh5 as f64 +
-                    *set[60 as i32 as usize].bfile.offset(j as isize)
+                    *set[60].bfile.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             let ref mut fresh6 =
                 *set[stage[i as usize] as usize].cfile.offset(j as isize);
             *fresh6 =
                 (*fresh6 as f64 +
-                    *set[60 as i32 as usize].cfile.offset(j as isize)
+                    *set[60].cfile.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             let ref mut fresh7 =
                 *set[stage[i as usize] as usize].dfile.offset(j as isize);
             *fresh7 =
                 (*fresh7 as f64 +
-                    *set[60 as i32 as usize].dfile.offset(j as isize)
+                    *set[60].dfile.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             let ref mut fresh8 =
                 *set[stage[i as usize] as usize].diag8.offset(j as isize);
             *fresh8 =
                 (*fresh8 as f64 +
-                    *set[60 as i32 as usize].diag8.offset(j as isize)
+                    *set[60].diag8.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -203,7 +200,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].diag7.offset(j as isize);
             *fresh9 =
                 (*fresh9 as f64 +
-                    *set[60 as i32 as usize].diag7.offset(j as isize)
+                    *set[60].diag7.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -214,7 +211,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].diag6.offset(j as isize);
             *fresh10 =
                 (*fresh10 as f64 +
-                    *set[60 as i32 as usize].diag6.offset(j as isize)
+                    *set[60].diag6.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -225,7 +222,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].diag5.offset(j as isize);
             *fresh11 =
                 (*fresh11 as f64 +
-                    *set[60 as i32 as usize].diag5.offset(j as isize)
+                    *set[60].diag5.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -236,7 +233,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].diag4.offset(j as isize);
             *fresh12 =
                 (*fresh12 as f64 +
-                    *set[60 as i32 as usize].diag4.offset(j as isize)
+                    *set[60].diag4.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -265,44 +262,44 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
             }
             /* Bonus for having corners.  The "0.5 *" is because corners are part
             of two A-file+2X patterns. */
-            if row[0 as i32 as usize] == 0 as i32 {
+            if row[0] == 0 as i32 {
                 adjust =
                     (adjust as f64 +
                         0.5f64 * 128.0f64 * corner_adjust) as i32
-            } else if row[0 as i32 as usize] == 2 as i32 {
+            } else if row[0] == 2 as i32 {
                 adjust =
                     (adjust as f64 -
                         0.5f64 * 128.0f64 * corner_adjust) as i32
             }
-            if row[7 as i32 as usize] == 0 as i32 {
+            if row[7] == 0 as i32 {
                 adjust =
                     (adjust as f64 +
                         0.5f64 * 128.0f64 * corner_adjust) as i32
-            } else if row[7 as i32 as usize] == 2 as i32 {
+            } else if row[7] == 2 as i32 {
                 adjust =
                     (adjust as f64 -
                         0.5f64 * 128.0f64 * corner_adjust) as i32
             }
             /* Bonus for having X-squares when the adjacent corners are empty.
             Scaling by 0.5 applies here too. */
-            if row[8 as i32 as usize] == 0 as i32 &&
-                row[0 as i32 as usize] == 1 as i32 {
+            if row[8] == 0 as i32 &&
+                row[0] == 1 as i32 {
                 adjust =
                     (adjust as f64 + 0.5f64 * 128.0f64 * x_adjust)
                         as i32
-            } else if row[8 as i32 as usize] == 2 as i32 &&
-                row[0 as i32 as usize] == 1 as i32 {
+            } else if row[8] == 2 as i32 &&
+                row[0] == 1 as i32 {
                 adjust =
                     (adjust as f64 - 0.5f64 * 128.0f64 * x_adjust)
                         as i32
             }
-            if row[9 as i32 as usize] == 0 as i32 &&
-                row[7 as i32 as usize] == 1 as i32 {
+            if row[9] == 0 as i32 &&
+                row[7] == 1 as i32 {
                 adjust =
                     (adjust as f64 + 0.5f64 * 128.0f64 * x_adjust)
                         as i32
-            } else if row[9 as i32 as usize] == 2 as i32 &&
-                row[7 as i32 as usize] == 1 as i32 {
+            } else if row[9] == 2 as i32 &&
+                row[7] == 1 as i32 {
                 adjust =
                     (adjust as f64 - 0.5f64 * 128.0f64 * x_adjust)
                         as i32
@@ -485,9 +482,9 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32) {
             ((weight1 * set[prev as usize].parity as i32 +
                 weight2 * set[next as usize].parity as i32) /
                 total_weight) as i16;
-        set[index as usize].parity_constant[0 as i32 as usize] =
+        set[index as usize].parity_constant[0] =
             set[index as usize].constant;
-        set[index as usize].parity_constant[1 as i32 as usize] =
+        set[index as usize].parity_constant[1] =
             (set[index as usize].constant as i32 +
                 set[index as usize].parity as i32) as i16;
         allocate_set::<FE>(index);
@@ -526,27 +523,27 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32) {
                        set[next as usize].corner52, weight2);
     }
     set[index as usize].afile2x_last =
-        set[index as usize].afile2x.offset(59048 as i32 as isize);
+        set[index as usize].afile2x.offset(59048);
     set[index as usize].bfile_last =
-        set[index as usize].bfile.offset(6560 as i32 as isize);
+        set[index as usize].bfile.offset(6560);
     set[index as usize].cfile_last =
-        set[index as usize].cfile.offset(6560 as i32 as isize);
+        set[index as usize].cfile.offset(6560);
     set[index as usize].dfile_last =
-        set[index as usize].dfile.offset(6560 as i32 as isize);
+        set[index as usize].dfile.offset(6560);
     set[index as usize].diag8_last =
-        set[index as usize].diag8.offset(6560 as i32 as isize);
+        set[index as usize].diag8.offset(6560);
     set[index as usize].diag7_last =
-        set[index as usize].diag7.offset(2186 as i32 as isize);
+        set[index as usize].diag7.offset(2186);
     set[index as usize].diag6_last =
-        set[index as usize].diag6.offset(728 as i32 as isize);
+        set[index as usize].diag6.offset(728);
     set[index as usize].diag5_last =
-        set[index as usize].diag5.offset(242 as i32 as isize);
+        set[index as usize].diag5.offset(242);
     set[index as usize].diag4_last =
-        set[index as usize].diag4.offset(80 as i32 as isize);
+        set[index as usize].diag4.offset(80);
     set[index as usize].corner33_last =
-        set[index as usize].corner33.offset(19682 as i32 as isize);
+        set[index as usize].corner33.offset(19682);
     set[index as usize].corner52_last =
-        set[index as usize].corner52.offset(59048 as i32 as isize);
+        set[index as usize].corner52.offset(59048);
     set[index as usize].loaded = 1 as i32;
 }
 
@@ -563,13 +560,13 @@ pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32)
     let mut eval_phase: i32 = 0;
     let mut score: i16 = 0;
     /* Any player wiped out? Game over then... */
-    if piece_count[0 as i32 as usize][disks_played as usize] ==
+    if piece_count[0][disks_played as usize] ==
         0 as i32 {
         if side_to_move == 0 as i32 {
             return -(29000 as i32 + 64 as i32)
         } else { return 29000 as i32 + 64 as i32 }
     } else {
-        if piece_count[2 as i32 as usize][disks_played as usize] ==
+        if piece_count[2][disks_played as usize] ==
             0 as i32 {
             if side_to_move == 0 as i32 {
                 return 29000 as i32 + 64 as i32
@@ -595,8 +592,8 @@ pub unsafe fn post_init_coeffs() {
            (which may be either from the tuning or an intermediate stage).
         */
     let mut i = 0 as i32;
-    while i < stage[0 as i32 as usize] {
-        eval_map[i as usize] = stage[0 as i32 as usize];
+    while i < stage[0] {
+        eval_map[i as usize] = stage[0];
         i += 1
     }
     i = 0 as i32;
@@ -606,7 +603,7 @@ pub unsafe fn post_init_coeffs() {
     }
     let mut subsequent_stage = 60 as i32;
     i = subsequent_stage;
-    while i >= stage[0 as i32 as usize] {
+    while i >= stage[0] {
         if eval_map[i as usize] == i {
             subsequent_stage = i
         } else if i == subsequent_stage - 2 as i32 {
@@ -947,15 +944,15 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
     i = 0 as i32;
     while i < 19683 as i32 {
         mirror_pattern =
-            row[0 as i32 as usize] +
-                3 as i32 * row[3 as i32 as usize] +
-                9 as i32 * row[6 as i32 as usize] +
-                27 as i32 * row[1 as i32 as usize] +
-                81 as i32 * row[4 as i32 as usize] +
-                243 as i32 * row[7 as i32 as usize] +
-                729 as i32 * row[2 as i32 as usize] +
-                2187 as i32 * row[5 as i32 as usize] +
-                6561 as i32 * row[8 as i32 as usize];
+            row[0] +
+                3 as i32 * row[3] +
+                9 as i32 * row[6] +
+                27 as i32 * row[1] +
+                81 as i32 * row[4] +
+                243 as i32 * row[7] +
+                729 as i32 * row[2] +
+                2187 as i32 * row[5] +
+                6561 as i32 * row[8];
         *map_mirror33.offset(i as isize) =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
@@ -984,10 +981,10 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
             (next_word() as i32 / 4 as i32) as
                 i16;
         set[stage[i as usize] as
-            usize].parity_constant[0 as i32 as usize] =
+            usize].parity_constant[0] =
             set[stage[i as usize] as usize].constant;
         set[stage[i as usize] as
-            usize].parity_constant[1 as i32 as usize] =
+            usize].parity_constant[1] =
             (set[stage[i as usize] as usize].constant as i32 +
                 set[stage[i as usize] as usize].parity as i32) as
                 i16;
@@ -1047,9 +1044,9 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
         curr_stage = stage[i as usize];
         if i == 0 as i32 {
             j = 0 as i32;
-            while j < stage[0 as i32 as usize] {
-                set[j as usize].prev = stage[0 as i32 as usize];
-                set[j as usize].next = stage[0 as i32 as usize];
+            while j < stage[0] {
+                set[j as usize].prev = stage[0];
+                set[j as usize].next = stage[0];
                 j += 1
             }
         } else {
@@ -1072,7 +1069,7 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
         set[j as usize].next = 60 as i32;
         j += 1
     }
-    set[60 as i32 as usize].permanent = 1 as i32;
+    set[60].permanent = 1 as i32;
     allocate_set::<FE>(60 as i32);
     /* Read the pattern values */
     unpack_coeffs::<FE, _>(&mut next_word);
@@ -1082,15 +1079,15 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
 pub unsafe fn init_coeffs_calculate_patterns() {
     /* Calculate the patterns which correspond to the board being filled */
     terminal_patterns(&mut set);
-    set[60 as i32 as usize].constant =
+    set[60].constant =
         0 as i32 as i16;
-    set[60 as i32 as usize].parity =
+    set[60].parity =
         0 as i32 as i16;
-    set[60 as i32 as usize].parity_constant[0 as i32 as usize]
-        = set[60 as i32 as usize].constant;
-    set[60 as i32 as usize].parity_constant[1 as i32 as usize]
+    set[60].parity_constant[0]
+        = set[60].constant;
+    set[60].parity_constant[1]
         =
-        (set[60 as i32 as usize].constant as i32 +
-            set[60 as i32 as usize].parity as i32) as
+        (set[60].constant as i32 +
+            set[60].parity as i32) as
             i16;
 }

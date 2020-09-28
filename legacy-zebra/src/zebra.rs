@@ -94,18 +94,18 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 help = 1 as i32;
                 current_block_107 = 2668756484064249700;
             } else {
-                skill[0 as i32 as usize] =
+                skill[0] =
                     atoi(*argv.offset(arg_index as isize));
-                if skill[0 as i32 as usize] > 0 as i32 {
+                if skill[0] > 0 as i32 {
                     if arg_index + 2 as i32 >= argc {
                         help = 1 as i32;
                         current_block_107 = 2668756484064249700;
                     } else {
                         arg_index += 1;
-                        exact_skill[0 as i32 as usize] =
+                        exact_skill[0] =
                             atoi(*argv.offset(arg_index as isize));
                         arg_index += 1;
-                        wld_skill[0 as i32 as usize] =
+                        wld_skill[0] =
                             atoi(*argv.offset(arg_index as isize));
                         current_block_107 = 15004371738079956865;
                     }
@@ -118,20 +118,20 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                             help = 1 as i32;
                             current_block_107 = 2668756484064249700;
                         } else {
-                            skill[2 as i32 as usize] =
+                            skill[2] =
                                 atoi(*argv.offset(arg_index as isize));
-                            if skill[2 as i32 as usize] >
+                            if skill[2] >
                                    0 as i32 {
                                 if arg_index + 2 as i32 >= argc {
                                     help = 1 as i32;
                                     current_block_107 = 2668756484064249700;
                                 } else {
                                     arg_index += 1;
-                                    exact_skill[2 as i32 as usize] =
+                                    exact_skill[2] =
                                         atoi(*argv.offset(arg_index as
                                                               isize));
                                     arg_index += 1;
-                                    wld_skill[2 as i32 as usize] =
+                                    wld_skill[2] =
                                         atoi(*argv.offset(arg_index as
                                                               isize));
                                     current_block_107 = 10485226111480991281;
@@ -241,16 +241,16 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 current_block_107 = 2668756484064249700;
             } else {
                 arg_index += 1;
-                player_time[0 as i32 as usize] =
+                player_time[0] =
                     atoi(*argv.offset(arg_index as isize)) as f64;
                 arg_index += 1;
-                player_increment[0 as i32 as usize] =
+                player_increment[0] =
                     atoi(*argv.offset(arg_index as isize)) as f64;
                 arg_index += 1;
-                player_time[2 as i32 as usize] =
+                player_time[2] =
                     atoi(*argv.offset(arg_index as isize)) as f64;
                 arg_index += 1;
-                player_increment[2 as i32 as usize] =
+                player_increment[2] =
                     atoi(*argv.offset(arg_index as isize)) as f64;
                 use_timer = 1 as i32;
                 current_block_107 = 10485226111480991281;
@@ -588,13 +588,13 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         my_srandom(timer as i32);
     } else { my_srandom(1 as i32); }
     if tournament == 0 && run_script == 0 {
-        while skill[0 as i32 as usize] < 0 as i32 {
+        while skill[0] < 0 as i32 {
             printf(b"Black parameters: \x00" as *const u8 as
                        *const i8);
             scanf(b"%d\x00" as *const u8 as *const i8,
                   &mut *skill.as_mut_ptr().offset(0 as i32 as isize)
                       as *mut i32);
-            if skill[0 as i32 as usize] > 0 as i32 {
+            if skill[0] > 0 as i32 {
                 scanf(b"%d %d\x00" as *const u8 as *const i8,
                       &mut *exact_skill.as_mut_ptr().offset(0 as i32
                                                                 as isize) as
@@ -604,19 +604,17 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                           *mut i32);
             }
         }
-        while skill[2 as i32 as usize] < 0 as i32 {
+        while skill[2] < 0 as i32 {
             printf(b"White parameters: \x00" as *const u8 as
                        *const i8);
             scanf(b"%d\x00" as *const u8 as *const i8,
-                  &mut *skill.as_mut_ptr().offset(2 as i32 as isize)
+                  &mut *skill.as_mut_ptr().offset(2)
                       as *mut i32);
-            if skill[2 as i32 as usize] > 0 as i32 {
+            if skill[2] > 0 as i32 {
                 scanf(b"%d %d\x00" as *const u8 as *const i8,
-                      &mut *exact_skill.as_mut_ptr().offset(2 as i32
-                                                                as isize) as
+                      &mut *exact_skill.as_mut_ptr().offset(2) as
                           *mut i32,
-                      &mut *wld_skill.as_mut_ptr().offset(2 as i32 as
-                                                              isize) as
+                      &mut *wld_skill.as_mut_ptr().offset(2) as
                           *mut i32);
             }
         }
@@ -655,8 +653,8 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
         score[i as usize] = 0.0f64;
         i += 1
     }
-    color_score[2 as i32 as usize] = 0.0f64;
-    color_score[0 as i32 as usize] = color_score[2 as i32 as usize];
+    color_score[2] = 0.0f64;
+    color_score[0] = color_score[2];
 
     let mut i = 0 as i32;
     let mut j = 0 as i32;
@@ -664,38 +662,38 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
     while i < tournament_levels_ {
         j = 0 as i32;
         while j < tournament_levels_ {
-            skill[0 as i32 as usize] =
-                tournament_skill[i as usize][0 as i32 as usize];
-            exact_skill[0 as i32 as usize] =
-                tournament_skill[i as usize][1 as i32 as usize];
-            wld_skill[0 as i32 as usize] =
-                tournament_skill[i as usize][2 as i32 as usize];
-            skill[2 as i32 as usize] =
-                tournament_skill[j as usize][0 as i32 as usize];
-            exact_skill[2 as i32 as usize] =
-                tournament_skill[j as usize][1 as i32 as usize];
-            wld_skill[2 as i32 as usize] =
-                tournament_skill[j as usize][2 as i32 as usize];
+            skill[0] =
+                tournament_skill[i as usize][0];
+            exact_skill[0] =
+                tournament_skill[i as usize][1];
+            wld_skill[0] =
+                tournament_skill[i as usize][2];
+            skill[2] =
+                tournament_skill[j as usize][0];
+            exact_skill[2] =
+                tournament_skill[j as usize][1];
+            wld_skill[2] =
+                tournament_skill[j as usize][2];
             play_game(0 as *const i8, move_sequence,
                       0 as *const i8, 1 as i32, log_file_name_, use_thor_, use_learning_);
             add_counter(&mut tourney_nodes, &mut total_nodes);
             tourney_time += total_time;
-            result[i as usize][j as usize][0 as i32 as usize] =
+            result[i as usize][j as usize][0] =
                 disc_count(0 as i32, &board);
-            result[i as usize][j as usize][2 as i32 as usize] =
+            result[i as usize][j as usize][2] =
                 disc_count(2 as i32, &board);
             if disc_count(0 as i32, &board) > disc_count(2 as i32, &board) {
                 score[i as usize] += 1.0f64;
-                color_score[0 as i32 as usize] += 1.0f64
+                color_score[0] += 1.0f64
             } else if disc_count(0 as i32, &board) ==
                           disc_count(2 as i32, &board) {
                 score[i as usize] += 0.5f64;
                 score[j as usize] += 0.5f64;
-                color_score[0 as i32 as usize] += 0.5f64;
-                color_score[2 as i32 as usize] += 0.5f64
+                color_score[0] += 0.5f64;
+                color_score[2] += 0.5f64
             } else {
                 score[j as usize] += 1.0f64;
-                color_score[2 as i32 as usize] += 1.0f64
+                color_score[2] += 1.0f64
             }
             j += 1
         }
@@ -713,9 +711,9 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
     while i < tournament_levels_ {
         printf(b"  Player %2d: %d-%d-%d\n\x00" as *const u8 as
                    *const i8, i + 1 as i32,
-               tournament_skill_[i as usize][0 as i32 as usize],
-               tournament_skill_[i as usize][1 as i32 as usize],
-               tournament_skill_[i as usize][2 as i32 as usize]);
+               tournament_skill_[i as usize][0],
+               tournament_skill_[i as usize][1],
+               tournament_skill_[i as usize][2]);
         i += 1
     }
     printf(b"\n       \x00" as *const u8 as *const i8);
@@ -734,8 +732,8 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
         j = 0 as i32;
         while j < tournament_levels_ {
             printf(b"%2d-%2d  \x00" as *const u8 as *const i8,
-                   result[i as usize][j as usize][0 as i32 as usize],
-                   result[i as usize][j as usize][2 as i32 as usize]);
+                   result[i as usize][j as usize][0],
+                   result[i as usize][j as usize][2]);
             j += 1
         }
         printf(b"  %4.1f\n\x00" as *const u8 as *const i8,
@@ -744,9 +742,9 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
     }
     puts(b"\x00" as *const u8 as *const i8);
     printf(b"Black score: %.1f\n\x00" as *const u8 as *const i8,
-           color_score[0 as i32 as usize]);
+           color_score[0]);
     printf(b"White score: %.1f\n\x00" as *const u8 as *const i8,
-           color_score[2 as i32 as usize]);
+           color_score[2]);
     puts(b"\x00" as *const u8 as *const i8);
 }
 
@@ -1166,9 +1164,9 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             if echo != 0 {
                 set_move_list(black_moves.as_mut_ptr(),
                               white_moves.as_mut_ptr(), score_sheet_row);
-                set_times(floor(player_time[0 as i32 as usize]) as
+                set_times(floor(player_time[0]) as
                               i32,
-                          floor(player_time[2 as i32 as usize]) as
+                          floor(player_time[2]) as
                               i32);
                 opening_name = find_opening_name();
                 if !opening_name.is_null() {
@@ -1364,18 +1362,18 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     if echo == 0 {
         printf(b"\n\x00" as *const u8 as *const i8);
         printf(b"Black level: %d\n\x00" as *const u8 as *const i8,
-               skill[0 as i32 as usize]);
+               skill[0]);
         printf(b"White level: %d\n\x00" as *const u8 as *const i8,
-               skill[2 as i32 as usize]);
+               skill[2]);
     }
     if side_to_move == 0 as i32 { score_sheet_row += 1 }
     LibcDumpHandler::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
     if echo != 0 && one_position_only == 0 {
         set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
-        set_times(floor(player_time[0 as i32 as usize]) as
+        set_times(floor(player_time[0]) as
                       i32,
-                  floor(player_time[2 as i32 as usize]) as
+                  floor(player_time[2]) as
                       i32);
         display_board(stdout, &board, side_to_move,
                       1 as i32, use_timer, 1 as i32,
@@ -1481,7 +1479,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
         /* Check if the line is a comment or an end marker */
         fgets(buffer.as_mut_ptr(), 256 as i32, script_stream);
         if feof(script_stream) != 0 { break ; }
-        if buffer[0 as i32 as usize] as i32 == '%' as i32 {
+        if buffer[0] as i32 == '%' as i32 {
             /* Comment */
             output_stream =
                 fopen(out_file_name,
@@ -1531,7 +1529,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                        i + 1 as i32);
                 exit(1 as i32);
             }
-            match stm_string[0 as i32 as usize] as i32 {
+            match stm_string[0] as i32 {
                 79 | 48 => { side_to_move = 2 as i32 }
                 42 | 88 => { side_to_move = 0 as i32 }
                 _ => {

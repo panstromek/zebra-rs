@@ -62,7 +62,7 @@ pub async fn start_game() {
         init_thor_database::<WasmFrontend>();
         my_srandom(1 as i32);
 
-        while skill[0 as i32 as usize] < 0 as i32 {
+        while skill[0] < 0 as i32 {
             skill[0] = 6;
             exact_skill[0] = 6;
             wld_skill[0] = 6;
