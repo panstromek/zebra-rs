@@ -60,7 +60,7 @@ pub static mut total_evaluations: CounterType = CounterType{hi: 0, lo: 0,};
 /* When no other information is available, JCW's endgame
    priority order is used also in the midgame. */
 
-pub static mut position_list: [i32; 100] =
+pub static position_list: [i32; 100] =
     [11 as i32, 18 as i32, 81 as i32,
         88 as i32, 13 as i32, 16 as i32,
         31 as i32, 38 as i32, 61 as i32,

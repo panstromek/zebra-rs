@@ -36,7 +36,7 @@ pub static mut hash_update1: u32 = 0;
 
 pub static mut hash_update2: u32 = 0;
 /* The board split into nine regions. */
-static mut board_region: [i8; 100] = [
+static board_region: [i8; 100] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 2, 2, 2, 2, 3, 3, 0,
     0, 1, 1, 2, 2, 2, 2, 3, 3, 0,
