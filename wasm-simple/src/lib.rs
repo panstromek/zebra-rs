@@ -45,17 +45,16 @@ async fn get_move_from_wasm(side_to_move: i32) -> i32 {
 macro_rules! c_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
 }
+const COEFFS: &[u8; 1336662] = include_bytes!("./../../coeffs2.bin");
 
 #[wasm_bindgen]
-pub async fn greet() {
+pub async fn start_game() {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
     unsafe {
         unflip::run_static_initializers();
         myrandom::run_static_initializers();
         set_default_engine_globals();
         use_book = 0;
-
-        const COEFFS: &[u8; 1336662] = include_bytes!("./../../coeffs2.bin");
 
         let coeffs = Flate2Source::new_from_data(COEFFS);
 
