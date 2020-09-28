@@ -109,8 +109,7 @@ pub unsafe fn init_patterns() {
    Translate the current board configuration into patterns.
 */
 
-pub unsafe fn compute_line_patterns(in_board:
-                                                   *mut i32) {
+pub unsafe fn compute_line_patterns(in_board: &[i32; 128]) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -126,10 +125,10 @@ pub unsafe fn compute_line_patterns(in_board:
         j = 1 as i32;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
-            if *in_board.offset(pos as isize) == 1 as i32 {
+            if in_board[pos as usize] == 1 as i32 {
                 mask = 0 as i32
             } else {
-                mask = color_pattern[*in_board.offset(pos as isize) as usize]
+                mask = color_pattern[in_board[pos as usize] as usize]
             }
             row_pattern[row_no[pos as usize] as usize] +=
                 mask * pow3[row_index[pos as usize] as usize];
