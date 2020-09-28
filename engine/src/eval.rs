@@ -15,24 +15,17 @@ use crate::src::search::evaluations;
    Contents:       Control mechanisms for board evaluation.
                    No knowledge in this module though.
 */
-/* Local variables */
-static mut use_experimental: i32 = 0;
 /*
    TOGGLE_EXPERIMENTAL
    Toggles usage of novelties in the evaluation function on/off.
 */
 
 pub unsafe fn toggle_experimental(use_0: i32) {
-    use_experimental = use_0;
-}
-/*
-  EXPERIMENTAL_EVAL
-  Returns 1 if the experimental eval (if there is such) is used,
-  0 otherwise.
-*/
+    // This flag is not ever used, so it's commented out. It's not clear
+    // what was its purpose in the original code;
 
-pub unsafe fn experimental_eval() -> i32 {
-    return use_experimental;
+    // static mut use_experimental: i32 = 0;
+    // use_experimental = use_0;
 }
 /*
   INIT_EVAL

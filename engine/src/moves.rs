@@ -36,7 +36,7 @@ pub static mut first_flipped_disc: [*mut *mut i32; 100] =
 pub static mut flipped_disc: [[*mut i32; 8]; 100] =
     [[0 as *const i32 as *mut i32; 8]; 100];
 
-pub static mut dir_mask: [i32; 100] =
+pub static dir_mask: [i32; 100] =
     [0 as i32, 0 as i32, 0 as i32, 0 as i32,
         0 as i32, 0 as i32, 0 as i32, 0 as i32,
         0 as i32, 0 as i32, 0 as i32, 81 as i32,
@@ -69,7 +69,7 @@ pub static mut dir_mask: [i32; 100] =
         0 as i32, 0 as i32, 0 as i32, 0 as i32,
         0 as i32, 0 as i32, 0 as i32];
 
-pub static mut move_offset: [i32; 8] =
+pub static move_offset: [i32; 8] =
     [1 as i32, -(1 as i32), 9 as i32,
         -(9 as i32), 10 as i32, -(10 as i32),
         11 as i32, -(11 as i32)];
