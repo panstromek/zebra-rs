@@ -80,6 +80,7 @@ mod tests {
     #[test]
     fn small_game_test_without_book() {
         snapshot_test(
+             // TODO run those tests on original zebra too
             "./target/release/zebra",
             "-l 6 6 6 6 6 6 -r 0 -b 0",
             "./snapshots/zebra.log-small_game_test_without_book",

@@ -2,13 +2,21 @@ const identity = _ => _;
 let resolver = identity
 let rejecter = identity
 
+let wasm = undefined
 
 self.addEventListener("message", ev => {
+    if (!wasm) {
+        console.log('wasm is not defined, skipping')
+        return
+    }
     console.log('message recieved in worker', ev)
-    if (ev.data[0] === 'get_move_from_js') {
+    const messageType = ev.data[0];
+    if (messageType === 'get_move_from_js') {
         resolver(ev.data[1])
-    } else if (ev.data[0] === 'get_pass_from_js') {
+    } else if (messageType === 'get_pass_from_js') {
         resolver(ev.data[1])
+    } else if (messageType === 'new-game') {
+        wasm.start_game()
     } else {
         console.error('rejecting promise because message from from main doesn\'t have known name.')
         rejecter()
@@ -44,6 +52,7 @@ global.zebra = {
     }
 }
 
-import("./pkg").then(async wasm => {
-    wasm.greet()
+import("./pkg").then(w => {
+    wasm = w
+    wasm.start_game();
 });

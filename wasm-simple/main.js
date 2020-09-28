@@ -85,3 +85,7 @@ worker.addEventListener("message", ev => {
         }
     }
 });
+
+document.getElementById('new-game-button').addEventListener('click', e => {
+    worker.postMessage(['new-game'])
+})
