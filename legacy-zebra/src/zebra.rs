@@ -22,7 +22,6 @@ use engine::src::hash::{setup_hash, set_hash_transformation};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, find_opening_name, set_draw_mode, set_game_mode};
 use engine::src::stubs::floor;
 use engine::src::learn::{store_move, clear_stored_game};
-use engine::src::eval::toggle_experimental;
 use engine::src::getcoeff::remove_coeffs;
 use engine::src::myrandom::{my_random, my_srandom};
 use crate::src::osfbook::print_move_alternatives;
@@ -1195,7 +1194,6 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             timed_search =
                 (skill[side_to_move as usize] >= 60 as i32) as
                     i32;
-            toggle_experimental(0 as i32);
             empties = 60 as i32 - disks_played;
             /* Determine the score for the move actually played.
                A private hash transformation is used so that the parallel

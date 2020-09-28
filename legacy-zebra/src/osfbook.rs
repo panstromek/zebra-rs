@@ -21,7 +21,6 @@ use engine::src::counter::reset_counter;
 use engine::src::zebra::EvaluationType;
 use engine::src::timer::toggle_abort_check;
 use engine::src::safemem::safe_malloc;
-use engine::src::eval::toggle_experimental;
 use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit, FILE};
 use engine::src::osfbook::{
     __time_t, node, book_node_count, prepare_tree_traversal, book_hash_table,
@@ -1602,7 +1601,6 @@ pub unsafe fn unpack_compressed_database(in_name:
                     b"Could not create database file\x00" as *const u8 as
                         *const i8, out_name);
     }
-    toggle_experimental(0 as i32);
     game_init(0 as *const i8, &mut dummy);
     toggle_midgame_hash_usage(1 as i32, 1 as i32);
     toggle_abort_check(0 as i32);

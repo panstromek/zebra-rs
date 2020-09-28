@@ -4,51 +4,6 @@ use crate::src::search::evaluations;
 
 
 /*
-   File:           eval.c
-
-   Created:        July 1, 1997
-
-   Modified:       September 22, 1999
-
-   Author:         Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:       Control mechanisms for board evaluation.
-                   No knowledge in this module though.
-*/
-/*
-   TOGGLE_EXPERIMENTAL
-   Toggles usage of novelties in the evaluation function on/off.
-*/
-
-pub unsafe fn toggle_experimental(use_0: i32) {
-    // This flag is not ever used, so it's commented out. It's not clear
-    // what was its purpose in the original code;
-
-    // static mut use_experimental: i32 = 0;
-    // use_experimental = use_0;
-}
-/*
-  INIT_EVAL
-  Reset the evaluation module.
-*/
-
-pub unsafe fn init_eval() { }
-/*
-   File:           eval.h
-
-   Created:        July 1, 1997
-
-   Modified:       September 15, 2001
-
-   Author:         Gunnar Andersson (gunnar@radagast.se)
-
-   Contents:       The interface to the evaluation function.
-*/
-/* An evaluation indicating a won midgame position where no
-   player has any moves available. */
-/* An eval so high it must have originated from a midgame win
-   disturbed by some randomness. */
-/*
   TERMINAL_EVALUATION
   Evaluates the position when no player has any legal moves.
 */

@@ -9,7 +9,6 @@ use crate::src::globals::{board, score_sheet_row, white_moves, black_moves};
 use crate::src::learn::{store_move, set_learning_parameters, clear_stored_game, Learner};
 use crate::src::error::{FrontEnd};
 use crate::src::myrandom::my_random;
-use crate::src::eval::toggle_experimental;
 use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, set_slack};
 use crate::src::getcoeff::remove_coeffs;
 use crate::src::game::{toggle_human_openings, generic_game_init, FileBoardSource, generic_compute_move, ComputeMoveOutput, ComputeMoveLogger};
@@ -297,7 +296,6 @@ pub unsafe fn engine_play_game<
                                             player_increment[side_to_move as usize],
                                             disks_played + 4);
                         let timed_search = (skill[side_to_move as usize] >= 60) as i32;
-                        toggle_experimental(0);
                         curr_move =
                             generic_compute_move::<ComputeMoveLog, ComputeMoveOut, FE>(
                                 side_to_move, 1,
@@ -583,7 +581,6 @@ pub async unsafe fn engine_play_game_async<
                                             player_increment[side_to_move as usize],
                                             disks_played + 4);
                         let timed_search = (skill[side_to_move as usize] >= 60) as i32;
-                        toggle_experimental(0);
                         curr_move =
                             generic_compute_move::<ComputeMoveLog, ComputeMoveOut, FE>(
                                 side_to_move, 1,
