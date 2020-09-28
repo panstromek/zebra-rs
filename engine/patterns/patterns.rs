@@ -19,13 +19,10 @@
 pub const pow3: [i32; 10] = [1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683];
 /* Connections between the squares and the bit masks */
 
-pub static mut row_no: [i32; 100] = [0; 100];
-
-pub static mut row_index: [i32; 100] = [0; 100];
-
-pub static mut col_no: [i32; 100] = [0; 100];
-
-pub static mut col_index: [i32; 100] = [0; 100];
+pub static row_no: [i32; 100] = init_patterns()[0];
+pub static row_index: [i32; 100] = init_patterns()[1];
+pub static col_no: [i32; 100] = init_patterns()[2];
+pub static col_index: [i32; 100] = init_patterns()[3];
 
 /* These values needed for compatibility with the old book format */
 // color_pattern[0] = 1;
@@ -86,20 +83,31 @@ const fn transformation_setup() -> [i32; 6561] {
    Pre-computes some tables needed for fast pattern access.
 */
 
-pub unsafe fn init_patterns() {
+const fn init_patterns() -> [[i32; 100]; 4] {
+    let mut row_no_: [i32; 100] = [0; 100];
+    let mut row_index_: [i32; 100] = [0; 100];
+    let mut col_no_: [i32; 100] = [0; 100];
+    let mut col_index_: [i32; 100] = [0; 100];
+
     let mut i = 1;
     while i <= 8 as i32 {
         let mut j = 1;
         while j <= 8  {
             let pos = (10 * i + j) as usize;
-            row_no[pos] = i - 1;
-            row_index[pos] = j - 1;
-            col_no[pos] = j - 1;
-            col_index[pos] = i - 1;
+            row_no_[pos] = i - 1;
+            row_index_[pos] = j - 1;
+            col_no_[pos] = j - 1;
+            col_index_[pos] = i - 1;
             j += 1
         }
         i += 1
     }
+    return [
+        row_no_,
+        row_index_,
+        col_no_,
+        col_index_
+    ]
 }
 /*
    COMPUTE_LINE_PATTERNS
