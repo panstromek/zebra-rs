@@ -6,7 +6,6 @@ use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, chec
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, init_memory_handler, CoeffAdjustments, remove_coeffs};
 use crate::src::hash::{free_hash, determine_hash_values, init_hash};
 use crate::src::timer::{clear_ponder_times, init_timer, time_t, clear_panic_abort, get_elapsed_time, is_panic_abort, determine_move_time};
-use crate::src::eval::init_eval;
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, is_midgame_abort, middle_game, toggle_midgame_hash_usage, toggle_midgame_abort_check, clear_midgame_abort, calculate_perturbation};
 use crate::src::moves::{disks_played, init_moves, valid_move, move_list, move_count, generate_all};
@@ -223,7 +222,6 @@ pub unsafe fn engine_game_init() {
     setup_search();
     setup_midgame();
     setup_end();
-    init_eval();
     clear_ponder_times();
     reset_counter(&mut total_nodes);
     reset_counter(&mut total_evaluations);

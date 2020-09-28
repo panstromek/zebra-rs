@@ -8,7 +8,6 @@ use crate::{
         myrandom::{my_random, my_srandom},
         globals::{board, piece_count, pv, pv_depth},
         midgame::{toggle_midgame_abort_check, toggle_midgame_hash_usage},
-        eval::toggle_experimental,
         getcoeff::remove_coeffs,
         counter::reset_counter,
         patterns::{col_pattern, flip8, row_pattern, compute_line_patterns},
@@ -2327,7 +2326,6 @@ pub unsafe fn engine_init_osf<FE: FrontEnd>() {
 */
 pub unsafe fn prepare_tree_traversal() {
     let mut side_to_move: i32 = 0;
-    toggle_experimental(0 as i32);
     setup_non_file_based_game(&mut side_to_move);
     engine_game_init();
     toggle_midgame_hash_usage(1 as i32, 1 as i32);
