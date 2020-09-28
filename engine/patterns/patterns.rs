@@ -84,25 +84,22 @@ const fn transformation_setup() -> [i32; 6561] {
 */
 
 pub unsafe fn init_patterns() {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut pos: i32 = 0;
-    i = 1 as i32;
+    let mut i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
-        while j <= 8 as i32 {
-            pos = 10 as i32 * i + j;
-            row_no[pos as usize] = i - 1 as i32;
-            row_index[pos as usize] = j - 1 as i32;
-            col_no[pos as usize] = j - 1 as i32;
-            col_index[pos as usize] = i - 1 as i32;
+        let mut j = 1;
+        while j <= 8  {
+            let pos = (10 * i + j) as usize;
+            row_no[pos] = i - 1;
+            row_index[pos] = j - 1;
+            col_no[pos] = j - 1;
+            col_index[pos] = i - 1;
             j += 1
         }
         i += 1
     }
     /* These values needed for compatibility with the old book format */
-    color_pattern[0 as i32 as usize] = 1 as i32;
-    color_pattern[2 as i32 as usize] = 2 as i32;
+    color_pattern[0] = 1;
+    color_pattern[2] = 2;
 }
 /*
    COMPUTE_LINE_PATTERNS
