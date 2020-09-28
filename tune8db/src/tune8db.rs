@@ -381,7 +381,7 @@ pub unsafe  fn pack_position(mut buffer: *mut i8,
     let mut score: i32 = 0;
     let mut hi_mask: u8 = 0;
     let mut lo_mask: u8 = 0;
-    sscanf(buffer.offset(34 as i32 as isize),
+    sscanf(buffer.offset(34),
            b"%d %d\x00" as *const u8 as *const i8,
            &mut stage_0 as *mut i32, &mut score as *mut i32);
     if abs(score) > max_diff { return 0 as i32 }
@@ -397,7 +397,7 @@ pub unsafe  fn pack_position(mut buffer: *mut i8,
             ((hi_mask as i32) << 4 as i32) +
                 lo_mask as i32;
         sscanf(buffer.offset((4 as i32 * i) as
-            isize).offset(2 as i32 as isize),
+            isize).offset(2),
                b"%c%c\x00" as *const u8 as *const i8,
                &mut hi_mask as *mut u8,
                &mut lo_mask as *mut u8);
@@ -421,7 +421,7 @@ pub unsafe  fn pack_position(mut buffer: *mut i8,
             mask as i16;
         i += 1
     }
-    match *buffer.offset(33 as i32 as isize) as i32 {
+    match *buffer.offset(33) as i32 {
         42 => {
             (*position_list.offset(index as isize)).side_to_move =
                 0 as i32 as i16;
@@ -650,471 +650,467 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
     /* The A file (with or without adjacent X-squares) */
     if side_to_move == 0 as i32 {
         *buffer_a.offset(0 as i32 as isize) =
-            mirror82x[(compact[row_pattern[0 as i32 as usize] as
+            mirror82x[(compact[row_pattern[0] as
                 usize] +
                 6561 as i32 *
-                    board[22 as i32 as usize] +
+                    board[22] +
                 19683 as i32 *
-                    board[27 as i32 as usize]) as usize];
-        *buffer_a.offset(1 as i32 as isize) =
-            mirror82x[(compact[row_pattern[7 as i32 as usize] as
+                    board[27]) as usize];
+        *buffer_a.offset(1) =
+            mirror82x[(compact[row_pattern[7] as
                 usize] +
                 6561 as i32 *
-                    board[72 as i32 as usize] +
+                    board[72] +
                 19683 as i32 *
-                    board[77 as i32 as usize]) as usize];
-        *buffer_a.offset(2 as i32 as isize) =
-            mirror82x[(compact[col_pattern[0 as i32 as usize] as
+                    board[77]) as usize];
+        *buffer_a.offset(2) =
+            mirror82x[(compact[col_pattern[0] as
                 usize] +
                 6561 as i32 *
-                    board[22 as i32 as usize] +
+                    board[22] +
                 19683 as i32 *
-                    board[72 as i32 as usize]) as usize];
-        *buffer_a.offset(3 as i32 as isize) =
-            mirror82x[(compact[col_pattern[7 as i32 as usize] as
+                    board[72]) as usize];
+        *buffer_a.offset(3) =
+            mirror82x[(compact[col_pattern[7] as
                 usize] +
                 6561 as i32 *
-                    board[27 as i32 as usize] +
+                    board[27] +
                 19683 as i32 *
-                    board[77 as i32 as usize]) as usize]
+                    board[77]) as usize]
     } else {
         *buffer_a.offset(0 as i32 as isize) =
-            mirror82x[inverse10[(compact[row_pattern[0 as i32 as
-                usize] as usize] +
+            mirror82x[inverse10[(compact[row_pattern[0] as usize] +
                 6561 as i32 *
-                    board[22 as i32 as usize] +
+                    board[22] +
                 19683 as i32 *
-                    board[27 as i32 as usize]) as
+                    board[27]) as
                 usize] as usize];
-        *buffer_a.offset(1 as i32 as isize) =
-            mirror82x[inverse10[(compact[row_pattern[7 as i32 as
-                usize] as usize] +
+        *buffer_a.offset(1) =
+            mirror82x[inverse10[(compact[row_pattern[7] as usize] +
                 6561 as i32 *
-                    board[72 as i32 as usize] +
+                    board[72] +
                 19683 as i32 *
-                    board[77 as i32 as usize]) as
+                    board[77]) as
                 usize] as usize];
-        *buffer_a.offset(2 as i32 as isize) =
-            mirror82x[inverse10[(compact[col_pattern[0 as i32 as
-                usize] as usize] +
+        *buffer_a.offset(2) =
+            mirror82x[inverse10[(compact[col_pattern[0] as usize] +
                 6561 as i32 *
-                    board[22 as i32 as usize] +
+                    board[22] +
                 19683 as i32 *
-                    board[72 as i32 as usize]) as
+                    board[72]) as
                 usize] as usize];
-        *buffer_a.offset(3 as i32 as isize) =
-            mirror82x[inverse10[(compact[col_pattern[7 as i32 as
-                usize] as usize] +
+        *buffer_a.offset(3) =
+            mirror82x[inverse10[(compact[col_pattern[7] as usize] +
                 6561 as i32 *
-                    board[27 as i32 as usize] +
+                    board[27] +
                 19683 as i32 *
-                    board[77 as i32 as usize]) as
+                    board[77]) as
                 usize] as usize]
     }
     /* The B file */
     if side_to_move == 0 as i32 {
         *buffer_b.offset(0 as i32 as isize) =
-            mirror[compact[row_pattern[1 as i32 as usize] as usize] as
+            mirror[compact[row_pattern[1] as usize] as
                 usize];
-        *buffer_b.offset(1 as i32 as isize) =
-            mirror[compact[row_pattern[6 as i32 as usize] as usize] as
+        *buffer_b.offset(1) =
+            mirror[compact[row_pattern[6] as usize] as
                 usize];
-        *buffer_b.offset(2 as i32 as isize) =
-            mirror[compact[col_pattern[1 as i32 as usize] as usize] as
+        *buffer_b.offset(2) =
+            mirror[compact[col_pattern[1] as usize] as
                 usize];
-        *buffer_b.offset(3 as i32 as isize) =
-            mirror[compact[col_pattern[6 as i32 as usize] as usize] as
+        *buffer_b.offset(3) =
+            mirror[compact[col_pattern[6] as usize] as
                 usize]
     } else {
         *buffer_b.offset(0 as i32 as isize) =
-            mirror[inverse8[compact[row_pattern[1 as i32 as usize] as
+            mirror[inverse8[compact[row_pattern[1] as
                 usize] as usize] as usize];
-        *buffer_b.offset(1 as i32 as isize) =
-            mirror[inverse8[compact[row_pattern[6 as i32 as usize] as
+        *buffer_b.offset(1) =
+            mirror[inverse8[compact[row_pattern[6] as
                 usize] as usize] as usize];
-        *buffer_b.offset(2 as i32 as isize) =
-            mirror[inverse8[compact[col_pattern[1 as i32 as usize] as
+        *buffer_b.offset(2) =
+            mirror[inverse8[compact[col_pattern[1] as
                 usize] as usize] as usize];
-        *buffer_b.offset(3 as i32 as isize) =
-            mirror[inverse8[compact[col_pattern[6 as i32 as usize] as
+        *buffer_b.offset(3) =
+            mirror[inverse8[compact[col_pattern[6] as
                 usize] as usize] as usize]
     }
     /* The C file */
     if side_to_move == 0 as i32 {
         *buffer_c.offset(0 as i32 as isize) =
-            mirror[compact[row_pattern[2 as i32 as usize] as usize] as
+            mirror[compact[row_pattern[2] as usize] as
                 usize];
-        *buffer_c.offset(1 as i32 as isize) =
-            mirror[compact[row_pattern[5 as i32 as usize] as usize] as
+        *buffer_c.offset(1) =
+            mirror[compact[row_pattern[5] as usize] as
                 usize];
-        *buffer_c.offset(2 as i32 as isize) =
-            mirror[compact[col_pattern[2 as i32 as usize] as usize] as
+        *buffer_c.offset(2) =
+            mirror[compact[col_pattern[2] as usize] as
                 usize];
-        *buffer_c.offset(3 as i32 as isize) =
-            mirror[compact[col_pattern[5 as i32 as usize] as usize] as
+        *buffer_c.offset(3) =
+            mirror[compact[col_pattern[5] as usize] as
                 usize]
     } else {
         *buffer_c.offset(0 as i32 as isize) =
-            mirror[inverse8[compact[row_pattern[2 as i32 as usize] as
+            mirror[inverse8[compact[row_pattern[2] as
                 usize] as usize] as usize];
-        *buffer_c.offset(1 as i32 as isize) =
-            mirror[inverse8[compact[row_pattern[5 as i32 as usize] as
+        *buffer_c.offset(1) =
+            mirror[inverse8[compact[row_pattern[5] as
                 usize] as usize] as usize];
-        *buffer_c.offset(2 as i32 as isize) =
-            mirror[inverse8[compact[col_pattern[2 as i32 as usize] as
+        *buffer_c.offset(2) =
+            mirror[inverse8[compact[col_pattern[2] as
                 usize] as usize] as usize];
-        *buffer_c.offset(3 as i32 as isize) =
-            mirror[inverse8[compact[col_pattern[5 as i32 as usize] as
+        *buffer_c.offset(3) =
+            mirror[inverse8[compact[col_pattern[5] as
                 usize] as usize] as usize]
     }
     /* The D file */
     if side_to_move == 0 as i32 {
         *buffer_d.offset(0 as i32 as isize) =
-            mirror[compact[row_pattern[3 as i32 as usize] as usize] as
+            mirror[compact[row_pattern[3] as usize] as
                 usize];
-        *buffer_d.offset(1 as i32 as isize) =
-            mirror[compact[row_pattern[4 as i32 as usize] as usize] as
+        *buffer_d.offset(1) =
+            mirror[compact[row_pattern[4] as usize] as
                 usize];
-        *buffer_d.offset(2 as i32 as isize) =
-            mirror[compact[col_pattern[3 as i32 as usize] as usize] as
+        *buffer_d.offset(2) =
+            mirror[compact[col_pattern[3] as usize] as
                 usize];
-        *buffer_d.offset(3 as i32 as isize) =
-            mirror[compact[col_pattern[4 as i32 as usize] as usize] as
+        *buffer_d.offset(3) =
+            mirror[compact[col_pattern[4] as usize] as
                 usize]
     } else {
         *buffer_d.offset(0 as i32 as isize) =
-            mirror[inverse8[compact[row_pattern[3 as i32 as usize] as
+            mirror[inverse8[compact[row_pattern[3] as
                 usize] as usize] as usize];
-        *buffer_d.offset(1 as i32 as isize) =
-            mirror[inverse8[compact[row_pattern[4 as i32 as usize] as
+        *buffer_d.offset(1) =
+            mirror[inverse8[compact[row_pattern[4] as
                 usize] as usize] as usize];
-        *buffer_d.offset(2 as i32 as isize) =
-            mirror[inverse8[compact[col_pattern[3 as i32 as usize] as
+        *buffer_d.offset(2) =
+            mirror[inverse8[compact[col_pattern[3] as
                 usize] as usize] as usize];
-        *buffer_d.offset(3 as i32 as isize) =
-            mirror[inverse8[compact[col_pattern[4 as i32 as usize] as
+        *buffer_d.offset(3) =
+            mirror[inverse8[compact[col_pattern[4] as
                 usize] as usize] as usize]
     }
     /* The 5*2 corner pattern */
     if side_to_move == 0 as i32 {
         /* a1-e1 + a2-e2 */
         config52 =
-            (row_pattern[0 as i32 as usize] & 1023 as i32) +
-                ((row_pattern[1 as i32 as usize] &
+            (row_pattern[0] & 1023 as i32) +
+                ((row_pattern[1] &
                     1023 as i32) << 10 as i32);
         *buffer_52.offset(0 as i32 as isize) =
             compact[config52 as usize];
         /* a1-a5 + b1-b5 */
         config52 =
-            (col_pattern[0 as i32 as usize] & 1023 as i32) +
-                ((col_pattern[1 as i32 as usize] &
+            (col_pattern[0] & 1023 as i32) +
+                ((col_pattern[1] &
                     1023 as i32) << 10 as i32);
-        *buffer_52.offset(1 as i32 as isize) =
+        *buffer_52.offset(1) =
             compact[config52 as usize];
         /* h1-d1 + h2-d2 */
         config52 =
-            (row_pattern[0 as i32 as usize] >> 6 as i32) +
-                ((row_pattern[1 as i32 as usize] >> 6 as i32)
+            (row_pattern[0] >> 6 as i32) +
+                ((row_pattern[1] >> 6 as i32)
                     << 10 as i32);
-        *buffer_52.offset(2 as i32 as isize) =
+        *buffer_52.offset(2) =
             flip52[compact[config52 as usize] as usize];
         /* h1-h5 + g1-g5 */
         config52 =
-            (col_pattern[7 as i32 as usize] & 1023 as i32) +
-                ((col_pattern[6 as i32 as usize] &
+            (col_pattern[7] & 1023 as i32) +
+                ((col_pattern[6] &
                     1023 as i32) << 10 as i32);
-        *buffer_52.offset(3 as i32 as isize) =
+        *buffer_52.offset(3) =
             compact[config52 as usize];
         /* a8-e8 + a7-e7 */
         config52 =
-            (row_pattern[7 as i32 as usize] & 1023 as i32) +
-                ((row_pattern[6 as i32 as usize] &
+            (row_pattern[7] & 1023 as i32) +
+                ((row_pattern[6] &
                     1023 as i32) << 10 as i32);
-        *buffer_52.offset(4 as i32 as isize) =
+        *buffer_52.offset(4) =
             compact[config52 as usize];
         /* a8-a4 + b8-b4 */
         config52 =
-            (col_pattern[0 as i32 as usize] >> 6 as i32) +
-                ((col_pattern[1 as i32 as usize] >> 6 as i32)
+            (col_pattern[0] >> 6 as i32) +
+                ((col_pattern[1] >> 6 as i32)
                     << 10 as i32);
-        *buffer_52.offset(5 as i32 as isize) =
+        *buffer_52.offset(5) =
             flip52[compact[config52 as usize] as usize];
         /* h8-d8 + h7-d7 */
         config52 =
-            (row_pattern[7 as i32 as usize] >> 6 as i32) +
-                ((row_pattern[6 as i32 as usize] >> 6 as i32)
+            (row_pattern[7] >> 6 as i32) +
+                ((row_pattern[6] >> 6 as i32)
                     << 10 as i32);
-        *buffer_52.offset(6 as i32 as isize) =
+        *buffer_52.offset(6) =
             flip52[compact[config52 as usize] as usize];
         /* h8-h4 + g8-g4 */
         config52 =
-            (col_pattern[7 as i32 as usize] >> 6 as i32) +
-                ((col_pattern[6 as i32 as usize] >> 6 as i32)
+            (col_pattern[7] >> 6 as i32) +
+                ((col_pattern[6] >> 6 as i32)
                     << 10 as i32);
-        *buffer_52.offset(7 as i32 as isize) =
+        *buffer_52.offset(7) =
             flip52[compact[config52 as usize] as usize]
     } else {
         /* a1-e1 + a2-e2 */
         config52 =
-            (row_pattern[0 as i32 as usize] & 1023 as i32) +
-                ((row_pattern[1 as i32 as usize] &
+            (row_pattern[0] & 1023 as i32) +
+                ((row_pattern[1] &
                     1023 as i32) << 10 as i32);
         *buffer_52.offset(0 as i32 as isize) =
             inverse10[compact[config52 as usize] as usize];
         /* a1-a5 + b1-b5 */
         config52 =
-            (col_pattern[0 as i32 as usize] & 1023 as i32) +
-                ((col_pattern[1 as i32 as usize] &
+            (col_pattern[0] & 1023 as i32) +
+                ((col_pattern[1] &
                     1023 as i32) << 10 as i32);
-        *buffer_52.offset(1 as i32 as isize) =
+        *buffer_52.offset(1) =
             inverse10[compact[config52 as usize] as usize];
         /* h1-d1 + h2-d2 */
         config52 =
-            (row_pattern[0 as i32 as usize] >> 6 as i32) +
-                ((row_pattern[1 as i32 as usize] >> 6 as i32)
+            (row_pattern[0] >> 6 as i32) +
+                ((row_pattern[1] >> 6 as i32)
                     << 10 as i32);
-        *buffer_52.offset(2 as i32 as isize) =
+        *buffer_52.offset(2) =
             inverse10[flip52[compact[config52 as usize] as usize] as usize];
         /* h1-h5 + g1-g5 */
         config52 =
-            (col_pattern[7 as i32 as usize] & 1023 as i32) +
-                ((col_pattern[6 as i32 as usize] &
+            (col_pattern[7] & 1023 as i32) +
+                ((col_pattern[6] &
                     1023 as i32) << 10 as i32);
-        *buffer_52.offset(3 as i32 as isize) =
+        *buffer_52.offset(3) =
             inverse10[compact[config52 as usize] as usize];
         /* a8-e8 + a7-e7 */
         config52 =
-            (row_pattern[7 as i32 as usize] & 1023 as i32) +
-                ((row_pattern[6 as i32 as usize] &
+            (row_pattern[7] & 1023 as i32) +
+                ((row_pattern[6] &
                     1023 as i32) << 10 as i32);
-        *buffer_52.offset(4 as i32 as isize) =
+        *buffer_52.offset(4) =
             inverse10[compact[config52 as usize] as usize];
         /* a8-a4 + b8-b4 */
         config52 =
-            (col_pattern[0 as i32 as usize] >> 6 as i32) +
-                ((col_pattern[1 as i32 as usize] >> 6 as i32)
+            (col_pattern[0] >> 6 as i32) +
+                ((col_pattern[1] >> 6 as i32)
                     << 10 as i32);
-        *buffer_52.offset(5 as i32 as isize) =
+        *buffer_52.offset(5) =
             inverse10[flip52[compact[config52 as usize] as usize] as usize];
         /* h8-e8 + h7-e7 */
         config52 =
-            (row_pattern[7 as i32 as usize] >> 6 as i32) +
-                ((row_pattern[6 as i32 as usize] >> 6 as i32)
+            (row_pattern[7] >> 6 as i32) +
+                ((row_pattern[6] >> 6 as i32)
                     << 10 as i32);
-        *buffer_52.offset(6 as i32 as isize) =
+        *buffer_52.offset(6) =
             inverse10[flip52[compact[config52 as usize] as usize] as usize];
         /* h8-h4 + g8-g4 */
         config52 =
-            (col_pattern[7 as i32 as usize] >> 6 as i32) +
-                ((col_pattern[6 as i32 as usize] >> 6 as i32)
+            (col_pattern[7] >> 6 as i32) +
+                ((col_pattern[6] >> 6 as i32)
                     << 10 as i32);
-        *buffer_52.offset(7 as i32 as isize) =
+        *buffer_52.offset(7) =
             inverse10[flip52[compact[config52 as usize] as usize] as usize]
     }
     /* The 3*3 corner pattern */
     if side_to_move == 0 as i32 {
         /* a1-c1 + a2-c2 + a3-c3 */
         config33 =
-            (row_pattern[0 as i32 as usize] & 63 as i32) +
-                ((row_pattern[1 as i32 as usize] & 63 as i32)
+            (row_pattern[0] & 63 as i32) +
+                ((row_pattern[1] & 63 as i32)
                     << 6 as i32) +
-                ((row_pattern[2 as i32 as usize] & 63 as i32)
+                ((row_pattern[2] & 63 as i32)
                     << 12 as i32);
         *buffer_33.offset(0 as i32 as isize) =
             mirror33[compact[config33 as usize] as usize];
         /* h1-f1 + h2-f2 + h3-f3 */
         config33 =
-            (row_pattern[0 as i32 as usize] >> 10 as i32) +
-                ((row_pattern[1 as i32 as usize] >> 10 as i32)
+            (row_pattern[0] >> 10 as i32) +
+                ((row_pattern[1] >> 10 as i32)
                     << 6 as i32) +
-                ((row_pattern[2 as i32 as usize] >> 10 as i32)
+                ((row_pattern[2] >> 10 as i32)
                     << 12 as i32);
-        *buffer_33.offset(1 as i32 as isize) =
+        *buffer_33.offset(1) =
             mirror33[flip33[compact[config33 as usize] as usize] as usize];
         /* a8-c8 + a7-c7 + a6-c6 */
         config33 =
-            (row_pattern[7 as i32 as usize] & 63 as i32) +
-                ((row_pattern[6 as i32 as usize] & 63 as i32)
+            (row_pattern[7] & 63 as i32) +
+                ((row_pattern[6] & 63 as i32)
                     << 6 as i32) +
-                ((row_pattern[5 as i32 as usize] & 63 as i32)
+                ((row_pattern[5] & 63 as i32)
                     << 12 as i32);
-        *buffer_33.offset(2 as i32 as isize) =
+        *buffer_33.offset(2) =
             mirror33[compact[config33 as usize] as usize];
         /* h8-f8 + h7-f7 + h6-f6 */
         config33 =
-            (row_pattern[7 as i32 as usize] >> 10 as i32) +
-                ((row_pattern[6 as i32 as usize] >> 10 as i32)
+            (row_pattern[7] >> 10 as i32) +
+                ((row_pattern[6] >> 10 as i32)
                     << 6 as i32) +
-                ((row_pattern[5 as i32 as usize] >> 10 as i32)
+                ((row_pattern[5] >> 10 as i32)
                     << 12 as i32);
-        *buffer_33.offset(3 as i32 as isize) =
+        *buffer_33.offset(3) =
             mirror33[flip33[compact[config33 as usize] as usize] as usize]
     } else {
         /* a1-c1 + a2-c2 + a3-c3 */
         config33 =
-            (row_pattern[0 as i32 as usize] & 63 as i32) +
-                ((row_pattern[1 as i32 as usize] & 63 as i32)
+            (row_pattern[0] & 63 as i32) +
+                ((row_pattern[1] & 63 as i32)
                     << 6 as i32) +
-                ((row_pattern[2 as i32 as usize] & 63 as i32)
+                ((row_pattern[2] & 63 as i32)
                     << 12 as i32);
         *buffer_33.offset(0 as i32 as isize) =
             mirror33[inverse9[compact[config33 as usize] as usize] as usize];
         /* h1-f1 + h2-f2 + h3-f3 */
         config33 =
-            (row_pattern[0 as i32 as usize] >> 10 as i32) +
-                ((row_pattern[1 as i32 as usize] >> 10 as i32)
+            (row_pattern[0] >> 10 as i32) +
+                ((row_pattern[1] >> 10 as i32)
                     << 6 as i32) +
-                ((row_pattern[2 as i32 as usize] >> 10 as i32)
+                ((row_pattern[2] >> 10 as i32)
                     << 12 as i32);
-        *buffer_33.offset(1 as i32 as isize) =
+        *buffer_33.offset(1) =
             mirror33[inverse9[flip33[compact[config33 as usize] as usize] as
                 usize] as usize];
         /* a8-c8 + a7-c7 + a6-c6 */
         config33 =
-            (row_pattern[7 as i32 as usize] & 63 as i32) +
-                ((row_pattern[6 as i32 as usize] & 63 as i32)
+            (row_pattern[7] & 63 as i32) +
+                ((row_pattern[6] & 63 as i32)
                     << 6 as i32) +
-                ((row_pattern[5 as i32 as usize] & 63 as i32)
+                ((row_pattern[5] & 63 as i32)
                     << 12 as i32);
-        *buffer_33.offset(2 as i32 as isize) =
+        *buffer_33.offset(2) =
             mirror33[inverse9[compact[config33 as usize] as usize] as usize];
         /* h8-f8 + h7-f7 + h6-f6 */
         config33 =
-            (row_pattern[7 as i32 as usize] >> 10 as i32) +
-                ((row_pattern[6 as i32 as usize] >> 10 as i32)
+            (row_pattern[7] >> 10 as i32) +
+                ((row_pattern[6] >> 10 as i32)
                     << 6 as i32) +
-                ((row_pattern[5 as i32 as usize] >> 10 as i32)
+                ((row_pattern[5] >> 10 as i32)
                     << 12 as i32);
-        *buffer_33.offset(3 as i32 as isize) =
+        *buffer_33.offset(3) =
             mirror33[inverse9[flip33[compact[config33 as usize] as usize] as
                 usize] as usize]
     }
     /* The diagonals of length 8 */
     if side_to_move == 0 as i32 {
         *buffer_8.offset(0 as i32 as isize) =
-            mirror[compact[diag1_pattern[7 as i32 as usize] as usize]
+            mirror[compact[diag1_pattern[7] as usize]
                 as usize];
-        *buffer_8.offset(1 as i32 as isize) =
-            mirror[compact[diag2_pattern[7 as i32 as usize] as usize]
+        *buffer_8.offset(1) =
+            mirror[compact[diag2_pattern[7] as usize]
                 as usize]
     } else {
         *buffer_8.offset(0 as i32 as isize) =
-            mirror[inverse8[compact[diag1_pattern[7 as i32 as usize]
+            mirror[inverse8[compact[diag1_pattern[7]
                 as usize] as usize] as usize];
-        *buffer_8.offset(1 as i32 as isize) =
-            mirror[inverse8[compact[diag2_pattern[7 as i32 as usize]
+        *buffer_8.offset(1) =
+            mirror[inverse8[compact[diag2_pattern[7]
                 as usize] as usize] as usize]
     }
     /* The diagonals of length 7 */
     if side_to_move == 0 as i32 {
         *buffer_7.offset(0 as i32 as isize) =
-            mirror7[compact[diag1_pattern[6 as i32 as usize] as usize]
+            mirror7[compact[diag1_pattern[6] as usize]
                 as usize];
-        *buffer_7.offset(1 as i32 as isize) =
-            mirror7[compact[diag1_pattern[8 as i32 as usize] as usize]
+        *buffer_7.offset(1) =
+            mirror7[compact[diag1_pattern[8] as usize]
                 as usize];
-        *buffer_7.offset(2 as i32 as isize) =
-            mirror7[compact[diag2_pattern[6 as i32 as usize] as usize]
+        *buffer_7.offset(2) =
+            mirror7[compact[diag2_pattern[6] as usize]
                 as usize];
-        *buffer_7.offset(3 as i32 as isize) =
-            mirror7[compact[diag2_pattern[8 as i32 as usize] as usize]
+        *buffer_7.offset(3) =
+            mirror7[compact[diag2_pattern[8] as usize]
                 as usize]
     } else {
         *buffer_7.offset(0 as i32 as isize) =
-            mirror7[inverse7[compact[diag1_pattern[6 as i32 as usize]
+            mirror7[inverse7[compact[diag1_pattern[6]
                 as usize] as usize] as usize];
-        *buffer_7.offset(1 as i32 as isize) =
-            mirror7[inverse7[compact[diag1_pattern[8 as i32 as usize]
+        *buffer_7.offset(1) =
+            mirror7[inverse7[compact[diag1_pattern[8]
                 as usize] as usize] as usize];
-        *buffer_7.offset(2 as i32 as isize) =
-            mirror7[inverse7[compact[diag2_pattern[6 as i32 as usize]
+        *buffer_7.offset(2) =
+            mirror7[inverse7[compact[diag2_pattern[6]
                 as usize] as usize] as usize];
-        *buffer_7.offset(3 as i32 as isize) =
-            mirror7[inverse7[compact[diag2_pattern[8 as i32 as usize]
+        *buffer_7.offset(3) =
+            mirror7[inverse7[compact[diag2_pattern[8]
                 as usize] as usize] as usize]
     }
     /* The diagonals of length 6 */
     if side_to_move == 0 as i32 {
         *buffer_6.offset(0 as i32 as isize) =
-            mirror6[compact[diag1_pattern[5 as i32 as usize] as usize]
+            mirror6[compact[diag1_pattern[5] as usize]
                 as usize];
-        *buffer_6.offset(1 as i32 as isize) =
-            mirror6[compact[diag1_pattern[9 as i32 as usize] as usize]
+        *buffer_6.offset(1) =
+            mirror6[compact[diag1_pattern[9] as usize]
                 as usize];
-        *buffer_6.offset(2 as i32 as isize) =
-            mirror6[compact[diag2_pattern[5 as i32 as usize] as usize]
+        *buffer_6.offset(2) =
+            mirror6[compact[diag2_pattern[5] as usize]
                 as usize];
-        *buffer_6.offset(3 as i32 as isize) =
-            mirror6[compact[diag2_pattern[9 as i32 as usize] as usize]
+        *buffer_6.offset(3) =
+            mirror6[compact[diag2_pattern[9] as usize]
                 as usize]
     } else {
         *buffer_6.offset(0 as i32 as isize) =
-            mirror6[inverse6[compact[diag1_pattern[5 as i32 as usize]
+            mirror6[inverse6[compact[diag1_pattern[5]
                 as usize] as usize] as usize];
-        *buffer_6.offset(1 as i32 as isize) =
-            mirror6[inverse6[compact[diag1_pattern[9 as i32 as usize]
+        *buffer_6.offset(1) =
+            mirror6[inverse6[compact[diag1_pattern[9]
                 as usize] as usize] as usize];
-        *buffer_6.offset(2 as i32 as isize) =
-            mirror6[inverse6[compact[diag2_pattern[5 as i32 as usize]
+        *buffer_6.offset(2) =
+            mirror6[inverse6[compact[diag2_pattern[5]
                 as usize] as usize] as usize];
-        *buffer_6.offset(3 as i32 as isize) =
-            mirror6[inverse6[compact[diag2_pattern[9 as i32 as usize]
+        *buffer_6.offset(3) =
+            mirror6[inverse6[compact[diag2_pattern[9]
                 as usize] as usize] as usize]
     }
     /* The diagonals of length 5 */
     if side_to_move == 0 as i32 {
         *buffer_5.offset(0 as i32 as isize) =
-            mirror5[compact[diag1_pattern[4 as i32 as usize] as usize]
+            mirror5[compact[diag1_pattern[4] as usize]
                 as usize];
-        *buffer_5.offset(1 as i32 as isize) =
-            mirror5[compact[diag1_pattern[10 as i32 as usize] as
+        *buffer_5.offset(1) =
+            mirror5[compact[diag1_pattern[10] as
                 usize] as usize];
-        *buffer_5.offset(2 as i32 as isize) =
-            mirror5[compact[diag2_pattern[4 as i32 as usize] as usize]
+        *buffer_5.offset(2) =
+            mirror5[compact[diag2_pattern[4] as usize]
                 as usize];
-        *buffer_5.offset(3 as i32 as isize) =
-            mirror5[compact[diag2_pattern[10 as i32 as usize] as
+        *buffer_5.offset(3) =
+            mirror5[compact[diag2_pattern[10] as
                 usize] as usize]
     } else {
         *buffer_5.offset(0 as i32 as isize) =
-            mirror5[inverse5[compact[diag1_pattern[4 as i32 as usize]
+            mirror5[inverse5[compact[diag1_pattern[4]
                 as usize] as usize] as usize];
-        *buffer_5.offset(1 as i32 as isize) =
-            mirror5[inverse5[compact[diag1_pattern[10 as i32 as usize]
+        *buffer_5.offset(1) =
+            mirror5[inverse5[compact[diag1_pattern[10]
                 as usize] as usize] as usize];
-        *buffer_5.offset(2 as i32 as isize) =
-            mirror5[inverse5[compact[diag2_pattern[4 as i32 as usize]
+        *buffer_5.offset(2) =
+            mirror5[inverse5[compact[diag2_pattern[4]
                 as usize] as usize] as usize];
-        *buffer_5.offset(3 as i32 as isize) =
-            mirror5[inverse5[compact[diag2_pattern[10 as i32 as usize]
+        *buffer_5.offset(3) =
+            mirror5[inverse5[compact[diag2_pattern[10]
                 as usize] as usize] as usize]
     }
     /* The diagonals of length 4 */
     if side_to_move == 0 as i32 {
         *buffer_4.offset(0 as i32 as isize) =
-            mirror4[compact[diag1_pattern[3 as i32 as usize] as usize]
+            mirror4[compact[diag1_pattern[3] as usize]
                 as usize];
-        *buffer_4.offset(1 as i32 as isize) =
-            mirror4[compact[diag1_pattern[11 as i32 as usize] as
+        *buffer_4.offset(1) =
+            mirror4[compact[diag1_pattern[11] as
                 usize] as usize];
-        *buffer_4.offset(2 as i32 as isize) =
-            mirror4[compact[diag2_pattern[3 as i32 as usize] as usize]
+        *buffer_4.offset(2) =
+            mirror4[compact[diag2_pattern[3] as usize]
                 as usize];
-        *buffer_4.offset(3 as i32 as isize) =
-            mirror4[compact[diag2_pattern[11 as i32 as usize] as
+        *buffer_4.offset(3) =
+            mirror4[compact[diag2_pattern[11] as
                 usize] as usize]
     } else {
         *buffer_4.offset(0 as i32 as isize) =
-            mirror4[inverse4[compact[diag1_pattern[3 as i32 as usize]
+            mirror4[inverse4[compact[diag1_pattern[3]
                 as usize] as usize] as usize];
-        *buffer_4.offset(1 as i32 as isize) =
-            mirror4[inverse4[compact[diag1_pattern[11 as i32 as usize]
+        *buffer_4.offset(1) =
+            mirror4[inverse4[compact[diag1_pattern[11]
                 as usize] as usize] as usize];
-        *buffer_4.offset(2 as i32 as isize) =
-            mirror4[inverse4[compact[diag2_pattern[3 as i32 as usize]
+        *buffer_4.offset(2) =
+            mirror4[inverse4[compact[diag2_pattern[3]
                 as usize] as usize] as usize];
-        *buffer_4.offset(3 as i32 as isize) =
-            mirror4[inverse4[compact[diag2_pattern[11 as i32 as usize]
+        *buffer_4.offset(3) =
+            mirror4[inverse4[compact[diag2_pattern[11]
                 as usize] as usize] as usize]
     };
 }
@@ -1951,15 +1947,15 @@ pub unsafe fn pattern_setup() {
     i = 0 as i32;
     while i < 19683 as i32 {
         mirror_pattern =
-            row[0 as i32 as usize] +
-                3 as i32 * row[3 as i32 as usize] +
-                9 as i32 * row[6 as i32 as usize] +
-                27 as i32 * row[1 as i32 as usize] +
-                81 as i32 * row[4 as i32 as usize] +
-                243 as i32 * row[7 as i32 as usize] +
-                729 as i32 * row[2 as i32 as usize] +
-                2187 as i32 * row[5 as i32 as usize] +
-                6561 as i32 * row[8 as i32 as usize];
+            row[0] +
+                3 as i32 * row[3] +
+                9 as i32 * row[6] +
+                27 as i32 * row[1] +
+                81 as i32 * row[4] +
+                243 as i32 * row[7] +
+                729 as i32 * row[2] +
+                2187 as i32 * row[5] +
+                6561 as i32 * row[8];
         mirror33[i as usize] =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
@@ -2448,17 +2444,17 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             *const i8);
         exit(1 as i32);
     }
-    game_file = *argv.offset(1 as i32 as isize);
-    option_file = *argv.offset(2 as i32 as isize);
-    analysis_stage = atoi(*argv.offset(3 as i32 as isize));
+    game_file = *argv.offset(1);
+    option_file = *argv.offset(2);
+    analysis_stage = atoi(*argv.offset(3));
     if argc >= 5 as i32 {
-        max_positions = atoi(*argv.offset(4 as i32 as isize))
+        max_positions = atoi(*argv.offset(4))
     } else { max_positions = 10000 as i32 }
     if argc >= 6 as i32 {
-        max_iterations = atoi(*argv.offset(5 as i32 as isize))
+        max_iterations = atoi(*argv.offset(5))
     } else { max_iterations = 100000000 as i32 }
     if argc >= 7 as i32 {
-        max_diff = atoi(*argv.offset(6 as i32 as isize))
+        max_diff = atoi(*argv.offset(6))
     } else { max_diff = 64 as i32 }
     /* Create pattern tables and reset all feature values */
     printf(b"Building pattern tables... \x00" as *const u8 as

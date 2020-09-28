@@ -1764,14 +1764,14 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                 }
                 i += 1
             }
-            match script_buffer[65 as i32 as usize] as i32 {
+            match script_buffer[65] as i32 {
                 42 | 88 | 120 => { side_to_move = 0 as i32 }
                 79 | 48 | 111 => { side_to_move = 2 as i32 }
                 _ => {
                     fprintf(stderr,
                             b"\nBad side to move \'%c\' in board on line %d\n\n\x00"
                                 as *const u8 as *const i8,
-                            script_buffer[65 as i32 as usize] as
+                            script_buffer[65] as
                                 i32, line);
                     exit(1 as i32);
                 }
@@ -1911,10 +1911,10 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                 let mut row: i32 = 0;
                 let mut col_0: i32 = 0;
                 row =
-                    move_buffer[1 as i32 as usize] as i32 -
+                    move_buffer[1] as i32 -
                         '0' as i32;
                 col_0 =
-                   FE::tolower(move_buffer[0 as i32 as usize] as
+                   FE::tolower(move_buffer[0] as
                                 i32) - 'a' as i32 + 1 as i32;
                 move_0 = 10 as i32 * row + col_0;
                 if row >= 1 as i32 && row <= 8 as i32 &&
@@ -2519,9 +2519,9 @@ unsafe fn do_restricted_minimax(index: i32,
     child_count = 0 as i32;
     i = 0 as i32;
     while i < move_count[disks_played as usize] {
-        piece_count[0 as i32 as usize][disks_played as usize] =
+        piece_count[0][disks_played as usize] =
             disc_count(0 as i32, &board);
-        piece_count[2 as i32 as usize][disks_played as usize] =
+        piece_count[2][disks_played as usize] =
             disc_count(2 as i32, &board);
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
@@ -2851,8 +2851,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                end_game::<FE>(side_to_move, 0 as i32, 1 as i32,
                          1 as i32, 0 as i32, &mut dummy_info);
                 endgame_correlation(side_to_move, root_eval,
-                                    pv[0 as i32 as
-                                        usize][0 as i32 as usize],
+                                    pv[0][0],
                                     min_disks, max_disks, spec);
             }
         }
@@ -2909,8 +2908,7 @@ unsafe fn do_endgame_statistics(index: i32,
                      1 as i32, 0 as i32, &mut dummy_info);
             if abs(root_eval) <= spec.max_diff {
                 endgame_correlation(side_to_move, root_eval,
-                                    pv[0 as i32 as
-                                        usize][0 as i32 as usize],
+                                    pv[0][0],
                                     disks_played, 48 as i32, spec);
             }
         }
@@ -3391,7 +3389,7 @@ pub unsafe fn correct_tree(max_empty: i32,
     puts(b"\x00" as *const u8 as *const i8);
     printf(b"Progress: \x00" as *const u8 as *const i8);
     fflush(stdout);
-    move_buffer[0 as i32 as usize] = '\u{0}' as i32 as i8;
+    move_buffer[0] = '\u{0}' as i32 as i8;
     do_correct(0 as i32, max_empty, full_solve,
                correction_script_name, move_buffer.as_mut_ptr());
     time(&mut stop_time);

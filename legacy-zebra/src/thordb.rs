@@ -218,9 +218,9 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
         i += 1;
         if !(ch as i32 != 0 as i32) { break ; }
     }
-    if buffer1[0 as i32 as usize] as i32 == '?' as i32 {
+    if buffer1[0] as i32 == '?' as i32 {
         /* Put unknown players LAST */
-        buffer1[0 as i32 as usize] = '~' as i32 as i8
+        buffer1[0] = '~' as i32 as i8
     }
     i = 0 as i32;
     loop  {
@@ -229,9 +229,9 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
         i += 1;
         if !(ch as i32 != 0 as i32) { break ; }
     }
-    if buffer2[0 as i32 as usize] as i32 == '?' as i32 {
+    if buffer2[0] as i32 == '?' as i32 {
         /* Put unknown players LAST */
-        buffer2[0 as i32 as usize] = '~' as i32 as i8
+        buffer2[0] = '~' as i32 as i8
     }
     return strcmp(buffer1.as_mut_ptr(), buffer2.as_mut_ptr());
 }

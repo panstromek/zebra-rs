@@ -271,14 +271,14 @@ pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32)
         }
         i += 1
     }
-    pv_depth[0 as i32 as usize] = 1 as i32;
+    pv_depth[0] = 1 as i32;
     if best_score_restricted > -(12345678 as i32) {
         /* No immediate loss */
-        pv[0 as i32 as usize][0 as i32 as usize] =
+        pv[0][0] =
             best_move_restricted;
         return best_score_restricted
     } else {
-        pv[0 as i32 as usize][0 as i32 as usize] =
+        pv[0][0] =
             best_move_unrestricted;
         return best_score_unrestricted
     };
@@ -358,7 +358,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         find_hash(&mut entry, 0 as i32);
         if entry.draft as i32 >= remains &&
             entry.selectivity as i32 <= selectivity &&
-            valid_move(entry.move_0[0 as i32 as usize],
+            valid_move(entry.move_0[0],
                        side_to_move) != 0 &&
             entry.flags as i32 & 8 as i32 != 0 &&
             (entry.flags as i32 & 4 as i32 != 0 ||
@@ -367,7 +367,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                 entry.flags as i32 & 2 as i32 != 0 &&
                     entry.eval <= alpha) {
             pv[level as usize][level as usize] =
-                entry.move_0[0 as i32 as usize];
+                entry.move_0[0];
             pv_depth[level as usize] = level + 1 as i32;
             return entry.eval
         }
@@ -375,7 +375,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
     hash_hit =
         (use_hash != 0 && allow_midgame_hash_probe != 0) as i32;
     if hash_hit != 0 {
-        hash_move = entry.move_0[0 as i32 as usize]
+        hash_move = entry.move_0[0]
     } else { hash_move = 44 as i32 }
     pre_search_done = 0 as i32;
     /* Use multi-prob-cut to selectively prune the tree */
@@ -878,7 +878,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
         find_hash(&mut entry, 0 as i32);
         if entry.draft as i32 >= remains &&
             entry.selectivity as i32 == 0 as i32 &&
-            valid_move(entry.move_0[0 as i32 as usize],
+            valid_move(entry.move_0[0],
                        side_to_move) != 0 &&
             entry.flags as i32 & 8 as i32 != 0 &&
             (entry.flags as i32 & 4 as i32 != 0 ||
@@ -886,7 +886,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
                     entry.eval >= beta ||
                 entry.flags as i32 & 2 as i32 != 0 &&
                     entry.eval <= alpha) {
-            best_mid_move = entry.move_0[0 as i32 as usize];
+            best_mid_move = entry.move_0[0];
             return entry.eval
         }
     }
@@ -1416,9 +1416,9 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
             flags: 0,};
     last_panic_check = 0.0f64;
     counter_phase = 0 as i32;
-    piece_count[0 as i32 as usize][disks_played as usize] =
+    piece_count[0][disks_played as usize] =
         disc_count(0 as i32, &board);
-    piece_count[2 as i32 as usize][disks_played as usize] =
+    piece_count[2][disks_played as usize] =
         disc_count(2 as i32, &board);
     let base_stage =
         disc_count(0 as i32, &board) + disc_count(2 as i32, &board) -
@@ -1482,9 +1482,9 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         }
         /* Adjust scores and PV if search is aborted */
         if is_panic_abort() != 0 || force_return != 0 {
-            pv[0 as i32 as usize][0 as i32 as usize] =
+            pv[0][0] =
                 best_mid_root_move;
-            pv_depth[0 as i32 as usize] = 1 as i32;
+            pv_depth[0] = 1 as i32;
             hash_expand_pv(side_to_move, 0 as i32, 4 as i32,
                            12345678 as i32);
             if base_stage + depth - 2 as i32 >= 0 as i32 &&
@@ -1503,7 +1503,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         find_hash(&mut entry, 0 as i32);
         if force_return == 0 && is_panic_abort() == 0 &&
             entry.draft as i32 != 0 as i32 &&
-            valid_move(entry.move_0[0 as i32 as usize],
+            valid_move(entry.move_0[0],
                        side_to_move) != 0 &&
             entry.draft as i32 == depth {
             full_length_line = 1 as i32
@@ -1559,7 +1559,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         if depth == max_depth {
             FE::midgame_display_status(side_to_move, max_depth, eval_info, depth,
                                        force_return != 0, &mut nodes,
-                                       &mut pv[0 as i32 as usize], pv_depth[0 as i32 as usize])
+                                       &mut pv[0], pv_depth[0])
         }
         if is_panic_abort() != 0 || force_return != 0 { break ; }
         /* Check if search time or adjusted search time are long enough
@@ -1576,5 +1576,5 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         depth += 1
     }
     root_eval = val;
-    return pv[0 as i32 as usize][0 as i32 as usize];
+    return pv[0][0];
 }

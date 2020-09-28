@@ -186,10 +186,10 @@ impl FrontEnd for LibcFatalError {
         unsafe {
             send_sweep(b"%c%c\x00" as *const u8 as *const i8,
                        'a' as i32 +
-                           entry.move_0[0 as i32 as usize] %
+                           entry.move_0[0] %
                                10 as i32 - 1 as i32,
                        '0' as i32 +
-                           entry.move_0[0 as i32 as usize] /
+                           entry.move_0[0] /
                                10 as i32);
             if entry.flags as i32 & 16 as i32 != 0 &&
                 entry.flags as i32 & 4 as i32 != 0 {

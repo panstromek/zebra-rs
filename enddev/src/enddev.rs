@@ -227,7 +227,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let mut game_moves: [i32; 60] = [0; 60];
     let mut stream: *mut FILE = 0 as *mut FILE;
     if argc != 3 as i32 ||
-        sscanf(*argv.offset(2 as i32 as isize),
+        sscanf(*argv.offset(2),
                b"%lf\x00" as *const u8 as *const i8,
                &mut rand_prob as *mut f64) != 1 as i32 {
         fputs(b"Usage:\n  enddev <game file> <randomization prob.>\n\x00" as
@@ -235,13 +235,13 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         exit(1 as i32);
     }
     stream =
-        fopen(*argv.offset(1 as i32 as isize),
+        fopen(*argv.offset(1),
               b"r\x00" as *const u8 as *const i8);
     if stream.is_null() {
         fprintf(stderr,
                 b"Cannot open %s for reading.\n\x00" as *const u8 as
                     *const i8,
-                *argv.offset(1 as i32 as isize));
+                *argv.offset(1));
         exit(1 as i32);
     }
     init_learn(b"book.bin\x00" as *const u8 as *const i8,

@@ -202,7 +202,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
         /* Check if the line is a comment or an end marker */
         fgets(buffer.as_mut_ptr(), 256 as i32, script_stream);
         if feof(script_stream) != 0 { break ; }
-        if buffer[0 as i32 as usize] as i32 == '%' as i32 {
+        if buffer[0] as i32 == '%' as i32 {
             /* Comment */
             output_stream =
                 fopen(out_file_name,
@@ -252,7 +252,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                        i + 1 as i32);
                 exit(1 as i32);
             }
-            match stm_string[0 as i32 as usize] as i32 {
+            match stm_string[0] as i32 {
                 79 | 48 => { side_to_move = 2 as i32 }
                 42 | 88 => { side_to_move = 0 as i32 }
                 _ => {
@@ -470,20 +470,20 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     display_pv = 1 as i32;
     use_learning = 0 as i32;
     use_thor = 0 as i32;
-    skill[2 as i32 as usize] = -(1 as i32);
-    skill[0 as i32 as usize] = skill[2 as i32 as usize];
+    skill[2] = -(1 as i32);
+    skill[0] = skill[2];
     hash_bits = 18 as i32;
     log_file_name = 0 as *mut i8;
     run_script = 0 as i32;
     script_out_file = 0 as *const i8;
     script_in_file = script_out_file;
     komi = 0 as i32;
-    player_time[2 as i32 as usize] = 10000000.0f64;
-    player_time[0 as i32 as usize] =
-        player_time[2 as i32 as usize];
-    player_increment[2 as i32 as usize] = 0.0f64;
-    player_increment[0 as i32 as usize] =
-        player_increment[2 as i32 as usize];
+    player_time[2] = 10000000.0f64;
+    player_time[0] =
+        player_time[2];
+    player_increment[2] = 0.0f64;
+    player_increment[0] =
+        player_increment[2];
     let mut current_block_37: u64;
     arg_index = 1 as i32;
     help = 0 as i32;

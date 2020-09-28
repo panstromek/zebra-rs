@@ -284,8 +284,8 @@ pub unsafe fn set_deviation_value(low_threshold: i32,
 */
 
 pub unsafe fn reset_book_search() {
-    used_slack[0 as i32 as usize] = 0.0f64 as i32;
-    used_slack[2 as i32 as usize] = 0.0f64 as i32;
+    used_slack[0] = 0.0f64 as i32;
+    used_slack[2] = 0.0f64 as i32;
 }
 /*
    SET_SLACK
@@ -379,102 +379,86 @@ pub unsafe fn get_hash(val0: *mut i32,
     i = 0 as i32;
     while i < 8 as i32 {
         /* b1 -> b1 */
-        out[0 as i32 as usize][0 as i32 as usize] ^=
-            line_hash[0 as i32 as
-                usize][i as
+        out[0][0] ^=
+            line_hash[0][i as
                 usize][row_pattern[i as usize] as usize];
-        out[0 as i32 as usize][1 as i32 as usize] ^=
-            line_hash[1 as i32 as
-                usize][i as
+        out[0][1] ^=
+            line_hash[1][i as
                 usize][row_pattern[i as usize] as usize];
         /* g1 -> b1 */
-        out[1 as i32 as usize][0 as i32 as usize] ^=
-            line_hash[0 as i32 as
-                usize][i as
+        out[1][0] ^=
+            line_hash[0][i as
                 usize][flip8[row_pattern[i as usize] as
                 usize] as usize];
-        out[1 as i32 as usize][1 as i32 as usize] ^=
-            line_hash[1 as i32 as
-                usize][i as
+        out[1][1] ^=
+            line_hash[1][i as
                 usize][flip8[row_pattern[i as usize] as
                 usize] as usize];
         /* g8 -> b1 */
-        out[2 as i32 as usize][0 as i32 as usize] ^=
-            line_hash[0 as i32 as
-                usize][i as
+        out[2][0] ^=
+            line_hash[0][i as
                 usize][flip8[row_pattern[(7 as
                 i32
                 - i) as
                 usize] as
                 usize] as usize];
-        out[2 as i32 as usize][1 as i32 as usize] ^=
-            line_hash[1 as i32 as
-                usize][i as
+        out[2][1] ^=
+            line_hash[1][i as
                 usize][flip8[row_pattern[(7 as
                 i32
                 - i) as
                 usize] as
                 usize] as usize];
         /* b8 -> b1 */
-        out[3 as i32 as usize][0 as i32 as usize] ^=
-            line_hash[0 as i32 as
-                usize][i as
+        out[3][0] ^=
+            line_hash[0][i as
                 usize][row_pattern[(7 as i32 - i)
                 as usize] as
                 usize];
-        out[3 as i32 as usize][1 as i32 as usize] ^=
-            line_hash[1 as i32 as
-                usize][i as
+        out[3][1] ^=
+            line_hash[1][i as
                 usize][row_pattern[(7 as i32 - i)
                 as usize] as
                 usize];
         /* a2 -> b1 */
-        out[4 as i32 as usize][0 as i32 as usize] ^=
-            line_hash[0 as i32 as
-                usize][i as
+        out[4][0] ^=
+            line_hash[0][i as
                 usize][col_pattern[i as usize] as usize];
-        out[4 as i32 as usize][1 as i32 as usize] ^=
-            line_hash[1 as i32 as
-                usize][i as
+        out[4][1] ^=
+            line_hash[1][i as
                 usize][col_pattern[i as usize] as usize];
         /* a7 -> b1 */
-        out[5 as i32 as usize][0 as i32 as usize] ^=
-            line_hash[0 as i32 as
-                usize][i as
+        out[5][0] ^=
+            line_hash[0][i as
                 usize][flip8[col_pattern[i as usize] as
                 usize] as usize];
-        out[5 as i32 as usize][1 as i32 as usize] ^=
-            line_hash[1 as i32 as
-                usize][i as
+        out[5][1] ^=
+            line_hash[1][i as
                 usize][flip8[col_pattern[i as usize] as
                 usize] as usize];
         /* h7 -> b1 */
-        out[6 as i32 as usize][0 as i32 as usize] ^=
-            line_hash[0 as i32 as
-                usize][i as
+        out[6][0] ^=
+            line_hash[0][i as
                 usize][flip8[col_pattern[(7 as
                 i32
                 - i) as
                 usize] as
                 usize] as usize];
-        out[6 as i32 as usize][1 as i32 as usize] ^=
-            line_hash[1 as i32 as
-                usize][i as
+        out[6][1] ^=
+            line_hash[1][i as
                 usize][flip8[col_pattern[(7 as
                 i32
                 - i) as
                 usize] as
                 usize] as usize];
         /* h2 -> b1 */
-        out[7 as i32 as usize][0 as i32 as usize] ^=
-            line_hash[0 as i32 as
-                usize][i as
+        out[7][0] ^=
+            line_hash[0][i as
                 usize][col_pattern[(7 as i32 - i)
                 as usize] as
                 usize];
-        out[7 as i32 as usize][1 as i32 as usize] ^=
-            line_hash[1 as i32 as
-                usize][i as
+        out[7][1] ^=
+            line_hash[1][i as
                 usize][col_pattern[(7 as i32 - i)
                 as usize] as
                 usize];
@@ -484,16 +468,16 @@ pub unsafe fn get_hash(val0: *mut i32,
        If two hash indices are equal, map number is implicitly used
        as tie-breaker. */
     min_map = 0 as i32;
-    min_hash0 = out[0 as i32 as usize][0 as i32 as usize];
-    min_hash1 = out[0 as i32 as usize][1 as i32 as usize];
+    min_hash0 = out[0][0];
+    min_hash1 = out[0][1];
     i = 1 as i32;
     while i < 8 as i32 {
-        if out[i as usize][0 as i32 as usize] < min_hash0 ||
-            out[i as usize][0 as i32 as usize] == min_hash0 &&
-                out[i as usize][1 as i32 as usize] < min_hash1 {
+        if out[i as usize][0] < min_hash0 ||
+            out[i as usize][0] == min_hash0 &&
+                out[i as usize][1] < min_hash1 {
             min_map = i;
-            min_hash0 = out[i as usize][0 as i32 as usize];
-            min_hash1 = out[i as usize][1 as i32 as usize]
+            min_hash0 = out[i as usize][0];
+            min_hash1 = out[i as usize][1]
         }
         i += 1
     }
@@ -741,9 +725,9 @@ pub unsafe fn do_minimax(index: i32,
     child_count = 0 as i32;
     i = 0 as i32;
     while i < move_count[disks_played as usize] {
-        piece_count[0 as i32 as usize][disks_played as usize] =
+        piece_count[0][disks_played as usize] =
             disc_count(0 as i32, &board);
-        piece_count[2 as i32 as usize][disks_played as usize] =
+        piece_count[2][disks_played as usize] =
             disc_count(2 as i32, &board);
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
@@ -957,22 +941,22 @@ pub unsafe fn init_maps<FE: FrontEnd>() {
         }
         i += 1
     }
-    symmetry_map[0 as i32 as usize] = b1_b1_map.as_mut_ptr();
-    inv_symmetry_map[0 as i32 as usize] = b1_b1_map.as_mut_ptr();
-    symmetry_map[1 as i32 as usize] = g1_b1_map.as_mut_ptr();
-    inv_symmetry_map[1 as i32 as usize] = g1_b1_map.as_mut_ptr();
-    symmetry_map[2 as i32 as usize] = g8_b1_map.as_mut_ptr();
-    inv_symmetry_map[2 as i32 as usize] = g8_b1_map.as_mut_ptr();
-    symmetry_map[3 as i32 as usize] = b8_b1_map.as_mut_ptr();
-    inv_symmetry_map[3 as i32 as usize] = b8_b1_map.as_mut_ptr();
-    symmetry_map[4 as i32 as usize] = a2_b1_map.as_mut_ptr();
-    inv_symmetry_map[4 as i32 as usize] = a2_b1_map.as_mut_ptr();
-    symmetry_map[5 as i32 as usize] = a7_b1_map.as_mut_ptr();
-    inv_symmetry_map[5 as i32 as usize] = h2_b1_map.as_mut_ptr();
-    symmetry_map[6 as i32 as usize] = h7_b1_map.as_mut_ptr();
-    inv_symmetry_map[6 as i32 as usize] = h7_b1_map.as_mut_ptr();
-    symmetry_map[7 as i32 as usize] = h2_b1_map.as_mut_ptr();
-    inv_symmetry_map[7 as i32 as usize] = a7_b1_map.as_mut_ptr();
+    symmetry_map[0] = b1_b1_map.as_mut_ptr();
+    inv_symmetry_map[0] = b1_b1_map.as_mut_ptr();
+    symmetry_map[1] = g1_b1_map.as_mut_ptr();
+    inv_symmetry_map[1] = g1_b1_map.as_mut_ptr();
+    symmetry_map[2] = g8_b1_map.as_mut_ptr();
+    inv_symmetry_map[2] = g8_b1_map.as_mut_ptr();
+    symmetry_map[3] = b8_b1_map.as_mut_ptr();
+    inv_symmetry_map[3] = b8_b1_map.as_mut_ptr();
+    symmetry_map[4] = a2_b1_map.as_mut_ptr();
+    inv_symmetry_map[4] = a2_b1_map.as_mut_ptr();
+    symmetry_map[5] = a7_b1_map.as_mut_ptr();
+    inv_symmetry_map[5] = h2_b1_map.as_mut_ptr();
+    symmetry_map[6] = h7_b1_map.as_mut_ptr();
+    inv_symmetry_map[6] = h7_b1_map.as_mut_ptr();
+    symmetry_map[7] = h2_b1_map.as_mut_ptr();
+    inv_symmetry_map[7] = a7_b1_map.as_mut_ptr();
     i = 0 as i32;
     while i < 8 as i32 {
         *symmetry_map[i as usize].offset(0 as i32 as isize) =
@@ -1193,12 +1177,12 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
         local_board[pos as usize] = 1 as i32;
         pos += 1
     }
-    local_board[54 as i32 as usize] = 0 as i32;
-    local_board[45 as i32 as usize] =
-        local_board[54 as i32 as usize];
-    local_board[55 as i32 as usize] = 2 as i32;
-    local_board[44 as i32 as usize] =
-        local_board[55 as i32 as usize];
+    local_board[54] = 0 as i32;
+    local_board[45] =
+        local_board[54];
+    local_board[55] = 2 as i32;
+    local_board[44] =
+        local_board[55];
     local_side_to_move = 0 as i32;
     i = 0 as i32;
     while i < disks_played {
@@ -1302,9 +1286,9 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
         while i < allowed_count {
             make_move(side_to_move, *allowed_moves.offset(i as isize),
                       1 as i32);
-            piece_count[0 as i32 as usize][disks_played as usize] =
+            piece_count[0][disks_played as usize] =
                 disc_count(0 as i32, &board);
-            piece_count[2 as i32 as usize][disks_played as usize] =
+            piece_count[2][disks_played as usize] =
                 disc_count(2 as i32, &board);
             last_panic_check = 0.0f64;
             if i == 0 as i32 {
@@ -1365,9 +1349,9 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
        to depth DEPTH+1 */
     make_move(side_to_move, *allowed_moves.offset(*best_index as isize),
               1 as i32);
-    piece_count[0 as i32 as usize][disks_played as usize] =
+    piece_count[0][disks_played as usize] =
         disc_count(0 as i32, &board);
-    piece_count[2 as i32 as usize][disks_played as usize] =
+    piece_count[2][disks_played as usize] =
         disc_count(2 as i32, &board);
     last_panic_check = 0.0f64;
     high_score =
@@ -1434,9 +1418,9 @@ pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32) {
     } else { side_to_move = 2 as i32 }
     remove_coeffs(disks_played - 8 as i32);
     clear_panic_abort();
-    piece_count[0 as i32 as usize][disks_played as usize] =
+    piece_count[0][disks_played as usize] =
         disc_count(0 as i32, &board);
-    piece_count[2 as i32 as usize][disks_played as usize] =
+    piece_count[2][disks_played as usize] =
         disc_count(2 as i32, &board);
     /* Find the moves which haven't been tried from this position */
     alternative_move_count = 0 as i32;
@@ -2105,7 +2089,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     index = *book_hash_table.offset(slot as isize);
     if (*node.offset(index as isize)).flags as i32 & 16 as i32
         != 0 {
-        if candidate_list[0 as i32 as usize].score <
+        if candidate_list[0].score <
             (*node.offset(index as isize)).black_minimax_score as
                 i32 {
             return -(1 as i32)
@@ -2114,13 +2098,13 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         4 as i32 != 0 {
         if (*node.offset(index as isize)).black_minimax_score as i32 >
             0 as i32 &&
-            candidate_list[0 as i32 as usize].score <=
+            candidate_list[0].score <=
                 0 as i32 {
             return -(1 as i32)
         }
     }
     /* Don't randomize among solved moves */
-    score = candidate_list[0 as i32 as usize].score;
+    score = candidate_list[0].score;
     if score >= 30000 as i32 { remaining_slack = 0 as i32 }
     feasible_count = 0 as i32;
     total_weight = 0 as i32;
@@ -2202,7 +2186,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     /* Fill the PV structure with the optimal book line */
     original_side_to_move = side_to_move;
     level = 0 as i32;
-    temp_move[0 as i32 as usize] =
+    temp_move[0] =
         candidate_list[chosen_index as usize].move_0;
     loop  {
         temp_stm[level as usize] = side_to_move;
@@ -2288,10 +2272,10 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         }
         if !(continuation != 0) { break ; }
     }
-    pv_depth[0 as i32 as usize] = level;
+    pv_depth[0] = level;
     i = 0 as i32;
     while i < level {
-        pv[0 as i32 as usize][i as usize] = temp_move[i as usize];
+        pv[0][i as usize] = temp_move[i as usize];
         i += 1
     }
     loop  {

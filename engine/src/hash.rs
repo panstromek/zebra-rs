@@ -88,15 +88,15 @@ pub unsafe fn determine_hash_values(side_to_move: i32,
             match *board.offset(pos as isize) {
                 0 => {
                     hash1 ^=
-                        hash_value1[0 as i32 as usize][pos as usize];
+                        hash_value1[0][pos as usize];
                     hash2 ^=
-                        hash_value2[0 as i32 as usize][pos as usize]
+                        hash_value2[0][pos as usize]
                 }
                 2 => {
                     hash1 ^=
-                        hash_value1[2 as i32 as usize][pos as usize];
+                        hash_value1[2][pos as usize];
                     hash2 ^=
-                        hash_value2[2 as i32 as usize][pos as usize]
+                        hash_value2[2][pos as usize]
                 }
                 _ => { }
             }
@@ -144,10 +144,10 @@ pub unsafe fn find_hash(mut entry: *mut HashEntry,
     (*entry).draft = 0 as i32 as i16;
     (*entry).flags = 2 as i32 as i16;
     (*entry).eval = 12345678 as i32;
-    (*entry).move_0[0 as i32 as usize] = 44 as i32;
-    (*entry).move_0[1 as i32 as usize] = 0 as i32;
-    (*entry).move_0[2 as i32 as usize] = 0 as i32;
-    (*entry).move_0[3 as i32 as usize] = 0 as i32;
+    (*entry).move_0[0] = 44 as i32;
+    (*entry).move_0[1] = 0 as i32;
+    (*entry).move_0[2] = 0 as i32;
+    (*entry).move_0[3] = 0 as i32;
 }
 
 /*
@@ -160,16 +160,16 @@ unsafe fn compact_to_wide(compact_entry:
                           mut entry: *mut HashEntry) {
     (*entry).key2 = (*compact_entry).key2;
     (*entry).eval = (*compact_entry).eval;
-    (*entry).move_0[0 as i32 as usize] =
+    (*entry).move_0[0] =
         ((*compact_entry).moves & 255 as i32 as u32) as
             i32;
-    (*entry).move_0[1 as i32 as usize] =
+    (*entry).move_0[1] =
         ((*compact_entry).moves >> 8 as i32 &
             255 as i32 as u32) as i32;
-    (*entry).move_0[2 as i32 as usize] =
+    (*entry).move_0[2] =
         ((*compact_entry).moves >> 16 as i32 &
             255 as i32 as u32) as i32;
-    (*entry).move_0[3 as i32 as usize] =
+    (*entry).move_0[3] =
         ((*compact_entry).moves >> 24 as i32 &
             255 as i32 as u32) as i32;
     (*entry).key1 =
@@ -199,12 +199,12 @@ pub unsafe fn wide_to_compact(entry: *const HashEntry,
     (*compact_entry).key2 = (*entry).key2;
     (*compact_entry).eval = (*entry).eval;
     (*compact_entry).moves =
-        ((*entry).move_0[0 as i32 as usize] +
-            ((*entry).move_0[1 as i32 as usize] << 8 as i32)
+        ((*entry).move_0[0] +
+            ((*entry).move_0[1] << 8 as i32)
             +
-            ((*entry).move_0[2 as i32 as usize] << 16 as i32)
+            ((*entry).move_0[2] << 16 as i32)
             +
-            ((*entry).move_0[3 as i32 as usize] <<
+            ((*entry).move_0[3] <<
                 24 as i32)) as u32;
     (*compact_entry).key1_selectivity_flags_draft =
         ((*entry).key1 &
@@ -385,19 +385,17 @@ pub unsafe fn setup_hash(clear: i32) {
     while rand_index < 130 as i32 {
         'c_2013:
         loop  {
-            random_pair[rand_index as usize][0 as i32 as usize] =
+            random_pair[rand_index as usize][0] =
                 ((my_random() << 3 as i32) +
                     (my_random() >> 2 as i32)) as u32;
-            random_pair[rand_index as usize][1 as i32 as usize] =
+            random_pair[rand_index as usize][1] =
                 ((my_random() << 3 as i32) +
                     (my_random() >> 2 as i32)) as u32;
             closeness =
                 get_closeness(random_pair[rand_index as
-                    usize][0 as i32 as
-                    usize],
+                    usize][0],
                               random_pair[rand_index as
-                                  usize][1 as i32 as
-                                  usize],
+                                  usize][1],
                               0 as i32 as u32,
                               0 as i32 as u32);
             if closeness > max_zero_closeness { continue ; }
@@ -406,31 +404,23 @@ pub unsafe fn setup_hash(clear: i32) {
                 if !(i < rand_index) { break 'c_2013 ; }
                 closeness =
                     get_closeness(random_pair[rand_index as
-                        usize][0 as i32
-                        as usize],
+                        usize][0],
                                   random_pair[rand_index as
-                                      usize][1 as i32
-                                      as usize],
+                                      usize][1],
                                   random_pair[i as
-                                      usize][0 as i32
-                                      as usize],
+                                      usize][0],
                                   random_pair[i as
-                                      usize][1 as i32
-                                      as usize]);
+                                      usize][1]);
                 if closeness > max_pair_closeness { break ; }
                 closeness =
                     get_closeness(random_pair[rand_index as
-                        usize][0 as i32
-                        as usize],
+                        usize][0],
                                   random_pair[rand_index as
-                                      usize][1 as i32
-                                      as usize],
+                                      usize][1],
                                   random_pair[i as
-                                      usize][1 as i32
-                                      as usize],
+                                      usize][1],
                                   random_pair[i as
-                                      usize][0 as i32
-                                      as usize]);
+                                      usize][0]);
                 if closeness > max_pair_closeness { break ; }
                 i += 1
             }
@@ -440,13 +430,13 @@ pub unsafe fn setup_hash(clear: i32) {
     rand_index = 0 as i32;
     i = 0 as i32;
     while i < 128 as i32 {
-        hash_value1[0 as i32 as usize][i as usize] =
+        hash_value1[0][i as usize] =
             0 as i32 as u32;
-        hash_value2[0 as i32 as usize][i as usize] =
+        hash_value2[0][i as usize] =
             0 as i32 as u32;
-        hash_value1[2 as i32 as usize][i as usize] =
+        hash_value1[2][i as usize] =
             0 as i32 as u32;
-        hash_value2[2 as i32 as usize][i as usize] =
+        hash_value2[2][i as usize] =
             0 as i32 as u32;
         i += 1
     }
@@ -455,15 +445,15 @@ pub unsafe fn setup_hash(clear: i32) {
         j = 1 as i32;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
-            hash_value1[0 as i32 as usize][pos as usize] =
-                random_pair[rand_index as usize][0 as i32 as usize];
-            hash_value2[0 as i32 as usize][pos as usize] =
-                random_pair[rand_index as usize][1 as i32 as usize];
+            hash_value1[0][pos as usize] =
+                random_pair[rand_index as usize][0];
+            hash_value2[0][pos as usize] =
+                random_pair[rand_index as usize][1];
             rand_index += 1;
-            hash_value1[2 as i32 as usize][pos as usize] =
-                random_pair[rand_index as usize][0 as i32 as usize];
-            hash_value2[2 as i32 as usize][pos as usize] =
-                random_pair[rand_index as usize][1 as i32 as usize];
+            hash_value1[2][pos as usize] =
+                random_pair[rand_index as usize][0];
+            hash_value2[2][pos as usize] =
+                random_pair[rand_index as usize][1];
             rand_index += 1;
             j += 1
         }
@@ -472,42 +462,42 @@ pub unsafe fn setup_hash(clear: i32) {
     i = 0 as i32;
     while i < 128 as i32 {
         hash_flip1[i as usize] =
-            hash_value1[0 as i32 as usize][i as usize] ^
-                hash_value1[2 as i32 as usize][i as usize];
+            hash_value1[0][i as usize] ^
+                hash_value1[2][i as usize];
         hash_flip2[i as usize] =
-            hash_value2[0 as i32 as usize][i as usize] ^
-                hash_value2[2 as i32 as usize][i as usize];
+            hash_value2[0][i as usize] ^
+                hash_value2[2][i as usize];
         i += 1
     }
-    hash_color1[0 as i32 as usize] =
-        random_pair[rand_index as usize][0 as i32 as usize];
-    hash_color2[0 as i32 as usize] =
-        random_pair[rand_index as usize][1 as i32 as usize];
+    hash_color1[0] =
+        random_pair[rand_index as usize][0];
+    hash_color2[0] =
+        random_pair[rand_index as usize][1];
     rand_index += 1;
-    hash_color1[2 as i32 as usize] =
-        random_pair[rand_index as usize][0 as i32 as usize];
-    hash_color2[2 as i32 as usize] =
-        random_pair[rand_index as usize][1 as i32 as usize];
+    hash_color1[2] =
+        random_pair[rand_index as usize][0];
+    hash_color2[2] =
+        random_pair[rand_index as usize][1];
     rand_index += 1;
     hash_flip_color1 =
-        hash_color1[0 as i32 as usize] ^
-            hash_color1[2 as i32 as usize];
+        hash_color1[0] ^
+            hash_color1[2];
     hash_flip_color2 =
-        hash_color2[0 as i32 as usize] ^
-            hash_color2[2 as i32 as usize];
+        hash_color2[0] ^
+            hash_color2[2];
     j = 0 as i32;
     while j < 128 as i32 {
-        hash_put_value1[0 as i32 as usize][j as usize] =
-            hash_value1[0 as i32 as usize][j as usize] ^
+        hash_put_value1[0][j as usize] =
+            hash_value1[0][j as usize] ^
                 hash_flip_color1;
-        hash_put_value2[0 as i32 as usize][j as usize] =
-            hash_value2[0 as i32 as usize][j as usize] ^
+        hash_put_value2[0][j as usize] =
+            hash_value2[0][j as usize] ^
                 hash_flip_color2;
-        hash_put_value1[2 as i32 as usize][j as usize] =
-            hash_value1[2 as i32 as usize][j as usize] ^
+        hash_put_value1[2][j as usize] =
+            hash_value1[2][j as usize] ^
                 hash_flip_color1;
-        hash_put_value2[2 as i32 as usize][j as usize] =
-            hash_value2[2 as i32 as usize][j as usize] ^
+        hash_put_value2[2][j as usize] =
+            hash_value2[2][j as usize] ^
                 hash_flip_color2;
         j += 1
     };
@@ -584,10 +574,10 @@ pub unsafe fn add_hash(reverse_mode: i32,
     }
     entry.key1 = code1;
     entry.key2 = code2;entry.eval = score;
-    entry.move_0[0 as i32 as usize] = best;
-    entry.move_0[1 as i32 as usize] = 0 as i32;
-    entry.move_0[2 as i32 as usize] = 0 as i32;
-    entry.move_0[3 as i32 as usize] = 0 as i32;
+    entry.move_0[0] = best;
+    entry.move_0[1] = 0 as i32;
+    entry.move_0[2] = 0 as i32;
+    entry.move_0[3] = 0 as i32;
     entry.flags = flags as i16;
     entry.draft = draft as i16;
     entry.selectivity = selectivity as i16;

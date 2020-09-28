@@ -107,12 +107,12 @@ pub unsafe fn clear_thor_board() {
         thor_board[pos as usize] = 1 as i32;
         pos += 1
     }
-    thor_board[54 as i32 as usize] = 0 as i32;
-    thor_board[45 as i32 as usize] =
-        thor_board[54 as i32 as usize];
-    thor_board[55 as i32 as usize] = 2 as i32;
-    thor_board[44 as i32 as usize] =
-        thor_board[55 as i32 as usize];
+    thor_board[54] = 0 as i32;
+    thor_board[45] =
+        thor_board[54];
+    thor_board[55] = 2 as i32;
+    thor_board[44] =
+        thor_board[55];
 }
 /*
   PREPARE_THOR_BOARD
@@ -386,31 +386,31 @@ pub unsafe fn get_corner_mask(disc_a1: i32,
     if disc_h1 != 1 as i32 { count += 1 }
     if disc_h8 != 1 as i32 { count += 1 }
     if count == 0 as i32 { return 0 as i32 as u32 }
-    config[0 as i32 as usize] =
+    config[0] =
         (mask_a1 + 4 as i32 * mask_a8 + 16 as i32 * mask_h1 +
             64 as i32 * mask_h8) as u32;
-    config[1 as i32 as usize] =
+    config[1] =
         (mask_a1 + 4 as i32 * mask_h1 + 16 as i32 * mask_a8 +
             64 as i32 * mask_h8) as u32;
-    config[2 as i32 as usize] =
+    config[2] =
         (mask_a8 + 4 as i32 * mask_a1 + 16 as i32 * mask_h8 +
             64 as i32 * mask_h1) as u32;
-    config[3 as i32 as usize] =
+    config[3] =
         (mask_a8 + 4 as i32 * mask_h8 + 16 as i32 * mask_a1 +
             64 as i32 * mask_h1) as u32;
-    config[4 as i32 as usize] =
+    config[4] =
         (mask_h1 + 4 as i32 * mask_h8 + 16 as i32 * mask_a1 +
             64 as i32 * mask_a8) as u32;
-    config[5 as i32 as usize] =
+    config[5] =
         (mask_h1 + 4 as i32 * mask_a1 + 16 as i32 * mask_h8 +
             64 as i32 * mask_a8) as u32;
-    config[6 as i32 as usize] =
+    config[6] =
         (mask_h8 + 4 as i32 * mask_h1 + 16 as i32 * mask_a8 +
             64 as i32 * mask_a1) as u32;
-    config[7 as i32 as usize] =
+    config[7] =
         (mask_h8 + 4 as i32 * mask_a8 + 16 as i32 * mask_h1 +
             64 as i32 * mask_a1) as u32;
-    out_mask = config[0 as i32 as usize];
+    out_mask = config[0];
     i = 1 as i32;
     while i < 8 as i32 {
         out_mask =
@@ -583,32 +583,32 @@ pub unsafe fn compute_full_primary_hash(hash_val:
         *hash_val.offset(0 as i32 as isize) ^=
             primary_hash[i as usize][thor_row_pattern[i as usize] as usize];
         /* b8 -> b1 */
-        *hash_val.offset(1 as i32 as isize) ^=
+        *hash_val.offset(1) ^=
             primary_hash[i as
                 usize][thor_row_pattern[(7 as i32 - i) as
                 usize] as usize];
         /* a2 -> b1 */
-        *hash_val.offset(2 as i32 as isize) ^=
+        *hash_val.offset(2) ^=
             primary_hash[i as usize][thor_col_pattern[i as usize] as usize];
         /* h2 -> b1 */
-        *hash_val.offset(3 as i32 as isize) ^=
+        *hash_val.offset(3) ^=
             primary_hash[i as
                 usize][thor_col_pattern[(7 as i32 - i) as
                 usize] as usize];
         i += 1
     }
     /* g1 -> b1 */
-    *hash_val.offset(4 as i32 as isize) =
+    *hash_val.offset(4) =
         bit_reverse_32(*hash_val.offset(0 as i32 as isize));
     /* g8 -> b1 */
-    *hash_val.offset(5 as i32 as isize) =
-        bit_reverse_32(*hash_val.offset(1 as i32 as isize));
+    *hash_val.offset(5) =
+        bit_reverse_32(*hash_val.offset(1));
     /* a7 -> b1 */
-    *hash_val.offset(6 as i32 as isize) =
-        bit_reverse_32(*hash_val.offset(2 as i32 as isize));
+    *hash_val.offset(6) =
+        bit_reverse_32(*hash_val.offset(2));
     /* h7 -> b1 */
-    *hash_val.offset(7 as i32 as isize) =
-        bit_reverse_32(*hash_val.offset(3 as i32 as isize));
+    *hash_val.offset(7) =
+        bit_reverse_32(*hash_val.offset(3));
 }
 pub unsafe fn compute_full_secondary_hash(hash_val:
                                       *mut u32) {
@@ -624,16 +624,16 @@ pub unsafe fn compute_full_secondary_hash(hash_val:
         *hash_val.offset(0 as i32 as isize) ^=
             secondary_hash[i as usize][thor_row_pattern[i as usize] as usize];
         /* b8 -> b1 */
-        *hash_val.offset(1 as i32 as isize) ^=
+        *hash_val.offset(1) ^=
             secondary_hash[i as
                 usize][thor_row_pattern[(7 as i32 - i)
                 as usize] as
                 usize];
         /* a2 -> b1 */
-        *hash_val.offset(2 as i32 as isize) ^=
+        *hash_val.offset(2) ^=
             secondary_hash[i as usize][thor_col_pattern[i as usize] as usize];
         /* h2 -> b1 */
-        *hash_val.offset(3 as i32 as isize) ^=
+        *hash_val.offset(3) ^=
             secondary_hash[i as
                 usize][thor_col_pattern[(7 as i32 - i)
                 as usize] as
@@ -641,17 +641,17 @@ pub unsafe fn compute_full_secondary_hash(hash_val:
         i += 1
     }
     /* g1 -> b1 */
-    *hash_val.offset(4 as i32 as isize) =
+    *hash_val.offset(4) =
         bit_reverse_32(*hash_val.offset(0 as i32 as isize));
     /* g8 -> b1 */
-    *hash_val.offset(5 as i32 as isize) =
-        bit_reverse_32(*hash_val.offset(1 as i32 as isize));
+    *hash_val.offset(5) =
+        bit_reverse_32(*hash_val.offset(1));
     /* a7 -> b1 */
-    *hash_val.offset(6 as i32 as isize) =
-        bit_reverse_32(*hash_val.offset(2 as i32 as isize));
+    *hash_val.offset(6) =
+        bit_reverse_32(*hash_val.offset(2));
     /* h7 -> b1 */
-    *hash_val.offset(7 as i32 as isize) =
-        bit_reverse_32(*hash_val.offset(3 as i32 as isize));
+    *hash_val.offset(7) =
+        bit_reverse_32(*hash_val.offset(3));
 }
 
 /*
@@ -1253,22 +1253,22 @@ pub unsafe fn init_symmetry_maps<FE: FrontEnd>() {
         }
         i += 1
     }
-    symmetry_map[0 as i32 as usize] = b1_b1_map.as_mut_ptr();
-    inv_symmetry_map[0 as i32 as usize] = b1_b1_map.as_mut_ptr();
-    symmetry_map[1 as i32 as usize] = b8_b1_map.as_mut_ptr();
-    inv_symmetry_map[1 as i32 as usize] = b8_b1_map.as_mut_ptr();
-    symmetry_map[2 as i32 as usize] = a2_b1_map.as_mut_ptr();
-    inv_symmetry_map[2 as i32 as usize] = a2_b1_map.as_mut_ptr();
-    symmetry_map[3 as i32 as usize] = h2_b1_map.as_mut_ptr();
-    inv_symmetry_map[3 as i32 as usize] = a7_b1_map.as_mut_ptr();
-    symmetry_map[4 as i32 as usize] = g1_b1_map.as_mut_ptr();
-    inv_symmetry_map[4 as i32 as usize] = g1_b1_map.as_mut_ptr();
-    symmetry_map[5 as i32 as usize] = g8_b1_map.as_mut_ptr();
-    inv_symmetry_map[5 as i32 as usize] = g8_b1_map.as_mut_ptr();
-    symmetry_map[6 as i32 as usize] = a7_b1_map.as_mut_ptr();
-    inv_symmetry_map[6 as i32 as usize] = h2_b1_map.as_mut_ptr();
-    symmetry_map[7 as i32 as usize] = h7_b1_map.as_mut_ptr();
-    inv_symmetry_map[7 as i32 as usize] = h7_b1_map.as_mut_ptr();
+    symmetry_map[0] = b1_b1_map.as_mut_ptr();
+    inv_symmetry_map[0] = b1_b1_map.as_mut_ptr();
+    symmetry_map[1] = b8_b1_map.as_mut_ptr();
+    inv_symmetry_map[1] = b8_b1_map.as_mut_ptr();
+    symmetry_map[2] = a2_b1_map.as_mut_ptr();
+    inv_symmetry_map[2] = a2_b1_map.as_mut_ptr();
+    symmetry_map[3] = h2_b1_map.as_mut_ptr();
+    inv_symmetry_map[3] = a7_b1_map.as_mut_ptr();
+    symmetry_map[4] = g1_b1_map.as_mut_ptr();
+    inv_symmetry_map[4] = g1_b1_map.as_mut_ptr();
+    symmetry_map[5] = g8_b1_map.as_mut_ptr();
+    inv_symmetry_map[5] = g8_b1_map.as_mut_ptr();
+    symmetry_map[6] = a7_b1_map.as_mut_ptr();
+    inv_symmetry_map[6] = h2_b1_map.as_mut_ptr();
+    symmetry_map[7] = h7_b1_map.as_mut_ptr();
+    inv_symmetry_map[7] = h7_b1_map.as_mut_ptr();
     i = 0 as i32;
     while i < 8 as i32 {
         j = 1 as i32;
@@ -1362,9 +1362,9 @@ pub unsafe fn prepare_game(mut game: *mut GameType) {
     /* Play through the game and count the number of black discs
        at each stage. */
     clear_thor_board();
-    disc_count[2 as i32 as usize] = 2 as i32;
-    disc_count[0 as i32 as usize] =
-        disc_count[2 as i32 as usize];
+    disc_count[2] = 2 as i32;
+    disc_count[0] =
+        disc_count[2];
     thor_side_to_move = 0 as i32;
     corner_descriptor = 0 as i32 as u32;
     moves_played = 0 as i32;
@@ -1372,7 +1372,7 @@ pub unsafe fn prepare_game(mut game: *mut GameType) {
     loop  {
         /* Store the number of black discs. */
         (*game).black_disc_count[moves_played as usize] =
-            disc_count[0 as i32 as usize] as i8;
+            disc_count[0] as i8;
         /* Make the move, update the board and disc count,
            and change the sign for white moves */
         move_0 = (*game).moves[moves_played as usize] as i32;
@@ -1421,15 +1421,15 @@ pub unsafe fn prepare_game(mut game: *mut GameType) {
         if move_0 == 11 as i32 || move_0 == 18 as i32 ||
             move_0 == 81 as i32 || move_0 == 88 as i32 {
             corner_descriptor |=
-                get_corner_mask(thor_board[11 as i32 as usize],
-                                thor_board[81 as i32 as usize],
-                                thor_board[18 as i32 as usize],
-                                thor_board[88 as i32 as usize])
+                get_corner_mask(thor_board[11],
+                                thor_board[81],
+                                thor_board[18],
+                                thor_board[88])
         }
         if !(done == 0 && moves_played < 60 as i32) { break ; }
     }
     (*game).black_disc_count[moves_played as usize] =
-        disc_count[0 as i32 as usize] as i8;
+        disc_count[0] as i8;
     (*game).move_count = moves_played as i16;
     i = moves_played + 1 as i32;
     while i <= 60 as i32 {
@@ -1587,7 +1587,7 @@ pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
     compute_partial_hash(&mut hash1, &mut hash2);
     (*root_node).hash1 = hash1;
     (*root_node).hash2 = hash2;
-    node_list[0 as i32 as usize] = root_node;
+    node_list[0] = root_node;
     /* Add each of the openings to the tree */
     i = 0 as i32;
     while i < 741 as i32 {
@@ -2290,18 +2290,18 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
     }
     /* Determine disc count, hash codes, patterns and opening
        for the position */
-    disc_count[2 as i32 as usize] = 0 as i32;
-    disc_count[0 as i32 as usize] =
-        disc_count[2 as i32 as usize];
+    disc_count[2] = 0 as i32;
+    disc_count[0] =
+        disc_count[2];
     i = 1 as i32;
     while i <= 8 as i32 {
         j = 1 as i32;
         pos = 10 as i32 * i + 1 as i32;
         while j <= 8 as i32 {
             if *in_board.offset(pos as isize) == 0 as i32 {
-                disc_count[0 as i32 as usize] += 1
+                disc_count[0] += 1
             } else if *in_board.offset(pos as isize) == 2 as i32 {
-                disc_count[2 as i32 as usize] += 1
+                disc_count[2] += 1
             }
             j += 1;
             pos += 1
@@ -2309,8 +2309,8 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
         i += 1
     }
     move_count =
-        disc_count[0 as i32 as usize] +
-            disc_count[2 as i32 as usize] - 4 as i32;
+        disc_count[0] +
+            disc_count[2] - 4 as i32;
     compute_thor_patterns(in_board);
     compute_partial_hash(&mut target_hash1, &mut target_hash2);
     opening_scan(move_count);
@@ -2329,46 +2329,46 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
             if *in_board.offset(pos as isize) != 1 as i32 {
                 index = 8 as i32 * i + j;
                 if index < 32 as i32 {
-                    shape_lo[0 as i32 as usize] |=
+                    shape_lo[0] |=
                         ((1 as i32) << index) as u32
                 } else {
-                    shape_hi[0 as i32 as usize] |=
+                    shape_hi[0] |=
                         ((1 as i32) << index - 32 as i32) as
                             u32
                 }
                 index = 8 as i32 * i + (7 as i32 - j);
                 if index < 32 as i32 {
-                    shape_lo[1 as i32 as usize] |=
+                    shape_lo[1] |=
                         ((1 as i32) << index) as u32
                 } else {
-                    shape_hi[1 as i32 as usize] |=
+                    shape_hi[1] |=
                         ((1 as i32) << index - 32 as i32) as
                             u32
                 }
                 index = 8 as i32 * j + i;
                 if index < 32 as i32 {
-                    shape_lo[2 as i32 as usize] |=
+                    shape_lo[2] |=
                         ((1 as i32) << index) as u32
                 } else {
-                    shape_hi[2 as i32 as usize] |=
+                    shape_hi[2] |=
                         ((1 as i32) << index - 32 as i32) as
                             u32
                 }
                 index = 8 as i32 * j + (7 as i32 - i);
                 if index < 32 as i32 {
-                    shape_lo[3 as i32 as usize] |=
+                    shape_lo[3] |=
                         ((1 as i32) << index) as u32
                 } else {
-                    shape_hi[3 as i32 as usize] |=
+                    shape_hi[3] |=
                         ((1 as i32) << index - 32 as i32) as
                             u32
                 }
                 index = 8 as i32 * (7 as i32 - i) + j;
                 if index < 32 as i32 {
-                    shape_lo[4 as i32 as usize] |=
+                    shape_lo[4] |=
                         ((1 as i32) << index) as u32
                 } else {
-                    shape_hi[4 as i32 as usize] |=
+                    shape_hi[4] |=
                         ((1 as i32) << index - 32 as i32) as
                             u32
                 }
@@ -2376,19 +2376,19 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
                     8 as i32 * (7 as i32 - i) +
                         (7 as i32 - j);
                 if index < 32 as i32 {
-                    shape_lo[5 as i32 as usize] |=
+                    shape_lo[5] |=
                         ((1 as i32) << index) as u32
                 } else {
-                    shape_hi[5 as i32 as usize] |=
+                    shape_hi[5] |=
                         ((1 as i32) << index - 32 as i32) as
                             u32
                 }
                 index = 8 as i32 * (7 as i32 - j) + i;
                 if index < 32 as i32 {
-                    shape_lo[6 as i32 as usize] |=
+                    shape_lo[6] |=
                         ((1 as i32) << index) as u32
                 } else {
-                    shape_hi[6 as i32 as usize] |=
+                    shape_hi[6] |=
                         ((1 as i32) << index - 32 as i32) as
                             u32
                 }
@@ -2396,10 +2396,10 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
                     8 as i32 * (7 as i32 - j) +
                         (7 as i32 - i);
                 if index < 32 as i32 {
-                    shape_lo[7 as i32 as usize] |=
+                    shape_lo[7] |=
                         ((1 as i32) << index) as u32
                 } else {
-                    shape_hi[7 as i32 as usize] |=
+                    shape_hi[7] |=
                         ((1 as i32) << index - 32 as i32) as
                             u32
                 }
@@ -2411,10 +2411,10 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
     }
     /* Get the corner mask */
     corner_mask =
-        get_corner_mask(*in_board.offset(11 as i32 as isize),
-                        *in_board.offset(81 as i32 as isize),
-                        *in_board.offset(18 as i32 as isize),
-                        *in_board.offset(88 as i32 as isize));
+        get_corner_mask(*in_board.offset(11),
+                        *in_board.offset(81),
+                        *in_board.offset(18),
+                        *in_board.offset(88));
     /* Query the database about all positions in all databases.
        Only games which pass the currently applied filter are scanned.
        Also compute the frequency table and the next move table.
@@ -2448,7 +2448,7 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
             game =
                 &mut *(*current_db).games.offset(i as isize) as *mut GameType;
             if (*game).passes_filter != 0 {
-                if disc_count[0 as i32 as usize] ==
+                if disc_count[0] ==
                     (*game).black_disc_count[move_count as usize] as
                         i32 {
                     if position_match(game, move_count, side_to_move,
@@ -2524,8 +2524,8 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
         sum += i * frequency[i as usize];
         i += 1
     }
-    thor_search.draws = frequency[32 as i32 as usize];
-    sum += 32 as i32 * frequency[32 as i32 as usize];
+    thor_search.draws = frequency[32];
+    sum += 32 as i32 * frequency[32];
     i = 33 as i32;
     thor_search.black_wins = 0 as i32;
     while i <= 64 as i32 {
@@ -2545,8 +2545,8 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
         /* ...and so is median of 0 values */
         thor_search.median_black_score = 32 as i32
     } else {
-        cumulative[0 as i32 as usize] =
-            frequency[0 as i32 as usize];
+        cumulative[0] =
+            frequency[0];
         i = 1 as i32;
         while i <= 64 as i32 {
             cumulative[i as usize] =
