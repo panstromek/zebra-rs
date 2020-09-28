@@ -38,7 +38,7 @@ pub static mut row_pattern: [i32; 8] = [0; 8];
 pub static mut col_pattern: [i32; 8] = [0; 8];
 /* Symmetry maps */
 
-pub const flip8: [i32; 6561] = transformation_setup();
+pub static flip8: [i32; 6561] = transformation_setup();
 /* Bit masks which represent dependencies between discs and patterns */
 
 pub static mut depend_lo: [u32; 100] = [0; 100];
