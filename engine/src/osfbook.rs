@@ -363,7 +363,7 @@ pub unsafe fn get_hash(val0: *mut i32,
     let mut out: [[i32; 2]; 8] = [[0; 2]; 8];
     /* Calculate the 8 different 64-bit hash values for the
        different rotations. */
-    compute_line_patterns(board.as_mut_ptr());
+    compute_line_patterns(&board);
     i = 0 as i32;
     while i < 8 as i32 {
         j = 0 as i32;
