@@ -27,7 +27,10 @@ pub static mut col_no: [i32; 100] = [0; 100];
 
 pub static mut col_index: [i32; 100] = [0; 100];
 
-pub static mut color_pattern: [i32; 3] = [0; 3];
+/* These values needed for compatibility with the old book format */
+// color_pattern[0] = 1;
+// color_pattern[2] = 2;
+pub static color_pattern: [i32; 3] = [1, 0, 2];
 /* The patterns describing the current state of the board. */
 
 pub static mut row_pattern: [i32; 8] = [0; 8];
@@ -97,9 +100,6 @@ pub unsafe fn init_patterns() {
         }
         i += 1
     }
-    /* These values needed for compatibility with the old book format */
-    color_pattern[0] = 1;
-    color_pattern[2] = 2;
 }
 /*
    COMPUTE_LINE_PATTERNS
