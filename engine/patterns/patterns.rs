@@ -44,11 +44,6 @@ pub static flip8: [i32; 6561] = transformation_setup();
 pub static mut depend_lo: [u32; 100] = [0; 100];
 
 pub static mut depend_hi: [u32; 100] = [0; 100];
-/* Bit masks that show what patterns have been modified */
-
-pub static mut modified_lo: u32 = 0;
-
-pub static mut modified_hi: u32 = 0;
 /*
    TRANSFORMATION_SET_UP
    Calculate the various symmetry and color transformations.
