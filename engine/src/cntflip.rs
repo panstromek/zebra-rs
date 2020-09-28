@@ -1,34 +1,3 @@
-use crate::src::moves::first_flip_direction;
-
-/*
-   cntflip.c
-
-   Last modified:     November 1, 2000
-*/
-unsafe fn AnyDrctnlFlips(sq: *mut i32,
-                                    inc: i32,
-                                    color: i32,
-                                    oppcol: i32) -> i32 {
-    let mut pt = sq.offset(inc as isize);
-    if *pt == oppcol {
-        pt = pt.offset(inc as isize);
-        if *pt == oppcol {
-            pt = pt.offset(inc as isize);
-            if *pt == oppcol {
-                pt = pt.offset(inc as isize);
-                if *pt == oppcol {
-                    pt = pt.offset(inc as isize);
-                    if *pt == oppcol {
-                        pt = pt.offset(inc as isize);
-                        if *pt == oppcol { pt = pt.offset(inc as isize) }
-                    }
-                }
-            }
-        }
-        if *pt == color { return 1 as i32 }
-    }
-    return 0 as i32;
-}
 /*
    cntflip.h
 
@@ -36,22 +5,45 @@ unsafe fn AnyDrctnlFlips(sq: *mut i32,
 
    Last modified:   December 25, 1999
 */
+pub unsafe fn AnyFlips_compact(board: &mut [i32; 128],
+                               first_flip_direction: &mut [*mut i32; 100],
+                               sqnum: i32, color: i32, oppcol: i32) -> i32 {
 
-pub unsafe fn AnyFlips_compact(board: *mut i32,
-                                          sqnum: i32,
-                                          color: i32,
-                                          oppcol: i32)
- -> i32 {
-    let mut sq = 0 as *mut i32;
-    let mut inc = 0 as *mut i32;
-    sq = &mut *board.offset(sqnum as isize) as *mut i32;
-    inc = first_flip_direction[sqnum as usize];
+    let sq = &board[sqnum as usize];
+    let mut inc = first_flip_direction[sqnum as usize];
     loop  {
-        if AnyDrctnlFlips(sq, *inc, color, oppcol) != 0 {
+        let any_drctnl_flips = {
+            let sq: &i32 = sq;
+            let inc: i32 = *inc;
+            let sq = sq as *const i32;
+            let mut pt = sq.offset(inc as isize);
+            if *pt == oppcol {
+                pt = pt.offset(inc as isize);
+                if *pt == oppcol {
+                    pt = pt.offset(inc as isize);
+                    if *pt == oppcol {
+                        pt = pt.offset(inc as isize);
+                        if *pt == oppcol {
+                            pt = pt.offset(inc as isize);
+                            if *pt == oppcol {
+                                pt = pt.offset(inc as isize);
+                                if *pt == oppcol { pt = pt.offset(inc as isize) }
+                            }
+                        }
+                    }
+                }
+                if *pt == color {
+                    return 1
+                }
+            }
+            0
+        };//  AnyDrctnlFlips(sq, *inc, color, oppcol);
+
+        if any_drctnl_flips != 0 {
             return 1 as i32
         }
         inc = inc.offset(1);
         if !(*inc != 0) { break ; }
     }
-    return 0 as i32;
+    0
 }

@@ -224,7 +224,7 @@ pub unsafe fn unmake_move(side_to_move: i32,
 pub unsafe fn generate_specific(curr_move: i32,
                                 side_to_move: i32)
                                 -> i32 {
-    return AnyFlips_compact(board.as_mut_ptr(), curr_move, side_to_move,
+    return AnyFlips_compact(&mut board, &mut first_flip_direction, curr_move, side_to_move,
                             0 as i32 + 2 as i32 -
                                 side_to_move);
 }
