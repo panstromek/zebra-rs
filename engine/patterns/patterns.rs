@@ -16,10 +16,7 @@
 */
 
 
-pub const pow3: [i32; 10] =
-    [1 as i32, 3 as i32, 9 as i32, 27 as i32,
-     81 as i32, 243 as i32, 729 as i32,
-     2187 as i32, 6561 as i32, 19683 as i32];
+pub const pow3: [i32; 10] = [1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683];
 /* Connections between the squares and the bit masks */
 
 pub static mut row_no: [i32; 100] = [0; 100];
@@ -90,11 +87,9 @@ const fn transformation_setup() -> [i32; 6561] {
 */
 unsafe fn add_single(mask: i32, pos: i32) {
     if mask < 32 as i32 {
-        depend_lo[pos as usize] |=
-            ((1 as i32) << mask) as u32
+        depend_lo[pos as usize] = depend_lo[pos as usize] | ((1 as i32) << mask) as u32
     } else {
-        depend_hi[pos as usize] |=
-            ((1 as i32) << mask - 32 as i32) as u32
+        depend_hi[pos as usize] = depend_hi[pos as usize] | ((1 as i32) << mask - 32 as i32) as u32
     };
 }
 /*
