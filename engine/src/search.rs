@@ -259,35 +259,20 @@ pub const fn disc_count(side_to_move: i32, board_: &[i32; 128]) -> i32 {
 */
 
 pub unsafe fn sort_moves(list_size: i32) {
-    let mut i: i32 = 0;
-    let mut modified: i32 = 0;
-    let mut temp_move: i32 = 0;
-    loop  {
-        modified = 0 as i32;
-        i = 0 as i32;
-        while i < list_size - 1 as i32 {
-            if evals[disks_played as
-                usize][move_list[disks_played as usize][i as usize]
-                as usize] <
-                evals[disks_played as
-                    usize][move_list[disks_played as
-                    usize][(i +
-                    1 as
-                        i32)
-                    as usize] as
-                    usize] {
-                modified = 1 as i32;
-                temp_move = move_list[disks_played as usize][i as usize];
-                move_list[disks_played as usize][i as usize] =
-                    move_list[disks_played as
-                        usize][(i + 1 as i32) as usize];
-                move_list[disks_played as
-                    usize][(i + 1 as i32) as usize] =
-                    temp_move
+    loop {
+        let mut modified = 0;
+        let mut i = 0;
+        while i < list_size - 1 {
+            if evals[disks_played as usize][move_list[disks_played as usize][i as usize] as usize] <
+                evals[disks_played as usize][move_list[disks_played as usize][(i + 1) as usize] as usize] {
+                modified = 1;
+                let temp_move = move_list[disks_played as usize][i as usize];
+                move_list[disks_played as usize][i as usize] = move_list[disks_played as usize][(i + 1 as i32) as usize];
+                move_list[disks_played as usize][(i + 1 as i32) as usize] = temp_move
             }
             i += 1
         }
-        if !(modified != 0) { break ; }
+        if modified == 0 { break; }
     };
 }
 /*
