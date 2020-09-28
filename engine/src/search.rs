@@ -238,24 +238,19 @@ pub unsafe fn setup_search() {
    Returns the number of disks of a specified color.
 */
 
-pub fn disc_count(side_to_move: i32, board_: &[i32; 128])
-                         -> i32 {
-    let board_ = board_;
-
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut sum: i32 = 0;
-    sum = 0 as i32;
-    i = 1 as i32;
-    while i <= 8 as i32 {
-        j = 10 as i32 * i + 1 as i32;
-        while j <= 10 as i32 * i + 8 as i32 {
-            if board_[j as usize] == side_to_move { sum += 1 }
+pub const fn disc_count(side_to_move: i32, board_: &[i32; 128]) -> i32 {
+    let mut j = 0;
+    let mut sum = 0;
+    let mut i = 1;
+    while i <= 8 {
+        j = 10 * i + 1;
+        while j <= 10 * i + 8 {
+            if board_[j] == side_to_move { sum += 1 }
             j += 1
         }
         i += 1
     }
-    return sum;
+    sum
 }
 /*
    SORT_MOVES

@@ -226,41 +226,33 @@ pub unsafe fn engine_game_init() {
     reset_counter(&mut total_evaluations);
     init_flip_stack();
     total_time = 0.0f64;
-    max_depth_reached = 0 as i32;
+    max_depth_reached = 0;
     last_time_used = 0.0f64;
-    endgame_performed[2 as i32 as usize] = 0 as i32;
-    endgame_performed[0 as i32 as usize] =
-        endgame_performed[2 as i32 as usize];
+    endgame_performed[2] = 0;
+    endgame_performed[0] = endgame_performed[2];
 }
 
-pub unsafe fn setup_game_clear_board() {
-    let mut i = 0 as i32;
-    while i < 10 as i32 {
-        let mut j = 0 as i32;
-        while j < 10 as i32 {
-            let pos = 10 as i32 * i + j;
-            if i == 0 as i32 || i == 9 as i32 ||
-                j == 0 as i32 || j == 9 as i32 {
-                board[pos as usize] = 3 as i32
-            } else { board[pos as usize] = 1 as i32 }
+pub const fn create_fresh_board() -> [i32; 128] {
+    let mut board_ = [0; 128];
+    let mut i = 0;
+    while i < 10 {
+        let mut j = 0;
+        while j < 10 {
+            let pos = 10 * i + j;
+            if i == 0 || i == 9 || j == 0 || j == 9 {
+                board_[pos] = 3
+            } else {
+                board_[pos] = 1
+            }
             j += 1
         }
         i += 1
     }
-}
-
-pub unsafe fn setup_game_board_normal(side_to_move: *mut i32) {
-    board[54 as i32 as usize] = 0 as i32;
-    board[45 as i32 as usize] = board[54 as i32 as usize];
-    board[55 as i32 as usize] = 2 as i32;
-    board[44 as i32 as usize] = board[55 as i32 as usize];
-    *side_to_move = 0 as i32
+    board_
 }
 
 pub unsafe fn setup_game_finalize(side_to_move:  *mut i32) {
-    disks_played =
-        disc_count(0 as i32, &board) + disc_count(2 as i32, &board) -
-            4 as i32;
+    disks_played = disc_count(0, &board) + disc_count(2, &board) - 4;
     determine_hash_values(*side_to_move, board.as_mut_ptr());
     /* Make the game score look right */
     if *side_to_move == 0 as i32 {
@@ -273,8 +265,12 @@ pub unsafe fn setup_game_finalize(side_to_move:  *mut i32) {
 
 
 pub unsafe fn setup_non_file_based_game(side_to_move: *mut i32) {
-    setup_game_clear_board();
-    setup_game_board_normal(side_to_move);
+    board = create_fresh_board();
+    board[54] = 0;
+    board[45] = 0;
+    board[55] = 2;
+    board[44] = 2;
+    *side_to_move = 0;
     setup_game_finalize(side_to_move);
 }
 
@@ -354,7 +350,7 @@ pub trait FileBoardSource : BoardSource {
 }
 
 pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: *mut i32) {
-    setup_game_clear_board();
+    board = create_fresh_board();
     assert!(!file_name.is_null());
     match S::open(file_name) {
         Some(file_source) => process_board_source::<_, FE>(side_to_move, file_source),
