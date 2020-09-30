@@ -95,54 +95,54 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let mut clear_low: i32 = 0;
     let mut clear_high: i32 = 0;
     init_osf(1 as i32);
-    cutoff = 16 as i32;
-    max_diff = 24 as i32;
-    max_game_count = 0 as i32;
-    import_games = 0 as i32;
+    cutoff = 16;
+    max_diff = 24;
+    max_game_count = 0;
+    import_games = 0;
     import_file_name = 0 as *mut i8;
-    input_database = 0 as i32;
+    input_database = 0;
     input_file_name = 0 as *mut i8;
-    input_binary = 0 as i32;
-    output_database = 0 as i32;
+    input_binary = 0;
+    output_database = 0;
     output_file_name = 0 as *mut i8;
-    output_binary = 1 as i32;
-    output_compressed = 0 as i32;
-    uncompress_database = 0 as i32;
-    calculate_minimax = 0 as i32;
-    low_threshold = 60 as i32;
-    high_threshold = 60 as i32;
+    output_binary = 1;
+    output_compressed = 0;
+    uncompress_database = 0;
+    calculate_minimax = 0;
+    low_threshold = 60;
+    high_threshold = 60;
     bonus = 0.0f64;
-    evaluate_all = 0 as i32;
-    display_line = 0 as i32;
-    do_statistics = 0 as i32;
+    evaluate_all = 0;
+    display_line = 0;
+    do_statistics = 0;
     statistics_file_name = 0 as *mut i8;
     probability = 0.0f64;
-    max_depth = 0 as i32;
-    complete_statistics = 0 as i32;
+    max_depth = 0;
+    complete_statistics = 0;
     statistics_type = MIDGAME_STATISTICS;
-    give_help = 0 as i32;
-    endgame_correct = 0 as i32;
-    max_empty = 0 as i32;
-    full_solve = 0 as i32;
-    process_openings = 0 as i32;
+    give_help = 0;
+    endgame_correct = 0;
+    max_empty = 0;
+    full_solve = 0;
+    process_openings = 0;
     opening_in_file = 0 as *mut i8;
-    dump_positions = 0 as i32;
+    dump_positions = 0;
     position_file = 0 as *mut i8;
     merge_script_file = 0 as *mut i8;
     merge_output_file = 0 as *mut i8;
     export_file = 0 as *mut i8;
     merge_book_file = 0 as *mut i8;
-    first_stage = 1 as i32;
-    last_stage = 0 as i32;
-    clear_flags = 0 as i32;
-    clear_low = 0 as i32;
-    clear_high = 60 as i32;
-    error = 0 as i32;
-    arg_index = 1 as i32;
+    first_stage = 1;
+    last_stage = 0;
+    clear_flags = 0;
+    clear_low = 0;
+    clear_high = 60;
+    error = 0;
+    arg_index = 1;
     while arg_index < argc && error == 0 {
         if strcasecmp(*argv.offset(arg_index as isize),
                       b"-i\x00" as *const u8 as *const i8) == 0 {
-            import_games = 1 as i32;
+            import_games = 1;
             arg_index += 1;
             import_file_name = *argv.offset(arg_index as isize);
             arg_index += 1;
@@ -164,7 +164,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     as *const u8 as *const i8);
                 exit(1 as i32);
             }
-            input_database = 1 as i32;
+            input_database = 1;
             input_binary =
                 (strcasecmp(*argv.offset(arg_index as isize),
                             b"-rb\x00" as *const u8 as *const i8) ==
@@ -183,7 +183,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             strcasecmp(*argv.offset(arg_index as isize),
                        b"-wc\x00" as *const u8 as
                            *const i8) == 0 {
-            output_database = 1 as i32;
+            output_database = 1;
             output_binary =
                 (strcasecmp(*argv.offset(arg_index as isize),
                             b"-wb\x00" as *const u8 as *const i8) ==
@@ -204,7 +204,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             let mut target_name: *mut i8 =
                 *argv.offset(arg_index as isize);
             unpack_compressed_database(compressed_name, target_name);
-            uncompress_database = 1 as i32;
+            uncompress_database = 1;
             exit(0 as i32);
         } else {
             if strcasecmp(*argv.offset(arg_index as isize),
@@ -237,7 +237,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-pm\x00" as *const u8 as
                                      *const i8) == 0 {
-                do_statistics = 1 as i32;
+                do_statistics = 1;
                 statistics_type = MIDGAME_STATISTICS;
                 arg_index += 1;
                 max_depth = atoi(*argv.offset(arg_index as isize));
@@ -250,7 +250,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-pe\x00" as *const u8 as
                                      *const i8) == 0 {
-                do_statistics = 1 as i32;
+                do_statistics = 1;
                 statistics_type = ENDGAME_STATISTICS;
                 arg_index += 1;
                 max_depth = atoi(*argv.offset(arg_index as isize));
@@ -302,7 +302,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-end\x00" as *const u8 as
                                      *const i8) == 0 {
-                endgame_correct = 1 as i32;
+                endgame_correct = 1;
                 arg_index += 1;
                 max_empty = atoi(*argv.offset(arg_index as isize));
                 arg_index += 1;
@@ -339,13 +339,13 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-opgen\x00" as *const u8 as
                                      *const i8) == 0 {
-                process_openings = 1 as i32;
+                process_openings = 1;
                 arg_index += 1;
                 opening_in_file = *argv.offset(arg_index as isize)
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-dump\x00" as *const u8 as
                                      *const i8) == 0 {
-                dump_positions = 1 as i32;
+                dump_positions = 1;
                 arg_index += 1;
                 position_file = *argv.offset(arg_index as isize);
                 arg_index += 1;

@@ -65,12 +65,12 @@ pub struct CandidateMove {
 pub static mut forced_opening: *const i8 = 0 as *const i8;
 pub static mut last_time_used: f64 = 0.;
 pub static mut max_depth_reached: i32 = 0;
-pub static mut use_log_file: i32 = 1 as i32;
-pub static mut play_human_openings: i32 = 1 as i32;
-pub static mut play_thor_match_openings: i32 = 1 as i32;
+pub static mut use_log_file: i32 = 1;
+pub static mut play_human_openings: i32 = 1;
+pub static mut play_thor_match_openings: i32 = 1;
 pub static mut game_evaluated_count: i32 = 0;
-pub static mut komi: i32 = 0 as i32;
-pub static mut prefix_move: i32 = 0 as i32;
+pub static mut komi: i32 = 0;
+pub static mut prefix_move: i32 = 0;
 pub static mut endgame_performed: [i32; 3] = [0; 3];
 pub static mut evaluated_list: [EvaluatedMove; 60] =
     [EvaluatedMove{eval:
@@ -188,7 +188,7 @@ pub unsafe fn get_search_statistics(max_depth:
 pub unsafe fn get_pv(destin: *mut i32) -> i32 {
     let mut i: i32 = 0;
     if prefix_move == 0 as i32 {
-        i = 0 as i32;
+        i = 0;
         while i < pv_depth[0] {
             *destin.offset(i as isize) =
                 pv[0][i as usize];
@@ -197,7 +197,7 @@ pub unsafe fn get_pv(destin: *mut i32) -> i32 {
         return pv_depth[0]
     } else {
         *destin.offset(0 as i32 as isize) = prefix_move;
-        i = 0 as i32;
+        i = 0;
         while i < pv_depth[0] {
             *destin.offset((i + 1 as i32) as isize) =
                 pv[0][i as usize];
@@ -312,10 +312,10 @@ pub trait BoardSource {
 pub unsafe fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: *mut i32, mut file_source: S) {
     let mut buffer: [i8; 70] = [0; 70];
     file_source.fill_board_buffer(&mut buffer);
-    let mut token = 0 as i32;
-    let mut i = 1 as i32;
+    let mut token = 0;
+    let mut i = 1;
     while i <= 8 as i32 {
-        let mut j = 1 as i32;
+        let mut j = 1;
         while j <= 8 as i32 {
             let pos = 10 as i32 * i + j;
             match buffer[token as usize] as i32 {
@@ -438,12 +438,12 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         reset_counter(&mut evaluations);
         reset_counter(&mut nodes);
     }
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i < 100 as i32 {
-        evals[disks_played as usize][i as usize] = 0 as i32;
+        evals[disks_played as usize][i as usize] = 0;
         i += 1
     }
-    max_depth_reached = 1 as i32;
+    max_depth_reached = 1;
     let empties = 60 as i32 - disks_played;
     reset_buffer_display::<FE>();
     determine_move_time(my_time as f64, my_incr as f64,
@@ -495,10 +495,10 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     /* Mark the search as interrupted until a successful search
        has been performed. */
     let mut move_type = INTERRUPTED_MOVE;
-    let mut interrupted_depth = 0 as i32;
+    let mut interrupted_depth = 0;
     let mut curr_move = move_list[disks_played as usize][0];
     /* Check the opening book for midgame moves */
-    let mut book_move_found = 0 as i32;
+    let mut book_move_found = 0;
     let mut midgame_move = -(1 as i32);
     if !forced_opening.is_null() {
         /* Check if the position fits the currently forced opening */
@@ -509,21 +509,21 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                                  0 as i32, 0.0f64, 0 as i32,
                                  1 as i32);
             midgame_move = curr_move;
-            book_move_found = 1 as i32;
+            book_move_found = 1;
             move_type = BOOK_MOVE;
             if echo != 0 {
                 let ponder_move = get_ponder_move();
                 Out::echo_ponder_move(curr_move, ponder_move);
             }
             clear_pv();
-            pv_depth[0] = 1 as i32;
+            pv_depth[0] = 1;
             pv[0][0] =
                 curr_move
         }
     }
     if book_move_found == 0 && play_thor_match_openings != 0 {
         /* Optionally use the Thor database as opening book. */
-        let threshold = 2 as i32;
+        let threshold = 2;
         database_search::<FE>(board.as_mut_ptr(), side_to_move);
         if get_match_count() >= threshold {
             let game_index =
@@ -536,14 +536,14 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                                      0 as i32, 0.0f64,
                                      0 as i32, 1 as i32);
                 midgame_move = curr_move;
-                book_move_found = 1 as i32;
+                book_move_found = 1;
                 move_type = BOOK_MOVE;
                 if echo != 0 {
                     let ponder_move = get_ponder_move();
                     Out::echo_ponder_move_2(curr_move, ponder_move);
                 }
                 clear_pv();
-                pv_depth[0] = 1 as i32;
+                pv_depth[0] = 1;
                 pv[0][0] =
                     curr_move
             } else {
@@ -562,21 +562,21 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                                  0 as i32, 0.0f64, 0 as i32,
                                  1 as i32);
             midgame_move = curr_move;
-            book_move_found = 1 as i32;
+            book_move_found = 1;
             move_type = BOOK_MOVE;
             if echo != 0 {
                 let ponder_move = get_ponder_move();
                 Out::echo_ponder_move_4(curr_move, ponder_move);
             }
             clear_pv();
-            pv_depth[0] = 1 as i32;
+            pv_depth[0] = 1;
             pv[0][0] =
                 curr_move
         }
     }
     if book_move_found == 0 && book != 0 {
         /* Check ordinary opening book */
-        let mut flags = 0 as i32;
+        let mut flags = 0;
         if empties <= 30 as i32 {
             if empties <= wld { flags = 4 as i32 }
             if empties <= exact { flags = 16 as i32 }
@@ -587,7 +587,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         if curr_move != -(1 as i32) {
             set_current_eval(book_eval_info);
             midgame_move = curr_move;
-            book_move_found = 1 as i32;
+            book_move_found = 1;
             move_type = BOOK_MOVE;
             Out::display_status_out();
         }
@@ -665,7 +665,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             } else { midgame_diff += komi as f64 }
             if timed_depth != 0 {
                 /* Check if the endgame zone has been reached */
-                offset = 7 as i32;
+                offset = 7;
                 /* These constants were chosen rather arbitrarily but intend
                    to make Zebra solve earlier if the position is lopsided. */
                 if is_panic_abort() != 0 { offset -= 1 }

@@ -517,7 +517,7 @@ impl FrontEnd for WasmFrontend {
 
     fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
         c_log!("Thor database:");
-        let mut i = 0 as i32;
+        let mut i = 0;
         while i < match_count {
             c_log!("{}{}: {}",
                    ('a' as i32 + move_list[i as usize].move_0 % 10 - 1) as u8 as char,

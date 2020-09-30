@@ -47,8 +47,8 @@ pub unsafe fn learn_game(game_length: i32,
     let wld_solve = get_earliest_wld_solve();
     let mut dummy: i32 = 0;
     generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut dummy);
-    let mut side_to_move = 0 as i32;
-    let mut i = 0 as i32;
+    let mut side_to_move = 0;
+    let mut i = 0;
     while i < game_length {
         generate_all(side_to_move);
         if move_count[disks_played as usize] == 0 as i32 {
@@ -93,7 +93,7 @@ pub unsafe fn full_learn_public_game(length: i32,
               b"a\x00" as *const u8 as *const i8);
     if !stream.is_null() {
         /* Write the game learned to a log file. */
-        let mut i = 0 as i32;
+        let mut i = 0;
         while i < length {
             fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
                     'a' as i32 + *moves.offset(i as isize) % 10 as i32
@@ -108,7 +108,7 @@ pub unsafe fn full_learn_public_game(length: i32,
     clear_panic_abort();
     toggle_abort_check(0 as i32);
     /* Copy the move list from the caller as it is modified below. */
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i < length {
         game_move[i as usize] = *moves.offset(i as isize) as i16;
         i += 1
@@ -116,8 +116,8 @@ pub unsafe fn full_learn_public_game(length: i32,
     let mut dummy: i32 = 0;
     /* Determine side to move for all positions */
     game_init(0 as *const i8, &mut dummy);
-    let mut side_to_move = 0 as i32;
-    let mut i = 0 as i32;
+    let mut side_to_move = 0;
+    let mut i = 0;
     while i < length {
         generate_all(side_to_move);
         if move_count[disks_played as usize] == 0 as i32 {

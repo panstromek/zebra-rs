@@ -87,7 +87,7 @@ impl FrontEnd for LibcFatalError {
             let timer = get_real_timer::<FE>();
             if timer - last_output >= interval2 || timed_buffer_management == 0 {
                 display_status(stdout, 0 as i32);
-                status_modified = 0 as i32;
+                status_modified = 0;
                 if timer - last_output >= interval2 {
                     if sweep_modified != 0 { display_sweep(stdout); }
                     last_output = timer;
@@ -161,7 +161,7 @@ impl FrontEnd for LibcFatalError {
                 pub static mut true_found: i32 = 0;
                 pub static mut true_val: i32 = 0;
                 ****
-                true_found = 1 as i32;
+                true_found = 1;
                 true_val = curr_val;
             */
             }
@@ -332,7 +332,7 @@ impl FrontEnd for LibcFatalError {
             printf(b"pv_depth[0] = %d\n\x00" as *const u8 as
                        *const i8,
                    pv_0_depth);
-            let mut j = 0 as i32;
+            let mut j = 0;
             while j < pv_0_depth {
                 printf(b"%c%c \x00" as *const u8 as *const i8,
                        'a' as i32 +
@@ -568,7 +568,7 @@ impl FrontEnd for LibcFatalError {
         unsafe {
             printf(b"%s:        \x00" as *const u8 as *const i8,
                    b"Thor database\x00" as *const u8 as *const i8);
-            let mut i = 0 as i32;
+            let mut i = 0;
             while i < match_count {
                 printf(b"%c%c: %4.1f%%    \x00" as *const u8 as
                            *const i8,

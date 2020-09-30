@@ -22,7 +22,7 @@ static mut start_time: f64 = 0.;
 static mut total_move_time: f64 = 0.;
 static mut ponder_time: [f64; 100] = [0.; 100];
 static mut panic_abort: i32 = 0;
-static mut do_check_abort: i32 = 1 as i32;
+static mut do_check_abort: i32 = 1;
 static mut init_time: time_t = 0;
 
 /*
@@ -97,7 +97,7 @@ pub unsafe fn toggle_abort_check(enable: i32) {
 */
 
 pub unsafe fn clear_panic_abort() {
-    panic_abort = 0 as i32;
+    panic_abort = 0;
 }
 /*
   IS_PANIC_ABORT
@@ -115,14 +115,14 @@ pub unsafe fn is_panic_abort() -> i32 {
 
 pub unsafe fn clear_ponder_times() {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < 100 as i32 {
         ponder_time[i as usize] = 0.0f64;
-        ponder_depth[i as usize] = 0 as i32;
+        ponder_depth[i as usize] = 0;
         i += 1
     }
     current_ponder_time = 0.0f64;
-    current_ponder_depth = 0 as i32;
+    current_ponder_depth = 0;
 }
 /*
   ADD_PONDER_TIME
@@ -194,7 +194,7 @@ pub unsafe fn start_move<FE: FrontEnd>(in_total_time: f64,
         if in_total_time - 10.0f64 > 0.1f64 {
             (in_total_time) - 10.0f64
         } else { 0.1f64 };
-    panic_abort = 0 as i32;
+    panic_abort = 0;
     start_time = get_real_timer::<FE>();
 }
 /*

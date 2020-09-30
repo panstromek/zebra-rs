@@ -122,7 +122,7 @@ unsafe extern "C" fn sort_tournament_database() {
                          u64).wrapping_mul(::std::mem::size_of::<*mut TournamentType>()
                                                          as u64)) as
             *mut *mut TournamentType;
-    i = 0 as i32;
+    i = 0;
     while i < tournaments.count {
         let ref mut fresh0 = *tournament_buffer.offset(i as isize);
         *fresh0 =
@@ -136,7 +136,7 @@ unsafe extern "C" fn sort_tournament_database() {
                    unsafe extern "C" fn(_: *const std::ffi::c_void,
                                         _: *const std::ffi::c_void)
                        -> i32));
-    i = 0 as i32;
+    i = 0;
     while i < tournaments.count {
         (**tournament_buffer.offset(i as isize)).lex_order = i;
         i += 1
@@ -182,17 +182,16 @@ pub unsafe fn read_tournament_database(file_name:
                                                               as
                                                               u64))
                 as *mut TournamentType;
-        i = 0 as i32;
+        i = 0;
         while i < tournaments.count {
             let ref mut fresh1 =
                 (*tournaments.tournament_list.offset(i as isize)).name;
             *fresh1 = tournament_name(i);
-            (*tournaments.tournament_list.offset(i as isize)).selected =
-                1 as i32;
+            (*tournaments.tournament_list.offset(i as isize)).selected = 1;
             i += 1
         }
         sort_tournament_database();
-        thor_games_sorted = 0 as i32;
+        thor_games_sorted = 0;
         thor_games_filtered = 0 as i32
     }
     return success;
@@ -211,7 +210,7 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
     let mut i: i32 = 0;
     let player1 = *(p1 as *mut *mut PlayerType);
     let player2 = *(p2 as *mut *mut PlayerType);
-    i = 0 as i32;
+    i = 0;
     loop  {
         ch = *(*player1).name.offset(i as isize);
         buffer1[i as usize] =FE::tolower(ch as i32) as i8;
@@ -222,7 +221,7 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
         /* Put unknown players LAST */
         buffer1[0] = '~' as i32 as i8
     }
-    i = 0 as i32;
+    i = 0;
     loop  {
         ch = *(*player2).name.offset(i as isize);
         buffer2[i as usize] =FE::tolower(ch as i32) as i8;
@@ -247,7 +246,7 @@ unsafe fn sort_player_database() {
                          u64).wrapping_mul(::std::mem::size_of::<*mut PlayerType>()
                                                          as u64)) as
             *mut *mut PlayerType;
-    i = 0 as i32;
+    i = 0;
     while i < players.count {
         let ref mut fresh2 = *player_buffer.offset(i as isize);
         *fresh2 =
@@ -260,7 +259,7 @@ unsafe fn sort_player_database() {
                    unsafe extern "C" fn(_: *const std::ffi::c_void,
                                         _: *const std::ffi::c_void)
                        -> i32));
-    i = 0 as i32;
+    i = 0;
     while i < players.count {
         (**player_buffer.offset(i as isize)).lex_order = i;
         i += 1
@@ -306,7 +305,7 @@ pub unsafe fn read_player_database(file_name:
                                                               as
                                                               u64))
                 as *mut PlayerType;
-        i = 0 as i32;
+        i = 0;
         while i < players.count {
             let ref mut fresh3 =
                 (*players.player_list.offset(i as isize)).name;
@@ -322,12 +321,11 @@ pub unsafe fn read_player_database(file_name:
                 (*players.player_list.offset(i as isize)).is_program =
                     0 as i32
             }
-            (*players.player_list.offset(i as isize)).selected =
-                1 as i32;
+            (*players.player_list.offset(i as isize)).selected = 1;
             i += 1
         }
         sort_player_database();
-        thor_games_sorted = 0 as i32;
+        thor_games_sorted = 0;
         thor_games_filtered = 0 as i32
     }
     return success;
@@ -393,14 +391,14 @@ pub unsafe fn read_game_database(file_name:
         fclose(stream);
         return 0 as i32
     }
-    success = 1 as i32;
+    success = 1;
     (*database_head).count = (*database_head).prolog.game_count;
     (*database_head).games =
         safe_malloc::<FE>(((*database_head).count as
                          u64).wrapping_mul(::std::mem::size_of::<GameType>()
                                                          as u64)) as
             *mut GameType;
-    i = 0 as i32;
+    i = 0;
     while i < (*database_head).count {
         success =
             (success != 0 &&
@@ -414,8 +412,8 @@ pub unsafe fn read_game_database(file_name:
     }
     thor_database_count += 1;
     thor_game_count += (*database_head).count;
-    thor_games_sorted = 0 as i32;
-    thor_games_filtered = 0 as i32;
+    thor_games_sorted = 0;
+    thor_games_filtered = 0;
     fclose(stream);
     return success;
 }
@@ -492,7 +490,7 @@ unsafe fn print_game(stream: *mut FILE,
             64 as i32 - (*game).perfect_black_score as i32,
             b"perfect\x00" as *const u8 as *const i8);
     if display_moves != 0 {
-        i = 0 as i32;
+        i = 0;
         while i < 60 as i32 {
             fprintf(stream, b" %d\x00" as *const u8 as *const i8,
                     abs((*game).moves[i as usize] as i32));
@@ -540,7 +538,7 @@ pub unsafe fn sort_thor_games(count: i32) {
 pub unsafe fn print_thor_matches(stream: *mut FILE,
                                             max_games: i32) {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i <
               (if thor_search.match_count < max_games {
                    thor_search.match_count

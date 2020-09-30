@@ -47,7 +47,7 @@ unsafe fn set_end_probcut(empty: usize, shallow_depth: i32) {
 unsafe fn set_probcut(depth: i32, shallow: i32) {
     let mut this_try = mpc_cut[depth as usize].cut_tries;
     mpc_cut[depth as usize].cut_depth[this_try as usize] = shallow;
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i <= 60 as i32 {
         mpc_cut[depth as usize].bias[this_try as usize][i as usize] =
             floor(128.0f64 *

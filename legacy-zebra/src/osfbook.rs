@@ -69,9 +69,9 @@ pub unsafe fn evaluate_tree() {
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     prepare_tree_traversal();
-    exhausted_node_count = 0 as i32;
-    evaluated_count = 0 as i32;
-    evaluation_stage = 0 as i32;
+    exhausted_node_count = 0;
+    evaluated_count = 0;
+    evaluation_stage = 0;
     time(&mut start_time);
     let feasible_count = compute_feasible_count();
     max_eval_count =
@@ -172,18 +172,18 @@ pub unsafe fn book_statistics(full_statistics: i32) {
                          u64).wrapping_mul(::std::mem::size_of::<i32>()
                                                          as u64)) as
             *mut i32;
-    wld_solved = 0 as i32;
+    wld_solved = 0;
     full_solved = wld_solved;
-    eval_count = 0 as i32;
-    negamax_count = 0 as i32;
-    private_count = 0 as i32;
-    unevaluated = 0 as i32;
-    i = 0 as i32;
+    eval_count = 0;
+    negamax_count = 0;
+    private_count = 0;
+    unevaluated = 0;
+    i = 0;
     while i < 60 as i32 {
-        depth[i as usize] = 0 as i32;
+        depth[i as usize] = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < book_node_count {
         if (*node.offset(i as isize)).flags as i32 & 16 as i32
                != 0 {
@@ -246,7 +246,7 @@ pub unsafe fn book_statistics(full_statistics: i32) {
            wld_solved);
     printf(b"#unevaluated: %d\n\n\x00" as *const u8 as *const i8,
            unevaluated);
-    i = 0 as i32;
+    i = 0;
     while i <= 59 as i32 {
         if depth[i as usize] > 0 as i32 {
             printf(b"#nodes with %2d-ply deviations: %d\n\x00" as *const u8 as
@@ -255,11 +255,11 @@ pub unsafe fn book_statistics(full_statistics: i32) {
         i += 1
     }
     puts(b"\x00" as *const u8 as *const i8);
-    this_strata = 0 as i32;
+    this_strata = 0;
     strata_shift =
         floor(strata[this_strata as usize] * eval_count as f64) as
             i32;
-    i = 0 as i32;
+    i = 0;
     while i < eval_count {
         if i == strata_shift {
             eval_strata[this_strata as usize] =
@@ -271,11 +271,11 @@ pub unsafe fn book_statistics(full_statistics: i32) {
         }
         i += 1
     }
-    this_strata = 0 as i32;
+    this_strata = 0;
     strata_shift =
         floor(strata[this_strata as usize] * negamax_count as f64)
             as i32;
-    i = 0 as i32;
+    i = 0;
     while i < negamax_count {
         if i == strata_shift {
             negamax_strata[this_strata as usize] =
@@ -287,7 +287,7 @@ pub unsafe fn book_statistics(full_statistics: i32) {
         }
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 10 as i32 {
         printf(b"%2.0f%%:  \x00" as *const u8 as *const i8,
                100 as i32 as f64 * strata[i as usize]);
@@ -303,9 +303,9 @@ pub unsafe fn book_statistics(full_statistics: i32) {
     free(evals as *mut std::ffi::c_void);
     if full_statistics != 0 {
         examine_tree();
-        first = 61 as i32;
+        first = 61;
         last = -(1 as i32);
-        i = 0 as i32;
+        i = 0;
         while i <= 60 as i32 {
             total_count[i as usize] =
                 exact_count[i as usize] + wld_count[i as usize] +
@@ -405,11 +405,11 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
     }
     printf(b": %+.2f\n\x00" as *const u8 as *const i8,
            root_score as f64 / 128.0f64);
-    current = 0 as i32;
+    current = 0;
     puts(b"Preferred line: \x00" as *const u8 as *const i8);
-    line = 0 as i32;
-    done = 0 as i32;
-    show_move = 1 as i32;
+    line = 0;
+    done = 0;
+    show_move = 1;
     while (*node.offset(current as isize)).flags as i32 &
               (16 as i32 | 4 as i32) == 0 && done == 0 {
         if (*node.offset(current as isize)).flags as i32 &
@@ -419,7 +419,7 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
         generate_all(side_to_move);
         next = -(1 as i32);
         this_move = -(1 as i32);
-        i = 0 as i32;
+        i = 0;
         while i < move_count[disks_played as usize] {
             get_hash(&mut val1, &mut val2, &mut base_orientation);
             this_move = move_list[disks_played as usize][i as usize];
@@ -444,7 +444,7 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
             i += 1
         }
         if next == -(1 as i32) {
-            done = 1 as i32;
+            done = 1;
             if adjust_score((*node.offset(current as isize)).alternative_score
                                 as i32, side_to_move) != root_score {
                 puts(b"(failed to find continuation)\x00" as *const u8 as
@@ -519,10 +519,10 @@ pub unsafe fn add_new_game(move_count_0: i32,
     let mut visited_node: [i32; 61] = [0; 61];
     let mut flags: [u16; 61] = [0; 61];
     stored_echo = echo;
-    echo = 0 as i32;
+    echo = 0;
     /* First create new nodes for new positions */
     prepare_tree_traversal();
-    i = 0 as i32;
+    i = 0;
     while i < move_count_0 {
         if *game_move_list.offset(i as isize) as i32 >
                0 as i32 {
@@ -530,15 +530,15 @@ pub unsafe fn add_new_game(move_count_0: i32,
         } else { flags[i as usize] = 2 as i32 as u16 }
         i += 1
     }
-    flags[move_count_0 as usize] = 0 as i32 as u16;
-    first_new_node = 61 as i32;
-    this_node = 0 as i32;
-    side_to_move = 0 as i32;
+    flags[move_count_0 as usize] = 0;
+    first_new_node = 61;
+    this_node = 0;
+    side_to_move = 0;
     last_move_number =
         if move_count_0 < 60 as i32 - min_empties {
             move_count_0
         } else { (60 as i32) - min_empties };
-    i = 0 as i32;
+    i = 0;
     while i <= last_move_number {
         /* Look for the position in the hash table */
         get_hash(&mut val1, &mut val2, &mut orientation);
@@ -572,7 +572,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 printf(b"last_move_number=%d, move_count=%d\n\x00" as
                            *const u8 as *const i8, last_move_number,
                        move_count_0);
-                j = 0 as i32;
+                j = 0;
                 while j < move_count_0 {
                     printf(b"%3d \x00" as *const u8 as *const i8,
                            *game_move_list.offset(j as isize) as i32);
@@ -652,7 +652,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
        alternatives and minimax information if requested. */
     if update_path != 0 {
         prepare_tree_traversal();
-        i = 0 as i32;
+        i = 0;
         while i < last_move_number {
             this_move =
                 abs(*game_move_list.offset(i as isize) as i32);
@@ -670,7 +670,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
             i += 1
         }
         if echo != 0 { fflush(stdout); }
-        midgame_eval_done = 0 as i32;
+        midgame_eval_done = 0;
         i = last_move_number - 1 as i32;
         while i >= 0 as i32 {
             this_move =
@@ -807,7 +807,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                                *const i8);
                     fflush(stdout);
                 }
-                midgame_eval_done = 1 as i32;
+                midgame_eval_done = 1;
                 if force_eval != 0 { clear_node_depth(this_node); }
                 evaluate_node::<LibcFatalError>(this_node);
                 printf(b"|\x00" as *const u8 as *const i8);
@@ -872,8 +872,8 @@ pub unsafe fn build_tree(file_name: *const i8,
                         *const i8, file_name);
     }
     time(&mut start_time);
-    games_parsed = 0 as i32;
-    games_imported = 0 as i32;
+    games_parsed = 0;
+    games_imported = 0;
     loop  {
         fgets(line_buffer.as_mut_ptr(), 998 as i32, stream);
         sscanf(line_buffer.as_mut_ptr(),
@@ -888,7 +888,7 @@ pub unsafe fn build_tree(file_name: *const i8,
                                                                                               u64)
                 as i32;
         games_parsed += 1;
-        i = 0 as i32;
+        i = 0;
         while i < move_count_0 {
             sscanf(move_string.as_mut_ptr().offset((3 as i32 * i) as
                                                        isize),
@@ -967,7 +967,7 @@ pub unsafe fn read_text_database(file_name:
     fscanf(stream, b"%d\x00" as *const u8 as *const i8,
            &mut new_book_node_count as *mut i32);
     set_allocation::<FE>(new_book_node_count + 1000 as i32);
-    i = 0 as i32;
+    i = 0;
     while i < new_book_node_count {
         fscanf(stream,
                b"%d %d %hd %hd %hd %hd %hd\n\x00" as *const u8 as
@@ -1033,7 +1033,7 @@ pub unsafe fn read_binary_database(file_name:
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
     set_allocation::<FE>(new_book_node_count + 1000 as i32);
-    i = 0 as i32;
+    i = 0;
     while i < new_book_node_count {
         fread(&mut (*node.offset(i as isize)).hash_val1 as *mut i32 as
                   *mut std::ffi::c_void,
@@ -1109,9 +1109,9 @@ pub unsafe fn merge_binary_database(file_name:
     fread(&mut merge_book_node_count as *mut i32 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
-    let mut merge_use_count = 0 as i32;
+    let mut merge_use_count = 0;
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < merge_book_node_count {
         let mut merge_node =
             BookNode{hash_val1: 0,
@@ -1209,7 +1209,7 @@ pub unsafe fn write_text_database(file_name:
             2718 as i32, 2818 as i32);
     fprintf(stream, b"%d\n\x00" as *const u8 as *const i8,
             book_node_count);
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i < book_node_count {
         fprintf(stream,
                 b"%d %d %d %d %d %d %d\n\x00" as *const u8 as
@@ -1258,7 +1258,7 @@ pub unsafe fn write_binary_database(file_name:
     fwrite(&mut book_node_count as *mut i32 as *const std::ffi::c_void,
            ::std::mem::size_of::<i32>() as u64,
            1 as i32 as size_t, stream);
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i < book_node_count {
         fwrite(&mut (*node.offset(i as isize)).hash_val1 as *mut i32
                    as *const std::ffi::c_void,
@@ -1331,15 +1331,15 @@ pub unsafe fn write_compressed_database(file_name:
                     u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                     as u64)) as
             *mut i16;
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i < book_node_count {
         let ref mut fresh45 = (*node.offset(i as isize)).flags;
         *fresh45 =
             (*fresh45 as i32 | 8 as i32) as u16;
         i += 1
     }
-    let mut node_index = 0 as i32;
-    let mut child_index = 0 as i32;
+    let mut node_index = 0;
+    let mut child_index = 0;
     do_compress(0 as i32, node_order, child_count, &mut node_index,
                 child, &mut child_index);
     fwrite(&mut book_node_count as *mut i32 as *const std::ffi::c_void,
@@ -1354,7 +1354,7 @@ pub unsafe fn write_compressed_database(file_name:
     fwrite(child as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            child_index as size_t, stream);
-    i = 0 as i32;
+    i = 0;
     while i < book_node_count {
         fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
                                       isize)).black_minimax_score as
@@ -1368,7 +1368,7 @@ pub unsafe fn write_compressed_database(file_name:
                1 as i32 as size_t, stream);
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < book_node_count {
         fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
                                       isize)).best_alternative_move as
@@ -1377,7 +1377,7 @@ pub unsafe fn write_compressed_database(file_name:
                1 as i32 as size_t, stream);
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < book_node_count {
         fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
                                       isize)).alternative_score as
@@ -1386,7 +1386,7 @@ pub unsafe fn write_compressed_database(file_name:
                1 as i32 as size_t, stream);
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < book_node_count {
         fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
                                       isize)).flags as *mut u16 as
@@ -1466,7 +1466,7 @@ unsafe fn do_uncompress(depth: i32,
            1 as i32 as size_t, stream);
     *node_index += 1;
     /* Recursively traverse the children */
-    i = 0 as i32;
+    i = 0;
     while i < saved_child_count {
         let mut flipped: i32 = 0;
         this_move =
@@ -1572,7 +1572,7 @@ pub unsafe fn unpack_compressed_database(in_name:
                          u64).wrapping_mul(::std::mem::size_of::<u16>()
                                                          as u64)) as
             *mut u16;
-    i = 0 as i32;
+    i = 0;
     while i < node_count {
         fread(&mut *black_score.offset(i as isize) as *mut i16 as
                   *mut std::ffi::c_void,
@@ -1605,19 +1605,19 @@ pub unsafe fn unpack_compressed_database(in_name:
     toggle_midgame_hash_usage(1 as i32, 1 as i32);
     toggle_abort_check(0 as i32);
     toggle_midgame_abort_check(0 as i32);
-    magic = 2718 as i32 as i16;
+    magic = 2718;
     fwrite(&mut magic as *mut i16 as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
-    magic = 2818 as i32 as i16;
+    magic = 2818;
     fwrite(&mut magic as *mut i16 as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
     fwrite(&mut node_count as *mut i32 as *const std::ffi::c_void,
            ::std::mem::size_of::<i32>() as u64,
            1 as i32 as size_t, stream);
-    node_index = 0 as i32;
-    child_index = 0 as i32;
+    node_index = 0;
+    child_index = 0;
     do_uncompress(0 as i32, stream, &mut node_index, &mut child_index,
                   child_count, child, black_score, white_score, alt_move,
                   alt_score, flags);
@@ -1689,11 +1689,11 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
         exit(1 as i32);
     }
     prepare_tree_traversal();
-    line = 1 as i32;
-    position_count = 0 as i32;
-    already_wld_count = 0 as i32;
-    already_exact_count = 0 as i32;
-    new_nodes_created = 0 as i32;
+    line = 1;
+    position_count = 0;
+    already_wld_count = 0;
+    already_exact_count = 0;
+    new_nodes_created = 0;
     fgets(script_buffer.as_mut_ptr(), 1024 as i32, script_stream);
     fgets(result_buffer.as_mut_ptr(), 1024 as i32, result_stream);
     while feof(script_stream) == 0 && feof(result_stream) == 0 {
@@ -1710,7 +1710,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                       i32 &
                       _ISgraph as i32 as u16 as i32
                       == 0 {
-            *ch = 0 as i32 as i8;
+            *ch = 0;
             ch = ch.offset(-1)
         }
         ch =
@@ -1725,28 +1725,27 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                       i32 &
                       _ISgraph as i32 as u16 as i32
                       == 0 {
-            *ch = 0 as i32 as i8;
+            *ch = 0;
             ch = ch.offset(-1)
         }
         if line % 4 as i32 == 3 as i32 {
             /* The position/result lines */
             position_count += 1;
             /* Parse the board */
-            disks_played =
-                0 as i32; /* The initial board contains 4 discs */
-            col = 0 as i32;
-            i = 1 as i32;
+            disks_played = 0; /* The initial board contains 4 discs */
+            col = 0;
+            i = 1;
             while i <= 8 as i32 {
-                j = 1 as i32;
+                j = 1;
                 while j <= 8 as i32 {
                     pos = 10 as i32 * i + j;
                     match script_buffer[col as usize] as i32 {
                         42 | 88 | 120 => {
-                            board[pos as usize] = 0 as i32;
+                            board[pos as usize] = 0;
                             disks_played += 1
                         }
                         79 | 48 | 111 => {
-                            board[pos as usize] = 2 as i32;
+                            board[pos as usize] = 2;
                             disks_played += 1
                         }
                         45 | 46 => { board[pos as usize] = 1 as i32 }
@@ -1778,7 +1777,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
             }
             disks_played -= 4 as i32;
             /* Parse the result */
-            wld_only = 1 as i32;
+            wld_only = 1;
             if strstr(result_buffer.as_mut_ptr(),
                       b"Black win\x00" as *const u8 as *const i8) ==
                    result_buffer.as_mut_ptr() {
@@ -1801,7 +1800,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
             } else if strstr(result_buffer.as_mut_ptr(),
                              b"Draw\x00" as *const u8 as *const i8)
                           == result_buffer.as_mut_ptr() {
-                score = 0 as i32;
+                score = 0;
                 tokens_read =
                     sscanf(result_buffer.as_mut_ptr(),
                            b"%*s %s\x00" as *const u8 as *const i8,
@@ -1811,7 +1810,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                 /* Exact score */
                 let mut black_discs: i32 = 0;
                 let mut white_discs: i32 = 0;
-                wld_only = 0 as i32;
+                wld_only = 0;
                 tokens_read =
                     sscanf(result_buffer.as_mut_ptr(),
                            b"%d %*s %d %s\x00" as *const u8 as
@@ -1837,7 +1836,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                             *const u8 as *const i8, line);
                 exit(0 as i32);
             }
-            probable_error = 0 as i32;
+            probable_error = 0;
             if (*node.offset(index as isize)).flags as i32 &
                    4 as i32 != 0 {
                 already_wld_count += 1;
@@ -1850,7 +1849,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                        score < 0 as i32 &&
                            (*node.offset(index as isize)).black_minimax_score
                                as i32 > 0 as i32 {
-                    probable_error = 1 as i32;
+                    probable_error = 1;
                     fprintf(stderr,
                             b"Line %d: New WLD score %d conflicts with old score %d\n\x00"
                                 as *const u8 as *const i8, line,
@@ -1866,7 +1865,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                        score !=
                            (*node.offset(index as isize)).black_minimax_score
                                as i32 {
-                    probable_error = 1 as i32;
+                    probable_error = 1;
                     fprintf(stderr,
                             b"Line %d: New exact score %d conflicts with old score %d\n\x00"
                                 as *const u8 as *const i8, line,
@@ -1970,7 +1969,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                         new_nodes_created += 1
                     } else {
                         /* Position already exists, sanity-check it */
-                        probable_error = 0 as i32;
+                        probable_error = 0;
                         if (*node.offset(index as isize)).flags as i32
                                & 4 as i32 != 0 {
                             if score > 0 as i32 &&
@@ -1986,7 +1985,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                                        (*node.offset(index as
                                                          isize)).black_minimax_score
                                            as i32 > 0 as i32 {
-                                probable_error = 1 as i32;
+                                probable_error = 1;
                                 fprintf(stderr,
                                         b"Line %d: New child WLD score %d conflicts with old score %d\n\x00"
                                             as *const u8 as
@@ -2003,7 +2002,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                                        (*node.offset(index as
                                                          isize)).black_minimax_score
                                            as i32 {
-                                probable_error = 1 as i32;
+                                probable_error = 1;
                                 fprintf(stderr,
                                         b"Line %d: New child exact score %d conflicts with old score %d\n\x00"
                                             as *const u8 as
@@ -2151,7 +2150,7 @@ pub unsafe fn print_move_alternatives(side_to_move:
             printf(b" Private node.\x00" as *const u8 as *const i8);
         }
         puts(b"\x00" as *const u8 as *const i8);
-        i = 0 as i32;
+        i = 0;
         while i < candidate_count {
             printf(b"   %c%c   \x00" as *const u8 as *const i8,
                    'a' as i32 +
@@ -2310,8 +2309,8 @@ pub unsafe fn convert_opening_list(base_file:
               *const u8 as *const i8, out_stream);
     /* Read the list of openings */
     prepare_tree_traversal();
-    level = 0 as i32;
-    i = 0 as i32;
+    level = 0;
+    i = 0;
     while i < opening_count {
         fgets(buffer.as_mut_ptr(), 1023 as i32, in_stream);
         /* Each line in the input file corresponds to one opening.
@@ -2335,12 +2334,12 @@ pub unsafe fn convert_opening_list(base_file:
                   0 {
             scan_ptr = scan_ptr.offset(1)
         }
-        *scan_ptr = 0 as i32 as i8;
+        *scan_ptr = 0;
         op_move_count =
               FE::strlen(move_seq.as_mut_ptr()).wrapping_div(2 as i32 as
                                                            u64) as
                 i32;
-        j = 0 as i32;
+        j = 0;
         move_ptr = buffer.as_mut_ptr();
         while j < op_move_count {
             if *(*__ctype_b_loc()).offset(*move_ptr as i32 as isize)
@@ -2370,7 +2369,7 @@ pub unsafe fn convert_opening_list(base_file:
         parent[level as usize] = dupstr(move_seq.as_mut_ptr());
         level += 1;
         /* Create the board position characteristic for the opening. */
-        j = 0 as i32;
+        j = 0;
         while j < op_move_count {
             if generate_specific(op_move[j as usize],
                                  side_to_move[j as usize]) == 0 {
@@ -2448,11 +2447,11 @@ unsafe fn export_position(side_to_move: i32,
     let mut white_mask: i32 = 0;
     let mut hi_mask: i32 = 0;
     let mut lo_mask: i32 = 0;
-    i = 1 as i32;
+    i = 1;
     while i <= 8 as i32 {
-        black_mask = 0 as i32;
-        white_mask = 0 as i32;
-        j = 0 as i32;
+        black_mask = 0;
+        white_mask = 0;
+        j = 0;
         pos = 10 as i32 * i + 1 as i32;
         while j < 8 as i32 {
             if board[pos as usize] == 0 as i32 {
@@ -2516,8 +2515,8 @@ unsafe fn do_restricted_minimax(index: i32,
         best_score = -(32000 as i32) as i16
     } else { best_score = 32000 as i32 as i16 }
     generate_all(side_to_move);
-    child_count = 0 as i32;
-    i = 0 as i32;
+    child_count = 0;
+    i = 0;
     while i < move_count[disks_played as usize] {
         piece_count[0][disks_played as usize] =
             disc_count(0 as i32, &board);
@@ -2591,7 +2590,7 @@ pub unsafe fn restricted_minimax_tree(low: i32,
     prepare_tree_traversal();
     time(&mut start_time);
     /* Mark all nodes as not traversed */
-    i = 0 as i32;
+    i = 0;
     while i < book_node_count {
         let ref mut fresh17 = (*node.offset(i as isize)).flags;
         *fresh17 =
@@ -2662,7 +2661,7 @@ unsafe fn do_midgame_statistics(index: i32,
         );
         setup_hash(0 as i32);
         determine_hash_values(side_to_move, board.as_mut_ptr());
-        depth = 1 as i32;
+        depth = 1;
         while depth <= spec.max_depth {
             middle_game::<FE>(side_to_move, depth, 0 as i32,
                         &mut dummy_info);
@@ -2674,7 +2673,7 @@ unsafe fn do_midgame_statistics(index: i32,
         puts(b"\x00" as *const u8 as *const i8);
         setup_hash(0 as i32);
         determine_hash_values(side_to_move, board.as_mut_ptr());
-        depth = 2 as i32;
+        depth = 2;
         while depth <= spec.max_depth {
             middle_game::<FE>(side_to_move, depth, 0 as i32,
                         &mut dummy_info);
@@ -2698,7 +2697,7 @@ unsafe fn do_midgame_statistics(index: i32,
             fprintf(out_file,
                     b"%2d %2d \x00" as *const u8 as *const i8,
                     1 as i32, spec.max_depth);
-            i = 1 as i32;
+            i = 1;
             while i <= spec.max_depth {
                 fprintf(out_file,
                         b"%5d \x00" as *const u8 as *const i8,
@@ -2710,7 +2709,7 @@ unsafe fn do_midgame_statistics(index: i32,
         }
     }
     /* Recursively search the children of the node */
-    i = 0 as i32;
+    i = 0;
     while i < move_count[disks_played as usize] {
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
@@ -2751,7 +2750,7 @@ pub unsafe fn generate_midgame_statistics(max_depth:
     prepare_tree_traversal();
     toggle_abort_check(0 as i32);
     time(&mut start_time);
-    i = 0 as i32;
+    i = 0;
     while i < book_node_count {
         let ref mut fresh19 = (*node.offset(i as isize)).flags;
         *fresh19 =
@@ -2805,7 +2804,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
     set_hash_transformation(abs(my_random() as i32) as u32,
                             abs(my_random() as i32) as u32);
     determine_hash_values(side_to_move, board.as_mut_ptr());
-    depth = 1 as i32;
+    depth = 1;
     while depth <= spec.max_depth {
         middle_game::<FE>(side_to_move, depth, 0 as i32, &mut dummy_info);
         eval_list[depth as usize] = root_eval;
@@ -2825,7 +2824,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                 best_score);
         fprintf(out_file, b"%2d %2d \x00" as *const u8 as *const i8,
                 1 as i32, spec.max_depth);
-        i = 1 as i32;
+        i = 1;
         while i <= spec.max_depth {
             fprintf(out_file, b"%5d \x00" as *const u8 as *const i8,
                     eval_list[i as usize]);
@@ -2914,7 +2913,7 @@ unsafe fn do_endgame_statistics(index: i32,
         }
     }
     /* Recursively search the children of the node */
-    i = 0 as i32;
+    i = 0;
     while i < move_count[disks_played as usize] {
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
@@ -2955,7 +2954,7 @@ pub unsafe fn generate_endgame_statistics(max_depth:
     prepare_tree_traversal();
     toggle_abort_check(0 as i32);
     time(&mut start_time);
-    i = 0 as i32;
+    i = 0;
     while i < book_node_count {
         let ref mut fresh21 = (*node.offset(i as isize)).flags;
         *fresh21 =
@@ -3016,7 +3015,7 @@ unsafe fn do_clear(index: i32, low: i32,
             side_to_move = 0 as i32
         } else { side_to_move = 2 as i32 }
         generate_all(side_to_move);
-        i = 0 as i32;
+        i = 0;
         while i < move_count[disks_played as usize] {
             this_move = move_list[disks_played as usize][i as usize];
             make_move(side_to_move, this_move, 1 as i32);
@@ -3057,7 +3056,7 @@ pub unsafe fn clear_tree(low: i32,
     }
     puts(b"\x00" as *const u8 as *const i8);
     time(&mut start_time);
-    i = 0 as i32;
+    i = 0;
     while i < book_node_count {
         let ref mut fresh30 = (*node.offset(i as isize)).flags;
         *fresh30 =
@@ -3113,8 +3112,8 @@ unsafe fn do_correct(index: i32,
     } else { side_to_move = 2 as i32 }
     /* First correct the children */
     generate_all(side_to_move);
-    child_count = 0 as i32;
-    i = 0 as i32;
+    child_count = 0;
+    i = 0;
     while i < move_count[disks_played as usize] {
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
@@ -3130,7 +3129,7 @@ unsafe fn do_correct(index: i32,
         i += 1
     }
     let mut current_block_29: u64;
-    i = 0 as i32;
+    i = 0;
     while i < child_count {
         if side_to_move == 0 as i32 {
             if force_black != 0 &&
@@ -3258,9 +3257,9 @@ unsafe fn do_correct(index: i32,
                     fprintf(target_file,
                             b"%% %d %d\n\x00" as *const u8 as
                                 *const i8, val1, val2);
-                    i = 1 as i32;
+                    i = 1;
                     while i <= 8 as i32 {
-                        j = 1 as i32;
+                        j = 1;
                         while j <= 8 as i32 {
                             pos = 10 as i32 * i + j;
                             if board[pos as usize] == 0 as i32 {
@@ -3324,19 +3323,19 @@ pub unsafe fn correct_tree(max_empty: i32,
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     prepare_tree_traversal();
-    exhausted_node_count = 0 as i32;
-    evaluated_count = 0 as i32;
-    evaluation_stage = 0 as i32;
+    exhausted_node_count = 0;
+    evaluated_count = 0;
+    evaluation_stage = 0;
     time(&mut start_time);
-    i = 0 as i32;
+    i = 0;
     while i < book_node_count {
         let ref mut fresh39 = (*node.offset(i as isize)).flags;
         *fresh39 =
             (*fresh39 as i32 | 8 as i32) as u16;
         i += 1
     }
-    feasible_count = 0 as i32;
-    i = 0 as i32;
+    feasible_count = 0;
+    i = 0;
     while i < book_node_count {
         let ref mut fresh40 = (*node.offset(i as isize)).flags;
         *fresh40 =
@@ -3424,8 +3423,8 @@ unsafe fn do_export(index: i32, stream: *mut FILE,
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
     generate_all(side_to_move);
-    child_count = 0 as i32;
-    i = 0 as i32;
+    child_count = 0;
+    i = 0;
     while i < move_count[disks_played as usize] {
         let mut child: i32 = 0;
         let mut slot: i32 = 0;
@@ -3449,7 +3448,7 @@ unsafe fn do_export(index: i32, stream: *mut FILE,
     }
     if child_count == 0 as i32 {
         /* We've reached a leaf in the opening tree. */
-        i = 0 as i32;
+        i = 0;
         while i < disks_played {
             fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
                     'a' as i32 +
@@ -3480,7 +3479,7 @@ pub unsafe fn export_tree(file_name: *const i8) {
     }
     prepare_tree_traversal();
     let mut move_vec: [i32; 60] = [0; 60];
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i < book_node_count {
         let ref mut fresh42 = (*node.offset(i as isize)).flags;
         *fresh42 =
