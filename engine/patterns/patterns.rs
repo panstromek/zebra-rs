@@ -44,20 +44,20 @@ const fn transformation_setup() -> [i32; 6561] {
     let mut j: i32 = 0;
     let mut row: [i32; 10] = [0; 10];
     /* Build the pattern tables for 8*1-patterns */
-    i = 0 as i32;
-    while i < 8 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 8 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 6561 as i32 {
         /* Create the symmetry map */
-        flip8_[i as usize] = 0 as i32;
-        j = 0 as i32;
+        flip8_[i as usize] = 0;
+        j = 0;
         while j < 8 as i32 {
             flip8_[i as usize] +=
                 row[j as usize] * pow3[(7 as i32 - j) as usize];
             j += 1
         }
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -115,15 +115,15 @@ pub fn compute_line_patterns(in_board: &[i32; 128], row_pattern_: &mut [i32; 8],
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
     let mut mask: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        row_pattern_[i as usize] = 0 as i32;
-        col_pattern_[i as usize] = 0 as i32;
+        row_pattern_[i as usize] = 0;
+        col_pattern_[i as usize] = 0;
         i += 1
     }
-    i = 1 as i32;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
             if in_board[pos as usize] == 1 as i32 {

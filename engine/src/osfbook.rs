@@ -171,12 +171,12 @@ pub unsafe fn probe_hash_table(val1: i32,
    into the node list.
 */
 pub unsafe fn create_hash_reference() {
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i < hash_table_size {
         *book_hash_table.offset(i as isize) = -(1 as i32);
         i += 1
     }
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i < book_node_count {
         select_hash_slot(i);
         i += 1
@@ -193,11 +193,11 @@ pub unsafe fn prepare_hash() {
     /* The hash keys are static, hence the same keys must be
        produced every time the program is run. */
     my_srandom(0 as i32);
-    i = 0 as i32;
+    i = 0;
     while i < 2 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 8 as i32 {
-            k = 0 as i32;
+            k = 0;
             while k < 6561 as i32 {
                 line_hash[i as usize][j as usize][k as usize] =
                     if my_random() % 2 as i32 as i64 != 0 {
@@ -209,7 +209,7 @@ pub unsafe fn prepare_hash() {
         }
         i += 1
     }
-    hash_table_size = 0 as i32;
+    hash_table_size = 0;
 }
 
 /*
@@ -217,7 +217,7 @@ pub unsafe fn prepare_hash() {
    Initializes the node tree by creating the root of the tree.
 */
 pub unsafe fn init_book_tree() {
-    book_node_count = 0 as i32;
+    book_node_count = 0;
     node = 0 as *mut BookNode;
 }
 
@@ -367,16 +367,16 @@ pub unsafe fn get_hash(val0: *mut i32,
     /* Calculate the 8 different 64-bit hash values for the
        different rotations. */
     compute_line_patterns(&board, &mut row_pattern, &mut col_pattern);
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 2 as i32 {
-            out[i as usize][j as usize] = 0 as i32;
+            out[i as usize][j as usize] = 0;
             j += 1
         }
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         /* b1 -> b1 */
         out[0][0] ^=
@@ -467,10 +467,10 @@ pub unsafe fn get_hash(val0: *mut i32,
     /* Find the rotation minimizing the hash index.
        If two hash indices are equal, map number is implicitly used
        as tie-breaker. */
-    min_map = 0 as i32;
+    min_map = 0;
     min_hash0 = out[0][0];
     min_hash1 = out[0][1];
-    i = 1 as i32;
+    i = 1;
     while i < 8 as i32 {
         if out[i as usize][0] < min_hash0 ||
             out[i as usize][0] == min_hash0 &&
@@ -518,9 +518,9 @@ pub unsafe fn do_compress(index: i32,
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
-    valid_child_count = 0 as i32;
+    valid_child_count = 0;
     generate_all(side_to_move);
-    i = 0 as i32;
+    i = 0;
     while i < move_count[disks_played as usize] {
         this_move =
             move_list[disks_played as usize][i as usize] as i16;
@@ -531,8 +531,8 @@ pub unsafe fn do_compress(index: i32,
         if child != -(1 as i32) &&
             (*node.offset(child as isize)).flags as i32 &
                 8 as i32 != 0 {
-            j = 0 as i32;
-            found = 0 as i32;
+            j = 0;
+            found = 0;
             while j < valid_child_count {
                 if child == local_child_list[j as usize] {
                     found = 1 as i32
@@ -553,7 +553,7 @@ pub unsafe fn do_compress(index: i32,
     *child_count.offset(*node_index as isize) =
         valid_child_count as i16;
     *node_index += 1;
-    i = 0 as i32;
+    i = 0;
     while i < valid_child_count {
         this_move = local_child_move[i as usize];
         make_move(side_to_move, this_move as i32, 1 as i32);
@@ -688,8 +688,8 @@ pub unsafe fn do_minimax(index: i32,
     } else { side_to_move = 2 as i32 }
     best_black_child_val = -(99999 as i32);
     best_white_child_val = -(99999 as i32);
-    worst_black_child_val = 99999 as i32;
-    worst_white_child_val = 99999 as i32;
+    worst_black_child_val = 99999;
+    worst_white_child_val = 99999;
     if (*node.offset(index as isize)).alternative_score as i32 !=
         9999 as i32 {
         best_black_score =
@@ -700,7 +700,7 @@ pub unsafe fn do_minimax(index: i32,
         best_black_child_val = worst_black_child_val;
         worst_white_child_val = best_white_score as i32;
         best_white_child_val = worst_white_child_val;
-        alternative_move_found = 0 as i32;
+        alternative_move_found = 0;
         alternative_move =
             (*node.offset(index as isize)).best_alternative_move as
                 i32;
@@ -711,19 +711,19 @@ pub unsafe fn do_minimax(index: i32,
                     usize].offset(alternative_move as isize)
         }
     } else {
-        alternative_move_found = 1 as i32;
-        alternative_move = 0 as i32;
+        alternative_move_found = 1;
+        alternative_move = 0;
         if side_to_move == 0 as i32 {
             best_black_score = -(32000 as i32) as i16;
             best_white_score = -(32000 as i32) as i16
         } else {
-            best_black_score = 32000 as i32 as i16;
+            best_black_score = 32000;
             best_white_score = 32000 as i32 as i16
         }
     }
     generate_all(side_to_move);
-    child_count = 0 as i32;
-    i = 0 as i32;
+    child_count = 0;
+    i = 0;
     while i < move_count[disks_played as usize] {
         piece_count[0][disks_played as usize] =
             disc_count(0 as i32, &board);
@@ -786,8 +786,7 @@ pub unsafe fn do_minimax(index: i32,
     if alternative_move_found == 0 {
         /* The was-to-be deviation now leads to a position in the database,
            hence it can no longer be used. */
-        (*node.offset(index as isize)).alternative_score =
-            9999 as i32 as i16;
+        (*node.offset(index as isize)).alternative_score = 9999;
         (*node.offset(index as isize)).best_alternative_move =
             -(1 as i32) as i16
     }
@@ -916,9 +915,9 @@ pub unsafe fn init_maps<FE: FrontEnd>() {
     let mut j: i32 = 0;
     let mut k: i32 = 0;
     let mut pos: i32 = 0;
-    i = 1 as i32;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
             b1_b1_map[pos as usize] = pos;
@@ -957,17 +956,16 @@ pub unsafe fn init_maps<FE: FrontEnd>() {
     inv_symmetry_map[6] = h7_b1_map.as_mut_ptr();
     symmetry_map[7] = h2_b1_map.as_mut_ptr();
     inv_symmetry_map[7] = a7_b1_map.as_mut_ptr();
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        *symmetry_map[i as usize].offset(0 as i32 as isize) =
-            0 as i32;
+        *symmetry_map[i as usize].offset(0 as i32 as isize) = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
-            k = 1 as i32;
+            k = 1;
             while k <= 8 as i32 {
                 pos = 10 as i32 * j + k;
                 if *inv_symmetry_map[i as
@@ -1079,14 +1077,11 @@ pub unsafe fn create_BookNode<FE: FrontEnd>(val1: i32,
     index = book_node_count;
     (*node.offset(index as isize)).hash_val1 = val1;
     (*node.offset(index as isize)).hash_val2 = val2;
-    (*node.offset(index as isize)).black_minimax_score =
-        9999 as i32 as i16;
-    (*node.offset(index as isize)).white_minimax_score =
-        9999 as i32 as i16;
+    (*node.offset(index as isize)).black_minimax_score = 9999;
+    (*node.offset(index as isize)).white_minimax_score = 9999;
     (*node.offset(index as isize)).best_alternative_move =
         -(1 as i32) as i16;
-    (*node.offset(index as isize)).alternative_score =
-        9999 as i32 as i16;
+    (*node.offset(index as isize)).alternative_score = 9999;
     (*node.offset(index as isize)).flags = flags;
     select_hash_slot(index);
     book_node_count += 1;
@@ -1107,7 +1102,7 @@ pub unsafe fn find_opening_name() -> *const i8 {
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
     get_hash(&mut val1, &mut val2, &mut orientation);
-    i = 0 as i32;
+    i = 0;
     while i < 76 as i32 {
         if val1 == opening_list[i as usize].hash_val1 &&
             val2 == opening_list[i as usize].hash_val2 {
@@ -1160,7 +1155,7 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
          FE::strlen(opening).wrapping_div(2 as i32 as u64) as
             i32;
     if move_count_0 <= disks_played { return -(1 as i32) }
-    i = 0 as i32;
+    i = 0;
     while i < move_count_0 {
         move_0[i as usize] =
             10 as i32 *
@@ -1172,24 +1167,24 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
     }
     /* Play through the given opening line until the number of discs
        matches that on the actual board. */
-    pos = 11 as i32;
+    pos = 11;
     while pos <= 88 as i32 {
-        local_board[pos as usize] = 1 as i32;
+        local_board[pos as usize] = 1;
         pos += 1
     }
-    local_board[54] = 0 as i32;
+    local_board[54] = 0;
     local_board[45] =
         local_board[54];
-    local_board[55] = 2 as i32;
+    local_board[55] = 2;
     local_board[44] =
         local_board[55];
-    local_side_to_move = 0 as i32;
-    i = 0 as i32;
+    local_side_to_move = 0;
+    i = 0;
     while i < disks_played {
-        j = 0 as i32;
+        j = 0;
         while j < 8 as i32 {
             pos = move_0[i as usize] + move_offset[j as usize];
-            count = 0 as i32;
+            count = 0;
             while local_board[pos as usize] ==
                 0 as i32 + 2 as i32 - local_side_to_move
             {
@@ -1216,12 +1211,12 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
        randomly to avoid the same symmetry being chosen all the time.
        This is not a perfect scheme but good enough. */
     symmetry = abs(my_random() as i32) % 8 as i32;
-    symm_index = 0 as i32;
+    symm_index = 0;
     while symm_index < 8 as i32 {
-        same_position = 1 as i32;
-        i = 1 as i32;
+        same_position = 1;
+        i = 1;
         while i <= 8 as i32 && same_position != 0 {
-            j = 1 as i32;
+            j = 1;
             while j <= 8 as i32 {
                 pos = 10 as i32 * i + j;
                 if board[pos as usize] !=
@@ -1282,7 +1277,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
     while curr_depth <= depth {
         low_score = -(12345678 as i32);
         curr_alpha = -(12345678 as i32);
-        i = 0 as i32;
+        i = 0;
         while i < allowed_count {
             make_move(side_to_move, *allowed_moves.offset(i as isize),
                       1 as i32);
@@ -1342,7 +1337,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
             j -= 1
         }
         *allowed_moves.offset(0 as i32 as isize) = best_move;
-        *best_index = 0 as i32;
+        *best_index = 0;
         curr_depth += 2 as i32
     }
     /* Then find the score for the best move when searched
@@ -1423,8 +1418,8 @@ pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32) {
     piece_count[2][disks_played as usize] =
         disc_count(2 as i32, &board);
     /* Find the moves which haven't been tried from this position */
-    alternative_move_count = 0 as i32;
-    i = 0 as i32;
+    alternative_move_count = 0;
+    i = 0;
     while i < move_count[disks_played as usize] {
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
@@ -1503,7 +1498,7 @@ pub unsafe fn do_validate<FE: FrontEnd>(index: i32) {
             != -(2 as i32) {
         evaluate_node::<FE>(index);
     }
-    i = 0 as i32;
+    i = 0;
     while i < move_count[disks_played as usize] {
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
@@ -1552,7 +1547,7 @@ pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32) {
         evaluation_stage += 1;
         FE::report_do_evaluate(evaluation_stage);
     }
-    i = 0 as i32;
+    i = 0;
     while i < move_count[disks_played as usize] {
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
@@ -1569,8 +1564,8 @@ pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32) {
 
 
 pub unsafe fn compute_feasible_count() -> i32 {
-    let mut feasible_count = 0 as i32;
-    let mut i = 0 as i32;
+    let mut feasible_count = 0;
+    let mut i = 0;
     while i < book_node_count {
         let ref mut fresh18 = (*node.offset(i as isize)).flags;
         *fresh18 =
@@ -1597,11 +1592,11 @@ pub unsafe fn compute_feasible_count() -> i32 {
 
 // extracted from validate_tree
 pub unsafe fn validate_prepared_tree<FE: FrontEnd>() -> i32 {
-    exhausted_node_count = 0 as i32;
-    evaluated_count = 0 as i32;
-    evaluation_stage = 0 as i32;
-    let mut feasible_count = 0 as i32;
-    let mut i = 0 as i32;
+    exhausted_node_count = 0;
+    evaluated_count = 0;
+    evaluation_stage = 0;
+    let mut feasible_count = 0;
+    let mut i = 0;
     while i < book_node_count {
         if (*node.offset(i as isize)).flags as i32 &
             (4 as i32 | 16 as i32) == 0 &&
@@ -1618,7 +1613,7 @@ pub unsafe fn validate_prepared_tree<FE: FrontEnd>() -> i32 {
             feasible_count
         } else { max_batch_size };
     if feasible_count > 0 as i32 {
-        i = 0 as i32;
+        i = 0;
         while i < book_node_count {
             let ref mut fresh20 = (*node.offset(i as isize)).flags;
             *fresh20 =
@@ -1677,7 +1672,7 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
     } else { side_to_move = 2 as i32 }
     matching_move = -(1 as i32);
     generate_all(side_to_move);
-    i = 0 as i32;
+    i = 0;
     while i < move_count[disks_played as usize] {
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
@@ -1790,8 +1785,8 @@ pub unsafe fn do_examine(index: i32) {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
     generate_all(side_to_move);
-    child_count = 0 as i32;
-    i = 0 as i32;
+    child_count = 0;
+    i = 0;
     while i < move_count[disks_played as usize] {
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
@@ -1818,7 +1813,7 @@ pub unsafe fn do_examine(index: i32) {
         }
     } else {
         let mut current_block_38: u64;
-        i = 0 as i32;
+        i = 0;
         while i < child_count {
             if side_to_move == 0 as i32 {
                 if force_black != 0 &&
@@ -1887,13 +1882,13 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
     /* If the position wasn't found in the hash table, return. */
     if slot == -(1 as i32) ||
         *book_hash_table.offset(slot as isize) == -(1 as i32) {
-        candidate_count = 0 as i32;
+        candidate_count = 0;
         return
     } else { index = *book_hash_table.offset(slot as isize) }
     /* If the position hasn't got the right flag bits set, return. */
     root_flags = (*node.offset(index as isize)).flags as i32;
     if flags != 0 as i32 && root_flags & flags == 0 {
-        candidate_count = 0 as i32;
+        candidate_count = 0;
         return
     }
     if side_to_move == 0 as i32 {
@@ -1910,8 +1905,8 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                              i32, side_to_move)
     } else { alternative_score = -(12345678 as i32) }
     generate_all(side_to_move);
-    candidate_count = 0 as i32;
-    i = 0 as i32;
+    candidate_count = 0;
+    i = 0;
     while i < move_count[disks_played as usize] {
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
@@ -1920,15 +1915,15 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
         unmake_move(side_to_move, this_move);
         /* Check if the move leads to a book position and, if it does,
            whether it has the solve status (WLD or FULL) specified by FLAGS. */
-        deviation = 0 as i32;
+        deviation = 0;
         if slot == -(1 as i32) ||
             *book_hash_table.offset(slot as isize) == -(1 as i32) {
             if this_move == alternative_move && flags == 0 {
                 score = alternative_score;
-                child_feasible = 1 as i32;
+                child_feasible = 1;
                 deviation = 1 as i32
             } else {
-                child_feasible = 0 as i32;
+                child_feasible = 0;
                 score = 0 as i32
             }
         } else if (*node.offset(*book_hash_table.offset(slot as isize) as
@@ -1946,7 +1941,7 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                         i32
             }
             child_feasible = 1 as i32
-        } else { child_feasible = 0 as i32; score = 0 as i32 }
+        } else { child_feasible = 0; score = 0 as i32 }
         if child_feasible != 0 && score == 0 as i32 &&
             (*node.offset(index as isize)).flags as i32 &
                 4 as i32 == 0 &&
@@ -2001,12 +1996,12 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
         loop
         /* Sort the book moves using bubble sort */
         {
-            changed = 0 as i32;
-            i = 0 as i32;
+            changed = 0;
+            i = 0;
             while i < candidate_count - 1 as i32 {
                 if candidate_list[i as usize].score <
                     candidate_list[(i + 1 as i32) as usize].score {
-                    changed = 1 as i32;
+                    changed = 1;
                     temp = candidate_list[i as usize];
                     candidate_list[i as usize] =
                         candidate_list[(i + 1 as i32) as usize];
@@ -2106,8 +2101,8 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     /* Don't randomize among solved moves */
     score = candidate_list[0].score;
     if score >= 30000 as i32 { remaining_slack = 0 as i32 }
-    feasible_count = 0 as i32;
-    total_weight = 0 as i32;
+    feasible_count = 0;
+    total_weight = 0;
     while feasible_count < candidate_count &&
         candidate_list[feasible_count as usize].score >=
             score - remaining_slack {
@@ -2127,7 +2122,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         random_point =
             ((my_random() >> 10 as i32) %
                 total_weight as i64) as i32;
-        chosen_index = 0 as i32;
+        chosen_index = 0;
         acc_weight = weight[chosen_index as usize];
         while random_point > acc_weight {
             chosen_index += 1;
@@ -2185,7 +2180,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     }
     /* Fill the PV structure with the optimal book line */
     original_side_to_move = side_to_move;
-    level = 0 as i32;
+    level = 0;
     temp_move[0] =
         candidate_list[chosen_index as usize].move_0;
     loop  {
@@ -2194,7 +2189,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         level += 1;
         get_hash(&mut val1, &mut val2, &mut orientation);
         slot = probe_hash_table(val1, val2);
-        continuation = 1 as i32;
+        continuation = 1;
         if slot == -(1 as i32) ||
             *book_hash_table.offset(slot as isize) == -(1 as i32) {
             continuation = 0 as i32
@@ -2218,16 +2213,16 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
             if (*node.offset(*book_hash_table.offset(slot as isize) as
                 isize)).flags as i32 &
                 1 as i32 != 0 {
-                side_to_move = 0 as i32;
+                side_to_move = 0;
                 sign = 1 as i32
             } else {
-                side_to_move = 2 as i32;
+                side_to_move = 2;
                 sign = -(1 as i32)
             }
             generate_all(side_to_move);
             best_score = -(12345678 as i32);
             best_move = -(1 as i32);
-            i = 0 as i32;
+            i = 0;
             while i < move_count[disks_played as usize] {
                 this_move = move_list[disks_played as usize][i as usize];
                 make_move(side_to_move, this_move, 1 as i32);
@@ -2273,7 +2268,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         if !(continuation != 0) { break ; }
     }
     pv_depth[0] = level;
-    i = 0 as i32;
+    i = 0;
     while i < level {
         pv[0][i as usize] = temp_move[i as usize];
         i += 1
@@ -2293,18 +2288,18 @@ pub unsafe fn engine_init_osf<FE: FrontEnd>() {
     setup_hash(1 as i32);
     init_book_tree();
     reset_book_search();
-    search_depth = 2 as i32;
-    max_slack = 0 as i32;
-    low_deviation_threshold = 60 as i32;
-    high_deviation_threshold = 60 as i32;
+    search_depth = 2;
+    max_slack = 0;
+    low_deviation_threshold = 60;
+    high_deviation_threshold = 60;
     deviation_bonus = 0.0f64;
-    min_eval_span = 0 as i32;
+    min_eval_span = 0;
     max_eval_span = 1000 as i32 * 128 as i32;
-    min_negamax_span = 0 as i32;
+    min_negamax_span = 0;
     max_negamax_span = 1000 as i32 * 128 as i32;
-    max_batch_size = 10000000 as i32;
-    force_black = 0 as i32;
-    force_white = 0 as i32;
+    max_batch_size = 10000000;
+    force_black = 0;
+    force_white = 0;
 }
 /*
    PREPATE_TREE_TRAVERSAL
@@ -2333,7 +2328,7 @@ pub unsafe fn validate_tree<FE: FrontEnd>() -> i32 {
 
 pub unsafe fn engine_minimax_tree() {
     /* Mark all nodes as not traversed */
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i < book_node_count {
         let ref mut fresh15 = (*node.offset(i as isize)).flags;
         *fresh15 =
@@ -2346,19 +2341,19 @@ pub unsafe fn engine_minimax_tree() {
 }
 
 pub unsafe fn engine_examine_tree() {
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i <= 60 as i32 {
-        exact_count[i as usize] = 0 as i32;
-        wld_count[i as usize] = 0 as i32;
-        exhausted_count[i as usize] = 0 as i32;
-        common_count[i as usize] = 0 as i32;
+        exact_count[i as usize] = 0;
+        wld_count[i as usize] = 0;
+        exhausted_count[i as usize] = 0;
+        common_count[i as usize] = 0;
         i += 1
     }
-    unreachable_count = 0 as i32;
-    leaf_count = 0 as i32;
-    bad_leaf_count = 0 as i32;
+    unreachable_count = 0;
+    leaf_count = 0;
+    bad_leaf_count = 0;
     /* Mark all nodes as not traversed and examine the tree */
-    i = 0 as i32;
+    i = 0;
     while i < book_node_count {
         let ref mut fresh22 = (*node.offset(i as isize)).flags;
         *fresh22 =
@@ -2367,7 +2362,7 @@ pub unsafe fn engine_examine_tree() {
     }
     do_examine(0 as i32);
     /* Any nodes not reached by the walkthrough? */
-    i = 0 as i32;
+    i = 0;
     while i < book_node_count {
         if (*node.offset(i as isize)).flags as i32 & 8 as i32
             != 0 {

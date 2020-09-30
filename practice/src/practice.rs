@@ -122,7 +122,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     toggle_human_openings(0 as i32);
     set_names::<LibcFatalError>(b"\x00" as *const u8 as *const i8,
               b"\x00" as *const u8 as *const i8);
-    quit = 0 as i32;
+    quit = 0;
     while quit == 0 {
         let mut val0: i32 = 0;
         let mut val1: i32 = 0;
@@ -149,7 +149,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                               16 as i32, 18 as i32);
         printf(b"Scores for the %d moves:\n\x00" as *const u8 as
                    *const i8, get_evaluated_count());
-        i = 0 as i32;
+        i = 0;
         while i < get_evaluated_count() {
             buffer =
                 produce_eval_text(&get_evaluated(i).eval, 0 as i32);
@@ -163,7 +163,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         }
         puts(b"\x00" as *const u8 as *const i8);
         loop  {
-            repeat = 0 as i32;
+            repeat = 0;
             if side_to_move == 0 as i32 {
                 printf(b"Black move: \x00" as *const u8 as
                     *const i8);
@@ -180,7 +180,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             } else {
                 command = atoi(move_string.as_mut_ptr());
                 if command >= 1 as i32 && command <= disks_played {
-                    i = 1 as i32;
+                    i = 1;
                     while i <= command {
                         unmake_move(old_stm[(disks_played - 1 as i32)
                             as usize],

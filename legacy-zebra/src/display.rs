@@ -224,7 +224,7 @@ pub unsafe fn display_optimal_line(stream: *mut FILE, full_pv_depth_: i32, full_
     if full_pv_depth_ == 0 as i32 { return }
     fprintf(stream, b"%s: \x00" as *const u8 as *const i8,
             b"PV\x00" as *const u8 as *const i8);
-    i = 0 as i32;
+    i = 0;
     while i < full_pv_depth_ {
         if i % 25 as i32 != 0 as i32 {
             fputc(' ' as i32, stream);
@@ -248,7 +248,7 @@ pub unsafe extern "C" fn send_status(format: *const i8, args: ...) {
         vsprintf(status_buffer.as_mut_ptr().offset(status_pos as isize),
                  format, arg_ptr.as_va_list());
     status_pos += written;
-    status_modified = 1 as i32;
+    status_modified = 1;
 }
 /*
   SEND_STATUS_TIME
@@ -295,7 +295,7 @@ pub unsafe fn send_status_nodes(node_count: f64) {
 */
 
 pub unsafe fn send_status_pv(pv: &[i32; 64], max_depth: i32, pv_depth_zero: i32) {
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i <
               (if max_depth < 5 as i32 {
                    max_depth
@@ -328,7 +328,7 @@ pub unsafe fn display_status(stream: *mut FILE,
                 status_buffer.as_mut_ptr());
         strcpy(stored_status_buffer.as_mut_ptr(), status_buffer.as_mut_ptr());
     }
-    status_pos = 0 as i32;
+    status_pos = 0;
 }
 /*
   SEND_SWEEP
@@ -342,7 +342,7 @@ pub unsafe extern "C" fn send_sweep(format: *const i8,
         vsprintf(sweep_buffer.as_mut_ptr().offset(sweep_pos as isize), format,
                  arg_ptr.as_va_list());
     sweep_pos += written;
-    sweep_modified = 1 as i32;
+    sweep_modified = 1;
 }
 /*
   DISPLAY_SWEEP
@@ -354,7 +354,7 @@ pub unsafe fn display_sweep(stream: *mut FILE) {
         fprintf(stream, b"%s\n\x00" as *const u8 as *const i8,
                 sweep_buffer.as_mut_ptr());
     }
-    sweep_modified = 0 as i32;
+    sweep_modified = 0;
 }
 /*
   PRODUCE_EVAL_TEXT
@@ -367,7 +367,7 @@ pub unsafe fn produce_eval_text(eval_info: &EvaluationType,
     let disk_diff: f64;
     let int_confidence: i32;
     let buffer = safe_malloc::<FE>(32 as i32 as size_t) as *mut i8;
-    let mut len = 0 as i32;
+    let mut len = 0;
     match eval_info.type_0 as u32 {
         0 => {
             if eval_info.score >= 29000 as i32 {
@@ -616,8 +616,7 @@ pub unsafe fn produce_eval_text(eval_info: &EvaluationType,
         }
         6 => {
             /* We really want to perform len = sprintf( buffer, "" ); */
-            *buffer.offset(0 as i32 as isize) =
-                0 as i32 as i8;
+            *buffer.offset(0 as i32 as isize) = 0;
             len = 0 as i32
         }
         8 => {

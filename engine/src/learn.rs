@@ -24,7 +24,7 @@ pub static mut game_move: [i16; 61] = [0; 61];
 
 pub unsafe fn clear_stored_game() {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i <= 60 as i32 {
         game_move[i as usize] = -(1 as i32) as i16;
         i += 1
@@ -64,8 +64,8 @@ pub unsafe fn game_learnable(finished: i32,
                              -> i32 {
     let mut i: i32 = 0;
     let mut moves_available: i32 = 0;
-    moves_available = 1 as i32;
-    i = 0 as i32;
+    moves_available = 1;
+    i = 0;
     while i < move_count_0 && i < 60 as i32 - cutoff_empty {
         if game_move[i as usize] as i32 == -(1 as i32) {
             moves_available = 0 as i32

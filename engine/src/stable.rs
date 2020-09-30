@@ -394,8 +394,8 @@ unsafe fn stability_search(my_bits: BitBoard,
             black_bits = my_bits;
             white_bits = opp_bits
         } else { black_bits = opp_bits; white_bits = my_bits }
-        all_stable_bits.high = 0 as i32 as u32;
-        all_stable_bits.low = 0 as i32 as u32;
+        all_stable_bits.high = 0;
+        all_stable_bits.low = 0;
         count_edge_stable(0 as i32, black_bits, white_bits);
         if (*candidate_bits).high & black_bits.high != 0 ||
                (*candidate_bits).low & black_bits.low != 0 {
@@ -416,8 +416,8 @@ unsafe fn stability_search(my_bits: BitBoard,
             return
         }
     }
-    mobility = 0 as i32;
-    old_sq = 0 as i32;
+    mobility = 0;
+    old_sq = 0;
     sq = stab_move_list[old_sq as usize].succ;
     while sq != 99 as i32 {
         let flip_test_result = TestFlips_bitboard[(sq - 11 as i32) as
@@ -478,8 +478,8 @@ unsafe fn complete_stability_search(board: *mut i32,
     let mut candidate_bits = BitBoard{high: 0, low: 0,};
     let mut test_bits = BitBoard{high: 0, low: 0,};
     /* Prepare the move list */
-    let mut last_sq = 0 as i32;
-    i = 0 as i32;
+    let mut last_sq = 0;
+    i = 0;
     while i < 60 as i32 {
         let sq = position_list[i as usize];
         if *board.offset(sq as isize) == 1 as i32 {
@@ -489,11 +489,11 @@ unsafe fn complete_stability_search(board: *mut i32,
         }
         i += 1
     }
-    stab_move_list[last_sq as usize].succ = 99 as i32;
-    empties = 0 as i32;
-    i = 1 as i32;
+    stab_move_list[last_sq as usize].succ = 99;
+    empties = 0;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             if *board.offset((10 as i32 * i + j) as isize) ==
                    1 as i32 {
@@ -511,8 +511,8 @@ unsafe fn complete_stability_search(board: *mut i32,
     candidate_bits.low = all_bits.low & !(*stable_bits).low;
     /* Search all potentially stable discs for at most 4 plies
        to weed out those easily flippable */
-    stability_nodes = 0 as i32;
-    shallow_depth = 4 as i32;
+    stability_nodes = 0;
+    shallow_depth = 4;
     stability_search(my_bits, opp_bits, side_to_move, &mut candidate_bits,
                      if empties < shallow_depth {
                          empties
@@ -521,10 +521,10 @@ unsafe fn complete_stability_search(board: *mut i32,
     /* Scan through the rest of the discs one at a time until the
        maximum number of stability nodes is exceeded. Hopefully
        a subset of the stable discs is found also if this happens. */
-    abort = 0 as i32;
-    i = 1 as i32;
+    abort = 0;
+    i = 1;
     while i <= 8 as i32 && abort == 0 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 && abort == 0 {
             let sq_0 = 10 as i32 * i + j;
             test_bits = square_mask[sq_0 as usize];
@@ -564,20 +564,19 @@ pub unsafe fn get_stable(board: &mut i32,
     let mut white_bits = BitBoard{high: 0, low: 0,};
     let mut all_stable = BitBoard{high: 0, low: 0,};
     set_bitboards(board, 0 as i32, &mut black_bits, &mut white_bits);
-    i = 0 as i32;
+    i = 0;
     while i < 100 as i32 {
-        *is_stable.offset(i as isize) = 0 as i32;
+        *is_stable.offset(i as isize) = 0;
         i += 1
     }
     if black_bits.high | black_bits.low == 0 as i32 as u32 ||
            white_bits.high | white_bits.low ==
                0 as i32 as u32 {
-        i = 1 as i32;
+        i = 1;
         while i <= 8 as i32 {
-            j = 1 as i32;
+            j = 1;
             while j <= 8 as i32 {
-                *is_stable.offset((10 as i32 * i + j) as isize) =
-                    1 as i32;
+                *is_stable.offset((10 as i32 * i + j) as isize) = 1;
                 j += 1
             }
             i += 1
@@ -590,10 +589,10 @@ pub unsafe fn get_stable(board: &mut i32,
         all_stable.high = last_black_stable.high | last_white_stable.high;
         all_stable.low = last_black_stable.low | last_white_stable.low;
         complete_stability_search(board, side_to_move, &mut all_stable, bb_flips_);
-        i = 1 as i32;
-        mask = 1 as i32 as u32;
+        i = 1;
+        mask = 1;
         while i <= 4 as i32 {
-            j = 1 as i32;
+            j = 1;
             while j <= 8 as i32 {
                 if all_stable.low & mask != 0 {
                     *is_stable.offset((10 as i32 * i + j) as isize) =
@@ -604,10 +603,10 @@ pub unsafe fn get_stable(board: &mut i32,
             }
             i += 1
         }
-        i = 5 as i32;
-        mask = 1 as i32 as u32;
+        i = 5;
+        mask = 1;
         while i <= 8 as i32 {
-            j = 1 as i32;
+            j = 1;
             while j <= 8 as i32 {
                 if all_stable.high & mask != 0 {
                     *is_stable.offset((10 as i32 * i + j) as isize) =
@@ -639,24 +638,24 @@ unsafe fn recursive_find_stable(pattern: i32)
         return edge_stable[pattern as usize] as i32
     }
     temp = pattern;
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         row[i as usize] = temp % 3 as i32;
         i += 1;
         temp /= 3 as i32
     }
     /* All positions stable unless proved otherwise. */
-    stable = 255 as i32;
+    stable = 255;
     /* Play out the 8 different moves and AND together the stability masks. */
-    j = 0 as i32;
+    j = 0;
     while j < 8 as i32 {
         stored_row[j as usize] = row[j as usize];
         j += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         /* Make sure we work with the original configuration */
-        j = 0 as i32;
+        j = 0;
         while j < 8 as i32 {
             row[j as usize] = stored_row[j as usize];
             j += 1
@@ -666,7 +665,7 @@ unsafe fn recursive_find_stable(pattern: i32)
             /* Mark the empty square as unstable and store position */
             stable &= !((1 as i32) << i);
             /* Play out a black move */
-            row[i as usize] = 0 as i32;
+            row[i as usize] = 0;
             if i >= 2 as i32 {
                 j = i - 1 as i32;
                 while j >= 1 as i32 &&
@@ -676,7 +675,7 @@ unsafe fn recursive_find_stable(pattern: i32)
                 if row[j as usize] == 0 as i32 {
                     j += 1;
                     while j < i {
-                        row[j as usize] = 0 as i32;
+                        row[j as usize] = 0;
                         stable &= !((1 as i32) << j);
                         j += 1
                     }
@@ -691,27 +690,27 @@ unsafe fn recursive_find_stable(pattern: i32)
                 if row[j as usize] == 0 as i32 {
                     j -= 1;
                     while j > i {
-                        row[j as usize] = 0 as i32;
+                        row[j as usize] = 0;
                         stable &= !((1 as i32) << j);
                         j -= 1
                     }
                 }
             }
-            new_pattern = 0 as i32;
-            j = 0 as i32;
+            new_pattern = 0;
+            j = 0;
             while j < 8 as i32 {
                 new_pattern += pow3[j as usize] * row[j as usize];
                 j += 1
             }
             stable &= recursive_find_stable(new_pattern);
             /* Restore position */
-            j = 0 as i32;
+            j = 0;
             while j < 8 as i32 {
                 row[j as usize] = stored_row[j as usize];
                 j += 1
             }
             /* Play out a white move */
-            row[i as usize] = 2 as i32;
+            row[i as usize] = 2;
             if i >= 2 as i32 {
                 j = i - 1 as i32;
                 while j >= 1 as i32 &&
@@ -721,7 +720,7 @@ unsafe fn recursive_find_stable(pattern: i32)
                 if row[j as usize] == 2 as i32 {
                     j += 1;
                     while j < i {
-                        row[j as usize] = 2 as i32;
+                        row[j as usize] = 2;
                         stable &= !((1 as i32) << j);
                         j += 1
                     }
@@ -736,14 +735,14 @@ unsafe fn recursive_find_stable(pattern: i32)
                 if row[j as usize] == 2 as i32 {
                     j -= 1;
                     while j > i {
-                        row[j as usize] = 2 as i32;
+                        row[j as usize] = 2;
                         stable &= !((1 as i32) << j);
                         j -= 1
                     }
                 }
             }
-            new_pattern = 0 as i32;
-            j = 0 as i32;
+            new_pattern = 0;
+            j = 0;
             while j < 8 as i32 {
                 new_pattern += pow3[j as usize] * row[j as usize];
                 j += 1
@@ -774,13 +773,13 @@ unsafe fn count_color_stable() {
         [1 as i32, 2 as i32, 2 as i32,
          2 as i32, 2 as i32, 2 as i32,
          2 as i32, 1 as i32];
-    i = 0 as i32;
-    while i < 8 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    pattern = 0 as i32;
+    i = 0;
+    while i < 8 as i32 { row[i as usize] = 0; i += 1 }
+    pattern = 0;
     while pattern < 6561 as i32 {
-        black_stable[pattern as usize] = 0 as i32 as u8;
-        white_stable[pattern as usize] = 0 as i32 as u8;
-        j = 0 as i32;
+        black_stable[pattern as usize] = 0;
+        white_stable[pattern as usize] = 0;
+        j = 0;
         while j < 8 as i32 {
             if edge_stable[pattern as usize] as i32 &
                    (1 as i32) << j != 0 {
@@ -797,7 +796,7 @@ unsafe fn count_color_stable() {
             j += 1
         }
         /* Next configuration */
-        i = 0 as i32;
+        i = 0;
         loop  {
             /* The odometer principle */
             row[i as usize] += 1;
@@ -822,10 +821,10 @@ unsafe fn count_color_stable() {
 pub unsafe fn init_stable() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < 256 as i32 {
-        base_conversion[i as usize] = 0 as i32 as i16;
-        j = 0 as i32;
+        base_conversion[i as usize] = 0;
+        j = 0;
         while j < 8 as i32 {
             if i & (1 as i32) << j != 0 {
                 base_conversion[i as usize] =
@@ -836,12 +835,12 @@ pub unsafe fn init_stable() {
         }
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 6561 as i32 {
         edge_stable[i as usize] = -(1 as i32) as i16;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 6561 as i32 {
         if edge_stable[i as usize] as i32 == -(1 as i32) {
             recursive_find_stable(i);

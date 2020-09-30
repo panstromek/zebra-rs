@@ -102,15 +102,15 @@ pub static mut filter: FilterType =
 */
 pub unsafe fn clear_thor_board() {
     let mut pos: i32 = 0;
-    pos = 11 as i32;
+    pos = 11;
     while pos <= 88 as i32 {
-        thor_board[pos as usize] = 1 as i32;
+        thor_board[pos as usize] = 1;
         pos += 1
     }
-    thor_board[54] = 0 as i32;
+    thor_board[54] = 0;
     thor_board[45] =
         thor_board[54];
-    thor_board[55] = 2 as i32;
+    thor_board[55] = 2;
     thor_board[44] =
         thor_board[55];
 }
@@ -122,9 +122,9 @@ pub unsafe fn prepare_thor_board() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < 10 as i32 {
-        j = 0 as i32;
+        j = 0;
         pos = 10 as i32 * i;
         while j < 10 as i32 {
             if i == 0 as i32 || i == 9 as i32 ||
@@ -147,7 +147,7 @@ pub unsafe fn directional_flip_count(sq: i32,
                                  color: i32,
                                  oppcol: i32)
                                  -> i32 {
-    let mut count = 1 as i32;
+    let mut count = 1;
     let mut pt = sq + inc;
     if thor_board[pt as usize] == oppcol {
         pt += inc;
@@ -232,7 +232,7 @@ pub unsafe fn count_flips(sqnum: i32,
                       oppcol: i32) -> i32 {
     let mut count: i32 = 0;
     let mut mask: i32 = 0;
-    count = 0 as i32;
+    count = 0;
     mask = dir_mask[sqnum as usize];
     if mask & 128 as i32 != 0 {
         count +=
@@ -277,7 +277,7 @@ pub unsafe fn any_flips(sqnum: i32, color: i32,
                     oppcol: i32) -> i32 {
     let mut count: i32 = 0;
     let mut mask: i32 = 0;
-    count = 0 as i32;
+    count = 0;
     mask = dir_mask[sqnum as usize];
     if mask & 128 as i32 != 0 {
         count |=
@@ -318,15 +318,15 @@ pub unsafe fn compute_thor_patterns(in_board: *mut i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        thor_row_pattern[i as usize] = 0 as i32;
-        thor_col_pattern[i as usize] = 0 as i32;
+        thor_row_pattern[i as usize] = 0;
+        thor_col_pattern[i as usize] = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        j = 0 as i32;
+        j = 0;
         pos = 10 as i32 * i + 11 as i32;
         while j < 8 as i32 {
             thor_row_pattern[i as usize] +=
@@ -364,23 +364,23 @@ pub unsafe fn get_corner_mask(disc_a1: i32,
     let mut mask_h8: i32 = 0;
     let mut out_mask: u32 = 0;
     let mut config: [u32; 8] = [0; 8];
-    mask_a1 = 0 as i32;
+    mask_a1 = 0;
     if disc_a1 == 0 as i32 {
         mask_a1 = 1 as i32
     } else if disc_a1 == 2 as i32 { mask_a1 = 2 as i32 }
-    mask_a8 = 0 as i32;
+    mask_a8 = 0;
     if disc_a8 == 0 as i32 {
         mask_a8 = 1 as i32
     } else if disc_a8 == 2 as i32 { mask_a8 = 2 as i32 }
-    mask_h1 = 0 as i32;
+    mask_h1 = 0;
     if disc_h1 == 0 as i32 {
         mask_h1 = 1 as i32
     } else if disc_h1 == 2 as i32 { mask_h1 = 2 as i32 }
-    mask_h8 = 0 as i32;
+    mask_h8 = 0;
     if disc_h8 == 0 as i32 {
         mask_h8 = 1 as i32
     } else if disc_h8 == 2 as i32 { mask_h8 = 2 as i32 }
-    count = 0 as i32;
+    count = 0;
     if disc_a1 != 1 as i32 { count += 1 }
     if disc_a8 != 1 as i32 { count += 1 }
     if disc_h1 != 1 as i32 { count += 1 }
@@ -411,7 +411,7 @@ pub unsafe fn get_corner_mask(disc_a1: i32,
         (mask_h8 + 4 as i32 * mask_a8 + 16 as i32 * mask_h1 +
             64 as i32 * mask_a1) as u32;
     out_mask = config[0];
-    i = 1 as i32;
+    i = 1;
     while i < 8 as i32 {
         out_mask =
             if out_mask < config[i as usize] {
@@ -515,7 +515,7 @@ pub unsafe fn get_database_info(info: *mut DatabaseInfoType) {
     let mut temp = DatabaseInfoType{year: 0, count: 0,};
     let mut current_db = 0 as *mut DatabaseType;
     current_db = database_head;
-    i = 0 as i32;
+    i = 0;
     while i < thor_database_count {
         (*info.offset(i as isize)).year = (*current_db).prolog.origin_year;
         (*info.offset(i as isize)).count = (*current_db).count;
@@ -525,12 +525,12 @@ pub unsafe fn get_database_info(info: *mut DatabaseInfoType) {
     loop
     /* Sort the list */
     {
-        change = 0 as i32;
-        i = 0 as i32;
+        change = 0;
+        i = 0;
         while i < thor_database_count - 1 as i32 {
             if (*info.offset(i as isize)).year >
                 (*info.offset((i + 1 as i32) as isize)).year {
-                change = 1 as i32;
+                change = 1;
                 temp = *info.offset(i as isize);
                 *info.offset(i as isize) =
                     *info.offset((i + 1 as i32) as isize);
@@ -550,9 +550,9 @@ pub unsafe fn get_database_info(info: *mut DatabaseInfoType) {
 pub unsafe fn compute_partial_hash(hash_val1: *mut u32,
                                hash_val2: *mut u32) {
     let mut i: i32 = 0;
-    *hash_val1 = 0 as i32 as u32;
-    *hash_val2 = 0 as i32 as u32;
-    i = 0 as i32;
+    *hash_val1 = 0;
+    *hash_val2 = 0;
+    i = 0;
     while i < 8 as i32 {
         *hash_val1 ^=
             primary_hash[i as usize][thor_row_pattern[i as usize] as usize];
@@ -572,12 +572,12 @@ pub unsafe fn compute_partial_hash(hash_val1: *mut u32,
 pub unsafe fn compute_full_primary_hash(hash_val:
                                     *mut u32) {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
-        *hash_val.offset(i as isize) = 0 as i32 as u32;
+        *hash_val.offset(i as isize) = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         /* b1 -> b1 */
         *hash_val.offset(0 as i32 as isize) ^=
@@ -613,12 +613,12 @@ pub unsafe fn compute_full_primary_hash(hash_val:
 pub unsafe fn compute_full_secondary_hash(hash_val:
                                       *mut u32) {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
-        *hash_val.offset(i as isize) = 0 as i32 as u32;
+        *hash_val.offset(i as isize) = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         /* b1 -> b1 */
         *hash_val.offset(0 as i32 as isize) ^=
@@ -665,8 +665,8 @@ pub unsafe fn primary_hash_lookup(target_hash: u32)
     let mut hit_mask: i32 = 0;
     let mut hash_val: [u32; 8] = [0; 8];
     compute_full_primary_hash(hash_val.as_mut_ptr());
-    hit_mask = 0 as i32;
-    i = 0 as i32;
+    hit_mask = 0;
+    i = 0;
     while i < 8 as i32 {
         if hash_val[i as usize] == target_hash {
             hit_mask |= (1 as i32) << i
@@ -686,8 +686,8 @@ pub unsafe fn secondary_hash_lookup(target_hash: u32)
     let mut hit_mask: i32 = 0;
     let mut hash_val: [u32; 8] = [0; 8];
     compute_full_secondary_hash(hash_val.as_mut_ptr());
-    hit_mask = 0 as i32;
-    i = 0 as i32;
+    hit_mask = 0;
+    i = 0;
     while i < 8 as i32 {
         if hash_val[i as usize] == target_hash {
             hit_mask |= (1 as i32) << i
@@ -707,10 +707,10 @@ pub unsafe fn filter_database(db: *mut DatabaseType) {
     let mut passes_filter: i32 = 0;
     let mut year: i32 = 0;
     let mut game = 0 as *mut GameType;
-    i = 0 as i32;
+    i = 0;
     while i < (*db).count {
         game = &mut *(*db).games.offset(i as isize) as *mut GameType;
-        passes_filter = 1 as i32;
+        passes_filter = 1;
         /* Apply the tournament filter */
         if passes_filter != 0 &&
             (*tournaments.tournament_list.offset((*game).tournament_no as
@@ -806,13 +806,13 @@ pub unsafe fn filter_all_databases() {
 
 pub unsafe fn set_player_filter(selected: *mut i32) {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < players.count {
         (*players.player_list.offset(i as isize)).selected =
             *selected.offset(i as isize);
         i += 1
     }
-    thor_games_filtered = 0 as i32;
+    thor_games_filtered = 0;
 }
 /*
   SET_PLAYER_FILTER_TYPE
@@ -834,13 +834,13 @@ pub unsafe fn set_player_filter_type(player_filter:
 pub unsafe fn set_tournament_filter(selected:
                                     *mut i32) {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < tournaments.count {
         (*tournaments.tournament_list.offset(i as isize)).selected =
             *selected.offset(i as isize);
         i += 1
     }
-    thor_games_filtered = 0 as i32;
+    thor_games_filtered = 0;
 }
 /*
   SET_YEAR_FILTER
@@ -851,7 +851,7 @@ pub unsafe fn set_year_filter(first_year: i32,
                               last_year: i32) {
     filter.first_year = first_year;
     filter.last_year = last_year;
-    thor_games_filtered = 0 as i32;
+    thor_games_filtered = 0;
 }
 /*
   SPECIFY_GAME_CATEGORIES
@@ -886,7 +886,7 @@ pub unsafe fn specify_thor_sort_order(mut count: i32,
     if count != thor_sort_criteria_count {
         thor_games_sorted = 0 as i32
     } else {
-        i = 0 as i32;
+        i = 0;
         while i < count {
             if *sort_order.offset(i as isize) != thor_sort_order[i as usize] {
                 thor_games_sorted = 0 as i32
@@ -895,7 +895,7 @@ pub unsafe fn specify_thor_sort_order(mut count: i32,
         }
     }
     thor_sort_criteria_count = count;
-    i = 0 as i32;
+    i = 0;
     while i < count {
         thor_sort_order[i as usize] = *sort_order.offset(i as isize);
         i += 1
@@ -922,17 +922,17 @@ pub unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
     let mut child = 0 as *mut ThorOpeningNode;
     /* Determine the status of the current node */
     if depth < moves_played {
-        (*node).matching_symmetry = 0 as i32;
+        (*node).matching_symmetry = 0;
         (*node).current_match = 0 as i32
     } else if depth == moves_played {
         /* Check the hash codes */
-        match_0 = 0 as i32;
-        matching_symmetry = 0 as i32;
-        i = 7 as i32;
+        match_0 = 0;
+        matching_symmetry = 0;
+        i = 7;
         while i >= 0 as i32 {
             if (*node).hash1 == *primary_hash_0.offset(i as isize) &&
                 (*node).hash2 == *secondary_hash_0.offset(i as isize) {
-                match_0 = 1 as i32;
+                match_0 = 1;
                 matching_symmetry = i
             }
             i -= 1
@@ -991,7 +991,7 @@ pub unsafe fn recursive_frequency_count(node: *mut ThorOpeningNode,
     let mut child_move: i32 = 0;
     let mut child = 0 as *mut ThorOpeningNode;
     if depth == moves_played {
-        i = 0 as i32;
+        i = 0;
         while i < 8 as i32 {
             j = *symmetries.offset(i as isize);
             if (*node).hash1 == *primary_hash_0.offset(j as isize) &&
@@ -1043,8 +1043,8 @@ pub unsafe fn get_thor_game(index: i32)
         info.black_name = b"\x00" as *const u8 as *const i8;
         info.white_name = b"\x00" as *const u8 as *const i8;
         info.tournament = b"\x00" as *const u8 as *const i8;
-        info.year = 0 as i32;
-        info.black_actual_score = 32 as i32;
+        info.year = 0;
+        info.black_actual_score = 32;
         info.black_corrected_score = 32 as i32
     } else {
         /* Copy name fields etc */
@@ -1145,15 +1145,15 @@ pub unsafe fn init_move_masks() {
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
     let mut index: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
-        j = 0 as i32;
+        j = 0;
         pos = 10 as i32 * i + 11 as i32;
         while j < 8 as i32 {
             index = 8 as i32 * i + j;
             move_mask_lo[pos as usize] =
                 ((1 as i32) << index) as u32;
-            move_mask_hi[pos as usize] = 0 as i32 as u32;
+            move_mask_hi[pos as usize] = 0;
             unmove_mask_lo[pos as usize] =
                 !((1 as i32) << index) as u32;
             unmove_mask_hi[pos as usize] =
@@ -1163,13 +1163,13 @@ pub unsafe fn init_move_masks() {
         }
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
-        j = 0 as i32;
+        j = 0;
         pos = 10 as i32 * i + 51 as i32;
         while j < 8 as i32 {
             index = 8 as i32 * i + j;
-            move_mask_lo[pos as usize] = 0 as i32 as u32;
+            move_mask_lo[pos as usize] = 0;
             move_mask_hi[pos as usize] =
                 ((1 as i32) << index) as u32;
             unmove_mask_lo[pos as usize] =
@@ -1196,7 +1196,7 @@ pub unsafe fn calculate_opening_frequency(mut node:
     if child.is_null() {
         return (*node).frequency
     } else {
-        sum = 0 as i32;
+        sum = 0;
         loop  {
             sum += calculate_opening_frequency(child);
             child = (*child).sibling_node;
@@ -1228,9 +1228,9 @@ pub unsafe fn init_symmetry_maps<FE: FrontEnd>() {
     let mut j: i32 = 0;
     let mut k: i32 = 0;
     let mut pos: i32 = 0;
-    i = 1 as i32;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
             b1_b1_map[pos as usize] = pos;
@@ -1269,11 +1269,11 @@ pub unsafe fn init_symmetry_maps<FE: FrontEnd>() {
     inv_symmetry_map[6] = h2_b1_map.as_mut_ptr();
     symmetry_map[7] = h7_b1_map.as_mut_ptr();
     inv_symmetry_map[7] = h7_b1_map.as_mut_ptr();
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
-            k = 1 as i32;
+            k = 1;
             while k <= 8 as i32 {
                 pos = 10 as i32 * j + k;
                 if *inv_symmetry_map[i as
@@ -1312,8 +1312,8 @@ pub unsafe fn play_through_game(game: *mut GameType,
     let mut move_0: i32 = 0;
     let mut flipped: i32 = 0;
     clear_thor_board();
-    thor_side_to_move = 0 as i32;
-    i = 0 as i32;
+    thor_side_to_move = 0;
+    i = 0;
     while i < max_moves {
         move_0 = abs((*game).moves[i as usize] as i32);
         flipped =
@@ -1362,13 +1362,13 @@ pub unsafe fn prepare_game(mut game: *mut GameType) {
     /* Play through the game and count the number of black discs
        at each stage. */
     clear_thor_board();
-    disc_count[2] = 2 as i32;
+    disc_count[2] = 2;
     disc_count[0] =
         disc_count[2];
-    thor_side_to_move = 0 as i32;
-    corner_descriptor = 0 as i32 as u32;
-    moves_played = 0 as i32;
-    done = 0 as i32;
+    thor_side_to_move = 0;
+    corner_descriptor = 0;
+    moves_played = 0;
+    done = 0;
     loop  {
         /* Store the number of black discs. */
         (*game).black_disc_count[moves_played as usize] =
@@ -1439,8 +1439,8 @@ pub unsafe fn prepare_game(mut game: *mut GameType) {
     }
     /* Find the longest opening which coincides with the game */
     opening = root_node;
-    i = 0 as i32;
-    opening_match = 1 as i32;
+    i = 0;
+    opening_match = 1;
     while opening_match != 0 {
         move_0 = (*opening).child_move as i32;
         child = (*opening).child_node;
@@ -1459,8 +1459,8 @@ pub unsafe fn prepare_game(mut game: *mut GameType) {
         ((3 as i32) << 27 as i32) as u32;
     (*game).shape_hi =
         ((3 as i32) << 3 as i32) as u32;
-    (*game).shape_state_hi = 0 as i32 as i16;
-    (*game).shape_state_lo = 0 as i32 as i16;
+    (*game).shape_state_hi = 0;
+    (*game).shape_state_lo = 0;
     /* Store the corner descriptor */
     (*game).corner_descriptor = corner_descriptor;
 }
@@ -1480,19 +1480,19 @@ pub unsafe fn init_thor_hash() {
     let mut row: [i32; 10] = [0; 10];
     let mut flip_row: [i32; 6561] = [0; 6561];
     let mut buffer: [i32; 6561] = [0; 6561];
-    i = 0 as i32;
-    while i < 8 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 8 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 6561 as i32 {
-        flip_row[i as usize] = 0 as i32;
-        j = 0 as i32;
+        flip_row[i as usize] = 0;
+        j = 0;
         while j < 8 as i32 {
             flip_row[i as usize] +=
                 row[j as usize] * pow3[(7 as i32 - j) as usize];
             j += 1
         }
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -1507,14 +1507,14 @@ pub unsafe fn init_thor_hash() {
         }
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 6561 as i32 {
             buffer[j as usize] = abs(my_random() as i32);
             j += 1
         }
-        j = 0 as i32;
+        j = 0;
         while j < 6561 as i32 {
             primary_hash[i as usize][j as usize] =
                 buffer[j as usize] as u32 &
@@ -1524,12 +1524,12 @@ pub unsafe fn init_thor_hash() {
                         0xffff as i32 as u32;
             j += 1
         }
-        j = 0 as i32;
+        j = 0;
         while j < 6561 as i32 {
             buffer[j as usize] = abs(my_random() as i32);
             j += 1
         }
-        j = 0 as i32;
+        j = 0;
         while j < 6561 as i32 {
             secondary_hash[i as usize][j as usize] =
                 buffer[j as usize] as u32 &
@@ -1552,8 +1552,8 @@ pub unsafe fn new_thor_opening_node<FE: FrontEnd>(parent: *mut ThorOpeningNode)
     node =
         safe_malloc::<FE>(::std::mem::size_of::<ThorOpeningNode>() as u64)
             as *mut ThorOpeningNode;
-    (*node).child_move = 0 as i32 as i8;
-    (*node).sibling_move = 0 as i32 as i8;
+    (*node).child_move = 0;
+    (*node).sibling_move = 0;
     (*node).child_node = 0 as *mut ThorOpeningNode_;
     (*node).sibling_node = 0 as *mut ThorOpeningNode_;
     (*node).parent_node = parent;
@@ -1589,7 +1589,7 @@ pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
     (*root_node).hash2 = hash2;
     node_list[0] = root_node;
     /* Add each of the openings to the tree */
-    i = 0 as i32;
+    i = 0;
     while i < 741 as i32 {
         branch_depth = THOR_OPENING_LIST[i as usize].first_unique;
         end_depth =
@@ -1601,7 +1601,7 @@ pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
                 as
                 u64))
                 as i32;
-        j = 0 as i32;
+        j = 0;
         while j < end_depth - branch_depth {
             thor_move_list[(branch_depth + j) as usize] =
                 (10 as i32 *
@@ -1627,8 +1627,8 @@ pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
         /* Play through the moves common with the previous line
            and the first deviation */
         clear_thor_board();
-        thor_side_to_move = 0 as i32;
-        j = 0 as i32;
+        thor_side_to_move = 0;
+        j = 0;
         while j <= branch_depth {
             move_0 = thor_move_list[j as usize] as i32;
             flipped =
@@ -1733,18 +1733,18 @@ pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
 
 pub unsafe fn init_thor_database<FE: FrontEnd>() {
     let mut i: i32 = 0; /* "infinity" */
-    thor_game_count = 0 as i32;
-    thor_database_count = 0 as i32;
+    thor_game_count = 0;
+    thor_database_count = 0;
     thor_search.match_list = 0 as *mut *mut GameType;
-    thor_search.allocation = 0 as i32;
-    thor_search.match_count = 0 as i32;
-    thor_search.black_wins = 0 as i32;
-    thor_search.draws = 0 as i32;
-    thor_search.white_wins = 0 as i32;
-    thor_search.median_black_score = 0 as i32;
+    thor_search.allocation = 0;
+    thor_search.match_count = 0;
+    thor_search.black_wins = 0;
+    thor_search.draws = 0;
+    thor_search.white_wins = 0;
+    thor_search.median_black_score = 0;
     thor_search.average_black_score = 0.0f64;
-    thor_sort_criteria_count = 5 as i32;
-    i = 0 as i32;
+    thor_sort_criteria_count = 5;
+    i = 0;
     while i < 5 as i32 {
         thor_sort_order[i as usize] = default_sort_order[i as usize];
         i += 1
@@ -1752,12 +1752,12 @@ pub unsafe fn init_thor_database<FE: FrontEnd>() {
     database_head = 0 as *mut DatabaseType;
     players.name_buffer = 0 as *mut i8;
     players.player_list = 0 as *mut PlayerType;
-    players.count = 0 as i32;
+    players.count = 0;
     tournaments.name_buffer = 0 as *mut i8;
     tournaments.tournament_list = 0 as *mut TournamentType;
-    tournaments.count = 0 as i32;
-    thor_games_sorted = 0 as i32;
-    thor_games_filtered = 0 as i32;
+    tournaments.count = 0;
+    thor_games_sorted = 0;
+    thor_games_filtered = 0;
     init_move_masks();
     init_symmetry_maps::<FE>();
     init_thor_hash();
@@ -1793,7 +1793,7 @@ pub unsafe fn get_thor_game_moves(index: i32,
         match (*game).matching_symmetry as i32 {
             0 | 2 | 5 | 7 => {
                 /* Symmetries that preserve the initial position. */
-                i = 0 as i32;
+                i = 0;
                 while i < (*game).move_count as i32 {
                     *moves.offset(i as isize) =
                         *symmetry_map[(*game).matching_symmetry as
@@ -1807,7 +1807,7 @@ pub unsafe fn get_thor_game_moves(index: i32,
             }
             _ => {
                 /* Symmetries that reverse the initial position. */
-                i = 0 as i32;
+                i = 0;
                 while i < (*game).move_count as i32 {
                     *moves.offset(i as isize) =
                         abs((*game).moves[i as usize] as i32);
@@ -1915,8 +1915,8 @@ pub unsafe fn position_match(mut game: *mut GameType,
         }
         (*game).shape_state_lo = move_count as i16
     }
-    shape_match = 0 as i32;
-    i = 0 as i32;
+    shape_match = 0;
+    i = 0;
     while i < 8 as i32 {
         shape_match |=
             ((*game).shape_lo == *shape_lo.offset(i as isize)) as i32;
@@ -1943,8 +1943,8 @@ pub unsafe fn position_match(mut game: *mut GameType,
         }
         (*game).shape_state_hi = move_count as i16
     }
-    shape_match = 0 as i32;
-    i = 0 as i32;
+    shape_match = 0;
+    i = 0;
     while i < 8 as i32 {
         shape_match |=
             ((*game).shape_hi == *shape_hi.offset(i as isize)) as i32;
@@ -1965,7 +1965,7 @@ pub unsafe fn position_match(mut game: *mut GameType,
         if primary_hit_mask != 0 {
             secondary_hit_mask = secondary_hash_lookup(in_hash2);
             if primary_hit_mask & secondary_hit_mask != 0 {
-                i = 0 as i32;
+                i = 0;
                 while i < 8 as i32 {
                     if primary_hit_mask & secondary_hit_mask &
                         (1 as i32) << i != 0 {
@@ -2010,7 +2010,7 @@ pub unsafe fn thor_compare(g1: *const c_void,
     let mut result: i32 = 0;
     let game1 = *(g1 as *mut *mut GameType);
     let game2 = *(g2 as *mut *mut GameType);
-    i = 0 as i32;
+    i = 0;
     while i < thor_sort_criteria_count {
         match thor_sort_order[i as usize] {
             1 => {
@@ -2091,13 +2091,13 @@ pub unsafe fn choose_thor_opening_move<FE:FrontEnd>(in_board:
     let mut move_list: [C2RustUnnamed; 64] =
         [C2RustUnnamed{move_0: 0, frequency: 0,}; 64];
     let mut temp = C2RustUnnamed{move_0: 0, frequency: 0,};
-    disc_count = 0 as i32;
-    i = 1 as i32;
+    disc_count = 0;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         pos = 10 as i32 * i + 1 as i32;
         while j <= 8 as i32 {
-            freq_count[pos as usize] = 0 as i32;
+            freq_count[pos as usize] = 0;
             if *in_board.offset(pos as isize) != 1 as i32 {
                 disc_count += 1
             }
@@ -2119,9 +2119,9 @@ pub unsafe fn choose_thor_opening_move<FE:FrontEnd>(in_board:
     }
     /* Create a random permutation of the symmetries to avoid the same
        symmetry always being chosen in e.g. the initial position */
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 { symmetries[i as usize] = i; i += 1 }
-    i = 0 as i32;
+    i = 0;
     while i < 7 as i32 {
         j = i + abs(my_random() as i32) % (8 as i32 - i);
         temp_symm = symmetries[i as usize];
@@ -2138,10 +2138,10 @@ pub unsafe fn choose_thor_opening_move<FE:FrontEnd>(in_board:
                               symmetries.as_mut_ptr(),
                               primary_hash_0.as_mut_ptr(),
                               secondary_hash_0.as_mut_ptr());
-    freq_sum = 0 as i32;
-    i = 1 as i32;
+    freq_sum = 0;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         pos = 10 as i32 * i + 1 as i32;
         while j <= 8 as i32 {
             freq_sum += freq_count[pos as usize];
@@ -2157,11 +2157,11 @@ pub unsafe fn choose_thor_opening_move<FE:FrontEnd>(in_board:
            proportional to the frequency of that move being played here. */
         random_value = abs(my_random() as i32) % freq_sum;
         random_move = -(1 as i32);
-        acc_freq_sum = 0 as i32;
-        match_count = 0 as i32;
-        i = 1 as i32;
+        acc_freq_sum = 0;
+        match_count = 0;
+        i = 1;
         while i <= 8 as i32 {
-            j = 1 as i32;
+            j = 1;
             pos = 10 as i32 * i + 1 as i32;
             while j <= 8 as i32 {
                 if freq_count[pos as usize] > 0 as i32 {
@@ -2183,9 +2183,9 @@ pub unsafe fn choose_thor_opening_move<FE:FrontEnd>(in_board:
         }
         /* Optionally display the database moves sorted on frequency */
         if echo != 0 {
-            i = 0 as i32;
+            i = 0;
             while i < match_count {
-                j = 0 as i32;
+                j = 0;
                 while j < match_count - 1 as i32 {
                     if move_list[j as usize].frequency <
                         move_list[(j + 1 as i32) as
@@ -2235,7 +2235,7 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
     /* We need a player and a tournament database. */
     if players.count == 0 as i32 ||
         tournaments.count == 0 as i32 {
-        thor_search.match_count = 0 as i32;
+        thor_search.match_count = 0;
         return
     }
     /* Make sure there's memory allocated if all positions
@@ -2266,9 +2266,9 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
     /* If necessary, sort all games in the database */
     if thor_games_sorted == 0 {
         current_db = database_head;
-        i = 0 as i32;
+        i = 0;
         while !current_db.is_null() {
-            j = 0 as i32;
+            j = 0;
             while j < (*current_db).count {
                 let ref mut fresh5 =
                     *thor_search.match_list.offset(i as isize);
@@ -2281,7 +2281,7 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
             current_db = (*current_db).next
         }
         FE::sort_thor_games(thor_game_count);
-        j = 0 as i32;
+        j = 0;
         while j < thor_game_count {
             (**thor_search.match_list.offset(j as isize)).sort_order = j;
             j += 1
@@ -2290,12 +2290,12 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
     }
     /* Determine disc count, hash codes, patterns and opening
        for the position */
-    disc_count[2] = 0 as i32;
+    disc_count[2] = 0;
     disc_count[0] =
         disc_count[2];
-    i = 1 as i32;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         pos = 10 as i32 * i + 1 as i32;
         while j <= 8 as i32 {
             if *in_board.offset(pos as isize) == 0 as i32 {
@@ -2315,15 +2315,15 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
     compute_partial_hash(&mut target_hash1, &mut target_hash2);
     opening_scan(move_count);
     /* Determine the shape masks */
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        shape_lo[i as usize] = 0 as i32 as u32;
-        shape_hi[i as usize] = 0 as i32 as u32;
+        shape_lo[i as usize] = 0;
+        shape_hi[i as usize] = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        j = 0 as i32;
+        j = 0;
         pos = 10 as i32 * i + 11 as i32;
         while j < 8 as i32 {
             if *in_board.offset(pos as isize) != 1 as i32 {
@@ -2423,27 +2423,27 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
        inserted at a position determined by the field SORT_ORDER
        in the game. As this index is unique, no over-write
        can occur. */
-    thor_search.match_count = 0 as i32;
-    i = 0 as i32;
+    thor_search.match_count = 0;
+    i = 0;
     while i < thor_game_count {
         let ref mut fresh6 = *thor_search.match_list.offset(i as isize);
         *fresh6 = 0 as *mut GameType;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i <= 64 as i32 {
-        frequency[i as usize] = 0 as i32;
+        frequency[i as usize] = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 100 as i32 {
-        thor_search.next_move_frequency[i as usize] = 0 as i32;
+        thor_search.next_move_frequency[i as usize] = 0;
         thor_search.next_move_score[i as usize] = 0.0f64;
         i += 1
     }
     current_db = database_head;
     while !current_db.is_null() {
-        i = 0 as i32;
+        i = 0;
         while i < (*current_db).count {
             game =
                 &mut *(*current_db).games.offset(i as isize) as *mut GameType;
@@ -2502,8 +2502,8 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
        This gives a sorted list. */
     if thor_search.match_count > 0 as i32 &&
         thor_search.match_count < thor_game_count {
-        i = 0 as i32;
-        j = 0 as i32;
+        i = 0;
+        j = 0;
         while i < thor_search.match_count {
             if !(*thor_search.match_list.offset(j as isize)).is_null() {
                 let ref mut fresh8 =
@@ -2516,9 +2516,9 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
     }
     /* Count the number of black wins, draws and white wins.
        Also determine the average score. */
-    sum = 0 as i32;
-    i = 0 as i32;
-    thor_search.white_wins = 0 as i32;
+    sum = 0;
+    i = 0;
+    thor_search.white_wins = 0;
     while i <= 31 as i32 {
         thor_search.white_wins += frequency[i as usize];
         sum += i * frequency[i as usize];
@@ -2526,8 +2526,8 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
     }
     thor_search.draws = frequency[32];
     sum += 32 as i32 * frequency[32];
-    i = 33 as i32;
-    thor_search.black_wins = 0 as i32;
+    i = 33;
+    thor_search.black_wins = 0;
     while i <= 64 as i32 {
         thor_search.black_wins += frequency[i as usize];
         sum += i * frequency[i as usize];
@@ -2547,7 +2547,7 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
     } else {
         cumulative[0] =
             frequency[0];
-        i = 1 as i32;
+        i = 1;
         while i <= 64 as i32 {
             cumulative[i as usize] =
                 cumulative[(i - 1 as i32) as usize] +
@@ -2559,7 +2559,7 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
            strictly larger than 50%. This definition works regardless
            of the parity of the number of values.
            By definition of median, both loops terminate for indices <= 64. */
-        i = 0 as i32;
+        i = 0;
         while 2 as i32 * cumulative[i as usize] <
             thor_search.match_count {
             i += 1

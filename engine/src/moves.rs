@@ -97,18 +97,18 @@ pub unsafe fn init_moves() {
     let mut k: i32 = 0;
     let mut pos: i32 = 0;
     let mut feasible: i32 = 0;
-    i = 1 as i32;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
-            k = 0 as i32;
+            k = 0;
             while k <= 8 as i32 {
-                flip_direction[pos as usize][k as usize] = 0 as i32;
+                flip_direction[pos as usize][k as usize] = 0;
                 k += 1
             }
-            feasible = 0 as i32;
-            k = 0 as i32;
+            feasible = 0;
+            k = 0;
             while k < 8 as i32 {
                 if dir_mask[pos as usize] & (1 as i32) << k != 0 {
                     flip_direction[pos as usize][feasible as usize] =
@@ -135,7 +135,7 @@ pub unsafe fn init_moves() {
    Prepare for move generation at a given level in the tree.
 */
 unsafe fn reset_generation(_side_to_move: i32) {
-    sweep_status[disks_played as usize] = 0 as i32;
+    sweep_status[disks_played as usize] = 0;
 }
 pub unsafe fn make_move(side_to_move: i32,
                         move_0: i32,
@@ -191,7 +191,7 @@ pub unsafe fn make_move(side_to_move: i32,
 
 pub unsafe fn unmake_move(side_to_move: i32,
                           move_0: i32) {
-    board[move_0 as usize] = 1 as i32;
+    board[move_0 as usize] = 1;
     disks_played -= 1;
     hash1 = hash_stored1[disks_played as usize];
     hash2 = hash_stored2[disks_played as usize];
@@ -235,7 +235,7 @@ pub unsafe fn generate_specific(curr_move: i32,
 pub unsafe fn generate_move(side_to_move: i32)
                             -> i32 {
     let mut move_0: i32 = 0;
-    let mut move_index = 0 as i32;
+    let mut move_index = 0;
     move_index = sweep_status[disks_played as usize];
     while move_index < 60 as i32 {
         move_0 =
@@ -259,7 +259,7 @@ pub unsafe fn generate_all(side_to_move: i32) {
     let mut count: i32 = 0;
     let mut curr_move: i32 = 0;
     reset_generation(side_to_move);
-    count = 0 as i32;
+    count = 0;
     curr_move = generate_move(side_to_move);
     while curr_move != -(1 as i32) {
         move_list[disks_played as usize][count as usize] = curr_move;
@@ -280,9 +280,9 @@ pub unsafe fn count_all(side_to_move: i32,
     let mut move_index: i32 = 0;
     let mut mobility: i32 = 0;
     let mut found_empty: i32 = 0;
-    mobility = 0 as i32;
-    found_empty = 0 as i32;
-    move_index = 0 as i32;
+    mobility = 0;
+    found_empty = 0;
+    move_index = 0;
     while move_index < 60 as i32 {
         move_0 =
             sorted_move_order[disks_played as usize][move_index as usize];
@@ -356,7 +356,7 @@ pub unsafe fn make_move_no_hash(side_to_move: i32,
 
 pub unsafe fn unmake_move_no_hash(side_to_move: i32,
                                   move_0: i32) {
-    board[move_0 as usize] = 1 as i32;
+    board[move_0 as usize] = 1;
     disks_played -= 1;
     let mut UndoFlips__flip_count = flip_count[disks_played as usize];
     let UndoFlips__oppcol =
@@ -389,11 +389,11 @@ pub unsafe fn valid_move(move_0: i32,
         board[move_0 as usize] != 1 as i32 {
         return 0 as i32
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         if dir_mask[move_0 as usize] & (1 as i32) << i != 0 {
             pos = move_0 + move_offset[i as usize];
-            count = 0 as i32;
+            count = 0;
             while board[pos as usize] ==
                 0 as i32 + 2 as i32 - side_to_move {
                 pos += move_offset[i as usize];
@@ -415,7 +415,7 @@ pub unsafe fn valid_move(move_0: i32,
 */
 pub unsafe fn get_move<ZFE: ZebraFrontend>(side_to_move: i32) -> i32 {
     let mut buffer: [i8; 255] = [0; 255];
-    let mut ready = 0 as i32;
+    let mut ready = 0;
     let mut curr_move: i32 = 0;
     while ready == 0 {
         ZFE::prompt_get_move(side_to_move, &mut buffer);
@@ -439,7 +439,7 @@ pub async unsafe fn get_move_async<GetMove, Fut>(side_to_move: i32, get_move: &m
         Fut: Future<Output=i32>
 {
     let mut buffer: [i8; 255] = [0; 255];
-    let mut ready = 0 as i32;
+    let mut ready = 0;
     let mut curr_move: i32 = 0;
     while ready == 0 {
         curr_move = get_move(side_to_move).await;

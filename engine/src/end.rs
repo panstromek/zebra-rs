@@ -203,9 +203,9 @@ pub unsafe fn prepare_to_solve(board_0: *const i32) {
             45 as i32 as u8];
     let mut i: i32 = 0;
     let mut last_sq: i32 = 0;
-    region_parity = 0 as i32 as u32;
-    last_sq = 0 as i32;
-    i = 59 as i32;
+    region_parity = 0;
+    last_sq = 0;
+    i = 59;
     while i >= 0 as i32 {
         let sq = worst2best[i as usize] as i32;
         if *board_0.offset(sq as isize) == 1 as i32 {
@@ -216,7 +216,7 @@ pub unsafe fn prepare_to_solve(board_0: *const i32) {
         }
         i -= 1
     }
-    end_move_list[last_sq as usize].succ = 99 as i32;
+    end_move_list[last_sq as usize].succ = 99;
 }
 
 
@@ -579,7 +579,7 @@ pub unsafe fn solve_parity(my_bits: BitBoard,
     let mut new_disc_diff: i32 = 0;
     let mut sq: i32 = 0;
     let mut old_sq: i32 = 0;
-    let mut best_sq = 0 as i32;
+    let mut best_sq = 0;
     let mut parity_mask: u32 = 0;
     nodes.lo = nodes.lo.wrapping_add(1);
     /* Check for stability cutoff */
@@ -602,7 +602,7 @@ pub unsafe fn solve_parity(my_bits: BitBoard,
     parity_mask = region_parity;
     if region_parity != 0 as i32 as u32 {
         /* Is there any region with odd parity? */
-        old_sq = 0 as i32;
+        old_sq = 0;
         sq = end_move_list[old_sq as usize].succ;
         while sq != 99 as i32 {
             let holepar = quadrant_mask[sq as usize];
@@ -652,7 +652,7 @@ pub unsafe fn solve_parity(my_bits: BitBoard,
     }
     /* Even parity */
     parity_mask = !parity_mask;
-    old_sq = 0 as i32;
+    old_sq = 0;
     sq = end_move_list[old_sq as usize].succ;
     while sq != 99 as i32 {
         let holepar_0 = quadrant_mask[sq as usize];
@@ -727,13 +727,13 @@ pub unsafe fn setup_end() {
         [1 as i32, -(1 as i32), 7 as i32,
             -(7 as i32), 8 as i32, -(8 as i32),
             9 as i32, -(9 as i32)];
-    earliest_wld_solve = 0 as i32;
-    earliest_full_solve = 0 as i32;
-    full_output_mode = 1 as i32;
+    earliest_wld_solve = 0;
+    earliest_full_solve = 0;
+    full_output_mode = 1;
     /* Calculate the neighborhood masks */
-    i = 1 as i32;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             /* Create the neighborhood mask for the square POS */
             let pos = 10 as i32 * i + j;
@@ -741,11 +741,9 @@ pub unsafe fn setup_end() {
                 8 as i32 * (i - 1 as i32) +
                     (j - 1 as i32);
             let mut k: u32 = 0;
-            neighborhood_mask[pos as usize].low =
-                0 as i32 as u32;
-            neighborhood_mask[pos as usize].high =
-                0 as i32 as u32;
-            k = 0 as i32 as u32;
+            neighborhood_mask[pos as usize].low = 0;
+            neighborhood_mask[pos as usize].high = 0;
+            k = 0;
             while k < 8 as i32 as u32 {
                 if dir_mask[pos as usize] & (1 as i32) << k != 0 {
                     let neighbor =
@@ -768,23 +766,23 @@ pub unsafe fn setup_end() {
         i += 1
     }
     /* Set the fastest-first mobility encouragements and thresholds */
-    i = 0 as i32;
+    i = 0;
     while i <= 60 as i32 {
-        ff_mob_factor[i as usize] = 460 as i32;
+        ff_mob_factor[i as usize] = 460;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i <= 60 as i32 {
         ff_threshold[i as usize] = 0.45f64;
         i += 1
     }
     /* Calculate the alpha thresholds for using fastest-first for
        each #empty and shallow search depth. */
-    j = 0 as i32; /* Infinity in disc difference */
+    j = 0; /* Infinity in disc difference */
     while j <= 8 as i32 {
         last_sigma = 100.0f64;
         last_mean = 0.0f64;
-        i = 60 as i32;
+        i = 60;
         while i >= 0 as i32 {
             if END_STATS_AVAILABLE[i as usize][j as usize] != 0 {
                 last_mean =
@@ -802,7 +800,7 @@ pub unsafe fn setup_end() {
     }
     j = 8 as i32 + 1 as i32;
     while j < 64 as i32 {
-        i = 0 as i32;
+        i = 0;
         while i <= 60 as i32 {
             prelim_threshold[i as usize][j as usize] =
                 prelim_threshold[i as usize][8];
@@ -810,9 +808,9 @@ pub unsafe fn setup_end() {
         }
         j += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i <= 60 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 64 as i32 {
             fast_first_threshold[i as usize][j as usize] =
                 ceil(prelim_threshold[i as usize][j as usize] * 128.0f64) as
@@ -842,7 +840,7 @@ pub unsafe fn solve_parity_hash(my_bits: BitBoard,
     let mut new_disc_diff: i32 = 0;
     let mut sq: i32 = 0;
     let mut old_sq: i32 = 0;
-    let mut best_sq = 0 as i32;
+    let mut best_sq = 0;
     let mut parity_mask: u32 = 0;
     let mut entry =
         HashEntry{key1: 0,
@@ -886,7 +884,7 @@ pub unsafe fn solve_parity_hash(my_bits: BitBoard,
     parity_mask = region_parity;
     if region_parity != 0 as i32 as u32 {
         /* Is there any region with odd parity? */
-        old_sq = 0 as i32;
+        old_sq = 0;
         sq = end_move_list[old_sq as usize].succ;
         while sq != 99 as i32 {
             let holepar = quadrant_mask[sq as usize];
@@ -929,7 +927,7 @@ pub unsafe fn solve_parity_hash(my_bits: BitBoard,
     }
     /* Even parity. */
     parity_mask = !parity_mask;
-    old_sq = 0 as i32;
+    old_sq = 0;
     sq = end_move_list[old_sq as usize].succ;
     while sq != 99 as i32 {
         let holepar_0 = quadrant_mask[sq as usize];
@@ -1287,7 +1285,7 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
     let mut succ: i32 = 0;
     let mut sq: i32 = 0;
     let mut old_sq: i32 = 0;
-    let mut best_sq = 0 as i32;
+    let mut best_sq = 0;
     let mut move_order: [i32; 64] = [0; 64];
     let mut goodness: [i32; 64] = [0; 64];
     let mut diff1: u32 = 0;
@@ -1334,11 +1332,11 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
         if stability_bound <= alpha { return alpha }
     }
     /* Calculate goodness values for all moves */
-    moves = 0 as i32;
+    moves = 0;
     best_value = -(12345678 as i32);
-    best_index = 0 as i32;
-    best_flipped = 0 as i32;
-    old_sq = 0 as i32;
+    best_index = 0;
+    best_flipped = 0;
+    old_sq = 0;
     sq = end_move_list[old_sq as usize].succ;
     while sq != 99 as i32 {
         flipped = TestFlips_wrapper(sq, my_bits, opp_bits, bb_flips_);
@@ -1423,7 +1421,7 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
     UndoFlips(best_flipped, oppcol);
     hash1 ^= diff1;
     hash2 ^= diff2;
-    board[sq as usize] = 1 as i32;
+    board[sq as usize] = 1;
     region_parity ^= quadrant_mask[sq as usize];
     end_move_list[pred as usize].succ = sq;
     end_move_list[succ as usize].pred = sq;
@@ -1441,7 +1439,7 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
     /* Play through the rest of the moves */
     move_order[best_index as usize] = move_order[0];
     goodness[best_index as usize] = goodness[0];
-    i = 1 as i32;
+    i = 1;
     while i < moves {
         let mut j: i32 = 0;
         best_value = goodness[i as usize];
@@ -1489,7 +1487,7 @@ pub unsafe fn solve_parity_hash_high(my_bits: BitBoard,
         UndoFlips(flipped, oppcol);
         hash1 ^= diff1;
         hash2 ^= diff2;
-        board[sq as usize] = 1 as i32;
+        board[sq as usize] = 1;
         end_move_list[pred as usize].succ = sq;
         end_move_list[succ as usize].pred = sq;
         if ev > score {
@@ -1556,7 +1554,7 @@ pub unsafe fn update_best_list<FE: FrontEnd>(best_list_: &mut [i32; 4],
                            best_list_length: &mut i32,
                            mut verbose: i32) {
     let best_list: *mut i32 = best_list_.as_mut_ptr();
-    verbose = 0 as i32;
+    verbose = 0;
     if verbose != 0 {
         FE::before_update_best_list_verbose(best_list_, move_0, best_list_index, best_list_length)
     }
@@ -1568,7 +1566,7 @@ pub unsafe fn update_best_list<FE: FrontEnd>(best_list_: &mut [i32; 4],
             i -= 1
         }
     } else {
-        let mut i = 3 as i32;
+        let mut i = 3;
         while i >= 1 as i32 {
             *best_list.offset(i as isize) =
                 *best_list.offset((i - 1 as i32) as isize);
@@ -1646,7 +1644,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
         FE::end_tree_search_level_0_report(alpha, beta);
     }
     remains = max_depth - level;
-    *selective_cutoff = 0 as i32;
+    *selective_cutoff = 0;
     /* Always (almost) check for stability cutoff in this region of search */
     if alpha >= 24 as i32 {
         stability_bound =
@@ -1698,7 +1696,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
     }
     /* Otherwise normal search */
     nodes.lo = nodes.lo.wrapping_add(1);
-    use_hash = 1 as i32;
+    use_hash = 1;
     if use_hash != 0 {
         /* Check for endgame hash table move */
         find_hash(&mut entry, 1 as i32);
@@ -1748,7 +1746,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
     if 1 as i32 != 0 && level > 2 as i32 &&
         selectivity > 0 as i32 {
         let mut cut: i32 = 0;
-        cut = 0 as i32;
+        cut = 0;
         while cut < use_end_cut[disks_played as usize] {
             let shallow_remains =
                 end_mpc_depth[disks_played as usize][cut as usize];
@@ -1775,7 +1773,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                              16 as i32 | 1 as i32, remains,
                              selectivity);
                 }
-                *selective_cutoff = 1 as i32;
+                *selective_cutoff = 1;
                 return beta
             }
             if shallow_val <= alpha_bound {
@@ -1785,7 +1783,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                              16 as i32 | 2 as i32, remains,
                              selectivity);
                 }
-                *selective_cutoff = 1 as i32;
+                *selective_cutoff = 1;
                 return alpha
             }
             cut += 1
@@ -1812,20 +1810,20 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
     }
     /* The nega-scout search */
     exp_depth = remains;
-    first = 1 as i32;
+    first = 1;
     best = -(12345678 as i32);
-    pre_search_done = 0 as i32;
+    pre_search_done = 0;
     curr_alpha = alpha;
     /* Initialize the move list and check the hash table move list */
-    move_count[disks_played as usize] = 0 as i32;
-    best_list_length = 0 as i32;
-    i = 0 as i32;
+    move_count[disks_played as usize] = 0;
+    best_list_length = 0;
+    i = 0;
     while i < 4 as i32 {
-        best_list[i as usize] = 0 as i32;
+        best_list[i as usize] = 0;
         i += 1
     }
     if hash_hit != 0 {
-        i = 0 as i32;
+        i = 0;
         while i < 4 as i32 {
             if valid_move(entry.move_0[i as usize], side_to_move) != 0 {
                 let fresh0 = best_list_length;
@@ -1869,8 +1867,8 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
             i += 1
         }
     }
-    move_index = 0 as i32;
-    best_list_index = 0 as i32;
+    move_index = 0;
+    best_list_index = 0;
     loop  {
         let mut child_selective_cutoff: i32 = 0;
         let mut new_my_bits = BitBoard{high: 0, low: 0,};
@@ -1882,7 +1880,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
         } else {
             if pre_search_done == 0 {
                 let mut shallow_index: i32 = 0;
-                pre_search_done = 1 as i32;
+                pre_search_done = 1;
                 threshold =
                     if (60 as i32 * 128 as i32) <
                         128 as i32 * alpha +
@@ -1896,14 +1894,14 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                                 usize][pre_depth as
                                 usize]
                     };
-                shallow_index = 0 as i32;
+                shallow_index = 0;
                 while shallow_index < 60 as i32 {
                     let mut already_checked: i32 = 0;
                     move_0 =
                         sorted_move_order[disks_played as
                             usize][shallow_index as usize];
-                    already_checked = 0 as i32;
-                    j = 0 as i32;
+                    already_checked = 0;
+                    j = 0;
                     while j < best_list_length {
                         if move_0 == best_list[j as usize] {
                             already_checked = 1 as i32
@@ -1917,7 +1915,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                         new_opp_bits.high = opp_bits.high & !bb_flips_.high;
                         new_opp_bits.low = opp_bits.low & !bb_flips_.low;
                         make_move(side_to_move, move_0, 1 as i32);
-                        curr_val = 0 as i32;
+                        curr_val = 0;
                         /* Enhanced Transposition Cutoff: It's a good idea to
                            transpose back into a position in the hash table. */
                         if use_hash != 0 {
@@ -2036,7 +2034,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
         new_my_bits = *bb_flips_;
         new_opp_bits.high = opp_bits.high & !bb_flips_.high;
         new_opp_bits.low = opp_bits.low & !bb_flips_.low;
-        update_pv = 0 as i32;
+        update_pv = 0;
         if first != 0 {
             curr_val =
                 -end_tree_search::<FE>(level + 1 as i32, level + exp_depth,
@@ -2046,7 +2044,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                                        selectivity, &mut child_selective_cutoff,
                                        1 as i32, bb_flips_);
             best = curr_val;
-            update_pv = 1 as i32;
+            update_pv = 1;
             if level == 0 as i32 { best_end_root_move = move_0 }
         } else {
             curr_alpha = if best > curr_alpha { best } else { curr_alpha };
@@ -2083,7 +2081,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                 }
                 if curr_val > best {
                     best = curr_val;
-                    update_pv = 1 as i32;
+                    update_pv = 1;
                     if level == 0 as i32 && is_panic_abort() == 0 &&
                         force_return == 0 {
                         best_end_root_move = move_0
@@ -2091,7 +2089,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
                 }
             } else if curr_val > best {
                 best = curr_val;
-                update_pv = 1 as i32;
+                update_pv = 1;
                 if level == 0 as i32 && is_panic_abort() == 0 &&
                     force_return == 0 {
                     best_end_root_move = move_0
@@ -2145,13 +2143,13 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
             best_list_length = best_list_length + 1;
             best_list[fresh1 as usize] = move_0
         }
-        first = 0 as i32;
+        first = 0;
         move_index += 1;
         best_list_index += 1
     }
     if first == 0 {
         if use_hash != 0 {
-            let mut flags = 16 as i32;
+            let mut flags = 16;
             if best > alpha {
                 flags |= 4 as i32
             } else { flags |= 2 as i32 }
@@ -2233,8 +2231,8 @@ pub unsafe fn full_expand_pv<FE: FrontEnd>(mut side_to_move: i32,
     let mut new_pv_depth: i32 = 0;
     let mut new_pv: [i32; 61] = [0; 61];
     let mut new_side_to_move: [i32; 61] = [0; 61];
-    new_pv_depth = 0 as i32;
-    pass_count = 0 as i32;
+    new_pv_depth = 0;
+    pass_count = 0;
     while pass_count < 2 as i32 {
         let mut move_0: i32 = 0;
         generate_all(side_to_move);
@@ -2262,7 +2260,7 @@ pub unsafe fn full_expand_pv<FE: FrontEnd>(mut side_to_move: i32,
         unmake_move(new_side_to_move[i as usize], new_pv[i as usize]);
         i -= 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < new_pv_depth {
         pv[0][i as usize] = new_pv[i as usize];
         i += 1
@@ -2442,7 +2440,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 if is_panic_abort() != 0 || force_return != 0 { break ; }
                 last_window_center = root_eval;
                 if is_panic_abort() == 0 && force_return == 0 {
-                    any_search_result = 1 as i32;
+                    any_search_result = 1;
                     old_eval = root_eval;
                     store_pv(old_pv.as_mut_ptr(), &mut old_depth);
                     current_confidence = confidence[selectivity as usize];
@@ -2623,7 +2621,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         earliest_wld_solve = empties
     }
     /* Check for aborted search. */
-    exact_score_failed = 0 as i32;
+    exact_score_failed = 0;
     if incomplete_search != 0 {
         if echo != 0 {
             FE::end_report_semi_panic_abort_2(get_elapsed_time::<FE>());

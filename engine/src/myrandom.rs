@@ -81,9 +81,9 @@ static mut my_rptr: *mut i64 =
 // Initialized in run_static_initializers
 static mut my_state: *mut i64 =
     0 as *const i64 as *mut i64;
-static mut my_rand_type: i32 = 3 as i32;
-static mut my_rand_deg: i32 = 31 as i32;
-static mut my_rand_sep: i32 = 3 as i32;
+static mut my_rand_type: i32 = 3;
+static mut my_rand_deg: i32 = 31;
+static mut my_rand_sep: i32 = 3;
 // Initialized in run_static_initializers
 static mut my_end_ptr: *mut i64 =
     0 as *const i64 as *mut i64;
@@ -106,9 +106,9 @@ pub unsafe fn my_srandom(x: i32) -> i32 {
     if my_rand_type == 0 as i32 {
         *my_state.offset(0 as i32 as isize) = x as i64
     } else {
-        j = 1 as i32;
+        j = 1;
         *my_state.offset(0 as i32 as isize) = x as i64;
-        i = 1 as i32;
+        i = 1;
         while i < my_rand_deg {
             *my_state.offset(i as isize) =
                 (1103515245 as i32 as i64)
@@ -121,7 +121,7 @@ pub unsafe fn my_srandom(x: i32) -> i32 {
         my_rptr =
             &mut *my_state.offset(0 as i32 as isize) as
                 *mut i64;
-        i = 0 as i32;
+        i = 0;
         while i < 10 as i32 * my_rand_deg { my_random(); i += 1 }
     }
     return 0 as i32;
@@ -160,24 +160,24 @@ pub unsafe fn my_initstate(seed: u32,
     } /* must set end_ptr before srandom */
     if n < 32 as i32 {
         if n < 8 as i32 { return 0 as *mut i8 }
-        my_rand_type = 0 as i32;
-        my_rand_deg = 0 as i32;
+        my_rand_type = 0;
+        my_rand_deg = 0;
         my_rand_sep = 0 as i32
     } else if n < 64 as i32 {
-        my_rand_type = 1 as i32;
-        my_rand_deg = 7 as i32;
+        my_rand_type = 1;
+        my_rand_deg = 7;
         my_rand_sep = 3 as i32
     } else if n < 128 as i32 {
-        my_rand_type = 2 as i32;
-        my_rand_deg = 15 as i32;
+        my_rand_type = 2;
+        my_rand_deg = 15;
         my_rand_sep = 1 as i32
     } else if n < 256 as i32 {
-        my_rand_type = 3 as i32;
-        my_rand_deg = 31 as i32;
+        my_rand_type = 3;
+        my_rand_deg = 31;
         my_rand_sep = 3 as i32
     } else {
-        my_rand_type = 4 as i32;
-        my_rand_deg = 63 as i32;
+        my_rand_type = 4;
+        my_rand_deg = 63;
         my_rand_sep = 1 as i32
     }
     my_state =

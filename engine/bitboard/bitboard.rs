@@ -56,7 +56,7 @@ pub unsafe fn iterative_popcount(mut n1: u32,
                                             mut n2: u32)
  -> u32 {
     let mut n: u32 = 0;
-    n = 0 as i32 as u32;
+    n = 0;
     while n1 != 0 as i32 as u32 {
         n = n.wrapping_add(1);
         n1 &= n1.wrapping_sub(1 as i32 as u32)
@@ -106,14 +106,14 @@ pub unsafe fn set_bitboards(board: *mut i32,
     let mut mask: u32 = 0;
     let mut my_bits = BitBoard{high: 0, low: 0,};
     let mut opp_bits = BitBoard{high: 0, low: 0,};
-    my_bits.high = 0 as i32 as u32;
-    my_bits.low = 0 as i32 as u32;
-    opp_bits.high = 0 as i32 as u32;
-    opp_bits.low = 0 as i32 as u32;
-    mask = 1 as i32 as u32;
-    i = 1 as i32;
+    my_bits.high = 0;
+    my_bits.low = 0;
+    opp_bits.high = 0;
+    opp_bits.low = 0;
+    mask = 1;
+    i = 1;
     while i <= 4 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
             if *board.offset(pos as isize) == side_to_move {
@@ -127,10 +127,10 @@ pub unsafe fn set_bitboards(board: *mut i32,
         }
         i += 1
     }
-    mask = 1 as i32 as u32;
-    i = 5 as i32;
+    mask = 1;
+    i = 5;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
             if *board.offset(pos as isize) == side_to_move {
@@ -151,9 +151,9 @@ pub unsafe fn set_bitboards(board: *mut i32,
 pub unsafe fn init_bitboard() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
-    i = 1 as i32;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             let pos = 10 as i32 * i + j;
             let shift =
@@ -165,8 +165,7 @@ pub unsafe fn init_bitboard() {
                 square_mask[pos as usize].high =
                     0 as i32 as u32
             } else {
-                square_mask[pos as usize].low =
-                    0 as i32 as u32;
+                square_mask[pos as usize].low = 0;
                 square_mask[pos as usize].high =
                     ((1 as u64) <<
                          shift.wrapping_sub(32 as i32 as

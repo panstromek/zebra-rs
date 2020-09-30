@@ -63,8 +63,8 @@ pub static mut hash_stored2: [u32; 64] = [0; 64];
 pub static mut hash_bits: i32 = 0;
 pub static mut hash_mask: i32 = 0;
 pub static mut rehash_count: i32 = 0;
-pub static mut hash_trans1: u32 = 0 as i32 as u32;
-pub static mut hash_trans2: u32 = 0 as i32 as u32;
+pub static mut hash_trans1: u32 = 0;
+pub static mut hash_trans2: u32 = 0;
 pub static mut hash_table: *mut CompactHashEntry =
     0 as *const CompactHashEntry as *mut CompactHashEntry;
 
@@ -78,11 +78,11 @@ pub unsafe fn determine_hash_values(side_to_move: i32,
                                     *const i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
-    hash1 = 0 as i32 as u32;
-    hash2 = 0 as i32 as u32;
-    i = 1 as i32;
+    hash1 = 0;
+    hash2 = 0;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             let pos = 10 as i32 * i + j;
             match *board.offset(pos as isize) {
@@ -141,13 +141,13 @@ pub unsafe fn find_hash(mut entry: *mut HashEntry,
         compact_to_wide(&mut *hash_table.offset(index2 as isize), entry);
         return
     }
-    (*entry).draft = 0 as i32 as i16;
-    (*entry).flags = 2 as i32 as i16;
-    (*entry).eval = 12345678 as i32;
-    (*entry).move_0[0] = 44 as i32;
-    (*entry).move_0[1] = 0 as i32;
-    (*entry).move_0[2] = 0 as i32;
-    (*entry).move_0[3] = 0 as i32;
+    (*entry).draft = 0;
+    (*entry).flags = 2;
+    (*entry).eval = 12345678;
+    (*entry).move_0[0] = 44;
+    (*entry).move_0[1] = 0;
+    (*entry).move_0[2] = 0;
+    (*entry).move_0[3] = 0;
 }
 
 /*
@@ -300,7 +300,7 @@ pub unsafe fn add_hash_extended(reverse_mode: i32,
     entry.key1 = code1;
     entry.key2 = code2;
     entry.eval = score;
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         entry.move_0[i as usize] = *best.offset(i as isize);
         i += 1
@@ -318,7 +318,7 @@ pub unsafe fn add_hash_extended(reverse_mode: i32,
 
 pub unsafe fn clear_hash_drafts() {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < hash_size {
         /* Set the draft to 0 */
         (*hash_table.offset(i as isize)).key1_selectivity_flags_draft &=
@@ -332,7 +332,7 @@ pub unsafe fn clear_hash_drafts() {
 */
 pub fn popcount(mut b: u32) -> u32 {
     let mut n: u32 = 0;
-    n = 0 as i32 as u32;
+    n = 0;
     while b != 0 as i32 as u32 {
         n = n.wrapping_add(1);
         b &= b.wrapping_sub(1 as i32 as u32)
@@ -367,21 +367,20 @@ pub unsafe fn setup_hash(clear: i32) {
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
     let mut rand_index: i32 = 0;
-    let max_pair_closeness = 10 as i32 as u32;
-    let max_zero_closeness = 9 as i32 as u32;
+    let max_pair_closeness = 10;
+    let max_zero_closeness = 9;
     let mut closeness: u32 = 0;
     let mut random_pair: [[u32; 2]; 130] = [[0; 2]; 130];
     if clear != 0 {
-        i = 0 as i32;
+        i = 0;
         while i < hash_size {
             (*hash_table.offset(i as isize)).key1_selectivity_flags_draft &=
                 !(255 as i32) as u32;
-            (*hash_table.offset(i as isize)).key2 =
-                0 as i32 as u32;
+            (*hash_table.offset(i as isize)).key2 = 0;
             i += 1
         }
     }
-    rand_index = 0 as i32;
+    rand_index = 0;
     while rand_index < 130 as i32 {
         'c_2013:
         loop  {
@@ -399,7 +398,7 @@ pub unsafe fn setup_hash(clear: i32) {
                               0 as i32 as u32,
                               0 as i32 as u32);
             if closeness > max_zero_closeness { continue ; }
-            i = 0 as i32;
+            i = 0;
             loop  {
                 if !(i < rand_index) { break 'c_2013 ; }
                 closeness =
@@ -427,22 +426,18 @@ pub unsafe fn setup_hash(clear: i32) {
         }
         rand_index += 1
     }
-    rand_index = 0 as i32;
-    i = 0 as i32;
+    rand_index = 0;
+    i = 0;
     while i < 128 as i32 {
-        hash_value1[0][i as usize] =
-            0 as i32 as u32;
-        hash_value2[0][i as usize] =
-            0 as i32 as u32;
-        hash_value1[2][i as usize] =
-            0 as i32 as u32;
-        hash_value2[2][i as usize] =
-            0 as i32 as u32;
+        hash_value1[0][i as usize] = 0;
+        hash_value2[0][i as usize] = 0;
+        hash_value1[2][i as usize] = 0;
+        hash_value2[2][i as usize] = 0;
         i += 1
     }
-    i = 1 as i32;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
             hash_value1[0][pos as usize] =
@@ -459,7 +454,7 @@ pub unsafe fn setup_hash(clear: i32) {
         }
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 128 as i32 {
         hash_flip1[i as usize] =
             hash_value1[0][i as usize] ^
@@ -485,7 +480,7 @@ pub unsafe fn setup_hash(clear: i32) {
     hash_flip_color2 =
         hash_color2[0] ^
             hash_color2[2];
-    j = 0 as i32;
+    j = 0;
     while j < 128 as i32 {
         hash_put_value1[0][j as usize] =
             hash_value1[0][j as usize] ^
@@ -575,9 +570,9 @@ pub unsafe fn add_hash(reverse_mode: i32,
     entry.key1 = code1;
     entry.key2 = code2;entry.eval = score;
     entry.move_0[0] = best;
-    entry.move_0[1] = 0 as i32;
-    entry.move_0[2] = 0 as i32;
-    entry.move_0[3] = 0 as i32;
+    entry.move_0[1] = 0;
+    entry.move_0[2] = 0;
+    entry.move_0[3] = 0;
     entry.flags = flags as i16;
     entry.draft = draft as i16;
     entry.selectivity = selectivity as i16;
@@ -611,7 +606,7 @@ pub unsafe fn init_hash<FE: FrontEnd>(in_hash_bits: i32) {
             u64).wrapping_mul(::std::mem::size_of::<CompactHashEntry>()
             as u64)) as
             *mut CompactHashEntry;
-    rehash_count = 0 as i32;
+    rehash_count = 0;
 }
 /*
   RESIZE_HASH

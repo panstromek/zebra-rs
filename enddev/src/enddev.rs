@@ -128,7 +128,7 @@ unsafe extern "C" fn tolower(mut __c: i32) -> i32 {
 
    Contents:
 */
-static mut VERBOSE: i32 = 1 as i32;
+static mut VERBOSE: i32 = 1;
 unsafe extern "C" fn read_game(mut stream: *mut FILE,
                                mut game_moves: *mut i32,
                                mut game_length: *mut i32) {
@@ -146,7 +146,7 @@ unsafe extern "C" fn read_game(mut stream: *mut FILE,
             0 {
             ch = ch.offset(1)
         }
-        *ch = 0 as i32 as i8;
+        *ch = 0;
         *game_length =
               FE::strlen(buffer.as_mut_ptr()).wrapping_div(2 as i32 as
                 u64) as
@@ -160,7 +160,7 @@ unsafe extern "C" fn read_game(mut stream: *mut FILE,
                         *const i8, buffer.as_mut_ptr());
             exit(1 as i32);
         }
-        i = 0 as i32;
+        i = 0;
         while i < *game_length {
             let mut col: i32 =
                 ({
@@ -214,9 +214,9 @@ unsafe extern "C" fn read_game(mut stream: *mut FILE,
 unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                  -> i32 {
     let mut rand_prob: f64 = 0.;
-    let hash_bits: i32 = 20 as i32;
-    let earliest_dev: i32 = 38 as i32;
-    let latest_dev: i32 = 52 as i32;
+    let hash_bits: i32 = 20;
+    let earliest_dev: i32 = 38;
+    let latest_dev: i32 = 52;
     let mut first_allowed_dev: i32 = 0;
     let mut side_to_move: i32 = 0;
     let mut last_was_pass: i32 = 0;
@@ -247,11 +247,11 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     init_learn(b"book.bin\x00" as *const u8 as *const i8,
                1 as i32);
     global_setup(0 as i32, hash_bits);
-    games_read = 0 as i32;
+    games_read = 0;
     first_allowed_dev = earliest_dev;
-    last_was_pass = 0 as i32;
-    restart = 1 as i32;
-    in_branch = 0 as i32;
+    last_was_pass = 0;
+    restart = 1;
+    in_branch = 0;
     loop  {
         if restart != 0 {
             if in_branch != 0 {
@@ -269,8 +269,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             }
             game_init(0 as *const i8, &mut side_to_move);
             setup_hash(1 as i32);
-            last_was_pass = 0 as i32;
-            restart = 0 as i32;
+            last_was_pass = 0;
+            restart = 0;
             in_branch = 0 as i32
         }
         if disc_count(0 as i32, &board) + disc_count(2 as i32, &board) ==
@@ -288,10 +288,10 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         if move_count[disks_played as usize] == 0 as i32 {
             if last_was_pass != 0 {
                 /* Game over? */
-                restart = 1 as i32; /* Must pass. */
+                restart = 1; /* Must pass. */
                 if in_branch != 0 {
                     let mut i: i32 = 0;
-                    i = 0 as i32;
+                    i = 0;
                     while i < disks_played {
                         printf(b"%c%c\x00" as *const u8 as
                                    *const i8,
@@ -367,7 +367,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                           &[i8; 23]>(b"int main(int, char **)\x00")).as_ptr());
                     }
                     best_score = -(12345678 as i32);
-                    i_0 = 0 as i32;
+                    i_0 = 0;
                     while i_0 < get_evaluated_count() {
                         let mut ev_info_0: EvaluatedMove = get_evaluated(i_0);
                         choices[i_0 as usize].move_0 = ev_info_0.move_0;
@@ -379,8 +379,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                             } else { best_score };
                         i_0 += 1
                     }
-                    total_prob = 0 as i32;
-                    i_0 = 0 as i32;
+                    total_prob = 0;
+                    i_0 = 0;
                     while i_0 < get_evaluated_count() {
                         choices[i_0 as usize].prob =
                             (100000 as i32 as f64 *
@@ -398,7 +398,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         i_0 += 1
                     }
                     if VERBOSE != 0 {
-                        i_0 = 0 as i32;
+                        i_0 = 0;
                         while i_0 < get_evaluated_count() {
                             fprintf(stderr,
                                     b"  %c%c  %+3d    p=%.03f\n\x00" as
@@ -421,8 +421,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         ((my_random() >> 4 as i32) %
                             (total_prob + 1 as i32) as i64)
                             as i32;
-                    accum_prob = 0 as i32;
-                    i_0 = 0 as i32;
+                    accum_prob = 0;
+                    i_0 = 0;
                     loop  {
                         accum_prob += choices[i_0 as usize].prob;
                         if !(accum_prob < rand_val) { break ; }
@@ -454,7 +454,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                         10 as i32);
                     }
                     if move_0 != game_moves[disks_played as usize] {
-                        in_branch = 1 as i32;
+                        in_branch = 1;
                         first_allowed_dev = disks_played + 1 as i32;
                         if VERBOSE != 0 {
                             fputs(b"  branching\n\x00" as *const u8 as

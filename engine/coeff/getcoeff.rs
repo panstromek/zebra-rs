@@ -1816,16 +1816,16 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
     let mut row: [i32; 10] = [0; 10];
     let mut hit: [[i32; 8]; 8] = [[0; 8]; 8];
     /* Count the number of times each square is counted */
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 8 as i32 {
-            hit[i as usize][j as usize] = 0 as i32;
+            hit[i as usize][j as usize] = 0;
             j += 1
         }
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         hit[0][i as usize] += 1;
         hit[i as usize][0] += 1;
@@ -1833,7 +1833,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         hit[i as usize][7] += 1;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         hit[1][i as usize] += 1;
         hit[i as usize][1] += 1;
@@ -1841,7 +1841,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         hit[i as usize][6] += 1;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         hit[2][i as usize] += 1;
         hit[i as usize][2] += 1;
@@ -1849,7 +1849,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         hit[i as usize][5] += 1;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         hit[3][i as usize] += 1;
         hit[i as usize][3] += 1;
@@ -1857,9 +1857,9 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         hit[i as usize][4] += 1;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 3 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 3 as i32 {
             hit[i as usize][j as usize] += 1;
             hit[i as usize][(7 as i32 - j) as usize] += 1;
@@ -1870,9 +1870,9 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         }
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 2 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 5 as i32 {
             hit[i as usize][j as usize] += 1;
             hit[j as usize][i as usize] += 1;
@@ -1888,13 +1888,13 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         }
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         hit[i as usize][i as usize] += 1;
         hit[i as usize][(7 as i32 - i) as usize] += 1;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 7 as i32 {
         hit[i as usize][(i + 1 as i32) as usize] += 1;
         hit[(i + 1 as i32) as usize][i as usize] += 1;
@@ -1903,7 +1903,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
             += 1;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 6 as i32 {
         hit[i as usize][(i + 2 as i32) as usize] += 1;
         hit[(i + 2 as i32) as usize][i as usize] += 1;
@@ -1912,7 +1912,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
             += 1;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 5 as i32 {
         hit[i as usize][(i + 3 as i32) as usize] += 1;
         hit[(i + 3 as i32) as usize][i as usize] += 1;
@@ -1921,7 +1921,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
             += 1;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         hit[i as usize][(i + 4 as i32) as usize] += 1;
         hit[(i + 4 as i32) as usize][i as usize] += 1;
@@ -1938,9 +1938,9 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         2 as i32;
     hit[6][6] +=
         2 as i32;
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 8 as i32 {
             value[i as usize][j as usize] =
                 1.0f64 / hit[i as usize][j as usize] as f64;
@@ -1948,12 +1948,12 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         }
         i += 1
     }
-    i = 0 as i32;
-    while i < 10 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 10 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 59049 as i32 {
         result = 0.0f64;
-        j = 0 as i32;
+        j = 0;
         while j < 8 as i32 {
             if row[j as usize] == 0 as i32 {
                 result += value[0][j as usize]
@@ -1979,9 +1979,9 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         *set[60].afile2x.offset(i as isize) =
             floor(result * 128.0f64 + 0.5f64) as i16;
         result = 0.0f64;
-        j = 0 as i32;
+        j = 0;
         while j < 5 as i32 {
-            k = 0 as i32;
+            k = 0;
             while k < 2 as i32 {
                 if row[(5 as i32 * k + j) as usize] ==
                     0 as i32 {
@@ -1998,9 +1998,9 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
             floor(result * 128.0f64 + 0.5f64) as i16;
         if i < 19683 as i32 {
             result = 0.0f64;
-            j = 0 as i32;
+            j = 0;
             while j < 3 as i32 {
-                k = 0 as i32;
+                k = 0;
                 while k < 3 as i32 {
                     if row[(3 as i32 * j + k) as usize] ==
                         0 as i32 {
@@ -2018,7 +2018,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         }
         if i < 6561 as i32 {
             result = 0.0f64;
-            j = 0 as i32;
+            j = 0;
             while j < 8 as i32 {
                 if row[j as usize] == 0 as i32 {
                     result += value[1][j as usize]
@@ -2030,7 +2030,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
             *set[60].bfile.offset(i as isize) =
                 floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
-            j = 0 as i32;
+            j = 0;
             while j < 8 as i32 {
                 if row[j as usize] == 0 as i32 {
                     result += value[2][j as usize]
@@ -2042,7 +2042,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
             *set[60].cfile.offset(i as isize) =
                 floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
-            j = 0 as i32;
+            j = 0;
             while j < 8 as i32 {
                 if row[j as usize] == 0 as i32 {
                     result += value[3][j as usize]
@@ -2054,7 +2054,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
             *set[60].dfile.offset(i as isize) =
                 floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
-            j = 0 as i32;
+            j = 0;
             while j < 8 as i32 {
                 if row[j as usize] == 0 as i32 {
                     result += value[j as usize][j as usize]
@@ -2068,7 +2068,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         }
         if i < 2187 as i32 {
             result = 0.0f64;
-            j = 0 as i32;
+            j = 0;
             while j < 7 as i32 {
                 if row[j as usize] == 0 as i32 {
                     result +=
@@ -2084,7 +2084,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         }
         if i < 729 as i32 {
             result = 0.0f64;
-            j = 0 as i32;
+            j = 0;
             while j < 6 as i32 {
                 if row[j as usize] == 0 as i32 {
                     result +=
@@ -2100,7 +2100,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         }
         if i < 243 as i32 {
             result = 0.0f64;
-            j = 0 as i32;
+            j = 0;
             while j < 5 as i32 {
                 if row[j as usize] == 0 as i32 {
                     result +=
@@ -2116,7 +2116,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
         }
         if i < 81 as i32 {
             result = 0.0f64;
-            j = 0 as i32;
+            j = 0;
             while j < 4 as i32 {
                 if row[j as usize] == 0 as i32 {
                     result +=
@@ -2131,7 +2131,7 @@ pub unsafe fn terminal_patterns(set: &mut [CoeffSet; 61]) {
                 floor(result * 128.0f64 + 0.5f64) as i16
         }
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;

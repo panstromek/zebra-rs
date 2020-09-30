@@ -385,7 +385,7 @@ pub unsafe  fn pack_position(mut buffer: *mut i8,
            b"%d %d\x00" as *const u8 as *const i8,
            &mut stage_0 as *mut i32, &mut score as *mut i32);
     if abs(score) > max_diff { return 0 as i32 }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         sscanf(buffer.offset((4 as i32 * i) as isize),
                b"%c%c\x00" as *const u8 as *const i8,
@@ -406,8 +406,8 @@ pub unsafe  fn pack_position(mut buffer: *mut i8,
         white_mask =
             ((hi_mask as i32) << 4 as i32) +
                 lo_mask as i32;
-        mask = 0 as i32;
-        j = 0 as i32;
+        mask = 0;
+        j = 0;
         while j < 8 as i32 {
             mask *= 4 as i32;
             if black_mask & (1 as i32) << j != 0 {
@@ -423,14 +423,12 @@ pub unsafe  fn pack_position(mut buffer: *mut i8,
     }
     match *buffer.offset(33) as i32 {
         42 => {
-            (*position_list.offset(index as isize)).side_to_move =
-                0 as i32 as i16;
+            (*position_list.offset(index as isize)).side_to_move = 0;
             (*position_list.offset(index as isize)).score =
                 score as i16
         }
         79 => {
-            (*position_list.offset(index as isize)).side_to_move =
-                2 as i32 as i16;
+            (*position_list.offset(index as isize)).side_to_move = 2;
             (*position_list.offset(index as isize)).score =
                 -score as i16
         }
@@ -454,12 +452,12 @@ pub unsafe  fn unpack_position(mut index: i32) {
     let mut mask: i32 = 0;
     /* Nota bene: Some care has to be taken not to mirror-reflect
      each row - the MSDB is the leftmost position on each row. */
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         mask =
             (*position_list.offset(index as isize)).row_bit_vec[i as usize] as
                 i32;
-        j = 0 as i32;
+        j = 0;
         pos = 10 as i32 * (i + 1 as i32) + 8 as i32;
         while j < 8 as i32 {
             board[pos as usize] = mask & 3 as i32;
@@ -479,10 +477,10 @@ pub unsafe  fn display_board(mut index: i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     puts(b"\x00" as *const u8 as *const i8);
-    i = 1 as i32;
+    i = 1;
     while i <= 8 as i32 {
         printf(b"      \x00" as *const u8 as *const i8);
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             match board[(10 as i32 * i + j) as usize] {
                 1 => { printf(b" \x00" as *const u8 as *const i8); }
@@ -529,7 +527,7 @@ pub unsafe  fn read_position_file(mut file_name:
                    *const i8, file_name);
         exit(1 as i32);
     }
-    position_count = 0 as i32;
+    position_count = 0;
     loop  {
         fgets(buffer.as_mut_ptr(), 100 as i32, stream);
         if feof(stream) == 0 {
@@ -559,21 +557,21 @@ pub unsafe  fn compute_patterns() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
-        row_pattern[i as usize] = 0 as i32;
-        col_pattern[i as usize] = 0 as i32;
+        row_pattern[i as usize] = 0;
+        col_pattern[i as usize] = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 15 as i32 {
-        diag1_pattern[i as usize] = 0 as i32;
-        diag2_pattern[i as usize] = 0 as i32;
+        diag1_pattern[i as usize] = 0;
+        diag2_pattern[i as usize] = 0;
         i += 1
     }
-    i = 1 as i32;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
             row_pattern[row_no[pos as usize] as usize] +=
@@ -603,12 +601,12 @@ unsafe  fn sort(mut vec: *mut i32, mut count: i32) {
     let mut temp: i32 = 0;
     let mut changed: i32 = 0;
     loop  {
-        changed = 0 as i32;
-        i = 0 as i32;
+        changed = 0;
+        i = 0;
         while i < count - 1 as i32 {
             if *vec.offset(i as isize) >
                 *vec.offset((i + 1 as i32) as isize) {
-                changed = 1 as i32;
+                changed = 1;
                 temp = *vec.offset(i as isize);
                 *vec.offset(i as isize) =
                     *vec.offset((i + 1 as i32) as isize);
@@ -1149,7 +1147,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
                        buffer_4.as_mut_ptr());
     /* The D file */
     sort(buffer_d.as_mut_ptr(), 4 as i32);
-    start = 0 as i32;
+    start = 0;
     loop  {
         stop = start + 1 as i32;
         while stop < 4 as i32 &&
@@ -1163,7 +1161,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
     }
     /* The C file */
     sort(buffer_c.as_mut_ptr(), 4 as i32);
-    start = 0 as i32;
+    start = 0;
     loop  {
         stop = start + 1 as i32;
         while stop < 4 as i32 &&
@@ -1177,7 +1175,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
     }
     /* The B file */
     sort(buffer_b.as_mut_ptr(), 4 as i32);
-    start = 0 as i32;
+    start = 0;
     loop  {
         stop = start + 1 as i32;
         while stop < 4 as i32 &&
@@ -1191,7 +1189,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
     }
     /* The A file */
     sort(buffer_a.as_mut_ptr(), 4 as i32);
-    start = 0 as i32;
+    start = 0;
     loop  {
         stop = start + 1 as i32;
         while stop < 4 as i32 &&
@@ -1205,7 +1203,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
     }
     /* The diagonals of length 8 */
     sort(buffer_8.as_mut_ptr(), 2 as i32);
-    start = 0 as i32;
+    start = 0;
     loop  {
         stop = start + 1 as i32;
         while stop < 2 as i32 &&
@@ -1219,7 +1217,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
     }
     /* The diagonals of length 7 */
     sort(buffer_7.as_mut_ptr(), 4 as i32);
-    start = 0 as i32;
+    start = 0;
     loop  {
         stop = start + 1 as i32;
         while stop < 4 as i32 &&
@@ -1233,7 +1231,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
     }
     /* The diagonals of length 6 */
     sort(buffer_6.as_mut_ptr(), 4 as i32);
-    start = 0 as i32;
+    start = 0;
     loop  {
         stop = start + 1 as i32;
         while stop < 4 as i32 &&
@@ -1247,7 +1245,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
     }
     /* The diagonals of length 5 */
     sort(buffer_5.as_mut_ptr(), 4 as i32);
-    start = 0 as i32;
+    start = 0;
     loop  {
         stop = start + 1 as i32;
         while stop < 4 as i32 &&
@@ -1261,7 +1259,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
     }
     /* The diagonals of length 4 */
     sort(buffer_4.as_mut_ptr(), 4 as i32);
-    start = 0 as i32;
+    start = 0;
     loop  {
         stop = start + 1 as i32;
         while stop < 4 as i32 &&
@@ -1275,7 +1273,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
     }
     /* The 5*2 corner pattern */
     sort(buffer_52.as_mut_ptr(), 8 as i32);
-    start = 0 as i32;
+    start = 0;
     loop  {
         stop = start + 1 as i32;
         while stop < 8 as i32 &&
@@ -1289,7 +1287,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
     }
     /* The 3*3 corner pattern */
     sort(buffer_33.as_mut_ptr(), 4 as i32);
-    start = 0 as i32;
+    start = 0;
     loop  {
         stop = start + 1 as i32;
         while stop < 4 as i32 &&
@@ -1345,57 +1343,57 @@ pub unsafe  fn perform_evaluation(mut index: i32) {
     total_weight += curr_weight;
     error += constant.solution;
     error += parity.solution * global_parity as f64;
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += afile2x[buffer_a[i as usize] as usize].solution;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += bfile[buffer_b[i as usize] as usize].solution;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += cfile[buffer_c[i as usize] as usize].solution;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += dfile[buffer_d[i as usize] as usize].solution;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         error += corner52[buffer_52[i as usize] as usize].solution;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += corner33[buffer_33[i as usize] as usize].solution;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 2 as i32 {
         error += diag8[buffer_8[i as usize] as usize].solution;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += diag7[buffer_7[i as usize] as usize].solution;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += diag6[buffer_6[i as usize] as usize].solution;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += diag5[buffer_5[i as usize] as usize].solution;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += diag4[buffer_4[i as usize] as usize].solution;
         i += 1
@@ -1406,57 +1404,57 @@ pub unsafe  fn perform_evaluation(mut index: i32) {
     grad_contrib = 2.0f64 * curr_weight * error;
     constant.gradient += grad_contrib;
     parity.gradient += grad_contrib * global_parity as f64;
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         afile2x[buffer_a[i as usize] as usize].gradient += grad_contrib;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         bfile[buffer_b[i as usize] as usize].gradient += grad_contrib;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         cfile[buffer_c[i as usize] as usize].gradient += grad_contrib;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         dfile[buffer_d[i as usize] as usize].gradient += grad_contrib;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         corner52[buffer_52[i as usize] as usize].gradient += grad_contrib;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         corner33[buffer_33[i as usize] as usize].gradient += grad_contrib;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 2 as i32 {
         diag8[buffer_8[i as usize] as usize].gradient += grad_contrib;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         diag7[buffer_7[i as usize] as usize].gradient += grad_contrib;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         diag6[buffer_6[i as usize] as usize].gradient += grad_contrib;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         diag5[buffer_5[i as usize] as usize].gradient += grad_contrib;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         diag4[buffer_4[i as usize] as usize].gradient += grad_contrib;
         i += 1
@@ -1507,67 +1505,67 @@ pub unsafe  fn perform_step_update(mut index: i32) {
     grad_contrib += constant.direction;
     error += parity.solution * global_parity as f64;
     grad_contrib += parity.direction * global_parity as f64;
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += afile2x[buffer_a[i as usize] as usize].solution;
         grad_contrib += afile2x[buffer_a[i as usize] as usize].direction;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += bfile[buffer_b[i as usize] as usize].solution;
         grad_contrib += bfile[buffer_b[i as usize] as usize].direction;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += cfile[buffer_c[i as usize] as usize].solution;
         grad_contrib += cfile[buffer_c[i as usize] as usize].direction;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += dfile[buffer_d[i as usize] as usize].solution;
         grad_contrib += dfile[buffer_d[i as usize] as usize].direction;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 8 as i32 {
         error += corner52[buffer_52[i as usize] as usize].solution;
         grad_contrib += corner52[buffer_52[i as usize] as usize].direction;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += corner33[buffer_33[i as usize] as usize].solution;
         grad_contrib += corner33[buffer_33[i as usize] as usize].direction;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 2 as i32 {
         error += diag8[buffer_8[i as usize] as usize].solution;
         grad_contrib += diag8[buffer_8[i as usize] as usize].direction;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += diag7[buffer_7[i as usize] as usize].solution;
         grad_contrib += diag7[buffer_7[i as usize] as usize].direction;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += diag6[buffer_6[i as usize] as usize].solution;
         grad_contrib += diag6[buffer_6[i as usize] as usize].direction;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += diag5[buffer_5[i as usize] as usize].solution;
         grad_contrib += diag5[buffer_5[i as usize] as usize].direction;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 4 as i32 {
         error += diag4[buffer_4[i as usize] as usize].solution;
         grad_contrib += diag4[buffer_4[i as usize] as usize].direction;
@@ -1607,7 +1605,7 @@ unsafe fn perform_action(mut bfunc: Option<unsafe fn(_: i32) -> ()>, mut index: 
 */
 pub unsafe fn iterate(mut bfunc: Option<unsafe fn(_: i32) -> ()>) {
     let mut index: i32 = 0;
-    index = 0 as i32;
+    index = 0;
     while index < position_count { perform_action(bfunc, index); index += 1 };
 }
 /*
@@ -1615,9 +1613,9 @@ pub unsafe fn iterate(mut bfunc: Option<unsafe fn(_: i32) -> ()>) {
    Creates frequency statistics.
 */
 pub unsafe fn analyze_games() {
-    node_count = 0 as i32;
-    relevant_count = 0 as i32;
-    interval = 0 as i32;
+    node_count = 0;
+    relevant_count = 0;
+    interval = 0;
     iterate(Some(perform_analysis as
         unsafe  fn(_: i32) -> ()));
 }
@@ -1626,8 +1624,8 @@ pub unsafe fn analyze_games() {
    Determines the gradient for all patterns.
 */
 pub unsafe  fn evaluate_games() {
-    node_count = 0 as i32;
-    relevant_count = 0 as i32;
+    node_count = 0;
+    relevant_count = 0;
     iterate(Some(perform_evaluation as unsafe fn(_: i32) -> ()));
 }
 /*
@@ -1635,8 +1633,8 @@ pub unsafe  fn evaluate_games() {
    Determines the optimal step length.
 */
 pub unsafe  fn determine_games() {
-    node_count = 0 as i32;
-    relevant_count = 0 as i32;
+    node_count = 0;
+    relevant_count = 0;
     iterate(Some(perform_step_update as unsafe fn(_: i32) -> ()));
 }
 /*
@@ -1656,48 +1654,48 @@ pub unsafe fn pattern_setup() {
     let mut flip3: [i32; 27] = [0; 27];
     let mut row: [i32; 10] = [0; 10];
     /* The inverse patterns */
-    i = 0 as i32;
+    i = 0;
     while i < 81 as i32 {
         inverse4[i as usize] = 80 as i32 - i;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 243 as i32 {
         inverse5[i as usize] = 242 as i32 - i;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 729 as i32 {
         inverse6[i as usize] = 728 as i32 - i;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 2187 as i32 {
         inverse7[i as usize] = 2186 as i32 - i;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 6561 as i32 {
         inverse8[i as usize] = 6560 as i32 - i;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 19683 as i32 {
         inverse9[i as usize] = 19682 as i32 - i;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 59049 as i32 {
         inverse10[i as usize] = 59048 as i32 - i;
         i += 1
     }
     /* Build the common pattern maps */
-    i = 0 as i32;
-    while i < 10 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 10 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 59049 as i32 {
-        pattern = 0 as i32;
-        j = 0 as i32;
+        pattern = 0;
+        j = 0;
         while j < 10 as i32 {
             /* Create the corresponding pattern. */
             pattern |= row[j as usize] << (j << 1 as i32);
@@ -1706,7 +1704,7 @@ pub unsafe fn pattern_setup() {
         /* Map the base-4 pattern onto the corresponding base-3 pattern */
         compact[pattern as usize] = i;
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -1722,13 +1720,13 @@ pub unsafe fn pattern_setup() {
         i += 1
     }
     /* Build the pattern tables for 8*1-patterns */
-    i = 0 as i32;
-    while i < 8 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 8 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 6561 as i32 {
-        mirror_pattern = 0 as i32;
-        power3 = 1 as i32;
-        j = 7 as i32;
+        mirror_pattern = 0;
+        power3 = 1;
+        j = 7;
         while j >= 0 as i32 {
             mirror_pattern += row[j as usize] * power3;
             power3 *= 3 as i32;
@@ -1739,7 +1737,7 @@ pub unsafe fn pattern_setup() {
             if i < mirror_pattern { i } else { mirror_pattern };
         flip8[i as usize] = mirror_pattern;
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -1755,13 +1753,13 @@ pub unsafe fn pattern_setup() {
         i += 1
     }
     /* Build the tables for 7*1-patterns */
-    i = 0 as i32;
-    while i < 7 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 7 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 2187 as i32 {
-        mirror_pattern = 0 as i32;
-        power3 = 1 as i32;
-        j = 6 as i32;
+        mirror_pattern = 0;
+        power3 = 1;
+        j = 6;
         while j >= 0 as i32 {
             mirror_pattern += row[j as usize] * power3;
             power3 *= 3 as i32;
@@ -1770,7 +1768,7 @@ pub unsafe fn pattern_setup() {
         mirror7[i as usize] =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -1786,13 +1784,13 @@ pub unsafe fn pattern_setup() {
         i += 1
     }
     /* Build the tables for 6*1-patterns */
-    i = 0 as i32;
-    while i < 6 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 6 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 729 as i32 {
-        mirror_pattern = 0 as i32;
-        power3 = 1 as i32;
-        j = 5 as i32;
+        mirror_pattern = 0;
+        power3 = 1;
+        j = 5;
         while j >= 0 as i32 {
             mirror_pattern += row[j as usize] * power3;
             power3 *= 3 as i32;
@@ -1801,7 +1799,7 @@ pub unsafe fn pattern_setup() {
         mirror6[i as usize] =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -1817,13 +1815,13 @@ pub unsafe fn pattern_setup() {
         i += 1
     }
     /* Build the tables for 5*1-patterns */
-    i = 0 as i32;
-    while i < 5 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 5 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 243 as i32 {
-        mirror_pattern = 0 as i32;
-        power3 = 1 as i32;
-        j = 4 as i32;
+        mirror_pattern = 0;
+        power3 = 1;
+        j = 4;
         while j >= 0 as i32 {
             mirror_pattern += row[j as usize] * power3;
             power3 *= 3 as i32;
@@ -1833,7 +1831,7 @@ pub unsafe fn pattern_setup() {
             if i < mirror_pattern { i } else { mirror_pattern };
         flip5[i as usize] = mirror_pattern;
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -1849,13 +1847,13 @@ pub unsafe fn pattern_setup() {
         i += 1
     }
     /* Build the tables for 4*1-patterns */
-    i = 0 as i32;
-    while i < 4 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 4 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 81 as i32 {
-        mirror_pattern = 0 as i32;
-        power3 = 1 as i32;
-        j = 3 as i32;
+        mirror_pattern = 0;
+        power3 = 1;
+        j = 3;
         while j >= 0 as i32 {
             mirror_pattern += row[j as usize] * power3;
             power3 *= 3 as i32;
@@ -1864,7 +1862,7 @@ pub unsafe fn pattern_setup() {
         mirror4[i as usize] =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -1880,13 +1878,13 @@ pub unsafe fn pattern_setup() {
         i += 1
     }
     /* Build the tables for 3*1-patterns */
-    i = 0 as i32;
-    while i < 3 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 3 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 27 as i32 {
-        mirror_pattern = 0 as i32;
-        power3 = 1 as i32;
-        j = 2 as i32;
+        mirror_pattern = 0;
+        power3 = 1;
+        j = 2;
         while j >= 0 as i32 {
             mirror_pattern += row[j as usize] * power3;
             power3 *= 3 as i32;
@@ -1896,7 +1894,7 @@ pub unsafe fn pattern_setup() {
             if i < mirror_pattern { i } else { mirror_pattern };
         flip3[i as usize] = mirror_pattern;
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -1912,9 +1910,9 @@ pub unsafe fn pattern_setup() {
         i += 1
     }
     /* Build the tables for 5*2-patterns */
-    i = 0 as i32;
+    i = 0;
     while i < 243 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 243 as i32 {
             flip52[(243 as i32 * i + j) as usize] =
                 243 as i32 * flip5[i as usize] + flip5[j as usize];
@@ -1922,14 +1920,14 @@ pub unsafe fn pattern_setup() {
         }
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 59049 as i32 { identity10[i as usize] = i; i += 1 }
     /* Build the tables for 3*3-patterns */
-    i = 0 as i32;
+    i = 0;
     while i < 27 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 27 as i32 {
-            k = 0 as i32;
+            k = 0;
             while k < 27 as i32 {
                 flip33[(729 as i32 * i + 27 as i32 * j + k) as
                     usize] =
@@ -1942,9 +1940,9 @@ pub unsafe fn pattern_setup() {
         }
         i += 1
     }
-    i = 0 as i32;
-    while i < 9 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 9 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 19683 as i32 {
         mirror_pattern =
             row[0] +
@@ -1959,7 +1957,7 @@ pub unsafe fn pattern_setup() {
         mirror33[i as usize] =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -1975,11 +1973,11 @@ pub unsafe fn pattern_setup() {
         i += 1
     }
     /* Build the tables for edge2X-patterns */
-    i = 0 as i32;
+    i = 0;
     while i < 6561 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 3 as i32 {
-            k = 0 as i32;
+            k = 0;
             while k < 3 as i32 {
                 mirror82x[(i + 6561 as i32 * j +
                     19683 as i32 * k) as usize] =
@@ -2000,9 +1998,9 @@ pub unsafe fn pattern_setup() {
         i += 1
     }
     /* Create the connections position <--> patterns affected */
-    i = 1 as i32;
+    i = 1;
     while i <= 8 as i32 {
-        j = 1 as i32;
+        j = 1;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
             row_no[pos as usize] = i - 1 as i32;
@@ -2028,80 +2026,80 @@ pub unsafe fn pattern_setup() {
     constant.direction = 0.0f64;
     parity.solution = 0.0f64;
     parity.direction = 0.0f64;
-    i = 0 as i32;
+    i = 0;
     while i < 59049 as i32 {
         afile2x[i as usize].pattern = i;
-        afile2x[i as usize].frequency = 0 as i32;
+        afile2x[i as usize].frequency = 0;
         afile2x[i as usize].direction = 0.0f64;
-        afile2x[i as usize].most_common = 0 as i32;
+        afile2x[i as usize].most_common = 0;
         corner52[i as usize].pattern = i;
-        corner52[i as usize].frequency = 0 as i32;
+        corner52[i as usize].frequency = 0;
         corner52[i as usize].direction = 0.0f64;
-        corner52[i as usize].most_common = 0 as i32;
+        corner52[i as usize].most_common = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 19683 as i32 {
         corner33[i as usize].pattern = i;
-        corner33[i as usize].frequency = 0 as i32;
+        corner33[i as usize].frequency = 0;
         corner33[i as usize].direction = 0.0f64;
-        corner33[i as usize].most_common = 0 as i32;
+        corner33[i as usize].most_common = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 6561 as i32 {
         afile[i as usize].pattern = i;
-        afile[i as usize].frequency = 0 as i32;
+        afile[i as usize].frequency = 0;
         afile[i as usize].direction = 0.0f64;
-        afile[i as usize].most_common = 0 as i32;
+        afile[i as usize].most_common = 0;
         bfile[i as usize].pattern = i;
-        bfile[i as usize].frequency = 0 as i32;
+        bfile[i as usize].frequency = 0;
         bfile[i as usize].direction = 0.0f64;
-        bfile[i as usize].most_common = 0 as i32;
+        bfile[i as usize].most_common = 0;
         cfile[i as usize].pattern = i;
-        cfile[i as usize].frequency = 0 as i32;
+        cfile[i as usize].frequency = 0;
         cfile[i as usize].direction = 0.0f64;
-        cfile[i as usize].most_common = 0 as i32;
+        cfile[i as usize].most_common = 0;
         dfile[i as usize].pattern = i;
-        dfile[i as usize].frequency = 0 as i32;
+        dfile[i as usize].frequency = 0;
         dfile[i as usize].direction = 0.0f64;
-        dfile[i as usize].most_common = 0 as i32;
+        dfile[i as usize].most_common = 0;
         diag8[i as usize].pattern = i;
-        diag8[i as usize].frequency = 0 as i32;
+        diag8[i as usize].frequency = 0;
         diag8[i as usize].direction = 0.0f64;
-        diag8[i as usize].most_common = 0 as i32;
+        diag8[i as usize].most_common = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 2187 as i32 {
         diag7[i as usize].pattern = i;
-        diag7[i as usize].frequency = 0 as i32;
+        diag7[i as usize].frequency = 0;
         diag7[i as usize].direction = 0.0f64;
-        diag7[i as usize].most_common = 0 as i32;
+        diag7[i as usize].most_common = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 729 as i32 {
         diag6[i as usize].pattern = i;
-        diag6[i as usize].frequency = 0 as i32;
+        diag6[i as usize].frequency = 0;
         diag6[i as usize].direction = 0.0f64;
-        diag6[i as usize].most_common = 0 as i32;
+        diag6[i as usize].most_common = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 243 as i32 {
         diag5[i as usize].pattern = i;
-        diag5[i as usize].frequency = 0 as i32;
+        diag5[i as usize].frequency = 0;
         diag5[i as usize].direction = 0.0f64;
-        diag5[i as usize].most_common = 0 as i32;
+        diag5[i as usize].most_common = 0;
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < 81 as i32 {
         diag4[i as usize].pattern = i;
-        diag4[i as usize].frequency = 0 as i32;
+        diag4[i as usize].frequency = 0;
         diag4[i as usize].direction = 0.0f64;
-        diag4[i as usize].most_common = 0 as i32;
+        diag4[i as usize].most_common = 0;
         i += 1
     };
 }
@@ -2128,7 +2126,7 @@ pub unsafe  fn save(mut base: *const i8,
         printf(b"Error creating \'%s\'\n\x00" as *const u8 as
                    *const i8, file_name.as_mut_ptr());
     } else {
-        i = 0 as i32;
+        i = 0;
         while i < count {
             vals[i as usize] =
                 (*items.offset(i as isize)).solution as f32;
@@ -2260,7 +2258,7 @@ pub unsafe  fn initialize_solution(mut base: *const i8,
         fopen(file_name.as_mut_ptr(),
               b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        i = 0 as i32;
+        i = 0;
         while i < count {
             (*item.offset(i as isize)).solution = 0.0f64;
             i += 1
@@ -2283,7 +2281,7 @@ pub unsafe  fn initialize_solution(mut base: *const i8,
               ::std::mem::size_of::<i32>() as u64,
               count as size_t, stream);
         fclose(stream);
-        i = 0 as i32;
+        i = 0;
         while i < count {
             if *freq.offset(i as isize) > 0 as i32 {
                 (*item.offset(i as isize)).solution =
@@ -2312,8 +2310,8 @@ pub unsafe  fn find_most_common(mut item: *mut InfoItem,
     let mut index: i32 = 0;
     let mut value: i32 = 0;
     value = -(1 as i32);
-    index = 0 as i32;
-    i = 0 as i32;
+    index = 0;
+    i = 0;
     while i < count {
         if (*item.offset(i as isize)).frequency > value {
             index = i;
@@ -2321,7 +2319,7 @@ pub unsafe  fn find_most_common(mut item: *mut InfoItem,
         }
         i += 1
     }
-    (*item.offset(index as isize)).most_common = 1 as i32;
+    (*item.offset(index as isize)).most_common = 1;
     (*item.offset(index as isize)).solution = 0.0f64;
 }
 /*
@@ -2378,7 +2376,7 @@ pub unsafe  fn update_solution(mut item: *mut InfoItem,
     let mut change: f64 = 0.;
     let mut abs_change: f64 = 0.;
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < count {
         if (*item.offset(i as isize)).frequency > 0 as i32 &&
             (*item.offset(i as isize)).most_common == 0 {
@@ -2406,7 +2404,7 @@ pub unsafe  fn update_search_direction(mut item: *mut InfoItem,
                                                  mut count: i32,
                                                  mut beta: f64) {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < count {
         if (*item.offset(i as isize)).most_common == 0 {
             (*item.offset(i as isize)).direction =
@@ -2474,7 +2472,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
            prefix.as_mut_ptr());
     fscanf(option_stream, b"%d\x00" as *const u8 as *const i8,
            &mut stage_count as *mut i32);
-    i = 0 as i32;
+    i = 0;
     while i < stage_count {
         fscanf(option_stream, b"%d\x00" as *const u8 as *const i8,
                &mut *stage.as_mut_ptr().offset(i as isize) as
@@ -2482,9 +2480,9 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         i += 1
     }
     fclose(option_stream);
-    i = 0 as i32;
+    i = 0;
     while i <= 60 as i32 {
-        active[i as usize] = 0 as i32;
+        active[i as usize] = 0;
         i += 1
     }
     if analysis_stage != 0 as i32 {
@@ -2492,7 +2490,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             stage[(analysis_stage - 1 as i32) as usize] +
                 1 as i32;
         while i <= stage[analysis_stage as usize] {
-            active[i as usize] = 1 as i32;
+            active[i as usize] = 1;
             weight[i as usize] =
                 sqrt(1.0f64 *
                     (i -
@@ -2507,7 +2505,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     if analysis_stage != stage_count - 1 as i32 {
         i = stage[analysis_stage as usize];
         while i < stage[(analysis_stage + 1 as i32) as usize] {
-            active[i as usize] = 1 as i32;
+            active[i as usize] = 1;
             weight[i as usize] =
                 sqrt(1.0f64 *
                     (stage[(analysis_stage + 1 as i32) as usize]
@@ -2518,7 +2516,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             i += 1
         }
     }
-    i = 0 as i32;
+    i = 0;
     while i <= 60 as i32 {
         if active[i as usize] != 0 { last_active = i }
         i += 1
@@ -2589,26 +2587,26 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     grad_sum = 0.0f64;
     max_delta = 0.0f64;
     average_delta = 0.0f64;
-    iteration = 1 as i32;
+    iteration = 1;
     while iteration <= max_iterations {
         constant.gradient = 0.0f64;
         parity.gradient = 0.0f64;
-        i = 0 as i32;
+        i = 0;
         while i < 59059 as i32 {
             afile2x[i as usize].gradient = 0.0f64;
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 59049 as i32 {
             corner52[i as usize].gradient = 0.0f64;
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 19683 as i32 {
             corner33[i as usize].gradient = 0.0f64;
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 6561 as i32 {
             bfile[i as usize].gradient = 0.0f64;
             cfile[i as usize].gradient = 0.0f64;
@@ -2616,22 +2614,22 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             diag8[i as usize].gradient = 0.0f64;
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 2187 as i32 {
             diag7[i as usize].gradient = 0.0f64;
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 729 as i32 {
             diag6[i as usize].gradient = 0.0f64;
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 243 as i32 {
             diag5[i as usize].gradient = 0.0f64;
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 81 as i32 {
             diag4[i as usize].gradient = 0.0f64;
             i += 1
@@ -2660,7 +2658,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         grad_sum = 0.0f64;
         grad_sum += constant.gradient * constant.gradient;
         grad_sum += parity.gradient * parity.gradient;
-        i = 0 as i32;
+        i = 0;
         while i < 59049 as i32 {
             if afile2x[i as usize].most_common == 0 {
                 grad_sum +=
@@ -2669,7 +2667,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             }
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 59049 as i32 {
             if corner52[i as usize].most_common == 0 {
                 grad_sum +=
@@ -2678,7 +2676,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             }
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 19683 as i32 {
             if corner33[i as usize].most_common == 0 {
                 grad_sum +=
@@ -2687,7 +2685,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             }
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 6561 as i32 {
             if bfile[i as usize].most_common == 0 {
                 grad_sum +=
@@ -2707,7 +2705,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             }
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 2187 as i32 {
             if diag7[i as usize].most_common == 0 {
                 grad_sum +=
@@ -2715,7 +2713,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             }
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 729 as i32 {
             if diag6[i as usize].most_common == 0 {
                 grad_sum +=
@@ -2723,7 +2721,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             }
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 243 as i32 {
             if diag5[i as usize].most_common == 0 {
                 grad_sum +=
@@ -2731,7 +2729,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             }
             i += 1
         }
-        i = 0 as i32;
+        i = 0;
         while i < 81 as i32 {
             if diag4[i as usize].most_common == 0 {
                 grad_sum +=
@@ -2785,7 +2783,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         /* Update the solution */
         max_delta = 0.0f64;
         delta_sum = 0.0f64;
-        update_count = 0 as i32;
+        update_count = 0;
         limit_change(&mut constant.solution,
                      (alpha * constant.direction / total_weight) as
                          f32);

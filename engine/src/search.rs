@@ -97,7 +97,7 @@ pub static position_list: [i32; 100] =
 
 
 /* Local variables */
-static mut pondered_move: i32 = 0 as i32;
+static mut pondered_move: i32 = 0;
 static mut negate_eval: i32 = 0;
 static mut last_eval: EvaluationType =
     EvaluationType{type_0: MIDGAME_EVAL,
@@ -113,9 +113,9 @@ static mut last_eval: EvaluationType =
 unsafe fn init_move_lists() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i <= 60 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 60 as i32 {
             sorted_move_order[i as usize][j as usize] =
                 position_list[j as usize];
@@ -123,9 +123,9 @@ unsafe fn init_move_lists() {
         }
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i <= 60 as i32 {
-        list_inherited[i as usize] = 0 as i32;
+        list_inherited[i as usize] = 0;
         i += 1
     };
 }
@@ -159,14 +159,14 @@ pub unsafe fn inherit_move_lists(stage: i32) {
     //  Index out of bounds here - reproducer:
     //  cargo run  -- -l 20 10 0 20 10 0 -r 0
     if list_inherited[stage as usize] != 0 { return }
-    list_inherited[stage as usize] = 1 as i32;
+    list_inherited[stage as usize] = 1;
     if stage == 0 as i32 { return }
     last = stage - 2 as i32;
     while last >= 0 as i32 && list_inherited[last as usize] == 0 {
         last -= 2 as i32
     }
     if last < 0 as i32 { return }
-    i = 0 as i32;
+    i = 0;
     while i < 60 as i32 {
         sorted_move_order[stage as usize][i as usize] =
             sorted_move_order[last as usize][i as usize];
@@ -181,15 +181,15 @@ pub unsafe fn inherit_move_lists(stage: i32) {
 */
 
 pub unsafe fn reorder_move_list(stage: i32) {
-    let dont_touch = 24 as i32;
+    let dont_touch = 24;
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
     let mut empty_pos: i32 = 0;
     let mut nonempty_pos: i32 = 0;
     let mut empty_buffer: [i32; 60] = [0; 60];
     let mut nonempty_buffer: [i32; 60] = [0; 60];
-    empty_pos = 0 as i32;
-    i = 0 as i32;
+    empty_pos = 0;
+    i = 0;
     while i < 60 as i32 {
         move_0 = sorted_move_order[stage as usize][i as usize];
         if board[move_0 as usize] == 1 as i32 || i < dont_touch {
@@ -208,7 +208,7 @@ pub unsafe fn reorder_move_list(stage: i32) {
         }
         i -= 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < empty_pos {
         sorted_move_order[stage as usize][i as usize] =
             empty_buffer[i as usize];
@@ -230,7 +230,7 @@ pub unsafe fn setup_search() {
     init_move_lists();
     create_eval_info(UNINITIALIZED_EVAL, UNSOLVED_POSITION, 0 as i32,
                      0.0f64, 0 as i32, 0 as i32);
-    negate_eval = 0 as i32;
+    negate_eval = 0;
 }
 /*
    DISC_COUNT
@@ -326,7 +326,7 @@ pub unsafe fn float_move(move_0: i32,
                          -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < list_size {
         if move_list[disks_played as usize][i as usize] == move_0 {
             j = i;
@@ -352,7 +352,7 @@ pub unsafe fn float_move(move_0: i32,
 pub unsafe fn store_pv(pv_buffer: *mut i32,
                        depth_buffer: *mut i32) {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < pv_depth[0] {
         *pv_buffer.offset(i as isize) =
             pv[0][i as usize];
@@ -368,7 +368,7 @@ pub unsafe fn store_pv(pv_buffer: *mut i32,
 pub unsafe fn restore_pv(pv_buffer: *mut i32,
                          depth_buffer: i32) {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < depth_buffer {
         pv[0][i as usize] =
             *pv_buffer.offset(i as isize);
@@ -382,7 +382,7 @@ pub unsafe fn restore_pv(pv_buffer: *mut i32,
 */
 
 pub unsafe fn clear_pv() {
-    pv_depth[0] = 0 as i32;
+    pv_depth[0] = 0;
 }
 /*
   SET_PONDER_MOVE
@@ -398,7 +398,7 @@ pub unsafe fn set_ponder_move(move_0: i32) {
 }
 
 pub unsafe fn clear_ponder_move() {
-    pondered_move = 0 as i32;
+    pondered_move = 0;
 }
 
 pub unsafe fn get_ponder_move() -> i32 {

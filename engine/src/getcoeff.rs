@@ -85,7 +85,7 @@ pub unsafe fn generate_batch(target: *mut i16,
     let mut i: i32 = 0;
     let mut total_weight: i32 = 0;
     total_weight = weight1 + weight2;
-    i = 0 as i32;
+    i = 0;
     while i < count {
         *target.offset(i as isize) =
             ((weight1 * *source1.offset(i as isize) as i32 +
@@ -100,7 +100,7 @@ pub unsafe fn generate_batch(target: *mut i16,
    Marks a memory block as no longer in use.
 */
 pub unsafe fn free_memory_block(block: i32) {
-    block_allocated[block as usize] = 0 as i32;
+    block_allocated[block as usize] = 0;
 }
 /*
    INIT_MEMORY_HANDLER
@@ -108,10 +108,10 @@ pub unsafe fn free_memory_block(block: i32) {
 */
 pub unsafe fn init_memory_handler() {
     let mut i: i32 = 0;
-    block_count = 0 as i32;
-    i = 0 as i32;
+    block_count = 0;
+    i = 0;
     while i < 200 as i32 {
-        block_allocated[i as usize] = 0 as i32;
+        block_allocated[i as usize] = 0;
         i += 1
     };
 }
@@ -131,10 +131,10 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
     let mut k: i32 = 0;
     let mut adjust: i32 = 0;
     let mut row: [i32; 10] = [0; 10];
-    i = 0 as i32;
+    i = 0;
     while i < stage_count - 1 as i32 {
         /* Bonuses for having more discs */
-        j = 0 as i32;
+        j = 0;
         while j < 59049 as i32 {
             let ref mut fresh2 =
                 *set[stage[i as usize] as usize].afile2x.offset(j as isize);
@@ -151,7 +151,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                     i16;
             j += 1
         }
-        j = 0 as i32;
+        j = 0;
         while j < 19683 as i32 {
             let ref mut fresh4 =
                 *set[stage[i as usize] as usize].corner33.offset(j as isize);
@@ -162,7 +162,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                     i16;
             j += 1
         }
-        j = 0 as i32;
+        j = 0;
         while j < 6561 as i32 {
             let ref mut fresh5 =
                 *set[stage[i as usize] as usize].bfile.offset(j as isize);
@@ -194,7 +194,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                     i16;
             j += 1
         }
-        j = 0 as i32;
+        j = 0;
         while j < 2187 as i32 {
             let ref mut fresh9 =
                 *set[stage[i as usize] as usize].diag7.offset(j as isize);
@@ -205,7 +205,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                     i16;
             j += 1
         }
-        j = 0 as i32;
+        j = 0;
         while j < 729 as i32 {
             let ref mut fresh10 =
                 *set[stage[i as usize] as usize].diag6.offset(j as isize);
@@ -216,7 +216,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                     i16;
             j += 1
         }
-        j = 0 as i32;
+        j = 0;
         while j < 243 as i32 {
             let ref mut fresh11 =
                 *set[stage[i as usize] as usize].diag5.offset(j as isize);
@@ -227,7 +227,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                     i16;
             j += 1
         }
-        j = 0 as i32;
+        j = 0;
         while j < 81 as i32 {
             let ref mut fresh12 =
                 *set[stage[i as usize] as usize].diag4.offset(j as isize);
@@ -238,16 +238,16 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                     i16;
             j += 1
         }
-        j = 0 as i32;
+        j = 0;
         while j < 10 as i32 {
-            row[j as usize] = 0 as i32;
+            row[j as usize] = 0;
             j += 1
         }
-        j = 0 as i32;
+        j = 0;
         while j < 59049 as i32 {
-            adjust = 0 as i32;
+            adjust = 0;
             /* Bonus for having edge discs */
-            k = 1 as i32;
+            k = 1;
             while k <= 6 as i32 {
                 if row[k as usize] == 0 as i32 {
                     adjust =
@@ -308,7 +308,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].afile2x.offset(j as isize);
             *fresh13 = (*fresh13 as i32 + adjust) as i16;
             /* Next configuration */
-            k = 0 as i32;
+            k = 0;
             loop  {
                 /* The odometer principle */
                 row[k as usize] += 1;
@@ -348,7 +348,7 @@ pub unsafe fn remove_specific_coeffs(phase: i32) {
 
 pub unsafe fn remove_coeffs(phase: i32) {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i < phase { remove_specific_coeffs(i); i += 1 };
 }
 /*
@@ -358,7 +358,7 @@ pub unsafe fn remove_coeffs(phase: i32) {
 
 pub unsafe fn clear_coeffs() {
     let mut i: i32 = 0;
-    i = 0 as i32;
+    i = 0;
     while i <= 60 as i32 { remove_specific_coeffs(i); i += 1 };
 }
 
@@ -385,12 +385,12 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(afile2x: *mut *mut i16,
     let mut i: i32 = 0;
     let mut found_free: i32 = 0;
     let mut free_block: i32 = 0;
-    found_free = 0 as i32;
+    found_free = 0;
     free_block = -(1 as i32);
-    i = 0 as i32;
+    i = 0;
     while i < block_count && found_free == 0 {
         if block_allocated[i as usize] == 0 {
-            found_free = 1 as i32;
+            found_free = 1;
             free_block = i
         }
         i += 1
@@ -422,7 +422,7 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(afile2x: *mut *mut i16,
         (*block_list[free_block as usize]).corner33_block.as_mut_ptr();
     *corner52 =
         (*block_list[free_block as usize]).corner52_block.as_mut_ptr();
-    block_allocated[free_block as usize] = 1 as i32;
+    block_allocated[free_block as usize] = 1;
     block_set[free_block as usize] = index;
     return free_block;
 }
@@ -470,7 +470,7 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32) {
         let mut prev = set[index as usize].prev;
         let mut next = set[index as usize].next;
         if prev == next {
-            weight1 = 1 as i32;
+            weight1 = 1;
             weight2 = 1 as i32
         } else { weight1 = next - index; weight2 = index - prev }
         let mut total_weight = weight1 + weight2;
@@ -544,7 +544,7 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32) {
         set[index as usize].corner33.offset(19682);
     set[index as usize].corner52_last =
         set[index as usize].corner52.offset(59048);
-    set[index as usize].loaded = 1 as i32;
+    set[index as usize].loaded = 1;
 }
 
 
@@ -591,17 +591,17 @@ pub unsafe fn post_init_coeffs() {
            - Other stages are mapped onto the next evaluation stage
            (which may be either from the tuning or an intermediate stage).
         */
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i < stage[0] {
         eval_map[i as usize] = stage[0];
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < stage_count {
         eval_map[stage[i as usize] as usize] = stage[i as usize];
         i += 1
     }
-    let mut subsequent_stage = 60 as i32;
+    let mut subsequent_stage = 60;
     i = subsequent_stage;
     while i >= stage[0] {
         if eval_map[i as usize] == i {
@@ -632,7 +632,7 @@ pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
             *mut i16;
     /* Unpack the coefficient block where the score is scaled
        so that 512 units corresponds to one disk. */
-    i = 0 as i32;
+    i = 0;
     while i < count {
         if mirror.is_null() || *mirror.offset(i as isize) == i {
             let i1 = next_word();
@@ -645,13 +645,13 @@ pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
         }
         i += 1
     }
-    i = 0 as i32;
+    i = 0;
     while i < count {
         *item.offset(i as isize) = *buffer.offset(i as isize);
         i += 1
     }
     if !mirror.is_null() {
-        i = 0 as i32;
+        i = 0;
         while i < count {
             if *item.offset(i as isize) as i32 !=
                 *item.offset(*mirror.offset(i as isize) as isize) as
@@ -730,12 +730,12 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
             as u64)) as
             *mut i32;
     /* Build the pattern tables for 8*1-patterns */
-    i = 0 as i32;
-    while i < 8 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 8 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 6561 as i32 {
-        mirror_pattern = 0 as i32;
-        j = 0 as i32;
+        mirror_pattern = 0;
+        j = 0;
         while j < 8 as i32 {
             mirror_pattern +=
                 row[j as usize] * pow3[(7 as i32 - j) as usize];
@@ -745,7 +745,7 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         *map_mirror8.offset(i as isize) =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -761,12 +761,12 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         i += 1
     }
     /* Build the tables for 7*1-patterns */
-    i = 0 as i32;
-    while i < 7 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 7 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 2187 as i32 {
-        mirror_pattern = 0 as i32;
-        j = 0 as i32;
+        mirror_pattern = 0;
+        j = 0;
         while j < 7 as i32 {
             mirror_pattern +=
                 row[j as usize] * pow3[(6 as i32 - j) as usize];
@@ -775,7 +775,7 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         *map_mirror7.offset(i as isize) =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -791,12 +791,12 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         i += 1
     }
     /* Build the tables for 6*1-patterns */
-    i = 0 as i32;
-    while i < 6 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 6 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 729 as i32 {
-        mirror_pattern = 0 as i32;
-        j = 0 as i32;
+        mirror_pattern = 0;
+        j = 0;
         while j < 6 as i32 {
             mirror_pattern +=
                 row[j as usize] * pow3[(5 as i32 - j) as usize];
@@ -805,7 +805,7 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         *map_mirror6.offset(i as isize) =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -821,12 +821,12 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         i += 1
     }
     /* Build the tables for 5*1-patterns */
-    i = 0 as i32;
-    while i < 5 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 5 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 243 as i32 {
-        mirror_pattern = 0 as i32;
-        j = 0 as i32;
+        mirror_pattern = 0;
+        j = 0;
         while j < 5 as i32 {
             mirror_pattern +=
                 row[j as usize] * pow3[(4 as i32 - j) as usize];
@@ -835,7 +835,7 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         *map_mirror5.offset(i as isize) =
             if mirror_pattern < i { mirror_pattern } else { i };
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -851,12 +851,12 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         i += 1
     }
     /* Build the tables for 4*1-patterns */
-    i = 0 as i32;
-    while i < 4 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 4 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 81 as i32 {
-        mirror_pattern = 0 as i32;
-        j = 0 as i32;
+        mirror_pattern = 0;
+        j = 0;
         while j < 4 as i32 {
             mirror_pattern +=
                 row[j as usize] * pow3[(3 as i32 - j) as usize];
@@ -865,7 +865,7 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         *map_mirror4.offset(i as isize) =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -881,12 +881,12 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         i += 1
     }
     /* Build the tables for 3*1-patterns */
-    i = 0 as i32;
-    while i < 3 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 3 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 27 as i32 {
-        mirror_pattern = 0 as i32;
-        j = 0 as i32;
+        mirror_pattern = 0;
+        j = 0;
         while j < 3 as i32 {
             mirror_pattern +=
                 row[j as usize] * pow3[(2 as i32 - j) as usize];
@@ -895,7 +895,7 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         *map_mirror3.offset(i as isize) =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -913,11 +913,11 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
     /* Build the tables for 5*2-patterns */
     /* --- none needed --- */
     /* Build the tables for edge2X-patterns */
-    i = 0 as i32;
+    i = 0;
     while i < 6561 as i32 {
-        j = 0 as i32;
+        j = 0;
         while j < 3 as i32 {
-            k = 0 as i32;
+            k = 0;
             while k < 3 as i32 {
                 *map_mirror8x2.offset((i + 6561 as i32 * j +
                     19683 as i32 * k) as isize)
@@ -939,9 +939,9 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         i += 1
     }
     /* Build the tables for 3*3-patterns */
-    i = 0 as i32;
-    while i < 9 as i32 { row[i as usize] = 0 as i32; i += 1 }
-    i = 0 as i32;
+    i = 0;
+    while i < 9 as i32 { row[i as usize] = 0; i += 1 }
+    i = 0;
     while i < 19683 as i32 {
         mirror_pattern =
             row[0] +
@@ -956,7 +956,7 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         *map_mirror33.offset(i as isize) =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0 as i32;
+        j = 0;
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
@@ -972,7 +972,7 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         i += 1
     }
     /* Read and unpack - using symmetries - the coefficient tables. */
-    i = 0 as i32;
+    i = 0;
     while i < stage_count - 1 as i32 {
         set[stage[i as usize] as usize].constant =
             (next_word() as i32 / 4 as i32) as
@@ -1029,21 +1029,21 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
     /* Read the different stages for which the evaluation function
        was tuned and mark the other stages with pointers to the previous
        and next stages. */
-    let mut i = 0 as i32;
+    let mut i = 0;
     while i <= 60 as i32 {
-        set[i as usize].permanent = 0 as i32;
-        set[i as usize].loaded = 0 as i32;
+        set[i as usize].permanent = 0;
+        set[i as usize].loaded = 0;
         i += 1
     }
     stage_count = next_word() as i32;
-    let mut i = 0 as i32;
+    let mut i = 0;
     let mut j: i32 = 0;
     let mut curr_stage: i32 = 0;
     while i < stage_count - 1 as i32 {
         stage[i as usize] = next_word() as i32;
         curr_stage = stage[i as usize];
         if i == 0 as i32 {
-            j = 0 as i32;
+            j = 0;
             while j < stage[0] {
                 set[j as usize].prev = stage[0];
                 set[j as usize].next = stage[0];
@@ -1057,19 +1057,19 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
                 j += 1
             }
         }
-        set[curr_stage as usize].permanent = 1 as i32;
+        set[curr_stage as usize].permanent = 1;
         allocate_set::<FE>(curr_stage);
         i += 1
     }
-    stage[(stage_count - 1 as i32) as usize] = 60 as i32;
+    stage[(stage_count - 1 as i32) as usize] = 60;
     j = stage[(stage_count - 2 as i32) as usize];
     while j < 60 as i32 {
         set[j as usize].prev =
             stage[(stage_count - 2 as i32) as usize];
-        set[j as usize].next = 60 as i32;
+        set[j as usize].next = 60;
         j += 1
     }
-    set[60].permanent = 1 as i32;
+    set[60].permanent = 1;
     allocate_set::<FE>(60 as i32);
     /* Read the pattern values */
     unpack_coeffs::<FE, _>(&mut next_word);
@@ -1079,10 +1079,8 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
 pub unsafe fn init_coeffs_calculate_patterns() {
     /* Calculate the patterns which correspond to the board being filled */
     terminal_patterns(&mut set);
-    set[60].constant =
-        0 as i32 as i16;
-    set[60].parity =
-        0 as i32 as i16;
+    set[60].constant = 0;
+    set[60].parity = 0;
     set[60].parity_constant[0]
         = set[60].constant;
     set[60].parity_constant[1]
