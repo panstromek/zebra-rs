@@ -1830,7 +1830,6 @@ pub fn main() {
         //  or just somehow initialize those vars a better way
         //  fixme!! I need to run these in other binaries, too
         unflip::run_static_initializers();
-        myrandom::run_static_initializers();
     }
     let mut args: Vec<*mut i8> = Vec::new();
     for arg in ::std::env::args() {

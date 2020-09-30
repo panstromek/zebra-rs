@@ -54,10 +54,10 @@ static mut my_randtbl: [u64; 32] =
  * in the initialization of randtbl) because the state table pointer is set
  * to point to randtbl[1] (as explained below).
  */
-// Initialized in run_static_initializers
-static mut my_fptr: *mut i64 = 0 as *const i64 as *mut i64;
-// Initialized in run_static_initializers
-static mut my_rptr: *mut i64 = 0 as *const i64 as *mut i64;
+static mut my_fptr: usize = 4;
+static mut my_rptr: usize = 1;
+static mut my_state: usize = 1;
+static mut my_end_ptr: usize = 32;
 /*
  * The following things are the pointer to the state information table,
  * the type of the current generator, the degree of the current polynomial
@@ -69,12 +69,9 @@ static mut my_rptr: *mut i64 = 0 as *const i64 as *mut i64;
  * indexing every time to find the address of the last element to see if
  * the front and rear pointers have wrapped.
  */
-// Initialized in run_static_initializers
-static mut my_state: *mut i64 = 0 as *const i64 as *mut i64;
 static my_rand_deg: i32 = 31;
 static my_rand_sep: i32 = 3;
-// Initialized in run_static_initializers
-static mut my_end_ptr: *mut i64 = 0 as *const i64 as *mut i64;
+
 /*
  * srandom:
  * Initialize the random number generator based on the given seed.  If the
@@ -89,17 +86,17 @@ static mut my_end_ptr: *mut i64 = 0 as *const i64 as *mut i64;
  */
 
 pub unsafe fn my_srandom(x: i32) -> i32 {
-    *my_state = x as i64;
+    my_randtbl[my_state] = x as u64;
     let mut i = 1;
     while i < my_rand_deg {
-        *my_state.offset(i as isize) =
+        my_randtbl[(my_state + (i as usize) )] =
             1103515245i64
-                .wrapping_mul(*my_state.offset((i - 1) as isize))
-                .wrapping_add(12345);
+                .wrapping_mul(my_randtbl[(my_state + ((i - 1) as usize))] as i64)
+                .wrapping_add(12345) as u64;
         i += 1
     }
-    my_fptr = &mut *my_state.offset(my_rand_sep as isize) as *mut i64;
-    my_rptr = &mut *my_state as *mut i64;
+    my_fptr = (my_state + (my_rand_sep as usize));
+    my_rptr = my_state;
     let mut i = 0;
     while i < 10 * my_rand_deg {
         my_random();
@@ -124,21 +121,15 @@ pub unsafe fn my_srandom(x: i32) -> i32 {
 
 pub unsafe fn my_random() -> i64 {
     let mut i: i64 = 0; /* chucking least random bit */
-    *my_fptr = (*my_fptr).wrapping_add(*my_rptr);
-    i = *my_fptr >> 1 & 0x7fffffff;
-    my_fptr = my_fptr.offset(1);
+    my_randtbl[my_fptr] = my_randtbl[my_fptr].wrapping_add(my_randtbl[my_rptr]);
+    i = (my_randtbl[my_fptr] >> 1 & 0x7fffffff) as i64;
+    my_fptr = my_fptr + (1);
     if my_fptr >= my_end_ptr {
         my_fptr = my_state;
-        my_rptr = my_rptr.offset(1)
+        my_rptr = my_rptr + (1)
     } else {
-        my_rptr = my_rptr.offset(1);
+        my_rptr = my_rptr + 1;
         if my_rptr >= my_end_ptr { my_rptr = my_state }
     }
     i
-}
-pub unsafe fn run_static_initializers() {
-    my_fptr =  my_randtbl.as_ptr().offset(4) as *mut i64;
-    my_rptr = my_randtbl.as_ptr().offset(1) as *mut i64;
-    my_state = my_randtbl.as_ptr().offset(1) as *mut i64;
-    my_end_ptr = my_randtbl.as_ptr().offset(32) as *mut i64;
 }
