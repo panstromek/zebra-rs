@@ -204,21 +204,13 @@ pub unsafe fn setup_midgame() {
 */
 
 pub unsafe fn calculate_perturbation() {
-    let mut i: i32 = 0;
-    let mut shift: i32 = 0;
-    if apply_perturbation == 0 || perturbation_amplitude == 0 as i32 {
-        i = 0;
-        while i < 100 as i32 {
-            score_perturbation[i as usize] = 0;
-            i += 1
-        }
+    if apply_perturbation == 0 || perturbation_amplitude == 0 {
+        score_perturbation = [0; 100];
     } else {
-        shift = perturbation_amplitude / 2 as i32;
-        i = 0;
+        let shift = perturbation_amplitude / 2;
+        let mut i = 0;
         while i < 100 as i32 {
-            score_perturbation[i as usize] =
-                abs(my_random() as i32) % perturbation_amplitude -
-                    shift;
+            score_perturbation[i as usize] = abs(my_random() as i32) % perturbation_amplitude - shift;
             i += 1
         }
     };
