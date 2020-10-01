@@ -1822,15 +1822,6 @@ impl DumpHandler for LibcDumpHandler {
 }
 
 pub fn main() {
-    // fixme do this also inside other root crates
-    unsafe {
-        //TODO is this actually safe now? Since they don't run in init array,
-        // is there some observable change in behaviour? Is there UB?
-        //  FIXME also figure out a way to run these in the engine,
-        //  or just somehow initialize those vars a better way
-        //  fixme!! I need to run these in other binaries, too
-        unflip::run_static_initializers();
-    }
     let mut args: Vec<*mut i8> = Vec::new();
     for arg in ::std::env::args() {
         args.push(::std::ffi::CString::new(arg).expect("Failed to convert argument into CString.").into_raw());
