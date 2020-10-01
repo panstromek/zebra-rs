@@ -12,10 +12,8 @@
 
 pub static mut global_flip_stack: [*mut i32; 2048] =
     [0 as *const i32 as *mut i32; 2048];
-// Initialized in run_static_initializers
 
-pub static mut flip_stack: *mut *mut i32 =
-    0 as *const *mut i32 as *mut *mut i32;
+pub static mut flip_stack: *mut *mut i32 = unsafe { global_flip_stack }.as_ptr() as *mut *mut i32;
 /*
    File:          unflip.h
 
@@ -59,12 +57,5 @@ pub unsafe fn UndoFlips(flip_count: i32,
 */
 
 pub unsafe fn init_flip_stack() {
-    flip_stack =
-        &mut *global_flip_stack.as_mut_ptr().offset(0 as i32 as isize)
-            as *mut *mut i32;
-}
-pub unsafe fn run_static_initializers() {
-    flip_stack =
-        &mut *global_flip_stack.as_mut_ptr().offset(0 as i32 as isize)
-            as *mut *mut i32
+    flip_stack = global_flip_stack.as_ptr() as *mut *mut i32;
 }

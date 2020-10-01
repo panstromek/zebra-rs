@@ -51,7 +51,6 @@ const COEFFS: &[u8; 1336662] = include_bytes!("./../../coeffs2.bin");
 pub async fn start_game() {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
     unsafe {
-        unflip::run_static_initializers();
         set_default_engine_globals();
         use_book = 0;
 
