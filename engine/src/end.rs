@@ -78,22 +78,22 @@ pub static mut region_parity: u32 = 0;
    These are taken from the normal distribution; to the percentile
    x corresponds the probability Pr(-x <= Y <= x) where Y is a N(0,1)
    variable. */
-pub static mut confidence: [f64; 10] =
+pub static confidence: [f64; 10] =
     [1.000f64, 0.99f64, 0.98f64, 0.954f64, 0.911f64, 0.838f64, 0.729f64,
         0.576f64, 0.383f64, 0.197f64];
 /* Percentiles used in the endgame MPC */
-pub static mut end_percentile: [f64; 10] =
+pub static end_percentile: [f64; 10] =
     [100.0f64, 4.0f64, 3.0f64, 2.0f64, 1.7f64, 1.4f64, 1.1f64, 0.8f64, 0.5f64,
         0.25f64];
-pub static mut stability_threshold: [i32; 19] =
+pub static stability_threshold: [i32; 19] =
     [65 as i32, 65 as i32, 65 as i32,
         65 as i32, 65 as i32, 46 as i32,
         38 as i32, 30 as i32, 24 as i32,
         24 as i32, 24 as i32, 24 as i32,
         0 as i32, 0 as i32, 0 as i32, 0 as i32,
         0 as i32, 0 as i32, 0 as i32];
-pub static mut fast_first_mean: [[f64; 64]; 61] = [[0.; 64]; 61];
-pub static mut fast_first_sigma: [[f64; 64]; 61] = [[0.; 64]; 61];
+// pub static mut fast_first_mean: [[f64; 64]; 61] = [[0.; 64]; 61];
+// pub static mut fast_first_sigma: [[f64; 64]; 61] = [[0.; 64]; 61];
 pub static mut best_move: i32 = 0;
 pub static mut best_end_root_move: i32 = 0;
 pub static mut full_output_mode: i32 = 0;
@@ -791,8 +791,8 @@ pub unsafe fn setup_end() {
                     ff_threshold[i as usize] *
                         END_SIGMA[i as usize][j as usize] as f64
             }
-            fast_first_mean[i as usize][j as usize] = last_mean;
-            fast_first_sigma[i as usize][j as usize] = last_sigma;
+            // fast_first_mean[i as usize][j as usize] = last_mean;
+            // fast_first_sigma[i as usize][j as usize] = last_sigma;
             prelim_threshold[i as usize][j as usize] = last_mean + last_sigma;
             i -= 1
         }
