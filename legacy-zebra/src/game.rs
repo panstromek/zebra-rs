@@ -1,12 +1,11 @@
 use libc_wrapper::{fclose, free, fprintf, fputs, fopen, puts, printf, fgets, time, ctime, strcpy, stdout, FILE, time_t};
-use crate::src::display::{display_optimal_line, display_status, produce_eval_text, send_status,
-                          send_status_time, send_status_pv, send_status_nodes, display_board};
+use crate::src::display::{display_optimal_line, display_status, produce_eval_text, send_status, send_status_time, send_status_pv, send_status_nodes, display_board, current_row, white_eval, white_time, white_player, black_eval, black_time, black_player, clear_status};
 
 use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError, FE};
 use engine::src::globals::{white_moves, black_moves, pv, pv_depth, board, piece_count};
-use engine::src::display::{current_row, black_player, white_player, white_time, white_eval, black_eval, black_time, clear_status, echo};
+use engine::src::display::{echo};
 use engine::src::search::{full_pv_depth, full_pv, set_current_eval, force_return, negate_current_eval, create_eval_info, disc_count, nodes, evaluations, evals, clear_ponder_move, set_ponder_move, float_move, sort_moves};
 use engine::src::zebra::EvaluationType;
 use engine::src::midgame::{toggle_perturbation_usage, toggle_midgame_abort_check};

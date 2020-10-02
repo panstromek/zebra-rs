@@ -7,6 +7,7 @@ use crate::src::game::CandidateMove;
 use crate::src::counter::CounterType;
 
 pub trait FrontEnd : FatalError {
+    fn reset_buffer_display();
     fn display_buffers();
     fn report_ponder_time(current_ponder_time_: f64, current_ponder_depth_: i32);
     fn after_update_best_list_verbose(best_list: &mut [i32; 4]);

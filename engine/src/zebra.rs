@@ -1,4 +1,4 @@
-use crate::src::display::{set_names, set_times, set_move_list, echo, set_evals, display_pv, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
+use crate::src::display::{echo,display_pv};
 use crate::src::timer::{toggle_abort_check, get_real_timer, determine_move_time, start_move, clear_panic_abort};
 use crate::src::moves::{disks_played, make_move, valid_move, move_count, move_list, generate_all, game_in_progress, get_move, get_move_async};
 use crate::src::search::{disc_count, total_time, total_evaluations, total_nodes, produce_compact_eval};
@@ -95,7 +95,7 @@ pub unsafe trait InitialMoveSource {
 }
 
 
-pub unsafe fn set_names_from_skills<FE :FrontEnd>() {
+pub unsafe fn set_names_from_skills<ZF: ZebraFrontend>() {
     let black_name = if skill[0] == 0 {
         b"Player\x00" as *const u8 as *const i8
     } else {
@@ -106,15 +106,17 @@ pub unsafe fn set_names_from_skills<FE :FrontEnd>() {
     } else {
         b"Zebra\x00" as *const u8 as *const i8
     };
-    set_names::<FE>(black_name, white_name);
+    ZF::set_names(black_name, white_name);
 }
 
 pub trait ZebraFrontend {
+    fn set_evals(black: f64, white: f64);
+    unsafe fn set_move_list(black: *mut i32, white: *mut i32, row: i32);
+    unsafe fn set_names(black_name: *const i8, white_name: *const i8);
+    fn set_times(black: i32, white: i32);
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
     fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64);
-    unsafe fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128], current_row_: i32,
-                                black_player_: *mut i8, black_time_: i32, black_eval_: f64,
-                                white_player_: *mut i8, white_time_: i32, white_eval_: f64,
+    unsafe fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
                                 black_moves_: &[i32; 60], white_moves_: &[i32; 60]);
     fn print_out_thor_matches(thor_max_games_: i32);
     unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32);
@@ -214,10 +216,10 @@ pub unsafe fn engine_play_game<
         if use_thor_ {
             ZF::load_thor_files();
         }
-        set_names_from_skills::<FE>();
-        set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
+        set_names_from_skills::<ZF>();
+        ZF::set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
-        set_evals(0.0f64, 0.0f64);
+        ZF::set_evals(0.0f64, 0.0f64);
         clear_moves();
         move_vec[0] = 0;
         // these are not used because their usage was disabled by preprocessor
@@ -236,9 +238,9 @@ pub unsafe fn engine_play_game<
                 let move_start = get_real_timer::<FE>();
                 clear_panic_abort();
                 if echo != 0 {
-                    set_move_list(black_moves.as_mut_ptr(),
+                    ZF::set_move_list(black_moves.as_mut_ptr(),
                                   white_moves.as_mut_ptr(), score_sheet_row);
-                    set_times(floor(player_time[0]) as i32,
+                    ZF::set_times(floor(player_time[0]) as i32,
                               floor(player_time[2]) as i32);
                     let opening_name = find_opening_name();
                     if !opening_name.is_null() {
@@ -264,11 +266,7 @@ pub unsafe fn engine_play_game<
                         ZF::print_out_thor_matches(thor_max_games);
                     }
                     ZF::display_board_after_thor(side_to_move, use_timer,
-                                                 &board, current_row,
-                                                 black_player, black_time,
-                                                 black_eval, white_player,
-                                                 white_time, white_eval,
-                                                 &black_moves, &white_moves);
+                                                 &board, &black_moves, &white_moves);
                 }
                 Dump::dump_position(side_to_move, &board);
                 Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
@@ -306,9 +304,9 @@ pub unsafe fn engine_play_game<
                                 0 as i32, &mut eval_info,
                                 &mut ComputeMoveLog::create_log_file_if_needed());
                         if side_to_move == 0 as i32 {
-                            set_evals(produce_compact_eval(eval_info), 0.0f64);
+                            ZF::set_evals(produce_compact_eval(eval_info), 0.0f64);
                         } else {
-                            set_evals(0.0f64, produce_compact_eval(eval_info));
+                            ZF::set_evals(0.0f64, produce_compact_eval(eval_info));
                         }
                         if eval_info.is_book != 0 &&
                             rand_move_freq > 0 &&
@@ -362,7 +360,7 @@ pub unsafe fn engine_play_game<
         if side_to_move == 0 as i32 { score_sheet_row += 1 }
         Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
         if echo != 0 && one_position_only == 0 {
-            set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
+            ZF::set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                           score_sheet_row);
             if use_thor_ {
                 let database_start = get_real_timer::<FE>();
@@ -382,12 +380,9 @@ pub unsafe fn engine_play_game<
                 }
                 ZF::print_out_thor_matches(thor_max_games);
             }
-            set_times(floor(player_time[0]) as _, floor(player_time[2]) as _);
+            ZF::set_times(floor(player_time[0]) as _, floor(player_time[2]) as _);
             ZF::display_board_after_thor(side_to_move, use_timer, &board,
-                                         current_row, black_player,
-                                         black_time, black_eval,
-                                         white_player, white_time,
-                                         white_eval, &black_moves,
+                                          &black_moves,
                                          &white_moves,
             );
         }
@@ -499,10 +494,10 @@ pub async unsafe fn engine_play_game_async<
         if use_thor_ {
             ZF::load_thor_files();
         }
-        set_names_from_skills::<FE>();
-        set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
+        set_names_from_skills::<ZF>();
+        ZF::set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
-        set_evals(0.0f64, 0.0f64);
+        ZF::set_evals(0.0f64, 0.0f64);
         clear_moves();
         move_vec[0] = 0;
         // these are not used because their usage was disabled by preprocessor
@@ -521,9 +516,9 @@ pub async unsafe fn engine_play_game_async<
                 let move_start = get_real_timer::<FE>();
                 clear_panic_abort();
                 if echo != 0 {
-                    set_move_list(black_moves.as_mut_ptr(),
+                    ZF::set_move_list(black_moves.as_mut_ptr(),
                                   white_moves.as_mut_ptr(), score_sheet_row);
-                    set_times(floor(player_time[0]) as i32,
+                    ZF::set_times(floor(player_time[0]) as i32,
                               floor(player_time[2]) as i32);
                     let opening_name = find_opening_name();
                     if !opening_name.is_null() {
@@ -549,11 +544,7 @@ pub async unsafe fn engine_play_game_async<
                         ZF::print_out_thor_matches(thor_max_games);
                     }
                     ZF::display_board_after_thor(side_to_move, use_timer,
-                                                 &board, current_row,
-                                                 black_player, black_time,
-                                                 black_eval, white_player,
-                                                 white_time, white_eval,
-                                                 &black_moves, &white_moves);
+                                                 &board, &black_moves, &white_moves);
                 }
                 Dump::dump_position(side_to_move, &board);
                 Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
@@ -591,9 +582,9 @@ pub async unsafe fn engine_play_game_async<
                                 0 as i32, &mut eval_info,
                                 &mut ComputeMoveLog::create_log_file_if_needed());
                         if side_to_move == 0 as i32 {
-                            set_evals(produce_compact_eval(eval_info), 0.0f64);
+                            ZF::set_evals(produce_compact_eval(eval_info), 0.0f64);
                         } else {
-                            set_evals(0.0f64, produce_compact_eval(eval_info));
+                            ZF::set_evals(0.0f64, produce_compact_eval(eval_info));
                         }
                         if eval_info.is_book != 0 &&
                             rand_move_freq > 0 &&
@@ -647,7 +638,7 @@ pub async unsafe fn engine_play_game_async<
         if side_to_move == 0 as i32 { score_sheet_row += 1 }
         Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
         if echo != 0 && one_position_only == 0 {
-            set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
+            ZF::set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                           score_sheet_row);
             if use_thor_ {
                 let database_start = get_real_timer::<FE>();
@@ -667,12 +658,9 @@ pub async unsafe fn engine_play_game_async<
                 }
                 ZF::print_out_thor_matches(thor_max_games);
             }
-            set_times(floor(player_time[0]) as _, floor(player_time[2]) as _);
+            ZF::set_times(floor(player_time[0]) as _, floor(player_time[2]) as _);
             ZF::display_board_after_thor(side_to_move, use_timer, &board,
-                                         current_row, black_player,
-                                         black_time, black_eval,
-                                         white_player, white_time,
-                                         white_eval, &black_moves,
+                                         &black_moves,
                                          &white_moves,
             );
         }

@@ -15,7 +15,7 @@ use crate::src::bitboard::init_bitboard;
 use crate::src::myrandom::{my_srandom, my_random};
 use crate::src::stubs::{abs};
 use crate::src::error::{FrontEnd};
-use crate::src::display::{echo, display_pv, reset_buffer_display};
+use crate::src::display::{echo, display_pv};
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_move, get_match_count, database_search};
 use engine_traits::CoeffSource;
 use flip::unflip::init_flip_stack;
@@ -445,7 +445,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     }
     max_depth_reached = 1;
     let empties = 60 as i32 - disks_played;
-    reset_buffer_display::<FE>();
+    FE::reset_buffer_display();
     determine_move_time(my_time as f64, my_incr as f64,
                         disks_played + 4 as i32);
     if get_ponder_move() == 0 { clear_ponder_times(); }

@@ -5,7 +5,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 use engine::src::game::{global_terminate, set_komi, toggle_human_openings, toggle_status_log};
 use engine::src::myrandom::my_srandom;
 use engine::src::thordb::init_thor_database;
-use engine::src::display::{echo, display_pv, set_move_list, set_evals, set_names, current_row, black_player, black_time, black_eval, white_eval, white_time, white_player};
+use engine::src::display::{echo, display_pv};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
 use engine::src::timer::{get_real_timer, determine_move_time, start_move};
 use engine::src::search::{full_pv, full_pv_depth, nodes, disc_count};
@@ -15,7 +15,7 @@ use engine::src::hash::setup_hash;
 use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack};
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::game::{global_setup, compute_move, game_init};
-use legacy_zebra::src::display::{display_move, display_board};
+use legacy_zebra::src::display::{display_move, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_evals, set_names};
 use engine::src::zebra::EvaluationType;
 use legacy_zebra::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;

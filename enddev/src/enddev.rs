@@ -10,12 +10,11 @@ use engine::src::zebra::EvaluationType;
 use engine::src::timer::start_move;
 use engine::src::hash::{determine_hash_values, setup_hash};
 use engine::src::search::disc_count;
-use legacy_zebra::src::display::display_board;
+use legacy_zebra::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use legacy_zebra::src::game::{extended_compute_move, compute_move, game_init, global_setup};
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
-use engine::src::display::{current_row, white_time, black_time, black_eval, white_eval, black_player, white_player};
 use libc_wrapper::_IO_FILE;
 
 extern "C" {
