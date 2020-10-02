@@ -45,7 +45,7 @@ async fn get_move_from_wasm(side_to_move: i32) -> i32 {
 macro_rules! c_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
 }
-const COEFFS: &[u8; 1336662] = include_bytes!("./../../coeffs2.bin");
+static COEFFS: &[u8; 1336662] = include_bytes!("./../../coeffs2.bin");
 
 #[wasm_bindgen]
 pub async fn start_game() {
