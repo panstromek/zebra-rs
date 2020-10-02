@@ -18,13 +18,14 @@ use crate::{
                   send_status_pv, send_status_nodes, produce_eval_text, display_sweep, send_sweep},
     }
 };
-use engine::src::display::{clear_status, echo, clear_sweep, interval2, interval1,
-                           last_output, sweep_modified, status_modified, timed_buffer_management};
 use engine::src::timer::{get_elapsed_time, is_panic_abort, get_real_timer};
 use engine::src::search::{hash_expand_pv};
 
 use engine::src::game::CandidateMove;
 use engine::src::counter::CounterType;
+use crate::src::display::{reset_buffer_display, clear_status, clear_sweep, interval2, interval1, last_output, sweep_modified, status_modified, timed_buffer_management};
+use std::env::args;
+use engine::src::display::echo;
 
 static mut buffer: [i8; 16] = [0; 16];
 
@@ -77,6 +78,9 @@ pub type FE = LibcFatalError;
 
 
 impl FrontEnd for LibcFatalError {
+    fn reset_buffer_display() {
+        unsafe { reset_buffer_display::<FE>() }
+    }
     /*
       DISPLAY_BUFFERS
       If an update has happened and the last display was long enough ago,

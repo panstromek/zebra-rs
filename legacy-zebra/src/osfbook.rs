@@ -4,8 +4,8 @@ use crate::{
         error::fatal_error
     }
 };
-use engine::src::display::{current_row, black_player, black_time, black_eval, white_eval, white_time, white_player, echo};
-use crate::src::display::display_board;
+use engine::src::display::{echo};
+use crate::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::midgame::{middle_game, toggle_midgame_abort_check, toggle_midgame_hash_usage};
 use engine::src::myrandom::{my_srandom, my_random};
 use engine::src::hash::{set_hash_transformation, determine_hash_values, setup_hash};

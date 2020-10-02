@@ -18,7 +18,6 @@ use std::convert::TryFrom;
 use engine::src::counter::CounterType;
 use engine_traits::CoeffSource;
 use flate2_coeff_source::Flate2Source;
-use engine::src::display::clear_sweep;
 use flip::unflip;
 use engine::src::myrandom;
 
@@ -223,6 +222,22 @@ impl DumpHandler for WasmFrontend {
 }
 
 impl ZebraFrontend for WasmFrontend {
+    fn set_evals(black: f64, white: f64) {
+        unimplemented!()
+    }
+
+    unsafe fn set_move_list(black: *mut i32, white: *mut i32, row: i32) {
+        unimplemented!()
+    }
+
+    unsafe fn set_names(black_name: *const i8, white_name: *const i8) {
+        unimplemented!()
+    }
+
+    fn set_times(black: i32, white: i32) {
+        unimplemented!()
+    }
+
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
         unimplemented!()
     }
@@ -231,7 +246,7 @@ impl ZebraFrontend for WasmFrontend {
         unimplemented!()
     }
 
-    unsafe fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128], current_row_: i32, black_player_: *mut i8, black_time_: i32, black_eval_: f64, white_player_: *mut i8, white_time_: i32, white_eval_: f64, black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
+    unsafe fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128], black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
         display_board(board_);
 
         // unimplemented!()
@@ -325,6 +340,10 @@ macro_rules! to_square {
 }
 
 impl FrontEnd for WasmFrontend {
+    fn reset_buffer_display() {
+
+    }
+
     fn display_buffers() {
         unimplemented!()
     }

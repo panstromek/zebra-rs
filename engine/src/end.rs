@@ -17,7 +17,7 @@ use crate::{
         globals::{piece_count, board, pv_depth, pv},
     }
 };
-use crate::src::display::{echo, reset_buffer_display};
+use crate::src::display::{echo};
 use crate::src::error::FrontEnd;
 use crate::src::hash::{add_hash, hash_flip1, hash_flip2};
 use crate::src::midgame::{toggle_midgame_hash_usage, tree_search};
@@ -2353,7 +2353,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     } else {
         set_panic_threshold(0.50f64 - (empties - 22) as f64 * 0.03f64);
     }
-    reset_buffer_display::<FE>();
+    FE::reset_buffer_display();
     /* Make sure the pre-searches don't mess up the hash table */
     toggle_midgame_hash_usage(1, 0);
     incomplete_search = 0;

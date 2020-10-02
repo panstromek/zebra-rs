@@ -10,13 +10,13 @@ use crate::src::thordb::{read_game_database, read_tournament_database, read_play
 use engine::src::thordb::{init_thor_database, get_total_game_count, get_thor_game_size, choose_thor_opening_move};
 use crate::src::error::{LibcFatalError, FE, fatal_error};
 use engine::src::error::{FrontEnd, FatalError};
-use engine::src::display::{white_time, black_time, current_row, black_player, white_player, white_eval, black_eval, echo, set_move_list, set_evals, set_names, set_times, toggle_smart_buffer_management, display_pv};
+use engine::src::display::{echo, display_pv};
 use libc_wrapper::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, sscanf, feof, fgets, atoi, scanf, sprintf, ctime, time, strchr, strcasecmp, atof, stdout};
 use engine::src::globals::{white_moves, score_sheet_row, black_moves, board};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType, adjust_counter};
 use engine::src::timer::{get_real_timer, determine_move_time, start_move, clear_panic_abort};
 use engine::src::search::{full_pv, full_pv_depth, nodes, disc_count, produce_compact_eval, total_time, total_nodes};
-use crate::src::display::{display_move, display_board, dumpch};
+use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::moves::{disks_played, make_move, valid_move, unmake_move, move_count, generate_all, game_in_progress};
 use engine::src::hash::{setup_hash, set_hash_transformation};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, find_opening_name, set_draw_mode, set_game_mode};
@@ -807,6 +807,21 @@ unsafe fn play_game(mut file_name: *const i8,
 
 struct LibcFrontend {} //TODO this could probably be merged with the FrontEnd trait or something
 impl ZebraFrontend for LibcFrontend {
+    fn set_evals(black: f64, white: f64) {
+        unsafe { set_evals(black, white); }
+    }
+
+    unsafe fn set_move_list(black: *mut i32, white: *mut i32, row: i32) {
+        set_move_list(black, white, row)
+    }
+
+    unsafe fn set_names(black_name: *const i8, white_name: *const i8) {
+        set_names::<LibcFatalError>(black_name, white_name)
+    }
+
+    fn set_times(black: i32, white: i32) {
+        unsafe { set_times(black, white) }
+    }
 
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
         unsafe {
@@ -831,16 +846,13 @@ impl ZebraFrontend for LibcFrontend {
         }
     }
     unsafe fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
-                                current_row_: i32,
-                                black_player_: *mut i8, black_time_: i32, black_eval_: f64,
-                                white_player_: *mut i8, white_time_: i32, white_eval_: f64,
                                 black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
         unsafe {
             display_board(stdout, board_,
-                          side_to_move, 1 as i32,
-                          give_time_, 1 as i32,
-                          current_row_, black_player_, black_time_, black_eval_,
-                          white_player_, white_time_, white_eval_, black_moves_, white_moves_);
+                          side_to_move, 1,
+                          give_time_, 1,
+                          current_row, black_player, black_time, black_eval,
+                          white_player, white_time, white_eval, black_moves_, white_moves_);
         }
     }
     fn print_out_thor_matches(thor_max_games_: i32) {
