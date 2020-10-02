@@ -188,14 +188,9 @@ pub unsafe fn static_or_terminal_evaluation<FE : FrontEnd>(side_to_move:
 */
 
 pub unsafe fn setup_midgame() {
-    let mut i: i32 = 0;
     allow_midgame_hash_probe = 1;
     allow_midgame_hash_update = 1;
-    i = 0;
-    while i <= 60 as i32 {
-        stage_reached[i as usize] = 0;
-        i += 1
-    }
+    stage_reached = [0; 62];
     calculate_perturbation();
 }
 /*
