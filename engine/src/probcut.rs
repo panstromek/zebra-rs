@@ -48,17 +48,17 @@ unsafe fn set_probcut(depth: i32, shallow: i32) {
     let mut this_try = mpc_cut[depth as usize].cut_tries;
     mpc_cut[depth as usize].cut_depth[this_try as usize] = shallow;
     let mut i = 0;
-    while i <= 60 as i32 {
-        mpc_cut[depth as usize].bias[this_try as usize][i as usize] =
+    while i <= 60 {
+        mpc_cut[depth as usize].bias[this_try as usize][i] =
             floor(128.0f64 *
-                (MID_CORR[i as usize][shallow as usize].const_base +
-                    MID_CORR[i as usize][shallow as usize].const_slope
+                (MID_CORR[i][shallow as usize].const_base +
+                    MID_CORR[i][shallow as usize].const_slope
                         * shallow as f32) as f64)
                 as i32;
-        mpc_cut[depth as usize].window[this_try as usize][i as usize] =
+        mpc_cut[depth as usize].window[this_try as usize][i] =
             floor(128.0f64 *
-                (MID_CORR[i as usize][shallow as usize].sigma_base +
-                    MID_CORR[i as usize][shallow as usize].sigma_slope
+                (MID_CORR[i][shallow as usize].sigma_base +
+                    MID_CORR[i][shallow as usize].sigma_slope
                         * shallow as f32) as f64)
                 as i32;
         i += 1
@@ -72,16 +72,8 @@ unsafe fn set_probcut(depth: i32, shallow: i32) {
 */
 
 pub unsafe fn init_probcut() {
-    let mut i = 0;
-    while i <= 22 {
-        mpc_cut[i].cut_tries = 0;
-        i += 1
-    }
-    let mut i = 0;
-    while i <= 60 {
-        use_end_cut[i] = 0;
-        i += 1
-    }
+    mpc_cut.iter_mut().for_each(|info| info.cut_tries = 0);
+    use_end_cut = [0; 61];
     set_probcut(3, 1);
     set_probcut(4, 2);
     set_probcut(5, 1);
