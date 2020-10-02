@@ -25,6 +25,7 @@ use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_mo
 use crate::src::stubs::{abs, ceil};
 use crate::src::timer::{check_panic_abort, check_threshold, clear_panic_abort, get_elapsed_time, is_panic_abort, last_panic_check, set_panic_threshold};
 use crate::src::zebra::EvaluationType;
+use crate::src::globals::Board;
 
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
@@ -133,7 +134,7 @@ pub unsafe fn TestFlips_wrapper(sq: i32, my_bits: BitBoard, opp_bits: BitBoard, 
   PREPARE_TO_SOLVE
   Create the list of empty squares.
 */
-pub unsafe fn prepare_to_solve(board_0: *const i32) {
+pub unsafe fn prepare_to_solve(board_0: &Board) {
     /* fixed square ordering: */
     /* jcw's order, which is the best of 4 tried (according to Warren Smith) */
     static worst2best: [u8; 64] = [
@@ -146,18 +147,19 @@ pub unsafe fn prepare_to_solve(board_0: *const i32) {
         51, 58, 84, 85, 33, 36, 63, 66,
         11, 18, 81, 88, 44, 45, 54, 45
     ];
-    let mut i: i32 = 0;
-    let mut last_sq: i32 = 0;
     region_parity = 0;
-    last_sq = 0;
-    i = 59;
-    while i >= 0 as i32 {
-        let sq = worst2best[i as usize] as i32;
-        if *board_0.offset(sq as isize) == 1 as i32 {
-            end_move_list[last_sq as usize].succ = sq;
-            end_move_list[sq as usize].pred = last_sq;
+    let mut last_sq = 0;
+    let mut i = 59;
+    loop {
+        let sq = worst2best[i];
+        if board_0[sq as usize] == 1 {
+            end_move_list[last_sq as usize].succ = sq as i32;
+            end_move_list[sq as usize].pred = last_sq as i32;
             region_parity ^= quadrant_mask[sq as usize];
             last_sq = sq
+        }
+        if i == 0 {
+            break;
         }
         i -= 1
     }
@@ -1628,7 +1630,7 @@ pub unsafe fn end_tree_search<FE: FrontEnd>(level: i32,
         } else {
             previous_move = 0 as i32
         } /* d4, of course impossible */
-        prepare_to_solve(board.as_mut_ptr());
+        prepare_to_solve(&board);
         result =
             end_solve(my_bits, opp_bits, alpha, beta, side_to_move, empties,
                       disk_diff, previous_move, bb_flips_);
