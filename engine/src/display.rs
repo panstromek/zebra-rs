@@ -24,9 +24,6 @@ pub static mut sweep_modified: i32 = 0;
 pub static mut timed_buffer_management: i32 = 1;
 pub static mut status_pos: i32 = 0;
 pub static mut sweep_pos: i32 = 0;
-pub static mut black_list: *mut i32 = 0 as *const i32 as *mut i32;
-pub static mut white_list: *mut i32 = 0 as *const i32 as *mut i32;
-
 
 /*
   SET_NAMES
@@ -55,8 +52,6 @@ pub unsafe fn set_evals(black: f64, white: f64) {
 }
 
 pub unsafe fn set_move_list(black: *mut i32, white: *mut i32, row: i32) {
-    black_list = black;
-    white_list = white;
     current_row = row;
 }
 
