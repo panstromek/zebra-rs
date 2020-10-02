@@ -647,7 +647,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
     } else { *global_parity = 0 as i32 }
     /* The A file (with or without adjacent X-squares) */
     if side_to_move == 0 as i32 {
-        *buffer_a.offset(0 as i32 as isize) =
+        *buffer_a =
             mirror82x[(compact[row_pattern[0] as
                 usize] +
                 6561 as i32 *
@@ -676,7 +676,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
                 19683 as i32 *
                     board[77]) as usize]
     } else {
-        *buffer_a.offset(0 as i32 as isize) =
+        *buffer_a =
             mirror82x[inverse10[(compact[row_pattern[0] as usize] +
                 6561 as i32 *
                     board[22] +
@@ -707,7 +707,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
     }
     /* The B file */
     if side_to_move == 0 as i32 {
-        *buffer_b.offset(0 as i32 as isize) =
+        *buffer_b =
             mirror[compact[row_pattern[1] as usize] as
                 usize];
         *buffer_b.offset(1) =
@@ -720,7 +720,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
             mirror[compact[col_pattern[6] as usize] as
                 usize]
     } else {
-        *buffer_b.offset(0 as i32 as isize) =
+        *buffer_b =
             mirror[inverse8[compact[row_pattern[1] as
                 usize] as usize] as usize];
         *buffer_b.offset(1) =
@@ -735,7 +735,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
     }
     /* The C file */
     if side_to_move == 0 as i32 {
-        *buffer_c.offset(0 as i32 as isize) =
+        *buffer_c =
             mirror[compact[row_pattern[2] as usize] as
                 usize];
         *buffer_c.offset(1) =
@@ -748,7 +748,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
             mirror[compact[col_pattern[5] as usize] as
                 usize]
     } else {
-        *buffer_c.offset(0 as i32 as isize) =
+        *buffer_c =
             mirror[inverse8[compact[row_pattern[2] as
                 usize] as usize] as usize];
         *buffer_c.offset(1) =
@@ -763,7 +763,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
     }
     /* The D file */
     if side_to_move == 0 as i32 {
-        *buffer_d.offset(0 as i32 as isize) =
+        *buffer_d =
             mirror[compact[row_pattern[3] as usize] as
                 usize];
         *buffer_d.offset(1) =
@@ -776,7 +776,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
             mirror[compact[col_pattern[4] as usize] as
                 usize]
     } else {
-        *buffer_d.offset(0 as i32 as isize) =
+        *buffer_d =
             mirror[inverse8[compact[row_pattern[3] as
                 usize] as usize] as usize];
         *buffer_d.offset(1) =
@@ -796,7 +796,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
             (row_pattern[0] & 1023 as i32) +
                 ((row_pattern[1] &
                     1023 as i32) << 10 as i32);
-        *buffer_52.offset(0 as i32 as isize) =
+        *buffer_52 =
             compact[config52 as usize];
         /* a1-a5 + b1-b5 */
         config52 =
@@ -853,7 +853,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
             (row_pattern[0] & 1023 as i32) +
                 ((row_pattern[1] &
                     1023 as i32) << 10 as i32);
-        *buffer_52.offset(0 as i32 as isize) =
+        *buffer_52 =
             inverse10[compact[config52 as usize] as usize];
         /* a1-a5 + b1-b5 */
         config52 =
@@ -914,7 +914,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
                     << 6 as i32) +
                 ((row_pattern[2] & 63 as i32)
                     << 12 as i32);
-        *buffer_33.offset(0 as i32 as isize) =
+        *buffer_33 =
             mirror33[compact[config33 as usize] as usize];
         /* h1-f1 + h2-f2 + h3-f3 */
         config33 =
@@ -951,7 +951,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
                     << 6 as i32) +
                 ((row_pattern[2] & 63 as i32)
                     << 12 as i32);
-        *buffer_33.offset(0 as i32 as isize) =
+        *buffer_33 =
             mirror33[inverse9[compact[config33 as usize] as usize] as usize];
         /* h1-f1 + h2-f2 + h3-f3 */
         config33 =
@@ -985,14 +985,14 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
     }
     /* The diagonals of length 8 */
     if side_to_move == 0 as i32 {
-        *buffer_8.offset(0 as i32 as isize) =
+        *buffer_8 =
             mirror[compact[diag1_pattern[7] as usize]
                 as usize];
         *buffer_8.offset(1) =
             mirror[compact[diag2_pattern[7] as usize]
                 as usize]
     } else {
-        *buffer_8.offset(0 as i32 as isize) =
+        *buffer_8 =
             mirror[inverse8[compact[diag1_pattern[7]
                 as usize] as usize] as usize];
         *buffer_8.offset(1) =
@@ -1001,7 +1001,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
     }
     /* The diagonals of length 7 */
     if side_to_move == 0 as i32 {
-        *buffer_7.offset(0 as i32 as isize) =
+        *buffer_7 =
             mirror7[compact[diag1_pattern[6] as usize]
                 as usize];
         *buffer_7.offset(1) =
@@ -1014,7 +1014,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
             mirror7[compact[diag2_pattern[8] as usize]
                 as usize]
     } else {
-        *buffer_7.offset(0 as i32 as isize) =
+        *buffer_7 =
             mirror7[inverse7[compact[diag1_pattern[6]
                 as usize] as usize] as usize];
         *buffer_7.offset(1) =
@@ -1029,7 +1029,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
     }
     /* The diagonals of length 6 */
     if side_to_move == 0 as i32 {
-        *buffer_6.offset(0 as i32 as isize) =
+        *buffer_6 =
             mirror6[compact[diag1_pattern[5] as usize]
                 as usize];
         *buffer_6.offset(1) =
@@ -1042,7 +1042,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
             mirror6[compact[diag2_pattern[9] as usize]
                 as usize]
     } else {
-        *buffer_6.offset(0 as i32 as isize) =
+        *buffer_6 =
             mirror6[inverse6[compact[diag1_pattern[5]
                 as usize] as usize] as usize];
         *buffer_6.offset(1) =
@@ -1057,7 +1057,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
     }
     /* The diagonals of length 5 */
     if side_to_move == 0 as i32 {
-        *buffer_5.offset(0 as i32 as isize) =
+        *buffer_5 =
             mirror5[compact[diag1_pattern[4] as usize]
                 as usize];
         *buffer_5.offset(1) =
@@ -1070,7 +1070,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
             mirror5[compact[diag2_pattern[10] as
                 usize] as usize]
     } else {
-        *buffer_5.offset(0 as i32 as isize) =
+        *buffer_5 =
             mirror5[inverse5[compact[diag1_pattern[4]
                 as usize] as usize] as usize];
         *buffer_5.offset(1) =
@@ -1085,7 +1085,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
     }
     /* The diagonals of length 4 */
     if side_to_move == 0 as i32 {
-        *buffer_4.offset(0 as i32 as isize) =
+        *buffer_4 =
             mirror4[compact[diag1_pattern[3] as usize]
                 as usize];
         *buffer_4.offset(1) =
@@ -1098,7 +1098,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
             mirror4[compact[diag2_pattern[11] as
                 usize] as usize]
     } else {
-        *buffer_4.offset(0 as i32 as isize) =
+        *buffer_4 =
             mirror4[inverse4[compact[diag1_pattern[3]
                 as usize] as usize] as usize];
         *buffer_4.offset(1) =

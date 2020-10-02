@@ -162,7 +162,7 @@ pub unsafe fn midgame_c__update_best_list(best_list:
             i -= 1
         }
     }
-    *best_list.offset(0 as i32 as isize) = move_0;
+    *best_list = move_0;
 }
 
 

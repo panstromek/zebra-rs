@@ -592,15 +592,13 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             printf(b"Black parameters: \x00" as *const u8 as
                        *const i8);
             scanf(b"%d\x00" as *const u8 as *const i8,
-                  &mut *skill.as_mut_ptr().offset(0 as i32 as isize)
+                  &mut *skill.as_mut_ptr()
                       as *mut i32);
             if skill[0] > 0 as i32 {
                 scanf(b"%d %d\x00" as *const u8 as *const i8,
-                      &mut *exact_skill.as_mut_ptr().offset(0 as i32
-                                                                as isize) as
+                      &mut *exact_skill.as_mut_ptr() as
                           *mut i32,
-                      &mut *wld_skill.as_mut_ptr().offset(0 as i32 as
-                                                              isize) as
+                      &mut *wld_skill.as_mut_ptr() as
                           *mut i32);
             }
         }

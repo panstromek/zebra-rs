@@ -958,7 +958,7 @@ pub unsafe fn init_maps<FE: FrontEnd>() {
     inv_symmetry_map[7] = a7_b1_map.as_mut_ptr();
     i = 0;
     while i < 8 as i32 {
-        *symmetry_map[i as usize].offset(0 as i32 as isize) = 0;
+        *symmetry_map[i as usize] = 0;
         i += 1
     }
     i = 0;
@@ -1336,7 +1336,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                 *allowed_moves.offset((j - 1 as i32) as isize);
             j -= 1
         }
-        *allowed_moves.offset(0 as i32 as isize) = best_move;
+        *allowed_moves = best_move;
         *best_index = 0;
         curr_depth += 2 as i32
     }

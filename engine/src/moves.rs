@@ -119,11 +119,7 @@ pub unsafe fn init_moves() {
             }
             first_flip_direction[pos as usize] =
                 &mut *(*flip_direction.as_mut_ptr().offset(pos as
-                    isize)).as_mut_ptr().offset(0
-                    as
-                    i32
-                    as
-                    isize)
+                    isize)).as_mut_ptr()
                     as *mut i32;
             j += 1
         }

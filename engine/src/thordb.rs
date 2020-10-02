@@ -580,7 +580,7 @@ pub unsafe fn compute_full_primary_hash(hash_val:
     i = 0;
     while i < 8 as i32 {
         /* b1 -> b1 */
-        *hash_val.offset(0 as i32 as isize) ^=
+        *hash_val ^=
             primary_hash[i as usize][thor_row_pattern[i as usize] as usize];
         /* b8 -> b1 */
         *hash_val.offset(1) ^=
@@ -599,7 +599,7 @@ pub unsafe fn compute_full_primary_hash(hash_val:
     }
     /* g1 -> b1 */
     *hash_val.offset(4) =
-        bit_reverse_32(*hash_val.offset(0 as i32 as isize));
+        bit_reverse_32(*hash_val);
     /* g8 -> b1 */
     *hash_val.offset(5) =
         bit_reverse_32(*hash_val.offset(1));
@@ -621,7 +621,7 @@ pub unsafe fn compute_full_secondary_hash(hash_val:
     i = 0;
     while i < 8 as i32 {
         /* b1 -> b1 */
-        *hash_val.offset(0 as i32 as isize) ^=
+        *hash_val ^=
             secondary_hash[i as usize][thor_row_pattern[i as usize] as usize];
         /* b8 -> b1 */
         *hash_val.offset(1) ^=
@@ -642,7 +642,7 @@ pub unsafe fn compute_full_secondary_hash(hash_val:
     }
     /* g1 -> b1 */
     *hash_val.offset(4) =
-        bit_reverse_32(*hash_val.offset(0 as i32 as isize));
+        bit_reverse_32(*hash_val);
     /* g8 -> b1 */
     *hash_val.offset(5) =
         bit_reverse_32(*hash_val.offset(1));
