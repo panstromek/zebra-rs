@@ -616,7 +616,7 @@ pub unsafe fn produce_eval_text(eval_info: &EvaluationType,
         }
         6 => {
             /* We really want to perform len = sprintf( buffer, "" ); */
-            *buffer.offset(0 as i32 as isize) = 0;
+            *buffer = 0;
             len = 0 as i32
         }
         8 => {

@@ -943,8 +943,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
                  0 as i32, book, mid - 1 as i32,
                  exact - 1 as i32, wld - 1 as i32,
                  1 as i32,
-                 &mut (*evaluated_list.as_mut_ptr().offset(0 as i32 as
-                                                               isize)).eval);
+                 &mut (*evaluated_list.as_mut_ptr()).eval);
     if evaluated_list[0].eval.type_0 as u32
            == PASS_EVAL as i32 as u32 {
         /* Don't allow pass */
@@ -952,10 +951,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
                      0 as i32, 0 as i32, book,
                      mid - 1 as i32, exact - 1 as i32,
                      wld - 1 as i32, 1 as i32,
-                     &mut (*evaluated_list.as_mut_ptr().offset(0 as
-                                                                   i32
-                                                                   as
-                                                                   isize)).eval);
+                     &mut (*evaluated_list.as_mut_ptr()).eval);
         if evaluated_list[0].eval.type_0 as
                u32 == PASS_EVAL as i32 as u32 {
             /* Game has ended */

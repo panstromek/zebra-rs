@@ -196,7 +196,7 @@ pub unsafe fn get_pv(destin: *mut i32) -> i32 {
         }
         return pv_depth[0]
     } else {
-        *destin.offset(0 as i32 as isize) = prefix_move;
+        *destin = prefix_move;
         i = 0;
         while i < pv_depth[0] {
             *destin.offset((i + 1 as i32) as isize) =

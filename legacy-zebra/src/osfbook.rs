@@ -394,12 +394,12 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
                *const i8);
     if original_side_to_move == 0 as i32 {
         root_score =
-            (*node.offset(0 as i32 as isize)).black_minimax_score as
+            (*node).black_minimax_score as
                 i32;
         printf(b"black\x00" as *const u8 as *const i8);
     } else {
         root_score =
-            (*node.offset(0 as i32 as isize)).white_minimax_score as
+            (*node).white_minimax_score as
                 i32;
         printf(b"white\x00" as *const u8 as *const i8);
     }

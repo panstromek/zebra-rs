@@ -1574,7 +1574,7 @@ pub unsafe fn update_best_list<FE: FrontEnd>(best_list_: &mut [i32; 4],
         }
         if *best_list_length < 4 as i32 { *best_list_length += 1 }
     }
-    *best_list.offset(0 as i32 as isize) = move_0;
+    *best_list = move_0;
     if verbose != 0 {
         FE::after_update_best_list_verbose(best_list_);
     };
