@@ -11,7 +11,6 @@ use crate::src::midgame::{setup_midgame, is_midgame_abort, middle_game, toggle_m
 use crate::src::moves::{disks_played, init_moves, valid_move, move_list, move_count, generate_all};
 use crate::src::stable::init_stable;
 use crate::src::probcut::init_probcut;
-use crate::src::bitboard::init_bitboard;
 use crate::src::myrandom::{my_srandom, my_random};
 use crate::src::stubs::{abs};
 use crate::src::error::{FrontEnd};
@@ -284,7 +283,6 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
         my_srandom(timer as i32);
     } else { my_srandom(1 as i32); }
     init_hash::<FE>(hash_bits);
-    init_bitboard();
     init_moves();
 
     // inlined init_coeffs
