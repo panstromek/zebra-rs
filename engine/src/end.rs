@@ -124,22 +124,17 @@ static stability_threshold: [i32; 19] =
   (1) verifying that there exists a neighboring opponent disc,
   (2) verifying that the move flips some disc.
 */
-unsafe fn TestFlips_wrapper(end:&mut End, sq: i32, my_bits: BitBoard, opp_bits: BitBoard, bb_flips_: &mut BitBoard) -> i32 {
-    let mut flipped: i32 = 0;
+fn TestFlips_wrapper(end:&mut End, sq: i32, my_bits: BitBoard, opp_bits: BitBoard, bb_flips_: &mut BitBoard) -> i32 {
     if end.neighborhood_mask[sq as usize].high & opp_bits.high |
-        end.neighborhood_mask[sq as usize].low & opp_bits.low !=
-        0 as i32 as u32 {
-        let (flipped_, bb) =
-            TestFlips_bitboard[(sq - 11 as i32) as
-                usize](my_bits.high,
-                       my_bits.low,
-                       opp_bits.high,
-                       opp_bits.low);
-        flipped = flipped_;
-        bb_flips_.low = bb.low;
-        bb_flips_.high = bb.high;
-    } else { flipped = 0 as i32 }
-    return flipped;
+        end.neighborhood_mask[sq as usize].low & opp_bits.low != 0 {
+
+        let (flipped, bb) =
+            TestFlips_bitboard[(sq - 11) as usize](my_bits.high, my_bits.low, opp_bits.high, opp_bits.low);
+        *bb_flips_ = bb;
+        flipped
+    } else {
+        0
+    }
 }
 /*
   PREPARE_TO_SOLVE
