@@ -17,8 +17,7 @@ pub struct BitBoard {
    Contents:      Basic bitboard manipulations
 */
 
-pub static mut square_mask: [BitBoard; 100] =
-    [BitBoard{high: 0, low: 0,}; 100];
+pub static square_mask: [BitBoard; 100] = create_square_mask();
 /*
   NON_ITERATIVE_POPCOUNT
   Counts the number of bits set in a 64-bit integer.
@@ -148,10 +147,10 @@ pub unsafe fn set_bitboards(board: *mut i32,
     *opp_out = opp_bits;
 }
 
-pub unsafe fn init_bitboard() {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    i = 1;
+const fn create_square_mask() -> [BitBoard; 100] {
+    let mut square_mask_: [BitBoard; 100] = [BitBoard{high: 0, low: 0,}; 100];
+    let mut j = 0;
+    let mut i = 1;
     while i <= 8 as i32 {
         j = 1;
         while j <= 8 as i32 {
@@ -160,13 +159,13 @@ pub unsafe fn init_bitboard() {
                 (8 as i32 * (i - 1 as i32) +
                      (j - 1 as i32)) as u32;
             if shift < 32 as i32 as u32 {
-                square_mask[pos as usize].low =
+                square_mask_[pos as usize].low =
                     ((1 as u64) << shift) as u32;
-                square_mask[pos as usize].high =
+                square_mask_[pos as usize].high =
                     0 as i32 as u32
             } else {
-                square_mask[pos as usize].low = 0;
-                square_mask[pos as usize].high =
+                square_mask_[pos as usize].low = 0;
+                square_mask_[pos as usize].high =
                     ((1 as u64) <<
                          shift.wrapping_sub(32 as i32 as
                                                 u32)) as u32
@@ -175,4 +174,5 @@ pub unsafe fn init_bitboard() {
         }
         i += 1
     };
+    square_mask_
 }
