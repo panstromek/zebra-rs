@@ -2,6 +2,7 @@ use crate::src::bitboard::{BitBoard, non_iterative_popcount, set_bitboards, squa
 use ::patterns::pow3;
 use crate::src::search::position_list;
 use crate::src::bitbtest::{TestFlips_bitboard};
+use crate::src::globals::Board;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -462,10 +463,10 @@ unsafe fn stability_search(my_bits: BitBoard,
   Tries to compute all stable discs by search the entire game tree.
   The actual work is performed by STABILITY_SEARCH above.
 */
-unsafe fn complete_stability_search(board: *mut i32,
+unsafe fn complete_stability_search(board: &Board,
                                                side_to_move: i32,
                                                mut stable_bits:
-                                                   *mut BitBoard, bb_flips_: &mut BitBoard) {
+                                                   &mut BitBoard, bb_flips_: &mut BitBoard) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut empties: i32 = 0;
@@ -482,7 +483,7 @@ unsafe fn complete_stability_search(board: *mut i32,
     i = 0;
     while i < 60 as i32 {
         let sq = position_list[i as usize];
-        if *board.offset(sq as isize) == 1 as i32 {
+        if *board.as_ptr().offset(sq as isize) == 1 as i32 {
             stab_move_list[last_sq as usize].succ = sq;
             stab_move_list[sq as usize].pred = last_sq;
             last_sq = sq
@@ -495,7 +496,7 @@ unsafe fn complete_stability_search(board: *mut i32,
     while i <= 8 as i32 {
         j = 1;
         while j <= 8 as i32 {
-            if *board.offset((10 as i32 * i + j) as isize) ==
+            if *board.as_ptr().offset((10 as i32 * i + j) as isize) ==
                    1 as i32 {
                 empties += 1
             }
@@ -554,7 +555,7 @@ unsafe fn complete_stability_search(board: *mut i32,
   is returned in the boolean vector IS_STABLE.
 */
 
-pub unsafe fn get_stable(board: &mut i32,
+pub unsafe fn get_stable(board: &Board,
                          side_to_move: i32,
                          is_stable: *mut i32, bb_flips_: &mut BitBoard) {
     let mut i: i32 = 0;

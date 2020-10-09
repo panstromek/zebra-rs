@@ -2163,7 +2163,7 @@ unsafe fn end_tree_wrapper<FE: FrontEnd>(end: &mut End, level: i32,
     let mut my_bits = BitBoard{high: 0, low: 0,};
     let mut opp_bits = BitBoard{high: 0, low: 0,};
     init_mmx();
-    set_bitboards(board.as_mut_ptr(), side_to_move, &mut my_bits,
+    set_bitboards(&board, side_to_move, &mut my_bits,
                   &mut opp_bits);
     return end_tree_search::<FE>(end,level, max_depth, my_bits, opp_bits, side_to_move,
                            if alpha - end. komi_shift > -(64 as i32) {
