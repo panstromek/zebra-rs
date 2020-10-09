@@ -9,7 +9,7 @@ use crate::{
         hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended, find_hash, HashEntry, hash_put_value2, hash_put_value1},
         bitbcnt::CountFlips_bitboard,
         bitboard::{set_bitboards, BitBoard},
-        bitbmob::{init_mmx, bitboard_mobility, weighted_mobility},
+        bitbmob::{bitboard_mobility, weighted_mobility},
         bitbtest::{TestFlips_bitboard},
         probcut::{end_mpc_depth, use_end_cut},
         stable::{count_stable, count_edge_stable},
@@ -2162,7 +2162,6 @@ unsafe fn end_tree_wrapper<FE: FrontEnd>(end: &mut End, level: i32,
     let mut selective_cutoff: i32 = 0;
     let mut my_bits = BitBoard{high: 0, low: 0,};
     let mut opp_bits = BitBoard{high: 0, low: 0,};
-    init_mmx();
     set_bitboards(&board, side_to_move, &mut my_bits,
                   &mut opp_bits);
     return end_tree_search::<FE>(end,level, max_depth, my_bits, opp_bits, side_to_move,
