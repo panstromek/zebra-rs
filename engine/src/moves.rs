@@ -61,10 +61,7 @@ pub static dir_mask: [i32; 100] =
         0 as i32, 0 as i32, 0 as i32, 0 as i32,
         0 as i32, 0 as i32, 0 as i32];
 
-pub static move_offset: [i32; 8] =
-    [1 as i32, -(1 as i32), 9 as i32,
-        -(9 as i32), 10 as i32, -(10 as i32),
-        11 as i32, -(11 as i32)];
+pub static move_offset: [i32; 8] = [1, -1, 9, -9, 10, -10, 11, -11];
 
 /*
    MAKE_MOVE
@@ -109,10 +106,9 @@ pub unsafe fn init_moves() {
                 }
                 k += 1
             }
-            first_flip_direction[pos as usize] =
-                &mut *(*flip_direction.as_mut_ptr().offset(pos as
-                    isize)).as_mut_ptr()
-                    as *mut i32;
+            first_flip_direction[pos as usize] = flip_direction
+                .as_mut_ptr()
+                .offset(pos as isize) as *mut i32;
             j += 1
         }
         i += 1

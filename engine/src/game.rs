@@ -61,11 +61,21 @@ pub struct CandidateMove {
 }
 
 /* The maximum length of any system path. */
+/*
+  SET_FORCED_OPENING
+  Specifies an opening line that Zebra is forced to follow when playing.
+*/
 pub static mut forced_opening: *const i8 = 0 as *const i8;
 pub static mut last_time_used: f64 = 0.;
 pub static mut max_depth_reached: i32 = 0;
 pub static mut use_log_file: i32 = 1;
 pub static mut play_human_openings: i32 = 1;
+
+/*
+  TOGGLE_THOR_MATCH_OPENINGS
+  Specifies whether matching Thor games are used as opening book
+  before resorting to the usual opening book.
+*/
 pub static mut play_thor_match_openings: i32 = 1;
 pub static mut game_evaluated_count: i32 = 0;
 pub static mut komi: i32 = 0;
@@ -110,31 +120,13 @@ pub unsafe fn set_komi(in_komi: i32) {
 pub unsafe fn toggle_human_openings(toggle: i32) {
     play_human_openings = toggle;
 }
-/*
-  TOGGLE_THOR_MATCH_OPENINGS
-  Specifies whether matching Thor games are used as opening book
-  before resorting to the usual opening book.
-*/
-
-pub unsafe fn toggle_thor_match_openings(toggle: i32) {
-    play_thor_match_openings = toggle;
-}
-/*
-  SET_FORCED_OPENING
-  Specifies an opening line that Zebra is forced to follow when playing.
-*/
-
-pub unsafe fn set_forced_opening(opening_str:
-                                 *const i8) {
-    forced_opening = opening_str;
-}
 
 /*
   COMPARE_EVAL
   Comparison function for two evals.  Same return value conventions
   as QuickSort.
 */
-pub unsafe fn compare_eval(mut e1: EvaluationType,
+pub fn compare_eval(mut e1: EvaluationType,
                        mut e2: EvaluationType) -> i32 {
     if e1.type_0 as u32 == WLD_EVAL as i32 as u32 ||
         e1.type_0 as u32 ==

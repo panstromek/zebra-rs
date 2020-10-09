@@ -65,8 +65,7 @@ pub static mut hash_mask: i32 = 0;
 pub static mut rehash_count: i32 = 0;
 pub static mut hash_trans1: u32 = 0;
 pub static mut hash_trans2: u32 = 0;
-pub static mut hash_table: *mut CompactHashEntry =
-    0 as *const CompactHashEntry as *mut CompactHashEntry;
+pub static mut hash_table: *mut CompactHashEntry = 0 as *mut CompactHashEntry;
 
 /*
    DETERMINE_HASH_VALUES
