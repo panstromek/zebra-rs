@@ -24,17 +24,9 @@ pub static mut move_count: [i32; 64] = [0; 64];
 
 pub static mut move_list: [[i32; 64]; 64] = [[0; 64]; 64];
 
-pub static mut first_flip_direction: [*mut i32; 100] =
-    [0 as *const i32 as *mut i32; 100];
+pub static mut first_flip_direction: [*mut i32; 100] = [0 as _; 100];
 
 pub static mut flip_direction: [[i32; 16]; 100] = [[0; 16]; 100];
-/* 100 * 9 used */
-
-pub static mut first_flipped_disc: [*mut *mut i32; 100] =
-    [0 as *const *mut i32 as *mut *mut i32; 100];
-
-pub static mut flipped_disc: [[*mut i32; 8]; 100] =
-    [[0 as *const i32 as *mut i32; 8]; 100];
 
 pub static dir_mask: [i32; 100] =
     [0 as i32, 0 as i32, 0 as i32, 0 as i32,
