@@ -51,7 +51,7 @@ pub fn non_iterative_popcount(mut n1: u32, mut n2: u32) -> u32 {
   set is low.
 */
 
-pub unsafe fn iterative_popcount(mut n1: u32,
+pub fn iterative_popcount(mut n1: u32,
                                             mut n2: u32)
  -> u32 {
     let mut n: u32 = 0;
@@ -71,7 +71,7 @@ pub unsafe fn iterative_popcount(mut n1: u32,
   Returns the bit-reverse of a 32-bit integer.
 */
 
-pub unsafe fn bit_reverse_32(mut val: u32)
+pub fn bit_reverse_32(mut val: u32)
  -> u32 {
     val =
         val >> 1 as i32 & 0x55555555 as i32 as u32 |
@@ -95,10 +95,11 @@ pub unsafe fn bit_reverse_32(mut val: u32)
   Converts the vector board representation to the bitboard representation.
 */
 
-pub unsafe fn set_bitboards(board: *mut i32,
+pub unsafe fn set_bitboards(board: &[i32; 128],
                                        side_to_move: i32,
-                                       my_out: *mut BitBoard,
-                                       opp_out: *mut BitBoard) {
+                                       my_out: &mut BitBoard,
+                                       opp_out: &mut BitBoard) {
+    let board = board.as_ptr();
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
