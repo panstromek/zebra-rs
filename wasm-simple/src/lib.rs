@@ -348,10 +348,6 @@ impl FrontEnd for WasmFrontend {
         unimplemented!()
     }
 
-    fn report_ponder_time(current_ponder_time_: f64, current_ponder_depth_: i32) {
-        unimplemented!()
-    }
-
     fn after_update_best_list_verbose(best_list: &mut [i32; 4]) {
         unimplemented!()
     }

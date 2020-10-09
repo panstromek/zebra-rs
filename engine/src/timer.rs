@@ -228,17 +228,6 @@ pub unsafe fn check_threshold<FE: FrontEnd>(threshold: f64)
         i32;
 }
 /*
-  ADJUST_CURRENT_PONDER_TIME
-  The ponder time for the move actually made in the position where
-  pondering was made is stored.
-*/
-
-pub unsafe fn adjust_current_ponder_time<FE: FrontEnd>(move_0: i32) {
-    current_ponder_time = ponder_time[move_0 as usize];
-    current_ponder_depth = ponder_depth[move_0 as usize];
-    FE::report_ponder_time(current_ponder_time, current_ponder_depth);
-}
-/*
   ABOVE_RECOMMENDED
   EXTENDED_ABOVE_RECOMMENDED
   Checks if the time spent searching is greater than the threshold
