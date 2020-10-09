@@ -14,7 +14,6 @@ use crate::bitboard::{BitBoard, non_iterative_popcount};
    See the file COPYING for more information.
 */
 
-pub unsafe fn init_mmx() { }
 fn generate_all_c(my_bits: BitBoard, opp_bits: BitBoard)
  -> BitBoard {
     // mm6
