@@ -639,16 +639,11 @@ pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
                                                            mirror: *mut i32,
                                                            count: i32,
                                                            next_word: &mut S) {
-    let mut i: i32 = 0;
-    let mut buffer = 0 as *mut i16;
-    buffer =
-        safe_malloc::<FE>((count as
-            u64).wrapping_mul(::std::mem::size_of::<i16>()
-            as u64)) as
-            *mut i16;
+    let mut buf = vec![0; count as usize];
+    let mut buffer: *mut i16 = buf.as_mut_ptr();
     /* Unpack the coefficient block where the score is scaled
        so that 512 units corresponds to one disk. */
-    i = 0;
+    let mut i: i32 = 0;
     while i < count {
         if mirror.is_null() || *mirror.offset(i as isize) == i {
             let i1 = next_word();
@@ -682,7 +677,6 @@ pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
             i += 1
         }
     }
-    FE::free(buffer as *mut c_void);
 }
 /*
    UNPACK_COEFFS
