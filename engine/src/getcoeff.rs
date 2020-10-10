@@ -547,8 +547,6 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32) {
     set[index as usize].loaded = 1;
 }
 
-
-pub static mut pattern_score: i16 = 0;
 /*
    PATTERN_EVALUATION
    Calculates the static evaluation of the position using
