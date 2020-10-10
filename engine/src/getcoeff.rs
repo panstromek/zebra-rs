@@ -566,7 +566,7 @@ pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32)
     if set[eval_phase as usize].loaded == 0 {
         load_set::<FE>(eval_phase);
     }
-    constant_and_parity_feature(side_to_move, eval_phase, disks_played, &mut globals::board, &mut set)
+    constant_and_parity_feature(side_to_move, disks_played, &mut globals::board, &mut set[eval_phase as usize])
 }
 
 pub unsafe fn post_init_coeffs() {
