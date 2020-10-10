@@ -9,6 +9,7 @@ use std::process::exit;
 use engine_traits::CoeffSource;
 use crate::src::globals;
 use coeff::{constant_and_parity_feature, CoeffSet, terminal_patterns};
+use std::ops::IndexMut;
 
 pub struct CoeffAdjustments {
     pub disc_adjust: f64,
@@ -73,15 +74,15 @@ static mut set: [CoeffSet; 61] = [CoeffSet {
 }; 61];
 
 pub unsafe fn generate_batch(target: *mut i16,
-                         count: i32,
+                         count: usize,
                          source1: *mut i16,
                          weight1: i32,
                          source2: *mut i16,
                              weight2: i32) {
-    generate_batch_(std::slice::from_raw_parts_mut(target, count as _),
-                    std::slice::from_raw_parts(source1, count as _),
+    generate_batch_(std::slice::from_raw_parts_mut(target, count),
+                    std::slice::from_raw_parts(source1, count),
                     weight1,
-                    std::slice::from_raw_parts(source2, count as _),
+                    std::slice::from_raw_parts(source2, count),
                     weight2
     );
 }
@@ -457,87 +458,77 @@ pub unsafe fn allocate_set<FE: FrontEnd>(index: i32) {
    (used for the inverted patterns when white is to move).
 */
 pub unsafe fn load_set<FE: FrontEnd>(index: i32) {
-    if set[index as usize].permanent == 0 {
-        let mut weight1: i32 = 0;
-        let mut weight2: i32 = 0;
-        let mut prev = set[index as usize].prev;
-        let mut next = set[index as usize].next;
+    let set_item = &mut set[(index as usize)];
+    if set_item.permanent == 0 {
+        let mut weight1 = 0;
+        let mut weight2 = 0;
+        let mut prev = set_item.prev;
+        let mut next = set_item.next;
         if prev == next {
             weight1 = 1;
-            weight2 = 1 as i32
-        } else { weight1 = next - index; weight2 = index - prev }
-        let mut total_weight = weight1 + weight2;
-        set[index as usize].constant =
-            ((weight1 * set[prev as usize].constant as i32 +
-                weight2 * set[next as usize].constant as i32) /
+            weight2 = 1;
+        } else {
+            weight1 = next - index;
+            weight2 = index - prev;
+        }
+        let total_weight = weight1 + weight2;
+        let previous_set_item = &mut set[prev as usize];
+        let next_set_item = &mut set[next as usize];
+        set_item.constant = ((weight1 * previous_set_item.constant as i32 +
+                weight2 * next_set_item.constant as i32) /
                 total_weight) as i16;
-        set[index as usize].parity =
-            ((weight1 * set[prev as usize].parity as i32 +
-                weight2 * set[next as usize].parity as i32) /
+        set_item.parity = ((weight1 * previous_set_item.parity as i32 +
+                weight2 * next_set_item.parity as i32) /
                 total_weight) as i16;
-        set[index as usize].parity_constant[0] =
-            set[index as usize].constant;
-        set[index as usize].parity_constant[1] =
-            (set[index as usize].constant as i32 +
-                set[index as usize].parity as i32) as i16;
+        set_item.parity_constant[0] = set_item.constant;
+        set_item.parity_constant[1] = set_item.constant + set_item.parity;
         allocate_set::<FE>(index);
-        generate_batch(set[index as usize].afile2x, 59049 as i32,
-                       set[prev as usize].afile2x, weight1,
-                       set[next as usize].afile2x, weight2);
-        generate_batch(set[index as usize].bfile, 6561 as i32,
-                       set[prev as usize].bfile, weight1,
-                       set[next as usize].bfile, weight2);
-        generate_batch(set[index as usize].cfile, 6561 as i32,
-                       set[prev as usize].cfile, weight1,
-                       set[next as usize].cfile, weight2);
-        generate_batch(set[index as usize].dfile, 6561 as i32,
-                       set[prev as usize].dfile, weight1,
-                       set[next as usize].dfile, weight2);
-        generate_batch(set[index as usize].diag8, 6561 as i32,
-                       set[prev as usize].diag8, weight1,
-                       set[next as usize].diag8, weight2);
-        generate_batch(set[index as usize].diag7, 2187 as i32,
-                       set[prev as usize].diag7, weight1,
-                       set[next as usize].diag7, weight2);
-        generate_batch(set[index as usize].diag6, 729 as i32,
-                       set[prev as usize].diag6, weight1,
-                       set[next as usize].diag6, weight2);
-        generate_batch(set[index as usize].diag5, 243 as i32,
-                       set[prev as usize].diag5, weight1,
-                       set[next as usize].diag5, weight2);
-        generate_batch(set[index as usize].diag4, 81 as i32,
-                       set[prev as usize].diag4, weight1,
-                       set[next as usize].diag4, weight2);
-        generate_batch(set[index as usize].corner33, 19683 as i32,
-                       set[prev as usize].corner33, weight1,
-                       set[next as usize].corner33, weight2);
-        generate_batch(set[index as usize].corner52, 59049 as i32,
-                       set[prev as usize].corner52, weight1,
-                       set[next as usize].corner52, weight2);
+        generate_batch(set_item.afile2x, 59049,
+                       previous_set_item.afile2x, weight1,
+                       next_set_item.afile2x, weight2);
+        generate_batch(set_item.bfile, 6561,
+                       previous_set_item.bfile, weight1,
+                       next_set_item.bfile, weight2);
+        generate_batch(set_item.cfile, 6561,
+                       previous_set_item.cfile, weight1,
+                       next_set_item.cfile, weight2);
+        generate_batch(set_item.dfile, 6561,
+                       previous_set_item.dfile, weight1,
+                       next_set_item.dfile, weight2);
+        generate_batch(set_item.diag8, 6561,
+                       previous_set_item.diag8, weight1,
+                       next_set_item.diag8, weight2);
+        generate_batch(set_item.diag7, 2187,
+                       previous_set_item.diag7, weight1,
+                       next_set_item.diag7, weight2);
+        generate_batch(set_item.diag6, 729,
+                       previous_set_item.diag6, weight1,
+                       next_set_item.diag6, weight2);
+        generate_batch(set_item.diag5, 243,
+                       previous_set_item.diag5, weight1,
+                       next_set_item.diag5, weight2);
+        generate_batch(set_item.diag4, 81,
+                       previous_set_item.diag4, weight1,
+                       next_set_item.diag4, weight2);
+        generate_batch(set_item.corner33, 19683,
+                       previous_set_item.corner33, weight1,
+                       next_set_item.corner33, weight2);
+        generate_batch(set_item.corner52, 59049,
+                       previous_set_item.corner52, weight1,
+                       next_set_item.corner52, weight2);
     }
-    set[index as usize].afile2x_last =
-        set[index as usize].afile2x.offset(59048);
-    set[index as usize].bfile_last =
-        set[index as usize].bfile.offset(6560);
-    set[index as usize].cfile_last =
-        set[index as usize].cfile.offset(6560);
-    set[index as usize].dfile_last =
-        set[index as usize].dfile.offset(6560);
-    set[index as usize].diag8_last =
-        set[index as usize].diag8.offset(6560);
-    set[index as usize].diag7_last =
-        set[index as usize].diag7.offset(2186);
-    set[index as usize].diag6_last =
-        set[index as usize].diag6.offset(728);
-    set[index as usize].diag5_last =
-        set[index as usize].diag5.offset(242);
-    set[index as usize].diag4_last =
-        set[index as usize].diag4.offset(80);
-    set[index as usize].corner33_last =
-        set[index as usize].corner33.offset(19682);
-    set[index as usize].corner52_last =
-        set[index as usize].corner52.offset(59048);
-    set[index as usize].loaded = 1;
+    set_item.afile2x_last = set_item.afile2x.offset(59048);
+    set_item.bfile_last = set_item.bfile.offset(6560);
+    set_item.cfile_last = set_item.cfile.offset(6560);
+    set_item.dfile_last = set_item.dfile.offset(6560);
+    set_item.diag8_last = set_item.diag8.offset(6560);
+    set_item.diag7_last = set_item.diag7.offset(2186);
+    set_item.diag6_last = set_item.diag6.offset(728);
+    set_item.diag5_last = set_item.diag5.offset(242);
+    set_item.diag4_last = set_item.diag4.offset(80);
+    set_item.corner33_last = set_item.corner33.offset(19682);
+    set_item.corner52_last = set_item.corner52.offset(59048);
+    set_item.loaded = 1;
 }
 
 /*
