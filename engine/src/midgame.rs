@@ -139,30 +139,22 @@ pub unsafe fn advance_move(index: i32) {
 /*
   midgame_c__update_best_list
 */
-pub unsafe fn midgame_c__update_best_list(best_list:
-                                      *mut i32,
-                                      move_0: i32,
-                                      best_list_index:
-                                      i32,
-                                      best_list_length:
-                                      i32) {
+pub fn midgame_c__update_best_list(best_list: &mut [i32; 4], move_0: i32, best_list_index: i32, best_list_length: i32) {
     let mut i: i32 = 0;
     if best_list_index < best_list_length {
         i = best_list_index;
         while i >= 1 as i32 {
-            *best_list.offset(i as isize) =
-                *best_list.offset((i - 1 as i32) as isize);
+            best_list[i as usize] = best_list[(i - 1 as i32) as usize];
             i -= 1
         }
     } else {
         i = 3;
         while i >= 1 as i32 {
-            *best_list.offset(i as isize) =
-                *best_list.offset((i - 1 as i32) as isize);
+            best_list[i as usize] = best_list[(i - 1 as i32) as usize];
             i -= 1
         }
     }
-    *best_list = move_0;
+    best_list[0] = move_0;
 }
 
 
@@ -758,7 +750,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         }
         evals[disks_played as usize][move_0 as usize] = curr_val;
         if update_pv != 0 {
-            midgame_c__update_best_list(best_list.as_mut_ptr(), move_0,
+            midgame_c__update_best_list(&mut best_list, move_0,
                                         best_list_index, best_list_length);
             pv[level as usize][level as usize] = move_0;
             pv_depth[level as usize] =
@@ -774,7 +766,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             advance_move(move_index);
             if use_hash != 0 && allow_midgame_hash_update != 0 {
                 add_hash_extended(0 as i32, best,
-                                  best_list.as_mut_ptr(),
+                                  &best_list,
                                   8 as i32 | 1 as i32,
                                   remains, selectivity);
             }
@@ -790,12 +782,12 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         if use_hash != 0 && allow_midgame_hash_update != 0 {
             if best > alpha {
                 add_hash_extended(0 as i32, best,
-                                  best_list.as_mut_ptr(),
+                                  &best_list,
                                   8 as i32 | 4 as i32,
                                   remains, selectivity);
             } else {
                 add_hash_extended(0 as i32, best,
-                                  best_list.as_mut_ptr(),
+                                  &best_list,
                                   8 as i32 | 2 as i32,
                                   remains, selectivity);
             }
@@ -1309,7 +1301,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
             FE::midgame_display_ponder_move(max_depth, alpha, beta, curr_val, searched, update_pv)
         }
         if update_pv != 0 {
-            midgame_c__update_best_list(best_list.as_mut_ptr(), move_0,
+            midgame_c__update_best_list(&mut best_list, move_0,
                                         best_list_index, best_list_length);
             pv[level as usize][level as usize] = move_0;
             pv_depth[level as usize] =
@@ -1325,7 +1317,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
             advance_move(move_index);
             if use_hash != 0 && allow_midgame_hash_update != 0 {
                 add_hash_extended(0 as i32, best,
-                                  best_list.as_mut_ptr(),
+                                  &best_list,
                                   8 as i32 | 1 as i32,
                                   remains, selectivity);
             }
@@ -1334,7 +1326,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
         /* For symmetry reasons, the score for any move is the score of the
            position for the initial position. */
         if disks_played == 0 as i32 {
-            add_hash_extended(0 as i32, best, best_list.as_mut_ptr(),
+            add_hash_extended(0 as i32, best, &best_list,
                               8 as i32 | 4 as i32, remains,
                               selectivity);
             return best
@@ -1349,12 +1341,12 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
         if use_hash != 0 && allow_midgame_hash_update != 0 {
             if best > alpha {
                 add_hash_extended(0 as i32, best,
-                                  best_list.as_mut_ptr(),
+                                  &best_list,
                                   8 as i32 | 4 as i32,
                                   remains, selectivity);
             } else {
                 add_hash_extended(0 as i32, best,
-                                  best_list.as_mut_ptr(),
+                                  &best_list,
                                   8 as i32 | 2 as i32,
                                   remains, selectivity);
             }

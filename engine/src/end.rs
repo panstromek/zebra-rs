@@ -2082,7 +2082,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             /* Fail high */
             if use_hash != 0 {
                 add_hash_extended(1 as i32, best,
-                                  best_list.as_mut_ptr(),
+                                  &best_list,
                                   16 as i32 | 1 as i32,
                                   remains,
                                   if *selective_cutoff != 0 {
@@ -2107,7 +2107,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             if best > alpha {
                 flags |= 4 as i32
             } else { flags |= 2 as i32 }
-            add_hash_extended(1 as i32, best, best_list.as_mut_ptr(),
+            add_hash_extended(1 as i32, best, &best_list,
                               flags, remains,
                               if *selective_cutoff != 0 {
                                   selectivity
