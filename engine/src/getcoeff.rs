@@ -431,30 +431,20 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(afile2x: *mut *mut i16,
    Finds memory for all patterns belonging to a certain stage.
 */
 pub unsafe fn allocate_set<FE: FrontEnd>(index: i32) {
-    set[index as usize].block =
-        find_memory_block::<FE>(&mut (*set.as_mut_ptr().offset(index as
-            isize)).afile2x,
-                          &mut (*set.as_mut_ptr().offset(index as
-                              isize)).bfile,
-                          &mut (*set.as_mut_ptr().offset(index as
-                              isize)).cfile,
-                          &mut (*set.as_mut_ptr().offset(index as
-                              isize)).dfile,
-                          &mut (*set.as_mut_ptr().offset(index as
-                              isize)).diag8,
-                          &mut (*set.as_mut_ptr().offset(index as
-                              isize)).diag7,
-                          &mut (*set.as_mut_ptr().offset(index as
-                              isize)).diag6,
-                          &mut (*set.as_mut_ptr().offset(index as
-                              isize)).diag5,
-                          &mut (*set.as_mut_ptr().offset(index as
-                              isize)).diag4,
-                          &mut (*set.as_mut_ptr().offset(index as
-                              isize)).corner33,
-                          &mut (*set.as_mut_ptr().offset(index as
-                              isize)).corner52,
-                          index);
+    let coeff_set = &mut set[index as usize];
+    set[index as usize].block = find_memory_block::<FE>(
+        &mut coeff_set.afile2x,
+        &mut coeff_set.bfile,
+        &mut coeff_set.cfile,
+        &mut coeff_set.dfile,
+        &mut coeff_set.diag8,
+        &mut coeff_set.diag7,
+        &mut coeff_set.diag6,
+        &mut coeff_set.diag5,
+        &mut coeff_set.diag4,
+        &mut coeff_set.corner33,
+        &mut coeff_set.corner52,
+        index);
 }
 /*
    LOAD_SET
