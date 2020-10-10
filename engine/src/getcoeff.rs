@@ -9,6 +9,7 @@ use engine_traits::{CoeffSource, Offset};
 use crate::src::globals;
 use coeff::{constant_and_parity_feature, CoeffSet, terminal_patterns};
 use std::ptr::null_mut;
+use std::slice::from_raw_parts_mut;
 
 pub struct CoeffAdjustments {
     pub disc_adjust: f64,
@@ -99,7 +100,7 @@ pub unsafe fn generate_batch(target: *mut i16,
                          weight1: i32,
                          source2: *mut i16,
                              weight2: i32) {
-    generate_batch_(std::slice::from_raw_parts_mut(target, count),
+    generate_batch_(from_raw_parts_mut(target, count),
                     std::slice::from_raw_parts(source1, count),
                     weight1,
                     std::slice::from_raw_parts(source2, count),
@@ -608,19 +609,17 @@ pub unsafe fn post_init_coeffs() {
    UNPACK_BATCH
    Reads feature values for one specific pattern
 */
-pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
+pub fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: &mut [i16],
                                                            mirror: Option<&[i32]>,
-                                                           count: i32,
                                                            next_word: &mut S) {
-    let item = std::slice::from_raw_parts_mut(item, count as usize);
-    let count = item.len()  as i32;
+    let count = item.len();
     let mut buffer = &mut vec![0; count as usize];
     let mut buffer = buffer.as_mut_slice();
     /* Unpack the coefficient block where the score is scaled
        so that 512 units corresponds to one disk. */
-    let mut i: i32 = 0;
+    let mut i = 0;
     while i < count {
-        if mirror.is_none() || *mirror.unwrap().offset(i as isize) == i {
+        if mirror.is_none() || *mirror.unwrap().offset(i as isize) == i as i32 {
             let i1 = next_word();
             *buffer.offset(i as isize) =
                 (i1 as i32 / 4 as i32) as
@@ -646,7 +645,7 @@ pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
                 let first_item = *item.offset(i as isize) as i32;
                 let second_item = *item.offset(first_mirror_offset as isize) as i32;
 
-                FE::report_mirror_symetry_error(count, i, first_mirror_offset, first_item, second_item);
+                FE::report_mirror_symetry_error(count as i32, i as i32, first_mirror_offset, first_item, second_item);
                 exit(1 as i32);
             }
             i += 1
@@ -942,28 +941,17 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
             (stage_set.constant as i32 +
                 stage_set.parity as i32) as
                 i16;
-        unpack_batch::<FE, S>(stage_set.afile2x, Some(&map_mirror8x2),
-                              59049 as i32, next_word);
-        unpack_batch::<FE, S>(stage_set.bfile, Some(&map_mirror8),
-                              6561 as i32, next_word);
-        unpack_batch::<FE, S>(stage_set.cfile, Some(&map_mirror8),
-                              6561 as i32, next_word);
-        unpack_batch::<FE, S>(stage_set.dfile, Some(&map_mirror8),
-                              6561 as i32, next_word);
-        unpack_batch::<FE, S>(stage_set.diag8, Some(&map_mirror8),
-                              6561 as i32, next_word);
-        unpack_batch::<FE, S>(stage_set.diag7, Some(&map_mirror7),
-                              2187 as i32, next_word);
-        unpack_batch::<FE, S>(stage_set.diag6, Some(&map_mirror6),
-                              729 as i32, next_word);
-        unpack_batch::<FE, S>(stage_set.diag5, Some(&map_mirror5),
-                              243 as i32, next_word);
-        unpack_batch::<FE, S>(stage_set.diag4, Some(&map_mirror4),
-                              81 as i32, next_word);
-        unpack_batch::<FE, S>(stage_set.corner33, Some(&map_mirror33),
-                              19683 as i32, next_word);
-        unpack_batch::<FE, S>(stage_set.corner52,
-                              None, 59049 as i32, next_word);
+        unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.afile2x, 59049), Some(&map_mirror8x2), next_word);
+        unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.bfile, 6561), Some(&map_mirror8), next_word);
+        unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.cfile, 6561), Some(&map_mirror8), next_word);
+        unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.dfile, 6561), Some(&map_mirror8), next_word);
+        unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.diag8, 6561), Some(&map_mirror8), next_word);
+        unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.diag7, 2187), Some(&map_mirror7), next_word);
+        unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.diag6, 729), Some(&map_mirror6), next_word);
+        unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.diag5, 243), Some(&map_mirror5), next_word);
+        unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.diag4, 81), Some(&map_mirror4), next_word);
+        unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.corner33, 19683), Some(&map_mirror33), next_word);
+        unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.corner52, 59049), None, next_word);
         i += 1
     }
 }
