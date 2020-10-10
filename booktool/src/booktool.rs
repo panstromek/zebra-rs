@@ -377,7 +377,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 arg_index += 1;
                 let mut hash_bits: i32 =
                     atoi(*argv.offset(arg_index as isize));
-                resize_hash::<FE>(hash_bits);
+                resize_hash(hash_bits);
                 printf(b"Hash table size changed to %d elements\n\x00" as
                            *const u8 as *const i8,
                        (1 as i32) << hash_bits);

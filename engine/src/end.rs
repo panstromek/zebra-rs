@@ -1547,7 +1547,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                             alpha: i32,
                                             mut beta: i32,
                                             selectivity: i32,
-                                            selective_cutoff: *mut i32,
+                                            selective_cutoff: &mut i32,
                                             void_legal: i32, bb_flips_: &mut BitBoard)
                                             -> i32 {
     let mut node_val: f64 = 0.;
