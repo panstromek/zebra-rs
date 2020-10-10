@@ -203,7 +203,7 @@ pub unsafe fn get_pv(destin: *mut i32) -> i32 {
 */
 
 pub unsafe fn global_terminate<FE: FrontEnd>() {
-    free_hash::<FE>();
+    free_hash();
     clear_coeffs();
     clear_osf::<FE>();
 }
@@ -274,7 +274,7 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
         FE::time(&mut timer);
         my_srandom(timer as i32);
     } else { my_srandom(1 as i32); }
-    init_hash::<FE>(hash_bits);
+    init_hash(hash_bits);
     init_moves();
 
     // inlined init_coeffs
