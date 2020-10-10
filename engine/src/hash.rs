@@ -51,10 +51,6 @@ pub static mut hash_flip_color1: u32 = 0;
 
 pub static mut hash_flip_color2: u32 = 0;
 
-pub static mut hash_diff1: [u32; 64] = [0; 64];
-
-pub static mut hash_diff2: [u32; 64] = [0; 64];
-
 pub static mut hash_stored1: [u32; 64] = [0; 64];
 
 pub static mut hash_stored2: [u32; 64] = [0; 64];
@@ -341,17 +337,11 @@ pub fn popcount(mut b: u32) -> u32 {
   Returns the closeness between the 64-bit integers (a0,a1) and (b0,b1).
   A closeness of 0 means that 32 bits differ.
 */
-pub unsafe fn get_closeness(a0: u32, a1: u32,
-                        b0: u32, b1: u32)
-                        -> u32 {
-    return abs(popcount(a0 ^
-        b0).wrapping_add(popcount(a1 ^
-        b1)).wrapping_sub(32
-        as
-        i32
-        as
-        u32)
-        as i32) as u32;
+pub fn get_closeness(a0: u32, a1: u32, b0: u32, b1: u32) -> u32 {
+    abs(popcount(a0 ^ b0)
+        .wrapping_add(popcount(a1 ^ b1))
+        .wrapping_sub(32) as i32
+    ) as u32
 }
 
 /*
@@ -596,10 +586,10 @@ pub unsafe fn add_hash(reverse_mode: i32,
    Allocate memory for the hash table.
 */
 
-pub unsafe fn init_hash<FE: FrontEnd>(in_hash_bits: i32) {
+pub unsafe fn init_hash(in_hash_bits: i32) {
     hash_bits = in_hash_bits;
-    hash_size = (1 as i32) << hash_bits;
-    hash_mask = hash_size - 1 as i32;
+    hash_size = 1i32 << hash_bits;
+    hash_mask = hash_size - 1;
     hash_table = vec![CompactHashEntry{
         key2: 0,
         eval: 0,
@@ -615,14 +605,14 @@ pub unsafe fn init_hash<FE: FrontEnd>(in_hash_bits: i32) {
 
 pub unsafe fn resize_hash<FE: FrontEnd>(new_hash_bits: i32) {
     hash_table.clear();
-    init_hash::<FE>(new_hash_bits);
-    setup_hash(1 as i32);
+    init_hash(new_hash_bits);
+    setup_hash(1);
 }
 /*
    FREE_HASH
    Remove the hash table.
 */
 
-pub unsafe fn free_hash<FE: FrontEnd>() {
+pub unsafe fn free_hash() {
     hash_table.clear()
 }
