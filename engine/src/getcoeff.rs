@@ -71,20 +71,25 @@ static mut set: [CoeffSet; 61] = [CoeffSet {
     corner52_last: 0 as _,
     alignment_padding: [0; 12],
 }; 61];
-/*
-   GENERATE_BATCH
-   Interpolates between two stages.
-*/
+
 pub unsafe fn generate_batch(target: *mut i16,
                          count: i32,
                          source1: *mut i16,
                          weight1: i32,
                          source2: *mut i16,
-                         weight2: i32) {
-    let target = std::slice::from_raw_parts_mut(target, count as _);
-    let source1 = std::slice::from_raw_parts(source1, count as _);
-    let source2 = std::slice::from_raw_parts(source2, count as _);
-
+                             weight2: i32) {
+    generate_batch_(std::slice::from_raw_parts_mut(target, count as _),
+                    std::slice::from_raw_parts(source1, count as _),
+                    weight1,
+                    std::slice::from_raw_parts(source2, count as _),
+                    weight2
+    );
+}
+/*
+   GENERATE_BATCH
+   Interpolates between two stages.
+*/
+fn generate_batch_(target: &mut [i16], source1: &[i16], weight1: i32, source2: &[i16], weight2: i32) {
     let total_weight = weight1 + weight2;
     source1.iter()
         .zip(source2.iter())
