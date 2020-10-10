@@ -36,42 +36,41 @@ static mut stage_count: i32 = 0;
 static mut block_count: i32 = 0;
 static mut stage: [i32; 61] = [0; 61];
 static mut block_allocated: [i32; 200] = [0; 200];
-static mut block_set: [i32; 200] = [0; 200];
 static mut eval_map: [i32; 61] = [0; 61];
-static mut block_list: [*mut AllocationBlock; 200] =
-    [0 as *const AllocationBlock as *mut AllocationBlock; 200];
-static mut set: [CoeffSet; 61] =
-    [CoeffSet{permanent: 0,
-        loaded: 0,
-        prev: 0,
-        next: 0,
-        block: 0,
-        parity_constant: [0; 2],
-        parity: 0,
-        constant: 0,
-        afile2x: 0 as *const i16 as *mut i16,
-        bfile: 0 as *const i16 as *mut i16,
-        cfile: 0 as *const i16 as *mut i16,
-        dfile: 0 as *const i16 as *mut i16,
-        diag8: 0 as *const i16 as *mut i16,
-        diag7: 0 as *const i16 as *mut i16,
-        diag6: 0 as *const i16 as *mut i16,
-        diag5: 0 as *const i16 as *mut i16,
-        diag4: 0 as *const i16 as *mut i16,
-        corner33: 0 as *const i16 as *mut i16,
-        corner52: 0 as *const i16 as *mut i16,
-        afile2x_last: 0 as *const i16 as *mut i16,
-        bfile_last: 0 as *const i16 as *mut i16,
-        cfile_last: 0 as *const i16 as *mut i16,
-        dfile_last: 0 as *const i16 as *mut i16,
-        diag8_last: 0 as *const i16 as *mut i16,
-        diag7_last: 0 as *const i16 as *mut i16,
-        diag6_last: 0 as *const i16 as *mut i16,
-        diag5_last: 0 as *const i16 as *mut i16,
-        diag4_last: 0 as *const i16 as *mut i16,
-        corner33_last: 0 as *const i16 as *mut i16,
-        corner52_last: 0 as *const i16 as *mut i16,
-        alignment_padding: [0; 12],}; 61];
+static mut block_list: [*mut AllocationBlock; 200] = [0 as _; 200];
+static mut set: [CoeffSet; 61] = [CoeffSet {
+    permanent: 0,
+    loaded: 0,
+    prev: 0,
+    next: 0,
+    block: 0,
+    parity_constant: [0; 2],
+    parity: 0,
+    constant: 0,
+    afile2x: 0 as _,
+    bfile: 0 as _,
+    cfile: 0 as _,
+    dfile: 0 as _,
+    diag8: 0 as _,
+    diag7: 0 as _,
+    diag6: 0 as _,
+    diag5: 0 as _,
+    diag4: 0 as _,
+    corner33: 0 as _,
+    corner52: 0 as _,
+    afile2x_last: 0 as _,
+    bfile_last: 0 as _,
+    cfile_last: 0 as _,
+    dfile_last: 0 as _,
+    diag8_last: 0 as _,
+    diag7_last: 0 as _,
+    diag6_last: 0 as _,
+    diag5_last: 0 as _,
+    diag4_last: 0 as _,
+    corner33_last: 0 as _,
+    corner52_last: 0 as _,
+    alignment_padding: [0; 12],
+}; 61];
 /*
    GENERATE_BATCH
    Interpolates between two stages.
@@ -418,12 +417,9 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(afile2x: *mut *mut i16,
     *diag6 = (*block_list[free_block as usize]).diag6_block.as_mut_ptr();
     *diag5 = (*block_list[free_block as usize]).diag5_block.as_mut_ptr();
     *diag4 = (*block_list[free_block as usize]).diag4_block.as_mut_ptr();
-    *corner33 =
-        (*block_list[free_block as usize]).corner33_block.as_mut_ptr();
-    *corner52 =
-        (*block_list[free_block as usize]).corner52_block.as_mut_ptr();
+    *corner33 = (*block_list[free_block as usize]).corner33_block.as_mut_ptr();
+    *corner52 = (*block_list[free_block as usize]).corner52_block.as_mut_ptr();
     block_allocated[free_block as usize] = 1;
-    block_set[free_block as usize] = index;
     return free_block;
 }
 /*
@@ -432,7 +428,7 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(afile2x: *mut *mut i16,
 */
 pub unsafe fn allocate_set<FE: FrontEnd>(index: i32) {
     let coeff_set = &mut set[index as usize];
-    set[index as usize].block = find_memory_block::<FE>(
+    coeff_set.block = find_memory_block::<FE>(
         &mut coeff_set.afile2x,
         &mut coeff_set.bfile,
         &mut coeff_set.cfile,
