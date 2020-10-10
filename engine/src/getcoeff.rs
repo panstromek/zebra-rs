@@ -395,19 +395,7 @@ pub unsafe fn clear_coeffs() {
    Maintains an internal memory handler to boost
    performance and avoid heap fragmentation.
 */
-pub unsafe fn find_memory_block<FE: FrontEnd>(afile2x: *mut *mut i16,
-                                              bfile: *mut *mut i16,
-                                              cfile: *mut *mut i16,
-                                              dfile: *mut *mut i16,
-                                              diag8: *mut *mut i16,
-                                              diag7: *mut *mut i16,
-                                              diag6: *mut *mut i16,
-                                              diag5: *mut *mut i16,
-                                              diag4: *mut *mut i16,
-                                              corner33: *mut *mut i16,
-                                              corner52: *mut *mut i16,
-                                              index: i32)
-                                              -> i32 {
+pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet, index: i32) -> i32 {
     let mut i: i32 = 0;
     let mut found_free: i32 = 0;
     let mut free_block: i32 = 0;
@@ -444,18 +432,19 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(afile2x: *mut *mut i16,
         free_block = block_count;
         block_count += 1
     }
+
     let mut block_list_item = (block_list[free_block as usize]).as_mut().unwrap();
-    *afile2x = (*block_list_item).afile2x_block.as_mut_ptr();
-    *bfile = (*block_list_item).bfile_block.as_mut_ptr();
-    *cfile = (*block_list_item).cfile_block.as_mut_ptr();
-    *dfile = (*block_list_item).dfile_block.as_mut_ptr();
-    *diag8 = (*block_list_item).diag8_block.as_mut_ptr();
-    *diag7 = (*block_list_item).diag7_block.as_mut_ptr();
-    *diag6 = (*block_list_item).diag6_block.as_mut_ptr();
-    *diag5 = (*block_list_item).diag5_block.as_mut_ptr();
-    *diag4 = (*block_list_item).diag4_block.as_mut_ptr();
-    *corner33 = (*block_list_item).corner33_block.as_mut_ptr();
-    *corner52 = (*block_list_item).corner52_block.as_mut_ptr();
+    coeff_set.afile2x = block_list_item.afile2x_block.as_mut_ptr();
+    coeff_set.bfile = block_list_item.bfile_block.as_mut_ptr();
+    coeff_set.cfile = block_list_item.cfile_block.as_mut_ptr();
+    coeff_set.dfile = block_list_item.dfile_block.as_mut_ptr();
+    coeff_set.diag8 = block_list_item.diag8_block.as_mut_ptr();
+    coeff_set.diag7 = block_list_item.diag7_block.as_mut_ptr();
+    coeff_set.diag6 = block_list_item.diag6_block.as_mut_ptr();
+    coeff_set.diag5 = block_list_item.diag5_block.as_mut_ptr();
+    coeff_set.diag4 = block_list_item.diag4_block.as_mut_ptr();
+    coeff_set.corner33 = block_list_item.corner33_block.as_mut_ptr();
+    coeff_set.corner52 = block_list_item.corner52_block.as_mut_ptr();
     block_allocated[free_block as usize] = 1;
     return free_block;
 }
@@ -465,19 +454,7 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(afile2x: *mut *mut i16,
 */
 pub unsafe fn allocate_set<FE: FrontEnd>(index: i32) {
     let coeff_set = &mut set[index as usize];
-    coeff_set.block = find_memory_block::<FE>(
-        &mut coeff_set.afile2x,
-        &mut coeff_set.bfile,
-        &mut coeff_set.cfile,
-        &mut coeff_set.dfile,
-        &mut coeff_set.diag8,
-        &mut coeff_set.diag7,
-        &mut coeff_set.diag6,
-        &mut coeff_set.diag5,
-        &mut coeff_set.diag4,
-        &mut coeff_set.corner33,
-        &mut coeff_set.corner52,
-        index);
+    coeff_set.block = find_memory_block::<FE>(coeff_set, index);
 }
 /*
    LOAD_SET
