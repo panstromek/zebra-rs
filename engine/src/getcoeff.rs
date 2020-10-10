@@ -81,18 +81,19 @@ pub unsafe fn generate_batch(target: *mut i16,
                          weight1: i32,
                          source2: *mut i16,
                          weight2: i32) {
-    let total_weight = weight1 + weight2;
     let target = std::slice::from_raw_parts_mut(target, count as _);
     let source1 = std::slice::from_raw_parts(source1, count as _);
     let source2 = std::slice::from_raw_parts(source2, count as _);
 
-    let mut i = 0;
-    while i < count as usize {
-        target[i] = (
-            (weight1 * source1[i] as i32 + weight2 * source2[i] as i32) / total_weight
-        ) as i16;
-        i += 1
-    };
+    let total_weight = weight1 + weight2;
+    source1.iter()
+        .zip(source2.iter())
+        .zip(target.iter_mut())
+        .for_each(|((&source1, &source2), target)| {
+            *target = (
+                (weight1 * source1 as i32 + weight2 * source2 as i32) / total_weight
+            ) as i16;
+        });
 }
 
 /*
