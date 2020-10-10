@@ -614,23 +614,18 @@ pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
                                                            next_word: &mut S) {
     let mut buffer = &mut vec![0; count as usize];
     let mut buffer = buffer.as_mut_slice();
-    let mut mirror = match mirror {
-        None => { null_mut() }
-        Some(m) => { m.as_ptr() }
-    };
-    // let mut buffer: *mut i16 = buf.as_mut_ptr();
     /* Unpack the coefficient block where the score is scaled
        so that 512 units corresponds to one disk. */
     let mut i: i32 = 0;
     while i < count {
-        if mirror.is_null() || *mirror.offset(i as isize) == i {
+        if mirror.is_none() || *mirror.unwrap().offset(i as isize) == i {
             let i1 = next_word();
             *buffer.offset(i as isize) =
                 (i1 as i32 / 4 as i32) as
                     i16
         } else {
             *buffer.offset(i as isize) =
-                *buffer.offset(*mirror.offset(i as isize) as isize)
+                *buffer.offset(*mirror.unwrap().offset(i as isize) as isize)
         }
         i += 1
     }
@@ -639,7 +634,7 @@ pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
         *item.offset(i as isize) = *buffer.offset(i as isize);
         i += 1
     }
-    if !mirror.is_null() {
+    if let Some(mirror) = mirror {
         i = 0;
         while i < count {
             if *item.offset(i as isize) as i32 !=
