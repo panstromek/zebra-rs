@@ -603,7 +603,7 @@ pub unsafe fn init_hash(in_hash_bits: i32) {
   Changes the size of the hash table.
 */
 
-pub unsafe fn resize_hash<FE: FrontEnd>(new_hash_bits: i32) {
+pub unsafe fn resize_hash(new_hash_bits: i32) {
     hash_table.clear();
     init_hash(new_hash_bits);
     setup_hash(1);
