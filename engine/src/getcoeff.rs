@@ -612,6 +612,8 @@ pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
                                                            mirror: Option<&[i32]>,
                                                            count: i32,
                                                            next_word: &mut S) {
+    let item = std::slice::from_raw_parts_mut(item, count as usize);
+    let count = item.len()  as i32;
     let mut buffer = &mut vec![0; count as usize];
     let mut buffer = buffer.as_mut_slice();
     /* Unpack the coefficient block where the score is scaled
