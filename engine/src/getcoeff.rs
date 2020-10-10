@@ -7,7 +7,7 @@ use std::ffi::c_void;
 use std::process::exit;
 use engine_traits::CoeffSource;
 use crate::src::globals;
-use coeff::{constant_and_parity_feature, CoeffSet, terminal_patterns};
+use coeff::{constant_and_parity_feature, CoeffSet, terminal_patterns, Offset, AsMutPtr};
 
 pub struct CoeffAdjustments {
     pub disc_adjust: f64,
@@ -67,17 +67,17 @@ static mut set: [CoeffSet; 61] = [CoeffSet {
     parity_constant: [0; 2],
     parity: 0,
     constant: 0,
-    afile2x: 0 as _,
-    bfile: 0 as _,
-    cfile: 0 as _,
-    dfile: 0 as _,
-    diag8: 0 as _,
-    diag7: 0 as _,
-    diag6: 0 as _,
-    diag5: 0 as _,
-    diag4: 0 as _,
-    corner33: 0 as _,
-    corner52: 0 as _,
+    afile2x: None,
+    bfile: None,
+    cfile: None,
+    dfile: None,
+    diag8: None,
+    diag7: None,
+    diag6: None,
+    diag5: None,
+    diag4: None,
+    corner33: None,
+    corner52: None,
     afile2x_last: 0 as _,
     bfile_last: 0 as _,
     cfile_last: 0 as _,
@@ -92,16 +92,16 @@ static mut set: [CoeffSet; 61] = [CoeffSet {
     alignment_padding: [0; 12],
 }; 61];
 
-pub unsafe fn generate_batch(target: *mut i16,
+pub unsafe fn generate_batch<'a, 'b, 'c>(target: &mut Option<&'a mut impl AsRef<[i16]>>,
                          count: usize,
-                         source1: *mut i16,
+                         source1: &mut Option<&'b mut impl AsRef<[i16]>>,
                          weight1: i32,
-                         source2: *mut i16,
+                         source2: &mut Option<&'c mut impl AsRef<[i16]>>,
                              weight2: i32) {
-    generate_batch_(std::slice::from_raw_parts_mut(target, count),
-                    std::slice::from_raw_parts(source1, count),
+    generate_batch_(std::slice::from_raw_parts_mut(target.unwrap().as_ref().as_mut_ptr(), count),
+                    std::slice::from_raw_parts(source1.unwrap().as_ref().as_mut_ptr(), count),
                     weight1,
-                    std::slice::from_raw_parts(source2, count),
+                    std::slice::from_raw_parts(source2.unwrap().as_ref().as_mut_ptr(), count),
                     weight2
     );
 }
@@ -158,21 +158,23 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
     let mut adjust: i32 = 0;
     let mut row: [i32; 10] = [0; 10];
     i = 0;
+    let set_60 = &mut set[60];
     while i < stage_count - 1 as i32 {
         /* Bonuses for having more discs */
         j = 0;
         while j < 59049 as i32 {
+            let set1 = &mut set[stage[i as usize] as usize];
             let ref mut fresh2 =
-                *set[stage[i as usize] as usize].afile2x.offset(j as isize);
+                *set1.afile2x.offset(j as isize);
             *fresh2 =
                 (*fresh2 as f64 +
-                    *set[60].afile2x.offset(j as isize) as i32
+                    *set_60.afile2x.offset(j as isize) as i32
                         as f64 * disc_adjust) as i16;
             let ref mut fresh3 =
-                *set[stage[i as usize] as usize].corner52.offset(j as isize);
+                *set1.corner52.offset(j as isize);
             *fresh3 =
                 (*fresh3 as f64 +
-                    *set[60].corner52.offset(j as isize) as
+                    *set_60.corner52.offset(j as isize) as
                         i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -183,7 +185,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].corner33.offset(j as isize);
             *fresh4 =
                 (*fresh4 as f64 +
-                    *set[60].corner33.offset(j as isize) as
+                    *set_60.corner33.offset(j as isize) as
                         i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -194,28 +196,28 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].bfile.offset(j as isize);
             *fresh5 =
                 (*fresh5 as f64 +
-                    *set[60].bfile.offset(j as isize)
+                    *set_60.bfile.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             let ref mut fresh6 =
                 *set[stage[i as usize] as usize].cfile.offset(j as isize);
             *fresh6 =
                 (*fresh6 as f64 +
-                    *set[60].cfile.offset(j as isize)
+                    *set_60.cfile.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             let ref mut fresh7 =
                 *set[stage[i as usize] as usize].dfile.offset(j as isize);
             *fresh7 =
                 (*fresh7 as f64 +
-                    *set[60].dfile.offset(j as isize)
+                    *set_60.dfile.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             let ref mut fresh8 =
                 *set[stage[i as usize] as usize].diag8.offset(j as isize);
             *fresh8 =
                 (*fresh8 as f64 +
-                    *set[60].diag8.offset(j as isize)
+                    *set_60.diag8.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -226,7 +228,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].diag7.offset(j as isize);
             *fresh9 =
                 (*fresh9 as f64 +
-                    *set[60].diag7.offset(j as isize)
+                    *set_60.diag7.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -237,7 +239,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].diag6.offset(j as isize);
             *fresh10 =
                 (*fresh10 as f64 +
-                    *set[60].diag6.offset(j as isize)
+                    *set_60.diag6.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -248,7 +250,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].diag5.offset(j as isize);
             *fresh11 =
                 (*fresh11 as f64 +
-                    *set[60].diag5.offset(j as isize)
+                    *set_60.diag5.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -259,7 +261,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                 *set[stage[i as usize] as usize].diag4.offset(j as isize);
             *fresh12 =
                 (*fresh12 as f64 +
-                    *set[60].diag4.offset(j as isize)
+                    *set_60.diag4.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -434,17 +436,18 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet, index: i
     }
 
     let mut block_list_item = (block_list[free_block as usize]).as_mut().unwrap();
-    coeff_set.afile2x = block_list_item.afile2x_block.as_mut_ptr();
-    coeff_set.bfile = block_list_item.bfile_block.as_mut_ptr();
-    coeff_set.cfile = block_list_item.cfile_block.as_mut_ptr();
-    coeff_set.dfile = block_list_item.dfile_block.as_mut_ptr();
-    coeff_set.diag8 = block_list_item.diag8_block.as_mut_ptr();
-    coeff_set.diag7 = block_list_item.diag7_block.as_mut_ptr();
-    coeff_set.diag6 = block_list_item.diag6_block.as_mut_ptr();
-    coeff_set.diag5 = block_list_item.diag5_block.as_mut_ptr();
-    coeff_set.diag4 = block_list_item.diag4_block.as_mut_ptr();
-    coeff_set.corner33 = block_list_item.corner33_block.as_mut_ptr();
-    coeff_set.corner52 = block_list_item.corner52_block.as_mut_ptr();
+    assert_eq!(std::mem::size_of::<*mut i16>() , std::mem::size_of::<&mut [i16; 59049]>());
+    coeff_set.afile2x = (&mut block_list_item.afile2x_block).into();
+    coeff_set.bfile = (&mut block_list_item.bfile_block).into();
+    coeff_set.cfile = (&mut block_list_item.cfile_block).into();
+    coeff_set.dfile = (&mut block_list_item.dfile_block).into();
+    coeff_set.diag8 = (&mut block_list_item.diag8_block).into();
+    coeff_set.diag7 = (&mut block_list_item.diag7_block).into();
+    coeff_set.diag6 = (&mut block_list_item.diag6_block).into();
+    coeff_set.diag5 = (&mut block_list_item.diag5_block).into();
+    coeff_set.diag4 = (&mut block_list_item.diag4_block).into();
+    coeff_set.corner33 = (&mut block_list_item.corner33_block).into();
+    coeff_set.corner52 = (&mut block_list_item.corner52_block).into();
     block_allocated[free_block as usize] = 1;
     return free_block;
 }
@@ -523,17 +526,17 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32) {
                        previous_set_item.corner52, weight1,
                        next_set_item.corner52, weight2);
     }
-    set_item.afile2x_last = set_item.afile2x.offset(59048);
-    set_item.bfile_last = set_item.bfile.offset(6560);
-    set_item.cfile_last = set_item.cfile.offset(6560);
-    set_item.dfile_last = set_item.dfile.offset(6560);
-    set_item.diag8_last = set_item.diag8.offset(6560);
-    set_item.diag7_last = set_item.diag7.offset(2186);
-    set_item.diag6_last = set_item.diag6.offset(728);
-    set_item.diag5_last = set_item.diag5.offset(242);
-    set_item.diag4_last = set_item.diag4.offset(80);
-    set_item.corner33_last = set_item.corner33.offset(19682);
-    set_item.corner52_last = set_item.corner52.offset(59048);
+    set_item.afile2x_last = set_item.afile2x.as_mut_ptr().offset(59048);
+    set_item.bfile_last = set_item.bfile.as_mut_ptr().offset(6560);
+    set_item.cfile_last = set_item.cfile.as_mut_ptr().offset(6560);
+    set_item.dfile_last = set_item.dfile.as_mut_ptr().offset(6560);
+    set_item.diag8_last = set_item.diag8.as_mut_ptr().offset(6560);
+    set_item.diag7_last = set_item.diag7.as_mut_ptr().offset(2186);
+    set_item.diag6_last = set_item.diag6.as_mut_ptr().offset(728);
+    set_item.diag5_last = set_item.diag5.as_mut_ptr().offset(242);
+    set_item.diag4_last = set_item.diag4.as_mut_ptr().offset(80);
+    set_item.corner33_last = set_item.corner33.as_mut_ptr().offset(19682);
+    set_item.corner52_last = set_item.corner52.as_mut_ptr().offset(59048);
     set_item.loaded = 1;
 }
 
@@ -607,7 +610,7 @@ pub unsafe fn post_init_coeffs() {
    UNPACK_BATCH
    Reads feature values for one specific pattern
 */
-pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
+pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: &mut [i16],
                                                            mirror: *mut i32,
                                                            count: i32,
                                                            next_word: &mut S) {
@@ -940,27 +943,27 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
             (set[stage[i as usize] as usize].constant as i32 +
                 set[stage[i as usize] as usize].parity as i32) as
                 i16;
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].afile2x, map_mirror8x2,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].afile2x.unwrap(), map_mirror8x2,
                      59049 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].bfile, map_mirror8,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].bfile.unwrap(), map_mirror8,
                      6561 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].cfile, map_mirror8,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].cfile.unwrap(), map_mirror8,
                      6561 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].dfile, map_mirror8,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].dfile.unwrap(), map_mirror8,
                      6561 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag8, map_mirror8,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag8.unwrap(), map_mirror8,
                      6561 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag7, map_mirror7,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag7.unwrap(), map_mirror7,
                      2187 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag6, map_mirror6,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag6.unwrap(), map_mirror6,
                      729 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag5, map_mirror5,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag5.unwrap(), map_mirror5,
                      243 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag4, map_mirror4,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag4.unwrap(), map_mirror4,
                      81 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].corner33, map_mirror33,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].corner33.unwrap(), map_mirror33,
                      19683 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].corner52,
+        unpack_batch::<FE, S>(set[stage[i as usize] as usize].corner52.unwrap(),
                      0 as *mut i32, 59049 as i32, next_word);
         i += 1
     }
