@@ -689,56 +689,26 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
     let mut k: i32 = 0;
     let mut mirror_pattern: i32 = 0;
     let mut row: [i32; 10] = [0; 10];
-    let mut map_mirror3 = 0 as *mut i32;
-    let mut map_mirror4 = 0 as *mut i32;
-    let mut map_mirror5 = 0 as *mut i32;
-    let mut map_mirror6 = 0 as *mut i32;
-    let mut map_mirror7 = 0 as *mut i32;
-    let mut map_mirror8 = 0 as *mut i32;
-    let mut map_mirror33 = 0 as *mut i32;
-    let mut map_mirror8x2 = 0 as *mut i32;
+
+    let mut map_mirror3 = vec![0; 27];
+    let mut map_mirror4 = vec![0; 81];
+    let mut map_mirror5 = vec![0; 243];
+    let mut map_mirror6 = vec![0; 729];
+    let mut map_mirror7 = vec![0; 2187];
+    let mut map_mirror8 = vec![0; 6561];
+    let mut map_mirror33 = vec![0; 19683];
+    let mut map_mirror8x2 = vec![0; 59049];
+
     /* Allocate the memory needed for the temporary mirror maps from the
        heap rather than the stack to reduce memory requirements. */
-    map_mirror3 =
-        safe_malloc::<FE>((27 as i32 as
-            u64).wrapping_mul(::std::mem::size_of::<i32>()
-            as u64)) as
-            *mut i32;
-    map_mirror4 =
-        safe_malloc::<FE>((81 as i32 as
-            u64).wrapping_mul(::std::mem::size_of::<i32>()
-            as u64)) as
-            *mut i32;
-    map_mirror5 =
-        safe_malloc::<FE>((243 as i32 as
-            u64).wrapping_mul(::std::mem::size_of::<i32>()
-            as u64)) as
-            *mut i32;
-    map_mirror6 =
-        safe_malloc::<FE>((729 as i32 as
-            u64).wrapping_mul(::std::mem::size_of::<i32>()
-            as u64)) as
-            *mut i32;
-    map_mirror7 =
-        safe_malloc::<FE>((2187 as i32 as
-            u64).wrapping_mul(::std::mem::size_of::<i32>()
-            as u64)) as
-            *mut i32;
-    map_mirror8 =
-        safe_malloc::<FE>((6561 as i32 as
-            u64).wrapping_mul(::std::mem::size_of::<i32>()
-            as u64)) as
-            *mut i32;
-    map_mirror33 =
-        safe_malloc::<FE>((19683 as i32 as
-            u64).wrapping_mul(::std::mem::size_of::<i32>()
-            as u64)) as
-            *mut i32;
-    map_mirror8x2 =
-        safe_malloc::<FE>((59049 as i32 as
-            u64).wrapping_mul(::std::mem::size_of::<i32>()
-            as u64)) as
-            *mut i32;
+    let mut map_mirror3 = map_mirror3.as_mut_ptr();
+    let mut map_mirror4 = map_mirror4.as_mut_ptr();
+    let mut map_mirror5 = map_mirror5.as_mut_ptr();
+    let mut map_mirror6 = map_mirror6.as_mut_ptr();
+    let mut map_mirror7 = map_mirror7.as_mut_ptr();
+    let mut map_mirror8 = map_mirror8.as_mut_ptr();
+    let mut map_mirror33 = map_mirror33.as_mut_ptr();
+    let mut map_mirror8x2 = map_mirror8x2.as_mut_ptr();
     /* Build the pattern tables for 8*1-patterns */
     i = 0;
     while i < 8 as i32 { row[i as usize] = 0; i += 1 }
@@ -1022,16 +992,6 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
                      0 as *mut i32, 59049 as i32, next_word);
         i += 1
     }
-    /* Free the mirror tables - the symmetries are now implicit
-       in the coefficient tables. */
-    FE::free(map_mirror3 as *mut c_void);
-    FE::free(map_mirror4 as *mut c_void);
-    FE::free(map_mirror5 as *mut c_void);
-    FE::free(map_mirror6 as *mut c_void);
-    FE::free(map_mirror7 as *mut c_void);
-    FE::free(map_mirror8 as *mut c_void);
-    FE::free(map_mirror33 as *mut c_void);
-    FE::free(map_mirror8x2 as *mut c_void);
 }
 
 pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mut coeffs: Source) {
