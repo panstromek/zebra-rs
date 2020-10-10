@@ -5,9 +5,10 @@ use crate::src::stubs::{floor};
 use crate::src::error::{FrontEnd};
 use std::ffi::c_void;
 use std::process::exit;
-use engine_traits::CoeffSource;
+use engine_traits::{CoeffSource, Offset};
 use crate::src::globals;
 use coeff::{constant_and_parity_feature, CoeffSet, terminal_patterns};
+use std::ptr::null_mut;
 
 pub struct CoeffAdjustments {
     pub disc_adjust: f64,
@@ -608,11 +609,16 @@ pub unsafe fn post_init_coeffs() {
    Reads feature values for one specific pattern
 */
 pub unsafe fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: *mut i16,
-                                                           mirror: *mut i32,
+                                                           mirror: Option<&[i32]>,
                                                            count: i32,
                                                            next_word: &mut S) {
-    let mut buf = vec![0; count as usize];
-    let mut buffer: *mut i16 = buf.as_mut_ptr();
+    let mut buffer = &mut vec![0; count as usize];
+    let mut buffer = buffer.as_mut_slice();
+    let mut mirror = match mirror {
+        None => { null_mut() }
+        Some(m) => { m.as_ptr() }
+    };
+    // let mut buffer: *mut i16 = buf.as_mut_ptr();
     /* Unpack the coefficient block where the score is scaled
        so that 512 units corresponds to one disk. */
     let mut i: i32 = 0;
@@ -673,14 +679,14 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
 
     /* Allocate the memory needed for the temporary mirror maps from the
        heap rather than the stack to reduce memory requirements. */
-    let mut map_mirror3 = map_mirror3.as_mut_ptr();
-    let mut map_mirror4 = map_mirror4.as_mut_ptr();
-    let mut map_mirror5 = map_mirror5.as_mut_ptr();
-    let mut map_mirror6 = map_mirror6.as_mut_ptr();
-    let mut map_mirror7 = map_mirror7.as_mut_ptr();
-    let mut map_mirror8 = map_mirror8.as_mut_ptr();
-    let mut map_mirror33 = map_mirror33.as_mut_ptr();
-    let mut map_mirror8x2 = map_mirror8x2.as_mut_ptr();
+    let mut map_mirror3 = map_mirror3.as_mut_slice();
+    let mut map_mirror4 = map_mirror4.as_mut_slice();
+    let mut map_mirror5 = map_mirror5.as_mut_slice();
+    let mut map_mirror6 = map_mirror6.as_mut_slice();
+    let mut map_mirror7 = map_mirror7.as_mut_slice();
+    let mut map_mirror8 = map_mirror8.as_mut_slice();
+    let mut map_mirror33 = map_mirror33.as_mut_slice();
+    let mut map_mirror8x2 = map_mirror8x2.as_mut_slice();
     /* Build the pattern tables for 8*1-patterns */
     i = 0;
     while i < 8 as i32 { row[i as usize] = 0; i += 1 }
@@ -926,42 +932,41 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
     /* Read and unpack - using symmetries - the coefficient tables. */
     i = 0;
     while i < stage_count - 1 as i32 {
-        set[stage[i as usize] as usize].constant =
+        let stage_set = &mut set[stage[i as usize] as usize];
+        stage_set.constant =
             (next_word() as i32 / 4 as i32) as
                 i16;
-        set[stage[i as usize] as usize].parity =
+        stage_set.parity =
             (next_word() as i32 / 4 as i32) as
                 i16;
-        set[stage[i as usize] as
-            usize].parity_constant[0] =
-            set[stage[i as usize] as usize].constant;
-        set[stage[i as usize] as
-            usize].parity_constant[1] =
-            (set[stage[i as usize] as usize].constant as i32 +
-                set[stage[i as usize] as usize].parity as i32) as
+        stage_set.parity_constant[0] =
+            stage_set.constant;
+        stage_set.parity_constant[1] =
+            (stage_set.constant as i32 +
+                stage_set.parity as i32) as
                 i16;
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].afile2x, map_mirror8x2,
-                     59049 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].bfile, map_mirror8,
-                     6561 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].cfile, map_mirror8,
-                     6561 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].dfile, map_mirror8,
-                     6561 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag8, map_mirror8,
-                     6561 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag7, map_mirror7,
-                     2187 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag6, map_mirror6,
-                     729 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag5, map_mirror5,
-                     243 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].diag4, map_mirror4,
-                     81 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].corner33, map_mirror33,
-                     19683 as i32, next_word);
-        unpack_batch::<FE, S>(set[stage[i as usize] as usize].corner52,
-                     0 as *mut i32, 59049 as i32, next_word);
+        unpack_batch::<FE, S>(stage_set.afile2x, Some(&map_mirror8x2),
+                              59049 as i32, next_word);
+        unpack_batch::<FE, S>(stage_set.bfile, Some(&map_mirror8),
+                              6561 as i32, next_word);
+        unpack_batch::<FE, S>(stage_set.cfile, Some(&map_mirror8),
+                              6561 as i32, next_word);
+        unpack_batch::<FE, S>(stage_set.dfile, Some(&map_mirror8),
+                              6561 as i32, next_word);
+        unpack_batch::<FE, S>(stage_set.diag8, Some(&map_mirror8),
+                              6561 as i32, next_word);
+        unpack_batch::<FE, S>(stage_set.diag7, Some(&map_mirror7),
+                              2187 as i32, next_word);
+        unpack_batch::<FE, S>(stage_set.diag6, Some(&map_mirror6),
+                              729 as i32, next_word);
+        unpack_batch::<FE, S>(stage_set.diag5, Some(&map_mirror5),
+                              243 as i32, next_word);
+        unpack_batch::<FE, S>(stage_set.diag4, Some(&map_mirror4),
+                              81 as i32, next_word);
+        unpack_batch::<FE, S>(stage_set.corner33, Some(&map_mirror33),
+                              19683 as i32, next_word);
+        unpack_batch::<FE, S>(stage_set.corner52,
+                              None, 59049 as i32, next_word);
         i += 1
     }
 }
