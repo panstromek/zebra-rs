@@ -9,7 +9,6 @@ use std::process::exit;
 use engine_traits::CoeffSource;
 use crate::src::globals;
 use coeff::{constant_and_parity_feature, CoeffSet, terminal_patterns};
-use std::ops::IndexMut;
 
 pub struct CoeffAdjustments {
     pub disc_adjust: f64,
@@ -18,7 +17,7 @@ pub struct CoeffAdjustments {
     pub x_adjust: f64,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 #[repr(C)]
 pub struct AllocationBlock {
     pub afile2x_block: [i16; 59049],
@@ -38,7 +37,32 @@ static mut block_count: i32 = 0;
 static mut stage: [i32; 61] = [0; 61];
 static mut block_allocated: [i32; 200] = [0; 200];
 static mut eval_map: [i32; 61] = [0; 61];
-static mut block_list: [*mut AllocationBlock; 200] = [0 as _; 200];
+macro_rules! arr_of {
+    ($count:literal, $expr:expr) => {
+            [$]
+    };
+}
+static mut block_list: [Option<Box<AllocationBlock>>; 200] = [
+    // This is just incredibly stupid, but I don't know any other way to do this,
+    // because this type doesn't implement copy
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None,None,None,None,None,
+    None,None,None,None,None,None,None,None
+];
 static mut set: [CoeffSet; 61] = [CoeffSet {
     permanent: 0,
     loaded: 0,
@@ -404,29 +428,39 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(afile2x: *mut *mut i16,
     }
     if found_free == 0 {
         if block_count < 200 as i32 {
-            block_list[block_count as usize] =
-                safe_malloc::<FE>(::std::mem::size_of::<AllocationBlock>() as
-                    u64) as *mut AllocationBlock
+            block_list[block_count as usize] = Some(Box::new(AllocationBlock {
+                afile2x_block: [0; 59049],
+                bfile_block: [0; 6561],
+                cfile_block: [0; 6561],
+                dfile_block: [0; 6561],
+                diag8_block: [0; 6561],
+                diag7_block: [0; 2187],
+                diag6_block: [0; 729],
+                diag5_block: [0; 243],
+                diag4_block: [0; 81],
+                corner33_block: [0; 19683],
+                corner52_block: [0; 59049],
+            }));
         }
-        if block_count == 200 as i32 ||
-            block_list[block_count as usize].is_null() {
+        if block_count == 200 || block_list[block_count as usize].is_none() {
             let block_count_ = block_count;
             FE::memory_allocation_failure(block_count_);
         }
         free_block = block_count;
         block_count += 1
     }
-    *afile2x = (*block_list[free_block as usize]).afile2x_block.as_mut_ptr();
-    *bfile = (*block_list[free_block as usize]).bfile_block.as_mut_ptr();
-    *cfile = (*block_list[free_block as usize]).cfile_block.as_mut_ptr();
-    *dfile = (*block_list[free_block as usize]).dfile_block.as_mut_ptr();
-    *diag8 = (*block_list[free_block as usize]).diag8_block.as_mut_ptr();
-    *diag7 = (*block_list[free_block as usize]).diag7_block.as_mut_ptr();
-    *diag6 = (*block_list[free_block as usize]).diag6_block.as_mut_ptr();
-    *diag5 = (*block_list[free_block as usize]).diag5_block.as_mut_ptr();
-    *diag4 = (*block_list[free_block as usize]).diag4_block.as_mut_ptr();
-    *corner33 = (*block_list[free_block as usize]).corner33_block.as_mut_ptr();
-    *corner52 = (*block_list[free_block as usize]).corner52_block.as_mut_ptr();
+    let mut block_list_item = (block_list[free_block as usize]).as_mut().unwrap();
+    *afile2x = (*block_list_item).afile2x_block.as_mut_ptr();
+    *bfile = (*block_list_item).bfile_block.as_mut_ptr();
+    *cfile = (*block_list_item).cfile_block.as_mut_ptr();
+    *dfile = (*block_list_item).dfile_block.as_mut_ptr();
+    *diag8 = (*block_list_item).diag8_block.as_mut_ptr();
+    *diag7 = (*block_list_item).diag7_block.as_mut_ptr();
+    *diag6 = (*block_list_item).diag6_block.as_mut_ptr();
+    *diag5 = (*block_list_item).diag5_block.as_mut_ptr();
+    *diag4 = (*block_list_item).diag4_block.as_mut_ptr();
+    *corner33 = (*block_list_item).corner33_block.as_mut_ptr();
+    *corner52 = (*block_list_item).corner52_block.as_mut_ptr();
     block_allocated[free_block as usize] = 1;
     return free_block;
 }
