@@ -65,7 +65,7 @@ pub static mut hash_mask: i32 = 0;
 pub static mut rehash_count: i32 = 0;
 pub static mut hash_trans1: u32 = 0;
 pub static mut hash_trans2: u32 = 0;
-pub static mut hash_table: *mut CompactHashEntry = 0 as *mut CompactHashEntry;
+pub static mut hash_table: Vec<CompactHashEntry> = Vec::new();
 
 /*
    DETERMINE_HASH_VALUES
@@ -124,7 +124,7 @@ pub unsafe fn find_hash(entry: &mut HashEntry, reverse_mode: i32) {
     } else { code1 = hash1 ^ hash_trans1; code2 = hash2 ^ hash_trans2 }
     index1 = (code1 & hash_mask as u32) as i32;
     index2 = index1 ^ 1 as i32;
-    let hash_table_ptr = hash_table;
+    let hash_table_ptr = hash_table.as_mut_ptr();
     if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
         if ((*hash_table_ptr.offset(index1 as isize)).key1_selectivity_flags_draft
             ^ code1) & 0xff000000 as u32 ==
@@ -266,7 +266,7 @@ pub unsafe fn add_hash_extended(reverse_mode: i32,
     } else { code1 = hash1 ^ hash_trans1; code2 = hash2 ^ hash_trans2 }
     index1 = code1 & hash_mask as u32;
     index2 = index1 ^ 1 as i32 as u32;
-    let hash_table_ptr = hash_table;
+    let hash_table_ptr = hash_table.as_mut_ptr();
     if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
         index = index1
     } else if (*hash_table_ptr.offset(index2 as isize)).key2 == code2 {
@@ -315,7 +315,7 @@ pub unsafe fn add_hash_extended(reverse_mode: i32,
 pub unsafe fn clear_hash_drafts() {
     let mut i: i32 = 0;
     i = 0;
-    let hash_table_ptr = hash_table;
+    let hash_table_ptr = hash_table.as_mut_ptr();
     while i < hash_size {
         /* Set the draft to 0 */
         (*hash_table_ptr.offset(i as isize)).key1_selectivity_flags_draft &=
@@ -368,7 +368,7 @@ pub unsafe fn setup_hash(clear: i32) {
     let max_zero_closeness = 9;
     let mut closeness: u32 = 0;
     let mut random_pair: [[u32; 2]; 130] = [[0; 2]; 130];
-    let has_table_ptr = hash_table;
+    let has_table_ptr = hash_table.as_mut_ptr();
     if clear != 0 {
         i = 0;
         while i < hash_size {
@@ -539,7 +539,7 @@ pub unsafe fn add_hash(reverse_mode: i32,
     } else { code1 = hash1 ^ hash_trans1; code2 = hash2 ^ hash_trans2 }
     index1 = code1 & hash_mask as u32;
     index2 = index1 ^ 1 as i32 as u32;
-    let hash_table_ptr = hash_table;
+    let hash_table_ptr = hash_table.as_mut_ptr();
     if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
         index = index1
     } else if (*hash_table_ptr.offset(index2 as isize)).key2 == code2 {
@@ -600,11 +600,12 @@ pub unsafe fn init_hash<FE: FrontEnd>(in_hash_bits: i32) {
     hash_bits = in_hash_bits;
     hash_size = (1 as i32) << hash_bits;
     hash_mask = hash_size - 1 as i32;
-    hash_table =
-        safe_malloc::<FE>((hash_size as
-            u64).wrapping_mul(::std::mem::size_of::<CompactHashEntry>()
-            as u64)) as
-            *mut CompactHashEntry;
+    hash_table = vec![CompactHashEntry{
+        key2: 0,
+        eval: 0,
+        moves: 0,
+        key1_selectivity_flags_draft: 0
+    }; hash_size as usize];
     rehash_count = 0;
 }
 /*
@@ -613,7 +614,7 @@ pub unsafe fn init_hash<FE: FrontEnd>(in_hash_bits: i32) {
 */
 
 pub unsafe fn resize_hash<FE: FrontEnd>(new_hash_bits: i32) {
-    FE::free(hash_table as *mut c_void);
+    hash_table.clear();
     init_hash::<FE>(new_hash_bits);
     setup_hash(1 as i32);
 }
@@ -623,5 +624,5 @@ pub unsafe fn resize_hash<FE: FrontEnd>(new_hash_bits: i32) {
 */
 
 pub unsafe fn free_hash<FE: FrontEnd>() {
-    FE::free(hash_table as *mut c_void);
+    hash_table.clear()
 }
