@@ -2,7 +2,6 @@ use crate::src::globals::{piece_count, Board};
 use crate::src::moves::disks_played;
 use ::patterns::{flip8, pow3};
 use crate::src::stubs::{floor};
-use crate::src::safemem::safe_malloc;
 use crate::src::error::{FrontEnd};
 use std::ffi::c_void;
 use std::process::exit;
@@ -37,11 +36,7 @@ static mut block_count: i32 = 0;
 static mut stage: [i32; 61] = [0; 61];
 static mut block_allocated: [i32; 200] = [0; 200];
 static mut eval_map: [i32; 61] = [0; 61];
-macro_rules! arr_of {
-    ($count:literal, $expr:expr) => {
-            [$]
-    };
-}
+
 static mut block_list: [Option<Box<AllocationBlock>>; 200] = [
     // This is just incredibly stupid, but I don't know any other way to do this,
     // because this type doesn't implement copy
