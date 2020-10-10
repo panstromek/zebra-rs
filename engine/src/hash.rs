@@ -113,8 +113,7 @@ pub unsafe fn determine_hash_values(side_to_move: i32,
    hash table positions are probed.
 */
 
-pub unsafe fn find_hash(mut entry: *mut HashEntry,
-                        reverse_mode: i32) {
+pub unsafe fn find_hash(entry: &mut HashEntry, reverse_mode: i32) {
     let mut index1: i32 = 0;
     let mut index2: i32 = 0;
     let mut code1: u32 = 0;
@@ -140,13 +139,13 @@ pub unsafe fn find_hash(mut entry: *mut HashEntry,
         compact_to_wide(&mut *hash_table.offset(index2 as isize), entry);
         return
     }
-    (*entry).draft = 0;
-    (*entry).flags = 2;
-    (*entry).eval = 12345678;
-    (*entry).move_0[0] = 44;
-    (*entry).move_0[1] = 0;
-    (*entry).move_0[2] = 0;
-    (*entry).move_0[3] = 0;
+    entry.draft = 0;
+    entry.flags = 2;
+    entry.eval = 12345678;
+    entry.move_0[0] = 44;
+    entry.move_0[1] = 0;
+    entry.move_0[2] = 0;
+    entry.move_0[3] = 0;
 }
 
 /*
@@ -154,9 +153,7 @@ pub unsafe fn find_hash(mut entry: *mut HashEntry,
    Expand the compact internal representation of entries
    in the hash table to something more usable.
 */
-unsafe fn compact_to_wide(compact_entry:
-                          *const CompactHashEntry,
-                          mut entry: *mut HashEntry) {
+fn compact_to_wide(compact_entry: &CompactHashEntry, entry: &mut HashEntry) {
     (*entry).key2 = (*compact_entry).key2;
     (*entry).eval = (*compact_entry).eval;
     (*entry).move_0[0] =
@@ -192,9 +189,7 @@ unsafe fn compact_to_wide(compact_entry:
    Convert the easily readable representation to the more
    compact one actually stored in the hash table.
 */
-pub unsafe fn wide_to_compact(entry: *const HashEntry,
-                          mut compact_entry:
-                          *mut CompactHashEntry) {
+pub fn wide_to_compact(entry: &HashEntry, compact_entry: &mut CompactHashEntry) {
     (*compact_entry).key2 = (*entry).key2;
     (*compact_entry).eval = (*entry).eval;
     (*compact_entry).moves =
@@ -244,7 +239,7 @@ pub unsafe fn set_hash_transformation(trans1: u32,
 
 pub unsafe fn add_hash_extended(reverse_mode: i32,
                                 score: i32,
-                                best: *mut i32,
+                                best: &[i32; 4],
                                 flags: i32,
                                 draft: i32,
                                 selectivity: i32) {
@@ -301,7 +296,7 @@ pub unsafe fn add_hash_extended(reverse_mode: i32,
     entry.eval = score;
     i = 0;
     while i < 4 as i32 {
-        entry.move_0[i as usize] = *best.offset(i as isize);
+        entry.move_0[i as usize] = best[i as usize];
         i += 1
     }
     entry.flags = flags as i16;
