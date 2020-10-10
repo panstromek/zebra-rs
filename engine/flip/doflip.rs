@@ -1252,7 +1252,7 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
     old_flip_stack = t_flip_stack;
     t_hash_update2 = 0;
     t_hash_update1 = t_hash_update2;
-    sq = &mut *board.as_mut_ptr().offset(sqnum as isize) as *mut i32;
+    sq = board.as_mut_ptr().offset(sqnum as isize);
     match board_region[sqnum as usize] as i32 {
         1 => {
             let mut pt = sq.offset(1);
