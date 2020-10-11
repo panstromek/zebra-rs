@@ -7,6 +7,8 @@ mod tests {
     use legacy_zebra::src::getcoeff::new_z_lib_source;
     use std::process::Command;
     use std::path::Path;
+    use std::fs::File;
+    use std::io::{Write, Error};
 
     #[test]
     fn coeff_source_test() {
@@ -24,6 +26,18 @@ mod tests {
 
         assert!(flate2_source.try_next_word().is_none());
     }
+    fn create_adjust_file() {
+        File::create("./../adjust.txt")
+            .unwrap()
+            .write("3.5 2.8 5.1 12.3\n".as_ref())
+            .unwrap();
+    }
+    fn delete_adjust_file() {
+        let filename = "./../adjust.txt";
+        if Path::new(filename).exists() {
+            std::fs::remove_file(filename).unwrap();
+        }
+    }
     // TODO these snapshot tests don't test for the last position
     //  (because zebra doesn't put it in the log file for some reason)
     //  it'd be good to improve that and test that one as well
@@ -34,6 +48,7 @@ mod tests {
             "./target/release/zebra",
             "-l 16 16 16 16 16 16 -r 0",
             "./snapshots/zebra.log-full_game_test",
+            false
         );
     }
 
@@ -43,18 +58,35 @@ mod tests {
             "./target/release/zebra",
             "-l 6 6 6 6 6 6 -r 0",
             "./snapshots/zebra.log-small_game_test",
+            false
         );
     }
 
     macro_rules! snap_test {
         ($id:ident, $args:literal) => {
-            #[test]
-            fn $id() {
-                snapshot_test(
-                    "./target/release/zebra",
-                    $args,
-                    &("./snapshots/zebra.log-".to_owned() + stringify!($id)),
-                );
+            mod $id {
+                use crate::tests::*;
+                #[test]
+                fn $id() {
+                    snapshot_test(
+                        "./target/release/zebra",
+                        $args,
+                        &("./snapshots/zebra.log-".to_owned() + stringify!($id)),
+                        false
+                    );
+                }
+                mod with_adjust {
+                    use crate::tests::*;
+                    #[test]
+                    fn $id() {
+                        snapshot_test(
+                            "./target/release/zebra",
+                            $args,
+                            &("./snapshots/zebra.log-".to_owned() + stringify!($id) + "-with-adjust"),
+                            true
+                        );
+                    }
+                }
             }
         };
     }
@@ -84,10 +116,16 @@ mod tests {
             "./target/release/zebra",
             "-l 6 6 6 6 6 6 -r 0 -b 0",
             "./snapshots/zebra.log-small_game_test_without_book",
+            false,
         );
     }
 
-    fn snapshot_test(binary: &str, arguments: &str, snapshot_path: &str) {
+    fn snapshot_test(binary: &str, arguments: &str, snapshot_path: &str, with_adjust: bool) {
+        if with_adjust {
+            create_adjust_file();
+        } else {
+            delete_adjust_file();
+        }
         let output = Command::new(binary)
             .current_dir("./../")
             .args(arguments.split_whitespace())
