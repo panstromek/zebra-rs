@@ -7,7 +7,7 @@ use std::ffi::c_void;
 use std::process::exit;
 use engine_traits::{CoeffSource, Offset};
 use crate::src::globals;
-use coeff::{constant_and_parity_feature, CoeffSet, terminal_patterns};
+use coeff::{constant_and_parity_feature, CoeffSet, terminal_patterns, CoeffSetData};
 use std::ptr::null_mut;
 use std::slice::from_raw_parts_mut;
 
@@ -69,17 +69,7 @@ static mut set: [CoeffSet; 61] = [CoeffSet {
     parity_constant: [0; 2],
     parity: 0,
     constant: 0,
-    afile2x: 0 as _,
-    bfile: 0 as _,
-    cfile: 0 as _,
-    dfile: 0 as _,
-    diag8: 0 as _,
-    diag7: 0 as _,
-    diag6: 0 as _,
-    diag5: 0 as _,
-    diag4: 0 as _,
-    corner33: 0 as _,
-    corner52: 0 as _
+    data: None
 }; 61];
 
 pub unsafe fn generate_batch(target: *mut i16,
@@ -139,8 +129,8 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
     while i < stage_count - 1 as i32 {
         /* Bonuses for having more discs */
         j = 0;
-        let stage_set = &mut set[stage[i as usize] as usize];
-        let sixty_set = &mut set[60];
+        let stage_set = &mut set[stage[i as usize] as usize].data.unwrap();
+        let sixty_set = &mut set[60].data.unwrap();
         while j < 59049 as i32 {
             let ref mut fresh2 =
                 *stage_set.afile2x.offset(j as isize);
@@ -409,17 +399,19 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet) -> i32 {
     }
 
     let mut block_list_item = (block_list[free_block as usize]).as_mut().unwrap();
-    coeff_set.afile2x = block_list_item.afile2x_block.as_mut_ptr();
-    coeff_set.bfile = block_list_item.bfile_block.as_mut_ptr();
-    coeff_set.cfile = block_list_item.cfile_block.as_mut_ptr();
-    coeff_set.dfile = block_list_item.dfile_block.as_mut_ptr();
-    coeff_set.diag8 = block_list_item.diag8_block.as_mut_ptr();
-    coeff_set.diag7 = block_list_item.diag7_block.as_mut_ptr();
-    coeff_set.diag6 = block_list_item.diag6_block.as_mut_ptr();
-    coeff_set.diag5 = block_list_item.diag5_block.as_mut_ptr();
-    coeff_set.diag4 = block_list_item.diag4_block.as_mut_ptr();
-    coeff_set.corner33 = block_list_item.corner33_block.as_mut_ptr();
-    coeff_set.corner52 = block_list_item.corner52_block.as_mut_ptr();
+    coeff_set.data = Some(CoeffSetData {
+        afile2x: block_list_item.afile2x_block.as_mut_ptr(),
+        bfile: block_list_item.bfile_block.as_mut_ptr(),
+        cfile: block_list_item.cfile_block.as_mut_ptr(),
+        dfile: block_list_item.dfile_block.as_mut_ptr(),
+        diag8: block_list_item.diag8_block.as_mut_ptr(),
+        diag7: block_list_item.diag7_block.as_mut_ptr(),
+        diag6: block_list_item.diag6_block.as_mut_ptr(),
+        diag5: block_list_item.diag5_block.as_mut_ptr(),
+        diag4: block_list_item.diag4_block.as_mut_ptr(),
+        corner33: block_list_item.corner33_block.as_mut_ptr(),
+        corner52: block_list_item.corner52_block.as_mut_ptr(),
+    });
     block_allocated[free_block as usize] = true;
     return free_block;
 }
@@ -462,6 +454,9 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
         set_item.parity_constant[0] = set_item.constant;
         set_item.parity_constant[1] = set_item.constant + set_item.parity;
         allocate_set::<FE>(set_item);
+        let set_item = set_item.data.as_mut().unwrap();
+        let previous_set_item = previous_set_item.data.as_mut().unwrap();
+        let next_set_item = next_set_item.data.as_mut().unwrap();
         generate_batch(set_item.afile2x, 59049, previous_set_item.afile2x, weight1, next_set_item.afile2x, weight2);
         generate_batch(set_item.bfile, 6561, previous_set_item.bfile, weight1, next_set_item.bfile, weight2);
         generate_batch(set_item.cfile, 6561, previous_set_item.cfile, weight1, next_set_item.cfile, weight2);
@@ -869,6 +864,7 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
         stage_set.parity = (next_word() / 4);
         stage_set.parity_constant[0] = stage_set.constant;
         stage_set.parity_constant[1] = (stage_set.constant as i32 + stage_set.parity as i32) as i16;
+        let mut stage_set = stage_set.data.as_mut().unwrap();
         unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.afile2x, 59049), Some(&map_mirror8x2), next_word);
         unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.bfile, 6561), Some(&map_mirror8), next_word);
         unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.cfile, 6561), Some(&map_mirror8), next_word);

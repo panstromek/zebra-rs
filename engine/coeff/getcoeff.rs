@@ -10,6 +10,12 @@ pub struct CoeffSet {
     pub parity_constant: [i16; 2],
     pub parity: i16,
     pub constant: i16,
+    pub data: Option<CoeffSetData>
+}
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct CoeffSetData {
     pub afile2x: *mut i16,
     pub bfile: *mut i16,
     pub cfile: *mut i16,
@@ -22,7 +28,7 @@ pub struct CoeffSet {
     pub corner33: *mut i16,
     pub corner52: *mut i16
 }
-impl CoeffSet {
+impl CoeffSetData {
     #[inline(always)]
     pub unsafe fn afile2x_last(&self) -> *mut i16 {
         self.afile2x.offset(59048)
@@ -73,6 +79,7 @@ pub unsafe fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
                                           board: &mut [i32; 128], set: &CoeffSet) -> i32 {
     /* The constant feature and the parity feature */
     let mut score = set.parity_constant[(disks_played & 1 as i32) as usize];
+    let set = set.data.unwrap();
     /* The pattern features. */
     if side_to_move == 0 as i32 {
         let mut pattern0: i32;
@@ -1081,6 +1088,7 @@ pub fn floor(num: f64) -> f64{
    only counting discs.
 */
 pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
+    let coeff_set = coeff_set.data.unwrap();
     /* Calculate the patterns which correspond to the board being filled */
     let mut result: f64;
     let mut value: [[f64; 8]; 8] = [[0.; 8]; 8];
