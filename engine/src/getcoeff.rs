@@ -36,7 +36,7 @@ pub struct AllocationBlock {
 static mut stage_count: i32 = 0;
 static mut block_count: i32 = 0;
 static mut stage: [i32; 61] = [0; 61];
-static mut block_allocated: [i32; 200] = [0; 200];
+static mut block_allocated: [bool; 200] = [false; 200];
 static mut eval_map: [i32; 61] = [0; 61];
 
 static mut block_list: [Option<Box<AllocationBlock>>; 200] = [
@@ -117,7 +117,7 @@ fn generate_batch_(target: &mut [i16], source1: &[i16], weight1: i32, source2: &
 */
 pub unsafe fn init_memory_handler() {
     block_count = 0;
-    block_allocated = [0; 200];
+    block_allocated = [false; 200];
 }
 
 
@@ -343,7 +343,7 @@ pub unsafe fn remove_specific_coeffs(coeff_set: &mut CoeffSet) {
     let coeff_set = coeff_set;
     if coeff_set.loaded != 0 {
         if coeff_set.permanent == 0 {
-            block_allocated[coeff_set.block as usize] = 0;
+            block_allocated[coeff_set.block as usize] = false;
         }
         coeff_set.loaded = 0
     };
@@ -379,7 +379,7 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet) -> i32 {
     let mut free_block = -1;
     let mut i = 0;
     while i < block_count && found_free == 0 {
-        if block_allocated[i as usize] == 0 {
+        if block_allocated[i as usize] == false {
             found_free = 1;
             free_block = i
         }
@@ -420,7 +420,7 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet) -> i32 {
     coeff_set.diag4 = block_list_item.diag4_block.as_mut_ptr();
     coeff_set.corner33 = block_list_item.corner33_block.as_mut_ptr();
     coeff_set.corner52 = block_list_item.corner52_block.as_mut_ptr();
-    block_allocated[free_block as usize] = 1;
+    block_allocated[free_block as usize] = true;
     return free_block;
 }
 /*
