@@ -223,19 +223,19 @@ impl DumpHandler for WasmFrontend {
 
 impl ZebraFrontend for WasmFrontend {
     fn set_evals(black: f64, white: f64) {
-        unimplemented!()
+        // unimplemented!()
     }
 
     unsafe fn set_move_list(black: *mut i32, white: *mut i32, row: i32) {
-        unimplemented!()
+        // unimplemented!()
     }
 
     unsafe fn set_names(black_name: *const i8, white_name: *const i8) {
-        unimplemented!()
+        // unimplemented!()
     }
 
     fn set_times(black: i32, white: i32) {
-        unimplemented!()
+        // unimplemented!()
     }
 
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
