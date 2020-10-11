@@ -1,7 +1,7 @@
+use engine_traits::Offset;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct CoeffSet {
+pub struct CoeffSet<'a> {
     pub permanent: i32,
     pub loaded: i32,
     pub prev: i32,
@@ -10,76 +10,90 @@ pub struct CoeffSet {
     pub parity_constant: [i16; 2],
     pub parity: i16,
     pub constant: i16,
-    pub data: Option<CoeffSetData>
+    pub data: Option<CoeffSetData<'a>>
+}
+impl<'a> CoeffSet<'a> {
+    pub const fn new() -> CoeffSet<'a> {
+        CoeffSet {
+            permanent: 0,
+            loaded: 0,
+            prev: 0,
+            next: 0,
+            block: 0,
+            parity_constant: [0; 2],
+            parity: 0,
+            constant: 0,
+            data: None
+        }
+    }
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct CoeffSetData {
-    pub afile2x: *mut i16,
-    pub bfile: *mut i16,
-    pub cfile: *mut i16,
-    pub dfile: *mut i16,
-    pub diag8: *mut i16,
-    pub diag7: *mut i16,
-    pub diag6: *mut i16,
-    pub diag5: *mut i16,
-    pub diag4: *mut i16,
-    pub corner33: *mut i16,
-    pub corner52: *mut i16
+pub struct CoeffSetData<'a> {
+    pub afile2x: &'a mut [i16; 59049],
+    pub bfile: &'a mut [i16; 6561],
+    pub cfile: &'a mut [i16; 6561],
+    pub dfile: &'a mut [i16; 6561],
+    pub diag8: &'a mut [i16; 6561],
+    pub diag7: &'a mut [i16; 2187],
+    pub diag6: &'a mut [i16; 729],
+    pub diag5: &'a mut [i16; 243],
+    pub diag4: &'a mut [i16; 81],
+    pub corner33: &'a mut [i16; 19683],
+    pub corner52: &'a mut [i16; 59049]
 }
-impl CoeffSetData {
+impl<'a> CoeffSetData<'a> {
     #[inline(always)]
-    pub unsafe fn afile2x_last(&self) -> *mut i16 {
-        self.afile2x.offset(59048)
+    pub unsafe fn afile2x_last(&mut self) -> *mut i16 {
+        self.afile2x.offset(59048) as *const i16 as *mut i16
     }
     #[inline(always)]
-    pub unsafe fn bfile_last(&self) -> *mut i16 {
-        self.bfile.offset(6560)
+    pub unsafe fn bfile_last(&mut self) -> *mut i16 {
+        self.bfile.offset(6560) as *const i16 as *mut i16
     }
     #[inline(always)]
-    pub unsafe fn cfile_last(&self) -> *mut i16 {
-        self.cfile.offset(6560)
+    pub unsafe fn cfile_last(&mut self) -> *mut i16 {
+        self.cfile.offset(6560) as *const i16 as *mut i16
     }
     #[inline(always)]
-    pub unsafe fn dfile_last(&self) -> *mut i16 {
-        self.dfile.offset(6560)
+    pub unsafe fn dfile_last(&mut self) -> *mut i16 {
+        self.dfile.offset(6560) as *const i16 as *mut i16
     }
     #[inline(always)]
-    pub unsafe fn diag8_last(&self) -> *mut i16 {
-        self.diag8.offset(6560)
+    pub unsafe fn diag8_last(&mut self) -> *mut i16 {
+        self.diag8.offset(6560) as *const i16 as *mut i16
     }
     #[inline(always)]
-    pub unsafe fn diag7_last(&self) -> *mut i16 {
-        self.diag7.offset(2186)
+    pub unsafe fn diag7_last(&mut self) -> *mut i16 {
+        self.diag7.offset(2186) as *const i16 as *mut i16
     }
     #[inline(always)]
-    pub unsafe fn diag6_last(&self) -> *mut i16 {
-        self.diag6.offset(728)
+    pub unsafe fn diag6_last(&mut self) -> *mut i16 {
+        self.diag6.offset(728) as *const i16 as *mut i16
     }
     #[inline(always)]
-    pub unsafe fn diag5_last(&self) -> *mut i16 {
-        self.diag5.offset(242)
+    pub unsafe fn diag5_last(&mut self) -> *mut i16 {
+        self.diag5.offset(242) as *const i16 as *mut i16
     }
     #[inline(always)]
-    pub unsafe fn diag4_last(&self) -> *mut i16 {
-        self.diag4.offset(80)
+    pub unsafe fn diag4_last(&mut self) -> *mut i16 {
+        self.diag4.offset(80) as *const i16 as *mut i16
     }
     #[inline(always)]
-    pub unsafe fn corner33_last(&self) -> *mut i16 {
-        self.corner33.offset(19682)
+    pub unsafe fn corner33_last(&mut self) -> *mut i16 {
+        self.corner33.offset(19682) as *const i16 as *mut i16
     }
     #[inline(always)]
-    pub unsafe fn corner52_last(&self) -> *mut i16 {
-        self.corner52.offset(59048)
+    pub unsafe fn corner52_last(&mut self) -> *mut i16 {
+        self.corner52.offset(59048) as *const i16 as *mut i16
     }
 }
 
 pub unsafe fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
-                                          board: &mut [i32; 128], set: &CoeffSet) -> i32 {
+                                          board: &mut [i32; 128], set: &mut CoeffSet) -> i32 {
     /* The constant feature and the parity feature */
     let mut score = set.parity_constant[(disks_played & 1 as i32) as usize];
-    let set = set.data.unwrap();
+    let set = set.data.as_mut().unwrap();
     /* The pattern features. */
     if side_to_move == 0 as i32 {
         let mut pattern0: i32;
@@ -1088,7 +1102,7 @@ pub fn floor(num: f64) -> f64{
    only counting discs.
 */
 pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
-    let coeff_set = coeff_set.data.unwrap();
+    let coeff_set = coeff_set.data.as_mut().unwrap();
     /* Calculate the patterns which correspond to the board being filled */
     let mut result: f64;
     let mut value: [[f64; 8]; 8] = [[0.; 8]; 8];
@@ -1249,7 +1263,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
         } else if row[9] == 2 as i32 {
             result -=value[1][6]
         }
-        *coeff_set.afile2x.offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16;
+        *(coeff_set.afile2x as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16;
         result = 0.0f64;
         j = 0;
         while j < 5 as i32 {
@@ -1264,7 +1278,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
             }
             j += 1
         }
-        *coeff_set.corner52.offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16;
+        *(coeff_set.corner52  as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16;
         if i < 19683 as i32 {
             result = 0.0f64;
             j = 0;
@@ -1280,7 +1294,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *coeff_set.corner33.offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
+            *(coeff_set.corner33 as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 6561 as i32 {
             result = 0.0f64;
@@ -1293,7 +1307,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *coeff_set.bfile.offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16;
+            *(coeff_set.bfile as &mut [i16]).offset(i as isize) = floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
             while j < 8 as i32 {
@@ -1304,7 +1318,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *coeff_set.cfile.offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16;
+            *(coeff_set.cfile as &mut [i16]).offset(i as isize) = floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
             while j < 8 as i32 {
@@ -1315,7 +1329,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *coeff_set.dfile.offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16;
+            *(coeff_set.dfile as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
             while j < 8 as i32 {
@@ -1326,7 +1340,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *coeff_set.diag8.offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
+            *(coeff_set.diag8  as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 2187 as i32 {
             result = 0.0f64;
@@ -1339,7 +1353,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *coeff_set.diag7.offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
+            *(coeff_set.diag7  as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 729 as i32 {
             result = 0.0f64;
@@ -1352,7 +1366,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *coeff_set.diag6.offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
+            *(coeff_set.diag6  as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 243 as i32 {
             result = 0.0f64;
@@ -1365,7 +1379,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *coeff_set.diag5.offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
+            *(coeff_set.diag5  as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 81 as i32 {
             result = 0.0f64;
@@ -1378,7 +1392,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *coeff_set.diag4.offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
+            *(coeff_set.diag4 as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
         }
         /* Next configuration */
         j = 0;

@@ -9,3 +9,4 @@ edition = "2018"
 name="coeff"
 path="getcoeff.rs"
 [dependencies]
+engine-traits = { path = "./../engine-traits" }
