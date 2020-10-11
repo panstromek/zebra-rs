@@ -400,12 +400,9 @@ pub unsafe fn clear_coeffs() {
    performance and avoid heap fragmentation.
 */
 pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet) -> i32 {
-    let mut i: i32 = 0;
-    let mut found_free: i32 = 0;
-    let mut free_block: i32 = 0;
-    found_free = 0;
-    free_block = -(1 as i32);
-    i = 0;
+    let mut found_free = 0;
+    let mut free_block = -1;
+    let mut i = 0;
     while i < block_count && found_free == 0 {
         if block_allocated[i as usize] == 0 {
             found_free = 1;
@@ -523,10 +520,8 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
    the statistically optimized pattern tables.
 */
 
-pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32)
-                                               -> i32 {
+pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32) -> i32 {
     let mut eval_phase: i32 = 0;
-    let mut score: i16 = 0;
     /* Any player wiped out? Game over then... */
     if piece_count[0][disks_played as usize] ==
         0 as i32 {
