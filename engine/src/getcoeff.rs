@@ -74,20 +74,11 @@ static mut set: [CoeffSet; 61] = [
     CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
     CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
     CoeffSet::new()];
-
-pub unsafe fn generate_batch(target: &mut [i16],
-                         count: usize,
-                         source1: &mut [i16],
-                         weight1: i32,
-                         source2: &mut [i16],
-                             weight2: i32) {
-    generate_batch_((target), (source1), weight1, (source2), weight2);
-}
 /*
    GENERATE_BATCH
    Interpolates between two stages.
 */
-fn generate_batch_(target: &mut [i16], source1: &[i16], weight1: i32, source2: &[i16], weight2: i32) {
+fn generate_batch(target: &mut [i16], source1: &[i16], weight1: i32, source2: &[i16], weight2: i32) {
     let total_weight = weight1 + weight2;
     source1.iter()
         .zip(source2.iter())
@@ -455,17 +446,17 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
         let set_item = set_item.data.as_mut().unwrap();
         let previous_set_item = previous_set_item.data.as_mut().unwrap();
         let next_set_item = next_set_item.data.as_mut().unwrap();
-        generate_batch(set_item.afile2x, 59049, previous_set_item.afile2x, weight1, next_set_item.afile2x, weight2);
-        generate_batch(set_item.bfile, 6561, previous_set_item.bfile, weight1, next_set_item.bfile, weight2);
-        generate_batch(set_item.cfile, 6561, previous_set_item.cfile, weight1, next_set_item.cfile, weight2);
-        generate_batch(set_item.dfile, 6561, previous_set_item.dfile, weight1, next_set_item.dfile, weight2);
-        generate_batch(set_item.diag8, 6561, previous_set_item.diag8, weight1, next_set_item.diag8, weight2);
-        generate_batch(set_item.diag7, 2187, previous_set_item.diag7, weight1, next_set_item.diag7, weight2);
-        generate_batch(set_item.diag6, 729, previous_set_item.diag6, weight1, next_set_item.diag6, weight2);
-        generate_batch(set_item.diag5, 243, previous_set_item.diag5, weight1, next_set_item.diag5, weight2);
-        generate_batch(set_item.diag4, 81, previous_set_item.diag4, weight1, next_set_item.diag4, weight2);
-        generate_batch(set_item.corner33, 19683, previous_set_item.corner33, weight1, next_set_item.corner33, weight2);
-        generate_batch(set_item.corner52, 59049, previous_set_item.corner52, weight1, next_set_item.corner52, weight2);
+        generate_batch(set_item.afile2x, previous_set_item.afile2x, weight1, next_set_item.afile2x, weight2);
+        generate_batch(set_item.bfile, previous_set_item.bfile, weight1, next_set_item.bfile, weight2);
+        generate_batch(set_item.cfile, previous_set_item.cfile, weight1, next_set_item.cfile, weight2);
+        generate_batch(set_item.dfile, previous_set_item.dfile, weight1, next_set_item.dfile, weight2);
+        generate_batch(set_item.diag8, previous_set_item.diag8, weight1, next_set_item.diag8, weight2);
+        generate_batch(set_item.diag7, previous_set_item.diag7, weight1, next_set_item.diag7, weight2);
+        generate_batch(set_item.diag6, previous_set_item.diag6, weight1, next_set_item.diag6, weight2);
+        generate_batch(set_item.diag5, previous_set_item.diag5, weight1, next_set_item.diag5, weight2);
+        generate_batch(set_item.diag4, previous_set_item.diag4, weight1, next_set_item.diag4, weight2);
+        generate_batch(set_item.corner33, previous_set_item.corner33, weight1, next_set_item.corner33, weight2);
+        generate_batch(set_item.corner52, previous_set_item.corner52, weight1, next_set_item.corner52, weight2);
     }
     set_item.loaded = 1;
 }
