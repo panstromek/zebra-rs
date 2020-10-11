@@ -8,7 +8,7 @@ mod tests {
     use std::process::Command;
     use std::path::Path;
     use std::fs::File;
-    use std::io::{Write, Error};
+    use std::io::{Write};
 
     #[test]
     fn coeff_source_test() {

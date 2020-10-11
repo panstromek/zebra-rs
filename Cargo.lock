@@ -39,6 +39,9 @@ checksum = "4785bdd1c96b2a846b2bd7cc02e86b6b3dbf14e7e53446c4f54c92a361040822"
 [[package]]
 name = "coeff"
 version = "0.1.0"
+dependencies = [
+ "engine-traits",
+]
 
 [[package]]
 name = "console_error_panic_hook"

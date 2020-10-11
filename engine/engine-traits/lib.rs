@@ -9,13 +9,13 @@ pub trait CoeffSource {
 pub trait Offset<T> {
     fn offset(self, count: isize) -> T;
 }
-impl<'a, T> Offset<&'a T> for &'a [T] {
+impl<'a, 'b: 'a, T> Offset<&'a T> for &'b [T] {
     #[inline(always)]
     fn offset(self, count: isize) -> &'a T {
         &self[count as usize]
     }
 }
-impl<'a, T> Offset<&'a mut T> for &'a mut [T] {
+impl<'a, 'b: 'a, T> Offset<&'a mut T> for &'b mut [T] {
     #[inline(always)]
     fn offset(self, count: isize) -> &'a mut T {
         &mut self[count as usize]
