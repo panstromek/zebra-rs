@@ -112,13 +112,6 @@ fn generate_batch_(target: &mut [i16], source1: &[i16], weight1: i32, source2: &
 }
 
 /*
-   FREE_MEMORY_BLOCK
-   Marks a memory block as no longer in use.
-*/
-pub unsafe fn free_memory_block(block: i32) {
-    block_allocated[block as usize] = 0;
-}
-/*
    INIT_MEMORY_HANDLER
    Mark all blocks in the memory arena as "not used".
 */
@@ -350,7 +343,7 @@ pub unsafe fn remove_specific_coeffs(coeff_set: &mut CoeffSet) {
     let coeff_set = coeff_set;
     if coeff_set.loaded != 0 {
         if coeff_set.permanent == 0 {
-            free_memory_block(coeff_set.block);
+            block_allocated[coeff_set.block as usize] = 0;
         }
         coeff_set.loaded = 0
     };
@@ -371,15 +364,9 @@ pub unsafe fn remove_coeffs(phase: i32) {
    CLEAR_COEFFS
    Remove all coefficients loaded from memory.
 */
-
 pub unsafe fn clear_coeffs() {
-    let mut i: i32 = 0;
-    while i <= 60 {
-        remove_specific_coeffs(&mut set[i as usize]);
-        i += 1
-    };
+    remove_coeffs(set.len() as i32);
 }
-
 
 
 /*
@@ -415,8 +402,7 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet) -> i32 {
             }));
         }
         if block_count == 200 || block_list[block_count as usize].is_none() {
-            let block_count_ = block_count;
-            FE::memory_allocation_failure(block_count_);
+            FE::memory_allocation_failure(block_count);
         }
         free_block = block_count;
         block_count += 1
