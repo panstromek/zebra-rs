@@ -79,19 +79,7 @@ static mut set: [CoeffSet; 61] = [CoeffSet {
     diag5: 0 as _,
     diag4: 0 as _,
     corner33: 0 as _,
-    corner52: 0 as _,
-    afile2x_last: 0 as _,
-    bfile_last: 0 as _,
-    cfile_last: 0 as _,
-    dfile_last: 0 as _,
-    diag8_last: 0 as _,
-    diag7_last: 0 as _,
-    diag6_last: 0 as _,
-    diag5_last: 0 as _,
-    diag4_last: 0 as _,
-    corner33_last: 0 as _,
-    corner52_last: 0 as _,
-    alignment_padding: [0; 12],
+    corner52: 0 as _
 }; 61];
 
 pub unsafe fn generate_batch(target: *mut i16,
@@ -500,17 +488,6 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
         generate_batch(set_item.corner33, 19683, previous_set_item.corner33, weight1, next_set_item.corner33, weight2);
         generate_batch(set_item.corner52, 59049, previous_set_item.corner52, weight1, next_set_item.corner52, weight2);
     }
-    set_item.afile2x_last = set_item.afile2x.offset(59048);
-    set_item.bfile_last = set_item.bfile.offset(6560);
-    set_item.cfile_last = set_item.cfile.offset(6560);
-    set_item.dfile_last = set_item.dfile.offset(6560);
-    set_item.diag8_last = set_item.diag8.offset(6560);
-    set_item.diag7_last = set_item.diag7.offset(2186);
-    set_item.diag6_last = set_item.diag6.offset(728);
-    set_item.diag5_last = set_item.diag5.offset(242);
-    set_item.diag4_last = set_item.diag4.offset(80);
-    set_item.corner33_last = set_item.corner33.offset(19682);
-    set_item.corner52_last = set_item.corner52.offset(59048);
     set_item.loaded = 1;
 }
 
