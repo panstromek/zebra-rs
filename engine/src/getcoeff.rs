@@ -135,13 +135,8 @@ pub unsafe fn free_memory_block(block: i32) {
    Mark all blocks in the memory arena as "not used".
 */
 pub unsafe fn init_memory_handler() {
-    let mut i: i32 = 0;
     block_count = 0;
-    i = 0;
-    while i < 200 as i32 {
-        block_allocated[i as usize] = 0;
-        i += 1
-    };
+    block_allocated = [0; 200];
 }
 
 
@@ -491,39 +486,17 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32) {
         set_item.parity_constant[0] = set_item.constant;
         set_item.parity_constant[1] = set_item.constant + set_item.parity;
         allocate_set::<FE>(index);
-        generate_batch(set_item.afile2x, 59049,
-                       previous_set_item.afile2x, weight1,
-                       next_set_item.afile2x, weight2);
-        generate_batch(set_item.bfile, 6561,
-                       previous_set_item.bfile, weight1,
-                       next_set_item.bfile, weight2);
-        generate_batch(set_item.cfile, 6561,
-                       previous_set_item.cfile, weight1,
-                       next_set_item.cfile, weight2);
-        generate_batch(set_item.dfile, 6561,
-                       previous_set_item.dfile, weight1,
-                       next_set_item.dfile, weight2);
-        generate_batch(set_item.diag8, 6561,
-                       previous_set_item.diag8, weight1,
-                       next_set_item.diag8, weight2);
-        generate_batch(set_item.diag7, 2187,
-                       previous_set_item.diag7, weight1,
-                       next_set_item.diag7, weight2);
-        generate_batch(set_item.diag6, 729,
-                       previous_set_item.diag6, weight1,
-                       next_set_item.diag6, weight2);
-        generate_batch(set_item.diag5, 243,
-                       previous_set_item.diag5, weight1,
-                       next_set_item.diag5, weight2);
-        generate_batch(set_item.diag4, 81,
-                       previous_set_item.diag4, weight1,
-                       next_set_item.diag4, weight2);
-        generate_batch(set_item.corner33, 19683,
-                       previous_set_item.corner33, weight1,
-                       next_set_item.corner33, weight2);
-        generate_batch(set_item.corner52, 59049,
-                       previous_set_item.corner52, weight1,
-                       next_set_item.corner52, weight2);
+        generate_batch(set_item.afile2x, 59049, previous_set_item.afile2x, weight1, next_set_item.afile2x, weight2);
+        generate_batch(set_item.bfile, 6561, previous_set_item.bfile, weight1, next_set_item.bfile, weight2);
+        generate_batch(set_item.cfile, 6561, previous_set_item.cfile, weight1, next_set_item.cfile, weight2);
+        generate_batch(set_item.dfile, 6561, previous_set_item.dfile, weight1, next_set_item.dfile, weight2);
+        generate_batch(set_item.diag8, 6561, previous_set_item.diag8, weight1, next_set_item.diag8, weight2);
+        generate_batch(set_item.diag7, 2187, previous_set_item.diag7, weight1, next_set_item.diag7, weight2);
+        generate_batch(set_item.diag6, 729, previous_set_item.diag6, weight1, next_set_item.diag6, weight2);
+        generate_batch(set_item.diag5, 243, previous_set_item.diag5, weight1, next_set_item.diag5, weight2);
+        generate_batch(set_item.diag4, 81, previous_set_item.diag4, weight1, next_set_item.diag4, weight2);
+        generate_batch(set_item.corner33, 19683, previous_set_item.corner33, weight1, next_set_item.corner33, weight2);
+        generate_batch(set_item.corner52, 59049, previous_set_item.corner52, weight1, next_set_item.corner52, weight2);
     }
     set_item.afile2x_last = set_item.afile2x.offset(59048);
     set_item.bfile_last = set_item.bfile.offset(6560);
