@@ -1,7 +1,5 @@
-use crate::src::stubs::abs;
 use crate::src::myrandom::my_random;
 use std::ffi::c_void;
-use crate::src::error::FrontEnd;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -337,10 +335,10 @@ pub fn popcount(mut b: u32) -> u32 {
   A closeness of 0 means that 32 bits differ.
 */
 pub fn get_closeness(a0: u32, a1: u32, b0: u32, b1: u32) -> u32 {
-    abs(popcount(a0 ^ b0)
+    (popcount(a0 ^ b0)
         .wrapping_add(popcount(a1 ^ b1))
         .wrapping_sub(32) as i32
-    ) as u32
+    ).abs() as u32
 }
 
 /*
