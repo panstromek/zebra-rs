@@ -158,18 +158,20 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
     while i < stage_count - 1 as i32 {
         /* Bonuses for having more discs */
         j = 0;
+        let stage_set = &mut set[stage[i as usize] as usize];
+        let sixty_set = &mut set[60];
         while j < 59049 as i32 {
             let ref mut fresh2 =
-                *set[stage[i as usize] as usize].afile2x.offset(j as isize);
+                *stage_set.afile2x.offset(j as isize);
             *fresh2 =
                 (*fresh2 as f64 +
-                    *set[60].afile2x.offset(j as isize) as i32
+                    *sixty_set.afile2x.offset(j as isize) as i32
                         as f64 * disc_adjust) as i16;
             let ref mut fresh3 =
-                *set[stage[i as usize] as usize].corner52.offset(j as isize);
+                *stage_set.corner52.offset(j as isize);
             *fresh3 =
                 (*fresh3 as f64 +
-                    *set[60].corner52.offset(j as isize) as
+                    *sixty_set.corner52.offset(j as isize) as
                         i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -177,10 +179,10 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
         j = 0;
         while j < 19683 as i32 {
             let ref mut fresh4 =
-                *set[stage[i as usize] as usize].corner33.offset(j as isize);
+                *stage_set.corner33.offset(j as isize);
             *fresh4 =
                 (*fresh4 as f64 +
-                    *set[60].corner33.offset(j as isize) as
+                    *sixty_set.corner33.offset(j as isize) as
                         i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -188,31 +190,31 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
         j = 0;
         while j < 6561 as i32 {
             let ref mut fresh5 =
-                *set[stage[i as usize] as usize].bfile.offset(j as isize);
+                *stage_set.bfile.offset(j as isize);
             *fresh5 =
                 (*fresh5 as f64 +
-                    *set[60].bfile.offset(j as isize)
+                    *sixty_set.bfile.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             let ref mut fresh6 =
-                *set[stage[i as usize] as usize].cfile.offset(j as isize);
+                *stage_set.cfile.offset(j as isize);
             *fresh6 =
                 (*fresh6 as f64 +
-                    *set[60].cfile.offset(j as isize)
+                    *sixty_set.cfile.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             let ref mut fresh7 =
-                *set[stage[i as usize] as usize].dfile.offset(j as isize);
+                *stage_set.dfile.offset(j as isize);
             *fresh7 =
                 (*fresh7 as f64 +
-                    *set[60].dfile.offset(j as isize)
+                    *sixty_set.dfile.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             let ref mut fresh8 =
-                *set[stage[i as usize] as usize].diag8.offset(j as isize);
+                *stage_set.diag8.offset(j as isize);
             *fresh8 =
                 (*fresh8 as f64 +
-                    *set[60].diag8.offset(j as isize)
+                    *sixty_set.diag8.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -220,10 +222,10 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
         j = 0;
         while j < 2187 as i32 {
             let ref mut fresh9 =
-                *set[stage[i as usize] as usize].diag7.offset(j as isize);
+                *stage_set.diag7.offset(j as isize);
             *fresh9 =
                 (*fresh9 as f64 +
-                    *set[60].diag7.offset(j as isize)
+                    *sixty_set.diag7.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -231,10 +233,10 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
         j = 0;
         while j < 729 as i32 {
             let ref mut fresh10 =
-                *set[stage[i as usize] as usize].diag6.offset(j as isize);
+                *stage_set.diag6.offset(j as isize);
             *fresh10 =
                 (*fresh10 as f64 +
-                    *set[60].diag6.offset(j as isize)
+                    *sixty_set.diag6.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -242,10 +244,10 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
         j = 0;
         while j < 243 as i32 {
             let ref mut fresh11 =
-                *set[stage[i as usize] as usize].diag5.offset(j as isize);
+                *stage_set.diag5.offset(j as isize);
             *fresh11 =
                 (*fresh11 as f64 +
-                    *set[60].diag5.offset(j as isize)
+                    *sixty_set.diag5.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -253,10 +255,10 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
         j = 0;
         while j < 81 as i32 {
             let ref mut fresh12 =
-                *set[stage[i as usize] as usize].diag4.offset(j as isize);
+                *stage_set.diag4.offset(j as isize);
             *fresh12 =
                 (*fresh12 as f64 +
-                    *set[60].diag4.offset(j as isize)
+                    *sixty_set.diag4.offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -328,7 +330,7 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
                         as i32
             }
             let ref mut fresh13 =
-                *set[stage[i as usize] as usize].afile2x.offset(j as isize);
+                *stage_set.afile2x.offset(j as isize);
             *fresh13 = (*fresh13 as i32 + adjust) as i16;
             /* Next configuration */
             k = 0;
@@ -356,12 +358,13 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
    Removes the interpolated coefficients for a
    specific game phase from memory.
 */
-pub unsafe fn remove_specific_coeffs(phase: i32) {
-    if set[phase as usize].loaded != 0 {
-        if set[phase as usize].permanent == 0 {
-            free_memory_block(set[phase as usize].block);
+pub unsafe fn remove_specific_coeffs(coeff_set: &mut CoeffSet) {
+    let coeff_set = coeff_set;
+    if coeff_set.loaded != 0 {
+        if coeff_set.permanent == 0 {
+            free_memory_block(coeff_set.block);
         }
-        set[phase as usize].loaded = 0 as i32
+        coeff_set.loaded = 0 as i32
     };
 }
 /*
@@ -372,7 +375,10 @@ pub unsafe fn remove_specific_coeffs(phase: i32) {
 pub unsafe fn remove_coeffs(phase: i32) {
     let mut i: i32 = 0;
     i = 0;
-    while i < phase { remove_specific_coeffs(i); i += 1 };
+    while i < phase {
+        remove_specific_coeffs(&mut set[i as usize]);
+        i += 1
+    };
 }
 /*
    CLEAR_COEFFS
@@ -382,7 +388,10 @@ pub unsafe fn remove_coeffs(phase: i32) {
 pub unsafe fn clear_coeffs() {
     let mut i: i32 = 0;
     i = 0;
-    while i <= 60 as i32 { remove_specific_coeffs(i); i += 1 };
+    while i <= 60 as i32 {
+        remove_specific_coeffs(&mut set[i as usize]);
+        i += 1
+    };
 }
 
 
