@@ -364,7 +364,7 @@ pub unsafe fn remove_specific_coeffs(coeff_set: &mut CoeffSet) {
         if coeff_set.permanent == 0 {
             free_memory_block(coeff_set.block);
         }
-        coeff_set.loaded = 0 as i32
+        coeff_set.loaded = 0
     };
 }
 /*
@@ -374,7 +374,6 @@ pub unsafe fn remove_specific_coeffs(coeff_set: &mut CoeffSet) {
 
 pub unsafe fn remove_coeffs(phase: i32) {
     let mut i: i32 = 0;
-    i = 0;
     while i < phase {
         remove_specific_coeffs(&mut set[i as usize]);
         i += 1
@@ -387,8 +386,7 @@ pub unsafe fn remove_coeffs(phase: i32) {
 
 pub unsafe fn clear_coeffs() {
     let mut i: i32 = 0;
-    i = 0;
-    while i <= 60 as i32 {
+    while i <= 60 {
         remove_specific_coeffs(&mut set[i as usize]);
         i += 1
     };
@@ -401,7 +399,7 @@ pub unsafe fn clear_coeffs() {
    Maintains an internal memory handler to boost
    performance and avoid heap fragmentation.
 */
-pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet, index: i32) -> i32 {
+pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet) -> i32 {
     let mut i: i32 = 0;
     let mut found_free: i32 = 0;
     let mut free_block: i32 = 0;
@@ -458,9 +456,8 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet, index: i
    ALLOCATE_SET
    Finds memory for all patterns belonging to a certain stage.
 */
-pub unsafe fn allocate_set<FE: FrontEnd>(index: i32) {
-    let coeff_set = &mut set[index as usize];
-    coeff_set.block = find_memory_block::<FE>(coeff_set, index);
+pub unsafe fn allocate_set<FE: FrontEnd>(coeff_set: &mut CoeffSet) {
+    coeff_set.block = find_memory_block::<FE>(coeff_set);
 }
 /*
    LOAD_SET
@@ -469,8 +466,7 @@ pub unsafe fn allocate_set<FE: FrontEnd>(index: i32) {
    Also calculates the offset pointers to the last elements in each block
    (used for the inverted patterns when white is to move).
 */
-pub unsafe fn load_set<FE: FrontEnd>(index: i32) {
-    let set_item = &mut set[(index as usize)];
+pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
     if set_item.permanent == 0 {
         let mut weight1 = 0;
         let mut weight2 = 0;
@@ -494,7 +490,7 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32) {
                 total_weight) as i16;
         set_item.parity_constant[0] = set_item.constant;
         set_item.parity_constant[1] = set_item.constant + set_item.parity;
-        allocate_set::<FE>(index);
+        allocate_set::<FE>(set_item);
         generate_batch(set_item.afile2x, 59049, previous_set_item.afile2x, weight1, next_set_item.afile2x, weight2);
         generate_batch(set_item.bfile, 6561, previous_set_item.bfile, weight1, next_set_item.bfile, weight2);
         generate_batch(set_item.cfile, 6561, previous_set_item.cfile, weight1, next_set_item.cfile, weight2);
@@ -548,7 +544,7 @@ pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32)
     /* Load and/or initialize the pattern coefficients */
     eval_phase = eval_map[disks_played as usize];
     if set[eval_phase as usize].loaded == 0 {
-        load_set::<FE>(eval_phase);
+        load_set::<FE>(eval_phase, &mut set[(eval_phase as usize)]);
     }
     constant_and_parity_feature(side_to_move, disks_played, &mut globals::board, &mut set[eval_phase as usize])
 }
@@ -936,62 +932,60 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
        was tuned and mark the other stages with pointers to the previous
        and next stages. */
     let mut i = 0;
-    while i <= 60 as i32 {
-        set[i as usize].permanent = 0;
-        set[i as usize].loaded = 0;
+    while i <= 60 {
+        let coeff_set = &mut set[i as usize];
+        coeff_set.permanent = 0;
+        coeff_set.loaded = 0;
         i += 1
     }
     stage_count = next_word() as i32;
     let mut i = 0;
-    let mut j: i32 = 0;
-    let mut curr_stage: i32 = 0;
-    while i < stage_count - 1 as i32 {
+    let mut j = 0;
+    let mut curr_stage = 0;
+    while i < stage_count - 1 {
         stage[i as usize] = next_word() as i32;
         curr_stage = stage[i as usize];
-        if i == 0 as i32 {
+        if i == 0 {
             j = 0;
             while j < stage[0] {
-                set[j as usize].prev = stage[0];
-                set[j as usize].next = stage[0];
+                let coeff_set = &mut set[j as usize];
+                coeff_set.prev = stage[0];
+                coeff_set.next = stage[0];
                 j += 1
             }
         } else {
             j = stage[(i - 1 as i32) as usize];
             while j < stage[i as usize] {
-                set[j as usize].prev = stage[(i - 1 as i32) as usize];
-                set[j as usize].next = stage[i as usize];
+                let coeff_set = &mut set[j as usize];
+                coeff_set.prev = stage[(i - 1 as i32) as usize];
+                coeff_set.next = stage[i as usize];
                 j += 1
             }
         }
         set[curr_stage as usize].permanent = 1;
-        allocate_set::<FE>(curr_stage);
+        allocate_set::<FE>( &mut set[curr_stage as usize]);
         i += 1
     }
-    stage[(stage_count - 1 as i32) as usize] = 60;
-    j = stage[(stage_count - 2 as i32) as usize];
-    while j < 60 as i32 {
-        set[j as usize].prev =
-            stage[(stage_count - 2 as i32) as usize];
-        set[j as usize].next = 60;
+    stage[(stage_count - 1) as usize] = 60;
+    j = stage[(stage_count - 2) as usize];
+    while j < 60 {
+        let coeff_set = &mut set[j as usize];
+        coeff_set.prev = stage[(stage_count - 2 as i32) as usize];
+        coeff_set.next = 60;
         j += 1
     }
     set[60].permanent = 1;
-    allocate_set::<FE>(60 as i32);
+    allocate_set::<FE>(&mut set[60]);
     /* Read the pattern values */
     unpack_coeffs::<FE, _>(&mut next_word);
 }
 
 
 pub unsafe fn init_coeffs_calculate_patterns() {
-    /* Calculate the patterns which correspond to the board being filled */
-    terminal_patterns(&mut set);
-    set[60].constant = 0;
-    set[60].parity = 0;
-    set[60].parity_constant[0]
-        = set[60].constant;
-    set[60].parity_constant[1]
-        =
-        (set[60].constant as i32 +
-            set[60].parity as i32) as
-            i16;
+    let coeff_set = &mut set[60];
+    terminal_patterns(coeff_set);
+    coeff_set.constant = 0;
+    coeff_set.parity = 0;
+    coeff_set.parity_constant[0] = coeff_set.constant;
+    coeff_set.parity_constant[1] = (coeff_set.constant as i32 + coeff_set.parity as i32) as i16;
 }
