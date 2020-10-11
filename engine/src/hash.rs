@@ -1,6 +1,5 @@
 use crate::src::stubs::abs;
 use crate::src::myrandom::my_random;
-use crate::src::safemem::safe_malloc;
 use std::ffi::c_void;
 use crate::src::error::FrontEnd;
 

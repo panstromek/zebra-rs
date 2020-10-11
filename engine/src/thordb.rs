@@ -87,9 +87,7 @@ pub static mut tournaments: TournamentDatabaseType =
             *mut TournamentType,};
 pub static mut root_node: *mut ThorOpeningNode =
     0 as *const ThorOpeningNode as *mut ThorOpeningNode;
-pub static mut default_sort_order: [i32; 5] =
-    [2 as i32, 3 as i32, 1 as i32, 5 as i32,
-        4 as i32];
+pub static default_sort_order: [i32; 5] = [2 as i32, 3 as i32, 1 as i32, 5 as i32, 4 as i32];
 pub static mut thor_sort_order: [i32; 10] = [0; 10];
 pub static mut filter: FilterType =
     FilterType{game_categories: 0,
@@ -100,7 +98,7 @@ pub static mut filter: FilterType =
 /*
   CLEAR_THOR_BOARD
 */
-pub unsafe fn clear_thor_board() {
+unsafe fn clear_thor_board() {
     let mut pos: i32 = 0;
     pos = 11;
     while pos <= 88 as i32 {
@@ -118,7 +116,7 @@ pub unsafe fn clear_thor_board() {
   PREPARE_THOR_BOARD
   Mark the positions outside the board as OUTSIDE.
 */
-pub unsafe fn prepare_thor_board() {
+unsafe fn prepare_thor_board() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -142,7 +140,7 @@ pub unsafe fn prepare_thor_board() {
   Count the number of discs flipped in the direction given by INC
   when SQ is played by COLOR and flip those discs.
 */
-pub unsafe fn directional_flip_count(sq: i32,
+unsafe fn directional_flip_count(sq: i32,
                                  inc: i32,
                                  color: i32,
                                  oppcol: i32)
@@ -189,7 +187,7 @@ pub unsafe fn directional_flip_count(sq: i32,
   Returns 1 if SQ is feasible for COLOR in the direction given by INC
   and flip the discs which are flipped if SQ is played.
 */
-pub unsafe fn directional_flip_any(sq: i32,
+unsafe fn directional_flip_any(sq: i32,
                                inc: i32,
                                color: i32,
                                oppcol: i32)
@@ -227,7 +225,7 @@ pub unsafe fn directional_flip_any(sq: i32,
   Returns the number of discs flipped if SQNUM is played by COLOR
   and flips those discs (if there are any).
 */
-pub unsafe fn count_flips(sqnum: i32,
+unsafe fn count_flips(sqnum: i32,
                       color: i32,
                       oppcol: i32) -> i32 {
     let mut count: i32 = 0;
@@ -273,7 +271,7 @@ pub unsafe fn count_flips(sqnum: i32,
   Returns 1 if SQNUM flips any discs for COLOR, otherwise 0, and
   flips those discs.
 */
-pub unsafe fn any_flips(sqnum: i32, color: i32,
+unsafe fn any_flips(sqnum: i32, color: i32,
                     oppcol: i32) -> i32 {
     let mut count: i32 = 0;
     let mut mask: i32 = 0;
@@ -314,7 +312,7 @@ pub unsafe fn any_flips(sqnum: i32, color: i32,
   Computes the row and column patterns.
 
 */
-pub unsafe fn compute_thor_patterns(in_board: *mut i32) {
+unsafe fn compute_thor_patterns(in_board: *mut i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -351,7 +349,7 @@ pub unsafe fn compute_thor_patterns(in_board: *mut i32) {
   one corner has been played (obvious generalization for one or two
   corners).
 */
-pub unsafe fn get_corner_mask(disc_a1: i32,
+unsafe fn get_corner_mask(disc_a1: i32,
                           disc_a8: i32,
                           disc_h1: i32,
                           disc_h8: i32)
@@ -455,7 +453,7 @@ pub unsafe fn get_player_name(index: i32)
   Returns the number of players in the database.
 */
 
-pub unsafe fn get_player_count() -> i32 {
+unsafe fn get_player_count() -> i32 {
     return players.count;
 }
 /*
@@ -463,7 +461,7 @@ pub unsafe fn get_player_count() -> i32 {
   Returns the index into the lexicographical order of the
   INDEXth player if available, otherwise the last index + 1.
 */
-pub unsafe fn player_lex_order(index: i32) -> i32 {
+unsafe fn player_lex_order(index: i32) -> i32 {
     if index < 0 as i32 || index >= players.count {
         return players.count
     } else { return (*players.player_list.offset(index as isize)).lex_order };
@@ -474,7 +472,7 @@ pub unsafe fn player_lex_order(index: i32) -> i32 {
   Returns the name of the INDEXth tournament if available.
 */
 
-pub unsafe fn get_tournament_name(index: i32)
+unsafe fn get_tournament_name(index: i32)
                                   -> *const i8 {
     if index < 0 as i32 || index >= tournaments.count {
         return b"< Not available >\x00" as *const u8 as *const i8
@@ -488,7 +486,7 @@ pub unsafe fn get_tournament_name(index: i32)
   Returns the number of players in the database.
 */
 
-pub unsafe fn get_tournament_count() -> i32 {
+unsafe fn get_tournament_count() -> i32 {
     return tournaments.count;
 }
 
@@ -497,7 +495,7 @@ pub unsafe fn get_tournament_count() -> i32 {
   Returns the number of game databases currently loaded.
 */
 
-pub unsafe fn get_database_count() -> i32 {
+unsafe fn get_database_count() -> i32 {
     return thor_database_count;
 }
 /*
@@ -509,7 +507,7 @@ pub unsafe fn get_database_count() -> i32 {
   above.
 */
 
-pub unsafe fn get_database_info(info: *mut DatabaseInfoType) {
+unsafe fn get_database_info(info: *mut DatabaseInfoType) {
     let mut i: i32 = 0;
     let mut change: i32 = 0;
     let mut temp = DatabaseInfoType{year: 0, count: 0,};
@@ -547,7 +545,7 @@ pub unsafe fn get_database_info(info: *mut DatabaseInfoType) {
   Computes the primary and secondary hash values for the
   unit element in the rotation group.
 */
-pub unsafe fn compute_partial_hash(hash_val1: *mut u32,
+unsafe fn compute_partial_hash(hash_val1: *mut u32,
                                hash_val2: *mut u32) {
     let mut i: i32 = 0;
     *hash_val1 = 0;
@@ -569,7 +567,7 @@ pub unsafe fn compute_partial_hash(hash_val1: *mut u32,
   Note: The order of the hash codes must coincide with the
         definitions in INIT_SYMMETRY_MAPS().
 */
-pub unsafe fn compute_full_primary_hash(hash_val:
+unsafe fn compute_full_primary_hash(hash_val:
                                     *mut u32) {
     let mut i: i32 = 0;
     i = 0;
@@ -610,7 +608,7 @@ pub unsafe fn compute_full_primary_hash(hash_val:
     *hash_val.offset(7) =
         bit_reverse_32(*hash_val.offset(3));
 }
-pub unsafe fn compute_full_secondary_hash(hash_val:
+unsafe fn compute_full_secondary_hash(hash_val:
                                       *mut u32) {
     let mut i: i32 = 0;
     i = 0;
@@ -659,7 +657,7 @@ pub unsafe fn compute_full_secondary_hash(hash_val:
   Checks if any of the rotations of the current pattern set
   match the primary hash code TARGET_HASH.
 */
-pub unsafe fn primary_hash_lookup(target_hash: u32)
+unsafe fn primary_hash_lookup(target_hash: u32)
                               -> i32 {
     let mut i: i32 = 0;
     let mut hit_mask: i32 = 0;
@@ -680,7 +678,7 @@ pub unsafe fn primary_hash_lookup(target_hash: u32)
   Checks if any of the rotations of the current pattern set
   match the secondary hash code TARGET_HASH.
 */
-pub unsafe fn secondary_hash_lookup(target_hash: u32)
+unsafe fn secondary_hash_lookup(target_hash: u32)
                                 -> i32 {
     let mut i: i32 = 0;
     let mut hit_mask: i32 = 0;
@@ -701,7 +699,7 @@ pub unsafe fn secondary_hash_lookup(target_hash: u32)
   FILTER_DATABASE
   Applies the current filter rules to the database DB.
 */
-pub unsafe fn filter_database(db: *mut DatabaseType) {
+unsafe fn filter_database(db: *mut DatabaseType) {
     let mut i: i32 = 0;
     let mut category: i32 = 0;
     let mut passes_filter: i32 = 0;
@@ -788,7 +786,7 @@ pub unsafe fn filter_database(db: *mut DatabaseType) {
   FILTER_ALL_DATABASES
   Applies the current filter rules to all databases.
 */
-pub unsafe fn filter_all_databases() {
+unsafe fn filter_all_databases() {
     let mut current_db = 0 as *mut DatabaseType;
     current_db = database_head;
     while !current_db.is_null() {
@@ -804,7 +802,7 @@ pub unsafe fn filter_all_databases() {
   GET_PLAYER_COUNT() if necessary.
 */
 
-pub unsafe fn set_player_filter(selected: *mut i32) {
+unsafe fn set_player_filter(selected: *mut i32) {
     let mut i: i32 = 0;
     i = 0;
     while i < players.count {
@@ -820,7 +818,7 @@ pub unsafe fn set_player_filter(selected: *mut i32) {
   player or if both players have to be selected for it be displayed.
 */
 
-pub unsafe fn set_player_filter_type(player_filter:
+unsafe fn set_player_filter_type(player_filter:
                                      PlayerFilterType) {
     filter.player_filter = player_filter;
 }
@@ -831,7 +829,7 @@ pub unsafe fn set_player_filter_type(player_filter:
   GET_TOURNAMENT_COUNT() if necessary.
 */
 
-pub unsafe fn set_tournament_filter(selected:
+unsafe fn set_tournament_filter(selected:
                                     *mut i32) {
     let mut i: i32 = 0;
     i = 0;
@@ -847,7 +845,7 @@ pub unsafe fn set_tournament_filter(selected:
   Specify the interval of years to which the search will be confined.
 */
 
-pub unsafe fn set_year_filter(first_year: i32,
+unsafe fn set_year_filter(first_year: i32,
                               last_year: i32) {
     filter.first_year = first_year;
     filter.last_year = last_year;
@@ -860,7 +858,7 @@ pub unsafe fn set_year_filter(first_year: i32,
   OR of the flags for the types enabled.
 */
 
-pub unsafe fn specify_game_categories(categories:
+unsafe fn specify_game_categories(categories:
                                       i32) {
     if categories != filter.game_categories {
         filter.game_categories = categories;
@@ -876,7 +874,7 @@ pub unsafe fn specify_game_categories(categories:
         to which SORT_ORDER points, a crash is likely.
 */
 
-pub unsafe fn specify_thor_sort_order(mut count: i32,
+unsafe fn specify_thor_sort_order(mut count: i32,
                                       sort_order:
                                       *mut i32) {
     let mut i: i32 = 0;
@@ -909,7 +907,7 @@ pub unsafe fn specify_thor_sort_order(mut count: i32,
   with the primary and secondary hash codes from the 8 different
   rotations.
 */
-pub unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
+unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
                                  depth: i32,
                                  moves_played: i32,
                                  primary_hash_0:
@@ -960,7 +958,7 @@ pub unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
   Fills the opening tree with information on how well
   the current pattern configuration matches the openings.
 */
-pub unsafe fn opening_scan(moves_played: i32) {
+unsafe fn opening_scan(moves_played: i32) {
     let mut primary_hash_0: [u32; 8] = [0; 8];
     let mut secondary_hash_0: [u32; 8] = [0; 8];
     compute_full_primary_hash(primary_hash_0.as_mut_ptr());
@@ -975,7 +973,7 @@ pub unsafe fn opening_scan(moves_played: i32) {
   the number of times each move has been played according to the
   trimmed set of openings from the Thor database.
 */
-pub unsafe fn recursive_frequency_count(node: *mut ThorOpeningNode,
+unsafe fn recursive_frequency_count(node: *mut ThorOpeningNode,
                                     freq_count:
                                     *mut i32,
                                     depth: i32,
@@ -1028,7 +1026,7 @@ pub unsafe fn recursive_frequency_count(node: *mut ThorOpeningNode,
   in the list of matching games generated by DATABASE_SEARCH.
 */
 
-pub unsafe fn get_thor_game(index: i32)
+unsafe fn get_thor_game(index: i32)
                             -> GameInfoType {
     let mut info =
         GameInfoType{black_name: 0 as *const i8,
@@ -1067,7 +1065,7 @@ pub unsafe fn get_thor_game(index: i32)
   in the list of matching games generated by DATABASE_SEARCH.
 */
 
-pub unsafe fn get_thor_game_move_count(index: i32)
+unsafe fn get_thor_game_move_count(index: i32)
                                        -> i32 {
     if index < 0 as i32 || index >= thor_search.match_count {
         /* Bad index */
@@ -1120,12 +1118,12 @@ pub unsafe fn get_black_average_score() -> f64 {
     return thor_search.average_black_score;
 }
 
-pub unsafe fn get_move_frequency(move_0: i32)
+unsafe fn get_move_frequency(move_0: i32)
                                  -> i32 {
     return thor_search.next_move_frequency[move_0 as usize];
 }
 
-pub unsafe fn get_move_win_rate(move_0: i32)
+unsafe fn get_move_win_rate(move_0: i32)
                                 -> f64 {
     if thor_search.next_move_frequency[move_0 as usize] == 0 as i32 {
         return 0.0f64
@@ -1140,7 +1138,7 @@ pub unsafe fn get_move_win_rate(move_0: i32)
   INIT_MOVE_MASKS
   Initializes the shape bit masks for each of the possible moves.
 */
-pub unsafe fn init_move_masks() {
+unsafe fn init_move_masks() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -1187,7 +1185,7 @@ pub unsafe fn init_move_masks() {
   Calculates and returns the number of lines in the Thor opening base
   that match the line defined by NODE.
 */
-pub unsafe fn calculate_opening_frequency(mut node:
+unsafe fn calculate_opening_frequency(mut node:
                                       *mut ThorOpeningNode)
                                       -> i32 {
     let mut sum: i32 = 0;
@@ -1223,7 +1221,7 @@ pub unsafe fn get_thor_game_size() -> i32 {
         in which they are calculated in COMPUTE_FULL_PRIMARY_HASH()
     and COMPUTE_FULL_SECONDARY_HASH().
 */
-pub unsafe fn init_symmetry_maps<FE: FrontEnd>() {
+unsafe fn init_symmetry_maps<FE: FrontEnd>() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -1305,7 +1303,7 @@ pub unsafe fn init_symmetry_maps<FE: FrontEnd>() {
   Play the MAX_MOVES first moves of GAME and update THOR_BOARD
   and THOR_SIDE_TO_MOVE to represent the position after those moves.
 */
-pub unsafe fn play_through_game(game: *mut GameType,
+unsafe fn play_through_game(game: *mut GameType,
                                 max_moves: i32)
                                 -> i32 {
     let mut i: i32 = 0;
@@ -1474,7 +1472,7 @@ pub unsafe fn prepare_game(mut game: *mut GameType) {
 
   which speeds up the computation of the hash functions.
 */
-pub unsafe fn init_thor_hash() {
+unsafe fn init_thor_hash() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut row: [i32; 10] = [0; 10];
@@ -1546,7 +1544,7 @@ pub unsafe fn init_thor_hash() {
   NEW_THOR_OPENING_NODE
   Creates and initializes a new node for use in the opening tree.
 */
-pub unsafe fn new_thor_opening_node<FE: FrontEnd>(parent: *mut ThorOpeningNode)
+unsafe fn new_thor_opening_node<FE: FrontEnd>(parent: *mut ThorOpeningNode)
                                                   -> *mut ThorOpeningNode {
     let mut node = 0 as *mut ThorOpeningNode;
     node =
@@ -1565,7 +1563,7 @@ pub unsafe fn new_thor_opening_node<FE: FrontEnd>(parent: *mut ThorOpeningNode)
   Builds the opening tree from the statically computed
   structure THOR_OPENING_LIST (see thorop.c).
 */
-pub unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
+unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
     let mut thor_move_list: [i8; 61] = [0; 61];
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -1779,7 +1777,7 @@ pub unsafe fn init_thor_database<FE: FrontEnd>() {
   on what rotation that gave a match.
 */
 
-pub unsafe fn get_thor_game_moves(index: i32,
+unsafe fn get_thor_game_moves(index: i32,
                                   move_count: *mut i32,
                                   moves: *mut i32) {
     let mut i: i32 = 0;
@@ -1850,7 +1848,7 @@ pub unsafe fn get_thor_game_move(index: i32,
   SIDE_TO_MOVE being the player to move, matches the hash codes
   IN_HASH1 and IN_HASH2, otherwise FALSE.
 */
-pub unsafe fn position_match(mut game: *mut GameType,
+unsafe fn position_match(mut game: *mut GameType,
                          move_count: i32,
                          side_to_move: i32,
                          shape_lo: *mut u32,
@@ -1986,7 +1984,7 @@ pub unsafe fn position_match(mut game: *mut GameType,
   INDEXth tournament if available, otherwise the last
   index + 1.
 */
-pub unsafe fn tournament_lex_order(index: i32)
+unsafe fn tournament_lex_order(index: i32)
                                    -> i32 {
     if index < 0 as i32 || index >= tournaments.count {
         return tournaments.count
