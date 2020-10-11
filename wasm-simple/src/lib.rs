@@ -47,6 +47,28 @@ macro_rules! c_log {
 static COEFFS: &[u8; 1336662] = include_bytes!("./../../coeffs2.bin");
 
 #[wasm_bindgen]
+pub fn set_skills(
+    black_skill :i32,
+    black_exact_skill :i32,
+    black_wld_skill :i32,
+    white_skill :i32,
+    white_exact_skill :i32,
+    white_wld_skill :i32
+) {
+    unsafe {
+        // black
+        skill[0] = black_skill;
+        exact_skill[0] = black_exact_skill;
+        wld_skill[0] = black_wld_skill;
+
+        // white
+        skill[2] = white_skill;
+        exact_skill[2] = white_exact_skill;
+        wld_skill[2] = white_wld_skill;
+    }
+}
+
+#[wasm_bindgen]
 pub async fn start_game() {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
     unsafe {
@@ -59,12 +81,13 @@ pub async fn start_game() {
         init_thor_database::<WasmFrontend>();
         my_srandom(1 as i32);
 
-        while skill[0] < 0 as i32 {
+        // FIXME don't run this init code on every start - my set_skills doesn't work because of that
+        if skill[0] < 0 {
             skill[0] = 6;
             exact_skill[0] = 6;
             wld_skill[0] = 6;
         }
-        while skill[2] < 0 as i32 {
+        if skill[2] < 0 {
             skill[2] = 0;
             exact_skill[2] = 0;
             wld_skill[2] = 0;
