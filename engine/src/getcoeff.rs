@@ -929,18 +929,10 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
     i = 0;
     while i < stage_count - 1 as i32 {
         let stage_set = &mut set[stage[i as usize] as usize];
-        stage_set.constant =
-            (next_word() as i32 / 4 as i32) as
-                i16;
-        stage_set.parity =
-            (next_word() as i32 / 4 as i32) as
-                i16;
-        stage_set.parity_constant[0] =
-            stage_set.constant;
-        stage_set.parity_constant[1] =
-            (stage_set.constant as i32 +
-                stage_set.parity as i32) as
-                i16;
+        stage_set.constant = (next_word() / 4);
+        stage_set.parity = (next_word() / 4);
+        stage_set.parity_constant[0] = stage_set.constant;
+        stage_set.parity_constant[1] = (stage_set.constant as i32 + stage_set.parity as i32) as i16;
         unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.afile2x, 59049), Some(&map_mirror8x2), next_word);
         unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.bfile, 6561), Some(&map_mirror8), next_word);
         unpack_batch::<FE, S>(from_raw_parts_mut(stage_set.cfile, 6561), Some(&map_mirror8), next_word);
