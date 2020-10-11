@@ -50,7 +50,7 @@ canvas.addEventListener('click', /** @type {MouseEvent}*/e => {
     const boardSize = Math.min(canvas.width, canvas.height)
     const fieldSize = boardSize / 8
 
-    if(waitingForPass) {
+    if (waitingForPass) {
         worker.postMessage(['get_pass_from_js', -1])
         waitingForPass = false
     } else if (waitingForMove) {
@@ -64,6 +64,23 @@ canvas.addEventListener('click', /** @type {MouseEvent}*/e => {
         waitingForMove = false
     }
 })
+document.getElementById('set-skills').addEventListener('click', set_skills)
+
+function set_skills() {
+    let numbers = [
+        Number(document.getElementById('black_skill').value),
+        Number(document.getElementById('black_exact_skill').value),
+        Number(document.getElementById('black_wld_skill').value),
+        Number(document.getElementById('white_skill').value),
+        Number(document.getElementById('white_exact_skill').value),
+        Number(document.getElementById('white_wld_skill').value)
+    ];
+    if (numbers.some(num => isNaN(num) && !Number.isInteger(num))) {
+        alert('Some values are not integers')
+        return
+    }
+    worker.postMessage(['set-skills', numbers])
+}
 
 worker.addEventListener("message", ev => {
     const [type, data] = ev.data;

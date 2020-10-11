@@ -11,12 +11,15 @@ self.addEventListener("message", ev => {
     }
     console.log('message recieved in worker', ev)
     const messageType = ev.data[0];
+    const messageData = ev.data[1];
     if (messageType === 'get_move_from_js') {
         resolver(ev.data[1])
     } else if (messageType === 'get_pass_from_js') {
         resolver(ev.data[1])
     } else if (messageType === 'new-game') {
         wasm.start_game()
+    } else if (messageType === 'set-skills') {
+        wasm.set_skills(...messageData)
     } else {
         console.error('rejecting promise because message from from main doesn\'t have known name.')
         rejecter()
