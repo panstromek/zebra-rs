@@ -25,7 +25,7 @@ pub static mut move_count: [i32; 64] = [0; 64];
 
 pub static mut move_list: [[i32; 64]; 64] = [[0; 64]; 64];
 
-pub static mut first_flip_direction: [*mut i32; 100] = [0 as _; 100];
+pub static mut first_flip_direction: [&[i32]; 100] = [&[]; 100];
 
 pub static mut flip_direction: [[i32; 16]; 100] = [[0; 16]; 100];
 
@@ -107,9 +107,7 @@ pub unsafe fn init_moves() {
                 }
                 k += 1
             }
-            first_flip_direction[pos as usize] = flip_direction
-                .as_mut_ptr()
-                .offset(pos as isize) as *mut i32;
+            first_flip_direction[pos as usize] = &flip_direction[pos as usize];
             j += 1
         }
         i += 1
