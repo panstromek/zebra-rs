@@ -59,5 +59,5 @@ global.zebra = {
 
 import("./pkg").then(w => {
     wasm = w
-    wasm.start_game();
+    wasm.init()
 });
