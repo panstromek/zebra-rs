@@ -6,6 +6,7 @@ use crate::src::zebra::ZebraFrontend;
 use std::future::Future;
 use flip::unflip::flip_stack;
 use flip::doflip::{DoFlips_no_hash, hash_update2, hash_update1, DoFlips_hash};
+use std::error::Error;
 /*
    File:              moves.c
 
@@ -417,16 +418,16 @@ pub unsafe fn get_move<ZFE: ZebraFrontend>(side_to_move: i32) -> i32 {
    GET_MOVE
    Prompts the user to enter a move and checks if the move is legal.
 */
-pub async unsafe fn get_move_async<GetMove, Fut>(side_to_move: i32, get_move: &mut GetMove) -> i32
+pub async unsafe fn get_move_async<GetMove, Fut>(side_to_move: i32, get_move: &mut GetMove) -> Result<i32, Box<dyn Error>>
     where
         GetMove: FnMut(i32) -> Fut,
-        Fut: Future<Output=i32>
+        Fut: Future<Output=Result<i32, Box<dyn Error>>>
 {
     let mut buffer: [i8; 255] = [0; 255];
     let mut ready = 0;
     let mut curr_move: i32 = 0;
     while ready == 0 {
-        curr_move = get_move(side_to_move).await;
+        curr_move = get_move(side_to_move).await?;
         ready = valid_move(curr_move, side_to_move);
         if ready == 0 {
             curr_move =
@@ -434,5 +435,5 @@ pub async unsafe fn get_move_async<GetMove, Fut>(side_to_move: i32, get_move: &m
             ready = valid_move(curr_move, side_to_move)
         }
     }
-    curr_move
+    Ok(curr_move)
 }

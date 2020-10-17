@@ -17,6 +17,8 @@ self.addEventListener("message", ev => {
     } else if (messageType === 'get_pass_from_js') {
         resolver(ev.data[1])
     } else if (messageType === 'new-game') {
+        rejecter();
+        rejecter = identity
         wasm.start_game()
     } else if (messageType === 'set-skills') {
         wasm.set_skills(...messageData)
