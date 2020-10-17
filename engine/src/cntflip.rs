@@ -5,12 +5,10 @@
 
    Last modified:   December 25, 1999
 */
-pub unsafe fn AnyFlips_compact(board: &mut [i32; 128],
-                               first_flip_direction: &[&[i32]; 100],
+pub unsafe fn AnyFlips_compact(board: &mut [i32; 128], mut inc : &[i32],
                                sqnum: i32, color: i32, oppcol: i32) -> i32 {
 
     let sq = &board[sqnum as usize];
-    let mut inc = first_flip_direction[sqnum as usize];
     loop  {
         let any_drctnl_flips = {
             let sq: &i32 = sq;

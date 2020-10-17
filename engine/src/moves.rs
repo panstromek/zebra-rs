@@ -25,11 +25,10 @@ pub static mut move_count: [i32; 64] = [0; 64];
 
 pub static mut move_list: [[i32; 64]; 64] = [[0; 64]; 64];
 
-pub static mut first_flip_direction: [&[i32]; 100] = [&[]; 100];
+pub static flip_direction: [[i32; 16]; 100] = init_flip_direction();
 
-pub static mut flip_direction: [[i32; 16]; 100] = [[0; 16]; 100];
-
-pub static dir_mask: [i32; 100] =
+pub static dir_mask: [i32; 100] = const_dir_mask;
+pub const const_dir_mask: [i32; 100] =
     [0 as i32, 0 as i32, 0 as i32, 0 as i32,
         0 as i32, 0 as i32, 0 as i32, 0 as i32,
         0 as i32, 0 as i32, 0 as i32, 81 as i32,
@@ -62,7 +61,8 @@ pub static dir_mask: [i32; 100] =
         0 as i32, 0 as i32, 0 as i32, 0 as i32,
         0 as i32, 0 as i32, 0 as i32];
 
-pub static move_offset: [i32; 8] = [1, -1, 9, -9, 10, -10, 11, -11];
+pub const const_move_offset: [i32; 8] = [1, -1, 9, -9, 10, -10, 11, -11];
+pub static move_offset: [i32; 8] = const_move_offset;
 
 /*
    MAKE_MOVE
@@ -81,37 +81,33 @@ static mut sweep_status: [i32; 64] = [0; 64];
   Initialize the move generation subsystem.
 */
 
-pub unsafe fn init_moves() {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut k: i32 = 0;
-    let mut pos: i32 = 0;
-    let mut feasible: i32 = 0;
-    i = 1;
-    while i <= 8 as i32 {
-        j = 1;
-        while j <= 8 as i32 {
-            pos = 10 as i32 * i + j;
-            k = 0;
-            while k <= 8 as i32 {
-                flip_direction[pos as usize][k as usize] = 0;
+pub const fn init_flip_direction() -> [[i32; 16]; 100] {
+    let mut flip_direction_ : [[i32; 16]; 100] = [[0; 16]; 100];
+    let mut feasible = 0;
+    let mut i = 1;
+    while i <= 8 {
+        let mut j = 1;
+        while j <= 8 {
+            let pos = 10 * i + j;
+            let mut k = 0;
+            while k <= 8 {
+                flip_direction_[pos][k] = 0;
                 k += 1
             }
             feasible = 0;
-            k = 0;
-            while k < 8 as i32 {
-                if dir_mask[pos as usize] & (1 as i32) << k != 0 {
-                    flip_direction[pos as usize][feasible as usize] =
-                        move_offset[k as usize];
+            let mut k = 0;
+            while k < 8 {
+                if const_dir_mask[pos] & 1 << k != 0 {
+                    flip_direction_[pos][feasible] = const_move_offset[k];
                     feasible += 1
                 }
                 k += 1
             }
-            first_flip_direction[pos as usize] = &flip_direction[pos as usize];
             j += 1
         }
         i += 1
     };
+    flip_direction_
 }
 /*
    RESET_GENERATION
@@ -200,12 +196,10 @@ pub unsafe fn unmake_move(side_to_move: i32,
    GENERATE_SPECIFIC
 */
 
-pub unsafe fn generate_specific(curr_move: i32,
-                                side_to_move: i32)
-                                -> i32 {
-    return AnyFlips_compact(&mut board, &mut first_flip_direction, curr_move, side_to_move,
-                            0 as i32 + 2 as i32 -
-                                side_to_move);
+pub unsafe fn generate_specific(curr_move: i32, side_to_move: i32) -> i32 {
+    let inc = &flip_direction[curr_move as usize]; //first_flip_direction[curr_move as usize];
+    return AnyFlips_compact(&mut board, inc, curr_move, side_to_move,
+                            0 as i32 + 2 as i32 - side_to_move);
 }
 /*
    GENERATE_MOVE
