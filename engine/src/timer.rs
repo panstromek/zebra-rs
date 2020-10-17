@@ -8,12 +8,7 @@ pub static mut last_panic_check: f64 = 0.;
 
 pub static mut ponder_depth: [i32; 100] = [0; 100];
 
-pub static mut current_ponder_depth: i32 = 0;
-
 pub static mut frozen_ponder_depth: i32 = 0;
-/* Local variables */
-
-pub static mut current_ponder_time: f64 = 0.;
 
 struct Timer {
     frozen_ponder_time: f64,
@@ -25,6 +20,8 @@ struct Timer {
     panic_abort: i32,
     do_check_abort: i32,
     init_time: time_t,
+    current_ponder_depth: i32,
+    current_ponder_time: f64
 }
 
 static mut timer: Timer = Timer {
@@ -37,6 +34,8 @@ static mut timer: Timer = Timer {
     panic_abort: 0,
     do_check_abort: 1,
     init_time: 0,
+    current_ponder_depth: 0,
+    current_ponder_time: 0.
 };
 
 /*
@@ -44,8 +43,8 @@ static mut timer: Timer = Timer {
   Sets the panic timeout when search immediately must stop.
 */
 
-pub unsafe fn set_default_panic() {
-   timer.panic_value =timer. time_per_move * (1.6f64 / 0.7f64) / timer.total_move_time;
+fn set_default_panic(timer_: &mut Timer) {
+    timer_.panic_value = timer_.time_per_move * (1.6f64 / 0.7f64) / timer_.total_move_time;
 }
 /*
    File:          timer.h
@@ -70,8 +69,8 @@ pub unsafe fn determine_move_time(time_left: f64,
                                   discs: i32) {
     let mut time_available: f64 = 0.;
     let mut moves_left: i32 = 0;
-   timer.frozen_ponder_time = current_ponder_time;
-    frozen_ponder_depth = current_ponder_depth;
+   timer.frozen_ponder_time = timer.current_ponder_time;
+    frozen_ponder_depth = timer.current_ponder_depth;
     moves_left =
         if (65 as i32 - discs) / 2 as i32 - 5 as i32 >
             2 as i32 {
@@ -94,7 +93,7 @@ pub unsafe fn determine_move_time(time_left: f64,
     if timer. time_per_move == 0 as i32 as f64 {
        timer. time_per_move = 1 as i32 as f64
     }
-    set_default_panic();
+    set_default_panic(&mut timer);
 }
 
 /*
@@ -135,8 +134,8 @@ pub unsafe fn clear_ponder_times() {
         ponder_depth[i as usize] = 0;
         i += 1
     }
-    current_ponder_time = 0.0f64;
-    current_ponder_depth = 0;
+    timer.current_ponder_time = 0.0f64;
+    timer.current_ponder_depth = 0;
 }
 /*
   ADD_PONDER_TIME
