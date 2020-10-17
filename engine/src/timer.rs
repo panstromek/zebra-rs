@@ -15,15 +15,29 @@ pub static mut frozen_ponder_depth: i32 = 0;
 
 pub static mut current_ponder_time: f64 = 0.;
 
-static mut frozen_ponder_time: f64 = 0.;
-static mut panic_value: f64 = 0.;
-static mut time_per_move: f64 = 0.;
-static mut start_time: f64 = 0.;
-static mut total_move_time: f64 = 0.;
-static mut ponder_time: [f64; 100] = [0.; 100];
-static mut panic_abort: i32 = 0;
-static mut do_check_abort: i32 = 1;
-static mut init_time: time_t = 0;
+struct Timer {
+    frozen_ponder_time: f64,
+    panic_value: f64,
+    time_per_move: f64,
+    start_time: f64,
+    total_move_time: f64,
+    ponder_time: [f64; 100],
+    panic_abort: i32,
+    do_check_abort: i32,
+    init_time: time_t,
+}
+
+static mut timer: Timer = Timer {
+    frozen_ponder_time: 0.,
+    panic_value: 0.,
+    time_per_move: 0.,
+    start_time: 0.,
+    total_move_time: 0.,
+    ponder_time: [0.; 100],
+    panic_abort: 0,
+    do_check_abort: 1,
+    init_time: 0,
+};
 
 /*
   SET_DEFAULT_PANIC
@@ -31,7 +45,7 @@ static mut init_time: time_t = 0;
 */
 
 pub unsafe fn set_default_panic() {
-    panic_value = time_per_move * (1.6f64 / 0.7f64) / total_move_time;
+   timer.panic_value =timer. time_per_move * (1.6f64 / 0.7f64) / timer.total_move_time;
 }
 /*
    File:          timer.h
@@ -56,7 +70,7 @@ pub unsafe fn determine_move_time(time_left: f64,
                                   discs: i32) {
     let mut time_available: f64 = 0.;
     let mut moves_left: i32 = 0;
-    frozen_ponder_time = current_ponder_time;
+   timer.frozen_ponder_time = current_ponder_time;
     frozen_ponder_depth = current_ponder_depth;
     moves_left =
         if (65 as i32 - discs) / 2 as i32 - 5 as i32 >
@@ -65,20 +79,20 @@ pub unsafe fn determine_move_time(time_left: f64,
                 5 as i32
         } else { 2 as i32 };
     time_available =
-        time_left + frozen_ponder_time + moves_left as f64 * incr -
+        time_left +timer.frozen_ponder_time + moves_left as f64 * incr -
             10.0f64;
     if time_available < 1.0f64 { time_available = 1.0f64 }
-    time_per_move =
+   timer. time_per_move =
         time_available / (moves_left + 1 as i32) as f64 *
             0.7f64;
-    if time_per_move > time_left / 4 as i32 as f64 {
-        time_per_move = time_left / 4 as i32 as f64
+    if timer. time_per_move > time_left / 4 as i32 as f64 {
+       timer. time_per_move = time_left / 4 as i32 as f64
     }
-    if time_per_move > time_left + frozen_ponder_time {
-        time_per_move = time_left / 4 as i32 as f64
+    if timer. time_per_move > time_left +timer.frozen_ponder_time {
+       timer. time_per_move = time_left / 4 as i32 as f64
     }
-    if time_per_move == 0 as i32 as f64 {
-        time_per_move = 1 as i32 as f64
+    if timer. time_per_move == 0 as i32 as f64 {
+       timer. time_per_move = 1 as i32 as f64
     }
     set_default_panic();
 }
@@ -89,7 +103,7 @@ pub unsafe fn determine_move_time(time_left: f64,
 */
 
 pub unsafe fn toggle_abort_check(enable: i32) {
-    do_check_abort = enable;
+    timer.do_check_abort = enable;
 }
 /*
   CLEAR_PANIC_ABORT
@@ -97,7 +111,7 @@ pub unsafe fn toggle_abort_check(enable: i32) {
 */
 
 pub unsafe fn clear_panic_abort() {
-    panic_abort = 0;
+    timer.panic_abort = 0;
 }
 /*
   IS_PANIC_ABORT
@@ -105,7 +119,7 @@ pub unsafe fn clear_panic_abort() {
 */
 
 pub unsafe fn is_panic_abort() -> i32 {
-    return panic_abort;
+    return timer.panic_abort;
 }
 /*
   CLEAR_PONDER_TIMES
@@ -117,7 +131,7 @@ pub unsafe fn clear_ponder_times() {
     let mut i: i32 = 0;
     i = 0;
     while i < 100 as i32 {
-        ponder_time[i as usize] = 0.0f64;
+        timer.ponder_time[i as usize] = 0.0f64;
         ponder_depth[i as usize] = 0;
         i += 1
     }
@@ -132,7 +146,7 @@ pub unsafe fn clear_ponder_times() {
 
 pub unsafe fn add_ponder_time(move_0: i32,
                               time_0: f64) {
-    ponder_time[move_0 as usize] += time_0;
+    timer.ponder_time[move_0 as usize] += time_0;
 }
 /*
   SET_PANIC_THRESHOLD
@@ -141,16 +155,16 @@ pub unsafe fn add_ponder_time(move_0: i32,
 */
 
 pub unsafe fn set_panic_threshold(value: f64) {
-    panic_value = value;
+   timer.panic_value = value;
 }
 
 /*
   RESET_REAL_TIMER
 */
 
-pub unsafe fn reset_real_timer<FE: FrontEnd>() { FE::time(&mut init_time); }
+pub unsafe fn reset_real_timer<FE: FrontEnd>() { FE::time(&mut timer.init_time); }
 /*
-  INIT_TIMER
+  timer.init_timeR
   Initializes the timer. This is really only needed when
   CRON_SUPPORTED is defined; in this case the cron daemon
   is used for timing.
@@ -159,13 +173,13 @@ pub unsafe fn reset_real_timer<FE: FrontEnd>() { FE::time(&mut init_time); }
 pub unsafe fn init_timer<FE: FrontEnd>() { reset_real_timer::<FE>(); }
 /*
   GET_REAL_TIMER
-  Returns the time passed since the last call to init_timer() or reset_timer().
+  Returns the time passed since the last call to timer.init_timer() or reset_timer().
 */
 
 pub unsafe fn get_real_timer<FE :FrontEnd>() -> f64 {
     let mut curr_time: time_t = 0;
     FE::time(&mut curr_time);
-    return (curr_time - init_time) as f64;
+    return (curr_time - timer.init_time) as f64;
 }
 
 /*
@@ -175,7 +189,7 @@ pub unsafe fn get_real_timer<FE :FrontEnd>() -> f64 {
 */
 
 pub unsafe fn get_elapsed_time<FE:FrontEnd>() -> f64 {
-    return fabs(get_real_timer::<FE>() - start_time);
+    return fabs(get_real_timer::<FE>() -timer.  start_time);
 }
 /*
   START_MOVE
@@ -190,26 +204,26 @@ pub unsafe fn start_move<FE: FrontEnd>(in_total_time: f64,
       Some correction might be necessary anyway, so let's skip it for now.
     */
     /* This won't work well in games with time increment, but never mind */
-    total_move_time =
+    timer.total_move_time =
         if in_total_time - 10.0f64 > 0.1f64 {
             (in_total_time) - 10.0f64
         } else { 0.1f64 };
-    panic_abort = 0;
-    start_time = get_real_timer::<FE>();
+    timer.panic_abort = 0;
+   timer.  start_time = get_real_timer::<FE>();
 }
 /*
   CHECK_PANIC_ABORT
   Checks if the alotted time has been used up and in this case
-  sets the PANIC_ABORT flags.
+  sets the timer.panic_abort flags.
 */
 
 pub unsafe fn check_panic_abort<FE: FrontEnd>() {
     let mut curr_time: f64 = 0.;
     let mut adjusted_total_time: f64 = 0.;
     curr_time = get_elapsed_time::<FE>();
-    adjusted_total_time = total_move_time;
-    if do_check_abort != 0 && curr_time >= panic_value * adjusted_total_time {
-        panic_abort = 1 as i32
+    adjusted_total_time = timer.total_move_time;
+    if timer.do_check_abort != 0 && curr_time >=timer.panic_value * adjusted_total_time {
+        timer.panic_abort = 1 as i32
     };
 }
 /*
@@ -222,9 +236,9 @@ pub unsafe fn check_threshold<FE: FrontEnd>(threshold: f64)
     let mut curr_time: f64 = 0.;
     let mut adjusted_total_time: f64 = 0.;
     curr_time = get_elapsed_time::<FE>();
-    adjusted_total_time = total_move_time;
-    return (do_check_abort != 0 &&
-        curr_time >= panic_value * threshold * adjusted_total_time) as
+    adjusted_total_time = timer.total_move_time;
+    return (timer.do_check_abort != 0 &&
+        curr_time >=timer.panic_value * threshold * adjusted_total_time) as
         i32;
 }
 /*
@@ -236,10 +250,10 @@ pub unsafe fn check_threshold<FE: FrontEnd>(threshold: f64)
 */
 
 pub unsafe fn above_recommended<FE: FrontEnd>() -> i32 {
-    return (get_elapsed_time::<FE>() >= time_per_move) as i32;
+    return (get_elapsed_time::<FE>() >=timer. time_per_move) as i32;
 }
 
 pub unsafe fn extended_above_recommended<FE: FrontEnd>() -> i32 {
-    return (get_elapsed_time::<FE>() + frozen_ponder_time >= 1.5f64 * time_per_move)
+    return (get_elapsed_time::<FE>() +timer.frozen_ponder_time >= 1.5f64 *timer. time_per_move)
         as i32;
 }
