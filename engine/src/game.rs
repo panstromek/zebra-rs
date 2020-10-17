@@ -8,7 +8,7 @@ use crate::src::hash::{free_hash, determine_hash_values, init_hash};
 use crate::src::timer::{clear_ponder_times, init_timer, time_t, clear_panic_abort, get_elapsed_time, is_panic_abort, determine_move_time};
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, is_midgame_abort, middle_game, toggle_midgame_hash_usage, toggle_midgame_abort_check, clear_midgame_abort, calculate_perturbation};
-use crate::src::moves::{disks_played, init_moves, valid_move, move_list, move_count, generate_all};
+use crate::src::moves::{disks_played, valid_move, move_list, move_count, generate_all};
 use crate::src::stable::init_stable;
 use crate::src::probcut::init_probcut;
 use crate::src::myrandom::{my_srandom, my_random};
@@ -275,7 +275,6 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
         my_srandom(timer as i32);
     } else { my_srandom(1 as i32); }
     init_hash(hash_bits);
-    init_moves();
 
     // inlined init_coeffs
     init_memory_handler();
@@ -414,7 +413,6 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         disc_count(0 as i32, &board);
     piece_count[2][disks_played as usize] =
         disc_count(2 as i32, &board);
-    init_moves();
     generate_all(side_to_move);
     determine_hash_values(side_to_move, board.as_mut_ptr());
     calculate_perturbation();
