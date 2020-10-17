@@ -24,3 +24,4 @@ flate2-coeff-source = { path = "./../flate2-coeff-source"}
 console_error_panic_hook = "0.1.6"
 wasm-bindgen-futures = "0.4.18"
 js-sys = "0.3.45"
+thiserror = "1.0.21"

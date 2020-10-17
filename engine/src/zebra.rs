@@ -14,6 +14,7 @@ use crate::src::getcoeff::remove_coeffs;
 use crate::src::game::{toggle_human_openings, generic_game_init, FileBoardSource, generic_compute_move, ComputeMoveOutput, ComputeMoveLogger};
 use crate::src::hash::{setup_hash};
 use std::future::Future;
+use std::error::Error;
 
 
 pub type EvalType = u32;
@@ -426,10 +427,10 @@ pub async unsafe fn engine_play_game_async<
 >(file_name: *const i8, mut move_string: *const i8,
   mut repeat: i32, log_file_name_: *mut i8,
   mut move_file: Option<Source>, use_thor_: bool,
-  use_learning_: bool, mut get_move_cb: GetMove)
+  use_learning_: bool, mut get_move_cb: GetMove) -> Result<(), Box<dyn Error>>
     where
         GetMove: FnMut(i32) -> Fut,
-        Fut: Future<Output=i32>
+        Fut: Future<Output=Result<i32, Box<dyn Error>>>
 {
     let mut eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,
@@ -561,7 +562,7 @@ pub async unsafe fn engine_play_game_async<
                             }
                         }
                         ZF::before_get_move();
-                        curr_move = get_move_async(side_to_move, &mut get_move_cb).await;
+                        curr_move = get_move_async(side_to_move, &mut get_move_cb).await?;
                     } else {
                         start_move::<FE>(player_time[side_to_move as usize],
                                    player_increment[side_to_move as usize],
@@ -689,6 +690,7 @@ pub async unsafe fn engine_play_game_async<
         toggle_abort_check(1);
         if !(repeat > 0) { break; }
     }
+    Ok(())
 }
 
 unsafe fn clear_moves() {

@@ -14,12 +14,14 @@ use engine::src::myrandom::my_srandom;
 use wasm_bindgen::__rt::core::ptr::null_mut;
 use engine::src::learn::Learner;
 use wasm_bindgen::__rt::std::ffi::CStr;
-use std::convert::TryFrom;
+use std::convert::{TryFrom, TryInto};
 use engine::src::counter::CounterType;
 use engine_traits::CoeffSource;
 use flate2_coeff_source::Flate2Source;
 use flip::unflip;
 use engine::src::myrandom;
+use std::error::Error;
+use thiserror::Error;
 
 extern crate engine;
 
@@ -35,11 +37,20 @@ extern "C" {
     pub async fn get_move_from_js(side_to_move: i32) -> Result<JsValue, JsValue>;
 }
 
-async fn get_move_from_wasm(side_to_move: i32) -> i32 {
-    get_move_from_js(side_to_move).await
-        .unwrap()
+#[derive(Error, Debug)]
+enum ZebraError {
+    #[error("Move recieved from JS is not a number.")]
+    MoveIsNotANumber,
+    #[error("Move from JS not recieved")]
+    MissingValue,
+}
+
+async fn get_move_from_wasm(side_to_move: i32) -> Result<i32, Box<dyn Error>> {
+    Ok(get_move_from_js(side_to_move).await
+        .map_err(|_e| ZebraError::MissingValue)?
         .as_f64()
-        .unwrap() as i32
+        .ok_or(ZebraError::MoveIsNotANumber)? as i32
+    )
 }
 macro_rules! c_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
@@ -48,12 +59,12 @@ static COEFFS: &[u8; 1336662] = include_bytes!("./../../coeffs2.bin");
 
 #[wasm_bindgen]
 pub fn set_skills(
-    black_skill :i32,
-    black_exact_skill :i32,
-    black_wld_skill :i32,
-    white_skill :i32,
-    white_exact_skill :i32,
-    white_wld_skill :i32
+    black_skill: i32,
+    black_exact_skill: i32,
+    black_wld_skill: i32,
+    white_skill: i32,
+    white_exact_skill: i32,
+    white_wld_skill: i32,
 ) {
     unsafe {
         // black
@@ -363,12 +374,11 @@ macro_rules! to_square {
 }
 
 impl FrontEnd for WasmFrontend {
-    fn reset_buffer_display() {
-
-    }
+    fn reset_buffer_display() {}
 
     fn display_buffers() {
-        unimplemented!()
+        c_log!("Display Buffers called - not sure what I am supposed to show here")
+        // unimplemented!()
     }
 
     fn after_update_best_list_verbose(best_list: &mut [i32; 4]) {
