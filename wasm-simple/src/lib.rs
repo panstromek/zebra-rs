@@ -79,17 +79,18 @@ pub fn set_skills(
     }
 }
 
+
 #[wasm_bindgen]
-pub async fn start_game() {
+pub fn init() {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
     unsafe {
         set_default_engine_globals();
         use_book = 0;
-
         let coeffs = Flate2Source::new_from_data(COEFFS);
 
         engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs);
         init_thor_database::<WasmFrontend>();
+
         my_srandom(1 as i32);
 
         // FIXME don't run this init code on every start - my set_skills doesn't work because of that
@@ -104,6 +105,17 @@ pub async fn start_game() {
             wld_skill[2] = 0;
         }
 
+    }
+}
+#[wasm_bindgen]
+pub fn terminate() {
+    // I never call this and it's probably pointless..., just putting it here so it is there
+    unsafe { global_terminate::<WasmFrontend>(); }
+}
+
+#[wasm_bindgen]
+pub async fn start_game() {
+    unsafe {
         let repeat = 1;
         // let mut move_file = LibcFileMoveSource::open(move_file_name);
 
@@ -118,9 +130,6 @@ pub async fn start_game() {
           None,
           false, false,
           get_move_from_wasm).await;
-
-
-        global_terminate::<WasmFrontend>();
     }
     c_log!("Zebra ended");
 }
