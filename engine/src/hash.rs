@@ -108,19 +108,16 @@ pub unsafe fn find_hash(entry: &mut HashEntry, reverse_mode: i32) {
     let index1 = (code1 & hash_mask as u32) as i32;
     let index2 = index1 ^ 1;
     let hash_table_ptr = &mut hash_table;
-    if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
-        if ((*hash_table_ptr.offset(index1 as isize)).key1_selectivity_flags_draft
-            ^ code1) & 0xff000000 as u32 ==
-            0 as i32 as u32 {
-            compact_to_wide(&mut *hash_table_ptr.offset(index1 as isize), entry);
+    if (hash_table_ptr.offset(index1 as isize)).key2 == code2 {
+        if (hash_table_ptr.offset(index1 as isize).key1_selectivity_flags_draft ^ code1
+        ) & 0xff000000 as u32 == 0 {
+            compact_to_wide(hash_table_ptr.offset(index1 as isize), entry);
             return
         }
-    } else if (*hash_table_ptr.offset(index2 as isize)).key2 == code2 &&
-        ((*hash_table_ptr.offset(index2 as
-            isize)).key1_selectivity_flags_draft
-            ^ code1) & 0xff000000 as u32 ==
-            0 as i32 as u32 {
-        compact_to_wide(&mut *hash_table_ptr.offset(index2 as isize), entry);
+    } else if (hash_table_ptr.offset(index2 as isize)).key2 == code2 &&
+        ((hash_table_ptr.offset(index2 as isize)).key1_selectivity_flags_draft
+            ^ code1) & 0xff000000 as u32 == 0 {
+        compact_to_wide(hash_table_ptr.offset(index2 as isize), entry);
         return
     }
     entry.draft = 0;

@@ -998,8 +998,7 @@ pub unsafe fn read_text_database(file_name:
    Reads a binary database file.
 */
 
-pub unsafe fn read_binary_database(file_name:
-                                                  *const i8) {
+pub unsafe fn read_binary_database(file_name: *const i8) {
     let mut i: i32 = 0;
     let mut new_book_node_count: i32 = 0;
     let mut magic1: i16 = 0;
