@@ -165,7 +165,7 @@ pub unsafe fn ponder_move(side_to_move: i32,
                0 as i32 as f64,
                disc_count(0 as i32, &board) + disc_count(2 as i32, &board));
     clear_ponder_times();
-    determine_hash_values(side_to_move, board.as_mut_ptr());
+    determine_hash_values(side_to_move, &board);
     reset_counter(&mut nodes);
     /* Find the scores for the moves available to the opponent. */
     let mut hash_move = 0;
@@ -350,7 +350,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                0 as i32 as f64,
                disc_count(0 as i32, &board) + disc_count(2 as i32, &board));
     clear_ponder_times();
-    determine_hash_values(side_to_move, board.as_mut_ptr());
+    determine_hash_values(side_to_move, &board);
     empties = 60 as i32 - disks_played;
     best_move = 0;
     game_evaluated_count = 0;
@@ -915,7 +915,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
                0 as i32 as f64,
                disc_count(0 as i32, &board) + disc_count(2 as i32, &board));
     clear_ponder_times();
-    determine_hash_values(side_to_move, board.as_mut_ptr());
+    determine_hash_values(side_to_move, &board);
     reset_counter(&mut nodes);
     /* Set search depths that result in Zebra solving after a brief
        midgame analysis */

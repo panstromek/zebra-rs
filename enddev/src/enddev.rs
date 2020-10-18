@@ -282,7 +282,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                           (*::std::mem::transmute::<&[u8; 23],
                               &[i8; 23]>(b"int main(int, char **)\x00")).as_ptr());
         }
-        determine_hash_values(side_to_move, board.as_mut_ptr());
+        determine_hash_values(side_to_move, &board);
         generate_all(side_to_move);
         if move_count[disks_played as usize] == 0 as i32 {
             if last_was_pass != 0 {

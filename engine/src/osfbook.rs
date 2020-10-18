@@ -1269,7 +1269,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
        of the averaging done, the hash table drafts are changed prior
        to each node being searched. */
     clear_hash_drafts();
-    determine_hash_values(side_to_move, board.as_mut_ptr());
+    determine_hash_values(side_to_move, &board);
     /* First determine the best move in the current position
        and its score when searched to depth DEPTH.
        This is done using standard negascout with iterative deepening. */

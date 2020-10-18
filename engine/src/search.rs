@@ -555,7 +555,7 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
         selectivity: 0,
         flags: 0,
     };
-    determine_hash_values(side_to_move, board.as_mut_ptr());
+    determine_hash_values(side_to_move, &board);
     new_pv_depth = 0;
     pass_count = 0;
     while pass_count < 2 {
