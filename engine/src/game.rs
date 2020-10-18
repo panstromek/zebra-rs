@@ -160,12 +160,11 @@ pub unsafe fn get_evaluated(index: i32)
   Returns some statistics about the last search made.
 */
 
-pub unsafe fn get_search_statistics(max_depth:
-                                    *mut i32,
-                                    node_count:
-                                    *mut f64) {
+pub unsafe fn get_search_statistics(max_depth: &mut i32, node_count: &mut f64) {
     *max_depth = max_depth_reached;
-    if prefix_move != 0 as i32 { *max_depth += 1 }
+    if prefix_move != 0 {
+        *max_depth += 1
+    }
     adjust_counter(&mut nodes);
     *node_count = counter_value(&mut nodes);
 }
