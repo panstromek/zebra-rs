@@ -176,25 +176,23 @@ pub unsafe fn get_search_statistics(max_depth:
   Returns the principal variation.
 */
 
-pub unsafe fn get_pv(destin: *mut i32) -> i32 {
-    let mut i: i32 = 0;
-    if prefix_move == 0 as i32 {
+pub unsafe fn get_pv(destin: &mut [i32]) -> i32 {
+    let mut i = 0;
+    return if prefix_move == 0 {
         i = 0;
         while i < pv_depth[0] {
-            *destin.offset(i as isize) =
-                pv[0][i as usize];
+            destin[i as usize] = pv[0][i as usize];
             i += 1
         }
-        return pv_depth[0]
+        pv_depth[0]
     } else {
-        *destin = prefix_move;
+        destin[0] = prefix_move;
         i = 0;
         while i < pv_depth[0] {
-            *destin.offset((i + 1 as i32) as isize) =
-                pv[0][i as usize];
+            destin[(i + 1 as i32) as usize] = pv[0][i as usize];
             i += 1
         }
-        return pv_depth[0] + 1 as i32
+        pv_depth[0] + 1
     };
 }
 /*
