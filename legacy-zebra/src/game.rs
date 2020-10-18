@@ -202,28 +202,10 @@ pub unsafe fn ponder_move(side_to_move: i32,
                 move_list[disks_played as usize][i as usize];
             i += 1
         }
-        printf(b"%s=%d\n\x00" as *const u8 as *const i8,
-               b"hash move\x00" as *const u8 as *const i8,
-               hash_move);
-        i = 0;
-        while i < expect_count {
-            printf(b"%c%c %-6.2f  \x00" as *const u8 as *const i8,
-                   'a' as i32 +
-                       move_list[disks_played as usize][i as usize] %
-                           10 as i32 - 1 as i32,
-                   '0' as i32 +
-                       move_list[disks_played as usize][i as usize] /
-                           10 as i32,
-                   evals[disks_played as
-                             usize][move_list[disks_played as
-                                                  usize][i as usize] as usize]
-                       as f64 / 128.0f64);
-            if i % 7 as i32 == 6 as i32 ||
-                   i == expect_count - 1 as i32 {
-                puts(b"\x00" as *const u8 as *const i8);
-            }
-            i += 1
-        }
+        report_hash_move(hash_move);
+        let move_list_item = &move_list[disks_played as usize];
+        let evals_item = &evals[disks_played as usize];
+        report_move_evals(expect_count, move_list_item, evals_item);
     }
     /* Go through the expected moves in order and prepare responses. */
     let mut best_pv_depth = 0;
@@ -282,6 +264,30 @@ pub unsafe fn ponder_move(side_to_move: i32,
     /* Don't forget to enable the time control mechanisms when leaving */
     toggle_abort_check(1 as i32);
     toggle_midgame_abort_check(1 as i32);
+}
+
+fn report_move_evals(expect_count: i32, move_list_item: &[i32; 64], evals_item: &[i32; 128]) {
+    let mut i = 0;
+    while i < expect_count {
+        let move__ = move_list_item[i as usize];
+        let move_eval = evals_item[move__ as usize];
+        unsafe {
+            printf(b"%c%c %-6.2f  \x00" as *const u8 as *const i8,
+                   'a' as i32 + move__ % 10 as i32 - 1 as i32,
+                   '0' as i32 + move__ / 10 as i32, move_eval as f64 / 128.0f64);
+        }
+        if i % 7 as i32 == 6 as i32 || i == expect_count - 1 as i32 {
+            unsafe { puts(b"\x00" as *const u8 as *const i8); }
+        }
+        i += 1
+    }
+}
+
+fn report_hash_move(hash_move: i32) {
+    unsafe {
+        printf(b"%s=%d\n\x00" as *const u8 as *const i8,
+               b"hash move\x00" as *const u8 as *const i8, hash_move);
+    }
 }
 /*
   EXTENDED_COMPUTE_MOVE
