@@ -23,3 +23,4 @@ flip = { path = "./../engine/flip" }
 libc-wrapper = { path = "./../libc-wrapper" }
 engine-traits = { path = "./../engine/engine-traits" }
 zlib-coeff-source = { path = "./zlib-coeff-source" }
+thor-opening-list = { path = "./../engine/thor-opening-list" }

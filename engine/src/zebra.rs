@@ -4,7 +4,7 @@ use crate::src::moves::{disks_played, make_move, valid_move, move_count, move_li
 use crate::src::search::{disc_count, total_time, total_evaluations, total_nodes, produce_compact_eval};
 use crate::src::counter::{counter_value, adjust_counter};
 use crate::src::stubs::{floor};
-use crate::src::thordb::{get_black_average_score, get_black_median_score, get_white_win_count, get_draw_count, get_black_win_count, get_match_count, database_search, choose_thor_opening_move};
+// use crate::src::thordb::{get_black_average_score, get_black_median_score, get_white_win_count, get_draw_count, get_black_win_count, get_match_count, database_search, choose_thor_opening_move};
 use crate::src::globals::{board, score_sheet_row, white_moves, black_moves};
 use crate::src::learn::{store_move, set_learning_parameters, clear_stored_game, Learner};
 use crate::src::error::{FrontEnd};
@@ -15,6 +15,7 @@ use crate::src::game::{toggle_human_openings, generic_game_init, FileBoardSource
 use crate::src::hash::{setup_hash};
 use std::future::Future;
 use std::error::Error;
+use crate::src::thordb::ThorDatabase;
 
 
 pub type EvalType = u32;
@@ -151,7 +152,9 @@ pub unsafe fn engine_play_game<
     ComputeMoveLog: ComputeMoveLogger,
     ComputeMoveOut: ComputeMoveOutput,
     Learn: Learner,
-    FE: FrontEnd>(file_name: *const i8, mut move_string: *const i8,
+    FE: FrontEnd,
+    Thor: ThorDatabase
+>(file_name: *const i8, mut move_string: *const i8,
                   mut repeat: i32, log_file_name_: *mut i8,
                   mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool) {
     let mut eval_info = EvaluationType {
@@ -249,18 +252,18 @@ pub unsafe fn engine_play_game<
                     }
                     if use_thor_ {
                         let database_start = get_real_timer::<FE>();
-                        database_search::<FE>(&board, side_to_move);
-                        thor_position_count = get_match_count();
+                        Thor::database_search(&board, side_to_move);
+                        thor_position_count = Thor::get_match_count();
                         let database_stop = get_real_timer::<FE>();
                         let database_time = database_stop - database_start;
                         total_search_time += database_time;
                         ZF::report_thor_matching_games_stats(total_search_time, thor_position_count, database_time);
                         if thor_position_count > 0 as i32 {
-                            let black_win_count = get_black_win_count();
-                            let draw_count = get_draw_count();
-                            let white_win_count = get_white_win_count();
-                            let black_median_score = get_black_median_score();
-                            let black_average_score = get_black_average_score();
+                            let black_win_count = Thor::get_black_win_count();
+                            let draw_count = Thor::get_draw_count();
+                            let white_win_count = Thor::get_white_win_count();
+                            let black_median_score = Thor::get_black_median_score();
+                            let black_average_score = Thor::get_black_average_score();
 
                             ZF::report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                         }
@@ -272,7 +275,7 @@ pub unsafe fn engine_play_game<
                 Dump::dump_position(side_to_move, &board);
                 Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
                 /* Check what the Thor opening statistics has to say */
-                choose_thor_opening_move::<FE>(&board, side_to_move, echo);
+                Thor::choose_thor_opening_move(&board, side_to_move, echo);
                 if echo != 0 && wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
                     if skill[side_to_move as usize] == 0 as i32 {
@@ -294,7 +297,7 @@ pub unsafe fn engine_play_game<
                                             disks_played + 4);
                         let timed_search = (skill[side_to_move as usize] >= 60) as i32;
                         curr_move =
-                            generic_compute_move::<ComputeMoveLog, ComputeMoveOut, FE>(
+                            generic_compute_move::<ComputeMoveLog, ComputeMoveOut, FE, Thor>(
                                 side_to_move, 1,
                                 player_time[side_to_move as usize] as i32,
                                 player_increment[side_to_move as usize] as i32, timed_search,
@@ -365,18 +368,18 @@ pub unsafe fn engine_play_game<
                           score_sheet_row);
             if use_thor_ {
                 let database_start = get_real_timer::<FE>();
-                database_search::<FE>(&board, side_to_move);
-                thor_position_count = get_match_count();
+                Thor::database_search(&board, side_to_move);
+                thor_position_count = Thor::get_match_count();
                 let database_stop = get_real_timer::<FE>();
                 let db_search_time = database_stop - database_start;
                 total_search_time += db_search_time;
                 ZF::report_some_thor_stats(total_search_time, thor_position_count, db_search_time);
                 if thor_position_count > 0 {
-                    let black_win_count = get_black_win_count();
-                    let draw_count = get_draw_count();
-                    let white_win_count = get_white_win_count();
-                    let black_median_score = get_black_median_score();
-                    let black_average_score = get_black_average_score();
+                    let black_win_count = Thor::get_black_win_count();
+                    let draw_count = Thor::get_draw_count();
+                    let white_win_count = Thor::get_white_win_count();
+                    let black_median_score = Thor::get_black_median_score();
+                    let black_average_score = Thor::get_black_average_score();
                     ZF::report_some_thor_scores(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                 }
                 ZF::print_out_thor_matches(thor_max_games);
@@ -422,6 +425,7 @@ pub async unsafe fn engine_play_game_async<
     ComputeMoveOut: ComputeMoveOutput,
     Learn: Learner,
     FE: FrontEnd,
+    Thor: ThorDatabase,
     GetMove,
     Fut
 >(file_name: *const i8, mut move_string: *const i8,
@@ -527,18 +531,18 @@ pub async unsafe fn engine_play_game_async<
                     }
                     if use_thor_ {
                         let database_start = get_real_timer::<FE>();
-                        database_search::<FE>(&board, side_to_move);
-                        thor_position_count = get_match_count();
+                        Thor::database_search(&board, side_to_move);
+                        thor_position_count = Thor::get_match_count();
                         let database_stop = get_real_timer::<FE>();
                         let database_time = database_stop - database_start;
                         total_search_time += database_time;
                         ZF::report_thor_matching_games_stats(total_search_time, thor_position_count, database_time);
                         if thor_position_count > 0 as i32 {
-                            let black_win_count = get_black_win_count();
-                            let draw_count = get_draw_count();
-                            let white_win_count = get_white_win_count();
-                            let black_median_score = get_black_median_score();
-                            let black_average_score = get_black_average_score();
+                            let black_win_count = Thor::get_black_win_count();
+                            let draw_count = Thor::get_draw_count();
+                            let white_win_count = Thor::get_white_win_count();
+                            let black_median_score = Thor::get_black_median_score();
+                            let black_average_score = Thor::get_black_average_score();
 
                             ZF::report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                         }
@@ -550,7 +554,7 @@ pub async unsafe fn engine_play_game_async<
                 Dump::dump_position(side_to_move, &board);
                 Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
                 /* Check what the Thor opening statistics has to say */
-                choose_thor_opening_move::<FE>(&board, side_to_move, echo);
+                Thor::choose_thor_opening_move(&board, side_to_move, echo);
                 if echo != 0 && wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
                     if skill[side_to_move as usize] == 0 as i32 {
@@ -572,7 +576,7 @@ pub async unsafe fn engine_play_game_async<
                                             disks_played + 4);
                         let timed_search = (skill[side_to_move as usize] >= 60) as i32;
                         curr_move =
-                            generic_compute_move::<ComputeMoveLog, ComputeMoveOut, FE>(
+                            generic_compute_move::<ComputeMoveLog, ComputeMoveOut, FE, Thor>(
                                 side_to_move, 1,
                                 player_time[side_to_move as usize] as i32,
                                 player_increment[side_to_move as usize] as i32, timed_search,
@@ -643,18 +647,18 @@ pub async unsafe fn engine_play_game_async<
                           score_sheet_row);
             if use_thor_ {
                 let database_start = get_real_timer::<FE>();
-                database_search::<FE>(&board, side_to_move);
-                thor_position_count = get_match_count();
+                Thor::database_search(&board, side_to_move);
+                thor_position_count = Thor::get_match_count();
                 let database_stop = get_real_timer::<FE>();
                 let db_search_time = database_stop - database_start;
                 total_search_time += db_search_time;
                 ZF::report_some_thor_stats(total_search_time, thor_position_count, db_search_time);
                 if thor_position_count > 0 {
-                    let black_win_count = get_black_win_count();
-                    let draw_count = get_draw_count();
-                    let white_win_count = get_white_win_count();
-                    let black_median_score = get_black_median_score();
-                    let black_average_score = get_black_average_score();
+                    let black_win_count = Thor::get_black_win_count();
+                    let draw_count = Thor::get_draw_count();
+                    let white_win_count = Thor::get_white_win_count();
+                    let black_median_score = Thor::get_black_median_score();
+                    let black_average_score = Thor::get_black_average_score();
                     ZF::report_some_thor_scores(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                 }
                 ZF::print_out_thor_matches(thor_max_games);

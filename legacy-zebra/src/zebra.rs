@@ -6,8 +6,7 @@ use std::ptr::null_mut;
 use engine::src::game::{generic_game_init, toggle_human_openings, toggle_status_log, global_terminate};
 use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler, compute_move, global_setup};
 use crate::src::learn::{LibcLearner, init_learn};
-use crate::src::thordb::{read_game_database, read_tournament_database, read_player_database, print_thor_matches};
-use engine::src::thordb::{init_thor_database, get_total_game_count, get_thor_game_size, choose_thor_opening_move};
+use crate::src::thordb::{read_game_database, read_tournament_database, read_player_database, print_thor_matches, LegacyThor, get_total_game_count, choose_thor_opening_move, get_thor_game_size, init_thor_database};
 use crate::src::error::{LibcFatalError, FE, fatal_error};
 use engine::src::error::{FrontEnd, FatalError};
 use engine::src::display::{echo, display_pv};
@@ -801,7 +800,7 @@ unsafe fn play_game(mut file_name: *const i8,
     let mut move_file = LibcFileMoveSource::open(move_file_name);
 
     engine_play_game
-        ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner, LibcFatalError>
+        ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner, LibcFatalError, LegacyThor>
         (file_name, move_string, repeat, log_file_name_, move_file, use_thor_, use_learning_)
 }
 
@@ -1191,7 +1190,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                               &black_moves, &white_moves);
             }
             /* Check what the Thor opening statistics has to say */
-            choose_thor_opening_move::<FE>(&board, side_to_move, echo);
+            choose_thor_opening_move(&board, side_to_move, echo);
             if echo != 0 && wait != 0 { dumpch(); }
             start_move::<FE>(player_time[side_to_move as usize],
                        player_increment[side_to_move as usize],

@@ -146,6 +146,7 @@ dependencies = [
  "engine-traits",
  "flip",
  "libc-wrapper",
+ "thor-opening-list",
  "thordb-types",
  "zlib-coeff-source",
 ]
@@ -375,6 +376,7 @@ dependencies = [
  "flip",
  "js-sys",
  "thiserror",
+ "thordb-types",
  "wasm-bindgen",
  "wasm-bindgen-futures",
 ]

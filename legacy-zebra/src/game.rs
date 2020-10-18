@@ -19,6 +19,7 @@ use engine::src::stubs::abs;
 use engine::src::osfbook::{get_book_move, get_candidate, get_candidate_count, fill_move_alternatives};
 use engine::src::game::{use_log_file, ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, evaluated_list, game_evaluated_count, max_depth_reached, prefix_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, MIDGAME_EVAL, WON_POSITION, UNDEFINED_EVAL, UNSOLVED_POSITION, EXACT_EVAL, WLD_EVAL, DRAWN_POSITION, LOST_POSITION, PASS_EVAL};
 use std::ffi::CStr;
+use crate::src::thordb::LegacyThor;
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
 /*
@@ -1071,7 +1072,7 @@ pub unsafe fn compute_move(side_to_move: i32,
                            search_forced: i32,
                            eval_info: &mut EvaluationType)
                            -> i32 {
-    return generic_compute_move::<LogFileHandler, LibcZebraOutput, LibcFatalError>(side_to_move, update_all, my_time,
+    return generic_compute_move::<LogFileHandler, LibcZebraOutput, LibcFatalError, LegacyThor>(side_to_move, update_all, my_time,
                                 my_incr, timed_depth,
                                 book, mid,
                                 exact, wld,

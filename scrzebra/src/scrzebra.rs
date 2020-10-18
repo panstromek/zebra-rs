@@ -4,7 +4,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 
 use engine::src::game::{global_terminate, set_komi, toggle_human_openings, toggle_status_log};
 use engine::src::myrandom::my_srandom;
-use engine::src::thordb::init_thor_database;
+use legacy_zebra::src::thordb::init_thor_database;
 use engine::src::display::{echo, display_pv};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
 use engine::src::timer::{get_real_timer, determine_move_time, start_move};
