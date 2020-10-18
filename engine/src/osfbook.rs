@@ -118,16 +118,13 @@ pub static mut exact_count: [i32; 61] = [0; 61];
 pub static mut wld_count: [i32; 61] = [0; 61];
 pub static mut exhausted_count: [i32; 61] = [0; 61];
 pub static mut common_count: [i32; 61] = [0; 61];
-pub static mut symmetry_map: [*mut i32; 8] =
-    [0 as *const i32 as *mut i32; 8];
-pub static mut inv_symmetry_map: [*mut i32; 8] =
-    [0 as *const i32 as *mut i32; 8];
+pub static mut symmetry_map: [*mut i32; 8] = [0 as *mut i32; 8];
+pub static mut inv_symmetry_map: [*mut i32; 8] = [0 as *mut i32; 8];
 pub static mut line_hash: [[[i32; 6561]; 8]; 2] = [[[0; 6561]; 8]; 2];
-pub static mut book_hash_table: *mut i32 =
-    0 as *const i32 as *mut i32;
+pub static mut book_hash_table: *mut i32 = 0 as *mut i32;
 pub static mut draw_mode: DrawMode = OPPONENT_WINS;
 pub static mut game_mode: GameMode = PRIVATE_GAME;
-pub static mut node: *mut BookNode = 0 as *const BookNode as *mut BookNode;
+pub static mut node: *mut BookNode = 0 as *mut BookNode;
 pub static mut candidate_list: [CandidateMove; 60] =
     [CandidateMove{move_0: 0, score: 0, flags: 0, parent_flags: 0,}; 60];
 
