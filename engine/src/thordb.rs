@@ -41,8 +41,7 @@ pub static mut move_mask_hi: [u32; 100] = [0; 100];
 pub static mut move_mask_lo: [u32; 100] = [0; 100];
 pub static mut unmove_mask_hi: [u32; 100] = [0; 100];
 pub static mut unmove_mask_lo: [u32; 100] = [0; 100];
-pub static mut database_head: *mut DatabaseType =
-    0 as *const DatabaseType as *mut DatabaseType;
+pub static mut database_head: *mut DatabaseType = 0 as *const DatabaseType as *mut DatabaseType;
 pub static mut players: PlayerDatabaseType =
     PlayerDatabaseType{prolog:
     PrologType{creation_century: 0,
@@ -1841,7 +1840,7 @@ pub unsafe fn get_thor_game_move(index: i32,
   SIDE_TO_MOVE being the player to move, matches the hash codes
   IN_HASH1 and IN_HASH2, otherwise FALSE.
 */
-unsafe fn position_match(mut game: *mut GameType,
+unsafe fn position_match(mut game: &mut GameType,
                          move_count: i32,
                          side_to_move: i32,
                          shape_lo: &mut [u32],
@@ -2223,7 +2222,7 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: &[i32], side_to_move: i32)
     let mut shape_lo: [u32; 8] = [0; 8];
     let mut shape_hi: [u32; 8] = [0; 8];
     let mut current_db = 0 as *mut DatabaseType;
-    let mut game = 0 as *mut GameType;
+    let mut game;
     /* We need a player and a tournament database. */
     if players.count == 0 as i32 ||
         tournaments.count == 0 as i32 {
@@ -2437,8 +2436,7 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: &[i32], side_to_move: i32)
     while !current_db.is_null() {
         i = 0;
         while i < (*current_db).count {
-            game =
-                &mut *(*current_db).games.offset(i as isize) as *mut GameType;
+            game = &mut *(*current_db).games.offset(i as isize);
             if (*game).passes_filter != 0 {
                 if disc_count[0] ==
                     (*game).black_disc_count[move_count as usize] as
