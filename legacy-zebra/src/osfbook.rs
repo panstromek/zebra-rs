@@ -546,7 +546,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
         slot = probe_hash_table(val1, val2);
         if slot == -(1 as i32) ||
                *book_hash_table.offset(slot as isize) == -(1 as i32) {
-            this_node = create_BookNode::<FE>(val1, val2, flags[i as usize]);
+            this_node = create_BookNode(val1, val2, flags[i as usize]);
             if private_game != 0 {
                 let ref mut fresh26 =
                     (*node.offset(this_node as isize)).flags;
@@ -967,7 +967,7 @@ pub unsafe fn read_text_database(file_name:
     }
     fscanf(stream, b"%d\x00" as *const u8 as *const i8,
            &mut new_book_node_count as *mut i32);
-    set_allocation::<FE>(new_book_node_count + 1000 as i32);
+    set_allocation(new_book_node_count + 1000 as i32);
     i = 0;
     while i < new_book_node_count {
         fscanf(stream,
@@ -1032,7 +1032,7 @@ pub unsafe fn read_binary_database(file_name: *const i8) {
     fread(&mut new_book_node_count as *mut i32 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
-    set_allocation::<FE>(new_book_node_count + 1000 as i32);
+    set_allocation(new_book_node_count + 1000 as i32);
     i = 0;
     while i < new_book_node_count {
         fread(&mut (*node.offset(i as isize)).hash_val1 as *mut i32 as
@@ -1157,7 +1157,7 @@ pub unsafe fn merge_binary_database(file_name:
                *book_hash_table.offset(slot as isize) == -(1 as i32) {
             /* New position, add it without modifications. */
             let this_node =
-                create_BookNode::<FE>(merge_node.hash_val1, merge_node.hash_val2,
+                create_BookNode(merge_node.hash_val1, merge_node.hash_val2,
                                 merge_node.flags);
             *node.offset(this_node as isize) = merge_node;
             merge_use_count += 1
@@ -1930,7 +1930,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                     index = *book_hash_table.offset(slot as isize);
                     if index == -(1 as i32) {
                         index =
-                            create_BookNode::<FE>(val1, val2,
+                            create_BookNode(val1, val2,
                                             32 as i32 as
                                                 u16);
                         let ref mut fresh50 =

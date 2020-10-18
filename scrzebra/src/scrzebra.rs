@@ -642,7 +642,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line);
     }
-    global_terminate::<LibcFatalError>();
+    global_terminate();
     return 0 as i32;
 }
 static mut use_thor: i32 = 0;

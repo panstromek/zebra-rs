@@ -110,7 +110,7 @@ pub fn init() {
 #[wasm_bindgen]
 pub fn terminate() {
     // I never call this and it's probably pointless..., just putting it here so it is there
-    unsafe { global_terminate::<WasmFrontend>(); }
+    unsafe { global_terminate(); }
 }
 
 #[wasm_bindgen]

@@ -630,7 +630,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     } else {
         play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name, use_thor != 0, use_learning != 0);
     }
-    global_terminate::<LibcFatalError>();
+    global_terminate();
     return 0 as i32;
 }
 /*

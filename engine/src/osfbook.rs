@@ -121,7 +121,7 @@ pub static mut common_count: [i32; 61] = [0; 61];
 pub static mut symmetry_map: [*mut i32; 8] = [0 as *mut i32; 8];
 pub static mut inv_symmetry_map: [*mut i32; 8] = [0 as *mut i32; 8];
 pub static mut line_hash: [[[i32; 6561]; 8]; 2] = [[[0; 6561]; 8]; 2];
-pub static mut book_hash_table: *mut i32 = 0 as *mut i32;
+pub static mut book_hash_table: Vec<i32> = Vec::new();
 pub static mut draw_mode: DrawMode = OPPONENT_WINS;
 pub static mut game_mode: GameMode = PRIVATE_GAME;
 pub static mut node: Vec<BookNode> = Vec::new();
@@ -994,24 +994,12 @@ pub unsafe fn init_maps<FE: FrontEnd>() {
    REBUILD_HASH_TABLE
    Resize the hash table for a requested number of nodes.
 */
-pub unsafe fn rebuild_hash_table<FE: FrontEnd>(requested_items: i32) {
-    let mut new_size: i32 = 0;
-    let mut new_memory: i32 = 0;
-    new_size = 2 as i32 * requested_items;
-    new_memory =
-        (new_size as
-            u64).wrapping_mul(::std::mem::size_of::<i32>()
-            as u64) as i32;
-    if hash_table_size == 0 as i32 {
-        book_hash_table =
-            safe_malloc::<FE>(new_memory as size_t) as *mut i32
+pub unsafe fn rebuild_hash_table(requested_items: i32) {
+    let new_size = 2 * requested_items;
+    if hash_table_size == 0 {
+        book_hash_table = vec![0; new_size as usize];
     } else {
-        book_hash_table =
-            safe_realloc::<FE>(book_hash_table as *mut c_void,
-                         new_memory as size_t) as *mut i32
-    }
-    if book_hash_table.is_null() {
-        FE::book_hash_table_allocaiton_failure(new_size, new_memory);
+        book_hash_table.resize(new_size as usize, 0);
     }
     hash_table_size = new_size;
     create_hash_reference();
@@ -1023,7 +1011,7 @@ pub unsafe fn rebuild_hash_table<FE: FrontEnd>(requested_items: i32) {
    SET_ALLOCATION
    Changes the number of nodes for which memory is allocated.
 */
-pub unsafe fn set_allocation<FE: FrontEnd>(size: i32) {
+pub unsafe fn set_allocation(size: i32) {
     if node.is_empty() {
         node = vec![BookNode {
             hash_val1: 0,
@@ -1045,37 +1033,29 @@ pub unsafe fn set_allocation<FE: FrontEnd>(size: i32) {
             flags: 0
         });
     }
-    // if node.is_null() {
-    //     // I have no idea what this value is supposed to mean
-    //     let to_report = (size as
-    //         u64).wrapping_mul(::std::mem::size_of::<BookNode>()
-    //         as u64);
-    //     FE::book_node_list_allocation_failure(size, to_report);
-    // }
     node_table_size = size;
-    if node_table_size as f64 >
-        0.80f64 * hash_table_size as f64 {
-        rebuild_hash_table::<FE>(node_table_size);
+    if node_table_size as f64 > 0.80f64 * hash_table_size as f64 {
+        rebuild_hash_table(node_table_size);
     };
 }
 /*
    INCREASE_ALLOCATION
    Allocate more memory for the book tree.
 */
-pub unsafe fn increase_allocation<FE: FrontEnd>() {
-    set_allocation::<FE>(node_table_size + 50000 as i32);
+pub unsafe fn increase_allocation() {
+    set_allocation(node_table_size + 50000 as i32);
 }
 /*
    CREATE_BOOK_NODE
    Creates a new book node without any connections whatsoever
    to the rest of the tree.
 */
-pub unsafe fn create_BookNode<FE: FrontEnd>(val1: i32,
+pub unsafe fn create_BookNode(val1: i32,
                                             val2: i32,
                                             flags: u16)
                                             -> i32 {
     let mut index: i32 = 0;
-    if book_node_count == node_table_size { increase_allocation::<FE>(); }
+    if book_node_count == node_table_size { increase_allocation(); }
     index = book_node_count;
     (*node.offset(index as isize)).hash_val1 = val1;
     (*node.offset(index as isize)).hash_val2 = val2;
@@ -1119,10 +1099,8 @@ pub unsafe fn find_opening_name() -> *const i8 {
   Free all dynamically allocated memory.
 */
 
-pub unsafe fn clear_osf<FE: FrontEnd>() {
-    FE::free(book_hash_table as *mut c_void);
-    book_hash_table = 0 as *mut i32;
-    // FE::free(node as *mut c_void);
+pub unsafe fn clear_osf() {
+    book_hash_table.clear();
     node.clear();
 }
 

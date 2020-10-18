@@ -202,10 +202,10 @@ pub unsafe fn get_pv(destin: *mut i32) -> i32 {
    Free all dynamically allocated memory.
 */
 
-pub unsafe fn global_terminate<FE: FrontEnd>() {
+pub unsafe fn global_terminate() {
     free_hash();
     clear_coeffs();
-    clear_osf::<FE>();
+    clear_osf();
 }
 
 pub unsafe fn engine_game_init() {
