@@ -35,6 +35,7 @@ use engine::src::osfbook::{
     do_evaluate, search_depth, compute_feasible_count, size_t, inv_symmetry_map,
     MIDGAME_EVAL, WON_POSITION, engine_minimax_tree, engine_examine_tree
 };
+use engine_traits::Offset;
 
 pub type FE = LibcFatalError;
 
@@ -394,12 +395,12 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
                *const i8);
     if original_side_to_move == 0 as i32 {
         root_score =
-            (*node).black_minimax_score as
+            node[0].black_minimax_score as
                 i32;
         printf(b"black\x00" as *const u8 as *const i8);
     } else {
         root_score =
-            (*node).white_minimax_score as
+            node[0].white_minimax_score as
                 i32;
         printf(b"white\x00" as *const u8 as *const i8);
     }
