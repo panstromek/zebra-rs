@@ -21,3 +21,8 @@ impl<'a, 'b: 'a, T> Offset<&'a mut T> for &'b mut [T] {
         &mut self[count as usize]
     }
 }
+impl Offset<usize> for usize {
+    fn offset(self, count: isize) -> usize {
+        (self as isize + count) as usize
+    }
+}

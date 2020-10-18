@@ -1,6 +1,6 @@
-use crate::unflip::flip_stack;
+use crate::unflip::{flip_stack, global_flip_stack};
 use core::mem;
-
+use engine_traits::Offset;
 /*
    File:           globals.h
 
@@ -48,87 +48,59 @@ static board_region: [i8; 100] = [
     0, 7, 7, 8, 8, 8, 8, 9, 9, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 ];
-// These methods were temporarily copied from standard library
-// because they got removed, but I can't replaces their usages
-// with something better, yet.
-pub trait WrappingOffsetFrom<T> {
-    fn wrapping_offset_from_(self, origin: *const T) -> isize;
-}
-impl<T> WrappingOffsetFrom<T> for *const T {
-    #[inline]
-    fn wrapping_offset_from_(self, origin: *const T) -> isize
-        where T: Sized,
-    {
-        let pointee_size = mem::size_of::<T>();
-        assert!(0 < pointee_size && pointee_size <= isize::MAX as usize);
-
-        let d = isize::wrapping_sub(self as _, origin as _);
-        d.wrapping_div(pointee_size as _)
-    }
-}
-impl<T> WrappingOffsetFrom<T> for *mut T {
-    #[inline]
-    fn wrapping_offset_from_(self, origin: *const T) -> isize
-        where T: Sized {
-        (self as *const T).wrapping_offset_from_(origin)
-    }
-}
 
 pub unsafe fn DoFlips_no_hash(sqnum: i32,
                               color: i32, board: &mut [i32; 128])
                               -> i32 {
-    let opp_color = 0 as i32 + 2 as i32 - color;
-    let mut sq = 0 as *mut i32;
-    let mut old_flip_stack = 0 as *mut *mut i32;
-    let mut t_flip_stack = 0 as *mut *mut i32;
-    t_flip_stack = flip_stack;
-    old_flip_stack = t_flip_stack;
-    sq = &mut *board.as_mut_ptr().offset(sqnum as isize) as *mut i32;
+    let opp_color = 2 - color;
+    let mut t_flip_stack = flip_stack;
+    let old_flip_stack = t_flip_stack;
+    let mut sq = sqnum as usize;
     match board_region[sqnum as usize] as i32 {
         1 => {
             let mut pt = sq.offset(1);
-            if *pt == opp_color {
+            if board[pt] == opp_color {
                 pt = pt.offset(1);
-                if *pt == opp_color {
+                if board[pt] == opp_color {
                     pt = pt.offset(1);
-                    if *pt == opp_color {
+                    if board[pt] == opp_color {
                         pt = pt.offset(1);
-                        if *pt == opp_color {
+                        if board[pt] == opp_color {
                             pt = pt.offset(1);
-                            if *pt == opp_color {
+                            if board[pt] == opp_color {
                                 pt = pt.offset(1);
-                                if *pt == opp_color {
+                                if board[pt] == opp_color {
                                     pt = pt.offset(1)
                                 }
                             }
                         }
                     }
                 }
-                if *pt == color {
+                if board[pt] == color {
                     pt = pt.offset(-(1 as i32 as isize));
                     loop  {
-                        *pt = color;
+                        board[pt] = color;
                         let fresh0 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh0 = pt;
+                        global_flip_stack[fresh0 ] = (pt);
                         pt = pt.offset(-(1 as i32 as isize));
                         if !(pt != sq) { break ; }
                     }
                 }
             }
             let mut pt_0 = sq.offset(11);
-            if *pt_0 == opp_color {
+            if board[pt_0] == opp_color {
                 pt_0 = pt_0.offset(11);
-                if *pt_0 == opp_color {
+                if board[pt_0] == opp_color {
                     pt_0 = pt_0.offset(11);
-                    if *pt_0 == opp_color {
+                    if board[pt_0] == opp_color {
                         pt_0 = pt_0.offset(11);
-                        if *pt_0 == opp_color {
+                        if board[pt_0] == opp_color {
                             pt_0 = pt_0.offset(11);
-                            if *pt_0 == opp_color {
+                            if board[pt_0] == opp_color {
                                 pt_0 =
                                     pt_0.offset(11);
-                                if *pt_0 == opp_color {
+                                if board[pt_0] == opp_color {
                                     pt_0 =
                                         pt_0.offset(11)
                                 }
@@ -136,31 +108,31 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_0 == color {
+                if board[pt_0] == color {
                     pt_0 = pt_0.offset(-(11 as i32 as isize));
                     loop  {
-                        *pt_0 = color;
+                        board[pt_0] = color;
                         let fresh1 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh1 = pt_0;
+                        global_flip_stack[fresh1 ] = (pt_0);
                         pt_0 = pt_0.offset(-(11 as i32 as isize));
                         if !(pt_0 != sq) { break ; }
                     }
                 }
             }
             let mut pt_1 = sq.offset(10);
-            if *pt_1 == opp_color {
+            if board[pt_1] == opp_color {
                 pt_1 = pt_1.offset(10);
-                if *pt_1 == opp_color {
+                if board[pt_1] == opp_color {
                     pt_1 = pt_1.offset(10);
-                    if *pt_1 == opp_color {
+                    if board[pt_1] == opp_color {
                         pt_1 = pt_1.offset(10);
-                        if *pt_1 == opp_color {
+                        if board[pt_1] == opp_color {
                             pt_1 = pt_1.offset(10);
-                            if *pt_1 == opp_color {
+                            if board[pt_1] == opp_color {
                                 pt_1 =
                                     pt_1.offset(10);
-                                if *pt_1 == opp_color {
+                                if board[pt_1] == opp_color {
                                     pt_1 =
                                         pt_1.offset(10)
                                 }
@@ -168,13 +140,13 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_1 == color {
+                if board[pt_1] == color {
                     pt_1 = pt_1.offset(-(10 as i32 as isize));
                     loop  {
-                        *pt_1 = color;
+                        board[pt_1] = color;
                         let fresh2 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh2 = pt_1;
+                        global_flip_stack[fresh2 ] = (pt_1);
                         pt_1 = pt_1.offset(-(10 as i32 as isize));
                         if !(pt_1 != sq) { break ; }
                     }
@@ -183,66 +155,66 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
         }
         2 => {
             let mut pt_2 = sq.offset(1);
-            if *pt_2 == opp_color {
+            if board[pt_2] == opp_color {
                 pt_2 = pt_2.offset(1);
-                if *pt_2 == opp_color {
+                if board[pt_2] == opp_color {
                     pt_2 = pt_2.offset(1);
-                    if *pt_2 == opp_color {
+                    if board[pt_2] == opp_color {
                         pt_2 = pt_2.offset(1);
-                        if *pt_2 == opp_color {
+                        if board[pt_2] == opp_color {
                             pt_2 = pt_2.offset(1)
                         }
                     }
                 }
-                if *pt_2 == color {
+                if board[pt_2] == color {
                     pt_2 = pt_2.offset(-(1 as i32 as isize));
                     loop  {
-                        *pt_2 = color;
+                        board[pt_2] = color;
                         let fresh3 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh3 = pt_2;
+                        global_flip_stack[fresh3 ] = (pt_2);
                         pt_2 = pt_2.offset(-(1 as i32 as isize));
                         if !(pt_2 != sq) { break ; }
                     }
                 }
             }
             let mut pt_3 = sq.offset(11);
-            if *pt_3 == opp_color {
+            if board[pt_3] == opp_color {
                 pt_3 = pt_3.offset(11);
-                if *pt_3 == opp_color {
+                if board[pt_3] == opp_color {
                     pt_3 = pt_3.offset(11);
-                    if *pt_3 == opp_color {
+                    if board[pt_3] == opp_color {
                         pt_3 = pt_3.offset(11);
-                        if *pt_3 == opp_color {
+                        if board[pt_3] == opp_color {
                             pt_3 = pt_3.offset(11)
                         }
                     }
                 }
-                if *pt_3 == color {
+                if board[pt_3] == color {
                     pt_3 = pt_3.offset(-(11 as i32 as isize));
                     loop  {
-                        *pt_3 = color;
+                        board[pt_3] = color;
                         let fresh4 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh4 = pt_3;
+                        global_flip_stack[fresh4 ] = (pt_3);
                         pt_3 = pt_3.offset(-(11 as i32 as isize));
                         if !(pt_3 != sq) { break ; }
                     }
                 }
             }
             let mut pt_4 = sq.offset(10);
-            if *pt_4 == opp_color {
+            if board[pt_4] == opp_color {
                 pt_4 = pt_4.offset(10);
-                if *pt_4 == opp_color {
+                if board[pt_4] == opp_color {
                     pt_4 = pt_4.offset(10);
-                    if *pt_4 == opp_color {
+                    if board[pt_4] == opp_color {
                         pt_4 = pt_4.offset(10);
-                        if *pt_4 == opp_color {
+                        if board[pt_4] == opp_color {
                             pt_4 = pt_4.offset(10);
-                            if *pt_4 == opp_color {
+                            if board[pt_4] == opp_color {
                                 pt_4 =
                                     pt_4.offset(10);
-                                if *pt_4 == opp_color {
+                                if board[pt_4] == opp_color {
                                     pt_4 =
                                         pt_4.offset(10)
                                 }
@@ -250,61 +222,61 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_4 == color {
+                if board[pt_4] == color {
                     pt_4 = pt_4.offset(-(10 as i32 as isize));
                     loop  {
-                        *pt_4 = color;
+                        board[pt_4] = color;
                         let fresh5 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh5 = pt_4;
+                        global_flip_stack[fresh5 ] = (pt_4);
                         pt_4 = pt_4.offset(-(10 as i32 as isize));
                         if !(pt_4 != sq) { break ; }
                     }
                 }
             }
             let mut pt_5 = sq.offset(9);
-            if *pt_5 == opp_color {
+            if board[pt_5] == opp_color {
                 pt_5 = pt_5.offset(9);
-                if *pt_5 == opp_color {
+                if board[pt_5] == opp_color {
                     pt_5 = pt_5.offset(9);
-                    if *pt_5 == opp_color {
+                    if board[pt_5] == opp_color {
                         pt_5 = pt_5.offset(9);
-                        if *pt_5 == opp_color {
+                        if board[pt_5] == opp_color {
                             pt_5 = pt_5.offset(9)
                         }
                     }
                 }
-                if *pt_5 == color {
+                if board[pt_5] == color {
                     pt_5 = pt_5.offset(-(9 as i32 as isize));
                     loop  {
-                        *pt_5 = color;
+                        board[pt_5] = color;
                         let fresh6 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh6 = pt_5;
+                        global_flip_stack[fresh6 ] = (pt_5);
                         pt_5 = pt_5.offset(-(9 as i32 as isize));
                         if !(pt_5 != sq) { break ; }
                     }
                 }
             }
             let mut pt_6 = sq.offset(-(1 as i32) as isize);
-            if *pt_6 == opp_color {
+            if board[pt_6] == opp_color {
                 pt_6 = pt_6.offset(-(1 as i32) as isize);
-                if *pt_6 == opp_color {
+                if board[pt_6] == opp_color {
                     pt_6 = pt_6.offset(-(1 as i32) as isize);
-                    if *pt_6 == opp_color {
+                    if board[pt_6] == opp_color {
                         pt_6 = pt_6.offset(-(1 as i32) as isize);
-                        if *pt_6 == opp_color {
+                        if board[pt_6] == opp_color {
                             pt_6 = pt_6.offset(-(1 as i32) as isize)
                         }
                     }
                 }
-                if *pt_6 == color {
+                if board[pt_6] == color {
                     pt_6 = pt_6.offset(-(-(1 as i32) as isize));
                     loop  {
-                        *pt_6 = color;
+                        board[pt_6] = color;
                         let fresh7 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh7 = pt_6;
+                        global_flip_stack[fresh7 ] = (pt_6);
                         pt_6 = pt_6.offset(-(-(1 as i32) as isize));
                         if !(pt_6 != sq) { break ; }
                     }
@@ -313,18 +285,18 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
         }
         3 => {
             let mut pt_7 = sq.offset(10);
-            if *pt_7 == opp_color {
+            if board[pt_7] == opp_color {
                 pt_7 = pt_7.offset(10);
-                if *pt_7 == opp_color {
+                if board[pt_7] == opp_color {
                     pt_7 = pt_7.offset(10);
-                    if *pt_7 == opp_color {
+                    if board[pt_7] == opp_color {
                         pt_7 = pt_7.offset(10);
-                        if *pt_7 == opp_color {
+                        if board[pt_7] == opp_color {
                             pt_7 = pt_7.offset(10);
-                            if *pt_7 == opp_color {
+                            if board[pt_7] == opp_color {
                                 pt_7 =
                                     pt_7.offset(10);
-                                if *pt_7 == opp_color {
+                                if board[pt_7] == opp_color {
                                     pt_7 =
                                         pt_7.offset(10)
                                 }
@@ -332,30 +304,30 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_7 == color {
+                if board[pt_7] == color {
                     pt_7 = pt_7.offset(-(10 as i32 as isize));
                     loop  {
-                        *pt_7 = color;
+                        board[pt_7] = color;
                         let fresh8 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh8 = pt_7;
+                        global_flip_stack[fresh8 ] = (pt_7);
                         pt_7 = pt_7.offset(-(10 as i32 as isize));
                         if !(pt_7 != sq) { break ; }
                     }
                 }
             }
             let mut pt_8 = sq.offset(9);
-            if *pt_8 == opp_color {
+            if board[pt_8] == opp_color {
                 pt_8 = pt_8.offset(9);
-                if *pt_8 == opp_color {
+                if board[pt_8] == opp_color {
                     pt_8 = pt_8.offset(9);
-                    if *pt_8 == opp_color {
+                    if board[pt_8] == opp_color {
                         pt_8 = pt_8.offset(9);
-                        if *pt_8 == opp_color {
+                        if board[pt_8] == opp_color {
                             pt_8 = pt_8.offset(9);
-                            if *pt_8 == opp_color {
+                            if board[pt_8] == opp_color {
                                 pt_8 = pt_8.offset(9);
-                                if *pt_8 == opp_color {
+                                if board[pt_8] == opp_color {
                                     pt_8 =
                                         pt_8.offset(9)
                                 }
@@ -363,31 +335,31 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_8 == color {
+                if board[pt_8] == color {
                     pt_8 = pt_8.offset(-(9 as i32 as isize));
                     loop  {
-                        *pt_8 = color;
+                        board[pt_8] = color;
                         let fresh9 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh9 = pt_8;
+                        global_flip_stack[fresh9 ] = (pt_8);
                         pt_8 = pt_8.offset(-(9 as i32 as isize));
                         if !(pt_8 != sq) { break ; }
                     }
                 }
             }
             let mut pt_9 = sq.offset(-(1 as i32) as isize);
-            if *pt_9 == opp_color {
+            if board[pt_9] == opp_color {
                 pt_9 = pt_9.offset(-(1 as i32) as isize);
-                if *pt_9 == opp_color {
+                if board[pt_9] == opp_color {
                     pt_9 = pt_9.offset(-(1 as i32) as isize);
-                    if *pt_9 == opp_color {
+                    if board[pt_9] == opp_color {
                         pt_9 = pt_9.offset(-(1 as i32) as isize);
-                        if *pt_9 == opp_color {
+                        if board[pt_9] == opp_color {
                             pt_9 = pt_9.offset(-(1 as i32) as isize);
-                            if *pt_9 == opp_color {
+                            if board[pt_9] == opp_color {
                                 pt_9 =
                                     pt_9.offset(-(1 as i32) as isize);
-                                if *pt_9 == opp_color {
+                                if board[pt_9] == opp_color {
                                     pt_9 =
                                         pt_9.offset(-(1 as i32) as
                                                         isize)
@@ -396,13 +368,13 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_9 == color {
+                if board[pt_9] == color {
                     pt_9 = pt_9.offset(-(-(1 as i32) as isize));
                     loop  {
-                        *pt_9 = color;
+                        board[pt_9] = color;
                         let fresh10 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh10 = pt_9;
+                        global_flip_stack[fresh10 ] = (pt_9);
                         pt_9 = pt_9.offset(-(-(1 as i32) as isize));
                         if !(pt_9 != sq) { break ; }
                     }
@@ -411,25 +383,25 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
         }
         4 => {
             let mut pt_10 = sq.offset(-(10 as i32) as isize);
-            if *pt_10 == opp_color {
+            if board[pt_10] == opp_color {
                 pt_10 = pt_10.offset(-(10 as i32) as isize);
-                if *pt_10 == opp_color {
+                if board[pt_10] == opp_color {
                     pt_10 = pt_10.offset(-(10 as i32) as isize);
-                    if *pt_10 == opp_color {
+                    if board[pt_10] == opp_color {
                         pt_10 = pt_10.offset(-(10 as i32) as isize);
-                        if *pt_10 == opp_color {
+                        if board[pt_10] == opp_color {
                             pt_10 =
                                 pt_10.offset(-(10 as i32) as isize)
                         }
                     }
                 }
-                if *pt_10 == color {
+                if board[pt_10] == color {
                     pt_10 = pt_10.offset(-(-(10 as i32) as isize));
                     loop  {
-                        *pt_10 = color;
+                        board[pt_10] = color;
                         let fresh11 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh11 = pt_10;
+                        global_flip_stack[fresh11 ] = (pt_10);
                         pt_10 =
                             pt_10.offset(-(-(10 as i32) as isize));
                         if !(pt_10 != sq) { break ; }
@@ -437,42 +409,42 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                 }
             }
             let mut pt_11 = sq.offset(-(9 as i32) as isize);
-            if *pt_11 == opp_color {
+            if board[pt_11] == opp_color {
                 pt_11 = pt_11.offset(-(9 as i32) as isize);
-                if *pt_11 == opp_color {
+                if board[pt_11] == opp_color {
                     pt_11 = pt_11.offset(-(9 as i32) as isize);
-                    if *pt_11 == opp_color {
+                    if board[pt_11] == opp_color {
                         pt_11 = pt_11.offset(-(9 as i32) as isize);
-                        if *pt_11 == opp_color {
+                        if board[pt_11] == opp_color {
                             pt_11 = pt_11.offset(-(9 as i32) as isize)
                         }
                     }
                 }
-                if *pt_11 == color {
+                if board[pt_11] == color {
                     pt_11 = pt_11.offset(-(-(9 as i32) as isize));
                     loop  {
-                        *pt_11 = color;
+                        board[pt_11] = color;
                         let fresh12 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh12 = pt_11;
+                        global_flip_stack[fresh12 ] = (pt_11);
                         pt_11 = pt_11.offset(-(-(9 as i32) as isize));
                         if !(pt_11 != sq) { break ; }
                     }
                 }
             }
             let mut pt_12 = sq.offset(1);
-            if *pt_12 == opp_color {
+            if board[pt_12] == opp_color {
                 pt_12 = pt_12.offset(1);
-                if *pt_12 == opp_color {
+                if board[pt_12] == opp_color {
                     pt_12 = pt_12.offset(1);
-                    if *pt_12 == opp_color {
+                    if board[pt_12] == opp_color {
                         pt_12 = pt_12.offset(1);
-                        if *pt_12 == opp_color {
+                        if board[pt_12] == opp_color {
                             pt_12 = pt_12.offset(1);
-                            if *pt_12 == opp_color {
+                            if board[pt_12] == opp_color {
                                 pt_12 =
                                     pt_12.offset(1);
-                                if *pt_12 == opp_color {
+                                if board[pt_12] == opp_color {
                                     pt_12 =
                                         pt_12.offset(1)
                                 }
@@ -480,61 +452,61 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_12 == color {
+                if board[pt_12] == color {
                     pt_12 = pt_12.offset(-(1 as i32 as isize));
                     loop  {
-                        *pt_12 = color;
+                        board[pt_12] = color;
                         let fresh13 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh13 = pt_12;
+                        global_flip_stack[fresh13 ] = (pt_12);
                         pt_12 = pt_12.offset(-(1 as i32 as isize));
                         if !(pt_12 != sq) { break ; }
                     }
                 }
             }
             let mut pt_13 = sq.offset(11);
-            if *pt_13 == opp_color {
+            if board[pt_13] == opp_color {
                 pt_13 = pt_13.offset(11);
-                if *pt_13 == opp_color {
+                if board[pt_13] == opp_color {
                     pt_13 = pt_13.offset(11);
-                    if *pt_13 == opp_color {
+                    if board[pt_13] == opp_color {
                         pt_13 = pt_13.offset(11);
-                        if *pt_13 == opp_color {
+                        if board[pt_13] == opp_color {
                             pt_13 = pt_13.offset(11)
                         }
                     }
                 }
-                if *pt_13 == color {
+                if board[pt_13] == color {
                     pt_13 = pt_13.offset(-(11 as i32 as isize));
                     loop  {
-                        *pt_13 = color;
+                        board[pt_13] = color;
                         let fresh14 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh14 = pt_13;
+                        global_flip_stack[fresh14 ] = (pt_13);
                         pt_13 = pt_13.offset(-(11 as i32 as isize));
                         if !(pt_13 != sq) { break ; }
                     }
                 }
             }
             let mut pt_14 = sq.offset(10);
-            if *pt_14 == opp_color {
+            if board[pt_14] == opp_color {
                 pt_14 = pt_14.offset(10);
-                if *pt_14 == opp_color {
+                if board[pt_14] == opp_color {
                     pt_14 = pt_14.offset(10);
-                    if *pt_14 == opp_color {
+                    if board[pt_14] == opp_color {
                         pt_14 = pt_14.offset(10);
-                        if *pt_14 == opp_color {
+                        if board[pt_14] == opp_color {
                             pt_14 = pt_14.offset(10)
                         }
                     }
                 }
-                if *pt_14 == color {
+                if board[pt_14] == color {
                     pt_14 = pt_14.offset(-(10 as i32 as isize));
                     loop  {
-                        *pt_14 = color;
+                        board[pt_14] = color;
                         let fresh15 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh15 = pt_14;
+                        global_flip_stack[fresh15 ] = (pt_14);
                         pt_14 = pt_14.offset(-(10 as i32 as isize));
                         if !(pt_14 != sq) { break ; }
                     }
@@ -543,25 +515,25 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
         }
         5 => {
             let mut pt_15 = sq.offset(-(11 as i32) as isize);
-            if *pt_15 == opp_color {
+            if board[pt_15] == opp_color {
                 pt_15 = pt_15.offset(-(11 as i32) as isize);
-                if *pt_15 == opp_color {
+                if board[pt_15] == opp_color {
                     pt_15 = pt_15.offset(-(11 as i32) as isize);
-                    if *pt_15 == opp_color {
+                    if board[pt_15] == opp_color {
                         pt_15 = pt_15.offset(-(11 as i32) as isize);
-                        if *pt_15 == opp_color {
+                        if board[pt_15] == opp_color {
                             pt_15 =
                                 pt_15.offset(-(11 as i32) as isize)
                         }
                     }
                 }
-                if *pt_15 == color {
+                if board[pt_15] == color {
                     pt_15 = pt_15.offset(-(-(11 as i32) as isize));
                     loop  {
-                        *pt_15 = color;
+                        board[pt_15] = color;
                         let fresh16 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh16 = pt_15;
+                        global_flip_stack[fresh16 ] = (pt_15);
                         pt_15 =
                             pt_15.offset(-(-(11 as i32) as isize));
                         if !(pt_15 != sq) { break ; }
@@ -569,25 +541,25 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                 }
             }
             let mut pt_16 = sq.offset(-(10 as i32) as isize);
-            if *pt_16 == opp_color {
+            if board[pt_16] == opp_color {
                 pt_16 = pt_16.offset(-(10 as i32) as isize);
-                if *pt_16 == opp_color {
+                if board[pt_16] == opp_color {
                     pt_16 = pt_16.offset(-(10 as i32) as isize);
-                    if *pt_16 == opp_color {
+                    if board[pt_16] == opp_color {
                         pt_16 = pt_16.offset(-(10 as i32) as isize);
-                        if *pt_16 == opp_color {
+                        if board[pt_16] == opp_color {
                             pt_16 =
                                 pt_16.offset(-(10 as i32) as isize)
                         }
                     }
                 }
-                if *pt_16 == color {
+                if board[pt_16] == color {
                     pt_16 = pt_16.offset(-(-(10 as i32) as isize));
                     loop  {
-                        *pt_16 = color;
+                        board[pt_16] = color;
                         let fresh17 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh17 = pt_16;
+                        global_flip_stack[fresh17 ] = (pt_16);
                         pt_16 =
                             pt_16.offset(-(-(10 as i32) as isize));
                         if !(pt_16 != sq) { break ; }
@@ -595,144 +567,144 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                 }
             }
             let mut pt_17 = sq.offset(-(9 as i32) as isize);
-            if *pt_17 == opp_color {
+            if board[pt_17] == opp_color {
                 pt_17 = pt_17.offset(-(9 as i32) as isize);
-                if *pt_17 == opp_color {
+                if board[pt_17] == opp_color {
                     pt_17 = pt_17.offset(-(9 as i32) as isize);
-                    if *pt_17 == opp_color {
+                    if board[pt_17] == opp_color {
                         pt_17 = pt_17.offset(-(9 as i32) as isize);
-                        if *pt_17 == opp_color {
+                        if board[pt_17] == opp_color {
                             pt_17 = pt_17.offset(-(9 as i32) as isize)
                         }
                     }
                 }
-                if *pt_17 == color {
+                if board[pt_17] == color {
                     pt_17 = pt_17.offset(-(-(9 as i32) as isize));
                     loop  {
-                        *pt_17 = color;
+                        board[pt_17] = color;
                         let fresh18 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh18 = pt_17;
+                        global_flip_stack[fresh18 ] = (pt_17);
                         pt_17 = pt_17.offset(-(-(9 as i32) as isize));
                         if !(pt_17 != sq) { break ; }
                     }
                 }
             }
             let mut pt_18 = sq.offset(1);
-            if *pt_18 == opp_color {
+            if board[pt_18] == opp_color {
                 pt_18 = pt_18.offset(1);
-                if *pt_18 == opp_color {
+                if board[pt_18] == opp_color {
                     pt_18 = pt_18.offset(1);
-                    if *pt_18 == opp_color {
+                    if board[pt_18] == opp_color {
                         pt_18 = pt_18.offset(1);
-                        if *pt_18 == opp_color {
+                        if board[pt_18] == opp_color {
                             pt_18 = pt_18.offset(1)
                         }
                     }
                 }
-                if *pt_18 == color {
+                if board[pt_18] == color {
                     pt_18 = pt_18.offset(-(1 as i32 as isize));
                     loop  {
-                        *pt_18 = color;
+                        board[pt_18] = color;
                         let fresh19 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh19 = pt_18;
+                        global_flip_stack[fresh19 ] = (pt_18);
                         pt_18 = pt_18.offset(-(1 as i32 as isize));
                         if !(pt_18 != sq) { break ; }
                     }
                 }
             }
             let mut pt_19 = sq.offset(11);
-            if *pt_19 == opp_color {
+            if board[pt_19] == opp_color {
                 pt_19 = pt_19.offset(11);
-                if *pt_19 == opp_color {
+                if board[pt_19] == opp_color {
                     pt_19 = pt_19.offset(11);
-                    if *pt_19 == opp_color {
+                    if board[pt_19] == opp_color {
                         pt_19 = pt_19.offset(11);
-                        if *pt_19 == opp_color {
+                        if board[pt_19] == opp_color {
                             pt_19 = pt_19.offset(11)
                         }
                     }
                 }
-                if *pt_19 == color {
+                if board[pt_19] == color {
                     pt_19 = pt_19.offset(-(11 as i32 as isize));
                     loop  {
-                        *pt_19 = color;
+                        board[pt_19] = color;
                         let fresh20 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh20 = pt_19;
+                        global_flip_stack[fresh20 ] = (pt_19);
                         pt_19 = pt_19.offset(-(11 as i32 as isize));
                         if !(pt_19 != sq) { break ; }
                     }
                 }
             }
             let mut pt_20 = sq.offset(10);
-            if *pt_20 == opp_color {
+            if board[pt_20] == opp_color {
                 pt_20 = pt_20.offset(10);
-                if *pt_20 == opp_color {
+                if board[pt_20] == opp_color {
                     pt_20 = pt_20.offset(10);
-                    if *pt_20 == opp_color {
+                    if board[pt_20] == opp_color {
                         pt_20 = pt_20.offset(10);
-                        if *pt_20 == opp_color {
+                        if board[pt_20] == opp_color {
                             pt_20 = pt_20.offset(10)
                         }
                     }
                 }
-                if *pt_20 == color {
+                if board[pt_20] == color {
                     pt_20 = pt_20.offset(-(10 as i32 as isize));
                     loop  {
-                        *pt_20 = color;
+                        board[pt_20] = color;
                         let fresh21 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh21 = pt_20;
+                        global_flip_stack[fresh21 ] = (pt_20);
                         pt_20 = pt_20.offset(-(10 as i32 as isize));
                         if !(pt_20 != sq) { break ; }
                     }
                 }
             }
             let mut pt_21 = sq.offset(9);
-            if *pt_21 == opp_color {
+            if board[pt_21] == opp_color {
                 pt_21 = pt_21.offset(9);
-                if *pt_21 == opp_color {
+                if board[pt_21] == opp_color {
                     pt_21 = pt_21.offset(9);
-                    if *pt_21 == opp_color {
+                    if board[pt_21] == opp_color {
                         pt_21 = pt_21.offset(9);
-                        if *pt_21 == opp_color {
+                        if board[pt_21] == opp_color {
                             pt_21 = pt_21.offset(9)
                         }
                     }
                 }
-                if *pt_21 == color {
+                if board[pt_21] == color {
                     pt_21 = pt_21.offset(-(9 as i32 as isize));
                     loop  {
-                        *pt_21 = color;
+                        board[pt_21] = color;
                         let fresh22 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh22 = pt_21;
+                        global_flip_stack[fresh22 ] = (pt_21);
                         pt_21 = pt_21.offset(-(9 as i32 as isize));
                         if !(pt_21 != sq) { break ; }
                     }
                 }
             }
             let mut pt_22 = sq.offset(-(1 as i32) as isize);
-            if *pt_22 == opp_color {
+            if board[pt_22] == opp_color {
                 pt_22 = pt_22.offset(-(1 as i32) as isize);
-                if *pt_22 == opp_color {
+                if board[pt_22] == opp_color {
                     pt_22 = pt_22.offset(-(1 as i32) as isize);
-                    if *pt_22 == opp_color {
+                    if board[pt_22] == opp_color {
                         pt_22 = pt_22.offset(-(1 as i32) as isize);
-                        if *pt_22 == opp_color {
+                        if board[pt_22] == opp_color {
                             pt_22 = pt_22.offset(-(1 as i32) as isize)
                         }
                     }
                 }
-                if *pt_22 == color {
+                if board[pt_22] == color {
                     pt_22 = pt_22.offset(-(-(1 as i32) as isize));
                     loop  {
-                        *pt_22 = color;
+                        board[pt_22] = color;
                         let fresh23 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh23 = pt_22;
+                        global_flip_stack[fresh23 ] = (pt_22);
                         pt_22 = pt_22.offset(-(-(1 as i32) as isize));
                         if !(pt_22 != sq) { break ; }
                     }
@@ -741,25 +713,25 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
         }
         6 => {
             let mut pt_23 = sq.offset(-(10 as i32) as isize);
-            if *pt_23 == opp_color {
+            if board[pt_23] == opp_color {
                 pt_23 = pt_23.offset(-(10 as i32) as isize);
-                if *pt_23 == opp_color {
+                if board[pt_23] == opp_color {
                     pt_23 = pt_23.offset(-(10 as i32) as isize);
-                    if *pt_23 == opp_color {
+                    if board[pt_23] == opp_color {
                         pt_23 = pt_23.offset(-(10 as i32) as isize);
-                        if *pt_23 == opp_color {
+                        if board[pt_23] == opp_color {
                             pt_23 =
                                 pt_23.offset(-(10 as i32) as isize)
                         }
                     }
                 }
-                if *pt_23 == color {
+                if board[pt_23] == color {
                     pt_23 = pt_23.offset(-(-(10 as i32) as isize));
                     loop  {
-                        *pt_23 = color;
+                        board[pt_23] = color;
                         let fresh24 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh24 = pt_23;
+                        global_flip_stack[fresh24 ] = (pt_23);
                         pt_23 =
                             pt_23.offset(-(-(10 as i32) as isize));
                         if !(pt_23 != sq) { break ; }
@@ -767,25 +739,25 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                 }
             }
             let mut pt_24 = sq.offset(-(11 as i32) as isize);
-            if *pt_24 == opp_color {
+            if board[pt_24] == opp_color {
                 pt_24 = pt_24.offset(-(11 as i32) as isize);
-                if *pt_24 == opp_color {
+                if board[pt_24] == opp_color {
                     pt_24 = pt_24.offset(-(11 as i32) as isize);
-                    if *pt_24 == opp_color {
+                    if board[pt_24] == opp_color {
                         pt_24 = pt_24.offset(-(11 as i32) as isize);
-                        if *pt_24 == opp_color {
+                        if board[pt_24] == opp_color {
                             pt_24 =
                                 pt_24.offset(-(11 as i32) as isize)
                         }
                     }
                 }
-                if *pt_24 == color {
+                if board[pt_24] == color {
                     pt_24 = pt_24.offset(-(-(11 as i32) as isize));
                     loop  {
-                        *pt_24 = color;
+                        board[pt_24] = color;
                         let fresh25 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh25 = pt_24;
+                        global_flip_stack[fresh25 ] = (pt_24);
                         pt_24 =
                             pt_24.offset(-(-(11 as i32) as isize));
                         if !(pt_24 != sq) { break ; }
@@ -793,20 +765,20 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                 }
             }
             let mut pt_25 = sq.offset(-(1 as i32) as isize);
-            if *pt_25 == opp_color {
+            if board[pt_25] == opp_color {
                 pt_25 = pt_25.offset(-(1 as i32) as isize);
-                if *pt_25 == opp_color {
+                if board[pt_25] == opp_color {
                     pt_25 = pt_25.offset(-(1 as i32) as isize);
-                    if *pt_25 == opp_color {
+                    if board[pt_25] == opp_color {
                         pt_25 = pt_25.offset(-(1 as i32) as isize);
-                        if *pt_25 == opp_color {
+                        if board[pt_25] == opp_color {
                             pt_25 =
                                 pt_25.offset(-(1 as i32) as isize);
-                            if *pt_25 == opp_color {
+                            if board[pt_25] == opp_color {
                                 pt_25 =
                                     pt_25.offset(-(1 as i32) as
                                                      isize);
-                                if *pt_25 == opp_color {
+                                if board[pt_25] == opp_color {
                                     pt_25 =
                                         pt_25.offset(-(1 as i32) as
                                                          isize)
@@ -815,61 +787,61 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_25 == color {
+                if board[pt_25] == color {
                     pt_25 = pt_25.offset(-(-(1 as i32) as isize));
                     loop  {
-                        *pt_25 = color;
+                        board[pt_25] = color;
                         let fresh26 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh26 = pt_25;
+                        global_flip_stack[fresh26 ] = (pt_25);
                         pt_25 = pt_25.offset(-(-(1 as i32) as isize));
                         if !(pt_25 != sq) { break ; }
                     }
                 }
             }
             let mut pt_26 = sq.offset(9);
-            if *pt_26 == opp_color {
+            if board[pt_26] == opp_color {
                 pt_26 = pt_26.offset(9);
-                if *pt_26 == opp_color {
+                if board[pt_26] == opp_color {
                     pt_26 = pt_26.offset(9);
-                    if *pt_26 == opp_color {
+                    if board[pt_26] == opp_color {
                         pt_26 = pt_26.offset(9);
-                        if *pt_26 == opp_color {
+                        if board[pt_26] == opp_color {
                             pt_26 = pt_26.offset(9)
                         }
                     }
                 }
-                if *pt_26 == color {
+                if board[pt_26] == color {
                     pt_26 = pt_26.offset(-(9 as i32 as isize));
                     loop  {
-                        *pt_26 = color;
+                        board[pt_26] = color;
                         let fresh27 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh27 = pt_26;
+                        global_flip_stack[fresh27 ] = (pt_26);
                         pt_26 = pt_26.offset(-(9 as i32 as isize));
                         if !(pt_26 != sq) { break ; }
                     }
                 }
             }
             let mut pt_27 = sq.offset(10);
-            if *pt_27 == opp_color {
+            if board[pt_27] == opp_color {
                 pt_27 = pt_27.offset(10);
-                if *pt_27 == opp_color {
+                if board[pt_27] == opp_color {
                     pt_27 = pt_27.offset(10);
-                    if *pt_27 == opp_color {
+                    if board[pt_27] == opp_color {
                         pt_27 = pt_27.offset(10);
-                        if *pt_27 == opp_color {
+                        if board[pt_27] == opp_color {
                             pt_27 = pt_27.offset(10)
                         }
                     }
                 }
-                if *pt_27 == color {
+                if board[pt_27] == color {
                     pt_27 = pt_27.offset(-(10 as i32 as isize));
                     loop  {
-                        *pt_27 = color;
+                        board[pt_27] = color;
                         let fresh28 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh28 = pt_27;
+                        global_flip_stack[fresh28 ] = (pt_27);
                         pt_27 = pt_27.offset(-(10 as i32 as isize));
                         if !(pt_27 != sq) { break ; }
                     }
@@ -878,20 +850,20 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
         }
         7 => {
             let mut pt_28 = sq.offset(-(10 as i32) as isize);
-            if *pt_28 == opp_color {
+            if board[pt_28] == opp_color {
                 pt_28 = pt_28.offset(-(10 as i32) as isize);
-                if *pt_28 == opp_color {
+                if board[pt_28] == opp_color {
                     pt_28 = pt_28.offset(-(10 as i32) as isize);
-                    if *pt_28 == opp_color {
+                    if board[pt_28] == opp_color {
                         pt_28 = pt_28.offset(-(10 as i32) as isize);
-                        if *pt_28 == opp_color {
+                        if board[pt_28] == opp_color {
                             pt_28 =
                                 pt_28.offset(-(10 as i32) as isize);
-                            if *pt_28 == opp_color {
+                            if board[pt_28] == opp_color {
                                 pt_28 =
                                     pt_28.offset(-(10 as i32) as
                                                      isize);
-                                if *pt_28 == opp_color {
+                                if board[pt_28] == opp_color {
                                     pt_28 =
                                         pt_28.offset(-(10 as i32) as
                                                          isize)
@@ -900,13 +872,13 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_28 == color {
+                if board[pt_28] == color {
                     pt_28 = pt_28.offset(-(-(10 as i32) as isize));
                     loop  {
-                        *pt_28 = color;
+                        board[pt_28] = color;
                         let fresh29 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh29 = pt_28;
+                        global_flip_stack[fresh29 ] = (pt_28);
                         pt_28 =
                             pt_28.offset(-(-(10 as i32) as isize));
                         if !(pt_28 != sq) { break ; }
@@ -914,20 +886,20 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                 }
             }
             let mut pt_29 = sq.offset(-(9 as i32) as isize);
-            if *pt_29 == opp_color {
+            if board[pt_29] == opp_color {
                 pt_29 = pt_29.offset(-(9 as i32) as isize);
-                if *pt_29 == opp_color {
+                if board[pt_29] == opp_color {
                     pt_29 = pt_29.offset(-(9 as i32) as isize);
-                    if *pt_29 == opp_color {
+                    if board[pt_29] == opp_color {
                         pt_29 = pt_29.offset(-(9 as i32) as isize);
-                        if *pt_29 == opp_color {
+                        if board[pt_29] == opp_color {
                             pt_29 =
                                 pt_29.offset(-(9 as i32) as isize);
-                            if *pt_29 == opp_color {
+                            if board[pt_29] == opp_color {
                                 pt_29 =
                                     pt_29.offset(-(9 as i32) as
                                                      isize);
-                                if *pt_29 == opp_color {
+                                if board[pt_29] == opp_color {
                                     pt_29 =
                                         pt_29.offset(-(9 as i32) as
                                                          isize)
@@ -936,31 +908,31 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_29 == color {
+                if board[pt_29] == color {
                     pt_29 = pt_29.offset(-(-(9 as i32) as isize));
                     loop  {
-                        *pt_29 = color;
+                        board[pt_29] = color;
                         let fresh30 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh30 = pt_29;
+                        global_flip_stack[fresh30 ] = (pt_29);
                         pt_29 = pt_29.offset(-(-(9 as i32) as isize));
                         if !(pt_29 != sq) { break ; }
                     }
                 }
             }
             let mut pt_30 = sq.offset(1);
-            if *pt_30 == opp_color {
+            if board[pt_30] == opp_color {
                 pt_30 = pt_30.offset(1);
-                if *pt_30 == opp_color {
+                if board[pt_30] == opp_color {
                     pt_30 = pt_30.offset(1);
-                    if *pt_30 == opp_color {
+                    if board[pt_30] == opp_color {
                         pt_30 = pt_30.offset(1);
-                        if *pt_30 == opp_color {
+                        if board[pt_30] == opp_color {
                             pt_30 = pt_30.offset(1);
-                            if *pt_30 == opp_color {
+                            if board[pt_30] == opp_color {
                                 pt_30 =
                                     pt_30.offset(1);
-                                if *pt_30 == opp_color {
+                                if board[pt_30] == opp_color {
                                     pt_30 =
                                         pt_30.offset(1)
                                 }
@@ -968,13 +940,13 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_30 == color {
+                if board[pt_30] == color {
                     pt_30 = pt_30.offset(-(1 as i32 as isize));
                     loop  {
-                        *pt_30 = color;
+                        board[pt_30] = color;
                         let fresh31 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh31 = pt_30;
+                        global_flip_stack[fresh31 ] = (pt_30);
                         pt_30 = pt_30.offset(-(1 as i32 as isize));
                         if !(pt_30 != sq) { break ; }
                     }
@@ -983,49 +955,49 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
         }
         8 => {
             let mut pt_31 = sq.offset(-(1 as i32) as isize);
-            if *pt_31 == opp_color {
+            if board[pt_31] == opp_color {
                 pt_31 = pt_31.offset(-(1 as i32) as isize);
-                if *pt_31 == opp_color {
+                if board[pt_31] == opp_color {
                     pt_31 = pt_31.offset(-(1 as i32) as isize);
-                    if *pt_31 == opp_color {
+                    if board[pt_31] == opp_color {
                         pt_31 = pt_31.offset(-(1 as i32) as isize);
-                        if *pt_31 == opp_color {
+                        if board[pt_31] == opp_color {
                             pt_31 = pt_31.offset(-(1 as i32) as isize)
                         }
                     }
                 }
-                if *pt_31 == color {
+                if board[pt_31] == color {
                     pt_31 = pt_31.offset(-(-(1 as i32) as isize));
                     loop  {
-                        *pt_31 = color;
+                        board[pt_31] = color;
                         let fresh32 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh32 = pt_31;
+                        global_flip_stack[fresh32 ] = (pt_31);
                         pt_31 = pt_31.offset(-(-(1 as i32) as isize));
                         if !(pt_31 != sq) { break ; }
                     }
                 }
             }
             let mut pt_32 = sq.offset(-(11 as i32) as isize);
-            if *pt_32 == opp_color {
+            if board[pt_32] == opp_color {
                 pt_32 = pt_32.offset(-(11 as i32) as isize);
-                if *pt_32 == opp_color {
+                if board[pt_32] == opp_color {
                     pt_32 = pt_32.offset(-(11 as i32) as isize);
-                    if *pt_32 == opp_color {
+                    if board[pt_32] == opp_color {
                         pt_32 = pt_32.offset(-(11 as i32) as isize);
-                        if *pt_32 == opp_color {
+                        if board[pt_32] == opp_color {
                             pt_32 =
                                 pt_32.offset(-(11 as i32) as isize)
                         }
                     }
                 }
-                if *pt_32 == color {
+                if board[pt_32] == color {
                     pt_32 = pt_32.offset(-(-(11 as i32) as isize));
                     loop  {
-                        *pt_32 = color;
+                        board[pt_32] = color;
                         let fresh33 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh33 = pt_32;
+                        global_flip_stack[fresh33 ] = (pt_32);
                         pt_32 =
                             pt_32.offset(-(-(11 as i32) as isize));
                         if !(pt_32 != sq) { break ; }
@@ -1033,20 +1005,20 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                 }
             }
             let mut pt_33 = sq.offset(-(10 as i32) as isize);
-            if *pt_33 == opp_color {
+            if board[pt_33] == opp_color {
                 pt_33 = pt_33.offset(-(10 as i32) as isize);
-                if *pt_33 == opp_color {
+                if board[pt_33] == opp_color {
                     pt_33 = pt_33.offset(-(10 as i32) as isize);
-                    if *pt_33 == opp_color {
+                    if board[pt_33] == opp_color {
                         pt_33 = pt_33.offset(-(10 as i32) as isize);
-                        if *pt_33 == opp_color {
+                        if board[pt_33] == opp_color {
                             pt_33 =
                                 pt_33.offset(-(10 as i32) as isize);
-                            if *pt_33 == opp_color {
+                            if board[pt_33] == opp_color {
                                 pt_33 =
                                     pt_33.offset(-(10 as i32) as
                                                      isize);
-                                if *pt_33 == opp_color {
+                                if board[pt_33] == opp_color {
                                     pt_33 =
                                         pt_33.offset(-(10 as i32) as
                                                          isize)
@@ -1055,13 +1027,13 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_33 == color {
+                if board[pt_33] == color {
                     pt_33 = pt_33.offset(-(-(10 as i32) as isize));
                     loop  {
-                        *pt_33 = color;
+                        board[pt_33] = color;
                         let fresh34 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh34 = pt_33;
+                        global_flip_stack[fresh34 ] = (pt_33);
                         pt_33 =
                             pt_33.offset(-(-(10 as i32) as isize));
                         if !(pt_33 != sq) { break ; }
@@ -1069,48 +1041,48 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                 }
             }
             let mut pt_34 = sq.offset(-(9 as i32) as isize);
-            if *pt_34 == opp_color {
+            if board[pt_34] == opp_color {
                 pt_34 = pt_34.offset(-(9 as i32) as isize);
-                if *pt_34 == opp_color {
+                if board[pt_34] == opp_color {
                     pt_34 = pt_34.offset(-(9 as i32) as isize);
-                    if *pt_34 == opp_color {
+                    if board[pt_34] == opp_color {
                         pt_34 = pt_34.offset(-(9 as i32) as isize);
-                        if *pt_34 == opp_color {
+                        if board[pt_34] == opp_color {
                             pt_34 = pt_34.offset(-(9 as i32) as isize)
                         }
                     }
                 }
-                if *pt_34 == color {
+                if board[pt_34] == color {
                     pt_34 = pt_34.offset(-(-(9 as i32) as isize));
                     loop  {
-                        *pt_34 = color;
+                        board[pt_34] = color;
                         let fresh35 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh35 = pt_34;
+                        global_flip_stack[fresh35 ] = (pt_34);
                         pt_34 = pt_34.offset(-(-(9 as i32) as isize));
                         if !(pt_34 != sq) { break ; }
                     }
                 }
             }
             let mut pt_35 = sq.offset(1);
-            if *pt_35 == opp_color {
+            if board[pt_35] == opp_color {
                 pt_35 = pt_35.offset(1);
-                if *pt_35 == opp_color {
+                if board[pt_35] == opp_color {
                     pt_35 = pt_35.offset(1);
-                    if *pt_35 == opp_color {
+                    if board[pt_35] == opp_color {
                         pt_35 = pt_35.offset(1);
-                        if *pt_35 == opp_color {
+                        if board[pt_35] == opp_color {
                             pt_35 = pt_35.offset(1)
                         }
                     }
                 }
-                if *pt_35 == color {
+                if board[pt_35] == color {
                     pt_35 = pt_35.offset(-(1 as i32 as isize));
                     loop  {
-                        *pt_35 = color;
+                        board[pt_35] = color;
                         let fresh36 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh36 = pt_35;
+                        global_flip_stack[fresh36 ] = (pt_35);
                         pt_35 = pt_35.offset(-(1 as i32 as isize));
                         if !(pt_35 != sq) { break ; }
                     }
@@ -1119,20 +1091,20 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
         }
         9 => {
             let mut pt_36 = sq.offset(-(10 as i32) as isize);
-            if *pt_36 == opp_color {
+            if board[pt_36] == opp_color {
                 pt_36 = pt_36.offset(-(10 as i32) as isize);
-                if *pt_36 == opp_color {
+                if board[pt_36] == opp_color {
                     pt_36 = pt_36.offset(-(10 as i32) as isize);
-                    if *pt_36 == opp_color {
+                    if board[pt_36] == opp_color {
                         pt_36 = pt_36.offset(-(10 as i32) as isize);
-                        if *pt_36 == opp_color {
+                        if board[pt_36] == opp_color {
                             pt_36 =
                                 pt_36.offset(-(10 as i32) as isize);
-                            if *pt_36 == opp_color {
+                            if board[pt_36] == opp_color {
                                 pt_36 =
                                     pt_36.offset(-(10 as i32) as
                                                      isize);
-                                if *pt_36 == opp_color {
+                                if board[pt_36] == opp_color {
                                     pt_36 =
                                         pt_36.offset(-(10 as i32) as
                                                          isize)
@@ -1141,13 +1113,13 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_36 == color {
+                if board[pt_36] == color {
                     pt_36 = pt_36.offset(-(-(10 as i32) as isize));
                     loop  {
-                        *pt_36 = color;
+                        board[pt_36] = color;
                         let fresh37 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh37 = pt_36;
+                        global_flip_stack[fresh37 ] = (pt_36);
                         pt_36 =
                             pt_36.offset(-(-(10 as i32) as isize));
                         if !(pt_36 != sq) { break ; }
@@ -1155,20 +1127,20 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                 }
             }
             let mut pt_37 = sq.offset(-(11 as i32) as isize);
-            if *pt_37 == opp_color {
+            if board[pt_37] == opp_color {
                 pt_37 = pt_37.offset(-(11 as i32) as isize);
-                if *pt_37 == opp_color {
+                if board[pt_37] == opp_color {
                     pt_37 = pt_37.offset(-(11 as i32) as isize);
-                    if *pt_37 == opp_color {
+                    if board[pt_37] == opp_color {
                         pt_37 = pt_37.offset(-(11 as i32) as isize);
-                        if *pt_37 == opp_color {
+                        if board[pt_37] == opp_color {
                             pt_37 =
                                 pt_37.offset(-(11 as i32) as isize);
-                            if *pt_37 == opp_color {
+                            if board[pt_37] == opp_color {
                                 pt_37 =
                                     pt_37.offset(-(11 as i32) as
                                                      isize);
-                                if *pt_37 == opp_color {
+                                if board[pt_37] == opp_color {
                                     pt_37 =
                                         pt_37.offset(-(11 as i32) as
                                                          isize)
@@ -1177,13 +1149,13 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_37 == color {
+                if board[pt_37] == color {
                     pt_37 = pt_37.offset(-(-(11 as i32) as isize));
                     loop  {
-                        *pt_37 = color;
+                        board[pt_37] = color;
                         let fresh38 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh38 = pt_37;
+                        global_flip_stack[fresh38 ] = (pt_37);
                         pt_37 =
                             pt_37.offset(-(-(11 as i32) as isize));
                         if !(pt_37 != sq) { break ; }
@@ -1191,20 +1163,20 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                 }
             }
             let mut pt_38 = sq.offset(-(1 as i32) as isize);
-            if *pt_38 == opp_color {
+            if board[pt_38] == opp_color {
                 pt_38 = pt_38.offset(-(1 as i32) as isize);
-                if *pt_38 == opp_color {
+                if board[pt_38] == opp_color {
                     pt_38 = pt_38.offset(-(1 as i32) as isize);
-                    if *pt_38 == opp_color {
+                    if board[pt_38] == opp_color {
                         pt_38 = pt_38.offset(-(1 as i32) as isize);
-                        if *pt_38 == opp_color {
+                        if board[pt_38] == opp_color {
                             pt_38 =
                                 pt_38.offset(-(1 as i32) as isize);
-                            if *pt_38 == opp_color {
+                            if board[pt_38] == opp_color {
                                 pt_38 =
                                     pt_38.offset(-(1 as i32) as
                                                      isize);
-                                if *pt_38 == opp_color {
+                                if board[pt_38] == opp_color {
                                     pt_38 =
                                         pt_38.offset(-(1 as i32) as
                                                          isize)
@@ -1213,13 +1185,13 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                         }
                     }
                 }
-                if *pt_38 == color {
+                if board[pt_38] == color {
                     pt_38 = pt_38.offset(-(-(1 as i32) as isize));
                     loop  {
-                        *pt_38 = color;
+                        board[pt_38] = color;
                         let fresh39 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh39 = pt_38;
+                        global_flip_stack[fresh39 ] = (pt_38);
                         pt_38 = pt_38.offset(-(-(1 as i32) as isize));
                         if !(pt_38 != sq) { break ; }
                     }
@@ -1229,8 +1201,7 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
         _ => { }
     }
     flip_stack = t_flip_stack;
-    return t_flip_stack.wrapping_offset_from_(old_flip_stack) as i64
-               as i32;
+    return (t_flip_stack - old_flip_stack) as i32;
 }
 /*
    doflip.h
@@ -1242,72 +1213,65 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
 
 pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                            hash_flip1: &mut [u32; 128], hash_flip2: &mut [u32; 128]) -> i32 {
-    let opp_color = 0 as i32 + 2 as i32 - color;
-    let mut sq = 0 as *mut i32;
-    let mut old_flip_stack = 0 as *mut *mut i32;
-    let mut t_flip_stack = 0 as *mut *mut i32;
-    let mut t_hash_update1: i32 = 0;
-    let mut t_hash_update2: i32 = 0;
-    t_flip_stack = flip_stack;
-    old_flip_stack = t_flip_stack;
-    t_hash_update2 = 0;
-    t_hash_update1 = t_hash_update2;
-    sq = board.as_mut_ptr().offset(sqnum as isize);
+    let opp_color = 2 - color;
+    let mut t_flip_stack = flip_stack;
+    let old_flip_stack = t_flip_stack;
+    let mut t_hash_update2 = 0;
+    let mut t_hash_update1 = t_hash_update2;
+    let mut sq = sqnum as usize;
     match board_region[sqnum as usize] as i32 {
         1 => {
             let mut pt = sq.offset(1);
-            if *pt == opp_color {
+            if board[pt] == opp_color {
                 pt = pt.offset(1);
-                if *pt == opp_color {
+                if board[pt] == opp_color {
                     pt = pt.offset(1);
-                    if *pt == opp_color {
+                    if board[pt] == opp_color {
                         pt = pt.offset(1);
-                        if *pt == opp_color {
+                        if board[pt] == opp_color {
                             pt = pt.offset(1);
-                            if *pt == opp_color {
+                            if board[pt] == opp_color {
                                 pt = pt.offset(1);
-                                if *pt == opp_color {
+                                if board[pt] == opp_color {
                                     pt = pt.offset(1)
                                 }
                             }
                         }
                     }
                 }
-                if *pt == color {
+                if board[pt] == color {
                     pt = pt.offset(-(1 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt]) as
                                 i32;
-                        *pt = color;
+                        board[pt] = color;
                         let fresh40 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh40 = pt;
+                        global_flip_stack[fresh40 ] = (pt);
                         pt = pt.offset(-(1 as i32 as isize));
                         if !(pt != sq) { break ; }
                     }
                 }
             }
             let mut pt_0 = sq.offset(11);
-            if *pt_0 == opp_color {
+            if board[pt_0] == opp_color {
                 pt_0 = pt_0.offset(11);
-                if *pt_0 == opp_color {
+                if board[pt_0] == opp_color {
                     pt_0 = pt_0.offset(11);
-                    if *pt_0 == opp_color {
+                    if board[pt_0] == opp_color {
                         pt_0 = pt_0.offset(11);
-                        if *pt_0 == opp_color {
+                        if board[pt_0] == opp_color {
                             pt_0 = pt_0.offset(11);
-                            if *pt_0 == opp_color {
+                            if board[pt_0] == opp_color {
                                 pt_0 =
                                     pt_0.offset(11);
-                                if *pt_0 == opp_color {
+                                if board[pt_0] == opp_color {
                                     pt_0 =
                                         pt_0.offset(11)
                                 }
@@ -1315,41 +1279,39 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_0 == color {
+                if board[pt_0] == color {
                     pt_0 = pt_0.offset(-(11 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_0.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_0]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_0.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_0]) as
                                 i32;
-                        *pt_0 = color;
+                        board[pt_0] = color;
                         let fresh41 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh41 = pt_0;
+                        global_flip_stack[fresh41 ] = (pt_0);
                         pt_0 = pt_0.offset(-(11 as i32 as isize));
                         if !(pt_0 != sq) { break ; }
                     }
                 }
             }
             let mut pt_1 = sq.offset(10);
-            if *pt_1 == opp_color {
+            if board[pt_1] == opp_color {
                 pt_1 = pt_1.offset(10);
-                if *pt_1 == opp_color {
+                if board[pt_1] == opp_color {
                     pt_1 = pt_1.offset(10);
-                    if *pt_1 == opp_color {
+                    if board[pt_1] == opp_color {
                         pt_1 = pt_1.offset(10);
-                        if *pt_1 == opp_color {
+                        if board[pt_1] == opp_color {
                             pt_1 = pt_1.offset(10);
-                            if *pt_1 == opp_color {
+                            if board[pt_1] == opp_color {
                                 pt_1 =
                                     pt_1.offset(10);
-                                if *pt_1 == opp_color {
+                                if board[pt_1] == opp_color {
                                     pt_1 =
                                         pt_1.offset(10)
                                 }
@@ -1357,23 +1319,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_1 == color {
+                if board[pt_1] == color {
                     pt_1 = pt_1.offset(-(10 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_1.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_1]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_1.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_1]) as
                                 i32;
-                        *pt_1 = color;
+                        board[pt_1] = color;
                         let fresh42 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh42 = pt_1;
+                        global_flip_stack[fresh42 ] = (pt_1);
                         pt_1 = pt_1.offset(-(10 as i32 as isize));
                         if !(pt_1 != sq) { break ; }
                     }
@@ -1382,86 +1342,82 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
         }
         2 => {
             let mut pt_2 = sq.offset(1);
-            if *pt_2 == opp_color {
+            if board[pt_2] == opp_color {
                 pt_2 = pt_2.offset(1);
-                if *pt_2 == opp_color {
+                if board[pt_2] == opp_color {
                     pt_2 = pt_2.offset(1);
-                    if *pt_2 == opp_color {
+                    if board[pt_2] == opp_color {
                         pt_2 = pt_2.offset(1);
-                        if *pt_2 == opp_color {
+                        if board[pt_2] == opp_color {
                             pt_2 = pt_2.offset(1)
                         }
                     }
                 }
-                if *pt_2 == color {
+                if board[pt_2] == color {
                     pt_2 = pt_2.offset(-(1 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_2.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_2]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_2.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_2]) as
                                 i32;
-                        *pt_2 = color;
+                        board[pt_2] = color;
                         let fresh43 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh43 = pt_2;
+                        global_flip_stack[fresh43 ] = (pt_2);
                         pt_2 = pt_2.offset(-(1 as i32 as isize));
                         if !(pt_2 != sq) { break ; }
                     }
                 }
             }
             let mut pt_3 = sq.offset(11);
-            if *pt_3 == opp_color {
+            if board[pt_3] == opp_color {
                 pt_3 = pt_3.offset(11);
-                if *pt_3 == opp_color {
+                if board[pt_3] == opp_color {
                     pt_3 = pt_3.offset(11);
-                    if *pt_3 == opp_color {
+                    if board[pt_3] == opp_color {
                         pt_3 = pt_3.offset(11);
-                        if *pt_3 == opp_color {
+                        if board[pt_3] == opp_color {
                             pt_3 = pt_3.offset(11)
                         }
                     }
                 }
-                if *pt_3 == color {
+                if board[pt_3] == color {
                     pt_3 = pt_3.offset(-(11 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_3.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_3]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_3.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_3]) as
                                 i32;
-                        *pt_3 = color;
+                        board[pt_3] = color;
                         let fresh44 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh44 = pt_3;
+                        global_flip_stack[fresh44 ] = (pt_3);
                         pt_3 = pt_3.offset(-(11 as i32 as isize));
                         if !(pt_3 != sq) { break ; }
                     }
                 }
             }
             let mut pt_4 = sq.offset(10);
-            if *pt_4 == opp_color {
+            if board[pt_4] == opp_color {
                 pt_4 = pt_4.offset(10);
-                if *pt_4 == opp_color {
+                if board[pt_4] == opp_color {
                     pt_4 = pt_4.offset(10);
-                    if *pt_4 == opp_color {
+                    if board[pt_4] == opp_color {
                         pt_4 = pt_4.offset(10);
-                        if *pt_4 == opp_color {
+                        if board[pt_4] == opp_color {
                             pt_4 = pt_4.offset(10);
-                            if *pt_4 == opp_color {
+                            if board[pt_4] == opp_color {
                                 pt_4 =
                                     pt_4.offset(10);
-                                if *pt_4 == opp_color {
+                                if board[pt_4] == opp_color {
                                     pt_4 =
                                         pt_4.offset(10)
                                 }
@@ -1469,91 +1425,85 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_4 == color {
+                if board[pt_4] == color {
                     pt_4 = pt_4.offset(-(10 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_4.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_4]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_4.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_4]) as
                                 i32;
-                        *pt_4 = color;
+                        board[pt_4] = color;
                         let fresh45 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh45 = pt_4;
+                        global_flip_stack[fresh45 ] = (pt_4);
                         pt_4 = pt_4.offset(-(10 as i32 as isize));
                         if !(pt_4 != sq) { break ; }
                     }
                 }
             }
             let mut pt_5 = sq.offset(9);
-            if *pt_5 == opp_color {
+            if board[pt_5] == opp_color {
                 pt_5 = pt_5.offset(9);
-                if *pt_5 == opp_color {
+                if board[pt_5] == opp_color {
                     pt_5 = pt_5.offset(9);
-                    if *pt_5 == opp_color {
+                    if board[pt_5] == opp_color {
                         pt_5 = pt_5.offset(9);
-                        if *pt_5 == opp_color {
+                        if board[pt_5] == opp_color {
                             pt_5 = pt_5.offset(9)
                         }
                     }
                 }
-                if *pt_5 == color {
+                if board[pt_5] == color {
                     pt_5 = pt_5.offset(-(9 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_5.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_5]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_5.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_5]) as
                                 i32;
-                        *pt_5 = color;
+                        board[pt_5] = color;
                         let fresh46 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh46 = pt_5;
+                        global_flip_stack[fresh46 ] = (pt_5);
                         pt_5 = pt_5.offset(-(9 as i32 as isize));
                         if !(pt_5 != sq) { break ; }
                     }
                 }
             }
             let mut pt_6 = sq.offset(-(1 as i32) as isize);
-            if *pt_6 == opp_color {
+            if board[pt_6] == opp_color {
                 pt_6 = pt_6.offset(-(1 as i32) as isize);
-                if *pt_6 == opp_color {
+                if board[pt_6] == opp_color {
                     pt_6 = pt_6.offset(-(1 as i32) as isize);
-                    if *pt_6 == opp_color {
+                    if board[pt_6] == opp_color {
                         pt_6 = pt_6.offset(-(1 as i32) as isize);
-                        if *pt_6 == opp_color {
+                        if board[pt_6] == opp_color {
                             pt_6 = pt_6.offset(-(1 as i32) as isize)
                         }
                     }
                 }
-                if *pt_6 == color {
+                if board[pt_6] == color {
                     pt_6 = pt_6.offset(-(-(1 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_6.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_6]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_6.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_6]) as
                                 i32;
-                        *pt_6 = color;
+                        board[pt_6] = color;
                         let fresh47 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh47 = pt_6;
+                        global_flip_stack[fresh47 ] = (pt_6);
                         pt_6 = pt_6.offset(-(-(1 as i32) as isize));
                         if !(pt_6 != sq) { break ; }
                     }
@@ -1562,18 +1512,18 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
         }
         3 => {
             let mut pt_7 = sq.offset(10);
-            if *pt_7 == opp_color {
+            if board[pt_7] == opp_color {
                 pt_7 = pt_7.offset(10);
-                if *pt_7 == opp_color {
+                if board[pt_7] == opp_color {
                     pt_7 = pt_7.offset(10);
-                    if *pt_7 == opp_color {
+                    if board[pt_7] == opp_color {
                         pt_7 = pt_7.offset(10);
-                        if *pt_7 == opp_color {
+                        if board[pt_7] == opp_color {
                             pt_7 = pt_7.offset(10);
-                            if *pt_7 == opp_color {
+                            if board[pt_7] == opp_color {
                                 pt_7 =
                                     pt_7.offset(10);
-                                if *pt_7 == opp_color {
+                                if board[pt_7] == opp_color {
                                     pt_7 =
                                         pt_7.offset(10)
                                 }
@@ -1581,40 +1531,38 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_7 == color {
+                if board[pt_7] == color {
                     pt_7 = pt_7.offset(-(10 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_7.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_7]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_7.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_7]) as
                                 i32;
-                        *pt_7 = color;
+                        board[pt_7] = color;
                         let fresh48 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh48 = pt_7;
+                        global_flip_stack[fresh48 ] = (pt_7);
                         pt_7 = pt_7.offset(-(10 as i32 as isize));
                         if !(pt_7 != sq) { break ; }
                     }
                 }
             }
             let mut pt_8 = sq.offset(9);
-            if *pt_8 == opp_color {
+            if board[pt_8] == opp_color {
                 pt_8 = pt_8.offset(9);
-                if *pt_8 == opp_color {
+                if board[pt_8] == opp_color {
                     pt_8 = pt_8.offset(9);
-                    if *pt_8 == opp_color {
+                    if board[pt_8] == opp_color {
                         pt_8 = pt_8.offset(9);
-                        if *pt_8 == opp_color {
+                        if board[pt_8] == opp_color {
                             pt_8 = pt_8.offset(9);
-                            if *pt_8 == opp_color {
+                            if board[pt_8] == opp_color {
                                 pt_8 = pt_8.offset(9);
-                                if *pt_8 == opp_color {
+                                if board[pt_8] == opp_color {
                                     pt_8 =
                                         pt_8.offset(9)
                                 }
@@ -1622,41 +1570,39 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_8 == color {
+                if board[pt_8] == color {
                     pt_8 = pt_8.offset(-(9 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_8.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_8]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_8.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_8]) as
                                 i32;
-                        *pt_8 = color;
+                        board[pt_8] = color;
                         let fresh49 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh49 = pt_8;
+                        global_flip_stack[fresh49 ] = (pt_8);
                         pt_8 = pt_8.offset(-(9 as i32 as isize));
                         if !(pt_8 != sq) { break ; }
                     }
                 }
             }
             let mut pt_9 = sq.offset(-(1 as i32) as isize);
-            if *pt_9 == opp_color {
+            if board[pt_9] == opp_color {
                 pt_9 = pt_9.offset(-(1 as i32) as isize);
-                if *pt_9 == opp_color {
+                if board[pt_9] == opp_color {
                     pt_9 = pt_9.offset(-(1 as i32) as isize);
-                    if *pt_9 == opp_color {
+                    if board[pt_9] == opp_color {
                         pt_9 = pt_9.offset(-(1 as i32) as isize);
-                        if *pt_9 == opp_color {
+                        if board[pt_9] == opp_color {
                             pt_9 = pt_9.offset(-(1 as i32) as isize);
-                            if *pt_9 == opp_color {
+                            if board[pt_9] == opp_color {
                                 pt_9 =
                                     pt_9.offset(-(1 as i32) as isize);
-                                if *pt_9 == opp_color {
+                                if board[pt_9] == opp_color {
                                     pt_9 =
                                         pt_9.offset(-(1 as i32) as
                                                         isize)
@@ -1665,23 +1611,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_9 == color {
+                if board[pt_9] == color {
                     pt_9 = pt_9.offset(-(-(1 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_9.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_9]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_9.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_9]) as
                                 i32;
-                        *pt_9 = color;
+                        board[pt_9] = color;
                         let fresh50 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh50 = pt_9;
+                        global_flip_stack[fresh50 ] = (pt_9);
                         pt_9 = pt_9.offset(-(-(1 as i32) as isize));
                         if !(pt_9 != sq) { break ; }
                     }
@@ -1690,35 +1634,33 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
         }
         4 => {
             let mut pt_10 = sq.offset(-(10 as i32) as isize);
-            if *pt_10 == opp_color {
+            if board[pt_10] == opp_color {
                 pt_10 = pt_10.offset(-(10 as i32) as isize);
-                if *pt_10 == opp_color {
+                if board[pt_10] == opp_color {
                     pt_10 = pt_10.offset(-(10 as i32) as isize);
-                    if *pt_10 == opp_color {
+                    if board[pt_10] == opp_color {
                         pt_10 = pt_10.offset(-(10 as i32) as isize);
-                        if *pt_10 == opp_color {
+                        if board[pt_10] == opp_color {
                             pt_10 =
                                 pt_10.offset(-(10 as i32) as isize)
                         }
                     }
                 }
-                if *pt_10 == color {
+                if board[pt_10] == color {
                     pt_10 = pt_10.offset(-(-(10 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_10.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_10]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_10.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_10]) as
                                 i32;
-                        *pt_10 = color;
+                        board[pt_10] = color;
                         let fresh51 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh51 = pt_10;
+                        global_flip_stack[fresh51 ] = (pt_10);
                         pt_10 =
                             pt_10.offset(-(-(10 as i32) as isize));
                         if !(pt_10 != sq) { break ; }
@@ -1726,52 +1668,50 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                 }
             }
             let mut pt_11 = sq.offset(-(9 as i32) as isize);
-            if *pt_11 == opp_color {
+            if board[pt_11] == opp_color {
                 pt_11 = pt_11.offset(-(9 as i32) as isize);
-                if *pt_11 == opp_color {
+                if board[pt_11] == opp_color {
                     pt_11 = pt_11.offset(-(9 as i32) as isize);
-                    if *pt_11 == opp_color {
+                    if board[pt_11] == opp_color {
                         pt_11 = pt_11.offset(-(9 as i32) as isize);
-                        if *pt_11 == opp_color {
+                        if board[pt_11] == opp_color {
                             pt_11 = pt_11.offset(-(9 as i32) as isize)
                         }
                     }
                 }
-                if *pt_11 == color {
+                if board[pt_11] == color {
                     pt_11 = pt_11.offset(-(-(9 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_11.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_11]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_11.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_11]) as
                                 i32;
-                        *pt_11 = color;
+                        board[pt_11] = color;
                         let fresh52 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh52 = pt_11;
+                        global_flip_stack[fresh52 ] = (pt_11);
                         pt_11 = pt_11.offset(-(-(9 as i32) as isize));
                         if !(pt_11 != sq) { break ; }
                     }
                 }
             }
             let mut pt_12 = sq.offset(1);
-            if *pt_12 == opp_color {
+            if board[pt_12] == opp_color {
                 pt_12 = pt_12.offset(1);
-                if *pt_12 == opp_color {
+                if board[pt_12] == opp_color {
                     pt_12 = pt_12.offset(1);
-                    if *pt_12 == opp_color {
+                    if board[pt_12] == opp_color {
                         pt_12 = pt_12.offset(1);
-                        if *pt_12 == opp_color {
+                        if board[pt_12] == opp_color {
                             pt_12 = pt_12.offset(1);
-                            if *pt_12 == opp_color {
+                            if board[pt_12] == opp_color {
                                 pt_12 =
                                     pt_12.offset(1);
-                                if *pt_12 == opp_color {
+                                if board[pt_12] == opp_color {
                                     pt_12 =
                                         pt_12.offset(1)
                                 }
@@ -1779,91 +1719,85 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_12 == color {
+                if board[pt_12] == color {
                     pt_12 = pt_12.offset(-(1 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_12.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_12]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_12.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_12]) as
                                 i32;
-                        *pt_12 = color;
+                        board[pt_12] = color;
                         let fresh53 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh53 = pt_12;
+                        global_flip_stack[fresh53 ] = (pt_12);
                         pt_12 = pt_12.offset(-(1 as i32 as isize));
                         if !(pt_12 != sq) { break ; }
                     }
                 }
             }
             let mut pt_13 = sq.offset(11);
-            if *pt_13 == opp_color {
+            if board[pt_13] == opp_color {
                 pt_13 = pt_13.offset(11);
-                if *pt_13 == opp_color {
+                if board[pt_13] == opp_color {
                     pt_13 = pt_13.offset(11);
-                    if *pt_13 == opp_color {
+                    if board[pt_13] == opp_color {
                         pt_13 = pt_13.offset(11);
-                        if *pt_13 == opp_color {
+                        if board[pt_13] == opp_color {
                             pt_13 = pt_13.offset(11)
                         }
                     }
                 }
-                if *pt_13 == color {
+                if board[pt_13] == color {
                     pt_13 = pt_13.offset(-(11 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_13.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_13]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_13.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_13]) as
                                 i32;
-                        *pt_13 = color;
+                        board[pt_13] = color;
                         let fresh54 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh54 = pt_13;
+                        global_flip_stack[fresh54 ] = (pt_13);
                         pt_13 = pt_13.offset(-(11 as i32 as isize));
                         if !(pt_13 != sq) { break ; }
                     }
                 }
             }
             let mut pt_14 = sq.offset(10);
-            if *pt_14 == opp_color {
+            if board[pt_14] == opp_color {
                 pt_14 = pt_14.offset(10);
-                if *pt_14 == opp_color {
+                if board[pt_14] == opp_color {
                     pt_14 = pt_14.offset(10);
-                    if *pt_14 == opp_color {
+                    if board[pt_14] == opp_color {
                         pt_14 = pt_14.offset(10);
-                        if *pt_14 == opp_color {
+                        if board[pt_14] == opp_color {
                             pt_14 = pt_14.offset(10)
                         }
                     }
                 }
-                if *pt_14 == color {
+                if board[pt_14] == color {
                     pt_14 = pt_14.offset(-(10 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_14.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_14]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_14.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_14]) as
                                 i32;
-                        *pt_14 = color;
+                        board[pt_14] = color;
                         let fresh55 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh55 = pt_14;
+                        global_flip_stack[fresh55 ] = (pt_14);
                         pt_14 = pt_14.offset(-(10 as i32 as isize));
                         if !(pt_14 != sq) { break ; }
                     }
@@ -1872,35 +1806,33 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
         }
         5 => {
             let mut pt_15 = sq.offset(-(11 as i32) as isize);
-            if *pt_15 == opp_color {
+            if board[pt_15] == opp_color {
                 pt_15 = pt_15.offset(-(11 as i32) as isize);
-                if *pt_15 == opp_color {
+                if board[pt_15] == opp_color {
                     pt_15 = pt_15.offset(-(11 as i32) as isize);
-                    if *pt_15 == opp_color {
+                    if board[pt_15] == opp_color {
                         pt_15 = pt_15.offset(-(11 as i32) as isize);
-                        if *pt_15 == opp_color {
+                        if board[pt_15] == opp_color {
                             pt_15 =
                                 pt_15.offset(-(11 as i32) as isize)
                         }
                     }
                 }
-                if *pt_15 == color {
+                if board[pt_15] == color {
                     pt_15 = pt_15.offset(-(-(11 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_15.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_15]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_15.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_15]) as
                                 i32;
-                        *pt_15 = color;
+                        board[pt_15] = color;
                         let fresh56 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh56 = pt_15;
+                        global_flip_stack[fresh56 ] = (pt_15);
                         pt_15 =
                             pt_15.offset(-(-(11 as i32) as isize));
                         if !(pt_15 != sq) { break ; }
@@ -1908,35 +1840,33 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                 }
             }
             let mut pt_16 = sq.offset(-(10 as i32) as isize);
-            if *pt_16 == opp_color {
+            if board[pt_16] == opp_color {
                 pt_16 = pt_16.offset(-(10 as i32) as isize);
-                if *pt_16 == opp_color {
+                if board[pt_16] == opp_color {
                     pt_16 = pt_16.offset(-(10 as i32) as isize);
-                    if *pt_16 == opp_color {
+                    if board[pt_16] == opp_color {
                         pt_16 = pt_16.offset(-(10 as i32) as isize);
-                        if *pt_16 == opp_color {
+                        if board[pt_16] == opp_color {
                             pt_16 =
                                 pt_16.offset(-(10 as i32) as isize)
                         }
                     }
                 }
-                if *pt_16 == color {
+                if board[pt_16] == color {
                     pt_16 = pt_16.offset(-(-(10 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_16.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_16]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_16.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_16]) as
                                 i32;
-                        *pt_16 = color;
+                        board[pt_16] = color;
                         let fresh57 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh57 = pt_16;
+                        global_flip_stack[fresh57 ] = (pt_16);
                         pt_16 =
                             pt_16.offset(-(-(10 as i32) as isize));
                         if !(pt_16 != sq) { break ; }
@@ -1944,204 +1874,192 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                 }
             }
             let mut pt_17 = sq.offset(-(9 as i32) as isize);
-            if *pt_17 == opp_color {
+            if board[pt_17] == opp_color {
                 pt_17 = pt_17.offset(-(9 as i32) as isize);
-                if *pt_17 == opp_color {
+                if board[pt_17] == opp_color {
                     pt_17 = pt_17.offset(-(9 as i32) as isize);
-                    if *pt_17 == opp_color {
+                    if board[pt_17] == opp_color {
                         pt_17 = pt_17.offset(-(9 as i32) as isize);
-                        if *pt_17 == opp_color {
+                        if board[pt_17] == opp_color {
                             pt_17 = pt_17.offset(-(9 as i32) as isize)
                         }
                     }
                 }
-                if *pt_17 == color {
+                if board[pt_17] == color {
                     pt_17 = pt_17.offset(-(-(9 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_17.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_17]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_17.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_17]) as
                                 i32;
-                        *pt_17 = color;
+                        board[pt_17] = color;
                         let fresh58 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh58 = pt_17;
+                        global_flip_stack[fresh58 ] = (pt_17);
                         pt_17 = pt_17.offset(-(-(9 as i32) as isize));
                         if !(pt_17 != sq) { break ; }
                     }
                 }
             }
             let mut pt_18 = sq.offset(1);
-            if *pt_18 == opp_color {
+            if board[pt_18] == opp_color {
                 pt_18 = pt_18.offset(1);
-                if *pt_18 == opp_color {
+                if board[pt_18] == opp_color {
                     pt_18 = pt_18.offset(1);
-                    if *pt_18 == opp_color {
+                    if board[pt_18] == opp_color {
                         pt_18 = pt_18.offset(1);
-                        if *pt_18 == opp_color {
+                        if board[pt_18] == opp_color {
                             pt_18 = pt_18.offset(1)
                         }
                     }
                 }
-                if *pt_18 == color {
+                if board[pt_18] == color {
                     pt_18 = pt_18.offset(-(1 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_18.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_18]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_18.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_18]) as
                                 i32;
-                        *pt_18 = color;
+                        board[pt_18] = color;
                         let fresh59 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh59 = pt_18;
+                        global_flip_stack[fresh59 ] = (pt_18);
                         pt_18 = pt_18.offset(-(1 as i32 as isize));
                         if !(pt_18 != sq) { break ; }
                     }
                 }
             }
             let mut pt_19 = sq.offset(11);
-            if *pt_19 == opp_color {
+            if board[pt_19] == opp_color {
                 pt_19 = pt_19.offset(11);
-                if *pt_19 == opp_color {
+                if board[pt_19] == opp_color {
                     pt_19 = pt_19.offset(11);
-                    if *pt_19 == opp_color {
+                    if board[pt_19] == opp_color {
                         pt_19 = pt_19.offset(11);
-                        if *pt_19 == opp_color {
+                        if board[pt_19] == opp_color {
                             pt_19 = pt_19.offset(11)
                         }
                     }
                 }
-                if *pt_19 == color {
+                if board[pt_19] == color {
                     pt_19 = pt_19.offset(-(11 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_19.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_19]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_19.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_19]) as
                                 i32;
-                        *pt_19 = color;
+                        board[pt_19] = color;
                         let fresh60 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh60 = pt_19;
+                        global_flip_stack[fresh60 ] = (pt_19);
                         pt_19 = pt_19.offset(-(11 as i32 as isize));
                         if !(pt_19 != sq) { break ; }
                     }
                 }
             }
             let mut pt_20 = sq.offset(10);
-            if *pt_20 == opp_color {
+            if board[pt_20] == opp_color {
                 pt_20 = pt_20.offset(10);
-                if *pt_20 == opp_color {
+                if board[pt_20] == opp_color {
                     pt_20 = pt_20.offset(10);
-                    if *pt_20 == opp_color {
+                    if board[pt_20] == opp_color {
                         pt_20 = pt_20.offset(10);
-                        if *pt_20 == opp_color {
+                        if board[pt_20] == opp_color {
                             pt_20 = pt_20.offset(10)
                         }
                     }
                 }
-                if *pt_20 == color {
+                if board[pt_20] == color {
                     pt_20 = pt_20.offset(-(10 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_20.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_20]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_20.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_20]) as
                                 i32;
-                        *pt_20 = color;
+                        board[pt_20] = color;
                         let fresh61 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh61 = pt_20;
+                        global_flip_stack[fresh61 ] = (pt_20);
                         pt_20 = pt_20.offset(-(10 as i32 as isize));
                         if !(pt_20 != sq) { break ; }
                     }
                 }
             }
             let mut pt_21 = sq.offset(9);
-            if *pt_21 == opp_color {
+            if board[pt_21] == opp_color {
                 pt_21 = pt_21.offset(9);
-                if *pt_21 == opp_color {
+                if board[pt_21] == opp_color {
                     pt_21 = pt_21.offset(9);
-                    if *pt_21 == opp_color {
+                    if board[pt_21] == opp_color {
                         pt_21 = pt_21.offset(9);
-                        if *pt_21 == opp_color {
+                        if board[pt_21] == opp_color {
                             pt_21 = pt_21.offset(9)
                         }
                     }
                 }
-                if *pt_21 == color {
+                if board[pt_21] == color {
                     pt_21 = pt_21.offset(-(9 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_21.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_21]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_21.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_21]) as
                                 i32;
-                        *pt_21 = color;
+                        board[pt_21] = color;
                         let fresh62 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh62 = pt_21;
+                        global_flip_stack[fresh62 ] = (pt_21);
                         pt_21 = pt_21.offset(-(9 as i32 as isize));
                         if !(pt_21 != sq) { break ; }
                     }
                 }
             }
             let mut pt_22 = sq.offset(-(1 as i32) as isize);
-            if *pt_22 == opp_color {
+            if board[pt_22] == opp_color {
                 pt_22 = pt_22.offset(-(1 as i32) as isize);
-                if *pt_22 == opp_color {
+                if board[pt_22] == opp_color {
                     pt_22 = pt_22.offset(-(1 as i32) as isize);
-                    if *pt_22 == opp_color {
+                    if board[pt_22] == opp_color {
                         pt_22 = pt_22.offset(-(1 as i32) as isize);
-                        if *pt_22 == opp_color {
+                        if board[pt_22] == opp_color {
                             pt_22 = pt_22.offset(-(1 as i32) as isize)
                         }
                     }
                 }
-                if *pt_22 == color {
+                if board[pt_22] == color {
                     pt_22 = pt_22.offset(-(-(1 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_22.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_22]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_22.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_22]) as
                                 i32;
-                        *pt_22 = color;
+                        board[pt_22] = color;
                         let fresh63 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh63 = pt_22;
+                        global_flip_stack[fresh63 ] = (pt_22);
                         pt_22 = pt_22.offset(-(-(1 as i32) as isize));
                         if !(pt_22 != sq) { break ; }
                     }
@@ -2150,35 +2068,33 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
         }
         6 => {
             let mut pt_23 = sq.offset(-(10 as i32) as isize);
-            if *pt_23 == opp_color {
+            if board[pt_23] == opp_color {
                 pt_23 = pt_23.offset(-(10 as i32) as isize);
-                if *pt_23 == opp_color {
+                if board[pt_23] == opp_color {
                     pt_23 = pt_23.offset(-(10 as i32) as isize);
-                    if *pt_23 == opp_color {
+                    if board[pt_23] == opp_color {
                         pt_23 = pt_23.offset(-(10 as i32) as isize);
-                        if *pt_23 == opp_color {
+                        if board[pt_23] == opp_color {
                             pt_23 =
                                 pt_23.offset(-(10 as i32) as isize)
                         }
                     }
                 }
-                if *pt_23 == color {
+                if board[pt_23] == color {
                     pt_23 = pt_23.offset(-(-(10 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_23.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_23]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_23.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_23]) as
                                 i32;
-                        *pt_23 = color;
+                        board[pt_23] = color;
                         let fresh64 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh64 = pt_23;
+                        global_flip_stack[fresh64 ] = (pt_23);
                         pt_23 =
                             pt_23.offset(-(-(10 as i32) as isize));
                         if !(pt_23 != sq) { break ; }
@@ -2186,35 +2102,33 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                 }
             }
             let mut pt_24 = sq.offset(-(11 as i32) as isize);
-            if *pt_24 == opp_color {
+            if board[pt_24] == opp_color {
                 pt_24 = pt_24.offset(-(11 as i32) as isize);
-                if *pt_24 == opp_color {
+                if board[pt_24] == opp_color {
                     pt_24 = pt_24.offset(-(11 as i32) as isize);
-                    if *pt_24 == opp_color {
+                    if board[pt_24] == opp_color {
                         pt_24 = pt_24.offset(-(11 as i32) as isize);
-                        if *pt_24 == opp_color {
+                        if board[pt_24] == opp_color {
                             pt_24 =
                                 pt_24.offset(-(11 as i32) as isize)
                         }
                     }
                 }
-                if *pt_24 == color {
+                if board[pt_24] == color {
                     pt_24 = pt_24.offset(-(-(11 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_24.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_24]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_24.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_24]) as
                                 i32;
-                        *pt_24 = color;
+                        board[pt_24] = color;
                         let fresh65 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh65 = pt_24;
+                        global_flip_stack[fresh65 ] = (pt_24);
                         pt_24 =
                             pt_24.offset(-(-(11 as i32) as isize));
                         if !(pt_24 != sq) { break ; }
@@ -2222,20 +2136,20 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                 }
             }
             let mut pt_25 = sq.offset(-(1 as i32) as isize);
-            if *pt_25 == opp_color {
+            if board[pt_25] == opp_color {
                 pt_25 = pt_25.offset(-(1 as i32) as isize);
-                if *pt_25 == opp_color {
+                if board[pt_25] == opp_color {
                     pt_25 = pt_25.offset(-(1 as i32) as isize);
-                    if *pt_25 == opp_color {
+                    if board[pt_25] == opp_color {
                         pt_25 = pt_25.offset(-(1 as i32) as isize);
-                        if *pt_25 == opp_color {
+                        if board[pt_25] == opp_color {
                             pt_25 =
                                 pt_25.offset(-(1 as i32) as isize);
-                            if *pt_25 == opp_color {
+                            if board[pt_25] == opp_color {
                                 pt_25 =
                                     pt_25.offset(-(1 as i32) as
                                                      isize);
-                                if *pt_25 == opp_color {
+                                if board[pt_25] == opp_color {
                                     pt_25 =
                                         pt_25.offset(-(1 as i32) as
                                                          isize)
@@ -2244,91 +2158,85 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_25 == color {
+                if board[pt_25] == color {
                     pt_25 = pt_25.offset(-(-(1 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_25.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_25]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_25.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_25]) as
                                 i32;
-                        *pt_25 = color;
+                        board[pt_25] = color;
                         let fresh66 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh66 = pt_25;
+                        global_flip_stack[fresh66 ] = (pt_25);
                         pt_25 = pt_25.offset(-(-(1 as i32) as isize));
                         if !(pt_25 != sq) { break ; }
                     }
                 }
             }
             let mut pt_26 = sq.offset(9);
-            if *pt_26 == opp_color {
+            if board[pt_26] == opp_color {
                 pt_26 = pt_26.offset(9);
-                if *pt_26 == opp_color {
+                if board[pt_26] == opp_color {
                     pt_26 = pt_26.offset(9);
-                    if *pt_26 == opp_color {
+                    if board[pt_26] == opp_color {
                         pt_26 = pt_26.offset(9);
-                        if *pt_26 == opp_color {
+                        if board[pt_26] == opp_color {
                             pt_26 = pt_26.offset(9)
                         }
                     }
                 }
-                if *pt_26 == color {
+                if board[pt_26] == color {
                     pt_26 = pt_26.offset(-(9 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_26.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_26]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_26.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_26]) as
                                 i32;
-                        *pt_26 = color;
+                        board[pt_26] = color;
                         let fresh67 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh67 = pt_26;
+                        global_flip_stack[fresh67 ] = (pt_26);
                         pt_26 = pt_26.offset(-(9 as i32 as isize));
                         if !(pt_26 != sq) { break ; }
                     }
                 }
             }
             let mut pt_27 = sq.offset(10);
-            if *pt_27 == opp_color {
+            if board[pt_27] == opp_color {
                 pt_27 = pt_27.offset(10);
-                if *pt_27 == opp_color {
+                if board[pt_27] == opp_color {
                     pt_27 = pt_27.offset(10);
-                    if *pt_27 == opp_color {
+                    if board[pt_27] == opp_color {
                         pt_27 = pt_27.offset(10);
-                        if *pt_27 == opp_color {
+                        if board[pt_27] == opp_color {
                             pt_27 = pt_27.offset(10)
                         }
                     }
                 }
-                if *pt_27 == color {
+                if board[pt_27] == color {
                     pt_27 = pt_27.offset(-(10 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_27.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_27]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_27.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_27]) as
                                 i32;
-                        *pt_27 = color;
+                        board[pt_27] = color;
                         let fresh68 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh68 = pt_27;
+                        global_flip_stack[fresh68 ] = (pt_27);
                         pt_27 = pt_27.offset(-(10 as i32 as isize));
                         if !(pt_27 != sq) { break ; }
                     }
@@ -2337,20 +2245,20 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
         }
         7 => {
             let mut pt_28 = sq.offset(-(10 as i32) as isize);
-            if *pt_28 == opp_color {
+            if board[pt_28] == opp_color {
                 pt_28 = pt_28.offset(-(10 as i32) as isize);
-                if *pt_28 == opp_color {
+                if board[pt_28] == opp_color {
                     pt_28 = pt_28.offset(-(10 as i32) as isize);
-                    if *pt_28 == opp_color {
+                    if board[pt_28] == opp_color {
                         pt_28 = pt_28.offset(-(10 as i32) as isize);
-                        if *pt_28 == opp_color {
+                        if board[pt_28] == opp_color {
                             pt_28 =
                                 pt_28.offset(-(10 as i32) as isize);
-                            if *pt_28 == opp_color {
+                            if board[pt_28] == opp_color {
                                 pt_28 =
                                     pt_28.offset(-(10 as i32) as
                                                      isize);
-                                if *pt_28 == opp_color {
+                                if board[pt_28] == opp_color {
                                     pt_28 =
                                         pt_28.offset(-(10 as i32) as
                                                          isize)
@@ -2359,23 +2267,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_28 == color {
+                if board[pt_28] == color {
                     pt_28 = pt_28.offset(-(-(10 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_28.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_28]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_28.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_28]) as
                                 i32;
-                        *pt_28 = color;
+                        board[pt_28] = color;
                         let fresh69 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh69 = pt_28;
+                        global_flip_stack[fresh69 ] = (pt_28);
                         pt_28 =
                             pt_28.offset(-(-(10 as i32) as isize));
                         if !(pt_28 != sq) { break ; }
@@ -2383,20 +2289,20 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                 }
             }
             let mut pt_29 = sq.offset(-(9 as i32) as isize);
-            if *pt_29 == opp_color {
+            if board[pt_29] == opp_color {
                 pt_29 = pt_29.offset(-(9 as i32) as isize);
-                if *pt_29 == opp_color {
+                if board[pt_29] == opp_color {
                     pt_29 = pt_29.offset(-(9 as i32) as isize);
-                    if *pt_29 == opp_color {
+                    if board[pt_29] == opp_color {
                         pt_29 = pt_29.offset(-(9 as i32) as isize);
-                        if *pt_29 == opp_color {
+                        if board[pt_29] == opp_color {
                             pt_29 =
                                 pt_29.offset(-(9 as i32) as isize);
-                            if *pt_29 == opp_color {
+                            if board[pt_29] == opp_color {
                                 pt_29 =
                                     pt_29.offset(-(9 as i32) as
                                                      isize);
-                                if *pt_29 == opp_color {
+                                if board[pt_29] == opp_color {
                                     pt_29 =
                                         pt_29.offset(-(9 as i32) as
                                                          isize)
@@ -2405,41 +2311,39 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_29 == color {
+                if board[pt_29] == color {
                     pt_29 = pt_29.offset(-(-(9 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_29.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_29]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_29.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_29]) as
                                 i32;
-                        *pt_29 = color;
+                        board[pt_29] = color;
                         let fresh70 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh70 = pt_29;
+                        global_flip_stack[fresh70 ] = (pt_29);
                         pt_29 = pt_29.offset(-(-(9 as i32) as isize));
                         if !(pt_29 != sq) { break ; }
                     }
                 }
             }
             let mut pt_30 = sq.offset(1);
-            if *pt_30 == opp_color {
+            if board[pt_30] == opp_color {
                 pt_30 = pt_30.offset(1);
-                if *pt_30 == opp_color {
+                if board[pt_30] == opp_color {
                     pt_30 = pt_30.offset(1);
-                    if *pt_30 == opp_color {
+                    if board[pt_30] == opp_color {
                         pt_30 = pt_30.offset(1);
-                        if *pt_30 == opp_color {
+                        if board[pt_30] == opp_color {
                             pt_30 = pt_30.offset(1);
-                            if *pt_30 == opp_color {
+                            if board[pt_30] == opp_color {
                                 pt_30 =
                                     pt_30.offset(1);
-                                if *pt_30 == opp_color {
+                                if board[pt_30] == opp_color {
                                     pt_30 =
                                         pt_30.offset(1)
                                 }
@@ -2447,23 +2351,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_30 == color {
+                if board[pt_30] == color {
                     pt_30 = pt_30.offset(-(1 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_30.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_30]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_30.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_30]) as
                                 i32;
-                        *pt_30 = color;
+                        board[pt_30] = color;
                         let fresh71 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh71 = pt_30;
+                        global_flip_stack[fresh71 ] = (pt_30);
                         pt_30 = pt_30.offset(-(1 as i32 as isize));
                         if !(pt_30 != sq) { break ; }
                     }
@@ -2472,69 +2374,65 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
         }
         8 => {
             let mut pt_31 = sq.offset(-(1 as i32) as isize);
-            if *pt_31 == opp_color {
+            if board[pt_31] == opp_color {
                 pt_31 = pt_31.offset(-(1 as i32) as isize);
-                if *pt_31 == opp_color {
+                if board[pt_31] == opp_color {
                     pt_31 = pt_31.offset(-(1 as i32) as isize);
-                    if *pt_31 == opp_color {
+                    if board[pt_31] == opp_color {
                         pt_31 = pt_31.offset(-(1 as i32) as isize);
-                        if *pt_31 == opp_color {
+                        if board[pt_31] == opp_color {
                             pt_31 = pt_31.offset(-(1 as i32) as isize)
                         }
                     }
                 }
-                if *pt_31 == color {
+                if board[pt_31] == color {
                     pt_31 = pt_31.offset(-(-(1 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_31.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_31]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_31.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_31]) as
                                 i32;
-                        *pt_31 = color;
+                        board[pt_31] = color;
                         let fresh72 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh72 = pt_31;
+                        global_flip_stack[fresh72 ] = (pt_31);
                         pt_31 = pt_31.offset(-(-(1 as i32) as isize));
                         if !(pt_31 != sq) { break ; }
                     }
                 }
             }
             let mut pt_32 = sq.offset(-(11 as i32) as isize);
-            if *pt_32 == opp_color {
+            if board[pt_32] == opp_color {
                 pt_32 = pt_32.offset(-(11 as i32) as isize);
-                if *pt_32 == opp_color {
+                if board[pt_32] == opp_color {
                     pt_32 = pt_32.offset(-(11 as i32) as isize);
-                    if *pt_32 == opp_color {
+                    if board[pt_32] == opp_color {
                         pt_32 = pt_32.offset(-(11 as i32) as isize);
-                        if *pt_32 == opp_color {
+                        if board[pt_32] == opp_color {
                             pt_32 =
                                 pt_32.offset(-(11 as i32) as isize)
                         }
                     }
                 }
-                if *pt_32 == color {
+                if board[pt_32] == color {
                     pt_32 = pt_32.offset(-(-(11 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_32.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_32]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_32.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_32]) as
                                 i32;
-                        *pt_32 = color;
+                        board[pt_32] = color;
                         let fresh73 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh73 = pt_32;
+                        global_flip_stack[fresh73 ] = (pt_32);
                         pt_32 =
                             pt_32.offset(-(-(11 as i32) as isize));
                         if !(pt_32 != sq) { break ; }
@@ -2542,20 +2440,20 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                 }
             }
             let mut pt_33 = sq.offset(-(10 as i32) as isize);
-            if *pt_33 == opp_color {
+            if board[pt_33] == opp_color {
                 pt_33 = pt_33.offset(-(10 as i32) as isize);
-                if *pt_33 == opp_color {
+                if board[pt_33] == opp_color {
                     pt_33 = pt_33.offset(-(10 as i32) as isize);
-                    if *pt_33 == opp_color {
+                    if board[pt_33] == opp_color {
                         pt_33 = pt_33.offset(-(10 as i32) as isize);
-                        if *pt_33 == opp_color {
+                        if board[pt_33] == opp_color {
                             pt_33 =
                                 pt_33.offset(-(10 as i32) as isize);
-                            if *pt_33 == opp_color {
+                            if board[pt_33] == opp_color {
                                 pt_33 =
                                     pt_33.offset(-(10 as i32) as
                                                      isize);
-                                if *pt_33 == opp_color {
+                                if board[pt_33] == opp_color {
                                     pt_33 =
                                         pt_33.offset(-(10 as i32) as
                                                          isize)
@@ -2564,23 +2462,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_33 == color {
+                if board[pt_33] == color {
                     pt_33 = pt_33.offset(-(-(10 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_33.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_33]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_33.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_33]) as
                                 i32;
-                        *pt_33 = color;
+                        board[pt_33] = color;
                         let fresh74 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh74 = pt_33;
+                        global_flip_stack[fresh74 ] = (pt_33);
                         pt_33 =
                             pt_33.offset(-(-(10 as i32) as isize));
                         if !(pt_33 != sq) { break ; }
@@ -2588,68 +2484,64 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                 }
             }
             let mut pt_34 = sq.offset(-(9 as i32) as isize);
-            if *pt_34 == opp_color {
+            if board[pt_34] == opp_color {
                 pt_34 = pt_34.offset(-(9 as i32) as isize);
-                if *pt_34 == opp_color {
+                if board[pt_34] == opp_color {
                     pt_34 = pt_34.offset(-(9 as i32) as isize);
-                    if *pt_34 == opp_color {
+                    if board[pt_34] == opp_color {
                         pt_34 = pt_34.offset(-(9 as i32) as isize);
-                        if *pt_34 == opp_color {
+                        if board[pt_34] == opp_color {
                             pt_34 = pt_34.offset(-(9 as i32) as isize)
                         }
                     }
                 }
-                if *pt_34 == color {
+                if board[pt_34] == color {
                     pt_34 = pt_34.offset(-(-(9 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_34.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_34]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_34.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_34]) as
                                 i32;
-                        *pt_34 = color;
+                        board[pt_34] = color;
                         let fresh75 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh75 = pt_34;
+                        global_flip_stack[fresh75 ] = (pt_34);
                         pt_34 = pt_34.offset(-(-(9 as i32) as isize));
                         if !(pt_34 != sq) { break ; }
                     }
                 }
             }
             let mut pt_35 = sq.offset(1);
-            if *pt_35 == opp_color {
+            if board[pt_35] == opp_color {
                 pt_35 = pt_35.offset(1);
-                if *pt_35 == opp_color {
+                if board[pt_35] == opp_color {
                     pt_35 = pt_35.offset(1);
-                    if *pt_35 == opp_color {
+                    if board[pt_35] == opp_color {
                         pt_35 = pt_35.offset(1);
-                        if *pt_35 == opp_color {
+                        if board[pt_35] == opp_color {
                             pt_35 = pt_35.offset(1)
                         }
                     }
                 }
-                if *pt_35 == color {
+                if board[pt_35] == color {
                     pt_35 = pt_35.offset(-(1 as i32 as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_35.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_35]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_35.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_35]) as
                                 i32;
-                        *pt_35 = color;
+                        board[pt_35] = color;
                         let fresh76 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh76 = pt_35;
+                        global_flip_stack[fresh76 ] = (pt_35);
                         pt_35 = pt_35.offset(-(1 as i32 as isize));
                         if !(pt_35 != sq) { break ; }
                     }
@@ -2658,20 +2550,20 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
         }
         9 => {
             let mut pt_36 = sq.offset(-(10 as i32) as isize);
-            if *pt_36 == opp_color {
+            if board[pt_36] == opp_color {
                 pt_36 = pt_36.offset(-(10 as i32) as isize);
-                if *pt_36 == opp_color {
+                if board[pt_36] == opp_color {
                     pt_36 = pt_36.offset(-(10 as i32) as isize);
-                    if *pt_36 == opp_color {
+                    if board[pt_36] == opp_color {
                         pt_36 = pt_36.offset(-(10 as i32) as isize);
-                        if *pt_36 == opp_color {
+                        if board[pt_36] == opp_color {
                             pt_36 =
                                 pt_36.offset(-(10 as i32) as isize);
-                            if *pt_36 == opp_color {
+                            if board[pt_36] == opp_color {
                                 pt_36 =
                                     pt_36.offset(-(10 as i32) as
                                                      isize);
-                                if *pt_36 == opp_color {
+                                if board[pt_36] == opp_color {
                                     pt_36 =
                                         pt_36.offset(-(10 as i32) as
                                                          isize)
@@ -2680,23 +2572,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_36 == color {
+                if board[pt_36] == color {
                     pt_36 = pt_36.offset(-(-(10 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_36.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_36]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_36.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_36]) as
                                 i32;
-                        *pt_36 = color;
+                        board[pt_36] = color;
                         let fresh77 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh77 = pt_36;
+                        global_flip_stack[fresh77 ] = (pt_36);
                         pt_36 =
                             pt_36.offset(-(-(10 as i32) as isize));
                         if !(pt_36 != sq) { break ; }
@@ -2704,20 +2594,20 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                 }
             }
             let mut pt_37 = sq.offset(-(11 as i32) as isize);
-            if *pt_37 == opp_color {
+            if board[pt_37] == opp_color {
                 pt_37 = pt_37.offset(-(11 as i32) as isize);
-                if *pt_37 == opp_color {
+                if board[pt_37] == opp_color {
                     pt_37 = pt_37.offset(-(11 as i32) as isize);
-                    if *pt_37 == opp_color {
+                    if board[pt_37] == opp_color {
                         pt_37 = pt_37.offset(-(11 as i32) as isize);
-                        if *pt_37 == opp_color {
+                        if board[pt_37] == opp_color {
                             pt_37 =
                                 pt_37.offset(-(11 as i32) as isize);
-                            if *pt_37 == opp_color {
+                            if board[pt_37] == opp_color {
                                 pt_37 =
                                     pt_37.offset(-(11 as i32) as
                                                      isize);
-                                if *pt_37 == opp_color {
+                                if board[pt_37] == opp_color {
                                     pt_37 =
                                         pt_37.offset(-(11 as i32) as
                                                          isize)
@@ -2726,23 +2616,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_37 == color {
+                if board[pt_37] == color {
                     pt_37 = pt_37.offset(-(-(11 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_37.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_37]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_37.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_37]) as
                                 i32;
-                        *pt_37 = color;
+                        board[pt_37] = color;
                         let fresh78 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh78 = pt_37;
+                        global_flip_stack[fresh78 ] = (pt_37);
                         pt_37 =
                             pt_37.offset(-(-(11 as i32) as isize));
                         if !(pt_37 != sq) { break ; }
@@ -2750,20 +2638,20 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                 }
             }
             let mut pt_38 = sq.offset(-(1 as i32) as isize);
-            if *pt_38 == opp_color {
+            if board[pt_38] == opp_color {
                 pt_38 = pt_38.offset(-(1 as i32) as isize);
-                if *pt_38 == opp_color {
+                if board[pt_38] == opp_color {
                     pt_38 = pt_38.offset(-(1 as i32) as isize);
-                    if *pt_38 == opp_color {
+                    if board[pt_38] == opp_color {
                         pt_38 = pt_38.offset(-(1 as i32) as isize);
-                        if *pt_38 == opp_color {
+                        if board[pt_38] == opp_color {
                             pt_38 =
                                 pt_38.offset(-(1 as i32) as isize);
-                            if *pt_38 == opp_color {
+                            if board[pt_38] == opp_color {
                                 pt_38 =
                                     pt_38.offset(-(1 as i32) as
                                                      isize);
-                                if *pt_38 == opp_color {
+                                if board[pt_38] == opp_color {
                                     pt_38 =
                                         pt_38.offset(-(1 as i32) as
                                                          isize)
@@ -2772,23 +2660,21 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                         }
                     }
                 }
-                if *pt_38 == color {
+                if board[pt_38] == color {
                     pt_38 = pt_38.offset(-(-(1 as i32) as isize));
                     loop  {
                         t_hash_update1 =
                             (t_hash_update1 as u32 ^
-                                 hash_flip1[pt_38.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip1[pt_38]) as
                                 i32;
                         t_hash_update2 =
                             (t_hash_update2 as u32 ^
-                                 hash_flip2[pt_38.wrapping_offset_from_(board.as_mut_ptr())
-                                                as i64 as usize]) as
+                                 hash_flip2[pt_38]) as
                                 i32;
-                        *pt_38 = color;
+                        board[pt_38] = color;
                         let fresh79 = t_flip_stack;
                         t_flip_stack = t_flip_stack.offset(1);
-                        *fresh79 = pt_38;
+                        global_flip_stack[fresh79 ] = (pt_38);
                         pt_38 = pt_38.offset(-(-(1 as i32) as isize));
                         if !(pt_38 != sq) { break ; }
                     }
@@ -2800,6 +2686,5 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
     hash_update1 = t_hash_update1 as u32;
     hash_update2 = t_hash_update2 as u32;
     flip_stack = t_flip_stack;
-    return t_flip_stack.wrapping_offset_from_(old_flip_stack) as i64
-               as i32;
+    return (t_flip_stack - old_flip_stack) as i32;
 }

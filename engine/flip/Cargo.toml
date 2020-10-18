@@ -9,3 +9,4 @@ name = "flip"
 path = "lib.rs"
 
 [dependencies]
+engine-traits = { path = "../engine-traits" }
