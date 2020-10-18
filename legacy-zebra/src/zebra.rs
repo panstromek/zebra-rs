@@ -1184,14 +1184,14 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                                *const i8, opening_name);
                 }
                 display_board(stdout, &board, side_to_move,
-                              1 as i32, use_timer, 1 as i32,
+                              1, use_timer, 1,
                               current_row,
                               black_player, black_time, black_eval,
                               white_player, white_time, white_eval,
                               &black_moves, &white_moves);
             }
             /* Check what the Thor opening statistics has to say */
-            choose_thor_opening_move::<FE>(board.as_mut_ptr(), side_to_move, echo);
+            choose_thor_opening_move::<FE>(&board, side_to_move, echo);
             if echo != 0 && wait != 0 { dumpch(); }
             start_move::<FE>(player_time[side_to_move as usize],
                        player_increment[side_to_move as usize],

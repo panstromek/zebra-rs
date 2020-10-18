@@ -352,9 +352,7 @@ pub unsafe fn get_candidate(index: i32) -> CandidateMove {
 pub static mut row_pattern: [i32; 8] = [0; 8];
 pub static mut col_pattern: [i32; 8] = [0; 8];
 
-pub unsafe fn get_hash(val0: *mut i32,
-                       val1: *mut i32,
-                       orientation: *mut i32) {
+pub unsafe fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut min_map: i32 = 0;
@@ -490,9 +488,10 @@ pub unsafe fn get_hash(val0: *mut i32,
 pub unsafe fn do_compress(index: i32,
                       node_order: *mut i32,
                       child_count: *mut i16,
-                      node_index: *mut i32,
+                      node_index: &mut i32,
                       child_list: *mut i16,
-                      child_index: *mut i32) {
+                      child_index: &mut i32) {
+    use engine_traits::Offset;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut child: i32 = 0;
@@ -620,8 +619,8 @@ pub unsafe fn adjust_score(score: i32,
    Calculates the minimax value of node INDEX.
 */
 pub unsafe fn do_minimax(index: i32,
-                         black_score: *mut i32,
-                         white_score: *mut i32) {
+                         black_score: &mut i32,
+                         white_score: &mut i32) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut child_black_score: i32 = 0;
@@ -1231,10 +1230,10 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                                        allow_mpc: i32,
                                        side_to_move: i32,
                                        allowed_count: i32,
-                                       allowed_moves: *mut i32,
+                                       allowed_moves: &mut [i32],
                                        _alpha: i32, _beta: i32,
-                                       best_score: *mut i32,
-                                       best_index: *mut i32) {
+                                       best_score: &mut i32,
+                                       best_index: &mut i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut curr_alpha: i32 = 0;
@@ -1316,7 +1315,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                 *allowed_moves.offset((j - 1 as i32) as isize);
             j -= 1
         }
-        *allowed_moves = best_move;
+        allowed_moves[0] = best_move;
         *best_index = 0;
         curr_depth += 2 as i32
     }
@@ -1425,7 +1424,7 @@ pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32) {
         /* Find the best of those moves */
         allow_mpc = (search_depth >= 9 as i32) as i32;
         nega_scout::<FE>(search_depth, allow_mpc, side_to_move,
-                   alternative_move_count, feasible_move.as_mut_ptr(),
+                   alternative_move_count, &mut feasible_move,
                    -(12345678 as i32), 12345678 as i32,
                    &mut best_score, &mut best_index);
         best_move = feasible_move[best_index as usize];

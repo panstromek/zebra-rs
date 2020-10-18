@@ -239,7 +239,7 @@ pub const fn create_fresh_board() -> [i32; 128] {
     board_
 }
 
-pub unsafe fn setup_game_finalize(side_to_move:  *mut i32) {
+pub unsafe fn setup_game_finalize(side_to_move:  &mut i32) {
     disks_played = disc_count(0, &board) + disc_count(2, &board) - 4;
     determine_hash_values(*side_to_move, &board);
     /* Make the game score look right */
@@ -252,7 +252,7 @@ pub unsafe fn setup_game_finalize(side_to_move:  *mut i32) {
 }
 
 
-pub unsafe fn setup_non_file_based_game(side_to_move: *mut i32) {
+pub unsafe fn setup_non_file_based_game(side_to_move: &mut i32) {
     board = create_fresh_board();
     board[54] = 0;
     board[45] = 0;
@@ -295,7 +295,7 @@ pub trait BoardSource {
 }
 
 
-pub unsafe fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: *mut i32, mut file_source: S) {
+pub unsafe fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &mut i32, mut file_source: S) {
     let mut buffer: [i8; 70] = [0; 70];
     file_source.fill_board_buffer(&mut buffer);
     let mut token = 0;
@@ -335,7 +335,7 @@ pub trait FileBoardSource : BoardSource {
     unsafe fn open(file_name: *const i8) -> Option<Self> where Self: Sized;
 }
 
-pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: *mut i32) {
+pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32) {
     board = create_fresh_board();
     assert!(!file_name.is_null());
     match S::open(file_name) {
@@ -347,7 +347,7 @@ pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name:
     setup_game_finalize(side_to_move);
 }
 
-pub unsafe fn generic_setup_game<Source: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: *mut i32) {
+pub unsafe fn generic_setup_game<Source: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32) {
     if file_name.is_null() {
         setup_non_file_based_game(side_to_move);
     } else {
@@ -355,7 +355,7 @@ pub unsafe fn generic_setup_game<Source: FileBoardSource, FE: FrontEnd>(file_nam
     }
 }
 
-pub unsafe fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: *mut i32) {
+pub unsafe fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32) {
     generic_setup_game::<Source, FE>(file_name, side_to_move);
     engine_game_init();
 }
@@ -370,7 +370,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                                                                                                exact: i32,
                                                                                                wld: i32,
                                                                                                search_forced: i32,
-                                                                                               eval_info: *mut EvaluationType,
+                                                                                               eval_info: &mut EvaluationType,
                                                                                                logger: &mut Option<L>)
                                                                                                -> i32 {
     let mut book_eval_info =
@@ -509,7 +509,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     if book_move_found == 0 && play_thor_match_openings != 0 {
         /* Optionally use the Thor database as opening book. */
         let threshold = 2;
-        database_search::<FE>(board.as_mut_ptr(), side_to_move);
+        database_search::<FE>(&board, side_to_move);
         if get_match_count() >= threshold {
             let game_index =
                 ((my_random() >> 8 as i32) %
@@ -539,7 +539,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     if book_move_found == 0 && play_human_openings != 0 && book != 0 {
         /* Check Thor statistics for a move */
         curr_move =
-            choose_thor_opening_move::<FE>(board.as_mut_ptr(), side_to_move,
+            choose_thor_opening_move::<FE>(&board, side_to_move,
                                      0 as i32);
         if curr_move != -(1 as i32) {
             book_eval_info =

@@ -119,7 +119,7 @@ impl BoardSource for LibcBoardFileSource {
    specified by FILE_NAME.
 */
 
-pub unsafe fn game_init(file_name: *const i8, side_to_move: *mut i32) {
+pub unsafe fn game_init(file_name: *const i8, side_to_move: &mut i32) {
     generic_game_init::<LibcBoardFileSource, LibcFatalError>(file_name, side_to_move);
 }
 /*
@@ -1069,7 +1069,7 @@ pub unsafe fn compute_move(side_to_move: i32,
                            exact: i32,
                            wld: i32,
                            search_forced: i32,
-                           eval_info: *mut EvaluationType)
+                           eval_info: &mut EvaluationType)
                            -> i32 {
     return generic_compute_move::<LogFileHandler, LibcZebraOutput, LibcFatalError>(side_to_move, update_all, my_time,
                                 my_incr, timed_depth,
