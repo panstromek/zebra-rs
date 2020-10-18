@@ -106,7 +106,7 @@ pub unsafe fn find_hash(entry: &mut HashEntry, reverse_mode: i32) {
     } else { code1 = hash1 ^ hash_trans1; code2 = hash2 ^ hash_trans2 }
     index1 = (code1 & hash_mask as u32) as i32;
     index2 = index1 ^ 1 as i32;
-    let hash_table_ptr = hash_table.as_mut_ptr();
+    let hash_table_ptr = &mut hash_table;
     if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
         if ((*hash_table_ptr.offset(index1 as isize)).key1_selectivity_flags_draft
             ^ code1) & 0xff000000 as u32 ==
@@ -295,13 +295,10 @@ pub unsafe fn add_hash_extended(reverse_mode: i32,
 */
 
 pub unsafe fn clear_hash_drafts() {
-    let mut i: i32 = 0;
-    i = 0;
-    let hash_table_ptr = hash_table.as_mut_ptr();
+    let mut i = 0;
     while i < hash_size {
         /* Set the draft to 0 */
-        (*hash_table_ptr.offset(i as isize)).key1_selectivity_flags_draft &=
-            !(0xff as i32) as u32;
+        hash_table[i as usize].key1_selectivity_flags_draft &= !(0xff as i32) as u32;
         i += 1
     };
 }

@@ -26,3 +26,16 @@ impl Offset<usize> for usize {
         (self as isize + count) as usize
     }
 }
+
+impl<'a, 'b: 'a, T> Offset<&'a T> for &'b Vec<T> {
+    fn offset(self, count: isize) -> &'a T {
+        let slice: &[_] = self.as_ref();
+        &slice[count as usize]
+    }
+}
+impl<'a, 'b: 'a, T> Offset<&'a mut T> for &'b mut Vec<T> {
+    fn offset(self, count: isize) -> &'a mut T {
+        let slice: &mut [_] = self.as_mut();
+        &mut slice[count as usize]
+    }
+}
