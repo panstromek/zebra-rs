@@ -20,7 +20,7 @@ use engine::src::end::end_game;
 use engine::src::counter::reset_counter;
 use engine::src::zebra::EvaluationType;
 use engine::src::timer::toggle_abort_check;
-use engine::src::safemem::safe_malloc;
+use crate::src::safemem::safe_malloc;
 use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit, FILE};
 use engine::src::osfbook::{
     __time_t, node, book_node_count, prepare_tree_traversal, book_hash_table,
@@ -164,12 +164,12 @@ pub unsafe fn book_statistics(full_statistics: i32) {
     let mut depth: [i32; 60] = [0; 60];
     let mut total_count: [i32; 61] = [0; 61];
     evals =
-        safe_malloc::<FE>((book_node_count as
+        safe_malloc((book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i32>()
                                                          as u64)) as
             *mut i32;
     negamax =
-        safe_malloc::<FE>((book_node_count as
+        safe_malloc((book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i32>()
                                                          as u64)) as
             *mut i32;
@@ -1317,12 +1317,12 @@ pub unsafe fn write_compressed_database(file_name:
     }
     prepare_tree_traversal();
     let node_order =
-        safe_malloc::<FE>((book_node_count as
+        safe_malloc((book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i32>()
                                                          as u64)) as
             *mut i32;
     let child_count =
-        safe_malloc::<FE>((book_node_count as
+        safe_malloc((book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
@@ -1532,12 +1532,12 @@ pub unsafe fn unpack_compressed_database(in_name:
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
     child_count =
-        safe_malloc::<FE>((node_count as
+        safe_malloc((node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
     child =
-        safe_malloc::<FE>((child_list_size as
+        safe_malloc((child_list_size as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
@@ -1548,27 +1548,27 @@ pub unsafe fn unpack_compressed_database(in_name:
           ::std::mem::size_of::<i16>() as u64,
           child_list_size as size_t, stream);
     black_score =
-        safe_malloc::<FE>((node_count as
+        safe_malloc((node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
     white_score =
-        safe_malloc::<FE>((node_count as
+        safe_malloc((node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
     alt_move =
-        safe_malloc::<FE>((node_count as
+        safe_malloc((node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
     alt_score =
-        safe_malloc::<FE>((node_count as
+        safe_malloc((node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
     flags =
-        safe_malloc::<FE>((node_count as
+        safe_malloc((node_count as
                          u64).wrapping_mul(::std::mem::size_of::<u16>()
                                                          as u64)) as
             *mut u16;
@@ -2598,7 +2598,7 @@ pub unsafe fn restricted_minimax_tree(low: i32,
         i += 1
     }
     minimax_values =
-        safe_malloc::<FE>((book_node_count as
+        safe_malloc((book_node_count as
             u64).wrapping_mul(::std::mem::size_of::<i32>()
             as u64)) as
             *mut i32;

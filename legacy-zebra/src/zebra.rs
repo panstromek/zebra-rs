@@ -815,7 +815,7 @@ impl ZebraFrontend for LibcFrontend {
     }
 
     unsafe fn set_names(black_name: *const i8, white_name: *const i8) {
-        set_names::<LibcFatalError>(black_name, white_name)
+        set_names(black_name, white_name)
     }
 
     fn set_times(black: i32, white: i32) {
@@ -1145,7 +1145,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     reset_book_search();
     let black_name = b"Zebra\x00" as *const u8 as *const i8;
     let white_name = b"Zebra\x00" as *const u8 as *const i8;
-    set_names::<FE>(black_name, white_name);
+    set_names(black_name, white_name);
     set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                   score_sheet_row);
     set_evals(0.0f64, 0.0f64);
@@ -1456,7 +1456,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     }
     fclose(output_stream);
     /* Initialize display subsystem and search parameters */
-    set_names::<FE>(b"\x00" as *const u8 as *const i8,
+    set_names(b"\x00" as *const u8 as *const i8,
               b"\x00" as *const u8 as *const i8);
     set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                   score_sheet_row);

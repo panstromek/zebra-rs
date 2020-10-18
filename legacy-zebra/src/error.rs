@@ -77,7 +77,36 @@ pub unsafe extern "C" fn fatal_error(format: *const i8, args: ...) -> ! {
 pub struct LibcFatalError; // FIXME rename this, it's not only error anymore
 pub type FE = LibcFatalError;
 
+impl LibcFatalError {
+    #[inline(always)]
+    pub unsafe fn malloc(size: u64) -> *mut c_void {
+        unsafe { malloc(size) }
+    }
+    #[inline(always)]
+    pub unsafe fn realloc(ptr: *mut c_void, size: u64) -> *mut c_void {
+        unsafe { realloc(ptr, size) }
+    }
+    #[inline(always)]
+    pub unsafe fn free(__ptr: *mut c_void) {
+        unsafe { free(__ptr) }
+    }
 
+    pub fn safe_malloc_failure(size: u64) -> ! {
+        unsafe {
+            fatal_error(b"%s %d\n\x00" as *const u8 as *const i8,
+                        b"Memory allocation failure when allocating\x00" as
+                            *const u8 as *const i8, size);
+        }
+    }
+
+    pub fn safe_realloc_failure(size: u64) -> ! {
+        unsafe {
+            fatal_error(b"%s %d\n\x00" as *const u8 as *const i8,
+                        b"Memory allocation failure when allocating\x00" as
+                            *const u8 as *const i8, size);
+        }
+    }
+}
 impl FrontEnd for LibcFatalError {
     fn reset_buffer_display() {
         unsafe { reset_buffer_display::<FE>() }
@@ -346,19 +375,6 @@ impl FrontEnd for LibcFatalError {
             fatal_error(b"Error in PV completion\x00" as *const u8 as
                 *const i8);
         }
-    }
-
-    #[inline(always)]
-    unsafe fn malloc(size: u64) -> *mut c_void {
-        unsafe { malloc(size) }
-    }
-    #[inline(always)]
-    unsafe fn realloc(ptr: *mut c_void, size: u64) -> *mut c_void {
-        unsafe { realloc(ptr, size) }
-    }
-    #[inline(always)]
-    unsafe fn free(__ptr: *mut c_void) {
-        unsafe { free(__ptr) }
     }
     #[inline(always)]
     fn time(__timer: &mut i64) -> i64 {
@@ -654,41 +670,6 @@ fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
             *const i8);
     }
 }
-
- fn book_node_list_allocation_failure(size: i32, to_report: u64) -> ! {
-    unsafe {
-        fatal_error(b"%s %d\n\x00" as *const u8 as *const i8,
-                    b"Book node list: Failed to allocate\x00" as *const u8 as
-                        *const i8,
-                    to_report,
-                    size);
-    }
-}
-
- fn book_hash_table_allocaiton_failure(new_size: i32, new_memory: i32) -> ! {
-    unsafe {
-        fatal_error(b"%s %d\n\x00" as *const u8 as *const i8,
-                    b"Book hash table: Failed to allocate\x00" as *const u8 as
-                        *const i8, new_memory, new_size);
-    }
-}
-
- fn safe_malloc_failure(size: u64) -> ! {
-    unsafe {
-        fatal_error(b"%s %d\n\x00" as *const u8 as *const i8,
-                    b"Memory allocation failure when allocating\x00" as
-                        *const u8 as *const i8, size);
-    }
-}
-
- fn safe_realloc_failure(size: u64) -> ! {
-    unsafe {
-        fatal_error(b"%s %d\n\x00" as *const u8 as *const i8,
-                    b"Memory allocation failure when allocating\x00" as
-                        *const u8 as *const i8, size);
-    }
-}
-
 
  fn error_in_map_thor(i: i32, pos: i32, to_report: i32) -> ! {
     unsafe {

@@ -24,9 +24,6 @@ pub trait FrontEnd : FatalError {
     fn end_report_semi_panic_abort(elapsed_time: f64);
     fn end_display_zero_status();
     fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i32; 64]);
-    unsafe fn malloc(_: u64) -> *mut c_void;
-    unsafe fn realloc(_: *mut c_void, _: u64) -> *mut c_void;
-    unsafe fn free(__ptr: *mut c_void);
     fn time(__timer: &mut time_t) -> time_t;
     unsafe fn strlen(_: *const i8) -> u64;
     fn tolower(num: i32) -> i32;
@@ -57,10 +54,6 @@ pub trait FatalError {
     fn invalid_move_in_move_sequence(curr_move: i32) -> !;
     fn error_in_map(i: i32, pos: i32, symmetry_map_item: i32) -> !;
     fn internal_error_in_book_code() -> !;
-    fn book_node_list_allocation_failure(size: i32, to_report: u64) -> !;
-    fn book_hash_table_allocaiton_failure(new_size: i32, new_memory: i32) -> !;
-    fn safe_malloc_failure(size: u64) -> !;
-    fn safe_realloc_failure(size: u64) -> !;
     fn error_in_map_thor(i: i32, pos: i32, to_report: i32) -> !;
     fn unexpected_character_in_a_move_string() -> !;
     fn invalid_move_string_provided() -> !;
