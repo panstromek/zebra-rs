@@ -497,48 +497,6 @@ impl FrontEnd for WasmFrontend {
         unimplemented!()
     }
 
-    unsafe fn malloc(len: u64) -> *mut c_void {
-        // This is a really primitive version
-        // of malloc that just uses a Vec to allocate the storage
-        // We could do better but this is just a stub so let's be ok with it
-        // we use u64 because that is the alignment malloc usually gives you
-        // as "sufficient"
-        let mut vec: Vec<u64> = Vec::new();
-        let size = std::mem::size_of::<u64>();
-        // division will truncate the length if it's not a multiple of size_of::u64,
-        // so we need to add one to round it up and another one to store the size
-        let count = len as usize / size + 2;
-        vec.resize(count, 0u64);
-        vec[0] = (count) as u64;
-        // we store the size in the first byte because
-        // we need it in realloc or free
-        let raw = Box::into_raw(vec.into_boxed_slice());
-        (raw as *mut u64).offset(1) as *mut c_void
-    }
-
-    unsafe fn realloc(mem: *mut c_void, num_bytes: u64) -> *mut c_void {
-        let start = (mem as *mut u64).offset(-1);
-        let size = (*start) as usize;
-        let mut vec = Vec::from_raw_parts(start, size, size);
-
-        let size = num_bytes as usize / std::mem::size_of::<u64>() + 2;
-        vec.resize(size, 0u64);
-        vec[0] = (size) as u64;
-        let raw = Box::into_raw(vec.into_boxed_slice());
-        (raw as *mut u64).offset(1) as *mut c_void
-    }
-
-    unsafe fn free(mem: *mut c_void) {
-        if mem == null_mut() {
-            return;
-        }
-        let orig = mem as *mut u64;
-        let start = (orig).offset(-1);
-        let size = (*start) as usize;
-        let vec = Vec::from_raw_parts(start, size, size);
-        drop(vec)
-    }
-
     fn time(__timer: &mut i64) -> i64 {
         let time = js_time().round() as i64;
         *__timer = time;
@@ -662,22 +620,6 @@ impl FatalError for WasmFrontend {
     }
 
     fn internal_error_in_book_code() -> ! {
-        unimplemented!()
-    }
-
-    fn book_node_list_allocation_failure(size: i32, to_report: u64) -> ! {
-        unimplemented!()
-    }
-
-    fn book_hash_table_allocaiton_failure(new_size: i32, new_memory: i32) -> ! {
-        unimplemented!()
-    }
-
-    fn safe_malloc_failure(size: u64) -> ! {
-        unimplemented!()
-    }
-
-    fn safe_realloc_failure(size: u64) -> ! {
         unimplemented!()
     }
 

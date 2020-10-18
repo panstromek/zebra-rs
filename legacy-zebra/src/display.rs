@@ -2,7 +2,7 @@ use libc_wrapper::{sprintf, fprintf, vsprintf, fputs, fputc, exit, strcpy, getc,
 use crate::src::error::{FE};
 use engine::src::error::FrontEnd;
 use engine::src::stubs::{floor, abs, ceil};
-use engine::src::safemem::safe_malloc;
+use crate::src::safemem::safe_malloc;
 use engine::src::zebra::EvaluationType;
 
 
@@ -40,7 +40,7 @@ pub static mut sweep_pos: i32 = 0;
   board by DISPLAY_BOARD.
 */
 
-pub unsafe fn set_names<FE: FrontEnd>(black_name: *const i8, white_name: *const i8) {
+pub unsafe fn set_names(black_name: *const i8, white_name: *const i8) {
     if !black_player.is_null() { FE::free(black_player as *mut c_void); }
     if !white_player.is_null() { FE::free(white_player as *mut c_void); }
     black_player = FE::strdup(black_name);
@@ -460,7 +460,7 @@ pub unsafe fn produce_eval_text(eval_info: &EvaluationType,
  -> *mut i8 {
     let disk_diff: f64;
     let int_confidence: i32;
-    let buffer = safe_malloc::<FE>(32 as i32 as size_t) as *mut i8;
+    let buffer = safe_malloc(32 as i32 as size_t) as *mut i8;
     let mut len = 0;
     match eval_info.type_0 as u32 {
         0 => {

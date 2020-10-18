@@ -11,7 +11,6 @@ use legacy_zebra::src::display::{produce_eval_text, display_board, white_eval, w
 use legacy_zebra::src::game::{extended_compute_move, game_init};
 use legacy_zebra::src::osfbook::{read_binary_database, init_osf};
 use legacy_zebra::src::error::{LibcFatalError, FE};
-use engine::src::error::FrontEnd;
 use libc_wrapper::_IO_FILE;
 
 extern "C" {
@@ -119,7 +118,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     read_binary_database(book_name);
     game_init(0 as *const i8, &mut side_to_move);
     toggle_human_openings(0 as i32);
-    set_names::<LibcFatalError>(b"\x00" as *const u8 as *const i8,
+    set_names(b"\x00" as *const u8 as *const i8,
               b"\x00" as *const u8 as *const i8);
     quit = 0;
     while quit == 0 {

@@ -170,7 +170,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     }
     fclose(output_stream);
     /* Initialize display subsystem and search parameters */
-    set_names::<FE>(b"\x00" as *const u8 as *const i8,
+    set_names(b"\x00" as *const u8 as *const i8,
               b"\x00" as *const u8 as *const i8);
     set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                   score_sheet_row);

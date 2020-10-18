@@ -20,21 +20,22 @@
 
    Contents:        Provides safer memory allocation than malloc().
 */
-use crate::src::error::{FrontEnd};
+use engine::src::error::{FrontEnd, FatalError};
 use std::ffi::c_void;
+use crate::src::error::LibcFatalError;
 
-pub unsafe fn safe_malloc<FE: FrontEnd>(size: u64) -> *mut c_void {
-    let block = FE::malloc(size);
+pub unsafe fn safe_malloc(size: u64) -> *mut c_void {
+    let block = LibcFatalError::malloc(size);
     if block.is_null() {
-        FE::safe_malloc_failure(size);
+        LibcFatalError::safe_malloc_failure(size);
     }
     block
 }
 
-pub unsafe fn safe_realloc<FE: FrontEnd>(ptr: *mut c_void, size: u64) -> *mut c_void {
-    let block = FE::realloc(ptr, size);
+pub unsafe fn safe_realloc(ptr: *mut c_void, size: u64) -> *mut c_void {
+    let block = LibcFatalError::realloc(ptr, size);
     if block.is_null() {
-        FE::safe_realloc_failure(size);
+        LibcFatalError::safe_realloc_failure(size);
     }
     block
 }
