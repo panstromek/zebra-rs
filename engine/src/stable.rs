@@ -376,10 +376,10 @@ pub unsafe fn count_stable(color: i32,
 unsafe fn stability_search(my_bits: BitBoard,
                            opp_bits: BitBoard,
                            side_to_move: i32,
-                           mut candidate_bits: *mut BitBoard,
+                           mut candidate_bits: &mut BitBoard,
                            max_depth: i32,
                            last_was_pass: i32,
-                           stability_nodes: *mut i32, bb_flips_: &mut BitBoard) {
+                           stability_nodes: &mut i32, bb_flips_: &mut BitBoard) {
     let mut sq: i32 = 0;
     let mut old_sq: i32 = 0;
     let mut mobility: i32 = 0;
@@ -557,7 +557,8 @@ unsafe fn complete_stability_search(board: &Board,
 
 pub unsafe fn get_stable(board: &Board,
                          side_to_move: i32,
-                         is_stable: *mut i32, bb_flips_: &mut BitBoard) {
+                         is_stable: &mut [i32], bb_flips_: &mut BitBoard) {
+    use engine_traits::Offset;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut mask: u32 = 0;

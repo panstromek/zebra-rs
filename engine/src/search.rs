@@ -362,13 +362,11 @@ pub unsafe fn store_pv(pv_buffer: &mut [i32], depth_buffer: &mut i32) {
    Put the stored principal variation back into the PV matrix.
 */
 
-pub unsafe fn restore_pv(pv_buffer: *mut i32,
-                         depth_buffer: i32) {
+pub unsafe fn restore_pv(pv_buffer: &[i32], depth_buffer: i32) {
     let mut i: i32 = 0;
     i = 0;
     while i < depth_buffer {
-        pv[0][i as usize] =
-            *pv_buffer.offset(i as isize);
+        pv[0][i as usize] = pv_buffer[i as usize];
         i += 1
     }
     pv_depth[0] = depth_buffer;

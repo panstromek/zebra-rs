@@ -1502,35 +1502,35 @@ unsafe fn end_solve(end:&mut End, my_bits: BitBoard, opp_bits: BitBoard,
 /*
   UPDATE_BEST_LIST
 */
-pub unsafe fn update_best_list<FE: FrontEnd>(best_list_: &mut [i32; 4],
+pub unsafe fn update_best_list<FE: FrontEnd>(best_list: &mut [i32; 4],
                            move_0: i32,
                            best_list_index: i32,
                            best_list_length: &mut i32,
                            mut verbose: i32) {
-    let best_list: *mut i32 = best_list_.as_mut_ptr();
+    use engine_traits::Offset;
     verbose = 0;
     if verbose != 0 {
-        FE::before_update_best_list_verbose(best_list_, move_0, best_list_index, best_list_length)
+        FE::before_update_best_list_verbose(best_list, move_0, best_list_index, best_list_length)
     }
     if best_list_index < *best_list_length {
         let mut i = best_list_index;
         while i >= 1 as i32 {
-            *best_list.offset(i as isize) =
+            *(best_list as &mut[_]).offset(i as isize) =
                 *best_list.offset((i - 1 as i32) as isize);
             i -= 1
         }
     } else {
         let mut i = 3;
         while i >= 1 as i32 {
-            *best_list.offset(i as isize) =
+            *(best_list as &mut[_]).offset(i as isize) =
                 *best_list.offset((i - 1 as i32) as isize);
             i -= 1
         }
         if *best_list_length < 4 as i32 { *best_list_length += 1 }
     }
-    *best_list = move_0;
+    best_list[0] = move_0;
     if verbose != 0 {
-        FE::after_update_best_list_verbose(best_list_);
+        FE::after_update_best_list_verbose(best_list);
     };
 }
 
@@ -2556,7 +2556,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     FE::end_display_zero_status();
                 }
             }
-            restore_pv(old_pv.as_mut_ptr(), old_depth);
+            restore_pv(&old_pv, old_depth);
             root_eval = old_eval;
             clear_panic_abort();
         } else {

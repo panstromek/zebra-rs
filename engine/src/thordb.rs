@@ -11,6 +11,7 @@ pub use thordb_types::{GameType, DatabaseType, C2RustUnnamed, EITHER_SELECTED_FI
                        PrologType, TournamentDatabaseType, SearchResultType, PlayerDatabaseType};
 use patterns::pow3;
 use thor_opening_list::THOR_OPENING_LIST;
+use engine_traits::Offset;
 
 /* Local variables */
 pub static mut thor_game_count: i32 = 0;
@@ -312,7 +313,8 @@ unsafe fn any_flips(sqnum: i32, color: i32,
   Computes the row and column patterns.
 
 */
-unsafe fn compute_thor_patterns(in_board: *mut i32) {
+unsafe fn compute_thor_patterns(in_board: &[i32]) {
+    use engine_traits::Offset;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -545,8 +547,8 @@ unsafe fn get_database_info(info: *mut DatabaseInfoType) {
   Computes the primary and secondary hash values for the
   unit element in the rotation group.
 */
-unsafe fn compute_partial_hash(hash_val1: *mut u32,
-                               hash_val2: *mut u32) {
+unsafe fn compute_partial_hash(hash_val1: &mut u32,
+                               hash_val2: &mut u32) {
     let mut i: i32 = 0;
     *hash_val1 = 0;
     *hash_val2 = 0;
@@ -567,8 +569,7 @@ unsafe fn compute_partial_hash(hash_val1: *mut u32,
   Note: The order of the hash codes must coincide with the
         definitions in INIT_SYMMETRY_MAPS().
 */
-unsafe fn compute_full_primary_hash(hash_val:
-                                    *mut u32) {
+unsafe fn compute_full_primary_hash(hash_val: &mut [u32]) {
     let mut i: i32 = 0;
     i = 0;
     while i < 4 as i32 {
@@ -578,7 +579,7 @@ unsafe fn compute_full_primary_hash(hash_val:
     i = 0;
     while i < 8 as i32 {
         /* b1 -> b1 */
-        *hash_val ^=
+        hash_val[0] ^=
             primary_hash[i as usize][thor_row_pattern[i as usize] as usize];
         /* b8 -> b1 */
         *hash_val.offset(1) ^=
@@ -597,7 +598,7 @@ unsafe fn compute_full_primary_hash(hash_val:
     }
     /* g1 -> b1 */
     *hash_val.offset(4) =
-        bit_reverse_32(*hash_val);
+        bit_reverse_32(hash_val[0]);
     /* g8 -> b1 */
     *hash_val.offset(5) =
         bit_reverse_32(*hash_val.offset(1));
@@ -608,8 +609,7 @@ unsafe fn compute_full_primary_hash(hash_val:
     *hash_val.offset(7) =
         bit_reverse_32(*hash_val.offset(3));
 }
-unsafe fn compute_full_secondary_hash(hash_val:
-                                      *mut u32) {
+unsafe fn compute_full_secondary_hash(hash_val: &mut [u32]) {
     let mut i: i32 = 0;
     i = 0;
     while i < 4 as i32 {
@@ -619,7 +619,7 @@ unsafe fn compute_full_secondary_hash(hash_val:
     i = 0;
     while i < 8 as i32 {
         /* b1 -> b1 */
-        *hash_val ^=
+        hash_val[0] ^=
             secondary_hash[i as usize][thor_row_pattern[i as usize] as usize];
         /* b8 -> b1 */
         *hash_val.offset(1) ^=
@@ -640,7 +640,7 @@ unsafe fn compute_full_secondary_hash(hash_val:
     }
     /* g1 -> b1 */
     *hash_val.offset(4) =
-        bit_reverse_32(*hash_val);
+        bit_reverse_32(hash_val[0]);
     /* g8 -> b1 */
     *hash_val.offset(5) =
         bit_reverse_32(*hash_val.offset(1));
@@ -662,7 +662,7 @@ unsafe fn primary_hash_lookup(target_hash: u32)
     let mut i: i32 = 0;
     let mut hit_mask: i32 = 0;
     let mut hash_val: [u32; 8] = [0; 8];
-    compute_full_primary_hash(hash_val.as_mut_ptr());
+    compute_full_primary_hash(&mut hash_val);
     hit_mask = 0;
     i = 0;
     while i < 8 as i32 {
@@ -683,7 +683,7 @@ unsafe fn secondary_hash_lookup(target_hash: u32)
     let mut i: i32 = 0;
     let mut hit_mask: i32 = 0;
     let mut hash_val: [u32; 8] = [0; 8];
-    compute_full_secondary_hash(hash_val.as_mut_ptr());
+    compute_full_secondary_hash(&mut hash_val);
     hit_mask = 0;
     i = 0;
     while i < 8 as i32 {
@@ -802,7 +802,8 @@ unsafe fn filter_all_databases() {
   GET_PLAYER_COUNT() if necessary.
 */
 
-unsafe fn set_player_filter(selected: *mut i32) {
+unsafe fn set_player_filter(selected: &mut [i32]) {
+    use engine_traits::Offset;
     let mut i: i32 = 0;
     i = 0;
     while i < players.count {
@@ -829,8 +830,8 @@ unsafe fn set_player_filter_type(player_filter:
   GET_TOURNAMENT_COUNT() if necessary.
 */
 
-unsafe fn set_tournament_filter(selected:
-                                    *mut i32) {
+unsafe fn set_tournament_filter(selected: &mut [i32]) {
+    use engine_traits::Offset;
     let mut i: i32 = 0;
     i = 0;
     while i < tournaments.count {
@@ -874,9 +875,7 @@ unsafe fn specify_game_categories(categories:
         to which SORT_ORDER points, a crash is likely.
 */
 
-unsafe fn specify_thor_sort_order(mut count: i32,
-                                      sort_order:
-                                      *mut i32) {
+unsafe fn specify_thor_sort_order(mut count: i32, sort_order: &[i32]) {
     let mut i: i32 = 0;
     /* Truncate the input vector if it is too long */
     count = if count < 10 as i32 { count } else { 10 as i32 };
@@ -886,7 +885,7 @@ unsafe fn specify_thor_sort_order(mut count: i32,
     } else {
         i = 0;
         while i < count {
-            if *sort_order.offset(i as isize) != thor_sort_order[i as usize] {
+            if sort_order[i as usize] != thor_sort_order[i as usize] {
                 thor_games_sorted = 0 as i32
             }
             i += 1
@@ -895,7 +894,7 @@ unsafe fn specify_thor_sort_order(mut count: i32,
     thor_sort_criteria_count = count;
     i = 0;
     while i < count {
-        thor_sort_order[i as usize] = *sort_order.offset(i as isize);
+        thor_sort_order[i as usize] = sort_order[i as usize];
         i += 1
     };
 }
@@ -910,10 +909,8 @@ unsafe fn specify_thor_sort_order(mut count: i32,
 unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
                                  depth: i32,
                                  moves_played: i32,
-                                 primary_hash_0:
-                                 *mut u32,
-                                 secondary_hash_0:
-                                 *mut u32) {
+                                 primary_hash_0: &mut [u32],
+                                 secondary_hash_0: &mut [u32]) {
     let mut i: i32 = 0;
     let mut match_0: i32 = 0;
     let mut matching_symmetry: i32 = 0;
@@ -961,11 +958,11 @@ unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
 unsafe fn opening_scan(moves_played: i32) {
     let mut primary_hash_0: [u32; 8] = [0; 8];
     let mut secondary_hash_0: [u32; 8] = [0; 8];
-    compute_full_primary_hash(primary_hash_0.as_mut_ptr());
-    compute_full_secondary_hash(secondary_hash_0.as_mut_ptr());
+    compute_full_primary_hash(&mut primary_hash_0);
+    compute_full_secondary_hash(&mut secondary_hash_0);
     recursive_opening_scan(root_node, 0 as i32, moves_played,
-                           primary_hash_0.as_mut_ptr(),
-                           secondary_hash_0.as_mut_ptr());
+                           &mut primary_hash_0,
+                           &mut secondary_hash_0);
 }
 /*
   RECURSIVE_FREQUENCY_COUNT
@@ -974,16 +971,12 @@ unsafe fn opening_scan(moves_played: i32) {
   trimmed set of openings from the Thor database.
 */
 unsafe fn recursive_frequency_count(node: *mut ThorOpeningNode,
-                                    freq_count:
-                                    *mut i32,
+                                    freq_count: &mut [i32],
                                     depth: i32,
                                     moves_played: i32,
-                                    symmetries:
-                                    *mut i32,
-                                    primary_hash_0:
-                                    *mut u32,
-                                    secondary_hash_0:
-                                    *mut u32) {
+                                    symmetries: &mut [i32],
+                                    primary_hash_0: &mut [u32],
+                                    secondary_hash_0: &mut [u32]) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut child_move: i32 = 0;
@@ -1581,7 +1574,7 @@ unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
     /* Create the root node and compute its hash value */
     root_node = new_thor_opening_node::<FE>(0 as *mut ThorOpeningNode);
     clear_thor_board();
-    compute_thor_patterns(thor_board.as_mut_ptr());
+    compute_thor_patterns(&thor_board);
     compute_partial_hash(&mut hash1, &mut hash2);
     (*root_node).hash1 = hash1;
     (*root_node).hash2 = hash2;
@@ -1658,7 +1651,7 @@ unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
         /* Create the branch from the previous node */
         parent = node_list[branch_depth as usize];
         new_child = new_thor_opening_node::<FE>(parent);
-        compute_thor_patterns(thor_board.as_mut_ptr());
+        compute_thor_patterns(&thor_board);
         compute_partial_hash(&mut hash1, &mut hash2);
         (*new_child).hash1 = hash1;
         (*new_child).hash2 = hash2;
@@ -1705,7 +1698,7 @@ unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
             }
             parent = new_child;
             new_child = new_thor_opening_node::<FE>(parent);
-            compute_thor_patterns(thor_board.as_mut_ptr());
+            compute_thor_patterns(&thor_board);
             compute_partial_hash(&mut hash1, &mut hash2);
             (*new_child).hash1 = hash1;
             (*new_child).hash2 = hash2;
@@ -1778,8 +1771,8 @@ pub unsafe fn init_thor_database<FE: FrontEnd>() {
 */
 
 unsafe fn get_thor_game_moves(index: i32,
-                                  move_count: *mut i32,
-                                  moves: *mut i32) {
+                                  move_count: &mut i32,
+                                  moves: &mut [i32]) {
     let mut i: i32 = 0;
     let mut game = 0 as *mut GameType;
     if index < 0 as i32 || index >= thor_search.match_count {
@@ -1851,8 +1844,8 @@ pub unsafe fn get_thor_game_move(index: i32,
 unsafe fn position_match(mut game: *mut GameType,
                          move_count: i32,
                          side_to_move: i32,
-                         shape_lo: *mut u32,
-                         shape_hi: *mut u32,
+                         shape_lo: &mut [u32],
+                         shape_hi: &mut [u32],
                          corner_mask: u32,
                          in_hash1: u32,
                          in_hash2: u32)
@@ -1958,7 +1951,7 @@ unsafe fn position_match(mut game: *mut GameType,
        functions match the given hash values for at least one
        rotation (common to the two hash functions). */
     if play_through_game(game, move_count) != 0 {
-        compute_thor_patterns(thor_board.as_mut_ptr());
+        compute_thor_patterns(&thor_board);
         primary_hit_mask = primary_hash_lookup(in_hash1);
         if primary_hit_mask != 0 {
             secondary_hit_mask = secondary_hash_lookup(in_hash2);
@@ -2067,11 +2060,12 @@ pub unsafe fn thor_compare(g1: *const c_void,
 */
 
 pub unsafe fn choose_thor_opening_move<FE:FrontEnd>(in_board:
-                                       *mut i32,
+                                       &[i32],
                                        side_to_move:
                                        i32,
                                        echo: i32)
                                        -> i32 {
+    use engine_traits::Offset;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut temp_symm: i32 = 0;
@@ -2128,14 +2122,14 @@ pub unsafe fn choose_thor_opening_move<FE:FrontEnd>(in_board:
         i += 1
     }
     /* Calculate frequencies for all moves */
-    compute_thor_patterns(in_board);
-    compute_full_primary_hash(primary_hash_0.as_mut_ptr());
-    compute_full_secondary_hash(secondary_hash_0.as_mut_ptr());
-    recursive_frequency_count(root_node, freq_count.as_mut_ptr(),
+    compute_thor_patterns(&in_board);
+    compute_full_primary_hash(&mut primary_hash_0);
+    compute_full_secondary_hash(&mut secondary_hash_0);
+    recursive_frequency_count(root_node, &mut freq_count,
                               0 as i32, disc_count - 4 as i32,
-                              symmetries.as_mut_ptr(),
-                              primary_hash_0.as_mut_ptr(),
-                              secondary_hash_0.as_mut_ptr());
+                              &mut symmetries,
+                              &mut primary_hash_0,
+                              &mut secondary_hash_0);
     freq_sum = 0;
     i = 1;
     while i <= 8 as i32 {
@@ -2210,8 +2204,8 @@ pub unsafe fn choose_thor_opening_move<FE:FrontEnd>(in_board:
   given by IN_BOARD with SIDE_TO_MOVE being the player whose turn it is.
 */
 
-pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
-                                            side_to_move: i32) {
+pub unsafe fn database_search<FE: FrontEnd>(in_board: &[i32], side_to_move: i32) {
+    use engine_traits::Offset;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut index: i32 = 0;
@@ -2450,8 +2444,8 @@ pub unsafe fn database_search<FE: FrontEnd>(in_board: *mut i32,
                     (*game).black_disc_count[move_count as usize] as
                         i32 {
                     if position_match(game, move_count, side_to_move,
-                                      shape_lo.as_mut_ptr(),
-                                      shape_hi.as_mut_ptr(), corner_mask,
+                                      &mut shape_lo,
+                                      &mut shape_hi, corner_mask,
                                       target_hash1, target_hash2) != 0 {
                         let ref mut fresh7 =
                             *thor_search.match_list.offset((*game).sort_order

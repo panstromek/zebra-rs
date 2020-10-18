@@ -249,7 +249,7 @@ pub unsafe fn engine_play_game<
                     }
                     if use_thor_ {
                         let database_start = get_real_timer::<FE>();
-                        database_search::<FE>(board.as_mut_ptr(), side_to_move);
+                        database_search::<FE>(&board, side_to_move);
                         thor_position_count = get_match_count();
                         let database_stop = get_real_timer::<FE>();
                         let database_time = database_stop - database_start;
@@ -272,7 +272,7 @@ pub unsafe fn engine_play_game<
                 Dump::dump_position(side_to_move, &board);
                 Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
                 /* Check what the Thor opening statistics has to say */
-                choose_thor_opening_move::<FE>(board.as_mut_ptr(), side_to_move, echo);
+                choose_thor_opening_move::<FE>(&board, side_to_move, echo);
                 if echo != 0 && wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
                     if skill[side_to_move as usize] == 0 as i32 {
@@ -365,7 +365,7 @@ pub unsafe fn engine_play_game<
                           score_sheet_row);
             if use_thor_ {
                 let database_start = get_real_timer::<FE>();
-                database_search::<FE>(board.as_mut_ptr(), side_to_move);
+                database_search::<FE>(&board, side_to_move);
                 thor_position_count = get_match_count();
                 let database_stop = get_real_timer::<FE>();
                 let db_search_time = database_stop - database_start;
@@ -527,7 +527,7 @@ pub async unsafe fn engine_play_game_async<
                     }
                     if use_thor_ {
                         let database_start = get_real_timer::<FE>();
-                        database_search::<FE>(board.as_mut_ptr(), side_to_move);
+                        database_search::<FE>(&board, side_to_move);
                         thor_position_count = get_match_count();
                         let database_stop = get_real_timer::<FE>();
                         let database_time = database_stop - database_start;
@@ -550,7 +550,7 @@ pub async unsafe fn engine_play_game_async<
                 Dump::dump_position(side_to_move, &board);
                 Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
                 /* Check what the Thor opening statistics has to say */
-                choose_thor_opening_move::<FE>(board.as_mut_ptr(), side_to_move, echo);
+                choose_thor_opening_move::<FE>(&board, side_to_move, echo);
                 if echo != 0 && wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
                     if skill[side_to_move as usize] == 0 as i32 {
@@ -643,7 +643,7 @@ pub async unsafe fn engine_play_game_async<
                           score_sheet_row);
             if use_thor_ {
                 let database_start = get_real_timer::<FE>();
-                database_search::<FE>(board.as_mut_ptr(), side_to_move);
+                database_search::<FE>(&board, side_to_move);
                 thor_position_count = get_match_count();
                 let database_stop = get_real_timer::<FE>();
                 let db_search_time = database_stop - database_start;
