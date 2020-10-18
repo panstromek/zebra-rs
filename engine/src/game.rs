@@ -244,7 +244,7 @@ pub const fn create_fresh_board() -> [i32; 128] {
 
 pub unsafe fn setup_game_finalize(side_to_move:  *mut i32) {
     disks_played = disc_count(0, &board) + disc_count(2, &board) - 4;
-    determine_hash_values(*side_to_move, board.as_mut_ptr());
+    determine_hash_values(*side_to_move, &board);
     /* Make the game score look right */
     if *side_to_move == 0 as i32 {
         score_sheet_row = -(1 as i32)
@@ -414,7 +414,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     piece_count[2][disks_played as usize] =
         disc_count(2 as i32, &board);
     generate_all(side_to_move);
-    determine_hash_values(side_to_move, board.as_mut_ptr());
+    determine_hash_values(side_to_move, &board);
     calculate_perturbation();
     if let Some(logger) = logger {
         let moves_generated = move_count[disks_played as usize];

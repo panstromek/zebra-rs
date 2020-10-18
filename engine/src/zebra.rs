@@ -73,7 +73,7 @@ pub static mut player_increment: [f64; 3] = [0.; 3];
 pub static mut skill: [i32; 3] = [0; 3];
 pub static mut wait: i32 = 0;
 pub static mut use_book: i32 = 1;
-pub static mut wld_only: i32 = 0;
+pub static wld_only: i32 = 0;
 
 
 pub unsafe fn set_default_engine_globals() {
@@ -694,10 +694,6 @@ pub async unsafe fn engine_play_game_async<
 }
 
 unsafe fn clear_moves() {
-    let mut i = 0;
-    while i < 60 {
-        black_moves[i] = -1;
-        white_moves[i] = -1;
-        i += 1
-    }
+    black_moves = [-1; 60];
+    white_moves = [-1; 60];
 }

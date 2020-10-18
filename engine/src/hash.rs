@@ -1,5 +1,6 @@
 use crate::src::myrandom::my_random;
 use std::ffi::c_void;
+use crate::src::globals::Board;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -65,30 +66,22 @@ pub static mut hash_table: Vec<CompactHashEntry> = Vec::new();
    Calculates the hash codes for the given board position.
 */
 
-pub unsafe fn determine_hash_values(side_to_move: i32,
-                                    board:
-                                    *const i32) {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
+pub unsafe fn determine_hash_values(side_to_move: i32, board: &Board) {
     hash1 = 0;
     hash2 = 0;
-    i = 1;
-    while i <= 8 as i32 {
-        j = 1;
-        while j <= 8 as i32 {
-            let pos = 10 as i32 * i + j;
-            match *board.offset(pos as isize) {
+    let mut i = 1;
+    while i <= 8  {
+        let mut j = 1;
+        while j <= 8  {
+            let pos = 10 * i + j;
+            match board[pos] {
                 0 => {
-                    hash1 ^=
-                        hash_value1[0][pos as usize];
-                    hash2 ^=
-                        hash_value2[0][pos as usize]
+                    hash1 ^= hash_value1[0][pos as usize];
+                    hash2 ^= hash_value2[0][pos as usize]
                 }
                 2 => {
-                    hash1 ^=
-                        hash_value1[2][pos as usize];
-                    hash2 ^=
-                        hash_value2[2][pos as usize]
+                    hash1 ^= hash_value1[2][pos as usize];
+                    hash2 ^= hash_value2[2][pos as usize]
                 }
                 _ => { }
             }
