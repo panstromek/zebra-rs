@@ -184,20 +184,20 @@ pub unsafe fn create_hash_reference() {
    Compute the position hash codes.
 */
 pub unsafe fn prepare_hash() {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut i = 0;
+    let mut j = 0;
+    let mut k = 0;
     /* The hash keys are static, hence the same keys must be
        produced every time the program is run. */
     my_srandom(0 as i32);
     i = 0;
-    while i < 2 as i32 {
+    while i < 2 {
         j = 0;
-        while j < 8 as i32 {
+        while j < 8 {
             k = 0;
-            while k < 6561 as i32 {
-                line_hash[i as usize][j as usize][k as usize] =
-                    if my_random() % 2 as i32 as i64 != 0 {
+            while k < 6561 {
+                line_hash[i][j][k] =
+                    if my_random() % 2 as i64 != 0 {
                         my_random()
                     } else { -my_random() } as i32;
                 k += 1
