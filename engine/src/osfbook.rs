@@ -23,7 +23,7 @@ use crate::src::timer::{last_panic_check, clear_panic_abort, toggle_abort_check}
 use crate::src::hash::{add_hash, setup_hash};
 use crate::src::display::echo;
 use crate::src::game::{engine_game_init, setup_non_file_based_game};
-
+use engine_traits::Offset;
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -124,7 +124,7 @@ pub static mut line_hash: [[[i32; 6561]; 8]; 2] = [[[0; 6561]; 8]; 2];
 pub static mut book_hash_table: *mut i32 = 0 as *mut i32;
 pub static mut draw_mode: DrawMode = OPPONENT_WINS;
 pub static mut game_mode: GameMode = PRIVATE_GAME;
-pub static mut node: *mut BookNode = 0 as *mut BookNode;
+pub static mut node: Vec<BookNode> = Vec::new();
 pub static mut candidate_list: [CandidateMove; 60] =
     [CandidateMove{move_0: 0, score: 0, flags: 0, parent_flags: 0,}; 60];
 
@@ -215,7 +215,7 @@ pub unsafe fn prepare_hash() {
 */
 pub unsafe fn init_book_tree() {
     book_node_count = 0;
-    node = 0 as *mut BookNode;
+    node = Vec::new();
 }
 
 /*
@@ -1024,29 +1024,34 @@ pub unsafe fn rebuild_hash_table<FE: FrontEnd>(requested_items: i32) {
    Changes the number of nodes for which memory is allocated.
 */
 pub unsafe fn set_allocation<FE: FrontEnd>(size: i32) {
-    if node.is_null() {
-        node =
-            safe_malloc::<FE>((size as
-                u64).wrapping_mul(::std::mem::size_of::<BookNode>()
-                as
-                u64))
-                as *mut BookNode
+    if node.is_empty() {
+        node = vec![BookNode {
+            hash_val1: 0,
+            hash_val2: 0,
+            black_minimax_score: 0,
+            white_minimax_score: 0,
+            best_alternative_move: 0,
+            alternative_score: 0,
+            flags: 0
+        }; size as usize];
     } else {
-        node =
-            safe_realloc::<FE>(node as *mut c_void,
-                         (size as
-                             u64).wrapping_mul(::std::mem::size_of::<BookNode>()
-                             as
-                             u64))
-                as *mut BookNode
+        node.resize(size as usize, BookNode {
+            hash_val1: 0,
+            hash_val2: 0,
+            black_minimax_score: 0,
+            white_minimax_score: 0,
+            best_alternative_move: 0,
+            alternative_score: 0,
+            flags: 0
+        });
     }
-    if node.is_null() {
-        // I have no idea what this value is supposed to mean
-        let to_report = (size as
-            u64).wrapping_mul(::std::mem::size_of::<BookNode>()
-            as u64);
-        FE::book_node_list_allocation_failure(size, to_report);
-    }
+    // if node.is_null() {
+    //     // I have no idea what this value is supposed to mean
+    //     let to_report = (size as
+    //         u64).wrapping_mul(::std::mem::size_of::<BookNode>()
+    //         as u64);
+    //     FE::book_node_list_allocation_failure(size, to_report);
+    // }
     node_table_size = size;
     if node_table_size as f64 >
         0.80f64 * hash_table_size as f64 {
@@ -1117,8 +1122,8 @@ pub unsafe fn find_opening_name() -> *const i8 {
 pub unsafe fn clear_osf<FE: FrontEnd>() {
     FE::free(book_hash_table as *mut c_void);
     book_hash_table = 0 as *mut i32;
-    FE::free(node as *mut c_void);
-    node = 0 as *mut BookNode;
+    // FE::free(node as *mut c_void);
+    node.clear();
 }
 
 
