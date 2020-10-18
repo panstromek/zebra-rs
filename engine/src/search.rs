@@ -349,13 +349,10 @@ pub unsafe fn float_move(move_0: i32,
    Saves the principal variation (the first row of the PV matrix).
 */
 
-pub unsafe fn store_pv(pv_buffer: *mut i32,
-                       depth_buffer: *mut i32) {
-    let mut i: i32 = 0;
-    i = 0;
+pub unsafe fn store_pv(pv_buffer: &mut [i32], depth_buffer: &mut i32) {
+    let mut i = 0;
     while i < pv_depth[0] {
-        *pv_buffer.offset(i as isize) =
-            pv[0][i as usize];
+        pv_buffer[(i as usize)] = pv[0][i as usize];
         i += 1
     }
     *depth_buffer = pv_depth[0];

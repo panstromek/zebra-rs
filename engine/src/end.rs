@@ -2328,7 +2328,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 if is_panic_abort() != 0 || force_return != 0 { break ; }
                 any_search_result = 1;
                 old_eval = root_eval;
-                store_pv(old_pv.as_mut_ptr(), &mut old_depth);
+                store_pv(&mut old_pv, &mut old_depth);
                 current_confidence = confidence[selectivity as usize];
                 flags = 4;
                 if root_eval == 0 as i32 {
@@ -2396,7 +2396,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 if is_panic_abort() == 0 && force_return == 0 {
                     any_search_result = 1;
                     old_eval = root_eval;
-                    store_pv(old_pv.as_mut_ptr(), &mut old_depth);
+                    store_pv(&mut old_pv, &mut old_depth);
                     current_confidence = confidence[selectivity as usize];
                     *eval_info =
                         create_eval_info(SELECTIVE_EVAL, UNSOLVED_POSITION,
@@ -2568,7 +2568,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         return pv[0][0]
     }
     /* Update solve info. */
-    store_pv(old_pv.as_mut_ptr(), &mut old_depth);
+    store_pv(&mut old_pv, &mut old_depth);
     old_eval = root_eval;
     if is_panic_abort() == 0 && force_return == 0 &&
         empties > end.earliest_wld_solve {
