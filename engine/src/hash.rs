@@ -96,16 +96,17 @@ pub unsafe fn determine_hash_values(side_to_move: i32, board: &Board) {
 */
 
 pub unsafe fn find_hash(entry: &mut HashEntry, reverse_mode: i32) {
-    let mut index1: i32 = 0;
-    let mut index2: i32 = 0;
     let mut code1: u32 = 0;
     let mut code2: u32 = 0;
     if reverse_mode != 0 {
         code1 = hash2 ^ hash_trans2;
         code2 = hash1 ^ hash_trans1
-    } else { code1 = hash1 ^ hash_trans1; code2 = hash2 ^ hash_trans2 }
-    index1 = (code1 & hash_mask as u32) as i32;
-    index2 = index1 ^ 1 as i32;
+    } else {
+        code1 = hash1 ^ hash_trans1;
+        code2 = hash2 ^ hash_trans2
+    }
+    let index1 = (code1 & hash_mask as u32) as i32;
+    let index2 = index1 ^ 1;
     let hash_table_ptr = &mut hash_table;
     if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
         if ((*hash_table_ptr.offset(index1 as isize)).key1_selectivity_flags_draft
