@@ -15,10 +15,9 @@ use crate::src::myrandom::{my_srandom, my_random};
 use crate::src::stubs::{abs};
 use crate::src::error::{FrontEnd};
 use crate::src::display::{echo, display_pv};
-use crate::src::thordb::{choose_thor_opening_move, get_thor_game_move, get_match_count, database_search};
+use crate::src::thordb::{ThorDatabase};
 use engine_traits::CoeffSource;
 use flip::unflip::init_flip_stack;
-
 
 pub type EvalType = u32;
 pub const UNINITIALIZED_EVAL: EvalType = 8;
@@ -360,7 +359,7 @@ pub unsafe fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name
     engine_game_init();
 }
 
-pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd>(side_to_move: i32,
+pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, Thor: ThorDatabase>(side_to_move: i32,
                                                                                                update_all: i32,
                                                                                                my_time: i32,
                                                                                                my_incr: i32,
@@ -509,12 +508,12 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     if book_move_found == 0 && play_thor_match_openings != 0 {
         /* Optionally use the Thor database as opening book. */
         let threshold = 2;
-        database_search::<FE>(&board, side_to_move);
-        if get_match_count() >= threshold {
+        Thor::database_search(&board, side_to_move);
+        if Thor::get_match_count() >= threshold {
             let game_index =
                 ((my_random() >> 8 as i32) %
-                    get_match_count() as i64) as i32;
-            curr_move = get_thor_game_move(game_index, disks_played);
+                    Thor::get_match_count() as i64) as i32;
+            curr_move = Thor::get_thor_game_move(game_index, disks_played);
             if valid_move(curr_move, side_to_move) != 0 {
                 book_eval_info =
                     create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
@@ -539,7 +538,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     if book_move_found == 0 && play_human_openings != 0 && book != 0 {
         /* Check Thor statistics for a move */
         curr_move =
-            choose_thor_opening_move::<FE>(&board, side_to_move,
+            Thor::choose_thor_opening_move(&board, side_to_move,
                                      0 as i32);
         if curr_move != -(1 as i32) {
             book_eval_info =

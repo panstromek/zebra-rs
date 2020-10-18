@@ -2,7 +2,6 @@ use crate::src::zebra::EvaluationType;
 use crate::src::hash::HashEntry;
 use std::ffi::c_void;
 use crate::src::timer::time_t;
-use crate::src::thordb::C2RustUnnamed;
 use crate::src::game::CandidateMove;
 use crate::src::counter::CounterType;
 
@@ -47,7 +46,7 @@ pub trait FrontEnd : FatalError {
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32);
     fn thordb_report_flipped_0_first();
     fn thordb_report_flipped_0_second();
-    fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]);
+    fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[thordb_types::C2RustUnnamed; 64]);
     fn sort_thor_games(count: i32);
 }
 pub trait FatalError {

@@ -9,7 +9,6 @@ use engine::src::game::{engine_global_setup, global_terminate, BoardSource, File
 use engine::src::error::{FrontEnd, FatalError};
 use wasm_bindgen::__rt::core::ffi::c_void;
 use engine::src::hash::HashEntry;
-use engine::src::thordb::{C2RustUnnamed, init_thor_database};
 use engine::src::myrandom::my_srandom;
 use wasm_bindgen::__rt::core::ptr::null_mut;
 use engine::src::learn::Learner;
@@ -22,6 +21,8 @@ use flip::unflip;
 use engine::src::myrandom;
 use std::error::Error;
 use thiserror::Error;
+use thordb_types::C2RustUnnamed;
+use engine::src::thordb::ThorDatabase;
 
 extern crate engine;
 
@@ -89,7 +90,7 @@ pub fn init() {
         let coeffs = Flate2Source::new_from_data(COEFFS);
 
         engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs);
-        init_thor_database::<WasmFrontend>();
+        // init_thor_database::<WasmFrontend>();
 
         my_srandom(1 as i32);
 
@@ -121,7 +122,7 @@ pub async fn start_game() {
 
         engine_play_game_async::<
             WasmFrontend, WasmInitialMoveSource, WasmFrontend, WasmBoardSource,
-            WasmComputeMoveLogger, WasmFrontend, WasmLearner, WasmFrontend,
+            WasmComputeMoveLogger, WasmFrontend, WasmLearner, WasmFrontend, WasmThor,
             _, _
         >(null_mut(),
           null_mut(),
@@ -134,6 +135,48 @@ pub async fn start_game() {
     c_log!("Zebra ended");
 }
 
+struct WasmThor;
+impl ThorDatabase for WasmThor {
+    fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[thordb_types::C2RustUnnamed; 64]) {
+        unimplemented!()
+    }
+
+    fn get_thor_game_move(index: i32, move_number: i32) -> i32 {
+        unimplemented!()
+    }
+
+    fn database_search(in_board: &[i32], side_to_move: i32) {
+        unimplemented!()
+    }
+
+    fn get_match_count() -> i32 {
+        unimplemented!()
+    }
+
+    fn get_black_win_count() -> i32 {
+        unimplemented!()
+    }
+
+    fn get_draw_count() -> i32 {
+        unimplemented!()
+    }
+
+    fn get_white_win_count() -> i32 {
+        unimplemented!()
+    }
+
+    fn get_black_median_score() -> i32 {
+        unimplemented!()
+    }
+
+    fn get_black_average_score() -> f64 {
+        unimplemented!()
+    }
+
+    fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32) -> i32 {
+        unimplemented!()
+    }
+}
 struct WasmLearner;
 
 impl Learner for WasmLearner {

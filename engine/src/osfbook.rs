@@ -16,7 +16,6 @@ use crate::{
 };
 use crate::src::stubs::{abs, ceil, floor};
 use crate::src::error::{FrontEnd};
-use crate::src::safemem::{safe_malloc, safe_realloc};
 use std::ffi::c_void;
 use crate::src::midgame::tree_search;
 use crate::src::timer::{last_panic_check, clear_panic_abort, toggle_abort_check};
