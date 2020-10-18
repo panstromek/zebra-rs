@@ -119,6 +119,9 @@ dependencies = [
 [[package]]
 name = "flip"
 version = "0.1.0"
+dependencies = [
+ "engine-traits",
+]
 
 [[package]]
 name = "js-sys"

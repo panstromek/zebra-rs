@@ -1372,7 +1372,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
                                     empties - 1 as i32, new_disc_diff,
                                     1 as i32, bb_flips_)
     }
-    UndoFlips(best_flipped, oppcol);
+    UndoFlips(&mut board, best_flipped, oppcol);
     hash1 ^= diff1;
     hash2 ^= diff2;
     board[sq as usize] = 1;
@@ -1438,7 +1438,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
                                         new_disc_diff, 1 as i32, bb_flips_)
         }
         end.region_parity ^= quadrant_mask[sq as usize];
-        UndoFlips(flipped, oppcol);
+        UndoFlips(&mut board, flipped, oppcol);
         hash1 ^= diff1;
         hash2 ^= diff2;
         board[sq as usize] = 1;

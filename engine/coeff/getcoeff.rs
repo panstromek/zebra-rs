@@ -1263,7 +1263,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
         } else if row[9] == 2 as i32 {
             result -=value[1][6]
         }
-        *(coeff_set.afile2x as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16;
+        coeff_set.afile2x[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16;
         result = 0.0f64;
         j = 0;
         while j < 5 as i32 {
@@ -1278,7 +1278,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
             }
             j += 1
         }
-        *(coeff_set.corner52  as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16;
+        coeff_set.corner52[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16;
         if i < 19683 as i32 {
             result = 0.0f64;
             j = 0;
@@ -1294,7 +1294,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *(coeff_set.corner33 as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.corner33[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 6561 as i32 {
             result = 0.0f64;
@@ -1307,7 +1307,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *(coeff_set.bfile as &mut [i16]).offset(i as isize) = floor(result * 128.0f64 + 0.5f64) as i16;
+            coeff_set.bfile[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
             while j < 8 as i32 {
@@ -1318,7 +1318,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *(coeff_set.cfile as &mut [i16]).offset(i as isize) = floor(result * 128.0f64 + 0.5f64) as i16;
+            coeff_set.cfile[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
             while j < 8 as i32 {
@@ -1329,7 +1329,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *(coeff_set.dfile as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16;
+            coeff_set.dfile[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
             while j < 8 as i32 {
@@ -1340,7 +1340,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *(coeff_set.diag8  as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag8[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 2187 as i32 {
             result = 0.0f64;
@@ -1353,7 +1353,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *(coeff_set.diag7  as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag7[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 729 as i32 {
             result = 0.0f64;
@@ -1366,7 +1366,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *(coeff_set.diag6  as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag6[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 243 as i32 {
             result = 0.0f64;
@@ -1379,7 +1379,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *(coeff_set.diag5  as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag5[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 81 as i32 {
             result = 0.0f64;
@@ -1392,7 +1392,7 @@ pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            *(coeff_set.diag4 as &mut [i16]).offset(i as isize) =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag4[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16
         }
         /* Next configuration */
         j = 0;
