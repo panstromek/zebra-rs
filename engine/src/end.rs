@@ -140,7 +140,7 @@ fn TestFlips_wrapper(end:&mut End, sq: i32, my_bits: BitBoard, opp_bits: BitBoar
   PREPARE_TO_SOLVE
   Create the list of empty squares.
 */
-unsafe fn prepare_to_solve(board_0: &Board, end:&mut End) {
+fn prepare_to_solve(board_0: &Board, end:&mut End) {
     /* fixed square ordering: */
     /* jcw's order, which is the best of 4 tried (according to Warren Smith) */
     static worst2best: [u8; 64] = [
