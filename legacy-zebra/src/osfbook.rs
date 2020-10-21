@@ -6,9 +6,9 @@ use crate::{
 };
 use engine::src::display::{echo};
 use crate::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
-use engine::src::midgame::{middle_game, toggle_midgame_abort_check, toggle_midgame_hash_usage};
+use engine::src::midgame::{middle_game, toggle_midgame_abort_check, toggle_midgame_hash_usage, tree_search};
 use engine::src::myrandom::{my_srandom, my_random};
-use engine::src::hash::{set_hash_transformation, determine_hash_values, setup_hash};
+use engine::src::hash::{set_hash_transformation, determine_hash_values, setup_hash, clear_hash_drafts};
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError};
 use engine::src::globals::{white_moves, black_moves, board, pv, piece_count};
@@ -19,22 +19,13 @@ use engine::src::search::{root_eval, nodes, disc_count};
 use engine::src::end::end_game;
 use engine::src::counter::reset_counter;
 use engine::src::zebra::EvaluationType;
-use engine::src::timer::toggle_abort_check;
+use engine::src::timer::{toggle_abort_check, last_panic_check, clear_panic_abort};
 use crate::src::safemem::safe_malloc;
 use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit, FILE};
-use engine::src::osfbook::{
-    __time_t, prepare_tree_traversal,
-    probe_hash_table, get_hash,
-    get_node_depth,
-    clear_node_depth,
-    get_candidate_count, fill_move_alternatives, engine_init_osf, _ISupper, _ISprint,
-    _ISspace, create_BookNode, _ISgraph, do_compress,
-    BookNode, create_hash_reference, set_allocation, do_minimax,
-    evaluate_node, adjust_score, g_book,
-    do_evaluate, compute_feasible_count, size_t,
-    MIDGAME_EVAL, WON_POSITION, engine_minimax_tree, engine_examine_tree
-};
+use engine::src::osfbook::{__time_t, probe_hash_table, get_hash, get_node_depth, clear_node_depth, get_candidate_count, fill_move_alternatives, _ISupper, _ISprint, _ISspace, _ISgraph, BookNode, adjust_score, g_book, size_t, MIDGAME_EVAL, WON_POSITION, set_node_depth, Book, reset_book_search, PRIVATE_GAME};
 use engine_traits::Offset;
+use engine::src::getcoeff::remove_coeffs;
+use engine::src::game::{engine_game_init, setup_non_file_based_game};
 
 pub type FE = LibcFatalError;
 static mut correction_script_name: *const i8 = 0 as *const i8;
@@ -193,7 +184,7 @@ pub unsafe fn book_statistics(full_statistics: i32) {
                       4 as i32 != 0 {
             wld_solved += 1
         } else {
-            depth[get_node_depth(i) as usize] += 1;
+            depth[get_node_depth(i, &mut g_book) as usize] += 1;
             if (*g_book.node.offset(i as isize)).alternative_score as i32 ==
                    9999 as i32 &&
                    (*g_book.node.offset(i as isize)).best_alternative_move as
@@ -426,7 +417,7 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
             this_move = move_list[disks_played as usize][i as usize];
             make_move(side_to_move, this_move, 1 as i32);
             get_hash(&mut val1, &mut val2, &mut child_orientation);
-            slot = probe_hash_table(val1, val2);
+            slot = probe_hash_table(val1, val2, &mut g_book);
             child = *g_book.book_hash_table.offset(slot as isize);
             if child != -(1 as i32) {
                 if original_side_to_move == 0 as i32 {
@@ -543,10 +534,10 @@ pub unsafe fn add_new_game(move_count_0: i32,
     while i <= last_move_number {
         /* Look for the position in the hash table */
         get_hash(&mut val1, &mut val2, &mut orientation);
-        slot = probe_hash_table(val1, val2);
+        slot = probe_hash_table(val1, val2, &mut g_book);
         if slot == -(1 as i32) ||
                *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
-            this_node = create_BookNode(val1, val2, flags[i as usize]);
+            this_node = create_BookNode(val1, val2, flags[i as usize], &mut g_book);
             if private_game != 0 {
                 let ref mut fresh26 =
                     (*g_book.node.offset(this_node as isize)).flags;
@@ -809,7 +800,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                     fflush(stdout);
                 }
                 midgame_eval_done = 1;
-                if force_eval != 0 { clear_node_depth(this_node); }
+                if force_eval != 0 { clear_node_depth(this_node, &mut g_book); }
                 evaluate_node::<LibcFatalError>(this_node);
                 printf(b"|\x00" as *const u8 as *const i8);
                 fflush(stdout);
@@ -967,7 +958,7 @@ pub unsafe fn read_text_database(file_name:
     }
     fscanf(stream, b"%d\x00" as *const u8 as *const i8,
            &mut new_book_node_count as *mut i32);
-    set_allocation(new_book_node_count + 1000 as i32);
+    set_allocation(new_book_node_count + 1000 as i32, &mut g_book);
     i = 0;
     while i < new_book_node_count {
         fscanf(stream,
@@ -987,7 +978,7 @@ pub unsafe fn read_text_database(file_name:
         i += 1
     }
     g_book.book_node_count = new_book_node_count;
-    create_hash_reference();
+    create_hash_reference(&mut g_book);
     fclose(stream);
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
@@ -1032,7 +1023,7 @@ pub unsafe fn read_binary_database(file_name: *const i8) {
     fread(&mut new_book_node_count as *mut i32 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
-    set_allocation(new_book_node_count + 1000 as i32);
+    set_allocation(new_book_node_count + 1000 as i32, &mut g_book);
     i = 0;
     while i < new_book_node_count {
         fread(&mut (*g_book.node.offset(i as isize)).hash_val1 as *mut i32 as
@@ -1067,7 +1058,7 @@ pub unsafe fn read_binary_database(file_name: *const i8) {
     }
     fclose(stream);
     g_book.book_node_count = new_book_node_count;
-    create_hash_reference();
+    create_hash_reference(&mut g_book);
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
@@ -1152,13 +1143,13 @@ pub unsafe fn merge_binary_database(file_name:
               1 as i32 as size_t, stream);
         /* Look up g_book.node in existing database. */
         let slot =
-            probe_hash_table(merge_node.hash_val1, merge_node.hash_val2);
+            probe_hash_table(merge_node.hash_val1, merge_node.hash_val2, &mut g_book);
         if slot == -(1 as i32) ||
                *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
             /* New position, add it without modifications. */
             let this_node =
                 create_BookNode(merge_node.hash_val1, merge_node.hash_val2,
-                                merge_node.flags);
+                                merge_node.flags, &mut g_book);
             *g_book.node.offset(this_node as isize) = merge_node;
             merge_use_count += 1
         } else {
@@ -1828,7 +1819,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
             }
             /* Set the score for the g_book.node corresponding to the position */
             get_hash(&mut val1, &mut val2, &mut orientation);
-            slot = probe_hash_table(val1, val2);
+            slot = probe_hash_table(val1, val2, &mut g_book);
             index = *g_book.book_hash_table.offset(slot as isize);
             if index == -(1 as i32) {
                 fprintf(stderr,
@@ -1926,13 +1917,13 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                         new_side_to_move = side_to_move
                     }
                     get_hash(&mut val1, &mut val2, &mut orientation);
-                    slot = probe_hash_table(val1, val2);
+                    slot = probe_hash_table(val1, val2, &mut g_book);
                     index = *g_book.book_hash_table.offset(slot as isize);
                     if index == -(1 as i32) {
                         index =
                             create_BookNode(val1, val2,
                                             32 as i32 as
-                                                u16);
+                                                u16, &mut g_book);
                         let ref mut fresh50 =
                             (*g_book.node.offset(index as
                                               isize)).white_minimax_score;
@@ -2106,7 +2097,7 @@ pub unsafe fn print_move_alternatives(side_to_move:
             sign = 1 as i32
         } else { sign = -(1 as i32) }
         get_hash(&mut val1, &mut val2, &mut orientation);
-        slot = probe_hash_table(val1, val2);
+        slot = probe_hash_table(val1, val2, &mut g_book);
         /* Check that the position is in the opening book after all */
         if slot == -(1 as i32) ||
                *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
@@ -2525,7 +2516,7 @@ unsafe fn do_restricted_minimax(index: i32,
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
-        slot = probe_hash_table(val1, val2);
+        slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
             do_restricted_minimax(child, low, high, target_file,
@@ -2714,7 +2705,7 @@ unsafe fn do_midgame_statistics(index: i32,
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
-        slot = probe_hash_table(val1, val2);
+        slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
             do_midgame_statistics(child, spec);
@@ -2918,7 +2909,7 @@ unsafe fn do_endgame_statistics(index: i32,
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
-        slot = probe_hash_table(val1, val2);
+        slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
             do_endgame_statistics(child, spec);
@@ -2994,7 +2985,7 @@ unsafe fn do_clear(index: i32, low: i32,
         return
     }
     if disks_played >= low && disks_played <= high {
-        if flags & 1 as i32 != 0 { clear_node_depth(index); }
+        if flags & 1 as i32 != 0 { clear_node_depth(index, &mut g_book); }
         if (*g_book.node.offset(index as isize)).flags as i32 &
             4 as i32 != 0 && flags & 2 as i32 != 0 {
             let ref mut fresh27 = (*g_book.node.offset(index as isize)).flags;
@@ -3020,7 +3011,7 @@ unsafe fn do_clear(index: i32, low: i32,
             this_move = move_list[disks_played as usize][i as usize];
             make_move(side_to_move, this_move, 1 as i32);
             get_hash(&mut val1, &mut val2, &mut orientation);
-            slot = probe_hash_table(val1, val2);
+            slot = probe_hash_table(val1, val2, &mut g_book);
             child = *g_book.book_hash_table.offset(slot as isize);
             if child != -(1 as i32) {
                 do_clear(child, low, high, flags);
@@ -3118,7 +3109,7 @@ unsafe fn do_correct(index: i32,
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
-        slot = probe_hash_table(val1, val2);
+        slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
             child_move[child_count as usize] = this_move;
@@ -3340,7 +3331,7 @@ pub unsafe fn correct_tree(max_empty: i32,
         let ref mut fresh40 = (*g_book.node.offset(i as isize)).flags;
         *fresh40 =
             (*fresh40 as i32 | 8 as i32) as u16;
-        if get_node_depth(i) < max_empty &&
+        if get_node_depth(i, &mut g_book) < max_empty &&
             abs((*g_book.node.offset(i as isize)).alternative_score as
                 i32) >= g_book.min_eval_span &&
             abs((*g_book.node.offset(i as isize)).alternative_score as
@@ -3436,7 +3427,7 @@ unsafe fn do_export(index: i32, stream: *mut FILE,
         *(move_vec.as_mut_ptr()).offset(disks_played as isize) = this_move;
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
-        slot = probe_hash_table(val1, val2);
+        slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
             do_export(child, stream, move_vec);
@@ -3489,3 +3480,1188 @@ pub unsafe fn export_tree(file_name: *const i8) {
     do_export(0 as i32, stream, &mut move_vec);
     fclose(stream);
 }
+
+// ============================
+// Following functions were moved back here from the engine,
+// even though they don't depend on libc (and I moved them to engine manually before)
+// These was done to ease engine cleanup, but these function could
+// be moved to libc-independent crate when time comes.
+// ============================
+/*
+  VALIDATE_TREE
+  Makes sure all nodes are either exhausted, solved or have a deviation.
+  The number of positions evaluated is returned.
+*/
+
+pub unsafe fn validate_tree<FE: FrontEnd>() -> i32 {
+    prepare_tree_traversal();
+    validate_prepared_tree::<FE>()
+}
+
+// extracted from validate_tree
+pub unsafe fn validate_prepared_tree<FE: FrontEnd>() -> i32 {
+    g_book.exhausted_node_count = 0;
+    g_book.evaluated_count = 0;
+    g_book.evaluation_stage = 0;
+    let mut feasible_count = 0;
+    let mut i = 0;
+    while i < g_book.book_node_count {
+        if (*g_book.node.offset(i as isize)).flags as i32 &
+            (4 as i32 | 16 as i32) == 0 &&
+            (*g_book.node.offset(i as isize)).alternative_score as i32 ==
+                9999 as i32 &&
+            (*g_book.node.offset(i as isize)).best_alternative_move as i32
+                != -(2 as i32) {
+            feasible_count += 1
+        }
+        i += 1
+    }
+    g_book.max_eval_count =
+        if feasible_count < g_book.max_batch_size {
+            feasible_count
+        } else { g_book.max_batch_size };
+    if feasible_count > 0 as i32 {
+        i = 0;
+        while i < g_book.book_node_count {
+            let ref mut fresh20 = (*g_book.node.offset(i as isize)).flags;
+            *fresh20 =
+                (*fresh20 as i32 | 8 as i32) as
+                    u16;
+            i += 1
+        }
+        do_validate::<FE>(0 as i32);
+    }
+    return g_book.evaluated_count;
+}
+
+/*
+   DO_VALIDATE
+   Recursively makes sure a subtree doesn't contain any midgame
+   g_book.node without a deviation move.
+*/
+pub unsafe fn do_validate<FE: FrontEnd>(index: i32) {
+    let mut i: i32 = 0;
+    let mut child: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    if g_book.evaluated_count >= g_book.max_eval_count { return }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        return
+    }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    generate_all(side_to_move);
+    if (*g_book.node.offset(index as isize)).flags as i32 &
+        (16 as i32 | 4 as i32) == 0 &&
+        (*g_book.node.offset(index as isize)).alternative_score as i32 ==
+            9999 as i32 &&
+        (*g_book.node.offset(index as isize)).best_alternative_move as i32
+            != -(2 as i32) {
+        evaluate_node::<FE>(index);
+    }
+    i = 0;
+    while i < move_count[disks_played as usize] {
+        this_move = move_list[disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2, &mut g_book);
+        child = *g_book.book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) { do_validate::<FE>(child); }
+        unmake_move(side_to_move, this_move);
+        i += 1
+    }
+    let ref mut fresh19 = (*g_book.node.offset(index as isize)).flags;
+    *fresh19 = (*fresh19 as i32 ^ 8 as i32) as u16;
+}
+
+
+/*
+   DO_EVALUATE
+   Recursively makes sure a subtree is evaluated to
+   the specified depth.
+*/
+pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32) {
+    let mut i: i32 = 0;
+    let mut child: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    if g_book.evaluated_count >= g_book.max_eval_count { return }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        return
+    }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    generate_all(side_to_move);
+    if (*g_book.node.offset(index as isize)).flags as i32 &
+        (16 as i32 | 4 as i32) == 0 {
+        evaluate_node::<FE>(index);
+    }
+    if g_book.evaluated_count >=
+        (g_book.evaluation_stage + 1 as i32) * g_book.max_eval_count /
+            25 as i32 {
+        g_book.evaluation_stage += 1;
+        FE::report_do_evaluate(g_book.evaluation_stage);
+    }
+    i = 0;
+    while i < move_count[disks_played as usize] {
+        this_move = move_list[disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2, &mut g_book);
+        child = *g_book.book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) { do_evaluate::<FE>(child); }
+        unmake_move(side_to_move, this_move);
+        i += 1
+    }
+    let ref mut fresh17 = (*g_book.node.offset(index as isize)).flags;
+    *fresh17 = (*fresh17 as i32 ^ 8 as i32) as u16;
+}
+
+
+pub unsafe fn compute_feasible_count() -> i32 {
+    let mut feasible_count = 0;
+    let mut i = 0;
+    while i < g_book.book_node_count {
+        let ref mut fresh18 = (*g_book.node.offset(i as isize)).flags;
+        *fresh18 =
+            (*fresh18 as i32 | 8 as i32) as u16;
+        if ((*g_book.node.offset(i as isize)).alternative_score as i32 ==
+            9999 as i32 ||
+            get_node_depth(i, &mut g_book) < g_book.search_depth &&
+                abs((*g_book.node.offset(i as isize)).alternative_score as
+                    i32) >= g_book.min_eval_span &&
+                abs((*g_book.node.offset(i as isize)).alternative_score as
+                    i32) <= g_book.max_eval_span &&
+                abs((*g_book.node.offset(i as isize)).black_minimax_score as
+                    i32) >= g_book.min_negamax_span &&
+                abs((*g_book.node.offset(i as isize)).black_minimax_score as
+                    i32) <= g_book.max_negamax_span) &&
+            (*g_book.node.offset(i as isize)).flags as i32 &
+                (4 as i32 | 16 as i32) == 0 {
+            feasible_count += 1
+        }
+        i += 1
+    }
+    feasible_count
+}
+
+
+pub unsafe fn engine_minimax_tree() {
+    /* Mark all nodes as not traversed */
+    let mut i = 0;
+    while i < g_book.book_node_count {
+        let ref mut fresh15 = (*g_book.node.offset(i as isize)).flags;
+        *fresh15 =
+            (*fresh15 as i32 | 8 as i32) as u16;
+        i += 1
+    }
+    let mut dummy_black_score: i32 = 0;
+    let mut dummy_white_score: i32 = 0;
+    do_minimax(0 as i32, &mut dummy_black_score, &mut dummy_white_score);
+}
+
+pub unsafe fn engine_examine_tree() {
+    let mut i = 0;
+    while i <= 60 as i32 {
+        g_book.exact_count[i as usize] = 0;
+        g_book.wld_count[i as usize] = 0;
+        g_book.exhausted_count[i as usize] = 0;
+        g_book.common_count[i as usize] = 0;
+        i += 1
+    }
+    g_book.unreachable_count = 0;
+    g_book.leaf_count = 0;
+    g_book.bad_leaf_count = 0;
+    /* Mark all nodes as not traversed and examine the tree */
+    i = 0;
+    while i < g_book.book_node_count {
+        let ref mut fresh22 = (*g_book.node.offset(i as isize)).flags;
+        *fresh22 =
+            (*fresh22 as i32 | 8 as i32) as u16;
+        i += 1
+    }
+    do_examine(0 as i32);
+    /* Any nodes not reached by the walkthrough? */
+    i = 0;
+    while i < g_book.book_node_count {
+        if (*g_book.node.offset(i as isize)).flags as i32 & 8 as i32
+            != 0 {
+            g_book.unreachable_count += 1;
+            let ref mut fresh23 = (*g_book.node.offset(i as isize)).flags;
+            *fresh23 =
+                (*fresh23 as i32 ^ 8 as i32) as u16
+        }
+        i += 1
+    }
+}
+
+/*
+   DO_EXAMINE
+   Add the properties of node INDEX to the statistics being gathered
+   and recursively traverse the subtree of the node, doing the same
+   thing in all nodes.
+*/
+pub unsafe fn do_examine(index: i32) {
+    let mut i: i32 = 0;
+    let mut child: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    let mut child_count: i32 = 0;
+    let mut child_move: [i32; 64] = [0; 64];
+    let mut child_node: [i32; 64] = [0; 64];
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        return
+    }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 16 as i32
+        != 0 {
+        g_book.exact_count[disks_played as usize] += 1
+    } else if (*g_book.node.offset(index as isize)).flags as i32 &
+        4 as i32 != 0 {
+        g_book.wld_count[disks_played as usize] += 1
+    } else if (*g_book.node.offset(index as isize)).best_alternative_move as
+        i32 == -(2 as i32) {
+        g_book.exhausted_count[disks_played as usize] += 1
+    } else { g_book.common_count[disks_played as usize] += 1 }
+    /* Examine all the children of the g_book.node */
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    generate_all(side_to_move);
+    child_count = 0;
+    i = 0;
+    while i < move_count[disks_played as usize] {
+        this_move = move_list[disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2, &mut g_book);
+        child = *g_book.book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) {
+            child_move[child_count as usize] = this_move;
+            child_node[child_count as usize] = child;
+            child_count += 1
+        }
+        unmake_move(side_to_move, this_move);
+        i += 1
+    }
+    if child_count == 0 as i32 {
+        g_book.leaf_count += 1;
+        if (*g_book.node.offset(index as isize)).flags as i32 &
+            16 as i32 == 0 {
+            g_book.bad_leaf_count += 1
+        }
+        if (*g_book.node.offset(index as isize)).flags as i32 &
+            4 as i32 == 0 {
+            g_book.really_bad_leaf_count += 1
+        }
+    } else {
+        let mut current_block_38: u64;
+        i = 0;
+        while i < child_count {
+            if side_to_move == 0 as i32 {
+                if g_book.force_black != 0 &&
+                    (*g_book.node.offset(child_node[i as usize] as
+                        isize)).black_minimax_score as
+                        i32 !=
+                        (*g_book.node.offset(index as isize)).black_minimax_score
+                            as i32 {
+                    current_block_38 = 2873832966593178012;
+                } else { current_block_38 = 10891380440665537214; }
+            } else if g_book.force_white != 0 &&
+                (*g_book.node.offset(child_node[i as usize] as
+                    isize)).white_minimax_score as
+                    i32 !=
+                    (*g_book.node.offset(index as
+                        isize)).white_minimax_score as
+                        i32 {
+                current_block_38 = 2873832966593178012;
+            } else { current_block_38 = 10891380440665537214; }
+            match current_block_38 {
+                10891380440665537214 => {
+                    this_move = child_move[i as usize];
+                    make_move(side_to_move, this_move, 1 as i32);
+                    do_examine(child_node[i as usize]);
+                    unmake_move(side_to_move, this_move);
+                }
+                _ => { }
+            }
+            i += 1
+        }
+    }
+    let ref mut fresh21 = (*g_book.node.offset(index as isize)).flags;
+    *fresh21 = (*fresh21 as i32 ^ 8 as i32) as u16;
+}
+
+
+/*
+   EVALUATE_NODE
+   Applies a search to a predetermined depth to find the best
+   alternative move in a position.
+   Note: This function assumes that generate_all() has been
+         called prior to it being called.
+*/
+pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32) {
+    let mut i: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut alternative_move_count: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut best_move: i32 = 0;
+    let mut child: i32 = 0;
+    let mut allow_mpc: i32 = 0;
+    let mut depth: i32 = 0;
+    let mut best_index: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    let mut feasible_move: [i32; 64] = [0; 64];
+    let mut best_score: i32 = 0;
+    /* Don't evaluate nodes that already have been searched deep enough */
+    depth = get_node_depth(index, &mut g_book);
+    if depth >= g_book.search_depth &&
+        (*g_book.node.offset(index as isize)).alternative_score as i32 !=
+            9999 as i32 {
+        return
+    }
+    /* If the g_book.node has been evaluated and its score is outside the
+       eval and minimax windows, bail out. */
+    if (*g_book.node.offset(index as isize)).alternative_score as i32 !=
+        9999 as i32 {
+        if abs((*g_book.node.offset(index as isize)).alternative_score as
+            i32) < g_book.min_eval_span ||
+            abs((*g_book.node.offset(index as isize)).alternative_score as
+                i32) > g_book.max_eval_span {
+            return
+        }
+        if abs((*g_book.node.offset(index as isize)).black_minimax_score as
+            i32) < g_book.min_negamax_span ||
+            abs((*g_book.node.offset(index as isize)).black_minimax_score as
+                i32) > g_book.max_negamax_span {
+            return
+        }
+    }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    remove_coeffs(disks_played - 8 as i32);
+    clear_panic_abort();
+    piece_count[0][disks_played as usize] =
+        disc_count(0 as i32, &board);
+    piece_count[2][disks_played as usize] =
+        disc_count(2 as i32, &board);
+    /* Find the moves which haven't been tried from this position */
+    alternative_move_count = 0;
+    i = 0;
+    while i < move_count[disks_played as usize] {
+        this_move = move_list[disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2, &mut g_book);
+        child = *g_book.book_hash_table.offset(slot as isize);
+        if child == -(1 as i32) {
+            let fresh16 = alternative_move_count;
+            alternative_move_count = alternative_move_count + 1;
+            feasible_move[fresh16 as usize] = this_move
+        }
+        unmake_move(side_to_move, this_move);
+        i += 1
+    }
+    if alternative_move_count == 0 as i32 {
+        /* There weren't any such moves */
+        g_book.exhausted_node_count += 1;
+        (*g_book.node.offset(index as isize)).best_alternative_move =
+            -(2 as i32) as i16;
+        (*g_book.node.offset(index as isize)).alternative_score =
+            9999 as i32 as i16
+    } else {
+        /* Find the best of those moves */
+        allow_mpc = (g_book.search_depth >= 9 as i32) as i32;
+        nega_scout::<FE>(g_book.search_depth, allow_mpc, side_to_move,
+                         alternative_move_count, &mut feasible_move,
+                         -(12345678 as i32), 12345678 as i32,
+                         &mut best_score, &mut best_index);
+        best_move = feasible_move[best_index as usize];
+        g_book.evaluated_count += 1;
+        if side_to_move == 0 as i32 {
+            (*g_book.node.offset(index as isize)).alternative_score =
+                best_score as i16
+        } else {
+            (*g_book.node.offset(index as isize)).alternative_score =
+                -best_score as i16
+        }
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        (*g_book.node.offset(index as isize)).best_alternative_move =
+            *g_book.symmetry_map[orientation as usize].offset(best_move as isize) as
+                i16
+    }
+    clear_node_depth(index, &mut g_book);
+    set_node_depth(index, g_book.search_depth, &mut g_book);
+}
+
+/*
+  NEGA_SCOUT
+  This wrapper on top of TREE_SEARCH is used by EVALUATE_NODE
+  to search the possible deviations.
+*/
+pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
+                                       allow_mpc: i32,
+                                       side_to_move: i32,
+                                       allowed_count: i32,
+                                       allowed_moves: &mut [i32],
+                                       _alpha: i32, _beta: i32,
+                                       best_score: &mut i32,
+                                       best_index: &mut i32) {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut curr_alpha: i32 = 0;
+    let mut curr_depth: i32 = 0;
+    let mut low_score: i32 = 0;
+    let mut high_score: i32 = 0;
+    let mut best_move: i32 = 0;
+    let mut current_score: i32 = 0;
+    reset_counter(&mut nodes);
+    low_score = -(12345678 as i32);
+    /* To avoid spurious hash table entries to take out the effect
+       of the averaging done, the hash table drafts are changed prior
+       to each g_book.node being searched. */
+    clear_hash_drafts();
+    determine_hash_values(side_to_move, &board);
+    /* First determine the best move in the current position
+       and its score when searched to depth DEPTH.
+       This is done using standard negascout with iterative deepening. */
+    curr_depth = 2 as i32 - depth % 2 as i32;
+    while curr_depth <= depth {
+        low_score = -(12345678 as i32);
+        curr_alpha = -(12345678 as i32);
+        i = 0;
+        while i < allowed_count {
+            make_move(side_to_move, *allowed_moves.offset(i as isize),
+                      1 as i32);
+            piece_count[0][disks_played as usize] =
+                disc_count(0 as i32, &board);
+            piece_count[2][disks_played as usize] =
+                disc_count(2 as i32, &board);
+            last_panic_check = 0.0f64;
+            if i == 0 as i32 {
+                current_score =
+                    -tree_search::<FE>(1 as i32, curr_depth,
+                                       0 as i32 + 2 as i32 -
+                                           side_to_move, -(12345678 as i32),
+                                       12345678 as i32, 1 as i32,
+                                       allow_mpc, 1 as i32);
+                low_score = current_score;
+                *best_index = i
+            } else {
+                curr_alpha =
+                    if low_score > curr_alpha {
+                        low_score
+                    } else { curr_alpha };
+                current_score =
+                    -tree_search::<FE>(1 as i32, curr_depth,
+                                       0 as i32 + 2 as i32 -
+                                           side_to_move,
+                                       -(curr_alpha + 1 as i32),
+                                       -curr_alpha, 1 as i32, allow_mpc,
+                                       1 as i32);
+                if current_score > curr_alpha {
+                    current_score =
+                        -tree_search::<FE>(1 as i32, curr_depth,
+                                           0 as i32 + 2 as i32 -
+                                               side_to_move,
+                                           -(12345678 as i32),
+                                           12345678 as i32,
+                                           1 as i32, allow_mpc,
+                                           1 as i32);
+                    if current_score > low_score {
+                        low_score = current_score;
+                        *best_index = i
+                    }
+                } else if current_score > low_score {
+                    low_score = current_score;
+                    *best_index = i
+                }
+            }
+            unmake_move(side_to_move, *allowed_moves.offset(i as isize));
+            i += 1
+        }
+        /* Float the best move so far to the top of the list */
+        best_move = *allowed_moves.offset(*best_index as isize);
+        j = *best_index;
+        while j >= 1 as i32 {
+            *allowed_moves.offset(j as isize) =
+                *allowed_moves.offset((j - 1 as i32) as isize);
+            j -= 1
+        }
+        allowed_moves[0] = best_move;
+        *best_index = 0;
+        curr_depth += 2 as i32
+    }
+    /* Then find the score for the best move when searched
+       to depth DEPTH+1 */
+    make_move(side_to_move, *allowed_moves.offset(*best_index as isize),
+              1 as i32);
+    piece_count[0][disks_played as usize] =
+        disc_count(0 as i32, &board);
+    piece_count[2][disks_played as usize] =
+        disc_count(2 as i32, &board);
+    last_panic_check = 0.0f64;
+    high_score =
+        -tree_search::<FE>(1 as i32, depth + 1 as i32,
+                           0 as i32 + 2 as i32 - side_to_move,
+                           -(12345678 as i32), 12345678 as i32,
+                           1 as i32, allow_mpc, 1 as i32);
+    unmake_move(side_to_move, *allowed_moves.offset(*best_index as isize));
+    /* To remove the oscillations between odd and even search depths
+       the score for the deviation is the average between the two scores. */
+    *best_score = (low_score + high_score) / 2 as i32;
+}
+
+
+
+/*
+   REBUILD_HASH_TABLE
+   Resize the hash table for a requested number of nodes.
+*/
+pub fn rebuild_hash_table(book: &mut Book, requested_items: i32) {
+    let new_size = 2 * requested_items;
+    if book.hash_table_size == 0 {
+        book.book_hash_table = vec![0; new_size as usize];
+    } else {
+        book.book_hash_table.resize(new_size as usize, 0);
+    }
+    book.hash_table_size = new_size;
+    create_hash_reference(book);
+}
+
+
+
+/*
+   SET_ALLOCATION
+   Changes the number of nodes for which memory is allocated.
+*/
+pub fn set_allocation(size: i32, book: &mut Book) {
+    if book.node.is_empty() {
+        book.node = vec![BookNode {
+            hash_val1: 0,
+            hash_val2: 0,
+            black_minimax_score: 0,
+            white_minimax_score: 0,
+            best_alternative_move: 0,
+            alternative_score: 0,
+            flags: 0
+        }; size as usize];
+    } else {
+        book.node.resize(size as usize, BookNode {
+            hash_val1: 0,
+            hash_val2: 0,
+            black_minimax_score: 0,
+            white_minimax_score: 0,
+            best_alternative_move: 0,
+            alternative_score: 0,
+            flags: 0
+        });
+    }
+    book.node_table_size = size;
+    if book.node_table_size as f64 > 0.80f64 * book.hash_table_size as f64 {
+        rebuild_hash_table(book, book.node_table_size);
+    };
+}
+/*
+   INCREASE_ALLOCATION
+   Allocate more memory for the book tree.
+*/
+pub fn increase_allocation(book: &mut Book) {
+    set_allocation(book.node_table_size + 50000 as i32, book);
+}
+/*
+   CREATE_BOOK_NODE
+   Creates a new book node without any connections whatsoever
+   to the rest of the tree.
+*/
+pub fn create_BookNode(val1: i32, val2: i32, flags: u16, book: &mut Book) -> i32 {
+    let mut index: i32 = 0;
+    if book.book_node_count == book.node_table_size { increase_allocation(book); }
+    index = book.book_node_count;
+    (*book.node.offset(index as isize)).hash_val1 = val1;
+    (*book.node.offset(index as isize)).hash_val2 = val2;
+    (*book.node.offset(index as isize)).black_minimax_score = 9999;
+    (*book.node.offset(index as isize)).white_minimax_score = 9999;
+    (*book.node.offset(index as isize)).best_alternative_move =
+        -(1 as i32) as i16;
+    (*book.node.offset(index as isize)).alternative_score = 9999;
+    (*book.node.offset(index as isize)).flags = flags;
+    select_hash_slot(index, book);
+    book.book_node_count += 1;
+    return index;
+}
+
+/*
+   DO_MINIMAX
+   Calculates the minimax value of g_book.node INDEX.
+*/
+pub unsafe fn do_minimax(index: i32,
+                         black_score: &mut i32,
+                         white_score: &mut i32) {
+    let mut i: i32 = 0;
+    let mut child: i32 = 0;
+    let mut child_black_score: i32 = 0;
+    let mut child_white_score: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut alternative_move: i32 = 0;
+    let mut alternative_move_found: i32 = 0;
+    let mut child_count: i32 = 0;
+    let mut best_black_child_val: i32 = 0;
+    let mut best_white_child_val: i32 = 0;
+    let mut worst_black_child_val: i32 = 0;
+    let mut worst_white_child_val: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    let mut best_black_score: i16 = 0;
+    let mut best_white_score: i16 = 0;
+    /* If the node has been visited AND it is a midgame node, meaning
+       that the minimax values are not to be tweaked, return the
+       stored values. */
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        if (*g_book.node.offset(index as isize)).flags as i32 &
+            (4 as i32 | 16 as i32) == 0 {
+            *black_score =
+                (*g_book.node.offset(index as isize)).black_minimax_score as
+                    i32;
+            *white_score =
+                (*g_book.node.offset(index as isize)).white_minimax_score as
+                    i32;
+            return
+        }
+    }
+    /* Correct WLD solved nodes corresponding to draws to be represented
+       as full solved and make sure full solved nodes are marked as
+       WLD solved as well */
+    if (*g_book.node.offset(index as isize)).flags as i32 & 4 as i32
+        != 0 &&
+        (*g_book.node.offset(index as isize)).black_minimax_score as i32
+            == 0 as i32 &&
+        (*g_book.node.offset(index as isize)).white_minimax_score as i32
+            == 0 as i32 {
+        let ref mut fresh2 = (*g_book.node.offset(index as isize)).flags;
+        *fresh2 =
+            (*fresh2 as i32 | 16 as i32) as u16
+    }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 16 as i32
+        != 0 &&
+        (*g_book.node.offset(index as isize)).flags as i32 &
+            4 as i32 == 0 {
+        let ref mut fresh3 = (*g_book.node.offset(index as isize)).flags;
+        *fresh3 =
+            (*fresh3 as i32 | 4 as i32) as u16
+    }
+    /* Recursively minimax all children of the node */
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    best_black_child_val = -(99999 as i32);
+    best_white_child_val = -(99999 as i32);
+    worst_black_child_val = 99999;
+    worst_white_child_val = 99999;
+    if (*g_book.node.offset(index as isize)).alternative_score as i32 !=
+        9999 as i32 {
+        best_black_score =
+            adjust_score((*g_book.node.offset(index as isize)).alternative_score as
+                             i32, side_to_move) as i16;
+        best_white_score = best_black_score;
+        worst_black_child_val = best_black_score as i32;
+        best_black_child_val = worst_black_child_val;
+        worst_white_child_val = best_white_score as i32;
+        best_white_child_val = worst_white_child_val;
+        alternative_move_found = 0;
+        alternative_move =
+            (*g_book.node.offset(index as isize)).best_alternative_move as
+                i32;
+        if alternative_move > 0 as i32 {
+            get_hash(&mut val1, &mut val2, &mut orientation);
+            alternative_move =
+                *g_book.inv_symmetry_map[orientation as
+                    usize].offset(alternative_move as isize)
+        }
+    } else {
+        alternative_move_found = 1;
+        alternative_move = 0;
+        if side_to_move == 0 as i32 {
+            best_black_score = -(32000 as i32) as i16;
+            best_white_score = -(32000 as i32) as i16
+        } else {
+            best_black_score = 32000;
+            best_white_score = 32000 as i32 as i16
+        }
+    }
+    generate_all(side_to_move);
+    child_count = 0;
+    i = 0;
+    while i < move_count[disks_played as usize] {
+        piece_count[0][disks_played as usize] =
+            disc_count(0 as i32, &board);
+        piece_count[2][disks_played as usize] =
+            disc_count(2 as i32, &board);
+        this_move = move_list[disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2, &mut g_book);
+        child = *g_book.book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) {
+            do_minimax(child, &mut child_black_score, &mut child_white_score);
+            best_black_child_val =
+                if best_black_child_val > child_black_score {
+                    best_black_child_val
+                } else { child_black_score };
+            best_white_child_val =
+                if best_white_child_val > child_white_score {
+                    best_white_child_val
+                } else { child_white_score };
+            worst_black_child_val =
+                if worst_black_child_val < child_black_score {
+                    worst_black_child_val
+                } else { child_black_score };
+            worst_white_child_val =
+                if worst_white_child_val < child_white_score {
+                    worst_white_child_val
+                } else { child_white_score };
+            if side_to_move == 0 as i32 {
+                best_black_score =
+                    if child_black_score > best_black_score as i32 {
+                        child_black_score
+                    } else { best_black_score as i32 } as
+                        i16;
+                best_white_score =
+                    if child_white_score > best_white_score as i32 {
+                        child_white_score
+                    } else { best_white_score as i32 } as
+                        i16
+            } else {
+                best_black_score =
+                    if child_black_score < best_black_score as i32 {
+                        child_black_score
+                    } else { best_black_score as i32 } as
+                        i16;
+                best_white_score =
+                    if child_white_score < best_white_score as i32 {
+                        child_white_score
+                    } else { best_white_score as i32 } as
+                        i16
+            }
+            child_count += 1
+        } else if alternative_move_found == 0 && this_move == alternative_move
+        {
+            alternative_move_found = 1 as i32
+        }
+        unmake_move(side_to_move, this_move);
+        i += 1
+    }
+    if alternative_move_found == 0 {
+        /* The was-to-be deviation now leads to a position in the database,
+           hence it can no longer be used. */
+        (*g_book.node.offset(index as isize)).alternative_score = 9999;
+        (*g_book.node.offset(index as isize)).best_alternative_move =
+            -(1 as i32) as i16
+    }
+    /* Try to infer the WLD status from the children */
+    if (*g_book.node.offset(index as isize)).flags as i32 &
+        (16 as i32 | 4 as i32) == 0 &&
+        child_count > 0 as i32 {
+        if side_to_move == 0 as i32 {
+            if best_black_child_val >= 30000 as i32 &&
+                best_white_child_val >= 30000 as i32 {
+                /* Black win */
+                let ref mut fresh4 =
+                    (*g_book.node.offset(index as isize)).white_minimax_score;
+                *fresh4 =
+                    if best_black_child_val < best_white_child_val {
+                        best_black_child_val
+                    } else { best_white_child_val } as i16;
+                (*g_book.node.offset(index as isize)).black_minimax_score = *fresh4;
+                let ref mut fresh5 = (*g_book.node.offset(index as isize)).flags;
+                *fresh5 =
+                    (*fresh5 as i32 | 4 as i32) as
+                        u16
+            } else if best_black_child_val <= -(30000 as i32) &&
+                best_white_child_val <= -(30000 as i32) {
+                /* Black loss */
+                let ref mut fresh6 =
+                    (*g_book.node.offset(index as isize)).white_minimax_score;
+                *fresh6 =
+                    if best_black_child_val > best_white_child_val {
+                        best_black_child_val
+                    } else { best_white_child_val } as i16;
+                (*g_book.node.offset(index as isize)).black_minimax_score = *fresh6;
+                let ref mut fresh7 = (*g_book.node.offset(index as isize)).flags;
+                *fresh7 =
+                    (*fresh7 as i32 | 4 as i32) as
+                        u16
+            }
+        } else if worst_black_child_val <= -(30000 as i32) &&
+            worst_white_child_val <= -(30000 as i32) {
+            /* White win */
+            let ref mut fresh8 =
+                (*g_book.node.offset(index as isize)).white_minimax_score;
+            *fresh8 =
+                if worst_black_child_val > worst_white_child_val {
+                    worst_black_child_val
+                } else { worst_white_child_val } as i16;
+            (*g_book.node.offset(index as isize)).black_minimax_score = *fresh8;
+            let ref mut fresh9 = (*g_book.node.offset(index as isize)).flags;
+            *fresh9 =
+                (*fresh9 as i32 | 4 as i32) as u16
+        } else if worst_black_child_val >= 30000 as i32 &&
+            worst_white_child_val >= 30000 as i32 {
+            /* White loss */
+            let ref mut fresh10 =
+                (*g_book.node.offset(index as isize)).white_minimax_score;
+            *fresh10 =
+                if worst_black_child_val < worst_white_child_val {
+                    worst_black_child_val
+                } else { worst_white_child_val } as i16;
+            (*g_book.node.offset(index as isize)).black_minimax_score = *fresh10;
+            let ref mut fresh11 = (*g_book.node.offset(index as isize)).flags;
+            *fresh11 =
+                (*fresh11 as i32 | 4 as i32) as u16
+        }
+    }
+    /* Tweak the minimax scores for draws to give the right
+       draw avoidance behavior */
+    if (*g_book.node.offset(index as isize)).flags as i32 &
+        (16 as i32 | 4 as i32) != 0 {
+        *black_score =
+            (*g_book.node.offset(index as isize)).black_minimax_score as i32;
+        *white_score =
+            (*g_book.node.offset(index as isize)).white_minimax_score as i32;
+        if (*g_book.node.offset(index as isize)).black_minimax_score as i32
+            == 0 as i32 &&
+            (*g_book.node.offset(index as isize)).white_minimax_score as
+                i32 == 0 as i32 {
+            /* Is it a position in which a draw should be avoided? */
+            if g_book.game_mode as u32 ==
+                PRIVATE_GAME as i32 as u32 ||
+                (*g_book.node.offset(index as isize)).flags as i32 &
+                    32 as i32 == 0 {
+                match g_book.draw_mode as u32 {
+                    1 => {
+                        *black_score =
+                            30000 as i32 - 1 as i32;
+                        *white_score = 30000 as i32 - 1 as i32
+                    }
+                    2 => {
+                        *black_score =
+                            -(30000 as i32 - 1 as i32);
+                        *white_score =
+                            -(30000 as i32 - 1 as i32)
+                    }
+                    3 => {
+                        *black_score =
+                            -(30000 as i32 - 1 as i32);
+                        *white_score = 30000 as i32 - 1 as i32
+                    }
+                    0 | _ => { }
+                }
+            }
+        }
+    } else {
+        let ref mut fresh12 =
+            (*g_book.node.offset(index as isize)).black_minimax_score;
+        *fresh12 = best_black_score;
+        *black_score = *fresh12 as i32;
+        let ref mut fresh13 =
+            (*g_book.node.offset(index as isize)).white_minimax_score;
+        *fresh13 = best_white_score;
+        *white_score = *fresh13 as i32
+    }
+    let ref mut fresh14 = (*g_book.node.offset(index as isize)).flags;
+    *fresh14 = (*fresh14 as i32 ^ 8 as i32) as u16;
+}
+
+
+
+pub unsafe fn engine_init_osf<FE: FrontEnd>() {
+    init_maps::<FE>();
+    prepare_hash();
+    setup_hash(1 as i32);
+    init_book_tree(&mut g_book);
+    reset_book_search();
+    g_book.search_depth = 2;
+    g_book.max_slack = 0;
+    g_book.low_deviation_threshold = 60;
+    g_book.high_deviation_threshold = 60;
+    g_book.deviation_bonus = 0.0f64;
+    g_book.min_eval_span = 0;
+    g_book.max_eval_span = 1000 as i32 * 128 as i32;
+    g_book.min_negamax_span = 0;
+    g_book.max_negamax_span = 1000 as i32 * 128 as i32;
+    g_book.max_batch_size = 10000000;
+    g_book.force_black = 0;
+    g_book.force_white = 0;
+}
+
+
+/*
+   PREPATE_TREE_TRAVERSAL
+   Prepares all relevant data structures for a tree search
+   or traversal.
+*/
+pub unsafe fn prepare_tree_traversal() {
+    let mut side_to_move: i32 = 0;
+    setup_non_file_based_game(&mut side_to_move);
+    engine_game_init();
+    toggle_midgame_hash_usage(1 as i32, 1 as i32);
+    toggle_abort_check(0 as i32);
+    toggle_midgame_abort_check(0 as i32);
+}
+
+
+
+/*
+   INIT_MAPS
+   Initializes the 8 symmetry maps.
+   Notice that the order of these MUST coincide with the returned
+   orientation value from get_hash() OR YOU WILL LOSE BIG.
+*/
+pub unsafe fn init_maps<FE: FrontEnd>() {
+    let mut i = 0;
+    let mut j = 0;
+    let mut k = 0;
+    let mut pos = 0;
+    i = 1;
+    while i <= 8 {
+        j = 1;
+        while j <= 8 {
+            pos = 10  * i + j;
+            g_book.b1_b1_map[pos as usize] = pos;
+            g_book.g1_b1_map[pos as usize] = 10 * i + (9 - j);
+            g_book.g8_b1_map[pos as usize] = 10 * (9 - i) + (9 - j);
+            g_book.b8_b1_map[pos as usize] = 10 * (9 - i) + j;
+            g_book.a2_b1_map[pos as usize] = 10 * j + i;
+            g_book.a7_b1_map[pos as usize] = 10 * j + (9 - i);
+            g_book.h7_b1_map[pos as usize] = 10 * (9 - j) + (9 - i);
+            g_book.h2_b1_map[pos as usize] = 10 * (9 - j) + i;
+            j += 1
+        }
+        i += 1
+    }
+    g_book.symmetry_map[0] = g_book.b1_b1_map.as_mut_ptr();
+    g_book.inv_symmetry_map[0] = g_book.b1_b1_map.as_mut_ptr();
+    g_book.symmetry_map[1] = g_book.g1_b1_map.as_mut_ptr();
+    g_book.inv_symmetry_map[1] = g_book.g1_b1_map.as_mut_ptr();
+    g_book.symmetry_map[2] = g_book.g8_b1_map.as_mut_ptr();
+    g_book.inv_symmetry_map[2] = g_book.g8_b1_map.as_mut_ptr();
+    g_book.symmetry_map[3] = g_book.b8_b1_map.as_mut_ptr();
+    g_book.inv_symmetry_map[3] = g_book.b8_b1_map.as_mut_ptr();
+    g_book.symmetry_map[4] = g_book.a2_b1_map.as_mut_ptr();
+    g_book.inv_symmetry_map[4] = g_book.a2_b1_map.as_mut_ptr();
+    g_book.symmetry_map[5] = g_book.a7_b1_map.as_mut_ptr();
+    g_book.inv_symmetry_map[5] = g_book.h2_b1_map.as_mut_ptr();
+    g_book.symmetry_map[6] = g_book.h7_b1_map.as_mut_ptr();
+    g_book.inv_symmetry_map[6] = g_book.h7_b1_map.as_mut_ptr();
+    g_book.symmetry_map[7] = g_book.h2_b1_map.as_mut_ptr();
+    g_book.inv_symmetry_map[7] = g_book.a7_b1_map.as_mut_ptr();
+    i = 0;
+    while i < 8 as i32 {
+        *g_book.symmetry_map[i as usize] = 0;
+        i += 1
+    }
+    i = 0;
+    while i < 8 as i32 {
+        j = 1;
+        while j <= 8 as i32 {
+            k = 1;
+            while k <= 8 as i32 {
+                pos = 10 as i32 * j + k;
+                if *g_book.inv_symmetry_map[i as usize]
+                    .offset(*g_book.symmetry_map[i as usize].offset(pos as isize) as isize) != pos {
+                    let symmetry_map_item = *g_book.inv_symmetry_map[i as usize].offset(*g_book.symmetry_map[i as usize].offset(pos as isize) as isize);
+                    FE::error_in_map(i, pos, symmetry_map_item);
+                }
+                k += 1
+            }
+            j += 1
+        }
+        i += 1
+    };
+}
+
+
+/*
+   DO_COMPRESS
+   Compresses the subtree below the current node.
+*/
+pub unsafe fn do_compress(index: i32,
+                          node_order: *mut i32,
+                          child_count: *mut i16,
+                          node_index: &mut i32,
+                          child_list: *mut i16,
+                          child_index: &mut i32) {
+    use engine_traits::Offset;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut child: i32 = 0;
+    let mut valid_child_count: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    let mut found: i32 = 0;
+    let mut local_child_list: [i32; 64] = [0; 64];
+    let mut this_move: i16 = 0;
+    let mut local_child_move: [i16; 64] = [0; 64];
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        return
+    }
+    *node_order.offset(*node_index as isize) = index;
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    valid_child_count = 0;
+    generate_all(side_to_move);
+    i = 0;
+    while i < move_count[disks_played as usize] {
+        this_move =
+            move_list[disks_played as usize][i as usize] as i16;
+        make_move(side_to_move, this_move as i32, 1 as i32);
+        get_hash(&mut val1, &mut val2, &mut orientation);
+        slot = probe_hash_table(val1, val2, &mut g_book);
+        child = *g_book.book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) &&
+            (*g_book.node.offset(child as isize)).flags as i32 &
+                8 as i32 != 0 {
+            j = 0;
+            found = 0;
+            while j < valid_child_count {
+                if child == local_child_list[j as usize] {
+                    found = 1 as i32
+                }
+                j += 1
+            }
+            if found == 0 {
+                local_child_list[valid_child_count as usize] = child;
+                local_child_move[valid_child_count as usize] = this_move;
+                valid_child_count += 1;
+                *child_list.offset(*child_index as isize) = this_move;
+                *child_index += 1
+            }
+        }
+        unmake_move(side_to_move, this_move as i32);
+        i += 1
+    }
+    *child_count.offset(*node_index as isize) =
+        valid_child_count as i16;
+    *node_index += 1;
+    i = 0;
+    while i < valid_child_count {
+        this_move = local_child_move[i as usize];
+        make_move(side_to_move, this_move as i32, 1 as i32);
+        do_compress(local_child_list[i as usize], node_order, child_count,
+                    node_index, child_list, child_index);
+        unmake_move(side_to_move, this_move as i32);
+        i += 1
+    }
+    let ref mut fresh44 = (*g_book.node.offset(index as isize)).flags;
+    *fresh44 = (*fresh44 as i32 ^ 8 as i32) as u16;
+}
+
+
+/*
+   INIT_BOOK_TREE
+   Initializes the node tree by creating the root of the tree.
+*/
+pub fn init_book_tree(book: &mut Book) {
+    book.book_node_count = 0;
+    book.node = Vec::new();
+}
+
+/*
+   PREPARE_HASH
+   Compute the position hash codes.
+*/
+pub unsafe fn prepare_hash() {
+    let mut i = 0;
+    let mut j = 0;
+    let mut k = 0;
+    /* The hash keys are static, hence the same keys must be
+       produced every time the program is run. */
+    my_srandom(0 as i32);
+    i = 0;
+    while i < 2 {
+        j = 0;
+        while j < 8 {
+            k = 0;
+            while k < 6561 {
+                g_book.line_hash[i][j][k] =
+                    if my_random() % 2 as i64 != 0 {
+                        my_random()
+                    } else { -my_random() } as i32;
+                k += 1
+            }
+            j += 1
+        }
+        i += 1
+    }
+    g_book.hash_table_size = 0;
+}
+
+/*
+   CREATE_HASH_REFERENCEE
+   Takes the node list and fills the hash table with indices
+   into the node list.
+*/
+pub fn create_hash_reference(book: &mut Book) {
+    let mut i = 0;
+    while i < book.hash_table_size {
+        *book.book_hash_table.offset(i as isize) = -(1 as i32);
+        i += 1
+    }
+    let mut i = 0;
+    while i < book.book_node_count {
+        select_hash_slot(i, book);
+        i += 1
+    };
+}
+
+
+/*
+   SELECT_HASH_SLOT
+   Finds a slot in the hash table for the node INDEX
+   using linear probing.
+*/
+pub fn select_hash_slot(index: i32, book: &mut Book) {
+    let mut slot: i32 = 0;
+    slot = (*book.node.offset(index as isize)).hash_val1 % book.hash_table_size;
+    while *book.book_hash_table.offset(slot as isize) != -(1 as i32) {
+        slot = (slot + 1 as i32) % book.hash_table_size
+    }
+    *book.book_hash_table.offset(slot as isize) = index;
+}
+
+
