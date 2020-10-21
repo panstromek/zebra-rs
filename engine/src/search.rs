@@ -37,7 +37,7 @@ pub static mut total_time: f64 = 0.;
 
 pub static mut root_eval: i32 = 0;
 
-pub static mut force_return: i32 = 0;
+pub static force_return: i32 = 0;
 
 pub static mut full_pv_depth: i32 = 0;
 
