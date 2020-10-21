@@ -23,21 +23,21 @@ use engine::src::timer::toggle_abort_check;
 use crate::src::safemem::safe_malloc;
 use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit, FILE};
 use engine::src::osfbook::{
-    __time_t, node, book_node_count, prepare_tree_traversal, book_hash_table,
-    probe_hash_table, get_hash, evaluated_count, max_batch_size, max_eval_count,
-    max_negamax_span, min_negamax_span, max_eval_span, min_eval_span, get_node_depth,
-    evaluation_stage, exhausted_node_count, force_white, force_black, clear_node_depth,
+    __time_t, prepare_tree_traversal,
+    probe_hash_table, get_hash,
+    get_node_depth,
+    clear_node_depth,
     get_candidate_count, fill_move_alternatives, engine_init_osf, _ISupper, _ISprint,
-    _ISspace, candidate_list, candidate_count, create_BookNode, _ISgraph, do_compress,
-    BookNode, create_hash_reference, set_allocation, total_game_count, do_minimax,
-    evaluate_node, adjust_score, exhausted_count, exact_count, wld_count, common_count,
-    really_bad_leaf_count, bad_leaf_count, leaf_count, unreachable_count,
-    do_evaluate, search_depth, compute_feasible_count, size_t, inv_symmetry_map,
+    _ISspace, create_BookNode, _ISgraph, do_compress,
+    BookNode, create_hash_reference, set_allocation, do_minimax,
+    evaluate_node, adjust_score, g_book,
+    do_evaluate, compute_feasible_count, size_t,
     MIDGAME_EVAL, WON_POSITION, engine_minimax_tree, engine_examine_tree
 };
 use engine_traits::Offset;
 
 pub type FE = LibcFatalError;
+static mut correction_script_name: *const i8 = 0 as *const i8;
 
 pub type _IO_lock_t = ();
 pub type time_t = __time_t;
@@ -70,37 +70,37 @@ pub unsafe fn evaluate_tree() {
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     prepare_tree_traversal();
-    exhausted_node_count = 0;
-    evaluated_count = 0;
-    evaluation_stage = 0;
+    g_book.exhausted_node_count = 0;
+    g_book.evaluated_count = 0;
+    g_book.evaluation_stage = 0;
     time(&mut start_time);
     let feasible_count = compute_feasible_count();
-    max_eval_count =
-        if feasible_count < max_batch_size {
+    g_book.max_eval_count =
+        if feasible_count < g_book.max_batch_size {
             feasible_count
-        } else { max_batch_size };
+        } else { g_book.max_batch_size };
     printf(b"Evaluating to depth %d. \x00" as *const u8 as
-               *const i8, search_depth);
-    if min_eval_span > 0 as i32 ||
-           max_eval_span < 1000 as i32 * 128 as i32 {
+               *const i8, g_book.search_depth);
+    if g_book.min_eval_span > 0 as i32 ||
+           g_book.max_eval_span < 1000 as i32 * 128 as i32 {
         printf(b"Eval interval is [%.2f,%.2f]. \x00" as *const u8 as
                    *const i8,
-               min_eval_span as f64 / 128.0f64,
-               max_eval_span as f64 / 128.0f64);
+               g_book.min_eval_span as f64 / 128.0f64,
+               g_book.max_eval_span as f64 / 128.0f64);
     }
-    if min_negamax_span > 0 as i32 ||
-           max_negamax_span < 1000 as i32 * 128 as i32 {
+    if g_book.min_negamax_span > 0 as i32 ||
+           g_book.max_negamax_span < 1000 as i32 * 128 as i32 {
         printf(b"Negamax interval is [%.2f,%.2f]. \x00" as *const u8 as
                    *const i8,
-               min_negamax_span as f64 / 128.0f64,
-               max_negamax_span as f64 / 128.0f64);
+               g_book.min_negamax_span as f64 / 128.0f64,
+               g_book.max_negamax_span as f64 / 128.0f64);
     }
-    if max_eval_count == feasible_count {
+    if g_book.max_eval_count == feasible_count {
         printf(b"\n%d relevant nodes.\x00" as *const u8 as
                    *const i8, feasible_count);
     } else {
         printf(b"\nMax batch size is %d.\x00" as *const u8 as
-                   *const i8, max_batch_size);
+                   *const i8, g_book.max_batch_size);
     }
     puts(b"\x00" as *const u8 as *const i8);
     printf(b"Progress: \x00" as *const u8 as *const i8);
@@ -110,9 +110,9 @@ pub unsafe fn evaluate_tree() {
     printf(b"(took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
     printf(b"%d nodes evaluated \x00" as *const u8 as *const i8,
-           evaluated_count);
+           g_book.evaluated_count);
     printf(b"(%d exhausted nodes ignored)\n\x00" as *const u8 as
-               *const i8, exhausted_node_count);
+               *const i8, g_book.exhausted_node_count);
     puts(b"\x00" as *const u8 as *const i8);
 }
 /*
@@ -164,12 +164,12 @@ pub unsafe fn book_statistics(full_statistics: i32) {
     let mut depth: [i32; 60] = [0; 60];
     let mut total_count: [i32; 61] = [0; 61];
     evals =
-        safe_malloc((book_node_count as
+        safe_malloc((g_book.book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i32>()
                                                          as u64)) as
             *mut i32;
     negamax =
-        safe_malloc((book_node_count as
+        safe_malloc((g_book.book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i32>()
                                                          as u64)) as
             *mut i32;
@@ -185,37 +185,37 @@ pub unsafe fn book_statistics(full_statistics: i32) {
         i += 1
     }
     i = 0;
-    while i < book_node_count {
-        if (*node.offset(i as isize)).flags as i32 & 16 as i32
+    while i < g_book.book_node_count {
+        if (*g_book.node.offset(i as isize)).flags as i32 & 16 as i32
                != 0 {
             full_solved += 1
-        } else if (*node.offset(i as isize)).flags as i32 &
+        } else if (*g_book.node.offset(i as isize)).flags as i32 &
                       4 as i32 != 0 {
             wld_solved += 1
         } else {
             depth[get_node_depth(i) as usize] += 1;
-            if (*node.offset(i as isize)).alternative_score as i32 ==
+            if (*g_book.node.offset(i as isize)).alternative_score as i32 ==
                    9999 as i32 &&
-                   (*node.offset(i as isize)).best_alternative_move as
+                   (*g_book.node.offset(i as isize)).best_alternative_move as
                        i32 == -(1 as i32) {
                 unevaluated += 1
             } else {
-                if (*node.offset(i as isize)).alternative_score as i32
+                if (*g_book.node.offset(i as isize)).alternative_score as i32
                        != 9999 as i32 {
                     let fresh24 = eval_count;
                     eval_count = eval_count + 1;
                     *evals.offset(fresh24 as isize) =
-                        abs((*node.offset(i as isize)).alternative_score as
+                        abs((*g_book.node.offset(i as isize)).alternative_score as
                                 i32)
                 }
                 let fresh25 = negamax_count;
                 negamax_count = negamax_count + 1;
                 *negamax.offset(fresh25 as isize) =
-                    abs((*node.offset(i as isize)).black_minimax_score as
+                    abs((*g_book.node.offset(i as isize)).black_minimax_score as
                             i32)
             }
         }
-        if (*node.offset(i as isize)).flags as i32 & 32 as i32
+        if (*g_book.node.offset(i as isize)).flags as i32 & 32 as i32
                != 0 {
             private_count += 1
         }
@@ -235,7 +235,7 @@ pub unsafe fn book_statistics(full_statistics: i32) {
                        -> i32));
     puts(b"\x00" as *const u8 as *const i8);
     printf(b"#nodes:       %d\x00" as *const u8 as *const i8,
-           book_node_count);
+           g_book.book_node_count);
     if private_count > 0 as i32 {
         printf(b"  (%d private)\x00" as *const u8 as *const i8,
                private_count);
@@ -309,8 +309,8 @@ pub unsafe fn book_statistics(full_statistics: i32) {
         i = 0;
         while i <= 60 as i32 {
             total_count[i as usize] =
-                exact_count[i as usize] + wld_count[i as usize] +
-                    exhausted_count[i as usize] + common_count[i as usize];
+                g_book.exact_count[i as usize] + g_book.wld_count[i as usize] +
+                    g_book.exhausted_count[i as usize] + g_book.common_count[i as usize];
             if total_count[i as usize] > 0 as i32 {
                 first = if first < i { first } else { i };
                 last = if last > i { last } else { i }
@@ -318,47 +318,47 @@ pub unsafe fn book_statistics(full_statistics: i32) {
             i += 1
         }
         printf(b"%d unreachable nodes\n\n\x00" as *const u8 as
-                   *const i8, unreachable_count);
+                   *const i8, g_book.unreachable_count);
         printf(b"%d leaf nodes; %d lack exact score and %d lack WLD status\n\x00"
-                   as *const u8 as *const i8, leaf_count,
-               bad_leaf_count, really_bad_leaf_count);
+                   as *const u8 as *const i8, g_book.leaf_count,
+               g_book.bad_leaf_count, g_book.really_bad_leaf_count);
         i = first;
         while i <= last {
             printf(b"%2d moves\x00" as *const u8 as *const i8, i);
             printf(b"   \x00" as *const u8 as *const i8);
-            printf(b"%5d node\x00" as *const u8 as *const i8,
+            printf(b"%5d g_book.node\x00" as *const u8 as *const i8,
                    total_count[i as usize]);
             if total_count[i as usize] == 1 as i32 {
                 printf(b" :  \x00" as *const u8 as *const i8);
             } else {
                 printf(b"s:  \x00" as *const u8 as *const i8);
             }
-            if common_count[i as usize] > 0 as i32 {
+            if g_book.common_count[i as usize] > 0 as i32 {
                 printf(b"%5d midgame\x00" as *const u8 as *const i8,
-                       common_count[i as usize]);
+                       g_book.common_count[i as usize]);
             } else {
                 printf(b"             \x00" as *const u8 as
                            *const i8);
             }
             printf(b"  \x00" as *const u8 as *const i8);
-            if wld_count[i as usize] > 0 as i32 {
+            if g_book.wld_count[i as usize] > 0 as i32 {
                 printf(b"%5d WLD\x00" as *const u8 as *const i8,
-                       wld_count[i as usize]);
+                       g_book.wld_count[i as usize]);
             } else {
                 printf(b"         \x00" as *const u8 as *const i8);
             }
             printf(b"  \x00" as *const u8 as *const i8);
-            if exact_count[i as usize] > 0 as i32 {
+            if g_book.exact_count[i as usize] > 0 as i32 {
                 printf(b"%5d exact\x00" as *const u8 as *const i8,
-                       exact_count[i as usize]);
+                       g_book.exact_count[i as usize]);
             } else {
                 printf(b"           \x00" as *const u8 as
                            *const i8);
             }
             printf(b"  \x00" as *const u8 as *const i8);
-            if exhausted_count[i as usize] > 0 as i32 {
+            if g_book.exhausted_count[i as usize] > 0 as i32 {
                 printf(b"%2d exhausted\x00" as *const u8 as
-                           *const i8, exhausted_count[i as usize]);
+                           *const i8, g_book.exhausted_count[i as usize]);
             }
             puts(b"\x00" as *const u8 as *const i8);
             i += 1
@@ -395,12 +395,12 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
                *const i8);
     if original_side_to_move == 0 as i32 {
         root_score =
-            node[0].black_minimax_score as
+            g_book.node[0].black_minimax_score as
                 i32;
         printf(b"black\x00" as *const u8 as *const i8);
     } else {
         root_score =
-            node[0].white_minimax_score as
+            g_book.node[0].white_minimax_score as
                 i32;
         printf(b"white\x00" as *const u8 as *const i8);
     }
@@ -411,9 +411,9 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
     line = 0;
     done = 0;
     show_move = 1;
-    while (*node.offset(current as isize)).flags as i32 &
+    while (*g_book.node.offset(current as isize)).flags as i32 &
               (16 as i32 | 4 as i32) == 0 && done == 0 {
-        if (*node.offset(current as isize)).flags as i32 &
+        if (*g_book.node.offset(current as isize)).flags as i32 &
                1 as i32 != 0 {
             side_to_move = 0 as i32
         } else { side_to_move = 2 as i32 }
@@ -427,15 +427,15 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
             make_move(side_to_move, this_move, 1 as i32);
             get_hash(&mut val1, &mut val2, &mut child_orientation);
             slot = probe_hash_table(val1, val2);
-            child = *book_hash_table.offset(slot as isize);
+            child = *g_book.book_hash_table.offset(slot as isize);
             if child != -(1 as i32) {
                 if original_side_to_move == 0 as i32 {
                     child_score =
-                        (*node.offset(child as isize)).black_minimax_score as
+                        (*g_book.node.offset(child as isize)).black_minimax_score as
                             i32
                 } else {
                     child_score =
-                        (*node.offset(child as isize)).white_minimax_score as
+                        (*g_book.node.offset(child as isize)).white_minimax_score as
                             i32
                 }
                 if child_score == root_score { next = child }
@@ -446,17 +446,17 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
         }
         if next == -(1 as i32) {
             done = 1;
-            if adjust_score((*node.offset(current as isize)).alternative_score
+            if adjust_score((*g_book.node.offset(current as isize)).alternative_score
                                 as i32, side_to_move) != root_score {
                 puts(b"(failed to find continuation)\x00" as *const u8 as
                          *const i8);
                 show_move = 0 as i32
             } else {
                 this_move =
-                    (*node.offset(current as isize)).best_alternative_move as
+                    (*g_book.node.offset(current as isize)).best_alternative_move as
                         i32;
                 this_move =
-                    *inv_symmetry_map[base_orientation as
+                    *g_book.inv_symmetry_map[base_orientation as
                                           usize].offset(this_move as isize)
             }
         }
@@ -545,17 +545,17 @@ pub unsafe fn add_new_game(move_count_0: i32,
         get_hash(&mut val1, &mut val2, &mut orientation);
         slot = probe_hash_table(val1, val2);
         if slot == -(1 as i32) ||
-               *book_hash_table.offset(slot as isize) == -(1 as i32) {
+               *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
             this_node = create_BookNode(val1, val2, flags[i as usize]);
             if private_game != 0 {
                 let ref mut fresh26 =
-                    (*node.offset(this_node as isize)).flags;
+                    (*g_book.node.offset(this_node as isize)).flags;
                 *fresh26 =
                     (*fresh26 as i32 | 32 as i32) as
                         u16
             }
             if i < first_new_node { first_new_node = i }
-        } else { this_node = *book_hash_table.offset(slot as isize) }
+        } else { this_node = *g_book.book_hash_table.offset(slot as isize) }
         visited_node[i as usize] = this_node;
         /* Make the moves of the game until the cutoff point */
         if i < last_move_number {
@@ -622,31 +622,31 @@ pub unsafe fn add_new_game(move_count_0: i32,
         outcome = root_eval;
         if side_to_move == 2 as i32 { outcome = -outcome }
     }
-    (*node.offset(this_node as isize)).black_minimax_score =
+    (*g_book.node.offset(this_node as isize)).black_minimax_score =
         outcome as i16;
-    (*node.offset(this_node as isize)).white_minimax_score =
+    (*g_book.node.offset(this_node as isize)).white_minimax_score =
         outcome as i16;
     if outcome > 0 as i32 {
         let ref mut fresh27 =
-            (*node.offset(this_node as isize)).black_minimax_score;
+            (*g_book.node.offset(this_node as isize)).black_minimax_score;
         *fresh27 =
             (*fresh27 as i32 + 30000 as i32) as i16;
         let ref mut fresh28 =
-            (*node.offset(this_node as isize)).white_minimax_score;
+            (*g_book.node.offset(this_node as isize)).white_minimax_score;
         *fresh28 =
             (*fresh28 as i32 + 30000 as i32) as i16
     }
     if outcome < 0 as i32 {
         let ref mut fresh29 =
-            (*node.offset(this_node as isize)).black_minimax_score;
+            (*g_book.node.offset(this_node as isize)).black_minimax_score;
         *fresh29 =
             (*fresh29 as i32 - 30000 as i32) as i16;
         let ref mut fresh30 =
-            (*node.offset(this_node as isize)).white_minimax_score;
+            (*g_book.node.offset(this_node as isize)).white_minimax_score;
         *fresh30 =
             (*fresh30 as i32 - 30000 as i32) as i16
     }
-    let ref mut fresh31 = (*node.offset(this_node as isize)).flags;
+    let ref mut fresh31 = (*g_book.node.offset(this_node as isize)).flags;
     *fresh31 =
         (*fresh31 as i32 | 16 as i32) as u16;
     /* Take another pass through the midgame to update move
@@ -685,15 +685,15 @@ pub unsafe fn add_new_game(move_count_0: i32,
             previously marked as private nodes are marked as public. */
             this_node = visited_node[i as usize];
             if private_game == 0 &&
-                   (*node.offset(this_node as isize)).flags as i32 &
+                   (*g_book.node.offset(this_node as isize)).flags as i32 &
                        32 as i32 != 0 {
                 let ref mut fresh32 =
-                    (*node.offset(this_node as isize)).flags;
+                    (*g_book.node.offset(this_node as isize)).flags;
                 *fresh32 =
                     (*fresh32 as i32 ^ 32 as i32) as
                         u16
             }
-            if (*node.offset(this_node as isize)).flags as i32 &
+            if (*g_book.node.offset(this_node as isize)).flags as i32 &
                    1 as i32 != 0 {
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
@@ -701,7 +701,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
             determine_hash_values(side_to_move, &board);
             if disks_played >= 60 as i32 - max_full_solve {
                 /* Only solve the position if it hasn't been solved already */
-                if (*node.offset(this_node as isize)).flags as i32 &
+                if (*g_book.node.offset(this_node as isize)).flags as i32 &
                        16 as i32 == 0 {
                    end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
                              1 as i32, 0 as i32,
@@ -709,19 +709,19 @@ pub unsafe fn add_new_game(move_count_0: i32,
                     if side_to_move == 0 as i32 {
                         outcome = root_eval
                     } else { outcome = -root_eval }
-                    (*node.offset(this_node as isize)).black_minimax_score =
+                    (*g_book.node.offset(this_node as isize)).black_minimax_score =
                         outcome as i16;
-                    (*node.offset(this_node as isize)).white_minimax_score =
+                    (*g_book.node.offset(this_node as isize)).white_minimax_score =
                         outcome as i16;
                     if outcome > 0 as i32 {
                         let ref mut fresh33 =
-                            (*node.offset(this_node as
+                            (*g_book.node.offset(this_node as
                                               isize)).black_minimax_score;
                         *fresh33 =
                             (*fresh33 as i32 + 30000 as i32)
                                 as i16;
                         let ref mut fresh34 =
-                            (*node.offset(this_node as
+                            (*g_book.node.offset(this_node as
                                               isize)).white_minimax_score;
                         *fresh34 =
                             (*fresh34 as i32 + 30000 as i32)
@@ -729,27 +729,27 @@ pub unsafe fn add_new_game(move_count_0: i32,
                     }
                     if outcome < 0 as i32 {
                         let ref mut fresh35 =
-                            (*node.offset(this_node as
+                            (*g_book.node.offset(this_node as
                                               isize)).black_minimax_score;
                         *fresh35 =
                             (*fresh35 as i32 - 30000 as i32)
                                 as i16;
                         let ref mut fresh36 =
-                            (*node.offset(this_node as
+                            (*g_book.node.offset(this_node as
                                               isize)).white_minimax_score;
                         *fresh36 =
                             (*fresh36 as i32 - 30000 as i32)
                                 as i16
                     }
                     let ref mut fresh37 =
-                        (*node.offset(this_node as isize)).flags;
+                        (*g_book.node.offset(this_node as isize)).flags;
                     *fresh37 =
                         (*fresh37 as i32 | 16 as i32) as
                             u16
                 }
             } else if disks_played >= 60 as i32 - max_wld_solve {
                 /* Only solve the position if its WLD status is unknown */
-                if (*node.offset(this_node as isize)).flags as i32 &
+                if (*g_book.node.offset(this_node as isize)).flags as i32 &
                        4 as i32 == 0 {
                    end_game::<FE>(side_to_move, 1 as i32, 0 as i32,
                              1 as i32, 0 as i32,
@@ -757,19 +757,19 @@ pub unsafe fn add_new_game(move_count_0: i32,
                     if side_to_move == 0 as i32 {
                         outcome = root_eval
                     } else { outcome = -root_eval }
-                    (*node.offset(this_node as isize)).black_minimax_score =
+                    (*g_book.node.offset(this_node as isize)).black_minimax_score =
                         outcome as i16;
-                    (*node.offset(this_node as isize)).white_minimax_score =
+                    (*g_book.node.offset(this_node as isize)).white_minimax_score =
                         outcome as i16;
                     if outcome > 0 as i32 {
                         let ref mut fresh38 =
-                            (*node.offset(this_node as
+                            (*g_book.node.offset(this_node as
                                               isize)).black_minimax_score;
                         *fresh38 =
                             (*fresh38 as i32 + 30000 as i32)
                                 as i16;
                         let ref mut fresh39 =
-                            (*node.offset(this_node as
+                            (*g_book.node.offset(this_node as
                                               isize)).white_minimax_score;
                         *fresh39 =
                             (*fresh39 as i32 + 30000 as i32)
@@ -777,20 +777,20 @@ pub unsafe fn add_new_game(move_count_0: i32,
                     }
                     if outcome < 0 as i32 {
                         let ref mut fresh40 =
-                            (*node.offset(this_node as
+                            (*g_book.node.offset(this_node as
                                               isize)).black_minimax_score;
                         *fresh40 =
                             (*fresh40 as i32 - 30000 as i32)
                                 as i16;
                         let ref mut fresh41 =
-                            (*node.offset(this_node as
+                            (*g_book.node.offset(this_node as
                                               isize)).white_minimax_score;
                         *fresh41 =
                             (*fresh41 as i32 - 30000 as i32)
                                 as i16
                     }
                     let ref mut fresh42 =
-                        (*node.offset(this_node as isize)).flags;
+                        (*g_book.node.offset(this_node as isize)).flags;
                     *fresh42 =
                         (*fresh42 as i32 | 4 as i32) as
                             u16
@@ -798,7 +798,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
             } else {
                 force_eval =
                     (i >= first_new_node - 1 as i32 ||
-                         (*node.offset(this_node as
+                         (*g_book.node.offset(this_node as
                                            isize)).best_alternative_move as
                              i32 ==
                              abs(*game_move_list.offset(i as isize) as
@@ -814,19 +814,19 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 printf(b"|\x00" as *const u8 as *const i8);
                 fflush(stdout);
             }
-            let ref mut fresh43 = (*node.offset(this_node as isize)).flags;
+            let ref mut fresh43 = (*g_book.node.offset(this_node as isize)).flags;
             *fresh43 =
                 (*fresh43 as i32 | 8 as i32) as
                     u16;
             do_minimax(this_node, &mut dummy_black_score,
                        &mut dummy_white_score);
-            if (*node.offset(this_node as isize)).flags as i32 &
+            if (*g_book.node.offset(this_node as isize)).flags as i32 &
                    4 as i32 == 0 &&
-                   (*node.offset(this_node as isize)).best_alternative_move as
+                   (*g_book.node.offset(this_node as isize)).best_alternative_move as
                        i32 == -(1 as i32) &&
-                   (*node.offset(this_node as isize)).alternative_score as
+                   (*g_book.node.offset(this_node as isize)).alternative_score as
                        i32 == 9999 as i32 {
-                /* Minimax discovered that the node hasn't got a deviation any
+                /* Minimax discovered that the g_book.node hasn't got a deviation any
                    longer because that move has been played. */
                 evaluate_node::<FE>(this_node);
                 printf(b"-|-\x00" as *const u8 as *const i8);
@@ -838,7 +838,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
         puts(b"\x00" as *const u8 as *const i8);
     }
     echo = stored_echo;
-    total_game_count += 1;
+    g_book.total_game_count += 1;
 }
 /*
    BUILD_TREE
@@ -973,20 +973,20 @@ pub unsafe fn read_text_database(file_name:
         fscanf(stream,
                b"%d %d %hd %hd %hd %hd %hd\n\x00" as *const u8 as
                    *const i8,
-               &mut (*node.offset(i as isize)).hash_val1 as *mut i32,
-               &mut (*node.offset(i as isize)).hash_val2 as *mut i32,
-               &mut (*node.offset(i as isize)).black_minimax_score as
+               &mut (*g_book.node.offset(i as isize)).hash_val1 as *mut i32,
+               &mut (*g_book.node.offset(i as isize)).hash_val2 as *mut i32,
+               &mut (*g_book.node.offset(i as isize)).black_minimax_score as
                    *mut i16,
-               &mut (*node.offset(i as isize)).white_minimax_score as
+               &mut (*g_book.node.offset(i as isize)).white_minimax_score as
                    *mut i16,
-               &mut (*node.offset(i as isize)).best_alternative_move as
+               &mut (*g_book.node.offset(i as isize)).best_alternative_move as
                    *mut i16,
-               &mut (*node.offset(i as isize)).alternative_score as
+               &mut (*g_book.node.offset(i as isize)).alternative_score as
                    *mut i16,
-               &mut (*node.offset(i as isize)).flags as *mut u16);
+               &mut (*g_book.node.offset(i as isize)).flags as *mut u16);
         i += 1
     }
-    book_node_count = new_book_node_count;
+    g_book.book_node_count = new_book_node_count;
     create_hash_reference();
     fclose(stream);
     time(&mut stop_time);
@@ -1035,38 +1035,38 @@ pub unsafe fn read_binary_database(file_name: *const i8) {
     set_allocation(new_book_node_count + 1000 as i32);
     i = 0;
     while i < new_book_node_count {
-        fread(&mut (*node.offset(i as isize)).hash_val1 as *mut i32 as
+        fread(&mut (*g_book.node.offset(i as isize)).hash_val1 as *mut i32 as
                   *mut std::ffi::c_void,
               ::std::mem::size_of::<i32>() as u64,
               1 as i32 as size_t, stream);
-        fread(&mut (*node.offset(i as isize)).hash_val2 as *mut i32 as
+        fread(&mut (*g_book.node.offset(i as isize)).hash_val2 as *mut i32 as
                   *mut std::ffi::c_void,
               ::std::mem::size_of::<i32>() as u64,
               1 as i32 as size_t, stream);
-        fread(&mut (*node.offset(i as isize)).black_minimax_score as
+        fread(&mut (*g_book.node.offset(i as isize)).black_minimax_score as
                   *mut i16 as *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
-        fread(&mut (*node.offset(i as isize)).white_minimax_score as
+        fread(&mut (*g_book.node.offset(i as isize)).white_minimax_score as
                   *mut i16 as *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
-        fread(&mut (*node.offset(i as isize)).best_alternative_move as
+        fread(&mut (*g_book.node.offset(i as isize)).best_alternative_move as
                   *mut i16 as *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
-        fread(&mut (*node.offset(i as isize)).alternative_score as
+        fread(&mut (*g_book.node.offset(i as isize)).alternative_score as
                   *mut i16 as *mut std::ffi::c_void,
               ::std::mem::size_of::<i16>() as u64,
               1 as i32 as size_t, stream);
-        fread(&mut (*node.offset(i as isize)).flags as *mut u16 as
+        fread(&mut (*g_book.node.offset(i as isize)).flags as *mut u16 as
                   *mut std::ffi::c_void,
               ::std::mem::size_of::<u16>() as u64,
               1 as i32 as size_t, stream);
         i += 1
     }
     fclose(stream);
-    book_node_count = new_book_node_count;
+    g_book.book_node_count = new_book_node_count;
     create_hash_reference();
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
@@ -1121,7 +1121,7 @@ pub unsafe fn merge_binary_database(file_name:
                      best_alternative_move: 0,
                      alternative_score: 0,
                      flags: 0,};
-        /* Read node. */
+        /* Read g_book.node. */
         fread(&mut merge_node.hash_val1 as *mut i32 as
                   *mut std::ffi::c_void,
               ::std::mem::size_of::<i32>() as u64,
@@ -1150,28 +1150,28 @@ pub unsafe fn merge_binary_database(file_name:
                   *mut std::ffi::c_void,
               ::std::mem::size_of::<u16>() as u64,
               1 as i32 as size_t, stream);
-        /* Look up node in existing database. */
+        /* Look up g_book.node in existing database. */
         let slot =
             probe_hash_table(merge_node.hash_val1, merge_node.hash_val2);
         if slot == -(1 as i32) ||
-               *book_hash_table.offset(slot as isize) == -(1 as i32) {
+               *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
             /* New position, add it without modifications. */
             let this_node =
                 create_BookNode(merge_node.hash_val1, merge_node.hash_val2,
                                 merge_node.flags);
-            *node.offset(this_node as isize) = merge_node;
+            *g_book.node.offset(this_node as isize) = merge_node;
             merge_use_count += 1
         } else {
             /* Existing position, use the book from the merge file if it contains
             better endgame information. */
-            let index = *book_hash_table.offset(slot as isize);
+            let index = *g_book.book_hash_table.offset(slot as isize);
             if merge_node.flags as i32 & 16 as i32 != 0 &&
-                   (*node.offset(index as isize)).flags as i32 &
+                   (*g_book.node.offset(index as isize)).flags as i32 &
                        16 as i32 == 0 ||
                    merge_node.flags as i32 & 4 as i32 != 0 &&
-                       (*node.offset(index as isize)).flags as i32 &
+                       (*g_book.node.offset(index as isize)).flags as i32 &
                            4 as i32 == 0 {
-                *node.offset(index as isize) = merge_node;
+                *g_book.node.offset(index as isize) = merge_node;
                 merge_use_count += 1
             }
         }
@@ -1208,19 +1208,19 @@ pub unsafe fn write_text_database(file_name:
     fprintf(stream, b"%d\n%d\n\x00" as *const u8 as *const i8,
             2718 as i32, 2818 as i32);
     fprintf(stream, b"%d\n\x00" as *const u8 as *const i8,
-            book_node_count);
+            g_book.book_node_count);
     let mut i = 0;
-    while i < book_node_count {
+    while i < g_book.book_node_count {
         fprintf(stream,
                 b"%d %d %d %d %d %d %d\n\x00" as *const u8 as
-                    *const i8, (*node.offset(i as isize)).hash_val1,
-                (*node.offset(i as isize)).hash_val2,
-                (*node.offset(i as isize)).black_minimax_score as i32,
-                (*node.offset(i as isize)).white_minimax_score as i32,
-                (*node.offset(i as isize)).best_alternative_move as
+                    *const i8, (*g_book.node.offset(i as isize)).hash_val1,
+                (*g_book.node.offset(i as isize)).hash_val2,
+                (*g_book.node.offset(i as isize)).black_minimax_score as i32,
+                (*g_book.node.offset(i as isize)).white_minimax_score as i32,
+                (*g_book.node.offset(i as isize)).best_alternative_move as
                     i32,
-                (*node.offset(i as isize)).alternative_score as i32,
-                (*node.offset(i as isize)).flags as i32);
+                (*g_book.node.offset(i as isize)).alternative_score as i32,
+                (*g_book.node.offset(i as isize)).flags as i32);
         i += 1
     }
     fclose(stream);
@@ -1255,36 +1255,36 @@ pub unsafe fn write_binary_database(file_name:
     fwrite(&mut magic as *mut i16 as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            1 as i32 as size_t, stream);
-    fwrite(&mut book_node_count as *mut i32 as *const std::ffi::c_void,
+    fwrite(&mut g_book.book_node_count as *mut i32 as *const std::ffi::c_void,
            ::std::mem::size_of::<i32>() as u64,
            1 as i32 as size_t, stream);
     let mut i = 0;
-    while i < book_node_count {
-        fwrite(&mut (*node.offset(i as isize)).hash_val1 as *mut i32
+    while i < g_book.book_node_count {
+        fwrite(&mut (*g_book.node.offset(i as isize)).hash_val1 as *mut i32
                    as *const std::ffi::c_void,
                ::std::mem::size_of::<i32>() as u64,
                1 as i32 as size_t, stream);
-        fwrite(&mut (*node.offset(i as isize)).hash_val2 as *mut i32
+        fwrite(&mut (*g_book.node.offset(i as isize)).hash_val2 as *mut i32
                    as *const std::ffi::c_void,
                ::std::mem::size_of::<i32>() as u64,
                1 as i32 as size_t, stream);
-        fwrite(&mut (*node.offset(i as isize)).black_minimax_score as
+        fwrite(&mut (*g_book.node.offset(i as isize)).black_minimax_score as
                    *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
-        fwrite(&mut (*node.offset(i as isize)).white_minimax_score as
+        fwrite(&mut (*g_book.node.offset(i as isize)).white_minimax_score as
                    *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
-        fwrite(&mut (*node.offset(i as isize)).best_alternative_move as
+        fwrite(&mut (*g_book.node.offset(i as isize)).best_alternative_move as
                    *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
-        fwrite(&mut (*node.offset(i as isize)).alternative_score as
+        fwrite(&mut (*g_book.node.offset(i as isize)).alternative_score as
                    *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
-        fwrite(&mut (*node.offset(i as isize)).flags as *mut u16 as
+        fwrite(&mut (*g_book.node.offset(i as isize)).flags as *mut u16 as
                    *const std::ffi::c_void,
                ::std::mem::size_of::<u16>() as u64,
                1 as i32 as size_t, stream);
@@ -1317,23 +1317,23 @@ pub unsafe fn write_compressed_database(file_name:
     }
     prepare_tree_traversal();
     let node_order =
-        safe_malloc((book_node_count as
+        safe_malloc((g_book.book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i32>()
                                                          as u64)) as
             *mut i32;
     let child_count =
-        safe_malloc((book_node_count as
+        safe_malloc((g_book.book_node_count as
                          u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                          as u64)) as
             *mut i16;
     let child =
-        malloc((book_node_count as
+        malloc((g_book.book_node_count as
                     u64).wrapping_mul(::std::mem::size_of::<i16>()
                                                     as u64)) as
             *mut i16;
     let mut i = 0;
-    while i < book_node_count {
-        let ref mut fresh45 = (*node.offset(i as isize)).flags;
+    while i < g_book.book_node_count {
+        let ref mut fresh45 = (*g_book.node.offset(i as isize)).flags;
         *fresh45 =
             (*fresh45 as i32 | 8 as i32) as u16;
         i += 1
@@ -1342,7 +1342,7 @@ pub unsafe fn write_compressed_database(file_name:
     let mut child_index = 0;
     do_compress(0 as i32, node_order, child_count, &mut node_index,
                 child, &mut child_index);
-    fwrite(&mut book_node_count as *mut i32 as *const std::ffi::c_void,
+    fwrite(&mut g_book.book_node_count as *mut i32 as *const std::ffi::c_void,
            ::std::mem::size_of::<i32>() as u64,
            1 as i32 as size_t, stream);
     fwrite(&mut child_index as *mut i32 as *const std::ffi::c_void,
@@ -1350,18 +1350,18 @@ pub unsafe fn write_compressed_database(file_name:
            1 as i32 as size_t, stream);
     fwrite(child_count as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
-           book_node_count as size_t, stream);
+           g_book.book_node_count as size_t, stream);
     fwrite(child as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
            child_index as size_t, stream);
     i = 0;
-    while i < book_node_count {
-        fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
+    while i < g_book.book_node_count {
+        fwrite(&mut (*g_book.node.offset(*node_order.offset(i as isize) as
                                       isize)).black_minimax_score as
                    *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
                1 as i32 as size_t, stream);
-        fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
+        fwrite(&mut (*g_book.node.offset(*node_order.offset(i as isize) as
                                       isize)).white_minimax_score as
                    *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
@@ -1369,8 +1369,8 @@ pub unsafe fn write_compressed_database(file_name:
         i += 1
     }
     i = 0;
-    while i < book_node_count {
-        fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
+    while i < g_book.book_node_count {
+        fwrite(&mut (*g_book.node.offset(*node_order.offset(i as isize) as
                                       isize)).best_alternative_move as
                    *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
@@ -1378,8 +1378,8 @@ pub unsafe fn write_compressed_database(file_name:
         i += 1
     }
     i = 0;
-    while i < book_node_count {
-        fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
+    while i < g_book.book_node_count {
+        fwrite(&mut (*g_book.node.offset(*node_order.offset(i as isize) as
                                       isize)).alternative_score as
                    *mut i16 as *const std::ffi::c_void,
                ::std::mem::size_of::<i16>() as u64,
@@ -1387,8 +1387,8 @@ pub unsafe fn write_compressed_database(file_name:
         i += 1
     }
     i = 0;
-    while i < book_node_count {
-        fwrite(&mut (*node.offset(*node_order.offset(i as isize) as
+    while i < g_book.book_node_count {
+        fwrite(&mut (*g_book.node.offset(*node_order.offset(i as isize) as
                                       isize)).flags as *mut u16 as
                    *const std::ffi::c_void,
                ::std::mem::size_of::<u16>() as u64,
@@ -1406,7 +1406,7 @@ pub unsafe fn write_compressed_database(file_name:
 }
 /*
   DO_UNCOMPRESS
-  Uncompress the subtree below the current node. This is done
+  Uncompress the subtree below the current g_book.node. This is done
   in preorder.
 */
 unsafe fn do_uncompress(depth: i32,
@@ -1826,10 +1826,10 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                     score -= 30000 as i32
                 }
             }
-            /* Set the score for the node corresponding to the position */
+            /* Set the score for the g_book.node corresponding to the position */
             get_hash(&mut val1, &mut val2, &mut orientation);
             slot = probe_hash_table(val1, val2);
-            index = *book_hash_table.offset(slot as isize);
+            index = *g_book.book_hash_table.offset(slot as isize);
             if index == -(1 as i32) {
                 fprintf(stderr,
                         b"Position on line %d not found in book\n\x00" as
@@ -1837,73 +1837,73 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                 exit(0 as i32);
             }
             probable_error = 0;
-            if (*node.offset(index as isize)).flags as i32 &
+            if (*g_book.node.offset(index as isize)).flags as i32 &
                    4 as i32 != 0 {
                 already_wld_count += 1;
                 if score > 0 as i32 &&
-                       (*node.offset(index as isize)).black_minimax_score as
+                       (*g_book.node.offset(index as isize)).black_minimax_score as
                            i32 <= 0 as i32 ||
                        score == 0 as i32 &&
-                           (*node.offset(index as isize)).black_minimax_score
+                           (*g_book.node.offset(index as isize)).black_minimax_score
                                as i32 != 0 as i32 ||
                        score < 0 as i32 &&
-                           (*node.offset(index as isize)).black_minimax_score
+                           (*g_book.node.offset(index as isize)).black_minimax_score
                                as i32 > 0 as i32 {
                     probable_error = 1;
                     fprintf(stderr,
                             b"Line %d: New WLD score %d conflicts with old score %d\n\x00"
                                 as *const u8 as *const i8, line,
                             score,
-                            (*node.offset(index as isize)).black_minimax_score
+                            (*g_book.node.offset(index as isize)).black_minimax_score
                                 as i32);
                 }
             }
-            if (*node.offset(index as isize)).flags as i32 &
+            if (*g_book.node.offset(index as isize)).flags as i32 &
                    16 as i32 != 0 {
                 already_exact_count += 1;
                 if wld_only == 0 &&
                        score !=
-                           (*node.offset(index as isize)).black_minimax_score
+                           (*g_book.node.offset(index as isize)).black_minimax_score
                                as i32 {
                     probable_error = 1;
                     fprintf(stderr,
                             b"Line %d: New exact score %d conflicts with old score %d\n\x00"
                                 as *const u8 as *const i8, line,
                             score,
-                            (*node.offset(index as isize)).black_minimax_score
+                            (*g_book.node.offset(index as isize)).black_minimax_score
                                 as i32);
                 }
             }
             if probable_error != 0 || wld_only == 0 ||
-                   (*node.offset(index as isize)).flags as i32 &
+                   (*g_book.node.offset(index as isize)).flags as i32 &
                        16 as i32 == 0 {
                 let ref mut fresh46 =
-                    (*node.offset(index as isize)).white_minimax_score;
+                    (*g_book.node.offset(index as isize)).white_minimax_score;
                 *fresh46 = score as i16;
-                (*node.offset(index as isize)).black_minimax_score = *fresh46
+                (*g_book.node.offset(index as isize)).black_minimax_score = *fresh46
             }
             if probable_error != 0 {
                 /* Clear the old flags if score was wrong */
-                let ref mut fresh47 = (*node.offset(index as isize)).flags;
+                let ref mut fresh47 = (*g_book.node.offset(index as isize)).flags;
                 *fresh47 =
                     (*fresh47 as i32 &
                          !(4 as i32 | 16 as i32)) as
                         u16
             }
             if wld_only != 0 {
-                let ref mut fresh48 = (*node.offset(index as isize)).flags;
+                let ref mut fresh48 = (*g_book.node.offset(index as isize)).flags;
                 *fresh48 =
                     (*fresh48 as i32 | 4 as i32) as
                         u16
             } else {
-                let ref mut fresh49 = (*node.offset(index as isize)).flags;
+                let ref mut fresh49 = (*g_book.node.offset(index as isize)).flags;
                 *fresh49 =
                     (*fresh49 as i32 |
                          (4 as i32 | 16 as i32)) as
                         u16
             }
             /* Examine the position arising from the PV move; if it exists it
-            need only be checked for sanity, otherwise a new node is
+            need only be checked for sanity, otherwise a new g_book.node is
              created. */
             if moves_read > 0 as i32 {
                 /* Make sure the optimal move leads to a position in the hash table */
@@ -1927,40 +1927,40 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                     }
                     get_hash(&mut val1, &mut val2, &mut orientation);
                     slot = probe_hash_table(val1, val2);
-                    index = *book_hash_table.offset(slot as isize);
+                    index = *g_book.book_hash_table.offset(slot as isize);
                     if index == -(1 as i32) {
                         index =
                             create_BookNode(val1, val2,
                                             32 as i32 as
                                                 u16);
                         let ref mut fresh50 =
-                            (*node.offset(index as
+                            (*g_book.node.offset(index as
                                               isize)).white_minimax_score;
                         *fresh50 = score as i16;
-                        (*node.offset(index as isize)).black_minimax_score =
+                        (*g_book.node.offset(index as isize)).black_minimax_score =
                             *fresh50;
                         if new_side_to_move == 0 as i32 {
                             let ref mut fresh51 =
-                                (*node.offset(index as isize)).flags;
+                                (*g_book.node.offset(index as isize)).flags;
                             *fresh51 =
                                 (*fresh51 as i32 | 1 as i32)
                                     as u16
                         } else {
                             let ref mut fresh52 =
-                                (*node.offset(index as isize)).flags;
+                                (*g_book.node.offset(index as isize)).flags;
                             *fresh52 =
                                 (*fresh52 as i32 | 2 as i32)
                                     as u16
                         }
                         if wld_only != 0 {
                             let ref mut fresh53 =
-                                (*node.offset(index as isize)).flags;
+                                (*g_book.node.offset(index as isize)).flags;
                             *fresh53 =
                                 (*fresh53 as i32 | 4 as i32)
                                     as u16
                         } else {
                             let ref mut fresh54 =
-                                (*node.offset(index as isize)).flags;
+                                (*g_book.node.offset(index as isize)).flags;
                             *fresh54 =
                                 (*fresh54 as i32 |
                                      (4 as i32 | 16 as i32))
@@ -1970,19 +1970,19 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                     } else {
                         /* Position already exists, sanity-check it */
                         probable_error = 0;
-                        if (*node.offset(index as isize)).flags as i32
+                        if (*g_book.node.offset(index as isize)).flags as i32
                                & 4 as i32 != 0 {
                             if score > 0 as i32 &&
-                                   (*node.offset(index as
+                                   (*g_book.node.offset(index as
                                                      isize)).black_minimax_score
                                        as i32 <= 0 as i32 ||
                                    score == 0 as i32 &&
-                                       (*node.offset(index as
+                                       (*g_book.node.offset(index as
                                                          isize)).black_minimax_score
                                            as i32 != 0 as i32
                                    ||
                                    score < 0 as i32 &&
-                                       (*node.offset(index as
+                                       (*g_book.node.offset(index as
                                                          isize)).black_minimax_score
                                            as i32 > 0 as i32 {
                                 probable_error = 1;
@@ -1990,16 +1990,16 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                                         b"Line %d: New child WLD score %d conflicts with old score %d\n\x00"
                                             as *const u8 as
                                             *const i8, line, score,
-                                        (*node.offset(index as
+                                        (*g_book.node.offset(index as
                                                           isize)).black_minimax_score
                                             as i32);
                             }
                         }
-                        if (*node.offset(index as isize)).flags as i32
+                        if (*g_book.node.offset(index as isize)).flags as i32
                                & 16 as i32 != 0 {
                             if wld_only == 0 &&
                                    score !=
-                                       (*node.offset(index as
+                                       (*g_book.node.offset(index as
                                                          isize)).black_minimax_score
                                            as i32 {
                                 probable_error = 1;
@@ -2007,7 +2007,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                                         b"Line %d: New child exact score %d conflicts with old score %d\n\x00"
                                             as *const u8 as
                                             *const i8, line, score,
-                                        (*node.offset(index as
+                                        (*g_book.node.offset(index as
                                                           isize)).black_minimax_score
                                             as i32);
                             }
@@ -2015,26 +2015,26 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                         if probable_error != 0 {
                             /* Correct errors encountered */
                             let ref mut fresh55 =
-                                (*node.offset(index as
+                                (*g_book.node.offset(index as
                                                   isize)).white_minimax_score;
                             *fresh55 = score as i16;
-                            (*node.offset(index as isize)).black_minimax_score
+                            (*g_book.node.offset(index as isize)).black_minimax_score
                                 = *fresh55;
                             let ref mut fresh56 =
-                                (*node.offset(index as isize)).flags;
+                                (*g_book.node.offset(index as isize)).flags;
                             *fresh56 =
                                 (*fresh56 as i32 &
                                      !(4 as i32 | 16 as i32))
                                     as u16;
                             if wld_only != 0 {
                                 let ref mut fresh57 =
-                                    (*node.offset(index as isize)).flags;
+                                    (*g_book.node.offset(index as isize)).flags;
                                 *fresh57 =
                                     (*fresh57 as i32 |
                                          4 as i32) as u16
                             } else {
                                 let ref mut fresh58 =
-                                    (*node.offset(index as isize)).flags;
+                                    (*g_book.node.offset(index as isize)).flags;
                                 *fresh58 =
                                     (*fresh58 as i32 |
                                          (4 as i32 |
@@ -2101,7 +2101,7 @@ pub unsafe fn print_move_alternatives(side_to_move:
     let mut orientation: i32 = 0;
     let mut score: i32 = 0;
     let mut output_score: i32 = 0;
-    if candidate_count > 0 as i32 {
+    if g_book.candidate_count > 0 as i32 {
         if side_to_move == 0 as i32 {
             sign = 1 as i32
         } else { sign = -(1 as i32) }
@@ -2109,18 +2109,18 @@ pub unsafe fn print_move_alternatives(side_to_move:
         slot = probe_hash_table(val1, val2);
         /* Check that the position is in the opening book after all */
         if slot == -(1 as i32) ||
-               *book_hash_table.offset(slot as isize) == -(1 as i32) {
+               *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
             return
         }
         /* Pick the book score corresponding to the player to move and
            remove draw avoidance and the special scores for nodes WLD. */
         if side_to_move == 0 as i32 {
             score =
-                (*node.offset(*book_hash_table.offset(slot as isize) as
+                (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
                                   isize)).black_minimax_score as i32
         } else {
             score =
-                (*node.offset(*book_hash_table.offset(slot as isize) as
+                (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
                                   isize)).white_minimax_score as i32
         }
         if score == 30000 as i32 - 1 as i32 ||
@@ -2130,12 +2130,12 @@ pub unsafe fn print_move_alternatives(side_to_move:
         if score > 30000 as i32 { score -= 30000 as i32 }
         if score < -(30000 as i32) { score += 30000 as i32 }
         printf(b"Book score is \x00" as *const u8 as *const i8);
-        if (*node.offset(*book_hash_table.offset(slot as isize) as
+        if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
                              isize)).flags as i32 & 16 as i32
                != 0 {
             printf(b"%+d (exact score).\x00" as *const u8 as
                        *const i8, sign * score);
-        } else if (*node.offset(*book_hash_table.offset(slot as isize) as
+        } else if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
                                     isize)).flags as i32 &
                       4 as i32 != 0 {
             printf(b"%+d (W/L/D solved).\x00" as *const u8 as
@@ -2144,37 +2144,37 @@ pub unsafe fn print_move_alternatives(side_to_move:
             printf(b"%+.2f.\x00" as *const u8 as *const i8,
                    (sign * score) as f64 / 128.0f64);
         }
-        if (*node.offset(*book_hash_table.offset(slot as isize) as
+        if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
                              isize)).flags as i32 & 32 as i32
                != 0 {
-            printf(b" Private node.\x00" as *const u8 as *const i8);
+            printf(b" Private g_book.node.\x00" as *const u8 as *const i8);
         }
         puts(b"\x00" as *const u8 as *const i8);
         i = 0;
-        while i < candidate_count {
+        while i < g_book.candidate_count {
             printf(b"   %c%c   \x00" as *const u8 as *const i8,
                    'a' as i32 +
-                       candidate_list[i as usize].move_0 % 10 as i32 -
+                       g_book.candidate_list[i as usize].move_0 % 10 as i32 -
                        1 as i32,
                    '0' as i32 +
-                       candidate_list[i as usize].move_0 / 10 as i32);
-            output_score = candidate_list[i as usize].score;
+                       g_book.candidate_list[i as usize].move_0 / 10 as i32);
+            output_score = g_book.candidate_list[i as usize].score;
             if output_score >= 30000 as i32 {
                 output_score -= 30000 as i32
             } else if output_score <= -(30000 as i32) {
                 output_score += 30000 as i32
             }
-            if candidate_list[i as usize].flags & 16 as i32 != 0 {
+            if g_book.candidate_list[i as usize].flags & 16 as i32 != 0 {
                 printf(b"%+-6d  (exact score)\x00" as *const u8 as
                            *const i8, output_score);
-            } else if candidate_list[i as usize].flags & 4 as i32 != 0
+            } else if g_book.candidate_list[i as usize].flags & 4 as i32 != 0
              {
                 printf(b"%+-6d  (W/L/D solved)\x00" as *const u8 as
                            *const i8, output_score);
             } else {
                 printf(b"%+-6.2f\x00" as *const u8 as *const i8,
                        output_score as f64 / 128.0f64);
-                if candidate_list[i as usize].flags & 64 as i32 != 0 {
+                if g_book.candidate_list[i as usize].flags & 64 as i32 != 0 {
                     printf(b"  (deviation)\x00" as *const u8 as
                                *const i8);
                 }
@@ -2431,7 +2431,7 @@ pub struct StatisticsSpec {
     pub max_diff: i32,
     pub max_depth: i32,
 }
-static mut correction_script_name: *const i8 = 0 as *const i8;
+
 /*
   EXPORT_POSITION
   Output the position and its value according to the database
@@ -2482,7 +2482,7 @@ unsafe fn export_position(side_to_move: i32,
 }
 /*
    DO_RESTRICTED_MINIMAX
-   Calculates the book-only minimax value of node INDEX,
+   Calculates the book-only minimax value of g_book.node INDEX,
    not caring about deviations from the database.
 */
 unsafe fn do_restricted_minimax(index: i32,
@@ -2502,12 +2502,12 @@ unsafe fn do_restricted_minimax(index: i32,
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
     let mut best_score: i16 = 0;
-    if (*node.offset(index as isize)).flags as i32 & 8 as i32
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
         == 0 {
         return
     }
-    /* Recursively minimax all children of the node */
-    if (*node.offset(index as isize)).flags as i32 & 1 as i32
+    /* Recursively minimax all children of the g_book.node */
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
@@ -2526,7 +2526,7 @@ unsafe fn do_restricted_minimax(index: i32,
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
         slot = probe_hash_table(val1, val2);
-        child = *book_hash_table.offset(slot as isize);
+        child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
             do_restricted_minimax(child, low, high, target_file,
                                   minimax_values);
@@ -2542,11 +2542,11 @@ unsafe fn do_restricted_minimax(index: i32,
         unmake_move(side_to_move, this_move);
         i += 1
     }
-    if (*node.offset(index as isize)).flags as i32 & 16 as i32
+    if (*g_book.node.offset(index as isize)).flags as i32 & 16 as i32
         != 0 ||
-        (*node.offset(index as isize)).flags as i32 &
+        (*g_book.node.offset(index as isize)).flags as i32 &
             4 as i32 != 0 && child_count == 0 as i32 {
-        best_score = (*node.offset(index as isize)).black_minimax_score
+        best_score = (*g_book.node.offset(index as isize)).black_minimax_score
     } else if child_count == 0 as i32 {
         printf(b"%d disks played\n\x00" as *const u8 as *const i8,
                disks_played);
@@ -2564,7 +2564,7 @@ unsafe fn do_restricted_minimax(index: i32,
                 i16
     }
     *minimax_values.offset(index as isize) = best_score as i32;
-    let ref mut fresh16 = (*node.offset(index as isize)).flags;
+    let ref mut fresh16 = (*g_book.node.offset(index as isize)).flags;
     *fresh16 = (*fresh16 as i32 ^ 8 as i32) as u16;
     if disks_played >= low && disks_played <= high {
         export_position(side_to_move, best_score as i32, target_file);
@@ -2591,14 +2591,14 @@ pub unsafe fn restricted_minimax_tree(low: i32,
     time(&mut start_time);
     /* Mark all nodes as not traversed */
     i = 0;
-    while i < book_node_count {
-        let ref mut fresh17 = (*node.offset(i as isize)).flags;
+    while i < g_book.book_node_count {
+        let ref mut fresh17 = (*g_book.node.offset(i as isize)).flags;
         *fresh17 =
             (*fresh17 as i32 | 8 as i32) as u16;
         i += 1
     }
     minimax_values =
-        safe_malloc((book_node_count as
+        safe_malloc((g_book.book_node_count as
             u64).wrapping_mul(::std::mem::size_of::<i32>()
             as u64)) as
             *mut i32;
@@ -2637,11 +2637,11 @@ unsafe fn do_midgame_statistics(index: i32,
     let mut orientation: i32 = 0;
     let mut eval_list: [i32; 64] = [0; 64];
     let mut out_file: *mut FILE = 0 as *mut FILE;
-    if (*node.offset(index as isize)).flags as i32 & 8 as i32
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
         == 0 {
         return
     }
-    if (*node.offset(index as isize)).flags as i32 & 1 as i32
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
@@ -2650,7 +2650,7 @@ unsafe fn do_midgame_statistics(index: i32,
      of different depths in order to determine correlations. */
     if ((my_random() % 1000 as i32 as i64) as f64)
         < 1000.0f64 * spec.prob &&
-        abs((*node.offset(index as isize)).black_minimax_score as
+        abs((*g_book.node.offset(index as isize)).black_minimax_score as
             i32) < spec.max_diff {
         display_board(stdout, &board, 0 as i32,
                       0 as i32, 0 as i32, 0 as i32,
@@ -2708,21 +2708,21 @@ unsafe fn do_midgame_statistics(index: i32,
             fclose(out_file);
         }
     }
-    /* Recursively search the children of the node */
+    /* Recursively search the children of the g_book.node */
     i = 0;
     while i < move_count[disks_played as usize] {
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
         slot = probe_hash_table(val1, val2);
-        child = *book_hash_table.offset(slot as isize);
+        child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
             do_midgame_statistics(child, spec);
         }
         unmake_move(side_to_move, this_move);
         i += 1
     }
-    let ref mut fresh18 = (*node.offset(index as isize)).flags;
+    let ref mut fresh18 = (*g_book.node.offset(index as isize)).flags;
     *fresh18 = (*fresh18 as i32 ^ 8 as i32) as u16;
 }
 /*
@@ -2751,8 +2751,8 @@ pub unsafe fn generate_midgame_statistics(max_depth:
     toggle_abort_check(0 as i32);
     time(&mut start_time);
     i = 0;
-    while i < book_node_count {
-        let ref mut fresh19 = (*node.offset(i as isize)).flags;
+    while i < g_book.book_node_count {
+        let ref mut fresh19 = (*g_book.node.offset(i as isize)).flags;
         *fresh19 =
             (*fresh19 as i32 | 8 as i32) as u16;
         i += 1
@@ -2879,11 +2879,11 @@ unsafe fn do_endgame_statistics(index: i32,
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
-    if (*node.offset(index as isize)).flags as i32 & 8 as i32
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
         == 0 {
         return
     }
-    if (*node.offset(index as isize)).flags as i32 & 1 as i32
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
@@ -2912,21 +2912,21 @@ unsafe fn do_endgame_statistics(index: i32,
             }
         }
     }
-    /* Recursively search the children of the node */
+    /* Recursively search the children of the g_book.node */
     i = 0;
     while i < move_count[disks_played as usize] {
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
         slot = probe_hash_table(val1, val2);
-        child = *book_hash_table.offset(slot as isize);
+        child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
             do_endgame_statistics(child, spec);
         }
         unmake_move(side_to_move, this_move);
         i += 1
     }
-    let ref mut fresh20 = (*node.offset(index as isize)).flags;
+    let ref mut fresh20 = (*g_book.node.offset(index as isize)).flags;
     *fresh20 = (*fresh20 as i32 ^ 8 as i32) as u16;
 }
 /*
@@ -2955,8 +2955,8 @@ pub unsafe fn generate_endgame_statistics(max_depth:
     toggle_abort_check(0 as i32);
     time(&mut start_time);
     i = 0;
-    while i < book_node_count {
-        let ref mut fresh21 = (*node.offset(i as isize)).flags;
+    while i < g_book.book_node_count {
+        let ref mut fresh21 = (*g_book.node.offset(i as isize)).flags;
         *fresh21 =
             (*fresh21 as i32 | 8 as i32) as u16;
         i += 1
@@ -2989,28 +2989,28 @@ unsafe fn do_clear(index: i32, low: i32,
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
-    if (*node.offset(index as isize)).flags as i32 & 8 as i32
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
         == 0 {
         return
     }
     if disks_played >= low && disks_played <= high {
         if flags & 1 as i32 != 0 { clear_node_depth(index); }
-        if (*node.offset(index as isize)).flags as i32 &
+        if (*g_book.node.offset(index as isize)).flags as i32 &
             4 as i32 != 0 && flags & 2 as i32 != 0 {
-            let ref mut fresh27 = (*node.offset(index as isize)).flags;
+            let ref mut fresh27 = (*g_book.node.offset(index as isize)).flags;
             *fresh27 =
                 (*fresh27 as i32 ^ 4 as i32) as u16
         }
-        if (*node.offset(index as isize)).flags as i32 &
+        if (*g_book.node.offset(index as isize)).flags as i32 &
             16 as i32 != 0 && flags & 4 as i32 != 0 {
-            let ref mut fresh28 = (*node.offset(index as isize)).flags;
+            let ref mut fresh28 = (*g_book.node.offset(index as isize)).flags;
             *fresh28 =
                 (*fresh28 as i32 ^ 16 as i32) as
                     u16
         }
     }
     if disks_played <= high {
-        if (*node.offset(index as isize)).flags as i32 &
+        if (*g_book.node.offset(index as isize)).flags as i32 &
             1 as i32 != 0 {
             side_to_move = 0 as i32
         } else { side_to_move = 2 as i32 }
@@ -3021,7 +3021,7 @@ unsafe fn do_clear(index: i32, low: i32,
             make_move(side_to_move, this_move, 1 as i32);
             get_hash(&mut val1, &mut val2, &mut orientation);
             slot = probe_hash_table(val1, val2);
-            child = *book_hash_table.offset(slot as isize);
+            child = *g_book.book_hash_table.offset(slot as isize);
             if child != -(1 as i32) {
                 do_clear(child, low, high, flags);
             }
@@ -3029,7 +3029,7 @@ unsafe fn do_clear(index: i32, low: i32,
             i += 1
         }
     }
-    let ref mut fresh29 = (*node.offset(index as isize)).flags;
+    let ref mut fresh29 = (*g_book.node.offset(index as isize)).flags;
     *fresh29 = (*fresh29 as i32 ^ 8 as i32) as u16;
 }
 /*
@@ -3057,8 +3057,8 @@ pub unsafe fn clear_tree(low: i32,
     puts(b"\x00" as *const u8 as *const i8);
     time(&mut start_time);
     i = 0;
-    while i < book_node_count {
-        let ref mut fresh30 = (*node.offset(i as isize)).flags;
+    while i < g_book.book_node_count {
+        let ref mut fresh30 = (*g_book.node.offset(i as isize)).flags;
         *fresh30 =
             (*fresh30 as i32 | 8 as i32) as u16;
         i += 1
@@ -3071,7 +3071,7 @@ pub unsafe fn clear_tree(low: i32,
 }
 /*
    DO_CORRECT
-   Performs endgame correction (WLD or full solve) of a node
+   Performs endgame correction (WLD or full solve) of a g_book.node
    and (recursively) the subtree below it.
 */
 unsafe fn do_correct(index: i32,
@@ -3101,12 +3101,12 @@ unsafe fn do_correct(index: i32,
     let mut child_count: i32 = 0;
     let mut child_move: [i32; 64] = [0; 64];
     let mut child_node: [i32; 64] = [0; 64];
-    if evaluated_count >= max_eval_count { return }
-    if (*node.offset(index as isize)).flags as i32 & 8 as i32
+    if g_book.evaluated_count >= g_book.max_eval_count { return }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
         == 0 {
         return
     }
-    if (*node.offset(index as isize)).flags as i32 & 1 as i32
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
@@ -3119,7 +3119,7 @@ unsafe fn do_correct(index: i32,
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
         slot = probe_hash_table(val1, val2);
-        child = *book_hash_table.offset(slot as isize);
+        child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
             child_move[child_count as usize] = this_move;
             child_node[child_count as usize] = child;
@@ -3132,19 +3132,19 @@ unsafe fn do_correct(index: i32,
     i = 0;
     while i < child_count {
         if side_to_move == 0 as i32 {
-            if force_black != 0 &&
-                (*node.offset(child_node[i as usize] as
+            if g_book.force_black != 0 &&
+                (*g_book.node.offset(child_node[i as usize] as
                     isize)).black_minimax_score as
                     i32 !=
-                    (*node.offset(index as isize)).black_minimax_score as
+                    (*g_book.node.offset(index as isize)).black_minimax_score as
                         i32 {
                 current_block_29 = 14818589718467733107;
             } else { current_block_29 = 11913429853522160501; }
-        } else if force_white != 0 &&
-            (*node.offset(child_node[i as usize] as
+        } else if g_book.force_white != 0 &&
+            (*g_book.node.offset(child_node[i as usize] as
                 isize)).white_minimax_score as
                 i32 !=
-                (*node.offset(index as isize)).white_minimax_score
+                (*g_book.node.offset(index as isize)).white_minimax_score
                     as i32 {
             current_block_29 = 14818589718467733107;
         } else { current_block_29 = 11913429853522160501; }
@@ -3168,29 +3168,29 @@ unsafe fn do_correct(index: i32,
         }
         i += 1
     }
-    /* Then correct the node itself (hopefully exploiting lots
+    /* Then correct the g_book.node itself (hopefully exploiting lots
      of useful information in the hash table) */
     generate_all(side_to_move);
     determine_hash_values(side_to_move, &board);
     if disks_played >= 60 as i32 - max_empty {
         really_evaluate =
             (full_solve != 0 &&
-                (*node.offset(index as isize)).flags as i32 &
+                (*g_book.node.offset(index as isize)).flags as i32 &
                     16 as i32 == 0 ||
                 full_solve == 0 &&
-                    (*node.offset(index as isize)).flags as i32 &
+                    (*g_book.node.offset(index as isize)).flags as i32 &
                         (4 as i32 | 16 as i32) == 0) as
                 i32;
-        if abs((*node.offset(index as isize)).alternative_score as
-            i32) < min_eval_span ||
-            abs((*node.offset(index as isize)).alternative_score as
-                i32) > max_eval_span {
+        if abs((*g_book.node.offset(index as isize)).alternative_score as
+            i32) < g_book.min_eval_span ||
+            abs((*g_book.node.offset(index as isize)).alternative_score as
+                i32) > g_book.max_eval_span {
             really_evaluate = 0 as i32
         }
-        if abs((*node.offset(index as isize)).black_minimax_score as
-            i32) < min_negamax_span ||
-            abs((*node.offset(index as isize)).black_minimax_score as
-                i32) > max_negamax_span {
+        if abs((*g_book.node.offset(index as isize)).black_minimax_score as
+            i32) < g_book.min_negamax_span ||
+            abs((*g_book.node.offset(index as isize)).black_minimax_score as
+                i32) > g_book.max_negamax_span {
             really_evaluate = 0 as i32
         }
         if really_evaluate != 0 {
@@ -3204,42 +3204,42 @@ unsafe fn do_correct(index: i32,
                     outcome = root_eval
                 } else { outcome = -root_eval }
                 let ref mut fresh31 =
-                    (*node.offset(index as isize)).white_minimax_score;
+                    (*g_book.node.offset(index as isize)).white_minimax_score;
                 *fresh31 = outcome as i16;
-                (*node.offset(index as isize)).black_minimax_score = *fresh31;
+                (*g_book.node.offset(index as isize)).black_minimax_score = *fresh31;
                 if outcome > 0 as i32 {
                     let ref mut fresh32 =
-                        (*node.offset(index as isize)).black_minimax_score;
+                        (*g_book.node.offset(index as isize)).black_minimax_score;
                     *fresh32 =
                         (*fresh32 as i32 + 30000 as i32) as
                             i16;
                     let ref mut fresh33 =
-                        (*node.offset(index as isize)).white_minimax_score;
+                        (*g_book.node.offset(index as isize)).white_minimax_score;
                     *fresh33 =
                         (*fresh33 as i32 + 30000 as i32) as
                             i16
                 }
                 if outcome < 0 as i32 {
                     let ref mut fresh34 =
-                        (*node.offset(index as isize)).black_minimax_score;
+                        (*g_book.node.offset(index as isize)).black_minimax_score;
                     *fresh34 =
                         (*fresh34 as i32 - 30000 as i32) as
                             i16;
                     let ref mut fresh35 =
-                        (*node.offset(index as isize)).white_minimax_score;
+                        (*g_book.node.offset(index as isize)).white_minimax_score;
                     *fresh35 =
                         (*fresh35 as i32 - 30000 as i32) as
                             i16
                 }
                 if full_solve != 0 {
                     let ref mut fresh36 =
-                        (*node.offset(index as isize)).flags;
+                        (*g_book.node.offset(index as isize)).flags;
                     *fresh36 =
                         (*fresh36 as i32 | 16 as i32) as
                             u16
                 } else {
                     let ref mut fresh37 =
-                        (*node.offset(index as isize)).flags;
+                        (*g_book.node.offset(index as isize)).flags;
                     *fresh37 =
                         (*fresh37 as i32 | 4 as i32) as
                             u16
@@ -3284,21 +3284,21 @@ unsafe fn do_correct(index: i32,
                     fclose(target_file);
                 }
             }
-            evaluated_count += 1
+            g_book.evaluated_count += 1
         }
     }
-    if evaluated_count >=
-        (evaluation_stage + 1 as i32) * max_eval_count /
+    if g_book.evaluated_count >=
+        (g_book.evaluation_stage + 1 as i32) * g_book.max_eval_count /
             25 as i32 {
-        evaluation_stage += 1;
+        g_book.evaluation_stage += 1;
         putc('|' as i32, stdout);
-        if evaluation_stage % 5 as i32 == 0 as i32 {
+        if g_book.evaluation_stage % 5 as i32 == 0 as i32 {
             printf(b" %d%% \x00" as *const u8 as *const i8,
-                   4 as i32 * evaluation_stage);
+                   4 as i32 * g_book.evaluation_stage);
         }
         fflush(stdout);
     }
-    let ref mut fresh38 = (*node.offset(index as isize)).flags;
+    let ref mut fresh38 = (*g_book.node.offset(index as isize)).flags;
     *fresh38 = (*fresh38 as i32 ^ 8 as i32) as u16;
 }
 /*
@@ -3323,40 +3323,40 @@ pub unsafe fn correct_tree(max_empty: i32,
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     prepare_tree_traversal();
-    exhausted_node_count = 0;
-    evaluated_count = 0;
-    evaluation_stage = 0;
+    g_book.exhausted_node_count = 0;
+    g_book.evaluated_count = 0;
+    g_book.evaluation_stage = 0;
     time(&mut start_time);
     i = 0;
-    while i < book_node_count {
-        let ref mut fresh39 = (*node.offset(i as isize)).flags;
+    while i < g_book.book_node_count {
+        let ref mut fresh39 = (*g_book.node.offset(i as isize)).flags;
         *fresh39 =
             (*fresh39 as i32 | 8 as i32) as u16;
         i += 1
     }
     feasible_count = 0;
     i = 0;
-    while i < book_node_count {
-        let ref mut fresh40 = (*node.offset(i as isize)).flags;
+    while i < g_book.book_node_count {
+        let ref mut fresh40 = (*g_book.node.offset(i as isize)).flags;
         *fresh40 =
             (*fresh40 as i32 | 8 as i32) as u16;
         if get_node_depth(i) < max_empty &&
-            abs((*node.offset(i as isize)).alternative_score as
-                i32) >= min_eval_span &&
-            abs((*node.offset(i as isize)).alternative_score as
-                i32) <= max_eval_span &&
-            abs((*node.offset(i as isize)).black_minimax_score as
-                i32) >= min_negamax_span &&
-            abs((*node.offset(i as isize)).black_minimax_score as
-                i32) <= max_negamax_span {
+            abs((*g_book.node.offset(i as isize)).alternative_score as
+                i32) >= g_book.min_eval_span &&
+            abs((*g_book.node.offset(i as isize)).alternative_score as
+                i32) <= g_book.max_eval_span &&
+            abs((*g_book.node.offset(i as isize)).black_minimax_score as
+                i32) >= g_book.min_negamax_span &&
+            abs((*g_book.node.offset(i as isize)).black_minimax_score as
+                i32) <= g_book.max_negamax_span {
             feasible_count += 1
         }
         i += 1
     }
-    max_eval_count =
-        if feasible_count < max_batch_size {
+    g_book.max_eval_count =
+        if feasible_count < g_book.max_batch_size {
             feasible_count
-        } else { max_batch_size };
+        } else { g_book.max_batch_size };
     printf(b"Correcting <= %d empty \x00" as *const u8 as *const i8,
            max_empty);
     if full_solve != 0 {
@@ -3364,26 +3364,26 @@ pub unsafe fn correct_tree(max_empty: i32,
     } else {
         printf(b"(WLD solve). \x00" as *const u8 as *const i8);
     }
-    if min_eval_span > 0 as i32 ||
-        max_eval_span < 1000 as i32 * 128 as i32 {
+    if g_book.min_eval_span > 0 as i32 ||
+        g_book.max_eval_span < 1000 as i32 * 128 as i32 {
         printf(b"Eval interval is [%.2f,%.2f]. \x00" as *const u8 as
                    *const i8,
-               min_eval_span as f64 / 128.0f64,
-               max_eval_span as f64 / 128.0f64);
+               g_book.min_eval_span as f64 / 128.0f64,
+               g_book.max_eval_span as f64 / 128.0f64);
     }
-    if min_negamax_span > 0 as i32 ||
-        max_negamax_span < 1000 as i32 * 128 as i32 {
+    if g_book.min_negamax_span > 0 as i32 ||
+        g_book.max_negamax_span < 1000 as i32 * 128 as i32 {
         printf(b"Negamax interval is [%.2f,%.2f]. \x00" as *const u8 as
                    *const i8,
-               min_negamax_span as f64 / 128.0f64,
-               max_negamax_span as f64 / 128.0f64);
+               g_book.min_negamax_span as f64 / 128.0f64,
+               g_book.max_negamax_span as f64 / 128.0f64);
     }
-    if max_eval_count == feasible_count {
+    if g_book.max_eval_count == feasible_count {
         printf(b"\n%d relevant nodes.\x00" as *const u8 as
                    *const i8, feasible_count);
     } else {
         printf(b"\nMax batch size is %d.\x00" as *const u8 as
-                   *const i8, max_batch_size);
+                   *const i8, g_book.max_batch_size);
     }
     puts(b"\x00" as *const u8 as *const i8);
     printf(b"Progress: \x00" as *const u8 as *const i8);
@@ -3397,10 +3397,10 @@ pub unsafe fn correct_tree(max_empty: i32,
     if correction_script_name.is_null() {
         /* Positions solved */
         printf(b"%d nodes solved\n\x00" as *const u8 as *const i8,
-               evaluated_count);
+               g_book.evaluated_count);
     } else {
         printf(b"%d nodes exported to %s\n\x00" as *const u8 as
-                   *const i8, evaluated_count,
+                   *const i8, g_book.evaluated_count,
                correction_script_name);
     }
     puts(b"\x00" as *const u8 as *const i8);
@@ -3416,9 +3416,9 @@ unsafe fn do_export(index: i32, stream: *mut FILE,
     let mut allow_branch: i32 = 0;
     let mut side_to_move: i32 = 0;
     allow_branch =
-        (*node.offset(index as isize)).flags as i32 &
+        (*g_book.node.offset(index as isize)).flags as i32 &
             8 as i32;
-    if (*node.offset(index as isize)).flags as i32 & 1 as i32
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
@@ -3437,7 +3437,7 @@ unsafe fn do_export(index: i32, stream: *mut FILE,
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
         slot = probe_hash_table(val1, val2);
-        child = *book_hash_table.offset(slot as isize);
+        child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
             do_export(child, stream, move_vec);
             child_count += 1
@@ -3460,7 +3460,7 @@ unsafe fn do_export(index: i32, stream: *mut FILE,
         }
         fprintf(stream, b"\n\x00" as *const u8 as *const i8);
     }
-    let ref mut fresh41 = (*node.offset(index as isize)).flags;
+    let ref mut fresh41 = (*g_book.node.offset(index as isize)).flags;
     *fresh41 =
         (*fresh41 as i32 & !(8 as i32)) as u16;
 }
@@ -3480,8 +3480,8 @@ pub unsafe fn export_tree(file_name: *const i8) {
     prepare_tree_traversal();
     let mut move_vec: [i32; 60] = [0; 60];
     let mut i = 0;
-    while i < book_node_count {
-        let ref mut fresh42 = (*node.offset(i as isize)).flags;
+    while i < g_book.book_node_count {
+        let ref mut fresh42 = (*g_book.node.offset(i as isize)).flags;
         *fresh42 =
             (*fresh42 as i32 | 8 as i32) as u16;
         i += 1

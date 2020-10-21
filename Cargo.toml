@@ -21,7 +21,8 @@ members = [
     "tests",
     "legacy-zebra/zlib-coeff-source",
     "engine/flip",
-    "engine/coeff"
+    "engine/coeff",
+    "script"
 ]
 
 [profile.release]
