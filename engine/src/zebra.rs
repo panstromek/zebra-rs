@@ -9,7 +9,7 @@ use crate::src::globals::{board, score_sheet_row, white_moves, black_moves};
 use crate::src::learn::{store_move, set_learning_parameters, clear_stored_game, Learner};
 use crate::src::error::{FrontEnd};
 use crate::src::myrandom::my_random;
-use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, set_slack};
+use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, set_slack, g_book};
 use crate::src::getcoeff::remove_coeffs;
 use crate::src::game::{toggle_human_openings, generic_game_init, FileBoardSource, generic_compute_move, ComputeMoveOutput, ComputeMoveLogger};
 use crate::src::hash::{setup_hash};
@@ -216,7 +216,7 @@ pub unsafe fn engine_play_game<
             set_learning_parameters(deviation_depth, cutoff_empty);
         }
         reset_book_search();
-        set_deviation_value(low_thresh, high_thresh, dev_bonus);
+        set_deviation_value(low_thresh, high_thresh, dev_bonus, &mut g_book);
         if use_thor_ {
             ZF::load_thor_files();
         }
@@ -495,7 +495,7 @@ pub async unsafe fn engine_play_game_async<
             set_learning_parameters(deviation_depth, cutoff_empty);
         }
         reset_book_search();
-        set_deviation_value(low_thresh, high_thresh, dev_bonus);
+        set_deviation_value(low_thresh, high_thresh, dev_bonus, &mut g_book);
         if use_thor_ {
             ZF::load_thor_files();
         }

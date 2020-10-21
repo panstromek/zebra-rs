@@ -49,7 +49,7 @@ fn main() {
     std::fs::write("../legacy-zebra/src/osfbook.rs", new_lines.join("\n")).unwrap();
 }
 
-fn replace_in_file(file: &String, declaration: &Regex, replacer: &Regex, mut struct_declaration: &mut (String, String), shoudl_write_decl: bool) -> Vec<String> {
+fn replace_in_file(file: &String, declaration: &Regex, replacer: &Regex, struct_declaration: &mut (String, String), shoudl_write_decl: bool) -> Vec<String> {
     let mut decl_written = false;
     let new_lines = file.lines()
         .map(|line| {

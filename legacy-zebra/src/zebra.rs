@@ -18,7 +18,7 @@ use engine::src::search::{full_pv, full_pv_depth, nodes, disc_count, produce_com
 use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::moves::{disks_played, make_move, valid_move, unmake_move, move_count, generate_all, game_in_progress};
 use engine::src::hash::{setup_hash, set_hash_transformation};
-use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, find_opening_name, set_draw_mode, set_game_mode};
+use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, find_opening_name, set_draw_mode, set_game_mode, g_book};
 use engine::src::stubs::floor;
 use engine::src::learn::{store_move, clear_stored_game};
 use engine::src::getcoeff::remove_coeffs;
@@ -1518,7 +1518,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             set_slack(0.0f64 as i32);
             toggle_human_openings(0 as i32);
             reset_book_search();
-            set_deviation_value(0 as i32, 60 as i32, 0.0f64);
+            set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_book);
             setup_hash(1 as i32);
             position_count += 1;
             scanned =
