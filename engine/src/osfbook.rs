@@ -906,31 +906,23 @@ pub unsafe fn do_minimax(index: i32,
    orientation value from get_hash() OR YOU WILL LOSE BIG.
 */
 pub unsafe fn init_maps<FE: FrontEnd>() {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut k: i32 = 0;
-    let mut pos: i32 = 0;
+    let mut i = 0;
+    let mut j = 0;
+    let mut k = 0;
+    let mut pos = 0;
     i = 1;
-    while i <= 8 as i32 {
+    while i <= 8 {
         j = 1;
-        while j <= 8 as i32 {
-            pos = 10 as i32 * i + j;
+        while j <= 8 {
+            pos = 10  * i + j;
             b1_b1_map[pos as usize] = pos;
-            g1_b1_map[pos as usize] =
-                10 as i32 * i + (9 as i32 - j);
-            g8_b1_map[pos as usize] =
-                10 as i32 * (9 as i32 - i) +
-                    (9 as i32 - j);
-            b8_b1_map[pos as usize] =
-                10 as i32 * (9 as i32 - i) + j;
-            a2_b1_map[pos as usize] = 10 as i32 * j + i;
-            a7_b1_map[pos as usize] =
-                10 as i32 * j + (9 as i32 - i);
-            h7_b1_map[pos as usize] =
-                10 as i32 * (9 as i32 - j) +
-                    (9 as i32 - i);
-            h2_b1_map[pos as usize] =
-                10 as i32 * (9 as i32 - j) + i;
+            g1_b1_map[pos as usize] = 10 * i + (9 - j);
+            g8_b1_map[pos as usize] = 10 * (9 - i) + (9 - j);
+            b8_b1_map[pos as usize] = 10 * (9 - i) + j;
+            a2_b1_map[pos as usize] = 10 * j + i;
+            a7_b1_map[pos as usize] = 10 * j + (9 - i);
+            h7_b1_map[pos as usize] = 10 * (9 - j) + (9 - i);
+            h2_b1_map[pos as usize] = 10 * (9 - j) + i;
             j += 1
         }
         i += 1
@@ -963,20 +955,9 @@ pub unsafe fn init_maps<FE: FrontEnd>() {
             k = 1;
             while k <= 8 as i32 {
                 pos = 10 as i32 * j + k;
-                if *inv_symmetry_map[i as
-                    usize].offset(*symmetry_map[i as
-                    usize].offset(pos
-                    as
-                    isize)
-                    as isize) != pos {
-                    let symmetry_map_item = *inv_symmetry_map[i as
-                        usize].offset(*symmetry_map[i
-                        as
-                        usize].offset(pos
-                        as
-                        isize)
-                        as
-                        isize);
+                if *inv_symmetry_map[i as usize]
+                    .offset(*symmetry_map[i as usize].offset(pos as isize) as isize) != pos {
+                    let symmetry_map_item = *inv_symmetry_map[i as usize].offset(*symmetry_map[i as usize].offset(pos as isize) as isize);
                     FE::error_in_map(i, pos, symmetry_map_item);
                 }
                 k += 1
@@ -2001,7 +1982,7 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
 
 pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                                           update_slack: i32,
-                                          mut eval_info: *mut EvaluationType)
+                                          mut eval_info: &mut EvaluationType)
                                           -> i32 {
     let mut i: i32 = 0;
     let mut original_side_to_move: i32 = 0;
