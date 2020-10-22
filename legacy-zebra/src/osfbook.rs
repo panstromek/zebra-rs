@@ -4408,7 +4408,7 @@ pub unsafe fn engine_init_osf<FE: FrontEnd>() {
     prepare_hash();
     setup_hash(1 as i32);
     init_book_tree(&mut g_book);
-    reset_book_search();
+    reset_book_search(&mut g_book);
     g_book.search_depth = 2;
     g_book.max_slack = 0;
     g_book.low_deviation_threshold = 60;

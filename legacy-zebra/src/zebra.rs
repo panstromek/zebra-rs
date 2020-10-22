@@ -1142,7 +1142,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                  *const i8);
     }
     use_book = 0;
-    reset_book_search();
+    reset_book_search(&mut g_book);
     let black_name = b"Zebra\x00" as *const u8 as *const i8;
     let white_name = b"Zebra\x00" as *const u8 as *const i8;
     set_names(black_name, white_name);
@@ -1517,7 +1517,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move);
             set_slack(0.0f64 as i32);
             toggle_human_openings(0 as i32);
-            reset_book_search();
+            reset_book_search(&mut g_book);
             set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_book);
             setup_hash(1 as i32);
             position_count += 1;

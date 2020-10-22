@@ -215,7 +215,7 @@ pub unsafe fn engine_play_game<
         if use_learning_ {
             set_learning_parameters(deviation_depth, cutoff_empty);
         }
-        reset_book_search();
+        reset_book_search(&mut g_book);
         set_deviation_value(low_thresh, high_thresh, dev_bonus, &mut g_book);
         if use_thor_ {
             ZF::load_thor_files();
@@ -493,7 +493,7 @@ pub async unsafe fn engine_play_game_async<
         if use_learning_ {
             set_learning_parameters(deviation_depth, cutoff_empty);
         }
-        reset_book_search();
+        reset_book_search(&mut g_book);
         set_deviation_value(low_thresh, high_thresh, dev_bonus, &mut g_book);
         if use_thor_ {
             ZF::load_thor_files();

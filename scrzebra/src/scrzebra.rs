@@ -231,7 +231,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
             game_init(0 as *const i8, &mut side_to_move);
             set_slack(0.0f64 as i32);
             toggle_human_openings(0 as i32);
-            reset_book_search();
+            reset_book_search(&mut g_book);
             set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_book);
             setup_hash(1 as i32);
             position_count += 1;
