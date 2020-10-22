@@ -57,7 +57,7 @@ pub unsafe fn set_evals(black: f64, white: f64) {
     white_eval = white;
 }
 
-pub unsafe fn set_move_list(black: *mut i32, white: *mut i32, row: i32) {
+pub unsafe fn set_move_list(_black: *mut i32, _white: *mut i32, row: i32) {
     current_row = row;
 }
 

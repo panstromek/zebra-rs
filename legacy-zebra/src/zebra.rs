@@ -810,8 +810,8 @@ impl ZebraFrontend for LibcFrontend {
         unsafe { set_evals(black, white); }
     }
 
-    unsafe fn set_move_list(black: *mut i32, white: *mut i32, row: i32) {
-        set_move_list(black, white, row)
+    fn set_move_list(row: i32) {
+        unsafe { set_move_list(null_mut(), null_mut(), row) }
     }
 
     unsafe fn set_names(black_name: *const i8, white_name: *const i8) {

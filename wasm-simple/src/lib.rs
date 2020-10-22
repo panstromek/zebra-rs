@@ -312,7 +312,7 @@ impl ZebraFrontend for WasmFrontend {
         // unimplemented!()
     }
 
-    unsafe fn set_move_list(black: *mut i32, white: *mut i32, row: i32) {
+    fn set_move_list(row: i32) {
         // unimplemented!()
     }
 
