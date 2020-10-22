@@ -298,6 +298,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             draft: 0,
             selectivity: 0,
             flags: 0,};
+    let mpc_cut_ = &mpc_cut;
     if level >= max_depth {
         nodes.lo = nodes.lo.wrapping_add(1);
         return static_or_terminal_evaluation::<FE>(side_to_move)
@@ -349,13 +350,13 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         let mut alpha_test = 1;
         let mut beta_test = 1;
         cut = 0;
-        while cut < mpc_cut[remains as usize].cut_tries {
+        while cut < mpc_cut_[remains as usize].cut_tries {
             /* Determine the fail-high and fail-low bounds */
             let bias =
-                mpc_cut[remains as
+                mpc_cut_[remains as
                     usize].bias[cut as usize][disks_played as usize];
             let window =
-                mpc_cut[remains as
+                mpc_cut_[remains as
                     usize].window[cut as
                     usize][disks_played as usize];
             let alpha_bound = alpha + bias - window;
@@ -363,7 +364,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             /* Don't use an MPC cut which results in the full-width depth
             being less than some predefined constant */
             shallow_remains =
-                mpc_cut[remains as usize].cut_depth[cut as usize];
+                mpc_cut_[remains as usize].cut_depth[cut as usize];
             if !(level + shallow_remains < 8 as i32) {
                 if shallow_remains > 1 as i32 {
                     /* "Deep" shallow search */
