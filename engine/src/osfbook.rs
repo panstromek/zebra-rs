@@ -259,7 +259,7 @@ pub fn set_deviation_value(low_threshold: i32, high_threshold: i32, bonus: f64, 
    Sets the used slack count to zero.
 */
 
-pub unsafe fn reset_book_search(book: &mut Book) {
+pub fn reset_book_search(book: &mut Book) {
     book.used_slack[0] = 0.0f64 as i32;
     book.used_slack[2] = 0.0f64 as i32;
 }
