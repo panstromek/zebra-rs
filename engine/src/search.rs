@@ -405,7 +405,7 @@ pub unsafe fn get_ponder_move() -> i32 {
   about the last search.
 */
 
-pub unsafe fn create_eval_info(in_type: EvalType,
+pub fn create_eval_info(in_type: EvalType,
                                in_res: EvalResult,
                                in_score: i32,
                                in_conf: f64,
