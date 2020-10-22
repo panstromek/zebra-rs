@@ -112,19 +112,18 @@ pub unsafe fn toggle_human_openings(toggle: i32) {
   Comparison function for two evals.  Same return value conventions
   as QuickSort.
 */
-pub fn compare_eval(mut e1: EvaluationType,
-                       mut e2: EvaluationType) -> i32 {
-    if e1.type_0 as u32 == WLD_EVAL as i32 as u32 ||
-        e1.type_0 as u32 ==
-            EXACT_EVAL as i32 as u32 {
-        if e1.score > 0 as i32 { e1.score += 100000 as i32 }
+pub fn compare_eval(mut e1: EvaluationType, mut e2: EvaluationType) -> i32 {
+    if e1.type_0 == WLD_EVAL || e1.type_0 == EXACT_EVAL {
+        if e1.score > 0 {
+            e1.score += 100000
+        }
     }
-    if e2.type_0 as u32 == WLD_EVAL as i32 as u32 ||
-        e2.type_0 as u32 ==
-            EXACT_EVAL as i32 as u32 {
-        if e2.score > 0 as i32 { e2.score += 100000 as i32 }
+    if e2.type_0 == WLD_EVAL || e2.type_0 == EXACT_EVAL {
+        if e2.score > 0 {
+            e2.score += 100000
+        }
     }
-    return e1.score - e2.score;
+    e1.score - e2.score
 }
 
 /*

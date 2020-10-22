@@ -18,7 +18,7 @@ use crate::src::thordb::ThorDatabase;
 use crate::src::zebra::EvalResult::WON_POSITION;
 use crate::src::zebra::EvalType::MIDGAME_EVAL;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum EvalType {
     UNINITIALIZED_EVAL = 8,
     INTERRUPTED_EVAL = 7,
@@ -30,7 +30,7 @@ pub enum EvalType {
     EXACT_EVAL = 1,
     MIDGAME_EVAL = 0,
 }
-#[derive(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum EvalResult {
     UNSOLVED_POSITION = 3,
     LOST_POSITION = 2,
