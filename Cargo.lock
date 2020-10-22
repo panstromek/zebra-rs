@@ -93,7 +93,6 @@ dependencies = [
  "flip",
  "patterns",
  "pcstat",
- "thor-opening-list",
  "thordb-types",
 ]
 

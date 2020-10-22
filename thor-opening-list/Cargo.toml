@@ -10,4 +10,4 @@ name = "thor_opening_list"
 path = "thor_opening_list.rs"
 
 [dependencies]
-thordb-types = { path = "./../thordb-types"}
+thordb-types = { path = "./../engine/thordb-types"}
