@@ -26,22 +26,8 @@ use crate::src::stubs::{abs, ceil};
 use crate::src::timer::{check_panic_abort, check_threshold, clear_panic_abort, get_elapsed_time, is_panic_abort, last_panic_check, set_panic_threshold};
 use crate::src::zebra::EvaluationType;
 use crate::src::globals::Board;
-
-type EvalType = u32;
-const UNINITIALIZED_EVAL: EvalType = 8;
-const INTERRUPTED_EVAL: EvalType = 7;
-const UNDEFINED_EVAL: EvalType = 6;
-const PASS_EVAL: EvalType = 5;
-const FORCED_EVAL: EvalType = 4;
-const SELECTIVE_EVAL: EvalType = 3;
-const WLD_EVAL: EvalType = 2;
-const EXACT_EVAL: EvalType = 1;
-const MIDGAME_EVAL: EvalType = 0;
-type EvalResult = u32;
-const UNSOLVED_POSITION: EvalResult = 3;
-const LOST_POSITION: EvalResult = 2;
-const DRAWN_POSITION: EvalResult = 1;
-const WON_POSITION: EvalResult = 0;
+use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_EVAL};
+use crate::src::zebra::EvalResult::{WON_POSITION, DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION};
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -49,7 +35,7 @@ struct MoveLink {
     pub pred: i32,
     pub succ: i32,
 }
-
+// probably this:   enum { WIN, LOSS, DRAW, UNKNOWN } solve_status;
 const DRAW: u32 = 2;
 const UNKNOWN: u32 = 3;
 const LOSS: u32 = 1;

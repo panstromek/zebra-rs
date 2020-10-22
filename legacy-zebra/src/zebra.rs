@@ -24,10 +24,14 @@ use engine::src::learn::{store_move, clear_stored_game};
 use engine::src::getcoeff::remove_coeffs;
 use engine::src::myrandom::{my_random, my_srandom};
 use crate::src::osfbook::print_move_alternatives;
-use engine::src::zebra::{set_default_engine_globals, DumpHandler, wld_only, use_book, EvaluationType, use_timer, player_time, one_position_only, skill, wld_skill, exact_skill, player_increment, wait, ZebraFrontend, engine_play_game, InitialMoveSource, tournament_levels, tournament_skill, only_analyze, tournament, rand_move_freq, thor_max_games, dev_bonus, high_thresh, low_thresh, slack, deviation_depth, cutoff_empty, PRIVATE_GAME, PUBLIC_GAME, NEUTRAL, BLACK_WINS, WHITE_WINS, OPPONENT_WINS, MIDGAME_EVAL, WON_POSITION, LOST_POSITION};
+use engine::src::zebra::{set_default_engine_globals, DumpHandler, wld_only, use_book, EvaluationType, use_timer, player_time, one_position_only, skill, wld_skill, exact_skill, player_increment, wait, ZebraFrontend, engine_play_game, InitialMoveSource, tournament_levels, tournament_skill, only_analyze, tournament, rand_move_freq, thor_max_games, dev_bonus, high_thresh, low_thresh, slack, deviation_depth, cutoff_empty};
 use libc_wrapper::{FILE, time_t};
 use engine::src::myrandom;
 use flip::unflip;
+use engine::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION};
+use engine::src::zebra::EvalType::MIDGAME_EVAL;
+use engine::src::zebra::DrawMode::{OPPONENT_WINS, WHITE_WINS, BLACK_WINS, NEUTRAL};
+use engine::src::zebra::GameMode::{PUBLIC_GAME, PRIVATE_GAME};
 
 /* ------------------- Function prototypes ---------------------- */
 /* Administrative routines */

@@ -18,22 +18,9 @@ use crate::src::display::{echo, display_pv};
 use crate::src::thordb::{ThorDatabase};
 use engine_traits::CoeffSource;
 use flip::unflip::init_flip_stack;
+use crate::src::zebra::EvalResult::{WON_POSITION, UNSOLVED_POSITION};
+use crate::src::zebra::EvalType::{MIDGAME_EVAL, INTERRUPTED_EVAL, UNDEFINED_EVAL, FORCED_EVAL, PASS_EVAL, EXACT_EVAL, WLD_EVAL};
 
-pub type EvalType = u32;
-pub const UNINITIALIZED_EVAL: EvalType = 8;
-pub const INTERRUPTED_EVAL: EvalType = 7;
-pub const UNDEFINED_EVAL: EvalType = 6;
-pub const PASS_EVAL: EvalType = 5;
-pub const FORCED_EVAL: EvalType = 4;
-pub const SELECTIVE_EVAL: EvalType = 3;
-pub const WLD_EVAL: EvalType = 2;
-pub const EXACT_EVAL: EvalType = 1;
-pub const MIDGAME_EVAL: EvalType = 0;
-pub type EvalResult = u32;
-pub const UNSOLVED_POSITION: EvalResult = 3;
-pub const LOST_POSITION: EvalResult = 2;
-pub const DRAWN_POSITION: EvalResult = 1;
-pub const WON_POSITION: EvalResult = 0;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

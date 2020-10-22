@@ -22,10 +22,13 @@ use engine::src::zebra::EvaluationType;
 use engine::src::timer::{toggle_abort_check, last_panic_check, clear_panic_abort};
 use crate::src::safemem::safe_malloc;
 use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit, FILE};
-use engine::src::osfbook::{__time_t, probe_hash_table, get_hash, get_node_depth, clear_node_depth, get_candidate_count, fill_move_alternatives, _ISupper, _ISprint, _ISspace, _ISgraph, BookNode, adjust_score, g_book, size_t, MIDGAME_EVAL, WON_POSITION, set_node_depth, Book, reset_book_search, PRIVATE_GAME};
+use engine::src::osfbook::{__time_t, probe_hash_table, get_hash, get_node_depth, clear_node_depth, get_candidate_count, fill_move_alternatives, _ISupper, _ISprint, _ISspace, _ISgraph, BookNode, adjust_score, g_book, size_t, set_node_depth, Book, reset_book_search};
 use engine_traits::Offset;
 use engine::src::getcoeff::remove_coeffs;
 use engine::src::game::{engine_game_init, setup_non_file_based_game};
+use engine::src::zebra::GameMode::PRIVATE_GAME;
+use engine::src::zebra::EvalResult::WON_POSITION;
+use engine::src::zebra::EvalType::MIDGAME_EVAL;
 
 pub type FE = LibcFatalError;
 static mut correction_script_name: *const i8 = 0 as *const i8;

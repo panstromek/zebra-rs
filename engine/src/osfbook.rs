@@ -22,6 +22,11 @@ use crate::src::hash::{add_hash, setup_hash};
 use crate::src::display::echo;
 use crate::src::game::{engine_game_init, setup_non_file_based_game};
 use engine_traits::Offset;
+use crate::src::zebra::EvalType::{MIDGAME_EVAL, WLD_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
+use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, DRAWN_POSITION, UNSOLVED_POSITION};
+use crate::src::zebra::DrawMode::{OPPONENT_WINS, BLACK_WINS, WHITE_WINS};
+use crate::src::zebra::GameMode::PRIVATE_GAME;
+use crate::src::zebra::{GameMode, DrawMode};
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -40,32 +45,6 @@ pub const _ISalpha: C2RustUnnamed = 1024;
 pub const _ISlower: C2RustUnnamed = 512;
 pub const _ISupper: C2RustUnnamed = 256;
 pub type size_t = u64;
-
-pub type EvalType = u32;
-pub const UNINITIALIZED_EVAL: EvalType = 8;
-pub const INTERRUPTED_EVAL: EvalType = 7;
-pub const UNDEFINED_EVAL: EvalType = 6;
-pub const PASS_EVAL: EvalType = 5;
-pub const FORCED_EVAL: EvalType = 4;
-pub const SELECTIVE_EVAL: EvalType = 3;
-pub const WLD_EVAL: EvalType = 2;
-pub const EXACT_EVAL: EvalType = 1;
-pub const MIDGAME_EVAL: EvalType = 0;
-pub type EvalResult = u32;
-pub const UNSOLVED_POSITION: EvalResult = 3;
-pub const LOST_POSITION: EvalResult = 2;
-pub const DRAWN_POSITION: EvalResult = 1;
-pub const WON_POSITION: EvalResult = 0;
-
-
-pub type DrawMode = u32;
-pub const OPPONENT_WINS: DrawMode = 3;
-pub const WHITE_WINS: DrawMode = 2;
-pub const BLACK_WINS: DrawMode = 1;
-pub const NEUTRAL: DrawMode = 0;
-pub type GameMode = u32;
-pub const PUBLIC_GAME: GameMode = 1;
-pub const PRIVATE_GAME: GameMode = 0;
 
 #[derive(Copy, Clone)]
 #[repr(C)]

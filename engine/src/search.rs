@@ -1,9 +1,11 @@
 use crate::src::globals::{Board, pv_depth, pv, board};
 use crate::src::counter::CounterType;
-use crate::src::zebra::EvaluationType;
+use crate::src::zebra::{EvaluationType, EvalResult, EvalType};
 use crate::src::moves::{unmake_move, make_move, disks_played, move_list};
 use crate::src::hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, find_hash, determine_hash_values, HashEntry};
 use crate::src::error::FrontEnd;
+use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, UNSOLVED_POSITION};
+use crate::src::zebra::EvalType::{MIDGAME_EVAL, UNINITIALIZED_EVAL};
 
 /*
    File:          search.c
@@ -17,21 +19,7 @@ use crate::src::error::FrontEnd;
    Contents:      Common search routines and variables.
 */
 
-pub type EvalType = u32;
-pub const UNINITIALIZED_EVAL: EvalType = 8;
-pub const INTERRUPTED_EVAL: EvalType = 7;
-pub const UNDEFINED_EVAL: EvalType = 6;
-pub const PASS_EVAL: EvalType = 5;
-pub const FORCED_EVAL: EvalType = 4;
-pub const SELECTIVE_EVAL: EvalType = 3;
-pub const WLD_EVAL: EvalType = 2;
-pub const EXACT_EVAL: EvalType = 1;
-pub const MIDGAME_EVAL: EvalType = 0;
-pub type EvalResult = u32;
-pub const UNSOLVED_POSITION: EvalResult = 3;
-pub const LOST_POSITION: EvalResult = 2;
-pub const DRAWN_POSITION: EvalResult = 1;
-pub const WON_POSITION: EvalResult = 0;
+
 
 pub static mut total_time: f64 = 0.;
 
