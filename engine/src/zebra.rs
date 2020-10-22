@@ -63,40 +63,66 @@ pub enum GameMode {
 }
 
 /* Local variables */
-pub static mut slack: f64 = 0.25f64;
-pub static mut dev_bonus: f64 = 0.0f64;
-pub static mut low_thresh: i32 = 0;
-pub static mut high_thresh: i32 = 0;
-pub static mut rand_move_freq: i32 = 0;
-pub static mut tournament: i32 = 0;
-pub static mut tournament_levels: i32 = 0;
-pub static mut deviation_depth: i32 = 0;
-pub static mut cutoff_empty: i32 = 0;
-pub static mut one_position_only: i32 = 0;
-pub static mut use_timer: i32 = 0;
-pub static mut only_analyze: i32 = 0;
-pub static mut thor_max_games: i32 = 0;
-pub static mut tournament_skill: [[i32; 3]; 8] = [[0; 3]; 8];
-pub static mut wld_skill: [i32; 3] = [0; 3];
-pub static mut exact_skill: [i32; 3] = [0; 3];
-pub static mut player_time: [f64; 3] = [0.; 3];
-pub static mut player_increment: [f64; 3] = [0.; 3];
-pub static mut skill: [i32; 3] = [0; 3];
-pub static mut wait: i32 = 0;
-pub static mut use_book: i32 = 1;
+pub struct Config {
+    pub slack: f64,
+    pub dev_bonus: f64,
+    pub low_thresh: i32,
+    pub high_thresh: i32,
+    pub rand_move_freq: i32,
+    pub tournament: i32,
+    pub tournament_levels: i32,
+    pub deviation_depth: i32,
+    pub cutoff_empty: i32,
+    pub one_position_only: i32,
+    pub use_timer: i32,
+    pub only_analyze: i32,
+    pub thor_max_games: i32,
+    pub tournament_skill: [[i32; 3]; 8],
+    pub wld_skill: [i32; 3],
+    pub exact_skill: [i32; 3],
+    pub player_time: [f64; 3],
+    pub player_increment: [f64; 3],
+    pub skill: [i32; 3],
+    pub wait: i32,
+    pub use_book: i32,
+}
+
+pub static mut config: Config = Config {
+    slack: 0.25f64,
+    dev_bonus: 0.0f64,
+    low_thresh: 0,
+    high_thresh: 0,
+    rand_move_freq: 0,
+    tournament: 0,
+    tournament_levels: 0,
+    deviation_depth: 0,
+    cutoff_empty: 0,
+    one_position_only: 0,
+    use_timer: 0,
+    only_analyze: 0,
+    thor_max_games: 0,
+    tournament_skill: [[0; 3]; 8],
+    wld_skill: [0; 3],
+    exact_skill: [0; 3],
+    player_time: [0.; 3],
+    player_increment: [0.; 3],
+    skill: [0; 3],
+    wait: 0,
+    use_book: 1,
+};
 pub static wld_only: i32 = 0;
 
 
 pub unsafe fn set_default_engine_globals() {
-    wait = 0;
+    config.wait = 0;
     echo = 1;
     display_pv = 1;
-    skill[2] = -1;
-    skill[0] = -1;
-    player_time[2] = 10000000.0f64;
-    player_time[0] = 10000000.0f64;
-    player_increment[2] = 0.0f64;
-    player_increment[0] = 0.0f64;
+    config.skill[2] = -1;
+    config.skill[0] = -1;
+    config.player_time[2] = 10000000.0f64;
+    config.player_time[0] = 10000000.0f64;
+    config.player_increment[2] = 0.0f64;
+    config.player_increment[0] = 0.0f64;
 }
 /// This trait is unsafe because line buffer is used as a c-style string later
 /// so this function needs to ensure that the line_buffer contains at
@@ -108,8 +134,8 @@ pub unsafe trait InitialMoveSource {
 
 
 pub unsafe fn set_names_from_skills<ZF: ZebraFrontend>() {
-    let white_is_player = skill[0] == 0;
-    let black_is_player = skill[2] == 0;
+    let white_is_player = config.skill[0] == 0;
+    let black_is_player = config.skill[2] == 0;
     ZF::set_names(white_is_player, black_is_player);
 }
 
@@ -208,17 +234,17 @@ pub unsafe fn engine_play_game<
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move);
         setup_hash(1);
         clear_stored_game();
-        if echo != 0 && use_book != 0 {
-            let slack_ = slack;
+        if echo != 0 && config.use_book != 0 {
+            let slack_ = config.slack;
             ZF::report_book_randomness(slack_);
         }
-        set_slack(floor(slack * 128.0f64) as i32);
+        set_slack(floor(config.slack * 128.0f64) as i32);
         toggle_human_openings(0);
         if use_learning_ {
-            set_learning_parameters(deviation_depth, cutoff_empty);
+            set_learning_parameters(config.deviation_depth, config.cutoff_empty);
         }
         reset_book_search(&mut g_book);
-        set_deviation_value(low_thresh, high_thresh, dev_bonus, &mut g_book);
+        set_deviation_value(config.low_thresh, config.high_thresh, config.dev_bonus, &mut g_book);
         if use_thor_ {
             ZF::load_thor_files();
         }
@@ -245,8 +271,8 @@ pub unsafe fn engine_play_game<
                 clear_panic_abort();
                 if echo != 0 {
                     ZF::set_move_list(score_sheet_row);
-                    ZF::set_times(floor(player_time[0]) as i32,
-                              floor(player_time[2]) as i32);
+                    ZF::set_times(floor(config.player_time[0]) as i32,
+                              floor(config.player_time[2]) as i32);
                     let opening_name = find_opening_name();
                     if !opening_name.is_null() {
                         ZF::report_opening_name(opening_name);
@@ -268,19 +294,19 @@ pub unsafe fn engine_play_game<
 
                             ZF::report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                         }
-                        ZF::print_out_thor_matches(thor_max_games);
+                        ZF::print_out_thor_matches(config.thor_max_games);
                     }
-                    ZF::display_board_after_thor(side_to_move, use_timer,
+                    ZF::display_board_after_thor(side_to_move, config.use_timer,
                                                  &board, &black_moves, &white_moves);
                 }
                 Dump::dump_position(side_to_move, &board);
                 Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
                 /* Check what the Thor opening statistics has to say */
                 Thor::choose_thor_opening_move(&board, side_to_move, echo);
-                if echo != 0 && wait != 0 { ZF::dumpch(); }
+                if echo != 0 && config.wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
-                    if skill[side_to_move as usize] == 0 as i32 {
-                        if use_book != 0 && display_pv != 0 {
+                    if config.skill[side_to_move as usize] == 0 as i32 {
+                        if config.use_book != 0 && display_pv != 0 {
                             fill_move_alternatives::<FE>(side_to_move,
                                                    0 as i32);
                             if echo != 0 {
@@ -290,22 +316,22 @@ pub unsafe fn engine_play_game<
                         ZF::before_get_move();
                         curr_move = get_move::<ZF>(side_to_move);
                     } else {
-                        start_move::<FE>(player_time[side_to_move as usize],
-                                   player_increment[side_to_move as usize],
+                        start_move::<FE>(config.player_time[side_to_move as usize],
+                                   config.player_increment[side_to_move as usize],
                                    disks_played + 4);
-                        determine_move_time(player_time[side_to_move as usize],
-                                            player_increment[side_to_move as usize],
+                        determine_move_time(config.player_time[side_to_move as usize],
+                                            config.player_increment[side_to_move as usize],
                                             disks_played + 4);
-                        let timed_search = (skill[side_to_move as usize] >= 60) as i32;
+                        let timed_search = (config.skill[side_to_move as usize] >= 60) as i32;
                         curr_move =
                             generic_compute_move::<ComputeMoveLog, ComputeMoveOut, FE, Thor>(
                                 side_to_move, 1,
-                                player_time[side_to_move as usize] as i32,
-                                player_increment[side_to_move as usize] as i32, timed_search,
-                                use_book,
-                                skill[side_to_move as usize],
-                                exact_skill[side_to_move as usize],
-                                wld_skill[side_to_move as usize],
+                                config.player_time[side_to_move as usize] as i32,
+                                config.player_increment[side_to_move as usize] as i32, timed_search,
+                                config.use_book,
+                                config.skill[side_to_move as usize],
+                                config.exact_skill[side_to_move as usize],
+                                config.wld_skill[side_to_move as usize],
                                 0 as i32, &mut eval_info,
                                 &mut ComputeMoveLog::create_log_file_if_needed());
                         if side_to_move == 0 as i32 {
@@ -314,9 +340,9 @@ pub unsafe fn engine_play_game<
                             ZF::set_evals(0.0f64, produce_compact_eval(eval_info));
                         }
                         if eval_info.is_book != 0 &&
-                            rand_move_freq > 0 &&
+                            config.rand_move_freq > 0 &&
                             side_to_move == rand_color &&
-                            my_random() % rand_move_freq as i64 == 0 {
+                            my_random() % config.rand_move_freq as i64 == 0 {
                             ZF::report_engine_override();
                             rand_color = 2 - rand_color;
                             curr_move = move_list[disks_played as usize]
@@ -330,8 +356,8 @@ pub unsafe fn engine_play_game<
                     }
                 }
                 let move_stop = get_real_timer::<FE>();
-                if player_time[side_to_move as usize] != 10000000.0f64 {
-                    player_time[side_to_move as usize] -= move_stop - move_start
+                if config.player_time[side_to_move as usize] != 10000000.0f64 {
+                    config.player_time[side_to_move as usize] -= move_stop - move_start
                 }
                 store_move(disks_played, curr_move);
                 ZF::push_move(&mut move_vec, curr_move, disks_played);
@@ -350,21 +376,21 @@ pub unsafe fn engine_play_game<
                 } else {
                     white_moves[score_sheet_row as usize] = -(1)
                 }
-                if skill[side_to_move as usize] == 0 {
+                if config.skill[side_to_move as usize] == 0 {
                     ZF::get_pass();
                 }
             }
             side_to_move = 2 - side_to_move;
-            if one_position_only != 0 { break; }
+            if config.one_position_only != 0 { break; }
         }
-        if echo == 0 && one_position_only == 0 {
-            let black_level = skill[0];
-            let white_level = skill[2];
+        if echo == 0 && config.one_position_only == 0 {
+            let black_level = config.skill[0];
+            let white_level = config.skill[2];
             ZF::report_skill_levels(black_level, white_level);
         }
         if side_to_move == 0 as i32 { score_sheet_row += 1 }
         Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
-        if echo != 0 && one_position_only == 0 {
+        if echo != 0 && config.one_position_only == 0 {
             ZF::set_move_list(
                           score_sheet_row);
             if use_thor_ {
@@ -383,10 +409,10 @@ pub unsafe fn engine_play_game<
                     let black_average_score = Thor::get_black_average_score();
                     ZF::report_some_thor_scores(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                 }
-                ZF::print_out_thor_matches(thor_max_games);
+                ZF::print_out_thor_matches(config.thor_max_games);
             }
-            ZF::set_times(floor(player_time[0]) as _, floor(player_time[2]) as _);
-            ZF::display_board_after_thor(side_to_move, use_timer, &board,
+            ZF::set_times(floor(config.player_time[0]) as _, floor(config.player_time[2]) as _);
+            ZF::display_board_after_thor(side_to_move, config.use_timer, &board,
                                           &black_moves,
                                          &white_moves,
             );
@@ -400,7 +426,7 @@ pub unsafe fn engine_play_game<
         let total_time_ = total_time;
         ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
-        if !log_file_name_.is_null() && one_position_only == 0 {
+        if !log_file_name_.is_null() && config.one_position_only == 0 {
             ZF::log_game_ending(log_file_name_,
                                 &mut move_vec,
                                 disc_count(0, &board),
@@ -408,9 +434,9 @@ pub unsafe fn engine_play_game<
         }
         repeat -= 1;
         toggle_abort_check(0 as i32);
-        if use_learning_ && one_position_only == 0 {
+        if use_learning_ && config.one_position_only == 0 {
             Learn::learn_game(disks_played,
-                              (skill[0] != 0 && skill[2] != 0) as i32,
+                              (config.skill[0] != 0 && config.skill[2] != 0) as i32,
                               (repeat == 0 as i32) as i32);
         }
         toggle_abort_check(1);
@@ -486,17 +512,17 @@ pub async unsafe fn engine_play_game_async<
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move);
         setup_hash(1);
         clear_stored_game();
-        if echo != 0 && use_book != 0 {
-            let slack_ = slack;
+        if echo != 0 && config.use_book != 0 {
+            let slack_ = config.slack;
             ZF::report_book_randomness(slack_);
         }
-        set_slack(floor(slack * 128.0f64) as i32);
+        set_slack(floor(config.slack * 128.0f64) as i32);
         toggle_human_openings(0);
         if use_learning_ {
-            set_learning_parameters(deviation_depth, cutoff_empty);
+            set_learning_parameters(config.deviation_depth, config.cutoff_empty);
         }
         reset_book_search(&mut g_book);
-        set_deviation_value(low_thresh, high_thresh, dev_bonus, &mut g_book);
+        set_deviation_value(config.low_thresh, config.high_thresh, config.dev_bonus, &mut g_book);
         if use_thor_ {
             ZF::load_thor_files();
         }
@@ -523,8 +549,8 @@ pub async unsafe fn engine_play_game_async<
                 clear_panic_abort();
                 if echo != 0 {
                     ZF::set_move_list(score_sheet_row);
-                    ZF::set_times(floor(player_time[0]) as i32,
-                              floor(player_time[2]) as i32);
+                    ZF::set_times(floor(config.player_time[0]) as i32,
+                              floor(config.player_time[2]) as i32);
                     let opening_name = find_opening_name();
                     if !opening_name.is_null() {
                         ZF::report_opening_name(opening_name);
@@ -546,19 +572,19 @@ pub async unsafe fn engine_play_game_async<
 
                             ZF::report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                         }
-                        ZF::print_out_thor_matches(thor_max_games);
+                        ZF::print_out_thor_matches(config.thor_max_games);
                     }
-                    ZF::display_board_after_thor(side_to_move, use_timer,
+                    ZF::display_board_after_thor(side_to_move, config.use_timer,
                                                  &board, &black_moves, &white_moves);
                 }
                 Dump::dump_position(side_to_move, &board);
                 Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
                 /* Check what the Thor opening statistics has to say */
                 Thor::choose_thor_opening_move(&board, side_to_move, echo);
-                if echo != 0 && wait != 0 { ZF::dumpch(); }
+                if echo != 0 && config.wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
-                    if skill[side_to_move as usize] == 0 as i32 {
-                        if use_book != 0 && display_pv != 0 {
+                    if config.skill[side_to_move as usize] == 0 as i32 {
+                        if config.use_book != 0 && display_pv != 0 {
                             fill_move_alternatives::<FE>(side_to_move,
                                                    0 as i32);
                             if echo != 0 {
@@ -568,22 +594,22 @@ pub async unsafe fn engine_play_game_async<
                         ZF::before_get_move();
                         curr_move = get_move_async(side_to_move, &mut get_move_cb).await?;
                     } else {
-                        start_move::<FE>(player_time[side_to_move as usize],
-                                   player_increment[side_to_move as usize],
+                        start_move::<FE>(config.player_time[side_to_move as usize],
+                                   config.player_increment[side_to_move as usize],
                                    disks_played + 4);
-                        determine_move_time(player_time[side_to_move as usize],
-                                            player_increment[side_to_move as usize],
+                        determine_move_time(config.player_time[side_to_move as usize],
+                                            config.player_increment[side_to_move as usize],
                                             disks_played + 4);
-                        let timed_search = (skill[side_to_move as usize] >= 60) as i32;
+                        let timed_search = (config.skill[side_to_move as usize] >= 60) as i32;
                         curr_move =
                             generic_compute_move::<ComputeMoveLog, ComputeMoveOut, FE, Thor>(
                                 side_to_move, 1,
-                                player_time[side_to_move as usize] as i32,
-                                player_increment[side_to_move as usize] as i32, timed_search,
-                                use_book,
-                                skill[side_to_move as usize],
-                                exact_skill[side_to_move as usize],
-                                wld_skill[side_to_move as usize],
+                                config.player_time[side_to_move as usize] as i32,
+                                config.player_increment[side_to_move as usize] as i32, timed_search,
+                                config.use_book,
+                                config.skill[side_to_move as usize],
+                                config.exact_skill[side_to_move as usize],
+                                config.wld_skill[side_to_move as usize],
                                 0 as i32, &mut eval_info,
                                 &mut ComputeMoveLog::create_log_file_if_needed());
                         if side_to_move == 0 as i32 {
@@ -592,9 +618,9 @@ pub async unsafe fn engine_play_game_async<
                             ZF::set_evals(0.0f64, produce_compact_eval(eval_info));
                         }
                         if eval_info.is_book != 0 &&
-                            rand_move_freq > 0 &&
+                            config.rand_move_freq > 0 &&
                             side_to_move == rand_color &&
-                            my_random() % rand_move_freq as i64 == 0 {
+                            my_random() % config.rand_move_freq as i64 == 0 {
                             ZF::report_engine_override();
                             rand_color = 2 - rand_color;
                             curr_move = move_list[disks_played as usize]
@@ -608,8 +634,8 @@ pub async unsafe fn engine_play_game_async<
                     }
                 }
                 let move_stop = get_real_timer::<FE>();
-                if player_time[side_to_move as usize] != 10000000.0f64 {
-                    player_time[side_to_move as usize] -= move_stop - move_start
+                if config.player_time[side_to_move as usize] != 10000000.0f64 {
+                    config.player_time[side_to_move as usize] -= move_stop - move_start
                 }
                 store_move(disks_played, curr_move);
                 ZF::push_move(&mut move_vec, curr_move, disks_played);
@@ -628,21 +654,21 @@ pub async unsafe fn engine_play_game_async<
                 } else {
                     white_moves[score_sheet_row as usize] = -(1)
                 }
-                if skill[side_to_move as usize] == 0 {
+                if config.skill[side_to_move as usize] == 0 {
                     get_move_cb(-1).await;
                 }
             }
             side_to_move = 2 - side_to_move;
-            if one_position_only != 0 { break; }
+            if config.one_position_only != 0 { break; }
         }
-        if echo == 0 && one_position_only == 0 {
-            let black_level = skill[0];
-            let white_level = skill[2];
+        if echo == 0 && config.one_position_only == 0 {
+            let black_level = config.skill[0];
+            let white_level = config.skill[2];
             ZF::report_skill_levels(black_level, white_level);
         }
         if side_to_move == 0 as i32 { score_sheet_row += 1 }
         Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
-        if echo != 0 && one_position_only == 0 {
+        if echo != 0 && config.one_position_only == 0 {
             ZF::set_move_list(
                           score_sheet_row);
             if use_thor_ {
@@ -661,10 +687,10 @@ pub async unsafe fn engine_play_game_async<
                     let black_average_score = Thor::get_black_average_score();
                     ZF::report_some_thor_scores(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
                 }
-                ZF::print_out_thor_matches(thor_max_games);
+                ZF::print_out_thor_matches(config.thor_max_games);
             }
-            ZF::set_times(floor(player_time[0]) as _, floor(player_time[2]) as _);
-            ZF::display_board_after_thor(side_to_move, use_timer, &board,
+            ZF::set_times(floor(config.player_time[0]) as _, floor(config.player_time[2]) as _);
+            ZF::display_board_after_thor(side_to_move, config.use_timer, &board,
                                          &black_moves,
                                          &white_moves,
             );
@@ -678,7 +704,7 @@ pub async unsafe fn engine_play_game_async<
         let total_time_ = total_time;
         ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
-        if !log_file_name_.is_null() && one_position_only == 0 {
+        if !log_file_name_.is_null() && config.one_position_only == 0 {
             ZF::log_game_ending(log_file_name_,
                                 &mut move_vec,
                                 disc_count(0, &board),
@@ -686,9 +712,9 @@ pub async unsafe fn engine_play_game_async<
         }
         repeat -= 1;
         toggle_abort_check(0 as i32);
-        if use_learning_ && one_position_only == 0 {
+        if use_learning_ && config.one_position_only == 0 {
             Learn::learn_game(disks_played,
-                              (skill[0] != 0 && skill[2] != 0) as i32,
+                              (config.skill[0] != 0 && config.skill[2] != 0) as i32,
                               (repeat == 0 as i32) as i32);
         }
         toggle_abort_check(1);

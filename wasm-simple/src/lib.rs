@@ -4,7 +4,7 @@ extern crate console_error_panic_hook;
 
 use std::panic;
 use wasm_bindgen::prelude::*;
-use engine::src::zebra::{set_default_engine_globals, EvaluationType, skill, exact_skill, wld_skill, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, use_book, engine_play_game_async};
+use engine::src::zebra::{set_default_engine_globals, EvaluationType, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, engine_play_game_async, config};
 use engine::src::game::{engine_global_setup, global_terminate, BoardSource, FileBoardSource, ComputeMoveLogger, ComputeMoveOutput, CandidateMove};
 use engine::src::error::{FrontEnd, FatalError};
 use wasm_bindgen::__rt::core::ffi::c_void;
@@ -69,14 +69,14 @@ pub fn set_skills(
 ) {
     unsafe {
         // black
-        skill[0] = black_skill;
-        exact_skill[0] = black_exact_skill;
-        wld_skill[0] = black_wld_skill;
+        config.skill[0] = black_skill;
+        config.exact_skill[0] = black_exact_skill;
+        config.wld_skill[0] = black_wld_skill;
 
         // white
-        skill[2] = white_skill;
-        exact_skill[2] = white_exact_skill;
-        wld_skill[2] = white_wld_skill;
+        config.skill[2] = white_skill;
+        config.exact_skill[2] = white_exact_skill;
+        config.wld_skill[2] = white_wld_skill;
     }
 }
 
@@ -86,7 +86,7 @@ pub fn init() {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
     unsafe {
         set_default_engine_globals();
-        use_book = 0;
+        config.use_book = 0;
         let coeffs = Flate2Source::new_from_data(COEFFS);
 
         engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs);
@@ -95,15 +95,15 @@ pub fn init() {
         my_srandom(1 as i32);
 
         // FIXME don't run this init code on every start - my set_skills doesn't work because of that
-        if skill[0] < 0 {
-            skill[0] = 6;
-            exact_skill[0] = 6;
-            wld_skill[0] = 6;
+        if config.skill[0] < 0 {
+            config.skill[0] = 6;
+            config.exact_skill[0] = 6;
+            config.wld_skill[0] = 6;
         }
-        if skill[2] < 0 {
-            skill[2] = 0;
-            exact_skill[2] = 0;
-            wld_skill[2] = 0;
+        if config.skill[2] < 0 {
+            config.skill[2] = 0;
+            config.exact_skill[2] = 0;
+            config.wld_skill[2] = 0;
         }
 
     }

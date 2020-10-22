@@ -24,7 +24,7 @@ use engine::src::learn::{store_move, clear_stored_game};
 use engine::src::getcoeff::remove_coeffs;
 use engine::src::myrandom::{my_random, my_srandom};
 use crate::src::osfbook::print_move_alternatives;
-use engine::src::zebra::{set_default_engine_globals, DumpHandler, wld_only, use_book, EvaluationType, use_timer, player_time, one_position_only, skill, wld_skill, exact_skill, player_increment, wait, ZebraFrontend, engine_play_game, InitialMoveSource, tournament_levels, tournament_skill, only_analyze, tournament, rand_move_freq, thor_max_games, dev_bonus, high_thresh, low_thresh, slack, deviation_depth, cutoff_empty};
+use engine::src::zebra::{set_default_engine_globals, DumpHandler, config, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource, wld_only};
 use libc_wrapper::{FILE, time_t};
 use engine::src::myrandom;
 use flip::unflip;
@@ -91,24 +91,24 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-l\x00" as *const u8 as *const i8) ==
                       0 {
-            tournament = 0;
+            config.tournament = 0;
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                skill[0] =
+                config.skill[0] =
                     atoi(*argv.offset(arg_index as isize));
-                if skill[0] > 0 as i32 {
+                if config.skill[0] > 0 as i32 {
                     if arg_index + 2 as i32 >= argc {
                         help = 1;
                         current_block_107 = 2668756484064249700;
                     } else {
                         arg_index += 1;
-                        exact_skill[0] =
+                        config.exact_skill[0] =
                             atoi(*argv.offset(arg_index as isize));
                         arg_index += 1;
-                        wld_skill[0] =
+                        config.wld_skill[0] =
                             atoi(*argv.offset(arg_index as isize));
                         current_block_107 = 15004371738079956865;
                     }
@@ -121,20 +121,20 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                             help = 1;
                             current_block_107 = 2668756484064249700;
                         } else {
-                            skill[2] =
+                            config.skill[2] =
                                 atoi(*argv.offset(arg_index as isize));
-                            if skill[2] >
+                            if config.skill[2] >
                                    0 as i32 {
                                 if arg_index + 2 as i32 >= argc {
                                     help = 1;
                                     current_block_107 = 2668756484064249700;
                                 } else {
                                     arg_index += 1;
-                                    exact_skill[2] =
+                                    config.exact_skill[2] =
                                         atoi(*argv.offset(arg_index as
                                                               isize));
                                     arg_index += 1;
-                                    wld_skill[2] =
+                                    config.wld_skill[2] =
                                         atoi(*argv.offset(arg_index as
                                                               isize));
                                     current_block_107 = 10485226111480991281;
@@ -156,18 +156,18 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                tournament = 1;
-                tournament_levels = atoi(*argv.offset(arg_index as isize));
-                if arg_index + 3 as i32 * tournament_levels >= argc {
+                config.tournament = 1;
+                config.tournament_levels = atoi(*argv.offset(arg_index as isize));
+                if arg_index + 3 as i32 * config.tournament_levels >= argc {
                     help = 1;
                     current_block_107 = 2668756484064249700;
                 } else {
                     i = 0;
-                    while i < tournament_levels {
+                    while i < config.tournament_levels {
                         j = 0;
                         while j < 3 as i32 {
                             arg_index += 1;
-                            tournament_skill[i as usize][j as usize] =
+                            config.tournament_skill[i as usize][j as usize] =
                                 atoi(*argv.offset(arg_index as isize));
                             j += 1
                         }
@@ -184,7 +184,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                wait = atoi(*argv.offset(arg_index as isize));
+                config.wait = atoi(*argv.offset(arg_index as isize));
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
@@ -233,7 +233,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                use_book = atoi(*argv.offset(arg_index as isize));
+                config.use_book = atoi(*argv.offset(arg_index as isize));
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
@@ -244,18 +244,18 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 current_block_107 = 2668756484064249700;
             } else {
                 arg_index += 1;
-                player_time[0] =
+                config.player_time[0] =
                     atoi(*argv.offset(arg_index as isize)) as f64;
                 arg_index += 1;
-                player_increment[0] =
+                config.player_increment[0] =
                     atoi(*argv.offset(arg_index as isize)) as f64;
                 arg_index += 1;
-                player_time[2] =
+                config.player_time[2] =
                     atoi(*argv.offset(arg_index as isize)) as f64;
                 arg_index += 1;
-                player_increment[2] =
+                config.player_increment[2] =
                     atoi(*argv.offset(arg_index as isize)) as f64;
-                use_timer = 1;
+                config.use_timer = 1;
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
@@ -266,9 +266,9 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 current_block_107 = 2668756484064249700;
             } else {
                 arg_index += 1;
-                deviation_depth = atoi(*argv.offset(arg_index as isize));
+                config.deviation_depth = atoi(*argv.offset(arg_index as isize));
                 arg_index += 1;
-                cutoff_empty = atoi(*argv.offset(arg_index as isize));
+                config.cutoff_empty = atoi(*argv.offset(arg_index as isize));
                 use_learning = 1;
                 current_block_107 = 10485226111480991281;
             }
@@ -280,7 +280,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                slack = atof(*argv.offset(arg_index as isize));
+                config.slack = atof(*argv.offset(arg_index as isize));
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
@@ -291,11 +291,11 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 current_block_107 = 2668756484064249700;
             } else {
                 arg_index += 1;
-                low_thresh = atoi(*argv.offset(arg_index as isize));
+                config.low_thresh = atoi(*argv.offset(arg_index as isize));
                 arg_index += 1;
-                high_thresh = atoi(*argv.offset(arg_index as isize));
+                config.high_thresh = atoi(*argv.offset(arg_index as isize));
                 arg_index += 1;
-                dev_bonus = atof(*argv.offset(arg_index as isize));
+                config.dev_bonus = atof(*argv.offset(arg_index as isize));
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
@@ -342,7 +342,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-test\x00" as *const u8 as *const i8)
                       == 0 {
-            one_position_only = 1;
+            config.one_position_only = 1;
             current_block_107 = 10485226111480991281;
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-seq\x00" as *const u8 as *const i8)
@@ -386,13 +386,13 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 current_block_107 = 2668756484064249700;
             } else {
                 use_thor = 1;
-                thor_max_games = atoi(*argv.offset(arg_index as isize));
+                config.thor_max_games = atoi(*argv.offset(arg_index as isize));
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-analyze\x00" as *const u8 as
                                  *const i8) == 0 {
-            only_analyze = 1;
+            config.only_analyze = 1;
             current_block_107 = 10485226111480991281;
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-randmove\x00" as *const u8 as
@@ -402,8 +402,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                rand_move_freq = atoi(*argv.offset(arg_index as isize));
-                if rand_move_freq < 0 as i32 {
+                config.rand_move_freq = atoi(*argv.offset(arg_index as isize));
+                if config.rand_move_freq < 0 as i32 {
                     help = 1;
                     current_block_107 = 2668756484064249700;
                 } else { current_block_107 = 10485226111480991281; }
@@ -582,7 +582,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     }
     global_setup(use_random, hash_bits);
     init_thor_database::<LibcFatalError>();
-    if use_book != 0 {
+    if config.use_book != 0 {
         init_learn(b"book.bin\x00" as *const u8 as *const i8,
                    1 as i32);
     }
@@ -590,45 +590,45 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         time(&mut timer);
         my_srandom(timer as i32);
     } else { my_srandom(1 as i32); }
-    if tournament == 0 && run_script == 0 {
-        while skill[0] < 0 as i32 {
+    if config.tournament == 0 && run_script == 0 {
+        while config.skill[0] < 0 as i32 {
             printf(b"Black parameters: \x00" as *const u8 as
                        *const i8);
             scanf(b"%d\x00" as *const u8 as *const i8,
-                  &mut *skill.as_mut_ptr()
+                  &mut *config.skill.as_mut_ptr()
                       as *mut i32);
-            if skill[0] > 0 as i32 {
+            if config.skill[0] > 0 as i32 {
                 scanf(b"%d %d\x00" as *const u8 as *const i8,
-                      &mut *exact_skill.as_mut_ptr() as
+                      &mut *config.exact_skill.as_mut_ptr() as
                           *mut i32,
-                      &mut *wld_skill.as_mut_ptr() as
+                      &mut *config.wld_skill.as_mut_ptr() as
                           *mut i32);
             }
         }
-        while skill[2] < 0 as i32 {
+        while config.skill[2] < 0 as i32 {
             printf(b"White parameters: \x00" as *const u8 as
                        *const i8);
             scanf(b"%d\x00" as *const u8 as *const i8,
-                  &mut *skill.as_mut_ptr().offset(2)
+                  &mut *config.skill.as_mut_ptr().offset(2)
                       as *mut i32);
-            if skill[2] > 0 as i32 {
+            if config.skill[2] > 0 as i32 {
                 scanf(b"%d %d\x00" as *const u8 as *const i8,
-                      &mut *exact_skill.as_mut_ptr().offset(2) as
+                      &mut *config.exact_skill.as_mut_ptr().offset(2) as
                           *mut i32,
-                      &mut *wld_skill.as_mut_ptr().offset(2) as
+                      &mut *config.wld_skill.as_mut_ptr().offset(2) as
                           *mut i32);
             }
         }
     }
-    if one_position_only != 0 {
+    if config.one_position_only != 0 {
         toggle_smart_buffer_management(0 as i32);
     }
     if run_script != 0 {
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line);
-    } else if tournament != 0 {
+    } else if config.tournament != 0 {
         play_tournament(move_sequence, log_file_name, use_thor != 0, use_learning != 0);
-    } else if only_analyze != 0 {
+    } else if config.only_analyze != 0 {
         analyze_game(move_sequence);
     } else {
         play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name, use_thor != 0, use_learning != 0);
@@ -659,22 +659,22 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
 
     let mut i = 0;
     let mut j = 0;
-    let tournament_levels_ = tournament_levels;
+    let tournament_levels_ = config.tournament_levels;
     while i < tournament_levels_ {
         j = 0;
         while j < tournament_levels_ {
-            skill[0] =
-                tournament_skill[i as usize][0];
-            exact_skill[0] =
-                tournament_skill[i as usize][1];
-            wld_skill[0] =
-                tournament_skill[i as usize][2];
-            skill[2] =
-                tournament_skill[j as usize][0];
-            exact_skill[2] =
-                tournament_skill[j as usize][1];
-            wld_skill[2] =
-                tournament_skill[j as usize][2];
+            config.skill[0] =
+                config.tournament_skill[i as usize][0];
+            config.exact_skill[0] =
+                config.tournament_skill[i as usize][1];
+            config.wld_skill[0] =
+                config.tournament_skill[i as usize][2];
+            config.skill[2] =
+                config.tournament_skill[j as usize][0];
+            config.exact_skill[2] =
+                config.tournament_skill[j as usize][1];
+            config.wld_skill[2] =
+                config.tournament_skill[j as usize][2];
             play_game(0 as *const i8, move_sequence,
                       0 as *const i8, 1 as i32, log_file_name_, use_thor_, use_learning_);
             add_counter(&mut tourney_nodes, &mut total_nodes);
@@ -701,7 +701,7 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
         i += 1
     }
     adjust_counter(&mut tourney_nodes);
-    let tournament_skill_ = &tournament_skill;
+    let tournament_skill_ = &config.tournament_skill;
     let tourney_counter_value = counter_value(&mut tourney_nodes);
 
     printf(b"\n\nTime:  %.1f s\nNodes: %.0f\n\x00" as *const u8 as
@@ -1151,11 +1151,11 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move);
     setup_hash(1 as i32);
     clear_stored_game();
-    if echo != 0 && use_book != 0 {
+    if echo != 0 && config.use_book != 0 {
         puts(b"Disabling usage of opening book\x00" as *const u8 as
                  *const i8);
     }
-    use_book = 0;
+    config.use_book = 0;
     reset_book_search(&mut g_book);
     let black_name = b"Zebra\x00" as *const u8 as *const i8;
     let white_name = b"Zebra\x00" as *const u8 as *const i8;
@@ -1187,9 +1187,9 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             if echo != 0 {
                 set_move_list(black_moves.as_mut_ptr(),
                               white_moves.as_mut_ptr(), score_sheet_row);
-                set_times(floor(player_time[0]) as
+                set_times(floor(config.player_time[0]) as
                               i32,
-                          floor(player_time[2]) as
+                          floor(config.player_time[2]) as
                               i32);
                 opening_name = find_opening_name();
                 if !opening_name.is_null() {
@@ -1197,7 +1197,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                                *const i8, opening_name);
                 }
                 display_board(stdout, &board, side_to_move,
-                              1, use_timer, 1,
+                              1, config.use_timer, 1,
                               current_row,
                               black_player, black_time, black_eval,
                               white_player, white_time, white_eval,
@@ -1205,15 +1205,15 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             }
             /* Check what the Thor opening statistics has to say */
             choose_thor_opening_move(&board, side_to_move, echo);
-            if echo != 0 && wait != 0 { dumpch(); }
-            start_move::<FE>(player_time[side_to_move as usize],
-                       player_increment[side_to_move as usize],
+            if echo != 0 && config.wait != 0 { dumpch(); }
+            start_move::<FE>(config.player_time[side_to_move as usize],
+                       config.player_increment[side_to_move as usize],
                        disks_played + 4 as i32);
-            determine_move_time(player_time[side_to_move as usize],
-                                player_increment[side_to_move as usize],
+            determine_move_time(config.player_time[side_to_move as usize],
+                                config.player_increment[side_to_move as usize],
                                 disks_played + 4 as i32);
             timed_search =
-                (skill[side_to_move as usize] >= 60 as i32) as
+                (config.skill[side_to_move as usize] >= 60 as i32) as
                     i32;
             empties = 60 as i32 - disks_played;
             /* Determine the score for the move actually played.
@@ -1224,61 +1224,61 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             curr_move = provided_move[disks_played as usize];
             opponent = 0 as i32 + 2 as i32 - side_to_move;
             make_move(side_to_move, curr_move, 1 as i32);
-            if empties > wld_skill[side_to_move as usize] {
+            if empties > config.wld_skill[side_to_move as usize] {
                 reset_counter(&mut nodes);
                 resp_move =
                     compute_move(opponent, 0 as i32,
-                                 player_time[opponent as usize] as
+                                 config.player_time[opponent as usize] as
                                      i32,
-                                 player_increment[opponent as usize] as
-                                     i32, timed_search, use_book,
-                                 skill[opponent as usize] - 2 as i32,
-                                 exact_skill[opponent as usize] -
+                                 config.player_increment[opponent as usize] as
+                                     i32, timed_search, config.use_book,
+                                 config.skill[opponent as usize] - 2 as i32,
+                                 config.exact_skill[opponent as usize] -
                                      1 as i32,
-                                 wld_skill[opponent as usize] -
+                                 config.wld_skill[opponent as usize] -
                                      1 as i32, 1 as i32,
                                  &mut played_info1)
             }
             reset_counter(&mut nodes);
             resp_move =
                 compute_move(opponent, 0 as i32,
-                             player_time[opponent as usize] as i32,
-                             player_increment[opponent as usize] as
-                                 i32, timed_search, use_book,
-                             skill[opponent as usize] - 1 as i32,
-                             exact_skill[opponent as usize] -
+                             config.player_time[opponent as usize] as i32,
+                             config.player_increment[opponent as usize] as
+                                 i32, timed_search, config.use_book,
+                             config.skill[opponent as usize] - 1 as i32,
+                             config.exact_skill[opponent as usize] -
                                  1 as i32,
-                             wld_skill[opponent as usize] - 1 as i32,
+                             config.wld_skill[opponent as usize] - 1 as i32,
                              1 as i32, &mut played_info2);
             unmake_move(side_to_move, curr_move);
             /* Determine the 'best' move and its score. For midgame moves,
             search twice to dampen oscillations. Unless we're in the endgame
              region, a private hash transform is used - see above. */
-            if empties > wld_skill[side_to_move as usize] {
+            if empties > config.wld_skill[side_to_move as usize] {
                 set_hash_transformation(best_trans1, best_trans2);
                 reset_counter(&mut nodes);
                 curr_move =
                     compute_move(side_to_move, 0 as i32,
-                                 player_time[side_to_move as usize] as
+                                 config.player_time[side_to_move as usize] as
                                      i32,
-                                 player_increment[side_to_move as usize] as
-                                     i32, timed_search, use_book,
-                                 skill[side_to_move as usize] -
+                                 config.player_increment[side_to_move as usize] as
+                                     i32, timed_search, config.use_book,
+                                 config.skill[side_to_move as usize] -
                                      1 as i32,
-                                 exact_skill[side_to_move as usize],
-                                 wld_skill[side_to_move as usize],
+                                 config.exact_skill[side_to_move as usize],
+                                 config.wld_skill[side_to_move as usize],
                                  1 as i32, &mut best_info1)
             }
             reset_counter(&mut nodes);
             curr_move =
                 compute_move(side_to_move, 0 as i32,
-                             player_time[side_to_move as usize] as
+                             config.player_time[side_to_move as usize] as
                                  i32,
-                             player_increment[side_to_move as usize] as
-                                 i32, timed_search, use_book,
-                             skill[side_to_move as usize],
-                             exact_skill[side_to_move as usize],
-                             wld_skill[side_to_move as usize],
+                             config.player_increment[side_to_move as usize] as
+                                 i32, timed_search, config.use_book,
+                             config.skill[side_to_move as usize],
+                             config.exact_skill[side_to_move as usize],
+                             config.wld_skill[side_to_move as usize],
                              1 as i32, &mut best_info2);
             if side_to_move == 0 as i32 {
                 set_evals(produce_compact_eval(best_info2), 0.0f64);
@@ -1289,11 +1289,11 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                     'a' as i32 + curr_move % 10 as i32 -
                         1 as i32,
                     '0' as i32 + curr_move / 10 as i32);
-            if empties <= exact_skill[side_to_move as usize] {
+            if empties <= config.exact_skill[side_to_move as usize] {
                 fprintf(output_stream,
                         b"%+6d\x00" as *const u8 as *const i8,
                         best_info2.score / 128 as i32);
-            } else if empties <= wld_skill[side_to_move as usize] {
+            } else if empties <= config.wld_skill[side_to_move as usize] {
                 if best_info2.res as u32 ==
                        WON_POSITION as i32 as u32 {
                     fputs(b"    +1\x00" as *const u8 as *const i8,
@@ -1329,11 +1329,11 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             if resp_move == -(1 as i32) {
                 fprintf(output_stream,
                         b"     ?\x00" as *const u8 as *const i8);
-            } else if empties <= exact_skill[side_to_move as usize] {
+            } else if empties <= config.exact_skill[side_to_move as usize] {
                 fprintf(output_stream,
                         b"%+6d\x00" as *const u8 as *const i8,
                         -played_info2.score / 128 as i32);
-            } else if empties <= wld_skill[side_to_move as usize] {
+            } else if empties <= config.wld_skill[side_to_move as usize] {
                 if played_info2.res as u32 ==
                        WON_POSITION as i32 as u32 {
                     fputs(b"    -1\x00" as *const u8 as *const i8,
@@ -1363,8 +1363,8 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                             '0' as i32 + curr_move / 10 as i32);
             }
             move_stop = get_real_timer::<FE>();
-            if player_time[side_to_move as usize] != 10000000.0f64 {
-                player_time[side_to_move as usize] -= move_stop - move_start
+            if config.player_time[side_to_move as usize] != 10000000.0f64 {
+                config.player_time[side_to_move as usize] -= move_stop - move_start
             }
             store_move(disks_played, curr_move);
             make_move(side_to_move, curr_move, 1 as i32);
@@ -1385,21 +1385,21 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     if echo == 0 {
         printf(b"\n\x00" as *const u8 as *const i8);
         printf(b"Black level: %d\n\x00" as *const u8 as *const i8,
-               skill[0]);
+               config.skill[0]);
         printf(b"White level: %d\n\x00" as *const u8 as *const i8,
-               skill[2]);
+               config.skill[2]);
     }
     if side_to_move == 0 as i32 { score_sheet_row += 1 }
     LibcDumpHandler::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
-    if echo != 0 && one_position_only == 0 {
+    if echo != 0 && config.one_position_only == 0 {
         set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
-        set_times(floor(player_time[0]) as
+        set_times(floor(config.player_time[0]) as
                       i32,
-                  floor(player_time[2]) as
+                  floor(config.player_time[2]) as
                       i32);
         display_board(stdout, &board, side_to_move,
-                      1 as i32, use_timer, 1 as i32,
+                      1 as i32, config.use_timer, 1 as i32,
                       current_row,
                       black_player, black_time, black_eval,
                       white_player, white_time, white_eval,
@@ -1484,7 +1484,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     my_time = 100000000;
     my_incr = 0;
     timed_search = 0;
-    book = use_book;
+    book = config.use_book;
     mid = 60;
     if wld_only != 0 {
         exact = 0 as i32
