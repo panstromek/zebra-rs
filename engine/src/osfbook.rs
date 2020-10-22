@@ -16,7 +16,6 @@ use crate::{
 };
 use crate::src::stubs::{abs, ceil, floor};
 use crate::src::error::{FrontEnd};
-use std::ffi::c_void;
 use crate::src::midgame::tree_search;
 use crate::src::timer::{last_panic_check, clear_panic_abort, toggle_abort_check};
 use crate::src::hash::{add_hash, setup_hash};
@@ -497,20 +496,18 @@ pub unsafe fn set_negamax_span(min_span: f64,
    ADJUST_SCORE
    Tweak a score as to encourage early deviations.
 */
-pub unsafe fn adjust_score(score: i32,
-                       side_to_move: i32)
-                       -> i32 {
+pub fn adjust_score(score: i32, side_to_move: i32, book: &mut Book, disks_played_: i32) -> i32 {
     let mut adjustment: i32 = 0;
     let mut adjust_steps: i32 = 0;
-    adjust_steps = g_book.high_deviation_threshold - disks_played;
+    adjust_steps = book.high_deviation_threshold - disks_played_;
     if adjust_steps < 0 as i32 {
         adjustment = 0 as i32
     } else {
-        if disks_played < g_book.low_deviation_threshold {
-            adjust_steps = g_book.high_deviation_threshold - g_book.low_deviation_threshold
+        if disks_played_ < book.low_deviation_threshold {
+            adjust_steps = book.high_deviation_threshold - book.low_deviation_threshold
         }
         adjustment =
-            floor(adjust_steps as f64 * g_book.deviation_bonus * 128.0f64)
+            floor(adjust_steps as f64 * book.deviation_bonus * 128.0f64)
                 as i32;
         if side_to_move == 2 as i32 { adjustment = -adjustment }
     }
@@ -818,47 +815,49 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
     let mut child_feasible: i32 = 0;
     let mut deviation: i32 = 0;
     let mut root_flags: i32 = 0;
-    get_hash(&mut val1, &mut val2, &mut orientation);
-    slot = probe_hash_table(val1, val2, &mut g_book);
+    let mut book = &mut g_book;
+    let board1 = &board;
+    get_hash_safe(&mut val1, &mut val2, &mut orientation, book, board1);
+    slot = probe_hash_table(val1, val2, book);
     /* If the position wasn't found in the hash table, return. */
     if slot == -(1 as i32) ||
-        *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
-        g_book.candidate_count = 0;
+        *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
+        book.candidate_count = 0;
         return
-    } else { index = *g_book.book_hash_table.offset(slot as isize) }
+    } else { index = *book.book_hash_table.offset(slot as isize) }
     /* If the position hasn't got the right flag bits set, return. */
-    root_flags = (*g_book.node.offset(index as isize)).flags as i32;
+    root_flags = (*book.node.offset(index as isize)).flags as i32;
     if flags != 0 as i32 && root_flags & flags == 0 {
-        g_book.candidate_count = 0;
+        book.candidate_count = 0;
         return
     }
     if side_to_move == 0 as i32 {
         sign = 1 as i32
     } else { sign = -(1 as i32) }
     alternative_move =
-        (*g_book.node.offset(index as isize)).best_alternative_move as i32;
+        (*book.node.offset(index as isize)).best_alternative_move as i32;
     if alternative_move > 0 as i32 {
         alternative_move =
-            *g_book.inv_symmetry_map[orientation as
+            *book.inv_symmetry_map[orientation as
                 usize].offset(alternative_move as isize);
         alternative_score =
-            adjust_score((*g_book.node.offset(index as isize)).alternative_score as
-                             i32, side_to_move)
+            adjust_score((*book.node.offset(index as isize)).alternative_score as
+                             i32, side_to_move, &mut book, disks_played)
     } else { alternative_score = -(12345678 as i32) }
     generate_all(side_to_move);
-    g_book.candidate_count = 0;
+    book.candidate_count = 0;
     i = 0;
     while i < move_count[disks_played as usize] {
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
-        slot = probe_hash_table(val1, val2, &mut g_book);
+        slot = probe_hash_table(val1, val2, &mut book);
         unmake_move(side_to_move, this_move);
         /* Check if the move leads to a book position and, if it does,
            whether it has the solve status (WLD or FULL) specified by FLAGS. */
         deviation = 0;
         if slot == -(1 as i32) ||
-            *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
+            *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
             if this_move == alternative_move && flags == 0 {
                 score = alternative_score;
                 child_feasible = 1;
@@ -867,48 +866,48 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                 child_feasible = 0;
                 score = 0 as i32
             }
-        } else if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
+        } else if (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
             isize)).flags as i32 & flags != 0
             || flags == 0 {
             if side_to_move == 0 as i32 {
                 score =
-                    (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
+                    (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                         isize)).black_minimax_score as
                         i32
             } else {
                 score =
-                    (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
+                    (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                         isize)).white_minimax_score as
                         i32
             }
             child_feasible = 1 as i32
         } else { child_feasible = 0; score = 0 as i32 }
         if child_feasible != 0 && score == 0 as i32 &&
-            (*g_book.node.offset(index as isize)).flags as i32 &
+            (*book.node.offset(index as isize)).flags as i32 &
                 4 as i32 == 0 &&
-            (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
+            (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                 isize)).flags as i32 &
                 4 as i32 != 0 {
             /* Check if this is a book draw that should be avoided, i.e., one
                where the current position is not solved but the child position
                is solved for a draw, and the draw mode dictates this draw to
                be a bad one. */
-            if g_book.game_mode as u32 ==
+            if book.game_mode as u32 ==
                 PRIVATE_GAME as i32 as u32 ||
-                (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
+                (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                     isize)).flags as i32 &
                     32 as i32 == 0 {
                 if side_to_move == 0 as i32 {
-                    if g_book.draw_mode as u32 ==
+                    if book.draw_mode as u32 ==
                         WHITE_WINS as i32 as u32 ||
-                        g_book.draw_mode as u32 ==
+                        book.draw_mode as u32 ==
                             OPPONENT_WINS as i32 as u32 {
                         FE::report_unwanted_book_draw(this_move);
                         child_feasible = 0 as i32
                     }
-                } else if g_book.draw_mode as u32 ==
+                } else if book.draw_mode as u32 ==
                     BLACK_WINS as i32 as u32 ||
-                    g_book.draw_mode as u32 ==
+                    book.draw_mode as u32 ==
                         OPPONENT_WINS as i32 as u32 {
                     FE::report_unwanted_book_draw(this_move);
                     child_feasible = 0 as i32
@@ -916,37 +915,37 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
             }
         }
         if child_feasible != 0 {
-            g_book.candidate_list[g_book.candidate_count as usize].move_0 =
+            book.candidate_list[book.candidate_count as usize].move_0 =
                 move_list[disks_played as usize][i as usize];
-            g_book.candidate_list[g_book.candidate_count as usize].score = sign * score;
+            book.candidate_list[book.candidate_count as usize].score = sign * score;
             if deviation != 0 {
-                g_book.candidate_list[g_book.candidate_count as usize].flags =
+                book.candidate_list[book.candidate_count as usize].flags =
                     64 as i32
             } else {
-                g_book.candidate_list[g_book.candidate_count as usize].flags =
-                    (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
+                book.candidate_list[book.candidate_count as usize].flags =
+                    (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                         isize)).flags as i32
             }
-            g_book.candidate_list[g_book.candidate_count as usize].parent_flags =
+            book.candidate_list[book.candidate_count as usize].parent_flags =
                 root_flags;
-            g_book.candidate_count += 1
+            book.candidate_count += 1
         }
         i += 1
     }
-    if g_book.candidate_count > 0 as i32 {
+    if book.candidate_count > 0 as i32 {
         loop
         /* Sort the book moves using bubble sort */
         {
             changed = 0;
             i = 0;
-            while i < g_book.candidate_count - 1 as i32 {
-                if g_book.candidate_list[i as usize].score <
-                    g_book.candidate_list[(i + 1 as i32) as usize].score {
+            while i < book.candidate_count - 1 as i32 {
+                if book.candidate_list[i as usize].score <
+                    book.candidate_list[(i + 1 as i32) as usize].score {
                     changed = 1;
-                    temp = g_book.candidate_list[i as usize];
-                    g_book.candidate_list[i as usize] =
-                        g_book.candidate_list[(i + 1 as i32) as usize];
-                    g_book.candidate_list[(i + 1 as i32) as usize] = temp
+                    temp = book.candidate_list[i as usize];
+                    book.candidate_list[i as usize] =
+                        book.candidate_list[(i + 1 as i32) as usize];
+                    book.candidate_list[(i + 1 as i32) as usize] = temp
                 }
                 i += 1
             }
@@ -997,59 +996,60 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     let mut temp_stm: [i32; 60] = [0; 60];
     /* Disable opening book randomness unless the move is going to
        be played on the board by Zebra */
+    let book = &mut g_book;
     if update_slack != 0 {
         remaining_slack =
-            if g_book.max_slack - g_book.used_slack[side_to_move as usize] >
+            if book.max_slack - book.used_slack[side_to_move as usize] >
                 0 as i32 {
-                (g_book.max_slack) - g_book.used_slack[side_to_move as usize]
+                (book.max_slack) - book.used_slack[side_to_move as usize]
             } else { 0 as i32 }
     } else { remaining_slack = 0 as i32 }
-    if echo != 0 && g_book.candidate_count > 0 as i32 &&
+    if echo != 0 && book.candidate_count > 0 as i32 &&
         get_ponder_move() == 0 {
         FE::report_in_get_book_move_1(side_to_move, remaining_slack);
     }
     /* No book move found? */
-    if g_book.candidate_count == 0 as i32 { return -(1 as i32) }
+    if book.candidate_count == 0 as i32 { return -(1 as i32) }
     /* Find the book flags of the original position. */
     get_hash(&mut val1, &mut val2, &mut orientation);
-    slot = probe_hash_table(val1, val2, &mut g_book);
+    slot = probe_hash_table(val1, val2, book);
     if slot == -(1 as i32) ||
-        *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
+        *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
         FE::internal_error_in_book_code();
     }
     base_flags =
-        (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as isize)).flags
+        (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags
             as i32;
     /* If we have an endgame score for the position, we only want to
        consult the book if there is at least one move realizing that score. */
-    index = *g_book.book_hash_table.offset(slot as isize);
-    if (*g_book.node.offset(index as isize)).flags as i32 & 16 as i32
+    index = *book.book_hash_table.offset(slot as isize);
+    if (*book.node.offset(index as isize)).flags as i32 & 16 as i32
         != 0 {
-        if g_book.candidate_list[0].score <
-            (*g_book.node.offset(index as isize)).black_minimax_score as
+        if book.candidate_list[0].score <
+            (*book.node.offset(index as isize)).black_minimax_score as
                 i32 {
             return -(1 as i32)
         }
-    } else if (*g_book.node.offset(index as isize)).flags as i32 &
+    } else if (*book.node.offset(index as isize)).flags as i32 &
         4 as i32 != 0 {
-        if (*g_book.node.offset(index as isize)).black_minimax_score as i32 >
+        if (*book.node.offset(index as isize)).black_minimax_score as i32 >
             0 as i32 &&
-            g_book.candidate_list[0].score <=
+            book.candidate_list[0].score <=
                 0 as i32 {
             return -(1 as i32)
         }
     }
     /* Don't randomize among solved moves */
-    score = g_book.candidate_list[0].score;
+    score = book.candidate_list[0].score;
     if score >= 30000 as i32 { remaining_slack = 0 as i32 }
     feasible_count = 0;
     total_weight = 0;
-    while feasible_count < g_book.candidate_count &&
-        g_book.candidate_list[feasible_count as usize].score >=
+    while feasible_count < book.candidate_count &&
+        book.candidate_list[feasible_count as usize].score >=
             score - remaining_slack {
         weight[feasible_count as usize] =
             2 as i32 * remaining_slack + 1 as i32 -
-                (score - g_book.candidate_list[feasible_count as usize].score);
+                (score - book.candidate_list[feasible_count as usize].score);
         total_weight += weight[feasible_count as usize];
         feasible_count += 1
     }
@@ -1070,9 +1070,9 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
             acc_weight += weight[chosen_index as usize]
         }
     }
-    chosen_score = g_book.candidate_list[chosen_index as usize].score;
+    chosen_score = book.candidate_list[chosen_index as usize].score;
     if update_slack != 0 {
-        g_book.used_slack[side_to_move as usize] += score - chosen_score
+        book.used_slack[side_to_move as usize] += score - chosen_score
     }
     /* Convert the book score to the normal form.
        Note that this should work also for old-style book values. */
@@ -1089,7 +1089,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         }
     }
     /* Return the score via the EvaluationType structure */
-    flags = g_book.candidate_list[chosen_index as usize].flags;
+    flags = book.candidate_list[chosen_index as usize].flags;
     *eval_info =
         create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION, chosen_score,
                          0.0f64, 0 as i32, 1 as i32);
@@ -1117,41 +1117,41 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         (*eval_info).type_0 = MIDGAME_EVAL
     }
     if echo != 0 {
-        FE::report_in_get_book_move_2(chosen_score, chosen_index, &flags, &g_book.candidate_list);
+        FE::report_in_get_book_move_2(chosen_score, chosen_index, &flags, &book.candidate_list);
     }
     /* Fill the PV structure with the optimal book line */
     original_side_to_move = side_to_move;
     level = 0;
     temp_move[0] =
-        g_book.candidate_list[chosen_index as usize].move_0;
+        book.candidate_list[chosen_index as usize].move_0;
     loop  {
         temp_stm[level as usize] = side_to_move;
         make_move(side_to_move, temp_move[level as usize], 1 as i32);
         level += 1;
         get_hash(&mut val1, &mut val2, &mut orientation);
-        slot = probe_hash_table(val1, val2, &mut g_book);
+        slot = probe_hash_table(val1, val2, book);
         continuation = 1;
         if slot == -(1 as i32) ||
-            *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
+            *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
             continuation = 0 as i32
         } else {
             alternative_move =
-                (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
+                (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                     isize)).best_alternative_move as
                     i32;
             if alternative_move > 0 as i32 {
                 alternative_move =
-                    *g_book.inv_symmetry_map[orientation as
+                    *book.inv_symmetry_map[orientation as
                         usize].offset(alternative_move as
                         isize);
                 alternative_score =
-                    adjust_score((*g_book.node.offset(*g_book.book_hash_table.offset(slot as
+                    adjust_score((*book.node.offset(*book.book_hash_table.offset(slot as
                         isize)
                         as
                         isize)).alternative_score
-                                     as i32, side_to_move)
+                                     as i32, side_to_move, book, disks_played)
             } else { alternative_score = -(12345678 as i32) }
-            if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
+            if (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                 isize)).flags as i32 &
                 1 as i32 != 0 {
                 side_to_move = 0;
@@ -1168,10 +1168,10 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                 this_move = move_list[disks_played as usize][i as usize];
                 make_move(side_to_move, this_move, 1 as i32);
                 get_hash(&mut val1, &mut val2, &mut orientation);
-                slot = probe_hash_table(val1, val2, &mut g_book);
+                slot = probe_hash_table(val1, val2, book);
                 unmake_move(side_to_move, this_move);
                 if slot == -(1 as i32) ||
-                    *g_book.book_hash_table.offset(slot as isize) ==
+                    *book.book_hash_table.offset(slot as isize) ==
                         -(1 as i32) {
                     if this_move == alternative_move {
                         score = alternative_score;
@@ -1180,13 +1180,13 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                 } else {
                     if original_side_to_move == 0 as i32 {
                         score =
-                            (*g_book.node.offset(*g_book.book_hash_table.offset(slot as
+                            (*book.node.offset(*book.book_hash_table.offset(slot as
                                 isize)
                                 as isize)).black_minimax_score
                                 as i32
                     } else {
                         score =
-                            (*g_book.node.offset(*g_book.book_hash_table.offset(slot as
+                            (*book.node.offset(*book.book_hash_table.offset(slot as
                                 isize)
                                 as isize)).white_minimax_score
                                 as i32
@@ -1219,6 +1219,6 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         unmake_move(temp_stm[level as usize], temp_move[level as usize]);
         if !(level > 0 as i32) { break ; }
     }
-    return g_book.candidate_list[chosen_index as usize].move_0;
+    return book.candidate_list[chosen_index as usize].move_0;
 }
 
