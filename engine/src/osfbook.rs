@@ -259,9 +259,9 @@ pub fn set_deviation_value(low_threshold: i32, high_threshold: i32, bonus: f64, 
    Sets the used slack count to zero.
 */
 
-pub unsafe fn reset_book_search() {
-    g_book.used_slack[0] = 0.0f64 as i32;
-    g_book.used_slack[2] = 0.0f64 as i32;
+pub unsafe fn reset_book_search(book: &mut Book) {
+    book.used_slack[0] = 0.0f64 as i32;
+    book.used_slack[2] = 0.0f64 as i32;
 }
 /*
    SET_SLACK
@@ -689,23 +689,24 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
     let mut orientation: i32 = 0;
     if level >= 5 as i32 { return }
     get_hash(&mut val1, &mut val2, &mut orientation);
-    slot = probe_hash_table(val1, val2, &mut g_book);
-    this_index = *g_book.book_hash_table.offset(slot as isize);
+    let mut book = &mut g_book;
+    slot = probe_hash_table(val1, val2, book);
+    this_index = *book.book_hash_table.offset(slot as isize);
     /* If the position wasn't found in the hash table, return. */
     if slot == -(1 as i32) ||
-        *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
+        *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
         return
     }
     /* Check the status of the g_book.node */
     is_full =
-        (*g_book.node.offset(this_index as isize)).flags as i32 &
+        (*book.node.offset(this_index as isize)).flags as i32 &
             16 as i32;
     is_wld =
-        (*g_book.node.offset(this_index as isize)).flags as i32 &
+        (*book.node.offset(this_index as isize)).flags as i32 &
             4 as i32;
-    /* Match the status of the g_book.node with those of the children and
-       recursively treat the entire subtree of the g_book.node */
-    if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as isize)).flags
+    /* Match the status of the node with those of the children and
+       recursively treat the entire subtree of the node */
+    if (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags
         as i32 & 1 as i32 != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
@@ -716,41 +717,41 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
-        slot = probe_hash_table(val1, val2, &mut g_book);
-        child_index = *g_book.book_hash_table.offset(slot as isize);
+        slot = probe_hash_table(val1, val2, &mut book);
+        child_index = *book.book_hash_table.offset(slot as isize);
         if child_index != -(1 as i32) {
             if disks_played < 60 as i32 - cutoff {
                 fill_endgame_hash(cutoff, level + 1 as i32);
             }
             if is_full != 0 {
                 /* Any child with matching exact score? */
-                if (*g_book.node.offset(child_index as isize)).flags as i32 &
+                if (*book.node.offset(child_index as isize)).flags as i32 &
                     16 as i32 != 0 &&
-                    (*g_book.node.offset(child_index as
+                    (*book.node.offset(child_index as
                         isize)).black_minimax_score as
                         i32 ==
-                        (*g_book.node.offset(this_index as
+                        (*book.node.offset(this_index as
                             isize)).black_minimax_score as
                             i32 {
                     matching_move = this_move
                 }
             } else if is_wld != 0 {
                 /* Any child with matching WLD results? */
-                if (*g_book.node.offset(child_index as isize)).flags as i32 &
+                if (*book.node.offset(child_index as isize)).flags as i32 &
                     (16 as i32 | 4 as i32) != 0 {
                     if side_to_move == 0 as i32 {
-                        if (*g_book.node.offset(child_index as
+                        if (*book.node.offset(child_index as
                             isize)).black_minimax_score as
                             i32 >=
-                            (*g_book.node.offset(this_index as
+                            (*book.node.offset(this_index as
                                 isize)).black_minimax_score
                                 as i32 {
                             matching_move = this_move
                         }
-                    } else if (*g_book.node.offset(child_index as
+                    } else if (*book.node.offset(child_index as
                         isize)).black_minimax_score as
                         i32 <=
-                        (*g_book.node.offset(this_index as
+                        (*book.node.offset(this_index as
                             isize)).black_minimax_score
                             as i32 {
                         matching_move = this_move
@@ -764,7 +765,7 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
     if matching_move != -(1 as i32) {
         /* Store the information */
         signed_score =
-            (*g_book.node.offset(this_index as isize)).black_minimax_score as
+            (*book.node.offset(this_index as isize)).black_minimax_score as
                 i32;
         if side_to_move == 2 as i32 { signed_score = -signed_score }
         if signed_score > 30000 as i32 {
