@@ -523,20 +523,19 @@ pub fn adjust_score(score: i32, side_to_move: i32, book: &mut Book, disks_played
 */
 
 pub unsafe fn find_opening_name() -> *const i8 {
-    let mut i: i32 = 0;
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
     get_hash_safe(&mut val1, &mut val2, &mut orientation, &mut g_book, &board);
-    i = 0;
-    while i < 76 as i32 {
-        if val1 == opening_list[i as usize].hash_val1 &&
-            val2 == opening_list[i as usize].hash_val2 {
-            return opening_list[i as usize].name.as_ptr() as *const i8
+    let mut i = 0;
+    while i < opening_list.len() {
+        if val1 == opening_list[i].hash_val1 &&
+            val2 == opening_list[i].hash_val2 {
+            return opening_list[i].name.as_ptr() as *const i8
         }
         i += 1
     }
-    return 0 as *const i8;
+    0 as *const i8
 }
 /*
   CLEAR_OSF
