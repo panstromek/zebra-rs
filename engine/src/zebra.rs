@@ -98,27 +98,19 @@ pub unsafe trait InitialMoveSource {
 
 
 pub unsafe fn set_names_from_skills<ZF: ZebraFrontend>() {
-    let black_name = if skill[0] == 0 {
-        b"Player\x00" as *const u8 as *const i8
-    } else {
-        b"Zebra\x00" as *const u8 as *const i8
-    };
-    let white_name = if skill[2] == 0 {
-        b"Player\x00" as *const u8 as *const i8
-    } else {
-        b"Zebra\x00" as *const u8 as *const i8
-    };
-    ZF::set_names(black_name, white_name);
+    let white_is_player = skill[0] == 0;
+    let black_is_player = skill[2] == 0;
+    ZF::set_names(white_is_player, black_is_player);
 }
 
 pub trait ZebraFrontend {
     fn set_evals(black: f64, white: f64);
     fn set_move_list(row: i32);
-    unsafe fn set_names(black_name: *const i8, white_name: *const i8);
+    fn set_names(white_is_player: bool, black_is_player: bool);
     fn set_times(black: i32, white: i32);
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
     fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64);
-    unsafe fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
+    fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
                                 black_moves_: &[i32; 60], white_moves_: &[i32; 60]);
     fn print_out_thor_matches(thor_max_games_: i32);
     unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32);
@@ -133,7 +125,7 @@ pub trait ZebraFrontend {
     fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
     unsafe fn report_opening_name(opening_name: *const i8);
     fn report_book_randomness(slack_: f64);
-    unsafe fn load_thor_files();
+    fn load_thor_files();
     fn print_move_alternatives(side_to_move: i32);
     fn dumpch();
 }

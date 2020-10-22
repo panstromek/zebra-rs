@@ -814,8 +814,18 @@ impl ZebraFrontend for LibcFrontend {
         unsafe { set_move_list(null_mut(), null_mut(), row) }
     }
 
-    unsafe fn set_names(black_name: *const i8, white_name: *const i8) {
-        set_names(black_name, white_name)
+    fn set_names(white_is_player: bool, black_is_player: bool) {
+        let black_name = if white_is_player {
+            b"Player\x00" as *const u8 as *const i8
+        } else {
+            b"Zebra\x00" as *const u8 as *const i8
+        };
+        let white_name = if black_is_player {
+            b"Player\x00" as *const u8 as *const i8
+        } else {
+            b"Zebra\x00" as *const u8 as *const i8
+        };
+        unsafe { set_names(black_name, white_name) }
     }
 
     fn set_times(black: i32, white: i32) {
@@ -844,7 +854,7 @@ impl ZebraFrontend for LibcFrontend {
                    total_search_time);
         }
     }
-    unsafe fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
+    fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
                                 black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
         unsafe {
             display_board(stdout, board_,
@@ -976,7 +986,7 @@ impl ZebraFrontend for LibcFrontend {
     fn report_book_randomness(slack_: f64) {
         unsafe { printf(b"Book randomness: %.2f disks\n\x00" as *const u8 as *const i8, slack_); }
     }
-    unsafe fn load_thor_files() {
+    fn load_thor_files() { unsafe {
         /* No error checking done as it's only for testing purposes */
         let database_start = get_real_timer::<FE>();
         read_player_database(b"thor\\wthor.jou\x00" as *const u8 as
@@ -1033,7 +1043,7 @@ impl ZebraFrontend for LibcFrontend {
                database_stop - database_start);
         printf(b"Each Thor game occupies %d bytes.\n\x00" as *const u8 as
                    *const i8, get_thor_game_size());
-    }
+    }}
 
     fn print_move_alternatives(side_to_move: i32) {
         unsafe { print_move_alternatives(side_to_move) }

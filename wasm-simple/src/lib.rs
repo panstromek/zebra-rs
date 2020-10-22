@@ -316,7 +316,7 @@ impl ZebraFrontend for WasmFrontend {
         // unimplemented!()
     }
 
-    unsafe fn set_names(black_name: *const i8, white_name: *const i8) {
+    fn set_names(white_is_player: bool, black_is_player: bool) {
         // unimplemented!()
     }
 
@@ -332,7 +332,7 @@ impl ZebraFrontend for WasmFrontend {
         unimplemented!()
     }
 
-    unsafe fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128], black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
+    fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128], black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
         display_board(board_);
 
         // unimplemented!()
@@ -406,7 +406,7 @@ impl ZebraFrontend for WasmFrontend {
         c_log!("Book randomness: {} disks\n", slack_);
     }
 
-    unsafe fn load_thor_files() {
+    fn load_thor_files() {
         c_log!("load_thor_files - ignored \n");
     }
 
