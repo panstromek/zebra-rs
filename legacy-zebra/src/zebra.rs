@@ -24,7 +24,7 @@ use engine::src::learn::{store_move, clear_stored_game};
 use engine::src::getcoeff::remove_coeffs;
 use engine::src::myrandom::{my_random, my_srandom};
 use crate::src::osfbook::print_move_alternatives;
-use engine::src::zebra::{set_default_engine_globals, DumpHandler, config, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource, wld_only};
+use engine::src::zebra::{set_default_engine_globals, DumpHandler, config, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource};
 use libc_wrapper::{FILE, time_t};
 use engine::src::myrandom;
 use flip::unflip;
@@ -1486,7 +1486,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     timed_search = 0;
     book = config.use_book;
     mid = 60;
-    if wld_only != 0 {
+    if config.wld_only != 0 {
         exact = 0 as i32
     } else { exact = 60 as i32 }
     wld = 60;
@@ -1661,7 +1661,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                        out_file_name);
                 exit(1 as i32);
             }
-            if wld_only != 0 {
+            if config.wld_only != 0 {
                 if side_to_move == 0 as i32 {
                     if score > 0 as i32 {
                         fputs(b"Black win\x00" as *const u8 as

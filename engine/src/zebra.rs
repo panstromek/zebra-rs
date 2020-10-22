@@ -85,6 +85,7 @@ pub struct Config {
     pub skill: [i32; 3],
     pub wait: i32,
     pub use_book: i32,
+    pub wld_only: i32
 }
 
 pub static mut config: Config = Config {
@@ -109,8 +110,8 @@ pub static mut config: Config = Config {
     skill: [0; 3],
     wait: 0,
     use_book: 1,
+    wld_only: 0
 };
-pub static wld_only: i32 = 0;
 
 
 pub unsafe fn set_default_engine_globals() {
