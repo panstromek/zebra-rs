@@ -4,7 +4,7 @@ extern crate console_error_panic_hook;
 
 use std::panic;
 use wasm_bindgen::prelude::*;
-use engine::src::zebra::{set_default_engine_globals, EvaluationType, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, engine_play_game_async, config};
+use engine::src::zebra::{set_default_engine_globals, EvaluationType, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, engine_play_game_async};
 use engine::src::game::{engine_global_setup, global_terminate, BoardSource, FileBoardSource, ComputeMoveLogger, ComputeMoveOutput, CandidateMove};
 use engine::src::error::{FrontEnd, FatalError};
 use wasm_bindgen::__rt::core::ffi::c_void;
@@ -57,6 +57,7 @@ macro_rules! c_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
 }
 static COEFFS: &[u8; 1336662] = include_bytes!("./../../coeffs2.bin");
+use engine::src::zebra::g_config as config;
 
 #[wasm_bindgen]
 pub fn set_skills(
@@ -85,7 +86,7 @@ pub fn set_skills(
 pub fn init() {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
     unsafe {
-        set_default_engine_globals();
+        set_default_engine_globals(&mut config);
         config.use_book = 0;
         let coeffs = Flate2Source::new_from_data(COEFFS);
 

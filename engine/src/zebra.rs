@@ -88,7 +88,7 @@ pub struct Config {
     pub wld_only: i32
 }
 
-pub static mut config: Config = Config {
+pub static mut g_config: Config = Config {
     slack: 0.25f64,
     dev_bonus: 0.0f64,
     low_thresh: 0,
@@ -114,7 +114,7 @@ pub static mut config: Config = Config {
 };
 
 
-pub unsafe fn set_default_engine_globals() {
+pub unsafe fn set_default_engine_globals(config: &mut Config) {
     config.wait = 0;
     echo = 1;
     display_pv = 1;
@@ -134,7 +134,7 @@ pub unsafe trait InitialMoveSource {
 }
 
 
-pub unsafe fn set_names_from_skills<ZF: ZebraFrontend>() {
+pub fn set_names_from_skills<ZF: ZebraFrontend>(config: &Config) {
     let white_is_player = config.skill[0] == 0;
     let black_is_player = config.skill[2] == 0;
     ZF::set_names(white_is_player, black_is_player);
@@ -186,6 +186,7 @@ pub unsafe fn engine_play_game<
 >(file_name: *const i8, mut move_string: *const i8,
                   mut repeat: i32, log_file_name_: *mut i8,
                   mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool) {
+    let mut config = &mut g_config;
     let mut eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,
         res: WON_POSITION,
@@ -249,7 +250,7 @@ pub unsafe fn engine_play_game<
         if use_thor_ {
             ZF::load_thor_files();
         }
-        set_names_from_skills::<ZF>();
+        set_names_from_skills::<ZF>(config);
         ZF::set_move_list(
                       score_sheet_row);
         ZF::set_evals(0.0f64, 0.0f64);
@@ -464,6 +465,7 @@ pub async unsafe fn engine_play_game_async<
         GetMove: FnMut(i32) -> Fut,
         Fut: Future<Output=Result<i32, Box<dyn Error>>>
 {
+    let mut config = &mut g_config;
     let mut eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,
         res: WON_POSITION,
@@ -527,9 +529,8 @@ pub async unsafe fn engine_play_game_async<
         if use_thor_ {
             ZF::load_thor_files();
         }
-        set_names_from_skills::<ZF>();
-        ZF::set_move_list(
-                      score_sheet_row);
+        set_names_from_skills::<ZF>(config);
+        ZF::set_move_list(score_sheet_row);
         ZF::set_evals(0.0f64, 0.0f64);
         clear_moves();
         move_vec[0] = 0;
