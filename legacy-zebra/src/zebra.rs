@@ -24,7 +24,7 @@ use engine::src::learn::{store_move, clear_stored_game};
 use engine::src::getcoeff::remove_coeffs;
 use engine::src::myrandom::{my_random, my_srandom};
 use crate::src::osfbook::print_move_alternatives;
-use engine::src::zebra::{set_default_engine_globals, DumpHandler, config, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource};
+use engine::src::zebra::{set_default_engine_globals, DumpHandler, g_config, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource};
 use libc_wrapper::{FILE, time_t};
 use engine::src::myrandom;
 use flip::unflip;
@@ -47,6 +47,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
            // TODO add macro or smth for these (it's in the C code)
            b"Jul  2 2020\x00" as *const u8 as *const i8,
            b"19:33:54\x00" as *const u8 as *const i8);
+    let mut config = &mut g_config;
 
     let mut move_sequence = 0 as *const i8;
     let mut move_file_name = 0 as *const i8;
@@ -62,7 +63,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let script_in_file = script_out_file;
     let mut use_learning = 0;
     let mut use_thor = 0;
-    set_default_engine_globals();
+    set_default_engine_globals(config);
     let mut current_block_107: u64;
     let mut arg_index = 1;
     let mut help = 0;
@@ -642,6 +643,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
    of the program.
 */
 unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8, use_thor_: bool, use_learning_: bool) {
+    let config = &mut g_config;
     let mut result: [[[i32; 3]; 8]; 8] = [[[0; 3]; 8]; 8];
     let mut tourney_time: f64 = 0.;
     let mut score: [f64; 8] = [0.; 8];
@@ -1063,6 +1065,7 @@ impl ZebraFrontend for LibcFrontend {
    Analyzes all positions arising from a given move sequence.
 */
 unsafe fn analyze_game(mut move_string: *const i8) {
+    let config = &mut g_config;
     let mut best_info1 =
         EvaluationType{type_0: MIDGAME_EVAL,
                        res: WON_POSITION,
@@ -1411,6 +1414,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                                         mut out_file_name:
                                             *const i8,
                                         mut display_line: i32) {
+    let config = &mut g_config;
     let mut script_nodes = CounterType{hi: 0, lo: 0,};
     let mut eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
