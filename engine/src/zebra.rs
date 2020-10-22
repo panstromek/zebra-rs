@@ -113,7 +113,7 @@ pub unsafe fn set_names_from_skills<ZF: ZebraFrontend>() {
 
 pub trait ZebraFrontend {
     fn set_evals(black: f64, white: f64);
-    unsafe fn set_move_list(black: *mut i32, white: *mut i32, row: i32);
+    fn set_move_list(row: i32);
     unsafe fn set_names(black_name: *const i8, white_name: *const i8);
     fn set_times(black: i32, white: i32);
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
@@ -221,7 +221,7 @@ pub unsafe fn engine_play_game<
             ZF::load_thor_files();
         }
         set_names_from_skills::<ZF>();
-        ZF::set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
+        ZF::set_move_list(
                       score_sheet_row);
         ZF::set_evals(0.0f64, 0.0f64);
         clear_moves();
@@ -242,8 +242,7 @@ pub unsafe fn engine_play_game<
                 let move_start = get_real_timer::<FE>();
                 clear_panic_abort();
                 if echo != 0 {
-                    ZF::set_move_list(black_moves.as_mut_ptr(),
-                                  white_moves.as_mut_ptr(), score_sheet_row);
+                    ZF::set_move_list(score_sheet_row);
                     ZF::set_times(floor(player_time[0]) as i32,
                               floor(player_time[2]) as i32);
                     let opening_name = find_opening_name();
@@ -364,7 +363,7 @@ pub unsafe fn engine_play_game<
         if side_to_move == 0 as i32 { score_sheet_row += 1 }
         Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
         if echo != 0 && one_position_only == 0 {
-            ZF::set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
+            ZF::set_move_list(
                           score_sheet_row);
             if use_thor_ {
                 let database_start = get_real_timer::<FE>();
@@ -500,7 +499,7 @@ pub async unsafe fn engine_play_game_async<
             ZF::load_thor_files();
         }
         set_names_from_skills::<ZF>();
-        ZF::set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
+        ZF::set_move_list(
                       score_sheet_row);
         ZF::set_evals(0.0f64, 0.0f64);
         clear_moves();
@@ -521,8 +520,7 @@ pub async unsafe fn engine_play_game_async<
                 let move_start = get_real_timer::<FE>();
                 clear_panic_abort();
                 if echo != 0 {
-                    ZF::set_move_list(black_moves.as_mut_ptr(),
-                                  white_moves.as_mut_ptr(), score_sheet_row);
+                    ZF::set_move_list(score_sheet_row);
                     ZF::set_times(floor(player_time[0]) as i32,
                               floor(player_time[2]) as i32);
                     let opening_name = find_opening_name();
@@ -643,7 +641,7 @@ pub async unsafe fn engine_play_game_async<
         if side_to_move == 0 as i32 { score_sheet_row += 1 }
         Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
         if echo != 0 && one_position_only == 0 {
-            ZF::set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
+            ZF::set_move_list(
                           score_sheet_row);
             if use_thor_ {
                 let database_start = get_real_timer::<FE>();
