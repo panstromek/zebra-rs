@@ -438,7 +438,7 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
         if next == -(1 as i32) {
             done = 1;
             if adjust_score((*g_book.node.offset(current as isize)).alternative_score
-                                as i32, side_to_move) != root_score {
+                                as i32, side_to_move, &mut g_book, disks_played) != root_score {
                 puts(b"(failed to find continuation)\x00" as *const u8 as
                          *const i8);
                 show_move = 0 as i32
@@ -4191,7 +4191,7 @@ pub unsafe fn do_minimax(index: i32,
         9999 as i32 {
         best_black_score =
             adjust_score((*g_book.node.offset(index as isize)).alternative_score as
-                             i32, side_to_move) as i16;
+                             i32, side_to_move, &mut g_book, disks_played) as i16;
         best_white_score = best_black_score;
         worst_black_child_val = best_black_score as i32;
         best_black_child_val = worst_black_child_val;
