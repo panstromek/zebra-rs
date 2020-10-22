@@ -12,6 +12,7 @@ use legacy_zebra::src::game::{extended_compute_move, game_init};
 use legacy_zebra::src::osfbook::{read_binary_database, init_osf};
 use legacy_zebra::src::error::{LibcFatalError, FE};
 use libc_wrapper::_IO_FILE;
+use engine::src::zebra::g_config;
 
 extern "C" {
 
@@ -130,7 +131,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                    *const i8, val0, val1, orientation);
         extended_compute_move::<LibcFatalError>(side_to_move, 0 as i32,
                               1 as i32, 6 as i32,
-                              16 as i32, 18 as i32);
+                              16 as i32, 18 as i32, g_config.echo);
         printf(b"Scores for the %d moves:\n\x00" as *const u8 as
                    *const i8, get_evaluated_count());
         i = 0;

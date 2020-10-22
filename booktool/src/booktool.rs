@@ -7,6 +7,7 @@ use engine::src::hash::resize_hash;
 use legacy_zebra::src::error::{LibcFatalError};
 use engine::src::zebra::DrawMode::{OPPONENT_WINS, WHITE_WINS, BLACK_WINS, NEUTRAL};
 use engine::src::zebra::GameMode::{PUBLIC_GAME, PRIVATE_GAME};
+use engine::src::zebra::g_config;
 
 pub type FE = LibcFatalError;
 
@@ -143,7 +144,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             import_file_name = *argv.offset(arg_index as isize);
             arg_index += 1;
             max_game_count = atoi(*argv.offset(arg_index as isize));
-            build_tree(import_file_name, max_game_count, max_diff, cutoff);
+            build_tree(import_file_name, max_game_count, max_diff, cutoff, g_config.echo);
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-r\x00" as *const u8 as *const i8) ==
             0 ||

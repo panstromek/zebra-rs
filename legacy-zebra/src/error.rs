@@ -2,7 +2,7 @@ use libc_wrapper::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, 
 use engine::src::error::{FrontEnd, FatalError};
 use engine::src::hash::HashEntry;
 use engine::src::thordb::{ThorDatabase};
-use engine::src::zebra::EvaluationType;
+use engine::src::zebra::{EvaluationType, g_config};
 use crate::src::thordb::{sort_thor_games};
 use crate::src::osfbook::{print_move_alternatives};
 use std::ffi::c_void;
@@ -25,7 +25,6 @@ use engine::src::game::CandidateMove;
 use engine::src::counter::CounterType;
 use crate::src::display::{reset_buffer_display, clear_status, clear_sweep, interval2, interval1, last_output, sweep_modified, status_modified, timed_buffer_management};
 use std::env::args;
-use engine::src::display::echo;
 use thordb_types::C2RustUnnamed;
 
 static mut buffer: [i8; 16] = [0; 16];
@@ -165,7 +164,7 @@ impl FrontEnd for LibcFatalError {
                 Self::end_tree_search_some_pv_stats_report(alpha, beta, curr_val)
             }
             send_sweep(b" \x00" as *const u8 as *const i8);
-            if update_pv != 0 && move_index > 0 as i32 && echo != 0 {
+            if update_pv != 0 && move_index > 0 as i32 && g_config.echo != 0 {
                 display_sweep(stdout);
             }
         }
@@ -488,6 +487,8 @@ impl FrontEnd for LibcFatalError {
     fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32,
                                    searched: i32, update_pv: i32) {
         unsafe {
+            let mut echo = g_config.echo;
+
             if update_pv != 0 {
                 if curr_val <= alpha {
                     send_sweep(b"<%.2f\x00" as *const u8 as

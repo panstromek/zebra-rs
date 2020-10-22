@@ -9,7 +9,6 @@ use crate::src::learn::{LibcLearner, init_learn};
 use crate::src::thordb::{read_game_database, read_tournament_database, read_player_database, print_thor_matches, LegacyThor, get_total_game_count, choose_thor_opening_move, get_thor_game_size, init_thor_database};
 use crate::src::error::{LibcFatalError, FE, fatal_error};
 use engine::src::error::{FrontEnd, FatalError};
-use engine::src::display::{echo, display_pv};
 use libc_wrapper::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, sscanf, feof, fgets, atoi, scanf, sprintf, ctime, time, strchr, strcasecmp, atof, stdout};
 use engine::src::globals::{white_moves, score_sheet_row, black_moves, board};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType, adjust_counter};
@@ -75,7 +74,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                echo = atoi(*argv.offset(arg_index as isize));
+                g_config.echo = atoi(*argv.offset(arg_index as isize));
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
@@ -196,7 +195,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                display_pv = atoi(*argv.offset(arg_index as isize));
+                config.display_pv = atoi(*argv.offset(arg_index as isize));
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
@@ -1147,14 +1146,14 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                         *const u8 as *const i8);
     }
     /* Set up the position and the search engine */
-    if echo != 0 {
+    if g_config.echo != 0 {
         puts(b"Analyzing provided game...\x00" as *const u8 as
                  *const i8);
     }
     generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move);
     setup_hash(1 as i32);
     clear_stored_game();
-    if echo != 0 && config.use_book != 0 {
+    if g_config.echo != 0 && config.use_book != 0 {
         puts(b"Disabling usage of opening book\x00" as *const u8 as
                  *const i8);
     }
@@ -1187,7 +1186,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         if move_count[disks_played as usize] != 0 as i32 {
             move_start = get_real_timer::<FE>();
             clear_panic_abort();
-            if echo != 0 {
+            if g_config.echo != 0 {
                 set_move_list(black_moves.as_mut_ptr(),
                               white_moves.as_mut_ptr(), score_sheet_row);
                 set_times(floor(config.player_time[0]) as
@@ -1207,8 +1206,8 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                               &black_moves, &white_moves);
             }
             /* Check what the Thor opening statistics has to say */
-            choose_thor_opening_move(&board, side_to_move, echo);
-            if echo != 0 && config.wait != 0 { dumpch(); }
+            choose_thor_opening_move(&board, side_to_move, g_config.echo);
+            if g_config.echo != 0 && config.wait != 0 { dumpch(); }
             start_move::<FE>(config.player_time[side_to_move as usize],
                        config.player_increment[side_to_move as usize],
                        disks_played + 4 as i32);
@@ -1385,7 +1384,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         } else { white_moves[score_sheet_row as usize] = -(1 as i32) }
         side_to_move = 0 as i32 + 2 as i32 - side_to_move
     }
-    if echo == 0 {
+    if g_config.echo == 0 {
         printf(b"\n\x00" as *const u8 as *const i8);
         printf(b"Black level: %d\n\x00" as *const u8 as *const i8,
                config.skill[0]);
@@ -1394,7 +1393,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     }
     if side_to_move == 0 as i32 { score_sheet_row += 1 }
     LibcDumpHandler::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
-    if echo != 0 && config.one_position_only == 0 {
+    if g_config.echo != 0 && config.one_position_only == 0 {
         set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
                       score_sheet_row);
         set_times(floor(config.player_time[0]) as
@@ -1602,7 +1601,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 disc_count(0 as i32, &board) + disc_count(2 as i32, &board) -
                     4 as i32;
             /* Search the position */
-            if echo != 0 {
+            if g_config.echo != 0 {
                 set_move_list(black_moves.as_mut_ptr(),
                               white_moves.as_mut_ptr(), score_sheet_row);
                 display_board(stdout, &board, side_to_move,
@@ -1726,7 +1725,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                       output_stream);
             }
             fclose(output_stream);
-            if echo != 0 {
+            if g_config.echo != 0 {
                 puts(b"\n\n\n\x00" as *const u8 as *const i8);
             }
         }

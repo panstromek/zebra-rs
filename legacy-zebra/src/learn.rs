@@ -8,6 +8,7 @@ use engine::src::osfbook::set_search_depth;
 use engine::src::moves::{make_move, generate_all, disks_played, move_count};
 use engine::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
 use engine::src::learn::{database_name, binary_database, game_move, learn_depth, Learner, cutoff_empty};
+use engine::src::zebra::g_config;
 
 /*
    INIT_LEARN
@@ -27,7 +28,7 @@ pub struct LibcLearner;
 impl Learner for LibcLearner {
     fn learn_game(game_length: i32, private_game: i32, save_database: i32) {
         unsafe {
-            learn_game(game_length, private_game, save_database)
+            learn_game(game_length, private_game, save_database, g_config.echo)
         }
     }
 }
@@ -40,7 +41,7 @@ impl Learner for LibcLearner {
 
 pub unsafe fn learn_game(game_length: i32,
                                     private_game: i32,
-                                    save_database: i32) {
+                                    save_database: i32, echo:i32) {
     clear_panic_abort();
     toggle_abort_check(0 as i32);
     let full_solve = get_earliest_full_solve();
@@ -66,7 +67,7 @@ pub unsafe fn learn_game(game_length: i32,
     }
     set_search_depth(learn_depth);
     add_new_game(game_length, game_move.as_mut_ptr(), cutoff_empty,
-                 full_solve, wld_solve, 1 as i32, private_game);
+                 full_solve, wld_solve, 1 as i32, private_game, echo);
     if save_database != 0 {
         if binary_database != 0 {
             write_binary_database(database_name.as_mut_ptr());
@@ -87,7 +88,7 @@ pub unsafe fn full_learn_public_game(length: i32,
                                                 deviation_depth:
                                                     i32,
                                                 exact: i32,
-                                                wld: i32) {
+                                                wld: i32, echo:i32) {
     let stream =
         fopen(b"learn.log\x00" as *const u8 as *const i8,
               b"a\x00" as *const u8 as *const i8);
@@ -137,7 +138,7 @@ pub unsafe fn full_learn_public_game(length: i32,
        book and the dump it to file. */
     set_search_depth(deviation_depth);
     add_new_game(length, game_move.as_mut_ptr(), cutoff, exact, wld,
-                 1 as i32, 0 as i32);
+                 1 as i32, 0 as i32, echo);
     if binary_database != 0 {
         write_binary_database(database_name.as_mut_ptr());
     } else { write_text_database(database_name.as_mut_ptr()); }

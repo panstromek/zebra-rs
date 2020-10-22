@@ -15,7 +15,6 @@ use crate::src::getcoeff::pattern_evaluation;
 use crate::src::stubs::abs;
 use crate::src::timer::{is_panic_abort, last_panic_check, check_panic_abort, above_recommended, extended_above_recommended, frozen_ponder_depth};
 use crate::src::hash::add_hash;
-use crate::src::display::{echo};
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, LOST_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
@@ -194,7 +193,7 @@ pub unsafe fn calculate_perturbation() {
   while avoiding all moves which allow an immediate loss
   (if that is possible).
 */
-pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32)
+pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32)
                                                      -> i32 {
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
@@ -223,7 +222,7 @@ pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32)
                          0 as i32 + 2 as i32 - side_to_move,
                          -(12345678 as i32), 12345678 as i32,
                          0 as i32, 0 as i32,
-                         0 as i32);
+                         0 as i32, echo);
         unmake_move(side_to_move, move_0);
         if depth_one_score > best_score_unrestricted {
             best_score_unrestricted = depth_one_score;
@@ -262,7 +261,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                         beta: i32,
                                         allow_hash: i32,
                                         allow_mpc: i32,
-                                        void_legal: i32)
+                                        void_legal: i32, echo: i32)
                                         -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -387,7 +386,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                             tree_search::<FE>(level, level + shallow_remains,
                                         side_to_move, alpha_bound, beta_bound,
                                         allow_hash, 0 as i32,
-                                        void_legal);
+                                        void_legal, echo);
                         if shallow_val >= beta_bound {
                             if use_hash != 0 && allow_midgame_hash_update != 0
                             {
@@ -433,7 +432,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                        side_to_move,
                                        beta_bound - 1 as i32,
                                        beta_bound, allow_hash,
-                                       0 as i32, void_legal) >=
+                                       0 as i32, void_legal, echo) >=
                             beta_bound {
                             if use_hash != 0 && allow_midgame_hash_update != 0
                             {
@@ -450,7 +449,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                        side_to_move, alpha_bound,
                                        alpha_bound + 1 as i32,
                                        allow_hash, 0 as i32,
-                                       void_legal) <= alpha_bound {
+                                       void_legal, echo) <= alpha_bound {
                             if use_hash != 0 && allow_midgame_hash_update != 0
                             {
                                 add_hash(0 as i32, alpha,
@@ -615,7 +614,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                              -(12345678 as i32),
                                              -pre_best, 0 as i32,
                                              0 as i32,
-                                             1 as i32);
+                                             1 as i32, echo);
                             pre_best =
                                 if pre_best > curr_val {
                                     pre_best
@@ -701,7 +700,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                 -tree_search::<FE>(level + 1 as i32, max_depth,
                              0 as i32 + 2 as i32 -
                                  side_to_move, -beta, -curr_alpha, allow_hash,
-                             allow_mpc, 1 as i32);
+                             allow_mpc, 1 as i32, echo);
             best = curr_val;
             best_move_index = move_index;
             update_pv = 1 as i32
@@ -712,14 +711,14 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                              0 as i32 + 2 as i32 -
                                  side_to_move,
                              -(curr_alpha + 1 as i32), -curr_alpha,
-                             allow_hash, allow_mpc, 1 as i32);
+                             allow_hash, allow_mpc, 1 as i32, echo);
             if curr_val > curr_alpha && curr_val < beta {
                 curr_val =
                     -tree_search::<FE>(level + 1 as i32, max_depth,
                                  0 as i32 + 2 as i32 -
                                      side_to_move, -beta,
                                  12345678 as i32, allow_hash,
-                                 allow_mpc, 1 as i32);
+                                 allow_mpc, 1 as i32, echo);
                 if curr_val > best {
                     best = curr_val;
                     best_move_index = move_index;
@@ -788,7 +787,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             -tree_search::<FE>(level, max_depth,
                          0 as i32 + 2 as i32 - side_to_move,
                          -beta, -alpha, allow_hash, allow_mpc,
-                         0 as i32);
+                         0 as i32, echo);
         hash1 ^= hash_flip_color1;
         hash2 ^= hash_flip_color2;
         return curr_val
@@ -1041,7 +1040,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                                              beta: i32,
                                              allow_hash: i32,
                                              allow_mpc: i32,
-                                             void_legal: i32)
+                                             void_legal: i32, echo: i32)
                                              -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -1166,7 +1165,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                                              side_to_move,
                                          -(12345678 as i32),
                                          -pre_best, 0 as i32,
-                                         0 as i32, 1 as i32);
+                                         0 as i32, 1 as i32, echo);
                         pre_best =
                             if pre_best > curr_val {
                                 pre_best
@@ -1236,7 +1235,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                                                - side_to_move,
                                            -(beta - offset),
                                            -(curr_alpha - offset), allow_hash,
-                                           allow_mpc, 1 as i32),
+                                           allow_mpc, 1 as i32, echo),
                               offset);
             best = curr_val;
             best_move_index = move_index;
@@ -1252,7 +1251,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                                            -(curr_alpha - offset +
                                                1 as i32),
                                            -(curr_alpha - offset), allow_hash,
-                                           allow_mpc, 1 as i32),
+                                           allow_mpc, 1 as i32, echo),
                               offset);
             if curr_val > curr_alpha && curr_val < beta {
                 curr_val =
@@ -1264,7 +1263,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                                                -(beta - offset),
                                                12345678 as i32,
                                                allow_hash, allow_mpc,
-                                               1 as i32), offset);
+                                               1 as i32, echo), offset);
                 if curr_val > best {
                     best = curr_val;
                     best_move_index = move_index;
@@ -1347,7 +1346,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
             -root_tree_search::<FE>(level, max_depth,
                               0 as i32 + 2 as i32 -
                                   side_to_move, -beta, -alpha, allow_hash,
-                              allow_mpc, 0 as i32);
+                              allow_mpc, 0 as i32, echo);
         hash1 ^= hash_flip_color1;
         hash2 ^= hash_flip_color2;
         return curr_val
@@ -1366,7 +1365,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
 pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                          max_depth: i32,
                                          update_evals: i32,
-                                         eval_info: &mut EvaluationType)
+                                         eval_info: &mut EvaluationType, echo:i32)
                                          -> i32 {
     let mut adjusted_val: i32;
     let mut alpha: i32;
@@ -1408,12 +1407,12 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         /* The actual search */
         if depth == 1 as i32 {
             /* Fix to make it harder to wipe out depth-1 Zebra */
-            val = protected_one_ply_search::<FE>(side_to_move)
+            val = protected_one_ply_search::<FE>(side_to_move, echo)
         } else if enable_mpc != 0 {
             val =
                 root_tree_search::<FE>(0 as i32, depth, side_to_move, alpha,
                                  beta, 1 as i32, 1 as i32,
-                                 1 as i32);
+                                 1 as i32, echo);
             if force_return == 0 && is_panic_abort() == 0 &&
                 (val <= alpha || val >= beta) {
                 val =
@@ -1421,13 +1420,13 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                      -(12345678 as i32),
                                      12345678 as i32,
                                      1 as i32, 1 as i32,
-                                     1 as i32)
+                                     1 as i32, echo)
             }
         } else {
             val =
                 root_tree_search::<FE>(0 as i32, depth, side_to_move, alpha,
                                  beta, 1 as i32, 0 as i32,
-                                 1 as i32);
+                                 1 as i32, echo);
             if is_panic_abort() == 0 && force_return == 0 {
                 if val <= alpha {
                     val =
@@ -1435,14 +1434,14 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                          side_to_move,
                                          -(29000 as i32), alpha,
                                          1 as i32, 0 as i32,
-                                         1 as i32)
+                                         1 as i32, echo)
                 } else if val >= beta {
                     val =
                         root_tree_search::<FE>(0 as i32, depth,
                                          side_to_move, beta,
                                          29000 as i32,
                                          1 as i32, 0 as i32,
-                                         1 as i32)
+                                         1 as i32, echo)
                 }
             }
         }
