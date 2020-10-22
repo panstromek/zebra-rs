@@ -4,7 +4,6 @@ use crate::src::moves::{disks_played, make_move, valid_move, move_count, move_li
 use crate::src::search::{disc_count, total_time, total_evaluations, total_nodes, produce_compact_eval};
 use crate::src::counter::{counter_value, adjust_counter};
 use crate::src::stubs::{floor};
-// use crate::src::thordb::{get_black_average_score, get_black_median_score, get_white_win_count, get_draw_count, get_black_win_count, get_match_count, database_search, choose_thor_opening_move};
 use crate::src::globals::{board, score_sheet_row, white_moves, black_moves};
 use crate::src::learn::{store_move, set_learning_parameters, clear_stored_game, Learner};
 use crate::src::error::{FrontEnd};
@@ -16,23 +15,29 @@ use crate::src::hash::{setup_hash};
 use std::future::Future;
 use std::error::Error;
 use crate::src::thordb::ThorDatabase;
+use crate::src::zebra::EvalResult::WON_POSITION;
+use crate::src::zebra::EvalType::MIDGAME_EVAL;
 
+#[derive(Copy, Clone)]
+pub enum EvalType {
+    UNINITIALIZED_EVAL = 8,
+    INTERRUPTED_EVAL = 7,
+    UNDEFINED_EVAL = 6,
+    PASS_EVAL = 5,
+    FORCED_EVAL = 4,
+    SELECTIVE_EVAL = 3,
+    WLD_EVAL = 2,
+    EXACT_EVAL = 1,
+    MIDGAME_EVAL = 0,
+}
+#[derive(Copy, Clone, Eq, PartialEq)]
+pub enum EvalResult {
+    UNSOLVED_POSITION = 3,
+    LOST_POSITION = 2,
+    DRAWN_POSITION = 1,
+    WON_POSITION = 0,
+}
 
-pub type EvalType = u32;
-pub const UNINITIALIZED_EVAL: EvalType = 8;
-pub const INTERRUPTED_EVAL: EvalType = 7;
-pub const UNDEFINED_EVAL: EvalType = 6;
-pub const PASS_EVAL: EvalType = 5;
-pub const FORCED_EVAL: EvalType = 4;
-pub const SELECTIVE_EVAL: EvalType = 3;
-pub const WLD_EVAL: EvalType = 2;
-pub const EXACT_EVAL: EvalType = 1;
-pub const MIDGAME_EVAL: EvalType = 0;
-pub type EvalResult = u32;
-pub const UNSOLVED_POSITION: EvalResult = 3;
-pub const LOST_POSITION: EvalResult = 2;
-pub const DRAWN_POSITION: EvalResult = 1;
-pub const WON_POSITION: EvalResult = 0;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct EvaluationType {
@@ -43,14 +48,19 @@ pub struct EvaluationType {
     pub search_depth: i32,
     pub is_book: i32,
 }
-pub type DrawMode = u32;
-pub const OPPONENT_WINS: DrawMode = 3;
-pub const WHITE_WINS: DrawMode = 2;
-pub const BLACK_WINS: DrawMode = 1;
-pub const NEUTRAL: DrawMode = 0;
-pub type GameMode = u32;
-pub const PUBLIC_GAME: GameMode = 1;
-pub const PRIVATE_GAME: GameMode = 0;
+#[derive(Copy, Clone)]
+pub enum DrawMode {
+    OPPONENT_WINS = 3,
+    WHITE_WINS = 2,
+    BLACK_WINS = 1,
+    NEUTRAL = 0,
+}
+
+#[derive(Copy, Clone)]
+pub enum GameMode {
+    PUBLIC_GAME = 1,
+    PRIVATE_GAME = 0,
+}
 
 /* Local variables */
 pub static mut slack: f64 = 0.25f64;
@@ -132,7 +142,7 @@ pub trait ZebraFrontend {
 /* File handling procedures */
 pub trait DumpHandler {
     fn dump_position(side_to_move: i32, board_: &[i32; 128]);
-    fn dump_game_score(side_to_move: i32, score_sheet_row_: i32, x: &[i32; 60], x: &[i32; 60]);
+    fn dump_game_score(side_to_move: i32, score_sheet_row_: i32, black_moves_: &[i32; 60], white_moves_: &[i32; 60]);
 }
 
 

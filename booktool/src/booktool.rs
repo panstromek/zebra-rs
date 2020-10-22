@@ -5,6 +5,9 @@ use legacy_zebra::src::osfbook::{write_text_database, write_compressed_database,
 use engine::src::osfbook::{set_draw_mode, set_black_force, set_white_force, set_deviation_value, set_search_depth, set_eval_span, set_negamax_span, set_max_batch_size, set_game_mode, g_book};
 use engine::src::hash::resize_hash;
 use legacy_zebra::src::error::{LibcFatalError};
+use engine::src::zebra::DrawMode::{OPPONENT_WINS, WHITE_WINS, BLACK_WINS, NEUTRAL};
+use engine::src::zebra::GameMode::{PUBLIC_GAME, PRIVATE_GAME};
+
 pub type FE = LibcFatalError;
 
 extern "C" {
@@ -24,14 +27,7 @@ extern "C" {
     fn strcasecmp(_: *const i8, _: *const i8)
                   -> i32;
 }
-pub type DrawMode = u32;
-pub const OPPONENT_WINS: DrawMode = 3;
-pub const WHITE_WINS: DrawMode = 2;
-pub const BLACK_WINS: DrawMode = 1;
-pub const NEUTRAL: DrawMode = 0;
-pub type GameMode = u32;
-pub const PUBLIC_GAME: GameMode = 1;
-pub const PRIVATE_GAME: GameMode = 0;
+
 pub const MIDGAME_STATISTICS: C2RustUnnamed = 0;
 pub type C2RustUnnamed = u32;
 pub const ENDGAME_STATISTICS: C2RustUnnamed = 1;
