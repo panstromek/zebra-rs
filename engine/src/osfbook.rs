@@ -19,7 +19,6 @@ use crate::src::error::{FrontEnd};
 use crate::src::midgame::tree_search;
 use crate::src::timer::{last_panic_check, clear_panic_abort, toggle_abort_check};
 use crate::src::hash::{add_hash, setup_hash};
-use crate::src::display::echo;
 use crate::src::game::{engine_game_init, setup_non_file_based_game};
 use engine_traits::Offset;
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, WLD_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
@@ -942,7 +941,7 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
 
 pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                                           update_slack: i32,
-                                          mut eval_info: &mut EvaluationType)
+                                          mut eval_info: &mut EvaluationType, echo: i32)
                                           -> i32 {
     let mut i: i32 = 0;
     let mut original_side_to_move: i32 = 0;

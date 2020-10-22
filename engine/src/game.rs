@@ -14,7 +14,6 @@ use crate::src::probcut::{init_probcut, end_mpc_depth, use_end_cut, mpc_cut};
 use crate::src::myrandom::{my_srandom, my_random};
 use crate::src::stubs::{abs};
 use crate::src::error::{FrontEnd};
-use crate::src::display::{echo, display_pv};
 use crate::src::thordb::{ThorDatabase};
 use engine_traits::CoeffSource;
 use flip::unflip::init_flip_stack;
@@ -356,7 +355,9 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                                                                                                wld: i32,
                                                                                                search_forced: i32,
                                                                                                eval_info: &mut EvaluationType,
-                                                                                               logger: &mut Option<L>)
+                                                                                               logger: &mut Option<L>,
+                                                                                               display_pv:i32,
+                                                                                               echo:i32)
                                                                                                -> i32 {
     let mut book_eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
@@ -553,7 +554,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         }
         fill_move_alternatives::<FE>(side_to_move, flags);
         curr_move =
-             get_book_move::<FE>(side_to_move, update_all, &mut book_eval_info);
+             get_book_move::<FE>(side_to_move, update_all, &mut book_eval_info, echo);
         if curr_move != -(1 as i32) {
             set_current_eval(book_eval_info);
             midgame_move = curr_move;
@@ -626,7 +627,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             max_depth_reached = midgame_depth;
             midgame_move =
                 middle_game::<FE>(side_to_move, midgame_depth, update_all,
-                            &mut mid_eval_info);
+                            &mut mid_eval_info, echo);
             set_current_eval(mid_eval_info);
             midgame_diff =
                 1.3f64 * mid_eval_info.score as f64 / 128.0f64;
@@ -678,15 +679,15 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                    end_game::<FE>(side_to_move,
                              (disks_played < 60 as i32 - exact) as
                                  i32, 0 as i32, book, komi,
-                             &mut end_eval_info)
+                             &mut end_eval_info, echo)
             } else if empties <= exact {
                 curr_move =
                    end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
-                             book, komi, &mut end_eval_info)
+                             book, komi, &mut end_eval_info, echo)
             } else {
                 curr_move =
                    end_game::<FE>(side_to_move, 1 as i32, 0 as i32,
-                             book, komi, &mut end_eval_info)
+                             book, komi, &mut end_eval_info, echo)
             }
             set_current_eval(end_eval_info);
             if abs(root_eval) == abs(-(27000 as i32)) {
@@ -758,14 +759,14 @@ pub unsafe fn compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fro
     exact: i32,
     wld: i32,
     search_forced: i32,
-    eval_info: &mut EvaluationType)
+    eval_info: &mut EvaluationType, display_pv:i32, echo:i32)
     -> i32 {
     return generic_compute_move::<L, Out, FE, Thor>(
         side_to_move, update_all, my_time,
         my_incr, timed_depth,
         book, mid,
         exact, wld,
-        search_forced, eval_info, &mut L::create_log_file_if_needed());
+        search_forced, eval_info, &mut L::create_log_file_if_needed(), display_pv, echo);
 }
 
 pub unsafe fn ponder_move<
@@ -777,7 +778,7 @@ pub unsafe fn ponder_move<
                            _book: i32,
                            mid: i32,
                            exact: i32,
-                           wld: i32) {
+                           wld: i32, display_pv: i32, mut echo:i32) {
     let mut eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -829,7 +830,7 @@ pub unsafe fn ponder_move<
                  if (8 as i32) < mid {
                      8 as i32
                  } else { mid }, 0 as i32, 0 as i32,
-                 0 as i32, &mut eval_info);
+                 0 as i32, &mut eval_info, display_pv, echo);
     echo = stored_echo;
     /* Sort the opponents on the score and push the table move (if any)
        to the front of the list */
@@ -862,7 +863,7 @@ pub unsafe fn ponder_move<
         compute_move::<L, Out, FE, Thor>(0 as i32 + 2 as i32 - side_to_move,
                                          0 as i32, 0 as i32, 0 as i32,
                      1 as i32, 0 as i32, mid, exact, wld,
-                     0 as i32, &mut eval_info);
+                     0 as i32, &mut eval_info, display_pv, echo);
         unmake_move(side_to_move, this_move);
         clear_ponder_move();
         move_stop_time = get_real_timer::<FE>();

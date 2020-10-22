@@ -5,7 +5,6 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 use engine::src::game::{global_terminate, set_komi, toggle_human_openings, toggle_status_log};
 use engine::src::myrandom::my_srandom;
 use legacy_zebra::src::thordb::init_thor_database;
-use engine::src::display::{echo, display_pv};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
 use engine::src::timer::{get_real_timer, determine_move_time, start_move};
 use engine::src::search::{full_pv, full_pv_depth, nodes, disc_count};
@@ -16,7 +15,7 @@ use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, g_
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::game::{global_setup, compute_move, game_init};
 use legacy_zebra::src::display::{display_move, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_evals, set_names};
-use engine::src::zebra::EvaluationType;
+use engine::src::zebra::{EvaluationType, g_config};
 use legacy_zebra::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
 use libc_wrapper::{strstr, FILE};
@@ -286,7 +285,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                 disc_count(0 as i32, &board) + disc_count(2 as i32, &board) -
                     4 as i32;
             /* Search the position */
-            if echo != 0 {
+            if g_config.echo != 0 {
                 set_move_list(black_moves.as_mut_ptr(),
                               white_moves.as_mut_ptr(), score_sheet_row);
                 display_board(stdout, &board, side_to_move,
@@ -409,7 +408,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                       output_stream);
             }
             fclose(output_stream);
-            if echo != 0 {
+            if g_config.echo != 0 {
                 puts(b"\n\n\n\x00" as *const u8 as *const i8);
             }
         }
@@ -454,8 +453,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
            b"20:20:01\x00" as *const u8 as *const i8);
     use_random = 1;
     wait = 0;
-    echo = 1;
-    display_pv = 1;
+    g_config.echo = 1;
+    g_config.display_pv = 1;
     use_learning = 0;
     use_thor = 0;
     skill[2] = -(1 as i32);
@@ -483,7 +482,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 help = 1;
                 current_block_37 = 4808432441040389987;
             } else {
-                echo = atoi(*argv.offset(arg_index as isize));
+                g_config.echo = atoi(*argv.offset(arg_index as isize));
                 current_block_37 = 13303144130133872306;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),

@@ -6,7 +6,7 @@ use engine::src::moves::{disks_played, make_move, valid_move, move_count, genera
 use engine::src::globals::{board, white_moves, black_moves};
 use engine::src::myrandom::my_random;
 use engine::src::game::{get_evaluated_count, get_evaluated, EvaluatedMove};
-use engine::src::zebra::EvaluationType;
+use engine::src::zebra::{EvaluationType, g_config};
 use engine::src::timer::start_move;
 use engine::src::hash::{determine_hash_values, setup_hash};
 use engine::src::search::disc_count;
@@ -341,7 +341,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     extended_compute_move::<LibcFatalError>(side_to_move, 0 as i32,
                                           0 as i32, 8 as i32,
                                           60 as i32,
-                                          60 as i32);
+                                          60 as i32, g_config.echo);
                     if get_evaluated_count() ==
                         move_count[disks_played as usize] {
                     } else {

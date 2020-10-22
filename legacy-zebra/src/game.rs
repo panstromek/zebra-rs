@@ -5,9 +5,8 @@ use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError, FE};
 use engine::src::globals::{white_moves, black_moves, pv, pv_depth, board, piece_count};
-use engine::src::display::{echo};
 use engine::src::search::{full_pv_depth, full_pv, set_current_eval, force_return, negate_current_eval, create_eval_info, disc_count, nodes, evaluations, evals, clear_ponder_move, set_ponder_move, float_move, sort_moves};
-use engine::src::zebra::EvaluationType;
+use engine::src::zebra::{EvaluationType, g_config};
 use engine::src::midgame::{toggle_perturbation_usage, toggle_midgame_abort_check};
 use engine::src::timer::{toggle_abort_check, clear_ponder_times, start_move, ponder_depth, add_ponder_time, get_real_timer};
 use engine::src::moves::{unmake_move, disks_played, make_move, move_count, move_list, generate_all};
@@ -171,7 +170,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                                                   mut book: i32,
                                                   mut mid: i32,
                                                   mut exact: i32,
-                                                  mut wld: i32)
+                                                  mut wld: i32, mut echo: i32)
                                                   -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -286,7 +285,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
         if game_evaluated_count > 0 as i32 {
             best_move =
                  get_book_move::<FE>(side_to_move, 0 as i32,
-                              &mut book_eval_info);
+                              &mut book_eval_info, echo);
             set_current_eval(book_eval_info);
         } else {
             pv_depth[0] = 0;
@@ -952,7 +951,7 @@ pub unsafe fn compute_move(side_to_move: i32,
                                 my_incr, timed_depth,
                                 book, mid,
                                 exact, wld,
-                                search_forced, eval_info, &mut LogFileHandler::create_log_file_if_needed());
+                                search_forced, eval_info, &mut LogFileHandler::create_log_file_if_needed(), g_config.display_pv, g_config.echo);
 }
 
 pub struct LibcZebraOutput;

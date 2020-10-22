@@ -17,7 +17,6 @@ use crate::{
         globals::{piece_count, board, pv_depth, pv},
     }
 };
-use crate::src::display::{echo};
 use crate::src::error::FrontEnd;
 use crate::src::hash::{add_hash, hash_flip1, hash_flip2};
 use crate::src::midgame::{toggle_midgame_hash_usage, tree_search};
@@ -1534,7 +1533,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                             mut beta: i32,
                                             selectivity: i32,
                                             selective_cutoff: &mut i32,
-                                            void_legal: i32, bb_flips_: &mut BitBoard)
+                                            void_legal: i32, bb_flips_: &mut BitBoard, echo: i32)
                                             -> i32 {
     let mut node_val: f64 = 0.;
     let mut i: i32 = 0;
@@ -1705,7 +1704,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             let shallow_val =
                 tree_search::<FE>(level, level + shallow_remains, side_to_move,
                             alpha_bound, beta_bound, use_hash,
-                            0 as i32, void_legal);
+                            0 as i32, void_legal, echo);
             if shallow_val >= beta_bound {
                 if use_hash != 0 {
                     add_hash(1 as i32, alpha,
@@ -1904,7 +1903,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                                 128 as i32,
                                             1 as i32,
                                             1 as i32,
-                                            1 as i32)
+                                            1 as i32,echo)
                         }
                         /* Make the moves which are highly likely to result in
                            fail-high in decreasing order of mobility for the
@@ -1982,7 +1981,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                        0 as i32 + 2 as i32 -
                                      side_to_move, -beta, -curr_alpha,
                                        selectivity, &mut child_selective_cutoff,
-                                       1 as i32, bb_flips_);
+                                       1 as i32, bb_flips_,echo);
             best = curr_val;
             update_pv = 1;
             if level == 0 as i32 { end. best_end_root_move = move_0 }
@@ -1996,7 +1995,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                        -(curr_alpha + 1 as i32),
                                        -curr_alpha, selectivity,
                                        &mut child_selective_cutoff,
-                                       1 as i32, bb_flips_);
+                                       1 as i32, bb_flips_,echo);
             if curr_val > curr_alpha && curr_val < beta {
                 if selectivity > 0 as i32 {
                     curr_val =
@@ -2007,7 +2006,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                              side_to_move, -beta,
                                                12345678 as i32, selectivity,
                                                &mut child_selective_cutoff,
-                                               1 as i32, bb_flips_)
+                                               1 as i32, bb_flips_,echo)
                 } else {
                     curr_val =
                         -end_tree_search::<FE>(end,level + 1 as i32,
@@ -2017,7 +2016,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                              side_to_move, -beta, -curr_val,
                                                selectivity,
                                                &mut child_selective_cutoff,
-                                               1 as i32, bb_flips_)
+                                               1 as i32, bb_flips_,echo)
                 }
                 if curr_val > best {
                     best = curr_val;
@@ -2109,7 +2108,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             -end_tree_search::<FE>(end ,level, max_depth, opp_bits, my_bits,
                                    0 as i32 + 2 as i32 -
                                  side_to_move, -beta, -alpha, selectivity,
-                                   selective_cutoff, 0 as i32, bb_flips_);
+                                   selective_cutoff, 0 as i32, bb_flips_,echo);
         if use_hash != 0 {
             hash1 ^= hash_flip_color1;
             hash2 ^= hash_flip_color2
@@ -2142,7 +2141,8 @@ unsafe fn end_tree_wrapper<FE: FrontEnd>(end: &mut End, level: i32,
                                              alpha: i32,
                                              beta: i32,
                                              selectivity: i32,
-                                             void_legal: i32)
+                                             void_legal: i32,
+                                             echo:i32)
                                              -> i32 {
     static mut bb_flips: BitBoard = BitBoard { high: 0, low: 0 };
     let mut selective_cutoff: i32 = 0;
@@ -2157,14 +2157,14 @@ unsafe fn end_tree_wrapper<FE: FrontEnd>(end: &mut End, level: i32,
                            if beta - end. komi_shift < 64 as i32 {
                                (beta) - end. komi_shift
                            } else { 64 as i32 }, selectivity,
-                                 &mut selective_cutoff, void_legal, &mut bb_flips) + end. komi_shift;
+                                 &mut selective_cutoff, void_legal, &mut bb_flips,echo) + end. komi_shift;
 }
 /*
    FULL_EXPAND_PV
    Pad the PV with optimal moves in the low-level phase.
 */
 unsafe fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
-                                           selectivity: i32) {
+                                           selectivity: i32, echo:i32) {
     let mut i: i32 = 0;
     let mut pass_count: i32 = 0;
     let mut new_pv_depth: i32 = 0;
@@ -2181,7 +2181,7 @@ unsafe fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
                     disc_count(2 as i32, &board);
             end_tree_wrapper::<FE>(end, new_pv_depth, empties, side_to_move,
                              -(64 as i32), 64 as i32,
-                             selectivity, 1 as i32);
+                             selectivity, 1 as i32, echo);
             move_0 = pv[new_pv_depth as usize][new_pv_depth as usize];
             new_pv[new_pv_depth as usize] = move_0;
             new_side_to_move[new_pv_depth as usize] = side_to_move;
@@ -2218,7 +2218,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                                      force_echo: i32,
                                      allow_book: i32,
                                      komi: i32,
-                                     mut eval_info: &mut EvaluationType)
+                                     mut eval_info: &mut EvaluationType, echo: i32)
                                      -> i32 {
     let end: &mut End = &mut end_g;
     let mut current_confidence: f64 = 0.;
@@ -2255,7 +2255,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     if allow_book != 0 {
         /* Is the exact score known? */
         fill_move_alternatives::<FE>(side_to_move, 16);
-        book_move = get_book_move::<FE>(side_to_move, 0, eval_info);
+        book_move = get_book_move::<FE>(side_to_move, 0, eval_info, echo);
         if book_move != -(1 as i32) {
             root_eval = (*eval_info).score / 128;
             hash_expand_pv(side_to_move, 1, 4, 0);
@@ -2265,7 +2265,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         /* Is the WLD status known? */
         fill_move_alternatives::<FE>(side_to_move, 4);
         if end. komi_shift == 0 {
-            book_move = get_book_move::<FE>(side_to_move, 0, eval_info);
+            book_move = get_book_move::<FE>(side_to_move, 0, eval_info, echo);
             if book_move != -1 {
                 if wld != 0 {
                     root_eval = eval_info.score / 128;
@@ -2309,7 +2309,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 alpha = -1;
                 beta = 1;
                 root_eval = end_tree_wrapper::<FE>(end, 0, empties, side_to_move,
-                                     alpha, beta, selectivity, 1);
+                                     alpha, beta, selectivity, 1, echo);
                 adjust_counter(&mut nodes);
                 if is_panic_abort() != 0 || force_return != 0 { break ; }
                 any_search_result = 1;
@@ -2345,7 +2345,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 root_eval =
                     end_tree_wrapper::<FE>(end, 0, empties, side_to_move,
                                      alpha, beta, selectivity,
-                                     1);
+                                     1, echo);
                 if root_eval <= alpha {
                     loop  {
                         last_window_center -= 2;
@@ -2356,7 +2356,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                         }
                         root_eval = end_tree_wrapper::<FE>(end, 0, empties,
                                              side_to_move, alpha, beta,
-                                             selectivity, 1);
+                                             selectivity, 1, echo);
                         if !(root_eval <= alpha) { break ; }
                     }
                     root_eval = last_window_center
@@ -2371,7 +2371,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                         root_eval =
                            end_tree_wrapper::<FE>(end, 0, empties,
                                              side_to_move, alpha, beta,
-                                             selectivity, 1 as i32);
+                                             selectivity, 1 as i32, echo);
                         if !(root_eval >= beta) { break ; }
                     }
                     root_eval = last_window_center
@@ -2455,7 +2455,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         beta = last_window_center + 1;
     }
     root_eval = end_tree_wrapper::<FE>(end, 0, empties, side_to_move, alpha, beta,
-                         0, 1);
+                         0, 1, echo);
     adjust_counter(&mut nodes);
     if is_panic_abort() == 0 && force_return == 0 {
         if wld == 0 {
@@ -2466,7 +2466,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     beta = ceiling_value;
                     root_eval = end_tree_wrapper::<FE>(end, 0, empties,
                                          side_to_move, alpha, beta,
-                                         0, 1);
+                                         0, 1, echo);
                     if is_panic_abort() != 0 || force_return != 0 { break ; }
                     if root_eval > alpha { break ; }
                     ceiling_value -= 2
@@ -2479,7 +2479,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     root_eval =
                        end_tree_wrapper::<FE>(end, 0 as i32, empties,
                                          side_to_move, alpha, beta,
-                                         0 as i32, 1 as i32);
+                                         0 as i32, 1 as i32, echo);
                     if is_panic_abort() != 0 || force_return != 0 { break ; }
                     assert!( root_eval > alpha );
                     if root_eval < beta { break ; }
@@ -2601,7 +2601,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     /* For shallow endgames, we can afford to compute the entire PV
        move by move. */
     if wld == 0 && incomplete_search == 0 && force_return == 0 && empties <= 16 {
-        full_expand_pv::<FE>(end, side_to_move, 0);
+        full_expand_pv::<FE>(end, side_to_move, 0,echo);
     }
     pv[0][0]
 }

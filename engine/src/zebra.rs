@@ -1,4 +1,3 @@
-use crate::src::display::{echo,display_pv};
 use crate::src::timer::{toggle_abort_check, get_real_timer, determine_move_time, start_move, clear_panic_abort};
 use crate::src::moves::{disks_played, make_move, valid_move, move_count, move_list, generate_all, game_in_progress, get_move, get_move_async};
 use crate::src::search::{disc_count, total_time, total_evaluations, total_nodes, produce_compact_eval};
@@ -85,7 +84,9 @@ pub struct Config {
     pub skill: [i32; 3],
     pub wait: i32,
     pub use_book: i32,
-    pub wld_only: i32
+    pub wld_only: i32,
+    pub echo: i32,
+    pub display_pv: i32
 }
 
 pub static mut g_config: Config = Config {
@@ -110,14 +111,16 @@ pub static mut g_config: Config = Config {
     skill: [0; 3],
     wait: 0,
     use_book: 1,
-    wld_only: 0
+    wld_only: 0,
+    echo: 0,
+    display_pv: 0,
 };
 
 
-pub unsafe fn set_default_engine_globals(config: &mut Config) {
+pub fn set_default_engine_globals(config: &mut Config) {
     config.wait = 0;
-    echo = 1;
-    display_pv = 1;
+    config.echo = 1;
+    config.display_pv = 1;
     config.skill[2] = -1;
     config.skill[0] = -1;
     config.player_time[2] = 10000000.0f64;
@@ -187,6 +190,7 @@ pub unsafe fn engine_play_game<
                   mut repeat: i32, log_file_name_: *mut i8,
                   mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool) {
     let mut config = &mut g_config;
+    let echo = config.echo;
     let mut eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,
         res: WON_POSITION,
@@ -308,7 +312,7 @@ pub unsafe fn engine_play_game<
                 if echo != 0 && config.wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
                     if config.skill[side_to_move as usize] == 0 as i32 {
-                        if config.use_book != 0 && display_pv != 0 {
+                        if config.use_book != 0 && config.display_pv != 0 {
                             fill_move_alternatives::<FE>(side_to_move,
                                                    0 as i32);
                             if echo != 0 {
@@ -335,7 +339,9 @@ pub unsafe fn engine_play_game<
                                 config.exact_skill[side_to_move as usize],
                                 config.wld_skill[side_to_move as usize],
                                 0 as i32, &mut eval_info,
-                                &mut ComputeMoveLog::create_log_file_if_needed());
+                                &mut ComputeMoveLog::create_log_file_if_needed(),
+                                config.display_pv,
+                                echo);
                         if side_to_move == 0 as i32 {
                             ZF::set_evals(produce_compact_eval(eval_info), 0.0f64);
                         } else {
@@ -466,6 +472,7 @@ pub async unsafe fn engine_play_game_async<
         Fut: Future<Output=Result<i32, Box<dyn Error>>>
 {
     let mut config = &mut g_config;
+    let echo = config.echo;
     let mut eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,
         res: WON_POSITION,
@@ -586,7 +593,7 @@ pub async unsafe fn engine_play_game_async<
                 if echo != 0 && config.wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
                     if config.skill[side_to_move as usize] == 0 as i32 {
-                        if config.use_book != 0 && display_pv != 0 {
+                        if config.use_book != 0 && config.display_pv != 0 {
                             fill_move_alternatives::<FE>(side_to_move,
                                                    0 as i32);
                             if echo != 0 {
@@ -613,7 +620,7 @@ pub async unsafe fn engine_play_game_async<
                                 config.exact_skill[side_to_move as usize],
                                 config.wld_skill[side_to_move as usize],
                                 0 as i32, &mut eval_info,
-                                &mut ComputeMoveLog::create_log_file_if_needed());
+                                &mut ComputeMoveLog::create_log_file_if_needed(), config.display_pv, echo);
                         if side_to_move == 0 as i32 {
                             ZF::set_evals(produce_compact_eval(eval_info), 0.0f64);
                         } else {

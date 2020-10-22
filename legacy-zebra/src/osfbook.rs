@@ -4,7 +4,6 @@ use crate::{
         error::fatal_error
     }
 };
-use engine::src::display::{echo};
 use crate::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::midgame::{middle_game, toggle_midgame_abort_check, toggle_midgame_hash_usage, tree_search};
 use engine::src::myrandom::{my_srandom, my_random};
@@ -18,7 +17,7 @@ use engine::src::stubs::{abs, floor};
 use engine::src::search::{root_eval, nodes, disc_count};
 use engine::src::end::end_game;
 use engine::src::counter::reset_counter;
-use engine::src::zebra::EvaluationType;
+use engine::src::zebra::{EvaluationType, g_config};
 use engine::src::timer::{toggle_abort_check, last_panic_check, clear_panic_abort};
 use crate::src::safemem::safe_malloc;
 use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit, FILE};
@@ -99,7 +98,7 @@ pub unsafe fn evaluate_tree() {
     puts(b"\x00" as *const u8 as *const i8);
     printf(b"Progress: \x00" as *const u8 as *const i8);
     fflush(stdout);
-    if feasible_count > 0 as i32 { do_evaluate::<LibcFatalError>(0 as i32); }
+    if feasible_count > 0 as i32 { do_evaluate::<LibcFatalError>(0 as i32, g_config.echo ); }
     time(&mut stop_time);
     printf(b"(took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
@@ -486,7 +485,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                                       max_full_solve: i32,
                                       max_wld_solve: i32,
                                       update_path: i32,
-                                      private_game: i32) {
+                                      private_game: i32, mut echo:i32) {
     let mut dummy_info =
         EvaluationType{type_0: MIDGAME_EVAL,
                        res: WON_POSITION,
@@ -612,7 +611,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
             }
         }
        end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
-                 1 as i32, 0 as i32, &mut dummy_info);
+                 1 as i32, 0 as i32, &mut dummy_info, echo);
         outcome = root_eval;
         if side_to_move == 2 as i32 { outcome = -outcome }
     }
@@ -699,7 +698,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                        16 as i32 == 0 {
                    end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
                              1 as i32, 0 as i32,
-                             &mut dummy_info);
+                             &mut dummy_info, echo);
                     if side_to_move == 0 as i32 {
                         outcome = root_eval
                     } else { outcome = -root_eval }
@@ -747,7 +746,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                        4 as i32 == 0 {
                    end_game::<FE>(side_to_move, 1 as i32, 0 as i32,
                              1 as i32, 0 as i32,
-                             &mut dummy_info);
+                             &mut dummy_info, echo);
                     if side_to_move == 0 as i32 {
                         outcome = root_eval
                     } else { outcome = -root_eval }
@@ -804,7 +803,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 }
                 midgame_eval_done = 1;
                 if force_eval != 0 { clear_node_depth(this_node, &mut g_book); }
-                evaluate_node::<LibcFatalError>(this_node);
+                evaluate_node::<LibcFatalError>(this_node, echo);
                 printf(b"|\x00" as *const u8 as *const i8);
                 fflush(stdout);
             }
@@ -822,7 +821,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                        i32 == 9999 as i32 {
                 /* Minimax discovered that the g_book.node hasn't got a deviation any
                    longer because that move has been played. */
-                evaluate_node::<FE>(this_node);
+                evaluate_node::<FE>(this_node, echo);
                 printf(b"-|-\x00" as *const u8 as *const i8);
                 do_minimax(this_node, &mut dummy_black_score,
                            &mut dummy_white_score);
@@ -843,7 +842,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
 pub unsafe fn build_tree(file_name: *const i8,
                                     max_game_count: i32,
                                     max_diff: i32,
-                                    min_empties: i32) {
+                                    min_empties: i32, echo:i32) {
     let mut move_string: [i8; 200] = [0; 200];
     let mut line_buffer: [i8; 1000] = [0; 1000];
     let mut sign: i8 = 0;
@@ -905,7 +904,7 @@ pub unsafe fn build_tree(file_name: *const i8,
         if abs(diff) <= max_diff {
             add_new_game(move_count_0, game_move_list.as_mut_ptr(),
                          min_empties, 0 as i32, 0 as i32,
-                         0 as i32, 0 as i32);
+                         0 as i32, 0 as i32, echo);
             printf(b"|\x00" as *const u8 as *const i8);
             if games_imported % 100 as i32 == 0 as i32 {
                 printf(b" --- %d games --- \x00" as *const u8 as
@@ -2612,7 +2611,7 @@ pub unsafe fn restricted_minimax_tree(low: i32,
    Recursively makes sure a subtree is evaluated to the specified depth.
 */
 unsafe fn do_midgame_statistics(index: i32,
-                                           spec: StatisticsSpec) {
+                                           spec: StatisticsSpec, echo:i32) {
     let mut dummy_info: EvaluationType =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -2658,7 +2657,7 @@ unsafe fn do_midgame_statistics(index: i32,
         depth = 1;
         while depth <= spec.max_depth {
             middle_game::<FE>(side_to_move, depth, 0 as i32,
-                        &mut dummy_info);
+                        &mut dummy_info, echo);
             eval_list[depth as usize] = root_eval;
             printf(b"%2d: %-5d \x00" as *const u8 as *const i8,
                    depth, eval_list[depth as usize]);
@@ -2670,7 +2669,7 @@ unsafe fn do_midgame_statistics(index: i32,
         depth = 2;
         while depth <= spec.max_depth {
             middle_game::<FE>(side_to_move, depth, 0 as i32,
-                        &mut dummy_info);
+                        &mut dummy_info, echo);
             eval_list[depth as usize] = root_eval;
             printf(b"%2d: %-5d \x00" as *const u8 as *const i8,
                    depth, eval_list[depth as usize]);
@@ -2711,7 +2710,7 @@ unsafe fn do_midgame_statistics(index: i32,
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
-            do_midgame_statistics(child, spec);
+            do_midgame_statistics(child, spec, echo);
         }
         unmake_move(side_to_move, this_move);
         i += 1
@@ -2756,7 +2755,7 @@ pub unsafe fn generate_midgame_statistics(max_depth:
     spec.max_depth = max_depth;
     spec.out_file_name = statistics_file_name;
     my_srandom(start_time as i32);
-    do_midgame_statistics(0 as i32, spec);
+    do_midgame_statistics(0 as i32, spec, g_config.echo);
     time(&mut stop_time);
     printf(b"\nDone (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
@@ -2772,7 +2771,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                                          best_move: i32,
                                          min_disks: i32,
                                          max_disks: i32,
-                                         spec: StatisticsSpec) {
+                                         spec: StatisticsSpec, echo:i32) {
     let mut dummy_info: EvaluationType =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -2800,7 +2799,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
     determine_hash_values(side_to_move, &board);
     depth = 1;
     while depth <= spec.max_depth {
-        middle_game::<FE>(side_to_move, depth, 0 as i32, &mut dummy_info);
+        middle_game::<FE>(side_to_move, depth, 0 as i32, &mut dummy_info, echo);
         eval_list[depth as usize] = root_eval;
         printf(b"%2d: %-6.2f \x00" as *const u8 as *const i8, depth,
                eval_list[depth as usize] as f64 / 128.0f64);
@@ -2842,10 +2841,10 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                 set_hash_transformation(0 as i32 as u32,
                                         0 as i32 as u32);
                end_game::<FE>(side_to_move, 0 as i32, 1 as i32,
-                         1 as i32, 0 as i32, &mut dummy_info);
+                         1 as i32, 0 as i32, &mut dummy_info, echo);
                 endgame_correlation(side_to_move, root_eval,
                                     pv[0][0],
-                                    min_disks, max_disks, spec);
+                                    min_disks, max_disks, spec, echo);
             }
         }
         unmake_move(stored_side_to_move, best_move);
@@ -2857,7 +2856,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
    the specified depth.
 */
 unsafe fn do_endgame_statistics(index: i32,
-                                           spec: StatisticsSpec) {
+                                           spec: StatisticsSpec, echo:i32 ) {
     let mut dummy_info: EvaluationType =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -2898,11 +2897,11 @@ unsafe fn do_endgame_statistics(index: i32,
             set_hash_transformation(0 as i32 as u32,
                                     0 as i32 as u32);
            end_game::<FE>(side_to_move, 0 as i32, 1 as i32,
-                     1 as i32, 0 as i32, &mut dummy_info);
+                     1 as i32, 0 as i32, &mut dummy_info, echo);
             if abs(root_eval) <= spec.max_diff {
                 endgame_correlation(side_to_move, root_eval,
                                     pv[0][0],
-                                    disks_played, 48 as i32, spec);
+                                    disks_played, 48 as i32, spec, echo);
             }
         }
     }
@@ -2915,7 +2914,7 @@ unsafe fn do_endgame_statistics(index: i32,
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
-            do_endgame_statistics(child, spec);
+            do_endgame_statistics(child, spec, echo);
         }
         unmake_move(side_to_move, this_move);
         i += 1
@@ -2960,7 +2959,7 @@ pub unsafe fn generate_endgame_statistics(max_depth:
     spec.max_depth = max_depth;
     spec.out_file_name = statistics_file_name;
     my_srandom(start_time as i32);
-    do_endgame_statistics(0 as i32, spec);
+    do_endgame_statistics(0 as i32, spec, g_config.echo);
     time(&mut stop_time);
     printf(b"\nDone (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
@@ -3072,7 +3071,7 @@ unsafe fn do_correct(index: i32,
                                 max_empty: i32,
                                 full_solve: i32,
                                 target_name: *const i8,
-                                move_hist: *mut i8) {
+                                move_hist: *mut i8, echo:i32) {
     let mut dummy_info: EvaluationType =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -3153,7 +3152,7 @@ unsafe fn do_correct(index: i32,
                         '0' as i32 + this_move / 10 as i32);
                 make_move(side_to_move, this_move, 1 as i32);
                 do_correct(child_node[i as usize], max_empty, full_solve,
-                           target_name, move_hist);
+                           target_name, move_hist, echo);
                 unmake_move(side_to_move, this_move);
                 *move_hist.offset((2 as i32 * disks_played) as isize)
                     = '\u{0}' as i32 as i8
@@ -3193,7 +3192,7 @@ unsafe fn do_correct(index: i32,
                 reset_counter(&mut nodes);
                end_game::<FE>(side_to_move, (full_solve == 0) as i32,
                          0 as i32, 1 as i32, 0 as i32,
-                         &mut dummy_info);
+                         &mut dummy_info, echo);
                 if side_to_move == 0 as i32 {
                     outcome = root_eval
                 } else { outcome = -root_eval }
@@ -3384,7 +3383,7 @@ pub unsafe fn correct_tree(max_empty: i32,
     fflush(stdout);
     move_buffer[0] = '\u{0}' as i32 as i8;
     do_correct(0 as i32, max_empty, full_solve,
-               correction_script_name, move_buffer.as_mut_ptr());
+               correction_script_name, move_buffer.as_mut_ptr(), g_config.echo);
     time(&mut stop_time);
     printf(b"(took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
@@ -3496,13 +3495,13 @@ pub unsafe fn export_tree(file_name: *const i8) {
   The number of positions evaluated is returned.
 */
 
-pub unsafe fn validate_tree<FE: FrontEnd>() -> i32 {
+pub unsafe fn validate_tree<FE: FrontEnd>(echo: i32) -> i32 {
     prepare_tree_traversal();
-    validate_prepared_tree::<FE>()
+    validate_prepared_tree::<FE>(echo)
 }
 
 // extracted from validate_tree
-pub unsafe fn validate_prepared_tree<FE: FrontEnd>() -> i32 {
+pub unsafe fn validate_prepared_tree<FE: FrontEnd>(echo: i32) -> i32 {
     g_book.exhausted_node_count = 0;
     g_book.evaluated_count = 0;
     g_book.evaluation_stage = 0;
@@ -3532,7 +3531,7 @@ pub unsafe fn validate_prepared_tree<FE: FrontEnd>() -> i32 {
                     u16;
             i += 1
         }
-        do_validate::<FE>(0 as i32);
+        do_validate::<FE>(0 as i32, echo);
     }
     return g_book.evaluated_count;
 }
@@ -3542,7 +3541,7 @@ pub unsafe fn validate_prepared_tree<FE: FrontEnd>() -> i32 {
    Recursively makes sure a subtree doesn't contain any midgame
    g_book.node without a deviation move.
 */
-pub unsafe fn do_validate<FE: FrontEnd>(index: i32) {
+pub unsafe fn do_validate<FE: FrontEnd>(index: i32, echo:i32) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
@@ -3567,7 +3566,7 @@ pub unsafe fn do_validate<FE: FrontEnd>(index: i32) {
             9999 as i32 &&
         (*g_book.node.offset(index as isize)).best_alternative_move as i32
             != -(2 as i32) {
-        evaluate_node::<FE>(index);
+        evaluate_node::<FE>(index, echo);
     }
     i = 0;
     while i < move_count[disks_played as usize] {
@@ -3576,7 +3575,7 @@ pub unsafe fn do_validate<FE: FrontEnd>(index: i32) {
         get_hash(&mut val1, &mut val2, &mut orientation);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
-        if child != -(1 as i32) { do_validate::<FE>(child); }
+        if child != -(1 as i32) { do_validate::<FE>(child, echo); }
         unmake_move(side_to_move, this_move);
         i += 1
     }
@@ -3590,7 +3589,7 @@ pub unsafe fn do_validate<FE: FrontEnd>(index: i32) {
    Recursively makes sure a subtree is evaluated to
    the specified depth.
 */
-pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32) {
+pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32, echo:i32) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
@@ -3611,7 +3610,7 @@ pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32) {
     generate_all(side_to_move);
     if (*g_book.node.offset(index as isize)).flags as i32 &
         (16 as i32 | 4 as i32) == 0 {
-        evaluate_node::<FE>(index);
+        evaluate_node::<FE>(index, echo);
     }
     if g_book.evaluated_count >=
         (g_book.evaluation_stage + 1 as i32) * g_book.max_eval_count /
@@ -3626,7 +3625,7 @@ pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32) {
         get_hash(&mut val1, &mut val2, &mut orientation);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
-        if child != -(1 as i32) { do_evaluate::<FE>(child); }
+        if child != -(1 as i32) { do_evaluate::<FE>(child, echo); }
         unmake_move(side_to_move, this_move);
         i += 1
     }
@@ -3822,7 +3821,7 @@ pub unsafe fn do_examine(index: i32) {
    Note: This function assumes that generate_all() has been
          called prior to it being called.
 */
-pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32) {
+pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32, echo: i32) {
     let mut i: i32 = 0;
     let mut side_to_move: i32 = 0;
     let mut alternative_move_count: i32 = 0;
@@ -3902,7 +3901,7 @@ pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32) {
         nega_scout::<FE>(g_book.search_depth, allow_mpc, side_to_move,
                          alternative_move_count, &mut feasible_move,
                          -(12345678 as i32), 12345678 as i32,
-                         &mut best_score, &mut best_index);
+                         &mut best_score, &mut best_index, echo);
         best_move = feasible_move[best_index as usize];
         g_book.evaluated_count += 1;
         if side_to_move == 0 as i32 {
@@ -3933,7 +3932,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                                        allowed_moves: &mut [i32],
                                        _alpha: i32, _beta: i32,
                                        best_score: &mut i32,
-                                       best_index: &mut i32) {
+                                       best_index: &mut i32, echo:i32) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut curr_alpha: i32 = 0;
@@ -3971,7 +3970,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                                        0 as i32 + 2 as i32 -
                                            side_to_move, -(12345678 as i32),
                                        12345678 as i32, 1 as i32,
-                                       allow_mpc, 1 as i32);
+                                       allow_mpc, 1 as i32, echo);
                 low_score = current_score;
                 *best_index = i
             } else {
@@ -3985,7 +3984,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                                            side_to_move,
                                        -(curr_alpha + 1 as i32),
                                        -curr_alpha, 1 as i32, allow_mpc,
-                                       1 as i32);
+                                       1 as i32, echo);
                 if current_score > curr_alpha {
                     current_score =
                         -tree_search::<FE>(1 as i32, curr_depth,
@@ -3994,7 +3993,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                                            -(12345678 as i32),
                                            12345678 as i32,
                                            1 as i32, allow_mpc,
-                                           1 as i32);
+                                           1 as i32, echo);
                     if current_score > low_score {
                         low_score = current_score;
                         *best_index = i
@@ -4032,7 +4031,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
         -tree_search::<FE>(1 as i32, depth + 1 as i32,
                            0 as i32 + 2 as i32 - side_to_move,
                            -(12345678 as i32), 12345678 as i32,
-                           1 as i32, allow_mpc, 1 as i32);
+                           1 as i32, allow_mpc, 1 as i32, echo);
     unmake_move(side_to_move, *allowed_moves.offset(*best_index as isize));
     /* To remove the oscillations between odd and even search depths
        the score for the deviation is the average between the two scores. */
