@@ -7,7 +7,7 @@ use engine::src::hash::resize_hash;
 use legacy_zebra::src::error::{LibcFatalError};
 use engine::src::zebra::DrawMode::{OPPONENT_WINS, WHITE_WINS, BLACK_WINS, NEUTRAL};
 use engine::src::zebra::GameMode::{PUBLIC_GAME, PRIVATE_GAME};
-use engine::src::zebra::g_config;
+use legacy_zebra::src::zebra::g_config;
 
 pub type FE = LibcFatalError;
 

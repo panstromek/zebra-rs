@@ -17,7 +17,7 @@ use engine::src::stubs::{abs, floor};
 use engine::src::search::{root_eval, nodes, disc_count};
 use engine::src::end::end_game;
 use engine::src::counter::reset_counter;
-use engine::src::zebra::{EvaluationType, g_config};
+use engine::src::zebra::{EvaluationType};
 use engine::src::timer::{toggle_abort_check, last_panic_check, clear_panic_abort};
 use crate::src::safemem::safe_malloc;
 use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit, FILE};
@@ -28,6 +28,7 @@ use engine::src::game::{engine_game_init, setup_non_file_based_game};
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
+use crate::src::zebra::g_config;
 
 pub type FE = LibcFatalError;
 static mut correction_script_name: *const i8 = 0 as *const i8;

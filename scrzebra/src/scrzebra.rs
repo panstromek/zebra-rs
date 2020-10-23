@@ -15,12 +15,13 @@ use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, g_
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::game::{global_setup, compute_move, game_init};
 use legacy_zebra::src::display::{display_move, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_evals, set_names};
-use engine::src::zebra::{EvaluationType, g_config};
+use engine::src::zebra::{EvaluationType};
 use legacy_zebra::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
 use libc_wrapper::{strstr, FILE};
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
+use legacy_zebra::src::zebra::g_config;
 
 extern "C" {
     #[no_mangle]

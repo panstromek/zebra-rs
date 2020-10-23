@@ -2,7 +2,7 @@ use libc_wrapper::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, 
 use engine::src::error::{FrontEnd, FatalError};
 use engine::src::hash::HashEntry;
 use engine::src::thordb::{ThorDatabase};
-use engine::src::zebra::{EvaluationType, g_config};
+use engine::src::zebra::{EvaluationType};
 use crate::src::thordb::{sort_thor_games};
 use crate::src::osfbook::{print_move_alternatives};
 use std::ffi::c_void;
@@ -26,6 +26,7 @@ use engine::src::counter::CounterType;
 use crate::src::display::{reset_buffer_display, clear_status, clear_sweep, interval2, interval1, last_output, sweep_modified, status_modified, timed_buffer_management};
 use std::env::args;
 use thordb_types::C2RustUnnamed;
+use crate::src::zebra::g_config;
 
 static mut buffer: [i8; 16] = [0; 16];
 

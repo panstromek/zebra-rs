@@ -6,7 +6,7 @@ use engine::src::moves::{disks_played, make_move, valid_move, move_count, genera
 use engine::src::globals::{board, white_moves, black_moves};
 use engine::src::myrandom::my_random;
 use engine::src::game::{get_evaluated_count, get_evaluated, EvaluatedMove};
-use engine::src::zebra::{EvaluationType, g_config};
+use engine::src::zebra::{EvaluationType};
 use engine::src::timer::start_move;
 use engine::src::hash::{determine_hash_values, setup_hash};
 use engine::src::search::disc_count;
@@ -18,6 +18,7 @@ use engine::src::error::FrontEnd;
 use libc_wrapper::_IO_FILE;
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
+use legacy_zebra::src::zebra::g_config;
 
 extern "C" {
     #[no_mangle]
