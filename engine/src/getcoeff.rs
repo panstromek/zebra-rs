@@ -60,7 +60,7 @@ static mut block_list: [Option<Box<AllocationBlock>>; 200] = [
     None,None,None,None,None,None,None,None,None,None,None,None,
     None,None,None,None,None,None,None,None
 ];
-static mut set: [CoeffSet; 61] = [
+pub static mut set: [CoeffSet; 61] = [
     CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
     CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
     CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
@@ -318,11 +318,11 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
    Removes the interpolated coefficients for a
    specific game phase from memory.
 */
-pub unsafe fn remove_specific_coeffs(coeff_set: &mut CoeffSet) {
+pub fn remove_specific_coeffs(coeff_set: &mut CoeffSet, block_allocated_: &mut [bool; 200]) {
     let coeff_set = coeff_set;
     if coeff_set.loaded != 0 {
         if coeff_set.permanent == 0 {
-            block_allocated[coeff_set.block as usize] = false;
+            block_allocated_[coeff_set.block as usize] = false;
         }
         coeff_set.loaded = 0
     };
@@ -335,7 +335,7 @@ pub unsafe fn remove_specific_coeffs(coeff_set: &mut CoeffSet) {
 pub unsafe fn remove_coeffs(phase: i32) {
     let mut i: i32 = 0;
     while i < phase {
-        remove_specific_coeffs(&mut set[i as usize]);
+        remove_specific_coeffs(&mut set[i as usize], &mut block_allocated);
         i += 1
     };
 }
@@ -343,8 +343,8 @@ pub unsafe fn remove_coeffs(phase: i32) {
    CLEAR_COEFFS
    Remove all coefficients loaded from memory.
 */
-pub unsafe fn clear_coeffs() {
-    remove_coeffs(set.len() as i32);
+pub unsafe fn clear_coeffs(set_: &mut [CoeffSet; 61]) {
+    remove_coeffs(set_.len() as i32);
 }
 
 

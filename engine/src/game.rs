@@ -3,7 +3,7 @@ use crate::src::counter::{adjust_counter, counter_value, reset_counter, add_coun
 use crate::src::search::{nodes, total_time, total_evaluations, total_nodes, setup_search, disc_count, complete_pv, get_ponder_move, evaluations, set_current_eval, create_eval_info, root_eval, force_return, clear_pv, evals, clear_ponder_move, set_ponder_move, float_move, sort_moves};
 use crate::src::globals::{pv_depth, pv, board, score_sheet_row, black_moves, piece_count};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
-use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, init_memory_handler, CoeffAdjustments, remove_coeffs};
+use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, init_memory_handler, CoeffAdjustments, remove_coeffs, set};
 use crate::src::hash::{free_hash, determine_hash_values, init_hash, find_hash, HashEntry};
 use crate::src::timer::{clear_ponder_times, init_timer, time_t, clear_panic_abort, get_elapsed_time, is_panic_abort, determine_move_time, toggle_abort_check, ponder_depth, add_ponder_time, get_real_timer, start_move};
 use crate::src::end::{setup_end, end_game};
@@ -185,7 +185,7 @@ pub unsafe fn get_pv(destin: &mut [i32]) -> i32 {
 
 pub unsafe fn global_terminate() {
     free_hash();
-    clear_coeffs();
+    clear_coeffs(&mut set);
     clear_osf(&mut g_book);
 }
 
