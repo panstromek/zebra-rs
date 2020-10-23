@@ -89,7 +89,7 @@ pub struct Config {
     pub display_pv: i32
 }
 
-pub static mut g_config: Config = Config {
+pub const INITIAL_CONFIG: Config = Config {
     slack: 0.25f64,
     dev_bonus: 0.0f64,
     low_thresh: 0,
@@ -187,9 +187,8 @@ pub unsafe fn engine_play_game<
     FE: FrontEnd,
     Thor: ThorDatabase
 >(file_name: *const i8, mut move_string: *const i8,
-                  mut repeat: i32, log_file_name_: *mut i8,
-                  mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool) {
-    let mut config = &mut g_config;
+  mut repeat: i32, log_file_name_: *mut i8,
+  mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool, config: &mut Config) {
     let echo = config.echo;
     let mut eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,
@@ -466,12 +465,12 @@ pub async unsafe fn engine_play_game_async<
 >(file_name: *const i8, mut move_string: *const i8,
   mut repeat: i32, log_file_name_: *mut i8,
   mut move_file: Option<Source>, use_thor_: bool,
-  use_learning_: bool, mut get_move_cb: GetMove) -> Result<(), Box<dyn Error>>
+  use_learning_: bool, mut get_move_cb: GetMove,
+  config: &mut Config) -> Result<(), Box<dyn Error>>
     where
         GetMove: FnMut(i32) -> Fut,
         Fut: Future<Output=Result<i32, Box<dyn Error>>>
 {
-    let mut config = &mut g_config;
     let echo = config.echo;
     let mut eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,

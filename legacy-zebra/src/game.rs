@@ -6,7 +6,7 @@ use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError, FE};
 use engine::src::globals::{white_moves, black_moves, pv, pv_depth, board, piece_count};
 use engine::src::search::{full_pv_depth, full_pv, set_current_eval, force_return, negate_current_eval, create_eval_info, disc_count, nodes, evaluations, evals, clear_ponder_move, set_ponder_move, float_move, sort_moves};
-use engine::src::zebra::{EvaluationType, g_config};
+use engine::src::zebra::{EvaluationType};
 use engine::src::midgame::{toggle_perturbation_usage, toggle_midgame_abort_check};
 use engine::src::timer::{toggle_abort_check, clear_ponder_times, start_move, ponder_depth, add_ponder_time, get_real_timer};
 use engine::src::moves::{unmake_move, disks_played, make_move, move_count, move_list, generate_all};
@@ -21,6 +21,7 @@ use std::ffi::CStr;
 use crate::src::thordb::LegacyThor;
 use engine::src::zebra::EvalResult::{UNSOLVED_POSITION, WON_POSITION, LOST_POSITION, DRAWN_POSITION};
 use engine::src::zebra::EvalType::{UNDEFINED_EVAL, EXACT_EVAL, PASS_EVAL, MIDGAME_EVAL, WLD_EVAL};
+use crate::src::zebra::g_config;
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
 /*

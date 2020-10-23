@@ -23,7 +23,7 @@ use engine::src::learn::{store_move, clear_stored_game};
 use engine::src::getcoeff::remove_coeffs;
 use engine::src::myrandom::{my_random, my_srandom};
 use crate::src::osfbook::print_move_alternatives;
-use engine::src::zebra::{set_default_engine_globals, DumpHandler, g_config, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource};
+use engine::src::zebra::{set_default_engine_globals, DumpHandler, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource, Config, INITIAL_CONFIG};
 use libc_wrapper::{FILE, time_t};
 use engine::src::myrandom;
 use flip::unflip;
@@ -32,6 +32,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::DrawMode::{OPPONENT_WINS, WHITE_WINS, BLACK_WINS, NEUTRAL};
 use engine::src::zebra::GameMode::{PUBLIC_GAME, PRIVATE_GAME};
 
+pub static mut g_config: Config = INITIAL_CONFIG;
 /* ------------------- Function prototypes ---------------------- */
 /* Administrative routines */
 /* ---------------------- Functions ------------------------ */
@@ -806,7 +807,7 @@ unsafe fn play_game(mut file_name: *const i8,
 
     engine_play_game
         ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner, LibcFatalError, LegacyThor>
-        (file_name, move_string, repeat, log_file_name_, move_file, use_thor_, use_learning_)
+        (file_name, move_string, repeat, log_file_name_, move_file, use_thor_, use_learning_, &mut g_config)
 }
 
 struct LibcFrontend {} //TODO this could probably be merged with the FrontEnd trait or something

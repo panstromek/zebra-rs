@@ -12,7 +12,7 @@ use legacy_zebra::src::game::{extended_compute_move, game_init};
 use legacy_zebra::src::osfbook::{read_binary_database, init_osf};
 use legacy_zebra::src::error::{LibcFatalError, FE};
 use libc_wrapper::_IO_FILE;
-use engine::src::zebra::g_config;
+use legacy_zebra::src::zebra::g_config;
 
 extern "C" {
 

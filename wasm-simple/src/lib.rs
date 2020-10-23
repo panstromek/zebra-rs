@@ -1,10 +1,11 @@
 #![allow(unused)]
+#![allow(non_upper_case_globals)]
 
 extern crate console_error_panic_hook;
 
 use std::panic;
 use wasm_bindgen::prelude::*;
-use engine::src::zebra::{set_default_engine_globals, EvaluationType, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, engine_play_game_async};
+use engine::src::zebra::{set_default_engine_globals, EvaluationType, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, engine_play_game_async, Config, INITIAL_CONFIG};
 use engine::src::game::{engine_global_setup, global_terminate, BoardSource, FileBoardSource, ComputeMoveLogger, ComputeMoveOutput, CandidateMove};
 use engine::src::error::{FrontEnd, FatalError};
 use wasm_bindgen::__rt::core::ffi::c_void;
@@ -57,7 +58,7 @@ macro_rules! c_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
 }
 static COEFFS: &[u8; 1336662] = include_bytes!("./../../coeffs2.bin");
-use engine::src::zebra::g_config as config;
+static mut config : Config = INITIAL_CONFIG;
 
 #[wasm_bindgen]
 pub fn set_skills(
@@ -131,7 +132,7 @@ pub async fn start_game() {
           null_mut(),
           None,
           false, false,
-          get_move_from_wasm).await;
+          get_move_from_wasm, &mut config).await;
     }
     c_log!("Zebra ended");
 }
