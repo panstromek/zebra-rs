@@ -44,14 +44,11 @@ pub static mut hash_stored1: [u32; 64] = [0; 64];
 pub static mut hash_stored2: [u32; 64] = [0; 64];
 
 /* Local variables */
-static mut hash_bits: i32 = 0;
 static mut hash_mask: i32 = 0;
-static mut rehash_count: i32 = 0;
 static mut hash_trans1: u32 = 0;
 static mut hash_trans2: u32 = 0;
 static mut hash_table: Vec<CompactHashEntry> = Vec::new();
 
-static mut hash_size: i32 = 0;
 static mut hash_value1: [[u32; 128]; 3] = [[0; 128]; 3];
 static mut hash_value2: [[u32; 128]; 3] = [[0; 128]; 3];
 static mut hash_color1: [u32; 3] = [0; 3];
@@ -294,9 +291,9 @@ pub unsafe fn add_hash_extended(reverse_mode: i32,
 
 pub unsafe fn clear_hash_drafts() {
     let mut i = 0;
-    while i < hash_size {
+    while i < hash_table.len() {
         /* Set the draft to 0 */
-        hash_table[i as usize].key1_selectivity_flags_draft &= !(0xff as i32) as u32;
+        hash_table[i].key1_selectivity_flags_draft &= !(0xff as i32) as u32;
         i += 1
     };
 }
@@ -339,10 +336,10 @@ pub unsafe fn setup_hash(clear: i32) {
     let max_zero_closeness = 9;
     let mut closeness: u32 = 0;
     let mut random_pair: [[u32; 2]; 130] = [[0; 2]; 130];
-    let has_table_ptr: &mut [_] = &mut hash_table;
+    let has_table_ptr = &mut hash_table;
     if clear != 0 {
         i = 0;
-        while i < hash_size {
+        while i < has_table_ptr.len() as i32 {
             (*has_table_ptr.offset(i as isize)).key1_selectivity_flags_draft &=
                 !(255 as i32) as u32;
             (*has_table_ptr.offset(i as isize)).key2 = 0;
@@ -568,8 +565,7 @@ pub unsafe fn add_hash(reverse_mode: i32,
 */
 
 pub unsafe fn init_hash(in_hash_bits: i32) {
-    hash_bits = in_hash_bits;
-    hash_size = 1i32 << hash_bits;
+    let hash_size = 1i32 << in_hash_bits;
     hash_mask = hash_size - 1;
     hash_table = vec![CompactHashEntry{
         key2: 0,
@@ -577,7 +573,6 @@ pub unsafe fn init_hash(in_hash_bits: i32) {
         moves: 0,
         key1_selectivity_flags_draft: 0
     }; hash_size as usize];
-    rehash_count = 0;
 }
 /*
   RESIZE_HASH
