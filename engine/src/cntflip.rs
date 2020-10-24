@@ -5,7 +5,7 @@
 
    Last modified:   December 25, 1999
 */
-pub fn AnyFlips_compact(board: &mut [i32; 128], mut inc : &[i32],
+pub fn AnyFlips_compact(board: &[i32; 128], mut inc : &[i32],
                                sqnum: i32, color: i32, oppcol: i32) -> i32 {
 
     let sq = sqnum;
