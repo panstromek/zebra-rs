@@ -4,7 +4,7 @@ use crate::src::search::{nodes, total_time, total_evaluations, total_nodes, setu
 use crate::src::globals::{pv_depth, pv, board, score_sheet_row, black_moves, piece_count};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, init_memory_handler, CoeffAdjustments, remove_coeffs, set};
-use crate::src::hash::{free_hash, determine_hash_values, init_hash, find_hash, HashEntry};
+use crate::src::hash::{free_hash, determine_hash_values, init_hash, find_hash, HashEntry, hash_state};
 use crate::src::timer::{clear_ponder_times, init_timer, time_t, clear_panic_abort, get_elapsed_time, is_panic_abort, determine_move_time, toggle_abort_check, ponder_depth, add_ponder_time, get_real_timer, start_move};
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, is_midgame_abort, middle_game, toggle_midgame_hash_usage, toggle_midgame_abort_check, clear_midgame_abort, calculate_perturbation};
@@ -814,11 +814,11 @@ pub unsafe fn ponder_move<
     reset_counter(&mut nodes);
     /* Find the scores for the moves available to the opponent. */
     let mut hash_move = 0;
-    find_hash(&mut entry, 1 as i32);
+    find_hash(&mut entry, 1 as i32, &mut hash_state);
     if entry.draft as i32 != 0 as i32 {
         hash_move = entry.move_0[0]
     } else {
-        find_hash(&mut entry, 0 as i32);
+        find_hash(&mut entry, 0 as i32, &mut hash_state);
         if entry.draft as i32 != 0 as i32 {
             hash_move = entry.move_0[0]
         }

@@ -543,7 +543,7 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
                 pass_count += 1
             }
         } else {
-            find_hash(&mut entry, mode);
+            find_hash(&mut entry, mode, &mut hash_state);
             if entry.draft as i32 != 0 as i32 &&
                 entry.flags as i32 & flags != 0 &&
                 entry.selectivity as i32 <= max_selectivity &&

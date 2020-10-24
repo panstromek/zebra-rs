@@ -339,7 +339,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         selectivity = 1 as i32
     } else { selectivity = 0 as i32 }
     if use_hash != 0 && midgame_state.allow_midgame_hash_probe != 0 {
-        find_hash(&mut entry, 0 as i32);
+        find_hash(&mut entry, 0 as i32, &mut hash_state);
         if entry.draft as i32 >= remains &&
             entry.selectivity as i32 <= selectivity &&
             valid_move(entry.move_0[0],
@@ -859,7 +859,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
         (remains >= 2 as i32 && 1 as i32 != 0 &&
             allow_hash != 0) as i32;
     if use_hash != 0 && midgame_state.allow_midgame_hash_probe != 0 {
-        find_hash(&mut entry, 0 as i32);
+        find_hash(&mut entry, 0 as i32, &mut hash_state);
         if entry.draft as i32 >= remains &&
             entry.selectivity as i32 == 0 as i32 &&
             valid_move(entry.move_0[0],
@@ -1104,7 +1104,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
        is applied for all moves. */
     hash_hit = 0;
     if use_hash != 0 && midgame_state.allow_midgame_hash_probe != 0 {
-        find_hash(&mut entry, 0 as i32);
+        find_hash(&mut entry, 0 as i32, &mut hash_state);
         if entry.draft as i32 != 0 as i32 {
             hash_hit = 1 as i32
         }
@@ -1483,7 +1483,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
            depth exactly DEPTH which would mean that the search
            gives new score information */
         full_length_line = 0;
-        find_hash(&mut entry, 0 as i32);
+        find_hash(&mut entry, 0 as i32, &mut hash_state);
         if force_return == 0 && is_panic_abort() == 0 &&
             entry.draft as i32 != 0 as i32 &&
             valid_move(entry.move_0[0],
