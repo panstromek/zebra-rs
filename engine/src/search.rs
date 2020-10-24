@@ -87,13 +87,7 @@ pub static position_list: [i32; 100] =
 /* Local variables */
 static mut pondered_move: i32 = 0;
 static mut negate_eval: i32 = 0;
-static mut last_eval: EvaluationType =
-    EvaluationType{type_0: MIDGAME_EVAL,
-        res: WON_POSITION,
-        score: 0,
-        confidence: 0.,
-        search_depth: 0,
-        is_book: 0,};
+static mut last_eval: EvaluationType = EvaluationType { type_0: MIDGAME_EVAL, res: WON_POSITION, score: 0, confidence: 0., search_depth: 0, is_book: 0 };
 /*
   INIT_MOVE_LISTS
   Initalize the self-organizing move lists.
