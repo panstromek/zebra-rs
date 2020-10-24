@@ -1,9 +1,9 @@
 use regex::{Captures, Regex};
 
 fn main() {
-    let filename = "../engine/src/hash.rs";
-    let struct_name = "HashState";
-    let global_name = "hash_state";
+    let filename = "../engine/src/midgame.rs";
+    let struct_name = "MidgameState";
+    let global_name = "midgame_state";
 
     let file = std::fs::read_to_string(filename).unwrap();
     let declaration = regex::Regex::new(
@@ -50,39 +50,39 @@ fn main() {
                                     true, global_name, true);
     std::fs::write(filename, new_lines.join("\n")).unwrap();
 
-    let usages_file_paths = [
-        "../legacy-zebra/src/zebra.rs",
-        "../legacy-zebra/src/display.rs",
-        "../legacy-zebra/src/error.rs",
-        "../legacy-zebra/src/game.rs",
-        "../legacy-zebra/src/getcoeff.rs",
-        "../legacy-zebra/src/learn.rs",
-        "../legacy-zebra/src/main.rs",
-        "../legacy-zebra/src/osfbook.rs",
-        "../legacy-zebra/src/safemem.rs",
-        "../legacy-zebra/src/thordb.rs",
-        "../engine/src/cntflip.rs",
-        "../engine/src/counter.rs",
-        "../engine/src/end.rs",
-        "../engine/src/error.rs",
-        "../engine/src/eval.rs",
-        "../engine/src/game.rs",
-        "../engine/src/getcoeff.rs",
-        "../engine/src/globals.rs",
+    let usages_file_paths: &[&'static str] = &[
+        // "../legacy-zebra/src/zebra.rs",
+        // "../legacy-zebra/src/display.rs",
+        // "../legacy-zebra/src/error.rs",
+        // "../legacy-zebra/src/game.rs",
+        // "../legacy-zebra/src/getcoeff.rs",
+        // "../legacy-zebra/src/learn.rs",
+        // "../legacy-zebra/src/main.rs",
+        // "../legacy-zebra/src/osfbook.rs",
+        // "../legacy-zebra/src/safemem.rs",
+        // "../legacy-zebra/src/thordb.rs",
+        // "../engine/src/cntflip.rs",
+        // "../engine/src/counter.rs",
+        // "../engine/src/end.rs",
+        // "../engine/src/error.rs",
+        // "../engine/src/eval.rs",
+        // "../engine/src/game.rs",
+        // "../engine/src/getcoeff.rs",
+        // "../engine/src/globals.rs",
         // "../engine/src/hash.rs",
-        "../engine/src/learn.rs",
-        "../engine/src/midgame.rs",
-        "../engine/src/moves.rs",
-        "../engine/src/myrandom.rs",
-        "../engine/src/opname.rs",
-        "../engine/src/osfbook.rs",
-        "../engine/src/probcut.rs",
-        "../engine/src/search.rs",
-        "../engine/src/stable.rs",
-        "../engine/src/stubs.rs",
-        "../engine/src/thordb.rs",
-        "../engine/src/timer.rs",
-        "../engine/src/zebra.rs",
+        // "../engine/src/learn.rs",
+        // "../engine/src/midgame.rs",
+        // "../engine/src/moves.rs",
+        // "../engine/src/myrandom.rs",
+        // "../engine/src/opname.rs",
+        // "../engine/src/osfbook.rs",
+        // "../engine/src/probcut.rs",
+        // "../engine/src/search.rs",
+        // "../engine/src/stable.rs",
+        // "../engine/src/stubs.rs",
+        // "../engine/src/thordb.rs",
+        // "../engine/src/timer.rs",
+        // "../engine/src/zebra.rs",
     ];
     for usages_file_path in usages_file_paths.iter() {
         let file = std::fs::read_to_string(usages_file_path).unwrap();
