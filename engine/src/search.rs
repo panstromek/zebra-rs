@@ -2,7 +2,7 @@ use crate::src::globals::{Board, pv_depth, pv, board};
 use crate::src::counter::CounterType;
 use crate::src::zebra::{EvaluationType, EvalResult, EvalType};
 use crate::src::moves::{unmake_move, make_move, disks_played, move_list};
-use crate::src::hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, find_hash, determine_hash_values, HashEntry};
+use crate::src::hash::{find_hash, determine_hash_values, HashEntry, hash_state};
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, UNSOLVED_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, UNINITIALIZED_EVAL};
@@ -552,8 +552,8 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
                 new_pv_depth += 1;
                 pass_count = 0
             } else {
-                hash1 ^= hash_flip_color1;
-                hash2 ^= hash_flip_color2;
+                hash_state.hash1 ^= hash_state.hash_flip_color1;
+                hash_state.hash2 ^= hash_state.hash_flip_color2;
                 pass_count += 1
             }
         } else {
@@ -568,8 +568,8 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
                 new_pv_depth += 1;
                 pass_count = 0
             } else {
-                hash1 ^= hash_flip_color1;
-                hash2 ^= hash_flip_color2;
+                hash_state.hash1 ^= hash_state.hash_flip_color1;
+                hash_state.hash2 ^= hash_state.hash_flip_color2;
                 pass_count += 1
             }
         }

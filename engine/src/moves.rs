@@ -1,6 +1,6 @@
 use crate::src::cntflip::AnyFlips_compact;
 use crate::src::globals::{board, piece_count};
-use crate::src::hash::{hash_stored2, hash2, hash_stored1, hash1, hash_put_value2, hash_put_value1, hash_flip1, hash_flip2};
+use crate::src::hash::{hash_state};
 use crate::src::search::sorted_move_order;
 use crate::src::zebra::ZebraFrontend;
 use std::future::Future;
@@ -125,23 +125,23 @@ pub unsafe fn make_move(side_to_move: i32,
     let mut diff1: u32 = 0;
     let mut diff2: u32 = 0;
     if update_hash != 0 {
-        flipped = DoFlips_hash(move_0, side_to_move, &mut board, &mut hash_flip1, &mut hash_flip2);
+        flipped = DoFlips_hash(move_0, side_to_move, &mut board, &mut hash_state.hash_flip1, &mut hash_state.hash_flip2);
         if flipped == 0 as i32 { return 0 as i32 }
         diff1 =
             hash_update1 ^
-                hash_put_value1[side_to_move as usize][move_0 as usize];
+                hash_state.hash_put_value1[side_to_move as usize][move_0 as usize];
         diff2 =
             hash_update2 ^
-                hash_put_value2[side_to_move as usize][move_0 as usize];
-        hash_stored1[disks_played as usize] = hash1;
-        hash_stored2[disks_played as usize] = hash2;
-        hash1 ^= diff1;
-        hash2 ^= diff2
+                hash_state.hash_put_value2[side_to_move as usize][move_0 as usize];
+        hash_state.hash_stored1[disks_played as usize] = hash_state.hash1;
+        hash_state.hash_stored2[disks_played as usize] = hash_state.hash2;
+        hash_state.hash1 ^= diff1;
+        hash_state.hash2 ^= diff2
     } else {
         flipped = DoFlips_no_hash(move_0, side_to_move, &mut board);
         if flipped == 0 as i32 { return 0 as i32 }
-        hash_stored1[disks_played as usize] = hash1;
-        hash_stored2[disks_played as usize] = hash2
+        hash_state.hash_stored1[disks_played as usize] = hash_state.hash1;
+        hash_state.hash_stored2[disks_played as usize] = hash_state.hash2
     }
     flip_count[disks_played as usize] = flipped;
     board[move_0 as usize] = side_to_move;
@@ -173,8 +173,8 @@ pub unsafe fn unmake_move(side_to_move: i32,
                           move_0: i32) {
     board[move_0 as usize] = 1;
     disks_played -= 1;
-    hash1 = hash_stored1[disks_played as usize];
-    hash2 = hash_stored2[disks_played as usize];
+    hash_state.hash1 = hash_state.hash_stored1[disks_played as usize];
+    hash_state.hash2 = hash_state.hash_stored2[disks_played as usize];
     let mut UndoFlips__flip_count = flip_count[disks_played as usize];
     let UndoFlips__oppcol =
         0 as i32 + 2 as i32 - side_to_move;

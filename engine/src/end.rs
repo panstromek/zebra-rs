@@ -6,7 +6,7 @@ use crate::{
         epcstat::{END_SIGMA, END_MEAN, END_STATS_AVAILABLE},
         moves::{dir_mask, disks_played, unmake_move, make_move, move_count, generate_all, move_list, valid_move},
         search::{force_return, hash_expand_pv, root_eval, store_pv, restore_pv, nodes, create_eval_info, disc_count, get_ponder_move, select_move, evals, sorted_move_order},
-        hash::{hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended, find_hash, HashEntry, hash_put_value2, hash_put_value1},
+        hash::{hash_state, add_hash_extended, find_hash, HashEntry},
         bitbcnt::CountFlips_bitboard,
         bitboard::{set_bitboards, BitBoard},
         bitbmob::{bitboard_mobility, weighted_mobility},
@@ -18,7 +18,7 @@ use crate::{
     }
 };
 use crate::src::error::FrontEnd;
-use crate::src::hash::{add_hash, hash_flip1, hash_flip2};
+use crate::src::hash::{add_hash};
 use crate::src::midgame::{toggle_midgame_hash_usage, tree_search};
 use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_move};
 use crate::src::stubs::{abs, ceil};
@@ -912,13 +912,13 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
             if disc_diff < 0 as i32 { return disc_diff - empties }
             return 0 as i32
         } else {
-            hash1 ^= hash_flip_color1;
-            hash2 ^= hash_flip_color2;
+            hash_state.hash1 ^= hash_state.hash_flip_color1;
+            hash_state.hash2 ^= hash_state.hash_flip_color2;
             score =
                 -solve_parity_hash(end, opp_bits, my_bits, -beta, -alpha, oppcol,
                                    empties, -disc_diff, 0 as i32, bb_flips_);
-            hash1 ^= hash_flip_color1;
-            hash2 ^= hash_flip_color2
+            hash_state.hash1 ^= hash_state.hash_flip_color1;
+            hash_state.hash2 ^= hash_state.hash_flip_color2
         }
     } else {
         end.  best_move = best_sq;
@@ -1319,25 +1319,25 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
             return 0 as i32
         } else {
             /* Opponent gets the chance to play */
-            hash1 ^= hash_flip_color1;
-            hash2 ^= hash_flip_color2;
+            hash_state.hash1 ^= hash_state.hash_flip_color1;
+            hash_state.hash2 ^= hash_state.hash_flip_color2;
             score =
                 -solve_parity_hash_high(end, opp_bits, my_bits, -beta, -alpha,
                                         oppcol, empties, -disc_diff,
                                         0 as i32, bb_flips_);
-            hash1 ^= hash_flip_color1;
-            hash2 ^= hash_flip_color2;
+            hash_state.hash1 ^= hash_state.hash_flip_color1;
+            hash_state.hash2 ^= hash_state.hash_flip_color2;
             return score
         }
     }
     /* Try move with highest goodness value */
     sq = move_order[best_index as usize];
-    DoFlips_hash(sq, color, &mut board, &mut hash_flip1, &mut hash_flip2);
+    DoFlips_hash(sq, color, &mut board, &mut hash_state.hash_flip1, &mut hash_state.hash_flip2);
     board[sq as usize] = color;
-    diff1 = hash_update1 ^ hash_put_value1[color as usize][sq as usize];
-    diff2 = hash_update2 ^ hash_put_value2[color as usize][sq as usize];
-    hash1 ^= diff1;
-    hash2 ^= diff2;
+    diff1 = hash_update1 ^ hash_state.hash_put_value1[color as usize][sq as usize];
+    diff2 = hash_update2 ^ hash_state.hash_put_value2[color as usize][sq as usize];
+    hash_state.hash1 ^= diff1;
+    hash_state.hash2 ^= diff2;
     end.region_parity ^= quadrant_mask[sq as usize];
     pred = end. end_move_list[sq as usize].pred;
     succ = end. end_move_list[sq as usize].succ;
@@ -1358,8 +1358,8 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
                                     1 as i32, bb_flips_)
     }
     UndoFlips(&mut board, best_flipped, oppcol);
-    hash1 ^= diff1;
-    hash2 ^= diff2;
+    hash_state.hash1 ^= diff1;
+    hash_state.hash2 ^= diff2;
     board[sq as usize] = 1;
     end.region_parity ^= quadrant_mask[sq as usize];
     end. end_move_list[pred as usize].succ = sq;
@@ -1397,12 +1397,12 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
         flipped = TestFlips_wrapper(end,sq, my_bits, opp_bits, bb_flips_);
         new_opp_bits.high = opp_bits.high & !bb_flips_.high;
         new_opp_bits.low = opp_bits.low & !bb_flips_.low;
-        DoFlips_hash(sq, color, &mut board, &mut hash_flip1, &mut hash_flip2);
+        DoFlips_hash(sq, color, &mut board, &mut hash_state.hash_flip1, &mut hash_state.hash_flip2);
         board[sq as usize] = color;
-        diff1 = hash_update1 ^ hash_put_value1[color as usize][sq as usize];
-        diff2 = hash_update2 ^ hash_put_value2[color as usize][sq as usize];
-        hash1 ^= diff1;
-        hash2 ^= diff2;
+        diff1 = hash_update1 ^ hash_state.hash_put_value1[color as usize][sq as usize];
+        diff2 = hash_update2 ^ hash_state.hash_put_value2[color as usize][sq as usize];
+        hash_state.hash1 ^= diff1;
+        hash_state.hash2 ^= diff2;
         end.region_parity ^= quadrant_mask[sq as usize];
         pred = end. end_move_list[sq as usize].pred;
         succ = end. end_move_list[sq as usize].succ;
@@ -1424,8 +1424,8 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
         }
         end.region_parity ^= quadrant_mask[sq as usize];
         UndoFlips(&mut board, flipped, oppcol);
-        hash1 ^= diff1;
-        hash2 ^= diff2;
+        hash_state.hash1 ^= diff1;
+        hash_state.hash2 ^= diff2;
         board[sq as usize] = 1;
         end. end_move_list[pred as usize].succ = sq;
         end. end_move_list[succ as usize].pred = sq;
@@ -2101,8 +2101,8 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         return best
     } else if void_legal != 0 {
         if use_hash != 0 {
-            hash1 ^= hash_flip_color1;
-            hash2 ^= hash_flip_color2
+            hash_state.hash1 ^= hash_state.hash_flip_color1;
+            hash_state.hash2 ^= hash_state.hash_flip_color2
         }
         curr_val =
             -end_tree_search::<FE>(end ,level, max_depth, opp_bits, my_bits,
@@ -2110,8 +2110,8 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                  side_to_move, -beta, -alpha, selectivity,
                                    selective_cutoff, 0 as i32, bb_flips_,echo);
         if use_hash != 0 {
-            hash1 ^= hash_flip_color1;
-            hash2 ^= hash_flip_color2
+            hash_state.hash1 ^= hash_state.hash_flip_color1;
+            hash_state.hash2 ^= hash_state.hash_flip_color2
         }
         return curr_val
     } else {
@@ -2188,8 +2188,8 @@ unsafe fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
             make_move(side_to_move, move_0, 1 as i32);
             new_pv_depth += 1
         } else {
-            hash1 ^= hash_flip_color1;
-            hash2 ^= hash_flip_color2;
+            hash_state.hash1 ^= hash_state.hash_flip_color1;
+            hash_state.hash2 ^= hash_state.hash_flip_color2;
             pass_count += 1
         }
         side_to_move = 0 as i32 + 2 as i32 - side_to_move
