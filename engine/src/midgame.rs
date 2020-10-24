@@ -33,19 +33,19 @@ pub struct DepthInfo {
 /* Default aspiration window parameters. These values are currently
    really huge as usage of a small windows tends to slow down
    the search. */
-pub static mut allow_midgame_hash_probe: i32 = 0;
-pub static mut allow_midgame_hash_update: i32 = 0;
-pub static mut best_mid_move: i32 = 0;
-pub static mut best_mid_root_move: i32 = 0;
-pub static mut midgame_abort: i32 = 0;
-pub static mut do_check_midgame_abort: i32 = 1;
-pub static mut counter_phase: i32 = 0;
-pub static mut apply_perturbation: i32 = 1;
-pub static mut perturbation_amplitude: i32 = 0;
-pub static mut stage_reached: [i32; 62] = [0; 62];
-pub static mut stage_score: [i32; 62] = [0; 62];
-pub static mut score_perturbation: [i32; 100] = [0; 100];
-pub static mut feas_index_list: [[i32; 64]; 64] = [[0; 64]; 64];
+static mut allow_midgame_hash_probe: i32 = 0;
+static mut allow_midgame_hash_update: i32 = 0;
+static mut best_mid_move: i32 = 0;
+static mut best_mid_root_move: i32 = 0;
+static mut midgame_abort: i32 = 0;
+static mut do_check_midgame_abort: i32 = 1;
+static mut counter_phase: i32 = 0;
+static mut apply_perturbation: i32 = 1;
+static mut perturbation_amplitude: i32 = 0;
+static mut stage_reached: [i32; 62] = [0; 62];
+static mut stage_score: [i32; 62] = [0; 62];
+static mut score_perturbation: [i32; 100] = [0; 100];
+static mut feas_index_list: [[i32; 64]; 64] = [[0; 64]; 64];
 
 
 /*

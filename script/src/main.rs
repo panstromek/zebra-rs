@@ -84,7 +84,6 @@ fn main() {
         "../engine/src/timer.rs",
         "../engine/src/zebra.rs",
     ];
-// FIXME trailing newline is deleted
     for usages_file_path in usages_file_paths.iter() {
         let file = std::fs::read_to_string(usages_file_path).unwrap();
         let new_lines = replace_in_file(&file, &declaration, &replacer,
@@ -103,7 +102,7 @@ fn replace_in_file(file: &String, declaration: &Regex, replacer: &Regex,
 
     let mut decl_written = false;
     let mut in_multiline_comment = false;
-    let new_lines = file.lines()
+    let mut new_lines = file.lines()
         .map(|line| {
             let is_use_statament = line.trim_start().starts_with("use ");
 
@@ -144,5 +143,6 @@ fn replace_in_file(file: &String, declaration: &Regex, replacer: &Regex,
         })
         // .inspect(|x| println!("{}", x))
         .collect::<Vec<_>>();
+    new_lines.push("\n".into());
     new_lines
 }

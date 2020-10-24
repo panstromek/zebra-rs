@@ -16,9 +16,9 @@ pub struct MoveLink {
 /* All discs determined as stable last time COUNT_STABLE was called
    for the two colors */
 
-pub static mut last_black_stable: BitBoard = BitBoard{high: 0, low: 0,};
+static mut last_black_stable: BitBoard = BitBoard{high: 0, low: 0,};
 
-pub static mut last_white_stable: BitBoard = BitBoard{high: 0, low: 0,};
+static mut last_white_stable: BitBoard = BitBoard{high: 0, low: 0,};
 /* Local variables */
 /* For each of the 3^8 edges, edge_stable[] holds an 8-bit mask
    where a bit is set if the corresponding disc can't be changed EVER. */

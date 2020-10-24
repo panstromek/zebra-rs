@@ -50,22 +50,22 @@ pub struct CandidateMove {
   SET_FORCED_OPENING
   Specifies an opening line that Zebra is forced to follow when playing.
 */
-pub static mut forced_opening: *const i8 = 0 as *const i8;
-pub static mut last_time_used: f64 = 0.;
+static mut forced_opening: *const i8 = 0 as *const i8;
+static mut last_time_used: f64 = 0.;
 pub static mut max_depth_reached: i32 = 0;
 pub static mut use_log_file: i32 = 1;
-pub static mut play_human_openings: i32 = 1;
+static mut play_human_openings: i32 = 1;
 
 /*
   TOGGLE_THOR_MATCH_OPENINGS
   Specifies whether matching Thor games are used as opening book
   before resorting to the usual opening book.
 */
-pub static mut play_thor_match_openings: i32 = 1;
+static play_thor_match_openings: i32 = 1;
 pub static mut game_evaluated_count: i32 = 0;
-pub static mut komi: i32 = 0;
+static mut komi: i32 = 0;
 pub static mut prefix_move: i32 = 0;
-pub static mut endgame_performed: [i32; 3] = [0; 3];
+static mut endgame_performed: [i32; 3] = [0; 3];
 pub static mut evaluated_list: [EvaluatedMove; 60] =
     [EvaluatedMove{eval:
     EvaluationType{type_0: MIDGAME_EVAL,
