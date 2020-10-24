@@ -16,7 +16,7 @@ use engine::src::timer::{get_real_timer, determine_move_time, start_move, clear_
 use engine::src::search::{full_pv, full_pv_depth, nodes, disc_count, produce_compact_eval, total_time, total_nodes};
 use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::moves::{disks_played, make_move, valid_move, unmake_move, move_count, generate_all, game_in_progress};
-use engine::src::hash::{setup_hash, set_hash_transformation};
+use engine::src::hash::{setup_hash, set_hash_transformation, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, find_opening_name, set_draw_mode, set_game_mode, g_book};
 use engine::src::stubs::floor;
 use engine::src::learn::{store_move, clear_stored_game};
@@ -1152,7 +1152,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                  *const i8);
     }
     generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move);
-    setup_hash(1 as i32);
+    setup_hash(1 as i32, &mut hash_state);
     clear_stored_game();
     if g_config.echo != 0 && config.use_book != 0 {
         puts(b"Disabling usage of opening book\x00" as *const u8 as
@@ -1537,7 +1537,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             toggle_human_openings(0 as i32);
             reset_book_search(&mut g_book);
             set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_book);
-            setup_hash(1 as i32);
+            setup_hash(1 as i32, &mut hash_state);
             position_count += 1;
             scanned =
                 sscanf(buffer.as_mut_ptr(),
