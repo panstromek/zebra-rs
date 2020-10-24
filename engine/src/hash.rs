@@ -70,11 +70,7 @@ pub static mut hash_state: HashState = HashState {
    Calculates the hash codes for the given board position.
 */
 
-pub unsafe fn determine_hash_values(side_to_move: i32, board: &Board) {
-    determine_hash_values_safe(side_to_move, board, &mut hash_state)
-}
-
-pub fn determine_hash_values_safe(side_to_move: i32, board: &Board, hash_state_: &mut HashState) {
+pub fn determine_hash_values(side_to_move: i32, board: &Board, hash_state_: &mut HashState) {
     hash_state_.hash1 = 0;
     hash_state_.hash2 = 0;
     let mut i = 1;

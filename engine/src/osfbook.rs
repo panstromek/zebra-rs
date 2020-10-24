@@ -3,7 +3,7 @@ use crate::{
         search::{get_ponder_move, create_eval_info, root_eval, disc_count, nodes},
         moves::{unmake_move, make_move, generate_specific, disks_played, move_list, move_count, generate_all, unmake_move_no_hash, make_move_no_hash},
         opname::opening_list,
-        hash::{determine_hash_values, clear_hash_drafts},
+        hash::{clear_hash_drafts},
         game::{CandidateMove},
         myrandom::{my_random, my_srandom},
         globals::{board, piece_count, pv, pv_depth},

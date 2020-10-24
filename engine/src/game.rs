@@ -4,7 +4,7 @@ use crate::src::search::{nodes, total_time, total_evaluations, total_nodes, setu
 use crate::src::globals::{pv_depth, pv, board, score_sheet_row, black_moves, piece_count};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, init_memory_handler, CoeffAdjustments, remove_coeffs, set};
-use crate::src::hash::{free_hash, determine_hash_values, init_hash, find_hash, HashEntry, hash_state};
+use crate::src::hash::{free_hash, init_hash, find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::timer::{clear_ponder_times, init_timer, time_t, clear_panic_abort, get_elapsed_time, is_panic_abort, determine_move_time, toggle_abort_check, ponder_depth, add_ponder_time, get_real_timer, start_move};
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, is_midgame_abort, middle_game, toggle_midgame_hash_usage, toggle_midgame_abort_check, clear_midgame_abort, calculate_perturbation};
@@ -225,7 +225,7 @@ pub const fn create_fresh_board() -> [i32; 128] {
 
 pub unsafe fn setup_game_finalize(side_to_move:  &mut i32) {
     disks_played = disc_count(0, &board) + disc_count(2, &board) - 4;
-    determine_hash_values(*side_to_move, &board);
+    determine_hash_values(*side_to_move, &board, &mut hash_state);
     /* Make the game score look right */
     if *side_to_move == 0 as i32 {
         score_sheet_row = -(1 as i32)
@@ -397,7 +397,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     piece_count[2][disks_played as usize] =
         disc_count(2 as i32, &board);
     generate_all(side_to_move);
-    determine_hash_values(side_to_move, &board);
+    determine_hash_values(side_to_move, &board, &mut hash_state);
     calculate_perturbation();
     if let Some(logger) = logger {
         let moves_generated = move_count[disks_played as usize];
@@ -810,7 +810,7 @@ pub unsafe fn ponder_move<
                      0 as i32 as f64,
                      disc_count(0 as i32, &board) + disc_count(2 as i32, &board));
     clear_ponder_times();
-    determine_hash_values(side_to_move, &board);
+    determine_hash_values(side_to_move, &board, &mut hash_state);
     reset_counter(&mut nodes);
     /* Find the scores for the moves available to the opponent. */
     let mut hash_move = 0;

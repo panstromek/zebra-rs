@@ -7,7 +7,7 @@ use crate::{
 use crate::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::midgame::{middle_game, toggle_midgame_abort_check, toggle_midgame_hash_usage, tree_search};
 use engine::src::myrandom::{my_srandom, my_random};
-use engine::src::hash::{set_hash_transformation, determine_hash_values, setup_hash, clear_hash_drafts};
+use engine::src::hash::{set_hash_transformation, setup_hash, clear_hash_drafts, hash_state, determine_hash_values};
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError};
 use engine::src::globals::{white_moves, black_moves, board, pv, piece_count};
@@ -598,7 +598,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
         } else { outcome = 0 as i32 }
     } else {
         generate_all(side_to_move);
-        determine_hash_values(side_to_move, &board);
+        determine_hash_values(side_to_move, &board, &mut hash_state);
         if echo != 0 {
             puts(b"\x00" as *const u8 as *const i8);
             if side_to_move == 0 as i32 {
@@ -692,7 +692,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
             generate_all(side_to_move);
-            determine_hash_values(side_to_move, &board);
+            determine_hash_values(side_to_move, &board, &mut hash_state);
             if disks_played >= 60 as i32 - max_full_solve {
                 /* Only solve the position if it hasn't been solved already */
                 if (*g_book.node.offset(this_node as isize)).flags as i32 &
@@ -2654,7 +2654,7 @@ unsafe fn do_midgame_statistics(index: i32,
                       &black_moves, &white_moves
         );
         setup_hash(0 as i32);
-        determine_hash_values(side_to_move, &board);
+        determine_hash_values(side_to_move, &board, &mut hash_state);
         depth = 1;
         while depth <= spec.max_depth {
             middle_game::<FE>(side_to_move, depth, 0 as i32,
@@ -2666,7 +2666,7 @@ unsafe fn do_midgame_statistics(index: i32,
         }
         puts(b"\x00" as *const u8 as *const i8);
         setup_hash(0 as i32);
-        determine_hash_values(side_to_move, &board);
+        determine_hash_values(side_to_move, &board, &mut hash_state);
         depth = 2;
         while depth <= spec.max_depth {
             middle_game::<FE>(side_to_move, depth, 0 as i32,
@@ -2797,7 +2797,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
     );
     set_hash_transformation(abs(my_random() as i32) as u32,
                             abs(my_random() as i32) as u32);
-    determine_hash_values(side_to_move, &board);
+    determine_hash_values(side_to_move, &board, &mut hash_state);
     depth = 1;
     while depth <= spec.max_depth {
         middle_game::<FE>(side_to_move, depth, 0 as i32, &mut dummy_info, echo);
@@ -2888,7 +2888,7 @@ unsafe fn do_endgame_statistics(index: i32,
         ((my_random() % 1000 as i32 as i64) as
             f64) < 1000.0f64 * spec.prob {
         setup_hash(0 as i32);
-        determine_hash_values(side_to_move, &board);
+        determine_hash_values(side_to_move, &board, &mut hash_state);
         printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
                    *const i8, 60 as i32 - disks_played);
         fill_move_alternatives::<FE>(side_to_move, 16 as i32);
@@ -3165,7 +3165,7 @@ unsafe fn do_correct(index: i32,
     /* Then correct the g_book.node itself (hopefully exploiting lots
      of useful information in the hash table) */
     generate_all(side_to_move);
-    determine_hash_values(side_to_move, &board);
+    determine_hash_values(side_to_move, &board, &mut hash_state);
     if disks_played >= 60 as i32 - max_empty {
         really_evaluate =
             (full_solve != 0 &&
@@ -3948,7 +3948,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
        of the averaging done, the hash table drafts are changed prior
        to each g_book.node being searched. */
     clear_hash_drafts();
-    determine_hash_values(side_to_move, &board);
+    determine_hash_values(side_to_move, &board, &mut hash_state);
     /* First determine the best move in the current position
        and its score when searched to depth DEPTH.
        This is done using standard negascout with iterative deepening. */
