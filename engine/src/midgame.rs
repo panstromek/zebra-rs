@@ -3,7 +3,7 @@ use crate::{
         search::{root_eval, force_return, hash_expand_pv, get_ponder_move, nodes, create_eval_info, inherit_move_lists, disc_count, evaluations, evals, sorted_move_order, reorder_move_list},
         counter::{counter_value, adjust_counter},
         moves::{valid_move, disks_played, unmake_move, make_move, move_list, move_count, generate_all, unmake_move_no_hash, make_move_no_hash},
-        hash::{find_hash, HashEntry, hash_flip_color2, hash2, hash_flip_color1, hash1, add_hash_extended},
+        hash::{find_hash, HashEntry, hash_state, add_hash_extended},
         globals::{piece_count, board, pv, pv_depth},
         eval::terminal_evaluation,
         probcut::mpc_cut,
@@ -781,15 +781,15 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         return best
     } else if void_legal != 0 {
         /* No feasible moves */
-        hash1 ^= hash_flip_color1;
-        hash2 ^= hash_flip_color2;
+        hash_state.hash1 ^= hash_state.hash_flip_color1;
+        hash_state.hash2 ^= hash_state.hash_flip_color2;
         curr_val =
             -tree_search::<FE>(level, max_depth,
                          0 as i32 + 2 as i32 - side_to_move,
                          -beta, -alpha, allow_hash, allow_mpc,
                          0 as i32, echo);
-        hash1 ^= hash_flip_color1;
-        hash2 ^= hash_flip_color2;
+        hash_state.hash1 ^= hash_state.hash_flip_color1;
+        hash_state.hash2 ^= hash_state.hash_flip_color2;
         return curr_val
     } else {
         pv_depth[level as usize] = level;
@@ -996,15 +996,15 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
         return best
     } else if void_legal != 0 {
         /* I pass, other player's turn now */
-        hash1 ^= hash_flip_color1;
-        hash2 ^= hash_flip_color2;
+        hash_state.hash1 ^= hash_state.hash_flip_color1;
+        hash_state.hash2 ^= hash_state.hash_flip_color2;
         curr_val =
             -fast_tree_search::<FE>(level, max_depth,
                               0 as i32 + 2 as i32 -
                                   side_to_move, -beta, -alpha, allow_hash,
                               0 as i32);
-        hash1 ^= hash_flip_color1;
-        hash2 ^= hash_flip_color2;
+        hash_state.hash1 ^= hash_state.hash_flip_color1;
+        hash_state.hash2 ^= hash_state.hash_flip_color2;
         return curr_val
     } else {
         /* Both players had to pass ==> evaluate board as final */
@@ -1340,15 +1340,15 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
         return best
     } else if void_legal != 0 {
         /* No feasible moves */
-        hash1 ^= hash_flip_color1;
-        hash2 ^= hash_flip_color2;
+        hash_state.hash1 ^= hash_state.hash_flip_color1;
+        hash_state.hash2 ^= hash_state.hash_flip_color2;
         curr_val =
             -root_tree_search::<FE>(level, max_depth,
                               0 as i32 + 2 as i32 -
                                   side_to_move, -beta, -alpha, allow_hash,
                               allow_mpc, 0 as i32, echo);
-        hash1 ^= hash_flip_color1;
-        hash2 ^= hash_flip_color2;
+        hash_state.hash1 ^= hash_state.hash_flip_color1;
+        hash_state.hash2 ^= hash_state.hash_flip_color2;
         return curr_val
     } else {
         pv_depth[level as usize] = level;
