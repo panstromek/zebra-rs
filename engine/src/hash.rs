@@ -71,6 +71,9 @@ pub static mut hash_state: HashState = HashState {
 */
 
 pub unsafe fn determine_hash_values(side_to_move: i32, board: &Board) {
+    determine_hash_values_safe(side_to_move, board)
+}
+pub unsafe fn determine_hash_values_safe(side_to_move: i32, board: &Board) {
     hash_state.hash1 = 0;
     hash_state.hash2 = 0;
     let mut i = 1;
@@ -103,19 +106,19 @@ pub unsafe fn determine_hash_values(side_to_move: i32, board: &Board) {
    hash table positions are probed.
 */
 
-pub unsafe fn find_hash(entry: &mut HashEntry, reverse_mode: i32) {
+pub fn find_hash(entry: &mut HashEntry, reverse_mode: i32, hash_state_: &mut HashState) {
     let mut code1: u32 = 0;
     let mut code2: u32 = 0;
     if reverse_mode != 0 {
-        code1 = hash_state.hash2 ^ hash_state.hash_trans2;
-        code2 = hash_state.hash1 ^ hash_state.hash_trans1
+        code1 = hash_state_.hash2 ^ hash_state_.hash_trans2;
+        code2 = hash_state_.hash1 ^ hash_state_.hash_trans1
     } else {
-        code1 = hash_state.hash1 ^ hash_state.hash_trans1;
-        code2 = hash_state.hash2 ^ hash_state.hash_trans2
+        code1 = hash_state_.hash1 ^ hash_state_.hash_trans1;
+        code2 = hash_state_.hash2 ^ hash_state_.hash_trans2
     }
-    let index1 = (code1 & hash_state.hash_mask as u32) as i32;
+    let index1 = (code1 & hash_state_.hash_mask as u32) as i32;
     let index2 = index1 ^ 1;
-    let hash_table_ptr = &mut hash_state.hash_table;
+    let hash_table_ptr = &mut hash_state_.hash_table;
     if (hash_table_ptr.offset(index1 as isize)).key2 == code2 {
         if (hash_table_ptr.offset(index1 as isize).key1_selectivity_flags_draft ^ code1
         ) & 0xff000000 as u32 == 0 {

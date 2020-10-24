@@ -790,7 +790,7 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
             selectivity: 0,
             flags: 0,};
     nodes.lo = nodes.lo.wrapping_add(1);
-    find_hash(&mut entry, 1 as i32);
+    find_hash(&mut entry, 1 as i32, &mut hash_state);
     if entry.draft as i32 == empties &&
         entry.selectivity as i32 == 0 as i32 &&
         valid_move(entry.move_0[0], color) != 0 &&
@@ -1239,7 +1239,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
             flags: 0,};
     nodes.lo = nodes.lo.wrapping_add(1);
     hash_move = -(1 as i32);
-    find_hash(&mut entry, 1 as i32);
+    find_hash(&mut entry, 1 as i32, &mut hash_state);
     if entry.draft as i32 == empties {
         if entry.selectivity as i32 == 0 as i32 &&
             entry.flags as i32 & 16 as i32 != 0 &&
@@ -1638,7 +1638,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
     use_hash = 1;
     if use_hash != 0 {
         /* Check for endgame hash table move */
-        find_hash(&mut entry, 1 as i32);
+        find_hash(&mut entry, 1 as i32, &mut hash_state);
         if entry.draft as i32 == remains &&
             entry.selectivity as i32 <= selectivity &&
             valid_move(entry.move_0[0],
@@ -1663,7 +1663,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         hash_hit =
             (entry.draft as i32 != 0 as i32) as i32;
         /* If not any such found, check for a midgame hash move */
-        find_hash(&mut mid_entry, 0 as i32);
+        find_hash(&mut mid_entry, 0 as i32, &mut hash_state);
         if mid_entry.draft as i32 != 0 as i32 &&
             mid_entry.flags as i32 & 8 as i32 != 0 {
             if level <= 4 as i32 ||
@@ -1780,7 +1780,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                             draft: 0,
                             selectivity: 0,
                             flags: 0,};
-                    find_hash(&mut etc_entry, 1 as i32);
+                    find_hash(&mut etc_entry, 1 as i32, &mut hash_state);
                     if etc_entry.flags as i32 & 16 as i32 != 0
                         &&
                         etc_entry.draft as i32 ==
@@ -1866,7 +1866,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                     draft: 0,
                                     selectivity: 0,
                                     flags: 0,};
-                            find_hash(&mut etc_entry_0, 1 as i32);
+                            find_hash(&mut etc_entry_0, 1 as i32, &mut hash_state);
                             if etc_entry_0.flags as i32 &
                                 16 as i32 != 0 &&
                                 etc_entry_0.draft as i32 ==
