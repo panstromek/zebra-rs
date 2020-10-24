@@ -156,7 +156,7 @@ pub fn inherit_move_lists(stage: i32, sorted_move_order_: &mut [[i32; 64]; 64], 
   in many variations in the tree.
 */
 
-pub unsafe fn reorder_move_list(stage: i32) {
+pub fn reorder_move_list(board_: &[i32; 128], stage_sorted_move_order: &mut [i32; 64]) {
     let dont_touch = 24;
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
@@ -167,8 +167,8 @@ pub unsafe fn reorder_move_list(stage: i32) {
     empty_pos = 0;
     i = 0;
     while i < 60 as i32 {
-        move_0 = sorted_move_order[stage as usize][i as usize];
-        if board[move_0 as usize] == 1 as i32 || i < dont_touch {
+        move_0 = stage_sorted_move_order[i as usize];
+        if board_[move_0 as usize] == 1 as i32 || i < dont_touch {
             empty_buffer[empty_pos as usize] = move_0;
             empty_pos += 1
         }
@@ -177,8 +177,8 @@ pub unsafe fn reorder_move_list(stage: i32) {
     nonempty_pos = 60 as i32 - 1 as i32;
     i = 60 as i32 - 1 as i32;
     while i >= 0 as i32 {
-        move_0 = sorted_move_order[stage as usize][i as usize];
-        if board[move_0 as usize] != 1 as i32 && i >= dont_touch {
+        move_0 = stage_sorted_move_order[i as usize];
+        if board_[move_0 as usize] != 1 as i32 && i >= dont_touch {
             nonempty_buffer[nonempty_pos as usize] = move_0;
             nonempty_pos -= 1
         }
@@ -186,14 +186,12 @@ pub unsafe fn reorder_move_list(stage: i32) {
     }
     i = 0;
     while i < empty_pos {
-        sorted_move_order[stage as usize][i as usize] =
-            empty_buffer[i as usize];
+        stage_sorted_move_order[i as usize] = empty_buffer[i as usize];
         i += 1
     }
     i = empty_pos;
     while i < 60 as i32 {
-        sorted_move_order[stage as usize][i as usize] =
-            nonempty_buffer[i as usize];
+        stage_sorted_move_order[i as usize] = nonempty_buffer[i as usize];
         i += 1
     };
 }
@@ -409,8 +407,7 @@ pub fn create_eval_info(in_type: EvalType,
   Converts a result descriptor into a number between -99.99 and 99.99 a la GGS.
 */
 
-pub unsafe fn produce_compact_eval(eval_info: EvaluationType)
-                                   -> f64 {
+pub fn produce_compact_eval(eval_info: EvaluationType) -> f64 {
     let mut eval: f64 = 0.;
     's_97:
         {

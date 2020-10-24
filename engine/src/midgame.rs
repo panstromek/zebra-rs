@@ -875,9 +875,8 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
         }
     }
     /* Reorder the move lists now and then to keep the empty squares up front */
-    if nodes.lo & 4095 as i32 as u32 ==
-        0 as i32 as u32 {
-        reorder_move_list(disks_played);
+    if nodes.lo & 4095 as i32 as u32 == 0 as i32 as u32 {
+        reorder_move_list(&board, &mut sorted_move_order[disks_played as usize]);
     }
     /* Search */
     first = 1;
