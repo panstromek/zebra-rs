@@ -338,7 +338,7 @@ pub fn get_closeness(a0: u32, a1: u32, b0: u32, b1: u32) -> u32 {
    Determine randomized hash masks.
 */
 
-pub unsafe fn setup_hash(clear: i32) {
+pub unsafe fn setup_hash(clear: i32, hash_state_: &mut HashState) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -347,7 +347,7 @@ pub unsafe fn setup_hash(clear: i32) {
     let max_zero_closeness = 9;
     let mut closeness: u32 = 0;
     let mut random_pair: [[u32; 2]; 130] = [[0; 2]; 130];
-    let has_table_ptr = &mut hash_state.hash_table;
+    let has_table_ptr = &mut hash_state_.hash_table;
     if clear != 0 {
         i = 0;
         while i < has_table_ptr.len() as i32 {
@@ -406,10 +406,10 @@ pub unsafe fn setup_hash(clear: i32) {
     rand_index = 0;
     i = 0;
     while i < 128 as i32 {
-        hash_state.hash_value1[0][i as usize] = 0;
-        hash_state.hash_value2[0][i as usize] = 0;
-        hash_state.hash_value1[2][i as usize] = 0;
-        hash_state.hash_value2[2][i as usize] = 0;
+        hash_state_.hash_value1[0][i as usize] = 0;
+        hash_state_.hash_value2[0][i as usize] = 0;
+        hash_state_.hash_value1[2][i as usize] = 0;
+        hash_state_.hash_value2[2][i as usize] = 0;
         i += 1
     }
     i = 1;
@@ -417,14 +417,14 @@ pub unsafe fn setup_hash(clear: i32) {
         j = 1;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
-            hash_state.hash_value1[0][pos as usize] =
+            hash_state_.hash_value1[0][pos as usize] =
                 random_pair[rand_index as usize][0];
-            hash_state.hash_value2[0][pos as usize] =
+            hash_state_.hash_value2[0][pos as usize] =
                 random_pair[rand_index as usize][1];
             rand_index += 1;
-            hash_state.hash_value1[2][pos as usize] =
+            hash_state_.hash_value1[2][pos as usize] =
                 random_pair[rand_index as usize][0];
-            hash_state.hash_value2[2][pos as usize] =
+            hash_state_.hash_value2[2][pos as usize] =
                 random_pair[rand_index as usize][1];
             rand_index += 1;
             j += 1
@@ -433,44 +433,44 @@ pub unsafe fn setup_hash(clear: i32) {
     }
     i = 0;
     while i < 128 as i32 {
-        hash_state.hash_flip1[i as usize] =
-            hash_state.hash_value1[0][i as usize] ^
-                hash_state.hash_value1[2][i as usize];
-        hash_state.hash_flip2[i as usize] =
-            hash_state.hash_value2[0][i as usize] ^
-                hash_state.hash_value2[2][i as usize];
+        hash_state_.hash_flip1[i as usize] =
+            hash_state_.hash_value1[0][i as usize] ^
+                hash_state_.hash_value1[2][i as usize];
+        hash_state_.hash_flip2[i as usize] =
+            hash_state_.hash_value2[0][i as usize] ^
+                hash_state_.hash_value2[2][i as usize];
         i += 1
     }
-    hash_state.hash_color1[0] =
+    hash_state_.hash_color1[0] =
         random_pair[rand_index as usize][0];
-    hash_state.hash_color2[0] =
+    hash_state_.hash_color2[0] =
         random_pair[rand_index as usize][1];
     rand_index += 1;
-    hash_state.hash_color1[2] =
+    hash_state_.hash_color1[2] =
         random_pair[rand_index as usize][0];
-    hash_state.hash_color2[2] =
+    hash_state_.hash_color2[2] =
         random_pair[rand_index as usize][1];
     rand_index += 1;
-    hash_state.hash_flip_color1 =
-        hash_state.hash_color1[0] ^
-            hash_state.hash_color1[2];
-    hash_state.hash_flip_color2 =
-        hash_state.hash_color2[0] ^
-            hash_state.hash_color2[2];
+    hash_state_.hash_flip_color1 =
+        hash_state_.hash_color1[0] ^
+            hash_state_.hash_color1[2];
+    hash_state_.hash_flip_color2 =
+        hash_state_.hash_color2[0] ^
+            hash_state_.hash_color2[2];
     j = 0;
     while j < 128 as i32 {
-        hash_state.hash_put_value1[0][j as usize] =
-            hash_state.hash_value1[0][j as usize] ^
-                hash_state.hash_flip_color1;
-        hash_state.hash_put_value2[0][j as usize] =
-            hash_state.hash_value2[0][j as usize] ^
-                hash_state.hash_flip_color2;
-        hash_state.hash_put_value1[2][j as usize] =
-            hash_state.hash_value1[2][j as usize] ^
-                hash_state.hash_flip_color1;
-        hash_state.hash_put_value2[2][j as usize] =
-            hash_state.hash_value2[2][j as usize] ^
-                hash_state.hash_flip_color2;
+        hash_state_.hash_put_value1[0][j as usize] =
+            hash_state_.hash_value1[0][j as usize] ^
+                hash_state_.hash_flip_color1;
+        hash_state_.hash_put_value2[0][j as usize] =
+            hash_state_.hash_value2[0][j as usize] ^
+                hash_state_.hash_flip_color2;
+        hash_state_.hash_put_value1[2][j as usize] =
+            hash_state_.hash_value1[2][j as usize] ^
+                hash_state_.hash_flip_color1;
+        hash_state_.hash_put_value2[2][j as usize] =
+            hash_state_.hash_value2[2][j as usize] ^
+                hash_state_.hash_flip_color2;
         j += 1
     };
 }
@@ -593,7 +593,7 @@ pub unsafe fn init_hash(in_hash_bits: i32) {
 pub unsafe fn resize_hash(new_hash_bits: i32) {
     hash_state.hash_table.clear();
     init_hash(new_hash_bits);
-    setup_hash(1);
+    setup_hash(1, &mut hash_state);
 }
 /*
    FREE_HASH

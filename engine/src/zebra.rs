@@ -10,7 +10,7 @@ use crate::src::myrandom::my_random;
 use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, set_slack, g_book};
 use crate::src::getcoeff::remove_coeffs;
 use crate::src::game::{toggle_human_openings, generic_game_init, FileBoardSource, generic_compute_move, ComputeMoveOutput, ComputeMoveLogger};
-use crate::src::hash::{setup_hash};
+use crate::src::hash::{setup_hash, hash_state};
 use std::future::Future;
 use std::error::Error;
 use crate::src::thordb::ThorDatabase;
@@ -237,7 +237,7 @@ pub unsafe fn engine_play_game<
         }
         /* Set up the position and the search engine */
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move);
-        setup_hash(1);
+        setup_hash(1, &mut hash_state);
         clear_stored_game();
         if echo != 0 && config.use_book != 0 {
             let slack_ = config.slack;
@@ -519,7 +519,7 @@ pub async unsafe fn engine_play_game_async<
         }
         /* Set up the position and the search engine */
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move);
-        setup_hash(1);
+        setup_hash(1, &mut hash_state);
         clear_stored_game();
         if echo != 0 && config.use_book != 0 {
             let slack_ = config.slack;

@@ -10,7 +10,7 @@ use engine::src::timer::{get_real_timer, determine_move_time, start_move};
 use engine::src::search::{full_pv, full_pv_depth, nodes, disc_count};
 use engine::src::moves::disks_played;
 use engine::src::globals::{board, score_sheet_row, white_moves, black_moves};
-use engine::src::hash::setup_hash;
+use engine::src::hash::{setup_hash, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, g_book};
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::game::{global_setup, compute_move, game_init};
@@ -221,7 +221,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
             toggle_human_openings(0 as i32);
             reset_book_search(&mut g_book);
             set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_book);
-            setup_hash(1 as i32);
+            setup_hash(1 as i32, &mut hash_state);
             position_count += 1;
             scanned =
                 sscanf(buffer.as_mut_ptr(),

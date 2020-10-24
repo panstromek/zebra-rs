@@ -2653,7 +2653,7 @@ unsafe fn do_midgame_statistics(index: i32,
                       white_player, white_time, white_eval,
                       &black_moves, &white_moves
         );
-        setup_hash(0 as i32);
+        setup_hash(0 as i32, &mut hash_state);
         determine_hash_values(side_to_move, &board, &mut hash_state);
         depth = 1;
         while depth <= spec.max_depth {
@@ -2665,7 +2665,7 @@ unsafe fn do_midgame_statistics(index: i32,
             depth += 2 as i32
         }
         puts(b"\x00" as *const u8 as *const i8);
-        setup_hash(0 as i32);
+        setup_hash(0 as i32, &mut hash_state);
         determine_hash_values(side_to_move, &board, &mut hash_state);
         depth = 2;
         while depth <= spec.max_depth {
@@ -2887,7 +2887,7 @@ unsafe fn do_endgame_statistics(index: i32,
     if disks_played == 33 as i32 &&
         ((my_random() % 1000 as i32 as i64) as
             f64) < 1000.0f64 * spec.prob {
-        setup_hash(0 as i32);
+        setup_hash(0 as i32, &mut hash_state);
         determine_hash_values(side_to_move, &board, &mut hash_state);
         printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
                    *const i8, 60 as i32 - disks_played);
@@ -4409,7 +4409,7 @@ pub unsafe fn do_minimax(index: i32,
 pub unsafe fn engine_init_osf<FE: FrontEnd>() {
     init_maps::<FE>();
     prepare_hash();
-    setup_hash(1 as i32);
+    setup_hash(1 as i32, &mut hash_state);
     init_book_tree(&mut g_book);
     reset_book_search(&mut g_book);
     g_book.search_depth = 2;

@@ -256,7 +256,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 first_allowed_dev = earliest_dev
             }
             game_init(0 as *const i8, &mut side_to_move);
-            setup_hash(1 as i32);
+            setup_hash(1 as i32, &mut hash_state);
             last_was_pass = 0;
             restart = 0;
             in_branch = 0 as i32
