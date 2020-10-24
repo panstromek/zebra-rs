@@ -92,24 +92,18 @@ static mut last_eval: EvaluationType = EvaluationType { type_0: MIDGAME_EVAL, re
   INIT_MOVE_LISTS
   Initalize the self-organizing move lists.
 */
-unsafe fn init_move_lists() {
+fn init_move_lists(sorted_move_order_: &mut [[i32; 64]; 64]) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     i = 0;
     while i <= 60 as i32 {
         j = 0;
         while j < 60 as i32 {
-            sorted_move_order[i as usize][j as usize] =
-                position_list[j as usize];
+            sorted_move_order_[i as usize][j as usize] = position_list[j as usize];
             j += 1
         }
         i += 1
     }
-    i = 0;
-    while i <= 60 as i32 {
-        list_inherited[i as usize] = 0;
-        i += 1
-    };
 }
 /* The time spent searching during the game. */
 /* The value of the root position from the last midgame or
@@ -209,7 +203,8 @@ pub unsafe fn reorder_move_list(stage: i32) {
 */
 
 pub unsafe fn setup_search() {
-    init_move_lists();
+    init_move_lists(&mut sorted_move_order);
+    list_inherited = [0; 62];
     create_eval_info(UNINITIALIZED_EVAL, UNSOLVED_POSITION, 0 as i32,
                      0.0f64, 0 as i32, 0 as i32);
     negate_eval = 0;
