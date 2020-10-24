@@ -18,6 +18,7 @@ use crate::src::hash::add_hash;
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, LOST_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
+use crate::src::search::list_inherited;
 
 
 #[derive(Copy, Clone)]
@@ -1421,7 +1422,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
     while depth <= max_depth {
         alpha = -(12345678 as i32);
         beta = 12345678;
-        inherit_move_lists(disks_played + max_depth);
+        inherit_move_lists(disks_played + max_depth, &mut sorted_move_order, &mut list_inherited);
         /* The actual search */
         if depth == 1 as i32 {
             /* Fix to make it harder to wipe out depth-1 Zebra */
