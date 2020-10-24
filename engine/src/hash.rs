@@ -71,11 +71,12 @@ pub static mut hash_state: HashState = HashState {
 */
 
 pub unsafe fn determine_hash_values(side_to_move: i32, board: &Board) {
-    determine_hash_values_safe(side_to_move, board)
+    determine_hash_values_safe(side_to_move, board, &mut hash_state)
 }
-pub unsafe fn determine_hash_values_safe(side_to_move: i32, board: &Board) {
-    hash_state.hash1 = 0;
-    hash_state.hash2 = 0;
+
+pub fn determine_hash_values_safe(side_to_move: i32, board: &Board, hash_state_: &mut HashState) {
+    hash_state_.hash1 = 0;
+    hash_state_.hash2 = 0;
     let mut i = 1;
     while i <= 8  {
         let mut j = 1;
@@ -83,12 +84,12 @@ pub unsafe fn determine_hash_values_safe(side_to_move: i32, board: &Board) {
             let pos = 10 * i + j;
             match board[pos] {
                 0 => {
-                    hash_state.hash1 ^= hash_state.hash_value1[0][pos as usize];
-                    hash_state.hash2 ^= hash_state.hash_value2[0][pos as usize]
+                    hash_state_.hash1 ^= hash_state_.hash_value1[0][pos as usize];
+                    hash_state_.hash2 ^= hash_state_.hash_value2[0][pos as usize]
                 }
                 2 => {
-                    hash_state.hash1 ^= hash_state.hash_value1[2][pos as usize];
-                    hash_state.hash2 ^= hash_state.hash_value2[2][pos as usize]
+                    hash_state_.hash1 ^= hash_state_.hash_value1[2][pos as usize];
+                    hash_state_.hash2 ^= hash_state_.hash_value2[2][pos as usize]
                 }
                 _ => { }
             }
@@ -96,8 +97,8 @@ pub unsafe fn determine_hash_values_safe(side_to_move: i32, board: &Board) {
         }
         i += 1
     }
-    hash_state.hash1 ^= hash_state.hash_color1[side_to_move as usize];
-    hash_state.hash2 ^= hash_state.hash_color2[side_to_move as usize];
+    hash_state_.hash1 ^= hash_state_.hash_color1[side_to_move as usize];
+    hash_state_.hash2 ^= hash_state_.hash_color2[side_to_move as usize];
 }
 
 /*
