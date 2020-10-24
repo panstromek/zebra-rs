@@ -8,7 +8,7 @@ use engine::src::myrandom::my_random;
 use engine::src::game::{get_evaluated_count, get_evaluated, EvaluatedMove};
 use engine::src::zebra::{EvaluationType};
 use engine::src::timer::start_move;
-use engine::src::hash::{determine_hash_values, setup_hash};
+use engine::src::hash::{setup_hash, hash_state, determine_hash_values};
 use engine::src::search::disc_count;
 use legacy_zebra::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use legacy_zebra::src::game::{extended_compute_move, compute_move, game_init, global_setup};
@@ -271,7 +271,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                           (*::std::mem::transmute::<&[u8; 23],
                               &[i8; 23]>(b"int main(int, char **)\x00")).as_ptr());
         }
-        determine_hash_values(side_to_move, &board);
+        determine_hash_values(side_to_move, & board, &mut hash_state);
         generate_all(side_to_move);
         if move_count[disks_played as usize] == 0 as i32 {
             if last_was_pass != 0 {

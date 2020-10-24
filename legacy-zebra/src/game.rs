@@ -11,7 +11,7 @@ use engine::src::midgame::{toggle_perturbation_usage, toggle_midgame_abort_check
 use engine::src::timer::{toggle_abort_check, clear_ponder_times, start_move, ponder_depth, add_ponder_time, get_real_timer};
 use engine::src::moves::{unmake_move, disks_played, make_move, move_count, move_list, generate_all};
 use engine::src::counter::reset_counter;
-use engine::src::hash::{determine_hash_values, set_hash_transformation, find_hash, HashEntry};
+use engine::src::hash::{set_hash_transformation, find_hash, HashEntry, hash_state, determine_hash_values};
 use engine::src::getcoeff::pattern_evaluation;
 use engine::src::myrandom::my_random;
 use engine::src::stubs::abs;
@@ -227,7 +227,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                0 as i32 as f64,
                disc_count(0 as i32, &board) + disc_count(2 as i32, &board));
     clear_ponder_times();
-    determine_hash_values(side_to_move, &board);
+    determine_hash_values(side_to_move, &board, &mut hash_state);
     empties = 60 as i32 - disks_played;
     best_move = 0;
     game_evaluated_count = 0;
@@ -792,7 +792,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
                0 as i32 as f64,
                disc_count(0 as i32, &board) + disc_count(2 as i32, &board));
     clear_ponder_times();
-    determine_hash_values(side_to_move, &board);
+    determine_hash_values(side_to_move, &board, &mut hash_state);
     reset_counter(&mut nodes);
     /* Set search depths that result in Zebra solving after a brief
        midgame analysis */

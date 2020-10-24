@@ -2,7 +2,7 @@ use crate::src::globals::{Board, pv_depth, pv, board};
 use crate::src::counter::CounterType;
 use crate::src::zebra::{EvaluationType, EvalResult, EvalType};
 use crate::src::moves::{unmake_move, make_move, disks_played, move_list};
-use crate::src::hash::{find_hash, determine_hash_values, HashEntry, hash_state};
+use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, UNSOLVED_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, UNINITIALIZED_EVAL};
@@ -524,7 +524,7 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
         selectivity: 0,
         flags: 0,
     };
-    determine_hash_values(side_to_move, &board);
+    determine_hash_values(side_to_move, &board, &mut hash_state);
     new_pv_depth = 0;
     pass_count = 0;
     while pass_count < 2 {
