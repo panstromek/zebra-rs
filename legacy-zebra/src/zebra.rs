@@ -3,8 +3,8 @@
 
 use std::process::exit;
 use std::ptr::null_mut;
-use engine::src::game::{generic_game_init, toggle_human_openings, toggle_status_log, global_terminate};
-use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler, compute_move, global_setup};
+use engine::src::game::{generic_game_init, toggle_human_openings, global_terminate};
+use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler, compute_move, global_setup, toggle_status_log};
 use crate::src::learn::{LibcLearner, init_learn};
 use crate::src::thordb::{read_game_database, read_tournament_database, read_player_database, print_thor_matches, LegacyThor, get_total_game_count, choose_thor_opening_move, get_thor_game_size, init_thor_database};
 use crate::src::error::{LibcFatalError, FE, fatal_error};
