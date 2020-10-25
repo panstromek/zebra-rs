@@ -1,7 +1,7 @@
 use crate::src::cntflip::AnyFlips_compact;
 use crate::src::globals::{board, piece_count};
 use crate::src::hash::{hash_state};
-use crate::src::search::sorted_move_order;
+use crate::src::search::search_state;
 use crate::src::zebra::ZebraFrontend;
 use std::future::Future;
 use flip::unflip::{flip_stack, global_flip_stack};
@@ -217,7 +217,7 @@ pub unsafe fn generate_move(side_to_move: i32)
     move_index = sweep_status[disks_played as usize];
     while move_index < 60 as i32 {
         move_0 =
-            sorted_move_order[disks_played as usize][move_index as usize];
+            search_state.sorted_move_order[disks_played as usize][move_index as usize];
         if board[move_0 as usize] == 1 as i32 &&
             generate_specific(move_0, side_to_move) != 0 {
             sweep_status[disks_played as usize] =
@@ -263,7 +263,7 @@ pub unsafe fn count_all(side_to_move: i32,
     move_index = 0;
     while move_index < 60 as i32 {
         move_0 =
-            sorted_move_order[disks_played as usize][move_index as usize];
+            search_state.sorted_move_order[disks_played as usize][move_index as usize];
         if board[move_0 as usize] == 1 as i32 {
             if generate_specific(move_0, side_to_move) != 0 { mobility += 1 }
             found_empty += 1;

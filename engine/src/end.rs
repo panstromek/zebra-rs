@@ -5,7 +5,7 @@ use crate::{
     src:: {
         epcstat::{END_SIGMA, END_MEAN, END_STATS_AVAILABLE},
         moves::{dir_mask, disks_played, unmake_move, make_move, move_count, generate_all, move_list, valid_move},
-        search::{force_return, hash_expand_pv, root_eval, store_pv, restore_pv, nodes, create_eval_info, disc_count, get_ponder_move, select_move, evals, sorted_move_order},
+        search::{force_return, hash_expand_pv, search_state, store_pv, restore_pv, create_eval_info, disc_count, get_ponder_move, select_move},
         hash::{hash_state, add_hash_extended, find_hash, HashEntry},
         bitbcnt::CountFlips_bitboard,
         bitboard::{set_bitboards, BitBoard},
@@ -189,7 +189,7 @@ unsafe fn solve_two_empty(end: &mut End, my_bits: BitBoard,
     let mut score = -(12345678 as i32);
     let mut flipped: i32 = 0;
     let mut ev: i32 = 0;
-    nodes.lo = nodes.lo.wrapping_add(1);
+    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     /* Overall strategy: Lazy evaluation whenever possible, i.e., don't
        update bitboards until they are used. Also look at alpha and beta
        in order to perform strength reduction: Feasibility testing is
@@ -198,7 +198,7 @@ unsafe fn solve_two_empty(end: &mut End, my_bits: BitBoard,
     flipped = TestFlips_wrapper(end,sq1, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
         /* SQ1 feasible for me */
-        nodes.lo = nodes.lo.wrapping_add(1);
+        search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
         ev = disc_diff + 2 as i32 * flipped;
         flipped =
             CountFlips_bitboard[(sq2 - 11 as i32) as
@@ -242,7 +242,7 @@ unsafe fn solve_two_empty(end: &mut End, my_bits: BitBoard,
     flipped = TestFlips_wrapper(end,sq2, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
         /* SQ2 feasible for me */
-        nodes.lo = nodes.lo.wrapping_add(1);
+        search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
         ev = disc_diff + 2 as i32 * flipped;
         flipped =
             CountFlips_bitboard[(sq1 - 11 as i32) as
@@ -316,7 +316,7 @@ unsafe fn solve_three_empty(end: &mut End, my_bits: BitBoard,
     let mut flipped: i32 = 0;
     let mut new_disc_diff: i32 = 0;
     let mut ev: i32 = 0;
-    nodes.lo = nodes.lo.wrapping_add(1);
+    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     flipped = TestFlips_wrapper(end,sq1, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
         new_opp_bits.high = opp_bits.high & !bb_flips_.high;
@@ -390,7 +390,7 @@ unsafe fn solve_four_empty(end: &mut End, my_bits: BitBoard,
     let mut flipped: i32 = 0;
     let mut new_disc_diff: i32 = 0;
     let mut ev: i32 = 0;
-    nodes.lo = nodes.lo.wrapping_add(1);
+    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     flipped = TestFlips_wrapper(end,sq1, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
         new_opp_bits.high = opp_bits.high & !bb_flips_.high;
@@ -519,7 +519,7 @@ unsafe fn solve_parity(end:&mut End, my_bits: BitBoard,
     let mut old_sq: i32 = 0;
     let mut best_sq = 0;
     let mut parity_mask: u32 = 0;
-    nodes.lo = nodes.lo.wrapping_add(1);
+    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     /* Check for stability cutoff */
     if alpha >= stability_threshold[empties as usize] {
         let mut stability_bound: i32 = 0;
@@ -789,7 +789,7 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
             draft: 0,
             selectivity: 0,
             flags: 0,};
-    nodes.lo = nodes.lo.wrapping_add(1);
+    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     find_hash(&mut entry, 1 as i32, &mut hash_state);
     if entry.draft as i32 == empties &&
         entry.selectivity as i32 == 0 as i32 &&
@@ -1237,7 +1237,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
             draft: 0,
             selectivity: 0,
             flags: 0,};
-    nodes.lo = nodes.lo.wrapping_add(1);
+    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     hash_move = -(1 as i32);
     find_hash(&mut entry, 1 as i32, &mut hash_state);
     if entry.draft as i32 == empties {
@@ -1280,7 +1280,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
     while sq != 99 as i32 {
         flipped = TestFlips_wrapper(end,sq, my_bits, opp_bits, bb_flips_);
         if flipped != 0 as i32 {
-            nodes.lo = nodes.lo.wrapping_add(1);
+            search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
             new_opp_bits.high = opp_bits.high & !bb_flips_.high;
             new_opp_bits.low = opp_bits.low & !bb_flips_.low;
             end. end_move_list[old_sq as usize].succ =
@@ -1634,7 +1634,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         return result
     }
     /* Otherwise normal search */
-    nodes.lo = nodes.lo.wrapping_add(1);
+    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     use_hash = 1;
     if use_hash != 0 {
         /* Check for endgame hash table move */
@@ -1837,7 +1837,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                 while shallow_index < 60 as i32 {
                     let mut already_checked: i32 = 0;
                     move_0 =
-                        sorted_move_order[disks_played as
+                        search_state.sorted_move_order[disks_played as
                             usize][shallow_index as usize];
                     already_checked = 0;
                     j = 0;
@@ -1939,7 +1939,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                             }
                         }
                         unmake_move(side_to_move, move_0);
-                        evals[disks_played as usize][move_0 as usize] =
+                        search_state.evals[disks_played as usize][move_0 as usize] =
                             curr_val;
                         move_list[disks_played as
                             usize][move_count[disks_played as usize]
@@ -1953,7 +1953,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             move_0 =
                 select_move(move_index, move_count[disks_played as usize])
         }
-        node_val = counter_value(&mut nodes);
+        node_val = counter_value(&mut search_state.nodes);
         if node_val - last_panic_check >= 250000.0f64 {
             /* Check for time abort */
             last_panic_check = node_val;
@@ -2257,9 +2257,9 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         fill_move_alternatives::<FE>(side_to_move, 16);
         book_move = get_book_move::<FE>(side_to_move, 0, eval_info, echo);
         if book_move != -(1 as i32) {
-            root_eval = (*eval_info).score / 128;
+            search_state.root_eval = (*eval_info).score / 128;
             hash_expand_pv(side_to_move, 1, 4, 0);
-            FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
+            FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut pv[0], pv_depth[0]);
             return book_move
         }
         /* Is the WLD status known? */
@@ -2268,10 +2268,10 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             book_move = get_book_move::<FE>(side_to_move, 0, eval_info, echo);
             if book_move != -1 {
                 if wld != 0 {
-                    root_eval = eval_info.score / 128;
+                    search_state.root_eval = eval_info.score / 128;
                     hash_expand_pv(side_to_move, 1, 4 | 2 | 1, 0);
                     FE::send_solve_status(empties, side_to_move, eval_info,
-                                          &mut nodes,
+                                          &mut search_state.nodes,
                                           &mut pv[0],
                                           pv_depth[0]);
                     return book_move
@@ -2308,31 +2308,31 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 let mut res = WON_POSITION;
                 alpha = -1;
                 beta = 1;
-                root_eval = end_tree_wrapper::<FE>(end, 0, empties, side_to_move,
+                search_state.root_eval = end_tree_wrapper::<FE>(end, 0, empties, side_to_move,
                                      alpha, beta, selectivity, 1, echo);
-                adjust_counter(&mut nodes);
+                adjust_counter(&mut search_state.nodes);
                 if is_panic_abort() != 0 || force_return != 0 { break ; }
                 any_search_result = 1;
-                old_eval = root_eval;
+                old_eval = search_state.root_eval;
                 store_pv(&mut old_pv, &mut old_depth);
                 current_confidence = confidence[selectivity as usize];
                 flags = 4;
-                if root_eval == 0 as i32 {
+                if search_state.root_eval == 0 as i32 {
                     res = DRAWN_POSITION
                 } else {
                     flags |=
                         (2 as i32 | 1 as i32) as u32;
-                    if root_eval > 0 as i32 {
+                    if search_state.root_eval > 0 as i32 {
                         res = WON_POSITION
                     } else { res = LOST_POSITION }
                 }
                 *eval_info = create_eval_info(SELECTIVE_EVAL, res,
-                                     root_eval * 128,
+                                     search_state.root_eval * 128,
                                      current_confidence, empties,
                                      0);
                 if end.full_output_mode != 0 {
                     hash_expand_pv(side_to_move, 1, flags as i32, selectivity);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
+                    FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut pv[0], pv_depth[0]);
                 }
                 selectivity -= 1
             }
@@ -2342,11 +2342,11 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 force_return == 0 {
                 alpha = last_window_center - 1;
                 beta = last_window_center + 1;
-                root_eval =
+                search_state.root_eval =
                     end_tree_wrapper::<FE>(end, 0, empties, side_to_move,
                                      alpha, beta, selectivity,
                                      1, echo);
-                if root_eval <= alpha {
+                if search_state.root_eval <= alpha {
                     loop  {
                         last_window_center -= 2;
                         alpha = last_window_center - 1;
@@ -2354,13 +2354,13 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                         if is_panic_abort() != 0 || force_return != 0 {
                             break ;
                         }
-                        root_eval = end_tree_wrapper::<FE>(end, 0, empties,
+                        search_state.root_eval = end_tree_wrapper::<FE>(end, 0, empties,
                                              side_to_move, alpha, beta,
                                              selectivity, 1, echo);
-                        if !(root_eval <= alpha) { break ; }
+                        if !(search_state.root_eval <= alpha) { break ; }
                     }
-                    root_eval = last_window_center
-                } else if root_eval >= beta {
+                    search_state.root_eval = last_window_center
+                } else if search_state.root_eval >= beta {
                     loop  {
                         last_window_center += 2;
                         alpha = last_window_center - 1;
@@ -2368,31 +2368,31 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                         if is_panic_abort() != 0 || force_return != 0 {
                             break ;
                         }
-                        root_eval =
+                        search_state.root_eval =
                            end_tree_wrapper::<FE>(end, 0, empties,
                                              side_to_move, alpha, beta,
                                              selectivity, 1 as i32, echo);
-                        if !(root_eval >= beta) { break ; }
+                        if !(search_state.root_eval >= beta) { break ; }
                     }
-                    root_eval = last_window_center
+                    search_state.root_eval = last_window_center
                 }
-                adjust_counter(&mut nodes);
+                adjust_counter(&mut search_state.nodes);
                 if is_panic_abort() != 0 || force_return != 0 { break ; }
-                last_window_center = root_eval;
+                last_window_center = search_state.root_eval;
                 if is_panic_abort() == 0 && force_return == 0 {
                     any_search_result = 1;
-                    old_eval = root_eval;
+                    old_eval = search_state.root_eval;
                     store_pv(&mut old_pv, &mut old_depth);
                     current_confidence = confidence[selectivity as usize];
                     *eval_info =
                         create_eval_info(SELECTIVE_EVAL, UNSOLVED_POSITION,
-                                         root_eval * 128,
+                                         search_state.root_eval * 128,
                                          current_confidence, empties,
                                          0);
                     if end.full_output_mode != 0 {
                         hash_expand_pv(side_to_move, 1,
                                        4, selectivity);
-                        FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
+                        FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut pv[0], pv_depth[0]);
                     }
                 }
                 selectivity -= 1
@@ -2419,18 +2419,18 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     }
                     hash_expand_pv(side_to_move, 1,
                                    flags_0 as i32, selectivity);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
+                    FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut pv[0], pv_depth[0]);
                 }
             }
             pv[0][0] = end. best_end_root_move;
             pv_depth[0] = 1;
-            root_eval = old_eval;
+            search_state.root_eval = old_eval;
             clear_panic_abort();
         } else {
             if echo != 0 {
                 FE::end_report_panic_abort_2(get_elapsed_time::<FE>());
             }
-            root_eval = -(27000 as i32)
+            search_state.root_eval = -(27000 as i32)
         }
         if echo != 0 || force_echo != 0 {
             FE::end_display_zero_status();
@@ -2440,7 +2440,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             /* If there is a known win (or mismarked draw) available,
              always play it upon timeout. */
             *eval_info = book_eval_info;
-            root_eval = (*eval_info).score / 128;
+            search_state.root_eval = (*eval_info).score / 128;
             return book_move
         } else {
             return pv[0][0]
@@ -2454,75 +2454,75 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         alpha = last_window_center - 1;
         beta = last_window_center + 1;
     }
-    root_eval = end_tree_wrapper::<FE>(end, 0, empties, side_to_move, alpha, beta,
+    search_state.root_eval = end_tree_wrapper::<FE>(end, 0, empties, side_to_move, alpha, beta,
                          0, 1, echo);
-    adjust_counter(&mut nodes);
+    adjust_counter(&mut search_state.nodes);
     if is_panic_abort() == 0 && force_return == 0 {
         if wld == 0 {
-            if root_eval <= alpha {
+            if search_state.root_eval <= alpha {
                 let mut ceiling_value = last_window_center - 2;
                 loop  {
                     alpha = ceiling_value - 1;
                     beta = ceiling_value;
-                    root_eval = end_tree_wrapper::<FE>(end, 0, empties,
+                    search_state.root_eval = end_tree_wrapper::<FE>(end, 0, empties,
                                          side_to_move, alpha, beta,
                                          0, 1, echo);
                     if is_panic_abort() != 0 || force_return != 0 { break ; }
-                    if root_eval > alpha { break ; }
+                    if search_state.root_eval > alpha { break ; }
                     ceiling_value -= 2
                 }
-            } else if root_eval >= beta {
+            } else if search_state.root_eval >= beta {
                 let mut floor_value = last_window_center + 2 as i32;
                 loop  {
                     alpha = floor_value - 1 as i32;
                     beta = floor_value + 1 as i32;
-                    root_eval =
+                    search_state.root_eval =
                        end_tree_wrapper::<FE>(end, 0 as i32, empties,
                                          side_to_move, alpha, beta,
                                          0 as i32, 1 as i32, echo);
                     if is_panic_abort() != 0 || force_return != 0 { break ; }
-                    assert!( root_eval > alpha );
-                    if root_eval < beta { break ; }
+                    assert!( search_state.root_eval > alpha );
+                    if search_state.root_eval < beta { break ; }
                     floor_value += 2 as i32
                 }
             }
         }
         if is_panic_abort() == 0 && force_return == 0 {
             let mut res_0 = WON_POSITION;
-            if root_eval < 0 as i32 {
+            if search_state.root_eval < 0 as i32 {
                 res_0 = LOST_POSITION
-            } else if root_eval == 0 as i32 {
+            } else if search_state.root_eval == 0 as i32 {
                 res_0 = DRAWN_POSITION
             } else { res_0 = WON_POSITION }
             if wld != 0 {
                 let mut flags_1: u32 = 0;
-                if root_eval == 0 as i32 {
+                if search_state.root_eval == 0 as i32 {
                     flags_1 = 4
                 } else {
                     flags_1 = (2 | 1)
                 }
                 *eval_info =
                     create_eval_info(WLD_EVAL, res_0,
-                                     root_eval * 128, 0.0f64,
+                                     search_state.root_eval * 128, 0.0f64,
                                      empties, 0);
                 if end.full_output_mode != 0 {
                     hash_expand_pv(side_to_move, 1,
                                    flags_1 as i32, 0);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
+                    FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut pv[0], pv_depth[0]);
                 }
             } else {
                 *eval_info =
                     create_eval_info(EXACT_EVAL, res_0,
-                                     root_eval * 128, 0.0f64,
+                                     search_state.root_eval * 128, 0.0f64,
                                      empties, 0);
                 if end.full_output_mode != 0 {
                     hash_expand_pv(side_to_move, 1, 4, 0);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
+                    FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut pv[0], pv_depth[0]);
                 }
             }
         }
     }
-    adjust_counter(&mut nodes);
+    adjust_counter(&mut search_state.nodes);
     /* Check for abort. */
     if is_panic_abort() != 0 || force_return != 0 {
         if any_search_result != 0 {
@@ -2531,11 +2531,11 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 if end.full_output_mode != 0 {
                     let mut flags_2: u32 = 0;
                     flags_2 = 4;
-                    if root_eval != 0 {
+                    if search_state.root_eval != 0 {
                         flags_2 |= 2 | 1
                     }
                     hash_expand_pv(side_to_move, 1, flags_2 as i32, 0);
-                    FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes,
+                    FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes,
                                           &mut pv[0], pv_depth[0]);
                 }
                 if echo != 0 || force_echo != 0 {
@@ -2543,19 +2543,19 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 }
             }
             restore_pv(&old_pv, old_depth);
-            root_eval = old_eval;
+            search_state.root_eval = old_eval;
             clear_panic_abort();
         } else {
             if echo != 0 {
                 FE::end_report_panic_abort(get_elapsed_time::<FE>());
             }
-            root_eval = - 27000;
+            search_state.root_eval = - 27000;
         }
         return pv[0][0]
     }
     /* Update solve info. */
     store_pv(&mut old_pv, &mut old_depth);
-    old_eval = root_eval;
+    old_eval = search_state.root_eval;
     if is_panic_abort() == 0 && force_return == 0 &&
         empties > end.earliest_wld_solve {
         end.earliest_wld_solve = empties
@@ -2567,7 +2567,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             FE::end_report_semi_panic_abort_2(get_elapsed_time::<FE>());
             if end.full_output_mode != 0 {
                 hash_expand_pv(side_to_move, 1, 4, 0);
-                FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
+                FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut pv[0], pv_depth[0]);
             }
             if echo != 0 || force_echo != 0 {
                 FE::end_display_zero_status();
@@ -2575,25 +2575,25 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         }
         pv[0][0] = end. best_end_root_move;
         pv_depth[0] = 1;
-        root_eval = old_eval;
+        search_state.root_eval = old_eval;
         exact_score_failed = 1;
         clear_panic_abort();
     }
-    if abs(root_eval) % 2 == 1 {
-        if root_eval > 0 {
-            root_eval += 1
-        } else { root_eval -= 1 }
+    if abs(search_state.root_eval) % 2 == 1 {
+        if search_state.root_eval > 0 {
+            search_state.root_eval += 1
+        } else { search_state.root_eval -= 1 }
     }
     if exact_score_failed == 0 && wld == 0 && empties > end.earliest_full_solve {
         end.earliest_full_solve = empties
     }
     if wld == 0 && exact_score_failed == 0 {
         eval_info.type_0 = EXACT_EVAL;
-        eval_info.score = root_eval * 128
+        eval_info.score = search_state.root_eval * 128
     }
     if wld == 0 && exact_score_failed == 0 {
         hash_expand_pv(side_to_move, 1, 4, 0);
-        FE::send_solve_status(empties, side_to_move, eval_info, &mut nodes, &mut pv[0], pv_depth[0]);
+        FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut pv[0], pv_depth[0]);
     }
     if echo != 0 || force_echo != 0 {
         FE::end_display_zero_status();

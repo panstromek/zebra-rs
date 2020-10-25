@@ -1,6 +1,6 @@
 use crate::src::timer::{toggle_abort_check, get_real_timer, determine_move_time, start_move, clear_panic_abort};
 use crate::src::moves::{disks_played, make_move, valid_move, move_count, move_list, generate_all, game_in_progress, get_move, get_move_async};
-use crate::src::search::{disc_count, total_time, total_evaluations, total_nodes, produce_compact_eval};
+use crate::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::counter::{counter_value, adjust_counter};
 use crate::src::stubs::{floor};
 use crate::src::globals::{board, score_sheet_row, white_moves, black_moves};
@@ -424,13 +424,13 @@ pub unsafe fn engine_play_game<
                                          &white_moves,
             );
         }
-        adjust_counter(&mut total_nodes);
-        let node_val = counter_value(&mut total_nodes);
-        adjust_counter(&mut total_evaluations);
-        let eval_val = counter_value(&mut total_evaluations);
+        adjust_counter(&mut search_state.total_nodes);
+        let node_val = counter_value(&mut search_state.total_nodes);
+        adjust_counter(&mut search_state.total_evaluations);
+        let eval_val = counter_value(&mut search_state.total_evaluations);
         let black_disc_count = disc_count(0, &board);
         let white_disc_count = disc_count(2, &board);
-        let total_time_ = total_time;
+        let total_time_ = search_state.total_time;
         ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
         if !log_file_name_.is_null() && config.one_position_only == 0 {
@@ -703,13 +703,13 @@ pub async unsafe fn engine_play_game_async<
                                          &white_moves,
             );
         }
-        adjust_counter(&mut total_nodes);
-        let node_val = counter_value(&mut total_nodes);
-        adjust_counter(&mut total_evaluations);
-        let eval_val = counter_value(&mut total_evaluations);
+        adjust_counter(&mut search_state.total_nodes);
+        let node_val = counter_value(&mut search_state.total_nodes);
+        adjust_counter(&mut search_state.total_evaluations);
+        let eval_val = counter_value(&mut search_state.total_evaluations);
         let black_disc_count = disc_count(0, &board);
         let white_disc_count = disc_count(2, &board);
-        let total_time_ = total_time;
+        let total_time_ = search_state.total_time;
         ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
         if !log_file_name_.is_null() && config.one_position_only == 0 {

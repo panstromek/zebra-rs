@@ -1,6 +1,6 @@
 use crate::src::zebra::EvaluationType;
 use crate::src::counter::{adjust_counter, counter_value, reset_counter, add_counter};
-use crate::src::search::{nodes, total_time, total_evaluations, total_nodes, setup_search, disc_count, complete_pv, get_ponder_move, evaluations, set_current_eval, create_eval_info, root_eval, force_return, clear_pv, evals, clear_ponder_move, set_ponder_move, float_move, sort_moves};
+use crate::src::search::{setup_search, disc_count, complete_pv, get_ponder_move, set_current_eval, create_eval_info, force_return, clear_pv, clear_ponder_move, set_ponder_move, float_move, sort_moves, search_state};
 use crate::src::globals::{pv_depth, pv, board, score_sheet_row, black_moves, piece_count, Board};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, init_memory_handler, CoeffAdjustments, remove_coeffs, set};
@@ -149,8 +149,8 @@ pub unsafe fn get_search_statistics(max_depth: &mut i32, node_count: &mut f64) {
     if prefix_move != 0 {
         *max_depth += 1
     }
-    adjust_counter(&mut nodes);
-    *node_count = counter_value(&mut nodes);
+    adjust_counter(&mut search_state.nodes);
+    *node_count = counter_value(&mut search_state.nodes);
 }
 
 
@@ -194,10 +194,10 @@ pub unsafe fn engine_game_init() {
     setup_midgame();
     setup_end();
     clear_ponder_times();
-    reset_counter(&mut total_nodes);
-    reset_counter(&mut total_evaluations);
+    reset_counter(&mut search_state.total_nodes);
+    reset_counter(&mut search_state.total_evaluations);
     init_flip_stack();
-    total_time = 0.0f64;
+    search_state.total_time = 0.0f64;
     max_depth_reached = 0;
     last_time_used = 0.0f64;
     endgame_performed[2] = 0;
@@ -406,12 +406,12 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         L::log_moves_generated(logger, moves_generated, move_list_for_disks_played);
     }
     if update_all != 0 {
-        reset_counter(&mut evaluations);
-        reset_counter(&mut nodes);
+        reset_counter(&mut search_state.evaluations);
+        reset_counter(&mut search_state.nodes);
     }
     let mut i = 0;
     while i < 100 as i32 {
-        evals[disks_played as usize][i as usize] = 0;
+        search_state.evals[disks_played as usize][i as usize] = 0;
         i += 1
     }
     max_depth_reached = 1;
@@ -690,7 +690,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                              book, komi, &mut end_eval_info, echo)
             }
             set_current_eval(end_eval_info);
-            if abs(root_eval) == abs(-(27000 as i32)) {
+            if abs(search_state.root_eval) == abs(-(27000 as i32)) {
                 move_type = INTERRUPTED_MOVE
             } else { move_type = ENDGAME_MOVE }
             if update_all != 0 {
@@ -705,7 +705,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                                  0.0f64 as i32, 0.0f64,
                                  0 as i32, 0 as i32);
             let info = &*eval_info;
-            let counter_value = counter_value(&mut nodes);
+            let counter_value = counter_value(&mut search_state.nodes);
             let elapsed_time = get_elapsed_time::<FE>();
             Out::send_move_type_0_status(interrupted_depth, info, counter_value, elapsed_time);
         }
@@ -717,9 +717,9 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     set_current_eval(*eval_info);
     last_time_used = get_elapsed_time::<FE>();
     if update_all != 0 {
-        total_time += last_time_used;
-        add_counter(&mut total_evaluations, &mut evaluations);
-        add_counter(&mut total_nodes, &mut nodes);
+        search_state.total_time += last_time_used;
+        add_counter(&mut search_state.total_evaluations, &mut search_state.evaluations);
+        add_counter(&mut search_state.total_nodes, &mut search_state.nodes);
     }
     clear_panic_abort();
     /* Write the contents of the status buffer to the log file. */
@@ -811,7 +811,7 @@ pub unsafe fn ponder_move<
                      disc_count(0 as i32, &board) + disc_count(2 as i32, &board));
     clear_ponder_times();
     determine_hash_values(side_to_move, &board, &mut hash_state);
-    reset_counter(&mut nodes);
+    reset_counter(&mut search_state.nodes);
     /* Find the scores for the moves available to the opponent. */
     let mut hash_move = 0;
     find_hash(&mut entry, 1 as i32, &mut hash_state);
@@ -848,7 +848,7 @@ pub unsafe fn ponder_move<
         }
         Rep::report_hash_move(hash_move);
         let move_list_item = &move_list[disks_played as usize];
-        let evals_item = &evals[disks_played as usize];
+        let evals_item = &search_state.evals[disks_played as usize];
         Rep::report_move_evals(expect_count, move_list_item, evals_item);
     }
     /* Go through the expected moves in order and prepare responses. */

@@ -14,7 +14,7 @@ use engine::src::globals::{white_moves, black_moves, board, pv, piece_count};
 use engine::src::moves::{disks_played, unmake_move, make_move, move_list, move_count,
                          generate_all, generate_specific, unmake_move_no_hash, make_move_no_hash};
 use engine::src::stubs::{abs, floor};
-use engine::src::search::{root_eval, nodes, disc_count};
+use engine::src::search::{disc_count, search_state};
 use engine::src::end::end_game;
 use engine::src::counter::reset_counter;
 use engine::src::zebra::{EvaluationType};
@@ -613,7 +613,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
         }
        end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
                  1 as i32, 0 as i32, &mut dummy_info, echo);
-        outcome = root_eval;
+        outcome = search_state.root_eval;
         if side_to_move == 2 as i32 { outcome = -outcome }
     }
     (*g_book.node.offset(this_node as isize)).black_minimax_score =
@@ -701,8 +701,8 @@ pub unsafe fn add_new_game(move_count_0: i32,
                              1 as i32, 0 as i32,
                              &mut dummy_info, echo);
                     if side_to_move == 0 as i32 {
-                        outcome = root_eval
-                    } else { outcome = -root_eval }
+                        outcome = search_state.root_eval
+                    } else { outcome = -search_state.root_eval }
                     (*g_book.node.offset(this_node as isize)).black_minimax_score =
                         outcome as i16;
                     (*g_book.node.offset(this_node as isize)).white_minimax_score =
@@ -749,8 +749,8 @@ pub unsafe fn add_new_game(move_count_0: i32,
                              1 as i32, 0 as i32,
                              &mut dummy_info, echo);
                     if side_to_move == 0 as i32 {
-                        outcome = root_eval
-                    } else { outcome = -root_eval }
+                        outcome = search_state.root_eval
+                    } else { outcome = -search_state.root_eval }
                     (*g_book.node.offset(this_node as isize)).black_minimax_score =
                         outcome as i16;
                     (*g_book.node.offset(this_node as isize)).white_minimax_score =
@@ -2659,7 +2659,7 @@ unsafe fn do_midgame_statistics(index: i32,
         while depth <= spec.max_depth {
             middle_game::<FE>(side_to_move, depth, 0 as i32,
                         &mut dummy_info, echo);
-            eval_list[depth as usize] = root_eval;
+            eval_list[depth as usize] = search_state.root_eval;
             printf(b"%2d: %-5d \x00" as *const u8 as *const i8,
                    depth, eval_list[depth as usize]);
             depth += 2 as i32
@@ -2671,7 +2671,7 @@ unsafe fn do_midgame_statistics(index: i32,
         while depth <= spec.max_depth {
             middle_game::<FE>(side_to_move, depth, 0 as i32,
                         &mut dummy_info, echo);
-            eval_list[depth as usize] = root_eval;
+            eval_list[depth as usize] = search_state.root_eval;
             printf(b"%2d: %-5d \x00" as *const u8 as *const i8,
                    depth, eval_list[depth as usize]);
             depth += 2 as i32
@@ -2801,7 +2801,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
     depth = 1;
     while depth <= spec.max_depth {
         middle_game::<FE>(side_to_move, depth, 0 as i32, &mut dummy_info, echo);
-        eval_list[depth as usize] = root_eval;
+        eval_list[depth as usize] = search_state.root_eval;
         printf(b"%2d: %-6.2f \x00" as *const u8 as *const i8, depth,
                eval_list[depth as usize] as f64 / 128.0f64);
         depth += 1
@@ -2843,7 +2843,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                                         0 as i32 as u32);
                end_game::<FE>(side_to_move, 0 as i32, 1 as i32,
                          1 as i32, 0 as i32, &mut dummy_info, echo);
-                endgame_correlation(side_to_move, root_eval,
+                endgame_correlation(side_to_move, search_state.root_eval,
                                     pv[0][0],
                                     min_disks, max_disks, spec, echo);
             }
@@ -2899,8 +2899,8 @@ unsafe fn do_endgame_statistics(index: i32,
                                     0 as i32 as u32);
            end_game::<FE>(side_to_move, 0 as i32, 1 as i32,
                      1 as i32, 0 as i32, &mut dummy_info, echo);
-            if abs(root_eval) <= spec.max_diff {
-                endgame_correlation(side_to_move, root_eval,
+            if abs(search_state.root_eval) <= spec.max_diff {
+                endgame_correlation(side_to_move, search_state.root_eval,
                                     pv[0][0],
                                     disks_played, 48 as i32, spec, echo);
             }
@@ -3190,13 +3190,13 @@ unsafe fn do_correct(index: i32,
         if really_evaluate != 0 {
             if target_name.is_null() {
                 /* Solve now */
-                reset_counter(&mut nodes);
+                reset_counter(&mut search_state.nodes);
                end_game::<FE>(side_to_move, (full_solve == 0) as i32,
                          0 as i32, 1 as i32, 0 as i32,
                          &mut dummy_info, echo);
                 if side_to_move == 0 as i32 {
-                    outcome = root_eval
-                } else { outcome = -root_eval }
+                    outcome = search_state.root_eval
+                } else { outcome = -search_state.root_eval }
                 let ref mut fresh31 =
                     (*g_book.node.offset(index as isize)).white_minimax_score;
                 *fresh31 = outcome as i16;
@@ -3942,7 +3942,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
     let mut high_score: i32 = 0;
     let mut best_move: i32 = 0;
     let mut current_score: i32 = 0;
-    reset_counter(&mut nodes);
+    reset_counter(&mut search_state.nodes);
     low_score = -(12345678 as i32);
     /* To avoid spurious hash table entries to take out the effect
        of the averaging done, the hash table drafts are changed prior
@@ -4666,5 +4666,4 @@ pub fn select_hash_slot(index: i32, book: &mut Book) {
     }
     *book.book_hash_table.offset(slot as isize) = index;
 }
-
 
