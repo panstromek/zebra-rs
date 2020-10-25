@@ -17,7 +17,7 @@ use engine::src::search::{disc_count, search_state};
 use engine::src::end::end_game;
 use engine::src::counter::reset_counter;
 use engine::src::zebra::{EvaluationType};
-use engine::src::timer::{toggle_abort_check, clear_panic_abort, timer as g_timer};
+use engine::src::timer::{toggle_abort_check, clear_panic_abort, g_timer as g_timer};
 use crate::src::safemem::safe_malloc;
 use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit, FILE};
 use engine::src::osfbook::{__time_t, probe_hash_table, get_hash, get_node_depth, clear_node_depth, get_candidate_count, fill_move_alternatives, _ISupper, _ISprint, _ISspace, _ISgraph, BookNode, adjust_score, g_book, size_t, set_node_depth, Book, reset_book_search};
