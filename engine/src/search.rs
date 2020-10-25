@@ -1,7 +1,7 @@
 use crate::src::globals::{Board, board_state};
 use crate::src::counter::CounterType;
 use crate::src::zebra::{EvaluationType, EvalResult, EvalType};
-use crate::src::moves::{unmake_move, make_move, disks_played___, move_list___};
+use crate::src::moves::{unmake_move, make_move, moves_state};
 use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, UNSOLVED_POSITION};
@@ -245,12 +245,12 @@ pub unsafe fn sort_moves(list_size: i32) {
         let mut modified = 0;
         let mut i = 0;
         while i < list_size - 1 {
-            if search_state.evals[disks_played___ as usize][move_list___[disks_played___ as usize][i as usize] as usize] <
-                search_state.evals[disks_played___ as usize][move_list___[disks_played___ as usize][(i + 1) as usize] as usize] {
+            if search_state.evals[moves_state.disks_played as usize][moves_state.move_list[moves_state.disks_played as usize][i as usize] as usize] <
+                search_state.evals[moves_state.disks_played as usize][moves_state.move_list[moves_state.disks_played as usize][(i + 1) as usize] as usize] {
                 modified = 1;
-                let temp_move = move_list___[disks_played___ as usize][i as usize];
-                move_list___[disks_played___ as usize][i as usize] = move_list___[disks_played___ as usize][(i + 1 as i32) as usize];
-                move_list___[disks_played___ as usize][(i + 1 as i32) as usize] = temp_move
+                let temp_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
+                moves_state.move_list[moves_state.disks_played as usize][i as usize] = moves_state.move_list[moves_state.disks_played as usize][(i + 1 as i32) as usize];
+                moves_state.move_list[moves_state.disks_played as usize][(i + 1 as i32) as usize] = temp_move
             }
             i += 1
         }
@@ -272,29 +272,29 @@ pub unsafe fn select_move(first: i32,
     let mut best_eval: i32 = 0;
     best = first;
     best_eval =
-        search_state.evals[disks_played___ as
-            usize][move_list___[disks_played___ as usize][first as usize] as
+        search_state.evals[moves_state.disks_played as
+            usize][moves_state.move_list[moves_state.disks_played as usize][first as usize] as
             usize];
     i = first + 1 as i32;
     while i < list_size {
-        if search_state.evals[disks_played___ as
-            usize][move_list___[disks_played___ as usize][i as usize] as
+        if search_state.evals[moves_state.disks_played as
+            usize][moves_state.move_list[moves_state.disks_played as usize][i as usize] as
             usize] > best_eval {
             best = i;
             best_eval =
-                search_state.evals[disks_played___ as
-                    usize][move_list___[disks_played___ as usize][i as usize]
+                search_state.evals[moves_state.disks_played as
+                    usize][moves_state.move_list[moves_state.disks_played as usize][i as usize]
                     as usize]
         }
         i += 1
     }
     if best != first {
-        temp_move = move_list___[disks_played___ as usize][first as usize];
-        move_list___[disks_played___ as usize][first as usize] =
-            move_list___[disks_played___ as usize][best as usize];
-        move_list___[disks_played___ as usize][best as usize] = temp_move
+        temp_move = moves_state.move_list[moves_state.disks_played as usize][first as usize];
+        moves_state.move_list[moves_state.disks_played as usize][first as usize] =
+            moves_state.move_list[moves_state.disks_played as usize][best as usize];
+        moves_state.move_list[moves_state.disks_played as usize][best as usize] = temp_move
     }
-    return move_list___[disks_played___ as usize][first as usize];
+    return moves_state.move_list[moves_state.disks_played as usize][first as usize];
 }
 /*
   FLOAT_MOVE
@@ -310,15 +310,15 @@ pub unsafe fn float_move(move_0: i32,
     let mut j: i32 = 0;
     i = 0;
     while i < list_size {
-        if move_list___[disks_played___ as usize][i as usize] == move_0 {
+        if moves_state.move_list[moves_state.disks_played as usize][i as usize] == move_0 {
             j = i;
             while j >= 1 as i32 {
-                move_list___[disks_played___ as usize][j as usize] =
-                    move_list___[disks_played___ as
+                moves_state.move_list[moves_state.disks_played as usize][j as usize] =
+                    moves_state.move_list[moves_state.disks_played as
                         usize][(j - 1 as i32) as usize];
                 j -= 1
             }
-            move_list___[disks_played___ as usize][0] =
+            moves_state.move_list[moves_state.disks_played as usize][0] =
                 move_0;
             return 1 as i32
         }

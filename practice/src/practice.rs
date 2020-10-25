@@ -4,7 +4,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, main, register_tool)]
 
 use engine::src::globals::{board_state};
-use engine::src::moves::{make_move, disks_played___, valid_move, generate_all, unmake_move};
+use engine::src::moves::{make_move, valid_move, generate_all, unmake_move, moves_state};
 use engine::src::game::{toggle_human_openings};
 use engine::src::osfbook::{get_hash, find_opening_name};
 use legacy_zebra::src::display::{produce_eval_text, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_names};
@@ -164,18 +164,18 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 quit = 1 as i32
             } else {
                 command = atoi(move_string.as_mut_ptr());
-                if command >= 1 as i32 && command <= disks_played___ {
+                if command >= 1 as i32 && command <= moves_state.disks_played {
                     i = 1;
                     while i <= command {
-                        unmake_move(old_stm[(disks_played___ - 1 as i32)
+                        unmake_move(old_stm[(moves_state.disks_played - 1 as i32)
                             as usize],
-                                    move_list[(disks_played___ -
+                                    move_list[(moves_state.disks_played -
                                         1 as i32) as
                                         usize]);
                         i += 1
                     }
-                    side_to_move = old_stm[disks_played___ as usize];
-                    board_state.score_sheet_row = row[disks_played___ as usize]
+                    side_to_move = old_stm[moves_state.disks_played as usize];
+                    board_state.score_sheet_row = row[moves_state.disks_played as usize]
                 } else if command != 0 as i32 {
                     printf(b"Can\'t back up %d moves\n\n\x00" as *const u8 as
                                *const i8, command);
@@ -197,9 +197,9 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         move_string[1] as
                             i32 <= '8' as i32 &&
                         valid_move(move_0, side_to_move) != 0 {
-                        old_stm[disks_played___ as usize] = side_to_move;
-                        row[disks_played___ as usize] = board_state.score_sheet_row;
-                        move_list[disks_played___ as usize] = move_0;
+                        old_stm[moves_state.disks_played as usize] = side_to_move;
+                        row[moves_state.disks_played as usize] = board_state.score_sheet_row;
+                        move_list[moves_state.disks_played as usize] = move_0;
                         make_move(side_to_move, move_0, 1 as i32);
                         if side_to_move == 0 as i32 {
                             board_state.score_sheet_row += 1;

@@ -8,7 +8,7 @@ use crate::src::hash::{free_hash, init_hash, find_hash, HashEntry, hash_state, d
 use crate::src::timer::{clear_ponder_times, init_timer, time_t, clear_panic_abort, get_elapsed_time, is_panic_abort, determine_move_time, toggle_abort_check, ponder_depth, add_ponder_time, get_real_timer, start_move};
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, is_midgame_abort, middle_game, toggle_midgame_hash_usage, toggle_midgame_abort_check, clear_midgame_abort, calculate_perturbation};
-use crate::src::moves::{disks_played___, valid_move, move_list___, move_count___, generate_all, unmake_move, make_move};
+use crate::src::moves::{valid_move, generate_all, unmake_move, make_move, moves_state};
 use crate::src::stable::init_stable;
 use crate::src::probcut::{init_probcut, prob_cut};
 use crate::src::myrandom::{my_srandom, my_random};
@@ -158,7 +158,7 @@ pub const fn create_fresh_board() -> Board {
 }
 
 pub unsafe fn setup_game_finalize(side_to_move:  &mut i32) {
-    disks_played___ = disc_count(0, &board_state.board) + disc_count(2, &board_state.board) - 4;
+    moves_state.disks_played = disc_count(0, &board_state.board) + disc_count(2, &board_state.board) - 4;
     determine_hash_values(*side_to_move, &board_state.board, &mut hash_state);
     /* Make the game score look right */
     if *side_to_move == 0 as i32 {
@@ -326,16 +326,16 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         L::log_board(logger, board_, side_to_move_);
     }
     /* Initialize various components of the move system */
-    board_state.piece_count[0][disks_played___ as usize] =
+    board_state.piece_count[0][moves_state.disks_played as usize] =
         disc_count(0 as i32, &board_state.board);
-    board_state.piece_count[2][disks_played___ as usize] =
+    board_state.piece_count[2][moves_state.disks_played as usize] =
         disc_count(2 as i32, &board_state.board);
     generate_all(side_to_move);
     determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     calculate_perturbation();
     if let Some(logger) = logger {
-        let moves_generated = move_count___[disks_played___ as usize];
-        let move_list_for_disks_played = &move_list___[disks_played___ as usize];
+        let moves_generated = moves_state.move_count[moves_state.disks_played as usize];
+        let move_list_for_disks_played = &moves_state.move_list[moves_state.disks_played as usize];
 
         L::log_moves_generated(logger, moves_generated, move_list_for_disks_played);
     }
@@ -345,18 +345,18 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     }
     let mut i = 0;
     while i < 100 as i32 {
-        search_state.evals[disks_played___ as usize][i as usize] = 0;
+        search_state.evals[moves_state.disks_played as usize][i as usize] = 0;
         i += 1
     }
     game_state.max_depth_reached = 1;
-    let empties = 60 as i32 - disks_played___;
+    let empties = 60 as i32 - moves_state.disks_played;
     FE::reset_buffer_display();
     determine_move_time(my_time as f64, my_incr as f64,
-                        disks_played___ + 4 as i32);
+                        moves_state.disks_played + 4 as i32);
     if get_ponder_move() == 0 { clear_ponder_times(); }
-    remove_coeffs(disks_played___);
+    remove_coeffs(moves_state.disks_played);
     /* No feasible moves? */
-    if move_count___[disks_played___ as usize] == 0 as i32 {
+    if moves_state.move_count[moves_state.disks_played as usize] == 0 as i32 {
         *eval_info =
             create_eval_info(PASS_EVAL, UNSOLVED_POSITION,
                              0.0f64 as i32, 0.0f64, 0 as i32,
@@ -377,7 +377,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
        Don't waste any time, unless told so or very close to the end,
        searching the position. */
     if empties > 60 as i32 &&
-        move_count___[disks_played___ as usize] == 1 as i32 &&
+        moves_state.move_count[moves_state.disks_played as usize] == 1 as i32 &&
         search_forced == 0 {
         /* Forced move */
         *eval_info =
@@ -387,21 +387,21 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         set_current_eval(*eval_info);
         if echo != 0 {
             let info = &*eval_info;
-            let disk = move_list___[disks_played___ as usize][0];
+            let disk = moves_state.move_list[moves_state.disks_played as usize][0];
             Out::echo_compute_move_2(info, disk);
         }
         if let Some(logger) = logger {
-            let best_move = move_list___[disks_played___ as usize][0];
+            let best_move = moves_state.move_list[moves_state.disks_played as usize][0];
             L::log_best_move(logger, best_move);
         }
         game_state.last_time_used = 0.0f64;
-        return move_list___[disks_played___ as usize][0]
+        return moves_state.move_list[moves_state.disks_played as usize][0]
     }
     /* Mark the search as interrupted until a successful search
        has been performed. */
     let mut move_type = INTERRUPTED_MOVE;
     let mut interrupted_depth = 0;
-    let mut curr_move = move_list___[disks_played___ as usize][0];
+    let mut curr_move = moves_state.move_list[moves_state.disks_played as usize][0];
     /* Check the opening book for midgame moves */
     let mut book_move_found = 0;
     let mut midgame_move = -(1 as i32);
@@ -434,7 +434,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             let game_index =
                 ((my_random() >> 8 as i32) %
                     Thor::get_match_count() as i64) as i32;
-            curr_move = Thor::get_thor_game_move(game_index, disks_played___);
+            curr_move = Thor::get_thor_game_move(game_index, moves_state.disks_played);
             if valid_move(curr_move, side_to_move) != 0 {
                 book_eval_info =
                     create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
@@ -586,7 +586,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             midgame_depth += 1;
             if !(is_panic_abort() == 0 && is_midgame_abort() == 0 &&
                 force_return == 0 && midgame_depth <= max_depth &&
-                midgame_depth + disks_played___ <= 61 as i32 &&
+                midgame_depth + moves_state.disks_played <= 61 as i32 &&
                 endgame_reached == 0) {
                 break ;
             }
@@ -603,7 +603,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     if force_return == 0 {
         if timed_depth != 0 && endgame_reached != 0 ||
             timed_depth != 0 && book_move_found != 0 &&
-                disks_played___ >= 60 as i32 - 30 as i32 ||
+                moves_state.disks_played >= 60 as i32 - 30 as i32 ||
             timed_depth == 0 &&
                 empties <= (if exact > wld { exact } else { wld }) {
             game_state.max_depth_reached = empties;
@@ -611,7 +611,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             if timed_depth != 0 {
                 curr_move =
                    end_game::<FE>(side_to_move,
-                             (disks_played___ < 60 as i32 - exact) as
+                             (moves_state.disks_played < 60 as i32 - exact) as
                                  i32, 0 as i32, book, game_state.komi,
                              &mut end_eval_info, echo)
             } else if empties <= exact {

@@ -1,7 +1,7 @@
 use crate::{
     src::{
         search::{get_ponder_move, create_eval_info, disc_count},
-        moves::{unmake_move, make_move, generate_specific, disks_played___, move_list___, move_count___, generate_all, unmake_move_no_hash, make_move_no_hash},
+        moves::{unmake_move, make_move, generate_specific, moves_state, generate_all, unmake_move_no_hash, make_move_no_hash},
         opname::opening_list,
         hash::{clear_hash_drafts},
         game::{CandidateMove},
@@ -555,7 +555,7 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
     move_count_0 =
          FE::strlen(opening).wrapping_div(2 as i32 as u64) as
             i32;
-    if move_count_0 <= disks_played___ { return -(1 as i32) }
+    if move_count_0 <= moves_state.disks_played { return -(1 as i32) }
     i = 0;
     while i < move_count_0 {
         move_0[i as usize] =
@@ -581,7 +581,7 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
         local_board[55];
     local_side_to_move = 0;
     i = 0;
-    while i < disks_played___ {
+    while i < moves_state.disks_played {
         j = 0;
         while j < 8 as i32 {
             pos = move_0[i as usize] + move_offset[j as usize];
@@ -633,7 +633,7 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
         }
         if same_position != 0 {
             return *g_book.inv_symmetry_map[symmetry as
-                usize].offset(move_0[disks_played___ as
+                usize].offset(move_0[moves_state.disks_played as
                 usize] as
                 isize)
         }
@@ -691,14 +691,14 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
     matching_move = -(1 as i32);
     generate_all(side_to_move);
     i = 0;
-    while i < move_count___[disks_played___ as usize] {
-        this_move = move_list___[disks_played___ as usize][i as usize];
+    while i < moves_state.move_count[moves_state.disks_played as usize] {
+        this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
         slot = probe_hash_table(val1, val2, &mut book);
         child_index = *book.book_hash_table.offset(slot as isize);
         if child_index != -(1 as i32) {
-            if disks_played___ < 60 as i32 - cutoff {
+            if moves_state.disks_played < 60 as i32 - cutoff {
                 fill_endgame_hash(cutoff, level + 1 as i32);
             }
             if is_full != 0 {
@@ -760,7 +760,7 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
             bound = 1 as i32
         } else { bound = 2 as i32 }
         add_hash(1 as i32, signed_score, matching_move,
-                 16 as i32 | bound, 60 as i32 - disks_played___,
+                 16 as i32 | bound, 60 as i32 - moves_state.disks_played,
                  0 as i32);
     };
 }
@@ -820,13 +820,13 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                 usize].offset(alternative_move as isize);
         alternative_score =
             adjust_score((*book.node.offset(index as isize)).alternative_score as
-                             i32, side_to_move, &mut book, disks_played___)
+                             i32, side_to_move, &mut book, moves_state.disks_played)
     } else { alternative_score = -(12345678 as i32) }
     generate_all(side_to_move);
     book.candidate_count = 0;
     i = 0;
-    while i < move_count___[disks_played___ as usize] {
-        this_move = move_list___[disks_played___ as usize][i as usize];
+    while i < moves_state.move_count[moves_state.disks_played as usize] {
+        this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
         slot = probe_hash_table(val1, val2, &mut book);
@@ -894,7 +894,7 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
         }
         if child_feasible != 0 {
             book.candidate_list[book.candidate_count as usize].move_0 =
-                move_list___[disks_played___ as usize][i as usize];
+                moves_state.move_list[moves_state.disks_played as usize][i as usize];
             book.candidate_list[book.candidate_count as usize].score = sign * score;
             if deviation != 0 {
                 book.candidate_list[book.candidate_count as usize].flags =
@@ -1127,7 +1127,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                         isize)
                         as
                         isize)).alternative_score
-                                     as i32, side_to_move, book, disks_played___)
+                                     as i32, side_to_move, book, moves_state.disks_played)
             } else { alternative_score = -(12345678 as i32) }
             if (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                 isize)).flags as i32 &
@@ -1142,8 +1142,8 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
             best_score = -(12345678 as i32);
             best_move = -(1 as i32);
             i = 0;
-            while i < move_count___[disks_played___ as usize] {
-                this_move = move_list___[disks_played___ as usize][i as usize];
+            while i < moves_state.move_count[moves_state.disks_played as usize] {
+                this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
                 make_move(side_to_move, this_move, 1 as i32);
                 get_hash(&mut val1, &mut val2, &mut orientation);
                 slot = probe_hash_table(val1, val2, book);
