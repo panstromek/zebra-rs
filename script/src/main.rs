@@ -31,7 +31,7 @@ fn main() {
         // .inspect(|x| println!("{:#?}", x))
         .collect::<Vec<_>>();
 
-
+    //fixme don't search fo non-pub stuff in other files
     let needle = "(\\b)(".to_string() +
         &declarations.iter().map(|decl| decl.name).collect::<Vec<_>>().join("|") +
         ")(\\b)";
@@ -42,7 +42,7 @@ fn main() {
                format!("pub static mut {} : {} = {} {{",global_name, struct_name, struct_name )),
 
               |(struct_decl, static_decl), declaration| {
-                  (struct_decl + (if declaration.is_pub { "\npub " } else { " " }) + declaration.name + ": " + declaration.type_ + ",",
+                  (struct_decl + (if declaration.is_pub { "\npub " } else { "\n " }) + declaration.name + ": " + declaration.type_ + ",",
                    static_decl + "\n" + declaration.name + ": " + declaration.default_value + ",")
               });
     struct_declaration.0 += "\n}\n";

@@ -50,10 +50,23 @@ pub struct CandidateMove {
   SET_FORCED_OPENING
   Specifies an opening line that Zebra is forced to follow when playing.
 */
-static mut forced_opening: *const i8 = 0 as *const i8;
-static mut last_time_used: f64 = 0.;
-pub static mut max_depth_reached___: i32 = 0;
-static mut play_human_openings: i32 = 1;
+pub struct GameState {
+    forced_opening: *const i8,
+    last_time_used: f64,
+    pub max_depth_reached: i32,
+    play_human_openings: i32,
+    komi: i32,
+    endgame_performed: [i32; 3],
+}
+
+pub static mut game_state: GameState = GameState {
+    forced_opening: 0 as *const i8,
+    last_time_used: 0.,
+    max_depth_reached: 0,
+    play_human_openings: 1,
+    komi: 0,
+    endgame_performed: [0; 3],
+};
 
 /*
   TOGGLE_THOR_MATCH_OPENINGS
@@ -61,8 +74,6 @@ static mut play_human_openings: i32 = 1;
   before resorting to the usual opening book.
 */
 static play_thor_match_openings: i32 = 1;
-static mut komi: i32 = 0;
-static mut endgame_performed: [i32; 3] = [0; 3];
 
 /*
   SET_KOMI
@@ -70,7 +81,7 @@ static mut endgame_performed: [i32; 3] = [0; 3];
 */
 
 pub unsafe fn set_komi(in_komi: i32) {
-    komi = in_komi;
+    game_state.komi = in_komi;
 }
 /*
   TOGGLE_HUMAN_OPENINGS
@@ -79,7 +90,7 @@ pub unsafe fn set_komi(in_komi: i32) {
 */
 
 pub unsafe fn toggle_human_openings(toggle: i32) {
-    play_human_openings = toggle;
+    game_state.play_human_openings = toggle;
 }
 
 /*
@@ -121,10 +132,10 @@ pub unsafe fn engine_game_init() {
     reset_counter(&mut search_state.total_evaluations);
     init_flip_stack();
     search_state.total_time = 0.0f64;
-    max_depth_reached___ = 0;
-    last_time_used = 0.0f64;
-    endgame_performed[2] = 0;
-    endgame_performed[0] = endgame_performed[2];
+    game_state.max_depth_reached = 0;
+    game_state.last_time_used = 0.0f64;
+    game_state.endgame_performed[2] = 0;
+    game_state.endgame_performed[0] = game_state.endgame_performed[2];
 }
 
 pub const fn create_fresh_board() -> Board {
@@ -337,7 +348,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         search_state.evals[disks_played as usize][i as usize] = 0;
         i += 1
     }
-    max_depth_reached___ = 1;
+    game_state.max_depth_reached = 1;
     let empties = 60 as i32 - disks_played;
     FE::reset_buffer_display();
     determine_move_time(my_time as f64, my_incr as f64,
@@ -358,7 +369,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         if let Some(logger) = logger {
             L::log_best_move_pass(logger);
         }
-        last_time_used = 0.0f64;
+        game_state.last_time_used = 0.0f64;
         clear_pv();
         return -(1 as i32)
     }
@@ -383,7 +394,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             let best_move = move_list[disks_played as usize][0];
             L::log_best_move(logger, best_move);
         }
-        last_time_used = 0.0f64;
+        game_state.last_time_used = 0.0f64;
         return move_list[disks_played as usize][0]
     }
     /* Mark the search as interrupted until a successful search
@@ -394,9 +405,9 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     /* Check the opening book for midgame moves */
     let mut book_move_found = 0;
     let mut midgame_move = -(1 as i32);
-    if !forced_opening.is_null() {
+    if !game_state.forced_opening.is_null() {
         /* Check if the position fits the currently forced opening */
-        curr_move = check_forced_opening::<FE>(side_to_move, forced_opening);
+        curr_move = check_forced_opening::<FE>(side_to_move, game_state.forced_opening);
         if curr_move != -(1 as i32) {
             book_eval_info =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
@@ -445,7 +456,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             }
         }
     }
-    if book_move_found == 0 && play_human_openings != 0 && book != 0 {
+    if book_move_found == 0 && game_state.play_human_openings != 0 && book != 0 {
         /* Check Thor statistics for a move */
         curr_move =
             Thor::choose_thor_opening_move(&board_state.board, side_to_move,
@@ -513,7 +524,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             } else { 2 as i32 }
     }
     endgame_reached =
-        (timed_depth == 0 && endgame_performed[side_to_move as usize] != 0) as
+        (timed_depth == 0 && game_state.endgame_performed[side_to_move as usize] != 0) as
             i32;
     if book_move_found == 0 && endgame_reached == 0 {
         clear_panic_abort();
@@ -547,7 +558,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 2 as i32
             } else { max_depth };
         loop  {
-            max_depth_reached___ = midgame_depth;
+            game_state.max_depth_reached = midgame_depth;
             midgame_move =
                 middle_game::<FE>(side_to_move, midgame_depth, update_all,
                             &mut mid_eval_info, echo);
@@ -555,15 +566,15 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             midgame_diff =
                 1.3f64 * mid_eval_info.score as f64 / 128.0f64;
             if side_to_move == 0 as i32 {
-                midgame_diff -= komi as f64
-            } else { midgame_diff += komi as f64 }
+                midgame_diff -= game_state.komi as f64
+            } else { midgame_diff += game_state.komi as f64 }
             if timed_depth != 0 {
                 /* Check if the endgame zone has been reached */
                 offset = 7;
                 /* These constants were chosen rather arbitrarily but intend
                    to make Zebra solve earlier if the position is lopsided. */
                 if is_panic_abort() != 0 { offset -= 1 }
-                if endgame_performed[side_to_move as usize] != 0 {
+                if game_state.endgame_performed[side_to_move as usize] != 0 {
                     offset += 2 as i32
                 }
                 if midgame_depth + offset + 27 as i32 >=
@@ -595,29 +606,29 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 disks_played >= 60 as i32 - 30 as i32 ||
             timed_depth == 0 &&
                 empties <= (if exact > wld { exact } else { wld }) {
-            max_depth_reached___ = empties;
+            game_state.max_depth_reached = empties;
             clear_panic_abort();
             if timed_depth != 0 {
                 curr_move =
                    end_game::<FE>(side_to_move,
                              (disks_played < 60 as i32 - exact) as
-                                 i32, 0 as i32, book, komi,
+                                 i32, 0 as i32, book, game_state.komi,
                              &mut end_eval_info, echo)
             } else if empties <= exact {
                 curr_move =
                    end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
-                             book, komi, &mut end_eval_info, echo)
+                             book, game_state.komi, &mut end_eval_info, echo)
             } else {
                 curr_move =
                    end_game::<FE>(side_to_move, 1 as i32, 0 as i32,
-                             book, komi, &mut end_eval_info, echo)
+                             book, game_state.komi, &mut end_eval_info, echo)
             }
             set_current_eval(end_eval_info);
             if abs(search_state.root_eval) == abs(-(27000 as i32)) {
                 move_type = INTERRUPTED_MOVE
             } else { move_type = ENDGAME_MOVE }
             if update_all != 0 {
-                endgame_performed[side_to_move as usize] = 1 as i32
+                game_state.endgame_performed[side_to_move as usize] = 1 as i32
             }
         }
     }
@@ -638,9 +649,9 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         _ => { }
     }
     set_current_eval(*eval_info);
-    last_time_used = get_elapsed_time::<FE>();
+    game_state.last_time_used = get_elapsed_time::<FE>();
     if update_all != 0 {
-        search_state.total_time += last_time_used;
+        search_state.total_time += game_state.last_time_used;
         add_counter(&mut search_state.total_evaluations, &mut search_state.evaluations);
         add_counter(&mut search_state.total_nodes, &mut search_state.nodes);
     }

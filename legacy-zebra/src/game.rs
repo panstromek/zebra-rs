@@ -16,7 +16,7 @@ use engine::src::getcoeff::pattern_evaluation;
 use engine::src::myrandom::my_random;
 use engine::src::stubs::abs;
 use engine::src::osfbook::{get_book_move, get_candidate, get_candidate_count, fill_move_alternatives};
-use engine::src::game::{ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, max_depth_reached___, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, PonderMoveReport};
+use engine::src::game::{ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, PonderMoveReport, game_state};
 use std::ffi::CStr;
 use crate::src::thordb::LegacyThor;
 use engine::src::zebra::EvalResult::{UNSOLVED_POSITION, WON_POSITION, LOST_POSITION, DRAWN_POSITION};
@@ -305,9 +305,9 @@ pub unsafe fn ponder_move<
                         move_stop_time - move_start_time);
         ponder_depth[expect_list[i as usize] as usize] =
             if ponder_depth[expect_list[i as usize] as usize] >
-                max_depth_reached___ - 1 as i32 {
+                game_state.max_depth_reached - 1 as i32 {
                 ponder_depth[expect_list[i as usize] as usize]
-            } else { (max_depth_reached___) - 1 as i32 };
+            } else { (game_state.max_depth_reached) - 1 as i32 };
         if i == 0 as i32 && force_return == 0 {
             /* Store the PV for the first move */
             best_pv_depth = board_state.pv_depth[0];
@@ -323,7 +323,7 @@ pub unsafe fn ponder_move<
     /* Make sure the PV looks reasonable when leaving - either by
        clearing it altogether or, preferrably, using the stored PV for
        the first move if it is available. */
-    max_depth_reached___ += 1;
+    game_state.max_depth_reached += 1;
     prefix_move = 0;
     if best_pv_depth == 0 as i32 {
         board_state.pv_depth[0] = 0 as i32
@@ -349,7 +349,7 @@ pub unsafe fn ponder_move<
 */
 
 pub unsafe fn get_search_statistics(max_depth: &mut i32, node_count: &mut f64) {
-    *max_depth = max_depth_reached___;
+    *max_depth = game_state.max_depth_reached;
     if prefix_move != 0 {
         *max_depth += 1
     }
@@ -972,7 +972,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
     toggle_abort_check(1 as i32);
     toggle_midgame_abort_check(1 as i32);
     toggle_perturbation_usage(1 as i32);
-    max_depth_reached___ += 1;
+    game_state.max_depth_reached += 1;
     prefix_move = 0;
     return best_move;
 }
@@ -1112,7 +1112,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     unmake_move(side_to_move, actual_move);
     prefix_move = 0;
     negate_current_eval(0 as i32);
-    max_depth_reached___ += 1;
+    game_state.max_depth_reached += 1;
     /* Compute the score for the best move and store it in the move list
        if it isn't ACTUAL_MOVE */
     best_move =
