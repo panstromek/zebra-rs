@@ -52,7 +52,7 @@ pub struct CandidateMove {
 */
 static mut forced_opening: *const i8 = 0 as *const i8;
 static mut last_time_used: f64 = 0.;
-pub static mut max_depth_reached: i32 = 0;
+pub static mut max_depth_reached___: i32 = 0;
 static mut play_human_openings: i32 = 1;
 
 /*
@@ -121,7 +121,7 @@ pub unsafe fn engine_game_init() {
     reset_counter(&mut search_state.total_evaluations);
     init_flip_stack();
     search_state.total_time = 0.0f64;
-    max_depth_reached = 0;
+    max_depth_reached___ = 0;
     last_time_used = 0.0f64;
     endgame_performed[2] = 0;
     endgame_performed[0] = endgame_performed[2];
@@ -337,7 +337,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         search_state.evals[disks_played as usize][i as usize] = 0;
         i += 1
     }
-    max_depth_reached = 1;
+    max_depth_reached___ = 1;
     let empties = 60 as i32 - disks_played;
     FE::reset_buffer_display();
     determine_move_time(my_time as f64, my_incr as f64,
@@ -547,7 +547,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 2 as i32
             } else { max_depth };
         loop  {
-            max_depth_reached = midgame_depth;
+            max_depth_reached___ = midgame_depth;
             midgame_move =
                 middle_game::<FE>(side_to_move, midgame_depth, update_all,
                             &mut mid_eval_info, echo);
@@ -595,7 +595,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 disks_played >= 60 as i32 - 30 as i32 ||
             timed_depth == 0 &&
                 empties <= (if exact > wld { exact } else { wld }) {
-            max_depth_reached = empties;
+            max_depth_reached___ = empties;
             clear_panic_abort();
             if timed_depth != 0 {
                 curr_move =
