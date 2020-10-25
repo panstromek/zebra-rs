@@ -8,7 +8,7 @@ use engine::src::globals::{board_state};
 use engine::src::search::{set_current_eval,search_state, force_return, negate_current_eval, create_eval_info, disc_count, clear_ponder_move, set_ponder_move, float_move, sort_moves};
 use engine::src::zebra::{EvaluationType};
 use engine::src::midgame::{toggle_perturbation_usage, toggle_midgame_abort_check};
-use engine::src::timer::{toggle_abort_check, clear_ponder_times, start_move, ponder_depth, add_ponder_time, get_real_timer};
+use engine::src::timer::{toggle_abort_check, clear_ponder_times, start_move, add_ponder_time, get_real_timer, timer};
 use engine::src::moves::{unmake_move, make_move, generate_all, moves_state};
 use engine::src::counter::{reset_counter, adjust_counter, counter_value};
 use engine::src::hash::{set_hash_transformation, find_hash, HashEntry, hash_state, determine_hash_values};
@@ -101,12 +101,12 @@ unsafe fn setup_log_file() {
             fopen(log_file_path.as_mut_ptr(),
                   b"w\x00" as *const u8 as *const i8);
         if !log_file.is_null() {
-            let mut timer: time_t = 0;
-            time(&mut timer);
+            let mut timer_: time_t = 0;
+            time(&mut timer_);
             fprintf(log_file,
                     b"%s %s\n\x00" as *const u8 as *const i8,
                     b"Log file created\x00" as *const u8 as
-                        *const i8, ctime(&mut timer));
+                        *const i8, ctime(&mut timer_));
             fprintf(log_file,
                     b"%s %s %s\n\x00" as *const u8 as *const i8,
                     b"Engine compiled\x00" as *const u8 as
@@ -303,10 +303,10 @@ pub unsafe fn ponder_move<
         move_stop_time = get_real_timer::<FE>();
         add_ponder_time(expect_list[i as usize],
                         move_stop_time - move_start_time);
-        ponder_depth[expect_list[i as usize] as usize] =
-            if ponder_depth[expect_list[i as usize] as usize] >
+        timer.ponder_depth[expect_list[i as usize] as usize] =
+            if timer.ponder_depth[expect_list[i as usize] as usize] >
                 game_state.max_depth_reached - 1 as i32 {
-                ponder_depth[expect_list[i as usize] as usize]
+                timer.ponder_depth[expect_list[i as usize] as usize]
             } else { (game_state.max_depth_reached) - 1 as i32 };
         if i == 0 as i32 && force_return == 0 {
             /* Store the PV for the first move */

@@ -13,7 +13,7 @@ use crate::{
 };
 use crate::src::getcoeff::pattern_evaluation;
 use crate::src::stubs::abs;
-use crate::src::timer::{is_panic_abort, last_panic_check, check_panic_abort, above_recommended, extended_above_recommended, frozen_ponder_depth};
+use crate::src::timer::{is_panic_abort, check_panic_abort, above_recommended, extended_above_recommended, timer};
 use crate::src::hash::add_hash;
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, LOST_POSITION, WON_POSITION};
@@ -698,10 +698,10 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             let mut node_val: f64 = 0.;
             adjust_counter(&mut search_state.nodes);
             node_val = counter_value(&mut search_state.nodes);
-            if node_val - last_panic_check >=
+            if node_val - timer.last_panic_check >=
                 100000 as i32 as f64 {
                 /* Time abort? */
-                last_panic_check = node_val;
+                timer.last_panic_check = node_val;
                 check_panic_abort::<FE>();
                 /* Display available search information */
                 if echo != 0 { FE::display_buffers(); }
@@ -1396,7 +1396,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
             draft: 0,
             selectivity: 0,
             flags: 0,};
-    last_panic_check = 0.0f64;
+    timer.last_panic_check = 0.0f64;
     midgame_state.counter_phase = 0;
     board_state.piece_count[0][moves_state.disks_played as usize] =
         disc_count(0 as i32, &board_state.board);
@@ -1550,7 +1550,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         if midgame_state.do_check_midgame_abort != 0 {
             if above_recommended::<FE>() != 0 ||
                 extended_above_recommended::<FE>() != 0 &&
-                    depth >= frozen_ponder_depth {
+                    depth >= timer.frozen_ponder_depth {
                 set_midgame_abort();
                 break ;
             }
