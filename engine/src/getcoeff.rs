@@ -39,41 +39,12 @@ static mut stage: [i32; 61] = [0; 61];
 static mut block_allocated: [bool; 200] = [false; 200];
 static mut eval_map: [i32; 61] = [0; 61];
 
-static mut block_list: [Option<Box<AllocationBlock>>; 200] = [
-    // This is just incredibly stupid, but I don't know any other way to do this,
-    // because this type doesn't implement copy
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None,None,None,None,None,
-    None,None,None,None,None,None,None,None
-];
-pub static mut set: [CoeffSet; 61] = [
-    CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
-    CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
-    CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
-    CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
-    CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
-    CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
-    CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
-    CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
-    CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
-    CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
-    CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
-    CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(), CoeffSet::new(),
-    CoeffSet::new()];
+const EMPTY_ALLOC_BLOCK: Option<Box<AllocationBlock>> = None;
+const NEW_COEFF_SET : CoeffSet = CoeffSet::new();
+
+static mut block_list: [Option<Box<AllocationBlock>>; 200] = [EMPTY_ALLOC_BLOCK; 200];
+
+pub static mut set: [CoeffSet; 61] = [NEW_COEFF_SET; 61];
 /*
    GENERATE_BATCH
    Interpolates between two stages.
