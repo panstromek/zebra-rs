@@ -112,20 +112,20 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         let mut val0: i32 = 0;
         let mut val1: i32 = 0;
         let mut orientation: i32 = 0;
-        set_move_list(board_state.black_moves___.as_mut_ptr(), board_state.white_moves___.as_mut_ptr(),
-                      board_state.score_sheet_row___);
+        set_move_list(board_state.black_moves.as_mut_ptr(), board_state.white_moves.as_mut_ptr(),
+                      board_state.score_sheet_row);
         opening_name = find_opening_name();
         if !opening_name.is_null() {
             printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8,
                    opening_name);
         }
         get_hash(&mut val0, &mut val1, &mut orientation);
-        display_board(stdout, &board_state.board___, side_to_move,
+        display_board(stdout, &board_state.board, side_to_move,
                       1 as i32, 0 as i32, 0 as i32,
                       current_row,
                       black_player, black_time, black_eval,
                       white_player, white_time, white_eval,
-                      &board_state.black_moves___, &board_state.white_moves___
+                      &board_state.black_moves, &board_state.white_moves
         );
         printf(b"Book hash: %d %d (%d)\n\n\x00" as *const u8 as
                    *const i8, val0, val1, orientation);
@@ -175,7 +175,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         i += 1
                     }
                     side_to_move = old_stm[disks_played as usize];
-                    board_state.score_sheet_row___ = row[disks_played as usize]
+                    board_state.score_sheet_row = row[disks_played as usize]
                 } else if command != 0 as i32 {
                     printf(b"Can\'t back up %d moves\n\n\x00" as *const u8 as
                                *const i8, command);
@@ -198,14 +198,14 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                             i32 <= '8' as i32 &&
                         valid_move(move_0, side_to_move) != 0 {
                         old_stm[disks_played as usize] = side_to_move;
-                        row[disks_played as usize] = board_state.score_sheet_row___;
+                        row[disks_played as usize] = board_state.score_sheet_row;
                         move_list[disks_played as usize] = move_0;
                         make_move(side_to_move, move_0, 1 as i32);
                         if side_to_move == 0 as i32 {
-                            board_state.score_sheet_row___ += 1;
-                            board_state.black_moves___[board_state.score_sheet_row___ as usize] = move_0
+                            board_state.score_sheet_row += 1;
+                            board_state.black_moves[board_state.score_sheet_row as usize] = move_0
                         } else {
-                            board_state.white_moves___[board_state.score_sheet_row___ as usize] = move_0
+                            board_state.white_moves[board_state.score_sheet_row as usize] = move_0
                         }
                         side_to_move =
                             0 as i32 + 2 as i32 - side_to_move

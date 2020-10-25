@@ -27,21 +27,21 @@ pub type Board = [i32; 128];
 */
 
 pub struct BoardState {
-    pub pv___: [[i32; 64]; 64],
-    pub pv_depth___: [i32; 64],
-    pub score_sheet_row___: i32,
-    pub piece_count___: [[i32; 64]; 3],
-    pub black_moves___: [i32; 60],
-    pub white_moves___: [i32; 60],
-    pub board___: Board,
+    pub pv: [[i32; 64]; 64],
+    pub pv_depth: [i32; 64],
+    pub score_sheet_row: i32,
+    pub piece_count: [[i32; 64]; 3],
+    pub black_moves: [i32; 60],
+    pub white_moves: [i32; 60],
+    pub board: Board,
 }
 
 pub static mut board_state: BoardState = BoardState {
-    pv___: [[0; 64]; 64],
-    pv_depth___: [0; 64],
-    score_sheet_row___: 0,
-    piece_count___: [[0; 64]; 3],
-    black_moves___: [0; 60],
-    white_moves___: [0; 60],
-    board___: [0; 128],
+    pv: [[0; 64]; 64],
+    pv_depth: [0; 64],
+    score_sheet_row: 0,
+    piece_count: [[0; 64]; 3],
+    black_moves: [0; 60],
+    white_moves: [0; 60],
+    board: [0; 128],
 };

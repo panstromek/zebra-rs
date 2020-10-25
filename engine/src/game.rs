@@ -157,24 +157,24 @@ pub const fn create_fresh_board() -> Board {
 }
 
 pub unsafe fn setup_game_finalize(side_to_move:  &mut i32) {
-    disks_played = disc_count(0, &board_state.board___) + disc_count(2, &board_state.board___) - 4;
-    determine_hash_values(*side_to_move, &board_state.board___, &mut hash_state);
+    disks_played = disc_count(0, &board_state.board) + disc_count(2, &board_state.board) - 4;
+    determine_hash_values(*side_to_move, &board_state.board, &mut hash_state);
     /* Make the game score look right */
     if *side_to_move == 0 as i32 {
-        board_state.score_sheet_row___ = -(1 as i32)
+        board_state.score_sheet_row = -(1 as i32)
     } else {
-        board_state.black_moves___[0] = -(1 as i32);
-        board_state.score_sheet_row___ = 0 as i32
+        board_state.black_moves[0] = -(1 as i32);
+        board_state.score_sheet_row = 0 as i32
     };
 }
 
 
 pub unsafe fn setup_non_file_based_game(side_to_move: &mut i32) {
-    board_state.board___ = create_fresh_board();
-    board_state.board___[54] = 0;
-    board_state.board___[45] = 0;
-    board_state.board___[55] = 2;
-    board_state.board___[44] = 2;
+    board_state.board = create_fresh_board();
+    board_state.board[54] = 0;
+    board_state.board[45] = 0;
+    board_state.board[55] = 2;
+    board_state.board[44] = 2;
     *side_to_move = 0;
     setup_game_finalize(side_to_move);
 }
@@ -222,8 +222,8 @@ pub unsafe fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &
         while j <= 8 as i32 {
             let pos = 10 as i32 * i + j;
             match buffer[token as usize] as i32 {
-                42 | 88 => { board_state.board___[pos as usize] = 0 as i32 }
-                79 | 48 => { board_state.board___[pos as usize] = 2 as i32 }
+                42 | 88 => { board_state.board[pos as usize] = 0 as i32 }
+                79 | 48 => { board_state.board[pos as usize] = 2 as i32 }
                 45 | 46 => {}
                 _ => {
                     let unrecognized = buffer[pos as usize];
@@ -253,7 +253,7 @@ pub trait FileBoardSource : BoardSource {
 }
 
 pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32) {
-    board_state.board___ = create_fresh_board();
+    board_state.board = create_fresh_board();
     assert!(!file_name.is_null());
     match S::open(file_name) {
         Some(file_source) => process_board_source::<_, FE>(side_to_move, file_source),
@@ -320,17 +320,17 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     let mut offset: i32 = 0;
 
     if let Some(logger) = logger {
-        let board_ = &board_state.board___;
+        let board_ = &board_state.board;
         let side_to_move_ = side_to_move;
         L::log_board(logger, board_, side_to_move_);
     }
     /* Initialize various components of the move system */
-    board_state.piece_count___[0][disks_played as usize] =
-        disc_count(0 as i32, &board_state.board___);
-    board_state.piece_count___[2][disks_played as usize] =
-        disc_count(2 as i32, &board_state.board___);
+    board_state.piece_count[0][disks_played as usize] =
+        disc_count(0 as i32, &board_state.board);
+    board_state.piece_count[2][disks_played as usize] =
+        disc_count(2 as i32, &board_state.board);
     generate_all(side_to_move);
-    determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
+    determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     calculate_perturbation();
     if let Some(logger) = logger {
         let moves_generated = move_count[disks_played as usize];
@@ -420,15 +420,15 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 Out::echo_ponder_move(curr_move, ponder_move);
             }
             clear_pv();
-            board_state.pv_depth___[0] = 1;
-            board_state.pv___[0][0] =
+            board_state.pv_depth[0] = 1;
+            board_state.pv[0][0] =
                 curr_move
         }
     }
     if book_move_found == 0 && play_thor_match_openings != 0 {
         /* Optionally use the Thor database as opening book. */
         let threshold = 2;
-        Thor::database_search(&board_state.board___, side_to_move);
+        Thor::database_search(&board_state.board, side_to_move);
         if Thor::get_match_count() >= threshold {
             let game_index =
                 ((my_random() >> 8 as i32) %
@@ -447,8 +447,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                     Out::echo_ponder_move_2(curr_move, ponder_move);
                 }
                 clear_pv();
-                board_state.pv_depth___[0] = 1;
-                board_state.pv___[0][0] =
+                board_state.pv_depth[0] = 1;
+                board_state.pv[0][0] =
                     curr_move
             } else {
                 FE::invalid_move(curr_move);
@@ -458,7 +458,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     if book_move_found == 0 && play_human_openings != 0 && book != 0 {
         /* Check Thor statistics for a move */
         curr_move =
-            Thor::choose_thor_opening_move(&board_state.board___, side_to_move,
+            Thor::choose_thor_opening_move(&board_state.board, side_to_move,
                                            0 as i32);
         if curr_move != -(1 as i32) {
             book_eval_info =
@@ -473,8 +473,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 Out::echo_ponder_move_4(curr_move, ponder_move);
             }
             clear_pv();
-            board_state.pv_depth___[0] = 1;
-            board_state.pv___[0][0] =
+            board_state.pv_depth[0] = 1;
+            board_state.pv[0][0] =
                 curr_move
         }
     }
