@@ -22,7 +22,7 @@ use crate::src::hash::{add_hash};
 use crate::src::midgame::{toggle_midgame_hash_usage, tree_search};
 use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_move};
 use crate::src::stubs::{abs, ceil};
-use crate::src::timer::{check_panic_abort, check_threshold, clear_panic_abort, get_elapsed_time, is_panic_abort, timer, set_panic_threshold};
+use crate::src::timer::{check_panic_abort, check_threshold, clear_panic_abort, get_elapsed_time, is_panic_abort, g_timer, set_panic_threshold};
 use crate::src::zebra::EvaluationType;
 use crate::src::globals::Board;
 use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_EVAL};
@@ -1956,9 +1956,9 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                 select_move(move_index, moves_state.move_count[moves_state.disks_played as usize])
         }
         node_val = counter_value(&mut search_state.nodes);
-        if node_val - timer.last_panic_check >= 250000.0f64 {
+        if node_val - g_timer.last_panic_check >= 250000.0f64 {
             /* Check for time abort */
-            timer.last_panic_check = node_val;
+            g_timer.last_panic_check = node_val;
             check_panic_abort::<FE>();
             /* Output status buffers if in interactive mode */
             if echo != 0 { FE::display_buffers(); }
@@ -2282,7 +2282,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         }
         fill_endgame_hash(8 + 1, 0);
     }
-    timer.last_panic_check = 0.0f64;
+    g_timer.last_panic_check = 0.0f64;
     solve_status = UNKNOWN;
     old_eval = 0;
     /* Prepare for the shallow searches using the midgame eval */
