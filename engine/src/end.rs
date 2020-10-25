@@ -4,7 +4,7 @@ use flip::unflip::UndoFlips;
 use crate::{
     src:: {
         epcstat::{END_SIGMA, END_MEAN, END_STATS_AVAILABLE},
-        moves::{dir_mask, disks_played___, unmake_move, make_move, move_count___, generate_all, move_list___, valid_move},
+        moves::{dir_mask, unmake_move, make_move, generate_all, valid_move},
         search::{force_return, hash_expand_pv, search_state, store_pv, restore_pv, create_eval_info, disc_count, get_ponder_move, select_move},
         hash::{hash_state, add_hash_extended, find_hash, HashEntry},
         bitbcnt::CountFlips_bitboard,
@@ -27,6 +27,7 @@ use crate::src::zebra::EvaluationType;
 use crate::src::globals::Board;
 use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_EVAL};
 use crate::src::zebra::EvalResult::{WON_POSITION, DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION};
+use crate::src::moves::moves_state;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -1609,10 +1610,10 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         }
     }
     /* Check if the low-level code is to be invoked */
-    my_discs = board_state.piece_count[side_to_move as usize][disks_played___ as usize];
+    my_discs = board_state.piece_count[side_to_move as usize][moves_state.disks_played as usize];
     opp_discs =
         board_state.piece_count[(0 as i32 + 2 as i32 - side_to_move) as
-            usize][disks_played___ as usize];
+            usize][moves_state.disks_played as usize];
     empties = 64 as i32 - my_discs - opp_discs;
     if remains <= 12 as i32 {
         disk_diff = my_discs - opp_discs;
@@ -1686,14 +1687,14 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         selectivity > 0 as i32 {
         let mut cut: i32 = 0;
         cut = 0;
-        while cut < prob_cut.use_end_cut[disks_played___ as usize] {
+        while cut < prob_cut.use_end_cut[moves_state.disks_played as usize] {
             let shallow_remains =
-                prob_cut.end_mpc_depth[disks_played___ as usize][cut as usize];
+                prob_cut.end_mpc_depth[moves_state.disks_played as usize][cut as usize];
             let mpc_bias =
-                ceil(END_MEAN[disks_played___ as usize][shallow_remains as usize]
+                ceil(END_MEAN[moves_state.disks_played as usize][shallow_remains as usize]
                     as f64 * 128.0f64) as i32;
             let mpc_window =
-                ceil(END_SIGMA[disks_played___ as
+                ceil(END_SIGMA[moves_state.disks_played as
                     usize][shallow_remains as usize] as
                     f64 * end_percentile[selectivity as usize]
                     * 128.0f64) as i32;
@@ -1754,7 +1755,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
     pre_search_done = 0;
     curr_alpha = alpha;
     /* Initialize the move list and check the hash table move list */
-    move_count___[disks_played___ as usize] = 0;
+    moves_state.move_count[moves_state.disks_played as usize] = 0;
     best_list_length = 0;
     i = 0;
     while i < 4 as i32 {
@@ -1815,7 +1816,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         /* Use results of shallow searches to determine the move order */
         if best_list_index < best_list_length {
             move_0 = best_list[best_list_index as usize];
-            move_count___[disks_played___ as usize] += 1
+            moves_state.move_count[moves_state.disks_played as usize] += 1
         } else {
             if pre_search_done == 0 {
                 let mut shallow_index: i32 = 0;
@@ -1823,13 +1824,13 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                 threshold =
                     if (60 as i32 * 128 as i32) <
                         128 as i32 * alpha +
-                            end.fast_first_threshold[disks_played___ as
+                            end.fast_first_threshold[moves_state.disks_played as
                                 usize][pre_depth as
                                 usize] {
                         (60 as i32) * 128 as i32
                     } else {
                         (128 as i32 * alpha) +
-                            end.fast_first_threshold[disks_played___ as
+                            end.fast_first_threshold[moves_state.disks_played as
                                 usize][pre_depth as
                                 usize]
                     };
@@ -1837,7 +1838,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                 while shallow_index < 60 as i32 {
                     let mut already_checked: i32 = 0;
                     move_0 =
-                        search_state.sorted_move_order[disks_played___ as
+                        search_state.sorted_move_order[moves_state.disks_played as
                             usize][shallow_index as usize];
                     already_checked = 0;
                     j = 0;
@@ -1925,33 +1926,33 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                         1000000 as i32 {
                                     curr_val -=
                                         2 as i32 *
-                                            end.ff_mob_factor[(disks_played___ -
+                                            end.ff_mob_factor[(moves_state.disks_played -
                                                 1 as
                                                     i32)
                                                 as usize] *
                                             mobility
                                 } else {
                                     curr_val -=
-                                        end.ff_mob_factor[(disks_played___ -
+                                        end.ff_mob_factor[(moves_state.disks_played -
                                             1 as i32)
                                             as usize] * mobility
                                 }
                             }
                         }
                         unmake_move(side_to_move, move_0);
-                        search_state.evals[disks_played___ as usize][move_0 as usize] =
+                        search_state.evals[moves_state.disks_played as usize][move_0 as usize] =
                             curr_val;
-                        move_list___[disks_played___ as
-                            usize][move_count___[disks_played___ as usize]
+                        moves_state.move_list[moves_state.disks_played as
+                            usize][moves_state.move_count[moves_state.disks_played as usize]
                             as usize] = move_0;
-                        move_count___[disks_played___ as usize] += 1
+                        moves_state.move_count[moves_state.disks_played as usize] += 1
                     }
                     shallow_index += 1
                 }
             }
-            if move_index == move_count___[disks_played___ as usize] { break ; }
+            if move_index == moves_state.move_count[moves_state.disks_played as usize] { break ; }
             move_0 =
-                select_move(move_index, move_count___[disks_played___ as usize])
+                select_move(move_index, moves_state.move_count[moves_state.disks_played as usize])
         }
         node_val = counter_value(&mut search_state.nodes);
         if node_val - last_panic_check >= 250000.0f64 {
@@ -2116,10 +2117,10 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         return curr_val
     } else {
         board_state.pv_depth[level as usize] = level;
-        my_discs = board_state.piece_count[side_to_move as usize][disks_played___ as usize];
+        my_discs = board_state.piece_count[side_to_move as usize][moves_state.disks_played as usize];
         opp_discs =
             board_state.piece_count[(0 as i32 + 2 as i32 - side_to_move)
-                as usize][disks_played___ as usize];
+                as usize][moves_state.disks_played as usize];
         disk_diff = my_discs - opp_discs;
         if my_discs > opp_discs {
             return 64 as i32 - 2 as i32 * opp_discs
@@ -2175,7 +2176,7 @@ unsafe fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
     while pass_count < 2 as i32 {
         let mut move_0: i32 = 0;
         generate_all(side_to_move);
-        if move_count___[disks_played___ as usize] > 0 as i32 {
+        if moves_state.move_count[moves_state.disks_played as usize] > 0 as i32 {
             let empties =
                 64 as i32 - disc_count(0 as i32, &board_state.board) -
                     disc_count(2 as i32, &board_state.board);
@@ -2284,8 +2285,8 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     solve_status = UNKNOWN;
     old_eval = 0;
     /* Prepare for the shallow searches using the midgame eval */
-    board_state.piece_count[0][disks_played___ as usize] = disc_count(0, &board_state.board);
-    board_state.piece_count[2][disks_played___ as usize] = disc_count(2, &board_state.board);
+    board_state.piece_count[0][moves_state.disks_played as usize] = disc_count(0, &board_state.board);
+    board_state.piece_count[2][moves_state.disks_played as usize] = disc_count(2, &board_state.board);
     if empties > 32 {
         set_panic_threshold(0.20f64);
     } else if empties < 22 {
