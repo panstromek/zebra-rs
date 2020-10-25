@@ -6,7 +6,7 @@ use crate::{
         hash::{clear_hash_drafts},
         game::{CandidateMove},
         myrandom::{my_random, my_srandom},
-        globals::{board, piece_count, pv, pv_depth},
+        globals::{board___, piece_count___, pv___, pv_depth___},
         midgame::{toggle_midgame_abort_check, toggle_midgame_hash_usage},
         getcoeff::remove_coeffs,
         counter::reset_counter,
@@ -308,7 +308,7 @@ pub unsafe fn get_candidate(index: i32) -> CandidateMove {
 
 
 pub unsafe fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32) {
-    get_hash_safe(val0, val1, orientation, &mut g_book, &board)
+    get_hash_safe(val0, val1, orientation, &mut g_book, &board___)
 }
 
 pub fn get_hash_safe(val0: &mut i32, val1: &mut i32, orientation: &mut i32,
@@ -504,7 +504,7 @@ pub unsafe fn find_opening_name() -> *const i8 {
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
-    get_hash_safe(&mut val1, &mut val2, &mut orientation, &mut g_book, &board);
+    get_hash_safe(&mut val1, &mut val2, &mut orientation, &mut g_book, &board___);
     let mut i = 0;
     while i < opening_list.len() {
         if val1 == opening_list[i].hash_val1 &&
@@ -620,7 +620,7 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
             j = 1;
             while j <= 8 as i32 {
                 pos = 10 as i32 * i + j;
-                if board[pos as usize] !=
+                if board___[pos as usize] !=
                     local_board[*g_book.symmetry_map[symmetry as
                         usize].offset(pos as
                         isize)
@@ -794,7 +794,7 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
     let mut deviation: i32 = 0;
     let mut root_flags: i32 = 0;
     let mut book = &mut g_book;
-    let board1 = &board;
+    let board1 = &board___;
     get_hash_safe(&mut val1, &mut val2, &mut orientation, book, board1);
     slot = probe_hash_table(val1, val2, book);
     /* If the position wasn't found in the hash table, return. */
@@ -1186,10 +1186,10 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         }
         if !(continuation != 0) { break ; }
     }
-    pv_depth[0] = level;
+    pv_depth___[0] = level;
     i = 0;
     while i < level {
-        pv[0][i as usize] = temp_move[i as usize];
+        pv___[0][i as usize] = temp_move[i as usize];
         i += 1
     }
     loop  {

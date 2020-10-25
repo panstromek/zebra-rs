@@ -3,7 +3,7 @@ use crate::src::moves::{disks_played, make_move, valid_move, move_count, move_li
 use crate::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::counter::{counter_value, adjust_counter};
 use crate::src::stubs::{floor};
-use crate::src::globals::{board, score_sheet_row, white_moves, black_moves};
+use crate::src::globals::{board___, score_sheet_row___, white_moves___, black_moves___};
 use crate::src::learn::{store_move, set_learning_parameters, clear_stored_game, Learner};
 use crate::src::error::{FrontEnd};
 use crate::src::myrandom::my_random;
@@ -255,7 +255,7 @@ pub unsafe fn engine_play_game<
         }
         set_names_from_skills::<ZF>(config);
         ZF::set_move_list(
-                      score_sheet_row);
+            score_sheet_row___);
         ZF::set_evals(0.0f64, 0.0f64);
         clear_moves();
         move_vec[0] = 0;
@@ -269,13 +269,13 @@ pub unsafe fn engine_play_game<
             remove_coeffs(disks_played);
             generate_all(side_to_move);
             if side_to_move == 0 {
-                score_sheet_row += 1
+                score_sheet_row___ += 1
             }
             if move_count[disks_played as usize] != 0 {
                 let move_start = get_real_timer::<FE>();
                 clear_panic_abort();
                 if echo != 0 {
-                    ZF::set_move_list(score_sheet_row);
+                    ZF::set_move_list(score_sheet_row___);
                     ZF::set_times(floor(config.player_time[0]) as i32,
                               floor(config.player_time[2]) as i32);
                     let opening_name = find_opening_name();
@@ -284,7 +284,7 @@ pub unsafe fn engine_play_game<
                     }
                     if use_thor_ {
                         let database_start = get_real_timer::<FE>();
-                        Thor::database_search(&board, side_to_move);
+                        Thor::database_search(&board___, side_to_move);
                         thor_position_count = Thor::get_match_count();
                         let database_stop = get_real_timer::<FE>();
                         let database_time = database_stop - database_start;
@@ -302,12 +302,12 @@ pub unsafe fn engine_play_game<
                         ZF::print_out_thor_matches(config.thor_max_games);
                     }
                     ZF::display_board_after_thor(side_to_move, config.use_timer,
-                                                 &board, &black_moves, &white_moves);
+                                                 &board___, &black_moves___, &white_moves___);
                 }
-                Dump::dump_position(side_to_move, &board);
-                Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
+                Dump::dump_position(side_to_move, &board___);
+                Dump::dump_game_score(side_to_move, score_sheet_row___, &black_moves___, &white_moves___);
                 /* Check what the Thor opening statistics has to say */
-                Thor::choose_thor_opening_move(&board, side_to_move, echo);
+                Thor::choose_thor_opening_move(&board___, side_to_move, echo);
                 if echo != 0 && config.wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
                     if config.skill[side_to_move as usize] == 0 as i32 {
@@ -370,18 +370,18 @@ pub unsafe fn engine_play_game<
                 ZF::push_move(&mut move_vec, curr_move, disks_played);
                 make_move(side_to_move, curr_move, 1);
                 if side_to_move == 0 as i32 {
-                    black_moves[score_sheet_row as usize] = curr_move
+                    black_moves___[score_sheet_row___ as usize] = curr_move
                 } else {
-                    if white_moves[score_sheet_row as usize] != -(1) {
-                        score_sheet_row += 1
+                    if white_moves___[score_sheet_row___ as usize] != -(1) {
+                        score_sheet_row___ += 1
                     }
-                    white_moves[score_sheet_row as usize] = curr_move
+                    white_moves___[score_sheet_row___ as usize] = curr_move
                 }
             } else {
                 if side_to_move == 0 {
-                    black_moves[score_sheet_row as usize] = -(1)
+                    black_moves___[score_sheet_row___ as usize] = -(1)
                 } else {
-                    white_moves[score_sheet_row as usize] = -(1)
+                    white_moves___[score_sheet_row___ as usize] = -(1)
                 }
                 if config.skill[side_to_move as usize] == 0 {
                     ZF::get_pass();
@@ -395,14 +395,14 @@ pub unsafe fn engine_play_game<
             let white_level = config.skill[2];
             ZF::report_skill_levels(black_level, white_level);
         }
-        if side_to_move == 0 as i32 { score_sheet_row += 1 }
-        Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
+        if side_to_move == 0 as i32 { score_sheet_row___ += 1 }
+        Dump::dump_game_score(side_to_move, score_sheet_row___, &black_moves___, &white_moves___);
         if echo != 0 && config.one_position_only == 0 {
             ZF::set_move_list(
-                          score_sheet_row);
+                score_sheet_row___);
             if use_thor_ {
                 let database_start = get_real_timer::<FE>();
-                Thor::database_search(&board, side_to_move);
+                Thor::database_search(&board___, side_to_move);
                 thor_position_count = Thor::get_match_count();
                 let database_stop = get_real_timer::<FE>();
                 let db_search_time = database_stop - database_start;
@@ -419,25 +419,25 @@ pub unsafe fn engine_play_game<
                 ZF::print_out_thor_matches(config.thor_max_games);
             }
             ZF::set_times(floor(config.player_time[0]) as _, floor(config.player_time[2]) as _);
-            ZF::display_board_after_thor(side_to_move, config.use_timer, &board,
-                                          &black_moves,
-                                         &white_moves,
+            ZF::display_board_after_thor(side_to_move, config.use_timer, &board___,
+                                         &black_moves___,
+                                         &white_moves___,
             );
         }
         adjust_counter(&mut search_state.total_nodes);
         let node_val = counter_value(&mut search_state.total_nodes);
         adjust_counter(&mut search_state.total_evaluations);
         let eval_val = counter_value(&mut search_state.total_evaluations);
-        let black_disc_count = disc_count(0, &board);
-        let white_disc_count = disc_count(2, &board);
+        let black_disc_count = disc_count(0, &board___);
+        let white_disc_count = disc_count(2, &board___);
         let total_time_ = search_state.total_time;
         ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
         if !log_file_name_.is_null() && config.one_position_only == 0 {
             ZF::log_game_ending(log_file_name_,
                                 &mut move_vec,
-                                disc_count(0, &board),
-                                disc_count(2, &board))
+                                disc_count(0, &board___),
+                                disc_count(2, &board___))
         }
         repeat -= 1;
         toggle_abort_check(0 as i32);
@@ -536,7 +536,7 @@ pub async unsafe fn engine_play_game_async<
             ZF::load_thor_files();
         }
         set_names_from_skills::<ZF>(config);
-        ZF::set_move_list(score_sheet_row);
+        ZF::set_move_list(score_sheet_row___);
         ZF::set_evals(0.0f64, 0.0f64);
         clear_moves();
         move_vec[0] = 0;
@@ -550,13 +550,13 @@ pub async unsafe fn engine_play_game_async<
             remove_coeffs(disks_played);
             generate_all(side_to_move);
             if side_to_move == 0 {
-                score_sheet_row += 1
+                score_sheet_row___ += 1
             }
             if move_count[disks_played as usize] != 0 {
                 let move_start = get_real_timer::<FE>();
                 clear_panic_abort();
                 if echo != 0 {
-                    ZF::set_move_list(score_sheet_row);
+                    ZF::set_move_list(score_sheet_row___);
                     ZF::set_times(floor(config.player_time[0]) as i32,
                               floor(config.player_time[2]) as i32);
                     let opening_name = find_opening_name();
@@ -565,7 +565,7 @@ pub async unsafe fn engine_play_game_async<
                     }
                     if use_thor_ {
                         let database_start = get_real_timer::<FE>();
-                        Thor::database_search(&board, side_to_move);
+                        Thor::database_search(&board___, side_to_move);
                         thor_position_count = Thor::get_match_count();
                         let database_stop = get_real_timer::<FE>();
                         let database_time = database_stop - database_start;
@@ -583,12 +583,12 @@ pub async unsafe fn engine_play_game_async<
                         ZF::print_out_thor_matches(config.thor_max_games);
                     }
                     ZF::display_board_after_thor(side_to_move, config.use_timer,
-                                                 &board, &black_moves, &white_moves);
+                                                 &board___, &black_moves___, &white_moves___);
                 }
-                Dump::dump_position(side_to_move, &board);
-                Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
+                Dump::dump_position(side_to_move, &board___);
+                Dump::dump_game_score(side_to_move, score_sheet_row___, &black_moves___, &white_moves___);
                 /* Check what the Thor opening statistics has to say */
-                Thor::choose_thor_opening_move(&board, side_to_move, echo);
+                Thor::choose_thor_opening_move(&board___, side_to_move, echo);
                 if echo != 0 && config.wait != 0 { ZF::dumpch(); }
                 if disks_played >= provided_move_count {
                     if config.skill[side_to_move as usize] == 0 as i32 {
@@ -649,18 +649,18 @@ pub async unsafe fn engine_play_game_async<
                 ZF::push_move(&mut move_vec, curr_move, disks_played);
                 make_move(side_to_move, curr_move, 1);
                 if side_to_move == 0 as i32 {
-                    black_moves[score_sheet_row as usize] = curr_move
+                    black_moves___[score_sheet_row___ as usize] = curr_move
                 } else {
-                    if white_moves[score_sheet_row as usize] != -(1) {
-                        score_sheet_row += 1
+                    if white_moves___[score_sheet_row___ as usize] != -(1) {
+                        score_sheet_row___ += 1
                     }
-                    white_moves[score_sheet_row as usize] = curr_move
+                    white_moves___[score_sheet_row___ as usize] = curr_move
                 }
             } else {
                 if side_to_move == 0 {
-                    black_moves[score_sheet_row as usize] = -(1)
+                    black_moves___[score_sheet_row___ as usize] = -(1)
                 } else {
-                    white_moves[score_sheet_row as usize] = -(1)
+                    white_moves___[score_sheet_row___ as usize] = -(1)
                 }
                 if config.skill[side_to_move as usize] == 0 {
                     get_move_cb(-1).await;
@@ -674,14 +674,14 @@ pub async unsafe fn engine_play_game_async<
             let white_level = config.skill[2];
             ZF::report_skill_levels(black_level, white_level);
         }
-        if side_to_move == 0 as i32 { score_sheet_row += 1 }
-        Dump::dump_game_score(side_to_move, score_sheet_row, &black_moves, &white_moves);
+        if side_to_move == 0 as i32 { score_sheet_row___ += 1 }
+        Dump::dump_game_score(side_to_move, score_sheet_row___, &black_moves___, &white_moves___);
         if echo != 0 && config.one_position_only == 0 {
             ZF::set_move_list(
-                          score_sheet_row);
+                score_sheet_row___);
             if use_thor_ {
                 let database_start = get_real_timer::<FE>();
-                Thor::database_search(&board, side_to_move);
+                Thor::database_search(&board___, side_to_move);
                 thor_position_count = Thor::get_match_count();
                 let database_stop = get_real_timer::<FE>();
                 let db_search_time = database_stop - database_start;
@@ -698,25 +698,25 @@ pub async unsafe fn engine_play_game_async<
                 ZF::print_out_thor_matches(config.thor_max_games);
             }
             ZF::set_times(floor(config.player_time[0]) as _, floor(config.player_time[2]) as _);
-            ZF::display_board_after_thor(side_to_move, config.use_timer, &board,
-                                         &black_moves,
-                                         &white_moves,
+            ZF::display_board_after_thor(side_to_move, config.use_timer, &board___,
+                                         &black_moves___,
+                                         &white_moves___,
             );
         }
         adjust_counter(&mut search_state.total_nodes);
         let node_val = counter_value(&mut search_state.total_nodes);
         adjust_counter(&mut search_state.total_evaluations);
         let eval_val = counter_value(&mut search_state.total_evaluations);
-        let black_disc_count = disc_count(0, &board);
-        let white_disc_count = disc_count(2, &board);
+        let black_disc_count = disc_count(0, &board___);
+        let white_disc_count = disc_count(2, &board___);
         let total_time_ = search_state.total_time;
         ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
         if !log_file_name_.is_null() && config.one_position_only == 0 {
             ZF::log_game_ending(log_file_name_,
                                 &mut move_vec,
-                                disc_count(0, &board),
-                                disc_count(2, &board))
+                                disc_count(0, &board___),
+                                disc_count(2, &board___))
         }
         repeat -= 1;
         toggle_abort_check(0 as i32);
@@ -732,6 +732,6 @@ pub async unsafe fn engine_play_game_async<
 }
 
 unsafe fn clear_moves() {
-    black_moves = [-1; 60];
-    white_moves = [-1; 60];
+    black_moves___ = [-1; 60];
+    white_moves___ = [-1; 60];
 }

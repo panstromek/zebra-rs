@@ -3,7 +3,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 #![register_tool(c2rust)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, main, register_tool)]
 
-use engine::src::globals::{score_sheet_row, white_moves, black_moves, board};
+use engine::src::globals::{score_sheet_row___, white_moves___, black_moves___, board___};
 use engine::src::moves::{make_move, disks_played, valid_move, generate_all, unmake_move};
 use engine::src::game::{toggle_human_openings};
 use engine::src::osfbook::{get_hash, find_opening_name};
@@ -112,20 +112,20 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         let mut val0: i32 = 0;
         let mut val1: i32 = 0;
         let mut orientation: i32 = 0;
-        set_move_list(black_moves.as_mut_ptr(), white_moves.as_mut_ptr(),
-                      score_sheet_row);
+        set_move_list(black_moves___.as_mut_ptr(), white_moves___.as_mut_ptr(),
+                      score_sheet_row___);
         opening_name = find_opening_name();
         if !opening_name.is_null() {
             printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8,
                    opening_name);
         }
         get_hash(&mut val0, &mut val1, &mut orientation);
-        display_board(stdout, &board, side_to_move,
+        display_board(stdout, &board___, side_to_move,
                       1 as i32, 0 as i32, 0 as i32,
                       current_row,
                       black_player, black_time, black_eval,
                       white_player, white_time, white_eval,
-                      &black_moves, &white_moves
+                      &black_moves___, &white_moves___
         );
         printf(b"Book hash: %d %d (%d)\n\n\x00" as *const u8 as
                    *const i8, val0, val1, orientation);
@@ -175,7 +175,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         i += 1
                     }
                     side_to_move = old_stm[disks_played as usize];
-                    score_sheet_row = row[disks_played as usize]
+                    score_sheet_row___ = row[disks_played as usize]
                 } else if command != 0 as i32 {
                     printf(b"Can\'t back up %d moves\n\n\x00" as *const u8 as
                                *const i8, command);
@@ -198,14 +198,14 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                             i32 <= '8' as i32 &&
                         valid_move(move_0, side_to_move) != 0 {
                         old_stm[disks_played as usize] = side_to_move;
-                        row[disks_played as usize] = score_sheet_row;
+                        row[disks_played as usize] = score_sheet_row___;
                         move_list[disks_played as usize] = move_0;
                         make_move(side_to_move, move_0, 1 as i32);
                         if side_to_move == 0 as i32 {
-                            score_sheet_row += 1;
-                            black_moves[score_sheet_row as usize] = move_0
+                            score_sheet_row___ += 1;
+                            black_moves___[score_sheet_row___ as usize] = move_0
                         } else {
-                            white_moves[score_sheet_row as usize] = move_0
+                            white_moves___[score_sheet_row___ as usize] = move_0
                         }
                         side_to_move =
                             0 as i32 + 2 as i32 - side_to_move
