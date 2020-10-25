@@ -1,4 +1,5 @@
 use regex::{Captures, Regex};
+use std::process::Command;
 
 fn main() {
     let filename = "../engine/src/globals.rs";
@@ -51,60 +52,73 @@ fn main() {
                                     &mut struct_declaration,
                                     true, global_name, true, &multi_comma);
     std::fs::write(filename, new_lines.join("\n")).unwrap();
+    let collector = Command::new("rg")
+        .arg((declarations.iter().map(|decl| {
+            return String::from("(") + decl.name + ")";
+        }).fold(String::from("\"(_______)"), |acc, name| {
+            acc + "|" + &name
+        }) + "\"").as_str())
+        .arg("../")
+        .arg("--files-with-matches")
+        .output()
+        .unwrap()
+        .stdout;
+    let rg_output = String::from_utf8(collector).unwrap();
+    let usages_file_paths = rg_output.lines();
     // TODO automate with "rg" and don't forget to remove the original file
     //  rg "(pv___)|(pv_depth___)|(board___)" --files-with-matches
-    let usages_file_paths: &[&'static str] = &[
-        "../scrzebra/src/scrzebra.rs",
-    "../engine/src/getcoeff.rs",
-    "../engine/src/end.rs",
-    "../engine/src/eval.rs",
-    "../engine/src/osfbook.rs",
-    "../engine/src/zebra.rs",
-    "../engine/src/globals.rs",
-    "../engine/src/midgame.rs",
-    "../engine/src/moves.rs",
-    "../engine/src/game.rs",
-    "../enddev/src/enddev.rs",
-    "../legacy-zebra/src/game.rs",
-    "../legacy-zebra/src/zebra.rs",
-    "../legacy-zebra/src/osfbook.rs",
-    "../practice/src/practice.rs",
-    "../engine/src/search.rs",
-
+    // let usages_file_paths: &[&'static str] = &[
+    //     "../scrzebra/src/scrzebra.rs",
+    // "../engine/src/getcoeff.rs",
+    // "../engine/src/end.rs",
+    // "../engine/src/eval.rs",
+    // "../engine/src/osfbook.rs",
+    // "../engine/src/zebra.rs",
+    // "../engine/src/globals.rs",
+    // "../engine/src/midgame.rs",
+    // "../engine/src/moves.rs",
+    // "../engine/src/game.rs",
+    // "../enddev/src/enddev.rs",
+    // "../legacy-zebra/src/game.rs",
     // "../legacy-zebra/src/zebra.rs",
-        // "../legacy-zebra/src/display.rs",
-        // "../legacy-zebra/src/error.rs",
-        // "../legacy-zebra/src/game.rs",
-        // "../legacy-zebra/src/getcoeff.rs",
-        // "../legacy-zebra/src/learn.rs",
-        // "../legacy-zebra/src/main.rs",
-        // "../legacy-zebra/src/osfbook.rs",
-        // "../legacy-zebra/src/safemem.rs",
-        // "../legacy-zebra/src/thordb.rs",
-        // "../engine/src/cntflip.rs",
-        // "../engine/src/counter.rs",
-        // "../engine/src/end.rs",
-        // "../engine/src/error.rs",
-        // "../engine/src/eval.rs",
-        // // "../engine/src/game.rs",
-        // "../engine/src/getcoeff.rs",
-        // "../engine/src/globals.rs",
-        // "../engine/src/hash.rs",
-        // "../engine/src/learn.rs",
-        // "../engine/src/midgame.rs",
-        // "../engine/src/moves.rs",
-        // "../engine/src/myrandom.rs",
-        // "../engine/src/opname.rs",
-        // "../engine/src/osfbook.rs",
-        // "../engine/src/probcut.rs",
-        // "../engine/src/search.rs",
-        // "../engine/src/stable.rs",
-        // "../engine/src/stubs.rs",
-        // "../engine/src/thordb.rs",
-        // "../engine/src/timer.rs",
-        // "../engine/src/zebra.rs",
-    ];
-    for usages_file_path in usages_file_paths.iter() {
+    // "../legacy-zebra/src/osfbook.rs",
+    // "../practice/src/practice.rs",
+    // "../engine/src/search.rs",
+    //
+    // // "../legacy-zebra/src/zebra.rs",
+    //     // "../legacy-zebra/src/display.rs",
+    //     // "../legacy-zebra/src/error.rs",
+    //     // "../legacy-zebra/src/game.rs",
+    //     // "../legacy-zebra/src/getcoeff.rs",
+    //     // "../legacy-zebra/src/learn.rs",
+    //     // "../legacy-zebra/src/main.rs",
+    //     // "../legacy-zebra/src/osfbook.rs",
+    //     // "../legacy-zebra/src/safemem.rs",
+    //     // "../legacy-zebra/src/thordb.rs",
+    //     // "../engine/src/cntflip.rs",
+    //     // "../engine/src/counter.rs",
+    //     // "../engine/src/end.rs",
+    //     // "../engine/src/error.rs",
+    //     // "../engine/src/eval.rs",
+    //     // // "../engine/src/game.rs",
+    //     // "../engine/src/getcoeff.rs",
+    //     // "../engine/src/globals.rs",
+    //     // "../engine/src/hash.rs",
+    //     // "../engine/src/learn.rs",
+    //     // "../engine/src/midgame.rs",
+    //     // "../engine/src/moves.rs",
+    //     // "../engine/src/myrandom.rs",
+    //     // "../engine/src/opname.rs",
+    //     // "../engine/src/osfbook.rs",
+    //     // "../engine/src/probcut.rs",
+    //     // "../engine/src/search.rs",
+    //     // "../engine/src/stable.rs",
+    //     // "../engine/src/stubs.rs",
+    //     // "../engine/src/thordb.rs",
+    //     // "../engine/src/timer.rs",
+    //     // "../engine/src/zebra.rs",
+    // ];
+    for usages_file_path in usages_file_paths {
         let file = std::fs::read_to_string(usages_file_path).unwrap();
         let new_lines = replace_in_file(&file, &declaration, &replacer,
                                         &mut struct_declaration,
