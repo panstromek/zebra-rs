@@ -18,6 +18,7 @@ use crate::src::hash::add_hash;
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, LOST_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
+use crate::src::myrandom::{random_instance, MyRandom};
 
 
 #[derive(Copy, Clone)]
@@ -186,21 +187,22 @@ pub unsafe fn setup_midgame() {
     midgame_state.allow_midgame_hash_probe = 1;
     midgame_state.allow_midgame_hash_update = 1;
     midgame_state.stage_reached = [0; 62];
-    calculate_perturbation();
+    calculate_perturbation(&mut midgame_state, &mut random_instance);
 }
 /*
   CALCULATE_PERTURBATION
   Determines the score perturbations (if any) to the root moves.
 */
 
-pub unsafe fn calculate_perturbation() {
-    if midgame_state.apply_perturbation == 0 || midgame_state.perturbation_amplitude == 0 {
-        midgame_state.score_perturbation = [0; 100];
+pub fn calculate_perturbation(state: &mut MidgameState, random: &mut MyRandom) {
+    let random = random;
+    if state.apply_perturbation == 0 || state.perturbation_amplitude == 0 {
+        state.score_perturbation = [0; 100];
     } else {
-        let shift = midgame_state.perturbation_amplitude / 2;
+        let shift = state.perturbation_amplitude / 2;
         let mut i = 0;
         while i < 100 as i32 {
-            midgame_state.score_perturbation[i as usize] = abs(my_random() as i32) % midgame_state.perturbation_amplitude - shift;
+            state.score_perturbation[i as usize] = abs(random.my_random() as i32) % state.perturbation_amplitude - shift;
             i += 1
         }
     };
