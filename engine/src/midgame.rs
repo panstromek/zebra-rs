@@ -183,11 +183,11 @@ pub unsafe fn static_or_terminal_evaluation<FE : FrontEnd>(side_to_move:
    Sets up some search parameters.
 */
 
-pub unsafe fn setup_midgame() {
-    midgame_state.allow_midgame_hash_probe = 1;
-    midgame_state.allow_midgame_hash_update = 1;
-    midgame_state.stage_reached = [0; 62];
-    calculate_perturbation(&mut midgame_state, &mut random_instance);
+pub fn setup_midgame(state: &mut MidgameState, random: &mut MyRandom) {
+    state.allow_midgame_hash_probe = 1;
+    state.allow_midgame_hash_update = 1;
+    state.stage_reached = [0; 62];
+    calculate_perturbation(state, random);
 }
 /*
   CALCULATE_PERTURBATION
@@ -201,7 +201,7 @@ pub fn calculate_perturbation(state: &mut MidgameState, random: &mut MyRandom) {
     } else {
         let shift = state.perturbation_amplitude / 2;
         let mut i = 0;
-        while i < 100 as i32 {
+        while i < state.score_perturbation.len()  {
             state.score_perturbation[i as usize] = abs(random.my_random() as i32) % state.perturbation_amplitude - shift;
             i += 1
         }

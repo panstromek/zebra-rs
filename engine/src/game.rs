@@ -125,7 +125,7 @@ pub unsafe fn global_terminate() {
 
 pub unsafe fn engine_game_init() {
     setup_search();
-    setup_midgame();
+    setup_midgame(&mut midgame_state, &mut random_instance);
     setup_end();
     clear_ponder_times();
     reset_counter(&mut search_state.total_nodes);
