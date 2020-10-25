@@ -2,12 +2,12 @@ use regex::{Captures, Regex};
 use std::process::{Command};
 
 fn main() {
-    let filename = "../engine/src/getcoeff.rs";
-    let struct_name = "CoeffState";
-    let global_name = "coeff_state";
+    let filename = "../engine/src/game.rs";
+    let struct_name = "GameState";
+    let global_name = "game_state";
 
     let file = std::fs::read_to_string(filename).unwrap();
-    let declaration = regex::Regex::new(
+    let declaration = Regex::new(
         r#"static\s+mut\s+([\w_]+):(.*?\s*?)=(.*?);\s*$"#).unwrap();
     #[derive(Debug)]
     struct Declaration<'a> {
@@ -35,7 +35,7 @@ fn main() {
     let needle = "(\\b)(".to_string() +
         &declarations.iter().map(|decl| decl.name).collect::<Vec<_>>().join("|") +
         ")(\\b)";
-    let replacer = regex::Regex::new(&needle).unwrap();
+    let replacer = Regex::new(&needle).unwrap();
     let mut struct_declaration = declarations
         .iter()
         .fold((format!("pub struct {} {{", struct_name),
@@ -48,7 +48,7 @@ fn main() {
     struct_declaration.0 += "\n}\n";
     struct_declaration.1 += "\n};\n";
 
-    let multi_comma = regex::Regex::new(r#",(?:\s+,)+"#).unwrap();
+    let multi_comma = Regex::new(r#",(?:\s+,)+"#).unwrap();
 
     let collector = Command::new("sh")
         .arg("-c")
