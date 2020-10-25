@@ -2,15 +2,8 @@ use crate::src::stubs::{fabs};
 use crate::src::error::FrontEnd;
 
 pub type time_t = i64;
-/* Global variables */
 
-pub static mut last_panic_check: f64 = 0.;
-
-pub static mut ponder_depth: [i32; 100] = [0; 100];
-
-pub static mut frozen_ponder_depth: i32 = 0;
-
-struct Timer {
+pub struct Timer {
     frozen_ponder_time: f64,
     panic_value: f64,
     time_per_move: f64,
@@ -21,10 +14,13 @@ struct Timer {
     do_check_abort: i32,
     init_time: time_t,
     current_ponder_depth: i32,
-    current_ponder_time: f64
+    current_ponder_time: f64,
+    pub last_panic_check: f64 ,
+    pub ponder_depth: [i32; 100] ,
+    pub frozen_ponder_depth: i32 ,
 }
 
-static mut timer: Timer = Timer {
+pub static mut timer: Timer = Timer {
     frozen_ponder_time: 0.,
     panic_value: 0.,
     time_per_move: 0.,
@@ -35,7 +31,10 @@ static mut timer: Timer = Timer {
     do_check_abort: 1,
     init_time: 0,
     current_ponder_depth: 0,
-    current_ponder_time: 0.
+    current_ponder_time: 0.,
+    last_panic_check: 0.,
+    ponder_depth: [0; 100],
+    frozen_ponder_depth: 0,
 };
 
 /*
@@ -70,7 +69,7 @@ pub unsafe fn determine_move_time(time_left: f64,
     let mut time_available: f64 = 0.;
     let mut moves_left: i32 = 0;
    timer.frozen_ponder_time = timer.current_ponder_time;
-    frozen_ponder_depth = timer.current_ponder_depth;
+    timer.frozen_ponder_depth = timer.current_ponder_depth;
     moves_left =
         if (65 as i32 - discs) / 2 as i32 - 5 as i32 >
             2 as i32 {
@@ -131,7 +130,7 @@ pub unsafe fn clear_ponder_times() {
     i = 0;
     while i < 100 as i32 {
         timer.ponder_time[i as usize] = 0.0f64;
-        ponder_depth[i as usize] = 0;
+        timer.ponder_depth[i as usize] = 0;
         i += 1
     }
     timer.current_ponder_time = 0.0f64;
