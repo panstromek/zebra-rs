@@ -6,7 +6,7 @@ use crate::{
         hash::{find_hash, HashEntry, hash_state, add_hash_extended},
         globals::board_state,
         eval::terminal_evaluation,
-        probcut::mpc_cut,
+        probcut::mpc_cut___,
         myrandom::my_random,
         zebra::{EvaluationType}
     }
@@ -315,7 +315,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             draft: 0,
             selectivity: 0,
             flags: 0,};
-    let mpc_cut_ = &mpc_cut;
+    let mpc_cut_ = &mpc_cut___;
     if level >= max_depth {
         search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
         return static_or_terminal_evaluation::<FE>(side_to_move)
