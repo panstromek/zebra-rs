@@ -12,9 +12,15 @@
 
 use engine_traits::Offset;
 
-pub static mut global_flip_stack: [usize; 2048] = [0; 2048];
+pub struct FlipStack {
+    pub global_flip_stack: [usize; 2048],
+    pub flip_stack: usize,
+}
 
-pub static mut flip_stack: usize = 0;
+pub static mut flip_stack_: FlipStack = FlipStack {
+    global_flip_stack: [0; 2048],
+    flip_stack: 0,
+};
 /*
    File:          unflip.h
 
@@ -40,15 +46,15 @@ pub unsafe fn UndoFlips(board: &mut [i32; 128], flip_count: i32, oppcol: i32) {
     let UndoFlips__oppcol = oppcol;
     if UndoFlips__flip_count & 1 as i32 != 0 {
         UndoFlips__flip_count -= 1;
-        flip_stack = flip_stack -1;
-        board[global_flip_stack[flip_stack]] = UndoFlips__oppcol
+        flip_stack_.flip_stack = flip_stack_.flip_stack -1;
+        board[flip_stack_.global_flip_stack[flip_stack_.flip_stack]] = UndoFlips__oppcol
     }
     while UndoFlips__flip_count != 0 {
         UndoFlips__flip_count -= 2 as i32;
-        flip_stack = flip_stack - 1;
-        board[global_flip_stack[flip_stack]] = UndoFlips__oppcol;
-        flip_stack = flip_stack - 1;
-        board[global_flip_stack[flip_stack]] = UndoFlips__oppcol
+        flip_stack_.flip_stack = flip_stack_.flip_stack - 1;
+        board[flip_stack_.global_flip_stack[flip_stack_.flip_stack]] = UndoFlips__oppcol;
+        flip_stack_.flip_stack = flip_stack_.flip_stack - 1;
+        board[flip_stack_.global_flip_stack[flip_stack_.flip_stack]] = UndoFlips__oppcol
     };
 }
 /*
@@ -57,5 +63,5 @@ pub unsafe fn UndoFlips(board: &mut [i32; 128], flip_count: i32, oppcol: i32) {
 */
 
 pub unsafe fn init_flip_stack() {
-    flip_stack = 0;
+    flip_stack_.flip_stack = 0;
 }
