@@ -27,7 +27,7 @@ use crate::src::zebra::EvaluationType;
 use crate::src::globals::Board;
 use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_EVAL};
 use crate::src::zebra::EvalResult::{WON_POSITION, DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION};
-use crate::src::moves::{moves_state, hash_update1, hash_update2};
+use crate::src::moves::{moves_state};
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -1334,11 +1334,9 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
     /* Try move with highest goodness value */
     sq = move_order[best_index as usize];
     let (_, hash_update1_, hash_update2_) = DoFlips_hash(sq, color, &mut board_state.board, &mut hash_state.hash_flip1, &mut hash_state.hash_flip2);
-    hash_update1 = hash_update1_;
-    hash_update2 = hash_update2_;
     board_state.board[sq as usize] = color;
-    diff1 = hash_update1 ^ hash_state.hash_put_value1[color as usize][sq as usize];
-    diff2 = hash_update2 ^ hash_state.hash_put_value2[color as usize][sq as usize];
+    diff1 = hash_update1_ ^ hash_state.hash_put_value1[color as usize][sq as usize];
+    diff2 = hash_update2_ ^ hash_state.hash_put_value2[color as usize][sq as usize];
     hash_state.hash1 ^= diff1;
     hash_state.hash2 ^= diff2;
     end.region_parity ^= quadrant_mask[sq as usize];
@@ -1402,11 +1400,9 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
         new_opp_bits.low = opp_bits.low & !bb_flips_.low;
         let (_, hash_update1_, hash_update2_) = DoFlips_hash(
             sq, color, &mut board_state.board, &mut hash_state.hash_flip1, &mut hash_state.hash_flip2);
-        hash_update1 = hash_update1_;
-        hash_update2 = hash_update2_;
         board_state.board[sq as usize] = color;
-        diff1 = hash_update1 ^ hash_state.hash_put_value1[color as usize][sq as usize];
-        diff2 = hash_update2 ^ hash_state.hash_put_value2[color as usize][sq as usize];
+        diff1 = hash_update1_ ^ hash_state.hash_put_value1[color as usize][sq as usize];
+        diff2 = hash_update2_ ^ hash_state.hash_put_value2[color as usize][sq as usize];
         hash_state.hash1 ^= diff1;
         hash_state.hash2 ^= diff2;
         end.region_parity ^= quadrant_mask[sq as usize];

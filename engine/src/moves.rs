@@ -28,9 +28,6 @@ pub struct MovesState {
     sweep_status: [i32; 64],
 }
 
-pub static mut hash_update1: u32 = 0;
-pub static mut hash_update2: u32 = 0;
-
 pub static mut moves_state: MovesState = MovesState {
     disks_played: 0,
     move_count: [0; 64],
@@ -141,15 +138,13 @@ pub unsafe fn make_move(side_to_move: i32,
         let (flipped_, hash_update1_, hash_update2_) = DoFlips_hash(
             move_0, side_to_move, &mut board_state.board,
             &mut hash_state.hash_flip1, &mut hash_state.hash_flip2);
-        hash_update1 = hash_update1_;
-        hash_update2 = hash_update2_;
         flipped = flipped_;
         if flipped == 0 as i32 { return 0 as i32 }
         diff1 =
-            hash_update1 ^
+            hash_update1_ ^
                 hash_state.hash_put_value1[side_to_move as usize][move_0 as usize];
         diff2 =
-            hash_update2 ^
+            hash_update2_ ^
                 hash_state.hash_put_value2[side_to_move as usize][move_0 as usize];
         hash_state.hash_stored1[moves_state.disks_played as usize] = hash_state.hash1;
         hash_state.hash_stored2[moves_state.disks_played as usize] = hash_state.hash2;
