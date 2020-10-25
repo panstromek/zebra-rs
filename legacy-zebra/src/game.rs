@@ -16,7 +16,7 @@ use engine::src::getcoeff::pattern_evaluation;
 use engine::src::myrandom::my_random;
 use engine::src::stubs::abs;
 use engine::src::osfbook::{get_book_move, get_candidate, get_candidate_count, fill_move_alternatives};
-use engine::src::game::{use_log_file, ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, evaluated_list, game_evaluated_count, max_depth_reached, prefix_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, PonderMoveReport};
+use engine::src::game::{use_log_file, ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, game_evaluated_count, max_depth_reached, prefix_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, PonderMoveReport};
 use std::ffi::CStr;
 use crate::src::thordb::LegacyThor;
 use engine::src::zebra::EvalResult::{UNSOLVED_POSITION, WON_POSITION, LOST_POSITION, DRAWN_POSITION};
@@ -24,6 +24,27 @@ use engine::src::zebra::EvalType::{UNDEFINED_EVAL, EXACT_EVAL, PASS_EVAL, MIDGAM
 use crate::src::zebra::g_config;
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
+
+pub static mut evaluated_list: [EvaluatedMove; 60] = [EvaluatedMove {
+    eval: EvaluationType {
+        type_0: MIDGAME_EVAL,
+        res: WON_POSITION,
+        score: 0,
+        confidence: 0.,
+        search_depth: 0,
+        is_book: 0,
+    },
+    side_to_move: 0,
+    move_0: 0,
+    pv_depth: 0,
+    pv: [0; 60],
+}; 60];
+
+pub unsafe fn get_evaluated(index: i32)
+                            -> EvaluatedMove {
+    return evaluated_list[index as usize];
+}
+
 /*
    GLOBAL_SETUP
    Initialize the different sub-systems.

@@ -66,18 +66,6 @@ pub static mut game_evaluated_count: i32 = 0;
 static mut komi: i32 = 0;
 pub static mut prefix_move: i32 = 0;
 static mut endgame_performed: [i32; 3] = [0; 3];
-pub static mut evaluated_list: [EvaluatedMove; 60] =
-    [EvaluatedMove{eval:
-    EvaluationType{type_0: MIDGAME_EVAL,
-        res: WON_POSITION,
-        score: 0,
-        confidence: 0.,
-        search_depth: 0,
-        is_book: 0,},
-        side_to_move: 0,
-        move_0: 0,
-        pv_depth: 0,
-        pv: [0; 60],}; 60];
 /*
   TOGGLE_STATUS_LOG
   Enable/disable the use of logging all the output that the
@@ -135,10 +123,6 @@ pub unsafe fn get_evaluated_count() -> i32 {
     return game_evaluated_count;
 }
 
-pub unsafe fn get_evaluated(index: i32)
-                            -> EvaluatedMove {
-    return evaluated_list[index as usize];
-}
 /*
   GET_SEARCH_STATISTICS
   Returns some statistics about the last search made.

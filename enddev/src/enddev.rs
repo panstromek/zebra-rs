@@ -5,13 +5,13 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 use engine::src::moves::{disks_played, make_move, valid_move, move_count, generate_all};
 use engine::src::globals::{board, white_moves, black_moves};
 use engine::src::myrandom::my_random;
-use engine::src::game::{get_evaluated_count, get_evaluated, EvaluatedMove};
+use engine::src::game::{get_evaluated_count, EvaluatedMove};
 use engine::src::zebra::{EvaluationType};
 use engine::src::timer::start_move;
 use engine::src::hash::{setup_hash, hash_state, determine_hash_values};
 use engine::src::search::disc_count;
 use legacy_zebra::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
-use legacy_zebra::src::game::{extended_compute_move, compute_move, game_init, global_setup};
+use legacy_zebra::src::game::{extended_compute_move, compute_move, game_init, global_setup, get_evaluated};
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
