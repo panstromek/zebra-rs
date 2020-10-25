@@ -150,7 +150,7 @@ pub trait ZebraFrontend {
     fn set_times(black: i32, white: i32);
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
     fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64);
-    fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
+    fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: & crate::src::globals::Board,
                                 black_moves_: &[i32; 60], white_moves_: &[i32; 60]);
     fn print_out_thor_matches(thor_max_games_: i32);
     unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32);
@@ -171,7 +171,7 @@ pub trait ZebraFrontend {
 }
 /* File handling procedures */
 pub trait DumpHandler {
-    fn dump_position(side_to_move: i32, board_: &[i32; 128]);
+    fn dump_position(side_to_move: i32, board_: & crate::src::globals::Board);
     fn dump_game_score(side_to_move: i32, score_sheet_row_: i32, black_moves_: &[i32; 60], white_moves_: &[i32; 60]);
 }
 

@@ -1,7 +1,7 @@
 use crate::src::zebra::EvaluationType;
 use crate::src::counter::{adjust_counter, counter_value, reset_counter, add_counter};
 use crate::src::search::{nodes, total_time, total_evaluations, total_nodes, setup_search, disc_count, complete_pv, get_ponder_move, evaluations, set_current_eval, create_eval_info, root_eval, force_return, clear_pv, evals, clear_ponder_move, set_ponder_move, float_move, sort_moves};
-use crate::src::globals::{pv_depth, pv, board, score_sheet_row, black_moves, piece_count};
+use crate::src::globals::{pv_depth, pv, board, score_sheet_row, black_moves, piece_count, Board};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, init_memory_handler, CoeffAdjustments, remove_coeffs, set};
 use crate::src::hash::{free_hash, init_hash, find_hash, HashEntry, hash_state, determine_hash_values};
@@ -204,7 +204,7 @@ pub unsafe fn engine_game_init() {
     endgame_performed[0] = endgame_performed[2];
 }
 
-pub const fn create_fresh_board() -> [i32; 128] {
+pub const fn create_fresh_board() -> Board {
     let mut board_ = [0; 128];
     let mut i = 0;
     while i < 10 {
@@ -932,7 +932,7 @@ pub trait ComputeMoveLogger {
     fn log_status(logger: &mut Self);
     fn log_optimal_line(logger: &mut Self);
     fn close_logger(logger: &mut Self);
-    fn log_board(logger: &mut Self, board_: &[i32; 128], side_to_move_: i32);
+    fn log_board(logger: &mut Self, board_: & crate::src::globals::Board, side_to_move_: i32);
     fn create(log_file_path_: &mut [i8]) -> Option<Self> where Self:Sized;
     fn create_log_file_if_needed() -> Option<Self> where Self:Sized;
 }
