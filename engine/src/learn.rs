@@ -1,8 +1,15 @@
+pub struct LearnState {
+    pub learn_depth: i32,
+    pub cutoff_empty: i32,
+    pub game_move: [i16; 61],
+}
 
+pub static mut learn_state: LearnState = LearnState {
+    learn_depth: 0,
+    cutoff_empty: 0,
+    game_move: [0; 61],
+};
 
-pub static mut learn_depth: i32 = 0;
-pub static mut cutoff_empty: i32 = 0;
-pub static mut game_move: [i16; 61] = [0; 61];
 /*
    File:          learn.h
 
@@ -23,7 +30,7 @@ pub unsafe fn clear_stored_game() {
     let mut i: i32 = 0;
     i = 0;
     while i <= 60 as i32 {
-        game_move[i as usize] = -(1 as i32) as i16;
+        learn_state.game_move[i as usize] = -(1 as i32) as i16;
         i += 1
     };
 }
@@ -35,7 +42,7 @@ pub unsafe fn clear_stored_game() {
 
 pub unsafe fn store_move(disks_played_0: i32,
                          move_0: i32) {
-    game_move[disks_played_0 as usize] = move_0 as i16;
+    learn_state.game_move[disks_played_0 as usize] = move_0 as i16;
 }
 /*
    SET_LEARNING_PARAMETERS
@@ -45,8 +52,8 @@ pub unsafe fn store_move(disks_played_0: i32,
 
 pub unsafe fn set_learning_parameters(depth: i32,
                                       cutoff: i32) {
-    learn_depth = depth;
-    cutoff_empty = cutoff;
+    learn_state.learn_depth = depth;
+    learn_state.cutoff_empty = cutoff;
 }
 
 /*
@@ -63,15 +70,15 @@ pub unsafe fn game_learnable(finished: i32,
     let mut moves_available: i32 = 0;
     moves_available = 1;
     i = 0;
-    while i < move_count_0 && i < 60 as i32 - cutoff_empty {
-        if game_move[i as usize] as i32 == -(1 as i32) {
+    while i < move_count_0 && i < 60 as i32 - learn_state.cutoff_empty {
+        if learn_state.game_move[i as usize] as i32 == -(1 as i32) {
             moves_available = 0 as i32
         }
         i += 1
     }
     return (moves_available != 0 &&
         (finished != 0 ||
-            move_count_0 >= 60 as i32 - cutoff_empty)) as
+            move_count_0 >= 60 as i32 - learn_state.cutoff_empty)) as
         i32;
 }
 
