@@ -1,6 +1,6 @@
 use crate::{
     src::{
-        search::{get_ponder_move, create_eval_info, root_eval, disc_count, nodes},
+        search::{get_ponder_move, create_eval_info, disc_count},
         moves::{unmake_move, make_move, generate_specific, disks_played, move_list, move_count, generate_all, unmake_move_no_hash, make_move_no_hash},
         opname::opening_list,
         hash::{clear_hash_drafts},
@@ -1199,4 +1199,3 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     }
     return book.candidate_list[chosen_index as usize].move_0;
 }
-

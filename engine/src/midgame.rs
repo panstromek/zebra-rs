@@ -1,6 +1,6 @@
 use crate::{
     src::{
-        search::{root_eval, force_return, hash_expand_pv, get_ponder_move, nodes, create_eval_info, inherit_move_lists, disc_count, evaluations, evals, sorted_move_order, reorder_move_list},
+        search::{search_state, force_return, hash_expand_pv, get_ponder_move, create_eval_info, inherit_move_lists, disc_count, reorder_move_list},
         counter::{counter_value, adjust_counter},
         moves::{valid_move, disks_played, unmake_move, make_move, move_list, move_count, generate_all, unmake_move_no_hash, make_move_no_hash},
         hash::{find_hash, HashEntry, hash_state, add_hash_extended},
@@ -18,7 +18,6 @@ use crate::src::hash::add_hash;
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, LOST_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
-use crate::src::search::list_inherited;
 
 
 #[derive(Copy, Clone)]
@@ -131,11 +130,11 @@ pub unsafe fn toggle_perturbation_usage(toggle: i32) {
 pub unsafe fn advance_move(index: i32) {
     let mut temp_move: i32 = 0;
     if index > 0 as i32 {
-        temp_move = sorted_move_order[disks_played as usize][index as usize];
-        sorted_move_order[disks_played as usize][index as usize] =
-            sorted_move_order[disks_played as
+        temp_move = search_state.sorted_move_order[disks_played as usize][index as usize];
+        search_state.sorted_move_order[disks_played as usize][index as usize] =
+            search_state.sorted_move_order[disks_played as
                 usize][(index - 1 as i32) as usize];
-        sorted_move_order[disks_played as
+        search_state.sorted_move_order[disks_played as
             usize][(index - 1 as i32) as usize] =
             temp_move
     };
@@ -173,7 +172,7 @@ pub unsafe fn static_or_terminal_evaluation<FE : FrontEnd>(side_to_move:
     if disks_played == 60 as i32 {
         return terminal_evaluation(side_to_move)
     } else {
-        evaluations.lo = evaluations.lo.wrapping_add(1);
+        search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
         return pattern_evaluation::<FE>(side_to_move)
     };
 }
@@ -229,10 +228,10 @@ pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32
     best_move_unrestricted = 0;
     i = 0;
     while i < move_count[disks_played as usize] {
-        nodes.lo = nodes.lo.wrapping_add(1);
+        search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
         move_0 = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, move_0, 1 as i32);
-        evaluations.lo = evaluations.lo.wrapping_add(1);
+        search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
         depth_one_score =
             -pattern_evaluation::<FE>(0 as i32 + 2 as i32 -
                 side_to_move);
@@ -318,7 +317,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             flags: 0,};
     let mpc_cut_ = &mpc_cut;
     if level >= max_depth {
-        nodes.lo = nodes.lo.wrapping_add(1);
+        search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
         return static_or_terminal_evaluation::<FE>(side_to_move)
     }
     remains = max_depth - level;
@@ -330,7 +329,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         pv[level as usize][level as usize] = midgame_state.best_mid_move;
         return curr_val
     }
-    nodes.lo = nodes.lo.wrapping_add(1);
+    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     /* Check the hash table */
     use_hash =
         (remains >= 2 as i32 && 1 as i32 != 0 &&
@@ -389,7 +388,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                     if cut == 0 as i32 {
                         /* Use static eval to decide if a one- or two-sided
                        MPC test is to be performed. */
-                        evaluations.lo = evaluations.lo.wrapping_add(1);
+                        search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
                         let static_eval =
                             pattern_evaluation::<FE>(side_to_move);
                         if static_eval <= alpha_bound {
@@ -487,7 +486,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                     move_index = 0;
                     while move_index < 60 as i32 {
                         move_0 =
-                            sorted_move_order[disks_played as
+                            search_state.sorted_move_order[disks_played as
                                 usize][move_index as usize];
                         if board[move_0 as usize] == 1 as i32 {
                             if make_move_no_hash(side_to_move, move_0) !=
@@ -501,7 +500,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                         -
                                         side_to_move);
                                 unmake_move_no_hash(side_to_move, move_0);
-                                nodes.lo = nodes.lo.wrapping_add(1);
+                                search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
                                 if curr_val > best {
                                     best = curr_val;
                                     if best >= beta_bound {
@@ -519,11 +518,11 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                         return beta
                                     }
                                 }
-                                evals[disks_played as usize][move_0 as usize]
+                                search_state.evals[disks_played as usize][move_0 as usize]
                                     = curr_val;
                                 if move_0 == hash_move {
                                     /* Always try hash table move first */
-                                    evals[disks_played as
+                                    search_state.evals[disks_played as
                                         usize][move_0 as usize] +=
                                         10000 as i32
                                 }
@@ -592,7 +591,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         if pre_search_done == 0 && best_list_index < best_list_length {
             move_count[disks_played as usize] += 1;
             move_index = 0;
-            while sorted_move_order[disks_played as
+            while search_state.sorted_move_order[disks_played as
                 usize][move_index as usize] !=
                 best_list[best_list_index as usize] {
                 move_index += 1
@@ -609,7 +608,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                 while move_index < 60 as i32 {
                     let mut already_checked: i32 = 0;
                     move_0 =
-                        sorted_move_order[disks_played as
+                        search_state.sorted_move_order[disks_played as
                             usize][move_index as usize];
                     already_checked = 0;
                     j = 0;
@@ -639,7 +638,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                     pre_best
                                 } else { curr_val };
                             unmake_move(side_to_move, move_0);
-                            evals[disks_played as usize][move_0 as usize] =
+                            search_state.evals[disks_played as usize][move_0 as usize] =
                                 curr_val;
                             midgame_state.feas_index_list[disks_played as
                                 usize][move_count[disks_played
@@ -659,8 +658,8 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             if i == move_count[disks_played as usize] { break ; }
             best_index = i;
             best_score =
-                evals[disks_played as
-                    usize][sorted_move_order[disks_played as
+                search_state.evals[disks_played as
+                    usize][search_state.sorted_move_order[disks_played as
                     usize][midgame_state.feas_index_list[disks_played
                     as
                     usize][i
@@ -672,17 +671,17 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             while j < move_count[disks_played as usize] {
                 let mut cand_move: i32 = 0;
                 cand_move =
-                    sorted_move_order[disks_played as
+                    search_state.sorted_move_order[disks_played as
                         usize][midgame_state.feas_index_list[disks_played
                         as
                         usize][j
                         as
                         usize]
                         as usize];
-                if evals[disks_played as usize][cand_move as usize] >
+                if search_state.evals[disks_played as usize][cand_move as usize] >
                     best_score {
                     best_score =
-                        evals[disks_played as usize][cand_move as usize];
+                        search_state.evals[disks_played as usize][cand_move as usize];
                     best_index = j
                 }
                 j += 1
@@ -693,12 +692,12 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                 midgame_state.feas_index_list[disks_played as usize][i as usize]
         }
         move_0 =
-            sorted_move_order[disks_played as usize][move_index as usize];
+            search_state.sorted_move_order[disks_played as usize][move_index as usize];
         midgame_state.counter_phase = midgame_state.counter_phase + 1 as i32 & 63 as i32;
         if midgame_state.counter_phase == 0 as i32 {
             let mut node_val: f64 = 0.;
-            adjust_counter(&mut nodes);
-            node_val = counter_value(&mut nodes);
+            adjust_counter(&mut search_state.nodes);
+            node_val = counter_value(&mut search_state.nodes);
             if node_val - last_panic_check >=
                 100000 as i32 as f64 {
                 /* Time abort? */
@@ -753,7 +752,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         if is_panic_abort() != 0 || force_return != 0 {
             return -(27000 as i32)
         }
-        evals[disks_played as usize][move_0 as usize] = curr_val;
+        search_state.evals[disks_played as usize][move_0 as usize] = curr_val;
         if update_pv != 0 {
             midgame_c__update_best_list(&mut best_list, move_0,
                                         best_list_index, best_list_length);
@@ -849,7 +848,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
             draft: 0,
             selectivity: 0,
             flags: 0,};
-    nodes.lo = nodes.lo.wrapping_add(1);
+    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     if level >= max_depth {
         return static_or_terminal_evaluation::<FE>(side_to_move)
     }
@@ -875,8 +874,8 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
         }
     }
     /* Reorder the move lists now and then to keep the empty squares up front */
-    if nodes.lo & 4095 as i32 as u32 == 0 as i32 as u32 {
-        reorder_move_list(&board, &mut sorted_move_order[disks_played as usize]);
+    if search_state.nodes.lo & 4095 as i32 as u32 == 0 as i32 as u32 {
+        reorder_move_list(&board, &mut search_state.sorted_move_order[disks_played as usize]);
     }
     /* Search */
     first = 1;
@@ -889,7 +888,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
         move_index = 0;
         while move_index < 60 as i32 {
             move_0 =
-                sorted_move_order[disks_played as usize][move_index as usize];
+                search_state.sorted_move_order[disks_played as usize][move_index as usize];
             if board[move_0 as usize] == 1 as i32 {
                 if make_move_no_hash(side_to_move, move_0) != 0 as i32
                 {
@@ -898,7 +897,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
                             2 as i32 -
                             side_to_move);
                     unmake_move_no_hash(side_to_move, move_0);
-                    nodes.lo = nodes.lo.wrapping_add(1);
+                    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
                     if curr_val > best {
                         best = curr_val;
                         best_move_index = move_index;
@@ -932,7 +931,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
         move_index = 0;
         while move_index < 60 as i32 {
             move_0 =
-                sorted_move_order[disks_played as usize][move_index as usize];
+                search_state.sorted_move_order[disks_played as usize][move_index as usize];
             if board[move_0 as usize] == 1 as i32 {
                 if make_move(side_to_move, move_0, new_use_hash) !=
                     0 as i32 {
@@ -1092,7 +1091,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
             selectivity: 0,
             flags: 0,};
     remains = max_depth - level;
-    nodes.lo = nodes.lo.wrapping_add(1);
+    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     use_hash =
         (remains >= 2 as i32 && 1 as i32 != 0 &&
             allow_hash != 0) as i32;
@@ -1146,7 +1145,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
         if pre_search_done == 0 && best_list_index < best_list_length {
             move_count[disks_played as usize] += 1;
             move_index = 0;
-            while sorted_move_order[disks_played as
+            while search_state.sorted_move_order[disks_played as
                 usize][move_index as usize] !=
                 best_list[best_list_index as usize] {
                 move_index += 1
@@ -1162,7 +1161,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                 while move_index < 60 as i32 {
                     let mut already_checked: i32 = 0;
                     move_0 =
-                        sorted_move_order[disks_played as
+                        search_state.sorted_move_order[disks_played as
                             usize][move_index as usize];
                     already_checked = 0;
                     j = 0;
@@ -1189,7 +1188,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                                 pre_best
                             } else { curr_val };
                         unmake_move(side_to_move, move_0);
-                        evals[disks_played as usize][move_0 as usize] =
+                        search_state.evals[disks_played as usize][move_0 as usize] =
                             curr_val;
                         midgame_state.feas_index_list[disks_played as
                             usize][move_count[disks_played as
@@ -1204,8 +1203,8 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
             if i == move_count[disks_played as usize] { break ; }
             best_index = i;
             best_score =
-                evals[disks_played as
-                    usize][sorted_move_order[disks_played as
+                search_state.evals[disks_played as
+                    usize][search_state.sorted_move_order[disks_played as
                     usize][midgame_state.feas_index_list[disks_played
                     as
                     usize][i
@@ -1217,17 +1216,17 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
             while j < move_count[disks_played as usize] {
                 let mut cand_move: i32 = 0;
                 cand_move =
-                    sorted_move_order[disks_played as
+                    search_state.sorted_move_order[disks_played as
                         usize][midgame_state.feas_index_list[disks_played
                         as
                         usize][j
                         as
                         usize]
                         as usize];
-                if evals[disks_played as usize][cand_move as usize] >
+                if search_state.evals[disks_played as usize][cand_move as usize] >
                     best_score {
                     best_score =
-                        evals[disks_played as usize][cand_move as usize];
+                        search_state.evals[disks_played as usize][cand_move as usize];
                     best_index = j
                 }
                 j += 1
@@ -1238,7 +1237,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                 midgame_state.feas_index_list[disks_played as usize][i as usize]
         }
         move_0 =
-            sorted_move_order[disks_played as usize][move_index as usize];
+            search_state.sorted_move_order[disks_played as usize][move_index as usize];
         if get_ponder_move() == 0 {
             FE::midgame_display_simple_ponder_move(move_0);
         }
@@ -1300,7 +1299,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
         if is_panic_abort() != 0 || force_return != 0 {
             return -(27000 as i32)
         }
-        evals[disks_played as usize][move_0 as usize] = curr_val;
+        search_state.evals[disks_played as usize][move_0 as usize] = curr_val;
         if get_ponder_move() == 0 {
             FE::midgame_display_ponder_move(max_depth, alpha, beta, curr_val, searched, update_pv)
         }
@@ -1421,7 +1420,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
     while depth <= max_depth {
         alpha = -(12345678 as i32);
         beta = 12345678;
-        inherit_move_lists(disks_played + max_depth, &mut sorted_move_order, &mut list_inherited);
+        inherit_move_lists(disks_played + max_depth, &mut search_state.sorted_move_order, &mut search_state.list_inherited);
         /* The actual search */
         if depth == 1 as i32 {
             /* Fix to make it harder to wipe out depth-1 Zebra */
@@ -1541,7 +1540,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         /* Display and store search info */
         if depth == max_depth {
             FE::midgame_display_status(side_to_move, max_depth, eval_info, depth,
-                                       force_return != 0, &mut nodes,
+                                       force_return != 0, &mut search_state.nodes,
                                        &mut pv[0], pv_depth[0])
         }
         if is_panic_abort() != 0 || force_return != 0 { break ; }
@@ -1558,7 +1557,6 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         }
         depth += 1
     }
-    root_eval = val;
+    search_state.root_eval = val;
     return pv[0][0];
 }
-

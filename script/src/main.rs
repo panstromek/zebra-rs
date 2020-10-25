@@ -1,9 +1,9 @@
 use regex::{Captures, Regex};
 
 fn main() {
-    let filename = "../engine/src/midgame.rs";
-    let struct_name = "MidgameState";
-    let global_name = "midgame_state";
+    let filename = "../engine/src/search.rs";
+    let struct_name = "SearchState";
+    let global_name = "search_state";
 
     let file = std::fs::read_to_string(filename).unwrap();
     let declaration = regex::Regex::new(
@@ -45,58 +45,60 @@ fn main() {
     struct_declaration.0 += "\n}\n";
     struct_declaration.1 += "\n};\n";
 
+    let multi_comma = regex::Regex::new(r#",(?:\s+,)+"#).unwrap();
+
     let new_lines = replace_in_file(&file, &declaration, &replacer,
                                     &mut struct_declaration,
-                                    true, global_name, true);
+                                    true, global_name, true, &multi_comma);
     std::fs::write(filename, new_lines.join("\n")).unwrap();
 
     let usages_file_paths: &[&'static str] = &[
-        // "../legacy-zebra/src/zebra.rs",
-        // "../legacy-zebra/src/display.rs",
-        // "../legacy-zebra/src/error.rs",
-        // "../legacy-zebra/src/game.rs",
-        // "../legacy-zebra/src/getcoeff.rs",
-        // "../legacy-zebra/src/learn.rs",
-        // "../legacy-zebra/src/main.rs",
-        // "../legacy-zebra/src/osfbook.rs",
-        // "../legacy-zebra/src/safemem.rs",
-        // "../legacy-zebra/src/thordb.rs",
-        // "../engine/src/cntflip.rs",
-        // "../engine/src/counter.rs",
-        // "../engine/src/end.rs",
-        // "../engine/src/error.rs",
-        // "../engine/src/eval.rs",
-        // "../engine/src/game.rs",
-        // "../engine/src/getcoeff.rs",
-        // "../engine/src/globals.rs",
-        // "../engine/src/hash.rs",
-        // "../engine/src/learn.rs",
-        // "../engine/src/midgame.rs",
-        // "../engine/src/moves.rs",
-        // "../engine/src/myrandom.rs",
-        // "../engine/src/opname.rs",
-        // "../engine/src/osfbook.rs",
-        // "../engine/src/probcut.rs",
+        "../legacy-zebra/src/zebra.rs",
+        "../legacy-zebra/src/display.rs",
+        "../legacy-zebra/src/error.rs",
+        "../legacy-zebra/src/game.rs",
+        "../legacy-zebra/src/getcoeff.rs",
+        "../legacy-zebra/src/learn.rs",
+        "../legacy-zebra/src/main.rs",
+        "../legacy-zebra/src/osfbook.rs",
+        "../legacy-zebra/src/safemem.rs",
+        "../legacy-zebra/src/thordb.rs",
+        "../engine/src/cntflip.rs",
+        "../engine/src/counter.rs",
+        "../engine/src/end.rs",
+        "../engine/src/error.rs",
+        "../engine/src/eval.rs",
+        "../engine/src/game.rs",
+        "../engine/src/getcoeff.rs",
+        "../engine/src/globals.rs",
+        "../engine/src/hash.rs",
+        "../engine/src/learn.rs",
+        "../engine/src/midgame.rs",
+        "../engine/src/moves.rs",
+        "../engine/src/myrandom.rs",
+        "../engine/src/opname.rs",
+        "../engine/src/osfbook.rs",
+        "../engine/src/probcut.rs",
         // "../engine/src/search.rs",
-        // "../engine/src/stable.rs",
-        // "../engine/src/stubs.rs",
-        // "../engine/src/thordb.rs",
-        // "../engine/src/timer.rs",
-        // "../engine/src/zebra.rs",
+        "../engine/src/stable.rs",
+        "../engine/src/stubs.rs",
+        "../engine/src/thordb.rs",
+        "../engine/src/timer.rs",
+        "../engine/src/zebra.rs",
     ];
     for usages_file_path in usages_file_paths.iter() {
         let file = std::fs::read_to_string(usages_file_path).unwrap();
         let new_lines = replace_in_file(&file, &declaration, &replacer,
                                         &mut struct_declaration,
                                         false, global_name,
-                                        false);
+                                        false, &multi_comma);
         std::fs::write(usages_file_path, new_lines.join("\n")).unwrap();
     }
 }
 
 fn replace_in_file(file: &String, declaration: &Regex, replacer: &Regex,
                    struct_declaration: &mut (String, String), shoudl_write_decl: bool,
-                   global_name: &str, should_erase_decl:bool
+                   global_name: &str, should_erase_decl:bool, multi_comma: &Regex
 ) -> Vec<String> {
     // FIXME check for redeclarations of the same symbol as a local
 
@@ -129,12 +131,15 @@ fn replace_in_file(file: &String, declaration: &Regex, replacer: &Regex,
             line.split("\"").enumerate().map(|(i, item )| {
                 if i % 2 == 0 {
                     // not a string
-                    replacer.replace_all(item, |captures: &Captures| {
+                    let replaced = replacer.replace_all(item, |captures: &Captures| {
                         if is_use_statament {
                             // TODO find and replace comma
                             return "".to_string();
                         }
                         return captures[1].to_string() + global_name +"." + &captures[2] + &captures[3];
+                    });
+                    multi_comma.replace_all(replaced.as_ref(), |_:&Captures| {
+                      return ","
                     }).to_string()
                 } else {
                     item.to_string()
@@ -143,6 +148,8 @@ fn replace_in_file(file: &String, declaration: &Regex, replacer: &Regex,
         })
         // .inspect(|x| println!("{}", x))
         .collect::<Vec<_>>();
-    new_lines.push("\n".into());
+    if !new_lines.last().unwrap().trim().is_empty() {
+        new_lines.push("".into());
+    }
     new_lines
 }

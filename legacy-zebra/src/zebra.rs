@@ -13,7 +13,7 @@ use libc_wrapper::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, s
 use engine::src::globals::{white_moves, score_sheet_row, black_moves, board};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType, adjust_counter};
 use engine::src::timer::{get_real_timer, determine_move_time, start_move, clear_panic_abort};
-use engine::src::search::{full_pv, full_pv_depth, nodes, disc_count, produce_compact_eval, total_time, total_nodes};
+use engine::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::moves::{disks_played, make_move, valid_move, unmake_move, move_count, generate_all, game_in_progress};
 use engine::src::hash::{setup_hash, set_hash_transformation, hash_state};
@@ -679,8 +679,8 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
                 config.tournament_skill[j as usize][2];
             play_game(0 as *const i8, move_sequence,
                       0 as *const i8, 1 as i32, log_file_name_, use_thor_, use_learning_);
-            add_counter(&mut tourney_nodes, &mut total_nodes);
-            tourney_time += total_time;
+            add_counter(&mut tourney_nodes, &mut search_state.total_nodes);
+            tourney_time += search_state.total_time;
             result[i as usize][j as usize][0] =
                 disc_count(0 as i32, &board);
             result[i as usize][j as usize][2] =
@@ -1228,7 +1228,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             opponent = 0 as i32 + 2 as i32 - side_to_move;
             make_move(side_to_move, curr_move, 1 as i32);
             if empties > config.wld_skill[side_to_move as usize] {
-                reset_counter(&mut nodes);
+                reset_counter(&mut search_state.nodes);
                 resp_move =
                     compute_move(opponent, 0 as i32,
                                  config.player_time[opponent as usize] as
@@ -1242,7 +1242,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                                      1 as i32, 1 as i32,
                                  &mut played_info1)
             }
-            reset_counter(&mut nodes);
+            reset_counter(&mut search_state.nodes);
             resp_move =
                 compute_move(opponent, 0 as i32,
                              config.player_time[opponent as usize] as i32,
@@ -1259,7 +1259,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
              region, a private hash transform is used - see above. */
             if empties > config.wld_skill[side_to_move as usize] {
                 set_hash_transformation(best_trans1, best_trans2);
-                reset_counter(&mut nodes);
+                reset_counter(&mut search_state.nodes);
                 curr_move =
                     compute_move(side_to_move, 0 as i32,
                                  config.player_time[side_to_move as usize] as
@@ -1272,7 +1272,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                                  config.wld_skill[side_to_move as usize],
                                  1 as i32, &mut best_info1)
             }
-            reset_counter(&mut nodes);
+            reset_counter(&mut search_state.nodes);
             curr_move =
                 compute_move(side_to_move, 0 as i32,
                              config.player_time[side_to_move as usize] as
@@ -1655,7 +1655,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             if search_stop - search_start > max_search {
                 max_search = search_stop - search_start
             }
-            add_counter(&mut script_nodes, &mut nodes);
+            add_counter(&mut script_nodes, &mut search_state.nodes);
             output_stream =
                 fopen(out_file_name,
                       b"a\x00" as *const u8 as *const i8);
@@ -1706,10 +1706,10 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                           output_stream);
                 }
                 j = 0;
-                while j < full_pv_depth {
+                while j < search_state.full_pv_depth {
                     fputs(b" \x00" as *const u8 as *const i8,
                           output_stream);
-                    display_move(output_stream, full_pv[j as usize]);
+                    display_move(output_stream, search_state.full_pv[j as usize]);
                     j += 1
                 }
             }

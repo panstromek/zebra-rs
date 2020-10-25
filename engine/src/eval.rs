@@ -1,6 +1,6 @@
 use crate::src::moves::disks_played;
 use crate::src::globals::piece_count;
-use crate::src::search::evaluations;
+use crate::src::search::search_state;
 
 
 /*
@@ -9,7 +9,7 @@ use crate::src::search::evaluations;
 */
 
 pub unsafe fn terminal_evaluation(side_to_move: i32) -> i32 {
-    let eval_counter = &mut evaluations;
+    let eval_counter = &mut search_state.evaluations;
     let my_discs = piece_count[side_to_move as usize][disks_played as usize];
     let opp_discs = piece_count[(2 - side_to_move) as usize][disks_played as usize];
 

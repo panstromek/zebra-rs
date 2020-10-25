@@ -20,31 +20,43 @@ use crate::src::zebra::EvalType::{MIDGAME_EVAL, UNINITIALIZED_EVAL};
 */
 
 
+pub struct SearchState {
+    pub total_time: f64,
+    pub root_eval: i32,
+    pub full_pv_depth: i32,
+    pub full_pv: [i32; 120],
+    pub list_inherited: [i32; 62],
+    pub sorted_move_order: [[i32; 64]; 64],
+    /* 61*60 used */
+    pub evals: [Board; 61],
+    pub nodes: CounterType,
+    pub total_nodes: CounterType,
+    pub evaluations: CounterType,
+    pub total_evaluations: CounterType,
+    pub pondered_move: i32,
+    pub negate_eval: i32,
+    pub last_eval: EvaluationType,
+}
 
-pub static mut total_time: f64 = 0.;
-
-pub static mut root_eval: i32 = 0;
+pub static mut search_state: SearchState = SearchState {
+    total_time: 0.,
+    root_eval: 0,
+    full_pv_depth: 0,
+    full_pv: [0; 120],
+    list_inherited: [0; 62],
+    sorted_move_order: [[0; 64]; 64],
+    evals: [[0; 128]; 61],
+    nodes: CounterType { hi: 0, lo: 0 },
+    total_nodes: CounterType { hi: 0, lo: 0 },
+    evaluations: CounterType { hi: 0, lo: 0 },
+    total_evaluations: CounterType { hi: 0, lo: 0 },
+    pondered_move: 0,
+    negate_eval: 0,
+    last_eval: EvaluationType { type_0: MIDGAME_EVAL, res: WON_POSITION, score: 0, confidence: 0., search_depth: 0, is_book: 0 },
+};
 
 pub static force_return: i32 = 0;
 
-pub static mut full_pv_depth: i32 = 0;
-
-pub static mut full_pv: [i32; 120] = [0; 120];
-
-pub static mut list_inherited: [i32; 62] = [0; 62];
-
-pub static mut sorted_move_order: [[i32; 64]; 64] = [[0; 64]; 64];
-/* 61*60 used */
-
-pub static mut evals: [Board; 61] = [[0; 128]; 61];
-
-pub static mut nodes: CounterType = CounterType{hi: 0, lo: 0,};
-
-pub static mut total_nodes: CounterType = CounterType{hi: 0, lo: 0,};
-
-pub static mut evaluations: CounterType = CounterType{hi: 0, lo: 0,};
-
-pub static mut total_evaluations: CounterType = CounterType{hi: 0, lo: 0,};
 /* When no other information is available, JCW's endgame
    priority order is used also in the midgame. */
 
@@ -83,11 +95,6 @@ pub static position_list: [i32; 100] =
         96 as i32, 97 as i32, 98 as i32,
         99 as i32];
 
-
-/* Local variables */
-static mut pondered_move: i32 = 0;
-static mut negate_eval: i32 = 0;
-static mut last_eval: EvaluationType = EvaluationType { type_0: MIDGAME_EVAL, res: WON_POSITION, score: 0, confidence: 0., search_depth: 0, is_book: 0 };
 /*
   INIT_MOVE_LISTS
   Initalize the self-organizing move lists.
@@ -201,11 +208,11 @@ pub fn reorder_move_list(board_: & crate::src::globals::Board, stage_sorted_move
 */
 
 pub unsafe fn setup_search() {
-    init_move_lists(&mut sorted_move_order);
-    list_inherited = [0; 62];
+    init_move_lists(&mut search_state.sorted_move_order);
+    search_state.list_inherited = [0; 62];
     create_eval_info(UNINITIALIZED_EVAL, UNSOLVED_POSITION, 0 as i32,
                      0.0f64, 0 as i32, 0 as i32);
-    negate_eval = 0;
+    search_state.negate_eval = 0;
 }
 /*
    DISC_COUNT
@@ -238,8 +245,8 @@ pub unsafe fn sort_moves(list_size: i32) {
         let mut modified = 0;
         let mut i = 0;
         while i < list_size - 1 {
-            if evals[disks_played as usize][move_list[disks_played as usize][i as usize] as usize] <
-                evals[disks_played as usize][move_list[disks_played as usize][(i + 1) as usize] as usize] {
+            if search_state.evals[disks_played as usize][move_list[disks_played as usize][i as usize] as usize] <
+                search_state.evals[disks_played as usize][move_list[disks_played as usize][(i + 1) as usize] as usize] {
                 modified = 1;
                 let temp_move = move_list[disks_played as usize][i as usize];
                 move_list[disks_played as usize][i as usize] = move_list[disks_played as usize][(i + 1 as i32) as usize];
@@ -265,17 +272,17 @@ pub unsafe fn select_move(first: i32,
     let mut best_eval: i32 = 0;
     best = first;
     best_eval =
-        evals[disks_played as
+        search_state.evals[disks_played as
             usize][move_list[disks_played as usize][first as usize] as
             usize];
     i = first + 1 as i32;
     while i < list_size {
-        if evals[disks_played as
+        if search_state.evals[disks_played as
             usize][move_list[disks_played as usize][i as usize] as
             usize] > best_eval {
             best = i;
             best_eval =
-                evals[disks_played as
+                search_state.evals[disks_played as
                     usize][move_list[disks_played as usize][i as usize]
                     as usize]
         }
@@ -364,15 +371,15 @@ pub unsafe fn clear_pv() {
 */
 
 pub unsafe fn set_ponder_move(move_0: i32) {
-    pondered_move = move_0;
+    search_state.pondered_move = move_0;
 }
 
 pub unsafe fn clear_ponder_move() {
-    pondered_move = 0;
+    search_state.pondered_move = 0;
 }
 
 pub unsafe fn get_ponder_move() -> i32 {
-    return pondered_move;
+    return search_state.pondered_move;
 }
 /*
   CREATE_EVAL_INFO
@@ -482,25 +489,25 @@ pub fn produce_compact_eval(eval_info: EvaluationType) -> f64 {
 */
 
 pub unsafe fn set_current_eval(eval: EvaluationType) {
-    last_eval = eval;
-    if negate_eval != 0 {
-        last_eval.score = -last_eval.score;
-        if last_eval.res as u32 ==
+    search_state.last_eval = eval;
+    if search_state.negate_eval != 0 {
+        search_state.last_eval.score = -search_state.last_eval.score;
+        if search_state.last_eval.res as u32 ==
             WON_POSITION as i32 as u32 {
-            last_eval.res = LOST_POSITION
-        } else if last_eval.res as u32 ==
+            search_state.last_eval.res = LOST_POSITION
+        } else if search_state.last_eval.res as u32 ==
             LOST_POSITION as i32 as u32 {
-            last_eval.res = WON_POSITION
+            search_state.last_eval.res = WON_POSITION
         }
     };
 }
 
 pub unsafe fn get_current_eval() -> EvaluationType {
-    return last_eval;
+    return search_state.last_eval;
 }
 
 pub unsafe fn negate_current_eval(negate: i32) {
-    negate_eval = negate;
+    search_state.negate_eval = negate;
 }
 
 /*
@@ -582,22 +589,22 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
 
 pub unsafe fn complete_pv<FE:FrontEnd>(mut side_to_move: i32) {
     let mut actual_side_to_move = [0; 60];
-    full_pv_depth = 0;
+    search_state.full_pv_depth = 0;
     let mut i = 0;
     while i < pv_depth[0] {
         if make_move(side_to_move, pv[0][i as usize], 1) != 0 {
             actual_side_to_move[i as usize] = side_to_move;
-            full_pv[full_pv_depth as usize] = pv[0][i as usize];
-            full_pv_depth += 1
+            search_state.full_pv[search_state.full_pv_depth as usize] = pv[0][i as usize];
+            search_state.full_pv_depth += 1
         } else {
-            full_pv[full_pv_depth as usize] = -(1);
-            full_pv_depth += 1;
+            search_state.full_pv[search_state.full_pv_depth as usize] = -(1);
+            search_state.full_pv_depth += 1;
             side_to_move = 0 + 2 - side_to_move;
             if make_move(side_to_move, pv[0][i as usize], 1) != 0 {
                 actual_side_to_move[i as usize] = side_to_move;
-                full_pv[full_pv_depth as usize] =
+                search_state.full_pv[search_state.full_pv_depth as usize] =
                     pv[0][i as usize];
-                full_pv_depth += 1
+                search_state.full_pv_depth += 1
             } else {
                 let pv_0_depth: i32  = pv_depth[0];
                 let pv_0: &[i32; 64] = &pv[0];

@@ -5,7 +5,7 @@ use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError, FE};
 use engine::src::globals::{white_moves, black_moves, pv, pv_depth, board, piece_count};
-use engine::src::search::{full_pv_depth, full_pv, set_current_eval, force_return, negate_current_eval, create_eval_info, disc_count, nodes, evaluations, evals, clear_ponder_move, set_ponder_move, float_move, sort_moves};
+use engine::src::search::{set_current_eval,search_state, force_return, negate_current_eval, create_eval_info, disc_count, clear_ponder_move, set_ponder_move, float_move, sort_moves};
 use engine::src::zebra::{EvaluationType};
 use engine::src::midgame::{toggle_perturbation_usage, toggle_midgame_abort_check};
 use engine::src::timer::{toggle_abort_check, clear_ponder_times, start_move, ponder_depth, add_ponder_time, get_real_timer};
@@ -231,7 +231,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
     empties = 60 as i32 - disks_played;
     best_move = 0;
     game_evaluated_count = 0;
-    reset_counter(&mut nodes);
+    reset_counter(&mut search_state.nodes);
     generate_all(side_to_move);
     if book_only != 0 || book != 0 {
         /* Evaluations for database moves */
@@ -340,7 +340,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                 make_move(side_to_move, this_move, 1 as i32);
                 if shallow_depth == 1 as i32 {
                     /* Compute move doesn't allow depth 0 */
-                    evaluations.lo = evaluations.lo.wrapping_add(1);
+                    search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
                     shallow_eval =
                         -pattern_evaluation::<FE>(0 as i32 +
                                                 2 as i32 -
@@ -400,7 +400,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                     }
                 }
                 unmake_move(side_to_move, this_move);
-                evals[disks_played as usize][this_move as usize] =
+                search_state.evals[disks_played as usize][this_move as usize] =
                     shallow_eval
             }
             i += 1
@@ -409,9 +409,9 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
             changed = 0;
             i = 0;
             while i < unsearched_count - 1 as i32 {
-                if evals[disks_played as
+                if search_state.evals[disks_played as
                              usize][unsearched_move[i as usize] as usize] <
-                       evals[disks_played as
+                       search_state.evals[disks_played as
                                  usize][unsearched_move[(i + 1 as i32)
                                                             as usize] as
                                             usize] {
@@ -535,7 +535,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                 make_move(side_to_move, this_move, 1 as i32);
                 if current_mid == 1 as i32 {
                     /* compute_move doesn't like 0-ply searches */
-                    evaluations.lo = evaluations.lo.wrapping_add(1);
+                    search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
                     shallow_eval =
                         pattern_evaluation::<FE>(0 as i32 + 2 as i32
                                                - side_to_move);
@@ -567,7 +567,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                         /* Don't allow pass */
                         if current_mid == 1 as i32 {
                             /* compute_move doesn't like 0-ply searches */
-                            evaluations.lo = evaluations.lo.wrapping_add(1);
+                            search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
                             shallow_eval = pattern_evaluation::<FE>(side_to_move);
                             this_eval =
                                 create_eval_info(MIDGAME_EVAL,
@@ -793,7 +793,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
                disc_count(0 as i32, &board) + disc_count(2 as i32, &board));
     clear_ponder_times();
     determine_hash_values(side_to_move, &board, &mut hash_state);
-    reset_counter(&mut nodes);
+    reset_counter(&mut search_state.nodes);
     /* Set search depths that result in Zebra solving after a brief
        midgame analysis */
     mid = 60;
@@ -959,7 +959,7 @@ pub struct LibcZebraOutput;
 impl ComputeMoveOutput for LibcZebraOutput {
 fn display_out_optimal_line() {
     //FIXME parametrize, this touches global state
-    unsafe { display_optimal_line(stdout, full_pv_depth, full_pv) }
+    unsafe { display_optimal_line(stdout, search_state.full_pv_depth, search_state.full_pv) }
 }
 
 fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64) {
@@ -1178,7 +1178,7 @@ fn log_status(logger: &mut LogFileHandler) {
 }
 
 fn log_optimal_line(logger: &mut LogFileHandler) {
-    unsafe { display_optimal_line(logger.log_file, full_pv_depth, full_pv); }
+    unsafe { display_optimal_line(logger.log_file, search_state.full_pv_depth, search_state.full_pv); }
 }
 
 fn close_logger(logger: &mut LogFileHandler) {
