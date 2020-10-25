@@ -4,7 +4,7 @@ use crate::src::hash::{hash_state};
 use crate::src::search::search_state;
 use crate::src::zebra::ZebraFrontend;
 use std::future::Future;
-use flip::unflip::{flip_stack, global_flip_stack};
+use flip::unflip::flip_stack_;
 use flip::doflip::{DoFlips_no_hash, hash_update2, hash_update1, DoFlips_hash};
 use std::error::Error;
 use engine_traits::Offset;
@@ -190,15 +190,15 @@ pub unsafe fn unmake_move(side_to_move: i32,
         0 as i32 + 2 as i32 - side_to_move;
     if UndoFlips__flip_count & 1 as i32 != 0 {
         UndoFlips__flip_count -= 1;
-        flip_stack = flip_stack.offset(-1);
-        board_state.board[global_flip_stack[flip_stack]] = UndoFlips__oppcol
+        flip_stack_.flip_stack = flip_stack_.flip_stack.offset(-1);
+        board_state.board[flip_stack_.global_flip_stack[flip_stack_.flip_stack]] = UndoFlips__oppcol
     }
     while UndoFlips__flip_count != 0 {
         UndoFlips__flip_count -= 2 as i32;
-        flip_stack = flip_stack.offset(-1);
-        board_state.board[global_flip_stack[flip_stack]] = UndoFlips__oppcol;
-        flip_stack = flip_stack.offset(-1);
-        board_state.board[global_flip_stack[flip_stack]] = UndoFlips__oppcol
+        flip_stack_.flip_stack = flip_stack_.flip_stack.offset(-1);
+        board_state.board[flip_stack_.global_flip_stack[flip_stack_.flip_stack]] = UndoFlips__oppcol;
+        flip_stack_.flip_stack = flip_stack_.flip_stack.offset(-1);
+        board_state.board[flip_stack_.global_flip_stack[flip_stack_.flip_stack]] = UndoFlips__oppcol
     };
 }
 
@@ -351,15 +351,15 @@ pub unsafe fn unmake_move_no_hash(side_to_move: i32,
         0 as i32 + 2 as i32 - side_to_move;
     if UndoFlips__flip_count & 1 as i32 != 0 {
         UndoFlips__flip_count -= 1;
-        flip_stack = flip_stack - 1;
-        board_state.board[global_flip_stack[flip_stack]] = UndoFlips__oppcol
+        flip_stack_.flip_stack = flip_stack_.flip_stack - 1;
+        board_state.board[flip_stack_.global_flip_stack[flip_stack_.flip_stack]] = UndoFlips__oppcol
     }
     while UndoFlips__flip_count != 0 {
         UndoFlips__flip_count -= 2 as i32;
-        flip_stack = flip_stack - 1;
-        board_state.board[global_flip_stack[flip_stack]] = UndoFlips__oppcol;
-        flip_stack = flip_stack - 1;
-        board_state.board[global_flip_stack[flip_stack]] = UndoFlips__oppcol
+        flip_stack_.flip_stack = flip_stack_.flip_stack - 1;
+        board_state.board[flip_stack_.global_flip_stack[flip_stack_.flip_stack]] = UndoFlips__oppcol;
+        flip_stack_.flip_stack = flip_stack_.flip_stack - 1;
+        board_state.board[flip_stack_.global_flip_stack[flip_stack_.flip_stack]] = UndoFlips__oppcol
     };
 }
 /*

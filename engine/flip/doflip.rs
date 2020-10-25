@@ -1,6 +1,6 @@
-use crate::unflip::{flip_stack as g_flip_stack, global_flip_stack as g_global_flip_stack};
 use core::mem;
 use engine_traits::Offset;
+use crate::unflip::flip_stack_;
 /*
    File:           globals.h
 
@@ -53,8 +53,8 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
                               color: i32, board: &mut [i32; 128])
                               -> i32 {
     let opp_color = 2 - color;
-    let flip_stack = &mut g_flip_stack;
-    let global_flip_stack = &mut g_global_flip_stack;
+    let flip_stack = &mut flip_stack_.flip_stack;
+    let global_flip_stack = &mut flip_stack_.global_flip_stack;
     let mut t_flip_stack = *flip_stack;
     let old_flip_stack = t_flip_stack;
     let mut sq = sqnum as usize;
@@ -1217,8 +1217,8 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
                            hash_flip1: &mut [u32; 128], hash_flip2: &mut [u32; 128]) -> i32 {
     let opp_color = 2 - color;
 
-    let flip_stack = &mut g_flip_stack;
-    let global_flip_stack = &mut g_global_flip_stack;
+    let flip_stack = &mut  flip_stack_.flip_stack;
+    let global_flip_stack = &mut flip_stack_.global_flip_stack;
 
     let mut t_flip_stack = *flip_stack;
     let old_flip_stack = t_flip_stack;
