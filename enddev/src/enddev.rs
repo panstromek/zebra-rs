@@ -261,7 +261,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             restart = 0;
             in_branch = 0 as i32
         }
-        if disc_count(0 as i32, &board_state.board___) + disc_count(2 as i32, &board_state.board___) ==
+        if disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board) ==
             disks_played + 4 as i32 {
         } else {
             __assert_fail(b"disc_count( BLACKSQ ) + disc_count( WHITESQ ) == disks_played + 4\x00"
@@ -271,7 +271,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                           (*::std::mem::transmute::<&[u8; 23],
                               &[i8; 23]>(b"int main(int, char **)\x00")).as_ptr());
         }
-        determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
+        determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
         generate_all(side_to_move);
         if move_count[disks_played as usize] == 0 as i32 {
             if last_was_pass != 0 {
@@ -456,12 +456,12 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         b"Game #%d contains illegal move %d @ #%d.\n\x00" as
                             *const u8 as *const i8, games_read,
                         move_0, disks_played);
-                display_board(stderr, &board_state.board___, side_to_move,
+                display_board(stderr, &board_state.board, side_to_move,
                               0 as i32, 0 as i32,
                               0 as i32, current_row,
                               black_player, black_time, black_eval,
                               white_player, white_time, white_eval,
-                              &board_state.black_moves___, &board_state.white_moves___);
+                              &board_state.black_moves, &board_state.white_moves);
                 exit(1 as i32);
             }
             game_moves[disks_played as usize] = move_0;

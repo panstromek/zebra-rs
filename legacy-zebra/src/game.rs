@@ -231,9 +231,9 @@ pub unsafe fn ponder_move<
     toggle_midgame_abort_check(0 as i32);
     start_move::<FE>(0 as i32 as f64,
                      0 as i32 as f64,
-                     disc_count(0 as i32, &board_state.board___) + disc_count(2 as i32, &board_state.board___));
+                     disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board));
     clear_ponder_times();
-    determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
+    determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     reset_counter(&mut search_state.nodes);
     /* Find the scores for the moves available to the opponent. */
     let mut hash_move = 0;
@@ -299,11 +299,11 @@ pub unsafe fn ponder_move<
             } else { (max_depth_reached) - 1 as i32 };
         if i == 0 as i32 && force_return == 0 {
             /* Store the PV for the first move */
-            best_pv_depth = board_state.pv_depth___[0];
+            best_pv_depth = board_state.pv_depth[0];
             j = 0;
-            while j < board_state.pv_depth___[0] {
+            while j < board_state.pv_depth[0] {
                 best_pv[j as usize] =
-                    board_state.pv___[0][j as usize];
+                    board_state.pv[0][j as usize];
                 j += 1
             }
         }
@@ -315,15 +315,15 @@ pub unsafe fn ponder_move<
     max_depth_reached += 1;
     prefix_move = 0;
     if best_pv_depth == 0 as i32 {
-        board_state.pv_depth___[0] = 0 as i32
+        board_state.pv_depth[0] = 0 as i32
     } else {
-        board_state.pv_depth___[0] =
+        board_state.pv_depth[0] =
             best_pv_depth + 1 as i32;
-        board_state.pv___[0][0] =
+        board_state.pv[0][0] =
             expect_list[0];
         i = 0;
         while i < best_pv_depth {
-            board_state.pv___[0][(i + 1 as i32) as usize] =
+            board_state.pv[0][(i + 1 as i32) as usize] =
                 best_pv[i as usize];
             i += 1
         }
@@ -356,19 +356,19 @@ pub unsafe fn get_pv(destin: &mut [i32]) -> i32 {
     let mut i = 0;
     return if prefix_move == 0 {
         i = 0;
-        while i < board_state.pv_depth___[0] {
-            destin[i as usize] = board_state.pv___[0][i as usize];
+        while i < board_state.pv_depth[0] {
+            destin[i as usize] = board_state.pv[0][i as usize];
             i += 1
         }
-        board_state.pv_depth___[0]
+        board_state.pv_depth[0]
     } else {
         destin[0] = prefix_move;
         i = 0;
-        while i < board_state.pv_depth___[0] {
-            destin[(i + 1 as i32) as usize] = board_state.pv___[0][i as usize];
+        while i < board_state.pv_depth[0] {
+            destin[(i + 1 as i32) as usize] = board_state.pv[0][i as usize];
             i += 1
         }
-        board_state.pv_depth___[0] + 1
+        board_state.pv_depth[0] + 1
     };
 }
 /*
@@ -437,9 +437,9 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
     toggle_perturbation_usage(0 as i32);
     start_move::<FE>(0 as i32 as f64,
                0 as i32 as f64,
-               disc_count(0 as i32, &board_state.board___) + disc_count(2 as i32, &board_state.board___));
+               disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board));
     clear_ponder_times();
-    determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
+    determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     empties = 60 as i32 - disks_played;
     best_move = 0;
     game_evaluated_count = 0;
@@ -501,7 +501,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                               &mut book_eval_info, echo);
             set_current_eval(book_eval_info);
         } else {
-            board_state.pv_depth___[0] = 0;
+            board_state.pv_depth[0] = 0;
             best_move = -(1 as i32);
             book_eval_info =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
@@ -585,23 +585,23 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                                PASS_EVAL as i32 as u32 {
                             /* Game over */
                             disc_diff =
-                                disc_count(side_to_move, &board_state.board___) -
+                                disc_count(side_to_move, &board_state.board) -
                                     disc_count(0 as i32 +
                                                    2 as i32 -
-                                                   side_to_move, &board_state.board___);
+                                                   side_to_move, &board_state.board);
                             if disc_diff > 0 as i32 {
                                 corrected_diff =
                                     64 as i32 -
                                         2 as i32 *
                                             disc_count(0 as i32 +
                                                            2 as i32 -
-                                                           side_to_move, &board_state.board___)
+                                                           side_to_move, &board_state.board)
                             } else if disc_diff == 0 as i32 {
                                 corrected_diff = 0 as i32
                             } else {
                                 corrected_diff =
                                     2 as i32 *
-                                        disc_count(side_to_move, &board_state.board___) -
+                                        disc_count(side_to_move, &board_state.board) -
                                         64 as i32
                             }
                             shallow_eval = 128 as i32 * corrected_diff
@@ -669,11 +669,11 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
         best_pv_depth = 0;
         if mid == 1 as i32 {
             /* compute_move won't be called */
-            board_state.pv_depth___[0] = 0;
-            board_state.piece_count___[0][disks_played as usize] =
-                disc_count(0 as i32, &board_state.board___);
-            board_state.piece_count___[2][disks_played as usize] =
-                disc_count(2 as i32, &board_state.board___)
+            board_state.pv_depth[0] = 0;
+            board_state.piece_count[0][disks_played as usize] =
+                disc_count(0 as i32, &board_state.board);
+            board_state.piece_count[2][disks_played as usize] =
+                disc_count(2 as i32, &board_state.board)
         }
         /* Perform iterative deepening if the search depth is large enough */
         if exact > empties_0 { exact = empties_0 }
@@ -800,17 +800,17 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                                PASS_EVAL as i32 as u32 {
                             /* Game over */
                             disc_diff =
-                                disc_count(side_to_move, &board_state.board___) -
+                                disc_count(side_to_move, &board_state.board) -
                                     disc_count(0 as i32 +
                                                    2 as i32 -
-                                                   side_to_move, &board_state.board___);
+                                                   side_to_move, &board_state.board);
                             if disc_diff > 0 as i32 {
                                 corrected_diff =
                                     64 as i32 -
                                         2 as i32 *
                                             disc_count(0 as i32 +
                                                            2 as i32 -
-                                                           side_to_move, &board_state.board___);
+                                                           side_to_move, &board_state.board);
                                 res = WON_POSITION
                             } else if disc_diff == 0 as i32 {
                                 corrected_diff = 0;
@@ -818,7 +818,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                             } else {
                                 corrected_diff =
                                     2 as i32 *
-                                        disc_count(side_to_move, &board_state.board___) -
+                                        disc_count(side_to_move, &board_state.board) -
                                         64 as i32;
                                 res = LOST_POSITION
                             }
@@ -846,17 +846,17 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                     evaluated_list[index as usize].eval = this_eval;
                     /* Store the PV corresponding to the move */
                     evaluated_list[index as usize].pv_depth =
-                        board_state.pv_depth___[0] +
+                        board_state.pv_depth[0] +
                             1 as i32;
                     evaluated_list[index as
                                        usize].pv[0] =
                         this_move;
                     j = 0;
-                    while j < board_state.pv_depth___[0] {
+                    while j < board_state.pv_depth[0] {
                         evaluated_list[index as
                                            usize].pv[(j + 1 as i32) as
                                                          usize] =
-                            board_state.pv___[0][j as usize];
+                            board_state.pv[0][j as usize];
                         j += 1
                     }
                     /* Store the PV corresponding to the best move */
@@ -865,11 +865,11 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                         best_score =
                             evaluated_list[index as usize].eval.score;
                         best_move = this_move;
-                        best_pv_depth = board_state.pv_depth___[0];
+                        best_pv_depth = board_state.pv_depth[0];
                         j = 0;
                         while j < best_pv_depth {
                             best_pv[j as usize] =
-                                board_state.pv___[0][j as usize];
+                                board_state.pv[0][j as usize];
                             j += 1
                         }
                     }
@@ -940,12 +940,12 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
         echo = stored_echo;
         game_evaluated_count = move_count[disks_played as usize];
         /* Make sure that the PV and the score correspond to the best move */
-        board_state.pv_depth___[0] =
+        board_state.pv_depth[0] =
             best_pv_depth + 1 as i32;
-        board_state.pv___[0][0] = best_move;
+        board_state.pv[0][0] = best_move;
         i = 0;
         while i < best_pv_depth {
-            board_state.pv___[0][(i + 1 as i32) as usize] =
+            board_state.pv[0][(i + 1 as i32) as usize] =
                 best_pv[i as usize];
             i += 1
         }
@@ -1002,9 +1002,9 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     toggle_perturbation_usage(0 as i32);
     start_move::<FE>(0 as i32 as f64,
                0 as i32 as f64,
-               disc_count(0 as i32, &board_state.board___) + disc_count(2 as i32, &board_state.board___));
+               disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board));
     clear_ponder_times();
-    determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
+    determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     reset_counter(&mut search_state.nodes);
     /* Set search depths that result in Zebra solving after a brief
        midgame analysis */
@@ -1044,22 +1044,22 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
                u32 == PASS_EVAL as i32 as u32 {
             /* Game has ended */
             disc_diff =
-                disc_count(side_to_move, &board_state.board___) -
+                disc_count(side_to_move, &board_state.board) -
                     disc_count(0 as i32 + 2 as i32 -
-                                   side_to_move, &board_state.board___);
+                                   side_to_move, &board_state.board);
             if disc_diff > 0 as i32 {
                 corrected_diff =
                     64 as i32 -
                         2 as i32 *
                             disc_count(0 as i32 + 2 as i32 -
-                                           side_to_move, &board_state.board___);
+                                           side_to_move, &board_state.board);
                 res = WON_POSITION
             } else if disc_diff == 0 as i32 {
                 corrected_diff = 0;
                 res = DRAWN_POSITION
             } else {
                 corrected_diff =
-                    2 as i32 * disc_count(side_to_move, &board_state.board___) -
+                    2 as i32 * disc_count(side_to_move, &board_state.board) -
                         64 as i32;
                 res = LOST_POSITION
             }
@@ -1089,12 +1089,12 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
                              0 as i32)
     } else {
         evaluated_list[0].pv_depth =
-            board_state.pv_depth___[0] + 1 as i32;
+            board_state.pv_depth[0] + 1 as i32;
         evaluated_list[0].pv[0] = actual_move;
         i = 0;
-        while i < board_state.pv_depth___[0] {
+        while i < board_state.pv_depth[0] {
             evaluated_list[0].pv[(i + 1 as i32) as usize] =
-                board_state.pv___[0][i as usize];
+                board_state.pv[0][i as usize];
             i += 1
         }
     }
@@ -1115,11 +1115,11 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
         evaluated_list[1].side_to_move = side_to_move;
         evaluated_list[1].move_0 = best_move;
         evaluated_list[1].pv_depth =
-            board_state.pv_depth___[0];
+            board_state.pv_depth[0];
         i = 0;
-        while i < board_state.pv_depth___[0] {
+        while i < board_state.pv_depth[0] {
             evaluated_list[1].pv[i as usize] =
-                board_state.pv___[0][i as usize];
+                board_state.pv[0][i as usize];
             i += 1
         }
         temp = evaluated_list[0];
@@ -1129,11 +1129,11 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     }
     /* The PV and current eval should when correspond to the best move
        when leaving */
-    board_state.pv_depth___[0] =
+    board_state.pv_depth[0] =
         evaluated_list[0].pv_depth;
     i = 0;
-    while i < board_state.pv_depth___[0] {
-        board_state.pv___[0][i as usize] =
+    while i < board_state.pv_depth[0] {
+        board_state.pv[0][i as usize] =
             evaluated_list[0].pv[i as usize];
         i += 1
     }
@@ -1184,7 +1184,7 @@ fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counte
                     eval_str);
         free(eval_str as *mut std::ffi::c_void);
         send_status_nodes(counter_value);
-        send_status_pv(&mut board_state.pv___[0], interrupted_depth, board_state.pv_depth___[0]);
+        send_status_pv(&mut board_state.pv[0], interrupted_depth, board_state.pv_depth[0]);
         send_status_time(elapsed_time);
         if elapsed_time != 0.0f64 {
             send_status(b"%6.0f %s\x00" as *const u8 as
@@ -1404,7 +1404,7 @@ fn log_board(logger: &mut LogFileHandler, board_: &[i32; 128], side_to_move_: i3
                       current_row,
                       black_player, black_time, black_eval,
                       white_player, white_time, white_eval,
-                      &board_state.black_moves___, &board_state.white_moves___
+                      &board_state.black_moves, &board_state.white_moves
         );
     }
 }
