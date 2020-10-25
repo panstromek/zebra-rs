@@ -10,7 +10,7 @@ use engine::src::myrandom::{my_srandom, my_random};
 use engine::src::hash::{set_hash_transformation, setup_hash, clear_hash_drafts, hash_state, determine_hash_values};
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError};
-use engine::src::globals::{white_moves___, black_moves___, board___, pv___, piece_count___};
+use engine::src::globals::board_state;
 use engine::src::moves::{disks_played, unmake_move, make_move, move_list, move_count,
                          generate_all, generate_specific, unmake_move_no_hash, make_move_no_hash};
 use engine::src::stubs::{abs, floor};
@@ -589,8 +589,8 @@ pub unsafe fn add_new_game(move_count_0: i32,
         /* No cutoff applies */
         let mut black_count: i32 = 0;
         let mut white_count: i32 = 0;
-        black_count = disc_count(0 as i32, &board___);
-        white_count = disc_count(2 as i32, &board___);
+        black_count = disc_count(0 as i32, &board_state.board___);
+        white_count = disc_count(2 as i32, &board_state.board___);
         if black_count > white_count {
             outcome = 64 as i32 - 2 as i32 * white_count
         } else if white_count > black_count {
@@ -598,7 +598,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
         } else { outcome = 0 as i32 }
     } else {
         generate_all(side_to_move);
-        determine_hash_values(side_to_move, &board___, &mut hash_state);
+        determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
         if echo != 0 {
             puts(b"\x00" as *const u8 as *const i8);
             if side_to_move == 0 as i32 {
@@ -692,7 +692,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
             generate_all(side_to_move);
-            determine_hash_values(side_to_move, &board___, &mut hash_state);
+            determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
             if disks_played >= 60 as i32 - max_full_solve {
                 /* Only solve the position if it hasn't been solved already */
                 if (*g_book.node.offset(this_node as isize)).flags as i32 &
@@ -1735,14 +1735,14 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                     pos = 10 as i32 * i + j;
                     match script_buffer[col as usize] as i32 {
                         42 | 88 | 120 => {
-                            board___[pos as usize] = 0;
+                            board_state.board___[pos as usize] = 0;
                             disks_played += 1
                         }
                         79 | 48 | 111 => {
-                            board___[pos as usize] = 2;
+                            board_state.board___[pos as usize] = 2;
                             disks_played += 1
                         }
-                        45 | 46 => { board___[pos as usize] = 1 as i32 }
+                        45 | 46 => { board_state.board___[pos as usize] = 1 as i32 }
                         _ => {
                             fprintf(stderr,
                                     b"\nBad character \'%c\' in board on line %d\n\n\x00"
@@ -2448,9 +2448,9 @@ unsafe fn export_position(side_to_move: i32,
         j = 0;
         pos = 10 as i32 * i + 1 as i32;
         while j < 8 as i32 {
-            if board___[pos as usize] == 0 as i32 {
+            if board_state.board___[pos as usize] == 0 as i32 {
                 black_mask |= (1 as i32) << j
-            } else if board___[pos as usize] == 2 as i32 {
+            } else if board_state.board___[pos as usize] == 2 as i32 {
                 white_mask |= (1 as i32) << j
             }
             j += 1;
@@ -2512,10 +2512,10 @@ unsafe fn do_restricted_minimax(index: i32,
     child_count = 0;
     i = 0;
     while i < move_count[disks_played as usize] {
-        piece_count___[0][disks_played as usize] =
-            disc_count(0 as i32, &board___);
-        piece_count___[2][disks_played as usize] =
-            disc_count(2 as i32, &board___);
+        board_state.piece_count___[0][disks_played as usize] =
+            disc_count(0 as i32, &board_state.board___);
+        board_state.piece_count___[2][disks_played as usize] =
+            disc_count(2 as i32, &board_state.board___);
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
@@ -2646,15 +2646,15 @@ unsafe fn do_midgame_statistics(index: i32,
         < 1000.0f64 * spec.prob &&
         abs((*g_book.node.offset(index as isize)).black_minimax_score as
             i32) < spec.max_diff {
-        display_board(stdout, &board___, 0 as i32,
+        display_board(stdout, &board_state.board___, 0 as i32,
                       0 as i32, 0 as i32, 0 as i32,
                       current_row,
                       black_player, black_time, black_eval,
                       white_player, white_time, white_eval,
-                      &black_moves___, &white_moves___
+                      &board_state.black_moves___, &board_state.white_moves___
         );
         setup_hash(0 as i32, &mut hash_state);
-        determine_hash_values(side_to_move, &board___, &mut hash_state);
+        determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
         depth = 1;
         while depth <= spec.max_depth {
             middle_game::<FE>(side_to_move, depth, 0 as i32,
@@ -2666,7 +2666,7 @@ unsafe fn do_midgame_statistics(index: i32,
         }
         puts(b"\x00" as *const u8 as *const i8);
         setup_hash(0 as i32, &mut hash_state);
-        determine_hash_values(side_to_move, &board___, &mut hash_state);
+        determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
         depth = 2;
         while depth <= spec.max_depth {
             middle_game::<FE>(side_to_move, depth, 0 as i32,
@@ -2788,16 +2788,16 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
     let mut eval_list: [i32; 64] = [0; 64];
-    display_board(stdout, &board___, 0 as i32,
+    display_board(stdout, &board_state.board___, 0 as i32,
                   0 as i32, 0 as i32, 0 as i32,
                   current_row,
                   black_player, black_time, black_eval,
                   white_player, white_time, white_eval,
-                  &black_moves___, &white_moves___
+                  &board_state.black_moves___, &board_state.white_moves___
     );
     set_hash_transformation(abs(my_random() as i32) as u32,
                             abs(my_random() as i32) as u32);
-    determine_hash_values(side_to_move, &board___, &mut hash_state);
+    determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
     depth = 1;
     while depth <= spec.max_depth {
         middle_game::<FE>(side_to_move, depth, 0 as i32, &mut dummy_info, echo);
@@ -2844,7 +2844,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                end_game::<FE>(side_to_move, 0 as i32, 1 as i32,
                          1 as i32, 0 as i32, &mut dummy_info, echo);
                 endgame_correlation(side_to_move, search_state.root_eval,
-                                    pv___[0][0],
+                                    board_state.pv___[0][0],
                                     min_disks, max_disks, spec, echo);
             }
         }
@@ -2888,7 +2888,7 @@ unsafe fn do_endgame_statistics(index: i32,
         ((my_random() % 1000 as i32 as i64) as
             f64) < 1000.0f64 * spec.prob {
         setup_hash(0 as i32, &mut hash_state);
-        determine_hash_values(side_to_move, &board___, &mut hash_state);
+        determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
         printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
                    *const i8, 60 as i32 - disks_played);
         fill_move_alternatives::<FE>(side_to_move, 16 as i32);
@@ -2901,7 +2901,7 @@ unsafe fn do_endgame_statistics(index: i32,
                      1 as i32, 0 as i32, &mut dummy_info, echo);
             if abs(search_state.root_eval) <= spec.max_diff {
                 endgame_correlation(side_to_move, search_state.root_eval,
-                                    pv___[0][0],
+                                    board_state.pv___[0][0],
                                     disks_played, 48 as i32, spec, echo);
             }
         }
@@ -3165,7 +3165,7 @@ unsafe fn do_correct(index: i32,
     /* Then correct the g_book.node itself (hopefully exploiting lots
      of useful information in the hash table) */
     generate_all(side_to_move);
-    determine_hash_values(side_to_move, &board___, &mut hash_state);
+    determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
     if disks_played >= 60 as i32 - max_empty {
         really_evaluate =
             (full_solve != 0 &&
@@ -3256,9 +3256,9 @@ unsafe fn do_correct(index: i32,
                         j = 1;
                         while j <= 8 as i32 {
                             pos = 10 as i32 * i + j;
-                            if board___[pos as usize] == 0 as i32 {
+                            if board_state.board___[pos as usize] == 0 as i32 {
                                 putc('X' as i32, target_file);
-                            } else if board___[pos as usize] == 2 as i32
+                            } else if board_state.board___[pos as usize] == 2 as i32
                             {
                                 putc('O' as i32, target_file);
                             } else { putc('-' as i32, target_file); }
@@ -3868,10 +3868,10 @@ pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32, echo: i32) {
     } else { side_to_move = 2 as i32 }
     remove_coeffs(disks_played - 8 as i32);
     clear_panic_abort();
-    piece_count___[0][disks_played as usize] =
-        disc_count(0 as i32, &board___);
-    piece_count___[2][disks_played as usize] =
-        disc_count(2 as i32, &board___);
+    board_state.piece_count___[0][disks_played as usize] =
+        disc_count(0 as i32, &board_state.board___);
+    board_state.piece_count___[2][disks_played as usize] =
+        disc_count(2 as i32, &board_state.board___);
     /* Find the moves which haven't been tried from this position */
     alternative_move_count = 0;
     i = 0;
@@ -3948,7 +3948,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
        of the averaging done, the hash table drafts are changed prior
        to each g_book.node being searched. */
     clear_hash_drafts();
-    determine_hash_values(side_to_move, &board___, &mut hash_state);
+    determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
     /* First determine the best move in the current position
        and its score when searched to depth DEPTH.
        This is done using standard negascout with iterative deepening. */
@@ -3960,10 +3960,10 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
         while i < allowed_count {
             make_move(side_to_move, *allowed_moves.offset(i as isize),
                       1 as i32);
-            piece_count___[0][disks_played as usize] =
-                disc_count(0 as i32, &board___);
-            piece_count___[2][disks_played as usize] =
-                disc_count(2 as i32, &board___);
+            board_state.piece_count___[0][disks_played as usize] =
+                disc_count(0 as i32, &board_state.board___);
+            board_state.piece_count___[2][disks_played as usize] =
+                disc_count(2 as i32, &board_state.board___);
             last_panic_check = 0.0f64;
             if i == 0 as i32 {
                 current_score =
@@ -4023,10 +4023,10 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
        to depth DEPTH+1 */
     make_move(side_to_move, *allowed_moves.offset(*best_index as isize),
               1 as i32);
-    piece_count___[0][disks_played as usize] =
-        disc_count(0 as i32, &board___);
-    piece_count___[2][disks_played as usize] =
-        disc_count(2 as i32, &board___);
+    board_state.piece_count___[0][disks_played as usize] =
+        disc_count(0 as i32, &board_state.board___);
+    board_state.piece_count___[2][disks_played as usize] =
+        disc_count(2 as i32, &board_state.board___);
     last_panic_check = 0.0f64;
     high_score =
         -tree_search::<FE>(1 as i32, depth + 1 as i32,
@@ -4225,10 +4225,10 @@ pub unsafe fn do_minimax(index: i32,
     child_count = 0;
     i = 0;
     while i < move_count[disks_played as usize] {
-        piece_count___[0][disks_played as usize] =
-            disc_count(0 as i32, &board___);
-        piece_count___[2][disks_played as usize] =
-            disc_count(2 as i32, &board___);
+        board_state.piece_count___[0][disks_played as usize] =
+            disc_count(0 as i32, &board_state.board___);
+        board_state.piece_count___[2][disks_played as usize] =
+            disc_count(2 as i32, &board_state.board___);
         this_move = move_list[disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
         get_hash(&mut val1, &mut val2, &mut orientation);
@@ -4666,4 +4666,3 @@ pub fn select_hash_slot(index: i32, book: &mut Book) {
     }
     *book.book_hash_table.offset(slot as isize) = index;
 }
-

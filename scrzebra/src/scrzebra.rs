@@ -9,7 +9,7 @@ use engine::src::counter::{counter_value, add_counter, reset_counter, CounterTyp
 use engine::src::timer::{get_real_timer, determine_move_time, start_move};
 use engine::src::search::{disc_count, search_state};
 use engine::src::moves::disks_played;
-use engine::src::globals::{board___, score_sheet_row___, white_moves___, black_moves___};
+use engine::src::globals::board_state;
 use engine::src::hash::{setup_hash, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, g_book};
 use legacy_zebra::src::learn::init_learn;
@@ -160,13 +160,13 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     /* Initialize display subsystem and search parameters */
     set_names(b"\x00" as *const u8 as *const i8,
               b"\x00" as *const u8 as *const i8);
-    set_move_list(black_moves___.as_mut_ptr(), white_moves___.as_mut_ptr(),
-                  score_sheet_row___);
+    set_move_list(board_state.black_moves___.as_mut_ptr(), board_state.white_moves___.as_mut_ptr(),
+                  board_state.score_sheet_row___);
     set_evals(0.0f64, 0.0f64);
     i = 0;
     while i < 60 as i32 {
-        black_moves___[i as usize] = -(1 as i32);
-        white_moves___[i as usize] = -(1 as i32);
+        board_state.black_moves___[i as usize] = -(1 as i32);
+        board_state.white_moves___[i as usize] = -(1 as i32);
         i += 1
     }
     my_time = 100000000;
@@ -264,12 +264,12 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                     pos = 10 as i32 * row + col;
                     match board_string[token as usize] as i32 {
                         42 | 88 | 120 => {
-                            board___[pos as usize] = 0 as i32
+                            board_state.board___[pos as usize] = 0 as i32
                         }
                         79 | 48 | 111 => {
-                            board___[pos as usize] = 2 as i32
+                            board_state.board___[pos as usize] = 2 as i32
                         }
-                        45 | 46 => { board___[pos as usize] = 1 as i32 }
+                        45 | 46 => { board_state.board___[pos as usize] = 1 as i32 }
                         _ => {
                             printf(b"\nBad character \'%c\' in board on line %d - aborting\n\n\x00"
                                        as *const u8 as *const i8,
@@ -283,18 +283,18 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                 row += 1
             }
             disks_played =
-                disc_count(0 as i32, &board___) + disc_count(2 as i32, &board___) -
+                disc_count(0 as i32, &board_state.board___) + disc_count(2 as i32, &board_state.board___) -
                     4 as i32;
             /* Search the position */
             if g_config.echo != 0 {
-                set_move_list(black_moves___.as_mut_ptr(),
-                              white_moves___.as_mut_ptr(), score_sheet_row___);
-                display_board(stdout, &board___, side_to_move,
+                set_move_list(board_state.black_moves___.as_mut_ptr(),
+                              board_state.white_moves___.as_mut_ptr(), board_state.score_sheet_row___);
+                display_board(stdout, &board_state.board___, side_to_move,
                               1 as i32, 0 as i32,
                               1 as i32, current_row,
                               black_player, black_time, black_eval,
                               white_player, white_time, white_eval,
-                              &black_moves___, &white_moves___);
+                              &board_state.black_moves___, &board_state.white_moves___);
             }
             search_start = get_real_timer::<FE>();
             start_move::<FE>(my_time as f64, my_incr as f64,
@@ -317,9 +317,9 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                                  1 as i32, &mut eval_info);
                 if move_0 == -(1 as i32) {
                     /* Both pass, game over. */
-                    let mut my_discs: i32 = disc_count(side_to_move, &board___);
+                    let mut my_discs: i32 = disc_count(side_to_move, &board_state.board___);
                     let mut opp_discs: i32 =
-                        disc_count(0 as i32 + 2 as i32 - side_to_move, &board___);
+                        disc_count(0 as i32 + 2 as i32 - side_to_move, &board_state.board___);
                     if my_discs > opp_discs {
                         my_discs = 64 as i32 - opp_discs
                     } else if opp_discs > my_discs {
