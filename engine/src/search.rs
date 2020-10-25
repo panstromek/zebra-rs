@@ -156,7 +156,7 @@ pub fn inherit_move_lists(stage: i32, sorted_move_order_: &mut [[i32; 64]; 64], 
   in many variations in the tree.
 */
 
-pub fn reorder_move_list(board_: &[i32; 128], stage_sorted_move_order: &mut [i32; 64]) {
+pub fn reorder_move_list(board_: & crate::src::globals::Board, stage_sorted_move_order: &mut [i32; 64]) {
     let dont_touch = 24;
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
@@ -213,7 +213,7 @@ pub unsafe fn setup_search() {
    Returns the number of disks of a specified color.
 */
 
-pub const fn disc_count(side_to_move: i32, board_: &[i32; 128]) -> i32 {
+pub const fn disc_count(side_to_move: i32, board_: & crate::src::globals::Board) -> i32 {
     let mut j = 0;
     let mut sum = 0;
     let mut i = 1;
