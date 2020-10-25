@@ -58,43 +58,47 @@ fn set_default_panic(timer_: &mut Timer) {
 */
 /* Holds the value of the variable NODES the last time the
    timer module was called to check if a panic abort occured. */
-/*
-  DETERMINE_MOVE_TIME
-  Initializes the timing subsystem and allocates time for the current move.
-*/
 
-pub unsafe fn determine_move_time(time_left: f64,
-                                  incr: f64,
-                                  discs: i32) {
-    let mut time_available: f64 = 0.;
-    let mut moves_left: i32 = 0;
-   timer.frozen_ponder_time = timer.current_ponder_time;
-    timer.frozen_ponder_depth = timer.current_ponder_depth;
-    moves_left =
-        if (65 as i32 - discs) / 2 as i32 - 5 as i32 >
-            2 as i32 {
-            ((65 as i32 - discs) / 2 as i32) -
-                5 as i32
-        } else { 2 as i32 };
-    time_available =
-        time_left +timer.frozen_ponder_time + moves_left as f64 * incr -
-            10.0f64;
-    if time_available < 1.0f64 { time_available = 1.0f64 }
-   timer. time_per_move =
-        time_available / (moves_left + 1 as i32) as f64 *
-            0.7f64;
-    if timer. time_per_move > time_left / 4 as i32 as f64 {
-       timer. time_per_move = time_left / 4 as i32 as f64
-    }
-    if timer. time_per_move > time_left +timer.frozen_ponder_time {
-       timer. time_per_move = time_left / 4 as i32 as f64
-    }
-    if timer. time_per_move == 0 as i32 as f64 {
-       timer. time_per_move = 1 as i32 as f64
-    }
-    set_default_panic(&mut timer);
+pub unsafe fn determine_move_time(time_left: f64, incr: f64, discs: i32) {
+    timer.determine_move_time(time_left, incr, discs)
 }
 
+impl Timer {
+    /*
+        DETERMINE_MOVE_TIME
+        Initializes the timing subsystem and allocates time for the current move.
+    */
+    pub fn determine_move_time(&mut self, time_left: f64, incr: f64, discs: i32) {
+        let timer_ = self;
+        let mut time_available: f64 = 0.;
+        let mut moves_left: i32 = 0;
+        timer_.frozen_ponder_time = timer_.current_ponder_time;
+        timer_.frozen_ponder_depth = timer_.current_ponder_depth;
+        moves_left =
+            if (65 as i32 - discs) / 2 as i32 - 5 as i32 >
+                2 as i32 {
+                ((65 as i32 - discs) / 2 as i32) -
+                    5 as i32
+            } else { 2 as i32 };
+        time_available =
+            time_left + timer_.frozen_ponder_time + moves_left as f64 * incr -
+                10.0f64;
+        if time_available < 1.0f64 { time_available = 1.0f64 }
+        timer_.time_per_move =
+            time_available / (moves_left + 1 as i32) as f64 *
+                0.7f64;
+        if timer_.time_per_move > time_left / 4 as i32 as f64 {
+            timer_.time_per_move = time_left / 4 as i32 as f64
+        }
+        if timer_.time_per_move > time_left + timer_.frozen_ponder_time {
+            timer_.time_per_move = time_left / 4 as i32 as f64
+        }
+        if timer_.time_per_move == 0 as i32 as f64 {
+            timer_.time_per_move = 1 as i32 as f64
+        }
+        set_default_panic(timer_);
+    }
+}
 /*
   TOGGLE_ABORT_CHECK
   Enables/disables panic time abort checking.
