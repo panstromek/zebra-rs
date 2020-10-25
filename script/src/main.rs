@@ -1,10 +1,10 @@
 use regex::{Captures, Regex};
-use std::process::Command;
+use std::process::{Command};
 
 fn main() {
-    let filename = "../engine/src/globals.rs";
-    let struct_name = "BoardState";
-    let global_name = "board_state";
+    let filename = "../engine/src/getcoeff.rs";
+    let struct_name = "CoeffState";
+    let global_name = "coeff_state";
 
     let file = std::fs::read_to_string(filename).unwrap();
     let declaration = regex::Regex::new(
@@ -14,6 +14,7 @@ fn main() {
         name: &'a str,
         type_: &'a str,
         default_value: &'a str,
+        is_pub: bool
     }
 
     let declarations = file.lines()
@@ -24,6 +25,7 @@ fn main() {
                     name: captures.get(1).unwrap().as_str().trim(),
                     type_: captures.get(2).unwrap().as_str().trim(),
                     default_value: captures.get(3).unwrap().as_str().trim(),
+                    is_pub: line.trim_start().starts_with("pub")
                 }
             }))
         // .inspect(|x| println!("{:#?}", x))
@@ -40,7 +42,7 @@ fn main() {
                format!("pub static mut {} : {} = {} {{",global_name, struct_name, struct_name )),
 
               |(struct_decl, static_decl), declaration| {
-                  (struct_decl + "\npub " + declaration.name + ": " + declaration.type_ + ",",
+                  (struct_decl + (if declaration.is_pub { "\npub " } else { " " }) + declaration.name + ": " + declaration.type_ + ",",
                    static_decl + "\n" + declaration.name + ": " + declaration.default_value + ",")
               });
     struct_declaration.0 += "\n}\n";
@@ -48,83 +50,36 @@ fn main() {
 
     let multi_comma = regex::Regex::new(r#",(?:\s+,)+"#).unwrap();
 
-    let new_lines = replace_in_file(&file, &declaration, &replacer,
-                                    &mut struct_declaration,
-                                    true, global_name, true, &multi_comma);
-    std::fs::write(filename, new_lines.join("\n")).unwrap();
-    let collector = Command::new("rg")
+    let collector = Command::new("sh")
+        .arg("-c")
         .arg((declarations.iter().map(|decl| {
             return String::from("(") + decl.name + ")";
-        }).fold(String::from("\"(_______)"), |acc, name| {
+        }).fold(String::from("rg \"(_______)"), |acc, name| {
             acc + "|" + &name
-        }) + "\"").as_str())
-        .arg("../")
-        .arg("--files-with-matches")
+        }) + "\" ../ --files-with-matches").as_str())
         .output()
         .unwrap()
         .stdout;
     let rg_output = String::from_utf8(collector).unwrap();
+    let new_lines = replace_in_file(&file, &declaration, &replacer,
+                                    &mut struct_declaration,
+                                    true, global_name, true, &multi_comma);
+
+    std::fs::write(filename, new_lines.join("\n")).unwrap();
     let usages_file_paths = rg_output.lines();
-    // TODO automate with "rg" and don't forget to remove the original file
-    //  rg "(pv___)|(pv_depth___)|(board___)" --files-with-matches
-    // let usages_file_paths: &[&'static str] = &[
-    //     "../scrzebra/src/scrzebra.rs",
-    // "../engine/src/getcoeff.rs",
-    // "../engine/src/end.rs",
-    // "../engine/src/eval.rs",
-    // "../engine/src/osfbook.rs",
-    // "../engine/src/zebra.rs",
-    // "../engine/src/globals.rs",
-    // "../engine/src/midgame.rs",
-    // "../engine/src/moves.rs",
-    // "../engine/src/game.rs",
-    // "../enddev/src/enddev.rs",
-    // "../legacy-zebra/src/game.rs",
-    // "../legacy-zebra/src/zebra.rs",
-    // "../legacy-zebra/src/osfbook.rs",
-    // "../practice/src/practice.rs",
-    // "../engine/src/search.rs",
-    //
-    // // "../legacy-zebra/src/zebra.rs",
-    //     // "../legacy-zebra/src/display.rs",
-    //     // "../legacy-zebra/src/error.rs",
-    //     // "../legacy-zebra/src/game.rs",
-    //     // "../legacy-zebra/src/getcoeff.rs",
-    //     // "../legacy-zebra/src/learn.rs",
-    //     // "../legacy-zebra/src/main.rs",
-    //     // "../legacy-zebra/src/osfbook.rs",
-    //     // "../legacy-zebra/src/safemem.rs",
-    //     // "../legacy-zebra/src/thordb.rs",
-    //     // "../engine/src/cntflip.rs",
-    //     // "../engine/src/counter.rs",
-    //     // "../engine/src/end.rs",
-    //     // "../engine/src/error.rs",
-    //     // "../engine/src/eval.rs",
-    //     // // "../engine/src/game.rs",
-    //     // "../engine/src/getcoeff.rs",
-    //     // "../engine/src/globals.rs",
-    //     // "../engine/src/hash.rs",
-    //     // "../engine/src/learn.rs",
-    //     // "../engine/src/midgame.rs",
-    //     // "../engine/src/moves.rs",
-    //     // "../engine/src/myrandom.rs",
-    //     // "../engine/src/opname.rs",
-    //     // "../engine/src/osfbook.rs",
-    //     // "../engine/src/probcut.rs",
-    //     // "../engine/src/search.rs",
-    //     // "../engine/src/stable.rs",
-    //     // "../engine/src/stubs.rs",
-    //     // "../engine/src/thordb.rs",
-    //     // "../engine/src/timer.rs",
-    //     // "../engine/src/zebra.rs",
-    // ];
     for usages_file_path in usages_file_paths {
-        let file = std::fs::read_to_string(usages_file_path).unwrap();
-        let new_lines = replace_in_file(&file, &declaration, &replacer,
-                                        &mut struct_declaration,
-                                        false, global_name,
-                                        false, &multi_comma);
-        std::fs::write(usages_file_path, new_lines.join("\n")).unwrap();
+        if usages_file_path == filename || usages_file_path == "../script/src/main.rs" {
+            continue;
+        }
+        if let Ok(file) = std::fs::read_to_string(usages_file_path) {
+            let new_lines = replace_in_file(&file, &declaration, &replacer,
+                                            &mut struct_declaration,
+                                            false, global_name,
+                                            false, &multi_comma);
+            std::fs::write(usages_file_path, new_lines.join("\n")).unwrap();
+        } else {
+            eprintln!("file doesn't exist '{}'", usages_file_path)
+        }
     }
 }
 
