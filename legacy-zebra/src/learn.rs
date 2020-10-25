@@ -7,8 +7,11 @@ use engine::src::timer::{clear_panic_abort, toggle_abort_check};
 use engine::src::osfbook::set_search_depth;
 use engine::src::moves::{make_move, generate_all, disks_played, move_count};
 use engine::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
-use engine::src::learn::{database_name, binary_database, game_move, learn_depth, Learner, cutoff_empty};
+use engine::src::learn::{binary_database, game_move, learn_depth, Learner, cutoff_empty};
 use crate::src::zebra::g_config;
+
+pub static mut binary_database: i32 = 0;
+pub static mut database_name: [i8; 256] = [0; 256];
 
 /*
    INIT_LEARN
