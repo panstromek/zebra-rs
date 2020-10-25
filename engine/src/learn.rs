@@ -1,8 +1,5 @@
 
 
-
-pub static mut database_name: [i8; 256] = [0; 256];
-pub static mut binary_database: i32 = 0;
 pub static mut learn_depth: i32 = 0;
 pub static mut cutoff_empty: i32 = 0;
 pub static mut game_move: [i16; 61] = [0; 61];
