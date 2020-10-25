@@ -3,7 +3,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, label_break_value, register_tool)]
 
 use engine::src::moves::{disks_played, make_move, valid_move, move_count, generate_all};
-use engine::src::globals::{board___, white_moves___, black_moves___};
+use engine::src::globals::{board_state};
 use engine::src::myrandom::my_random;
 use engine::src::game::{EvaluatedMove};
 use engine::src::zebra::{EvaluationType};
@@ -261,7 +261,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             restart = 0;
             in_branch = 0 as i32
         }
-        if disc_count(0 as i32, &board___) + disc_count(2 as i32, &board___) ==
+        if disc_count(0 as i32, &board_state.board___) + disc_count(2 as i32, &board_state.board___) ==
             disks_played + 4 as i32 {
         } else {
             __assert_fail(b"disc_count( BLACKSQ ) + disc_count( WHITESQ ) == disks_played + 4\x00"
@@ -271,7 +271,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                           (*::std::mem::transmute::<&[u8; 23],
                               &[i8; 23]>(b"int main(int, char **)\x00")).as_ptr());
         }
-        determine_hash_values(side_to_move, &board___, &mut hash_state);
+        determine_hash_values(side_to_move, &board_state.board___, &mut hash_state);
         generate_all(side_to_move);
         if move_count[disks_played as usize] == 0 as i32 {
             if last_was_pass != 0 {
@@ -456,12 +456,12 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         b"Game #%d contains illegal move %d @ #%d.\n\x00" as
                             *const u8 as *const i8, games_read,
                         move_0, disks_played);
-                display_board(stderr, &board___, side_to_move,
+                display_board(stderr, &board_state.board___, side_to_move,
                               0 as i32, 0 as i32,
                               0 as i32, current_row,
                               black_player, black_time, black_eval,
                               white_player, white_time, white_eval,
-                              &black_moves___, &white_moves___);
+                              &board_state.black_moves___, &board_state.white_moves___);
                 exit(1 as i32);
             }
             game_moves[disks_played as usize] = move_0;

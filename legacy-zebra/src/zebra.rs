@@ -10,7 +10,7 @@ use crate::src::thordb::{read_game_database, read_tournament_database, read_play
 use crate::src::error::{LibcFatalError, FE, fatal_error};
 use engine::src::error::{FrontEnd, FatalError};
 use libc_wrapper::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, sscanf, feof, fgets, atoi, scanf, sprintf, ctime, time, strchr, strcasecmp, atof, stdout};
-use engine::src::globals::{white_moves___, score_sheet_row___, black_moves___, board___};
+use engine::src::globals::{board_state};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType, adjust_counter};
 use engine::src::timer::{get_real_timer, determine_move_time, start_move, clear_panic_abort};
 use engine::src::search::{disc_count, produce_compact_eval, search_state};
@@ -682,14 +682,14 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
             add_counter(&mut tourney_nodes, &mut search_state.total_nodes);
             tourney_time += search_state.total_time;
             result[i as usize][j as usize][0] =
-                disc_count(0 as i32, &board___);
+                disc_count(0 as i32, &board_state.board___);
             result[i as usize][j as usize][2] =
-                disc_count(2 as i32, &board___);
-            if disc_count(0 as i32, &board___) > disc_count(2 as i32, &board___) {
+                disc_count(2 as i32, &board_state.board___);
+            if disc_count(0 as i32, &board_state.board___) > disc_count(2 as i32, &board_state.board___) {
                 score[i as usize] += 1.0f64;
                 color_score[0] += 1.0f64
-            } else if disc_count(0 as i32, &board___) ==
-                          disc_count(2 as i32, &board___) {
+            } else if disc_count(0 as i32, &board_state.board___) ==
+                          disc_count(2 as i32, &board_state.board___) {
                 score[i as usize] += 0.5f64;
                 score[j as usize] += 0.5f64;
                 color_score[0] += 0.5f64;
@@ -1163,13 +1163,13 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     let black_name = b"Zebra\x00" as *const u8 as *const i8;
     let white_name = b"Zebra\x00" as *const u8 as *const i8;
     set_names(black_name, white_name);
-    set_move_list(black_moves___.as_mut_ptr(), white_moves___.as_mut_ptr(),
-                  score_sheet_row___);
+    set_move_list(board_state.black_moves___.as_mut_ptr(), board_state.white_moves___.as_mut_ptr(),
+                  board_state.score_sheet_row___);
     set_evals(0.0f64, 0.0f64);
     let mut i = 0;
     while i < 60 as i32 {
-        black_moves___[i as usize] = -(1 as i32);
-        white_moves___[i as usize] = -(1 as i32);
+        board_state.black_moves___[i as usize] = -(1 as i32);
+        board_state.white_moves___[i as usize] = -(1 as i32);
         i += 1
     }
     let _black_hash1 = my_random() as i32;
@@ -1183,13 +1183,13 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     while game_in_progress() != 0 && disks_played < provided_move_count {
         remove_coeffs(disks_played);
         generate_all(side_to_move);
-        if side_to_move == 0 as i32 { score_sheet_row___ += 1 }
+        if side_to_move == 0 as i32 { board_state.score_sheet_row___ += 1 }
         if move_count[disks_played as usize] != 0 as i32 {
             move_start = get_real_timer::<FE>();
             clear_panic_abort();
             if g_config.echo != 0 {
-                set_move_list(black_moves___.as_mut_ptr(),
-                              white_moves___.as_mut_ptr(), score_sheet_row___);
+                set_move_list(board_state.black_moves___.as_mut_ptr(),
+                              board_state.white_moves___.as_mut_ptr(), board_state.score_sheet_row___);
                 set_times(floor(config.player_time[0]) as
                               i32,
                           floor(config.player_time[2]) as
@@ -1199,15 +1199,15 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                     printf(b"\nOpening: %s\n\x00" as *const u8 as
                                *const i8, opening_name);
                 }
-                display_board(stdout, &board___, side_to_move,
+                display_board(stdout, &board_state.board___, side_to_move,
                               1, config.use_timer, 1,
                               current_row,
                               black_player, black_time, black_eval,
                               white_player, white_time, white_eval,
-                              &black_moves___, &white_moves___);
+                              &board_state.black_moves___, &board_state.white_moves___);
             }
             /* Check what the Thor opening statistics has to say */
-            choose_thor_opening_move(&board___, side_to_move, g_config.echo);
+            choose_thor_opening_move(&board_state.board___, side_to_move, g_config.echo);
             if g_config.echo != 0 && config.wait != 0 { dumpch(); }
             start_move::<FE>(config.player_time[side_to_move as usize],
                        config.player_increment[side_to_move as usize],
@@ -1372,17 +1372,17 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             store_move(disks_played, curr_move);
             make_move(side_to_move, curr_move, 1 as i32);
             if side_to_move == 0 as i32 {
-                black_moves___[score_sheet_row___ as usize] = curr_move
+                board_state.black_moves___[board_state.score_sheet_row___ as usize] = curr_move
             } else {
-                if white_moves___[score_sheet_row___ as usize] !=
+                if board_state.white_moves___[board_state.score_sheet_row___ as usize] !=
                        -(1 as i32) {
-                    score_sheet_row___ += 1
+                    board_state.score_sheet_row___ += 1
                 }
-                white_moves___[score_sheet_row___ as usize] = curr_move
+                board_state.white_moves___[board_state.score_sheet_row___ as usize] = curr_move
             }
         } else if side_to_move == 0 as i32 {
-            black_moves___[score_sheet_row___ as usize] = -(1 as i32)
-        } else { white_moves___[score_sheet_row___ as usize] = -(1 as i32) }
+            board_state.black_moves___[board_state.score_sheet_row___ as usize] = -(1 as i32)
+        } else { board_state.white_moves___[board_state.score_sheet_row___ as usize] = -(1 as i32) }
         side_to_move = 0 as i32 + 2 as i32 - side_to_move
     }
     if g_config.echo == 0 {
@@ -1392,21 +1392,21 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         printf(b"White level: %d\n\x00" as *const u8 as *const i8,
                config.skill[2]);
     }
-    if side_to_move == 0 as i32 { score_sheet_row___ += 1 }
-    LibcDumpHandler::dump_game_score(side_to_move, score_sheet_row___, &black_moves___, &white_moves___);
+    if side_to_move == 0 as i32 { board_state.score_sheet_row___ += 1 }
+    LibcDumpHandler::dump_game_score(side_to_move, board_state.score_sheet_row___, &board_state.black_moves___, &board_state.white_moves___);
     if g_config.echo != 0 && config.one_position_only == 0 {
-        set_move_list(black_moves___.as_mut_ptr(), white_moves___.as_mut_ptr(),
-                      score_sheet_row___);
+        set_move_list(board_state.black_moves___.as_mut_ptr(), board_state.white_moves___.as_mut_ptr(),
+                      board_state.score_sheet_row___);
         set_times(floor(config.player_time[0]) as
                       i32,
                   floor(config.player_time[2]) as
                       i32);
-        display_board(stdout, &board___, side_to_move,
+        display_board(stdout, &board_state.board___, side_to_move,
                       1 as i32, config.use_timer, 1 as i32,
                       current_row,
                       black_player, black_time, black_eval,
                       white_player, white_time, white_eval,
-                      &black_moves___, &white_moves___);
+                      &board_state.black_moves___, &board_state.white_moves___);
     }
     fclose(output_stream);
 }
@@ -1476,13 +1476,13 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     /* Initialize display subsystem and search parameters */
     set_names(b"\x00" as *const u8 as *const i8,
               b"\x00" as *const u8 as *const i8);
-    set_move_list(black_moves___.as_mut_ptr(), white_moves___.as_mut_ptr(),
-                  score_sheet_row___);
+    set_move_list(board_state.black_moves___.as_mut_ptr(), board_state.white_moves___.as_mut_ptr(),
+                  board_state.score_sheet_row___);
     set_evals(0.0f64, 0.0f64);
     i = 0;
     while i < 60 as i32 {
-        black_moves___[i as usize] = -(1 as i32);
-        white_moves___[i as usize] = -(1 as i32);
+        board_state.black_moves___[i as usize] = -(1 as i32);
+        board_state.white_moves___[i as usize] = -(1 as i32);
         i += 1
     }
     my_time = 100000000;
@@ -1580,12 +1580,12 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                     pos = 10 as i32 * row + col;
                     match board_string[token as usize] as i32 {
                         42 | 88 | 120 => {
-                            board___[pos as usize] = 0 as i32
+                            board_state.board___[pos as usize] = 0 as i32
                         }
                         79 | 48 | 111 => {
-                            board___[pos as usize] = 2 as i32
+                            board_state.board___[pos as usize] = 2 as i32
                         }
-                        45 | 46 => { board___[pos as usize] = 1 as i32 }
+                        45 | 46 => { board_state.board___[pos as usize] = 1 as i32 }
                         _ => {
                             printf(b"\nBad character \'%c\' in board on line %d - aborting\n\n\x00"
                                        as *const u8 as *const i8,
@@ -1599,18 +1599,18 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 row += 1
             }
             disks_played =
-                disc_count(0 as i32, &board___) + disc_count(2 as i32, &board___) -
+                disc_count(0 as i32, &board_state.board___) + disc_count(2 as i32, &board_state.board___) -
                     4 as i32;
             /* Search the position */
             if g_config.echo != 0 {
-                set_move_list(black_moves___.as_mut_ptr(),
-                              white_moves___.as_mut_ptr(), score_sheet_row___);
-                display_board(stdout, &board___, side_to_move,
+                set_move_list(board_state.black_moves___.as_mut_ptr(),
+                              board_state.white_moves___.as_mut_ptr(), board_state.score_sheet_row___);
+                display_board(stdout, &board_state.board___, side_to_move,
                               1 as i32, 0 as i32,
                               1 as i32, current_row,
                               black_player, black_time, black_eval,
                               white_player, white_time, white_eval,
-                              &black_moves___, &white_moves___);
+                              &board_state.black_moves___, &board_state.white_moves___);
             }
             search_start = get_real_timer::<FE>();
             start_move::<FE>(my_time as f64, my_incr as f64,
@@ -1633,10 +1633,10 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                                  1 as i32, &mut eval_info);
                 if move_0 == -(1 as i32) {
                     /* Both pass, game over. */
-                    let mut my_discs = disc_count(side_to_move, &board___);
+                    let mut my_discs = disc_count(side_to_move, &board_state.board___);
                     let mut opp_discs =
                         disc_count(0 as i32 + 2 as i32 -
-                                       side_to_move, &board___);
+                                       side_to_move, &board_state.board___);
                     if my_discs > opp_discs {
                         my_discs = 64 as i32 - opp_discs
                     } else if opp_discs > my_discs {

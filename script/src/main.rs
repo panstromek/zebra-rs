@@ -51,7 +51,8 @@ fn main() {
                                     &mut struct_declaration,
                                     true, global_name, true, &multi_comma);
     std::fs::write(filename, new_lines.join("\n")).unwrap();
-
+    // TODO automate with "rg" and don't forget to remove the original file
+    //  rg "(pv___)|(pv_depth___)|(board___)" --files-with-matches
     let usages_file_paths: &[&'static str] = &[
         "../scrzebra/src/scrzebra.rs",
     "../engine/src/getcoeff.rs",
