@@ -19,7 +19,7 @@ use crate::src::error::{FrontEnd};
 use crate::src::midgame::tree_search;
 use crate::src::timer::{last_panic_check, clear_panic_abort, toggle_abort_check};
 use crate::src::hash::{add_hash, setup_hash};
-use crate::src::game::{engine_game_init, setup_non_file_based_game};
+use crate::src::game::{setup_non_file_based_game};
 use engine_traits::Offset;
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, WLD_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
 use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, DRAWN_POSITION, UNSOLVED_POSITION};

@@ -62,9 +62,7 @@ static mut play_human_openings: i32 = 1;
   before resorting to the usual opening book.
 */
 static play_thor_match_openings: i32 = 1;
-pub static mut game_evaluated_count: i32 = 0;
 static mut komi: i32 = 0;
-pub static mut prefix_move: i32 = 0;
 static mut endgame_performed: [i32; 3] = [0; 3];
 /*
   TOGGLE_STATUS_LOG
@@ -113,55 +111,6 @@ pub fn compare_eval(mut e1: EvaluationType, mut e2: EvaluationType) -> i32 {
     e1.score - e2.score
 }
 
-/*
-  GET_EVALUATED_COUNT
-  GET_EVALUATED
-  Accessor functions for the data structure filled by extended_compute_move().
-*/
-
-pub unsafe fn get_evaluated_count() -> i32 {
-    return game_evaluated_count;
-}
-
-/*
-  GET_SEARCH_STATISTICS
-  Returns some statistics about the last search made.
-*/
-
-pub unsafe fn get_search_statistics(max_depth: &mut i32, node_count: &mut f64) {
-    *max_depth = max_depth_reached;
-    if prefix_move != 0 {
-        *max_depth += 1
-    }
-    adjust_counter(&mut search_state.nodes);
-    *node_count = counter_value(&mut search_state.nodes);
-}
-
-
-/*
-  GET_PV
-  Returns the principal variation.
-*/
-
-pub unsafe fn get_pv(destin: &mut [i32]) -> i32 {
-    let mut i = 0;
-    return if prefix_move == 0 {
-        i = 0;
-        while i < pv_depth[0] {
-            destin[i as usize] = pv[0][i as usize];
-            i += 1
-        }
-        pv_depth[0]
-    } else {
-        destin[0] = prefix_move;
-        i = 0;
-        while i < pv_depth[0] {
-            destin[(i + 1 as i32) as usize] = pv[0][i as usize];
-            i += 1
-        }
-        pv_depth[0] + 1
-    };
-}
 /*
    GLOBAL_TERMINATE
    Free all dynamically allocated memory.
@@ -753,146 +702,6 @@ pub unsafe fn compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fro
         search_forced, eval_info, &mut L::create_log_file_if_needed(), display_pv, echo);
 }
 
-pub unsafe fn ponder_move<
-    L: ComputeMoveLogger,
-    Out: ComputeMoveOutput,
-    FE: FrontEnd,
-    Thor: ThorDatabase,
-    Rep: PonderMoveReport>(side_to_move: i32,
-                           _book: i32,
-                           mid: i32,
-                           exact: i32,
-                           wld: i32, display_pv: i32, mut echo:i32) {
-    let mut eval_info =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
-    let mut entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
-    let mut move_start_time: f64 = 0.;
-    let mut move_stop_time: f64 = 0.;
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut this_move: i32 = 0;
-    let mut expect_count: i32 = 0;
-    let mut expect_list: [i32; 64] = [0; 64];
-    let mut best_pv: [i32; 61] = [0; 61];
-    /* Disable all time control mechanisms as it's the opponent's
-       time we're using */
-    toggle_abort_check(0 as i32);
-    toggle_midgame_abort_check(0 as i32);
-    start_move::<FE>(0 as i32 as f64,
-                     0 as i32 as f64,
-                     disc_count(0 as i32, &board) + disc_count(2 as i32, &board));
-    clear_ponder_times();
-    determine_hash_values(side_to_move, &board, &mut hash_state);
-    reset_counter(&mut search_state.nodes);
-    /* Find the scores for the moves available to the opponent. */
-    let mut hash_move = 0;
-    find_hash(&mut entry, 1 as i32, &mut hash_state);
-    if entry.draft as i32 != 0 as i32 {
-        hash_move = entry.move_0[0]
-    } else {
-        find_hash(&mut entry, 0 as i32, &mut hash_state);
-        if entry.draft as i32 != 0 as i32 {
-            hash_move = entry.move_0[0]
-        }
-    }
-    let stored_echo = echo;
-    echo = 0;
-    compute_move::<L, Out, FE, Thor>(side_to_move, 0 as i32, 0 as i32,
-                 0 as i32, 0 as i32, 0 as i32,
-                 if (8 as i32) < mid {
-                     8 as i32
-                 } else { mid }, 0 as i32, 0 as i32,
-                 0 as i32, &mut eval_info, display_pv, echo);
-    echo = stored_echo;
-    /* Sort the opponents on the score and push the table move (if any)
-       to the front of the list */
-    if force_return != 0 {
-        expect_count = 0 as i32
-    } else {
-        sort_moves(move_count[disks_played as usize]);
-        float_move(hash_move, move_count[disks_played as usize]);
-        expect_count = move_count[disks_played as usize];
-        i = 0;
-        while i < expect_count {
-            expect_list[i as usize] =
-                move_list[disks_played as usize][i as usize];
-            i += 1
-        }
-        Rep::report_hash_move(hash_move);
-        let move_list_item = &move_list[disks_played as usize];
-        let evals_item = &search_state.evals[disks_played as usize];
-        Rep::report_move_evals(expect_count, move_list_item, evals_item);
-    }
-    /* Go through the expected moves in order and prepare responses. */
-    let mut best_pv_depth = 0;
-    let mut i = 0;
-    while force_return == 0 && i < expect_count {
-        move_start_time = get_real_timer::<FE>();
-        set_ponder_move(expect_list[i as usize]);
-        this_move = expect_list[i as usize];
-        prefix_move = this_move;
-        make_move(side_to_move, this_move, 1 as i32);
-        compute_move::<L, Out, FE, Thor>(0 as i32 + 2 as i32 - side_to_move,
-                                         0 as i32, 0 as i32, 0 as i32,
-                     1 as i32, 0 as i32, mid, exact, wld,
-                     0 as i32, &mut eval_info, display_pv, echo);
-        unmake_move(side_to_move, this_move);
-        clear_ponder_move();
-        move_stop_time = get_real_timer::<FE>();
-        add_ponder_time(expect_list[i as usize],
-                        move_stop_time - move_start_time);
-        ponder_depth[expect_list[i as usize] as usize] =
-            if ponder_depth[expect_list[i as usize] as usize] >
-                max_depth_reached - 1 as i32 {
-                ponder_depth[expect_list[i as usize] as usize]
-            } else { (max_depth_reached) - 1 as i32 };
-        if i == 0 as i32 && force_return == 0 {
-            /* Store the PV for the first move */
-            best_pv_depth = pv_depth[0];
-            j = 0;
-            while j < pv_depth[0] {
-                best_pv[j as usize] =
-                    pv[0][j as usize];
-                j += 1
-            }
-        }
-        i += 1
-    }
-    /* Make sure the PV looks reasonable when leaving - either by
-       clearing it altogether or, preferrably, using the stored PV for
-       the first move if it is available. */
-    max_depth_reached += 1;
-    prefix_move = 0;
-    if best_pv_depth == 0 as i32 {
-        pv_depth[0] = 0 as i32
-    } else {
-        pv_depth[0] =
-            best_pv_depth + 1 as i32;
-        pv[0][0] =
-            expect_list[0];
-        i = 0;
-        while i < best_pv_depth {
-            pv[0][(i + 1 as i32) as usize] =
-                best_pv[i as usize];
-            i += 1
-        }
-    }
-    /* Don't forget to enable the time control mechanisms when leaving */
-    toggle_abort_check(1 as i32);
-    toggle_midgame_abort_check(1 as i32);
-}
 pub trait PonderMoveReport {
     fn report_move_evals(expect_count: i32, move_list_item: &[i32; 64], evals_item: &[i32; 128]);
     fn report_hash_move(hash_move: i32);

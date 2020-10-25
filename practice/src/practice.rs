@@ -5,10 +5,10 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 
 use engine::src::globals::{score_sheet_row, white_moves, black_moves, board};
 use engine::src::moves::{make_move, disks_played, valid_move, generate_all, unmake_move};
-use engine::src::game::{get_evaluated_count, toggle_human_openings};
+use engine::src::game::{toggle_human_openings};
 use engine::src::osfbook::{get_hash, find_opening_name};
 use legacy_zebra::src::display::{produce_eval_text, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_names};
-use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated};
+use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{read_binary_database, init_osf};
 use legacy_zebra::src::error::{LibcFatalError, FE};
 use libc_wrapper::_IO_FILE;
