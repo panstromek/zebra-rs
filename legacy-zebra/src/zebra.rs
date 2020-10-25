@@ -15,7 +15,7 @@ use engine::src::counter::{counter_value, add_counter, reset_counter, CounterTyp
 use engine::src::timer::{get_real_timer, determine_move_time, start_move, clear_panic_abort};
 use engine::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
-use engine::src::moves::{disks_played, make_move, valid_move, unmake_move, move_count, generate_all, game_in_progress};
+use engine::src::moves::{disks_played___, make_move, valid_move, unmake_move, move_count___, generate_all, game_in_progress};
 use engine::src::hash::{setup_hash, set_hash_transformation, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, find_opening_name, set_draw_mode, set_game_mode, g_book};
 use engine::src::stubs::floor;
@@ -1180,11 +1180,11 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     let best_trans2 = my_random() as u32;
     let played_trans1 = my_random() as u32;
     let played_trans2 = my_random() as u32;
-    while game_in_progress() != 0 && disks_played < provided_move_count {
-        remove_coeffs(disks_played);
+    while game_in_progress() != 0 && disks_played___ < provided_move_count {
+        remove_coeffs(disks_played___);
         generate_all(side_to_move);
         if side_to_move == 0 as i32 { board_state.score_sheet_row += 1 }
-        if move_count[disks_played as usize] != 0 as i32 {
+        if move_count___[disks_played___ as usize] != 0 as i32 {
             move_start = get_real_timer::<FE>();
             clear_panic_abort();
             if g_config.echo != 0 {
@@ -1210,21 +1210,21 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             choose_thor_opening_move(&board_state.board, side_to_move, g_config.echo);
             if g_config.echo != 0 && config.wait != 0 { dumpch(); }
             start_move::<FE>(config.player_time[side_to_move as usize],
-                       config.player_increment[side_to_move as usize],
-                       disks_played + 4 as i32);
+                             config.player_increment[side_to_move as usize],
+                             disks_played___ + 4 as i32);
             determine_move_time(config.player_time[side_to_move as usize],
                                 config.player_increment[side_to_move as usize],
-                                disks_played + 4 as i32);
+                                disks_played___ + 4 as i32);
             timed_search =
                 (config.skill[side_to_move as usize] >= 60 as i32) as
                     i32;
-            empties = 60 as i32 - disks_played;
+            empties = 60 as i32 - disks_played___;
             /* Determine the score for the move actually played.
                A private hash transformation is used so that the parallel
             search trees - "played" and "best" - don't clash. This way
              all scores are comparable. */
             set_hash_transformation(played_trans1, played_trans2);
-            curr_move = provided_move[disks_played as usize];
+            curr_move = provided_move[disks_played___ as usize];
             opponent = 0 as i32 + 2 as i32 - side_to_move;
             make_move(side_to_move, curr_move, 1 as i32);
             if empties > config.wld_skill[side_to_move as usize] {
@@ -1309,7 +1309,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                     fputs(b"     0\x00" as *const u8 as *const i8,
                           output_stream);
                 }
-            } else if curr_move == provided_move[disks_played as usize] &&
+            } else if curr_move == provided_move[disks_played___ as usize] &&
                           resp_move != -(1 as i32) {
                 fprintf(output_stream,
                         b"%6.2f\x00" as *const u8 as *const i8,
@@ -1323,7 +1323,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                             f64 /
                             (2 as i32 as f64 * 128.0f64));
             }
-            curr_move = provided_move[disks_played as usize];
+            curr_move = provided_move[disks_played___ as usize];
             fprintf(output_stream,
                     b"       %c%c \x00" as *const u8 as *const i8,
                     'a' as i32 + curr_move % 10 as i32 -
@@ -1369,7 +1369,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             if config.player_time[side_to_move as usize] != 10000000.0f64 {
                 config.player_time[side_to_move as usize] -= move_stop - move_start
             }
-            store_move(disks_played, curr_move);
+            store_move(disks_played___, curr_move);
             make_move(side_to_move, curr_move, 1 as i32);
             if side_to_move == 0 as i32 {
                 board_state.black_moves[board_state.score_sheet_row as usize] = curr_move
@@ -1598,7 +1598,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 }
                 row += 1
             }
-            disks_played =
+            disks_played___ =
                 disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board) -
                     4 as i32;
             /* Search the position */
@@ -1614,10 +1614,10 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             }
             search_start = get_real_timer::<FE>();
             start_move::<FE>(my_time as f64, my_incr as f64,
-                       disks_played + 4 as i32);
+                             disks_played___ + 4 as i32);
             determine_move_time(my_time as f64,
                                 my_incr as f64,
-                                disks_played + 4 as i32);
+                                disks_played___ + 4 as i32);
             pass_count = 0;
             move_0 =
                 compute_move(side_to_move, 1 as i32, my_time, my_incr,

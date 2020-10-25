@@ -20,11 +20,11 @@ use engine_traits::Offset;
    Contents:          The move generator.
 */
 
-pub static mut disks_played: i32 = 0;
+pub static mut disks_played___: i32 = 0;
 
-pub static mut move_count: [i32; 64] = [0; 64];
+pub static mut move_count___: [i32; 64] = [0; 64];
 
-pub static mut move_list: [[i32; 64]; 64] = [[0; 64]; 64];
+pub static mut move_list___: [[i32; 64]; 64] = [[0; 64]; 64];
 
 pub static flip_direction: [[i32; 16]; 100] = init_flip_direction();
 
@@ -115,7 +115,7 @@ pub const fn init_flip_direction() -> [[i32; 16]; 100] {
    Prepare for move generation at a given level in the tree.
 */
 unsafe fn reset_generation(_side_to_move: i32) {
-    sweep_status[disks_played as usize] = 0;
+    sweep_status[disks_played___ as usize] = 0;
 }
 pub unsafe fn make_move(side_to_move: i32,
                         move_0: i32,
@@ -133,35 +133,35 @@ pub unsafe fn make_move(side_to_move: i32,
         diff2 =
             hash_update2 ^
                 hash_state.hash_put_value2[side_to_move as usize][move_0 as usize];
-        hash_state.hash_stored1[disks_played as usize] = hash_state.hash1;
-        hash_state.hash_stored2[disks_played as usize] = hash_state.hash2;
+        hash_state.hash_stored1[disks_played___ as usize] = hash_state.hash1;
+        hash_state.hash_stored2[disks_played___ as usize] = hash_state.hash2;
         hash_state.hash1 ^= diff1;
         hash_state.hash2 ^= diff2
     } else {
         flipped = DoFlips_no_hash(move_0, side_to_move, &mut board_state.board);
         if flipped == 0 as i32 { return 0 as i32 }
-        hash_state.hash_stored1[disks_played as usize] = hash_state.hash1;
-        hash_state.hash_stored2[disks_played as usize] = hash_state.hash2
+        hash_state.hash_stored1[disks_played___ as usize] = hash_state.hash1;
+        hash_state.hash_stored2[disks_played___ as usize] = hash_state.hash2
     }
-    flip_count[disks_played as usize] = flipped;
+    flip_count[disks_played___ as usize] = flipped;
     board_state.board[move_0 as usize] = side_to_move;
     if side_to_move == 0 as i32 {
-        board_state.piece_count[0][(disks_played + 1 as i32) as usize] =
-            board_state.piece_count[0][disks_played as usize] +
+        board_state.piece_count[0][(disks_played___ + 1 as i32) as usize] =
+            board_state.piece_count[0][disks_played___ as usize] +
                 flipped + 1 as i32;
-        board_state.piece_count[2][(disks_played + 1 as i32) as usize] =
-            board_state.piece_count[2][disks_played as usize] -
+        board_state.piece_count[2][(disks_played___ + 1 as i32) as usize] =
+            board_state.piece_count[2][disks_played___ as usize] -
                 flipped
     } else {
         /* side_to_move == WHITESQ */
-        board_state.piece_count[2][(disks_played + 1 as i32) as usize] =
-            board_state.piece_count[2][disks_played as usize] +
+        board_state.piece_count[2][(disks_played___ + 1 as i32) as usize] =
+            board_state.piece_count[2][disks_played___ as usize] +
                 flipped + 1 as i32;
-        board_state.piece_count[0][(disks_played + 1 as i32) as usize] =
-            board_state.piece_count[0][disks_played as usize] -
+        board_state.piece_count[0][(disks_played___ + 1 as i32) as usize] =
+            board_state.piece_count[0][disks_played___ as usize] -
                 flipped
     }
-    disks_played += 1;
+    disks_played___ += 1;
     return flipped;
 }
 /*
@@ -172,10 +172,10 @@ pub unsafe fn make_move(side_to_move: i32,
 pub unsafe fn unmake_move(side_to_move: i32,
                           move_0: i32) {
     board_state.board[move_0 as usize] = 1;
-    disks_played -= 1;
-    hash_state.hash1 = hash_state.hash_stored1[disks_played as usize];
-    hash_state.hash2 = hash_state.hash_stored2[disks_played as usize];
-    let mut UndoFlips__flip_count = flip_count[disks_played as usize];
+    disks_played___ -= 1;
+    hash_state.hash1 = hash_state.hash_stored1[disks_played___ as usize];
+    hash_state.hash2 = hash_state.hash_stored2[disks_played___ as usize];
+    let mut UndoFlips__flip_count = flip_count[disks_played___ as usize];
     let UndoFlips__oppcol =
         0 as i32 + 2 as i32 - side_to_move;
     if UndoFlips__flip_count & 1 as i32 != 0 {
@@ -214,18 +214,18 @@ pub unsafe fn generate_move(side_to_move: i32)
                             -> i32 {
     let mut move_0: i32 = 0;
     let mut move_index = 0;
-    move_index = sweep_status[disks_played as usize];
+    move_index = sweep_status[disks_played___ as usize];
     while move_index < 60 as i32 {
         move_0 =
-            search_state.sorted_move_order[disks_played as usize][move_index as usize];
+            search_state.sorted_move_order[disks_played___ as usize][move_index as usize];
         if board_state.board[move_0 as usize] == 1 as i32 &&
             generate_specific(move_0, side_to_move) != 0 {
-            sweep_status[disks_played as usize] =
+            sweep_status[disks_played___ as usize] =
                 move_index + 1 as i32;
             return move_0
         } else { move_index += 1 }
     }
-    sweep_status[disks_played as usize] = move_index;
+    sweep_status[disks_played___ as usize] = move_index;
     return -(1 as i32);
 }
 /*
@@ -240,12 +240,12 @@ pub unsafe fn generate_all(side_to_move: i32) {
     count = 0;
     curr_move = generate_move(side_to_move);
     while curr_move != -(1 as i32) {
-        move_list[disks_played as usize][count as usize] = curr_move;
+        move_list___[disks_played___ as usize][count as usize] = curr_move;
         count += 1;
         curr_move = generate_move(side_to_move)
     }
-    move_list[disks_played as usize][count as usize] = -(1 as i32);
-    move_count[disks_played as usize] = count;
+    move_list___[disks_played___ as usize][count as usize] = -(1 as i32);
+    move_count___[disks_played___ as usize] = count;
 }
 /*
   COUNT_ALL
@@ -263,7 +263,7 @@ pub unsafe fn count_all(side_to_move: i32,
     move_index = 0;
     while move_index < 60 as i32 {
         move_0 =
-            search_state.sorted_move_order[disks_played as usize][move_index as usize];
+            search_state.sorted_move_order[disks_played___ as usize][move_index as usize];
         if board_state.board[move_0 as usize] == 1 as i32 {
             if generate_specific(move_0, side_to_move) != 0 { mobility += 1 }
             found_empty += 1;
@@ -282,9 +282,9 @@ pub unsafe fn game_in_progress() -> i32 {
     let mut black_count: i32 = 0;
     let mut white_count: i32 = 0;
     generate_all(0 as i32);
-    black_count = move_count[disks_played as usize];
+    black_count = move_count___[disks_played___ as usize];
     generate_all(2 as i32);
-    white_count = move_count[disks_played as usize];
+    white_count = move_count___[disks_played___ as usize];
     return (black_count > 0 as i32 || white_count > 0 as i32)
         as i32;
 }
@@ -304,25 +304,25 @@ pub unsafe fn make_move_no_hash(side_to_move: i32,
     let mut flipped: i32 = 0;
     flipped = DoFlips_no_hash(move_0, side_to_move, &mut board_state.board);
     if flipped == 0 as i32 { return 0 as i32 }
-    flip_count[disks_played as usize] = flipped;
+    flip_count[disks_played___ as usize] = flipped;
     board_state.board[move_0 as usize] = side_to_move;
     if side_to_move == 0 as i32 {
-        board_state.piece_count[0][(disks_played + 1 as i32) as usize] =
-            board_state.piece_count[0][disks_played as usize] +
+        board_state.piece_count[0][(disks_played___ + 1 as i32) as usize] =
+            board_state.piece_count[0][disks_played___ as usize] +
                 flipped + 1 as i32;
-        board_state.piece_count[2][(disks_played + 1 as i32) as usize] =
-            board_state.piece_count[2][disks_played as usize] -
+        board_state.piece_count[2][(disks_played___ + 1 as i32) as usize] =
+            board_state.piece_count[2][disks_played___ as usize] -
                 flipped
     } else {
         /* side_to_move == WHITESQ */
-        board_state.piece_count[2][(disks_played + 1 as i32) as usize] =
-            board_state.piece_count[2][disks_played as usize] +
+        board_state.piece_count[2][(disks_played___ + 1 as i32) as usize] =
+            board_state.piece_count[2][disks_played___ as usize] +
                 flipped + 1 as i32;
-        board_state.piece_count[0][(disks_played + 1 as i32) as usize] =
-            board_state.piece_count[0][disks_played as usize] -
+        board_state.piece_count[0][(disks_played___ + 1 as i32) as usize] =
+            board_state.piece_count[0][disks_played___ as usize] -
                 flipped
     }
-    disks_played += 1;
+    disks_played___ += 1;
     return flipped;
 }
 
@@ -335,8 +335,8 @@ pub unsafe fn make_move_no_hash(side_to_move: i32,
 pub unsafe fn unmake_move_no_hash(side_to_move: i32,
                                   move_0: i32) {
     board_state.board[move_0 as usize] = 1;
-    disks_played -= 1;
-    let mut UndoFlips__flip_count = flip_count[disks_played as usize];
+    disks_played___ -= 1;
+    let mut UndoFlips__flip_count = flip_count[disks_played___ as usize];
     let UndoFlips__oppcol =
         0 as i32 + 2 as i32 - side_to_move;
     if UndoFlips__flip_count & 1 as i32 != 0 {
