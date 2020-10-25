@@ -7,11 +7,11 @@ use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init
 use crate::src::hash::{free_hash, init_hash, find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::timer::{clear_ponder_times, init_timer, time_t, clear_panic_abort, get_elapsed_time, is_panic_abort, determine_move_time, toggle_abort_check, add_ponder_time, get_real_timer, start_move};
 use crate::src::end::{setup_end, end_game};
-use crate::src::midgame::{setup_midgame, is_midgame_abort, middle_game, toggle_midgame_hash_usage, toggle_midgame_abort_check, clear_midgame_abort, calculate_perturbation};
+use crate::src::midgame::{setup_midgame, is_midgame_abort, middle_game, toggle_midgame_hash_usage, toggle_midgame_abort_check, clear_midgame_abort, calculate_perturbation, midgame_state};
 use crate::src::moves::{valid_move, generate_all, unmake_move, make_move, moves_state};
 use crate::src::stable::init_stable;
 use crate::src::probcut::{init_probcut, prob_cut};
-use crate::src::myrandom::{my_srandom, my_random};
+use crate::src::myrandom::{my_srandom, my_random, random_instance};
 use crate::src::stubs::{abs};
 use crate::src::error::{FrontEnd};
 use crate::src::thordb::{ThorDatabase};
@@ -332,7 +332,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         disc_count(2 as i32, &board_state.board);
     generate_all(side_to_move);
     determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
-    calculate_perturbation();
+    calculate_perturbation(&mut midgame_state, &mut random_instance);
     if let Some(logger) = logger {
         let moves_generated = moves_state.move_count[moves_state.disks_played as usize];
         let move_list_for_disks_played = &moves_state.move_list[moves_state.disks_played as usize];
