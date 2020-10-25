@@ -783,7 +783,7 @@ unsafe fn count_color_stable() {
     let mut j: i32 = 0;
     let mut pattern: i32 = 0;
     let mut row: [i32; 8] = [0; 8];
-    static mut stable_incr: [i32; 8] =
+    static stable_incr: [i32; 8] =
         [1 as i32, 2 as i32, 2 as i32,
          2 as i32, 2 as i32, 2 as i32,
          2 as i32, 1 as i32];
