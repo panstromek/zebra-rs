@@ -33,18 +33,30 @@ pub struct AllocationBlock {
     pub corner33_block: [i16; 19683],
     pub corner52_block: [i16; 59049],
 }
-static mut stage_count___: i32 = 0;
-static mut block_count___: i32 = 0;
-static mut stage___: [i32; 61] = [0; 61];
-static mut block_allocated___: [bool; 200] = [false; 200];
-static mut eval_map___: [i32; 61] = [0; 61];
 
 const EMPTY_ALLOC_BLOCK: Option<Box<AllocationBlock>> = None;
 const NEW_COEFF_SET : CoeffSet = CoeffSet::new();
 
-static mut block_list___: [Option<Box<AllocationBlock>>; 200] = [EMPTY_ALLOC_BLOCK; 200];
+pub struct CoeffState {
+    stage_count: i32,
+    block_count: i32,
+    stage: [i32; 61],
+    block_allocated: [bool; 200],
+    eval_map: [i32; 61],
+    block_list: [Option<Box<AllocationBlock>>; 200],
+    pub set: [CoeffSet<'static>; 61],
+}
 
-pub static mut set___: [CoeffSet; 61] = [NEW_COEFF_SET; 61];
+pub static mut coeff_state: CoeffState = CoeffState {
+    stage_count: 0,
+    block_count: 0,
+    stage: [0; 61],
+    block_allocated: [false; 200],
+    eval_map: [0; 61],
+    block_list: [EMPTY_ALLOC_BLOCK; 200],
+    set: [NEW_COEFF_SET; 61],
+};
+
 /*
    GENERATE_BATCH
    Interpolates between two stages.
@@ -66,8 +78,8 @@ fn generate_batch(target: &mut [i16], source1: &[i16], weight1: i32, source2: &[
    Mark all blocks in the memory arena as "not used".
 */
 pub unsafe fn init_memory_handler() {
-    block_count___ = 0;
-    block_allocated___ = [false; 200];
+    coeff_state.block_count = 0;
+    coeff_state.block_allocated = [false; 200];
 }
 
 
@@ -86,11 +98,11 @@ pub unsafe fn eval_adjustment(disc_adjust: f64,
     let mut adjust: i32 = 0;
     let mut row: [i32; 10] = [0; 10];
     i = 0;
-    while i < stage_count___ - 1 as i32 {
+    while i < coeff_state.stage_count - 1 as i32 {
         /* Bonuses for having more discs */
         j = 0;
-        let stage_set = set___[stage___[i as usize] as usize].data.as_mut().unwrap();
-        let sixty_set = set___[60].data.as_mut().unwrap();
+        let stage_set = coeff_state.set[coeff_state.stage[i as usize] as usize].data.as_mut().unwrap();
+        let sixty_set = coeff_state.set[60].data.as_mut().unwrap();
         while j < 59049 as i32 {
             let ref mut fresh2 =
                 *(stage_set.afile2x  as &mut[i16]).offset(j as isize);
@@ -306,7 +318,7 @@ pub fn remove_specific_coeffs(coeff_set: &mut CoeffSet, block_allocated_: &mut [
 pub unsafe fn remove_coeffs(phase: i32) {
     let mut i: i32 = 0;
     while i < phase {
-        remove_specific_coeffs(&mut set___[i as usize], &mut block_allocated___);
+        remove_specific_coeffs(&mut coeff_state.set[i as usize], &mut coeff_state.block_allocated);
         i += 1
     };
 }
@@ -328,16 +340,16 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet) -> i32 {
     let mut found_free = 0;
     let mut free_block = -1;
     let mut i = 0;
-    while i < block_count___ && found_free == 0 {
-        if block_allocated___[i as usize] == false {
+    while i < coeff_state.block_count && found_free == 0 {
+        if coeff_state.block_allocated[i as usize] == false {
             found_free = 1;
             free_block = i
         }
         i += 1
     }
     if found_free == 0 {
-        if block_count___ < 200 as i32 {
-            block_list___[block_count___ as usize] = Some(Box::new(AllocationBlock {
+        if coeff_state.block_count < 200 as i32 {
+            coeff_state.block_list[coeff_state.block_count as usize] = Some(Box::new(AllocationBlock {
                 afile2x_block: [0; 59049],
                 bfile_block: [0; 6561],
                 cfile_block: [0; 6561],
@@ -351,14 +363,14 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet) -> i32 {
                 corner52_block: [0; 59049],
             }));
         }
-        if block_count___ == 200 || block_list___[block_count___ as usize].is_none() {
-            FE::memory_allocation_failure(block_count___);
+        if coeff_state.block_count == 200 || coeff_state.block_list[coeff_state.block_count as usize].is_none() {
+            FE::memory_allocation_failure(coeff_state.block_count);
         }
-        free_block = block_count___;
-        block_count___ += 1
+        free_block = coeff_state.block_count;
+        coeff_state.block_count += 1
     }
 
-    let mut block_list_item = (block_list___[free_block as usize]).as_mut().unwrap();
+    let mut block_list_item = (coeff_state.block_list[free_block as usize]).as_mut().unwrap();
     coeff_set.data = Some(CoeffSetData {
         afile2x: &mut block_list_item.afile2x_block,
         bfile: &mut block_list_item.bfile_block,
@@ -372,7 +384,7 @@ pub unsafe fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet) -> i32 {
         corner33: &mut block_list_item.corner33_block,
         corner52: &mut block_list_item.corner52_block,
     });
-    block_allocated___[free_block as usize] = true;
+    coeff_state.block_allocated[free_block as usize] = true;
     return free_block;
 }
 /*
@@ -403,8 +415,8 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
             weight2 = index - prev;
         }
         let total_weight = weight1 + weight2;
-        let previous_set_item = &mut set___[prev as usize];
-        let next_set_item = &mut set___[next as usize];
+        let previous_set_item = &mut coeff_state.set[prev as usize];
+        let next_set_item = &mut coeff_state.set[next as usize];
         set_item.constant = ((weight1 * previous_set_item.constant as i32 +
                 weight2 * next_set_item.constant as i32) /
                 total_weight) as i16;
@@ -455,11 +467,11 @@ pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32) -> i32 {
         }
     }
     /* Load and/or initialize the pattern coefficients */
-    eval_phase = eval_map___[disks_played as usize];
-    if set___[eval_phase as usize].loaded == 0 {
-        load_set::<FE>(eval_phase, &mut set___[(eval_phase as usize)]);
+    eval_phase = coeff_state.eval_map[disks_played as usize];
+    if coeff_state.set[eval_phase as usize].loaded == 0 {
+        load_set::<FE>(eval_phase, &mut coeff_state.set[(eval_phase as usize)]);
     }
-    constant_and_parity_feature(side_to_move, disks_played, &mut globals::board_state.board, &mut set___[eval_phase as usize])
+    constant_and_parity_feature(side_to_move, disks_played, &mut globals::board_state.board, &mut coeff_state.set[eval_phase as usize])
 }
 
 pub unsafe fn post_init_coeffs() {
@@ -473,24 +485,24 @@ pub unsafe fn post_init_coeffs() {
            (which may be either from the tuning or an intermediate stage).
         */
     let mut i = 0;
-    while i < stage___[0] {
-        eval_map___[i as usize] = stage___[0];
+    while i < coeff_state.stage[0] {
+        coeff_state.eval_map[i as usize] = coeff_state.stage[0];
         i += 1
     }
     i = 0;
-    while i < stage_count___ {
-        eval_map___[stage___[i as usize] as usize] = stage___[i as usize];
+    while i < coeff_state.stage_count {
+        coeff_state.eval_map[coeff_state.stage[i as usize] as usize] = coeff_state.stage[i as usize];
         i += 1
     }
     let mut subsequent_stage = 60;
     i = subsequent_stage;
-    while i >= stage___[0] {
-        if eval_map___[i as usize] == i {
+    while i >= coeff_state.stage[0] {
+        if coeff_state.eval_map[i as usize] == i {
             subsequent_stage = i
         } else if i == subsequent_stage - 2 as i32 {
-            eval_map___[i as usize] = i;
+            coeff_state.eval_map[i as usize] = i;
             subsequent_stage = i
-        } else { eval_map___[i as usize] = subsequent_stage }
+        } else { coeff_state.eval_map[i as usize] = subsequent_stage }
         i -= 1
     };
 }
@@ -818,8 +830,8 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
     }
     /* Read and unpack - using symmetries - the coefficient tables. */
     i = 0;
-    while i < stage_count___ - 1 as i32 {
-        let stage_set = &mut set___[stage___[i as usize] as usize];
+    while i < coeff_state.stage_count - 1 as i32 {
+        let stage_set = &mut coeff_state.set[coeff_state.stage[i as usize] as usize];
         stage_set.constant = (next_word() / 4);
         stage_set.parity = (next_word() / 4);
         stage_set.parity_constant[0] = stage_set.constant;
@@ -847,56 +859,56 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
        and next stages. */
     let mut i = 0;
     while i <= 60 {
-        let coeff_set = &mut set___[i as usize];
+        let coeff_set = &mut coeff_state.set[i as usize];
         coeff_set.permanent = 0;
         coeff_set.loaded = 0;
         i += 1
     }
-    stage_count___ = next_word() as i32;
+    coeff_state.stage_count = next_word() as i32;
     let mut i = 0;
     let mut j = 0;
     let mut curr_stage = 0;
-    while i < stage_count___ - 1 {
-        stage___[i as usize] = next_word() as i32;
-        curr_stage = stage___[i as usize];
+    while i < coeff_state.stage_count - 1 {
+        coeff_state.stage[i as usize] = next_word() as i32;
+        curr_stage = coeff_state.stage[i as usize];
         if i == 0 {
             j = 0;
-            while j < stage___[0] {
-                let coeff_set = &mut set___[j as usize];
-                coeff_set.prev = stage___[0];
-                coeff_set.next = stage___[0];
+            while j < coeff_state.stage[0] {
+                let coeff_set = &mut coeff_state.set[j as usize];
+                coeff_set.prev = coeff_state.stage[0];
+                coeff_set.next = coeff_state.stage[0];
                 j += 1
             }
         } else {
-            j = stage___[(i - 1 as i32) as usize];
-            while j < stage___[i as usize] {
-                let coeff_set = &mut set___[j as usize];
-                coeff_set.prev = stage___[(i - 1 as i32) as usize];
-                coeff_set.next = stage___[i as usize];
+            j = coeff_state.stage[(i - 1 as i32) as usize];
+            while j < coeff_state.stage[i as usize] {
+                let coeff_set = &mut coeff_state.set[j as usize];
+                coeff_set.prev = coeff_state.stage[(i - 1 as i32) as usize];
+                coeff_set.next = coeff_state.stage[i as usize];
                 j += 1
             }
         }
-        set___[curr_stage as usize].permanent = 1;
-        allocate_set::<FE>( &mut set___[curr_stage as usize]);
+        coeff_state.set[curr_stage as usize].permanent = 1;
+        allocate_set::<FE>( &mut coeff_state.set[curr_stage as usize]);
         i += 1
     }
-    stage___[(stage_count___ - 1) as usize] = 60;
-    j = stage___[(stage_count___ - 2) as usize];
+    coeff_state.stage[(coeff_state.stage_count - 1) as usize] = 60;
+    j = coeff_state.stage[(coeff_state.stage_count - 2) as usize];
     while j < 60 {
-        let coeff_set = &mut set___[j as usize];
-        coeff_set.prev = stage___[(stage_count___ - 2 as i32) as usize];
+        let coeff_set = &mut coeff_state.set[j as usize];
+        coeff_set.prev = coeff_state.stage[(coeff_state.stage_count - 2 as i32) as usize];
         coeff_set.next = 60;
         j += 1
     }
-    set___[60].permanent = 1;
-    allocate_set::<FE>(&mut set___[60]);
+    coeff_state.set[60].permanent = 1;
+    allocate_set::<FE>(&mut coeff_state.set[60]);
     /* Read the pattern values */
     unpack_coeffs::<FE, _>(&mut next_word);
 }
 
 
 pub unsafe fn init_coeffs_calculate_patterns() {
-    let coeff_set = &mut set___[60];
+    let coeff_set = &mut coeff_state.set[60];
     terminal_patterns(coeff_set);
     coeff_set.constant = 0;
     coeff_set.parity = 0;
