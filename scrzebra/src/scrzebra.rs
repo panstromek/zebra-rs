@@ -2,7 +2,7 @@
 non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types)]
 
-use engine::src::game::{global_terminate, set_komi, toggle_human_openings, toggle_status_log};
+use engine::src::game::{global_terminate, set_komi, toggle_human_openings};
 use engine::src::myrandom::my_srandom;
 use legacy_zebra::src::thordb::init_thor_database;
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
@@ -13,7 +13,7 @@ use engine::src::globals::board_state;
 use engine::src::hash::{setup_hash, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, g_book};
 use legacy_zebra::src::learn::init_learn;
-use legacy_zebra::src::game::{global_setup, compute_move, game_init};
+use legacy_zebra::src::game::{global_setup, compute_move, game_init, toggle_status_log};
 use legacy_zebra::src::display::{display_move, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_evals, set_names};
 use engine::src::zebra::{EvaluationType};
 use legacy_zebra::src::error::{LibcFatalError, FE};

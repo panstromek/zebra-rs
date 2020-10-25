@@ -16,7 +16,7 @@ use engine::src::getcoeff::pattern_evaluation;
 use engine::src::myrandom::my_random;
 use engine::src::stubs::abs;
 use engine::src::osfbook::{get_book_move, get_candidate, get_candidate_count, fill_move_alternatives};
-use engine::src::game::{use_log_file, ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, max_depth_reached, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, PonderMoveReport};
+use engine::src::game::{ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, max_depth_reached, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, PonderMoveReport};
 use std::ffi::CStr;
 use crate::src::thordb::LegacyThor;
 use engine::src::zebra::EvalResult::{UNSOLVED_POSITION, WON_POSITION, LOST_POSITION, DRAWN_POSITION};
@@ -55,6 +55,17 @@ pub static mut game_evaluated_count: i32 = 0;
 
 pub unsafe fn get_evaluated_count() -> i32 {
     return game_evaluated_count;
+}
+
+pub static mut use_log_file: i32 = 1;
+/*
+  TOGGLE_STATUS_LOG
+  Enable/disable the use of logging all the output that the
+  text version of Zebra would output to the screen.
+*/
+
+pub unsafe fn toggle_status_log(write_log: i32) {
+    use_log_file = write_log;
 }
 
 /*

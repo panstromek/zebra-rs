@@ -53,7 +53,6 @@ pub struct CandidateMove {
 static mut forced_opening: *const i8 = 0 as *const i8;
 static mut last_time_used: f64 = 0.;
 pub static mut max_depth_reached: i32 = 0;
-pub static mut use_log_file: i32 = 1;
 static mut play_human_openings: i32 = 1;
 
 /*
@@ -64,15 +63,6 @@ static mut play_human_openings: i32 = 1;
 static play_thor_match_openings: i32 = 1;
 static mut komi: i32 = 0;
 static mut endgame_performed: [i32; 3] = [0; 3];
-/*
-  TOGGLE_STATUS_LOG
-  Enable/disable the use of logging all the output that the
-  text version of Zebra would output to the screen.
-*/
-
-pub unsafe fn toggle_status_log(write_log: i32) {
-    use_log_file = write_log;
-}
 
 /*
   SET_KOMI
