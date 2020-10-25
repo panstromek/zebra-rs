@@ -13,11 +13,17 @@ use crate::src::stubs::floor;
 
    Contents:      The initialization of the Multi-ProbCut search parameters.
 */
-pub static mut use_end_cut___: [i32; 61] = [0; 61];
+pub struct ProbCut {
+    pub use_end_cut: [i32; 61],
+    pub end_mpc_depth: [[i32; 4]; 61],
+    pub mpc_cut: [DepthInfo; 23],
+}
 
-pub static mut end_mpc_depth___: [[i32; 4]; 61] = [[0; 4]; 61];
-
-pub static mut mpc_cut___: [DepthInfo; 23] = [DepthInfo { cut_tries: 0, cut_depth: [0; 2], bias: [[0; 61]; 2], window: [[0; 61]; 2] }; 23];
+pub static mut prob_cut: ProbCut = ProbCut {
+    use_end_cut: [0; 61],
+    end_mpc_depth: [[0; 4]; 61],
+    mpc_cut: [DepthInfo { cut_tries: 0, cut_depth: [0; 2], bias: [[0; 61]; 2], window: [[0; 61]; 2] }; 23],
+};
 
 /*
    SET_END_PROBCUT
@@ -113,4 +119,3 @@ pub fn init_probcut(mpc_cut_: &mut [DepthInfo; 23], use_end_cut_: &mut [i32; 61]
     set_end_probcut(use_end_cut_, end_mpc_depth_,26, 4);
     set_end_probcut(use_end_cut_, end_mpc_depth_,27, 4);
 }
-
