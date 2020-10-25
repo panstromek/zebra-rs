@@ -1,4 +1,4 @@
-use crate::src::globals::{piece_count, Board};
+use crate::src::globals::{piece_count___, Board};
 use crate::src::moves::disks_played;
 use ::patterns::{flip8, pow3};
 use crate::src::stubs::{floor};
@@ -470,13 +470,13 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
 pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32) -> i32 {
     let mut eval_phase: i32 = 0;
     /* Any player wiped out? Game over then... */
-    if piece_count[0][disks_played as usize] ==
+    if piece_count___[0][disks_played as usize] ==
         0 as i32 {
         if side_to_move == 0 as i32 {
             return -(29000 as i32 + 64 as i32)
         } else { return 29000 as i32 + 64 as i32 }
     } else {
-        if piece_count[2][disks_played as usize] ==
+        if piece_count___[2][disks_played as usize] ==
             0 as i32 {
             if side_to_move == 0 as i32 {
                 return 29000 as i32 + 64 as i32
@@ -488,7 +488,7 @@ pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32) -> i32 {
     if set[eval_phase as usize].loaded == 0 {
         load_set::<FE>(eval_phase, &mut set[(eval_phase as usize)]);
     }
-    constant_and_parity_feature(side_to_move, disks_played, &mut globals::board, &mut set[eval_phase as usize])
+    constant_and_parity_feature(side_to_move, disks_played, &mut globals::board___, &mut set[eval_phase as usize])
 }
 
 pub unsafe fn post_init_coeffs() {

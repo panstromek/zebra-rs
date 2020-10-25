@@ -27,16 +27,16 @@ pub type Board = [i32; 128];
 */
 /* Global variables */
 
-pub static mut pv: [[i32; 64]; 64] = [[0; 64]; 64];
+pub static mut pv___: [[i32; 64]; 64] = [[0; 64]; 64];
 
-pub static mut pv_depth: [i32; 64] = [0; 64];
+pub static mut pv_depth___: [i32; 64] = [0; 64];
 
-pub static mut score_sheet_row: i32 = 0;
+pub static mut score_sheet_row___: i32 = 0;
 
-pub static mut piece_count: [[i32; 64]; 3] = [[0; 64]; 3];
+pub static mut piece_count___: [[i32; 64]; 3] = [[0; 64]; 3];
 
-pub static mut black_moves: [i32; 60] = [0; 60];
+pub static mut black_moves___: [i32; 60] = [0; 60];
 
-pub static mut white_moves: [i32; 60] = [0; 60];
+pub static mut white_moves___: [i32; 60] = [0; 60];
 
-pub static mut board: Board = [0; 128];
+pub static mut board___: Board = [0; 128];
