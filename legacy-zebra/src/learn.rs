@@ -5,7 +5,7 @@ use engine::src::game::generic_game_init;
 use crate::src::error::LibcFatalError;
 use engine::src::timer::{clear_panic_abort, toggle_abort_check};
 use engine::src::osfbook::set_search_depth;
-use engine::src::moves::{make_move, generate_all, disks_played, move_count};
+use engine::src::moves::{make_move, generate_all, disks_played___, move_count___};
 use engine::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
 use engine::src::learn::{game_move, learn_depth, Learner, cutoff_empty};
 use crate::src::zebra::g_config;
@@ -55,7 +55,7 @@ pub unsafe fn learn_game(game_length: i32,
     let mut i = 0;
     while i < game_length {
         generate_all(side_to_move);
-        if move_count[disks_played as usize] == 0 as i32 {
+        if move_count___[disks_played___ as usize] == 0 as i32 {
             side_to_move = 0 as i32 + 2 as i32 - side_to_move;
             generate_all(side_to_move);
         }
@@ -124,7 +124,7 @@ pub unsafe fn full_learn_public_game(length: i32,
     let mut i = 0;
     while i < length {
         generate_all(side_to_move);
-        if move_count[disks_played as usize] == 0 as i32 {
+        if move_count___[disks_played___ as usize] == 0 as i32 {
             side_to_move = 0 as i32 + 2 as i32 - side_to_move;
             generate_all(side_to_move);
         }

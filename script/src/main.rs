@@ -32,10 +32,18 @@ fn main() {
         .collect::<Vec<_>>();
 
     //fixme don't search fo non-pub stuff in other files
-    let needle = "(\\b)(".to_string() +
+    let orig_file_needle = "(\\b)(".to_string() +
         &declarations.iter().map(|decl| decl.name).collect::<Vec<_>>().join("|") +
         ")(\\b)";
-    let replacer = Regex::new(&needle).unwrap();
+
+    let other_file_needle = "(\\b)(".to_string() +
+        &declarations.iter()
+            .filter_map(|decl| if decl.is_pub { Some(decl.name) } else { None })
+            .collect::<Vec<_>>()
+            .join("|") + ")(\\b)";
+
+    let replacer = Regex::new(&orig_file_needle).unwrap();
+    let replacer_for_other_files = Regex::new(&other_file_needle).unwrap();
     let mut struct_declaration = declarations
         .iter()
         .fold((format!("pub struct {} {{", struct_name),
@@ -72,7 +80,7 @@ fn main() {
             continue;
         }
         if let Ok(file) = std::fs::read_to_string(usages_file_path) {
-            let new_lines = replace_in_file(&file, &declaration, &replacer,
+            let new_lines = replace_in_file(&file, &declaration, &replacer_for_other_files,
                                             &mut struct_declaration,
                                             false, global_name,
                                             false, &multi_comma);

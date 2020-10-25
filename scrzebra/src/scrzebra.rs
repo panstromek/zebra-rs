@@ -8,7 +8,7 @@ use legacy_zebra::src::thordb::init_thor_database;
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
 use engine::src::timer::{get_real_timer, determine_move_time, start_move};
 use engine::src::search::{disc_count, search_state};
-use engine::src::moves::disks_played;
+use engine::src::moves::disks_played___;
 use engine::src::globals::board_state;
 use engine::src::hash::{setup_hash, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, g_book};
@@ -282,7 +282,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                 }
                 row += 1
             }
-            disks_played =
+            disks_played___ =
                 disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board) -
                     4 as i32;
             /* Search the position */
@@ -298,10 +298,10 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
             }
             search_start = get_real_timer::<FE>();
             start_move::<FE>(my_time as f64, my_incr as f64,
-                       disks_played + 4 as i32);
+                             disks_played___ + 4 as i32);
             determine_move_time(my_time as f64,
                                 my_incr as f64,
-                                disks_played + 4 as i32);
+                                disks_played___ + 4 as i32);
             pass_count = 0;
             move_0 =
                 compute_move(side_to_move, 1 as i32, my_time, my_incr,
