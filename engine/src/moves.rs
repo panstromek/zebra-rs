@@ -5,7 +5,7 @@ use crate::src::search::search_state;
 use crate::src::zebra::ZebraFrontend;
 use std::future::Future;
 use flip::unflip::flip_stack_;
-use flip::doflip::{DoFlips_no_hash, hash_update2, hash_update1, DoFlips_hash};
+use flip::doflip::{DoFlips_no_hash, DoFlips_hash};
 use std::error::Error;
 use engine_traits::Offset;
 /*
@@ -27,6 +27,9 @@ pub struct MovesState {
     flip_count: [i32; 65],
     sweep_status: [i32; 64],
 }
+
+pub static mut hash_update1: u32 = 0;
+pub static mut hash_update2: u32 = 0;
 
 pub static mut moves_state: MovesState = MovesState {
     disks_played: 0,
@@ -135,7 +138,12 @@ pub unsafe fn make_move(side_to_move: i32,
     let mut diff1: u32 = 0;
     let mut diff2: u32 = 0;
     if update_hash != 0 {
-        flipped = DoFlips_hash(move_0, side_to_move, &mut board_state.board, &mut hash_state.hash_flip1, &mut hash_state.hash_flip2);
+        let (flipped_, hash_update1_, hash_update2_) = DoFlips_hash(
+            move_0, side_to_move, &mut board_state.board,
+            &mut hash_state.hash_flip1, &mut hash_state.hash_flip2);
+        hash_update1 = hash_update1_;
+        hash_update2 = hash_update2_;
+        flipped = flipped_;
         if flipped == 0 as i32 { return 0 as i32 }
         diff1 =
             hash_update1 ^

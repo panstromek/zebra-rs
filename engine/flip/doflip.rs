@@ -30,11 +30,6 @@ use crate::unflip::flip_stack_;
    This piece of software is released under the GPL.
    See the file COPYING for more information.
 */
-/* Global variables */
-
-pub static mut hash_update1: u32 = 0;
-
-pub static mut hash_update2: u32 = 0;
 /* The board split into nine regions. */
 static board_region: [i8; 100] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1214,7 +1209,7 @@ pub unsafe fn DoFlips_no_hash(sqnum: i32,
 */
 
 pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
-                           hash_flip1: &mut [u32; 128], hash_flip2: &mut [u32; 128]) -> i32 {
+                           hash_flip1: &mut [u32; 128], hash_flip2: &mut [u32; 128]) -> (i32, u32, u32) {
     let opp_color = 2 - color;
 
     let flip_stack = &mut  flip_stack_.flip_stack;
@@ -2689,8 +2684,6 @@ pub unsafe fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
         }
         _ => { }
     }
-    hash_update1 = t_hash_update1 as u32;
-    hash_update2 = t_hash_update2 as u32;
     *flip_stack = t_flip_stack;
-    return (t_flip_stack - old_flip_stack) as i32;
+    return ((t_flip_stack - old_flip_stack) as i32, t_hash_update1 as u32, t_hash_update2 as u32);
 }
