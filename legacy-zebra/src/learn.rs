@@ -7,7 +7,7 @@ use engine::src::timer::{clear_panic_abort, toggle_abort_check};
 use engine::src::osfbook::set_search_depth;
 use engine::src::moves::{make_move, generate_all, moves_state};
 use engine::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
-use engine::src::learn::{game_move, learn_depth, Learner, cutoff_empty};
+use engine::src::learn::{learn_state, Learner};
 use crate::src::zebra::g_config;
 
 pub static mut binary_database: i32 = 0;
@@ -59,17 +59,17 @@ pub unsafe fn learn_game(game_length: i32,
             side_to_move = 0 as i32 + 2 as i32 - side_to_move;
             generate_all(side_to_move);
         }
-        make_move(side_to_move, game_move[i as usize] as i32,
+        make_move(side_to_move, learn_state.game_move[i as usize] as i32,
                   1 as i32);
         if side_to_move == 2 as i32 {
-            game_move[i as usize] =
-                -(game_move[i as usize] as i32) as i16
+            learn_state.game_move[i as usize] =
+                -(learn_state.game_move[i as usize] as i32) as i16
         }
         side_to_move = 0 as i32 + 2 as i32 - side_to_move;
         i += 1
     }
-    set_search_depth(learn_depth);
-    add_new_game(game_length, game_move.as_mut_ptr(), cutoff_empty,
+    set_search_depth(learn_state.learn_depth);
+    add_new_game(game_length, learn_state.game_move.as_mut_ptr(), learn_state.cutoff_empty,
                  full_solve, wld_solve, 1 as i32, private_game, echo);
     if save_database != 0 {
         if binary_database != 0 {
@@ -114,7 +114,7 @@ pub unsafe fn full_learn_public_game(length: i32,
     /* Copy the move list from the caller as it is modified below. */
     let mut i = 0;
     while i < length {
-        game_move[i as usize] = *moves.offset(i as isize) as i16;
+        learn_state.game_move[i as usize] = *moves.offset(i as isize) as i16;
         i += 1
     }
     let mut dummy: i32 = 0;
@@ -128,11 +128,11 @@ pub unsafe fn full_learn_public_game(length: i32,
             side_to_move = 0 as i32 + 2 as i32 - side_to_move;
             generate_all(side_to_move);
         }
-        make_move(side_to_move, game_move[i as usize] as i32,
+        make_move(side_to_move, learn_state.game_move[i as usize] as i32,
                   1 as i32);
         if side_to_move == 2 as i32 {
-            game_move[i as usize] =
-                -(game_move[i as usize] as i32) as i16
+            learn_state.game_move[i as usize] =
+                -(learn_state.game_move[i as usize] as i32) as i16
         }
         side_to_move = 0 as i32 + 2 as i32 - side_to_move;
         i += 1
@@ -140,7 +140,7 @@ pub unsafe fn full_learn_public_game(length: i32,
     /* Let the learning sub-routine in osfbook update the opening
        book and the dump it to file. */
     set_search_depth(deviation_depth);
-    add_new_game(length, game_move.as_mut_ptr(), cutoff, exact, wld,
+    add_new_game(length, learn_state.game_move.as_mut_ptr(), cutoff, exact, wld,
                  1 as i32, 0 as i32, echo);
     if binary_database != 0 {
         write_binary_database(database_name.as_mut_ptr());
