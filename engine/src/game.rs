@@ -10,7 +10,7 @@ use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, is_midgame_abort, middle_game, toggle_midgame_hash_usage, toggle_midgame_abort_check, clear_midgame_abort, calculate_perturbation};
 use crate::src::moves::{disks_played, valid_move, move_list, move_count, generate_all, unmake_move, make_move};
 use crate::src::stable::init_stable;
-use crate::src::probcut::{init_probcut, end_mpc_depth___, use_end_cut___, mpc_cut___};
+use crate::src::probcut::{init_probcut, prob_cut};
 use crate::src::myrandom::{my_srandom, my_random};
 use crate::src::stubs::{abs};
 use crate::src::error::{FrontEnd};
@@ -201,7 +201,7 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     post_init_coeffs();
 
     init_timer::<FE>();
-    init_probcut(&mut mpc_cut___, &mut use_end_cut___, &mut end_mpc_depth___);
+    init_probcut(&mut prob_cut.mpc_cut, &mut prob_cut.use_end_cut, &mut prob_cut.end_mpc_depth);
     init_stable();
     setup_search();
 }

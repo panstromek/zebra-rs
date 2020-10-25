@@ -11,7 +11,7 @@ use crate::{
         bitboard::{set_bitboards, BitBoard},
         bitbmob::{bitboard_mobility, weighted_mobility},
         bitbtest::{TestFlips_bitboard},
-        probcut::{end_mpc_depth___, use_end_cut___},
+        probcut::prob_cut,
         stable::{count_stable, count_edge_stable},
         counter::{adjust_counter, counter_value},
         globals::board_state,
@@ -1686,9 +1686,9 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         selectivity > 0 as i32 {
         let mut cut: i32 = 0;
         cut = 0;
-        while cut < use_end_cut___[disks_played as usize] {
+        while cut < prob_cut.use_end_cut[disks_played as usize] {
             let shallow_remains =
-                end_mpc_depth___[disks_played as usize][cut as usize];
+                prob_cut.end_mpc_depth[disks_played as usize][cut as usize];
             let mpc_bias =
                 ceil(END_MEAN[disks_played as usize][shallow_remains as usize]
                     as f64 * 128.0f64) as i32;
