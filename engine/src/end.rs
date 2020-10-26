@@ -1,5 +1,5 @@
 use flip::doflip::{DoFlips_hash};
-use flip::unflip::UndoFlips;
+use flip::unflip::flip_stack_;
 
 use crate::{
     src:: {
@@ -1360,7 +1360,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
                                     empties - 1 as i32, new_disc_diff,
                                     1 as i32, bb_flips_)
     }
-    UndoFlips(&mut board_state.board, best_flipped, oppcol);
+    flip_stack_.UndoFlips(&mut board_state.board, best_flipped, oppcol);
     hash_state.hash1 ^= diff1;
     hash_state.hash2 ^= diff2;
     board_state.board[sq as usize] = 1;
@@ -1427,7 +1427,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
                                         new_disc_diff, 1 as i32, bb_flips_)
         }
         end.region_parity ^= quadrant_mask[sq as usize];
-        UndoFlips(&mut board_state.board, flipped, oppcol);
+        flip_stack_.UndoFlips(&mut board_state.board, flipped, oppcol);
         hash_state.hash1 ^= diff1;
         hash_state.hash2 ^= diff2;
         board_state.board[sq as usize] = 1;
