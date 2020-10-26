@@ -28,6 +28,7 @@ use crate::src::globals::Board;
 use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_EVAL};
 use crate::src::zebra::EvalResult::{WON_POSITION, DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION};
 use crate::src::moves::{moves_state};
+use crate::src::search::SearchState;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -177,20 +178,21 @@ fn prepare_to_solve(board_0: &Board, end:&mut End) {
   * SOLVE_PARITY_HASH_HIGH uses stability, hash table and (non-thresholded)
     fastest first
 */
-unsafe fn solve_two_empty(end: &mut End, my_bits: BitBoard,
+fn solve_two_empty(end: &mut End, my_bits: BitBoard,
                           opp_bits: BitBoard,
                           sq1: i32,
                           sq2: i32,
                           mut alpha: i32,
                           beta: i32,
                           disc_diff: i32,
-                          pass_legal: i32, bb_flips_: &mut BitBoard)
+                          pass_legal: i32, bb_flips_: &mut BitBoard, search_state_: &mut SearchState)
                           -> i32 {
     // BitBoard new_opp_bits;
     let mut score = -(12345678 as i32);
     let mut flipped: i32 = 0;
     let mut ev: i32 = 0;
-    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
+    let search_state_ = search_state_;
+    search_state_.nodes.lo = search_state_.nodes.lo.wrapping_add(1);
     /* Overall strategy: Lazy evaluation whenever possible, i.e., don't
        update bitboards until they are used. Also look at alpha and beta
        in order to perform strength reduction: Feasibility testing is
@@ -199,7 +201,7 @@ unsafe fn solve_two_empty(end: &mut End, my_bits: BitBoard,
     flipped = TestFlips_wrapper(end,sq1, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
         /* SQ1 feasible for me */
-        search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
+        search_state_.nodes.lo = search_state_.nodes.lo.wrapping_add(1);
         ev = disc_diff + 2 as i32 * flipped;
         flipped =
             CountFlips_bitboard[(sq2 - 11 as i32) as
@@ -243,7 +245,7 @@ unsafe fn solve_two_empty(end: &mut End, my_bits: BitBoard,
     flipped = TestFlips_wrapper(end,sq2, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
         /* SQ2 feasible for me */
-        search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
+        search_state_.nodes.lo = search_state_.nodes.lo.wrapping_add(1);
         ev = disc_diff + 2 as i32 * flipped;
         flipped =
             CountFlips_bitboard[(sq1 - 11 as i32) as
@@ -297,8 +299,8 @@ unsafe fn solve_two_empty(end: &mut End, my_bits: BitBoard,
             }
             return 0 as i32
         } else {
-            return -solve_two_empty(end,opp_bits, my_bits, sq1, sq2, -beta,
-                                    -alpha, -disc_diff, 0 as i32, bb_flips_)
+            return -solve_two_empty(end, opp_bits, my_bits, sq1, sq2, -beta,
+                                    -alpha, -disc_diff, 0 as i32, bb_flips_, search_state_)
         }
     } else { return score };
 }
@@ -325,8 +327,8 @@ unsafe fn solve_three_empty(end: &mut End, my_bits: BitBoard,
         new_disc_diff =
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         score =
-            -solve_two_empty(end,new_opp_bits, *bb_flips_, sq2, sq3, -beta, -alpha,
-                             new_disc_diff, 1 as i32, bb_flips_);
+            -solve_two_empty(end, new_opp_bits, *bb_flips_, sq2, sq3, -beta, -alpha,
+                             new_disc_diff, 1 as i32, bb_flips_, &mut search_state);
         if score >= beta {
             return score
         } else { if score > alpha { alpha = score } }
@@ -338,8 +340,8 @@ unsafe fn solve_three_empty(end: &mut End, my_bits: BitBoard,
         new_disc_diff =
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         ev =
-            -solve_two_empty(end,new_opp_bits, *bb_flips_, sq1, sq3, -beta, -alpha,
-                             new_disc_diff, 1 as i32, bb_flips_);
+            -solve_two_empty(end, new_opp_bits, *bb_flips_, sq1, sq3, -beta, -alpha,
+                             new_disc_diff, 1 as i32, bb_flips_, &mut search_state);
         if ev >= beta {
             return ev
         } else {
@@ -353,8 +355,8 @@ unsafe fn solve_three_empty(end: &mut End, my_bits: BitBoard,
         new_disc_diff =
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         ev =
-            -solve_two_empty(end,new_opp_bits, *bb_flips_, sq1, sq2, -beta, -alpha,
-                             new_disc_diff, 1 as i32, bb_flips_);
+            -solve_two_empty(end, new_opp_bits, *bb_flips_, sq1, sq2, -beta, -alpha,
+                             new_disc_diff, 1 as i32, bb_flips_, &mut search_state);
         if ev >= score { return ev }
     }
     if score == -(12345678 as i32) {
