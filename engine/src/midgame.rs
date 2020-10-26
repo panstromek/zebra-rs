@@ -13,7 +13,7 @@ use crate::{
 };
 use crate::src::getcoeff::pattern_evaluation;
 use crate::src::stubs::abs;
-use crate::src::timer::{is_panic_abort, check_panic_abort, above_recommended, extended_above_recommended, g_timer};
+use crate::src::timer::{check_panic_abort, above_recommended, extended_above_recommended, g_timer};
 use crate::src::hash::add_hash;
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, LOST_POSITION, WON_POSITION};
@@ -708,7 +708,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                 /* Display available search information */
                 if echo != 0 { FE::display_buffers(); }
                 /* Check for events */
-                if is_panic_abort() != 0 || force_return != 0 {
+                if g_timer.is_panic_abort() != 0 || force_return != 0 {
                     return -(27000 as i32)
                 }
             }
@@ -751,7 +751,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             }
         }
         unmake_move(side_to_move, move_0);
-        if is_panic_abort() != 0 || force_return != 0 {
+        if g_timer.is_panic_abort() != 0 || force_return != 0 {
             return -(27000 as i32)
         }
         search_state.evals[moves_state.disks_played as usize][move_0 as usize] = curr_val;
@@ -1287,7 +1287,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                     best = curr_val;
                     best_move_index = move_index;
                     update_pv = 1;
-                    if is_panic_abort() == 0 && force_return == 0 {
+                    if g_timer.is_panic_abort() == 0 && force_return == 0 {
                         midgame_state.best_mid_root_move = move_0
                     }
                 }
@@ -1298,7 +1298,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
             }
         }
         unmake_move(side_to_move, move_0);
-        if is_panic_abort() != 0 || force_return != 0 {
+        if g_timer.is_panic_abort() != 0 || force_return != 0 {
             return -(27000 as i32)
         }
         search_state.evals[moves_state.disks_played as usize][move_0 as usize] = curr_val;
@@ -1432,7 +1432,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
                 root_tree_search::<FE>(0 as i32, depth, side_to_move, alpha,
                                  beta, 1 as i32, 1 as i32,
                                  1 as i32, echo);
-            if force_return == 0 && is_panic_abort() == 0 &&
+            if force_return == 0 && g_timer.is_panic_abort() == 0 &&
                 (val <= alpha || val >= beta) {
                 val =
                     root_tree_search::<FE>(0 as i32, depth, side_to_move,
@@ -1446,7 +1446,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
                 root_tree_search::<FE>(0 as i32, depth, side_to_move, alpha,
                                  beta, 1 as i32, 0 as i32,
                                  1 as i32, echo);
-            if is_panic_abort() == 0 && force_return == 0 {
+            if g_timer.is_panic_abort() == 0 && force_return == 0 {
                 if val <= alpha {
                     val =
                         root_tree_search::<FE>(0 as i32, depth,
@@ -1465,7 +1465,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
             }
         }
         /* Adjust scores and PV if search is aborted */
-        if is_panic_abort() != 0 || force_return != 0 {
+        if g_timer.is_panic_abort() != 0 || force_return != 0 {
             board_state.pv[0][0] =
                 midgame_state.best_mid_root_move;
             board_state.pv_depth[0] = 1;
@@ -1485,7 +1485,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
            gives new score information */
         full_length_line = 0;
         find_hash(&mut entry, 0 as i32, &mut hash_state);
-        if force_return == 0 && is_panic_abort() == 0 &&
+        if force_return == 0 && g_timer.is_panic_abort() == 0 &&
             entry.draft as i32 != 0 as i32 &&
             valid_move(entry.move_0[0],
                        side_to_move) != 0 &&
@@ -1545,7 +1545,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                        force_return != 0, &mut search_state.nodes,
                                        &mut board_state.pv[0], board_state.pv_depth[0])
         }
-        if is_panic_abort() != 0 || force_return != 0 { break ; }
+        if g_timer.is_panic_abort() != 0 || force_return != 0 { break ; }
         /* Check if search time or adjusted search time are long enough
            for the search to be discontinued */
         old_val = adjusted_val;

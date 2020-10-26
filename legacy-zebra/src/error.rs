@@ -18,7 +18,7 @@ use crate::{
                   send_status_pv, send_status_nodes, produce_eval_text, display_sweep, send_sweep},
     }
 };
-use engine::src::timer::{get_elapsed_time, is_panic_abort, get_real_timer};
+use engine::src::timer::{get_elapsed_time, get_real_timer, g_timer};
 use engine::src::search::{hash_expand_pv};
 
 use engine::src::game::CandidateMove;
@@ -522,7 +522,7 @@ impl FrontEnd for LibcFatalError {
          unsafe {
              clear_status();
              send_status(b"--> \x00" as *const u8 as *const i8);
-             if is_panic_abort() != 0 || force_return_ {
+             if g_timer.is_panic_abort() != 0 || force_return_ {
                  send_status(b"*\x00" as *const u8 as *const i8);
              } else {
                  send_status(b" \x00" as *const u8 as *const i8);

@@ -101,6 +101,14 @@ impl Timer {
     pub fn toggle_abort_check(&mut self, enable: i32) {
         self.do_check_abort = enable;
     }
+    /*
+      IS_PANIC_ABORT
+      Returns the current panic status.
+    */
+
+    pub fn is_panic_abort(&self) -> i32 {
+        return self.panic_abort;
+    }
 }
 /*
   CLEAR_PANIC_ABORT
@@ -109,14 +117,6 @@ impl Timer {
 
 pub unsafe fn clear_panic_abort() {
     g_timer.panic_abort = 0;
-}
-/*
-  IS_PANIC_ABORT
-  Returns the current panic status.
-*/
-
-pub unsafe fn is_panic_abort() -> i32 {
-    return g_timer.panic_abort;
 }
 /*
   CLEAR_PONDER_TIMES

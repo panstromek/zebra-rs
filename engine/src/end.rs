@@ -22,7 +22,7 @@ use crate::src::hash::{add_hash};
 use crate::src::midgame::{tree_search, midgame_state};
 use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_move};
 use crate::src::stubs::{abs, ceil};
-use crate::src::timer::{check_panic_abort, check_threshold, clear_panic_abort, get_elapsed_time, is_panic_abort, g_timer, set_panic_threshold};
+use crate::src::timer::{check_panic_abort, check_threshold, clear_panic_abort, get_elapsed_time, g_timer, set_panic_threshold};
 use crate::src::zebra::EvaluationType;
 use crate::src::globals::Board;
 use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_EVAL};
@@ -1965,7 +1965,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             /* Output status buffers if in interactive mode */
             if echo != 0 { FE::display_buffers(); }
             /* Check for events */
-            if is_panic_abort() != 0 || force_return != 0 {
+            if g_timer.is_panic_abort() != 0 || force_return != 0 {
                 return -(27000 as i32)
             }
         }
@@ -2025,7 +2025,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                 if curr_val > best {
                     best = curr_val;
                     update_pv = 1;
-                    if level == 0 as i32 && is_panic_abort() == 0 &&
+                    if level == 0 as i32 && g_timer.is_panic_abort() == 0 &&
                         force_return == 0 {
                         end. best_end_root_move = move_0
                     }
@@ -2033,7 +2033,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             } else if curr_val > best {
                 best = curr_val;
                 update_pv = 1;
-                if level == 0 as i32 && is_panic_abort() == 0 &&
+                if level == 0 as i32 && g_timer.is_panic_abort() == 0 &&
                     force_return == 0 {
                     end. best_end_root_move = move_0
                 }
@@ -2046,7 +2046,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             *selective_cutoff = 1 as i32
         }
         unmake_move(side_to_move, move_0);
-        if is_panic_abort() != 0 || force_return != 0 {
+        if g_timer.is_panic_abort() != 0 || force_return != 0 {
             return -(27000 as i32)
         }
         if level == 0 as i32 && get_ponder_move() == 0 {
@@ -2307,7 +2307,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     if empties > 18 {
         if wld != 0 {
             selectivity = 9;
-            while selectivity > 0 && is_panic_abort() == 0 && force_return == 0 {
+            while selectivity > 0 && g_timer.is_panic_abort() == 0 && force_return == 0 {
                 let mut flags: u32 = 0;
                 let mut res = WON_POSITION;
                 alpha = -1;
@@ -2315,7 +2315,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 search_state.root_eval = end_tree_wrapper::<FE>(end, 0, empties, side_to_move,
                                      alpha, beta, selectivity, 1, echo);
                 adjust_counter(&mut search_state.nodes);
-                if is_panic_abort() != 0 || force_return != 0 { break ; }
+                if g_timer.is_panic_abort() != 0 || force_return != 0 { break ; }
                 any_search_result = 1;
                 old_eval = search_state.root_eval;
                 store_pv(&mut old_pv, &mut old_depth);
@@ -2342,7 +2342,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             }
         } else {
             selectivity = 9;
-            while selectivity > 0 && is_panic_abort() == 0 &&
+            while selectivity > 0 && g_timer.is_panic_abort() == 0 &&
                 force_return == 0 {
                 alpha = last_window_center - 1;
                 beta = last_window_center + 1;
@@ -2355,7 +2355,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                         last_window_center -= 2;
                         alpha = last_window_center - 1;
                         beta = last_window_center + 1;
-                        if is_panic_abort() != 0 || force_return != 0 {
+                        if g_timer.is_panic_abort() != 0 || force_return != 0 {
                             break ;
                         }
                         search_state.root_eval = end_tree_wrapper::<FE>(end, 0, empties,
@@ -2369,7 +2369,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                         last_window_center += 2;
                         alpha = last_window_center - 1;
                         beta = last_window_center + 1;
-                        if is_panic_abort() != 0 || force_return != 0 {
+                        if g_timer.is_panic_abort() != 0 || force_return != 0 {
                             break ;
                         }
                         search_state.root_eval =
@@ -2381,9 +2381,9 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     search_state.root_eval = last_window_center
                 }
                 adjust_counter(&mut search_state.nodes);
-                if is_panic_abort() != 0 || force_return != 0 { break ; }
+                if g_timer.is_panic_abort() != 0 || force_return != 0 { break ; }
                 last_window_center = search_state.root_eval;
-                if is_panic_abort() == 0 && force_return == 0 {
+                if g_timer.is_panic_abort() == 0 && force_return == 0 {
                     any_search_result = 1;
                     old_eval = search_state.root_eval;
                     store_pv(&mut old_pv, &mut old_depth);
@@ -2410,11 +2410,11 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
        the status of long_selective_search. This is not automatic as
        it is not guaranteed that any selective search was performed. */
     check_panic_abort::<FE>();
-    if is_panic_abort() != 0 || force_return != 0 ||
+    if g_timer.is_panic_abort() != 0 || force_return != 0 ||
         long_selective_search != 0 {
         /* Don't try non-selective solve. */
         if any_search_result != 0 {
-            if echo != 0 && (is_panic_abort() != 0 || force_return != 0) {
+            if echo != 0 && (g_timer.is_panic_abort() != 0 || force_return != 0) {
                 FE::end_report_semi_panic_abort(get_elapsed_time::<FE>());
                 if end.full_output_mode != 0 {
                     let mut flags_0: u32 = 4;
@@ -2461,7 +2461,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     search_state.root_eval = end_tree_wrapper::<FE>(end, 0, empties, side_to_move, alpha, beta,
                          0, 1, echo);
     adjust_counter(&mut search_state.nodes);
-    if is_panic_abort() == 0 && force_return == 0 {
+    if g_timer.is_panic_abort() == 0 && force_return == 0 {
         if wld == 0 {
             if search_state.root_eval <= alpha {
                 let mut ceiling_value = last_window_center - 2;
@@ -2471,7 +2471,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     search_state.root_eval = end_tree_wrapper::<FE>(end, 0, empties,
                                          side_to_move, alpha, beta,
                                          0, 1, echo);
-                    if is_panic_abort() != 0 || force_return != 0 { break ; }
+                    if g_timer.is_panic_abort() != 0 || force_return != 0 { break ; }
                     if search_state.root_eval > alpha { break ; }
                     ceiling_value -= 2
                 }
@@ -2484,14 +2484,14 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                        end_tree_wrapper::<FE>(end, 0 as i32, empties,
                                          side_to_move, alpha, beta,
                                          0 as i32, 1 as i32, echo);
-                    if is_panic_abort() != 0 || force_return != 0 { break ; }
+                    if g_timer.is_panic_abort() != 0 || force_return != 0 { break ; }
                     assert!( search_state.root_eval > alpha );
                     if search_state.root_eval < beta { break ; }
                     floor_value += 2 as i32
                 }
             }
         }
-        if is_panic_abort() == 0 && force_return == 0 {
+        if g_timer.is_panic_abort() == 0 && force_return == 0 {
             let mut res_0 = WON_POSITION;
             if search_state.root_eval < 0 as i32 {
                 res_0 = LOST_POSITION
@@ -2528,7 +2528,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     }
     adjust_counter(&mut search_state.nodes);
     /* Check for abort. */
-    if is_panic_abort() != 0 || force_return != 0 {
+    if g_timer.is_panic_abort() != 0 || force_return != 0 {
         if any_search_result != 0 {
             if echo != 0 {
                 FE::end_report_semi_panic_abort_3(get_elapsed_time::<FE>());
@@ -2560,7 +2560,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     /* Update solve info. */
     store_pv(&mut old_pv, &mut old_depth);
     old_eval = search_state.root_eval;
-    if is_panic_abort() == 0 && force_return == 0 &&
+    if g_timer.is_panic_abort() == 0 && force_return == 0 &&
         empties > end.earliest_wld_solve {
         end.earliest_wld_solve = empties
     }
