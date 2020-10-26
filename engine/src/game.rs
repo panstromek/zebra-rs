@@ -127,7 +127,7 @@ pub unsafe fn engine_game_init() {
     setup_search(&mut search_state);
     setup_midgame(&mut midgame_state, &mut random_instance);
     setup_end();
-    clear_ponder_times();
+    clear_ponder_times(&mut g_timer);
     reset_counter(&mut search_state.total_nodes);
     reset_counter(&mut search_state.total_evaluations);
     init_flip_stack();
@@ -353,7 +353,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     FE::reset_buffer_display();
     g_timer.determine_move_time(my_time as f64, my_incr as f64,
                         moves_state.disks_played + 4 as i32);
-    if get_ponder_move() == 0 { clear_ponder_times(); }
+    if get_ponder_move() == 0 { clear_ponder_times(&mut g_timer); }
     remove_coeffs(moves_state.disks_played);
     /* No feasible moves? */
     if moves_state.move_count[moves_state.disks_played as usize] == 0 as i32 {
