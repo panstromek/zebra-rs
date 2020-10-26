@@ -19,11 +19,10 @@ use engine::src::moves::{make_move, valid_move, unmake_move, generate_all, game_
 use engine::src::hash::{setup_hash, set_hash_transformation, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, find_opening_name, g_book};
 use engine::src::stubs::floor;
-use engine::src::learn::{store_move, clear_stored_game};
 use engine::src::getcoeff::remove_coeffs;
 use engine::src::myrandom::{my_random, my_srandom};
 use crate::src::osfbook::print_move_alternatives;
-use engine::src::zebra::{set_default_engine_globals, DumpHandler, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource, Config, INITIAL_CONFIG};
+use engine::src::zebra::{set_default_engine_globals, DumpHandler, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource, Config, INITIAL_CONFIG, learn_state};
 use libc_wrapper::{FILE, time_t};
 use engine::src::myrandom;
 use flip::unflip;
@@ -1153,7 +1152,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     }
     generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move);
     setup_hash(1 as i32, &mut hash_state);
-    clear_stored_game();
+    learn_state.clear_stored_game();
     if g_config.echo != 0 && config.use_book != 0 {
         puts(b"Disabling usage of opening book\x00" as *const u8 as
                  *const i8);
@@ -1369,7 +1368,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             if config.player_time[side_to_move as usize] != 10000000.0f64 {
                 config.player_time[side_to_move as usize] -= move_stop - move_start
             }
-            store_move(moves_state.disks_played, curr_move);
+            learn_state.store_move(moves_state.disks_played, curr_move);
             make_move(side_to_move, curr_move, 1 as i32);
             if side_to_move == 0 as i32 {
                 board_state.black_moves[board_state.score_sheet_row as usize] = curr_move
