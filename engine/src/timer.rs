@@ -124,16 +124,16 @@ pub unsafe fn clear_panic_abort() {
   the time associated with the last move actually made.
 */
 
-pub unsafe fn clear_ponder_times() {
+pub fn clear_ponder_times(timer: &mut Timer) {
     let mut i: i32 = 0;
     i = 0;
     while i < 100 as i32 {
-        g_timer.ponder_time[i as usize] = 0.0f64;
-        g_timer.ponder_depth[i as usize] = 0;
+        timer.ponder_time[i as usize] = 0.0f64;
+        timer.ponder_depth[i as usize] = 0;
         i += 1
     }
-    g_timer.current_ponder_time = 0.0f64;
-    g_timer.current_ponder_depth = 0;
+    timer.current_ponder_time = 0.0f64;
+    timer.current_ponder_depth = 0;
 }
 /*
   ADD_PONDER_TIME
