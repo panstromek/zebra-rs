@@ -3,7 +3,7 @@
 
 use std::process::exit;
 use std::ptr::null_mut;
-use engine::src::game::{generic_game_init, toggle_human_openings, global_terminate};
+use engine::src::game::{generic_game_init, global_terminate, game_state};
 use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler, compute_move, global_setup, toggle_status_log};
 use crate::src::learn::{LibcLearner, init_learn};
 use crate::src::thordb::{read_game_database, read_tournament_database, read_player_database, print_thor_matches, LegacyThor, get_total_game_count, choose_thor_opening_move, get_thor_game_size, init_thor_database};
@@ -1534,7 +1534,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             /* Parse the script line containing board and side to move */
             generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move);
             g_book.set_slack(0.0f64 as i32);
-            toggle_human_openings(0 as i32);
+            game_state.toggle_human_openings(0 as i32);
             reset_book_search(&mut g_book);
             set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_book);
             setup_hash(1 as i32, &mut hash_state);

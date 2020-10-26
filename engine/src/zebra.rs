@@ -9,7 +9,7 @@ use crate::src::error::{FrontEnd};
 use crate::src::myrandom::my_random;
 use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, g_book};
 use crate::src::getcoeff::remove_coeffs;
-use crate::src::game::{toggle_human_openings, generic_game_init, FileBoardSource, generic_compute_move, ComputeMoveOutput, ComputeMoveLogger};
+use crate::src::game::{generic_game_init, FileBoardSource, generic_compute_move, ComputeMoveOutput, ComputeMoveLogger, game_state};
 use crate::src::hash::{setup_hash, hash_state};
 use std::future::Future;
 use std::error::Error;
@@ -244,7 +244,7 @@ pub unsafe fn engine_play_game<
             ZF::report_book_randomness(slack_);
         }
         g_book.set_slack(floor(config.slack * 128.0f64) as i32);
-        toggle_human_openings(0);
+        game_state.toggle_human_openings(0);
         if use_learning_ {
             set_learning_parameters(config.deviation_depth, config.cutoff_empty);
         }
@@ -526,7 +526,7 @@ pub async unsafe fn engine_play_game_async<
             ZF::report_book_randomness(slack_);
         }
         g_book.set_slack(floor(config.slack * 128.0f64) as i32);
-        toggle_human_openings(0);
+        game_state.toggle_human_openings(0);
         if use_learning_ {
             set_learning_parameters(config.deviation_depth, config.cutoff_empty);
         }

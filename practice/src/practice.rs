@@ -5,7 +5,6 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 
 use engine::src::globals::{board_state};
 use engine::src::moves::{make_move, valid_move, generate_all, unmake_move, moves_state};
-use engine::src::game::{toggle_human_openings};
 use engine::src::osfbook::{get_hash, find_opening_name};
 use legacy_zebra::src::display::{produce_eval_text, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_names};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
@@ -13,6 +12,7 @@ use legacy_zebra::src::osfbook::{read_binary_database, init_osf};
 use legacy_zebra::src::error::{LibcFatalError, FE};
 use libc_wrapper::_IO_FILE;
 use legacy_zebra::src::zebra::g_config;
+use engine::src::game::game_state;
 
 extern "C" {
 
@@ -104,7 +104,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     init_osf(1 as i32);
     read_binary_database(book_name);
     game_init(0 as *const i8, &mut side_to_move);
-    toggle_human_openings(0 as i32);
+    game_state.toggle_human_openings(0 as i32);
     set_names(b"\x00" as *const u8 as *const i8,
               b"\x00" as *const u8 as *const i8);
     quit = 0;
