@@ -8,7 +8,7 @@ use engine::src::globals::{board_state};
 use engine::src::search::{set_current_eval,search_state, force_return, negate_current_eval, create_eval_info, disc_count, clear_ponder_move, set_ponder_move, float_move, sort_moves};
 use engine::src::zebra::{EvaluationType};
 use engine::src::midgame::{toggle_perturbation_usage, toggle_midgame_abort_check};
-use engine::src::timer::{toggle_abort_check, clear_ponder_times, start_move, add_ponder_time, get_real_timer, g_timer};
+use engine::src::timer::{clear_ponder_times, start_move, add_ponder_time, get_real_timer, g_timer};
 use engine::src::moves::{unmake_move, make_move, generate_all, moves_state};
 use engine::src::counter::{reset_counter, adjust_counter, counter_value};
 use engine::src::hash::{set_hash_transformation, find_hash, HashEntry, hash_state, determine_hash_values};
@@ -238,7 +238,7 @@ pub unsafe fn ponder_move<
     let mut best_pv: [i32; 61] = [0; 61];
     /* Disable all time control mechanisms as it's the opponent's
        time we're using */
-    toggle_abort_check(0 as i32);
+    g_timer.toggle_abort_check(0 as i32);
     toggle_midgame_abort_check(0 as i32);
     start_move::<FE>(0 as i32 as f64,
                      0 as i32 as f64,
@@ -340,7 +340,7 @@ pub unsafe fn ponder_move<
         }
     }
     /* Don't forget to enable the time control mechanisms when leaving */
-    toggle_abort_check(1 as i32);
+    g_timer.toggle_abort_check(1 as i32);
     toggle_midgame_abort_check(1 as i32);
 }
 /*
@@ -443,7 +443,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                        is_book: 0,};
     let mut res = WON_POSITION;
     /* Disable all time control mechanisms and randomization */
-    toggle_abort_check(0 as i32);
+    g_timer.toggle_abort_check(0 as i32);
     toggle_midgame_abort_check(0 as i32);
     toggle_perturbation_usage(0 as i32);
     start_move::<FE>(0 as i32 as f64,
@@ -969,7 +969,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
     set_hash_transformation(0 as i32 as u32,
                             0 as i32 as u32);
     /* Don't forget to enable the time control mechanisms when leaving */
-    toggle_abort_check(1 as i32);
+    g_timer.toggle_abort_check(1 as i32);
     toggle_midgame_abort_check(1 as i32);
     toggle_perturbation_usage(1 as i32);
     game_state.max_depth_reached += 1;
@@ -1008,7 +1008,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
                       pv: [0; 60],};
     let mut res = WON_POSITION;
     /* Disable all time control mechanisms */
-    toggle_abort_check(0 as i32);
+    g_timer.toggle_abort_check(0 as i32);
     toggle_midgame_abort_check(0 as i32);
     toggle_perturbation_usage(0 as i32);
     start_move::<FE>(0 as i32 as f64,
@@ -1150,7 +1150,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     }
     set_current_eval(evaluated_list[0].eval);
     /* Don't forget to enable the time control mechanisms when leaving */
-    toggle_abort_check(1 as i32);
+    g_timer.toggle_abort_check(1 as i32);
     toggle_midgame_abort_check(1 as i32);
     toggle_perturbation_usage(0 as i32);
 }

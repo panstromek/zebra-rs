@@ -94,14 +94,13 @@ impl Timer {
         }
         set_default_panic(timer_);
     }
-}
-/*
-  TOGGLE_ABORT_CHECK
-  Enables/disables panic time abort checking.
-*/
-
-pub unsafe fn toggle_abort_check(enable: i32) {
-    g_timer.do_check_abort = enable;
+    /*
+      TOGGLE_ABORT_CHECK
+     Enables/disables panic time abort checking.
+    */
+    pub fn toggle_abort_check(&mut self, enable: i32) {
+        self.do_check_abort = enable;
+    }
 }
 /*
   CLEAR_PANIC_ABORT
