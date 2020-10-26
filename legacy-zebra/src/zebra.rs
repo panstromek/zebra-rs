@@ -12,7 +12,7 @@ use engine::src::error::{FrontEnd, FatalError};
 use libc_wrapper::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, sscanf, feof, fgets, atoi, scanf, sprintf, ctime, time, strchr, strcasecmp, atof, stdout};
 use engine::src::globals::{board_state};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType, adjust_counter};
-use engine::src::timer::{get_real_timer, determine_move_time, start_move, clear_panic_abort};
+use engine::src::timer::{get_real_timer, start_move, clear_panic_abort, g_timer};
 use engine::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::moves::{make_move, valid_move, unmake_move, generate_all, game_in_progress, moves_state};
@@ -1212,7 +1212,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             start_move::<FE>(config.player_time[side_to_move as usize],
                              config.player_increment[side_to_move as usize],
                              moves_state.disks_played + 4 as i32);
-            determine_move_time(config.player_time[side_to_move as usize],
+            g_timer.determine_move_time(config.player_time[side_to_move as usize],
                                 config.player_increment[side_to_move as usize],
                                 moves_state.disks_played + 4 as i32);
             timed_search =
@@ -1615,7 +1615,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             search_start = get_real_timer::<FE>();
             start_move::<FE>(my_time as f64, my_incr as f64,
                              moves_state.disks_played + 4 as i32);
-            determine_move_time(my_time as f64,
+            g_timer.determine_move_time(my_time as f64,
                                 my_incr as f64,
                                 moves_state.disks_played + 4 as i32);
             pass_count = 0;

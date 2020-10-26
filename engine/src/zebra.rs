@@ -1,4 +1,4 @@
-use crate::src::timer::{toggle_abort_check, get_real_timer, determine_move_time, start_move, clear_panic_abort};
+use crate::src::timer::{toggle_abort_check, get_real_timer, start_move, clear_panic_abort, g_timer};
 use crate::src::moves::{make_move, valid_move, generate_all, game_in_progress, get_move, get_move_async, moves_state};
 use crate::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::counter::{counter_value, adjust_counter};
@@ -324,7 +324,7 @@ pub unsafe fn engine_play_game<
                         start_move::<FE>(config.player_time[side_to_move as usize],
                                          config.player_increment[side_to_move as usize],
                                          moves_state.disks_played + 4);
-                        determine_move_time(config.player_time[side_to_move as usize],
+                        g_timer.determine_move_time(config.player_time[side_to_move as usize],
                                             config.player_increment[side_to_move as usize],
                                             moves_state.disks_played + 4);
                         let timed_search = (config.skill[side_to_move as usize] >= 60) as i32;
@@ -605,7 +605,7 @@ pub async unsafe fn engine_play_game_async<
                         start_move::<FE>(config.player_time[side_to_move as usize],
                                          config.player_increment[side_to_move as usize],
                                          moves_state.disks_played + 4);
-                        determine_move_time(config.player_time[side_to_move as usize],
+                        g_timer.determine_move_time(config.player_time[side_to_move as usize],
                                             config.player_increment[side_to_move as usize],
                                             moves_state.disks_played + 4);
                         let timed_search = (config.skill[side_to_move as usize] >= 60) as i32;
