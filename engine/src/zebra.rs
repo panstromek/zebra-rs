@@ -4,7 +4,7 @@ use crate::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::counter::{counter_value, adjust_counter};
 use crate::src::stubs::{floor};
 use crate::src::globals::{board_state};
-use crate::src::learn::{store_move, set_learning_parameters, clear_stored_game, Learner};
+use crate::src::learn::{Learner, LearnState};
 use crate::src::error::{FrontEnd};
 use crate::src::myrandom::my_random;
 use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, g_book};
@@ -114,6 +114,12 @@ pub const INITIAL_CONFIG: Config = Config {
     wld_only: 0,
     echo: 0,
     display_pv: 0,
+};
+
+pub static mut learn_state: LearnState = LearnState {
+    learn_depth: 0,
+    cutoff_empty: 0,
+    game_move: [0; 61],
 };
 
 
@@ -238,7 +244,7 @@ pub unsafe fn engine_play_game<
         /* Set up the position and the search engine */
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move);
         setup_hash(1, &mut hash_state);
-        clear_stored_game();
+        learn_state.clear_stored_game();
         if echo != 0 && config.use_book != 0 {
             let slack_ = config.slack;
             ZF::report_book_randomness(slack_);
@@ -246,7 +252,7 @@ pub unsafe fn engine_play_game<
         g_book.set_slack(floor(config.slack * 128.0f64) as i32);
         game_state.toggle_human_openings(0);
         if use_learning_ {
-            set_learning_parameters(config.deviation_depth, config.cutoff_empty);
+            learn_state.set_learning_parameters(config.deviation_depth, config.cutoff_empty);
         }
         reset_book_search(&mut g_book);
         set_deviation_value(config.low_thresh, config.high_thresh, config.dev_bonus, &mut g_book);
@@ -366,7 +372,7 @@ pub unsafe fn engine_play_game<
                 if config.player_time[side_to_move as usize] != 10000000.0f64 {
                     config.player_time[side_to_move as usize] -= move_stop - move_start
                 }
-                store_move(moves_state.disks_played, curr_move);
+                learn_state.store_move(moves_state.disks_played, curr_move);
                 ZF::push_move(&mut move_vec, curr_move, moves_state.disks_played);
                 make_move(side_to_move, curr_move, 1);
                 if side_to_move == 0 as i32 {
@@ -520,7 +526,7 @@ pub async unsafe fn engine_play_game_async<
         /* Set up the position and the search engine */
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move);
         setup_hash(1, &mut hash_state);
-        clear_stored_game();
+        learn_state.clear_stored_game();
         if echo != 0 && config.use_book != 0 {
             let slack_ = config.slack;
             ZF::report_book_randomness(slack_);
@@ -528,7 +534,7 @@ pub async unsafe fn engine_play_game_async<
         g_book.set_slack(floor(config.slack * 128.0f64) as i32);
         game_state.toggle_human_openings(0);
         if use_learning_ {
-            set_learning_parameters(config.deviation_depth, config.cutoff_empty);
+            learn_state.set_learning_parameters(config.deviation_depth, config.cutoff_empty);
         }
         reset_book_search(&mut g_book);
         set_deviation_value(config.low_thresh, config.high_thresh, config.dev_bonus, &mut g_book);
@@ -645,7 +651,7 @@ pub async unsafe fn engine_play_game_async<
                 if config.player_time[side_to_move as usize] != 10000000.0f64 {
                     config.player_time[side_to_move as usize] -= move_stop - move_start
                 }
-                store_move(moves_state.disks_played, curr_move);
+                learn_state.store_move(moves_state.disks_played, curr_move);
                 ZF::push_move(&mut move_vec, curr_move, moves_state.disks_played);
                 make_move(side_to_move, curr_move, 1);
                 if side_to_move == 0 as i32 {
