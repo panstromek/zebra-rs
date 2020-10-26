@@ -20,7 +20,7 @@ use engine::src::zebra::{EvaluationType};
 use engine::src::timer::{clear_panic_abort, g_timer};
 use crate::src::safemem::safe_malloc;
 use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit, FILE};
-use engine::src::osfbook::{__time_t, probe_hash_table, get_hash, get_node_depth, clear_node_depth, get_candidate_count, fill_move_alternatives, _ISupper, _ISprint, _ISspace, _ISgraph, BookNode, adjust_score, g_book, size_t, set_node_depth, Book, reset_book_search};
+use engine::src::osfbook::{__time_t, probe_hash_table, get_hash, get_node_depth, clear_node_depth, fill_move_alternatives, _ISupper, _ISprint, _ISspace, _ISgraph, BookNode, adjust_score, g_book, size_t, set_node_depth, Book, reset_book_search};
 use engine_traits::Offset;
 use engine::src::getcoeff::remove_coeffs;
 use engine::src::game::{engine_game_init, setup_non_file_based_game};
@@ -2835,7 +2835,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
             printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
                        *const i8, 60 as i32 - moves_state.disks_played);
             fill_move_alternatives::<FE>(side_to_move, 16 as i32);
-            if get_candidate_count() > 0 as i32 ||
+            if g_book.get_candidate_count() > 0 as i32 ||
                 moves_state.disks_played >= 40 as i32 {
                 print_move_alternatives(side_to_move);
                 set_hash_transformation(0 as i32 as u32,
@@ -2891,7 +2891,7 @@ unsafe fn do_endgame_statistics(index: i32,
         printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
                    *const i8, 60 as i32 - moves_state.disks_played);
         fill_move_alternatives::<FE>(side_to_move, 16 as i32);
-        if get_candidate_count() > 0 as i32 ||
+        if g_book.get_candidate_count() > 0 as i32 ||
             moves_state.disks_played >= 40 as i32 {
             print_move_alternatives(side_to_move);
             set_hash_transformation(0 as i32 as u32,

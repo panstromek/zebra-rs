@@ -15,7 +15,7 @@ use engine::src::hash::{set_hash_transformation, find_hash, HashEntry, hash_stat
 use engine::src::getcoeff::pattern_evaluation;
 use engine::src::myrandom::my_random;
 use engine::src::stubs::abs;
-use engine::src::osfbook::{get_book_move, get_candidate, get_candidate_count, fill_move_alternatives};
+use engine::src::osfbook::{get_book_move, fill_move_alternatives, g_book};
 use engine::src::game::{ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, PonderMoveReport, game_state};
 use std::ffi::CStr;
 use crate::src::thordb::LegacyThor;
@@ -463,11 +463,11 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
             flags = 16 as i32
         } else if empties <= wld { flags = 4 as i32 }
         fill_move_alternatives::<FE>(side_to_move, flags);
-        game_evaluated_count = get_candidate_count();
+        game_evaluated_count = g_book.get_candidate_count();
         i = 0;
         while i < game_evaluated_count {
             let mut child_flags: i32 = 0;
-            book_move = get_candidate(i);
+            book_move = g_book.get_candidate(i);
             evaluated_list[i as usize].side_to_move = side_to_move;
             evaluated_list[i as usize].move_0 = book_move.move_0;
             evaluated_list[i as usize].pv_depth = 1;

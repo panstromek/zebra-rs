@@ -241,61 +241,63 @@ pub fn reset_book_search(book: &mut Book) {
     book.used_slack[0] = 0.0f64 as i32;
     book.used_slack[2] = 0.0f64 as i32;
 }
-/*
-   SET_SLACK
-   Sets the total amount of negamaxed evaluation that
-   the program is willing to trade for randomness.
-*/
 
-pub unsafe fn set_slack(slack: i32) {
-    g_book.max_slack = slack;
+impl Book {
+    /*
+       g_book.SET_SLACK(
+       Sets the total amount of negamaxed evaluation that
+       the program is willing to trade for randomness.
+    */
+
+    pub fn set_slack(&mut self, slack: i32) {
+        self.max_slack = slack;
+    }
+    /*
+      g_book.(
+      Specifies how book draws should be treated.
+    */
+
+    pub fn set_draw_mode(&mut self, mode: DrawMode) {
+        self.draw_mode = mode;
+    }
+    /*
+      g_book.(
+      Specifies if the book is in private or public mode.
+    */
+
+    pub fn set_game_mode(&mut self, mode: GameMode) {
+        self.game_mode = mode;
+    }
+    /*
+      g_book.(
+      g_book.(
+      Specifies if the moves for either of the players are to
+      be forced when recursing the tree.
+    */
+
+    pub fn set_black_force(&mut self, force: i32) {
+        self.force_black = force;
+    }
+
+    pub fn set_white_force(&mut self, force: i32) {
+        self.force_white = force;
+    }
+
+    /*
+      g_book.(
+      GET_CANDIDATE
+      Accessor functions for the data structure created by
+      FILL_MOVE_ALTERNATIVES.
+    */
+
+    pub fn get_candidate_count(&self) -> i32 {
+        return self.candidate_count;
+    }
+
+    pub fn get_candidate(&self, index: i32) -> CandidateMove {
+        return self.candidate_list[index as usize];
+    }
 }
-/*
-  SET_DRAW_MODE
-  Specifies how book draws should be treated.
-*/
-
-pub unsafe fn set_draw_mode(mode: DrawMode) {
-    g_book.draw_mode = mode;
-}
-/*
-  SET_GAME_MODE
-  Specifies if the book is in private or public mode.
-*/
-
-pub unsafe fn set_game_mode(mode: GameMode) {
-    g_book.game_mode = mode;
-}
-/*
-  SET_BLACK_FORCE
-  SET_WHITE_FORCE
-  Specifies if the moves for either of the players are to
-  be forced when recursing the tree.
-*/
-
-pub unsafe fn set_black_force(force: i32) {
-    g_book.force_black = force;
-}
-
-pub unsafe fn set_white_force(force: i32) {
-    g_book.force_white = force;
-}
-
-/*
-  GET_CANDIDATE_COUNT
-  GET_CANDIDATE
-  Accessor functions for the data structure created by
-  FILL_MOVE_ALTERNATIVES.
-*/
-
-pub unsafe fn get_candidate_count() -> i32 {
-    return g_book.candidate_count;
-}
-
-pub unsafe fn get_candidate(index: i32) -> CandidateMove {
-    return g_book.candidate_list[index as usize];
-}
-
 
 /*
    GET_HASH

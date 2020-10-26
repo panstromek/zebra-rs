@@ -17,7 +17,7 @@ use engine::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::moves::{make_move, valid_move, unmake_move, generate_all, game_in_progress, moves_state};
 use engine::src::hash::{setup_hash, set_hash_transformation, hash_state};
-use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, find_opening_name, set_draw_mode, set_game_mode, g_book};
+use engine::src::osfbook::{set_deviation_value, reset_book_search, find_opening_name, g_book};
 use engine::src::stubs::floor;
 use engine::src::learn::{store_move, clear_stored_game};
 use engine::src::getcoeff::remove_coeffs;
@@ -313,32 +313,32 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-private\x00" as *const u8 as
                                  *const i8) == 0 {
-            set_game_mode(PRIVATE_GAME);
+            g_book.set_game_mode(PRIVATE_GAME);
             current_block_107 = 10485226111480991281;
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-public\x00" as *const u8 as
                                  *const i8) == 0 {
-            set_game_mode(PUBLIC_GAME);
+            g_book.set_game_mode(PUBLIC_GAME);
             current_block_107 = 10485226111480991281;
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-keepdraw\x00" as *const u8 as
                                  *const i8) == 0 {
-            set_draw_mode(NEUTRAL);
+            g_book.set_draw_mode(NEUTRAL);
             current_block_107 = 10485226111480991281;
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-draw2black\x00" as *const u8 as
                                  *const i8) == 0 {
-            set_draw_mode(BLACK_WINS);
+            g_book.set_draw_mode(BLACK_WINS);
             current_block_107 = 10485226111480991281;
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-draw2white\x00" as *const u8 as
                                  *const i8) == 0 {
-            set_draw_mode(WHITE_WINS);
+            g_book.set_draw_mode(WHITE_WINS);
             current_block_107 = 10485226111480991281;
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-draw2none\x00" as *const u8 as
                                  *const i8) == 0 {
-            set_draw_mode(OPPONENT_WINS);
+            g_book.set_draw_mode(OPPONENT_WINS);
             current_block_107 = 10485226111480991281;
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-test\x00" as *const u8 as *const i8)
@@ -1533,7 +1533,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             }
             /* Parse the script line containing board and side to move */
             generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move);
-            set_slack(0.0f64 as i32);
+            g_book.set_slack(0.0f64 as i32);
             toggle_human_openings(0 as i32);
             reset_book_search(&mut g_book);
             set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_book);

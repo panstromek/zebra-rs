@@ -11,7 +11,7 @@ use engine::src::search::{disc_count, search_state};
 use engine::src::moves::moves_state;
 use engine::src::globals::board_state;
 use engine::src::hash::{setup_hash, hash_state};
-use engine::src::osfbook::{set_deviation_value, reset_book_search, set_slack, g_book};
+use engine::src::osfbook::{set_deviation_value, reset_book_search, g_book};
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::game::{global_setup, compute_move, game_init, toggle_status_log};
 use legacy_zebra::src::display::{display_move, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_evals, set_names};
@@ -217,7 +217,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
             }
             /* Parse the script line containing board and side to move */
             game_init(0 as *const i8, &mut side_to_move);
-            set_slack(0.0f64 as i32);
+            g_book.set_slack(0.0f64 as i32);
             toggle_human_openings(0 as i32);
             reset_book_search(&mut g_book);
             set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_book);
