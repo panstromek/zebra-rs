@@ -2,7 +2,7 @@
 non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types)]
 
-use engine::src::game::{global_terminate, set_komi, toggle_human_openings};
+use engine::src::game::{global_terminate, game_state};
 use engine::src::myrandom::my_srandom;
 use legacy_zebra::src::thordb::init_thor_database;
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
@@ -218,7 +218,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
             /* Parse the script line containing board and side to move */
             game_init(0 as *const i8, &mut side_to_move);
             g_book.set_slack(0.0f64 as i32);
-            toggle_human_openings(0 as i32);
+            game_state.toggle_human_openings(0 as i32);
             reset_book_search(&mut g_book);
             set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_book);
             setup_hash(1 as i32, &mut hash_state);
@@ -574,7 +574,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 as *const i8);
             exit(1 as i32);
         }
-        set_komi(komi);
+        game_state.set_komi(komi);
     }
     if help != 0 {
         puts(b"Usage:\x00" as *const u8 as *const i8);

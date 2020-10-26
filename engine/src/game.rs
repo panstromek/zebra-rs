@@ -75,22 +75,24 @@ pub static mut game_state: GameState = GameState {
 */
 static play_thor_match_openings: i32 = 1;
 
-/*
-  SET_KOMI
-  Set the endgame komi value.
-*/
+impl GameState {
+    /*
+      SET_KOMI
+      Set the endgame komi value.
+    */
 
-pub unsafe fn set_komi(in_komi: i32) {
-    game_state.komi = in_komi;
-}
-/*
-  TOGGLE_HUMAN_OPENINGS
-  Specifies whether the Thor statistics should be queried for
-  openings moves before resorting to the usual opening book.
-*/
+    pub fn set_komi(&mut self, in_komi: i32) {
+        self.komi = in_komi;
+    }
+    /*
+      TOGGLE_HUMAN_OPENINGS
+      Specifies whether the Thor statistics should be queried for
+      openings moves before resorting to the usual opening book.
+    */
 
-pub unsafe fn toggle_human_openings(toggle: i32) {
-    game_state.play_human_openings = toggle;
+    pub fn toggle_human_openings(&mut self, toggle: i32) {
+        self.play_human_openings = toggle;
+    }
 }
 
 /*
