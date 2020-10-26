@@ -66,63 +66,63 @@ pub static mut midgame_state: MidgameState = MidgameState {
     feas_index_list: [[0; 64]; 64],
 };
 
+impl MidgameState {
+    /*
+      CLEAR_MIDGAME_ABORT
+      IS_MIDGAME_ABORT
+      SET_MIDGAME_ABORT
+      TOGGLE_MIDGAME_ABORT_CHECK
+      These functions handle the midgame abort system which kicks in
+      when it is estimated that the next iteration in the iterative
+      deepening would take too long.
+    */
 
-/*
-  CLEAR_MIDGAME_ABORT
-  IS_MIDGAME_ABORT
-  SET_MIDGAME_ABORT
-  TOGGLE_MIDGAME_ABORT_CHECK
-  These functions handle the midgame abort system which kicks in
-  when it is estimated that the next iteration in the iterative
-  deepening would take too long.
-*/
+    pub fn clear_midgame_abort(&mut self) {
+        self.midgame_abort = 0;
+    }
 
-pub unsafe fn clear_midgame_abort() {
-    midgame_state.midgame_abort = 0;
+    pub fn is_midgame_abort(&mut self) -> i32 {
+        return self.midgame_abort;
+    }
+
+    pub fn set_midgame_abort(&mut self) {
+        self.midgame_abort = self.do_check_midgame_abort;
+    }
+
+    pub fn toggle_midgame_abort_check(&mut self, toggle: i32) {
+        self.do_check_midgame_abort = toggle;
+    }
+    /*
+       TOGGLE_MIDGAME_HASH_USAGE
+       Toggles hash table access in the midgame search on/off.
+    */
+
+    pub fn toggle_midgame_hash_usage(&mut self, allow_read:
+                                            i32,
+                                            allow_write:
+                                            i32) {
+        self.allow_midgame_hash_probe = allow_read;
+        self.allow_midgame_hash_update = allow_write;
+    }
+
+    /*
+      SET_PERTURBATION
+      Set the amplitude of the score perturbation applied by
+      CALCULATE_PERTURBATION.
+    */
+
+    pub fn set_perturbation(&mut self, amplitude: i32) {
+        self.perturbation_amplitude = amplitude;
+    }
+    /*
+      TOGGLE_PERTURBATION_USAGE
+      Toggle usage of score perturbations on/off.
+    */
+
+    pub fn toggle_perturbation_usage(&mut self, toggle: i32) {
+        self.apply_perturbation = toggle;
+    }
 }
-
-pub unsafe fn is_midgame_abort() -> i32 {
-    return midgame_state.midgame_abort;
-}
-
-pub unsafe fn set_midgame_abort() {
-    midgame_state.midgame_abort = midgame_state.do_check_midgame_abort;
-}
-
-pub unsafe fn toggle_midgame_abort_check(toggle: i32) {
-    midgame_state.do_check_midgame_abort = toggle;
-}
-/*
-   TOGGLE_MIDGAME_HASH_USAGE
-   Toggles hash table access in the midgame search on/off.
-*/
-
-pub unsafe fn toggle_midgame_hash_usage(allow_read:
-                                        i32,
-                                        allow_write:
-                                        i32) {
-    midgame_state.allow_midgame_hash_probe = allow_read;
-    midgame_state.allow_midgame_hash_update = allow_write;
-}
-
-/*
-  SET_PERTURBATION
-  Set the amplitude of the score perturbation applied by
-  CALCULATE_PERTURBATION.
-*/
-
-pub unsafe fn set_perturbation(amplitude: i32) {
-    midgame_state.perturbation_amplitude = amplitude;
-}
-/*
-  TOGGLE_PERTURBATION_USAGE
-  Toggle usage of score perturbations on/off.
-*/
-
-pub unsafe fn toggle_perturbation_usage(toggle: i32) {
-    midgame_state.apply_perturbation = toggle;
-}
-
 /*
   ADVANCE_MOVE
   Swaps a move and its predecessor in the move list if it's
@@ -1553,7 +1553,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
             if above_recommended::<FE>() != 0 ||
                 extended_above_recommended::<FE>() != 0 &&
                     depth >= g_timer.frozen_ponder_depth {
-                set_midgame_abort();
+                midgame_state.set_midgame_abort();
                 break ;
             }
         }

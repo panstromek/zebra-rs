@@ -5,7 +5,7 @@ use crate::{
     }
 };
 use crate::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
-use engine::src::midgame::{middle_game, toggle_midgame_abort_check, toggle_midgame_hash_usage, tree_search};
+use engine::src::midgame::{middle_game, tree_search, midgame_state};
 use engine::src::myrandom::{my_srandom, my_random};
 use engine::src::hash::{set_hash_transformation, setup_hash, clear_hash_drafts, hash_state, determine_hash_values};
 use engine::src::error::{FrontEnd};
@@ -1595,9 +1595,9 @@ pub unsafe fn unpack_compressed_database(in_name:
                         *const i8, out_name);
     }
     game_init(0 as *const i8, &mut dummy);
-    toggle_midgame_hash_usage(1 as i32, 1 as i32);
+    midgame_state.toggle_midgame_hash_usage(1 as i32, 1 as i32);
     g_timer.toggle_abort_check(0 as i32);
-    toggle_midgame_abort_check(0 as i32);
+    midgame_state.toggle_midgame_abort_check(0 as i32);
     magic = 2718;
     fwrite(&mut magic as *mut i16 as *const std::ffi::c_void,
            ::std::mem::size_of::<i16>() as u64,
@@ -4435,9 +4435,9 @@ pub unsafe fn prepare_tree_traversal() {
     let mut side_to_move: i32 = 0;
     setup_non_file_based_game(&mut side_to_move);
     engine_game_init();
-    toggle_midgame_hash_usage(1 as i32, 1 as i32);
+    midgame_state.toggle_midgame_hash_usage(1 as i32, 1 as i32);
     g_timer.toggle_abort_check(0 as i32);
-    toggle_midgame_abort_check(0 as i32);
+    midgame_state.toggle_midgame_abort_check(0 as i32);
 }
 
 

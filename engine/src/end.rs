@@ -19,7 +19,7 @@ use crate::{
 };
 use crate::src::error::FrontEnd;
 use crate::src::hash::{add_hash};
-use crate::src::midgame::{toggle_midgame_hash_usage, tree_search};
+use crate::src::midgame::{tree_search, midgame_state};
 use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_move};
 use crate::src::stubs::{abs, ceil};
 use crate::src::timer::{check_panic_abort, check_threshold, clear_panic_abort, get_elapsed_time, is_panic_abort, g_timer, set_panic_threshold};
@@ -2299,7 +2299,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     }
     FE::reset_buffer_display();
     /* Make sure the pre-searches don't mess up the hash table */
-    toggle_midgame_hash_usage(1, 0);
+    midgame_state.toggle_midgame_hash_usage(1, 0);
     incomplete_search = 0;
     any_search_result = 0;
     /* Start off by selective endgame search */

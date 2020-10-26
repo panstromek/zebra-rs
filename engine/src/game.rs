@@ -7,7 +7,7 @@ use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init
 use crate::src::hash::{free_hash, init_hash, find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::timer::{clear_ponder_times, init_timer, time_t, clear_panic_abort, get_elapsed_time, is_panic_abort, add_ponder_time, get_real_timer, start_move, g_timer};
 use crate::src::end::{setup_end, end_game};
-use crate::src::midgame::{setup_midgame, is_midgame_abort, middle_game, toggle_midgame_hash_usage, toggle_midgame_abort_check, clear_midgame_abort, calculate_perturbation, midgame_state};
+use crate::src::midgame::{setup_midgame, middle_game,calculate_perturbation, midgame_state};
 use crate::src::moves::{valid_move, generate_all, unmake_move, make_move, moves_state};
 use crate::src::stable::init_stable;
 use crate::src::probcut::{init_probcut, prob_cut};
@@ -528,9 +528,9 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             i32;
     if book_move_found == 0 && endgame_reached == 0 {
         clear_panic_abort();
-        clear_midgame_abort();
-        toggle_midgame_abort_check(update_all);
-        toggle_midgame_hash_usage(1 as i32, 1 as i32);
+        midgame_state.clear_midgame_abort();
+        midgame_state.toggle_midgame_abort_check(update_all);
+        midgame_state.toggle_midgame_hash_usage(1 as i32, 1 as i32);
         if timed_depth != 0 {
             max_depth = 64 as i32
         } else if empties <= (if exact > wld { exact } else { wld }) {
@@ -584,7 +584,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 }
             }
             midgame_depth += 1;
-            if !(is_panic_abort() == 0 && is_midgame_abort() == 0 &&
+            if !(is_panic_abort() == 0 && midgame_state.is_midgame_abort() == 0 &&
                 force_return == 0 && midgame_depth <= max_depth &&
                 midgame_depth + moves_state.disks_played <= 61 as i32 &&
                 endgame_reached == 0) {

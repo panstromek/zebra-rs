@@ -7,7 +7,6 @@ use crate::{
         game::{CandidateMove},
         myrandom::{my_random, my_srandom},
         globals::board_state,
-        midgame::{toggle_midgame_abort_check, toggle_midgame_hash_usage},
         getcoeff::remove_coeffs,
         counter::reset_counter,
         patterns::{flip8, compute_line_patterns},
