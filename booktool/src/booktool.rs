@@ -2,7 +2,7 @@
 non_upper_case_globals, unused_assignments, unused_mut)]
 
 use legacy_zebra::src::osfbook::{write_text_database, write_compressed_database, write_binary_database, generate_endgame_statistics, generate_midgame_statistics, display_doubly_optimal_line, export_tree, restricted_minimax_tree, minimax_tree, merge_position_list, correct_tree, evaluate_tree, merge_binary_database, clear_tree, book_statistics, convert_opening_list, set_output_script_name, unpack_compressed_database, read_text_database, read_binary_database, build_tree, init_osf};
-use engine::src::osfbook::{set_draw_mode, set_black_force, set_white_force, set_deviation_value, set_search_depth, set_eval_span, set_negamax_span, set_max_batch_size, set_game_mode, g_book};
+use engine::src::osfbook::{set_deviation_value, set_search_depth, set_eval_span, set_negamax_span, set_max_batch_size, g_book};
 use engine::src::hash::resize_hash;
 use legacy_zebra::src::error::{LibcFatalError};
 use engine::src::zebra::DrawMode::{OPPONENT_WINS, WHITE_WINS, BLACK_WINS, NEUTRAL};
@@ -312,27 +312,27 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-private\x00" as *const u8 as
                                      *const i8) == 0 {
-                set_game_mode(PRIVATE_GAME);
+                g_book.set_game_mode(PRIVATE_GAME);
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-public\x00" as *const u8 as
                                      *const i8) == 0 {
-                set_game_mode(PUBLIC_GAME);
+                g_book.set_game_mode(PUBLIC_GAME);
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-keepdraw\x00" as *const u8 as
                                      *const i8) == 0 {
-                set_draw_mode(NEUTRAL);
+                g_book.set_draw_mode(NEUTRAL);
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-draw2black\x00" as *const u8 as
                                      *const i8) == 0 {
-                set_draw_mode(BLACK_WINS);
+                g_book.set_draw_mode(BLACK_WINS);
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-draw2white\x00" as *const u8 as
                                      *const i8) == 0 {
-                set_draw_mode(WHITE_WINS);
+                g_book.set_draw_mode(WHITE_WINS);
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-draw2none\x00" as *const u8 as
                                      *const i8) == 0 {
-                set_draw_mode(OPPONENT_WINS);
+                g_book.set_draw_mode(OPPONENT_WINS);
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-opgen\x00" as *const u8 as
                                      *const i8) == 0 {
@@ -381,11 +381,11 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-fb\x00" as *const u8 as
                                      *const i8) == 0 {
-                set_black_force(1 as i32);
+                g_book.set_black_force(1 as i32);
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-fw\x00" as *const u8 as
                                      *const i8) == 0 {
-                set_white_force(1 as i32);
+                g_book.set_white_force(1 as i32);
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-merge\x00" as *const u8 as
                                      *const i8) == 0 {
