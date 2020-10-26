@@ -1,7 +1,7 @@
 use crate::src::globals::{Board, board_state};
 use crate::src::counter::CounterType;
 use crate::src::zebra::{EvaluationType, EvalResult, EvalType};
-use crate::src::moves::{unmake_move, make_move, moves_state};
+use crate::src::moves::{unmake_move, make_move, moves_state, MovesState};
 use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, UNSOLVED_POSITION};
@@ -240,17 +240,17 @@ pub const fn disc_count(side_to_move: i32, board_: & crate::src::globals::Board)
    from a shallow search.
 */
 
-pub unsafe fn sort_moves(list_size: i32) {
+pub fn sort_moves(list_size: i32, moves: &mut MovesState, search: &SearchState) {
     loop {
         let mut modified = 0;
         let mut i = 0;
         while i < list_size - 1 {
-            if search_state.evals[moves_state.disks_played as usize][moves_state.move_list[moves_state.disks_played as usize][i as usize] as usize] <
-                search_state.evals[moves_state.disks_played as usize][moves_state.move_list[moves_state.disks_played as usize][(i + 1) as usize] as usize] {
+            if search.evals[moves.disks_played as usize][moves.move_list[moves.disks_played as usize][i as usize] as usize] <
+                search.evals[moves.disks_played as usize][moves.move_list[moves.disks_played as usize][(i + 1) as usize] as usize] {
                 modified = 1;
-                let temp_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
-                moves_state.move_list[moves_state.disks_played as usize][i as usize] = moves_state.move_list[moves_state.disks_played as usize][(i + 1 as i32) as usize];
-                moves_state.move_list[moves_state.disks_played as usize][(i + 1 as i32) as usize] = temp_move
+                let temp_move = moves.move_list[moves.disks_played as usize][i as usize];
+                moves.move_list[moves.disks_played as usize][i as usize] = moves.move_list[moves.disks_played as usize][(i + 1 as i32) as usize];
+                moves.move_list[moves.disks_played as usize][(i + 1 as i32) as usize] = temp_move
             }
             i += 1
         }
