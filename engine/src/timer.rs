@@ -59,10 +59,6 @@ fn set_default_panic(timer_: &mut Timer) {
 /* Holds the value of the variable NODES the last time the
    timer module was called to check if a panic abort occured. */
 
-pub unsafe fn determine_move_time(time_left: f64, incr: f64, discs: i32) {
-    g_timer.determine_move_time(time_left, incr, discs)
-}
-
 impl Timer {
     /*
         DETERMINE_MOVE_TIME

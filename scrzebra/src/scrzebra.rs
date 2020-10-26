@@ -6,7 +6,7 @@ use engine::src::game::{global_terminate, set_komi, toggle_human_openings};
 use engine::src::myrandom::my_srandom;
 use legacy_zebra::src::thordb::init_thor_database;
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
-use engine::src::timer::{get_real_timer, determine_move_time, start_move};
+use engine::src::timer::{get_real_timer, start_move, g_timer};
 use engine::src::search::{disc_count, search_state};
 use engine::src::moves::moves_state;
 use engine::src::globals::board_state;
@@ -299,7 +299,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
             search_start = get_real_timer::<FE>();
             start_move::<FE>(my_time as f64, my_incr as f64,
                              moves_state.disks_played + 4 as i32);
-            determine_move_time(my_time as f64,
+            g_timer.determine_move_time(my_time as f64,
                                 my_incr as f64,
                                 moves_state.disks_played + 4 as i32);
             pass_count = 0;
