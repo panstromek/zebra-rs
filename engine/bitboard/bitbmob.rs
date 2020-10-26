@@ -244,7 +244,7 @@ fn generate_all_c(my_bits: BitBoard, opp_bits: BitBoard)
     return moves;
 }
 
-pub unsafe fn bitboard_mobility(my_bits: BitBoard,
+pub fn bitboard_mobility(my_bits: BitBoard,
                                            opp_bits: BitBoard)
  -> i32 {
     let mut moves = BitBoard{high: 0, low: 0,};
@@ -265,7 +265,7 @@ pub unsafe fn bitboard_mobility(my_bits: BitBoard,
    Contents:
 */
 
-pub unsafe fn weighted_mobility(my_bits: BitBoard,
+pub fn weighted_mobility(my_bits: BitBoard,
                                            opp_bits: BitBoard)
  -> i32 {
     let mut n1: u32 = 0; /* corner bonus for A1/H1/A8/H8 */
