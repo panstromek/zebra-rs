@@ -1491,7 +1491,7 @@ unsafe fn end_solve(end:&mut End, my_bits: BitBoard, opp_bits: BitBoard,
 /*
   UPDATE_BEST_LIST
 */
-pub unsafe fn update_best_list<FE: FrontEnd>(best_list: &mut [i32; 4],
+pub fn update_best_list<FE: FrontEnd>(best_list: &mut [i32; 4],
                            move_0: i32,
                            best_list_index: i32,
                            best_list_length: &mut i32,
