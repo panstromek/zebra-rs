@@ -416,7 +416,6 @@ pub fn create_eval_info(in_type: EvalType,
 
 pub fn produce_compact_eval(eval_info: EvaluationType) -> f64 {
     let mut eval: f64 = 0.;
-    's_97:
         {
             let current_block_17: u64;
             match eval_info.type_0 as u32 {
@@ -458,7 +457,9 @@ pub fn produce_compact_eval(eval_info: EvaluationType) -> f64 {
                 4 | 5 | 7 | 6 | 8 => {
                     current_block_17 = 12692146724533637300;
                 }
-                _ => { break 's_97 ; }
+                _ => {
+                    return 0.0f64;
+                }
             }
             match current_block_17 {
                 13171200747117244060 => {
