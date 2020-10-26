@@ -207,12 +207,12 @@ pub fn reorder_move_list(board_: & crate::src::globals::Board, stage_sorted_move
    Initialize the history of the game in the search driver.
 */
 
-pub unsafe fn setup_search() {
-    init_move_lists(&mut search_state.sorted_move_order);
-    search_state.list_inherited = [0; 62];
+pub fn setup_search(state: &mut SearchState) {
+    init_move_lists(&mut state.sorted_move_order);
+    state.list_inherited = [0; 62];
     create_eval_info(UNINITIALIZED_EVAL, UNSOLVED_POSITION, 0 as i32,
                      0.0f64, 0 as i32, 0 as i32);
-    search_state.negate_eval = 0;
+    state.negate_eval = 0;
 }
 /*
    DISC_COUNT

@@ -124,7 +124,7 @@ pub unsafe fn global_terminate() {
 }
 
 pub unsafe fn engine_game_init() {
-    setup_search();
+    setup_search(&mut search_state);
     setup_midgame(&mut midgame_state, &mut random_instance);
     setup_end();
     clear_ponder_times();
@@ -203,7 +203,7 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     init_timer::<FE>();
     init_probcut(&mut prob_cut.mpc_cut, &mut prob_cut.use_end_cut, &mut prob_cut.end_mpc_depth);
     init_stable();
-    setup_search();
+    setup_search(&mut search_state);
 }
 
 pub trait BoardSource {
