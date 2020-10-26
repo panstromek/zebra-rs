@@ -3,7 +3,7 @@ use crate::src::game::{game_init, LibcBoardFileSource};
 use libc_wrapper::{fclose, fputs, fprintf, fopen, strcpy};
 use engine::src::game::generic_game_init;
 use crate::src::error::LibcFatalError;
-use engine::src::timer::{clear_panic_abort, toggle_abort_check};
+use engine::src::timer::{clear_panic_abort, g_timer};
 use engine::src::osfbook::set_search_depth;
 use engine::src::moves::{make_move, generate_all, moves_state};
 use engine::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
@@ -46,7 +46,7 @@ pub unsafe fn learn_game(game_length: i32,
                                     private_game: i32,
                                     save_database: i32, echo:i32) {
     clear_panic_abort();
-    toggle_abort_check(0 as i32);
+    g_timer.toggle_abort_check(0 as i32);
     let full_solve = get_earliest_full_solve();
     let wld_solve = get_earliest_wld_solve();
     let mut dummy: i32 = 0;
@@ -76,7 +76,7 @@ pub unsafe fn learn_game(game_length: i32,
             write_binary_database(database_name.as_mut_ptr());
         } else { write_text_database(database_name.as_mut_ptr()); }
     }
-    toggle_abort_check(1 as i32);
+    g_timer.toggle_abort_check(1 as i32);
 }
 /*
   FULL_LEARN_PUBLIC_GAME
@@ -110,7 +110,7 @@ pub unsafe fn full_learn_public_game(length: i32,
         fclose(stream);
     }
     clear_panic_abort();
-    toggle_abort_check(0 as i32);
+    g_timer.toggle_abort_check(0 as i32);
     /* Copy the move list from the caller as it is modified below. */
     let mut i = 0;
     while i < length {
@@ -145,5 +145,5 @@ pub unsafe fn full_learn_public_game(length: i32,
     if binary_database != 0 {
         write_binary_database(database_name.as_mut_ptr());
     } else { write_text_database(database_name.as_mut_ptr()); }
-    toggle_abort_check(1 as i32);
+    g_timer.toggle_abort_check(1 as i32);
 }

@@ -1,4 +1,4 @@
-use crate::src::timer::{toggle_abort_check, get_real_timer, start_move, clear_panic_abort, g_timer};
+use crate::src::timer::{get_real_timer, start_move, clear_panic_abort, g_timer};
 use crate::src::moves::{make_move, valid_move, generate_all, game_in_progress, get_move, get_move_async, moves_state};
 use crate::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::counter::{counter_value, adjust_counter};
@@ -440,13 +440,13 @@ pub unsafe fn engine_play_game<
                                 disc_count(2, &board_state.board))
         }
         repeat -= 1;
-        toggle_abort_check(0 as i32);
+        g_timer.toggle_abort_check(0 as i32);
         if use_learning_ && config.one_position_only == 0 {
             Learn::learn_game(moves_state.disks_played,
                               (config.skill[0] != 0 && config.skill[2] != 0) as i32,
                               (repeat == 0 as i32) as i32);
         }
-        toggle_abort_check(1);
+        g_timer.toggle_abort_check(1);
         if !(repeat > 0) { break; }
     }
 }
@@ -719,13 +719,13 @@ pub async unsafe fn engine_play_game_async<
                                 disc_count(2, &board_state.board))
         }
         repeat -= 1;
-        toggle_abort_check(0 as i32);
+        g_timer.toggle_abort_check(0 as i32);
         if use_learning_ && config.one_position_only == 0 {
             Learn::learn_game(moves_state.disks_played,
                               (config.skill[0] != 0 && config.skill[2] != 0) as i32,
                               (repeat == 0 as i32) as i32);
         }
-        toggle_abort_check(1);
+        g_timer.toggle_abort_check(1);
         if !(repeat > 0) { break; }
     }
     Ok(())
