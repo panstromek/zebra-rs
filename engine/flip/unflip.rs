@@ -16,6 +16,15 @@ pub struct FlipStack {
     pub global_flip_stack: [usize; 2048],
     pub flip_stack: usize,
 }
+impl FlipStack {
+    /*
+      INIT_FLIP_STACK
+      Reset the flip stack.
+    */
+    pub fn init_flip_stack(&mut self) {
+        self.flip_stack = 0;
+    }
+}
 
 pub static mut flip_stack_: FlipStack = FlipStack {
     global_flip_stack: [0; 2048],
@@ -56,12 +65,4 @@ pub unsafe fn UndoFlips(board: &mut [i32; 128], flip_count: i32, oppcol: i32) {
         flip_stack_.flip_stack = flip_stack_.flip_stack - 1;
         board[flip_stack_.global_flip_stack[flip_stack_.flip_stack]] = UndoFlips__oppcol
     };
-}
-/*
-  INIT_FLIP_STACK
-  Reset the flip stack.
-*/
-
-pub unsafe fn init_flip_stack() {
-    flip_stack_.flip_stack = 0;
 }

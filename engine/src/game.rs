@@ -16,7 +16,7 @@ use crate::src::stubs::{abs};
 use crate::src::error::{FrontEnd};
 use crate::src::thordb::{ThorDatabase};
 use engine_traits::CoeffSource;
-use flip::unflip::init_flip_stack;
+use flip::unflip::{flip_stack_};
 use crate::src::zebra::EvalResult::{WON_POSITION, UNSOLVED_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, INTERRUPTED_EVAL, UNDEFINED_EVAL, FORCED_EVAL, PASS_EVAL, EXACT_EVAL, WLD_EVAL};
 
@@ -132,7 +132,7 @@ pub unsafe fn engine_game_init() {
     clear_ponder_times(&mut g_timer);
     reset_counter(&mut search_state.total_nodes);
     reset_counter(&mut search_state.total_evaluations);
-    init_flip_stack();
+    flip_stack_.init_flip_stack();
     search_state.total_time = 0.0f64;
     game_state.max_depth_reached = 0;
     game_state.last_time_used = 0.0f64;
