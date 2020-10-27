@@ -377,23 +377,23 @@ fn solve_three_empty(end: &mut End, my_bits: BitBoard,
     }
     return score;
 }
-unsafe fn solve_four_empty(end: &mut End, my_bits: BitBoard,
-                               opp_bits: BitBoard,
-                               sq1: i32,
-                               sq2: i32,
-                               sq3: i32,
-                               sq4: i32,
-                               mut alpha: i32,
-                               beta: i32,
-                               disc_diff: i32,
-                               pass_legal: i32, bb_flips_: &mut BitBoard)
-                               -> i32 {
+fn solve_four_empty(end: &mut End, my_bits: BitBoard,
+                           opp_bits: BitBoard,
+                           sq1: i32,
+                           sq2: i32,
+                           sq3: i32,
+                           sq4: i32,
+                           mut alpha: i32,
+                           beta: i32,
+                           disc_diff: i32,
+                           pass_legal: i32, bb_flips_: &mut BitBoard, search_state_: &mut SearchState)
+                           -> i32 {
     let mut new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut score = -(12345678 as i32);
     let mut flipped: i32 = 0;
     let mut new_disc_diff: i32 = 0;
     let mut ev: i32 = 0;
-    search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
+    search_state_.nodes.lo = search_state_.nodes.lo.wrapping_add(1);
     flipped = TestFlips_wrapper(end,sq1, my_bits, opp_bits, bb_flips_);
     if flipped != 0 as i32 {
         new_opp_bits.high = opp_bits.high & !bb_flips_.high;
@@ -402,7 +402,7 @@ unsafe fn solve_four_empty(end: &mut End, my_bits: BitBoard,
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         score =
             -solve_three_empty(end, new_opp_bits, *bb_flips_, sq2, sq3, sq4, -beta,
-                               -alpha, new_disc_diff, 1 as i32, bb_flips_, &mut search_state);
+                               -alpha, new_disc_diff, 1 as i32, bb_flips_, search_state_);
         if score >= beta {
             return score
         } else { if score > alpha { alpha = score } }
@@ -415,7 +415,7 @@ unsafe fn solve_four_empty(end: &mut End, my_bits: BitBoard,
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         ev =
             -solve_three_empty(end, new_opp_bits, *bb_flips_, sq1, sq3, sq4, -beta,
-                               -alpha, new_disc_diff, 1 as i32, bb_flips_, &mut search_state);
+                               -alpha, new_disc_diff, 1 as i32, bb_flips_, search_state_);
         if ev >= beta {
             return ev
         } else {
@@ -430,7 +430,7 @@ unsafe fn solve_four_empty(end: &mut End, my_bits: BitBoard,
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         ev =
             -solve_three_empty(end, new_opp_bits, *bb_flips_, sq1, sq2, sq4, -beta,
-                               -alpha, new_disc_diff, 1 as i32, bb_flips_, &mut search_state);
+                               -alpha, new_disc_diff, 1 as i32, bb_flips_, search_state_);
         if ev >= beta {
             return ev
         } else {
@@ -445,7 +445,7 @@ unsafe fn solve_four_empty(end: &mut End, my_bits: BitBoard,
             -disc_diff - 2 as i32 * flipped - 1 as i32;
         ev =
             -solve_three_empty(end, new_opp_bits, *bb_flips_, sq1, sq2, sq3, -beta,
-                               -alpha, new_disc_diff, 1 as i32, bb_flips_, &mut search_state);
+                               -alpha, new_disc_diff, 1 as i32, bb_flips_, search_state_);
         if ev >= score { return ev }
     }
     if score == -(12345678 as i32) {
@@ -461,7 +461,7 @@ unsafe fn solve_four_empty(end: &mut End, my_bits: BitBoard,
         } else {
             return -solve_four_empty(end, opp_bits, my_bits, sq1, sq2, sq3, sq4,
                                      -beta, -alpha, -disc_diff,
-                                     0 as i32, bb_flips_)
+                                     0 as i32, bb_flips_, search_state_)
         }
     }
     return score;
@@ -566,7 +566,7 @@ unsafe fn solve_parity(end:&mut End, my_bits: BitBoard,
                         ev =
                             -solve_four_empty(end, new_opp_bits, *bb_flips_, sq1,
                                               sq2, sq3, sq4, -beta, -alpha,
-                                              new_disc_diff, 1 as i32, bb_flips_)
+                                              new_disc_diff, 1 as i32, bb_flips_, &mut search_state)
                     } else {
                         end.region_parity ^= holepar;
                         ev =
@@ -616,7 +616,7 @@ unsafe fn solve_parity(end:&mut End, my_bits: BitBoard,
                     ev =
                         -solve_four_empty(end, new_opp_bits, *bb_flips_, sq1_0,
                                           sq2_0, sq3_0, sq4_0, -beta, -alpha,
-                                          new_disc_diff, 1 as i32, bb_flips_)
+                                          new_disc_diff, 1 as i32, bb_flips_, &mut search_state)
                 } else {
                     end.region_parity ^= holepar_0;
                     ev =
