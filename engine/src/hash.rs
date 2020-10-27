@@ -511,14 +511,14 @@ pub unsafe fn add_hash(reverse_mode: i32,
     //  so it cannot ever fail...
     //  And there is not comment or anything in there about it.. weird
     //
-
+    let state = &mut hash_state;
     if reverse_mode != 0 {
-        code1 = hash_state.hash2 ^ hash_state.hash_trans2;
-        code2 = hash_state.hash1 ^ hash_state.hash_trans1
-    } else { code1 = hash_state.hash1 ^ hash_state.hash_trans1; code2 = hash_state.hash2 ^ hash_state.hash_trans2 }
-    index1 = code1 & hash_state.hash_mask as u32;
+        code1 = state.hash2 ^ state.hash_trans2;
+        code2 = state.hash1 ^ state.hash_trans1
+    } else { code1 = state.hash1 ^ state.hash_trans1; code2 = state.hash2 ^ state.hash_trans2 }
+    index1 = code1 & state.hash_mask as u32;
     index2 = index1 ^ 1 as i32 as u32;
-    let hash_table_ptr: &mut [_] = &mut hash_state.hash_table;
+    let hash_table_ptr: &mut [_] = &mut state.hash_table;
     if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
         index = index1
     } else if (*hash_table_ptr.offset(index2 as isize)).key2 == code2 {

@@ -263,38 +263,36 @@ pub fn sort_moves(list_size: i32, moves: &mut MovesState, search: &SearchState) 
   Moves this move to the front of the sub-list.
 */
 
-pub unsafe fn select_move(first: i32,
-                          list_size: i32)
-                          -> i32 {
+pub fn select_move(first: i32, list_size: i32, search_state_: &mut SearchState, moves_state_: &mut MovesState) -> i32 {
     let mut i: i32 = 0;
     let mut temp_move: i32 = 0;
     let mut best: i32 = 0;
     let mut best_eval: i32 = 0;
     best = first;
     best_eval =
-        search_state.evals[moves_state.disks_played as
-            usize][moves_state.move_list[moves_state.disks_played as usize][first as usize] as
+        search_state_.evals[moves_state_.disks_played as
+            usize][moves_state_.move_list[moves_state_.disks_played as usize][first as usize] as
             usize];
     i = first + 1 as i32;
     while i < list_size {
-        if search_state.evals[moves_state.disks_played as
-            usize][moves_state.move_list[moves_state.disks_played as usize][i as usize] as
+        if search_state_.evals[moves_state_.disks_played as
+            usize][moves_state_.move_list[moves_state_.disks_played as usize][i as usize] as
             usize] > best_eval {
             best = i;
             best_eval =
-                search_state.evals[moves_state.disks_played as
-                    usize][moves_state.move_list[moves_state.disks_played as usize][i as usize]
+                search_state_.evals[moves_state_.disks_played as
+                    usize][moves_state_.move_list[moves_state_.disks_played as usize][i as usize]
                     as usize]
         }
         i += 1
     }
     if best != first {
-        temp_move = moves_state.move_list[moves_state.disks_played as usize][first as usize];
-        moves_state.move_list[moves_state.disks_played as usize][first as usize] =
-            moves_state.move_list[moves_state.disks_played as usize][best as usize];
-        moves_state.move_list[moves_state.disks_played as usize][best as usize] = temp_move
+        temp_move = moves_state_.move_list[moves_state_.disks_played as usize][first as usize];
+        moves_state_.move_list[moves_state_.disks_played as usize][first as usize] =
+            moves_state_.move_list[moves_state_.disks_played as usize][best as usize];
+        moves_state_.move_list[moves_state_.disks_played as usize][best as usize] = temp_move
     }
-    return moves_state.move_list[moves_state.disks_played as usize][first as usize];
+    return moves_state_.move_list[moves_state_.disks_played as usize][first as usize];
 }
 /*
   FLOAT_MOVE
