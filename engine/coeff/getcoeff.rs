@@ -43,7 +43,7 @@ pub struct CoeffSetData<'a> {
     pub corner52: &'a mut [i16; 59049]
 }
 
-pub unsafe fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
+pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
                                           board: &mut [i32; 128], set: &mut CoeffSet) -> i32 {
     /* The constant feature and the parity feature */
     let mut score = set.parity_constant[(disks_played & 1 as i32) as usize];
@@ -1055,7 +1055,7 @@ pub fn floor(num: f64) -> f64{
    Calculates the patterns associated with a filled board,
    only counting discs.
 */
-pub unsafe fn terminal_patterns(coeff_set: &mut CoeffSet) {
+pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
     let coeff_set = coeff_set.data.as_mut().unwrap();
     /* Calculate the patterns which correspond to the board being filled */
     let mut result: f64;
