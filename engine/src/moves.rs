@@ -120,12 +120,14 @@ pub const fn init_flip_direction() -> [[i32; 16]; 100] {
     };
     flip_direction_
 }
-/*
-   RESET_GENERATION
-   Prepare for move generation at a given level in the tree.
-*/
-unsafe fn reset_generation(_side_to_move: i32) {
-    moves_state.sweep_status[moves_state.disks_played as usize] = 0;
+impl MovesState {
+    /*
+       RESET_GENERATION
+       Prepare for move generation at a given level in the tree.
+    */
+    fn reset_generation(&mut self, _side_to_move: i32) {
+        self.sweep_status[self.disks_played as usize] = 0;
+    }
 }
 pub unsafe fn make_move(side_to_move: i32,
                         move_0: i32,
@@ -249,7 +251,7 @@ pub unsafe fn generate_move(side_to_move: i32)
 pub unsafe fn generate_all(side_to_move: i32) {
     let mut count: i32 = 0;
     let mut curr_move: i32 = 0;
-    reset_generation(side_to_move);
+    moves_state.reset_generation(side_to_move);
     count = 0;
     curr_move = generate_move(side_to_move);
     while curr_move != -(1 as i32) {
