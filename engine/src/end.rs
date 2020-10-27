@@ -1955,7 +1955,9 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             }
             if move_index == moves_state.move_count[moves_state.disks_played as usize] { break ; }
             move_0 =
-                select_move(move_index, moves_state.move_count[moves_state.disks_played as usize])
+                select_move(move_index,
+                            moves_state.move_count[moves_state.disks_played as usize],
+                    &mut search_state, &mut moves_state)
         }
         node_val = counter_value(&mut search_state.nodes);
         if node_val - g_timer.last_panic_check >= 250000.0f64 {
