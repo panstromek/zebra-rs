@@ -198,7 +198,8 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     process_coeffs_from_fn_source::<FE, _>(coeffs);
     init_coeffs_calculate_terminal_patterns(&mut coeff_state);
     if let Some(adjusts) = coeff_adjustments {
-        eval_adjustment(adjusts.disc_adjust, adjusts.edge_adjust, adjusts.corner_adjust, adjusts.x_adjust);
+        eval_adjustment(adjusts.disc_adjust, adjusts.edge_adjust,
+                        adjusts.corner_adjust, adjusts.x_adjust, &mut coeff_state);
     };
     post_init_coeffs(&mut coeff_state);
 
