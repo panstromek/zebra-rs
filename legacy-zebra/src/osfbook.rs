@@ -558,7 +558,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                    0 as i32 {
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
-            if generate_specific(this_move, side_to_move) == 0 {
+            if generate_specific(this_move, side_to_move, &board_state.board) == 0 {
                 puts(b"\x00" as *const u8 as *const i8);
                 printf(b"i=%d, side_to_move=%d, this_move=%d\n\x00" as
                            *const u8 as *const i8, i, side_to_move,
@@ -654,7 +654,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                    0 as i32 {
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
-            if generate_specific(this_move, side_to_move) == 0 {
+            if generate_specific(this_move, side_to_move, &board_state.board) == 0 {
                 fatal_error(b"%s: %d\n\x00" as *const u8 as
                                 *const i8,
                             b"Invalid move generated\x00" as *const u8 as
@@ -2365,7 +2365,7 @@ pub unsafe fn convert_opening_list(base_file:
         j = 0;
         while j < op_move_count {
             if generate_specific(op_move[j as usize],
-                                 side_to_move[j as usize]) == 0 {
+                                 side_to_move[j as usize], &board_state.board) == 0 {
                 printf(b"Move %d in opening #%d is illegal\n\x00" as *const u8
                            as *const i8, j + 1 as i32, i);
                 exit(1 as i32);
