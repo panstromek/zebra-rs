@@ -356,7 +356,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     g_timer.determine_move_time(my_time as f64, my_incr as f64,
                         moves_state.disks_played + 4 as i32);
     if get_ponder_move() == 0 { clear_ponder_times(&mut g_timer); }
-    remove_coeffs(moves_state.disks_played);
+    remove_coeffs(moves_state.disks_played, &mut coeff_state);
     /* No feasible moves? */
     if moves_state.move_count[moves_state.disks_played as usize] == 0 as i32 {
         *eval_info =

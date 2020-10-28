@@ -22,7 +22,7 @@ use crate::src::safemem::safe_malloc;
 use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit, FILE};
 use engine::src::osfbook::{__time_t, probe_hash_table, get_hash, get_node_depth, clear_node_depth, fill_move_alternatives, _ISupper, _ISprint, _ISspace, _ISgraph, BookNode, adjust_score, g_book, size_t, set_node_depth, Book, reset_book_search};
 use engine_traits::Offset;
-use engine::src::getcoeff::remove_coeffs;
+use engine::src::getcoeff::{remove_coeffs, coeff_state};
 use engine::src::game::{engine_game_init, setup_non_file_based_game};
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine::src::zebra::EvalResult::WON_POSITION;
@@ -3865,7 +3865,7 @@ pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32, echo: i32) {
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
-    remove_coeffs(moves_state.disks_played - 8 as i32);
+    remove_coeffs(moves_state.disks_played - 8 as i32, &mut coeff_state);
     g_timer.clear_panic_abort();
     board_state.piece_count[0][moves_state.disks_played as usize] =
         disc_count(0 as i32, &board_state.board);

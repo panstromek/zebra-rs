@@ -316,10 +316,10 @@ pub fn remove_specific_coeffs(coeff_set: &mut CoeffSet, block_allocated_: &mut [
    Removes pattern tables which have gone out of scope from memory.
 */
 
-pub unsafe fn remove_coeffs(phase: i32) {
+pub fn remove_coeffs(phase: i32, state: &mut CoeffState) {
     let mut i: i32 = 0;
     while i < phase {
-        remove_specific_coeffs(&mut coeff_state.set[i as usize], &mut coeff_state.block_allocated);
+        remove_specific_coeffs(&mut state.set[i as usize], &mut state.block_allocated);
         i += 1
     };
 }
@@ -328,7 +328,7 @@ pub unsafe fn remove_coeffs(phase: i32) {
    Remove all coefficients loaded from memory.
 */
 pub unsafe fn clear_coeffs(set_: &mut [CoeffSet; 61]) {
-    remove_coeffs(set_.len() as i32);
+    remove_coeffs(set_.len() as i32, &mut coeff_state);
 }
 
 

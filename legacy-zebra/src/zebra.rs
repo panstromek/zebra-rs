@@ -19,7 +19,7 @@ use engine::src::moves::{make_move, valid_move, unmake_move, generate_all, game_
 use engine::src::hash::{setup_hash, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, find_opening_name, g_book};
 use engine::src::stubs::floor;
-use engine::src::getcoeff::remove_coeffs;
+use engine::src::getcoeff::{remove_coeffs, coeff_state};
 use engine::src::myrandom::{my_random, my_srandom, random_instance};
 use crate::src::osfbook::print_move_alternatives;
 use engine::src::zebra::{set_default_engine_globals, DumpHandler, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource, Config, INITIAL_CONFIG, learn_state};
@@ -1180,7 +1180,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     let played_trans1 = my_random() as u32;
     let played_trans2 = my_random() as u32;
     while game_in_progress() != 0 && moves_state.disks_played < provided_move_count {
-        remove_coeffs(moves_state.disks_played);
+        remove_coeffs(moves_state.disks_played, &mut coeff_state);
         generate_all(side_to_move);
         if side_to_move == 0 as i32 { board_state.score_sheet_row += 1 }
         if moves_state.move_count[moves_state.disks_played as usize] != 0 as i32 {
