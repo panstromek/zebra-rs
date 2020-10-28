@@ -404,7 +404,9 @@ pub fn allocate_set<FE: FrontEnd>(coeff_set: &mut CoeffSet, state: &mut CoeffSta
    Also calculates the offset pointers to the last elements in each block
    (used for the inverted patterns when white is to move).
 */
-pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
+pub fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet,
+                                     block_list_: &'static mut [Option<Box<AllocationBlock>>; 200],
+                                     state: &mut CoeffState) {
     if set_item.permanent == 0 {
         let mut weight1 = 0;
         let mut weight2 = 0;
@@ -418,17 +420,23 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
             weight2 = index - prev;
         }
         let total_weight = weight1 + weight2;
-        let previous_set_item = &coeff_state.set[prev as usize];
-        let next_set_item = &coeff_state.set[next as usize];
-        set_item.constant = ((weight1 * previous_set_item.constant as i32 +
+        {
+            let previous_set_item = &state.set[prev as usize];
+            let next_set_item = &state.set[next as usize];
+            set_item.constant = ((weight1 * previous_set_item.constant as i32 +
                 weight2 * next_set_item.constant as i32) /
                 total_weight) as i16;
-        set_item.parity = ((weight1 * previous_set_item.parity as i32 +
+            set_item.parity = ((weight1 * previous_set_item.parity as i32 +
                 weight2 * next_set_item.parity as i32) /
                 total_weight) as i16;
-        set_item.parity_constant[0] = set_item.constant;
-        set_item.parity_constant[1] = set_item.constant + set_item.parity;
-        allocate_set::<FE>(set_item, &mut coeff_state, &mut block_list);
+            set_item.parity_constant[0] = set_item.constant;
+            set_item.parity_constant[1] = set_item.constant + set_item.parity;
+        }
+        allocate_set::<FE>(set_item, state, block_list_);
+
+        let previous_set_item = &state.set[prev as usize];
+        let next_set_item = &state.set[next as usize];
+
         let set_item = set_item.data.as_mut().unwrap();
         let previous_set_item = previous_set_item.data.as_ref().unwrap();
         let next_set_item = next_set_item.data.as_ref().unwrap();
@@ -472,7 +480,7 @@ pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32) -> i32 {
     /* Load and/or initialize the pattern coefficients */
     eval_phase = coeff_state.eval_map[moves_state.disks_played as usize];
     if coeff_state.set[eval_phase as usize].loaded == 0 {
-        load_set::<FE>(eval_phase, &mut coeff_state.set[(eval_phase as usize)]);
+        load_set::<FE>(eval_phase, &mut coeff_state.set[(eval_phase as usize)], &mut block_list, &mut coeff_state);
     }
     constant_and_parity_feature(side_to_move, moves_state.disks_played, &mut globals::board_state.board, &mut coeff_state.set[eval_phase as usize])
 }
