@@ -1,7 +1,7 @@
 use crate::src::cntflip::AnyFlips_compact;
 use crate::src::globals::{board_state};
 use crate::src::hash::{hash_state};
-use crate::src::search::search_state;
+use crate::src::search::{search_state, SearchState};
 use crate::src::zebra::ZebraFrontend;
 use std::future::Future;
 use flip::unflip::flip_stack_;
@@ -225,22 +225,23 @@ pub fn generate_specific(curr_move: i32, side_to_move: i32, board: &[i32; 128]) 
    in a position are generated, only those who need be considered.
 */
 
-pub unsafe fn generate_move(side_to_move: i32)
+pub fn generate_move(side_to_move: i32, board: &[i32; 128],
+                            moves_state_: &mut MovesState, search_state_: &SearchState)
                             -> i32 {
     let mut move_0: i32 = 0;
     let mut move_index = 0;
-    move_index = moves_state.sweep_status[moves_state.disks_played as usize];
+    move_index = moves_state_.sweep_status[moves_state_.disks_played as usize];
     while move_index < 60 as i32 {
         move_0 =
-            search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
-        if board_state.board[move_0 as usize] == 1 as i32 &&
-            generate_specific(move_0, side_to_move, &board_state.board) != 0 {
-            moves_state.sweep_status[moves_state.disks_played as usize] =
+            search_state_.sorted_move_order[moves_state_.disks_played as usize][move_index as usize];
+        if board[move_0 as usize] == 1 as i32 &&
+            generate_specific(move_0, side_to_move, board) != 0 {
+            moves_state_.sweep_status[moves_state_.disks_played as usize] =
                 move_index + 1 as i32;
             return move_0
         } else { move_index += 1 }
     }
-    moves_state.sweep_status[moves_state.disks_played as usize] = move_index;
+    moves_state_.sweep_status[moves_state_.disks_played as usize] = move_index;
     return -(1 as i32);
 }
 /*
@@ -253,11 +254,11 @@ pub unsafe fn generate_all(side_to_move: i32) {
     let mut curr_move: i32 = 0;
     moves_state.reset_generation(side_to_move);
     count = 0;
-    curr_move = generate_move(side_to_move);
+    curr_move = generate_move(side_to_move, &board_state.board, &mut moves_state, &search_state);
     while curr_move != -(1 as i32) {
         moves_state.move_list[moves_state.disks_played as usize][count as usize] = curr_move;
         count += 1;
-        curr_move = generate_move(side_to_move)
+        curr_move = generate_move(side_to_move, &board_state.board, &mut moves_state, &search_state)
     }
     moves_state.move_list[moves_state.disks_played as usize][count as usize] = -(1 as i32);
     moves_state.move_count[moves_state.disks_played as usize] = count;
