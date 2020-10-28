@@ -210,81 +210,6 @@ pub fn wide_to_compact(entry: &HashEntry, compact_entry: &mut CompactHashEntry) 
 }
 
 /*
-   ADD_HASH_EXTENDED
-   Add information to the hash table. Two adjacent positions are tried
-   and the most shallow search is replaced.
-*/
-
-pub unsafe fn add_hash_extended(reverse_mode: i32,
-                                score: i32,
-                                best: &[i32; 4],
-                                flags: i32,
-                                draft: i32,
-                                selectivity: i32) {
-    let mut i: i32 = 0;
-    let mut old_draft: i32 = 0;
-    let mut change_encouragment: i32 = 0;
-    let mut index: u32 = 0;
-    let mut index1: u32 = 0;
-    let mut index2: u32 = 0;
-    let mut code1: u32 = 0;
-    let mut code2: u32 = 0;
-    let mut entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
-    if reverse_mode != 0 {
-        code1 = hash_state.hash2 ^ hash_state.hash_trans2;
-        code2 = hash_state.hash1 ^ hash_state.hash_trans1
-    } else { code1 = hash_state.hash1 ^ hash_state.hash_trans1; code2 = hash_state.hash2 ^ hash_state.hash_trans2 }
-    index1 = code1 & hash_state.hash_mask as u32;
-    index2 = index1 ^ 1 as i32 as u32;
-    let hash_table_ptr: &mut [_] = &mut hash_state.hash_table;
-    if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
-        index = index1
-    } else if (*hash_table_ptr.offset(index2 as isize)).key2 == code2 {
-        index = index2
-    } else if (*hash_table_ptr.offset(index1 as
-        isize)).key1_selectivity_flags_draft &
-        255 as i32 as u32 <=
-        (*hash_table_ptr.offset(index2 as
-            isize)).key1_selectivity_flags_draft
-            & 255 as i32 as u32 {
-        index = index1
-    } else { index = index2 }
-    old_draft =
-        ((*hash_table_ptr.offset(index as isize)).key1_selectivity_flags_draft &
-            255 as i32 as u32) as i32;
-    if flags & 4 as i32 != 0 {
-        /* Exact scores are potentially more useful */
-        change_encouragment = 2 as i32
-    } else { change_encouragment = 0 as i32 }
-    if (*hash_table_ptr.offset(index as isize)).key2 == code2 {
-        if old_draft > draft + change_encouragment + 2 as i32 {
-            return
-        }
-    } else if old_draft > draft + change_encouragment + 4 as i32 {
-        return
-    }
-    entry.key1 = code1;
-    entry.key2 = code2;
-    entry.eval = score;
-    i = 0;
-    while i < 4 as i32 {
-        entry.move_0[i as usize] = best[i as usize];
-        i += 1
-    }
-    entry.flags = flags as i16;
-    entry.draft = draft as i16;
-    entry.selectivity = selectivity as i16;
-    wide_to_compact(&mut entry, hash_table_ptr.offset(index as isize));
-}
-
-/*
   CLEAR_HASH_DRAFTS
   Resets the draft information for all entries in the hash table.
 */
@@ -601,4 +526,81 @@ impl HashState {
         self.hash_trans1 = trans1;
         self.hash_trans2 = trans2;
     }
+
+
+    /*
+       ADD_HASH_EXTENDED
+       Add information to the hash table. Two adjacent positions are tried
+       and the most shallow search is replaced.
+    */
+
+    pub fn add_hash_extended(&mut self, reverse_mode: i32,
+                             score: i32,
+                             best: &[i32; 4],
+                             flags: i32,
+                             draft: i32,
+                             selectivity: i32) {
+        let mut i: i32 = 0;
+        let mut old_draft: i32 = 0;
+        let mut change_encouragment: i32 = 0;
+        let mut index: u32 = 0;
+        let mut index1: u32 = 0;
+        let mut index2: u32 = 0;
+        let mut code1: u32 = 0;
+        let mut code2: u32 = 0;
+        let mut entry =
+            HashEntry{key1: 0,
+                key2: 0,
+                eval: 0,
+                move_0: [0; 4],
+                draft: 0,
+                selectivity: 0,
+                flags: 0,};
+        if reverse_mode != 0 {
+            code1 = self.hash2 ^ self.hash_trans2;
+            code2 = self.hash1 ^ self.hash_trans1
+        } else { code1 = self.hash1 ^ self.hash_trans1; code2 = self.hash2 ^ self.hash_trans2 }
+        index1 = code1 & self.hash_mask as u32;
+        index2 = index1 ^ 1 as i32 as u32;
+        let hash_table_ptr: &mut [_] = &mut self.hash_table;
+        if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
+            index = index1
+        } else if (*hash_table_ptr.offset(index2 as isize)).key2 == code2 {
+            index = index2
+        } else if (*hash_table_ptr.offset(index1 as
+            isize)).key1_selectivity_flags_draft &
+            255 as i32 as u32 <=
+            (*hash_table_ptr.offset(index2 as
+                isize)).key1_selectivity_flags_draft
+                & 255 as i32 as u32 {
+            index = index1
+        } else { index = index2 }
+        old_draft =
+            ((*hash_table_ptr.offset(index as isize)).key1_selectivity_flags_draft &
+                255 as i32 as u32) as i32;
+        if flags & 4 as i32 != 0 {
+            /* Exact scores are potentially more useful */
+            change_encouragment = 2 as i32
+        } else { change_encouragment = 0 as i32 }
+        if (*hash_table_ptr.offset(index as isize)).key2 == code2 {
+            if old_draft > draft + change_encouragment + 2 as i32 {
+                return
+            }
+        } else if old_draft > draft + change_encouragment + 4 as i32 {
+            return
+        }
+        entry.key1 = code1;
+        entry.key2 = code2;
+        entry.eval = score;
+        i = 0;
+        while i < 4 as i32 {
+            entry.move_0[i as usize] = best[i as usize];
+            i += 1
+        }
+        entry.flags = flags as i16;
+        entry.draft = draft as i16;
+        entry.selectivity = selectivity as i16;
+        wide_to_compact(&mut entry, hash_table_ptr.offset(index as isize));
+    }
+
 }
