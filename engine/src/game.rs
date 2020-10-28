@@ -200,7 +200,7 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     if let Some(adjusts) = coeff_adjustments {
         eval_adjustment(adjusts.disc_adjust, adjusts.edge_adjust, adjusts.corner_adjust, adjusts.x_adjust);
     };
-    post_init_coeffs();
+    post_init_coeffs(&mut coeff_state);
 
     init_timer::<FE>();
     init_probcut(&mut prob_cut.mpc_cut, &mut prob_cut.use_end_cut, &mut prob_cut.end_mpc_depth);

@@ -474,7 +474,7 @@ pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32) -> i32 {
     constant_and_parity_feature(side_to_move, moves_state.disks_played, &mut globals::board_state.board, &mut coeff_state.set[eval_phase as usize])
 }
 
-pub unsafe fn post_init_coeffs() {
+pub fn post_init_coeffs(state: &mut CoeffState) {
     /* For each of number of disks played, decide on what set of evaluation
            patterns to use.
            The following rules apply:
@@ -485,24 +485,24 @@ pub unsafe fn post_init_coeffs() {
            (which may be either from the tuning or an intermediate stage).
         */
     let mut i = 0;
-    while i < coeff_state.stage[0] {
-        coeff_state.eval_map[i as usize] = coeff_state.stage[0];
+    while i < state.stage[0] {
+        state.eval_map[i as usize] = state.stage[0];
         i += 1
     }
     i = 0;
-    while i < coeff_state.stage_count {
-        coeff_state.eval_map[coeff_state.stage[i as usize] as usize] = coeff_state.stage[i as usize];
+    while i < state.stage_count {
+        state.eval_map[state.stage[i as usize] as usize] = state.stage[i as usize];
         i += 1
     }
     let mut subsequent_stage = 60;
     i = subsequent_stage;
-    while i >= coeff_state.stage[0] {
-        if coeff_state.eval_map[i as usize] == i {
+    while i >= state.stage[0] {
+        if state.eval_map[i as usize] == i {
             subsequent_stage = i
         } else if i == subsequent_stage - 2 as i32 {
-            coeff_state.eval_map[i as usize] = i;
+            state.eval_map[i as usize] = i;
             subsequent_stage = i
-        } else { coeff_state.eval_map[i as usize] = subsequent_stage }
+        } else { state.eval_map[i as usize] = subsequent_stage }
         i -= 1
     };
 }
