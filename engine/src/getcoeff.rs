@@ -73,15 +73,16 @@ fn generate_batch(target: &mut [i16], source1: &[i16], weight1: i32, source2: &[
         });
 }
 
-/*
-   INIT_MEMORY_HANDLER
-   Mark all blocks in the memory arena as "not used".
-*/
-pub unsafe fn init_memory_handler() {
-    coeff_state.block_count = 0;
-    coeff_state.block_allocated = [false; 200];
+impl CoeffState<'_> {
+    /*
+       INIT_MEMORY_HANDLER
+       Mark all blocks in the memory arena as "not used".
+    */
+    pub fn init_memory_handler(&mut self) {
+        self.block_count = 0;
+        self.block_allocated = [false; 200];
+    }
 }
-
 
 /*
   DISC_COUNT_ADJUSTMENT
