@@ -300,11 +300,11 @@ pub unsafe fn add_hash_extended(reverse_mode: i32,
   Resets the draft information for all entries in the hash table.
 */
 
-pub unsafe fn clear_hash_drafts() {
+pub fn clear_hash_drafts(state: &mut HashState) {
     let mut i = 0;
-    while i < hash_state.hash_table.len() {
+    while i < state.hash_table.len() {
         /* Set the draft to 0 */
-        hash_state.hash_table[i].key1_selectivity_flags_draft &= !(0xff as i32) as u32;
+        state.hash_table[i].key1_selectivity_flags_draft &= !(0xff as i32) as u32;
         i += 1
     };
 }

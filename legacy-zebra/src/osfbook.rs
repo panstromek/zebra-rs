@@ -3946,7 +3946,7 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
     /* To avoid spurious hash table entries to take out the effect
        of the averaging done, the hash table drafts are changed prior
        to each g_book.node being searched. */
-    clear_hash_drafts();
+    clear_hash_drafts(&mut hash_state);
     determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     /* First determine the best move in the current position
        and its score when searched to depth DEPTH.
