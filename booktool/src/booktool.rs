@@ -3,11 +3,12 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 
 use legacy_zebra::src::osfbook::{write_text_database, write_compressed_database, write_binary_database, generate_endgame_statistics, generate_midgame_statistics, display_doubly_optimal_line, export_tree, restricted_minimax_tree, minimax_tree, merge_position_list, correct_tree, evaluate_tree, merge_binary_database, clear_tree, book_statistics, convert_opening_list, set_output_script_name, unpack_compressed_database, read_text_database, read_binary_database, build_tree, init_osf};
 use engine::src::osfbook::{set_deviation_value, set_search_depth, set_eval_span, set_negamax_span, set_max_batch_size, g_book};
-use engine::src::hash::resize_hash;
 use legacy_zebra::src::error::{LibcFatalError};
 use engine::src::zebra::DrawMode::{OPPONENT_WINS, WHITE_WINS, BLACK_WINS, NEUTRAL};
 use engine::src::zebra::GameMode::{PUBLIC_GAME, PRIVATE_GAME};
 use legacy_zebra::src::zebra::g_config;
+use engine::src::hash::hash_state;
+use engine::src::myrandom::random_instance;
 
 pub type FE = LibcFatalError;
 
@@ -374,7 +375,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 arg_index += 1;
                 let mut hash_bits: i32 =
                     atoi(*argv.offset(arg_index as isize));
-                resize_hash(hash_bits);
+                hash_state.resize_hash(hash_bits, &mut random_instance);
                 printf(b"Hash table size changed to %d elements\n\x00" as
                            *const u8 as *const i8,
                        (1 as i32) << hash_bits);
