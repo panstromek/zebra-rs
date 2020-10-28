@@ -12,7 +12,7 @@ use engine::src::error::{FrontEnd, FatalError};
 use libc_wrapper::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, sscanf, feof, fgets, atoi, scanf, sprintf, ctime, time, strchr, strcasecmp, atof, stdout};
 use engine::src::globals::{board_state};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType, adjust_counter};
-use engine::src::timer::{get_real_timer, start_move, clear_panic_abort, g_timer};
+use engine::src::timer::{get_real_timer, start_move, g_timer};
 use engine::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::moves::{make_move, valid_move, unmake_move, generate_all, game_in_progress, moves_state};
@@ -1185,7 +1185,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         if side_to_move == 0 as i32 { board_state.score_sheet_row += 1 }
         if moves_state.move_count[moves_state.disks_played as usize] != 0 as i32 {
             move_start = get_real_timer::<FE>();
-            clear_panic_abort();
+            g_timer.clear_panic_abort();
             if g_config.echo != 0 {
                 set_move_list(board_state.black_moves.as_mut_ptr(),
                               board_state.white_moves.as_mut_ptr(), board_state.score_sheet_row);

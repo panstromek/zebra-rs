@@ -5,7 +5,7 @@ use crate::src::globals::{board_state, Board};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, init_memory_handler, CoeffAdjustments, remove_coeffs, coeff_state};
 use crate::src::hash::{free_hash, init_hash, find_hash, HashEntry, hash_state, determine_hash_values};
-use crate::src::timer::{clear_ponder_times, init_timer, time_t, clear_panic_abort, get_elapsed_time, add_ponder_time, get_real_timer, start_move, g_timer};
+use crate::src::timer::{clear_ponder_times, init_timer, time_t, get_elapsed_time, add_ponder_time, get_real_timer, start_move, g_timer};
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, middle_game,calculate_perturbation, midgame_state};
 use crate::src::moves::{valid_move, generate_all, unmake_move, make_move, moves_state};
@@ -529,7 +529,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         (timed_depth == 0 && game_state.endgame_performed[side_to_move as usize] != 0) as
             i32;
     if book_move_found == 0 && endgame_reached == 0 {
-        clear_panic_abort();
+        g_timer.clear_panic_abort();
         midgame_state.clear_midgame_abort();
         midgame_state.toggle_midgame_abort_check(update_all);
         midgame_state.toggle_midgame_hash_usage(1 as i32, 1 as i32);
@@ -609,7 +609,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             timed_depth == 0 &&
                 empties <= (if exact > wld { exact } else { wld }) {
             game_state.max_depth_reached = empties;
-            clear_panic_abort();
+            g_timer.clear_panic_abort();
             if timed_depth != 0 {
                 curr_move =
                    end_game::<FE>(side_to_move,
@@ -657,7 +657,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         add_counter(&mut search_state.total_evaluations, &mut search_state.evaluations);
         add_counter(&mut search_state.total_nodes, &mut search_state.nodes);
     }
-    clear_panic_abort();
+    g_timer.clear_panic_abort();
     /* Write the contents of the status buffer to the log file. */
     if move_type as u32 == BOOK_MOVE as i32 as u32 {
         if let Some(logger) = logger {

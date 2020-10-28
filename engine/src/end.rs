@@ -22,7 +22,7 @@ use crate::src::hash::{add_hash};
 use crate::src::midgame::{tree_search, midgame_state};
 use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_move};
 use crate::src::stubs::{abs, ceil};
-use crate::src::timer::{check_panic_abort, check_threshold, clear_panic_abort, get_elapsed_time, g_timer, set_panic_threshold};
+use crate::src::timer::{check_panic_abort, check_threshold, get_elapsed_time, g_timer, set_panic_threshold};
 use crate::src::zebra::EvaluationType;
 use crate::src::globals::Board;
 use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_EVAL};
@@ -2431,7 +2431,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             board_state.pv[0][0] = end. best_end_root_move;
             board_state.pv_depth[0] = 1;
             search_state.root_eval = old_eval;
-            clear_panic_abort();
+            g_timer.clear_panic_abort();
         } else {
             if echo != 0 {
                 FE::end_report_panic_abort_2(get_elapsed_time::<FE>());
@@ -2550,7 +2550,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             }
             restore_pv(&old_pv, old_depth);
             search_state.root_eval = old_eval;
-            clear_panic_abort();
+            g_timer.clear_panic_abort();
         } else {
             if echo != 0 {
                 FE::end_report_panic_abort(get_elapsed_time::<FE>());
@@ -2583,7 +2583,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         board_state.pv_depth[0] = 1;
         search_state.root_eval = old_eval;
         exact_score_failed = 1;
-        clear_panic_abort();
+        g_timer.clear_panic_abort();
     }
     if abs(search_state.root_eval) % 2 == 1 {
         if search_state.root_eval > 0 {

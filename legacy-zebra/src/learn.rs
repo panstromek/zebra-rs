@@ -3,7 +3,7 @@ use crate::src::game::{game_init, LibcBoardFileSource};
 use libc_wrapper::{fclose, fputs, fprintf, fopen, strcpy};
 use engine::src::game::generic_game_init;
 use crate::src::error::LibcFatalError;
-use engine::src::timer::{clear_panic_abort, g_timer};
+use engine::src::timer::{g_timer};
 use engine::src::osfbook::set_search_depth;
 use engine::src::moves::{make_move, generate_all, moves_state};
 use engine::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
@@ -46,7 +46,7 @@ impl Learner for LibcLearner {
 pub unsafe fn learn_game(game_length: i32,
                                     private_game: i32,
                                     save_database: i32, echo:i32) {
-    clear_panic_abort();
+    g_timer.clear_panic_abort();
     g_timer.toggle_abort_check(0 as i32);
     let full_solve = get_earliest_full_solve();
     let wld_solve = get_earliest_wld_solve();
@@ -110,7 +110,7 @@ pub unsafe fn full_learn_public_game(length: i32,
         fputs(b"\n\x00" as *const u8 as *const i8, stream);
         fclose(stream);
     }
-    clear_panic_abort();
+    g_timer.clear_panic_abort();
     g_timer.toggle_abort_check(0 as i32);
     /* Copy the move list from the caller as it is modified below. */
     let mut i = 0;
