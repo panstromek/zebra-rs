@@ -272,7 +272,7 @@ pub unsafe fn ponder_move<
         expect_count = 0 as i32
     } else {
         sort_moves(moves_state.move_count[moves_state.disks_played as usize], &mut moves_state, &search_state);
-        float_move(hash_move, moves_state.move_count[moves_state.disks_played as usize]);
+        float_move(hash_move, moves_state.move_count[moves_state.disks_played as usize], &mut moves_state);
         expect_count = moves_state.move_count[moves_state.disks_played as usize];
         i = 0;
         while i < expect_count {
