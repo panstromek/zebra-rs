@@ -1,6 +1,6 @@
 use crate::src::zebra::EvaluationType;
 use crate::src::counter::{adjust_counter, counter_value, reset_counter, add_counter};
-use crate::src::search::{setup_search, disc_count, complete_pv, get_ponder_move, set_current_eval, create_eval_info, force_return, clear_pv, clear_ponder_move, set_ponder_move, float_move, sort_moves, search_state};
+use crate::src::search::{setup_search, disc_count, complete_pv, get_ponder_move, set_current_eval, create_eval_info, force_return, clear_ponder_move, set_ponder_move, float_move, sort_moves, search_state};
 use crate::src::globals::{board_state, Board};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, init_memory_handler, CoeffAdjustments, remove_coeffs, coeff_state};
@@ -372,7 +372,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             L::log_best_move_pass(logger);
         }
         game_state.last_time_used = 0.0f64;
-        clear_pv();
+        board_state.clear_pv();
         return -(1 as i32)
     }
     /* If there is only one move available:
@@ -422,7 +422,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 let ponder_move = get_ponder_move();
                 Out::echo_ponder_move(curr_move, ponder_move);
             }
-            clear_pv();
+            board_state.clear_pv();
             board_state.pv_depth[0] = 1;
             board_state.pv[0][0] =
                 curr_move
@@ -449,7 +449,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                     let ponder_move = get_ponder_move();
                     Out::echo_ponder_move_2(curr_move, ponder_move);
                 }
-                clear_pv();
+                board_state.clear_pv();
                 board_state.pv_depth[0] = 1;
                 board_state.pv[0][0] =
                     curr_move
@@ -475,7 +475,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 let ponder_move = get_ponder_move();
                 Out::echo_ponder_move_4(curr_move, ponder_move);
             }
-            clear_pv();
+            board_state.clear_pv();
             board_state.pv_depth[0] = 1;
             board_state.pv[0][0] =
                 curr_move

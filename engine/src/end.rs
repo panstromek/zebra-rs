@@ -2320,7 +2320,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 if g_timer.is_panic_abort() != 0 || force_return != 0 { break ; }
                 any_search_result = 1;
                 old_eval = search_state.root_eval;
-                store_pv(&mut old_pv, &mut old_depth);
+                store_pv(&mut old_pv, &mut old_depth, &board_state);
                 current_confidence = confidence[selectivity as usize];
                 flags = 4;
                 if search_state.root_eval == 0 as i32 {
@@ -2388,7 +2388,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 if g_timer.is_panic_abort() == 0 && force_return == 0 {
                     any_search_result = 1;
                     old_eval = search_state.root_eval;
-                    store_pv(&mut old_pv, &mut old_depth);
+                    store_pv(&mut old_pv, &mut old_depth, &board_state);
                     current_confidence = confidence[selectivity as usize];
                     *eval_info =
                         create_eval_info(SELECTIVE_EVAL, UNSOLVED_POSITION,
@@ -2548,7 +2548,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     FE::end_display_zero_status();
                 }
             }
-            restore_pv(&old_pv, old_depth);
+            restore_pv(&old_pv, old_depth, &mut board_state);
             search_state.root_eval = old_eval;
             g_timer.clear_panic_abort();
         } else {
@@ -2560,7 +2560,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         return board_state.pv[0][0]
     }
     /* Update solve info. */
-    store_pv(&mut old_pv, &mut old_depth);
+    store_pv(&mut old_pv, &mut old_depth, &board_state);
     old_eval = search_state.root_eval;
     if g_timer.is_panic_abort() == 0 && force_return == 0 &&
         empties > end.earliest_wld_solve {
