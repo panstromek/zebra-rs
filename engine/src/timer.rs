@@ -109,14 +109,13 @@ impl Timer {
     pub fn is_panic_abort(&self) -> i32 {
         return self.panic_abort;
     }
-}
-/*
-  CLEAR_PANIC_ABORT
-  Resets the panic abort flag.
-*/
-
-pub unsafe fn clear_panic_abort() {
-    g_timer.panic_abort = 0;
+    /*
+      CLEAR_PANIC_ABORT
+      Resets the panic abort flag.
+    */
+    pub fn clear_panic_abort(&mut self) {
+        self.panic_abort = 0;
+    }
 }
 /*
   CLEAR_PONDER_TIMES

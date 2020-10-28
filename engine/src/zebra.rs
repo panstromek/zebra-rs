@@ -1,4 +1,4 @@
-use crate::src::timer::{get_real_timer, start_move, clear_panic_abort, g_timer};
+use crate::src::timer::{get_real_timer, start_move, g_timer};
 use crate::src::moves::{make_move, valid_move, generate_all, game_in_progress, get_move, get_move_async, moves_state};
 use crate::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::counter::{counter_value, adjust_counter};
@@ -279,7 +279,7 @@ pub unsafe fn engine_play_game<
             }
             if moves_state.move_count[moves_state.disks_played as usize] != 0 {
                 let move_start = get_real_timer::<FE>();
-                clear_panic_abort();
+                g_timer.clear_panic_abort();
                 if echo != 0 {
                     ZF::set_move_list(board_state.score_sheet_row);
                     ZF::set_times(floor(config.player_time[0]) as i32,
@@ -560,7 +560,7 @@ pub async unsafe fn engine_play_game_async<
             }
             if moves_state.move_count[moves_state.disks_played as usize] != 0 {
                 let move_start = get_real_timer::<FE>();
-                clear_panic_abort();
+                g_timer.clear_panic_abort();
                 if echo != 0 {
                     ZF::set_move_list(board_state.score_sheet_row);
                     ZF::set_times(floor(config.player_time[0]) as i32,

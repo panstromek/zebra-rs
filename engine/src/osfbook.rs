@@ -16,7 +16,6 @@ use crate::{
 use crate::src::stubs::{abs, ceil, floor};
 use crate::src::error::{FrontEnd};
 use crate::src::midgame::tree_search;
-use crate::src::timer::{clear_panic_abort};
 use crate::src::hash::{add_hash, setup_hash};
 use crate::src::game::{setup_non_file_based_game};
 use engine_traits::Offset;
