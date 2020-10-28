@@ -89,21 +89,23 @@ impl CoeffState<'_> {
 */
 /* Adjust the coefficients so as to reflect the encouragement for
        having lots of discs */
-pub unsafe fn eval_adjustment(disc_adjust: f64,
-                          edge_adjust: f64,
-                          corner_adjust: f64,
-                          x_adjust: f64) {
+pub fn eval_adjustment(disc_adjust: f64,
+                              edge_adjust: f64,
+                              corner_adjust: f64,
+                              x_adjust: f64, state: &mut CoeffState) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
     let mut adjust: i32 = 0;
     let mut row: [i32; 10] = [0; 10];
     i = 0;
-    while i < coeff_state.stage_count - 1 as i32 {
+    while i < state.stage_count - 1 as i32 {
         /* Bonuses for having more discs */
         j = 0;
-        let stage_set = coeff_state.set[coeff_state.stage[i as usize] as usize].data.as_mut().unwrap();
-        let sixty_set = coeff_state.set[60].data.as_mut().unwrap();
+        let stage_i = state.stage[i as usize] as usize;
+        let set = &mut state.set.split_at_mut(60);
+        let stage_set = set.0[stage_i].data.as_mut().unwrap();
+        let sixty_set = set.1[0].data.as_mut().unwrap();
         while j < 59049 as i32 {
             let ref mut fresh2 =
                 *(stage_set.afile2x  as &mut[i16]).offset(j as isize);
