@@ -1,7 +1,7 @@
 use crate::src::zebra::EvaluationType;
 use crate::src::counter::{adjust_counter, counter_value, reset_counter, add_counter};
 use crate::src::search::{setup_search, disc_count, complete_pv, get_ponder_move, set_current_eval, create_eval_info, force_return, clear_ponder_move, set_ponder_move, float_move, sort_moves, search_state};
-use crate::src::globals::{board_state, Board};
+use crate::src::globals::{board_state, Board, BoardState};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, CoeffAdjustments, remove_coeffs, coeff_state};
 use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
@@ -189,8 +189,8 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     let mut timer: time_t = 0;
     if use_random != 0 {
         FE::time(&mut timer);
-        my_srandom(timer as i32);
-    } else { my_srandom(1 as i32); }
+        random_instance.my_srandom(timer as i32);
+    } else { random_instance.my_srandom(1 as i32); }
     hash_state.init_hash(hash_bits);
 
     // inlined init_coeffs
@@ -215,7 +215,7 @@ pub trait BoardSource {
 }
 
 
-pub unsafe fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &mut i32, mut file_source: S) {
+pub fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &mut i32, mut file_source: S, board_state_: &mut BoardState) {
     let mut buffer: [i8; 70] = [0; 70];
     file_source.fill_board_buffer(&mut buffer);
     let mut token = 0;
@@ -225,8 +225,8 @@ pub unsafe fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &
         while j <= 8 as i32 {
             let pos = 10 as i32 * i + j;
             match buffer[token as usize] as i32 {
-                42 | 88 => { board_state.board[pos as usize] = 0 as i32 }
-                79 | 48 => { board_state.board[pos as usize] = 2 as i32 }
+                42 | 88 => { board_state_.board[pos as usize] = 0 as i32 }
+                79 | 48 => { board_state_.board[pos as usize] = 2 as i32 }
                 45 | 46 => {}
                 _ => {
                     let unrecognized = buffer[pos as usize];
@@ -259,7 +259,7 @@ pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name:
     board_state.board = create_fresh_board();
     assert!(!file_name.is_null());
     match S::open(file_name) {
-        Some(file_source) => process_board_source::<_, FE>(side_to_move, file_source),
+        Some(file_source) => process_board_source::<_, FE>(side_to_move, file_source, &mut board_state),
         None => {
             FE::cannot_open_game_file(file_name);
         },
