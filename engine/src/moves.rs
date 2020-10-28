@@ -139,7 +139,7 @@ pub unsafe fn make_move(side_to_move: i32,
     if update_hash != 0 {
         let (flipped_, hash_update1_, hash_update2_) = DoFlips_hash(
             move_0, side_to_move, &mut board_state.board,
-            &mut hash_state.hash_flip1, &mut hash_state.hash_flip2);
+            &mut hash_state.hash_flip1, &mut hash_state.hash_flip2, &mut flip_stack_);
         flipped = flipped_;
         if flipped == 0 as i32 { return 0 as i32 }
         diff1 =
