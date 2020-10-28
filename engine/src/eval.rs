@@ -1,5 +1,5 @@
 use crate::src::moves::moves_state;
-use crate::src::globals::board_state;
+use crate::src::globals::{board_state, PieceCounts};
 use crate::src::search::search_state;
 
 
@@ -10,8 +10,11 @@ use crate::src::search::search_state;
 
 pub unsafe fn terminal_evaluation(side_to_move: i32) -> i32 {
     let eval_counter = &mut search_state.evaluations;
-    let my_discs = board_state.piece_count[side_to_move as usize][moves_state.disks_played as usize];
-    let opp_discs = board_state.piece_count[(2 - side_to_move) as usize][moves_state.disks_played as usize];
+    let disks_played = moves_state.disks_played;
+    let state = &board_state;
+    let PieceCounts {
+        my_discs, opp_discs
+    } = state.get_piece_counts(side_to_move, disks_played);
 
     eval_counter.lo = eval_counter.lo.wrapping_add(1);
     let disc_diff = if my_discs > opp_discs {
