@@ -45,3 +45,19 @@ pub static mut board_state: BoardState = BoardState {
     white_moves: [0; 60],
     board: [0; 128],
 };
+
+pub struct PieceCounts {
+    pub my_discs: i32,
+    pub opp_discs: i32,
+}
+
+impl BoardState {
+    pub fn get_piece_counts(&self, side_to_move: i32, disks_played: i32) -> PieceCounts {
+        let my_discs = self.piece_count[side_to_move as usize][disks_played as usize];
+        let opp_discs = self.piece_count[(2 - side_to_move) as usize][disks_played as usize];
+        PieceCounts {
+            my_discs,
+            opp_discs,
+        }
+    }
+}
