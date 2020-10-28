@@ -560,7 +560,8 @@ pub fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: &mut [i16],
    Reads all feature values for a certain stage. To take care of
    symmetric patterns, mirror tables are calculated.
 */
-pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S) {
+pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state: &mut CoeffState) {
+
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -830,8 +831,8 @@ pub unsafe fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S)
     }
     /* Read and unpack - using symmetries - the coefficient tables. */
     i = 0;
-    while i < coeff_state.stage_count - 1 as i32 {
-        let stage_set = &mut coeff_state.set[coeff_state.stage[i as usize] as usize];
+    while i < state.stage_count - 1 as i32 {
+        let stage_set = &mut state.set[state.stage[i as usize] as usize];
         stage_set.constant = (next_word() / 4);
         stage_set.parity = (next_word() / 4);
         stage_set.parity_constant[0] = stage_set.constant;
@@ -903,7 +904,7 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
     coeff_state.set[60].permanent = 1;
     allocate_set::<FE>(&mut coeff_state.set[60]);
     /* Read the pattern values */
-    unpack_coeffs::<FE, _>(&mut next_word);
+    unpack_coeffs::<FE, _>(&mut next_word, &mut coeff_state);
 }
 
 
