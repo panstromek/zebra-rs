@@ -171,7 +171,7 @@ pub unsafe fn static_or_terminal_evaluation<FE : FrontEnd>(side_to_move:
                                             i32)
                                                            -> i32 {
     if moves_state.disks_played == 60 as i32 {
-        return terminal_evaluation(side_to_move)
+        return terminal_evaluation(board_state.get_piece_counts(side_to_move, moves_state.disks_played), &mut search_state.evaluations)
     } else {
         search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
         return pattern_evaluation::<FE>(side_to_move)
@@ -813,7 +813,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         return curr_val
     } else {
         board_state.pv_depth[level as usize] = level;
-        return terminal_evaluation(side_to_move)
+        return terminal_evaluation(board_state.get_piece_counts(side_to_move, moves_state.disks_played), &mut search_state.evaluations)
     };
 }
 
@@ -1027,7 +1027,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
         return curr_val
     } else {
         /* Both players had to pass ==> evaluate board as final */
-        curr_val = terminal_evaluation(side_to_move);
+        curr_val = terminal_evaluation(board_state.get_piece_counts(side_to_move, moves_state.disks_played), &mut search_state.evaluations);
         return curr_val
     };
 }
@@ -1371,7 +1371,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
         return curr_val
     } else {
         board_state.pv_depth[level as usize] = level;
-        return terminal_evaluation(side_to_move)
+        return terminal_evaluation(board_state.get_piece_counts(side_to_move, moves_state.disks_played), &mut search_state.evaluations)
     };
 }
 
