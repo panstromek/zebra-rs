@@ -337,9 +337,10 @@ pub unsafe fn clear_coeffs(set_: &mut [CoeffSet; 61]) {
    Maintains an internal memory handler to boost
    performance and avoid heap fragmentation.
 */
-pub fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet,
-                                                  state: &mut CoeffState,
-                                                  block_list_: &'static mut [Option<Box<AllocationBlock>>; 200]) -> i32 {
+pub fn find_memory_block<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState,
+                                       block_list_: &'static mut [Option<Box<AllocationBlock>>; 200],
+                                       interpolate_from : Option<(i32, i32, i32, i32)>
+) -> i32 {
     let mut found_free = 0;
     let mut free_block = -1;
     let mut i = 0;
@@ -374,7 +375,7 @@ pub fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet,
     }
 
     let mut block_list_item = (block_list_[free_block as usize]).as_mut().unwrap();
-    coeff_set.data = Some(CoeffSetData {
+    let set_data = CoeffSetData {
         afile2x: &mut block_list_item.afile2x_block,
         bfile: &mut block_list_item.bfile_block,
         cfile: &mut block_list_item.cfile_block,
@@ -386,16 +387,39 @@ pub fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet,
         diag4: &mut block_list_item.diag4_block,
         corner33: &mut block_list_item.corner33_block,
         corner52: &mut block_list_item.corner52_block,
-    });
+    };
+    // This is kinda ugly quick workaround for some aliasing issues.
+    // Ideally, this code shouldn't be here, it was in load_set before
+    if let Some((prev, next, weight1, weight2 )) = interpolate_from {
+        let previous_set_item = state.set[prev as usize].data.as_ref().unwrap();
+        let next_set_item = state.set[next as usize].data.as_ref().unwrap();
+        generate_batch(set_data.afile2x, previous_set_item.afile2x, weight1, next_set_item.afile2x, weight2);
+        generate_batch(set_data.bfile, previous_set_item.bfile, weight1, next_set_item.bfile, weight2);
+        generate_batch(set_data.cfile, previous_set_item.cfile, weight1, next_set_item.cfile, weight2);
+        generate_batch(set_data.dfile, previous_set_item.dfile, weight1, next_set_item.dfile, weight2);
+        generate_batch(set_data.diag8, previous_set_item.diag8, weight1, next_set_item.diag8, weight2);
+        generate_batch(set_data.diag7, previous_set_item.diag7, weight1, next_set_item.diag7, weight2);
+        generate_batch(set_data.diag6, previous_set_item.diag6, weight1, next_set_item.diag6, weight2);
+        generate_batch(set_data.diag5, previous_set_item.diag5, weight1, next_set_item.diag5, weight2);
+        generate_batch(set_data.diag4, previous_set_item.diag4, weight1, next_set_item.diag4, weight2);
+        generate_batch(set_data.corner33, previous_set_item.corner33, weight1, next_set_item.corner33, weight2);
+        generate_batch(set_data.corner52, previous_set_item.corner52, weight1, next_set_item.corner52, weight2);
+    }
+    let coeff_set = &mut state.set[curr_stage as usize];
+
+    coeff_set.data = Some(set_data);
     state.block_allocated[free_block as usize] = true;
+    coeff_set.block = free_block;
     return free_block;
 }
 /*
    ALLOCATE_SET
    Finds memory for all patterns belonging to a certain stage.
 */
-pub fn allocate_set<FE: FrontEnd>(coeff_set: &mut CoeffSet, state: &mut CoeffState, bl: &'static mut [Option<Box<AllocationBlock>>; 200]) {
-    coeff_set.block = find_memory_block::<FE>(coeff_set, state, bl);
+pub fn allocate_set<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState, bl: &'static mut [Option<Box<AllocationBlock>>; 200],
+                                  interpolate_from: Option<(i32, i32, i32, i32)>
+) {
+    find_memory_block::<FE>(curr_stage, state, bl, interpolate_from);
 }
 /*
    LOAD_SET
@@ -404,14 +428,15 @@ pub fn allocate_set<FE: FrontEnd>(coeff_set: &mut CoeffSet, state: &mut CoeffSta
    Also calculates the offset pointers to the last elements in each block
    (used for the inverted patterns when white is to move).
 */
-pub fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet,
+pub fn load_set<FE: FrontEnd>(index: i32,
                                      block_list_: &'static mut [Option<Box<AllocationBlock>>; 200],
                                      state: &mut CoeffState) {
-    if set_item.permanent == 0 {
+    // let set_item: &CoeffSet = &mut state.set[(index as usize)];
+    if state.set[(index as usize)].permanent == 0 {
         let mut weight1 = 0;
         let mut weight2 = 0;
-        let mut prev = set_item.prev;
-        let mut next = set_item.next;
+        let mut prev = state.set[(index as usize)].prev;
+        let mut next = state.set[(index as usize)].next;
         if prev == next {
             weight1 = 1;
             weight2 = 1;
@@ -420,39 +445,26 @@ pub fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet,
             weight2 = index - prev;
         }
         let total_weight = weight1 + weight2;
-        {
-            let previous_set_item = &state.set[prev as usize];
-            let next_set_item = &state.set[next as usize];
-            set_item.constant = ((weight1 * previous_set_item.constant as i32 +
-                weight2 * next_set_item.constant as i32) /
-                total_weight) as i16;
-            set_item.parity = ((weight1 * previous_set_item.parity as i32 +
-                weight2 * next_set_item.parity as i32) /
-                total_weight) as i16;
-            set_item.parity_constant[0] = set_item.constant;
-            set_item.parity_constant[1] = set_item.constant + set_item.parity;
-        }
-        allocate_set::<FE>(set_item, state, block_list_);
 
-        let previous_set_item = &state.set[prev as usize];
-        let next_set_item = &state.set[next as usize];
+        // let next_set_item = &state.set[next as usize];
+        // let set_item: &mut CoeffSet = &mut state.set[(index as usize)];
+        state.set[(index as usize)].constant = ((weight1 * state.set[prev as usize].constant as i32 +
+            weight2 * state.set[next as usize].constant as i32) /
+            total_weight) as i16;
+        state.set[(index as usize)].parity = ((weight1 * state.set[prev as usize].parity as i32 +
+            weight2 * state.set[next as usize].parity as i32) /
+            total_weight) as i16;
+        state.set[(index as usize)].parity_constant[0] = state.set[(index as usize)].constant;
+        state.set[(index as usize)].parity_constant[1] = state.set[(index as usize)].constant + state.set[(index as usize)].parity;
 
-        let set_item = set_item.data.as_mut().unwrap();
-        let previous_set_item = previous_set_item.data.as_ref().unwrap();
-        let next_set_item = next_set_item.data.as_ref().unwrap();
-        generate_batch(set_item.afile2x, previous_set_item.afile2x, weight1, next_set_item.afile2x, weight2);
-        generate_batch(set_item.bfile, previous_set_item.bfile, weight1, next_set_item.bfile, weight2);
-        generate_batch(set_item.cfile, previous_set_item.cfile, weight1, next_set_item.cfile, weight2);
-        generate_batch(set_item.dfile, previous_set_item.dfile, weight1, next_set_item.dfile, weight2);
-        generate_batch(set_item.diag8, previous_set_item.diag8, weight1, next_set_item.diag8, weight2);
-        generate_batch(set_item.diag7, previous_set_item.diag7, weight1, next_set_item.diag7, weight2);
-        generate_batch(set_item.diag6, previous_set_item.diag6, weight1, next_set_item.diag6, weight2);
-        generate_batch(set_item.diag5, previous_set_item.diag5, weight1, next_set_item.diag5, weight2);
-        generate_batch(set_item.diag4, previous_set_item.diag4, weight1, next_set_item.diag4, weight2);
-        generate_batch(set_item.corner33, previous_set_item.corner33, weight1, next_set_item.corner33, weight2);
-        generate_batch(set_item.corner52, previous_set_item.corner52, weight1, next_set_item.corner52, weight2);
+        allocate_set::<FE>(index, state, block_list_, Some((prev, next, weight1, weight2)));
+
+        // let previous_set_item = &state.set[prev as usize];
+        // let next_set_item = &state.set[next as usize];
+        //  generate_batch(set_data.corner52, previous_set_item.corner52, weight1, next_set_item.corner52, weight2);
+        //  .... this was here before
     }
-    set_item.loaded = 1;
+    state.set[(index as usize)].loaded = 1;
 }
 
 /*
@@ -480,7 +492,8 @@ pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32) -> i32 {
     /* Load and/or initialize the pattern coefficients */
     eval_phase = coeff_state.eval_map[moves_state.disks_played as usize];
     if coeff_state.set[eval_phase as usize].loaded == 0 {
-        load_set::<FE>(eval_phase, &mut coeff_state.set[(eval_phase as usize)], &mut block_list, &mut coeff_state);
+        let state = &mut coeff_state;
+        load_set::<FE>(eval_phase, &mut block_list, state);
     }
     constant_and_parity_feature(side_to_move, moves_state.disks_played, &mut globals::board_state.board, &mut coeff_state.set[eval_phase as usize])
 }
@@ -901,7 +914,7 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
             }
         }
         coeff_state.set[curr_stage as usize].permanent = 1;
-        allocate_set::<FE>(&mut coeff_state.set[curr_stage as usize], &mut coeff_state, &mut block_list);
+        allocate_set::<FE>(curr_stage, &mut coeff_state, &mut block_list, None);
         i += 1
     }
     coeff_state.stage[(coeff_state.stage_count - 1) as usize] = 60;
@@ -913,7 +926,7 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
         j += 1
     }
     coeff_state.set[60].permanent = 1;
-    allocate_set::<FE>(&mut coeff_state.set[60], &mut coeff_state, &mut block_list);
+    allocate_set::<FE>(60, &mut coeff_state, &mut block_list, None);
     /* Read the pattern values */
     unpack_coeffs::<FE, _>(&mut next_word, &mut coeff_state);
 }
