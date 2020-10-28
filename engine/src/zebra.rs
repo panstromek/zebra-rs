@@ -6,7 +6,7 @@ use crate::src::stubs::{floor};
 use crate::src::globals::{board_state};
 use crate::src::learn::{Learner, LearnState};
 use crate::src::error::{FrontEnd};
-use crate::src::myrandom::my_random;
+use crate::src::myrandom::{my_random, random_instance};
 use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, g_book};
 use crate::src::getcoeff::remove_coeffs;
 use crate::src::game::{generic_game_init, FileBoardSource, generic_compute_move, ComputeMoveOutput, ComputeMoveLogger, game_state};
@@ -243,7 +243,7 @@ pub unsafe fn engine_play_game<
         }
         /* Set up the position and the search engine */
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move);
-        setup_hash(1, &mut hash_state);
+        setup_hash(1, &mut hash_state, &mut  random_instance);
         learn_state.clear_stored_game();
         if echo != 0 && config.use_book != 0 {
             let slack_ = config.slack;
@@ -525,7 +525,7 @@ pub async unsafe fn engine_play_game_async<
         }
         /* Set up the position and the search engine */
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move);
-        setup_hash(1, &mut hash_state);
+        setup_hash(1, &mut hash_state, &mut  random_instance);
         learn_state.clear_stored_game();
         if echo != 0 && config.use_book != 0 {
             let slack_ = config.slack;

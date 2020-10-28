@@ -20,7 +20,7 @@ use engine::src::hash::{setup_hash, set_hash_transformation, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, find_opening_name, g_book};
 use engine::src::stubs::floor;
 use engine::src::getcoeff::remove_coeffs;
-use engine::src::myrandom::{my_random, my_srandom};
+use engine::src::myrandom::{my_random, my_srandom, random_instance};
 use crate::src::osfbook::print_move_alternatives;
 use engine::src::zebra::{set_default_engine_globals, DumpHandler, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource, Config, INITIAL_CONFIG, learn_state};
 use libc_wrapper::{FILE, time_t};
@@ -1151,7 +1151,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                  *const i8);
     }
     generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move);
-    setup_hash(1 as i32, &mut hash_state);
+    setup_hash(1 as i32, &mut hash_state, &mut  random_instance);
     learn_state.clear_stored_game();
     if g_config.echo != 0 && config.use_book != 0 {
         puts(b"Disabling usage of opening book\x00" as *const u8 as
@@ -1536,7 +1536,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             game_state.toggle_human_openings(0 as i32);
             reset_book_search(&mut g_book);
             set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_book);
-            setup_hash(1 as i32, &mut hash_state);
+            setup_hash(1 as i32, &mut hash_state, &mut  random_instance);
             position_count += 1;
             scanned =
                 sscanf(buffer.as_mut_ptr(),

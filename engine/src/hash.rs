@@ -1,4 +1,4 @@
-use crate::src::myrandom::my_random;
+use crate::src::myrandom::{my_random, random_instance, MyRandom};
 use std::ffi::c_void;
 use crate::src::globals::Board;
 use engine_traits::Offset;
@@ -338,7 +338,7 @@ pub fn get_closeness(a0: u32, a1: u32, b0: u32, b1: u32) -> u32 {
    Determine randomized hash masks.
 */
 
-pub unsafe fn setup_hash(clear: i32, hash_state_: &mut HashState) {
+pub fn setup_hash(clear: i32, hash_state_: &mut HashState, random: &mut MyRandom) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -362,11 +362,11 @@ pub unsafe fn setup_hash(clear: i32, hash_state_: &mut HashState) {
         'c_2013:
         loop  {
             random_pair[rand_index as usize][0] =
-                ((my_random() << 3 as i32) +
-                    (my_random() >> 2 as i32)) as u32;
+                ((random.my_random() << 3 as i32) +
+                    (random.my_random() >> 2 as i32)) as u32;
             random_pair[rand_index as usize][1] =
-                ((my_random() << 3 as i32) +
-                    (my_random() >> 2 as i32)) as u32;
+                ((random.my_random() << 3 as i32) +
+                    (random.my_random() >> 2 as i32)) as u32;
             closeness =
                 get_closeness(random_pair[rand_index as
                     usize][0],
@@ -593,7 +593,7 @@ pub unsafe fn init_hash(in_hash_bits: i32) {
 pub unsafe fn resize_hash(new_hash_bits: i32) {
     hash_state.hash_table.clear();
     init_hash(new_hash_bits);
-    setup_hash(1, &mut hash_state);
+    setup_hash(1, &mut hash_state, &mut random_instance);
 }
 /*
    FREE_HASH

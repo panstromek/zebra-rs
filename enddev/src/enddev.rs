@@ -4,7 +4,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 
 use engine::src::moves::{moves_state, make_move, valid_move, generate_all};
 use engine::src::globals::{board_state};
-use engine::src::myrandom::my_random;
+use engine::src::myrandom::{my_random, random_instance};
 use engine::src::game::{EvaluatedMove};
 use engine::src::zebra::{EvaluationType};
 use engine::src::timer::start_move;
@@ -256,7 +256,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 first_allowed_dev = earliest_dev
             }
             game_init(0 as *const i8, &mut side_to_move);
-            setup_hash(1 as i32, &mut hash_state);
+            setup_hash(1 as i32, &mut hash_state, &mut  random_instance);
             last_was_pass = 0;
             restart = 0;
             in_branch = 0 as i32
