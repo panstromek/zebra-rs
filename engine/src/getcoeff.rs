@@ -392,8 +392,8 @@ pub fn find_memory_block<'a, 'b:'a, FE: FrontEnd>(coeff_set: &mut CoeffSet<'a>, 
    ALLOCATE_SET
    Finds memory for all patterns belonging to a certain stage.
 */
-pub unsafe fn allocate_set<FE: FrontEnd>(coeff_set: &mut CoeffSet) {
-    coeff_set.block = find_memory_block::<FE>(coeff_set, &mut coeff_state);
+pub fn allocate_set<'a, 'b: 'a, FE: FrontEnd>(coeff_set: &mut CoeffSet<'a>, state: &'a mut CoeffState<'b>) {
+    coeff_set.block = find_memory_block::<FE>(coeff_set, state);
 }
 /*
    LOAD_SET
@@ -426,7 +426,7 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
                 total_weight) as i16;
         set_item.parity_constant[0] = set_item.constant;
         set_item.parity_constant[1] = set_item.constant + set_item.parity;
-        allocate_set::<FE>(set_item);
+        allocate_set::<FE>(set_item, &mut coeff_state);
         let set_item = set_item.data.as_mut().unwrap();
         let previous_set_item = previous_set_item.data.as_mut().unwrap();
         let next_set_item = next_set_item.data.as_mut().unwrap();
@@ -891,7 +891,7 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
             }
         }
         coeff_state.set[curr_stage as usize].permanent = 1;
-        allocate_set::<FE>( &mut coeff_state.set[curr_stage as usize]);
+        allocate_set::<FE>(&mut coeff_state.set[curr_stage as usize], &mut coeff_state);
         i += 1
     }
     coeff_state.stage[(coeff_state.stage_count - 1) as usize] = 60;
@@ -903,7 +903,7 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
         j += 1
     }
     coeff_state.set[60].permanent = 1;
-    allocate_set::<FE>(&mut coeff_state.set[60]);
+    allocate_set::<FE>(&mut coeff_state.set[60], &mut coeff_state);
     /* Read the pattern values */
     unpack_coeffs::<FE, _>(&mut next_word, &mut coeff_state);
 }
