@@ -330,18 +330,18 @@ pub unsafe fn count_edge_stable(color: i32,
         before this function is called *or you lose big*.
 */
 
-pub unsafe fn count_stable(color: i32,
-                                      col_bits: BitBoard,
-                                      opp_bits: BitBoard) -> i32 {
+pub fn count_stable(color: i32,
+                           col_bits: BitBoard,
+                           opp_bits: BitBoard, state: &mut StableState) -> i32 {
     let mut t: u32 = 0;
     let mut col_stable = BitBoard{high: 0, low: 0,};
     let mut common_stable = BitBoard{high: 0, low: 0,};
     /* Stable edge discs */
-    common_stable.low = stable_state.edge_stable[stable_state.edge_a1h1 as usize] as u32;
+    common_stable.low = state.edge_stable[state.edge_a1h1 as usize] as u32;
     common_stable.high =
-        ((stable_state.edge_stable[stable_state.edge_a8h8 as usize] as i32) <<
+        ((state.edge_stable[state.edge_a8h8 as usize] as i32) <<
              24 as i32) as u32;
-    t = stable_state.edge_stable[stable_state.edge_a1a8 as usize] as u32;
+    t = state.edge_stable[state.edge_a1a8 as usize] as u32;
     common_stable.low |=
         (t &
              0xf as i32 as
@@ -354,7 +354,7 @@ pub unsafe fn count_stable(color: i32,
                  i32).wrapping_mul(0x204081 as i32 as
                                                u32) &
             0x1010101 as i32 as u32;
-    t = stable_state.edge_stable[stable_state.edge_h1h8 as usize] as u32;
+    t = state.edge_stable[state.edge_h1h8 as usize] as u32;
     common_stable.low |=
         (t &
              0xf as i32 as
@@ -372,8 +372,8 @@ pub unsafe fn count_stable(color: i32,
     col_stable.low = col_bits.low & common_stable.low;
     edge_zardoz_stable(&mut col_stable, col_bits, opp_bits);
     if color == 0 as i32 {
-        stable_state.last_black_stable = col_stable
-    } else { stable_state.last_white_stable = col_stable }
+        state.last_black_stable = col_stable
+    } else { state.last_white_stable = col_stable }
     if col_stable.high | col_stable.low != 0 {
         return non_iterative_popcount(col_stable.high, col_stable.low) as
                    i32
@@ -412,13 +412,13 @@ unsafe fn stability_search(my_bits: BitBoard,
         count_edge_stable(0 as i32, black_bits, white_bits);
         if (*candidate_bits).high & black_bits.high != 0 ||
                (*candidate_bits).low & black_bits.low != 0 {
-            count_stable(0 as i32, black_bits, white_bits);
+            count_stable(0 as i32, black_bits, white_bits, &mut stable_state);
             all_stable_bits.high |= stable_state.last_black_stable.high;
             all_stable_bits.low |= stable_state.last_black_stable.low
         }
         if (*candidate_bits).high & white_bits.high != 0 ||
                (*candidate_bits).low & white_bits.low != 0 {
-            count_stable(2 as i32, white_bits, black_bits);
+            count_stable(2 as i32, white_bits, black_bits, &mut stable_state);
             all_stable_bits.high |= stable_state.last_white_stable.high;
             all_stable_bits.low |= stable_state.last_white_stable.low
         }
@@ -598,8 +598,8 @@ pub unsafe fn get_stable(board: &Board,
     } else {
         /* Nobody wiped out */
         count_edge_stable(0 as i32, black_bits, white_bits);
-        count_stable(0 as i32, black_bits, white_bits);
-        count_stable(2 as i32, white_bits, black_bits);
+        count_stable(0 as i32, black_bits, white_bits, &mut stable_state);
+        count_stable(2 as i32, white_bits, black_bits, &mut stable_state);
         all_stable.high = stable_state.last_black_stable.high | stable_state.last_white_stable.high;
         all_stable.low = stable_state.last_black_stable.low | stable_state.last_white_stable.low;
         complete_stability_search(board, side_to_move, &mut all_stable, bb_flips_);

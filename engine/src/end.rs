@@ -29,6 +29,7 @@ use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_
 use crate::src::zebra::EvalResult::{WON_POSITION, DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION};
 use crate::src::moves::{moves_state};
 use crate::src::search::SearchState;
+use crate::src::stable::stable_state;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -533,7 +534,7 @@ unsafe fn solve_parity(end:&mut End, my_bits: BitBoard,
         if stability_bound <= alpha { return alpha }
         stability_bound =
             64 as i32 -
-                2 as i32 * count_stable(oppcol, opp_bits, my_bits);
+                2 as i32 * count_stable(oppcol, opp_bits, my_bits, &mut stable_state);
         if stability_bound < beta {
             beta = stability_bound + 1 as i32
         }
@@ -816,7 +817,7 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
         if stability_bound <= alpha { return alpha }
         stability_bound =
             64 as i32 -
-                2 as i32 * count_stable(oppcol, opp_bits, my_bits);
+                2 as i32 * count_stable(oppcol, opp_bits, my_bits, &mut stable_state);
         if stability_bound < beta {
             beta = stability_bound + 1 as i32
         }
@@ -1267,7 +1268,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
         if stability_bound <= alpha { return alpha }
         stability_bound =
             64 as i32 -
-                2 as i32 * count_stable(oppcol, opp_bits, my_bits);
+                2 as i32 * count_stable(oppcol, opp_bits, my_bits, &mut stable_state);
         if stability_bound < beta {
             beta = stability_bound + 1 as i32
         }
@@ -1603,7 +1604,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             64 as i32 -
                 2 as i32 *
                     count_stable(0 as i32 + 2 as i32 -
-                                     side_to_move, opp_bits, my_bits);
+                                     side_to_move, opp_bits, my_bits, &mut stable_state);
         if stability_bound < beta {
             beta = stability_bound + 1 as i32
         }
