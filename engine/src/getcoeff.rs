@@ -932,8 +932,8 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
 }
 
 
-pub unsafe fn init_coeffs_calculate_patterns() {
-    let coeff_set = &mut coeff_state.set[60];
+pub fn init_coeffs_calculate_patterns(state: &mut CoeffState) {
+    let coeff_set = &mut state.set[60];
     terminal_patterns(coeff_set);
     coeff_set.constant = 0;
     coeff_set.parity = 0;
