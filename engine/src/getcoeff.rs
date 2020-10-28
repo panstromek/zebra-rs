@@ -327,8 +327,8 @@ pub fn remove_coeffs(phase: i32, state: &mut CoeffState) {
    CLEAR_COEFFS
    Remove all coefficients loaded from memory.
 */
-pub unsafe fn clear_coeffs(set_: &mut [CoeffSet; 61]) {
-    remove_coeffs(set_.len() as i32, &mut coeff_state);
+pub fn clear_coeffs(state: &mut CoeffState) {
+    remove_coeffs(state.set.len() as i32, state);
 }
 
 

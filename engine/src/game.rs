@@ -121,7 +121,7 @@ pub fn compare_eval(mut e1: EvaluationType, mut e2: EvaluationType) -> i32 {
 
 pub unsafe fn global_terminate() {
     hash_state.free_hash();
-    clear_coeffs(&mut coeff_state.set);
+    clear_coeffs(&mut coeff_state);
     clear_osf(&mut g_book);
 }
 
