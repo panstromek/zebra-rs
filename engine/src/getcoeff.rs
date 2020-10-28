@@ -418,8 +418,8 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
             weight2 = index - prev;
         }
         let total_weight = weight1 + weight2;
-        let previous_set_item = &mut coeff_state.set[prev as usize];
-        let next_set_item = &mut coeff_state.set[next as usize];
+        let previous_set_item = &coeff_state.set[prev as usize];
+        let next_set_item = &coeff_state.set[next as usize];
         set_item.constant = ((weight1 * previous_set_item.constant as i32 +
                 weight2 * next_set_item.constant as i32) /
                 total_weight) as i16;
@@ -430,8 +430,8 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
         set_item.parity_constant[1] = set_item.constant + set_item.parity;
         allocate_set::<FE>(set_item, &mut coeff_state, &mut block_list);
         let set_item = set_item.data.as_mut().unwrap();
-        let previous_set_item = previous_set_item.data.as_mut().unwrap();
-        let next_set_item = next_set_item.data.as_mut().unwrap();
+        let previous_set_item = previous_set_item.data.as_ref().unwrap();
+        let next_set_item = next_set_item.data.as_ref().unwrap();
         generate_batch(set_item.afile2x, previous_set_item.afile2x, weight1, next_set_item.afile2x, weight2);
         generate_batch(set_item.bfile, previous_set_item.bfile, weight1, next_set_item.bfile, weight2);
         generate_batch(set_item.cfile, previous_set_item.cfile, weight1, next_set_item.cfile, weight2);
