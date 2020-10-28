@@ -852,7 +852,7 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
                         if ev > alpha {
                             if ev >= beta {
                                 end.  best_move = sq;
-                                add_hash(1 as i32, score, end.  best_move,
+                                add_hash(&mut hash_state, 1 as i32, score, end.  best_move,
                                          16 as i32 | 1 as i32,
                                          empties, 0 as i32);
                                 return score
@@ -895,7 +895,7 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
                     if ev > alpha {
                         if ev >= beta {
                             end.  best_move = sq;
-                            add_hash(1 as i32, score, end.  best_move,
+                            add_hash(&mut hash_state,1 as i32, score, end.  best_move,
                                      16 as i32 | 1 as i32,
                                      empties, 0 as i32);
                             return score
@@ -926,11 +926,11 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
     } else {
         end.  best_move = best_sq;
         if score > in_alpha {
-            add_hash(1 as i32, score, end.  best_move,
+            add_hash(&mut hash_state,1 as i32, score, end.  best_move,
                      16 as i32 | 4 as i32, empties,
                      0 as i32);
         } else {
-            add_hash(1 as i32, score, end.  best_move,
+            add_hash(&mut hash_state,1 as i32, score, end.  best_move,
                      16 as i32 | 2 as i32, empties,
                      0 as i32);
         }
@@ -1371,7 +1371,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
     if score > alpha {
         if score >= beta {
             end.  best_move = best_sq;
-            add_hash(1 as i32, score, end.  best_move,
+            add_hash(&mut hash_state,1 as i32, score, end.  best_move,
                      16 as i32 | 1 as i32, empties,
                      0 as i32);
             return score
@@ -1438,7 +1438,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
             if ev > alpha {
                 if ev >= beta {
                     end.  best_move = sq;
-                    add_hash(1 as i32, score, end.  best_move,
+                    add_hash(&mut hash_state,1 as i32, score, end.  best_move,
                              16 as i32 | 1 as i32, empties,
                              0 as i32);
                     return score
@@ -1451,11 +1451,11 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
     }
     end.  best_move = best_sq;
     if score > in_alpha {
-        add_hash(1 as i32, score, end.  best_move,
+        add_hash(&mut hash_state,1 as i32, score, end.  best_move,
                  16 as i32 | 4 as i32, empties,
                  0 as i32);
     } else {
-        add_hash(1 as i32, score, end.  best_move,
+        add_hash(&mut hash_state,1 as i32, score, end.  best_move,
                  16 as i32 | 2 as i32, empties,
                  0 as i32);
     }
@@ -1711,7 +1711,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                             0 as i32, void_legal, echo);
             if shallow_val >= beta_bound {
                 if use_hash != 0 {
-                    add_hash(1 as i32, alpha,
+                    add_hash(&mut hash_state,1 as i32, alpha,
                              board_state.pv[level as usize][level as usize],
                              16 as i32 | 1 as i32, remains,
                              selectivity);
@@ -1721,7 +1721,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             }
             if shallow_val <= alpha_bound {
                 if use_hash != 0 {
-                    add_hash(1 as i32, beta,
+                    add_hash(&mut hash_state,1 as i32, beta,
                              board_state.pv[level as usize][level as usize],
                              16 as i32 | 2 as i32, remains,
                              selectivity);

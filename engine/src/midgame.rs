@@ -412,7 +412,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                         if shallow_val >= beta_bound {
                             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
                             {
-                                add_hash(0 as i32, beta,
+                                add_hash(&mut hash_state,0 as i32, beta,
                                          board_state.pv[level as usize][level as usize],
                                          8 as i32 | 1 as i32,
                                          remains, selectivity);
@@ -421,7 +421,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                         } else if shallow_val <= alpha_bound {
                             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
                             {
-                                add_hash(0 as i32, alpha,
+                                add_hash(&mut hash_state,0 as i32, alpha,
                                          board_state.pv[level as usize][level as usize],
                                          8 as i32 | 2 as i32,
                                          remains, selectivity);
@@ -458,7 +458,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                             beta_bound {
                             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
                             {
-                                add_hash(0 as i32, beta,
+                                add_hash(&mut hash_state,0 as i32, beta,
                                          board_state.pv[level as usize][level as usize],
                                          8 as i32 | 1 as i32,
                                          remains, selectivity);
@@ -474,7 +474,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                        void_legal, echo) <= alpha_bound {
                             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
                             {
-                                add_hash(0 as i32, alpha,
+                                add_hash(&mut hash_state,0 as i32, alpha,
                                          board_state.pv[level as usize][level as usize],
                                          8 as i32 | 2 as i32,
                                          remains, selectivity);
@@ -511,7 +511,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                         if use_hash != 0 &&
                                             midgame_state.allow_midgame_hash_update != 0
                                         {
-                                            add_hash(0 as i32, beta,
+                                            add_hash(&mut hash_state,0 as i32, beta,
                                                      board_state.pv[level as
                                                          usize][level as
                                                          usize],
@@ -549,7 +549,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                         moves_state.move_count[moves_state.disks_played as usize] >
                             0 as i32 {
                         if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
-                            add_hash(0 as i32, alpha,
+                            add_hash(&mut hash_state,0 as i32, alpha,
                                      board_state.pv[level as usize][level as usize],
                                      8 as i32 | 2 as i32,
                                      remains, selectivity);
@@ -911,7 +911,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
                             midgame_state.best_mid_move = best_move;
                             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
                             {
-                                add_hash(0 as i32, best, best_move,
+                                add_hash(&mut hash_state,0 as i32, best, best_move,
                                          8 as i32 | 1 as i32,
                                          remains, 0 as i32);
                             }
@@ -986,7 +986,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
                         advance_move(move_index, &mut search_state, &mut moves_state);
                         midgame_state.best_mid_move = best_move;
                         if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
-                            add_hash(0 as i32, best, best_move,
+                            add_hash(&mut hash_state,0 as i32, best, best_move,
                                      8 as i32 | 1 as i32,
                                      remains, 0 as i32);
                         }
@@ -1005,11 +1005,11 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
         midgame_state.best_mid_move = best_move;
         if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
             if best > alpha {
-                add_hash(0 as i32, best, best_move,
+                add_hash(&mut hash_state,0 as i32, best, best_move,
                          8 as i32 | 4 as i32, remains,
                          0 as i32);
             } else {
-                add_hash(0 as i32, best, best_move,
+                add_hash(&mut hash_state,0 as i32, best, best_move,
                          8 as i32 | 2 as i32, remains,
                          0 as i32);
             }
