@@ -212,9 +212,9 @@ pub unsafe fn unmake_move(side_to_move: i32,
    GENERATE_SPECIFIC
 */
 
-pub unsafe fn generate_specific(curr_move: i32, side_to_move: i32) -> i32 {
+pub fn generate_specific(curr_move: i32, side_to_move: i32, board: &[i32; 128]) -> i32 {
     let inc = &flip_direction[curr_move as usize]; //first_flip_direction[curr_move as usize];
-    return AnyFlips_compact(&board_state.board, inc, curr_move, side_to_move,
+    return AnyFlips_compact(board, inc, curr_move, side_to_move,
                             0 as i32 + 2 as i32 - side_to_move);
 }
 /*
@@ -234,7 +234,7 @@ pub unsafe fn generate_move(side_to_move: i32)
         move_0 =
             search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
         if board_state.board[move_0 as usize] == 1 as i32 &&
-            generate_specific(move_0, side_to_move) != 0 {
+            generate_specific(move_0, side_to_move, &board_state.board) != 0 {
             moves_state.sweep_status[moves_state.disks_played as usize] =
                 move_index + 1 as i32;
             return move_0
@@ -280,7 +280,7 @@ pub unsafe fn count_all(side_to_move: i32,
         move_0 =
             search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
         if board_state.board[move_0 as usize] == 1 as i32 {
-            if generate_specific(move_0, side_to_move) != 0 { mobility += 1 }
+            if generate_specific(move_0, side_to_move, &board_state.board) != 0 { mobility += 1 }
             found_empty += 1;
             if found_empty == empty { return mobility }
         }
