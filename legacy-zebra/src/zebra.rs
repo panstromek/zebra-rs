@@ -16,7 +16,7 @@ use engine::src::timer::{get_real_timer, start_move, g_timer};
 use engine::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::moves::{make_move, valid_move, unmake_move, generate_all, game_in_progress, moves_state};
-use engine::src::hash::{setup_hash, set_hash_transformation, hash_state};
+use engine::src::hash::{setup_hash, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, find_opening_name, g_book};
 use engine::src::stubs::floor;
 use engine::src::getcoeff::remove_coeffs;
@@ -1222,7 +1222,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                A private hash transformation is used so that the parallel
             search trees - "played" and "best" - don't clash. This way
              all scores are comparable. */
-            set_hash_transformation(played_trans1, played_trans2);
+            hash_state.set_hash_transformation(played_trans1, played_trans2);
             curr_move = provided_move[moves_state.disks_played as usize];
             opponent = 0 as i32 + 2 as i32 - side_to_move;
             make_move(side_to_move, curr_move, 1 as i32);
@@ -1257,7 +1257,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             search twice to dampen oscillations. Unless we're in the endgame
              region, a private hash transform is used - see above. */
             if empties > config.wld_skill[side_to_move as usize] {
-                set_hash_transformation(best_trans1, best_trans2);
+                hash_state.set_hash_transformation(best_trans1, best_trans2);
                 reset_counter(&mut search_state.nodes);
                 curr_move =
                     compute_move(side_to_move, 0 as i32,

@@ -10,7 +10,7 @@ use engine::src::zebra::{EvaluationType};
 use engine::src::timer::{clear_ponder_times, start_move, add_ponder_time, get_real_timer, g_timer};
 use engine::src::moves::{unmake_move, make_move, generate_all, moves_state};
 use engine::src::counter::{reset_counter, adjust_counter, counter_value};
-use engine::src::hash::{set_hash_transformation, find_hash, HashEntry, hash_state, determine_hash_values};
+use engine::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use engine::src::getcoeff::pattern_evaluation;
 use engine::src::myrandom::my_random;
 use engine::src::stubs::abs;
@@ -751,7 +751,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                 /* To avoid strange effects when browsing back and forth through
                    a game during the midgame, rehash the hash transformation masks
                    for each move unless the endgame is reached */
-                set_hash_transformation(transform1[i as usize],
+                hash_state.set_hash_transformation(transform1[i as usize],
                                         transform2[i as usize]);
                 /* Determine the score for the ith move */
                 prefix_move = this_move;
@@ -966,7 +966,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
         }
     }
     /* Reset the hash transformation masks prior to leaving */
-    set_hash_transformation(0 as i32 as u32,
+    hash_state.set_hash_transformation(0 as i32 as u32,
                             0 as i32 as u32);
     /* Don't forget to enable the time control mechanisms when leaving */
     g_timer.toggle_abort_check(1 as i32);

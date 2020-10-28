@@ -7,7 +7,7 @@ use crate::{
 use crate::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::midgame::{middle_game, tree_search, midgame_state};
 use engine::src::myrandom::{my_srandom, my_random, random_instance};
-use engine::src::hash::{set_hash_transformation, setup_hash, clear_hash_drafts, hash_state, determine_hash_values};
+use engine::src::hash::{setup_hash, clear_hash_drafts, hash_state, determine_hash_values};
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError};
 use engine::src::globals::board_state;
@@ -2794,7 +2794,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                   white_player, white_time, white_eval,
                   &board_state.black_moves, &board_state.white_moves
     );
-    set_hash_transformation(abs(my_random() as i32) as u32,
+    hash_state.set_hash_transformation(abs(my_random() as i32) as u32,
                             abs(my_random() as i32) as u32);
     determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     depth = 1;
@@ -2838,7 +2838,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
             if g_book.get_candidate_count() > 0 as i32 ||
                 moves_state.disks_played >= 40 as i32 {
                 print_move_alternatives(side_to_move);
-                set_hash_transformation(0 as i32 as u32,
+                hash_state.set_hash_transformation(0 as i32 as u32,
                                         0 as i32 as u32);
                end_game::<FE>(side_to_move, 0 as i32, 1 as i32,
                          1 as i32, 0 as i32, &mut dummy_info, echo);
@@ -2894,7 +2894,7 @@ unsafe fn do_endgame_statistics(index: i32,
         if g_book.get_candidate_count() > 0 as i32 ||
             moves_state.disks_played >= 40 as i32 {
             print_move_alternatives(side_to_move);
-            set_hash_transformation(0 as i32 as u32,
+            hash_state.set_hash_transformation(0 as i32 as u32,
                                     0 as i32 as u32);
            end_game::<FE>(side_to_move, 0 as i32, 1 as i32,
                      1 as i32, 0 as i32, &mut dummy_info, echo);
