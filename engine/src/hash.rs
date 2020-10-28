@@ -2,6 +2,7 @@ use crate::src::myrandom::{my_random, random_instance, MyRandom};
 use std::ffi::c_void;
 use crate::src::globals::Board;
 use engine_traits::Offset;
+use std::collections::hash_map::RandomState;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -570,36 +571,35 @@ pub unsafe fn add_hash(reverse_mode: i32,
 /* The XOR of the hash_color*, used for disk flipping. */
 /* Stored 64-bit hash mask which hold the hash codes at different nodes
    in the search tree. */
-/*
-   INIT_HASH
-   Allocate memory for the hash table.
-*/
-
-pub unsafe fn init_hash(in_hash_bits: i32) {
-    let hash_size = 1i32 << in_hash_bits;
-    hash_state.hash_mask = hash_size - 1;
-    hash_state.hash_table = vec![CompactHashEntry{
-        key2: 0,
-        eval: 0,
-        moves: 0,
-        key1_selectivity_flags_draft: 0
-    }; hash_size as usize];
-}
-/*
-  RESIZE_HASH
-  Changes the size of the hash table.
-*/
-
-pub unsafe fn resize_hash(new_hash_bits: i32) {
-    hash_state.hash_table.clear();
-    init_hash(new_hash_bits);
-    setup_hash(1, &mut hash_state, &mut random_instance);
-}
-/*
-   FREE_HASH
-   Remove the hash table.
-*/
-
-pub unsafe fn free_hash() {
-    hash_state.hash_table.clear()
+impl HashState {
+    /*
+       INIT_HASH
+       Allocate memory for the hash table.
+    */
+    pub fn init_hash(&mut self, in_hash_bits: i32) {
+        let hash_size = 1i32 << in_hash_bits;
+        self.hash_mask = hash_size - 1;
+        self.hash_table = vec![CompactHashEntry {
+            key2: 0,
+            eval: 0,
+            moves: 0,
+            key1_selectivity_flags_draft: 0,
+        }; hash_size as usize];
+    }
+    /*
+      RESIZE_HASH
+      Changes the size of the hash table.
+    */
+    pub fn resize_hash(&mut self, new_hash_bits: i32, random_instance_: &mut MyRandom) {
+        self.hash_table.clear();
+        self.init_hash(new_hash_bits);
+        setup_hash(1, self, random_instance_);
+    }
+    /*
+       FREE_HASH
+       Remove the hash table.
+    */
+    pub fn free_hash(&mut self) {
+        self.hash_table.clear()
+    }
 }

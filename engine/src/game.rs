@@ -4,7 +4,7 @@ use crate::src::search::{setup_search, disc_count, complete_pv, get_ponder_move,
 use crate::src::globals::{board_state, Board};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, init_memory_handler, CoeffAdjustments, remove_coeffs, coeff_state};
-use crate::src::hash::{free_hash, init_hash, find_hash, HashEntry, hash_state, determine_hash_values};
+use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::timer::{clear_ponder_times, init_timer, time_t, get_elapsed_time, add_ponder_time, get_real_timer, start_move, g_timer};
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, middle_game,calculate_perturbation, midgame_state};
@@ -120,7 +120,7 @@ pub fn compare_eval(mut e1: EvaluationType, mut e2: EvaluationType) -> i32 {
 */
 
 pub unsafe fn global_terminate() {
-    free_hash();
+    hash_state.free_hash();
     clear_coeffs(&mut coeff_state.set);
     clear_osf(&mut g_book);
 }
@@ -191,7 +191,7 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
         FE::time(&mut timer);
         my_srandom(timer as i32);
     } else { my_srandom(1 as i32); }
-    init_hash(hash_bits);
+    hash_state.init_hash(hash_bits);
 
     // inlined init_coeffs
     init_memory_handler();
