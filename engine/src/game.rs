@@ -3,7 +3,7 @@ use crate::src::counter::{adjust_counter, counter_value, reset_counter, add_coun
 use crate::src::search::{setup_search, disc_count, complete_pv, get_ponder_move, set_current_eval, create_eval_info, force_return, clear_ponder_move, set_ponder_move, float_move, sort_moves, search_state};
 use crate::src::globals::{board_state, Board, BoardState};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
-use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_patterns, process_coeffs_from_fn_source, CoeffAdjustments, remove_coeffs, coeff_state};
+use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_terminal_patterns, process_coeffs_from_fn_source, CoeffAdjustments, remove_coeffs, coeff_state};
 use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::timer::{clear_ponder_times, init_timer, time_t, get_elapsed_time, add_ponder_time, get_real_timer, start_move, g_timer};
 use crate::src::end::{setup_end, end_game};
@@ -196,7 +196,7 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     // inlined init_coeffs
     coeff_state.init_memory_handler();
     process_coeffs_from_fn_source::<FE, _>(coeffs);
-    init_coeffs_calculate_patterns(&mut coeff_state);
+    init_coeffs_calculate_terminal_patterns(&mut coeff_state);
     if let Some(adjusts) = coeff_adjustments {
         eval_adjustment(adjusts.disc_adjust, adjusts.edge_adjust, adjusts.corner_adjust, adjusts.x_adjust);
     };
