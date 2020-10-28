@@ -1335,7 +1335,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
     }
     /* Try move with highest goodness value */
     sq = move_order[best_index as usize];
-    let (_, hash_update1_, hash_update2_) = DoFlips_hash(sq, color, &mut board_state.board, &mut hash_state.hash_flip1, &mut hash_state.hash_flip2);
+    let (_, hash_update1_, hash_update2_) = DoFlips_hash(sq, color, &mut board_state.board, &mut hash_state.hash_flip1, &mut hash_state.hash_flip2, &mut flip_stack_);
     board_state.board[sq as usize] = color;
     diff1 = hash_update1_ ^ hash_state.hash_put_value1[color as usize][sq as usize];
     diff2 = hash_update2_ ^ hash_state.hash_put_value2[color as usize][sq as usize];
@@ -1401,7 +1401,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
         new_opp_bits.high = opp_bits.high & !bb_flips_.high;
         new_opp_bits.low = opp_bits.low & !bb_flips_.low;
         let (_, hash_update1_, hash_update2_) = DoFlips_hash(
-            sq, color, &mut board_state.board, &mut hash_state.hash_flip1, &mut hash_state.hash_flip2);
+            sq, color, &mut board_state.board, &mut hash_state.hash_flip1, &mut hash_state.hash_flip2, &mut flip_stack_);
         board_state.board[sq as usize] = color;
         diff1 = hash_update1_ ^ hash_state.hash_put_value1[color as usize][sq as usize];
         diff2 = hash_update2_ ^ hash_state.hash_put_value2[color as usize][sq as usize];
