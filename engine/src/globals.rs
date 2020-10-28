@@ -60,4 +60,12 @@ impl BoardState {
             opp_discs,
         }
     }
+
+    /*
+      CLEAR_PV
+      Clears the principal variation.
+    */
+    pub fn clear_pv(&mut self) {
+        self.pv_depth[0] = 0;
+    }
 }

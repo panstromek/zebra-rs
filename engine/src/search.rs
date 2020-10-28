@@ -1,4 +1,4 @@
-use crate::src::globals::{Board, board_state};
+use crate::src::globals::{Board, board_state, BoardState};
 use crate::src::counter::CounterType;
 use crate::src::zebra::{EvaluationType, EvalResult, EvalType};
 use crate::src::moves::{unmake_move, make_move, moves_state, MovesState};
@@ -327,35 +327,27 @@ pub fn float_move(move_0: i32, list_size: i32, state: &mut MovesState) -> i32 {
    Saves the principal variation (the first row of the PV matrix).
 */
 
-pub unsafe fn store_pv(pv_buffer: &mut [i32], depth_buffer: &mut i32) {
+pub fn store_pv(pv_buffer: &mut [i32], depth_buffer: &mut i32, state: &BoardState) {
     let mut i = 0;
-    while i < board_state.pv_depth[0] {
-        pv_buffer[(i as usize)] = board_state.pv[0][i as usize];
+    while i < state.pv_depth[0] {
+        pv_buffer[(i as usize)] = state.pv[0][i as usize];
         i += 1
     }
-    *depth_buffer = board_state.pv_depth[0];
+    *depth_buffer = state.pv_depth[0];
 }
 /*
    RESTORE_PV
    Put the stored principal variation back into the PV matrix.
 */
 
-pub unsafe fn restore_pv(pv_buffer: &[i32], depth_buffer: i32) {
+pub fn restore_pv(pv_buffer: &[i32], depth_buffer: i32, state: &mut BoardState) {
     let mut i: i32 = 0;
     i = 0;
     while i < depth_buffer {
-        board_state.pv[0][i as usize] = pv_buffer[i as usize];
+        state.pv[0][i as usize] = pv_buffer[i as usize];
         i += 1
     }
-    board_state.pv_depth[0] = depth_buffer;
-}
-/*
-  CLEAR_PV
-  Clears the principal variation.
-*/
-
-pub unsafe fn clear_pv() {
-    board_state.pv_depth[0] = 0;
+    state.pv_depth[0] = depth_buffer;
 }
 /*
   SET_PONDER_MOVE
