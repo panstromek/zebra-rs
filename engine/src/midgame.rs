@@ -19,6 +19,8 @@ use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, LOST_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
 use crate::src::myrandom::{random_instance, MyRandom};
+use crate::src::search::SearchState;
+use crate::src::moves::MovesState;
 
 
 #[derive(Copy, Clone)]
@@ -128,14 +130,14 @@ impl MidgameState {
   Swaps a move and its predecessor in the move list if it's
   not already first in the list.
 */
-pub unsafe fn advance_move(index: i32) {
+pub fn advance_move(index: i32, search: &mut SearchState, moves: &mut MovesState) {
     let mut temp_move: i32 = 0;
     if index > 0 as i32 {
-        temp_move = search_state.sorted_move_order[moves_state.disks_played as usize][index as usize];
-        search_state.sorted_move_order[moves_state.disks_played as usize][index as usize] =
-            search_state.sorted_move_order[moves_state.disks_played as
+        temp_move = search.sorted_move_order[moves.disks_played as usize][index as usize];
+        search.sorted_move_order[moves.disks_played as usize][index as usize] =
+            search.sorted_move_order[moves.disks_played as
                 usize][(index - 1 as i32) as usize];
-        search_state.sorted_move_order[moves_state.disks_played as
+        search.sorted_move_order[moves.disks_played as
             usize][(index - 1 as i32) as usize] =
             temp_move
     };
@@ -769,7 +771,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             }
         }
         if best >= beta {
-            advance_move(move_index);
+            advance_move(move_index, &mut search_state, &mut moves_state);
             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
                 add_hash_extended(0 as i32, best,
                                   &best_list,
@@ -784,7 +786,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
     }
     /* Post-processing */
     if moves_state.move_count[moves_state.disks_played as usize] > 0 as i32 {
-        advance_move(best_move_index);
+        advance_move(best_move_index, &mut search_state, &mut moves_state);
         if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
             if best > alpha {
                 add_hash_extended(0 as i32, best,
@@ -905,7 +907,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
                         best_move_index = move_index;
                         best_move = move_0;
                         if curr_val >= beta {
-                            advance_move(move_index);
+                            advance_move(move_index, &mut search_state, &mut moves_state);
                             midgame_state.best_mid_move = best_move;
                             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
                             {
@@ -981,7 +983,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
                     }
                     unmake_move(side_to_move, move_0);
                     if best >= beta {
-                        advance_move(move_index);
+                        advance_move(move_index, &mut search_state, &mut moves_state);
                         midgame_state.best_mid_move = best_move;
                         if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
                             add_hash(0 as i32, best, best_move,
@@ -999,7 +1001,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
         }
     }
     if first == 0 {
-        advance_move(best_move_index);
+        advance_move(best_move_index, &mut search_state, &mut moves_state);
         midgame_state.best_mid_move = best_move;
         if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
             if best > alpha {
@@ -1319,7 +1321,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
             }
         }
         if best >= beta {
-            advance_move(move_index);
+            advance_move(move_index, &mut search_state, &mut moves_state);
             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
                 add_hash_extended(0 as i32, best,
                                   &best_list,
@@ -1342,7 +1344,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
     }
     /* Post-processing */
     if moves_state.move_count[moves_state.disks_played as usize] > 0 as i32 {
-        advance_move(best_move_index);
+        advance_move(best_move_index, &mut search_state, &mut moves_state);
         if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
             if best > alpha {
                 add_hash_extended(0 as i32, best,
