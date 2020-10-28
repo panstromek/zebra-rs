@@ -337,9 +337,9 @@ pub unsafe fn clear_coeffs(set_: &mut [CoeffSet; 61]) {
    Maintains an internal memory handler to boost
    performance and avoid heap fragmentation.
 */
-pub fn find_memory_block<'a, 'b:'a, FE: FrontEnd>(coeff_set: &mut CoeffSet<'a>,
-                                                  state: &'a mut CoeffState<'b>,
-                                                  block_list_: &'a mut [Option<Box<AllocationBlock>>; 200]) -> i32 {
+pub fn find_memory_block<FE: FrontEnd>(coeff_set: &mut CoeffSet,
+                                                  state: &mut CoeffState,
+                                                  block_list_: &'static mut [Option<Box<AllocationBlock>>; 200]) -> i32 {
     let mut found_free = 0;
     let mut free_block = -1;
     let mut i = 0;
@@ -394,7 +394,7 @@ pub fn find_memory_block<'a, 'b:'a, FE: FrontEnd>(coeff_set: &mut CoeffSet<'a>,
    ALLOCATE_SET
    Finds memory for all patterns belonging to a certain stage.
 */
-pub fn allocate_set<'a, 'b: 'a, FE: FrontEnd>(coeff_set: &mut CoeffSet<'a>, state: &'a mut CoeffState<'b>, bl: &'a mut [Option<Box<AllocationBlock>>; 200]) {
+pub fn allocate_set<FE: FrontEnd>(coeff_set: &mut CoeffSet, state: &mut CoeffState, bl: &'static mut [Option<Box<AllocationBlock>>; 200]) {
     coeff_set.block = find_memory_block::<FE>(coeff_set, state, bl);
 }
 /*
