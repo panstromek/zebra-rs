@@ -301,22 +301,20 @@ pub fn select_move(first: i32, list_size: i32, search_state_: &mut SearchState, 
   Return 1 if the move was found, 0 otherwise.
 */
 
-pub unsafe fn float_move(move_0: i32,
-                         list_size: i32)
-                         -> i32 {
+pub fn float_move(move_0: i32, list_size: i32, state: &mut MovesState) -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     i = 0;
     while i < list_size {
-        if moves_state.move_list[moves_state.disks_played as usize][i as usize] == move_0 {
+        if state.move_list[state.disks_played as usize][i as usize] == move_0 {
             j = i;
             while j >= 1 as i32 {
-                moves_state.move_list[moves_state.disks_played as usize][j as usize] =
-                    moves_state.move_list[moves_state.disks_played as
+                state.move_list[state.disks_played as usize][j as usize] =
+                    state.move_list[state.disks_played as
                         usize][(j - 1 as i32) as usize];
                 j -= 1
             }
-            moves_state.move_list[moves_state.disks_played as usize][0] =
+            state.move_list[state.disks_played as usize][0] =
                 move_0;
             return 1 as i32
         }
