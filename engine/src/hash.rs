@@ -210,18 +210,6 @@ pub fn wide_to_compact(entry: &HashEntry, compact_entry: &mut CompactHashEntry) 
 }
 
 /*
-  SET_HASH_TRANSFORMATION
-  Specify the hash code transformation masks. Changing these masks
-  is the poor man's way to achieve the effect of clearing the hash
-  table.
-*/
-
-pub unsafe fn set_hash_transformation(trans1: u32,
-                                      trans2: u32) {
-    hash_state.hash_trans1 = trans1;
-    hash_state.hash_trans2 = trans2;
-}
-/*
    ADD_HASH_EXTENDED
    Add information to the hash table. Two adjacent positions are tried
    and the most shallow search is replaced.
@@ -600,5 +588,17 @@ impl HashState {
     */
     pub fn free_hash(&mut self) {
         self.hash_table.clear()
+    }
+
+    /*
+      SET_HASH_TRANSFORMATION
+      Specify the hash code transformation masks. Changing these masks
+      is the poor man's way to achieve the effect of clearing the hash
+      table.
+    */
+
+    pub fn set_hash_transformation(&mut self, trans1: u32, trans2: u32) {
+        self.hash_trans1 = trans1;
+        self.hash_trans2 = trans2;
     }
 }
