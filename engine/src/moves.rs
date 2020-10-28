@@ -153,7 +153,7 @@ pub unsafe fn make_move(side_to_move: i32,
         hash_state.hash1 ^= diff1;
         hash_state.hash2 ^= diff2
     } else {
-        flipped = DoFlips_no_hash(move_0, side_to_move, &mut board_state.board);
+        flipped = DoFlips_no_hash(move_0, side_to_move, &mut board_state.board, &mut flip_stack_);
         if flipped == 0 as i32 { return 0 as i32 }
         hash_state.hash_stored1[moves_state.disks_played as usize] = hash_state.hash1;
         hash_state.hash_stored2[moves_state.disks_played as usize] = hash_state.hash2
@@ -318,7 +318,7 @@ pub unsafe fn make_move_no_hash(side_to_move: i32,
                                 move_0: i32)
                                 -> i32 {
     let mut flipped: i32 = 0;
-    flipped = DoFlips_no_hash(move_0, side_to_move, &mut board_state.board);
+    flipped = DoFlips_no_hash(move_0, side_to_move, &mut board_state.board, &mut flip_stack_);
     if flipped == 0 as i32 { return 0 as i32 }
     moves_state.flip_count[moves_state.disks_played as usize] = flipped;
     board_state.board[move_0 as usize] = side_to_move;
