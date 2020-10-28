@@ -337,7 +337,9 @@ pub unsafe fn clear_coeffs(set_: &mut [CoeffSet; 61]) {
    Maintains an internal memory handler to boost
    performance and avoid heap fragmentation.
 */
-pub unsafe fn find_memory_block<'a, 'b:'a, FE: FrontEnd>(coeff_set: &mut CoeffSet<'a>, state: &'a mut CoeffState<'b>) -> i32 {
+pub fn find_memory_block<'a, 'b:'a, FE: FrontEnd>(coeff_set: &mut CoeffSet<'a>,
+                                                  state: &'a mut CoeffState<'b>,
+                                                  block_list_: &'a mut [Option<Box<AllocationBlock>>; 200]) -> i32 {
     let mut found_free = 0;
     let mut free_block = -1;
     let mut i = 0;
@@ -350,7 +352,7 @@ pub unsafe fn find_memory_block<'a, 'b:'a, FE: FrontEnd>(coeff_set: &mut CoeffSe
     }
     if found_free == 0 {
         if state.block_count < 200 as i32 {
-            block_list[state.block_count as usize] = Some(Box::new(AllocationBlock {
+            block_list_[state.block_count as usize] = Some(Box::new(AllocationBlock {
                 afile2x_block: [0; 59049],
                 bfile_block: [0; 6561],
                 cfile_block: [0; 6561],
@@ -364,14 +366,14 @@ pub unsafe fn find_memory_block<'a, 'b:'a, FE: FrontEnd>(coeff_set: &mut CoeffSe
                 corner52_block: [0; 59049],
             }));
         }
-        if state.block_count == 200 || block_list[state.block_count as usize].is_none() {
+        if state.block_count == 200 || block_list_[state.block_count as usize].is_none() {
             FE::memory_allocation_failure(state.block_count);
         }
         free_block = state.block_count;
         state.block_count += 1
     }
 
-    let mut block_list_item = (block_list[free_block as usize]).as_mut().unwrap();
+    let mut block_list_item = (block_list_[free_block as usize]).as_mut().unwrap();
     coeff_set.data = Some(CoeffSetData {
         afile2x: &mut block_list_item.afile2x_block,
         bfile: &mut block_list_item.bfile_block,
@@ -392,8 +394,8 @@ pub unsafe fn find_memory_block<'a, 'b:'a, FE: FrontEnd>(coeff_set: &mut CoeffSe
    ALLOCATE_SET
    Finds memory for all patterns belonging to a certain stage.
 */
-pub unsafe fn allocate_set<'a, 'b: 'a, FE: FrontEnd>(coeff_set: &mut CoeffSet<'a>, state: &'a mut CoeffState<'b>) {
-    coeff_set.block = find_memory_block::<FE>(coeff_set, state);
+pub fn allocate_set<'a, 'b: 'a, FE: FrontEnd>(coeff_set: &mut CoeffSet<'a>, state: &'a mut CoeffState<'b>, bl: &'a mut [Option<Box<AllocationBlock>>; 200]) {
+    coeff_set.block = find_memory_block::<FE>(coeff_set, state, bl);
 }
 /*
    LOAD_SET
@@ -426,7 +428,7 @@ pub unsafe fn load_set<FE: FrontEnd>(index: i32, set_item: &mut CoeffSet) {
                 total_weight) as i16;
         set_item.parity_constant[0] = set_item.constant;
         set_item.parity_constant[1] = set_item.constant + set_item.parity;
-        allocate_set::<FE>(set_item, &mut coeff_state);
+        allocate_set::<FE>(set_item, &mut coeff_state, &mut block_list);
         let set_item = set_item.data.as_mut().unwrap();
         let previous_set_item = previous_set_item.data.as_mut().unwrap();
         let next_set_item = next_set_item.data.as_mut().unwrap();
@@ -891,7 +893,7 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
             }
         }
         coeff_state.set[curr_stage as usize].permanent = 1;
-        allocate_set::<FE>(&mut coeff_state.set[curr_stage as usize], &mut coeff_state);
+        allocate_set::<FE>(&mut coeff_state.set[curr_stage as usize], &mut coeff_state, &mut block_list);
         i += 1
     }
     coeff_state.stage[(coeff_state.stage_count - 1) as usize] = 60;
@@ -903,7 +905,7 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
         j += 1
     }
     coeff_state.set[60].permanent = 1;
-    allocate_set::<FE>(&mut coeff_state.set[60], &mut coeff_state);
+    allocate_set::<FE>(&mut coeff_state.set[60], &mut coeff_state, &mut block_list);
     /* Read the pattern values */
     unpack_coeffs::<FE, _>(&mut next_word, &mut coeff_state);
 }
