@@ -483,7 +483,7 @@ pub fn setup_hash(clear: i32, hash_state_: &mut HashState, random: &mut MyRandom
    and the most shallow search is replaced.
 */
 
-pub unsafe fn add_hash(reverse_mode: i32,
+pub fn add_hash(state: &mut HashState, reverse_mode: i32,
                        score: i32,
                        best: i32,
                        flags: i32,
@@ -512,7 +512,6 @@ pub unsafe fn add_hash(reverse_mode: i32,
     //  so it cannot ever fail...
     //  And there is not comment or anything in there about it.. weird
     //
-    let state = &mut hash_state;
     if reverse_mode != 0 {
         code1 = state.hash2 ^ state.hash_trans2;
         code2 = state.hash1 ^ state.hash_trans1

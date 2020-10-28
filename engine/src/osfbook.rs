@@ -16,7 +16,7 @@ use crate::{
 use crate::src::stubs::{abs, ceil, floor};
 use crate::src::error::{FrontEnd};
 use crate::src::midgame::tree_search;
-use crate::src::hash::{add_hash, setup_hash};
+use crate::src::hash::{add_hash, setup_hash, hash_state};
 use crate::src::game::{setup_non_file_based_game};
 use engine_traits::Offset;
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, WLD_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
@@ -759,7 +759,7 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
         } else if signed_score >= 0 as i32 {
             bound = 1 as i32
         } else { bound = 2 as i32 }
-        add_hash(1 as i32, signed_score, matching_move,
+        add_hash(&mut hash_state,1 as i32, signed_score, matching_move,
                  16 as i32 | bound, 60 as i32 - moves_state.disks_played,
                  0 as i32);
     };
