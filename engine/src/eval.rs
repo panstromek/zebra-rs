@@ -1,6 +1,5 @@
-use crate::src::moves::moves_state;
-use crate::src::globals::{board_state, PieceCounts};
-use crate::src::search::search_state;
+use crate::src::globals::PieceCounts;
+use crate::src::counter::CounterType;
 
 
 /*
@@ -8,13 +7,8 @@ use crate::src::search::search_state;
   Evaluates the position when no player has any legal moves.
 */
 
-pub unsafe fn terminal_evaluation(side_to_move: i32) -> i32 {
-    let eval_counter = &mut search_state.evaluations;
-    let disks_played = moves_state.disks_played;
-    let state = &board_state;
-    let PieceCounts {
-        my_discs, opp_discs
-    } = state.get_piece_counts(side_to_move, disks_played);
+pub fn terminal_evaluation(counts: PieceCounts, eval_counter: &mut CounterType) -> i32 {
+    let PieceCounts { my_discs, opp_discs } = counts;
 
     eval_counter.lo = eval_counter.lo.wrapping_add(1);
     let disc_diff = if my_discs > opp_discs {
