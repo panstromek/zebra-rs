@@ -6,7 +6,7 @@ use crate::{
         epcstat::{END_SIGMA, END_MEAN, END_STATS_AVAILABLE},
         moves::{dir_mask, unmake_move, make_move, generate_all, valid_move},
         search::{force_return, hash_expand_pv, search_state, store_pv, restore_pv, create_eval_info, disc_count, get_ponder_move, select_move},
-        hash::{hash_state, add_hash_extended, find_hash, HashEntry},
+        hash::{hash_state, find_hash, HashEntry},
         bitbcnt::CountFlips_bitboard,
         bitboard::{set_bitboards, BitBoard},
         bitbmob::{bitboard_mobility, weighted_mobility},
@@ -2073,7 +2073,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         if best >= beta {
             /* Fail high */
             if use_hash != 0 {
-                add_hash_extended(1 as i32, best,
+                hash_state.add_hash_extended(1 as i32, best,
                                   &best_list,
                                   16 as i32 | 1 as i32,
                                   remains,
@@ -2099,7 +2099,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             if best > alpha {
                 flags |= 4 as i32
             } else { flags |= 2 as i32 }
-            add_hash_extended(1 as i32, best, &best_list,
+            hash_state.add_hash_extended(1 as i32, best, &best_list,
                               flags, remains,
                               if *selective_cutoff != 0 {
                                   selectivity
