@@ -37,14 +37,14 @@ pub struct AllocationBlock {
 const EMPTY_ALLOC_BLOCK: Option<Box<AllocationBlock>> = None;
 const NEW_COEFF_SET : CoeffSet = CoeffSet::new();
 
-pub struct CoeffState {
+pub struct CoeffState<'a> {
     stage_count: i32,
     block_count: i32,
     stage: [i32; 61],
     block_allocated: [bool; 200],
     eval_map: [i32; 61],
     block_list: [Option<Box<AllocationBlock>>; 200],
-    pub set: [CoeffSet<'static>; 61],
+    pub set: [CoeffSet<'a>; 61],
 }
 
 pub static mut coeff_state: CoeffState = CoeffState {
