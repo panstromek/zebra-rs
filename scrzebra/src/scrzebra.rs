@@ -3,7 +3,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types)]
 
 use engine::src::game::{global_terminate, game_state};
-use engine::src::myrandom::my_srandom;
+use engine::src::myrandom::{my_srandom, random_instance};
 use legacy_zebra::src::thordb::init_thor_database;
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
 use engine::src::timer::{get_real_timer, start_move, g_timer};
@@ -221,7 +221,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
             game_state.toggle_human_openings(0 as i32);
             reset_book_search(&mut g_book);
             set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_book);
-            setup_hash(1 as i32, &mut hash_state);
+            setup_hash(1 as i32, &mut hash_state, &mut  random_instance);
             position_count += 1;
             scanned =
                 sscanf(buffer.as_mut_ptr(),
