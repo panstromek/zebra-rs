@@ -335,11 +335,12 @@ pub fn clear_coeffs(state: &mut CoeffState) {
 
 
 /*
-   FIND_MEMORY_BLOCK
+   ALLOCATE_SET
+   Finds memory for all patterns belonging to a certain stage.
    Maintains an internal memory handler to boost
    performance and avoid heap fragmentation.
 */
-pub fn find_memory_block<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState,
+pub fn allocate_set<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState,
                                        block_list_: &'static mut [Option<Box<AllocationBlock>>; 200],
                                        interpolate_from : Option<(i32, i32, i32, i32)>
 ) -> i32 {
@@ -413,15 +414,6 @@ pub fn find_memory_block<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState,
     state.block_allocated[free_block as usize] = true;
     coeff_set.block = free_block;
     return free_block;
-}
-/*
-   ALLOCATE_SET
-   Finds memory for all patterns belonging to a certain stage.
-*/
-pub fn allocate_set<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState, bl: &'static mut [Option<Box<AllocationBlock>>; 200],
-                                  interpolate_from: Option<(i32, i32, i32, i32)>
-) {
-    find_memory_block::<FE>(curr_stage, state, bl, interpolate_from);
 }
 /*
    LOAD_SET
