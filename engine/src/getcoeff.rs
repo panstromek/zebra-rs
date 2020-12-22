@@ -7,7 +7,7 @@ use std::ffi::c_void;
 use std::process::exit;
 use engine_traits::{CoeffSource, Offset};
 use crate::src::globals;
-use coeff::{constant_and_parity_feature, CoeffSet, terminal_patterns, CoeffSetData};
+use coeff::{constant_and_parity_feature, CoeffSet, terminal_patterns, CoeffSetData, AllocationBlock};
 use std::ptr::null_mut;
 use std::slice::from_raw_parts_mut;
 
@@ -16,22 +16,6 @@ pub struct CoeffAdjustments {
     pub edge_adjust: f64,
     pub corner_adjust: f64,
     pub x_adjust: f64,
-}
-
-#[derive(Clone)]
-#[repr(C)]
-pub struct AllocationBlock {
-    pub afile2x_block: [i16; 59049],
-    pub bfile_block: [i16; 6561],
-    pub cfile_block: [i16; 6561],
-    pub dfile_block: [i16; 6561],
-    pub diag8_block: [i16; 6561],
-    pub diag7_block: [i16; 2187],
-    pub diag6_block: [i16; 729],
-    pub diag5_block: [i16; 243],
-    pub diag4_block: [i16; 81],
-    pub corner33_block: [i16; 19683],
-    pub corner52_block: [i16; 59049],
 }
 
 const EMPTY_ALLOC_BLOCK: Option<Box<AllocationBlock>> = None;
@@ -108,16 +92,16 @@ pub fn eval_adjustment(disc_adjust: f64,
         let sixty_set = set.1[0].data.as_mut().unwrap();
         while j < 59049 as i32 {
             let ref mut fresh2 =
-                *(stage_set.afile2x  as &mut[i16]).offset(j as isize);
+                *(stage_set.afile2x_mut()as &mut[i16]).offset(j as isize);
             *fresh2 =
                 (*fresh2 as f64 +
-                    *sixty_set.afile2x.offset(j as isize) as i32
+                    *sixty_set.afile2x_mut().offset(j as isize) as i32
                         as f64 * disc_adjust) as i16;
             let ref mut fresh3 =
-                *(stage_set.corner52  as &mut[i16]).offset(j as isize);
+                *(stage_set.corner52_mut()as &mut[i16]).offset(j as isize);
             *fresh3 =
                 (*fresh3 as f64 +
-                    *sixty_set.corner52.offset(j as isize) as
+                    *sixty_set.corner52_mut().offset(j as isize) as
                         i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -125,10 +109,10 @@ pub fn eval_adjustment(disc_adjust: f64,
         j = 0;
         while j < 19683 as i32 {
             let ref mut fresh4 =
-                *(stage_set.corner33 as &mut [i16]).offset(j as isize);
+                *(stage_set.corner33_mut()as &mut [i16]).offset(j as isize);
             *fresh4 =
                 (*fresh4 as f64 +
-                    *sixty_set.corner33.offset(j as isize) as
+                    *sixty_set.corner33_mut().offset(j as isize) as
                         i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -136,31 +120,31 @@ pub fn eval_adjustment(disc_adjust: f64,
         j = 0;
         while j < 6561 as i32 {
             let ref mut fresh5 =
-                *(stage_set.bfile  as &mut[i16]).offset(j as isize);
+                *(stage_set.bfile_mut()as &mut[i16]).offset(j as isize);
             *fresh5 =
                 (*fresh5 as f64 +
-                    *sixty_set.bfile.offset(j as isize)
+                    *sixty_set.bfile_mut().offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             let ref mut fresh6 =
-                *(stage_set.cfile  as &mut[i16]).offset(j as isize);
+                *(stage_set.cfile_mut()as &mut[i16]).offset(j as isize);
             *fresh6 =
                 (*fresh6 as f64 +
-                    *sixty_set.cfile.offset(j as isize)
+                    *sixty_set.cfile_mut().offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             let ref mut fresh7 =
-                *(stage_set.dfile  as &mut[i16]).offset(j as isize);
+                *(stage_set.dfile_mut()as &mut[i16]).offset(j as isize);
             *fresh7 =
                 (*fresh7 as f64 +
-                    *sixty_set.dfile.offset(j as isize)
+                    *sixty_set.dfile_mut().offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             let ref mut fresh8 =
-                *(stage_set.diag8  as &mut[i16]).offset(j as isize);
+                *(stage_set.diag8_mut()as &mut[i16]).offset(j as isize);
             *fresh8 =
                 (*fresh8 as f64 +
-                    *sixty_set.diag8.offset(j as isize)
+                    *sixty_set.diag8_mut().offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -168,10 +152,10 @@ pub fn eval_adjustment(disc_adjust: f64,
         j = 0;
         while j < 2187 as i32 {
             let ref mut fresh9 =
-                *(stage_set.diag7  as &mut[i16]).offset(j as isize);
+                *(stage_set.diag7_mut()as &mut[i16]).offset(j as isize);
             *fresh9 =
                 (*fresh9 as f64 +
-                    *sixty_set.diag7.offset(j as isize)
+                    *sixty_set.diag7_mut().offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -179,10 +163,10 @@ pub fn eval_adjustment(disc_adjust: f64,
         j = 0;
         while j < 729 as i32 {
             let ref mut fresh10 =
-                *(stage_set.diag6  as &mut[i16]).offset(j as isize);
+                *(stage_set.diag6_mut()as &mut[i16]).offset(j as isize);
             *fresh10 =
                 (*fresh10 as f64 +
-                    *sixty_set.diag6.offset(j as isize)
+                    *sixty_set.diag6_mut().offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -190,10 +174,10 @@ pub fn eval_adjustment(disc_adjust: f64,
         j = 0;
         while j < 243 as i32 {
             let ref mut fresh11 =
-                *(stage_set.diag5  as &mut[i16]).offset(j as isize);
+                *(stage_set.diag5_mut()as &mut[i16]).offset(j as isize);
             *fresh11 =
                 (*fresh11 as f64 +
-                    *sixty_set.diag5.offset(j as isize)
+                    *sixty_set.diag5_mut().offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -201,10 +185,10 @@ pub fn eval_adjustment(disc_adjust: f64,
         j = 0;
         while j < 81 as i32 {
             let ref mut fresh12 =
-                *(stage_set.diag4 as &mut[i16]).offset(j as isize);
+                *(stage_set.diag4_mut()as &mut[i16]).offset(j as isize);
             *fresh12 =
                 (*fresh12 as f64 +
-                    *sixty_set.diag4.offset(j as isize)
+                    *sixty_set.diag4_mut().offset(j as isize)
                         as i32 as f64 * disc_adjust) as
                     i16;
             j += 1
@@ -276,7 +260,7 @@ pub fn eval_adjustment(disc_adjust: f64,
                         as i32
             }
             let ref mut fresh13 =
-                *(stage_set.afile2x as &mut [i16]).offset(j as isize);
+                *(stage_set.afile2x_mut() as &mut [i16]).offset(j as isize);
             *fresh13 = (*fresh13 as i32 + adjust) as i16;
             /* Next configuration */
             k = 0;
@@ -378,35 +362,35 @@ pub fn allocate_set<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState,
     }
 
     let mut block_list_item = (block_list_[free_block as usize]).as_mut().unwrap();
-    let set_data = CoeffSetData {
-        afile2x: &mut block_list_item.afile2x_block,
-        bfile: &mut block_list_item.bfile_block,
-        cfile: &mut block_list_item.cfile_block,
-        dfile: &mut block_list_item.dfile_block,
-        diag8: &mut block_list_item.diag8_block,
-        diag7: &mut block_list_item.diag7_block,
-        diag6: &mut block_list_item.diag6_block,
-        diag5: &mut block_list_item.diag5_block,
-        diag4: &mut block_list_item.diag4_block,
-        corner33: &mut block_list_item.corner33_block,
-        corner52: &mut block_list_item.corner52_block,
+    let mut set_data = CoeffSetData {
+        get_afile2x: &mut block_list_item.afile2x_block,
+        get_bfile: &mut block_list_item.bfile_block,
+        get_cfile: &mut block_list_item.cfile_block,
+        get_dfile: &mut block_list_item.dfile_block,
+        get_diag8: &mut block_list_item.diag8_block,
+        get_diag7: &mut block_list_item.diag7_block,
+        get_diag6: &mut block_list_item.diag6_block,
+        get_diag5: &mut block_list_item.diag5_block,
+        get_diag4: &mut block_list_item.diag4_block,
+        get_corner33: &mut block_list_item.corner33_block,
+        get_corner52: &mut block_list_item.corner52_block,
     };
     // This is kinda ugly quick workaround for some aliasing issues.
     // Ideally, this code shouldn't be here, it was in load_set before
     if let Some((prev, next, weight1, weight2 )) = interpolate_from {
         let previous_set_item = state.set[prev as usize].data.as_ref().unwrap();
         let next_set_item = state.set[next as usize].data.as_ref().unwrap();
-        generate_batch(set_data.afile2x, previous_set_item.afile2x, weight1, next_set_item.afile2x, weight2);
-        generate_batch(set_data.bfile, previous_set_item.bfile, weight1, next_set_item.bfile, weight2);
-        generate_batch(set_data.cfile, previous_set_item.cfile, weight1, next_set_item.cfile, weight2);
-        generate_batch(set_data.dfile, previous_set_item.dfile, weight1, next_set_item.dfile, weight2);
-        generate_batch(set_data.diag8, previous_set_item.diag8, weight1, next_set_item.diag8, weight2);
-        generate_batch(set_data.diag7, previous_set_item.diag7, weight1, next_set_item.diag7, weight2);
-        generate_batch(set_data.diag6, previous_set_item.diag6, weight1, next_set_item.diag6, weight2);
-        generate_batch(set_data.diag5, previous_set_item.diag5, weight1, next_set_item.diag5, weight2);
-        generate_batch(set_data.diag4, previous_set_item.diag4, weight1, next_set_item.diag4, weight2);
-        generate_batch(set_data.corner33, previous_set_item.corner33, weight1, next_set_item.corner33, weight2);
-        generate_batch(set_data.corner52, previous_set_item.corner52, weight1, next_set_item.corner52, weight2);
+        generate_batch(set_data.afile2x_mut(), previous_set_item.afile2x() , weight1, next_set_item.afile2x() , weight2);
+        generate_batch(set_data.bfile_mut() , previous_set_item.bfile() , weight1, next_set_item.bfile() , weight2);
+        generate_batch(set_data.cfile_mut() , previous_set_item.cfile() , weight1, next_set_item.cfile() , weight2);
+        generate_batch(set_data.dfile_mut() , previous_set_item.dfile() , weight1, next_set_item.dfile() , weight2);
+        generate_batch(set_data.diag8_mut() , previous_set_item.diag8() , weight1, next_set_item.diag8() , weight2);
+        generate_batch(set_data.diag7_mut() , previous_set_item.diag7() , weight1, next_set_item.diag7() , weight2);
+        generate_batch(set_data.diag6_mut() , previous_set_item.diag6() , weight1, next_set_item.diag6() , weight2);
+        generate_batch(set_data.diag5_mut() , previous_set_item.diag5() , weight1, next_set_item.diag5() , weight2);
+        generate_batch(set_data.diag4_mut() , previous_set_item.diag4() , weight1, next_set_item.diag4() , weight2);
+        generate_batch(set_data.corner33_mut() , previous_set_item.corner33() , weight1, next_set_item.corner33() , weight2);
+        generate_batch(set_data.corner52_mut() , previous_set_item.corner52() , weight1, next_set_item.corner52() , weight2);
     }
     let coeff_set = &mut state.set[curr_stage as usize];
 
@@ -856,17 +840,17 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         stage_set.parity_constant[0] = stage_set.constant;
         stage_set.parity_constant[1] = (stage_set.constant as i32 + stage_set.parity as i32) as i16;
         let mut stage_set = stage_set.data.as_mut().unwrap();
-        unpack_batch::<FE, S>(stage_set.afile2x, Some(&map_mirror8x2), next_word);
-        unpack_batch::<FE, S>(stage_set.bfile, Some(&map_mirror8), next_word);
-        unpack_batch::<FE, S>(stage_set.cfile, Some(&map_mirror8), next_word);
-        unpack_batch::<FE, S>(stage_set.dfile, Some(&map_mirror8), next_word);
-        unpack_batch::<FE, S>(stage_set.diag8, Some(&map_mirror8), next_word);
-        unpack_batch::<FE, S>(stage_set.diag7, Some(&map_mirror7), next_word);
-        unpack_batch::<FE, S>(stage_set.diag6, Some(&map_mirror6), next_word);
-        unpack_batch::<FE, S>(stage_set.diag5, Some(&map_mirror5), next_word);
-        unpack_batch::<FE, S>(stage_set.diag4, Some(&map_mirror4), next_word);
-        unpack_batch::<FE, S>(stage_set.corner33, Some(&map_mirror33), next_word);
-        unpack_batch::<FE, S>(stage_set.corner52, None, next_word);
+        unpack_batch::<FE, S>(stage_set.afile2x_mut() , Some(&map_mirror8x2), next_word);
+        unpack_batch::<FE, S>(stage_set.bfile_mut() , Some(&map_mirror8), next_word);
+        unpack_batch::<FE, S>(stage_set.cfile_mut() , Some(&map_mirror8), next_word);
+        unpack_batch::<FE, S>(stage_set.dfile_mut() , Some(&map_mirror8), next_word);
+        unpack_batch::<FE, S>(stage_set.diag8_mut() , Some(&map_mirror8), next_word);
+        unpack_batch::<FE, S>(stage_set.diag7_mut() , Some(&map_mirror7), next_word);
+        unpack_batch::<FE, S>(stage_set.diag6_mut() , Some(&map_mirror6), next_word);
+        unpack_batch::<FE, S>(stage_set.diag5_mut() , Some(&map_mirror5), next_word);
+        unpack_batch::<FE, S>(stage_set.diag4_mut() , Some(&map_mirror4), next_word);
+        unpack_batch::<FE, S>(stage_set.corner33_mut() , Some(&map_mirror33), next_word);
+        unpack_batch::<FE, S>(stage_set.corner52_mut() , None, next_word);
         i += 1
     }
 }
