@@ -21,22 +21,16 @@ pub struct CoeffAdjustments {
 const EMPTY_ALLOC_BLOCK: Option<Box<AllocationBlock>> = None;
 const NEW_COEFF_SET : CoeffSet = CoeffSet::new();
 
-pub struct CoeffState<'a> {
+pub struct CoeffState {
     stage_count: i32,
-    block_count: i32,
     stage: [i32; 61],
-    block_allocated: [bool; 200],
     eval_map: [i32; 61],
-    pub set: [CoeffSet<'a>; 61],
+    pub set: [CoeffSet; 61],
 }
-
-static mut block_list: [Option<Box<AllocationBlock>>; 200] = [EMPTY_ALLOC_BLOCK; 200];
 
 pub static mut coeff_state: CoeffState = CoeffState {
     stage_count: 0,
-    block_count: 0,
     stage: [0; 61],
-    block_allocated: [false; 200],
     eval_map: [0; 61],
     set: [NEW_COEFF_SET; 61],
 };
@@ -57,15 +51,12 @@ fn generate_batch(target: &mut [i16], source1: &[i16], weight1: i32, source2: &[
         });
 }
 
-impl CoeffState<'_> {
+impl CoeffState {
     /*
        INIT_MEMORY_HANDLER
        Mark all blocks in the memory arena as "not used".
     */
-    pub fn init_memory_handler(&mut self) {
-        self.block_count = 0;
-        self.block_allocated = [false; 200];
-    }
+    pub fn init_memory_handler(&mut self) {}
 }
 
 /*
@@ -288,11 +279,11 @@ pub fn eval_adjustment(disc_adjust: f64,
    Removes the interpolated coefficients for a
    specific game phase from memory.
 */
-pub fn remove_specific_coeffs(coeff_set: &mut CoeffSet, block_allocated_: &mut [bool; 200]) {
+pub fn remove_specific_coeffs(coeff_set: &mut CoeffSet) {
     let coeff_set = coeff_set;
     if coeff_set.loaded != 0 {
         if coeff_set.permanent == 0 {
-            block_allocated_[coeff_set.block as usize] = false;
+            // block_allocated_[coeff_set.block as usize] = false;
         }
         coeff_set.loaded = 0
     };
@@ -305,7 +296,7 @@ pub fn remove_specific_coeffs(coeff_set: &mut CoeffSet, block_allocated_: &mut [
 pub fn remove_coeffs(phase: i32, state: &mut CoeffState) {
     let mut i: i32 = 0;
     while i < phase {
-        remove_specific_coeffs(&mut state.set[i as usize], &mut state.block_allocated);
+        remove_specific_coeffs(&mut state.set[i as usize]);
         i += 1
     };
 }
@@ -324,56 +315,21 @@ pub fn clear_coeffs(state: &mut CoeffState) {
    Maintains an internal memory handler to boost
    performance and avoid heap fragmentation.
 */
-pub fn allocate_set<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState,
-                                       block_list_: &'static mut [Option<Box<AllocationBlock>>; 200],
-                                       interpolate_from : Option<(i32, i32, i32, i32)>
-) -> i32 {
-    let mut found_free = 0;
-    let mut free_block = -1;
-    let mut i = 0;
-    while i < state.block_count && found_free == 0 {
-        if state.block_allocated[i as usize] == false {
-            found_free = 1;
-            free_block = i
-        }
-        i += 1
-    }
-    if found_free == 0 {
-        if state.block_count < 200 as i32 {
-            block_list_[state.block_count as usize] = Some(Box::new(AllocationBlock {
-                afile2x_block: [0; 59049],
-                bfile_block: [0; 6561],
-                cfile_block: [0; 6561],
-                dfile_block: [0; 6561],
-                diag8_block: [0; 6561],
-                diag7_block: [0; 2187],
-                diag6_block: [0; 729],
-                diag5_block: [0; 243],
-                diag4_block: [0; 81],
-                corner33_block: [0; 19683],
-                corner52_block: [0; 59049],
-            }));
-        }
-        if state.block_count == 200 || block_list_[state.block_count as usize].is_none() {
-            FE::memory_allocation_failure(state.block_count);
-        }
-        free_block = state.block_count;
-        state.block_count += 1
-    }
-
-    let mut block_list_item = (block_list_[free_block as usize]).as_mut().unwrap();
+pub fn allocate_set<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState, interpolate_from : Option<(i32, i32, i32, i32)>) {
     let mut set_data = CoeffSetData {
-        get_afile2x: &mut block_list_item.afile2x_block,
-        get_bfile: &mut block_list_item.bfile_block,
-        get_cfile: &mut block_list_item.cfile_block,
-        get_dfile: &mut block_list_item.dfile_block,
-        get_diag8: &mut block_list_item.diag8_block,
-        get_diag7: &mut block_list_item.diag7_block,
-        get_diag6: &mut block_list_item.diag6_block,
-        get_diag5: &mut block_list_item.diag5_block,
-        get_diag4: &mut block_list_item.diag4_block,
-        get_corner33: &mut block_list_item.corner33_block,
-        get_corner52: &mut block_list_item.corner52_block,
+       allocation: Box::new(AllocationBlock {
+           afile2x_block: [0; 59049],
+           bfile_block: [0; 6561],
+           cfile_block: [0; 6561],
+           dfile_block: [0; 6561],
+           diag8_block: [0; 6561],
+           diag7_block: [0; 2187],
+           diag6_block: [0; 729],
+           diag5_block: [0; 243],
+           diag4_block: [0; 81],
+           corner33_block: [0; 19683],
+           corner52_block: [0; 59049],
+       })
     };
     // This is kinda ugly quick workaround for some aliasing issues.
     // Ideally, this code shouldn't be here, it was in load_set before
@@ -395,9 +351,6 @@ pub fn allocate_set<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState,
     let coeff_set = &mut state.set[curr_stage as usize];
 
     coeff_set.data = Some(set_data);
-    state.block_allocated[free_block as usize] = true;
-    coeff_set.block = free_block;
-    return free_block;
 }
 /*
    LOAD_SET
@@ -406,9 +359,7 @@ pub fn allocate_set<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState,
    Also calculates the offset pointers to the last elements in each block
    (used for the inverted patterns when white is to move).
 */
-pub fn load_set<FE: FrontEnd>(index: i32,
-                                     block_list_: &'static mut [Option<Box<AllocationBlock>>; 200],
-                                     state: &mut CoeffState) {
+pub fn load_set<FE: FrontEnd>(index: i32, state: &mut CoeffState) {
     // let set_item: &CoeffSet = &mut state.set[(index as usize)];
     if state.set[(index as usize)].permanent == 0 {
         let mut weight1 = 0;
@@ -435,7 +386,7 @@ pub fn load_set<FE: FrontEnd>(index: i32,
         state.set[(index as usize)].parity_constant[0] = state.set[(index as usize)].constant;
         state.set[(index as usize)].parity_constant[1] = state.set[(index as usize)].constant + state.set[(index as usize)].parity;
 
-        allocate_set::<FE>(index, state, block_list_, Some((prev, next, weight1, weight2)));
+        allocate_set::<FE>(index, state, Some((prev, next, weight1, weight2)));
 
         // let previous_set_item = &state.set[prev as usize];
         // let next_set_item = &state.set[next as usize];
@@ -471,7 +422,7 @@ pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32) -> i32 {
     eval_phase = coeff_state.eval_map[moves_state.disks_played as usize];
     if coeff_state.set[eval_phase as usize].loaded == 0 {
         let state = &mut coeff_state;
-        load_set::<FE>(eval_phase, &mut block_list, state);
+        load_set::<FE>(eval_phase,  state);
     }
     constant_and_parity_feature(side_to_move, moves_state.disks_played, &mut globals::board_state.board, &mut coeff_state.set[eval_phase as usize])
 }
@@ -892,7 +843,7 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
             }
         }
         coeff_state.set[curr_stage as usize].permanent = 1;
-        allocate_set::<FE>(curr_stage, &mut coeff_state, &mut block_list, None);
+        allocate_set::<FE>(curr_stage, &mut coeff_state, None);
         i += 1
     }
     coeff_state.stage[(coeff_state.stage_count - 1) as usize] = 60;
@@ -904,7 +855,7 @@ pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mu
         j += 1
     }
     coeff_state.set[60].permanent = 1;
-    allocate_set::<FE>(60, &mut coeff_state, &mut block_list, None);
+    allocate_set::<FE>(60, &mut coeff_state, None);
     /* Read the pattern values */
     unpack_coeffs::<FE, _>(&mut next_word, &mut coeff_state);
 }
