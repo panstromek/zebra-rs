@@ -1,25 +1,23 @@
 use engine_traits::Offset;
 
 #[repr(C)]
-pub struct CoeffSet<'a> {
+pub struct CoeffSet {
     pub permanent: i32,
     pub loaded: i32,
     pub prev: i32,
     pub next: i32,
-    pub block: i32,
     pub parity_constant: [i16; 2],
     pub parity: i16,
     pub constant: i16,
-    pub data: Option<CoeffSetData<'a>>
+    pub data: Option<CoeffSetData>
 }
-impl<'a> CoeffSet<'a> {
-    pub const fn new() -> CoeffSet<'a> {
+impl CoeffSet {
+    pub const fn new() -> CoeffSet {
         CoeffSet {
             permanent: 0,
             loaded: 0,
             prev: 0,
             next: 0,
-            block: 0,
             parity_constant: [0; 2],
             parity: 0,
             constant: 0,
@@ -45,43 +43,45 @@ pub struct AllocationBlock {
 }
 
 #[repr(C)]
-pub struct CoeffSetData<'a> {
-    pub get_afile2x: &'a mut [i16; 59049],
-    pub get_bfile: &'a mut [i16; 6561],
-    pub get_cfile: &'a mut [i16; 6561],
-    pub get_dfile: &'a mut [i16; 6561],
-    pub get_diag8: &'a mut [i16; 6561],
-    pub get_diag7: &'a mut [i16; 2187],
-    pub get_diag6: &'a mut [i16; 729],
-    pub get_diag5: &'a mut [i16; 243],
-    pub get_diag4: &'a mut [i16; 81],
-    pub get_corner33: &'a mut [i16; 19683],
-    pub get_corner52: &'a mut [i16; 59049]
+pub struct CoeffSetData {
+    pub allocation: Box<AllocationBlock>, 
+    // pub get_afile2x: &'a mut [i16; 59049],
+    // pub get_bfile: &'a mut [i16; 6561],
+    // pub get_cfile: &'a mut [i16; 6561],
+    // pub get_dfile: &'a mut [i16; 6561],
+    // pub get_diag8: &'a mut [i16; 6561],
+    // pub get_diag7: &'a mut [i16; 2187],
+    // pub get_diag6: &'a mut [i16; 729],
+    // pub get_diag5: &'a mut [i16; 243],
+    // pub get_diag4: &'a mut [i16; 81],
+    // pub get_corner33: &'a mut [i16; 19683],
+    // pub get_corner52: &'a mut [i16; 59049]
 }
 
-impl<'a> CoeffSetData<'a> {
-    pub fn afile2x_mut(&mut self) -> &mut [i16; 59049] { self.get_afile2x }
-    pub fn bfile_mut(&mut self) -> &mut [i16; 6561] { self.get_bfile }
-    pub fn cfile_mut(&mut self) ->  &mut [i16; 6561] { self.get_cfile }
-    pub fn dfile_mut(&mut self) ->  &mut [i16; 6561] { self.get_dfile }
-    pub fn diag8_mut(&mut self) ->  &mut [i16; 6561] { self.get_diag8 }
-    pub fn diag7_mut(&mut self) ->  &mut [i16; 2187] { self.get_diag7 }
-    pub fn diag6_mut(&mut self) ->  &mut [i16; 729] { self.get_diag6 }
-    pub fn diag5_mut(&mut self) ->  &mut [i16; 243] { self.get_diag5 }
-    pub fn diag4_mut(&mut self) ->  &mut [i16; 81] { self.get_diag4 }
-    pub fn corner33_mut(&mut self) ->  &mut [i16; 19683] { self.get_corner33 }
-    pub fn corner52_mut(&mut self) ->  &mut [i16; 59049] { self.get_corner52 }
-    pub fn afile2x(&self) -> &[i16; 59049] { self.get_afile2x }
-    pub fn bfile(&self) -> &[i16; 6561] { self.get_bfile }
-    pub fn cfile(&self) ->  &[i16; 6561] { self.get_cfile }
-    pub fn dfile(&self) ->  &[i16; 6561] { self.get_dfile }
-    pub fn diag8(&self) ->  &[i16; 6561] { self.get_diag8 }
-    pub fn diag7(&self) ->  &[i16; 2187] { self.get_diag7 }
-    pub fn diag6(&self) ->  &[i16; 729] { self.get_diag6 }
-    pub fn diag5(&self) ->  &[i16; 243] { self.get_diag5 }
-    pub fn diag4(&self) ->  &[i16; 81] { self.get_diag4 }
-    pub fn corner33(&self) ->  &[i16; 19683] { self.get_corner33 }
-    pub fn corner52(&self) ->  &[i16; 59049] { self.get_corner52 }
+impl CoeffSetData {
+    pub fn afile2x_mut(&mut self) -> &mut [i16; 59049] { &mut self.allocation.afile2x_block }
+    pub fn bfile_mut(&mut self) -> &mut [i16; 6561] { &mut self.allocation.bfile_block }
+    pub fn cfile_mut(&mut self) ->  &mut [i16; 6561] { &mut self.allocation.cfile_block }
+    pub fn dfile_mut(&mut self) ->  &mut [i16; 6561] { &mut self.allocation.dfile_block }
+    pub fn diag8_mut(&mut self) ->  &mut [i16; 6561] { &mut self.allocation.diag8_block }
+    pub fn diag7_mut(&mut self) ->  &mut [i16; 2187] { &mut self.allocation.diag7_block }
+    pub fn diag6_mut(&mut self) ->  &mut [i16; 729] { &mut self.allocation.diag6_block }
+    pub fn diag5_mut(&mut self) ->  &mut [i16; 243] { &mut self.allocation.diag5_block }
+    pub fn diag4_mut(&mut self) ->  &mut [i16; 81] { &mut self.allocation.diag4_block }
+    pub fn corner33_mut(&mut self) ->  &mut [i16; 19683] { &mut self.allocation.corner33_block }
+    pub fn corner52_mut(&mut self) ->  &mut [i16; 59049] { &mut self.allocation.corner52_block }
+
+    pub fn afile2x(&self) -> &[i16; 59049] {  & self.allocation.afile2x_block  }
+    pub fn bfile(&self) -> &[i16; 6561] {  & self.allocation.bfile_block  }
+    pub fn cfile(&self) ->  &[i16; 6561] {  & self.allocation.cfile_block  }
+    pub fn dfile(&self) ->  &[i16; 6561] {  & self.allocation.dfile_block  }
+    pub fn diag8(&self) ->  &[i16; 6561] {  & self.allocation.diag8_block  }
+    pub fn diag7(&self) ->  &[i16; 2187] {  & self.allocation.diag7_block  }
+    pub fn diag6(&self) ->  &[i16; 729] {  & self.allocation.diag6_block  }
+    pub fn diag5(&self) ->  &[i16; 243] {  & self.allocation.diag5_block  }
+    pub fn diag4(&self) ->  &[i16; 81] {  & self.allocation.diag4_block  }
+    pub fn corner33(&self) ->  &[i16; 19683] {  & self.allocation.corner33_block  }
+    pub fn corner52(&self) ->  &[i16; 59049] {  & self.allocation.corner52_block  }
 }
 
 pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
