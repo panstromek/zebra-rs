@@ -806,58 +806,58 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
     }
 }
 
-pub unsafe fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mut coeffs: Source) {
+pub fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mut coeffs: Source, coeff_state_: &mut CoeffState) {
     let mut next_word = || coeffs.next_word();
     /* Read the different stages for which the evaluation function
        was tuned and mark the other stages with pointers to the previous
        and next stages. */
     let mut i = 0;
     while i <= 60 {
-        let coeff_set = &mut coeff_state.set[i as usize];
+        let coeff_set = &mut coeff_state_.set[i as usize];
         coeff_set.permanent = 0;
         coeff_set.loaded = 0;
         i += 1
     }
-    coeff_state.stage_count = next_word() as i32;
+    coeff_state_.stage_count = next_word() as i32;
     let mut i = 0;
     let mut j = 0;
     let mut curr_stage = 0;
-    while i < coeff_state.stage_count - 1 {
-        coeff_state.stage[i as usize] = next_word() as i32;
-        curr_stage = coeff_state.stage[i as usize];
+    while i < coeff_state_.stage_count - 1 {
+        coeff_state_.stage[i as usize] = next_word() as i32;
+        curr_stage = coeff_state_.stage[i as usize];
         if i == 0 {
             j = 0;
-            while j < coeff_state.stage[0] {
-                let coeff_set = &mut coeff_state.set[j as usize];
-                coeff_set.prev = coeff_state.stage[0];
-                coeff_set.next = coeff_state.stage[0];
+            while j < coeff_state_.stage[0] {
+                let coeff_set = &mut coeff_state_.set[j as usize];
+                coeff_set.prev = coeff_state_.stage[0];
+                coeff_set.next = coeff_state_.stage[0];
                 j += 1
             }
         } else {
-            j = coeff_state.stage[(i - 1 as i32) as usize];
-            while j < coeff_state.stage[i as usize] {
-                let coeff_set = &mut coeff_state.set[j as usize];
-                coeff_set.prev = coeff_state.stage[(i - 1 as i32) as usize];
-                coeff_set.next = coeff_state.stage[i as usize];
+            j = coeff_state_.stage[(i - 1 as i32) as usize];
+            while j < coeff_state_.stage[i as usize] {
+                let coeff_set = &mut coeff_state_.set[j as usize];
+                coeff_set.prev = coeff_state_.stage[(i - 1 as i32) as usize];
+                coeff_set.next = coeff_state_.stage[i as usize];
                 j += 1
             }
         }
-        coeff_state.set[curr_stage as usize].permanent = 1;
-        allocate_set::<FE>(curr_stage, &mut coeff_state, None);
+        coeff_state_.set[curr_stage as usize].permanent = 1;
+        allocate_set::<FE>(curr_stage, coeff_state_, None);
         i += 1
     }
-    coeff_state.stage[(coeff_state.stage_count - 1) as usize] = 60;
-    j = coeff_state.stage[(coeff_state.stage_count - 2) as usize];
+    coeff_state_.stage[(coeff_state_.stage_count - 1) as usize] = 60;
+    j = coeff_state_.stage[(coeff_state_.stage_count - 2) as usize];
     while j < 60 {
-        let coeff_set = &mut coeff_state.set[j as usize];
-        coeff_set.prev = coeff_state.stage[(coeff_state.stage_count - 2 as i32) as usize];
+        let coeff_set = &mut coeff_state_.set[j as usize];
+        coeff_set.prev = coeff_state_.stage[(coeff_state_.stage_count - 2 as i32) as usize];
         coeff_set.next = 60;
         j += 1
     }
-    coeff_state.set[60].permanent = 1;
-    allocate_set::<FE>(60, &mut coeff_state, None);
+    coeff_state_.set[60].permanent = 1;
+    allocate_set::<FE>(60, coeff_state_, None);
     /* Read the pattern values */
-    unpack_coeffs::<FE, _>(&mut next_word, &mut coeff_state);
+    unpack_coeffs::<FE, _>(&mut next_word, coeff_state_);
 }
 
 
