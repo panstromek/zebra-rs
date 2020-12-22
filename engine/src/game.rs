@@ -195,7 +195,7 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
 
     // inlined init_coeffs
     coeff_state.init_memory_handler();
-    process_coeffs_from_fn_source::<FE, _>(coeffs);
+    process_coeffs_from_fn_source::<FE, _>(coeffs, &mut coeff_state);
     init_coeffs_calculate_terminal_patterns(&mut coeff_state);
     if let Some(adjusts) = coeff_adjustments {
         eval_adjustment(adjusts.disc_adjust, adjusts.edge_adjust,
