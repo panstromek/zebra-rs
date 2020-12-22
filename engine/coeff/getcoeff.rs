@@ -28,19 +28,60 @@ impl<'a> CoeffSet<'a> {
     }
 }
 
+#[derive(Clone)]
+#[repr(C)]
+pub struct AllocationBlock {
+    pub afile2x_block: [i16; 59049],
+    pub bfile_block: [i16; 6561],
+    pub cfile_block: [i16; 6561],
+    pub dfile_block: [i16; 6561],
+    pub diag8_block: [i16; 6561],
+    pub diag7_block: [i16; 2187],
+    pub diag6_block: [i16; 729],
+    pub diag5_block: [i16; 243],
+    pub diag4_block: [i16; 81],
+    pub corner33_block: [i16; 19683],
+    pub corner52_block: [i16; 59049],
+}
+
 #[repr(C)]
 pub struct CoeffSetData<'a> {
-    pub afile2x: &'a mut [i16; 59049],
-    pub bfile: &'a mut [i16; 6561],
-    pub cfile: &'a mut [i16; 6561],
-    pub dfile: &'a mut [i16; 6561],
-    pub diag8: &'a mut [i16; 6561],
-    pub diag7: &'a mut [i16; 2187],
-    pub diag6: &'a mut [i16; 729],
-    pub diag5: &'a mut [i16; 243],
-    pub diag4: &'a mut [i16; 81],
-    pub corner33: &'a mut [i16; 19683],
-    pub corner52: &'a mut [i16; 59049]
+    pub get_afile2x: &'a mut [i16; 59049],
+    pub get_bfile: &'a mut [i16; 6561],
+    pub get_cfile: &'a mut [i16; 6561],
+    pub get_dfile: &'a mut [i16; 6561],
+    pub get_diag8: &'a mut [i16; 6561],
+    pub get_diag7: &'a mut [i16; 2187],
+    pub get_diag6: &'a mut [i16; 729],
+    pub get_diag5: &'a mut [i16; 243],
+    pub get_diag4: &'a mut [i16; 81],
+    pub get_corner33: &'a mut [i16; 19683],
+    pub get_corner52: &'a mut [i16; 59049]
+}
+
+impl<'a> CoeffSetData<'a> {
+    pub fn afile2x_mut(&mut self) -> &mut [i16; 59049] { self.get_afile2x }
+    pub fn bfile_mut(&mut self) -> &mut [i16; 6561] { self.get_bfile }
+    pub fn cfile_mut(&mut self) ->  &mut [i16; 6561] { self.get_cfile }
+    pub fn dfile_mut(&mut self) ->  &mut [i16; 6561] { self.get_dfile }
+    pub fn diag8_mut(&mut self) ->  &mut [i16; 6561] { self.get_diag8 }
+    pub fn diag7_mut(&mut self) ->  &mut [i16; 2187] { self.get_diag7 }
+    pub fn diag6_mut(&mut self) ->  &mut [i16; 729] { self.get_diag6 }
+    pub fn diag5_mut(&mut self) ->  &mut [i16; 243] { self.get_diag5 }
+    pub fn diag4_mut(&mut self) ->  &mut [i16; 81] { self.get_diag4 }
+    pub fn corner33_mut(&mut self) ->  &mut [i16; 19683] { self.get_corner33 }
+    pub fn corner52_mut(&mut self) ->  &mut [i16; 59049] { self.get_corner52 }
+    pub fn afile2x(&self) -> &[i16; 59049] { self.get_afile2x }
+    pub fn bfile(&self) -> &[i16; 6561] { self.get_bfile }
+    pub fn cfile(&self) ->  &[i16; 6561] { self.get_cfile }
+    pub fn dfile(&self) ->  &[i16; 6561] { self.get_dfile }
+    pub fn diag8(&self) ->  &[i16; 6561] { self.get_diag8 }
+    pub fn diag7(&self) ->  &[i16; 2187] { self.get_diag7 }
+    pub fn diag6(&self) ->  &[i16; 729] { self.get_diag6 }
+    pub fn diag5(&self) ->  &[i16; 243] { self.get_diag5 }
+    pub fn diag4(&self) ->  &[i16; 81] { self.get_diag4 }
+    pub fn corner33(&self) ->  &[i16; 19683] { self.get_corner33 }
+    pub fn corner52(&self) ->  &[i16; 59049] { self.get_corner52 }
 }
 
 pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
@@ -62,7 +103,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[21];
         pattern0 = 3 * pattern0 + board[11];
         score =(score as i32 +
-                *set.afile2x.offset(pattern0 as isize)
+                *set.afile2x_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[77];
         pattern0 = 3 * pattern0 + board[27];
@@ -75,7 +116,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[28];
         pattern0 = 3 * pattern0 + board[18];
         score =(score as i32 +
-                *set.afile2x.offset(pattern0 as isize)
+                *set.afile2x_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[27];
         pattern0 = 3 * pattern0 + board[22];
@@ -88,7 +129,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[12];
         pattern0 = 3 * pattern0 + board[11];
         score =(score as i32 +
-                *set.afile2x.offset(pattern0 as isize)
+                *set.afile2x_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[77];
         pattern0 = 3 * pattern0 + board[72];
@@ -101,7 +142,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[82];
         pattern0 = 3 * pattern0 + board[81];
         score =(score as i32 +
-                *set.afile2x.offset(pattern0 as isize)
+                *set.afile2x_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[82];
         pattern0 = 3 * pattern0 + board[72];
@@ -112,7 +153,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[22];
         pattern0 = 3 * pattern0 + board[12];
         score =(score as i32 +
-                *set.bfile.offset(pattern0 as isize) as
+                *set.bfile_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[87];
         pattern0 = 3 * pattern0 + board[77];
@@ -123,7 +164,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[27];
         pattern0 = 3 * pattern0 + board[17];
         score =(score as i32 +
-                *set.bfile.offset(pattern0 as isize) as
+                *set.bfile_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[28];
         pattern0 = 3 * pattern0 + board[27];
@@ -134,7 +175,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[22];
         pattern0 = 3 * pattern0 + board[21];
         score =(score as i32 +
-                *set.bfile.offset(pattern0 as isize) as
+                *set.bfile_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[78];
         pattern0 = 3 * pattern0 + board[77];
@@ -145,7 +186,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[72];
         pattern0 = 3 * pattern0 + board[71];
         score =(score as i32 +
-                *set.bfile.offset(pattern0 as isize) as
+                *set.bfile_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[83];
         pattern0 = 3 * pattern0 + board[73];
@@ -156,7 +197,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[23];
         pattern0 = 3 * pattern0 + board[13];
         score =(score as i32 +
-                *set.cfile.offset(pattern0 as isize) as
+                *set.cfile_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[86];
         pattern0 = 3 * pattern0 + board[76];
@@ -167,7 +208,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[26];
         pattern0 = 3 * pattern0 + board[16];
         score =(score as i32 +
-                *set.cfile.offset(pattern0 as isize) as
+                *set.cfile_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[38];
         pattern0 = 3 * pattern0 + board[37];
@@ -178,7 +219,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[32];
         pattern0 = 3 * pattern0 + board[31];
         score =(score as i32 +
-                *set.cfile.offset(pattern0 as isize) as
+                *set.cfile_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[68];
         pattern0 = 3 * pattern0 + board[67];
@@ -189,7 +230,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[62];
         pattern0 = 3 * pattern0 + board[61];
         score =(score as i32 +
-                *set.cfile.offset(pattern0 as isize) as
+                *set.cfile_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[84];
         pattern0 = 3 * pattern0 + board[74];
@@ -200,7 +241,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[24];
         pattern0 = 3 * pattern0 + board[14];
         score =(score as i32 +
-                *set.dfile.offset(pattern0 as isize) as
+                *set.dfile_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[85];
         pattern0 = 3 * pattern0 + board[75];
@@ -211,7 +252,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[25];
         pattern0 = 3 * pattern0 + board[15];
         score =(score as i32 +
-                *set.dfile.offset(pattern0 as isize) as
+                *set.dfile_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[48];
         pattern0 = 3 * pattern0 + board[47];
@@ -222,7 +263,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[42];
         pattern0 = 3 * pattern0 + board[41];
         score =(score as i32 +
-                *set.dfile.offset(pattern0 as isize) as
+                *set.dfile_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[58];
         pattern0 = 3 * pattern0 + board[57];
@@ -233,7 +274,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[52];
         pattern0 = 3 * pattern0 + board[51];
         score =(score as i32 +
-                *set.dfile.offset(pattern0 as isize) as
+                *set.dfile_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[88];
         pattern0 = 3 * pattern0 + board[77];
@@ -244,7 +285,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[22];
         pattern0 = 3 * pattern0 + board[11];
         score =(score as i32 +
-                *set.diag8.offset(pattern0 as isize) as
+                *set.diag8_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[81];
         pattern0 = 3 * pattern0 + board[72];
@@ -255,7 +296,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[27];
         pattern0 = 3 * pattern0 + board[18];
         score =(score as i32 +
-                *set.diag8.offset(pattern0 as isize) as
+                *set.diag8_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[78];
         pattern0 = 3 * pattern0 + board[67];
@@ -265,7 +306,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[23];
         pattern0 = 3 * pattern0 + board[12];
         score =(score as i32 +
-                *set.diag7.offset(pattern0 as isize) as
+                *set.diag7_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[87];
         pattern0 = 3 * pattern0 + board[76];
@@ -275,7 +316,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[32];
         pattern0 = 3 * pattern0 + board[21];
         score =(score as i32 +
-                *set.diag7.offset(pattern0 as isize) as
+                *set.diag7_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[71];
         pattern0 = 3 * pattern0 + board[62];
@@ -285,7 +326,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[26];
         pattern0 = 3 * pattern0 + board[17];
         score =(score as i32 +
-                *set.diag7.offset(pattern0 as isize) as
+                *set.diag7_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[82];
         pattern0 = 3 * pattern0 + board[73];
@@ -295,7 +336,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[37];
         pattern0 = 3 * pattern0 + board[28];
         score =(score as i32 +
-                *set.diag7.offset(pattern0 as isize) as
+                *set.diag7_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[68];
         pattern0 = 3 * pattern0 + board[57];
@@ -304,7 +345,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[24];
         pattern0 = 3 * pattern0 + board[13];
         score =(score as i32 +
-                *set.diag6.offset(pattern0 as isize) as
+                *set.diag6().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[86];
         pattern0 = 3 * pattern0 + board[75];
@@ -313,7 +354,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[42];
         pattern0 = 3 * pattern0 + board[31];
         score =(score as i32 +
-                *set.diag6.offset(pattern0 as isize) as
+                *set.diag6_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[61];
         pattern0 = 3 * pattern0 + board[52];
@@ -322,7 +363,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[25];
         pattern0 = 3 * pattern0 + board[16];
         score =(score as i32 +
-                *set.diag6.offset(pattern0 as isize) as
+                *set.diag6_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[83];
         pattern0 = 3 * pattern0 + board[74];
@@ -331,7 +372,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[47];
         pattern0 = 3 * pattern0 + board[38];
         score =(score as i32 +
-                *set.diag6.offset(pattern0 as isize) as
+                *set.diag6_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[58];
         pattern0 = 3 * pattern0 + board[47];
@@ -339,7 +380,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[25];
         pattern0 = 3 * pattern0 + board[14];
         score =(score as i32 +
-                *set.diag5.offset(pattern0 as isize) as
+                *set.diag5_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[85];
         pattern0 = 3 * pattern0 + board[74];
@@ -347,7 +388,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[52];
         pattern0 = 3 * pattern0 + board[41];
         score =(score as i32 +
-                *set.diag5.offset(pattern0 as isize) as
+                *set.diag5_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[51];
         pattern0 = 3 * pattern0 + board[42];
@@ -355,7 +396,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[24];
         pattern0 = 3 * pattern0 + board[15];
         score =(score as i32 +
-                *set.diag5.offset(pattern0 as isize) as
+                *set.diag5_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[84];
         pattern0 = 3 * pattern0 + board[75];
@@ -363,35 +404,35 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[57];
         pattern0 = 3 * pattern0 + board[48];
         score =(score as i32 +
-                *set.diag5.offset(pattern0 as isize) as
+                *set.diag5_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[48];
         pattern0 = 3 * pattern0 + board[37];
         pattern0 = 3 * pattern0 + board[26];
         pattern0 = 3 * pattern0 + board[15];
         score =(score as i32 +
-                *set.diag4.offset(pattern0 as isize) as
+                *set.diag4_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[84];
         pattern0 = 3 * pattern0 + board[73];
         pattern0 = 3 * pattern0 + board[62];
         pattern0 = 3 * pattern0 + board[51];
         score =(score as i32 +
-                *set.diag4.offset(pattern0 as isize) as
+                *set.diag4_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[41];
         pattern0 = 3 * pattern0 + board[32];
         pattern0 = 3 * pattern0 + board[23];
         pattern0 = 3 * pattern0 + board[14];
         score =(score as i32 +
-                *set.diag4.offset(pattern0 as isize) as
+                *set.diag4_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[85];
         pattern0 = 3 * pattern0 + board[76];
         pattern0 = 3 * pattern0 + board[67];
         pattern0 = 3 * pattern0 + board[58];
         score =(score as i32 +
-                *set.diag4.offset(pattern0 as isize) as
+                *set.diag4_mut().offset(pattern0 as isize) as
                     i32) as i16;
         pattern0 = board[33];
         pattern0 = 3 * pattern0 + board[32];
@@ -403,7 +444,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[12];
         pattern0 = 3 * pattern0 + board[11];
         score =(score as i32 +
-                *set.corner33.offset(pattern0 as isize)
+                *set.corner33_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[63];
         pattern0 = 3 * pattern0 + board[62];
@@ -415,7 +456,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[82];
         pattern0 = 3 * pattern0 + board[81];
         score =(score as i32 +
-                *set.corner33.offset(pattern0 as isize)
+                *set.corner33_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[36];
         pattern0 = 3 * pattern0 + board[37];
@@ -427,7 +468,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[17];
         pattern0 = 3 * pattern0 + board[18];
         score =(score as i32 +
-                *set.corner33.offset(pattern0 as isize)
+                *set.corner33_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[66];
         pattern0 = 3 * pattern0 + board[67];
@@ -439,7 +480,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[87];
         pattern0 = 3 * pattern0 + board[88];
         score =(score as i32 +
-                *set.corner33.offset(pattern0 as isize)
+                *set.corner33_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[25];
         pattern0 = 3 * pattern0 + board[24];
@@ -452,7 +493,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[12];
         pattern0 = 3 * pattern0 + board[11];
         score =(score as i32 +
-                *set.corner52.offset(pattern0 as isize)
+                *set.corner52_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[75];
         pattern0 = 3 * pattern0 + board[74];
@@ -465,7 +506,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[82];
         pattern0 = 3 * pattern0 + board[81];
         score =(score as i32 +
-                *set.corner52.offset(pattern0 as isize)
+                *set.corner52_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[24];
         pattern0 = 3 * pattern0 + board[25];
@@ -478,7 +519,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[17];
         pattern0 = 3 * pattern0 + board[18];
         score =(score as i32 +
-                *set.corner52.offset(pattern0 as isize)
+                *set.corner52_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[74];
         pattern0 = 3 * pattern0 + board[75];
@@ -491,7 +532,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[87];
         pattern0 = 3 * pattern0 + board[88];
         score =(score as i32 +
-                *set.corner52.offset(pattern0 as isize)
+                *set.corner52_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[52];
         pattern0 = 3 * pattern0 + board[42];
@@ -504,7 +545,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[21];
         pattern0 = 3 * pattern0 + board[11];
         score =(score as i32 +
-                *set.corner52.offset(pattern0 as isize)
+                *set.corner52_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[57];
         pattern0 = 3 * pattern0 + board[47];
@@ -517,7 +558,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[28];
         pattern0 = 3 * pattern0 + board[18];
         score =(score as i32 +
-                *set.corner52.offset(pattern0 as isize)
+                *set.corner52_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[42];
         pattern0 = 3 * pattern0 + board[52];
@@ -530,7 +571,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[71];
         pattern0 = 3 * pattern0 + board[81];
         score =(score as i32 +
-                *set.corner52.offset(pattern0 as isize)
+                *set.corner52_mut().offset(pattern0 as isize)
                     as i32) as i16;
         pattern0 = board[47];
         pattern0 = 3 * pattern0 + board[57];
@@ -543,7 +584,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0 = 3 * pattern0 + board[78];
         pattern0 = 3 * pattern0 + board[88];
         score =(score as i32 +
-                *set.corner52.offset(pattern0 as isize)
+                *set.corner52_mut().offset(pattern0 as isize)
                     as i32) as i16
     } else {
         let mut pattern0_0: i32;
@@ -558,7 +599,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[21];
         pattern0_0 = 3 as i32 * pattern0_0 + board[11];
         score =(score as i32 +
-                *set.afile2x.offset(59048-pattern0_0 as isize) as
+                *set.afile2x_mut().offset(59048-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[77];
         pattern0_0 = 3 as i32 * pattern0_0 + board[27];
@@ -571,7 +612,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[28];
         pattern0_0 = 3 as i32 * pattern0_0 + board[18];
         score =(score as i32 +
-                *set.afile2x.offset(59048-pattern0_0 as isize) as
+                *set.afile2x_mut().offset(59048-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[27];
         pattern0_0 = 3 as i32 * pattern0_0 + board[22];
@@ -584,7 +625,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[12];
         pattern0_0 = 3 as i32 * pattern0_0 + board[11];
         score =(score as i32 +
-                *set.afile2x.offset(59048-pattern0_0 as isize) as
+                *set.afile2x_mut().offset(59048-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[77];
         pattern0_0 = 3 as i32 * pattern0_0 + board[72];
@@ -597,7 +638,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[82];
         pattern0_0 = 3 as i32 * pattern0_0 + board[81];
         score =(score as i32 +
-            *set.afile2x.offset(59048 - pattern0_0 as isize) as
+            *set.afile2x_mut().offset(59048 - pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[82];
         pattern0_0 = 3 as i32 * pattern0_0 + board[72];
@@ -608,7 +649,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[22];
         pattern0_0 = 3 as i32 * pattern0_0 + board[12];
         score =(score as i32 +
-                *set.bfile.offset(6560-pattern0_0 as isize) as
+                *set.bfile_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[87];
         pattern0_0 = 3 as i32 * pattern0_0 + board[77];
@@ -619,7 +660,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[27];
         pattern0_0 = 3 as i32 * pattern0_0 + board[17];
         score =(score as i32 +
-                *set.bfile.offset(6560-pattern0_0 as isize) as
+                *set.bfile_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[28];
         pattern0_0 = 3 as i32 * pattern0_0 + board[27];
@@ -630,7 +671,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[22];
         pattern0_0 = 3 as i32 * pattern0_0 + board[21];
         score =(score as i32 +
-                *set.bfile.offset(6560-pattern0_0 as isize) as
+                *set.bfile_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[78];
         pattern0_0 = 3 as i32 * pattern0_0 + board[77];
@@ -641,7 +682,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[72];
         pattern0_0 = 3 as i32 * pattern0_0 + board[71];
         score =(score as i32 +
-                *set.bfile.offset(6560-pattern0_0 as isize) as
+                *set.bfile_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[83];
         pattern0_0 = 3 as i32 * pattern0_0 + board[73];
@@ -652,7 +693,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[23];
         pattern0_0 = 3 as i32 * pattern0_0 + board[13];
         score =(score as i32 +
-                *set.cfile.offset(6560-pattern0_0 as isize) as
+                *set.cfile_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[86];
         pattern0_0 = 3 as i32 * pattern0_0 + board[76];
@@ -663,7 +704,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[26];
         pattern0_0 = 3 as i32 * pattern0_0 + board[16];
         score =(score as i32 +
-                *set.cfile.offset(6560-pattern0_0 as isize) as
+                *set.cfile_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[38];
         pattern0_0 = 3 as i32 * pattern0_0 + board[37];
@@ -674,7 +715,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[32];
         pattern0_0 = 3 as i32 * pattern0_0 + board[31];
         score =(score as i32 +
-                *set.cfile.offset(6560-pattern0_0 as isize) as
+                *set.cfile_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[68];
         pattern0_0 = 3 as i32 * pattern0_0 + board[67];
@@ -685,7 +726,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[62];
         pattern0_0 = 3 as i32 * pattern0_0 + board[61];
         score =(score as i32 +
-                *set.cfile.offset(6560-pattern0_0 as isize) as
+                *set.cfile_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[84];
         pattern0_0 = 3 as i32 * pattern0_0 + board[74];
@@ -696,7 +737,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[24];
         pattern0_0 = 3 as i32 * pattern0_0 + board[14];
         score =(score as i32 +
-                *set.dfile.offset(6560-pattern0_0 as isize) as
+                *set.dfile_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[85];
         pattern0_0 = 3 as i32 * pattern0_0 + board[75];
@@ -707,7 +748,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[25];
         pattern0_0 = 3 as i32 * pattern0_0 + board[15];
         score =(score as i32 +
-                *set.dfile.offset(6560-pattern0_0 as isize) as
+                *set.dfile_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[48];
         pattern0_0 = 3 as i32 * pattern0_0 + board[47];
@@ -718,7 +759,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[42];
         pattern0_0 = 3 as i32 * pattern0_0 + board[41];
         score =(score as i32 +
-                *set.dfile.offset(6560-pattern0_0 as isize) as
+                *set.dfile_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[58];
         pattern0_0 = 3 as i32 * pattern0_0 + board[57];
@@ -729,7 +770,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[52];
         pattern0_0 = 3 as i32 * pattern0_0 + board[51];
         score =(score as i32 +
-                *set.dfile.offset(6560-pattern0_0 as isize) as
+                *set.dfile_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[88];
         pattern0_0 = 3 as i32 * pattern0_0 + board[77];
@@ -740,7 +781,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[22];
         pattern0_0 = 3 as i32 * pattern0_0 + board[11];
         score =(score as i32 +
-                *set.diag8.offset(6560-pattern0_0 as isize) as
+                *set.diag8_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[81];
         pattern0_0 = 3 as i32 * pattern0_0 + board[72];
@@ -751,7 +792,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[27];
         pattern0_0 = 3 as i32 * pattern0_0 + board[18];
         score =(score as i32 +
-                *set.diag8.offset(6560-pattern0_0 as isize) as
+                *set.diag8_mut().offset(6560-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[78];
         pattern0_0 = 3 as i32 * pattern0_0 + board[67];
@@ -761,7 +802,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[23];
         pattern0_0 = 3 as i32 * pattern0_0 + board[12];
         score =(score as i32 +
-                *set.diag7.offset(2186-pattern0_0 as isize) as
+                *set.diag7_mut().offset(2186-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[87];
         pattern0_0 = 3 as i32 * pattern0_0 + board[76];
@@ -771,7 +812,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[32];
         pattern0_0 = 3 as i32 * pattern0_0 + board[21];
         score =(score as i32 +
-                *set.diag7.offset(2186-pattern0_0 as isize) as
+                *set.diag7_mut().offset(2186-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[71];
         pattern0_0 = 3 as i32 * pattern0_0 + board[62];
@@ -781,7 +822,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[26];
         pattern0_0 = 3 as i32 * pattern0_0 + board[17];
         score =(score as i32 +
-                *set.diag7.offset(2186-pattern0_0 as isize) as
+                *set.diag7_mut().offset(2186-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[82];
         pattern0_0 = 3 as i32 * pattern0_0 + board[73];
@@ -791,7 +832,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[37];
         pattern0_0 = 3 as i32 * pattern0_0 + board[28];
         score =(score as i32 +
-                *set.diag7.offset(2186-pattern0_0 as isize) as
+                *set.diag7_mut().offset(2186-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[68];
         pattern0_0 = 3 as i32 * pattern0_0 + board[57];
@@ -800,7 +841,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[24];
         pattern0_0 = 3 as i32 * pattern0_0 + board[13];
         score =(score as i32 +
-                *set.diag6.offset(728-pattern0_0 as isize) as
+                *set.diag6_mut().offset(728-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[86];
         pattern0_0 = 3 as i32 * pattern0_0 + board[75];
@@ -809,7 +850,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[42];
         pattern0_0 = 3 as i32 * pattern0_0 + board[31];
         score =(score as i32 +
-                *set.diag6.offset(728-pattern0_0 as isize) as
+                *set.diag6_mut().offset(728-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[61];
         pattern0_0 = 3 as i32 * pattern0_0 + board[52];
@@ -818,7 +859,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[25];
         pattern0_0 = 3 as i32 * pattern0_0 + board[16];
         score =(score as i32 +
-                *set.diag6.offset(728-pattern0_0 as isize) as
+                *set.diag6_mut().offset(728-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[83];
         pattern0_0 = 3 as i32 * pattern0_0 + board[74];
@@ -827,7 +868,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[47];
         pattern0_0 = 3 as i32 * pattern0_0 + board[38];
         score =(score as i32 +
-                *set.diag6.offset(728-pattern0_0 as isize) as
+                *set.diag6_mut().offset(728-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[58];
         pattern0_0 = 3 as i32 * pattern0_0 + board[47];
@@ -835,7 +876,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[25];
         pattern0_0 = 3 as i32 * pattern0_0 + board[14];
         score =(score as i32 +
-                *set.diag5.offset(242-pattern0_0 as isize) as
+                *set.diag5_mut().offset(242-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[85];
         pattern0_0 = 3 as i32 * pattern0_0 + board[74];
@@ -843,7 +884,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[52];
         pattern0_0 = 3 as i32 * pattern0_0 + board[41];
         score =(score as i32 +
-                *set.diag5.offset(242-pattern0_0 as isize) as
+                *set.diag5_mut().offset(242-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[51];
         pattern0_0 = 3 as i32 * pattern0_0 + board[42];
@@ -851,7 +892,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[24];
         pattern0_0 = 3 as i32 * pattern0_0 + board[15];
         score =(score as i32 +
-                *set.diag5.offset(242-pattern0_0 as isize) as
+                *set.diag5_mut().offset(242-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[84];
         pattern0_0 = 3 as i32 * pattern0_0 + board[75];
@@ -859,35 +900,35 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[57];
         pattern0_0 = 3 as i32 * pattern0_0 + board[48];
         score =(score as i32 +
-                *set.diag5.offset(242-pattern0_0 as isize) as
+                *set.diag5_mut().offset(242-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[48];
         pattern0_0 = 3 as i32 * pattern0_0 + board[37];
         pattern0_0 = 3 as i32 * pattern0_0 + board[26];
         pattern0_0 = 3 as i32 * pattern0_0 + board[15];
         score =(score as i32 +
-                *set.diag4.offset(80-pattern0_0 as isize) as
+                *set.diag4_mut().offset(80-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[84];
         pattern0_0 = 3 as i32 * pattern0_0 + board[73];
         pattern0_0 = 3 as i32 * pattern0_0 + board[62];
         pattern0_0 = 3 as i32 * pattern0_0 + board[51];
         score =(score as i32 +
-                *set.diag4.offset(80-pattern0_0 as isize) as
+                *set.diag4_mut().offset(80-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[41];
         pattern0_0 = 3 as i32 * pattern0_0 + board[32];
         pattern0_0 = 3 as i32 * pattern0_0 + board[23];
         pattern0_0 = 3 as i32 * pattern0_0 + board[14];
         score =(score as i32 +
-                *set.diag4.offset(80-pattern0_0 as isize) as
+                *set.diag4_mut().offset(80-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[85];
         pattern0_0 = 3 as i32 * pattern0_0 + board[76];
         pattern0_0 = 3 as i32 * pattern0_0 + board[67];
         pattern0_0 = 3 as i32 * pattern0_0 + board[58];
         score =(score as i32 +
-                *set.diag4.offset(80-pattern0_0 as isize) as
+                *set.diag4_mut().offset(80-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[33];
         pattern0_0 = 3 as i32 * pattern0_0 + board[32];
@@ -899,7 +940,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[12];
         pattern0_0 = 3 as i32 * pattern0_0 + board[11];
         score =(score as i32 +
-                *set.corner33.offset(19682-pattern0_0 as isize) as
+                *set.corner33_mut().offset(19682-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[63];
         pattern0_0 = 3 as i32 * pattern0_0 + board[62];
@@ -911,7 +952,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[82];
         pattern0_0 = 3 as i32 * pattern0_0 + board[81];
         score =(score as i32 +
-                *set.corner33.offset(19682-pattern0_0 as isize) as
+                *set.corner33_mut().offset(19682-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[36];
         pattern0_0 = 3 as i32 * pattern0_0 + board[37];
@@ -923,7 +964,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[17];
         pattern0_0 = 3 as i32 * pattern0_0 + board[18];
         score =(score as i32 +
-                *set.corner33.offset(19682-pattern0_0 as isize) as
+                *set.corner33_mut().offset(19682-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[66];
         pattern0_0 = 3 as i32 * pattern0_0 + board[67];
@@ -935,7 +976,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[87];
         pattern0_0 = 3 as i32 * pattern0_0 + board[88];
         score =(score as i32 +
-                *set.corner33.offset(19682-pattern0_0 as isize) as
+                *set.corner33_mut().offset(19682-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[25];
         pattern0_0 = 3 as i32 * pattern0_0 + board[24];
@@ -948,7 +989,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[12];
         pattern0_0 = 3 as i32 * pattern0_0 + board[11];
         score =(score as i32 +
-                *set.corner52.offset(59048-pattern0_0 as isize) as
+                *set.corner52_mut().offset(59048-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[75];
         pattern0_0 = 3 as i32 * pattern0_0 + board[74];
@@ -961,7 +1002,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[82];
         pattern0_0 = 3 as i32 * pattern0_0 + board[81];
         score =(score as i32 +
-                *set.corner52.offset(59048-pattern0_0 as isize) as
+                *set.corner52_mut().offset(59048-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[24];
         pattern0_0 = 3 as i32 * pattern0_0 + board[25];
@@ -974,7 +1015,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[17];
         pattern0_0 = 3 as i32 * pattern0_0 + board[18];
         score =(score as i32 +
-                *set.corner52.offset(59048-pattern0_0 as isize) as
+                *set.corner52_mut().offset(59048-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[74];
         pattern0_0 = 3 as i32 * pattern0_0 + board[75];
@@ -987,7 +1028,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[87];
         pattern0_0 = 3 as i32 * pattern0_0 + board[88];
         score =(score as i32 +
-                *set.corner52.offset(59048-pattern0_0 as isize) as
+                *set.corner52_mut().offset(59048-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[52];
         pattern0_0 = 3 as i32 * pattern0_0 + board[42];
@@ -1000,7 +1041,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[21];
         pattern0_0 = 3 as i32 * pattern0_0 + board[11];
         score =(score as i32 +
-                *set.corner52.offset(59048-pattern0_0 as isize) as
+                *set.corner52_mut().offset(59048-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[57];
         pattern0_0 = 3 as i32 * pattern0_0 + board[47];
@@ -1013,7 +1054,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[28];
         pattern0_0 = 3 as i32 * pattern0_0 + board[18];
         score =(score as i32 +
-                *set.corner52.offset(59048-pattern0_0 as isize) as
+                *set.corner52_mut().offset(59048-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[42];
         pattern0_0 = 3 as i32 * pattern0_0 + board[52];
@@ -1026,7 +1067,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[71];
         pattern0_0 = 3 as i32 * pattern0_0 + board[81];
         score =(score as i32 +
-                *set.corner52.offset(59048-pattern0_0 as isize) as
+                *set.corner52_mut().offset(59048-pattern0_0 as isize) as
                     i32) as i16;
         pattern0_0 = board[47];
         pattern0_0 = 3 as i32 * pattern0_0 + board[57];
@@ -1039,7 +1080,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         pattern0_0 = 3 as i32 * pattern0_0 + board[78];
         pattern0_0 = 3 as i32 * pattern0_0 + board[88];
         score =(score as i32 +
-                *set.corner52.offset(59048-pattern0_0 as isize) as
+                *set.corner52_mut().offset(59048-pattern0_0 as isize) as
                     i32) as i16
     }
     return score as i32;
@@ -1217,7 +1258,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
         } else if row[9] == 2 as i32 {
             result -=value[1][6]
         }
-        coeff_set.afile2x[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16;
+        coeff_set.afile2x_mut()[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16;
         result = 0.0f64;
         j = 0;
         while j < 5 as i32 {
@@ -1232,7 +1273,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
             }
             j += 1
         }
-        coeff_set.corner52[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16;
+        coeff_set.corner52_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16;
         if i < 19683 as i32 {
             result = 0.0f64;
             j = 0;
@@ -1248,7 +1289,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.corner33[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.corner33_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 6561 as i32 {
             result = 0.0f64;
@@ -1261,7 +1302,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.bfile[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16;
+            coeff_set.bfile_mut()[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
             while j < 8 as i32 {
@@ -1272,7 +1313,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.cfile[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16;
+            coeff_set.cfile_mut()[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
             while j < 8 as i32 {
@@ -1283,7 +1324,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.dfile[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16;
+            coeff_set.dfile_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
             while j < 8 as i32 {
@@ -1294,7 +1335,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.diag8[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag8_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 2187 as i32 {
             result = 0.0f64;
@@ -1307,7 +1348,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.diag7[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag7_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 729 as i32 {
             result = 0.0f64;
@@ -1320,7 +1361,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.diag6[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag6_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 243 as i32 {
             result = 0.0f64;
@@ -1333,7 +1374,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.diag5[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag5_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 81 as i32 {
             result = 0.0f64;
@@ -1346,7 +1387,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.diag4[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag4_mut()[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16
         }
         /* Next configuration */
         j = 0;
