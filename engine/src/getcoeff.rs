@@ -51,14 +51,6 @@ fn generate_batch(target: &mut [i16], source1: &[i16], weight1: i32, source2: &[
         });
 }
 
-impl CoeffState {
-    /*
-       INIT_MEMORY_HANDLER
-       Mark all blocks in the memory arena as "not used".
-    */
-    pub fn init_memory_handler(&mut self) {}
-}
-
 /*
   DISC_COUNT_ADJUSTMENT
 */
