@@ -6,7 +6,7 @@ use crate::src::error::LibcFatalError;
 use engine::src::timer::{g_timer};
 use engine::src::osfbook::set_search_depth;
 use engine::src::moves::{make_move, generate_all, moves_state};
-use engine::src::end::{get_earliest_wld_solve, get_earliest_full_solve};
+use engine::src::end::{end_g};
 use engine::src::learn::{Learner};
 use crate::src::zebra::g_config;
 use engine::src::zebra::learn_state;
@@ -48,8 +48,8 @@ pub unsafe fn learn_game(game_length: i32,
                                     save_database: i32, echo:i32) {
     g_timer.clear_panic_abort();
     g_timer.toggle_abort_check(0 as i32);
-    let full_solve = get_earliest_full_solve();
-    let wld_solve = get_earliest_wld_solve();
+    let full_solve = end_g.get_earliest_full_solve();
+    let wld_solve = end_g.get_earliest_wld_solve();
     let mut dummy: i32 = 0;
     generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut dummy);
     let mut side_to_move = 0;

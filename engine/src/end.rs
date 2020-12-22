@@ -56,7 +56,7 @@ static quadrant_mask: [u32; 100] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 ];
 
-struct End {
+pub struct End {
     /* The parities of the regions are in the region_parity bit vector. */
     region_parity: u32,
     end_move_list: [MoveLink; 100],
@@ -72,7 +72,7 @@ struct End {
     komi_shift: i32,
 }
 
-static mut end_g: End = End {
+pub static mut end_g: End = End {
     /* The parities of the regions are in the region_parity bit vector. */
     region_parity: 0,
     end_move_list: [MoveLink { pred: 0, succ: 0 }; 100],
@@ -480,19 +480,20 @@ fn solve_four_empty(end: &mut End, my_bits: BitBoard,
 
    Contents:      The interface to the endgame solver.
 */
-/*
-  GET_EARLIEST_WLD_SOLVE
-  GET_EARLIEST_FULL_SOLVE
-  Return the highest #empty when WLD and full solve respectively
-  were completed (not initiated).
-*/
+impl End {
+    /*
+      GET_EARLIEST_WLD_SOLVE
+      GET_EARLIEST_FULL_SOLVE
+      Return the highest #empty when WLD and full solve respectively
+      were completed (not initiated).
+    */
+    pub fn get_earliest_wld_solve(&self) -> i32 {
+        return self.earliest_wld_solve;
+    }
 
-pub unsafe fn get_earliest_wld_solve() -> i32 {
-    return end_g.earliest_wld_solve;
-}
-
-pub unsafe fn get_earliest_full_solve() -> i32 {
-    return end_g.earliest_full_solve;
+    pub fn get_earliest_full_solve(&self) -> i32 {
+        return self.earliest_full_solve;
+    }
 }
 // /*
 //   SET_OUTPUT_MODE
