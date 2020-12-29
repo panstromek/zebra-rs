@@ -4,7 +4,6 @@ use libc_wrapper::{fclose, fputs, fprintf, fopen, strcpy};
 use engine::src::game::generic_game_init;
 use crate::src::error::LibcFatalError;
 use engine::src::timer::{g_timer};
-use engine::src::osfbook::set_search_depth;
 use engine::src::moves::{make_move,  moves_state, generate_all};
 use engine::src::end::{end_g};
 use engine::src::learn::{Learner};
@@ -12,6 +11,7 @@ use crate::src::zebra::g_config;
 use engine::src::zebra::learn_state;
 use engine::src::globals::board_state;
 use engine::src::search::search_state;
+use engine::src::osfbook::g_book;
 
 pub static mut binary_database: i32 = 0;
 pub static mut database_name: [i8; 256] = [0; 256];
@@ -71,7 +71,7 @@ pub unsafe fn learn_game(game_length: i32,
         side_to_move = 0 as i32 + 2 as i32 - side_to_move;
         i += 1
     }
-    set_search_depth(learn_state.learn_depth);
+   g_book.set_search_depth(learn_state.learn_depth);
     add_new_game(game_length, learn_state.game_move.as_mut_ptr(), learn_state.cutoff_empty,
                  full_solve, wld_solve, 1 as i32, private_game, echo);
     if save_database != 0 {
@@ -142,7 +142,7 @@ pub unsafe fn full_learn_public_game(length: i32,
     }
     /* Let the learning sub-routine in osfbook update the opening
        book and the dump it to file. */
-    set_search_depth(deviation_depth);
+   g_book.set_search_depth(deviation_depth);
     add_new_game(length, learn_state.game_move.as_mut_ptr(), cutoff, exact, wld,
                  1 as i32, 0 as i32, echo);
     if binary_database != 0 {
