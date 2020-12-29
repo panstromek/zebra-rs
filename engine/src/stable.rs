@@ -778,7 +778,7 @@ unsafe fn recursive_find_stable(pattern: i32)
   This way the stability values for the four edges can be added together
   without any risk for double-counting.
 */
-unsafe fn count_color_stable() {
+fn count_color_stable(stable_state_: &mut StableState) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pattern: i32 = 0;
@@ -791,19 +791,19 @@ unsafe fn count_color_stable() {
     while i < 8 as i32 { row[i as usize] = 0; i += 1 }
     pattern = 0;
     while pattern < 6561 as i32 {
-        stable_state.black_stable[pattern as usize] = 0;
-        stable_state.white_stable[pattern as usize] = 0;
+        stable_state_.black_stable[pattern as usize] = 0;
+        stable_state_.white_stable[pattern as usize] = 0;
         j = 0;
         while j < 8 as i32 {
-            if stable_state.edge_stable[pattern as usize] as i32 &
+            if stable_state_.edge_stable[pattern as usize] as i32 &
                    (1 as i32) << j != 0 {
                 if row[j as usize] == 0 as i32 {
-                    stable_state.black_stable[pattern as usize] =
-                        (stable_state.black_stable[pattern as usize] as i32 +
+                    stable_state_.black_stable[pattern as usize] =
+                        (stable_state_.black_stable[pattern as usize] as i32 +
                              stable_incr[j as usize]) as u8
                 } else if row[j as usize] == 2 as i32 {
-                    stable_state.white_stable[pattern as usize] =
-                        (stable_state.white_stable[pattern as usize] as i32 +
+                    stable_state_.white_stable[pattern as usize] =
+                        (stable_state_.white_stable[pattern as usize] as i32 +
                              stable_incr[j as usize]) as u8
                 }
             }
@@ -861,5 +861,5 @@ pub unsafe fn init_stable() {
         }
         i += 1
     }
-    count_color_stable();
+    count_color_stable(&mut stable_state);
 }
