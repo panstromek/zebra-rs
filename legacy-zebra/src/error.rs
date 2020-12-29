@@ -8,7 +8,6 @@ use crate::src::osfbook::{print_move_alternatives};
 use std::ffi::{c_void, CStr, CString};
 use engine::{
     src:: {
-        search::{set_current_eval},
         counter::{counter_value},
     }
 };
@@ -271,7 +270,8 @@ impl FrontEnd for LibcFatalError {
     fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType,
                          nodes_counter: &mut CounterType, pv_zero: &mut [i32; 64], pv_depth_zero: i32) {
         unsafe {
-            set_current_eval(*eval_info);
+            let eval = *eval_info;
+            search_state.set_current_eval(eval);
             clear_status();
             send_status(b"-->  %2d  \x00" as *const u8 as *const i8, empties);
             let eval_str = produce_eval_text(&*eval_info, 1 as i32);

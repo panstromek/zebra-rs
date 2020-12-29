@@ -1,6 +1,6 @@
 use crate::src::zebra::EvaluationType;
 use crate::src::counter::{adjust_counter, counter_value, reset_counter, add_counter};
-use crate::src::search::{setup_search, disc_count, complete_pv, set_current_eval, create_eval_info, force_return, float_move, sort_moves, search_state};
+use crate::src::search::{setup_search, disc_count, complete_pv, create_eval_info, force_return, float_move, sort_moves, search_state};
 use crate::src::globals::{board_state, Board, BoardState};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_terminal_patterns, process_coeffs_from_fn_source, CoeffAdjustments, remove_coeffs, coeff_state};
@@ -364,7 +364,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             create_eval_info(PASS_EVAL, UNSOLVED_POSITION,
                              0.0f64 as i32, 0.0f64, 0 as i32,
                              0 as i32);
-        set_current_eval(*eval_info);
+        let eval = *eval_info;
+        search_state.set_current_eval(eval);
         if echo != 0 {
             let info = &*eval_info;
             Out::echo_compute_move_1(info);
@@ -387,7 +388,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             create_eval_info(FORCED_EVAL, UNSOLVED_POSITION,
                              0.0f64 as i32, 0.0f64, 0 as i32,
                              0 as i32);
-        set_current_eval(*eval_info);
+        let eval = *eval_info;
+        search_state.set_current_eval(eval);
         if echo != 0 {
             let info = &*eval_info;
             let disk = moves_state.move_list[moves_state.disks_played as usize][0];
@@ -493,7 +495,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         curr_move =
              get_book_move::<FE>(side_to_move, update_all, &mut book_eval_info, echo);
         if curr_move != -(1 as i32) {
-            set_current_eval(book_eval_info);
+            let eval = book_eval_info;
+            search_state.set_current_eval(eval);
             midgame_move = curr_move;
             book_move_found = 1;
             move_type = BOOK_MOVE;
@@ -565,7 +568,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             midgame_move =
                 middle_game::<FE>(side_to_move, midgame_depth, update_all,
                             &mut mid_eval_info, echo);
-            set_current_eval(mid_eval_info);
+            let eval = mid_eval_info;
+            search_state.set_current_eval(eval);
             midgame_diff =
                 1.3f64 * mid_eval_info.score as f64 / 128.0f64;
             if side_to_move == 0 as i32 {
@@ -626,7 +630,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                    end_game::<FE>(side_to_move, 1 as i32, 0 as i32,
                              book, game_state.komi, &mut end_eval_info, echo)
             }
-            set_current_eval(end_eval_info);
+            let eval = end_eval_info;
+            search_state.set_current_eval(eval);
             if abs(search_state.root_eval) == abs(-(27000 as i32)) {
                 move_type = INTERRUPTED_MOVE
             } else { move_type = ENDGAME_MOVE }
@@ -651,7 +656,8 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         3 => { *eval_info = end_eval_info }
         _ => { }
     }
-    set_current_eval(*eval_info);
+    let eval = *eval_info;
+    search_state.set_current_eval(eval);
     game_state.last_time_used =  g_timer.get_elapsed_time::<FE>();
     if update_all != 0 {
         search_state.total_time += game_state.last_time_used;
