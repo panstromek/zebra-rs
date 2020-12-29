@@ -633,13 +633,14 @@ pub unsafe fn get_stable(board: &Board,
         }
     };
 }
+impl StableState {
 /*
   RECURSIVE_FIND_STABLE
   Returns a bit mask describing the set of stable discs in the
   edge PATTERN. When a bit mask is calculated, it's stored in
   a table so that any particular bit mask only is generated once.
 */
-unsafe fn recursive_find_stable(pattern: i32)
+fn recursive_find_stable(&mut self, pattern: i32)
  -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -648,8 +649,8 @@ unsafe fn recursive_find_stable(pattern: i32)
     let mut temp: i32 = 0;
     let mut row: [i32; 8] = [0; 8];
     let mut stored_row: [i32; 8] = [0; 8];
-    if stable_state.edge_stable[pattern as usize] as i32 != -(1 as i32) {
-        return stable_state.edge_stable[pattern as usize] as i32
+    if self.edge_stable[pattern as usize] as i32 != -(1 as i32) {
+        return self.edge_stable[pattern as usize] as i32
     }
     temp = pattern;
     i = 0;
@@ -716,7 +717,7 @@ unsafe fn recursive_find_stable(pattern: i32)
                 new_pattern += pow3[j as usize] * row[j as usize];
                 j += 1
             }
-            stable &= recursive_find_stable(new_pattern);
+            stable &= self.recursive_find_stable(new_pattern);
             /* Restore position */
             j = 0;
             while j < 8 as i32 {
@@ -761,13 +762,14 @@ unsafe fn recursive_find_stable(pattern: i32)
                 new_pattern += pow3[j as usize] * row[j as usize];
                 j += 1
             }
-            stable &= recursive_find_stable(new_pattern)
+            stable &= self.recursive_find_stable(new_pattern)
         }
         i += 1
     }
     /* Store and return */
-    stable_state.edge_stable[pattern as usize] = stable as i16;
+    self.edge_stable[pattern as usize] = stable as i16;
     return stable;
+}
 }
 /*
   COUNT_COLOR_STABLE
@@ -857,7 +859,7 @@ pub unsafe fn init_stable() {
     i = 0;
     while i < 6561 as i32 {
         if stable_state.edge_stable[i as usize] as i32 == -(1 as i32) {
-            recursive_find_stable(i);
+            stable_state.recursive_find_stable(i);
         }
         i += 1
     }
