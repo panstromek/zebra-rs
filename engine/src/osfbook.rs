@@ -497,11 +497,11 @@ pub fn adjust_score(score: i32, side_to_move: i32, book: &mut Book, disks_played
   NULL otherwise.
 */
 
-pub unsafe fn find_opening_name() -> *const i8 {
+pub fn find_opening_name(book: &mut Book, board: &Board) -> *const i8 {
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
-    get_hash(&mut val1, &mut val2, &mut orientation, &mut g_book, &board_state.board);
+    get_hash(&mut val1, &mut val2, &mut orientation, book, board);
     let mut i = 0;
     while i < opening_list.len() {
         if val1 == opening_list[i].hash_val1 &&

@@ -115,7 +115,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         let mut orientation: i32 = 0;
         set_move_list(board_state.black_moves.as_mut_ptr(), board_state.white_moves.as_mut_ptr(),
                       board_state.score_sheet_row);
-        opening_name = find_opening_name();
+        opening_name = find_opening_name( &mut g_book, &board_state.board);
         if !opening_name.is_null() {
             printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8,
                    opening_name);

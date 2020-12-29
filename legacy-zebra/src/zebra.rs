@@ -1196,7 +1196,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                               i32,
                           floor(config.player_time[2]) as
                               i32);
-                opening_name = find_opening_name();
+                opening_name = find_opening_name( &mut g_book, &board_state.board);
                 if !opening_name.is_null() {
                     printf(b"\nOpening: %s\n\x00" as *const u8 as
                                *const i8, opening_name);
