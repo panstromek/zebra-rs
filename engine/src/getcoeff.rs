@@ -307,7 +307,7 @@ pub fn clear_coeffs(state: &mut CoeffState) {
    Maintains an internal memory handler to boost
    performance and avoid heap fragmentation.
 */
-pub fn allocate_set<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState, interpolate_from : Option<(i32, i32, i32, i32)>) {
+pub fn allocate_set(curr_stage: i32, state: &mut CoeffState, interpolate_from : Option<(i32, i32, i32, i32)>) {
     let mut set_data = CoeffSetData {
        allocation: Box::new(AllocationBlock {
            afile2x_block: [0; 59049],
@@ -351,7 +351,7 @@ pub fn allocate_set<FE: FrontEnd>(curr_stage: i32, state: &mut CoeffState, inter
    Also calculates the offset pointers to the last elements in each block
    (used for the inverted patterns when white is to move).
 */
-pub fn load_set<FE: FrontEnd>(index: i32, state: &mut CoeffState) {
+pub fn load_set(index: i32, state: &mut CoeffState) {
     // let set_item: &CoeffSet = &mut state.set[(index as usize)];
     if state.set[(index as usize)].permanent == 0 {
         let mut weight1 = 0;
@@ -378,7 +378,7 @@ pub fn load_set<FE: FrontEnd>(index: i32, state: &mut CoeffState) {
         state.set[(index as usize)].parity_constant[0] = state.set[(index as usize)].constant;
         state.set[(index as usize)].parity_constant[1] = state.set[(index as usize)].constant + state.set[(index as usize)].parity;
 
-        allocate_set::<FE>(index, state, Some((prev, next, weight1, weight2)));
+        allocate_set(index, state, Some((prev, next, weight1, weight2)));
 
         // let previous_set_item = &state.set[prev as usize];
         // let next_set_item = &state.set[next as usize];
@@ -395,10 +395,10 @@ pub fn load_set<FE: FrontEnd>(index: i32, state: &mut CoeffState) {
 */
 
 pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32) -> i32 {
-    pattern_evaluation_::<FE>(side_to_move, &mut board_state, &moves_state, &mut coeff_state)
+    pattern_evaluation_(side_to_move, &mut board_state, &moves_state, &mut coeff_state)
 }
 
-pub fn pattern_evaluation_<FE: FrontEnd>(side_to_move: i32, board_state_: &mut BoardState, moves_state_: &MovesState, coeff_state_: &mut CoeffState) -> i32 {
+pub fn pattern_evaluation_(side_to_move: i32, board_state_: &mut BoardState, moves_state_: &MovesState, coeff_state_: &mut CoeffState) -> i32 {
     /* Any player wiped out? Game over then... */
     let mut eval_phase: i32 = 0;
     if board_state_.piece_count[0][moves_state_.disks_played as usize] ==
@@ -417,7 +417,7 @@ pub fn pattern_evaluation_<FE: FrontEnd>(side_to_move: i32, board_state_: &mut B
     /* Load and/or initialize the pattern coefficients */
     eval_phase = coeff_state_.eval_map[moves_state_.disks_played as usize];
     if coeff_state_.set[eval_phase as usize].loaded == 0 {
-        load_set::<FE>(eval_phase, coeff_state_);
+        load_set(eval_phase, coeff_state_);
     }
     constant_and_parity_feature(side_to_move, moves_state_.disks_played, &mut board_state_.board, &mut coeff_state_.set[eval_phase as usize])
 }
@@ -838,7 +838,7 @@ pub fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mut coeff
             }
         }
         coeff_state_.set[curr_stage as usize].permanent = 1;
-        allocate_set::<FE>(curr_stage, coeff_state_, None);
+        allocate_set(curr_stage, coeff_state_, None);
         i += 1
     }
     coeff_state_.stage[(coeff_state_.stage_count - 1) as usize] = 60;
@@ -850,7 +850,7 @@ pub fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mut coeff
         j += 1
     }
     coeff_state_.set[60].permanent = 1;
-    allocate_set::<FE>(60, coeff_state_, None);
+    allocate_set(60, coeff_state_, None);
     /* Read the pattern values */
     unpack_coeffs::<FE, _>(&mut next_word, coeff_state_);
 }
