@@ -20,7 +20,7 @@ use engine::src::hash::{setup_hash, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, find_opening_name, g_book};
 use engine::src::stubs::floor;
 use engine::src::getcoeff::{remove_coeffs, coeff_state};
-use engine::src::myrandom::{my_random, my_srandom, random_instance};
+use engine::src::myrandom::{random_instance};
 use crate::src::osfbook::print_move_alternatives;
 use engine::src::zebra::{set_default_engine_globals, DumpHandler, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource, Config, INITIAL_CONFIG, learn_state};
 use libc_wrapper::{FILE, time_t};
@@ -588,8 +588,11 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     }
     if use_random != 0 {
         time(&mut timer);
-        my_srandom(timer as i32);
-    } else { my_srandom(1 as i32); }
+        let x = timer as i32;
+        random_instance.my_srandom(x);
+    } else {
+        let x = 1 as i32;
+        random_instance.my_srandom(x); }
     if config.tournament == 0 && run_script == 0 {
         while config.skill[0] < 0 as i32 {
             printf(b"Black parameters: \x00" as *const u8 as
@@ -1171,14 +1174,14 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         board_state.white_moves[i as usize] = -(1 as i32);
         i += 1
     }
-    let _black_hash1 = my_random() as i32;
-    let _black_hash2 = my_random() as i32;
-    let _white_hash1 = my_random() as i32;
-    let _white_hash2 = my_random() as i32;
-    let best_trans1 = my_random() as u32;
-    let best_trans2 = my_random() as u32;
-    let played_trans1 = my_random() as u32;
-    let played_trans2 = my_random() as u32;
+    let _black_hash1 = random_instance.my_random() as i32;
+    let _black_hash2 = random_instance.my_random() as i32;
+    let _white_hash1 = random_instance.my_random() as i32;
+    let _white_hash2 = random_instance.my_random() as i32;
+    let best_trans1 = random_instance.my_random() as u32;
+    let best_trans2 = random_instance.my_random() as u32;
+    let played_trans1 = random_instance.my_random() as u32;
+    let played_trans2 = random_instance.my_random() as u32;
     while game_in_progress() != 0 && moves_state.disks_played < provided_move_count {
         remove_coeffs(moves_state.disks_played, &mut coeff_state);
         generate_all(side_to_move);

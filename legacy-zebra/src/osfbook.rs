@@ -6,7 +6,7 @@ use crate::{
 };
 use crate::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::midgame::{middle_game, tree_search, midgame_state};
-use engine::src::myrandom::{my_srandom, my_random, random_instance};
+use engine::src::myrandom::{random_instance};
 use engine::src::hash::{setup_hash, clear_hash_drafts, hash_state, determine_hash_values};
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError};
@@ -2641,7 +2641,7 @@ unsafe fn do_midgame_statistics(index: i32,
     generate_all(side_to_move);
     /* With a certain probability, search the position to a variety
      of different depths in order to determine correlations. */
-    if ((my_random() % 1000 as i32 as i64) as f64)
+    if ((engine::src::myrandom::random_instance.my_random() % 1000 as i32 as i64) as f64)
         < 1000.0f64 * spec.prob &&
         abs((*g_book.node.offset(index as isize)).black_minimax_score as
             i32) < spec.max_diff {
@@ -2754,7 +2754,8 @@ pub unsafe fn generate_midgame_statistics(max_depth:
     spec.max_diff = max_diff;
     spec.max_depth = max_depth;
     spec.out_file_name = statistics_file_name;
-    my_srandom(start_time as i32);
+    let x = start_time as i32;
+    engine::src::myrandom::random_instance.my_srandom(x);
     do_midgame_statistics(0 as i32, spec, g_config.echo);
     time(&mut stop_time);
     printf(b"\nDone (took %d s)\n\x00" as *const u8 as *const i8,
@@ -2794,8 +2795,8 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                   white_player, white_time, white_eval,
                   &board_state.black_moves, &board_state.white_moves
     );
-    hash_state.set_hash_transformation(abs(my_random() as i32) as u32,
-                            abs(my_random() as i32) as u32);
+    hash_state.set_hash_transformation(abs(engine::src::myrandom::random_instance.my_random() as i32) as u32,
+                                       abs(engine::src::myrandom::random_instance.my_random() as i32) as u32);
     determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     depth = 1;
     while depth <= spec.max_depth {
@@ -2884,7 +2885,7 @@ unsafe fn do_endgame_statistics(index: i32,
     /* With a certain probability, search the position to a variety
      of different depths in order to determine correlations. */
     if moves_state.disks_played == 33 as i32 &&
-        ((my_random() % 1000 as i32 as i64) as
+        ((engine::src::myrandom::random_instance.my_random() % 1000 as i32 as i64) as
             f64) < 1000.0f64 * spec.prob {
         setup_hash(0 as i32, &mut hash_state, &mut  random_instance);
         determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
@@ -2958,7 +2959,8 @@ pub unsafe fn generate_endgame_statistics(max_depth:
     spec.max_diff = max_diff;
     spec.max_depth = max_depth;
     spec.out_file_name = statistics_file_name;
-    my_srandom(start_time as i32);
+    let x = start_time as i32;
+    engine::src::myrandom::random_instance.my_srandom(x);
     do_endgame_statistics(0 as i32, spec, g_config.echo);
     time(&mut stop_time);
     printf(b"\nDone (took %d s)\n\x00" as *const u8 as *const i8,
@@ -4613,7 +4615,8 @@ pub unsafe fn prepare_hash() {
     let mut k = 0;
     /* The hash keys are static, hence the same keys must be
        produced every time the program is run. */
-    my_srandom(0 as i32);
+    let x = 0 as i32;
+    engine::src::myrandom::random_instance.my_srandom(x);
     i = 0;
     while i < 2 {
         j = 0;
@@ -4621,9 +4624,9 @@ pub unsafe fn prepare_hash() {
             k = 0;
             while k < 6561 {
                 g_book.line_hash[i][j][k] =
-                    if my_random() % 2 as i64 != 0 {
-                        my_random()
-                    } else { -my_random() } as i32;
+                    if engine::src::myrandom::random_instance.my_random() % 2 as i64 != 0 {
+                        engine::src::myrandom::random_instance.my_random()
+                    } else { -engine::src::myrandom::random_instance.my_random() } as i32;
                 k += 1
             }
             j += 1

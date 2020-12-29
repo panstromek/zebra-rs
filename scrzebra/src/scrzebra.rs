@@ -3,7 +3,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types)]
 
 use engine::src::game::{global_terminate, game_state};
-use engine::src::myrandom::{my_srandom, random_instance};
+use engine::src::myrandom::{random_instance};
 use legacy_zebra::src::thordb::init_thor_database;
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
 use engine::src::timer::{get_real_timer, start_move, g_timer};
@@ -624,8 +624,11 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     }
     if use_random != 0 && 1 as i32 == 0 {
         FE::time(&mut timer);
-        my_srandom(timer as i32);
-    } else { my_srandom(1 as i32); }
+        let x = timer as i32;
+        engine::src::myrandom::random_instance.my_srandom(x);
+    } else {
+        let x = 1 as i32;
+        engine::src::myrandom::random_instance.my_srandom(x); }
     if run_script != 0 {
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line);

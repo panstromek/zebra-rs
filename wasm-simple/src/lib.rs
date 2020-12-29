@@ -10,7 +10,6 @@ use engine::src::game::{engine_global_setup, global_terminate, BoardSource, File
 use engine::src::error::{FrontEnd, FatalError};
 use wasm_bindgen::__rt::core::ffi::c_void;
 use engine::src::hash::HashEntry;
-use engine::src::myrandom::my_srandom;
 use wasm_bindgen::__rt::core::ptr::null_mut;
 use engine::src::learn::Learner;
 use wasm_bindgen::__rt::std::ffi::CStr;
@@ -94,7 +93,8 @@ pub fn init() {
         engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs);
         // init_thor_database::<WasmFrontend>();
 
-        my_srandom(1 as i32);
+        let x = 1 as i32;
+        engine::src::myrandom::random_instance.my_srandom(x);
 
         // FIXME don't run this init code on every start - my set_skills doesn't work because of that
         if config.skill[0] < 0 {

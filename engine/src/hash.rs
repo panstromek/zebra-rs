@@ -1,4 +1,4 @@
-use crate::src::myrandom::{my_random, random_instance, MyRandom};
+use crate::src::myrandom::{random_instance, MyRandom};
 use std::ffi::c_void;
 use crate::src::globals::Board;
 use engine_traits::Offset;

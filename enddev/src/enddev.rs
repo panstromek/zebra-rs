@@ -4,7 +4,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 
 use engine::src::moves::{moves_state, make_move, valid_move, generate_all};
 use engine::src::globals::{board_state};
-use engine::src::myrandom::{my_random, random_instance};
+use engine::src::myrandom::{random_instance};
 use engine::src::game::{EvaluatedMove};
 use engine::src::zebra::{EvaluationType};
 use engine::src::timer::start_move;
@@ -323,7 +323,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 if moves_state.disks_played >= first_allowed_dev &&
                     moves_state.disks_played <= latest_dev &&
                     (0.0001f64 *
-                        ((my_random() >> 9 as i32) %
+                        ((engine::src::myrandom::random_instance.my_random() >> 9 as i32) %
                             10000 as i32 as i64) as
                             f64) < rand_prob {
                     let mut i_0: i32 = 0;
@@ -406,7 +406,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         }
                     }
                     rand_val =
-                        ((my_random() >> 4 as i32) %
+                        ((engine::src::myrandom::random_instance.my_random() >> 4 as i32) %
                             (total_prob + 1 as i32) as i64)
                             as i32;
                     accum_prob = 0;

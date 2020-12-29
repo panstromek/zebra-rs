@@ -12,7 +12,6 @@ use engine::src::moves::{unmake_move, make_move, generate_all, moves_state};
 use engine::src::counter::{reset_counter, adjust_counter, counter_value};
 use engine::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use engine::src::getcoeff::{coeff_state, pattern_evaluation};
-use engine::src::myrandom::my_random;
 use engine::src::stubs::abs;
 use engine::src::osfbook::{get_book_move, fill_move_alternatives, g_book};
 use engine::src::game::{ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, PonderMoveReport, game_state};
@@ -667,9 +666,9 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                 unsearched_move[i as usize];
             if empties_0 > (if wld > exact { wld } else { exact }) {
                 transform1[i as usize] =
-                    abs(my_random() as i32) as u32;
+                    abs(engine::src::myrandom::random_instance.my_random() as i32) as u32;
                 transform2[i as usize] =
-                    abs(my_random() as i32) as u32
+                    abs(engine::src::myrandom::random_instance.my_random() as i32) as u32
             } else {
                 transform1[i as usize] = 0;
                 transform2[i as usize] = 0 as i32 as u32

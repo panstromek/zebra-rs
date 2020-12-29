@@ -7,7 +7,6 @@ use crate::{
         globals::board_state,
         eval::terminal_evaluation,
         probcut::prob_cut,
-        myrandom::my_random,
         zebra::{EvaluationType}
     }
 };
