@@ -8,7 +8,7 @@ use engine::src::globals::{board_state};
 use engine::src::search::{set_current_eval,search_state, force_return, negate_current_eval, create_eval_info, disc_count, clear_ponder_move, set_ponder_move, float_move, sort_moves};
 use engine::src::zebra::{EvaluationType};
 use engine::src::timer::{clear_ponder_times, start_move, get_real_timer, g_timer};
-use engine::src::moves::{unmake_move, make_move, generate_all, moves_state};
+use engine::src::moves::{unmake_move, make_move, generate_all_unsafe, moves_state};
 use engine::src::counter::{reset_counter, adjust_counter, counter_value};
 use engine::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use engine::src::getcoeff::{coeff_state, pattern_evaluation};
@@ -455,7 +455,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
     best_move = 0;
     game_evaluated_count = 0;
     reset_counter(&mut search_state.nodes);
-    generate_all(side_to_move);
+    generate_all_unsafe(side_to_move);
     if book_only != 0 || book != 0 {
         /* Evaluations for database moves */
         let mut flags = 0;

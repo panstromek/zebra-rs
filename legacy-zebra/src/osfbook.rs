@@ -11,7 +11,7 @@ use engine::src::hash::{setup_hash, clear_hash_drafts, hash_state, determine_has
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError};
 use engine::src::globals::board_state;
-use engine::src::moves::{unmake_move, make_move, generate_all, generate_specific, unmake_move_no_hash, make_move_no_hash, moves_state};
+use engine::src::moves::{unmake_move, make_move, generate_all_unsafe, generate_specific, unmake_move_no_hash, make_move_no_hash, moves_state};
 use engine::src::stubs::{abs, floor};
 use engine::src::search::{disc_count, search_state};
 use engine::src::end::end_game;
@@ -410,7 +410,7 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
                1 as i32 != 0 {
             side_to_move = 0 as i32
         } else { side_to_move = 2 as i32 }
-        generate_all(side_to_move);
+        generate_all_unsafe(side_to_move);
         next = -(1 as i32);
         this_move = -(1 as i32);
         i = 0;
@@ -596,7 +596,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
             outcome = 2 as i32 * black_count - 64 as i32
         } else { outcome = 0 as i32 }
     } else {
-        generate_all(side_to_move);
+        generate_all_unsafe(side_to_move);
         determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
         if echo != 0 {
             puts(b"\x00" as *const u8 as *const i8);
@@ -690,7 +690,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                    1 as i32 != 0 {
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
-            generate_all(side_to_move);
+            generate_all_unsafe(side_to_move);
             determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
             if moves_state.disks_played >= 60 as i32 - max_full_solve {
                 /* Only solve the position if it hasn't been solved already */
@@ -1914,7 +1914,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                        && make_move_no_hash(side_to_move, move_0) != 0 {
                     let mut new_side_to_move =
                         0 as i32 + 2 as i32 - side_to_move;
-                    generate_all(new_side_to_move);
+                    generate_all_unsafe(new_side_to_move);
                     if moves_state.move_count[moves_state.disks_played as usize] == 0 as i32 {
                         new_side_to_move = side_to_move
                     }
@@ -2507,7 +2507,7 @@ unsafe fn do_restricted_minimax(index: i32,
     if side_to_move == 0 as i32 {
         best_score = -(32000 as i32) as i16
     } else { best_score = 32000 as i32 as i16 }
-    generate_all(side_to_move);
+    generate_all_unsafe(side_to_move);
     child_count = 0;
     i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {
@@ -2638,7 +2638,7 @@ unsafe fn do_midgame_statistics(index: i32,
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
-    generate_all(side_to_move);
+    generate_all_unsafe(side_to_move);
     /* With a certain probability, search the position to a variety
      of different depths in order to determine correlations. */
     if ((engine::src::myrandom::random_instance.my_random() % 1000 as i32 as i64) as f64)
@@ -2831,7 +2831,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
         make_move(side_to_move, best_move, 1 as i32);
         stored_side_to_move = side_to_move;
         side_to_move = 0 as i32 + 2 as i32 - side_to_move;
-        generate_all(side_to_move);
+        generate_all_unsafe(side_to_move);
         if moves_state.move_count[moves_state.disks_played as usize] > 0 as i32 {
             printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
                        *const i8, 60 as i32 - moves_state.disks_played);
@@ -2881,7 +2881,7 @@ unsafe fn do_endgame_statistics(index: i32,
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
-    generate_all(side_to_move);
+    generate_all_unsafe(side_to_move);
     /* With a certain probability, search the position to a variety
      of different depths in order to determine correlations. */
     if moves_state.disks_played == 33 as i32 &&
@@ -3009,7 +3009,7 @@ unsafe fn do_clear(index: i32, low: i32,
             1 as i32 != 0 {
             side_to_move = 0 as i32
         } else { side_to_move = 2 as i32 }
-        generate_all(side_to_move);
+        generate_all_unsafe(side_to_move);
         i = 0;
         while i < moves_state.move_count[moves_state.disks_played as usize] {
             this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
@@ -3106,7 +3106,7 @@ unsafe fn do_correct(index: i32,
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
     /* First correct the children */
-    generate_all(side_to_move);
+    generate_all_unsafe(side_to_move);
     child_count = 0;
     i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {
@@ -3165,7 +3165,7 @@ unsafe fn do_correct(index: i32,
     }
     /* Then correct the g_book.node itself (hopefully exploiting lots
      of useful information in the hash table) */
-    generate_all(side_to_move);
+    generate_all_unsafe(side_to_move);
     determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     if moves_state.disks_played >= 60 as i32 - max_empty {
         really_evaluate =
@@ -3417,7 +3417,7 @@ unsafe fn do_export(index: i32, stream: *mut FILE,
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
-    generate_all(side_to_move);
+    generate_all_unsafe(side_to_move);
     child_count = 0;
     i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {
@@ -3561,7 +3561,7 @@ pub unsafe fn do_validate<FE: FrontEnd>(index: i32, echo:i32) {
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
-    generate_all(side_to_move);
+    generate_all_unsafe(side_to_move);
     if (*g_book.node.offset(index as isize)).flags as i32 &
         (16 as i32 | 4 as i32) == 0 &&
         (*g_book.node.offset(index as isize)).alternative_score as i32 ==
@@ -3609,7 +3609,7 @@ pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32, echo:i32) {
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
-    generate_all(side_to_move);
+    generate_all_unsafe(side_to_move);
     if (*g_book.node.offset(index as isize)).flags as i32 &
         (16 as i32 | 4 as i32) == 0 {
         evaluate_node::<FE>(index, echo);
@@ -3750,7 +3750,7 @@ pub unsafe fn do_examine(index: i32) {
         != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
-    generate_all(side_to_move);
+    generate_all_unsafe(side_to_move);
     child_count = 0;
     i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {
@@ -4222,7 +4222,7 @@ pub unsafe fn do_minimax(index: i32,
             best_white_score = 32000 as i32 as i16
         }
     }
-    generate_all(side_to_move);
+    generate_all_unsafe(side_to_move);
     child_count = 0;
     i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {
@@ -4548,7 +4548,7 @@ pub unsafe fn do_compress(index: i32,
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
     valid_child_count = 0;
-    generate_all(side_to_move);
+    generate_all_unsafe(side_to_move);
     i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         this_move =
