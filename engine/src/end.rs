@@ -5,7 +5,7 @@ use crate::{
     src:: {
         epcstat::{END_SIGMA, END_MEAN, END_STATS_AVAILABLE},
         moves::{dir_mask, unmake_move, make_move},
-        search::{force_return, hash_expand_pv, search_state, store_pv, restore_pv, create_eval_info, disc_count, get_ponder_move, select_move},
+        search::{force_return, hash_expand_pv, search_state, store_pv, restore_pv, create_eval_info, disc_count, select_move},
         hash::{hash_state, find_hash, HashEntry},
         bitbcnt::CountFlips_bitboard,
         bitboard::{set_bitboards, BitBoard},
@@ -1634,7 +1634,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                       disk_diff, previous_move, bb_flips_);
         board_state.pv_depth[level as usize] = level + 1 as i32;
         board_state.pv[level as usize][level as usize] = end.  best_move;
-        if level == 0 as i32 && get_ponder_move() == 0 {
+        if level == 0 as i32 && search_state.get_ponder_move() == 0 {
             FE::end_tree_search_level_0_ponder_0_report(alpha, beta, result, end.  best_move)
         }
         return result
@@ -1658,7 +1658,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             board_state.pv[level as usize][level as usize] =
                 entry.move_0[0];
             board_state.pv_depth[level as usize] = level + 1 as i32;
-            if level == 0 as i32 && get_ponder_move() == 0 {
+            if level == 0 as i32 && search_state.get_ponder_move() == 0 {
                 FE::end_tree_search_output_some_stats(&entry);
             }
             if entry.selectivity as i32 > 0 as i32 {
@@ -1973,7 +1973,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                 return -(27000 as i32)
             }
         }
-        if level == 0 as i32 && get_ponder_move() == 0 {
+        if level == 0 as i32 && search_state.get_ponder_move() == 0 {
             FE::end_tree_search_level_0_ponder_0_short_report(move_0, first);
         }
         make_move(side_to_move, move_0, use_hash);
@@ -2053,7 +2053,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         if g_timer.is_panic_abort() != 0 || force_return != 0 {
             return -(27000 as i32)
         }
-        if level == 0 as i32 && get_ponder_move() == 0 {
+        if level == 0 as i32 && search_state.get_ponder_move() == 0 {
             /* Output some stats */
             FE::end_tree_search_output_some_second_stats(alpha, beta, curr_val, update_pv, move_index)
         }

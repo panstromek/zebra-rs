@@ -357,18 +357,20 @@ pub fn restore_pv(pv_buffer: &[i32], depth_buffer: i32, state: &mut BoardState) 
   that the search is performed given that the move indicated has
   been made.
 */
+impl SearchState {
+    pub fn set_ponder_move(&mut self, move_0: i32) {
+        self.pondered_move = move_0;
+    }
 
-pub unsafe fn set_ponder_move(move_0: i32) {
-    search_state.pondered_move = move_0;
+    pub fn clear_ponder_move(&mut self) {
+        self.pondered_move = 0;
+    }
+
+    pub fn get_ponder_move(&self) -> i32 {
+        return self.pondered_move;
+    }
 }
 
-pub unsafe fn clear_ponder_move() {
-    search_state.pondered_move = 0;
-}
-
-pub unsafe fn get_ponder_move() -> i32 {
-    return search_state.pondered_move;
-}
 /*
   CREATE_EVAL_INFO
   Creates a result descriptor given all the information available

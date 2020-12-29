@@ -5,7 +5,7 @@ use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError, FE};
 use engine::src::globals::{board_state};
-use engine::src::search::{set_current_eval,search_state, force_return, negate_current_eval, create_eval_info, disc_count, clear_ponder_move, set_ponder_move, float_move, sort_moves};
+use engine::src::search::{set_current_eval,search_state, force_return, negate_current_eval, create_eval_info, disc_count, float_move, sort_moves};
 use engine::src::zebra::{EvaluationType};
 use engine::src::timer::{g_timer};
 use engine::src::moves::{unmake_move, make_move,  moves_state, generate_all};
@@ -289,7 +289,8 @@ pub unsafe fn ponder_move<
     let mut i = 0;
     while force_return == 0 && i < expect_count {
         move_start_time =  g_timer.get_real_timer::<FE>();
-        set_ponder_move(expect_list[i as usize]);
+        let move_0 = expect_list[i as usize];
+        search_state.set_ponder_move(move_0);
         this_move = expect_list[i as usize];
         prefix_move = this_move;
         make_move(side_to_move, this_move, 1 as i32);
@@ -298,7 +299,7 @@ pub unsafe fn ponder_move<
                                          1 as i32, 0 as i32, mid, exact, wld,
                                          0 as i32, &mut eval_info, display_pv, echo);
         unmake_move(side_to_move, this_move);
-        clear_ponder_move();
+        search_state.clear_ponder_move();
         move_stop_time =  g_timer.get_real_timer::<FE>();
         let move_0 = expect_list[i as usize];
         let time_0 = move_stop_time - move_start_time;

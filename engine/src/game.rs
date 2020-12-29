@@ -1,6 +1,6 @@
 use crate::src::zebra::EvaluationType;
 use crate::src::counter::{adjust_counter, counter_value, reset_counter, add_counter};
-use crate::src::search::{setup_search, disc_count, complete_pv, get_ponder_move, set_current_eval, create_eval_info, force_return, clear_ponder_move, set_ponder_move, float_move, sort_moves, search_state};
+use crate::src::search::{setup_search, disc_count, complete_pv, set_current_eval, create_eval_info, force_return, float_move, sort_moves, search_state};
 use crate::src::globals::{board_state, Board, BoardState};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_terminal_patterns, process_coeffs_from_fn_source, CoeffAdjustments, remove_coeffs, coeff_state};
@@ -356,7 +356,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     FE::reset_buffer_display();
     g_timer.determine_move_time(my_time as f64, my_incr as f64,
                         moves_state.disks_played + 4 as i32);
-    if get_ponder_move() == 0 {  g_timer.clear_ponder_times(); }
+    if search_state.get_ponder_move() == 0 {  g_timer.clear_ponder_times(); }
     remove_coeffs(moves_state.disks_played, &mut coeff_state);
     /* No feasible moves? */
     if moves_state.move_count[moves_state.disks_played as usize] == 0 as i32 {
@@ -420,7 +420,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             book_move_found = 1;
             move_type = BOOK_MOVE;
             if echo != 0 {
-                let ponder_move = get_ponder_move();
+                let ponder_move = search_state.get_ponder_move();
                 Out::echo_ponder_move(curr_move, ponder_move);
             }
             board_state.clear_pv();
@@ -447,7 +447,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 book_move_found = 1;
                 move_type = BOOK_MOVE;
                 if echo != 0 {
-                    let ponder_move = get_ponder_move();
+                    let ponder_move = search_state.get_ponder_move();
                     Out::echo_ponder_move_2(curr_move, ponder_move);
                 }
                 board_state.clear_pv();
@@ -473,7 +473,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             book_move_found = 1;
             move_type = BOOK_MOVE;
             if echo != 0 {
-                let ponder_move = get_ponder_move();
+                let ponder_move = search_state.get_ponder_move();
                 Out::echo_ponder_move_4(curr_move, ponder_move);
             }
             board_state.clear_pv();
@@ -670,7 +670,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     }
     /* Write the principal variation, if available, to the log file
        and, optionally, to screen. */
-    if get_ponder_move() == 0 {
+    if search_state.get_ponder_move() == 0 {
         complete_pv::<FE>(side_to_move);
         if display_pv != 0 && echo != 0 { Out::display_out_optimal_line(); }
         if let Some(logger) = logger { L::log_optimal_line(logger); }

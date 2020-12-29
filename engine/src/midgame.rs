@@ -1,6 +1,6 @@
 use crate::{
     src::{
-        search::{search_state, force_return, hash_expand_pv, get_ponder_move, create_eval_info, inherit_move_lists, disc_count, reorder_move_list},
+        search::{search_state, force_return, hash_expand_pv, create_eval_info, inherit_move_lists, disc_count, reorder_move_list},
         counter::{counter_value, adjust_counter},
         moves::{ unmake_move, make_move, moves_state, unmake_move_no_hash, make_move_no_hash},
         hash::{find_hash, HashEntry, hash_state},
@@ -1115,7 +1115,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
         }
     }
     pre_search_done = 0;
-    if get_ponder_move() == 0 {
+    if search_state.get_ponder_move() == 0 {
         FE::midgame_display_initial_ponder_move(alpha, beta);
     }
     /* Full negascout search */
@@ -1244,7 +1244,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
         }
         move_0 =
             search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
-        if get_ponder_move() == 0 {
+        if search_state.get_ponder_move() == 0 {
             FE::midgame_display_simple_ponder_move(move_0);
         }
         make_move(side_to_move, move_0, 1 as i32);
@@ -1306,7 +1306,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
             return -(27000 as i32)
         }
         search_state.evals[moves_state.disks_played as usize][move_0 as usize] = curr_val;
-        if get_ponder_move() == 0 {
+        if search_state.get_ponder_move() == 0 {
             FE::midgame_display_ponder_move(max_depth, alpha, beta, curr_val, searched, update_pv)
         }
         if update_pv != 0 {

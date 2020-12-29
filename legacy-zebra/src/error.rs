@@ -8,7 +8,7 @@ use crate::src::osfbook::{print_move_alternatives};
 use std::ffi::{c_void, CStr, CString};
 use engine::{
     src:: {
-        search::{get_ponder_move, set_current_eval},
+        search::{set_current_eval},
         counter::{counter_value},
     }
 };
@@ -19,7 +19,7 @@ use crate::{
     }
 };
 use engine::src::timer::{g_timer};
-use engine::src::search::{hash_expand_pv};
+use engine::src::search::{hash_expand_pv, search_state};
 
 use engine::src::game::CandidateMove;
 use engine::src::counter::CounterType;
@@ -279,11 +279,11 @@ impl FrontEnd for LibcFatalError {
             free(eval_str as *mut std::ffi::c_void);
             let node_val = counter_value(nodes_counter);
             send_status_nodes(node_val);
-            if get_ponder_move() != 0 {
+            if search_state.get_ponder_move() != 0 {
                 send_status(b"{%c%c} \x00" as *const u8 as *const i8,
-                            'a' as i32 + get_ponder_move() % 10 as i32 -
+                            'a' as i32 + search_state.get_ponder_move() % 10 as i32 -
                                 1 as i32,
-                            '0' as i32 + get_ponder_move() / 10 as i32);
+                            '0' as i32 + search_state.get_ponder_move() / 10 as i32);
             }
             send_status_pv(pv_zero, empties, pv_depth_zero);
             send_status_time( g_timer.get_elapsed_time::<FE>());
@@ -430,11 +430,11 @@ impl FrontEnd for LibcFatalError {
                                 *const i8,
                             chosen_score as f64 / 128.0f64);
             }
-            if get_ponder_move() != 0 {
+            if search_state.get_ponder_move() != 0 {
                 send_status(b"{%c%c} \x00" as *const u8 as *const i8,
-                            'a' as i32 + get_ponder_move() % 10 as i32 -
+                            'a' as i32 + search_state.get_ponder_move() % 10 as i32 -
                                 1 as i32,
-                            '0' as i32 + get_ponder_move() / 10 as i32);
+                            '0' as i32 + search_state.get_ponder_move() / 10 as i32);
             }
             send_status(b"%c%c\x00" as *const u8 as *const i8,
                         'a' as i32 +
@@ -532,13 +532,13 @@ impl FrontEnd for LibcFatalError {
              free(eval_str as *mut std::ffi::c_void);
              let node_val = counter_value(nodes_counter);
              send_status_nodes(node_val);
-             if get_ponder_move() != 0 {
+             if search_state.get_ponder_move() != 0 {
                  send_status(b"{%c%c} \x00" as *const u8 as
                                  *const i8,
-                             'a' as i32 + get_ponder_move() % 10 as i32
+                             'a' as i32 + search_state.get_ponder_move() % 10 as i32
                                  - 1 as i32,
                              '0' as i32 +
-                                 get_ponder_move() / 10 as i32);
+                                 search_state.get_ponder_move() / 10 as i32);
              }
              hash_expand_pv(side_to_move, 0 as i32, 4 as i32,
                             12345678 as i32);
