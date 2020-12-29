@@ -22,7 +22,7 @@ use crate::src::hash::{add_hash};
 use crate::src::midgame::{tree_search, midgame_state};
 use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_move};
 use crate::src::stubs::{abs, ceil};
-use crate::src::timer::{check_panic_abort, check_threshold, get_elapsed_time, g_timer, set_panic_threshold};
+use crate::src::timer::{check_panic_abort, check_threshold, get_elapsed_time, g_timer};
 use crate::src::zebra::EvaluationType;
 use crate::src::globals::Board;
 use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_EVAL};
@@ -2295,11 +2295,14 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     board_state.piece_count[0][moves_state.disks_played as usize] = disc_count(0, &board_state.board);
     board_state.piece_count[2][moves_state.disks_played as usize] = disc_count(2, &board_state.board);
     if empties > 32 {
-        set_panic_threshold(0.20f64);
+        let value = 0.20f64;
+        g_timer.set_panic_threshold(value);
     } else if empties < 22 {
-        set_panic_threshold(0.50f64);
+        let value = 0.50f64;
+        g_timer.set_panic_threshold(value);
     } else {
-        set_panic_threshold(0.50f64 - (empties - 22) as f64 * 0.03f64);
+        let value = 0.50f64 - (empties - 22) as f64 * 0.03f64;
+        g_timer.set_panic_threshold(value);
     }
     FE::reset_buffer_display();
     /* Make sure the pre-searches don't mess up the hash table */
