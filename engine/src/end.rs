@@ -531,7 +531,7 @@ unsafe fn solve_parity(end:&mut End, my_bits: BitBoard,
         stability_bound =
             64 as i32 -
                 2 as i32 *
-                    count_edge_stable(oppcol, opp_bits, my_bits);
+                    count_edge_stable(oppcol, opp_bits, my_bits, &mut stable_state);
         if stability_bound <= alpha { return alpha }
         stability_bound =
             64 as i32 -
@@ -814,7 +814,7 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
         stability_bound =
             64 as i32 -
                 2 as i32 *
-                    count_edge_stable(oppcol, opp_bits, my_bits);
+                    count_edge_stable(oppcol, opp_bits, my_bits, &mut stable_state);
         if stability_bound <= alpha { return alpha }
         stability_bound =
             64 as i32 -
@@ -1265,7 +1265,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
         stability_bound =
             64 as i32 -
                 2 as i32 *
-                    count_edge_stable(oppcol, opp_bits, my_bits);
+                    count_edge_stable(oppcol, opp_bits, my_bits, &mut stable_state);
         if stability_bound <= alpha { return alpha }
         stability_bound =
             64 as i32 -
@@ -1596,7 +1596,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             64 as i32 -
                 2 as i32 *
                     count_edge_stable(0 as i32 + 2 as i32 -
-                                          side_to_move, opp_bits, my_bits);
+                                          side_to_move, opp_bits, my_bits, &mut stable_state);
         if stability_bound <= alpha {
             board_state.pv_depth[level as usize] = level;
             return alpha

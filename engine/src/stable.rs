@@ -199,10 +199,9 @@ fn edge_zardoz_stable(ss: &mut BitBoard, dd: BitBoard, od: BitBoard) {
   by COUNT_STABLE below.
 */
 
-pub unsafe fn count_edge_stable(color: i32,
-                                           col_bits: BitBoard,
-                                           opp_bits: BitBoard)
- -> i32 {
+pub fn count_edge_stable(color: i32, col_bits: BitBoard, opp_bits: BitBoard, state: &mut StableState)
+                                -> i32 {
+
     let mut col_mask: u32 = 0;
     let mut opp_mask: u32 = 0;
     let mut ix_a1a8: u32 = 0;
@@ -236,8 +235,8 @@ pub unsafe fn count_edge_stable(color: i32,
                                                                                   u32)
             >> 24 as i32;
     ix_a1a8 =
-        (stable_state.base_conversion[col_mask as usize] as i32 -
-             stable_state.base_conversion[opp_mask as usize] as i32) as
+        (state.base_conversion[col_mask as usize] as i32 -
+             state.base_conversion[opp_mask as usize] as i32) as
             u32;
     col_mask =
         ((col_bits.low & 0x80808080 as u32) >>
@@ -270,55 +269,55 @@ pub unsafe fn count_edge_stable(color: i32,
                                                                                   u32)
             >> 24 as i32;
     ix_h1h8 =
-        (stable_state.base_conversion[col_mask as usize] as i32 -
-             stable_state.base_conversion[opp_mask as usize] as i32) as
+        (state.base_conversion[col_mask as usize] as i32 -
+             state.base_conversion[opp_mask as usize] as i32) as
             u32;
     ix_a1h1 =
-        (stable_state.base_conversion[(col_bits.low & 255 as i32 as u32)
+        (state.base_conversion[(col_bits.low & 255 as i32 as u32)
                              as usize] as i32 -
-             stable_state.base_conversion[(opp_bits.low &
+             state.base_conversion[(opp_bits.low &
                                   255 as i32 as u32) as
                                  usize] as i32) as u32;
     ix_a8h8 =
-        (stable_state.base_conversion[(col_bits.high >> 24 as i32) as usize] as
+        (state.base_conversion[(col_bits.high >> 24 as i32) as usize] as
              i32 -
-             stable_state.base_conversion[(opp_bits.high >> 24 as i32) as usize] as
+             state.base_conversion[(opp_bits.high >> 24 as i32) as usize] as
                  i32) as u32;
     if color == 0 as i32 {
-        stable_state.edge_a1h1 =
+        state.edge_a1h1 =
             ((3280 as i32 * 1 as i32) as
                  u32).wrapping_sub(ix_a1h1) as i32;
-        stable_state.edge_a8h8 =
+        state.edge_a8h8 =
             ((3280 as i32 * 1 as i32) as
                  u32).wrapping_sub(ix_a8h8) as i32;
-        stable_state.edge_a1a8 =
+        state.edge_a1a8 =
             ((3280 as i32 * 1 as i32) as
                  u32).wrapping_sub(ix_a1a8) as i32;
-        stable_state.edge_h1h8 =
+        state.edge_h1h8 =
             ((3280 as i32 * 1 as i32) as
                  u32).wrapping_sub(ix_h1h8) as i32;
-        return (stable_state.black_stable[stable_state.edge_a1h1 as usize] as i32 +
-                    stable_state.black_stable[stable_state.edge_a1a8 as usize] as i32 +
-                    stable_state.black_stable[stable_state.edge_a8h8 as usize] as i32 +
-                    stable_state.black_stable[stable_state.edge_h1h8 as usize] as i32) as
+        return (state.black_stable[state.edge_a1h1 as usize] as i32 +
+                    state.black_stable[state.edge_a1a8 as usize] as i32 +
+                    state.black_stable[state.edge_a8h8 as usize] as i32 +
+                    state.black_stable[state.edge_h1h8 as usize] as i32) as
                    u8 as i32 / 2 as i32
     } else {
-        stable_state.edge_a1h1 =
+        state.edge_a1h1 =
             ((3280 as i32 * 1 as i32) as
                  u32).wrapping_add(ix_a1h1) as i32;
-        stable_state.edge_a8h8 =
+        state.edge_a8h8 =
             ((3280 as i32 * 1 as i32) as
                  u32).wrapping_add(ix_a8h8) as i32;
-        stable_state.edge_a1a8 =
+        state.edge_a1a8 =
             ((3280 as i32 * 1 as i32) as
                  u32).wrapping_add(ix_a1a8) as i32;
-        stable_state.edge_h1h8 =
+        state.edge_h1h8 =
             ((3280 as i32 * 1 as i32) as
                  u32).wrapping_add(ix_h1h8) as i32;
-        return (stable_state.white_stable[stable_state.edge_a1h1 as usize] as i32 +
-                    stable_state.white_stable[stable_state.edge_a1a8 as usize] as i32 +
-                    stable_state.white_stable[stable_state.edge_a8h8 as usize] as i32 +
-                    stable_state.white_stable[stable_state.edge_h1h8 as usize] as i32) as
+        return (state.white_stable[state.edge_a1h1 as usize] as i32 +
+                    state.white_stable[state.edge_a1a8 as usize] as i32 +
+                    state.white_stable[state.edge_a8h8 as usize] as i32 +
+                    state.white_stable[state.edge_h1h8 as usize] as i32) as
                    u8 as i32 / 2 as i32
     };
 }
@@ -409,7 +408,7 @@ unsafe fn stability_search(my_bits: BitBoard,
         } else { black_bits = opp_bits; white_bits = my_bits }
         all_stable_bits.high = 0;
         all_stable_bits.low = 0;
-        count_edge_stable(0 as i32, black_bits, white_bits);
+        count_edge_stable(0 as i32, black_bits, white_bits, &mut stable_state);
         if (*candidate_bits).high & black_bits.high != 0 ||
                (*candidate_bits).low & black_bits.low != 0 {
             count_stable(0 as i32, black_bits, white_bits, &mut stable_state);
@@ -597,7 +596,7 @@ pub unsafe fn get_stable(board: &Board,
         }
     } else {
         /* Nobody wiped out */
-        count_edge_stable(0 as i32, black_bits, white_bits);
+        count_edge_stable(0 as i32, black_bits, white_bits, &mut stable_state);
         count_stable(0 as i32, black_bits, white_bits, &mut stable_state);
         count_stable(2 as i32, white_bits, black_bits, &mut stable_state);
         all_stable.high = stable_state.last_black_stable.high | stable_state.last_white_stable.high;
