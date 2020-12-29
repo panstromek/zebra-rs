@@ -7,7 +7,7 @@ use engine::src::zebra::EvaluationType;
 
 
 use engine::src::search::disc_count;
-use engine::src::timer::get_real_timer;
+use engine::src::timer::{g_timer};
 use std::ffi::c_void;
 
 static mut stored_status_buffer: [i8; 256] = [0; 256];
@@ -104,7 +104,7 @@ pub unsafe fn reset_buffer_display<FE: FrontEnd>() {
     clear_sweep();
     interval1 = 0.0f64;
     interval2 = 1.0f64;
-    last_output = get_real_timer::<FE>();
+    last_output =  g_timer.get_real_timer::<FE>();
 }
 
 /*

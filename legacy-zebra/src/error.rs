@@ -18,7 +18,7 @@ use crate::{
                   send_status_pv, send_status_nodes, produce_eval_text, display_sweep, send_sweep},
     }
 };
-use engine::src::timer::{get_elapsed_time, get_real_timer, g_timer};
+use engine::src::timer::{g_timer};
 use engine::src::search::{hash_expand_pv};
 
 use engine::src::game::CandidateMove;
@@ -119,7 +119,7 @@ impl FrontEnd for LibcFatalError {
     */
     fn display_buffers() {
         unsafe {
-            let timer = get_real_timer::<FE>();
+            let timer =  g_timer.get_real_timer::<FE>();
             if timer - last_output >= interval2 || timed_buffer_management == 0 {
                 display_status(stdout, 0 as i32);
                 status_modified = 0;
@@ -286,10 +286,10 @@ impl FrontEnd for LibcFatalError {
                             '0' as i32 + get_ponder_move() / 10 as i32);
             }
             send_status_pv(pv_zero, empties, pv_depth_zero);
-            send_status_time(get_elapsed_time::<FE>());
-            if get_elapsed_time::<FE>() > 0.0001f64 {
+            send_status_time( g_timer.get_elapsed_time::<FE>());
+            if  g_timer.get_elapsed_time::<FE>() > 0.0001f64 {
                 send_status(b"%6.0f %s  \x00" as *const u8 as *const i8,
-                            node_val / (get_elapsed_time::<FE>() + 0.0001f64),
+                            node_val / ( g_timer.get_elapsed_time::<FE>() + 0.0001f64),
                             b"nps\x00" as *const u8 as *const i8);
             };
         }
@@ -543,11 +543,11 @@ impl FrontEnd for LibcFatalError {
              hash_expand_pv(side_to_move, 0 as i32, 4 as i32,
                             12345678 as i32);
              send_status_pv(pv_zero, max_depth, pv_depth_zero);
-             send_status_time(get_elapsed_time::<FE>());
-             if get_elapsed_time::<FE>() != 0.0f64 {
+             send_status_time( g_timer.get_elapsed_time::<FE>());
+             if  g_timer.get_elapsed_time::<FE>() != 0.0f64 {
                  send_status(b"%6.0f %s\x00" as *const u8 as
                                  *const i8,
-                             node_val / (get_elapsed_time::<FE>() + 0.001f64),
+                             node_val / ( g_timer.get_elapsed_time::<FE>() + 0.001f64),
                              b"nps\x00" as *const u8 as *const i8);
              }
 

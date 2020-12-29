@@ -5,7 +5,7 @@ use crate::src::globals::{board_state, Board, BoardState};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_terminal_patterns, process_coeffs_from_fn_source, CoeffAdjustments, remove_coeffs, coeff_state};
 use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
-use crate::src::timer::{clear_ponder_times, time_t, get_elapsed_time, get_real_timer, start_move, g_timer};
+use crate::src::timer::{time_t, g_timer};
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, middle_game,calculate_perturbation, midgame_state};
 use crate::src::moves::{valid_move,  unmake_move, make_move, moves_state, generate_all};
@@ -130,7 +130,7 @@ pub unsafe fn engine_game_init() {
     setup_search(&mut search_state);
     setup_midgame(&mut midgame_state, &mut random_instance);
     setup_end();
-    clear_ponder_times(&mut g_timer);
+    g_timer.clear_ponder_times();
     reset_counter(&mut search_state.total_nodes);
     reset_counter(&mut search_state.total_evaluations);
     flip_stack_.init_flip_stack();
@@ -356,7 +356,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     FE::reset_buffer_display();
     g_timer.determine_move_time(my_time as f64, my_incr as f64,
                         moves_state.disks_played + 4 as i32);
-    if get_ponder_move() == 0 { clear_ponder_times(&mut g_timer); }
+    if get_ponder_move() == 0 {  g_timer.clear_ponder_times(); }
     remove_coeffs(moves_state.disks_played, &mut coeff_state);
     /* No feasible moves? */
     if moves_state.move_count[moves_state.disks_played as usize] == 0 as i32 {
@@ -643,7 +643,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                                  0 as i32, 0 as i32);
             let info = &*eval_info;
             let counter_value = counter_value(&mut search_state.nodes);
-            let elapsed_time = get_elapsed_time::<FE>();
+            let elapsed_time =  g_timer.get_elapsed_time::<FE>();
             Out::send_move_type_0_status(interrupted_depth, info, counter_value, elapsed_time);
         }
         1 => { *eval_info = book_eval_info }
@@ -652,7 +652,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         _ => { }
     }
     set_current_eval(*eval_info);
-    game_state.last_time_used = get_elapsed_time::<FE>();
+    game_state.last_time_used =  g_timer.get_elapsed_time::<FE>();
     if update_all != 0 {
         search_state.total_time += game_state.last_time_used;
         add_counter(&mut search_state.total_evaluations, &mut search_state.evaluations);
