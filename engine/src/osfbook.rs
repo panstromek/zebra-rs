@@ -437,35 +437,35 @@ pub fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32, book: &mu
     *val1 = abs(min_hash1);
     *orientation = min_map;
 }
-
+impl Book {
 /*
    SET_SEARCH_DEPTH
    When finding move alternatives, searches to depth DEPTH
    will be performed.
 */
 
-pub unsafe fn set_search_depth(depth: i32) {
-    g_book.search_depth = depth;
+pub fn set_search_depth(&mut self, depth: i32) {
+    self.search_depth = depth;
 }
 /*
   SET_EVAL_SPAN
   Specify the evaluation value interval where nodes are re-evaluated.
 */
 
-pub unsafe fn set_eval_span(min_span: f64,
+pub fn set_eval_span(&mut self, min_span: f64,
                             max_span: f64) {
-    g_book.min_eval_span = ceil(min_span * 128.0f64) as i32;
-    g_book.max_eval_span = ceil(max_span * 128.0f64) as i32;
+    self.min_eval_span = ceil(min_span * 128.0f64) as i32;
+    self.max_eval_span = ceil(max_span * 128.0f64) as i32;
 }
 /*
   SET_NEGAMAX_SPAN
   Specify the negamax value interval where nodes are re-evaluated.
 */
 
-pub unsafe fn set_negamax_span(min_span: f64,
-                               max_span: f64) {
-    g_book.min_negamax_span = ceil(min_span * 128.0f64) as i32;
-    g_book.max_negamax_span = ceil(max_span * 128.0f64) as i32;
+pub fn set_negamax_span(&mut self, min_span: f64, max_span: f64) {
+    self.min_negamax_span = ceil(min_span * 128.0f64) as i32;
+    self.max_negamax_span = ceil(max_span * 128.0f64) as i32;
+}
 }
 /*
    ADJUST_SCORE

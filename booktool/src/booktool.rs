@@ -2,7 +2,7 @@
 non_upper_case_globals, unused_assignments, unused_mut)]
 
 use legacy_zebra::src::osfbook::{write_text_database, write_compressed_database, write_binary_database, generate_endgame_statistics, generate_midgame_statistics, display_doubly_optimal_line, export_tree, restricted_minimax_tree, minimax_tree, merge_position_list, correct_tree, evaluate_tree, merge_binary_database, clear_tree, book_statistics, convert_opening_list, set_output_script_name, unpack_compressed_database, read_text_database, read_binary_database, build_tree, init_osf};
-use engine::src::osfbook::{set_deviation_value, set_search_depth, set_eval_span, set_negamax_span, set_max_batch_size, g_book};
+use engine::src::osfbook::{set_deviation_value, set_max_batch_size, g_book};
 use legacy_zebra::src::error::{LibcFatalError};
 use engine::src::zebra::DrawMode::{OPPONENT_WINS, WHITE_WINS, BLACK_WINS, NEUTRAL};
 use engine::src::zebra::GameMode::{PUBLIC_GAME, PRIVATE_GAME};
@@ -267,7 +267,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                  b"-l\x00" as *const u8 as
                                      *const i8) == 0 {
                 arg_index += 1;
-                set_search_depth(atoi(*argv.offset(arg_index as isize)));
+               g_book.set_search_depth(atoi(*argv.offset(arg_index as isize)));
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-evalspan\x00" as *const u8 as
                                      *const i8) == 0 {
@@ -275,7 +275,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 min_eval_span = atof(*argv.offset(arg_index as isize));
                 arg_index += 1;
                 max_eval_span = atof(*argv.offset(arg_index as isize));
-                set_eval_span(min_eval_span, max_eval_span);
+               g_book.set_eval_span(min_eval_span, max_eval_span);
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-negspan\x00" as *const u8 as
                                      *const i8) == 0 {
@@ -283,7 +283,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 min_negamax_span = atof(*argv.offset(arg_index as isize));
                 arg_index += 1;
                 max_negamax_span = atof(*argv.offset(arg_index as isize));
-                set_negamax_span(min_negamax_span, max_negamax_span);
+               g_book.set_negamax_span(min_negamax_span, max_negamax_span);
             } else if strcasecmp(*argv.offset(arg_index as isize),
                                  b"-batch\x00" as *const u8 as
                                      *const i8) == 0 {
