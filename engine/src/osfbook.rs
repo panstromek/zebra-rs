@@ -1,6 +1,6 @@
 use crate::{
     src::{
-        search::{get_ponder_move, create_eval_info, disc_count},
+        search::{create_eval_info, disc_count},
         moves::{unmake_move, make_move, generate_specific, moves_state,  unmake_move_no_hash, make_move_no_hash},
         opname::opening_list,
         hash::{clear_hash_drafts},
@@ -989,7 +989,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
             } else { 0 as i32 }
     } else { remaining_slack = 0 as i32 }
     if echo != 0 && book.candidate_count > 0 as i32 &&
-        get_ponder_move() == 0 {
+        search_state.get_ponder_move() == 0 {
         FE::report_in_get_book_move_1(side_to_move, remaining_slack);
     }
     /* No book move found? */
