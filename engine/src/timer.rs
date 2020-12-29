@@ -116,6 +116,35 @@ impl Timer {
     pub fn clear_panic_abort(&mut self) {
         self.panic_abort = 0;
     }
+
+    /*
+      ADD_PONDER_TIME
+      Increases the timer keeping track of the ponder time for
+      a certain move.
+    */
+    pub fn add_ponder_time(&mut self, move_0: i32, time_0: f64) {
+        self.ponder_time[move_0 as usize] += time_0;
+    }
+    /*
+      SET_PANIC_THRESHOLD
+      Specifies the fraction of the remaining time (VALUE must lie in [0,1])
+      before the panic timeout kicks in.
+    */
+    pub fn set_panic_threshold(&mut self, value: f64) {
+        self.panic_value = value;
+    }
+
+    /*
+      RESET_REAL_TIMER
+    */
+    pub fn reset_real_timer<FE: FrontEnd>(&mut self) { FE::time(&mut self.init_time); }
+    /*
+      INIT_TIMER
+      Initializes the timer. This is really only needed when
+      CRON_SUPPORTED is defined; in this case the cron daemon
+      is used for timing.
+    */
+    pub fn init_timer<FE: FrontEnd>(&mut self) { self.reset_real_timer::<FE>(); }
 }
 /*
   CLEAR_PONDER_TIMES
@@ -134,39 +163,6 @@ pub fn clear_ponder_times(timer: &mut Timer) {
     timer.current_ponder_time = 0.0f64;
     timer.current_ponder_depth = 0;
 }
-/*
-  ADD_PONDER_TIME
-  Increases the timer keeping track of the ponder time for
-  a certain move.
-*/
-
-pub unsafe fn add_ponder_time(move_0: i32,
-                              time_0: f64) {
-    g_timer.ponder_time[move_0 as usize] += time_0;
-}
-/*
-  SET_PANIC_THRESHOLD
-  Specifies the fraction of the remaining time (VALUE must lie in [0,1])
-  before the panic timeout kicks in.
-*/
-
-pub unsafe fn set_panic_threshold(value: f64) {
-   g_timer.panic_value = value;
-}
-
-/*
-  RESET_REAL_TIMER
-*/
-
-pub unsafe fn reset_real_timer<FE: FrontEnd>() { FE::time(&mut g_timer.init_time); }
-/*
-  timer.init_timeR
-  Initializes the timer. This is really only needed when
-  CRON_SUPPORTED is defined; in this case the cron daemon
-  is used for timing.
-*/
-
-pub unsafe fn init_timer<FE: FrontEnd>() { reset_real_timer::<FE>(); }
 /*
   GET_REAL_TIMER
   Returns the time passed since the last call to timer.init_timer() or reset_timer().

@@ -7,7 +7,7 @@ use crate::src::error::{LibcFatalError, FE};
 use engine::src::globals::{board_state};
 use engine::src::search::{set_current_eval,search_state, force_return, negate_current_eval, create_eval_info, disc_count, clear_ponder_move, set_ponder_move, float_move, sort_moves};
 use engine::src::zebra::{EvaluationType};
-use engine::src::timer::{clear_ponder_times, start_move, add_ponder_time, get_real_timer, g_timer};
+use engine::src::timer::{clear_ponder_times, start_move, get_real_timer, g_timer};
 use engine::src::moves::{unmake_move, make_move, generate_all, moves_state};
 use engine::src::counter::{reset_counter, adjust_counter, counter_value};
 use engine::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
@@ -301,8 +301,9 @@ pub unsafe fn ponder_move<
         unmake_move(side_to_move, this_move);
         clear_ponder_move();
         move_stop_time = get_real_timer::<FE>();
-        add_ponder_time(expect_list[i as usize],
-                        move_stop_time - move_start_time);
+        let move_0 = expect_list[i as usize];
+        let time_0 = move_stop_time - move_start_time;
+        g_timer.add_ponder_time(move_0, time_0);
         g_timer.ponder_depth[expect_list[i as usize] as usize] =
             if g_timer.ponder_depth[expect_list[i as usize] as usize] >
                 game_state.max_depth_reached - 1 as i32 {

@@ -5,7 +5,7 @@ use crate::src::globals::{board_state, Board, BoardState};
 use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
 use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_terminal_patterns, process_coeffs_from_fn_source, CoeffAdjustments, remove_coeffs, coeff_state};
 use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
-use crate::src::timer::{clear_ponder_times, init_timer, time_t, get_elapsed_time, add_ponder_time, get_real_timer, start_move, g_timer};
+use crate::src::timer::{clear_ponder_times, time_t, get_elapsed_time, get_real_timer, start_move, g_timer};
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, middle_game,calculate_perturbation, midgame_state};
 use crate::src::moves::{valid_move, generate_all, unmake_move, make_move, moves_state};
@@ -202,7 +202,7 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     };
     post_init_coeffs(&mut coeff_state);
 
-    init_timer::<FE>();
+    g_timer.init_timer::<FE>();
     init_probcut(&mut prob_cut.mpc_cut, &mut prob_cut.use_end_cut, &mut prob_cut.end_mpc_depth);
     init_stable();
     setup_search(&mut search_state);
