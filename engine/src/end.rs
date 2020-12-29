@@ -4,7 +4,7 @@ use flip::unflip::flip_stack_;
 use crate::{
     src:: {
         epcstat::{END_SIGMA, END_MEAN, END_STATS_AVAILABLE},
-        moves::{dir_mask, unmake_move, make_move,  valid_move},
+        moves::{dir_mask, unmake_move, make_move},
         search::{force_return, hash_expand_pv, search_state, store_pv, restore_pv, create_eval_info, disc_count, get_ponder_move, select_move},
         hash::{hash_state, find_hash, HashEntry},
         bitbcnt::CountFlips_bitboard,
@@ -27,7 +27,7 @@ use crate::src::zebra::EvaluationType;
 use crate::src::globals::Board;
 use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_EVAL};
 use crate::src::zebra::EvalResult::{WON_POSITION, DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION};
-use crate::src::moves::{moves_state, generate_all};
+use crate::src::moves::{moves_state, generate_all, valid_move};
 use crate::src::search::SearchState;
 use crate::src::stable::stable_state;
 
@@ -798,7 +798,7 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
     find_hash(&mut entry, 1 as i32, &mut hash_state);
     if entry.draft as i32 == empties &&
         entry.selectivity as i32 == 0 as i32 &&
-        valid_move(entry.move_0[0], color) != 0 &&
+        valid_move(entry.move_0[0], color, &board_state.board) != 0 &&
         entry.flags as i32 & 16 as i32 != 0 &&
         (entry.flags as i32 & 4 as i32 != 0 ||
             entry.flags as i32 & 1 as i32 != 0 &&
@@ -1248,7 +1248,7 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
     if entry.draft as i32 == empties {
         if entry.selectivity as i32 == 0 as i32 &&
             entry.flags as i32 & 16 as i32 != 0 &&
-            valid_move(entry.move_0[0], color) != 0
+            valid_move(entry.move_0[0], color, &board_state.board) != 0
             &&
             (entry.flags as i32 & 4 as i32 != 0 ||
                 entry.flags as i32 & 1 as i32 != 0 &&
@@ -1648,7 +1648,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         if entry.draft as i32 == remains &&
             entry.selectivity as i32 <= selectivity &&
             valid_move(entry.move_0[0],
-                       side_to_move) != 0 &&
+                       side_to_move, &board_state.board) != 0 &&
             entry.flags as i32 & 16 as i32 != 0 &&
             (entry.flags as i32 & 4 as i32 != 0 ||
                 entry.flags as i32 & 1 as i32 != 0 &&
@@ -1770,7 +1770,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
     if hash_hit != 0 {
         i = 0;
         while i < 4 as i32 {
-            if valid_move(entry.move_0[i as usize], side_to_move) != 0 {
+            if valid_move(entry.move_0[i as usize], side_to_move, &board_state.board) != 0 {
                 let fresh0 = best_list_length;
                 best_list_length = best_list_length + 1;
                 best_list[fresh0 as usize] = entry.move_0[i as usize];
