@@ -394,11 +394,7 @@ pub fn load_set(index: i32, state: &mut CoeffState) {
    the statistically optimized pattern tables.
 */
 
-pub unsafe fn pattern_evaluation<FE: FrontEnd>(side_to_move: i32) -> i32 {
-    pattern_evaluation_(side_to_move, &mut board_state, &moves_state, &mut coeff_state)
-}
-
-pub fn pattern_evaluation_(side_to_move: i32, board_state_: &mut BoardState, moves_state_: &MovesState, coeff_state_: &mut CoeffState) -> i32 {
+pub fn pattern_evaluation(side_to_move: i32, board_state_: &mut BoardState, moves_state_: &MovesState, coeff_state_: &mut CoeffState) -> i32 {
     /* Any player wiped out? Game over then... */
     let mut eval_phase: i32 = 0;
     if board_state_.piece_count[0][moves_state_.disks_played as usize] ==
