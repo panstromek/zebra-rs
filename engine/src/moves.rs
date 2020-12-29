@@ -266,8 +266,14 @@ pub fn generate_all(side_to_move: i32, moves_state_: &mut MovesState, search_sta
   Counts the number of moves for one player.
 */
 
-pub unsafe fn count_all(side_to_move: i32,
-                        empty: i32) -> i32 {
+pub unsafe fn count_all_unsafe(side_to_move: i32, empty: i32) -> i32 {
+    let board = &board_state.board;
+    let current_move_order = &search_state.sorted_move_order[moves_state.disks_played as usize];
+
+    count_all(side_to_move, empty, board, current_move_order)
+}
+
+pub fn count_all(side_to_move: i32, empty: i32, board: &Board, current_move_order_sorted: &[i32; 64]) -> i32 {
     let mut move_0: i32 = 0;
     let mut move_index: i32 = 0;
     let mut mobility: i32 = 0;
@@ -276,10 +282,9 @@ pub unsafe fn count_all(side_to_move: i32,
     found_empty = 0;
     move_index = 0;
     while move_index < 60 as i32 {
-        move_0 =
-            search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
-        if board_state.board[move_0 as usize] == 1 as i32 {
-            if generate_specific(move_0, side_to_move, &board_state.board) != 0 { mobility += 1 }
+        move_0 = current_move_order_sorted[move_index as usize];
+        if board[move_0 as usize] == 1 as i32 {
+            if generate_specific(move_0, side_to_move, board) != 0 { mobility += 1 }
             found_empty += 1;
             if found_empty == empty { return mobility }
         }
