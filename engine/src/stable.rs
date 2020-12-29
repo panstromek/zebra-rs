@@ -834,17 +834,17 @@ fn count_color_stable(stable_state_: &mut StableState) {
   configurations. This is done using dynamic programming.
 */
 
-pub unsafe fn init_stable() {
+pub fn init_stable(state: &mut StableState) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     i = 0;
     while i < 256 as i32 {
-        stable_state.base_conversion[i as usize] = 0;
+        state.base_conversion[i as usize] = 0;
         j = 0;
         while j < 8 as i32 {
             if i & (1 as i32) << j != 0 {
-                stable_state.base_conversion[i as usize] =
-                    (stable_state.base_conversion[i as usize] as i32 +
+                state.base_conversion[i as usize] =
+                    (state.base_conversion[i as usize] as i32 +
                          pow3[j as usize]) as i16
             }
             j += 1
@@ -853,15 +853,15 @@ pub unsafe fn init_stable() {
     }
     i = 0;
     while i < 6561 as i32 {
-        stable_state.edge_stable[i as usize] = -(1 as i32) as i16;
+        state.edge_stable[i as usize] = -(1 as i32) as i16;
         i += 1
     }
     i = 0;
     while i < 6561 as i32 {
-        if stable_state.edge_stable[i as usize] as i32 == -(1 as i32) {
-            stable_state.recursive_find_stable(i);
+        if state.edge_stable[i as usize] as i32 == -(1 as i32) {
+            state.recursive_find_stable(i);
         }
         i += 1
     }
-    count_color_stable(&mut stable_state);
+    count_color_stable(state);
 }
