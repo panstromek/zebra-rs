@@ -15,9 +15,9 @@ pub struct Timer {
     init_time: time_t,
     current_ponder_depth: i32,
     current_ponder_time: f64,
-    pub last_panic_check: f64 ,
-    pub ponder_depth: [i32; 100] ,
-    pub frozen_ponder_depth: i32 ,
+    pub last_panic_check: f64,
+    pub ponder_depth: [i32; 100],
+    pub frozen_ponder_depth: i32,
 }
 
 pub static mut g_timer: Timer = Timer {
@@ -52,7 +52,6 @@ pub static mut g_timer: Timer = Timer {
    timer module was called to check if a panic abort occured. */
 
 impl Timer {
-
     /*
       SET_DEFAULT_PANIC
       Sets the panic timeout when search immediately must stop.
@@ -147,110 +146,110 @@ impl Timer {
     */
     pub fn init_timer<FE: FrontEnd>(&mut self) { self.reset_real_timer::<FE>(); }
 
-/*
-  CLEAR_PONDER_TIMES
-  Clears the ponder times for all board positions and resets
-  the time associated with the last move actually made.
-*/
-
-pub fn clear_ponder_times(&mut self) {
-    let timer = self;
-    let mut i: i32 = 0;
-    i = 0;
-    while i < 100 as i32 {
-        timer.ponder_time[i as usize] = 0.0f64;
-        timer.ponder_depth[i as usize] = 0;
-        i += 1
-    }
-    timer.current_ponder_time = 0.0f64;
-    timer.current_ponder_depth = 0;
-}
-/*
-  GET_REAL_TIMER
-  Returns the time passed since the last call to timer.init_timer() or reset_timer().
-*/
-
-pub fn get_real_timer<FE :FrontEnd>(&self) -> f64 {
-    let mut curr_time: time_t = 0;
-    FE::time(&mut curr_time);
-    return (curr_time - self.init_time) as f64;
-}
-
-/*
-  GET_ELAPSED_TIME
-  Returns the time passed since START_MOVE was called.
-  This is the actual time, not adjusted for pondering.
-*/
-
-pub fn get_elapsed_time<FE:FrontEnd>(&self) -> f64 {
-    return fabs(self.get_real_timer::<FE>() - self.  start_time);
-}
-/*
-  START_MOVE
-*/
-
-pub fn start_move<FE: FrontEnd>(&mut self, in_total_time: f64,
-                         _increment: f64,
-                         _discs: i32) {
     /*
-      This is a possible approach in time control games with increment:
-        available_time = in_total_time + increment * (65 - discs) / 2.0;
-      Some correction might be necessary anyway, so let's skip it for now.
+      CLEAR_PONDER_TIMES
+      Clears the ponder times for all board positions and resets
+      the time associated with the last move actually made.
     */
-    /* This won't work well in games with time increment, but never mind */
-    self.total_move_time =
-        if in_total_time - 10.0f64 > 0.1f64 {
-            (in_total_time) - 10.0f64
-        } else { 0.1f64 };
-    self.panic_abort = 0;
-    self.start_time =  self.get_real_timer::<FE>();
-}
-/*
-  CHECK_PANIC_ABORT
-  Checks if the alotted time has been used up and in this case
-  sets the timer.panic_abort flags.
-*/
 
-pub fn check_panic_abort<FE: FrontEnd>(&mut self) {
-    let mut curr_time: f64 = 0.;
-    let mut adjusted_total_time: f64 = 0.;
-    curr_time =  self.get_elapsed_time::<FE>();
-    adjusted_total_time = self.total_move_time;
-    if self.do_check_abort != 0 && curr_time >= self.panic_value * adjusted_total_time {
-        self.panic_abort = 1 as i32
-    };
-}
-/*
-  CHECK_THRESHOLD
-  Checks if a certain fraction of the panic time has been used.
-*/
+    pub fn clear_ponder_times(&mut self) {
+        let timer = self;
+        let mut i: i32 = 0;
+        i = 0;
+        while i < 100 as i32 {
+            timer.ponder_time[i as usize] = 0.0f64;
+            timer.ponder_depth[i as usize] = 0;
+            i += 1
+        }
+        timer.current_ponder_time = 0.0f64;
+        timer.current_ponder_depth = 0;
+    }
+    /*
+      GET_REAL_TIMER
+      Returns the time passed since the last call to timer.init_timer() or reset_timer().
+    */
 
-pub fn check_threshold<FE: FrontEnd>(&self, threshold: f64)
-                              -> i32 {
-    let mut curr_time: f64 = 0.;
-    let mut adjusted_total_time: f64 = 0.;
-    curr_time =  self.get_elapsed_time::<FE>();
-    adjusted_total_time = self.total_move_time;
-    return (self.do_check_abort != 0 &&
-        curr_time >= self.panic_value * threshold * adjusted_total_time) as
-        i32;
-}
-/*
-  ABOVE_RECOMMENDED
-  EXTENDED_ABOVE_RECOMMENDED
-  Checks if the time spent searching is greater than the threshold
-  where no new iteration should be started.
-  The extended version takes the ponder time into account.
-*/
+    pub fn get_real_timer<FE: FrontEnd>(&self) -> f64 {
+        let mut curr_time: time_t = 0;
+        FE::time(&mut curr_time);
+        return (curr_time - self.init_time) as f64;
+    }
 
-pub fn above_recommended<FE: FrontEnd>(&self) -> i32 {
-    return ( self.get_elapsed_time::<FE>() >= self.time_per_move) as i32;
-}
+    /*
+      GET_ELAPSED_TIME
+      Returns the time passed since START_MOVE was called.
+      This is the actual time, not adjusted for pondering.
+    */
 
-pub fn extended_above_recommended<FE: FrontEnd>(&self) -> i32 {
-    return ( self.get_elapsed_time::<FE>() + self.frozen_ponder_time >= 1.5f64 * self.time_per_move)
-        as i32;
-}
+    pub fn get_elapsed_time<FE: FrontEnd>(&self) -> f64 {
+        return fabs(self.get_real_timer::<FE>() - self.start_time);
+    }
+    /*
+      START_MOVE
+    */
+
+    pub fn start_move<FE: FrontEnd>(&mut self, in_total_time: f64,
+                                    _increment: f64,
+                                    _discs: i32) {
+        /*
+          This is a possible approach in time control games with increment:
+            available_time = in_total_time + increment * (65 - discs) / 2.0;
+          Some correction might be necessary anyway, so let's skip it for now.
+        */
+        /* This won't work well in games with time increment, but never mind */
+        self.total_move_time =
+            if in_total_time - 10.0f64 > 0.1f64 {
+                (in_total_time) - 10.0f64
+            } else { 0.1f64 };
+        self.panic_abort = 0;
+        self.start_time = self.get_real_timer::<FE>();
+    }
+    /*
+      CHECK_PANIC_ABORT
+      Checks if the alotted time has been used up and in this case
+      sets the timer.panic_abort flags.
+    */
+
+    pub fn check_panic_abort<FE: FrontEnd>(&mut self) {
+        let mut curr_time: f64 = 0.;
+        let mut adjusted_total_time: f64 = 0.;
+        curr_time = self.get_elapsed_time::<FE>();
+        adjusted_total_time = self.total_move_time;
+        if self.do_check_abort != 0 && curr_time >= self.panic_value * adjusted_total_time {
+            self.panic_abort = 1 as i32
+        };
+    }
+    /*
+      CHECK_THRESHOLD
+      Checks if a certain fraction of the panic time has been used.
+    */
+
+    pub fn check_threshold<FE: FrontEnd>(&self, threshold: f64)
+                                         -> i32 {
+        let mut curr_time: f64 = 0.;
+        let mut adjusted_total_time: f64 = 0.;
+        curr_time = self.get_elapsed_time::<FE>();
+        adjusted_total_time = self.total_move_time;
+        return (self.do_check_abort != 0 &&
+            curr_time >= self.panic_value * threshold * adjusted_total_time) as
+            i32;
+    }
+    /*
+      ABOVE_RECOMMENDED
+      EXTENDED_ABOVE_RECOMMENDED
+      Checks if the time spent searching is greater than the threshold
+      where no new iteration should be started.
+      The extended version takes the ponder time into account.
+    */
+
+    pub fn above_recommended<FE: FrontEnd>(&self) -> i32 {
+        return (self.get_elapsed_time::<FE>() >= self.time_per_move) as i32;
+    }
+
+    pub fn extended_above_recommended<FE: FrontEnd>(&self) -> i32 {
+        return (self.get_elapsed_time::<FE>() + self.frozen_ponder_time >= 1.5f64 * self.time_per_move)
+            as i32;
+    }
 }
 
 // (clear_ponder_times|get_real_timer|get_elapsed_time|start_move|check_panic_abort|check_threshold|above_recommended|extended_above_recommended)
