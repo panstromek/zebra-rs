@@ -1,4 +1,4 @@
-use libc_wrapper::{sprintf, fprintf, vsprintf, fputs, fputc, exit, strcpy, getc, stdin, FILE, size_t};
+use libc_wrapper::{sprintf, fprintf, vsprintf, fputs, fputc, exit, strcpy, getc, stdin, FILE, size_t, strdup};
 use crate::src::error::{FE};
 use engine::src::error::FrontEnd;
 use engine::src::stubs::{floor, abs, ceil};
@@ -43,8 +43,8 @@ pub static mut sweep_pos: i32 = 0;
 pub unsafe fn set_names(black_name: *const i8, white_name: *const i8) {
     if !black_player.is_null() { FE::free(black_player as *mut c_void); }
     if !white_player.is_null() { FE::free(white_player as *mut c_void); }
-    black_player = FE::strdup(black_name);
-    white_player = FE::strdup(white_name);
+    black_player = strdup(black_name);
+    white_player = strdup(white_name);
 }
 
 pub unsafe fn set_times(black: i32, white: i32) {
