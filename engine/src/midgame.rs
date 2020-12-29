@@ -168,9 +168,7 @@ pub fn midgame_c__update_best_list(best_list: &mut [i32; 4], move_0: i32, best_l
   Invokes the proper evaluation function depending on whether the
   board is filled or not.
 */
-pub unsafe fn static_or_terminal_evaluation<FE : FrontEnd>(side_to_move:
-                                            i32)
-                                                           -> i32 {
+pub unsafe fn static_or_terminal_evaluation(side_to_move: i32) -> i32 {
     if moves_state.disks_played == 60 as i32 {
         return terminal_evaluation(board_state.get_piece_counts(side_to_move, moves_state.disks_played), &mut search_state.evaluations)
     } else {
@@ -322,7 +320,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
     let mpc_cut_ = &prob_cut.mpc_cut;
     if level >= max_depth {
         search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
-        return static_or_terminal_evaluation::<FE>(side_to_move)
+        return static_or_terminal_evaluation(side_to_move)
     }
     remains = max_depth - level;
     if remains < 3 as i32 {
@@ -496,7 +494,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                             if make_move_no_hash(side_to_move, move_0) !=
                                 0 as i32 {
                                 curr_val =
-                                    -static_or_terminal_evaluation::<FE>(0 as
+                                    -static_or_terminal_evaluation(0 as
                                         i32
                                         +
                                         2 as
@@ -854,7 +852,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
             flags: 0,};
     search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     if level >= max_depth {
-        return static_or_terminal_evaluation::<FE>(side_to_move)
+        return static_or_terminal_evaluation(side_to_move)
     }
     /* Check the hash table */
     remains = max_depth - level;
@@ -897,7 +895,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
                 if make_move_no_hash(side_to_move, move_0) != 0 as i32
                 {
                     curr_val =
-                        -static_or_terminal_evaluation::<FE>(0 as i32 +
+                        -static_or_terminal_evaluation(0 as i32 +
                             2 as i32 -
                             side_to_move);
                     unmake_move_no_hash(side_to_move, move_0);
