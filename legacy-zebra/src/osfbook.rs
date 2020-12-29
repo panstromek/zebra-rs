@@ -415,10 +415,16 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
         this_move = -(1 as i32);
         i = 0;
         while i < moves_state.move_count[moves_state.disks_played as usize] {
-            get_hash(&mut val1, &mut val2, &mut base_orientation);
+            let val0___ = &mut val1;
+            let val1___ = &mut val2;
+            let orientation___ = &mut base_orientation;
+            get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
             this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
             make_move(side_to_move, this_move, 1 as i32);
-            get_hash(&mut val1, &mut val2, &mut child_orientation);
+            let val0___ = &mut val1;
+            let val1___ = &mut val2;
+            let orientation___ = &mut child_orientation;
+            get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
             slot = probe_hash_table(val1, val2, &mut g_book);
             child = *g_book.book_hash_table.offset(slot as isize);
             if child != -(1 as i32) {
@@ -535,7 +541,10 @@ pub unsafe fn add_new_game(move_count_0: i32,
     i = 0;
     while i <= last_move_number {
         /* Look for the position in the hash table */
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         if slot == -(1 as i32) ||
                *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
@@ -1430,7 +1439,10 @@ unsafe fn do_uncompress(depth: i32,
     saved_child_index = *child_index;
     *child_index += saved_child_count;
     /* Write the data for the current node */
-    get_hash(&mut val1, &mut val2, &mut orientation);
+    let val0___ = &mut val1;
+    let val1___ = &mut val2;
+    let orientation___ = &mut orientation;
+    get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
     fwrite(&mut val1 as *mut i32 as *const std::ffi::c_void,
            ::std::mem::size_of::<i32>() as u64,
            1 as i32 as size_t, stream);
@@ -1820,7 +1832,10 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                 }
             }
             /* Set the score for the g_book.node corresponding to the position */
-            get_hash(&mut val1, &mut val2, &mut orientation);
+            let val0___ = &mut val1;
+            let val1___ = &mut val2;
+            let orientation___ = &mut orientation;
+            get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
             slot = probe_hash_table(val1, val2, &mut g_book);
             index = *g_book.book_hash_table.offset(slot as isize);
             if index == -(1 as i32) {
@@ -1919,7 +1934,10 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                     if moves_state.move_count[moves_state.disks_played as usize] == 0 as i32 {
                         new_side_to_move = side_to_move
                     }
-                    get_hash(&mut val1, &mut val2, &mut orientation);
+                    let val0___ = &mut val1;
+                    let val1___ = &mut val2;
+                    let orientation___ = &mut orientation;
+                    get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
                     slot = probe_hash_table(val1, val2, &mut g_book);
                     index = *g_book.book_hash_table.offset(slot as isize);
                     if index == -(1 as i32) {
@@ -2099,7 +2117,10 @@ pub unsafe fn print_move_alternatives(side_to_move:
         if side_to_move == 0 as i32 {
             sign = 1 as i32
         } else { sign = -(1 as i32) }
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         /* Check that the position is in the opening book after all */
         if slot == -(1 as i32) ||
@@ -2376,7 +2397,10 @@ pub unsafe fn convert_opening_list(base_file:
             j += 1
         }
         /* Write the code fragment  */
-        get_hash(&mut hash_val1, &mut hash_val2, &mut orientation);
+        let val0___ = &mut hash_val1;
+        let val1___ = &mut hash_val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         fprintf(out_stream,
                 b"   { \"%s\",\n     \"%s\",\n     %d, %d, %d }\x00" as
                     *const u8 as *const i8, name_start,
@@ -2518,7 +2542,10 @@ unsafe fn do_restricted_minimax(index: i32,
             disc_count(2 as i32, &board_state.board);
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
@@ -2684,7 +2711,10 @@ unsafe fn do_midgame_statistics(index: i32,
         if !out_file.is_null() &&
             abs(eval_list[spec.max_depth as usize]) <=
                 20 as i32 * 128 as i32 {
-            get_hash(&mut val1, &mut val2, &mut orientation);
+            let val0___ = &mut val1;
+            let val1___ = &mut val2;
+            let orientation___ = &mut orientation;
+            get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
             fprintf(out_file,
                     b"%08x%08x %2d \x00" as *const u8 as *const i8,
                     val1, val2, moves_state.disks_played);
@@ -2707,7 +2737,10 @@ unsafe fn do_midgame_statistics(index: i32,
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
@@ -2811,7 +2844,10 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
         fopen(spec.out_file_name,
               b"a\x00" as *const u8 as *const i8);
     if !out_file.is_null() {
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         fprintf(out_file,
                 b"%08x%08x %2d \x00" as *const u8 as *const i8,
                 val1, val2, moves_state.disks_played);
@@ -2912,7 +2948,10 @@ unsafe fn do_endgame_statistics(index: i32,
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
@@ -3015,7 +3054,10 @@ unsafe fn do_clear(index: i32, low: i32,
         while i < moves_state.move_count[moves_state.disks_played as usize] {
             this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
             make_move(side_to_move, this_move, 1 as i32);
-            get_hash(&mut val1, &mut val2, &mut orientation);
+            let val0___ = &mut val1;
+            let val1___ = &mut val2;
+            let orientation___ = &mut orientation;
+            get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
             slot = probe_hash_table(val1, val2, &mut g_book);
             child = *g_book.book_hash_table.offset(slot as isize);
             if child != -(1 as i32) {
@@ -3113,7 +3155,10 @@ unsafe fn do_correct(index: i32,
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
@@ -3249,7 +3294,10 @@ unsafe fn do_correct(index: i32,
                     fprintf(target_file,
                             b"%% %s\n\x00" as *const u8 as
                                 *const i8, move_hist);
-                    get_hash(&mut val1, &mut val2, &mut orientation);
+                    let val0___ = &mut val1;
+                    let val1___ = &mut val2;
+                    let orientation___ = &mut orientation;
+                    get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
                     fprintf(target_file,
                             b"%% %d %d\n\x00" as *const u8 as
                                 *const i8, val1, val2);
@@ -3431,7 +3479,10 @@ unsafe fn do_export(index: i32, stream: *mut FILE,
             moves_state.move_list[moves_state.disks_played as usize][i as usize];
         *(move_vec.as_mut_ptr()).offset(moves_state.disks_played as isize) = this_move;
         make_move(side_to_move, this_move, 1 as i32);
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
@@ -3575,7 +3626,10 @@ pub unsafe fn do_validate<FE: FrontEnd>(index: i32, echo:i32) {
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) { do_validate::<FE>(child, echo); }
@@ -3625,7 +3679,10 @@ pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32, echo:i32) {
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) { do_evaluate::<FE>(child, echo); }
@@ -3757,7 +3814,10 @@ pub unsafe fn do_examine(index: i32) {
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
@@ -3880,7 +3940,10 @@ pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32, echo: i32) {
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child == -(1 as i32) {
@@ -3914,7 +3977,10 @@ pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32, echo: i32) {
             (*g_book.node.offset(index as isize)).alternative_score =
                 -best_score as i16
         }
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         (*g_book.node.offset(index as isize)).best_alternative_move =
             *g_book.symmetry_map[orientation as usize].offset(best_move as isize) as
                 i16
@@ -4207,7 +4273,7 @@ pub unsafe fn do_minimax(index: i32,
             (*g_book.node.offset(index as isize)).best_alternative_move as
                 i32;
         if alternative_move > 0 as i32 {
-            get_hash(&mut val1, &mut val2, &mut orientation);
+            get_hash(&mut val1, &mut val2, &mut orientation, &mut g_book, &board_state.board);
             alternative_move =
                 *g_book.inv_symmetry_map[orientation as
                     usize].offset(alternative_move as isize)
@@ -4233,7 +4299,7 @@ pub unsafe fn do_minimax(index: i32,
             disc_count(2 as i32, &board_state.board);
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32);
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        get_hash(&mut val1, &mut val2, &mut orientation, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) {
@@ -4555,7 +4621,7 @@ pub unsafe fn do_compress(index: i32,
         this_move =
             moves_state.move_list[moves_state.disks_played as usize][i as usize] as i16;
         make_move(side_to_move, this_move as i32, 1 as i32);
-        get_hash(&mut val1, &mut val2, &mut orientation);
+        get_hash(&mut val1, &mut val2, &mut orientation, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) &&
