@@ -15,7 +15,7 @@ use engine::src::counter::{counter_value, add_counter, reset_counter, CounterTyp
 use engine::src::timer::{g_timer};
 use engine::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
-use engine::src::moves::{make_move, valid_move, unmake_move,  game_in_progress, moves_state, generate_all};
+use engine::src::moves::{make_move, valid_move, unmake_move, game_in_progress, moves_state, generate_all};
 use engine::src::hash::{setup_hash, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, find_opening_name, g_book};
 use engine::src::stubs::floor;
@@ -1182,7 +1182,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
     let best_trans2 = random_instance.my_random() as u32;
     let played_trans1 = random_instance.my_random() as u32;
     let played_trans2 = random_instance.my_random() as u32;
-    while game_in_progress() != 0 && moves_state.disks_played < provided_move_count {
+    while game_in_progress(&mut moves_state, &search_state, &board_state.board) != 0 && moves_state.disks_played < provided_move_count {
         remove_coeffs(moves_state.disks_played, &mut coeff_state);
         generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
         if side_to_move == 0 as i32 { board_state.score_sheet_row += 1 }

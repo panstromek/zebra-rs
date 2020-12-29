@@ -1,5 +1,5 @@
 use crate::src::timer::{g_timer};
-use crate::src::moves::{make_move, valid_move,  game_in_progress, get_move, get_move_async, moves_state, generate_all};
+use crate::src::moves::{make_move, valid_move, game_in_progress, get_move, get_move_async, moves_state, generate_all};
 use crate::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::counter::{counter_value, adjust_counter};
 use crate::src::stubs::{floor};
@@ -271,7 +271,7 @@ pub unsafe fn engine_play_game<
         let _black_hash2 = crate::src::myrandom::random_instance.my_random();
         let _white_hash1 = crate::src::myrandom::random_instance.my_random();
         let _white_hash2 = crate::src::myrandom::random_instance.my_random();
-        while game_in_progress() != 0 {
+        while game_in_progress(&mut moves_state, &search_state, &board_state.board) != 0 {
             remove_coeffs(moves_state.disks_played, &mut coeff_state);
             generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
             if side_to_move == 0 {
@@ -552,7 +552,7 @@ pub async unsafe fn engine_play_game_async<
         let _black_hash2 = crate::src::myrandom::random_instance.my_random();
         let _white_hash1 = crate::src::myrandom::random_instance.my_random();
         let _white_hash2 = crate::src::myrandom::random_instance.my_random();
-        while game_in_progress() != 0 {
+        while game_in_progress(&mut moves_state, &search_state, &board_state.board) != 0 {
             remove_coeffs(moves_state.disks_played,&mut coeff_state);
             generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
             if side_to_move == 0 {

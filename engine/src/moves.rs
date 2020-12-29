@@ -297,17 +297,16 @@ pub fn count_all(side_to_move: i32, empty: i32, board: &Board, current_move_orde
    Determines if any of the players has a valid move.
 */
 
-pub unsafe fn game_in_progress() -> i32 {
+pub fn game_in_progress(moves_state_: &mut MovesState, search_state_: &SearchState, board: &Board) -> i32 {
     let mut black_count: i32 = 0;
     let mut white_count: i32 = 0;
     let side_to_move = 0 as i32;
-    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
-    black_count = moves_state.move_count[moves_state.disks_played as usize];
+    generate_all(side_to_move, moves_state_, search_state_, board);
+    black_count = moves_state_.move_count[moves_state_.disks_played as usize];
     let side_to_move = 2 as i32;
-    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
-    white_count = moves_state.move_count[moves_state.disks_played as usize];
-    return (black_count > 0 as i32 || white_count > 0 as i32)
-        as i32;
+    generate_all(side_to_move, moves_state_, search_state_, board);
+    white_count = moves_state_.move_count[moves_state_.disks_played as usize];
+    return (black_count > 0 as i32 || white_count > 0 as i32) as i32;
 }
 
 /*
