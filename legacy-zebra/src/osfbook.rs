@@ -6,7 +6,7 @@ use crate::{
 };
 use crate::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use engine::src::midgame::{middle_game, tree_search, midgame_state};
-use engine::src::myrandom::{random_instance};
+use engine::src::myrandom::{random_instance, MyRandom};
 use engine::src::hash::{setup_hash, clear_hash_drafts, hash_state, determine_hash_values};
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError};
@@ -4476,7 +4476,7 @@ pub unsafe fn do_minimax(index: i32,
 
 pub unsafe fn engine_init_osf<FE: FrontEnd>() {
     init_maps::<FE>();
-    prepare_hash();
+    prepare_hash(&mut g_book, &mut engine::src::myrandom::random_instance);
     setup_hash(1 as i32, &mut hash_state, &mut random_instance);
     init_book_tree(&mut g_book);
     reset_book_search(&mut g_book);
@@ -4676,31 +4676,31 @@ pub fn init_book_tree(book: &mut Book) {
    PREPARE_HASH
    Compute the position hash codes.
 */
-pub unsafe fn prepare_hash() {
+pub fn prepare_hash(book: &mut Book, random: &mut MyRandom) {
     let mut i = 0;
     let mut j = 0;
     let mut k = 0;
     /* The hash keys are static, hence the same keys must be
        produced every time the program is run. */
     let x = 0 as i32;
-    engine::src::myrandom::random_instance.my_srandom(x);
+    random.my_srandom(x);
     i = 0;
     while i < 2 {
         j = 0;
         while j < 8 {
             k = 0;
             while k < 6561 {
-                g_book.line_hash[i][j][k] =
-                    if engine::src::myrandom::random_instance.my_random() % 2 as i64 != 0 {
-                        engine::src::myrandom::random_instance.my_random()
-                    } else { -engine::src::myrandom::random_instance.my_random() } as i32;
+                book.line_hash[i][j][k] =
+                    if random.my_random() % 2 as i64 != 0 {
+                        random.my_random()
+                    } else { -random.my_random() } as i32;
                 k += 1
             }
             j += 1
         }
         i += 1
     }
-    g_book.hash_table_size = 0;
+    book.hash_table_size = 0;
 }
 
 /*
