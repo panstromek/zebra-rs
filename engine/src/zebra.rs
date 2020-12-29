@@ -1,5 +1,5 @@
 use crate::src::timer::{g_timer};
-use crate::src::moves::{make_move, valid_move, game_in_progress, get_move, get_move_async, moves_state, generate_all};
+use crate::src::moves::{make_move, game_in_progress, get_move, get_move_async, moves_state, generate_all, valid_move};
 use crate::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::counter::{counter_value, adjust_counter};
 use crate::src::stubs::{floor};
@@ -364,7 +364,7 @@ pub unsafe fn engine_play_game<
                     }
                 } else {
                     curr_move = provided_move[moves_state.disks_played as usize];
-                    if valid_move(curr_move, side_to_move) == 0 {
+                    if valid_move(curr_move, side_to_move, &board_state.board) == 0 {
                         FE::invalid_move_in_move_sequence(curr_move);
                     }
                 }
@@ -643,7 +643,7 @@ pub async unsafe fn engine_play_game_async<
                     }
                 } else {
                     curr_move = provided_move[moves_state.disks_played as usize];
-                    if valid_move(curr_move, side_to_move) == 0 {
+                    if valid_move(curr_move, side_to_move, &board_state.board) == 0 {
                         FE::invalid_move_in_move_sequence(curr_move);
                     }
                 }

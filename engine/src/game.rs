@@ -8,7 +8,7 @@ use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::timer::{time_t, g_timer};
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, middle_game,calculate_perturbation, midgame_state};
-use crate::src::moves::{valid_move,  unmake_move, make_move, moves_state, generate_all};
+use crate::src::moves::{ unmake_move, make_move, moves_state, generate_all, valid_move};
 use crate::src::stable::{init_stable, stable_state};
 use crate::src::probcut::{init_probcut, prob_cut};
 use crate::src::myrandom::{random_instance};
@@ -438,7 +438,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                 ((crate::src::myrandom::random_instance.my_random() >> 8 as i32) %
                     Thor::get_match_count() as i64) as i32;
             curr_move = Thor::get_thor_game_move(game_index, moves_state.disks_played);
-            if valid_move(curr_move, side_to_move) != 0 {
+            if valid_move(curr_move, side_to_move, &board_state.board) != 0 {
                 book_eval_info =
                     create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
                                      0 as i32, 0.0f64,

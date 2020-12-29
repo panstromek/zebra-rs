@@ -2,7 +2,7 @@
 non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, label_break_value, register_tool)]
 
-use engine::src::moves::{moves_state, make_move, valid_move, generate_all};
+use engine::src::moves::{moves_state, make_move, generate_all, valid_move};
 use engine::src::globals::{board_state};
 use engine::src::myrandom::{random_instance};
 use engine::src::game::{EvaluatedMove};
@@ -451,7 +451,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     }
                 }
             }
-            if valid_move(move_0, side_to_move) == 0 {
+            if valid_move(move_0, side_to_move, &board_state.board) == 0 {
                 fprintf(stderr,
                         b"Game #%d contains illegal move %d @ #%d.\n\x00" as
                             *const u8 as *const i8, games_read,

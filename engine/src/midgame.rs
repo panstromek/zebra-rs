@@ -2,7 +2,7 @@ use crate::{
     src::{
         search::{search_state, force_return, hash_expand_pv, get_ponder_move, create_eval_info, inherit_move_lists, disc_count, reorder_move_list},
         counter::{counter_value, adjust_counter},
-        moves::{valid_move, unmake_move, make_move, moves_state,  unmake_move_no_hash, make_move_no_hash},
+        moves::{ unmake_move, make_move, moves_state, unmake_move_no_hash, make_move_no_hash},
         hash::{find_hash, HashEntry, hash_state},
         globals::board_state,
         eval::terminal_evaluation,
@@ -19,7 +19,7 @@ use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, LOST_POSITION, WON_POSITI
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
 use crate::src::myrandom::{random_instance, MyRandom};
 use crate::src::search::SearchState;
-use crate::src::moves::{MovesState, generate_all};
+use crate::src::moves::{MovesState, generate_all, valid_move};
 use crate::src::globals::BoardState;
 
 
@@ -346,7 +346,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         if entry.draft as i32 >= remains &&
             entry.selectivity as i32 <= selectivity &&
             valid_move(entry.move_0[0],
-                       side_to_move) != 0 &&
+                       side_to_move, &board_state.board) != 0 &&
             entry.flags as i32 & 8 as i32 != 0 &&
             (entry.flags as i32 & 4 as i32 != 0 ||
                 entry.flags as i32 & 1 as i32 != 0 &&
@@ -579,7 +579,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         if hash_hit != 0 {
             i = 0;
             while i < 4 as i32 {
-                if valid_move(entry.move_0[i as usize], side_to_move) != 0 {
+                if valid_move(entry.move_0[i as usize], side_to_move, &board_state.board) != 0 {
                     let fresh0 = best_list_length;
                     best_list_length = best_list_length + 1;
                     best_list[fresh0 as usize] = entry.move_0[i as usize]
@@ -867,7 +867,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
         if entry.draft as i32 >= remains &&
             entry.selectivity as i32 == 0 as i32 &&
             valid_move(entry.move_0[0],
-                       side_to_move) != 0 &&
+                       side_to_move, &board_state.board) != 0 &&
             entry.flags as i32 & 8 as i32 != 0 &&
             (entry.flags as i32 & 4 as i32 != 0 ||
                 entry.flags as i32 & 1 as i32 != 0 &&
@@ -1134,7 +1134,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
         if hash_hit != 0 {
             i = 0;
             while i < 4 as i32 {
-                if valid_move(entry.move_0[i as usize], side_to_move) != 0 {
+                if valid_move(entry.move_0[i as usize], side_to_move, &board_state.board) != 0 {
                     let fresh1 = best_list_length;
                     best_list_length = best_list_length + 1;
                     best_list[fresh1 as usize] = entry.move_0[i as usize]
@@ -1492,7 +1492,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         if force_return == 0 && g_timer.is_panic_abort() == 0 &&
             entry.draft as i32 != 0 as i32 &&
             valid_move(entry.move_0[0],
-                       side_to_move) != 0 &&
+                       side_to_move, &board_state.board) != 0 &&
             entry.draft as i32 == depth {
             full_length_line = 1 as i32
         }

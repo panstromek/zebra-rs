@@ -377,14 +377,12 @@ pub unsafe fn unmake_move_no_hash(side_to_move: i32,
    Determines if a move is legal.
 */
 
-pub unsafe fn valid_move(move_0: i32,
-                         side_to_move: i32)
-                         -> i32 {
+pub fn valid_move(move_0: i32, side_to_move: i32, board: &[i32; 128]) -> i32{
     let mut i: i32 = 0;
     let mut pos: i32 = 0;
     let mut count: i32 = 0;
     if move_0 < 11 as i32 || move_0 > 88 as i32 ||
-        board_state.board[move_0 as usize] != 1 as i32 {
+        board[move_0 as usize] != 1 as i32 {
         return 0 as i32
     }
     i = 0;
@@ -392,12 +390,12 @@ pub unsafe fn valid_move(move_0: i32,
         if dir_mask[move_0 as usize] & (1 as i32) << i != 0 {
             pos = move_0 + move_offset[i as usize];
             count = 0;
-            while board_state.board[pos as usize] ==
+            while board[pos as usize] ==
                 0 as i32 + 2 as i32 - side_to_move {
                 pos += move_offset[i as usize];
                 count += 1
             }
-            if board_state.board[pos as usize] == side_to_move {
+            if board[pos as usize] == side_to_move {
                 if count >= 1 as i32 { return 1 as i32 }
             }
         }
@@ -417,11 +415,11 @@ pub unsafe fn get_move<ZFE: ZebraFrontend>(side_to_move: i32) -> i32 {
     let mut curr_move: i32 = 0;
     while ready == 0 {
         ZFE::prompt_get_move(side_to_move, &mut buffer);
-        ready = valid_move(curr_move, side_to_move);
+        ready = valid_move(curr_move, side_to_move, &board_state.board);
         if ready == 0 {
             curr_move =
                 buffer[0] as i32 - 'a' as i32 + 1 + 10 * (buffer[1] as i32 - '0' as i32);
-            ready = valid_move(curr_move, side_to_move)
+            ready = valid_move(curr_move, side_to_move, &board_state.board)
         }
     }
     curr_move
@@ -441,11 +439,11 @@ pub async unsafe fn get_move_async<GetMove, Fut>(side_to_move: i32, get_move: &m
     let mut curr_move: i32 = 0;
     while ready == 0 {
         curr_move = get_move(side_to_move).await?;
-        ready = valid_move(curr_move, side_to_move);
+        ready = valid_move(curr_move, side_to_move, &board_state.board);
         if ready == 0 {
             curr_move =
                 buffer[0] as i32 - 'a' as i32 + 1 + 10 * (buffer[1] as i32 - '0' as i32);
-            ready = valid_move(curr_move, side_to_move)
+            ready = valid_move(curr_move, side_to_move, &board_state.board)
         }
     }
     Ok(curr_move)

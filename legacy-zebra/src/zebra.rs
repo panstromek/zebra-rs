@@ -15,7 +15,7 @@ use engine::src::counter::{counter_value, add_counter, reset_counter, CounterTyp
 use engine::src::timer::{g_timer};
 use engine::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
-use engine::src::moves::{make_move, valid_move, unmake_move, game_in_progress, moves_state, generate_all};
+use engine::src::moves::{make_move, unmake_move, game_in_progress, moves_state, generate_all, valid_move};
 use engine::src::hash::{setup_hash, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, find_opening_name, g_book};
 use engine::src::stubs::floor;
@@ -1360,7 +1360,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             }
             fputs(b"\n\x00" as *const u8 as *const i8,
                   output_stream);
-            if valid_move(curr_move, side_to_move) == 0 {
+            if valid_move(curr_move, side_to_move, &board_state.board) == 0 {
                 fatal_error(b"Invalid move %c%c in move sequence\x00" as
                                 *const u8 as *const i8,
                             'a' as i32 + curr_move % 10 as i32 -
