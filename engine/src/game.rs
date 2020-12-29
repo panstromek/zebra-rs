@@ -9,7 +9,7 @@ use crate::src::timer::{clear_ponder_times, time_t, get_elapsed_time, get_real_t
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, middle_game,calculate_perturbation, midgame_state};
 use crate::src::moves::{valid_move, generate_all, unmake_move, make_move, moves_state};
-use crate::src::stable::init_stable;
+use crate::src::stable::{init_stable, stable_state};
 use crate::src::probcut::{init_probcut, prob_cut};
 use crate::src::myrandom::{random_instance};
 use crate::src::stubs::{abs};
@@ -204,7 +204,7 @@ pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
 
     g_timer.init_timer::<FE>();
     init_probcut(&mut prob_cut.mpc_cut, &mut prob_cut.use_end_cut, &mut prob_cut.end_mpc_depth);
-    init_stable();
+    init_stable(&mut stable_state);
     setup_search(&mut search_state);
 }
 
