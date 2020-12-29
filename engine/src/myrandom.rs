@@ -152,11 +152,3 @@ impl MyRandom {
 }
 
 pub static mut random_instance: MyRandom = MyRandom::new();
-
-pub unsafe fn my_random() -> i64 {
-    random_instance.my_random()
-}
-
-pub unsafe fn my_srandom(x: i32) -> i32 {
-    random_instance.my_srandom(x)
-}

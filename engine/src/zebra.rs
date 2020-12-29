@@ -6,7 +6,7 @@ use crate::src::stubs::{floor};
 use crate::src::globals::{board_state};
 use crate::src::learn::{Learner, LearnState};
 use crate::src::error::{FrontEnd};
-use crate::src::myrandom::{my_random, random_instance};
+use crate::src::myrandom::{random_instance};
 use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, g_book};
 use crate::src::getcoeff::{remove_coeffs, coeff_state};
 use crate::src::game::{generic_game_init, FileBoardSource, generic_compute_move, ComputeMoveOutput, ComputeMoveLogger, game_state};
@@ -267,10 +267,10 @@ pub unsafe fn engine_play_game<
         move_vec[0] = 0;
         // these are not used because their usage was disabled by preprocessor
         // byt for deterministic testing, we need to call random the same way, so we keep them.
-        let _black_hash1 = my_random();
-        let _black_hash2 = my_random();
-        let _white_hash1 = my_random();
-        let _white_hash2 = my_random();
+        let _black_hash1 = crate::src::myrandom::random_instance.my_random();
+        let _black_hash2 = crate::src::myrandom::random_instance.my_random();
+        let _white_hash1 = crate::src::myrandom::random_instance.my_random();
+        let _white_hash2 = crate::src::myrandom::random_instance.my_random();
         while game_in_progress() != 0 {
             remove_coeffs(moves_state.disks_played, &mut coeff_state);
             generate_all(side_to_move);
@@ -355,11 +355,11 @@ pub unsafe fn engine_play_game<
                         if eval_info.is_book != 0 &&
                             config.rand_move_freq > 0 &&
                             side_to_move == rand_color &&
-                            my_random() % config.rand_move_freq as i64 == 0 {
+                            crate::src::myrandom::random_instance.my_random() % config.rand_move_freq as i64 == 0 {
                             ZF::report_engine_override();
                             rand_color = 2 - rand_color;
                             curr_move = moves_state.move_list[moves_state.disks_played as usize]
-                                [(my_random() % moves_state.move_count[moves_state.disks_played as usize] as i64) as usize]
+                                [(crate::src::myrandom::random_instance.my_random() % moves_state.move_count[moves_state.disks_played as usize] as i64) as usize]
                         }
                     }
                 } else {
@@ -548,10 +548,10 @@ pub async unsafe fn engine_play_game_async<
         move_vec[0] = 0;
         // these are not used because their usage was disabled by preprocessor
         // byt for deterministic testing, we need to call random the same way, so we keep them.
-        let _black_hash1 = my_random();
-        let _black_hash2 = my_random();
-        let _white_hash1 = my_random();
-        let _white_hash2 = my_random();
+        let _black_hash1 = crate::src::myrandom::random_instance.my_random();
+        let _black_hash2 = crate::src::myrandom::random_instance.my_random();
+        let _white_hash1 = crate::src::myrandom::random_instance.my_random();
+        let _white_hash2 = crate::src::myrandom::random_instance.my_random();
         while game_in_progress() != 0 {
             remove_coeffs(moves_state.disks_played,&mut coeff_state);
             generate_all(side_to_move);
@@ -634,11 +634,11 @@ pub async unsafe fn engine_play_game_async<
                         if eval_info.is_book != 0 &&
                             config.rand_move_freq > 0 &&
                             side_to_move == rand_color &&
-                            my_random() % config.rand_move_freq as i64 == 0 {
+                            crate::src::myrandom::random_instance.my_random() % config.rand_move_freq as i64 == 0 {
                             ZF::report_engine_override();
                             rand_color = 2 - rand_color;
                             curr_move = moves_state.move_list[moves_state.disks_played as usize]
-                                [(my_random() % moves_state.move_count[moves_state.disks_played as usize] as i64) as usize]
+                                [(crate::src::myrandom::random_instance.my_random() % moves_state.move_count[moves_state.disks_played as usize] as i64) as usize]
                         }
                     }
                 } else {

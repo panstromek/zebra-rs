@@ -6,7 +6,7 @@ use crate::src::safemem::{safe_malloc, safe_realloc};
 use thordb_types::{Int8, Int16, Int32};
 
 use engine::src::bitboard::bit_reverse_32;
-use engine::src::myrandom::my_random;
+use engine::src::myrandom::{random_instance};
 use engine::src::moves::dir_mask;
 use std::ffi::c_void;
 use thordb_types::{GameType, DatabaseType, C2RustUnnamed, EITHER_SELECTED_FILTER,
@@ -2096,7 +2096,7 @@ unsafe fn init_thor_hash() {
     while i < 8 as i32 {
         j = 0;
         while j < 6561 as i32 {
-            buffer[j as usize] = abs(my_random() as i32);
+            buffer[j as usize] = abs(engine::src::myrandom::random_instance.my_random() as i32);
             j += 1
         }
         j = 0;
@@ -2111,7 +2111,7 @@ unsafe fn init_thor_hash() {
         }
         j = 0;
         while j < 6561 as i32 {
-            buffer[j as usize] = abs(my_random() as i32);
+            buffer[j as usize] = abs(engine::src::myrandom::random_instance.my_random() as i32);
             j += 1
         }
         j = 0;
@@ -2709,7 +2709,7 @@ pub unsafe fn choose_thor_opening_move(in_board:
     while i < 8 as i32 { symmetries[i as usize] = i; i += 1 }
     i = 0;
     while i < 7 as i32 {
-        j = i + abs(my_random() as i32) % (8 as i32 - i);
+        j = i + abs(engine::src::myrandom::random_instance.my_random() as i32) % (8 as i32 - i);
         temp_symm = symmetries[i as usize];
         symmetries[i as usize] = symmetries[j as usize];
         symmetries[j as usize] = temp_symm;
@@ -2741,7 +2741,7 @@ pub unsafe fn choose_thor_opening_move(in_board:
         /* Create a list of the moves chosen from the position and also
            randomly select one of them. Probability for each move is
            proportional to the frequency of that move being played here. */
-        random_value = abs(my_random() as i32) % freq_sum;
+        random_value = abs(random_instance.my_random() as i32) % freq_sum;
         random_move = -(1 as i32);
         acc_freq_sum = 0;
         match_count = 0;

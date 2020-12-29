@@ -5,7 +5,6 @@ use crate::{
         opname::opening_list,
         hash::{clear_hash_drafts},
         game::{CandidateMove},
-        myrandom::{my_random, my_srandom},
         globals::board_state,
         getcoeff::remove_coeffs,
         counter::reset_counter,
@@ -611,7 +610,7 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
        line match the current board. The initial symmetry is chosen
        randomly to avoid the same symmetry being chosen all the time.
        This is not a perfect scheme but good enough. */
-    symmetry = abs(my_random() as i32) % 8 as i32;
+    symmetry = abs(crate::src::myrandom::random_instance.my_random() as i32) % 8 as i32;
     symm_index = 0;
     while symm_index < 8 as i32 {
         same_position = 1;
@@ -1039,7 +1038,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         chosen_index = 0 as i32
     } else {
         random_point =
-            ((my_random() >> 10 as i32) %
+            ((crate::src::myrandom::random_instance.my_random() >> 10 as i32) %
                 total_weight as i64) as i32;
         chosen_index = 0;
         acc_weight = weight[chosen_index as usize];

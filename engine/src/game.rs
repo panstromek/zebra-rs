@@ -11,7 +11,7 @@ use crate::src::midgame::{setup_midgame, middle_game,calculate_perturbation, mid
 use crate::src::moves::{valid_move, generate_all, unmake_move, make_move, moves_state};
 use crate::src::stable::init_stable;
 use crate::src::probcut::{init_probcut, prob_cut};
-use crate::src::myrandom::{my_srandom, my_random, random_instance};
+use crate::src::myrandom::{random_instance};
 use crate::src::stubs::{abs};
 use crate::src::error::{FrontEnd};
 use crate::src::thordb::{ThorDatabase};
@@ -434,7 +434,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         Thor::database_search(&board_state.board, side_to_move);
         if Thor::get_match_count() >= threshold {
             let game_index =
-                ((my_random() >> 8 as i32) %
+                ((crate::src::myrandom::random_instance.my_random() >> 8 as i32) %
                     Thor::get_match_count() as i64) as i32;
             curr_move = Thor::get_thor_game_move(game_index, moves_state.disks_played);
             if valid_move(curr_move, side_to_move) != 0 {
