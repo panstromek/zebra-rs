@@ -48,7 +48,7 @@ pub trait FrontEnd : FatalError {
 pub trait FatalError {
     fn invalid_move(curr_move: i32) -> !;
     fn unrecognized_character(unrecognized: i8) -> !;
-    unsafe fn cannot_open_game_file(file_name: *const i8) -> !;
+    fn cannot_open_game_file(file_name: &str) -> !;
     fn memory_allocation_failure(block_count_: i32) -> !;
     fn invalid_move_in_move_sequence(curr_move: i32) -> !;
     fn error_in_map(i: i32, pos: i32, symmetry_map_item: i32) -> !;

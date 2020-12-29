@@ -5,7 +5,7 @@ use engine::src::thordb::{ThorDatabase};
 use engine::src::zebra::{EvaluationType};
 use crate::src::thordb::{sort_thor_games};
 use crate::src::osfbook::{print_move_alternatives};
-use std::ffi::c_void;
+use std::ffi::{c_void, CStr, CString};
 use engine::{
     src:: {
         search::{get_ponder_move, set_current_eval},
@@ -27,6 +27,7 @@ use crate::src::display::{reset_buffer_display, clear_status, clear_sweep, inter
 use std::env::args;
 use thordb_types::C2RustUnnamed;
 use crate::src::zebra::g_config;
+use std::convert::TryFrom;
 
 static mut buffer: [i8; 16] = [0; 16];
 
@@ -628,11 +629,14 @@ impl FatalError for LibcFatalError {
   }
 }
 
-unsafe fn cannot_open_game_file(file_name: *const i8) -> ! {
-  fatal_error(b"%s \'%s\'\n\x00" as *const u8 as
-                  *const i8,
-              b"Cannot open game file\x00" as *const u8 as
-                  *const i8, file_name);
+fn cannot_open_game_file(file_name: &str) -> ! {
+    let file_name: *const i8 = CString::new(file_name).unwrap().as_c_str().as_ptr();
+    unsafe {
+        fatal_error(b"%s \'%s\'\n\x00" as *const u8 as
+                        *const i8,
+                    b"Cannot open game file\x00" as *const u8 as
+                        *const i8, file_name);
+    }
 }
 
 
