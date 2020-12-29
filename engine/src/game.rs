@@ -8,7 +8,7 @@ use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::timer::{clear_ponder_times, time_t, get_elapsed_time, get_real_timer, start_move, g_timer};
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, middle_game,calculate_perturbation, midgame_state};
-use crate::src::moves::{valid_move, generate_all_unsafe, unmake_move, make_move, moves_state};
+use crate::src::moves::{valid_move,  unmake_move, make_move, moves_state, generate_all};
 use crate::src::stable::{init_stable, stable_state};
 use crate::src::probcut::{init_probcut, prob_cut};
 use crate::src::myrandom::{random_instance};
@@ -333,7 +333,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         disc_count(0 as i32, &board_state.board);
     board_state.piece_count[2][moves_state.disks_played as usize] =
         disc_count(2 as i32, &board_state.board);
-    generate_all_unsafe(side_to_move);
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
     determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     calculate_perturbation(&mut midgame_state, &mut random_instance);
     if let Some(logger) = logger {

@@ -4,7 +4,7 @@ use flip::unflip::flip_stack_;
 use crate::{
     src:: {
         epcstat::{END_SIGMA, END_MEAN, END_STATS_AVAILABLE},
-        moves::{dir_mask, unmake_move, make_move, generate_all_unsafe, valid_move},
+        moves::{dir_mask, unmake_move, make_move,  valid_move},
         search::{force_return, hash_expand_pv, search_state, store_pv, restore_pv, create_eval_info, disc_count, get_ponder_move, select_move},
         hash::{hash_state, find_hash, HashEntry},
         bitbcnt::CountFlips_bitboard,
@@ -27,7 +27,7 @@ use crate::src::zebra::EvaluationType;
 use crate::src::globals::Board;
 use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_EVAL};
 use crate::src::zebra::EvalResult::{WON_POSITION, DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION};
-use crate::src::moves::{moves_state};
+use crate::src::moves::{moves_state, generate_all};
 use crate::src::search::SearchState;
 use crate::src::stable::stable_state;
 
@@ -2182,7 +2182,7 @@ unsafe fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
     pass_count = 0;
     while pass_count < 2 as i32 {
         let mut move_0: i32 = 0;
-        generate_all_unsafe(side_to_move);
+        generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
         if moves_state.move_count[moves_state.disks_played as usize] > 0 as i32 {
             let empties =
                 64 as i32 - disc_count(0 as i32, &board_state.board) -

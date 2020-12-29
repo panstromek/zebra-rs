@@ -2,14 +2,14 @@
 non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, label_break_value, register_tool)]
 
-use engine::src::moves::{moves_state, make_move, valid_move, generate_all_unsafe};
+use engine::src::moves::{moves_state, make_move, valid_move, generate_all};
 use engine::src::globals::{board_state};
 use engine::src::myrandom::{random_instance};
 use engine::src::game::{EvaluatedMove};
 use engine::src::zebra::{EvaluationType};
 use engine::src::timer::start_move;
 use engine::src::hash::{setup_hash, hash_state, determine_hash_values};
-use engine::src::search::disc_count;
+use engine::src::search::{disc_count, search_state};
 use legacy_zebra::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
 use legacy_zebra::src::game::{extended_compute_move, compute_move, game_init, global_setup, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::learn::init_learn;
@@ -272,7 +272,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                               &[i8; 23]>(b"int main(int, char **)\x00")).as_ptr());
         }
         determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
-        generate_all_unsafe(side_to_move);
+        generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
         if moves_state.move_count[moves_state.disks_played as usize] == 0 as i32 {
             if last_was_pass != 0 {
                 /* Game over? */
