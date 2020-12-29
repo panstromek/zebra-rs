@@ -11,7 +11,7 @@ use engine::src::timer::{clear_ponder_times, start_move, get_real_timer, g_timer
 use engine::src::moves::{unmake_move, make_move, generate_all, moves_state};
 use engine::src::counter::{reset_counter, adjust_counter, counter_value};
 use engine::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
-use engine::src::getcoeff::pattern_evaluation;
+use engine::src::getcoeff::{coeff_state, pattern_evaluation};
 use engine::src::myrandom::my_random;
 use engine::src::stubs::abs;
 use engine::src::osfbook::{get_book_move, fill_move_alternatives, g_book};
@@ -562,13 +562,14 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                 unsearched_move[unsearched_count as usize] = this_move;
                 unsearched_count += 1;
                 make_move(side_to_move, this_move, 1 as i32);
+                let side_to_move_argument = 0 as i32 +
+                    2 as i32 -
+                    side_to_move;
                 if shallow_depth == 1 as i32 {
                     /* Compute move doesn't allow depth 0 */
                     search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
                     shallow_eval =
-                        -pattern_evaluation::<FE>(0 as i32 +
-                                                2 as i32 -
-                                                side_to_move)
+                        -pattern_evaluation(side_to_move_argument, &mut board_state, &moves_state, &mut coeff_state)
                 } else {
                     let mut shallow_info =
                         EvaluationType{type_0: MIDGAME_EVAL,
@@ -760,9 +761,10 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                 if current_mid == 1 as i32 {
                     /* compute_move doesn't like 0-ply searches */
                     search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
+                    let side_to_move_argument = 0 as i32 + 2 as i32
+                        - side_to_move;
                     shallow_eval =
-                        pattern_evaluation::<FE>(0 as i32 + 2 as i32
-                                               - side_to_move);
+                        pattern_evaluation(side_to_move_argument, &mut board_state, &moves_state, &mut coeff_state);
                     this_eval =
                         create_eval_info(MIDGAME_EVAL, UNSOLVED_POSITION,
                                          shallow_eval, 0.0f64,
@@ -792,7 +794,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                         if current_mid == 1 as i32 {
                             /* compute_move doesn't like 0-ply searches */
                             search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
-                            shallow_eval = pattern_evaluation::<FE>(side_to_move);
+                            shallow_eval = pattern_evaluation(side_to_move, &mut board_state, &moves_state, &mut coeff_state);
                             this_eval =
                                 create_eval_info(MIDGAME_EVAL,
                                                  UNSOLVED_POSITION,

@@ -11,7 +11,7 @@ use crate::{
         zebra::{EvaluationType}
     }
 };
-use crate::src::getcoeff::pattern_evaluation;
+use crate::src::getcoeff::{coeff_state, pattern_evaluation};
 use crate::src::stubs::abs;
 use crate::src::timer::{check_panic_abort, above_recommended, extended_above_recommended, g_timer};
 use crate::src::hash::add_hash;
@@ -176,7 +176,7 @@ pub unsafe fn static_or_terminal_evaluation<FE : FrontEnd>(side_to_move:
         return terminal_evaluation(board_state.get_piece_counts(side_to_move, moves_state.disks_played), &mut search_state.evaluations)
     } else {
         search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
-        return pattern_evaluation::<FE>(side_to_move)
+        return pattern_evaluation(side_to_move, &mut board_state, &moves_state, &mut coeff_state)
     };
 }
 
@@ -236,9 +236,10 @@ pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32
         move_0 = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, move_0, 1 as i32);
         search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
+        let side_to_move_argument = 0 as i32 + 2 as i32 -
+            side_to_move;
         depth_one_score =
-            -pattern_evaluation::<FE>(0 as i32 + 2 as i32 -
-                side_to_move);
+            -pattern_evaluation(side_to_move_argument, &mut board_state, &moves_state, &mut coeff_state);
         depth_two_score =
             -tree_search::<FE>(1 as i32, 2 as i32,
                          0 as i32 + 2 as i32 - side_to_move,
@@ -394,7 +395,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                        MPC test is to be performed. */
                         search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
                         let static_eval =
-                            pattern_evaluation::<FE>(side_to_move);
+                            pattern_evaluation(side_to_move, &mut board_state, &moves_state, &mut coeff_state);
                         if static_eval <= alpha_bound {
                             beta_test = 0 as i32
                         } else if static_eval >= beta_bound {
