@@ -7,7 +7,6 @@ use engine::src::globals::{board_state};
 use engine::src::myrandom::{random_instance};
 use engine::src::game::{EvaluatedMove};
 use engine::src::zebra::{EvaluationType};
-use engine::src::timer::start_move;
 use engine::src::hash::{setup_hash, hash_state, determine_hash_values};
 use engine::src::search::{disc_count, search_state};
 use legacy_zebra::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
@@ -19,6 +18,7 @@ use libc_wrapper::_IO_FILE;
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use legacy_zebra::src::zebra::g_config;
+use engine::src::timer::g_timer;
 
 extern "C" {
     #[no_mangle]
@@ -300,7 +300,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             }
         } else {
             let mut move_0: i32 = 0;
-            start_move::<FE>(100000 as i32 as f64,
+             g_timer.start_move::<FE>(100000 as i32 as f64,
                              0 as i32 as f64,
                              moves_state.disks_played + 4 as i32);
             if in_branch != 0 {

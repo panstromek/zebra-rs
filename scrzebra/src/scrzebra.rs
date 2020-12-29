@@ -6,7 +6,7 @@ use engine::src::game::{global_terminate, game_state};
 use engine::src::myrandom::{random_instance};
 use legacy_zebra::src::thordb::init_thor_database;
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
-use engine::src::timer::{get_real_timer, start_move, g_timer};
+use engine::src::timer::{g_timer};
 use engine::src::search::{disc_count, search_state};
 use engine::src::moves::moves_state;
 use engine::src::globals::board_state;
@@ -182,7 +182,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     reset_counter(&mut script_nodes);
     position_count = 0;
     max_search = -0.0f64;
-    start_time = get_real_timer::<FE>();
+    start_time =  g_timer.get_real_timer::<FE>();
     /* Scan through the script file */
     i = 0;
     loop  {
@@ -296,8 +296,8 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                               white_player, white_time, white_eval,
                               &board_state.black_moves, &board_state.white_moves);
             }
-            search_start = get_real_timer::<FE>();
-            start_move::<FE>(my_time as f64, my_incr as f64,
+            search_start =  g_timer.get_real_timer::<FE>();
+             g_timer.start_move::<FE>(my_time as f64, my_incr as f64,
                              moves_state.disks_played + 4 as i32);
             g_timer.determine_move_time(my_time as f64,
                                 my_incr as f64,
@@ -334,7 +334,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                 }
             }
             score = eval_info.score / 128 as i32;
-            search_stop = get_real_timer::<FE>();
+            search_stop =  g_timer.get_real_timer::<FE>();
             if search_stop - search_start > max_search {
                 max_search = search_stop - search_start
             }
@@ -417,7 +417,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     }
     /* Clean up and terminate */
     fclose(script_stream);
-    stop_time = get_real_timer::<FE>();
+    stop_time =  g_timer.get_real_timer::<FE>();
     printf(b"Total positions solved:   %d\n\x00" as *const u8 as
                *const i8, position_count);
     printf(b"Total time:               %.1f s\n\x00" as *const u8 as

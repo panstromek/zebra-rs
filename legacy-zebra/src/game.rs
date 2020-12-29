@@ -7,7 +7,7 @@ use crate::src::error::{LibcFatalError, FE};
 use engine::src::globals::{board_state};
 use engine::src::search::{set_current_eval,search_state, force_return, negate_current_eval, create_eval_info, disc_count, clear_ponder_move, set_ponder_move, float_move, sort_moves};
 use engine::src::zebra::{EvaluationType};
-use engine::src::timer::{clear_ponder_times, start_move, get_real_timer, g_timer};
+use engine::src::timer::{g_timer};
 use engine::src::moves::{unmake_move, make_move,  moves_state, generate_all};
 use engine::src::counter::{reset_counter, adjust_counter, counter_value};
 use engine::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
@@ -239,10 +239,10 @@ pub unsafe fn ponder_move<
        time we're using */
     g_timer.toggle_abort_check(0 as i32);
     midgame_state.toggle_midgame_abort_check(0 as i32);
-    start_move::<FE>(0 as i32 as f64,
+     g_timer.start_move::<FE>(0 as i32 as f64,
                      0 as i32 as f64,
                      disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board));
-    clear_ponder_times(&mut g_timer);
+     g_timer.clear_ponder_times();
     determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     reset_counter(&mut search_state.nodes);
     /* Find the scores for the moves available to the opponent. */
@@ -288,7 +288,7 @@ pub unsafe fn ponder_move<
     let mut best_pv_depth = 0;
     let mut i = 0;
     while force_return == 0 && i < expect_count {
-        move_start_time = get_real_timer::<FE>();
+        move_start_time =  g_timer.get_real_timer::<FE>();
         set_ponder_move(expect_list[i as usize]);
         this_move = expect_list[i as usize];
         prefix_move = this_move;
@@ -299,7 +299,7 @@ pub unsafe fn ponder_move<
                                          0 as i32, &mut eval_info, display_pv, echo);
         unmake_move(side_to_move, this_move);
         clear_ponder_move();
-        move_stop_time = get_real_timer::<FE>();
+        move_stop_time =  g_timer.get_real_timer::<FE>();
         let move_0 = expect_list[i as usize];
         let time_0 = move_stop_time - move_start_time;
         g_timer.add_ponder_time(move_0, time_0);
@@ -446,10 +446,10 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
     g_timer.toggle_abort_check(0 as i32);
     midgame_state.toggle_midgame_abort_check(0 as i32);
     midgame_state.toggle_perturbation_usage(0 as i32);
-    start_move::<FE>(0 as i32 as f64,
+     g_timer.start_move::<FE>(0 as i32 as f64,
                0 as i32 as f64,
                disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board));
-    clear_ponder_times(&mut g_timer);
+    g_timer.clear_ponder_times();
     determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     empties = 60 as i32 - moves_state.disks_played;
     best_move = 0;
@@ -1013,10 +1013,10 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     g_timer.toggle_abort_check(0 as i32);
     midgame_state.toggle_midgame_abort_check(0 as i32);
     midgame_state.toggle_perturbation_usage(0 as i32);
-    start_move::<FE>(0 as i32 as f64,
+     g_timer.start_move::<FE>(0 as i32 as f64,
                0 as i32 as f64,
                disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board));
-    clear_ponder_times(&mut g_timer);
+     g_timer.clear_ponder_times();
     determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     reset_counter(&mut search_state.nodes);
     /* Set search depths that result in Zebra solving after a brief

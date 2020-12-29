@@ -1,4 +1,4 @@
-use crate::src::timer::{get_real_timer, start_move, g_timer};
+use crate::src::timer::{g_timer};
 use crate::src::moves::{make_move, valid_move,  game_in_progress, get_move, get_move_async, moves_state, generate_all};
 use crate::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::counter::{counter_value, adjust_counter};
@@ -278,7 +278,7 @@ pub unsafe fn engine_play_game<
                 board_state.score_sheet_row += 1
             }
             if moves_state.move_count[moves_state.disks_played as usize] != 0 {
-                let move_start = get_real_timer::<FE>();
+                let move_start =  g_timer.get_real_timer::<FE>();
                 g_timer.clear_panic_abort();
                 if echo != 0 {
                     ZF::set_move_list(board_state.score_sheet_row);
@@ -289,10 +289,10 @@ pub unsafe fn engine_play_game<
                         ZF::report_opening_name(opening_name);
                     }
                     if use_thor_ {
-                        let database_start = get_real_timer::<FE>();
+                        let database_start =  g_timer.get_real_timer::<FE>();
                         Thor::database_search(&board_state.board, side_to_move);
                         thor_position_count = Thor::get_match_count();
-                        let database_stop = get_real_timer::<FE>();
+                        let database_stop =  g_timer.get_real_timer::<FE>();
                         let database_time = database_stop - database_start;
                         total_search_time += database_time;
                         ZF::report_thor_matching_games_stats(total_search_time, thor_position_count, database_time);
@@ -327,7 +327,7 @@ pub unsafe fn engine_play_game<
                         ZF::before_get_move();
                         curr_move = get_move::<ZF>(side_to_move);
                     } else {
-                        start_move::<FE>(config.player_time[side_to_move as usize],
+                         g_timer.start_move::<FE>(config.player_time[side_to_move as usize],
                                          config.player_increment[side_to_move as usize],
                                          moves_state.disks_played + 4);
                         g_timer.determine_move_time(config.player_time[side_to_move as usize],
@@ -368,7 +368,7 @@ pub unsafe fn engine_play_game<
                         FE::invalid_move_in_move_sequence(curr_move);
                     }
                 }
-                let move_stop = get_real_timer::<FE>();
+                let move_stop =  g_timer.get_real_timer::<FE>();
                 if config.player_time[side_to_move as usize] != 10000000.0f64 {
                     config.player_time[side_to_move as usize] -= move_stop - move_start
                 }
@@ -407,10 +407,10 @@ pub unsafe fn engine_play_game<
             ZF::set_move_list(
                 board_state.score_sheet_row);
             if use_thor_ {
-                let database_start = get_real_timer::<FE>();
+                let database_start =  g_timer.get_real_timer::<FE>();
                 Thor::database_search(&board_state.board, side_to_move);
                 thor_position_count = Thor::get_match_count();
-                let database_stop = get_real_timer::<FE>();
+                let database_stop =  g_timer.get_real_timer::<FE>();
                 let db_search_time = database_stop - database_start;
                 total_search_time += db_search_time;
                 ZF::report_some_thor_stats(total_search_time, thor_position_count, db_search_time);
@@ -559,7 +559,7 @@ pub async unsafe fn engine_play_game_async<
                 board_state.score_sheet_row += 1
             }
             if moves_state.move_count[moves_state.disks_played as usize] != 0 {
-                let move_start = get_real_timer::<FE>();
+                let move_start =  g_timer.get_real_timer::<FE>();
                 g_timer.clear_panic_abort();
                 if echo != 0 {
                     ZF::set_move_list(board_state.score_sheet_row);
@@ -570,10 +570,10 @@ pub async unsafe fn engine_play_game_async<
                         ZF::report_opening_name(opening_name);
                     }
                     if use_thor_ {
-                        let database_start = get_real_timer::<FE>();
+                        let database_start =  g_timer.get_real_timer::<FE>();
                         Thor::database_search(&board_state.board, side_to_move);
                         thor_position_count = Thor::get_match_count();
-                        let database_stop = get_real_timer::<FE>();
+                        let database_stop =  g_timer.get_real_timer::<FE>();
                         let database_time = database_stop - database_start;
                         total_search_time += database_time;
                         ZF::report_thor_matching_games_stats(total_search_time, thor_position_count, database_time);
@@ -608,7 +608,7 @@ pub async unsafe fn engine_play_game_async<
                         ZF::before_get_move();
                         curr_move = get_move_async(side_to_move, &mut get_move_cb).await?;
                     } else {
-                        start_move::<FE>(config.player_time[side_to_move as usize],
+                         g_timer.start_move::<FE>(config.player_time[side_to_move as usize],
                                          config.player_increment[side_to_move as usize],
                                          moves_state.disks_played + 4);
                         g_timer.determine_move_time(config.player_time[side_to_move as usize],
@@ -647,7 +647,7 @@ pub async unsafe fn engine_play_game_async<
                         FE::invalid_move_in_move_sequence(curr_move);
                     }
                 }
-                let move_stop = get_real_timer::<FE>();
+                let move_stop =  g_timer.get_real_timer::<FE>();
                 if config.player_time[side_to_move as usize] != 10000000.0f64 {
                     config.player_time[side_to_move as usize] -= move_stop - move_start
                 }
@@ -686,10 +686,10 @@ pub async unsafe fn engine_play_game_async<
             ZF::set_move_list(
                 board_state.score_sheet_row);
             if use_thor_ {
-                let database_start = get_real_timer::<FE>();
+                let database_start =  g_timer.get_real_timer::<FE>();
                 Thor::database_search(&board_state.board, side_to_move);
                 thor_position_count = Thor::get_match_count();
-                let database_stop = get_real_timer::<FE>();
+                let database_stop =  g_timer.get_real_timer::<FE>();
                 let db_search_time = database_stop - database_start;
                 total_search_time += db_search_time;
                 ZF::report_some_thor_stats(total_search_time, thor_position_count, db_search_time);
