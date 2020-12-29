@@ -5,7 +5,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 
 use engine::src::globals::{board_state};
 use engine::src::moves::{make_move, unmake_move, moves_state, generate_all, valid_move};
-use engine::src::osfbook::{get_hash, find_opening_name};
+use engine::src::osfbook::{get_hash, find_opening_name, g_book};
 use legacy_zebra::src::display::{produce_eval_text, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_names};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{read_binary_database, init_osf};
@@ -120,7 +120,10 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8,
                    opening_name);
         }
-        get_hash(&mut val0, &mut val1, &mut orientation);
+        let val0___ = &mut val0;
+        let val1___ = &mut val1;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         display_board(stdout, &board_state.board, side_to_move,
                       1 as i32, 0 as i32, 0 as i32,
                       current_row,
