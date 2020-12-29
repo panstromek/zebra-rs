@@ -429,7 +429,7 @@ pub fn get_move<ZFE: ZebraFrontend>(side_to_move: i32, board: &Board) -> i32 {
    GET_MOVE
    Prompts the user to enter a move and checks if the move is legal.
 */
-pub async unsafe fn get_move_async<GetMove, Fut>(side_to_move: i32, get_move: &mut GetMove) -> Result<i32, Box<dyn Error>>
+pub async fn get_move_async<GetMove, Fut>(side_to_move: i32, get_move: &mut GetMove, board: &Board) -> Result<i32, Box<dyn Error>>
     where
         GetMove: FnMut(i32) -> Fut,
         Fut: Future<Output=Result<i32, Box<dyn Error>>>
@@ -439,11 +439,11 @@ pub async unsafe fn get_move_async<GetMove, Fut>(side_to_move: i32, get_move: &m
     let mut curr_move: i32 = 0;
     while ready == 0 {
         curr_move = get_move(side_to_move).await?;
-        ready = valid_move(curr_move, side_to_move, &board_state.board);
+        ready = valid_move(curr_move, side_to_move, board);
         if ready == 0 {
             curr_move =
                 buffer[0] as i32 - 'a' as i32 + 1 + 10 * (buffer[1] as i32 - '0' as i32);
-            ready = valid_move(curr_move, side_to_move, &board_state.board)
+            ready = valid_move(curr_move, side_to_move, board)
         }
     }
     Ok(curr_move)

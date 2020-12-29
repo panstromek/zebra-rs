@@ -606,7 +606,7 @@ pub async unsafe fn engine_play_game_async<
                             }
                         }
                         ZF::before_get_move();
-                        curr_move = get_move_async(side_to_move, &mut get_move_cb).await?;
+                        curr_move = get_move_async(side_to_move, &mut get_move_cb, &board_state.board).await?;
                     } else {
                          g_timer.start_move::<FE>(config.player_time[side_to_move as usize],
                                          config.player_increment[side_to_move as usize],
