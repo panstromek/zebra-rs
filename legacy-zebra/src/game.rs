@@ -5,7 +5,7 @@ use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError, FE};
 use engine::src::globals::{board_state};
-use engine::src::search::{set_current_eval,search_state, force_return, negate_current_eval, create_eval_info, disc_count, float_move, sort_moves};
+use engine::src::search::{search_state, force_return, create_eval_info, disc_count, float_move, sort_moves};
 use engine::src::zebra::{EvaluationType};
 use engine::src::timer::{g_timer};
 use engine::src::moves::{unmake_move, make_move,  moves_state, generate_all};
@@ -511,7 +511,8 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
             best_move =
                  get_book_move::<FE>(side_to_move, 0 as i32,
                               &mut book_eval_info, echo);
-            set_current_eval(book_eval_info);
+            let eval = book_eval_info;
+            search_state.set_current_eval(eval);
         } else {
             board_state.pv_depth[0] = 0;
             best_move = -(1 as i32);
@@ -519,7 +520,8 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
                                  0 as i32, 0.0f64, 0 as i32,
                                  0 as i32);
-            set_current_eval(book_eval_info);
+            let eval = book_eval_info;
+            search_state.set_current_eval(eval);
         }
     } else {
         /* Make searches for moves not in the database */
@@ -532,7 +534,8 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
             best_score = evaluated_list[0].eval.score;
             best_move = evaluated_list[0].move_0
         }
-        negate_current_eval(1 as i32);
+        let negate = 1 as i32;
+        search_state.negate_current_eval(negate);
         /* Store the available moves, clear their evaluations and sort
            them on shallow evaluation. */
         if empties_0 < 12 as i32 {
@@ -963,9 +966,11 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                 best_pv[i as usize];
             i += 1
         }
-        negate_current_eval(0 as i32);
+        let negate = 0 as i32;
+        search_state.negate_current_eval(negate);
         if moves_state.move_count[moves_state.disks_played as usize] > 0 as i32 {
-            set_current_eval(evaluated_list[0].eval);
+            let eval_argument = evaluated_list[0].eval;
+            search_state.set_current_eval(eval_argument);
         }
     }
     /* Reset the hash transformation masks prior to leaving */
@@ -1038,7 +1043,8 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     evaluated_list[0].pv[0] =
         actual_move;
     prefix_move = actual_move;
-    negate_current_eval(1 as i32);
+    let negate = 1 as i32;
+    search_state.negate_current_eval(negate);
     make_move(side_to_move, actual_move, 1 as i32);
     compute_move(0 as i32 + 2 as i32 - side_to_move,
                  0 as i32, 0 as i32, 0 as i32,
@@ -1114,7 +1120,8 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     }
     unmake_move(side_to_move, actual_move);
     prefix_move = 0;
-    negate_current_eval(0 as i32);
+    let negate = 0 as i32;
+    search_state.negate_current_eval(negate);
     game_state.max_depth_reached += 1;
     /* Compute the score for the best move and store it in the move list
        if it isn't ACTUAL_MOVE */
@@ -1151,7 +1158,8 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
             evaluated_list[0].pv[i as usize];
         i += 1
     }
-    set_current_eval(evaluated_list[0].eval);
+    let eval_argument = evaluated_list[0].eval;
+    search_state.set_current_eval(eval_argument);
     /* Don't forget to enable the time control mechanisms when leaving */
     g_timer.toggle_abort_check(1 as i32);
     midgame_state.toggle_midgame_abort_check(1 as i32);

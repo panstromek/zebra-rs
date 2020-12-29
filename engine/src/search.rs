@@ -478,27 +478,28 @@ pub fn produce_compact_eval(eval_info: EvaluationType) -> f64 {
   Mutator and accessor functions for the global variable
   holding the last available position evaluation.
 */
+impl SearchState {
+    pub fn set_current_eval(&mut self, eval: EvaluationType) {
+        self.last_eval = eval;
+        if self.negate_eval != 0 {
+            self.last_eval.score = -self.last_eval.score;
+            if self.last_eval.res as u32 ==
+                WON_POSITION as i32 as u32 {
+                self.last_eval.res = LOST_POSITION
+            } else if self.last_eval.res as u32 ==
+                LOST_POSITION as i32 as u32 {
+                self.last_eval.res = WON_POSITION
+            }
+        };
+    }
 
-pub unsafe fn set_current_eval(eval: EvaluationType) {
-    search_state.last_eval = eval;
-    if search_state.negate_eval != 0 {
-        search_state.last_eval.score = -search_state.last_eval.score;
-        if search_state.last_eval.res as u32 ==
-            WON_POSITION as i32 as u32 {
-            search_state.last_eval.res = LOST_POSITION
-        } else if search_state.last_eval.res as u32 ==
-            LOST_POSITION as i32 as u32 {
-            search_state.last_eval.res = WON_POSITION
-        }
-    };
-}
+    pub fn get_current_eval(&self) -> EvaluationType {
+        return self.last_eval;
+    }
 
-pub unsafe fn get_current_eval() -> EvaluationType {
-    return search_state.last_eval;
-}
-
-pub unsafe fn negate_current_eval(negate: i32) {
-    search_state.negate_eval = negate;
+    pub fn negate_current_eval(&mut self, negate: i32) {
+        self.negate_eval = negate;
+    }
 }
 
 /*
