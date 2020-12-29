@@ -325,7 +325,7 @@ pub unsafe fn engine_play_game<
                             }
                         }
                         ZF::before_get_move();
-                        curr_move = get_move::<ZF>(side_to_move);
+                        curr_move = get_move::<ZF>(side_to_move, &board_state.board);
                     } else {
                          g_timer.start_move::<FE>(config.player_time[side_to_move as usize],
                                          config.player_increment[side_to_move as usize],
