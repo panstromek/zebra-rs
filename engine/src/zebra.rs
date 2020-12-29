@@ -284,7 +284,7 @@ pub unsafe fn engine_play_game<
                     ZF::set_move_list(board_state.score_sheet_row);
                     ZF::set_times(floor(config.player_time[0]) as i32,
                               floor(config.player_time[2]) as i32);
-                    let opening_name = find_opening_name();
+                    let opening_name = find_opening_name( &mut g_book, &board_state.board);
                     if !opening_name.is_null() {
                         ZF::report_opening_name(opening_name);
                     }
@@ -565,7 +565,7 @@ pub async unsafe fn engine_play_game_async<
                     ZF::set_move_list(board_state.score_sheet_row);
                     ZF::set_times(floor(config.player_time[0]) as i32,
                               floor(config.player_time[2]) as i32);
-                    let opening_name = find_opening_name();
+                    let opening_name = find_opening_name( &mut g_book, &board_state.board);
                     if !opening_name.is_null() {
                         ZF::report_opening_name(opening_name);
                     }
