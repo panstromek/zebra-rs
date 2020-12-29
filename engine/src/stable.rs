@@ -494,7 +494,7 @@ unsafe fn complete_stability_search(board: &Board,
     i = 0;
     while i < 60 as i32 {
         let sq = position_list[i as usize];
-        if *board.as_ptr().offset(sq as isize) == 1 as i32 {
+        if board[sq as usize] == 1 as i32 {
             stable_state.stab_move_list[last_sq as usize].succ = sq;
             stable_state.stab_move_list[sq as usize].pred = last_sq;
             last_sq = sq
@@ -507,8 +507,7 @@ unsafe fn complete_stability_search(board: &Board,
     while i <= 8 as i32 {
         j = 1;
         while j <= 8 as i32 {
-            if *board.as_ptr().offset((10 as i32 * i + j) as isize) ==
-                   1 as i32 {
+            if board[(10 as i32 * i + j) as usize] == 1 as i32 {
                 empties += 1
             }
             j += 1
