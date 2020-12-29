@@ -2,7 +2,7 @@ use crate::{
     src::{
         search::{search_state, force_return, hash_expand_pv, get_ponder_move, create_eval_info, inherit_move_lists, disc_count, reorder_move_list},
         counter::{counter_value, adjust_counter},
-        moves::{valid_move, unmake_move, make_move, moves_state, generate_all_unsafe, unmake_move_no_hash, make_move_no_hash},
+        moves::{valid_move, unmake_move, make_move, moves_state,  unmake_move_no_hash, make_move_no_hash},
         hash::{find_hash, HashEntry, hash_state},
         globals::board_state,
         eval::terminal_evaluation,
@@ -19,7 +19,7 @@ use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, LOST_POSITION, WON_POSITI
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
 use crate::src::myrandom::{random_instance, MyRandom};
 use crate::src::search::SearchState;
-use crate::src::moves::MovesState;
+use crate::src::moves::{MovesState, generate_all};
 use crate::src::globals::BoardState;
 
 
@@ -224,7 +224,7 @@ pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32
     let mut best_score_unrestricted: i32 = 0;
     let mut best_move_restricted: i32 = 0;
     let mut best_move_unrestricted: i32 = 0;
-    generate_all_unsafe(side_to_move);
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
     best_score_restricted = -(12345678 as i32);
     best_score_unrestricted = -(12345678 as i32);
     best_move_restricted = 0;

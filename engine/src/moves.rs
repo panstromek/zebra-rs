@@ -249,11 +249,7 @@ pub fn generate_move(side_to_move: i32, board: &[i32; 128],
    Generates a list containing all the moves possible in a position.
 */
 
-pub unsafe fn generate_all_unsafe(side_to_move: i32) {
-    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
-}
-
-fn generate_all(side_to_move: i32, moves_state_: &mut MovesState, search_state_: &SearchState, board: &Board) {
+pub fn generate_all(side_to_move: i32, moves_state_: &mut MovesState, search_state_: &SearchState, board: &Board) {
     moves_state_.reset_generation(side_to_move);
     let mut count = 0;
     let mut curr_move = generate_move(side_to_move, board, moves_state_, search_state_);
@@ -299,9 +295,11 @@ pub unsafe fn count_all(side_to_move: i32,
 pub unsafe fn game_in_progress() -> i32 {
     let mut black_count: i32 = 0;
     let mut white_count: i32 = 0;
-    generate_all_unsafe(0 as i32);
+    let side_to_move = 0 as i32;
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
     black_count = moves_state.move_count[moves_state.disks_played as usize];
-    generate_all_unsafe(2 as i32);
+    let side_to_move = 2 as i32;
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
     white_count = moves_state.move_count[moves_state.disks_played as usize];
     return (black_count > 0 as i32 || white_count > 0 as i32)
         as i32;

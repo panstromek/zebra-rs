@@ -1,7 +1,7 @@
 use crate::{
     src::{
         search::{get_ponder_move, create_eval_info, disc_count},
-        moves::{unmake_move, make_move, generate_specific, moves_state, generate_all_unsafe, unmake_move_no_hash, make_move_no_hash},
+        moves::{unmake_move, make_move, generate_specific, moves_state,  unmake_move_no_hash, make_move_no_hash},
         opname::opening_list,
         hash::{clear_hash_drafts},
         game::{CandidateMove},
@@ -23,6 +23,8 @@ use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, DRAWN_POSITION,
 use crate::src::zebra::DrawMode::{OPPONENT_WINS, BLACK_WINS, WHITE_WINS};
 use crate::src::zebra::GameMode::PRIVATE_GAME;
 use crate::src::zebra::{GameMode, DrawMode};
+use crate::src::search::search_state;
+use crate::src::moves::generate_all;
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -688,7 +690,7 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
     matching_move = -(1 as i32);
-    generate_all_unsafe(side_to_move);
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
     i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
@@ -821,7 +823,7 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
             adjust_score((*book.node.offset(index as isize)).alternative_score as
                              i32, side_to_move, &mut book, moves_state.disks_played)
     } else { alternative_score = -(12345678 as i32) }
-    generate_all_unsafe(side_to_move);
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
     book.candidate_count = 0;
     i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {
@@ -1137,7 +1139,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                 side_to_move = 2;
                 sign = -(1 as i32)
             }
-            generate_all_unsafe(side_to_move);
+            generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
             best_score = -(12345678 as i32);
             best_move = -(1 as i32);
             i = 0;
