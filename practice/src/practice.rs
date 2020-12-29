@@ -4,7 +4,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, main, register_tool)]
 
 use engine::src::globals::{board_state};
-use engine::src::moves::{make_move, valid_move, generate_all, unmake_move, moves_state};
+use engine::src::moves::{make_move, valid_move, generate_all_unsafe, unmake_move, moves_state};
 use engine::src::osfbook::{get_hash, find_opening_name};
 use legacy_zebra::src::display::{produce_eval_text, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_names};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
@@ -181,7 +181,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                *const i8, command);
                     repeat = 1 as i32
                 } else {
-                    generate_all(side_to_move);
+                    generate_all_unsafe(side_to_move);
                     move_0 =
                         move_string[0] as i32
                             - 'a' as i32 + 1 as i32 +

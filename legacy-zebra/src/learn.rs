@@ -5,7 +5,7 @@ use engine::src::game::generic_game_init;
 use crate::src::error::LibcFatalError;
 use engine::src::timer::{g_timer};
 use engine::src::osfbook::set_search_depth;
-use engine::src::moves::{make_move, generate_all, moves_state};
+use engine::src::moves::{make_move, generate_all_unsafe, moves_state};
 use engine::src::end::{end_g};
 use engine::src::learn::{Learner};
 use crate::src::zebra::g_config;
@@ -55,10 +55,10 @@ pub unsafe fn learn_game(game_length: i32,
     let mut side_to_move = 0;
     let mut i = 0;
     while i < game_length {
-        generate_all(side_to_move);
+        generate_all_unsafe(side_to_move);
         if moves_state.move_count[moves_state.disks_played as usize] == 0 as i32 {
             side_to_move = 0 as i32 + 2 as i32 - side_to_move;
-            generate_all(side_to_move);
+            generate_all_unsafe(side_to_move);
         }
         make_move(side_to_move, learn_state.game_move[i as usize] as i32,
                   1 as i32);
@@ -124,10 +124,10 @@ pub unsafe fn full_learn_public_game(length: i32,
     let mut side_to_move = 0;
     let mut i = 0;
     while i < length {
-        generate_all(side_to_move);
+        generate_all_unsafe(side_to_move);
         if moves_state.move_count[moves_state.disks_played as usize] == 0 as i32 {
             side_to_move = 0 as i32 + 2 as i32 - side_to_move;
-            generate_all(side_to_move);
+            generate_all_unsafe(side_to_move);
         }
         make_move(side_to_move, learn_state.game_move[i as usize] as i32,
                   1 as i32);

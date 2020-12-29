@@ -1,5 +1,5 @@
 use crate::src::timer::{get_real_timer, start_move, g_timer};
-use crate::src::moves::{make_move, valid_move, generate_all, game_in_progress, get_move, get_move_async, moves_state};
+use crate::src::moves::{make_move, valid_move, generate_all_unsafe, game_in_progress, get_move, get_move_async, moves_state};
 use crate::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::counter::{counter_value, adjust_counter};
 use crate::src::stubs::{floor};
@@ -273,7 +273,7 @@ pub unsafe fn engine_play_game<
         let _white_hash2 = crate::src::myrandom::random_instance.my_random();
         while game_in_progress() != 0 {
             remove_coeffs(moves_state.disks_played, &mut coeff_state);
-            generate_all(side_to_move);
+            generate_all_unsafe(side_to_move);
             if side_to_move == 0 {
                 board_state.score_sheet_row += 1
             }
@@ -554,7 +554,7 @@ pub async unsafe fn engine_play_game_async<
         let _white_hash2 = crate::src::myrandom::random_instance.my_random();
         while game_in_progress() != 0 {
             remove_coeffs(moves_state.disks_played,&mut coeff_state);
-            generate_all(side_to_move);
+            generate_all_unsafe(side_to_move);
             if side_to_move == 0 {
                 board_state.score_sheet_row += 1
             }

@@ -4,7 +4,7 @@ use flip::unflip::flip_stack_;
 use crate::{
     src:: {
         epcstat::{END_SIGMA, END_MEAN, END_STATS_AVAILABLE},
-        moves::{dir_mask, unmake_move, make_move, generate_all, valid_move},
+        moves::{dir_mask, unmake_move, make_move, generate_all_unsafe, valid_move},
         search::{force_return, hash_expand_pv, search_state, store_pv, restore_pv, create_eval_info, disc_count, get_ponder_move, select_move},
         hash::{hash_state, find_hash, HashEntry},
         bitbcnt::CountFlips_bitboard,
@@ -2182,7 +2182,7 @@ unsafe fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
     pass_count = 0;
     while pass_count < 2 as i32 {
         let mut move_0: i32 = 0;
-        generate_all(side_to_move);
+        generate_all_unsafe(side_to_move);
         if moves_state.move_count[moves_state.disks_played as usize] > 0 as i32 {
             let empties =
                 64 as i32 - disc_count(0 as i32, &board_state.board) -
