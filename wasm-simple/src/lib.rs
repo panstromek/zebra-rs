@@ -597,7 +597,7 @@ impl FatalError for WasmFrontend {
         unimplemented!()
     }
 
-    unsafe fn cannot_open_game_file(file_name: *const i8) -> ! {
+    fn cannot_open_game_file(file_name: &str) -> ! {
         unimplemented!()
     }
 

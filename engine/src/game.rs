@@ -19,6 +19,7 @@ use engine_traits::CoeffSource;
 use flip::unflip::{flip_stack_};
 use crate::src::zebra::EvalResult::{WON_POSITION, UNSOLVED_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, INTERRUPTED_EVAL, UNDEFINED_EVAL, FORCED_EVAL, PASS_EVAL, EXACT_EVAL, WLD_EVAL};
+use std::ffi::CStr;
 
 
 #[derive(Copy, Clone)]
@@ -261,7 +262,7 @@ pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name:
     match S::open(file_name) {
         Some(file_source) => process_board_source::<_, FE>(side_to_move, file_source, &mut board_state),
         None => {
-            FE::cannot_open_game_file(file_name);
+            FE::cannot_open_game_file(CStr::from_ptr(file_name).to_str().unwrap());
         },
     };
     setup_game_finalize(side_to_move);
