@@ -10,7 +10,7 @@ use crate::{
         zebra::{EvaluationType}
     }
 };
-use crate::src::getcoeff::{coeff_state, pattern_evaluation};
+use crate::src::getcoeff::{coeff_state, pattern_evaluation, CoeffState};
 use crate::src::stubs::abs;
 use crate::src::timer::{check_panic_abort, above_recommended, extended_above_recommended, g_timer};
 use crate::src::hash::add_hash;
@@ -20,6 +20,7 @@ use crate::src::zebra::EvalType::{MIDGAME_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
 use crate::src::myrandom::{random_instance, MyRandom};
 use crate::src::search::SearchState;
 use crate::src::moves::MovesState;
+use crate::src::globals::BoardState;
 
 
 #[derive(Copy, Clone)]
@@ -168,13 +169,14 @@ pub fn midgame_c__update_best_list(best_list: &mut [i32; 4], move_0: i32, best_l
   Invokes the proper evaluation function depending on whether the
   board is filled or not.
 */
-pub unsafe fn static_or_terminal_evaluation(side_to_move: i32) -> i32 {
-    if moves_state.disks_played == 60 as i32 {
-        return terminal_evaluation(board_state.get_piece_counts(side_to_move, moves_state.disks_played), &mut search_state.evaluations)
+
+pub fn static_or_terminal_evaluation(side_to_move: i32, moves_state_: &MovesState, board_state_: &mut BoardState, search_state_: &mut SearchState, coeff_state_: &mut CoeffState) -> i32 {
+    if moves_state_.disks_played == 60 as i32 {
+        terminal_evaluation(board_state_.get_piece_counts(side_to_move, moves_state_.disks_played), &mut search_state_.evaluations)
     } else {
-        search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
-        return pattern_evaluation(side_to_move, &mut board_state, &moves_state, &mut coeff_state)
-    };
+        search_state_.evaluations.lo = search_state_.evaluations.lo.wrapping_add(1);
+        pattern_evaluation(side_to_move, board_state_, moves_state_, coeff_state_)
+    }
 }
 
 /*
@@ -320,7 +322,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
     let mpc_cut_ = &prob_cut.mpc_cut;
     if level >= max_depth {
         search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
-        return static_or_terminal_evaluation(side_to_move)
+        return static_or_terminal_evaluation(side_to_move, &moves_state, &mut board_state, &mut search_state, &mut coeff_state)
     }
     remains = max_depth - level;
     if remains < 3 as i32 {
@@ -493,14 +495,15 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                         if board_state.board[move_0 as usize] == 1 as i32 {
                             if make_move_no_hash(side_to_move, move_0) !=
                                 0 as i32 {
-                                curr_val =
-                                    -static_or_terminal_evaluation(0 as
+                                let side_to_move_argument = 0 as
+                                    i32
+                                    +
+                                    2 as
                                         i32
-                                        +
-                                        2 as
-                                            i32
-                                        -
-                                        side_to_move);
+                                    -
+                                    side_to_move;
+                                curr_val =
+                                    -static_or_terminal_evaluation(side_to_move_argument, &moves_state, &mut board_state, &mut search_state, &mut coeff_state);
                                 unmake_move_no_hash(side_to_move, move_0);
                                 search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
                                 if curr_val > best {
@@ -852,7 +855,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
             flags: 0,};
     search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     if level >= max_depth {
-        return static_or_terminal_evaluation(side_to_move)
+        return static_or_terminal_evaluation(side_to_move, &moves_state, &mut board_state, &mut search_state, &mut coeff_state)
     }
     /* Check the hash table */
     remains = max_depth - level;
@@ -894,10 +897,11 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
             if board_state.board[move_0 as usize] == 1 as i32 {
                 if make_move_no_hash(side_to_move, move_0) != 0 as i32
                 {
+                    let side_to_move_argument = 0 as i32 +
+                        2 as i32 -
+                        side_to_move;
                     curr_val =
-                        -static_or_terminal_evaluation(0 as i32 +
-                            2 as i32 -
-                            side_to_move);
+                        -static_or_terminal_evaluation(side_to_move_argument, &moves_state, &mut board_state, &mut search_state, &mut coeff_state);
                     unmake_move_no_hash(side_to_move, move_0);
                     search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
                     if curr_val > best {
