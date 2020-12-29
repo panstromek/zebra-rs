@@ -565,9 +565,9 @@ fn complete_stability_search(board: &Board,
   is returned in the boolean vector IS_STABLE.
 */
 
-pub unsafe fn get_stable(board: &Board,
+pub fn get_stable(board: &Board,
                          side_to_move: i32,
-                         is_stable: &mut [i32], bb_flips_: &mut BitBoard) {
+                         is_stable: &mut [i32], bb_flips_: &mut BitBoard, state: &mut StableState) {
     use engine_traits::Offset;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -595,12 +595,12 @@ pub unsafe fn get_stable(board: &Board,
         }
     } else {
         /* Nobody wiped out */
-        count_edge_stable(0 as i32, black_bits, white_bits, &mut stable_state);
-        count_stable(0 as i32, black_bits, white_bits, &mut stable_state);
-        count_stable(2 as i32, white_bits, black_bits, &mut stable_state);
-        all_stable.high = stable_state.last_black_stable.high | stable_state.last_white_stable.high;
-        all_stable.low = stable_state.last_black_stable.low | stable_state.last_white_stable.low;
-        complete_stability_search(board, side_to_move, &mut all_stable, bb_flips_, &mut stable_state);
+        count_edge_stable(0 as i32, black_bits, white_bits, state);
+        count_stable(0 as i32, black_bits, white_bits, state);
+        count_stable(2 as i32, white_bits, black_bits, state);
+        all_stable.high = state.last_black_stable.high | state.last_white_stable.high;
+        all_stable.low = state.last_black_stable.low | state.last_white_stable.low;
+        complete_stability_search(board, side_to_move, &mut all_stable, bb_flips_, state);
         i = 1;
         mask = 1;
         while i <= 4 as i32 {
