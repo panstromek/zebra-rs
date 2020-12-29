@@ -518,14 +518,6 @@ impl FrontEnd for WasmFrontend {
         (char::from(num as u8).to_ascii_lowercase()) as i32
     }
 
-    unsafe fn strdup(arg: *const i8) -> *mut i8 {
-        let slice = CStr::from_ptr(arg)
-            .to_bytes_with_nul()
-            .to_vec()
-            .into_boxed_slice();
-        Box::leak(slice).as_mut_ptr() as *mut _
-    }
-
     fn report_do_evaluate(evaluation_stage_: i32) {
         unimplemented!()
     }

@@ -388,10 +388,6 @@ impl FrontEnd for LibcFatalError {
     fn tolower(num: i32) -> i32 {
         unsafe { tolower(num) }
     }
-    #[inline(always)]
-    unsafe fn strdup(s: *const i8) -> *mut i8 {
-        unsafe { strdup(s) }
-    }
     fn report_do_evaluate(evaluation_stage_: i32) {
         unsafe {
             putc('|' as i32, stdout);
