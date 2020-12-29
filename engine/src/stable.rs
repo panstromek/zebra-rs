@@ -474,10 +474,10 @@ fn stability_search(my_bits: BitBoard,
   Tries to compute all stable discs by search the entire game tree.
   The actual work is performed by STABILITY_SEARCH above.
 */
-unsafe fn complete_stability_search(board: &Board,
-                                               side_to_move: i32,
-                                               mut stable_bits:
-                                                   &mut BitBoard, bb_flips_: &mut BitBoard) {
+fn complete_stability_search(board: &Board,
+                                    side_to_move: i32,
+                                    mut stable_bits:
+                                                   &mut BitBoard, bb_flips_: &mut BitBoard, state: &mut StableState) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut empties: i32 = 0;
@@ -495,13 +495,13 @@ unsafe fn complete_stability_search(board: &Board,
     while i < 60 as i32 {
         let sq = position_list[i as usize];
         if board[sq as usize] == 1 as i32 {
-            stable_state.stab_move_list[last_sq as usize].succ = sq;
-            stable_state.stab_move_list[sq as usize].pred = last_sq;
+            state.stab_move_list[last_sq as usize].succ = sq;
+            state.stab_move_list[sq as usize].pred = last_sq;
             last_sq = sq
         }
         i += 1
     }
-    stable_state.stab_move_list[last_sq as usize].succ = 99;
+    state.stab_move_list[last_sq as usize].succ = 99;
     empties = 0;
     i = 1;
     while i <= 8 as i32 {
@@ -528,7 +528,7 @@ unsafe fn complete_stability_search(board: &Board,
                      if empties < shallow_depth {
                          empties
                      } else { shallow_depth }, 0 as i32,
-                     &mut stability_nodes, bb_flips_, &mut stable_state);
+                     &mut stability_nodes, bb_flips_,  state);
     /* Scan through the rest of the discs one at a time until the
        maximum number of stability nodes is exceeded. Hopefully
        a subset of the stable discs is found also if this happens. */
@@ -543,7 +543,7 @@ unsafe fn complete_stability_search(board: &Board,
                    test_bits.low & candidate_bits.low != 0 {
                 stability_search(my_bits, opp_bits, side_to_move,
                                  &mut test_bits, empties, 0 as i32,
-                                 &mut stability_nodes, bb_flips_, &mut stable_state);
+                                 &mut stability_nodes, bb_flips_,  state);
                 abort =
                     (stability_nodes > 10000 as i32) as i32;
                 if abort == 0 {
@@ -600,7 +600,7 @@ pub unsafe fn get_stable(board: &Board,
         count_stable(2 as i32, white_bits, black_bits, &mut stable_state);
         all_stable.high = stable_state.last_black_stable.high | stable_state.last_white_stable.high;
         all_stable.low = stable_state.last_black_stable.low | stable_state.last_white_stable.low;
-        complete_stability_search(board, side_to_move, &mut all_stable, bb_flips_);
+        complete_stability_search(board, side_to_move, &mut all_stable, bb_flips_, &mut stable_state);
         i = 1;
         mask = 1;
         while i <= 4 as i32 {
