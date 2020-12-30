@@ -8,7 +8,7 @@ use engine::src::globals::{board_state};
 use engine::src::search::{search_state, force_return, create_eval_info, disc_count, float_move, sort_moves};
 use engine::src::zebra::{EvaluationType};
 use engine::src::timer::{g_timer};
-use engine::src::moves::{unmake_move, make_move,  moves_state, generate_all};
+use engine::src::moves::{make_move, moves_state, generate_all, unmake_move};
 use engine::src::counter::{reset_counter, adjust_counter, counter_value};
 use engine::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use engine::src::getcoeff::{coeff_state, pattern_evaluation};
@@ -22,6 +22,7 @@ use engine::src::zebra::EvalType::{UNDEFINED_EVAL, EXACT_EVAL, PASS_EVAL, MIDGAM
 use crate::src::zebra::g_config;
 use engine::src::thordb::ThorDatabase;
 use engine::src::midgame::midgame_state;
+use flip::unflip::flip_stack_;
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
 pub static mut prefix_move: i32 = 0;
@@ -298,7 +299,10 @@ pub unsafe fn ponder_move<
                                          0 as i32, 0 as i32, 0 as i32,
                                          1 as i32, 0 as i32, mid, exact, wld,
                                          0 as i32, &mut eval_info, display_pv, echo);
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         search_state.clear_ponder_move();
         move_stop_time =  g_timer.get_real_timer::<FE>();
         let move_0 = expect_list[i as usize];
@@ -627,7 +631,10 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                         shallow_eval = -shallow_info.score
                     }
                 }
-                unmake_move(side_to_move, this_move);
+                let move_0 = this_move;
+                {
+                    unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                };
                 search_state.evals[moves_state.disks_played as usize][this_move as usize] =
                     shallow_eval
             }
@@ -788,7 +795,10 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                         create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
                                          0 as i32, 0.0f64,
                                          0 as i32, 0 as i32);
-                    unmake_move(side_to_move, this_move);
+                    let move_0 = this_move;
+                    {
+                        unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                    };
                     break ;
                 } else {
                     if this_eval.type_0 as u32 ==
@@ -890,7 +900,10 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                             j += 1
                         }
                     }
-                    unmake_move(side_to_move, this_move);
+                    let move_0 = this_move;
+                    {
+                        unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                    };
                     /* Sort the moves evaluated */
                     if first_iteration != 0 { game_evaluated_count += 1 }
                     if force_return == 0 {
@@ -1118,7 +1131,10 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
             i += 1
         }
     }
-    unmake_move(side_to_move, actual_move);
+    let move_0 = actual_move;
+    {
+        unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+    };
     prefix_move = 0;
     let negate = 0 as i32;
     search_state.negate_current_eval(negate);

@@ -1,11 +1,12 @@
 use crate::src::globals::{Board, board_state, BoardState};
 use crate::src::counter::CounterType;
 use crate::src::zebra::{EvaluationType, EvalResult, EvalType};
-use crate::src::moves::{unmake_move, make_move, moves_state, MovesState};
+use crate::src::moves::{make_move, moves_state, unmake_move, MovesState};
 use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, UNSOLVED_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, UNINITIALIZED_EVAL};
+use flip::unflip::flip_stack_;
 
 /*
    File:          search.c
@@ -562,7 +563,11 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
     }
     let mut i = new_pv_depth as i32 - 1 as i32;
     while i >= 0 {
-        unmake_move(new_side_to_move[i as usize], new_pv[i as usize]);
+        let side_to_move = new_side_to_move[i as usize];
+        let move_0 = new_pv[i as usize];
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i -= 1
     }
     let mut i = 0;
@@ -608,8 +613,11 @@ pub unsafe fn complete_pv<FE:FrontEnd>(mut side_to_move: i32) {
     }
     i = board_state.pv_depth[0] - 1 as i32;
     while i >= 0 as i32 {
-        unmake_move(actual_side_to_move[i as usize],
-                    board_state.pv[0][i as usize]);
+        let side_to_move = actual_side_to_move[i as usize];
+        let move_0 = board_state.pv[0][i as usize];
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i -= 1
     };
 }

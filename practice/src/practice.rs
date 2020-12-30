@@ -4,7 +4,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, main, register_tool)]
 
 use engine::src::globals::{board_state};
-use engine::src::moves::{make_move, unmake_move, moves_state, generate_all, valid_move};
+use engine::src::moves::{make_move, moves_state, generate_all, valid_move, unmake_move};
 use engine::src::osfbook::{get_hash, find_opening_name, g_book};
 use legacy_zebra::src::display::{produce_eval_text, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_names};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
@@ -14,6 +14,8 @@ use libc_wrapper::_IO_FILE;
 use legacy_zebra::src::zebra::g_config;
 use engine::src::game::game_state;
 use engine::src::search::search_state;
+use engine::src::hash::hash_state;
+use flip::unflip::flip_stack_;
 
 extern "C" {
 
@@ -171,11 +173,14 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 if command >= 1 as i32 && command <= moves_state.disks_played {
                     i = 1;
                     while i <= command {
-                        unmake_move(old_stm[(moves_state.disks_played - 1 as i32)
-                            as usize],
-                                    move_list[(moves_state.disks_played -
-                                        1 as i32) as
-                                        usize]);
+                        let side_to_move = old_stm[(moves_state.disks_played - 1 as i32)
+                            as usize];
+                        let move_0 = move_list[(moves_state.disks_played -
+                            1 as i32) as
+                            usize];
+                        {
+                            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                        };
                         i += 1
                     }
                     side_to_move = old_stm[moves_state.disks_played as usize];

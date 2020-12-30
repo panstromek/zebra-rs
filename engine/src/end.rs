@@ -4,7 +4,7 @@ use flip::unflip::flip_stack_;
 use crate::{
     src:: {
         epcstat::{END_SIGMA, END_MEAN, END_STATS_AVAILABLE},
-        moves::{dir_mask, unmake_move, make_move},
+        moves::{dir_mask,  make_move},
         search::{force_return, hash_expand_pv, search_state, store_pv, restore_pv, create_eval_info, disc_count, select_move},
         hash::{hash_state, find_hash, HashEntry},
         bitbcnt::CountFlips_bitboard,
@@ -27,7 +27,7 @@ use crate::src::zebra::EvaluationType;
 use crate::src::globals::Board;
 use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_EVAL};
 use crate::src::zebra::EvalResult::{WON_POSITION, DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION};
-use crate::src::moves::{moves_state, generate_all, valid_move};
+use crate::src::moves::{moves_state, generate_all, unmake_move, valid_move};
 use crate::src::search::SearchState;
 use crate::src::stable::stable_state;
 
@@ -1806,7 +1806,10 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                         best_list[0] =
                             entry.move_0[i as usize]
                     }
-                    unmake_move(side_to_move, entry.move_0[i as usize]);
+                    let move_0 = entry.move_0[i as usize];
+                    {
+                        unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                    };
                 }
             }
             i += 1
@@ -1944,7 +1947,9 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                 }
                             }
                         }
-                        unmake_move(side_to_move, move_0);
+                        {
+                            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                        };
                         search_state.evals[moves_state.disks_played as usize][move_0 as usize] =
                             curr_val;
                         moves_state.move_list[moves_state.disks_played as
@@ -2049,7 +2054,9 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         } else if child_selective_cutoff != 0 {
             *selective_cutoff = 1 as i32
         }
-        unmake_move(side_to_move, move_0);
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         if g_timer.is_panic_abort() != 0 || force_return != 0 {
             return -(27000 as i32)
         }
@@ -2204,7 +2211,11 @@ unsafe fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
     }
     i = new_pv_depth - 1 as i32;
     while i >= 0 as i32 {
-        unmake_move(new_side_to_move[i as usize], new_pv[i as usize]);
+        let side_to_move = new_side_to_move[i as usize];
+        let move_0 = new_pv[i as usize];
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i -= 1
     }
     i = 0;
