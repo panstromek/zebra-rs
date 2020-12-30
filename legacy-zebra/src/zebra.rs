@@ -1229,7 +1229,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
             hash_state.set_hash_transformation(played_trans1, played_trans2);
             curr_move = provided_move[moves_state.disks_played as usize];
             opponent = 0 as i32 + 2 as i32 - side_to_move;
-            make_move(side_to_move, curr_move, 1 as i32);
+            make_move(side_to_move, curr_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
             if empties > config.wld_skill[side_to_move as usize] {
                 reset_counter(&mut search_state.nodes);
                 resp_move =
@@ -1376,7 +1376,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                 config.player_time[side_to_move as usize] -= move_stop - move_start
             }
             learn_state.store_move(moves_state.disks_played, curr_move);
-            make_move(side_to_move, curr_move, 1 as i32);
+            make_move(side_to_move, curr_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
             if side_to_move == 0 as i32 {
                 board_state.black_moves[board_state.score_sheet_row as usize] = curr_move
             } else {

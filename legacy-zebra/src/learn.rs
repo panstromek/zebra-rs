@@ -12,6 +12,8 @@ use engine::src::zebra::learn_state;
 use engine::src::globals::board_state;
 use engine::src::search::search_state;
 use engine::src::osfbook::g_book;
+use flip::unflip::flip_stack_;
+use engine::src::hash::hash_state;
 
 pub static mut binary_database: i32 = 0;
 pub static mut database_name: [i8; 256] = [0; 256];
@@ -63,7 +65,7 @@ pub unsafe fn learn_game(game_length: i32,
             generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
         }
         make_move(side_to_move, learn_state.game_move[i as usize] as i32,
-                  1 as i32);
+                  1 as i32, &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
         if side_to_move == 2 as i32 {
             learn_state.game_move[i as usize] =
                 -(learn_state.game_move[i as usize] as i32) as i16
@@ -132,7 +134,7 @@ pub unsafe fn full_learn_public_game(length: i32,
             generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
         }
         make_move(side_to_move, learn_state.game_move[i as usize] as i32,
-                  1 as i32);
+                  1 as i32, &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
         if side_to_move == 2 as i32 {
             learn_state.game_move[i as usize] =
                 -(learn_state.game_move[i as usize] as i32) as i16

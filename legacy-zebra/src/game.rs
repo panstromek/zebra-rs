@@ -294,7 +294,7 @@ pub unsafe fn ponder_move<
         search_state.set_ponder_move(move_0);
         this_move = expect_list[i as usize];
         prefix_move = this_move;
-        make_move(side_to_move, this_move, 1 as i32);
+        make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
         engine::src::game::compute_move::<L, Out, FE, Thor>(0 as i32 + 2 as i32 - side_to_move,
                                          0 as i32, 0 as i32, 0 as i32,
                                          1 as i32, 0 as i32, mid, exact, wld,
@@ -568,7 +568,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
             if !(unsearched == 0) {
                 unsearched_move[unsearched_count as usize] = this_move;
                 unsearched_count += 1;
-                make_move(side_to_move, this_move, 1 as i32);
+                make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
                 let side_to_move_argument = 0 as i32 +
                     2 as i32 -
                     side_to_move;
@@ -767,7 +767,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                                         transform2[i as usize]);
                 /* Determine the score for the ith move */
                 prefix_move = this_move;
-                make_move(side_to_move, this_move, 1 as i32);
+                make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
                 if current_mid == 1 as i32 {
                     /* compute_move doesn't like 0-ply searches */
                     search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
@@ -1058,7 +1058,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     prefix_move = actual_move;
     let negate = 1 as i32;
     search_state.negate_current_eval(negate);
-    make_move(side_to_move, actual_move, 1 as i32);
+    make_move(side_to_move, actual_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
     compute_move(0 as i32 + 2 as i32 - side_to_move,
                  0 as i32, 0 as i32, 0 as i32,
                  0 as i32, book, mid - 1 as i32,

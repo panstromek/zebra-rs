@@ -532,7 +532,7 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
         if new_pv_depth < board_state.pv_depth[0] as usize &&
             new_pv_depth == 0 {
             if board_state.board[board_state.pv[0][new_pv_depth] as usize] == 1 &&
-                make_move(side_to_move, board_state.pv[0][new_pv_depth], 1) != 0 {
+                make_move(side_to_move, board_state.pv[0][new_pv_depth], 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) != 0 {
                 new_pv[new_pv_depth] =
                     board_state.pv[0][new_pv_depth];
                 new_pv_depth += 1;
@@ -548,7 +548,7 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
                 entry.flags as i32 & flags != 0 &&
                 entry.selectivity as i32 <= max_selectivity &&
                 board_state.board[entry.move_0[0] as usize] == 1 &&
-                make_move(side_to_move, entry.move_0[0], 1 ) != 0 {
+                make_move(side_to_move, entry.move_0[0], 1  , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) != 0 {
                 new_pv[new_pv_depth] =
                     entry.move_0[0];
                 new_pv_depth += 1;
@@ -589,7 +589,7 @@ pub unsafe fn complete_pv<FE:FrontEnd>(mut side_to_move: i32) {
     search_state.full_pv_depth = 0;
     let mut i = 0;
     while i < board_state.pv_depth[0] {
-        if make_move(side_to_move, board_state.pv[0][i as usize], 1) != 0 {
+        if make_move(side_to_move, board_state.pv[0][i as usize], 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) != 0 {
             actual_side_to_move[i as usize] = side_to_move;
             search_state.full_pv[search_state.full_pv_depth as usize] = board_state.pv[0][i as usize];
             search_state.full_pv_depth += 1
@@ -597,7 +597,7 @@ pub unsafe fn complete_pv<FE:FrontEnd>(mut side_to_move: i32) {
             search_state.full_pv[search_state.full_pv_depth as usize] = -(1);
             search_state.full_pv_depth += 1;
             side_to_move = 0 + 2 - side_to_move;
-            if make_move(side_to_move, board_state.pv[0][i as usize], 1) != 0 {
+            if make_move(side_to_move, board_state.pv[0][i as usize], 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) != 0 {
                 actual_side_to_move[i as usize] = side_to_move;
                 search_state.full_pv[search_state.full_pv_depth as usize] =
                     board_state.pv[0][i as usize];

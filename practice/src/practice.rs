@@ -209,7 +209,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         old_stm[moves_state.disks_played as usize] = side_to_move;
                         row[moves_state.disks_played as usize] = board_state.score_sheet_row;
                         move_list[moves_state.disks_played as usize] = move_0;
-                        make_move(side_to_move, move_0, 1 as i32);
+                        make_move(side_to_move, move_0, 1 as i32, &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
                         if side_to_move == 0 as i32 {
                             board_state.score_sheet_row += 1;
                             board_state.black_moves[board_state.score_sheet_row as usize] = move_0
