@@ -15,7 +15,7 @@ use engine::src::counter::{counter_value, add_counter, reset_counter, CounterTyp
 use engine::src::timer::{g_timer};
 use engine::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
-use engine::src::moves::{make_move, unmake_move, game_in_progress, moves_state, generate_all, valid_move};
+use engine::src::moves::{make_move, game_in_progress, moves_state, generate_all, valid_move, unmake_move};
 use engine::src::hash::{setup_hash, hash_state};
 use engine::src::osfbook::{set_deviation_value, reset_book_search, find_opening_name, g_book};
 use engine::src::stubs::floor;
@@ -30,6 +30,7 @@ use engine::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION};
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::DrawMode::{OPPONENT_WINS, WHITE_WINS, BLACK_WINS, NEUTRAL};
 use engine::src::zebra::GameMode::{PUBLIC_GAME, PRIVATE_GAME};
+use flip::unflip::flip_stack_;
 
 pub static mut g_config: Config = INITIAL_CONFIG;
 /* ------------------- Function prototypes ---------------------- */
@@ -1255,7 +1256,10 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                                  1 as i32,
                              config.wld_skill[opponent as usize] - 1 as i32,
                              1 as i32, &mut played_info2);
-            unmake_move(side_to_move, curr_move);
+            let move_0 = curr_move;
+            {
+                unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            };
             /* Determine the 'best' move and its score. For midgame moves,
             search twice to dampen oscillations. Unless we're in the endgame
              region, a private hash transform is used - see above. */

@@ -1,7 +1,7 @@
 use crate::{
     src::{
         search::{create_eval_info, disc_count},
-        moves::{unmake_move, make_move, generate_specific, moves_state,  unmake_move_no_hash, make_move_no_hash},
+        moves::{make_move, generate_specific, moves_state,  unmake_move_no_hash, make_move_no_hash},
         opname::opening_list,
         hash::{clear_hash_drafts},
         game::{CandidateMove},
@@ -24,8 +24,9 @@ use crate::src::zebra::DrawMode::{OPPONENT_WINS, BLACK_WINS, WHITE_WINS};
 use crate::src::zebra::GameMode::PRIVATE_GAME;
 use crate::src::zebra::{GameMode, DrawMode};
 use crate::src::search::search_state;
-use crate::src::moves::generate_all;
+use crate::src::moves::{unmake_move, generate_all};
 use crate::src::globals::Board;
+use flip::unflip::flip_stack_;
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -740,7 +741,10 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
                 }
             }
         }
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i += 1
     }
     if matching_move != -(1 as i32) {
@@ -836,7 +840,10 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
         let orientation___ = &mut orientation;
         get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut book);
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         /* Check if the move leads to a book position and, if it does,
            whether it has the solve status (WLD or FULL) specified by FLAGS. */
         deviation = 0;
@@ -1162,7 +1169,10 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                 let orientation___ = &mut orientation;
                 get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
                 slot = probe_hash_table(val1, val2, book);
-                unmake_move(side_to_move, this_move);
+                let move_0 = this_move;
+                {
+                    unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                };
                 if slot == -(1 as i32) ||
                     *book.book_hash_table.offset(slot as isize) ==
                         -(1 as i32) {
@@ -1209,7 +1219,11 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     }
     loop  {
         level -= 1;
-        unmake_move(temp_stm[level as usize], temp_move[level as usize]);
+        let side_to_move = temp_stm[level as usize];
+        let move_0 = temp_move[level as usize];
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         if !(level > 0 as i32) { break ; }
     }
     return book.candidate_list[chosen_index as usize].move_0;

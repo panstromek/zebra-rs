@@ -9,6 +9,7 @@ edition = "2018"
 
 [dependencies]
 engine = { path= "./../engine" }
+flip = { path= "./../engine/flip" }
 legacy-zebra = { path= "./../legacy-zebra" }
 libc = "0.2"
 libc-wrapper = { path = "./../libc-wrapper"}

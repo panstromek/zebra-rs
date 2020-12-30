@@ -8,7 +8,7 @@ use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::timer::{time_t, g_timer};
 use crate::src::end::{setup_end, end_game};
 use crate::src::midgame::{setup_midgame, middle_game,calculate_perturbation, midgame_state};
-use crate::src::moves::{ unmake_move, make_move, moves_state, generate_all, valid_move};
+use crate::src::moves::{  make_move, moves_state, generate_all, valid_move};
 use crate::src::stable::{init_stable, stable_state};
 use crate::src::probcut::{init_probcut, prob_cut};
 use crate::src::myrandom::{random_instance};

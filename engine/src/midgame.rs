@@ -2,7 +2,7 @@ use crate::{
     src::{
         search::{search_state, force_return, hash_expand_pv, create_eval_info, inherit_move_lists, disc_count, reorder_move_list},
         counter::{counter_value, adjust_counter},
-        moves::{ unmake_move, make_move, moves_state, unmake_move_no_hash, make_move_no_hash},
+        moves::{make_move_no_hash},
         hash::{find_hash, HashEntry, hash_state},
         globals::board_state,
         eval::terminal_evaluation,
@@ -19,7 +19,7 @@ use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, LOST_POSITION, WON_POSITI
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
 use crate::src::myrandom::{random_instance, MyRandom};
 use crate::src::search::SearchState;
-use crate::src::moves::{MovesState, generate_all, valid_move};
+use crate::src::moves::{MovesState, generate_all, moves_state, valid_move, unmake_move, unmake_move_no_hash, make_move};
 use crate::src::globals::BoardState;
 use flip::unflip::flip_stack_;
 
@@ -246,7 +246,9 @@ pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32
                          -(12345678 as i32), 12345678 as i32,
                          0 as i32, 0 as i32,
                          0 as i32, echo);
-        unmake_move(side_to_move, move_0);
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         if depth_one_score > best_score_unrestricted {
             best_score_unrestricted = depth_one_score;
             best_move_unrestricted = move_0
@@ -643,7 +645,9 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                 if pre_best > curr_val {
                                     pre_best
                                 } else { curr_val };
-                            unmake_move(side_to_move, move_0);
+                            {
+                                unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                            };
                             search_state.evals[moves_state.disks_played as usize][move_0 as usize] =
                                 curr_val;
                             midgame_state.feas_index_list[moves_state.disks_played as
@@ -754,7 +758,9 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                 update_pv = 1 as i32
             }
         }
-        unmake_move(side_to_move, move_0);
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         if g_timer.is_panic_abort() != 0 || force_return != 0 {
             return -(27000 as i32)
         }
@@ -984,7 +990,9 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
                             best = curr_val
                         }
                     }
-                    unmake_move(side_to_move, move_0);
+                    {
+                        unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                    };
                     if best >= beta {
                         advance_move(move_index, &mut search_state, &mut moves_state);
                         midgame_state.best_mid_move = best_move;
@@ -1194,7 +1202,9 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                             if pre_best > curr_val {
                                 pre_best
                             } else { curr_val };
-                        unmake_move(side_to_move, move_0);
+                        {
+                            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                        };
                         search_state.evals[moves_state.disks_played as usize][move_0 as usize] =
                             curr_val;
                         midgame_state.feas_index_list[moves_state.disks_played as
@@ -1302,7 +1312,9 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                 update_pv = 1 as i32
             }
         }
-        unmake_move(side_to_move, move_0);
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         if g_timer.is_panic_abort() != 0 || force_return != 0 {
             return -(27000 as i32)
         }

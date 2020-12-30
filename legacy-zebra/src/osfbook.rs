@@ -11,7 +11,7 @@ use engine::src::hash::{setup_hash, clear_hash_drafts, hash_state, determine_has
 use engine::src::error::{FrontEnd};
 use crate::src::error::{LibcFatalError};
 use engine::src::globals::board_state;
-use engine::src::moves::{unmake_move, make_move,  generate_specific, unmake_move_no_hash, make_move_no_hash, moves_state, generate_all};
+use engine::src::moves::{make_move, make_move_no_hash, moves_state, unmake_move, generate_all, generate_specific, unmake_move_no_hash};
 use engine::src::stubs::{abs, floor};
 use engine::src::search::{disc_count, search_state};
 use engine::src::end::end_game;
@@ -441,7 +441,10 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
                 if child_score == root_score { next = child }
             }
             if child != -(1 as i32) && next == child { break ; }
-            unmake_move(side_to_move, this_move);
+            let move_0 = this_move;
+            {
+                unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            };
             i += 1
         }
         if next == -(1 as i32) {
@@ -683,7 +686,10 @@ pub unsafe fn add_new_game(move_count_0: i32,
                    0 as i32 {
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
-            unmake_move(side_to_move, this_move);
+            let move_0 = this_move;
+            {
+                unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            };
             /* If the game was public, make sure that all nodes that
             previously marked as private nodes are marked as public. */
             this_node = visited_node[i as usize];
@@ -2414,7 +2420,11 @@ pub unsafe fn convert_opening_list(base_file:
         /* Undo the moves */
         j = op_move_count - 1 as i32;
         while j >= 0 as i32 {
-            unmake_move(side_to_move[j as usize], op_move[j as usize]);
+            let side_to_move_argument = side_to_move[j as usize];
+            let move_0 = op_move[j as usize];
+            {
+                unmake_move(side_to_move_argument, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            };
             j -= 1
         }
         i += 1
@@ -2561,7 +2571,10 @@ unsafe fn do_restricted_minimax(index: i32,
             }
             child_count += 1
         }
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i += 1
     }
     if (*g_book.node.offset(index as isize)).flags as i32 & 16 as i32
@@ -2747,7 +2760,10 @@ unsafe fn do_midgame_statistics(index: i32,
         if child != -(1 as i32) {
             do_midgame_statistics(child, spec, echo);
         }
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i += 1
     }
     let ref mut fresh18 = (*g_book.node.offset(index as isize)).flags;
@@ -2886,7 +2902,11 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                                     min_disks, max_disks, spec, echo);
             }
         }
-        unmake_move(stored_side_to_move, best_move);
+        let side_to_move = stored_side_to_move;
+        let move_0 = best_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
     };
 }
 /*
@@ -2958,7 +2978,10 @@ unsafe fn do_endgame_statistics(index: i32,
         if child != -(1 as i32) {
             do_endgame_statistics(child, spec, echo);
         }
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i += 1
     }
     let ref mut fresh20 = (*g_book.node.offset(index as isize)).flags;
@@ -3064,7 +3087,10 @@ unsafe fn do_clear(index: i32, low: i32,
             if child != -(1 as i32) {
                 do_clear(child, low, high, flags);
             }
-            unmake_move(side_to_move, this_move);
+            let move_0 = this_move;
+            {
+                unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            };
             i += 1
         }
     }
@@ -3167,7 +3193,10 @@ unsafe fn do_correct(index: i32,
             child_node[child_count as usize] = child;
             child_count += 1
         }
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i += 1
     }
     let mut current_block_29: u64;
@@ -3202,7 +3231,10 @@ unsafe fn do_correct(index: i32,
                 make_move(side_to_move, this_move, 1 as i32);
                 do_correct(child_node[i as usize], max_empty, full_solve,
                            target_name, move_hist, echo);
-                unmake_move(side_to_move, this_move);
+                let move_0 = this_move;
+                {
+                    unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                };
                 *move_hist.offset((2 as i32 * moves_state.disks_played) as isize)
                     = '\u{0}' as i32 as i8
             }
@@ -3490,7 +3522,10 @@ unsafe fn do_export(index: i32, stream: *mut FILE,
             do_export(child, stream, move_vec);
             child_count += 1
         }
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         if child_count == 1 as i32 && allow_branch == 0 { break ; }
         i += 1
     }
@@ -3634,7 +3669,10 @@ pub unsafe fn do_validate<FE: FrontEnd>(index: i32, echo:i32) {
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) { do_validate::<FE>(child, echo); }
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i += 1
     }
     let ref mut fresh19 = (*g_book.node.offset(index as isize)).flags;
@@ -3687,7 +3725,10 @@ pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32, echo:i32) {
         slot = probe_hash_table(val1, val2, &mut g_book);
         child = *g_book.book_hash_table.offset(slot as isize);
         if child != -(1 as i32) { do_evaluate::<FE>(child, echo); }
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i += 1
     }
     let ref mut fresh17 = (*g_book.node.offset(index as isize)).flags;
@@ -3826,7 +3867,10 @@ pub unsafe fn do_examine(index: i32) {
             child_node[child_count as usize] = child;
             child_count += 1
         }
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i += 1
     }
     if child_count == 0 as i32 {
@@ -3866,7 +3910,10 @@ pub unsafe fn do_examine(index: i32) {
                     this_move = child_move[i as usize];
                     make_move(side_to_move, this_move, 1 as i32);
                     do_examine(child_node[i as usize]);
-                    unmake_move(side_to_move, this_move);
+                    let move_0 = this_move;
+                    {
+                        unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                    };
                 }
                 _ => { }
             }
@@ -3952,7 +3999,10 @@ pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32, echo: i32) {
             alternative_move_count = alternative_move_count + 1;
             feasible_move[fresh16 as usize] = this_move
         }
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i += 1
     }
     if alternative_move_count == 0 as i32 {
@@ -4073,7 +4123,10 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                     *best_index = i
                 }
             }
-            unmake_move(side_to_move, *allowed_moves.offset(i as isize));
+            let move_0 = *allowed_moves.offset(i as isize);
+            {
+                unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            };
             i += 1
         }
         /* Float the best move so far to the top of the list */
@@ -4102,7 +4155,10 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                            0 as i32 + 2 as i32 - side_to_move,
                            -(12345678 as i32), 12345678 as i32,
                            1 as i32, allow_mpc, 1 as i32, echo);
-    unmake_move(side_to_move, *allowed_moves.offset(*best_index as isize));
+    let move_0 = *allowed_moves.offset(*best_index as isize);
+    {
+        unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+    };
     /* To remove the oscillations between odd and even search depths
        the score for the deviation is the average between the two scores. */
     *best_score = (low_score + high_score) / 2 as i32;
@@ -4349,7 +4405,10 @@ pub unsafe fn do_minimax(index: i32,
         {
             alternative_move_found = 1 as i32
         }
-        unmake_move(side_to_move, this_move);
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i += 1
     }
     if alternative_move_found == 0 {
@@ -4644,7 +4703,10 @@ pub unsafe fn do_compress(index: i32,
                 *child_index += 1
             }
         }
-        unmake_move(side_to_move, this_move as i32);
+        let move_0 = this_move as i32;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i += 1
     }
     *child_count.offset(*node_index as isize) =
@@ -4656,7 +4718,10 @@ pub unsafe fn do_compress(index: i32,
         make_move(side_to_move, this_move as i32, 1 as i32);
         do_compress(local_child_list[i as usize], node_order, child_count,
                     node_index, child_list, child_index);
-        unmake_move(side_to_move, this_move as i32);
+        let move_0 = this_move as i32;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
         i += 1
     }
     let ref mut fresh44 = (*g_book.node.offset(index as isize)).flags;

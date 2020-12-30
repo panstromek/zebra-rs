@@ -1,6 +1,6 @@
 use crate::src::cntflip::AnyFlips_compact;
 use crate::src::globals::{board_state, Board, BoardState};
-use crate::src::hash::{hash_state};
+use crate::src::hash::{hash_state, HashState};
 use crate::src::search::{search_state, SearchState};
 use crate::src::zebra::ZebraFrontend;
 use std::future::Future;
@@ -184,13 +184,7 @@ pub unsafe fn make_move(side_to_move: i32,
   Takes back a move.
 */
 
-pub unsafe fn unmake_move(side_to_move: i32,
-                          move_0: i32) {
-    let board = &mut board_state.board;
-    let moves_state_ = &mut moves_state;
-    let hash_state_ = &mut hash_state;
-    let flip_stack = &mut flip_stack_;
-
+pub fn unmake_move(side_to_move: i32, move_0: i32, board: &mut [i32; 128], moves_state_: &mut MovesState, hash_state_: &mut HashState, flip_stack: &mut FlipStack) {
     board[move_0 as usize] = 1;
     moves_state_.disks_played -= 1;
     hash_state_.hash1 = hash_state_.hash_stored1[moves_state_.disks_played as usize];
