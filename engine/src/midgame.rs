@@ -1494,8 +1494,7 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
             board_state.pv[0][0] =
                 midgame_state.best_mid_root_move;
             board_state.pv_depth[0] = 1;
-            hash_expand_pv(side_to_move, 0 as i32, 4 as i32,
-                           12345678 as i32);
+            hash_expand_pv(side_to_move, 0 as i32, 4 as i32, 12345678 as i32, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
             if base_stage + depth - 2 as i32 >= 0 as i32 &&
                 midgame_state.stage_reached[(base_stage + depth - 2 as i32) as
                     usize] != 0 {

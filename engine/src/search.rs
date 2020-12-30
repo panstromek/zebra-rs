@@ -508,13 +508,7 @@ impl SearchState {
   Pad the existing PV with the move sequence suggested by the hash table.
 */
 
-pub unsafe fn hash_expand_pv(mut side_to_move: i32,
-                             mode: i32,
-                             flags: i32, max_selectivity: i32) {
-    hash_expand_pv_s(side_to_move, mode, flags, max_selectivity, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
-}
-
-pub fn hash_expand_pv_s(mut side_to_move: i32, mode: i32, flags: i32, max_selectivity: i32,
+pub fn hash_expand_pv(mut side_to_move: i32, mode: i32, flags: i32, max_selectivity: i32,
                            board_state_: &mut BoardState, hash_state_: &mut HashState, moves_state_: &mut MovesState, flip_stack: &mut FlipStack) {
     let mut pass_count = 0;
     let mut new_pv_depth = 0;
