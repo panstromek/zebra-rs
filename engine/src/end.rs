@@ -1777,7 +1777,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                 /* Check for ETC among the hash table moves */
                 if use_hash != 0 &&
                     make_move(side_to_move, entry.move_0[i as usize],
-                              1 as i32) != 0 as i32 {
+                              1 as i32, &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) != 0 as i32 {
                     let mut etc_entry =
                         HashEntry{key1: 0,
                             key2: 0,
@@ -1862,7 +1862,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                             0 as i32 {
                         new_opp_bits.high = opp_bits.high & !bb_flips_.high;
                         new_opp_bits.low = opp_bits.low & !bb_flips_.low;
-                        make_move(side_to_move, move_0, 1 as i32);
+                        make_move(side_to_move, move_0, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
                         curr_val = 0;
                         /* Enhanced Transposition Cutoff: It's a good idea to
                            transpose back into a position in the hash table. */
@@ -1981,7 +1981,7 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         if level == 0 as i32 && search_state.get_ponder_move() == 0 {
             FE::end_tree_search_level_0_ponder_0_short_report(move_0, first);
         }
-        make_move(side_to_move, move_0, use_hash);
+        make_move(side_to_move, move_0, use_hash,  &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
         TestFlips_wrapper(end,move_0, my_bits, opp_bits, bb_flips_);
         new_my_bits = *bb_flips_;
         new_opp_bits.high = opp_bits.high & !bb_flips_.high;
@@ -2200,7 +2200,7 @@ unsafe fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
             move_0 = board_state.pv[new_pv_depth as usize][new_pv_depth as usize];
             new_pv[new_pv_depth as usize] = move_0;
             new_side_to_move[new_pv_depth as usize] = side_to_move;
-            make_move(side_to_move, move_0, 1 as i32);
+            make_move(side_to_move, move_0, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
             new_pv_depth += 1
         } else {
             hash_state.hash1 ^= hash_state.hash_flip_color1;

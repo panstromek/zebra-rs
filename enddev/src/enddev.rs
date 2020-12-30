@@ -19,6 +19,7 @@ use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use legacy_zebra::src::zebra::g_config;
 use engine::src::timer::g_timer;
+use flip::unflip::flip_stack_;
 
 extern "C" {
     #[no_mangle]
@@ -465,7 +466,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 exit(1 as i32);
             }
             game_moves[moves_state.disks_played as usize] = move_0;
-            if make_move(side_to_move, move_0, 1 as i32) ==
+            if make_move(side_to_move, move_0, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) ==
                 0 as i32 {
                 fprintf(stderr,
                         b"Internal error: \'Legal\' move flips no discs.\n\x00"

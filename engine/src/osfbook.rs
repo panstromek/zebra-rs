@@ -694,7 +694,7 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
     i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
-        make_move(side_to_move, this_move, 1 as i32);
+        make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
         let val0___ = &mut val1;
         let val1___ = &mut val2;
         let orientation___ = &mut orientation;
@@ -834,7 +834,7 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
     i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
-        make_move(side_to_move, this_move, 1 as i32);
+        make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
         let val0___ = &mut val1;
         let val1___ = &mut val2;
         let orientation___ = &mut orientation;
@@ -1120,7 +1120,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         book.candidate_list[chosen_index as usize].move_0;
     loop  {
         temp_stm[level as usize] = side_to_move;
-        make_move(side_to_move, temp_move[level as usize], 1 as i32);
+        make_move(side_to_move, temp_move[level as usize], 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
         level += 1;
         let val0___ = &mut val1;
         let val1___ = &mut val2;
@@ -1163,7 +1163,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
             i = 0;
             while i < moves_state.move_count[moves_state.disks_played as usize] {
                 this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
-                make_move(side_to_move, this_move, 1 as i32);
+                make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
                 let val0___ = &mut val1;
                 let val1___ = &mut val2;
                 let orientation___ = &mut orientation;

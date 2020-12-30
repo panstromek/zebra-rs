@@ -234,7 +234,7 @@ pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
         move_0 = moves_state.move_list[moves_state.disks_played as usize][i as usize];
-        make_move(side_to_move, move_0, 1 as i32);
+        make_move(side_to_move, move_0, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
         search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
         let side_to_move_argument = 0 as i32 + 2 as i32 -
             side_to_move;
@@ -633,7 +633,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                     if board_state.board[move_0 as usize] == 1 as i32 {
                         if already_checked == 0 &&
                             make_move(side_to_move, move_0,
-                                      1 as i32) != 0 as i32
+                                      1 as i32, &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) != 0 as i32
                         {
                             curr_val =
                                 -tree_search::<FE>(level + 1 as i32,
@@ -725,7 +725,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                 }
             }
         }
-        make_move(side_to_move, move_0, 1 as i32);
+        make_move(side_to_move, move_0, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
         update_pv = 0;
         if searched == 0 as i32 {
             curr_val =
@@ -954,7 +954,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
             move_0 =
                 search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
             if board_state.board[move_0 as usize] == 1 as i32 {
-                if make_move(side_to_move, move_0, new_use_hash) !=
+                if make_move(side_to_move, move_0, new_use_hash , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) !=
                     0 as i32 {
                     if first != 0 {
                         curr_val =
@@ -1196,7 +1196,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                     }
                     if already_checked == 0 &&
                         board_state.board[move_0 as usize] == 1 as i32 &&
-                        make_move(side_to_move, move_0, 1 as i32)
+                        make_move(side_to_move, move_0, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ )
                             != 0 as i32 {
                         curr_val =
                             -tree_search::<FE>(level + 1 as i32,
@@ -1266,7 +1266,7 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
         if search_state.get_ponder_move() == 0 {
             FE::midgame_display_simple_ponder_move(move_0);
         }
-        make_move(side_to_move, move_0, 1 as i32);
+        make_move(side_to_move, move_0, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
         update_pv = 0;
         offset = midgame_state.score_perturbation[move_0 as usize];
         if searched == 0 as i32 {

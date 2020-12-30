@@ -16,6 +16,7 @@ use std::error::Error;
 use crate::src::thordb::ThorDatabase;
 use crate::src::zebra::EvalResult::WON_POSITION;
 use crate::src::zebra::EvalType::MIDGAME_EVAL;
+use flip::unflip::flip_stack_;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum EvalType {
@@ -374,7 +375,7 @@ pub unsafe fn engine_play_game<
                 }
                 learn_state.store_move(moves_state.disks_played, curr_move);
                 ZF::push_move(&mut move_vec, curr_move, moves_state.disks_played);
-                make_move(side_to_move, curr_move, 1);
+                make_move(side_to_move, curr_move, 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
                 if side_to_move == 0 as i32 {
                     board_state.black_moves[board_state.score_sheet_row as usize] = curr_move
                 } else {
@@ -653,7 +654,7 @@ pub async unsafe fn engine_play_game_async<
                 }
                 learn_state.store_move(moves_state.disks_played, curr_move);
                 ZF::push_move(&mut move_vec, curr_move, moves_state.disks_played);
-                make_move(side_to_move, curr_move, 1);
+                make_move(side_to_move, curr_move, 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
                 if side_to_move == 0 as i32 {
                     board_state.black_moves[board_state.score_sheet_row as usize] = curr_move
                 } else {
