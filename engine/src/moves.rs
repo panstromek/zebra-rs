@@ -265,10 +265,8 @@ pub fn generate_all(side_to_move: i32, moves_state_: &mut MovesState, search_sta
   Counts the number of moves for one player.
 */
 
-pub unsafe fn count_all_unsafe(side_to_move: i32, empty: i32) -> i32 {
-    let board = &board_state.board;
-    let current_move_order = &search_state.sorted_move_order[moves_state.disks_played as usize];
-
+fn count_all_wrapper(side_to_move: i32, empty: i32, board: &Board, moves_state_: &mut MovesState, search_state_: &mut SearchState) -> i32 {
+    let current_move_order = &search_state_.sorted_move_order[moves_state_.disks_played as usize];
     count_all(side_to_move, empty, board, current_move_order)
 }
 
