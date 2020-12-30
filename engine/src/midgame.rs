@@ -21,6 +21,7 @@ use crate::src::myrandom::{random_instance, MyRandom};
 use crate::src::search::SearchState;
 use crate::src::moves::{MovesState, generate_all, valid_move};
 use crate::src::globals::BoardState;
+use flip::unflip::flip_stack_;
 
 
 #[derive(Copy, Clone)]
@@ -493,7 +494,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                             search_state.sorted_move_order[moves_state.disks_played as
                                 usize][move_index as usize];
                         if board_state.board[move_0 as usize] == 1 as i32 {
-                            if make_move_no_hash(side_to_move, move_0) !=
+                            if make_move_no_hash(side_to_move, move_0, &mut board_state, &mut moves_state, &mut flip_stack_ ) !=
                                 0 as i32 {
                                 let side_to_move_argument = 0 as
                                     i32
@@ -895,7 +896,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
             move_0 =
                 search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
             if board_state.board[move_0 as usize] == 1 as i32 {
-                if make_move_no_hash(side_to_move, move_0) != 0 as i32
+                if make_move_no_hash(side_to_move, move_0, &mut board_state, &mut moves_state, &mut flip_stack_ ) != 0 as i32
                 {
                     let side_to_move_argument = 0 as i32 +
                         2 as i32 -

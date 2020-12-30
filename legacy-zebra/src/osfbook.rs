@@ -28,6 +28,7 @@ use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use crate::src::zebra::g_config;
+use flip::unflip::flip_stack_;
 
 pub type FE = LibcFatalError;
 static mut correction_script_name: *const i8 = 0 as *const i8;
@@ -1476,7 +1477,7 @@ unsafe fn do_uncompress(depth: i32,
         let mut flipped: i32 = 0;
         this_move =
             *child.offset((saved_child_index + i) as isize) as i32;
-        flipped = make_move_no_hash(side_to_move, this_move);
+        flipped = make_move_no_hash(side_to_move, this_move, &mut board_state, &mut moves_state, &mut flip_stack_ );
         if flipped == 0 as i32 {
             printf(b"%c%c flips %d discs for %d\n\x00" as *const u8 as
                        *const i8,
@@ -1926,7 +1927,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                 move_0 = 10 as i32 * row + col_0;
                 if row >= 1 as i32 && row <= 8 as i32 &&
                        col_0 >= 1 as i32 && col_0 <= 8 as i32
-                       && make_move_no_hash(side_to_move, move_0) != 0 {
+                       && make_move_no_hash(side_to_move, move_0, &mut board_state, &mut moves_state, &mut flip_stack_ ) != 0 {
                     let mut new_side_to_move =
                         0 as i32 + 2 as i32 - side_to_move;
                     let side_to_move = new_side_to_move;
