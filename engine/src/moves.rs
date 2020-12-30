@@ -352,11 +352,11 @@ pub fn make_move_no_hash(side_to_move: i32, move_0: i32, board_state_: &mut Boar
 
 pub unsafe fn unmake_move_no_hash(side_to_move: i32,
                                   move_0: i32) {
-    let board_state_ = &mut board_state;
+    let board = &mut board_state.board;
     let moves_state_ = &mut moves_state;
     let flip_stack = &mut flip_stack_;
 
-    board_state_.board[move_0 as usize] = 1;
+    board[move_0 as usize] = 1;
     moves_state_.disks_played -= 1;
     let mut UndoFlips__flip_count = moves_state_.flip_count[moves_state_.disks_played as usize];
     let UndoFlips__oppcol =
@@ -364,14 +364,14 @@ pub unsafe fn unmake_move_no_hash(side_to_move: i32,
     if UndoFlips__flip_count & 1 as i32 != 0 {
         UndoFlips__flip_count -= 1;
         flip_stack.flip_stack = flip_stack.flip_stack - 1;
-        board_state_.board[flip_stack.global_flip_stack[flip_stack.flip_stack]] = UndoFlips__oppcol
+        board[flip_stack.global_flip_stack[flip_stack.flip_stack]] = UndoFlips__oppcol
     }
     while UndoFlips__flip_count != 0 {
         UndoFlips__flip_count -= 2 as i32;
         flip_stack.flip_stack = flip_stack.flip_stack - 1;
-        board_state_.board[flip_stack.global_flip_stack[flip_stack.flip_stack]] = UndoFlips__oppcol;
+        board[flip_stack.global_flip_stack[flip_stack.flip_stack]] = UndoFlips__oppcol;
         flip_stack.flip_stack = flip_stack.flip_stack - 1;
-        board_state_.board[flip_stack.global_flip_stack[flip_stack.flip_stack]] = UndoFlips__oppcol
+        board[flip_stack.global_flip_stack[flip_stack.flip_stack]] = UndoFlips__oppcol
     };
 }
 /*
