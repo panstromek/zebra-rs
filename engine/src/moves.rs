@@ -349,17 +349,11 @@ pub fn make_move_no_hash(side_to_move: i32, move_0: i32, board_state_: &mut Boar
   updating hash table, preferrable through MAKE_MOVE_NO_HASH().
 */
 
-pub unsafe fn unmake_move_no_hash(side_to_move: i32,
-                                  move_0: i32) {
-    let board = &mut board_state.board;
-    let moves_state_ = &mut moves_state;
-    let flip_stack = &mut flip_stack_;
-
+pub fn unmake_move_no_hash(side_to_move: i32, move_0: i32, board: &mut [i32; 128], moves_state_: &mut MovesState, flip_stack: &mut FlipStack) {
     board[move_0 as usize] = 1;
     moves_state_.disks_played -= 1;
     let mut UndoFlips__flip_count = moves_state_.flip_count[moves_state_.disks_played as usize];
-    let UndoFlips__oppcol =
-        0 as i32 + 2 as i32 - side_to_move;
+    let UndoFlips__oppcol = 0 as i32 + 2 as i32 - side_to_move;
     if UndoFlips__flip_count & 1 as i32 != 0 {
         UndoFlips__flip_count -= 1;
         flip_stack.flip_stack = flip_stack.flip_stack - 1;
