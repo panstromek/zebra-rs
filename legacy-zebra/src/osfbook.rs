@@ -1495,7 +1495,11 @@ unsafe fn do_uncompress(depth: i32,
         do_uncompress(depth + 1 as i32, stream, node_index,
                       child_index, child_count, child, black_score,
                       white_score, alt_move, alt_score, flags);
-        unmake_move_no_hash(side_to_move, this_move);
+        let side_to_move___unmake_move_no_hash = side_to_move;
+        let move_0___unmake_move_no_hash = this_move;
+        {
+            unmake_move_no_hash(side_to_move___unmake_move_no_hash, move_0___unmake_move_no_hash, &mut board_state.board, &mut moves_state, &mut flip_stack_);
+        };
         i += 1
     };
 }
@@ -2062,7 +2066,11 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                             }
                         }
                     }
-                    unmake_move_no_hash(side_to_move, move_0);
+                    let side_to_move___unmake_move_no_hash = side_to_move;
+                    let move_0___unmake_move_no_hash = move_0;
+                    {
+                        unmake_move_no_hash(side_to_move___unmake_move_no_hash, move_0___unmake_move_no_hash, &mut board_state.board, &mut moves_state, &mut flip_stack_);
+                    };
                 } else {
                     fprintf(stderr,
                             b"Line %d: The PV move \'%s\' is invalid\n\x00" as

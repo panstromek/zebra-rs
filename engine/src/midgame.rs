@@ -507,7 +507,11 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                     side_to_move;
                                 curr_val =
                                     -static_or_terminal_evaluation(side_to_move_argument, &moves_state, &mut board_state, &mut search_state, &mut coeff_state);
-                                unmake_move_no_hash(side_to_move, move_0);
+                                let side_to_move___unmake_move_no_hash = side_to_move;
+                                let move_0___unmake_move_no_hash = move_0;
+                                {
+                                    unmake_move_no_hash(side_to_move___unmake_move_no_hash, move_0___unmake_move_no_hash, &mut board_state.board, &mut moves_state, &mut flip_stack_);
+                                };
                                 search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
                                 if curr_val > best {
                                     best = curr_val;
@@ -909,7 +913,11 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
                         side_to_move;
                     curr_val =
                         -static_or_terminal_evaluation(side_to_move_argument, &moves_state, &mut board_state, &mut search_state, &mut coeff_state);
-                    unmake_move_no_hash(side_to_move, move_0);
+                    let side_to_move___unmake_move_no_hash = side_to_move;
+                    let move_0___unmake_move_no_hash = move_0;
+                    {
+                        unmake_move_no_hash(side_to_move___unmake_move_no_hash, move_0___unmake_move_no_hash, &mut board_state.board, &mut moves_state, &mut flip_stack_);
+                    };
                     search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
                     if curr_val > best {
                         best = curr_val;
