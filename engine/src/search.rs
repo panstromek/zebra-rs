@@ -511,6 +511,11 @@ impl SearchState {
 pub unsafe fn hash_expand_pv(mut side_to_move: i32,
                              mode: i32,
                              flags: i32, max_selectivity: i32) {
+    hash_expand_pv_s(side_to_move, mode, flags, max_selectivity, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
+}
+
+pub fn hash_expand_pv_s(mut side_to_move: i32, mode: i32, flags: i32, max_selectivity: i32,
+                           board_state_: &mut BoardState, hash_state_: &mut HashState, moves_state_: &mut MovesState, flip_stack: &mut FlipStack) {
     let mut pass_count = 0;
     let mut new_pv_depth = 0;
     let mut new_pv = [0; 61];
@@ -524,38 +529,38 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
         selectivity: 0,
         flags: 0,
     };
-    determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
+    determine_hash_values(side_to_move, &board_state_.board, hash_state_);
     new_pv_depth = 0;
     pass_count = 0;
     while pass_count < 2 {
         new_side_to_move[new_pv_depth] = side_to_move;
-        if new_pv_depth < board_state.pv_depth[0] as usize &&
+        if new_pv_depth < board_state_.pv_depth[0] as usize &&
             new_pv_depth == 0 {
-            if board_state.board[board_state.pv[0][new_pv_depth] as usize] == 1 &&
-                make_move(side_to_move, board_state.pv[0][new_pv_depth], 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) != 0 {
+            if board_state_.board[board_state_.pv[0][new_pv_depth] as usize] == 1 &&
+                make_move(side_to_move, board_state_.pv[0][new_pv_depth], 1, moves_state_, board_state_, hash_state_, flip_stack) != 0 {
                 new_pv[new_pv_depth] =
-                    board_state.pv[0][new_pv_depth];
+                    board_state_.pv[0][new_pv_depth];
                 new_pv_depth += 1;
                 pass_count = 0
             } else {
-                hash_state.hash1 ^= hash_state.hash_flip_color1;
-                hash_state.hash2 ^= hash_state.hash_flip_color2;
+                hash_state_.hash1 ^= hash_state_.hash_flip_color1;
+                hash_state_.hash2 ^= hash_state_.hash_flip_color2;
                 pass_count += 1
             }
         } else {
-            find_hash(&mut entry, mode, &mut hash_state);
+            find_hash(&mut entry, mode, hash_state_);
             if entry.draft as i32 != 0 as i32 &&
                 entry.flags as i32 & flags != 0 &&
                 entry.selectivity as i32 <= max_selectivity &&
-                board_state.board[entry.move_0[0] as usize] == 1 &&
-                make_move(side_to_move, entry.move_0[0], 1  , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) != 0 {
+                board_state_.board[entry.move_0[0] as usize] == 1 &&
+                make_move(side_to_move, entry.move_0[0], 1, moves_state_, board_state_, hash_state_, flip_stack) != 0 {
                 new_pv[new_pv_depth] =
                     entry.move_0[0];
                 new_pv_depth += 1;
                 pass_count = 0
             } else {
-                hash_state.hash1 ^= hash_state.hash_flip_color1;
-                hash_state.hash2 ^= hash_state.hash_flip_color2;
+                hash_state_.hash1 ^= hash_state_.hash_flip_color1;
+                hash_state_.hash2 ^= hash_state_.hash_flip_color2;
                 pass_count += 1
             }
         }
@@ -566,16 +571,16 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
         let side_to_move = new_side_to_move[i as usize];
         let move_0 = new_pv[i as usize];
         {
-            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            unmake_move(side_to_move, move_0, &mut board_state_.board, moves_state_, hash_state_, flip_stack);
         };
         i -= 1
     }
     let mut i = 0;
     while i < new_pv_depth {
-        board_state.pv[0][i] = new_pv[i];
+        board_state_.pv[0][i] = new_pv[i];
         i += 1
     }
-    board_state.pv_depth[0] = new_pv_depth as i32;
+    board_state_.pv_depth[0] = new_pv_depth as i32;
 }
 
 
