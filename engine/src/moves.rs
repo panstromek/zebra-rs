@@ -1,10 +1,10 @@
 use crate::src::cntflip::AnyFlips_compact;
-use crate::src::globals::{board_state, Board};
+use crate::src::globals::{board_state, Board, BoardState};
 use crate::src::hash::{hash_state};
 use crate::src::search::{search_state, SearchState};
 use crate::src::zebra::ZebraFrontend;
 use std::future::Future;
-use flip::unflip::flip_stack_;
+use flip::unflip::{flip_stack_, FlipStack};
 use flip::doflip::{DoFlips_no_hash, DoFlips_hash};
 use std::error::Error;
 use engine_traits::Offset;
@@ -225,7 +225,7 @@ pub fn generate_specific(curr_move: i32, side_to_move: i32, board: &[i32; 128]) 
    in a position are generated, only those who need be considered.
 */
 
-pub fn generate_move(side_to_move: i32, board: &[i32; 128],
+pub fn generate_move(side_to_move: i32, board: &Board,
                             moves_state_: &mut MovesState, search_state_: &SearchState)
                             -> i32 {
     let mut move_0: i32 = 0;
@@ -318,31 +318,29 @@ pub fn game_in_progress(moves_state_: &mut MovesState, search_state_: &SearchSta
    is not updated - the move has to be unmade using UNMAKE_MOVE_NO_HASH().
 */
 
-pub unsafe fn make_move_no_hash(side_to_move: i32,
-                                move_0: i32)
+pub fn make_move_no_hash(side_to_move: i32, move_0: i32, board_state_: &mut BoardState, moves_state_: &mut MovesState, flip_stack: &mut FlipStack)
                                 -> i32 {
-    let mut flipped: i32 = 0;
-    flipped = DoFlips_no_hash(move_0, side_to_move, &mut board_state.board, &mut flip_stack_);
+    let flipped = DoFlips_no_hash(move_0, side_to_move, &mut board_state_.board, flip_stack);
     if flipped == 0 as i32 { return 0 as i32 }
-    moves_state.flip_count[moves_state.disks_played as usize] = flipped;
-    board_state.board[move_0 as usize] = side_to_move;
+    moves_state_.flip_count[moves_state_.disks_played as usize] = flipped;
+    board_state_.board[move_0 as usize] = side_to_move;
     if side_to_move == 0 as i32 {
-        board_state.piece_count[0][(moves_state.disks_played + 1 as i32) as usize] =
-            board_state.piece_count[0][moves_state.disks_played as usize] +
+        board_state_.piece_count[0][(moves_state_.disks_played + 1 as i32) as usize] =
+            board_state_.piece_count[0][moves_state_.disks_played as usize] +
                 flipped + 1 as i32;
-        board_state.piece_count[2][(moves_state.disks_played + 1 as i32) as usize] =
-            board_state.piece_count[2][moves_state.disks_played as usize] -
+        board_state_.piece_count[2][(moves_state_.disks_played + 1 as i32) as usize] =
+            board_state_.piece_count[2][moves_state_.disks_played as usize] -
                 flipped
     } else {
         /* side_to_move == WHITESQ */
-        board_state.piece_count[2][(moves_state.disks_played + 1 as i32) as usize] =
-            board_state.piece_count[2][moves_state.disks_played as usize] +
+        board_state_.piece_count[2][(moves_state_.disks_played + 1 as i32) as usize] =
+            board_state_.piece_count[2][moves_state_.disks_played as usize] +
                 flipped + 1 as i32;
-        board_state.piece_count[0][(moves_state.disks_played + 1 as i32) as usize] =
-            board_state.piece_count[0][moves_state.disks_played as usize] -
+        board_state_.piece_count[0][(moves_state_.disks_played + 1 as i32) as usize] =
+            board_state_.piece_count[0][moves_state_.disks_played as usize] -
                 flipped
     }
-    moves_state.disks_played += 1;
+    moves_state_.disks_played += 1;
     return flipped;
 }
 
