@@ -2,11 +2,11 @@ use crate::src::globals::{Board, board_state, BoardState};
 use crate::src::counter::CounterType;
 use crate::src::zebra::{EvaluationType, EvalResult, EvalType};
 use crate::src::moves::{make_move, moves_state, unmake_move, MovesState};
-use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
+use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values, HashState};
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, UNSOLVED_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, UNINITIALIZED_EVAL};
-use flip::unflip::flip_stack_;
+use flip::unflip::{flip_stack_, FlipStack};
 
 /*
    File:          search.c
@@ -584,39 +584,39 @@ pub unsafe fn hash_expand_pv(mut side_to_move: i32,
   Complete the principal variation with passes (if any there are any).
 */
 
-pub unsafe fn complete_pv<FE:FrontEnd>(mut side_to_move: i32) {
+pub fn complete_pv<FE: FrontEnd>(mut side_to_move: i32, search_state_: &mut SearchState, board_state_: &mut BoardState, flip_stack: &mut FlipStack, hash_state_: &mut HashState, moves_state_: &mut MovesState) {
     let mut actual_side_to_move = [0; 60];
-    search_state.full_pv_depth = 0;
+    search_state_.full_pv_depth = 0;
     let mut i = 0;
-    while i < board_state.pv_depth[0] {
-        if make_move(side_to_move, board_state.pv[0][i as usize], 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) != 0 {
+    while i < board_state_.pv_depth[0] {
+        if make_move(side_to_move, board_state_.pv[0][i as usize], 1, moves_state_, board_state_, hash_state_, flip_stack) != 0 {
             actual_side_to_move[i as usize] = side_to_move;
-            search_state.full_pv[search_state.full_pv_depth as usize] = board_state.pv[0][i as usize];
-            search_state.full_pv_depth += 1
+            search_state_.full_pv[search_state_.full_pv_depth as usize] = board_state_.pv[0][i as usize];
+            search_state_.full_pv_depth += 1
         } else {
-            search_state.full_pv[search_state.full_pv_depth as usize] = -(1);
-            search_state.full_pv_depth += 1;
+            search_state_.full_pv[search_state_.full_pv_depth as usize] = -(1);
+            search_state_.full_pv_depth += 1;
             side_to_move = 0 + 2 - side_to_move;
-            if make_move(side_to_move, board_state.pv[0][i as usize], 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) != 0 {
+            if make_move(side_to_move, board_state_.pv[0][i as usize], 1, moves_state_, board_state_, hash_state_, flip_stack) != 0 {
                 actual_side_to_move[i as usize] = side_to_move;
-                search_state.full_pv[search_state.full_pv_depth as usize] =
-                    board_state.pv[0][i as usize];
-                search_state.full_pv_depth += 1
+                search_state_.full_pv[search_state_.full_pv_depth as usize] =
+                    board_state_.pv[0][i as usize];
+                search_state_.full_pv_depth += 1
             } else {
-                let pv_0_depth: i32  = board_state.pv_depth[0];
-                let pv_0: &[i32; 64] = &board_state.pv[0];
+                let pv_0_depth: i32 = board_state_.pv_depth[0];
+                let pv_0: &[i32; 64] = &board_state_.pv[0];
                 FE::handle_fatal_pv_error(i, pv_0_depth, pv_0);
             }
         }
         side_to_move = 0 as i32 + 2 as i32 - side_to_move;
         i += 1
     }
-    i = board_state.pv_depth[0] - 1 as i32;
+    i = board_state_.pv_depth[0] - 1 as i32;
     while i >= 0 as i32 {
         let side_to_move = actual_side_to_move[i as usize];
-        let move_0 = board_state.pv[0][i as usize];
+        let move_0 = board_state_.pv[0][i as usize];
         {
-            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            unmake_move(side_to_move, move_0, &mut board_state_.board, moves_state_, hash_state_, flip_stack);
         };
         i -= 1
     };

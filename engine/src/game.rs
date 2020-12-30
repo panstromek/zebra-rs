@@ -677,7 +677,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     /* Write the principal variation, if available, to the log file
        and, optionally, to screen. */
     if search_state.get_ponder_move() == 0 {
-        complete_pv::<FE>(side_to_move);
+        complete_pv::<FE>(side_to_move, &mut search_state, &mut board_state, &mut flip_stack_, &mut hash_state, &mut moves_state);
         if display_pv != 0 && echo != 0 { Out::display_out_optimal_line(); }
         if let Some(logger) = logger { L::log_optimal_line(logger); }
     }
