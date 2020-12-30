@@ -2277,7 +2277,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         book_move = get_book_move::<FE>(side_to_move, 0, eval_info, echo);
         if book_move != -(1 as i32) {
             search_state.root_eval = (*eval_info).score / 128;
-            hash_expand_pv(side_to_move, 1, 4, 0);
+            hash_expand_pv(side_to_move, 1, 4, 0, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
             FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut board_state.pv[0], board_state.pv_depth[0]);
             return book_move
         }
@@ -2288,7 +2288,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             if book_move != -1 {
                 if wld != 0 {
                     search_state.root_eval = eval_info.score / 128;
-                    hash_expand_pv(side_to_move, 1, 4 | 2 | 1, 0);
+                    hash_expand_pv(side_to_move, 1, 4 | 2 | 1, 0, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
                     FE::send_solve_status(empties, side_to_move, eval_info,
                                           &mut search_state.nodes,
                                           &mut board_state.pv[0],
@@ -2353,7 +2353,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                                      current_confidence, empties,
                                      0);
                 if end.full_output_mode != 0 {
-                    hash_expand_pv(side_to_move, 1, flags as i32, selectivity);
+                    hash_expand_pv(side_to_move, 1, flags as i32, selectivity, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
                     FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut board_state.pv[0], board_state.pv_depth[0]);
                 }
                 selectivity -= 1
@@ -2412,8 +2412,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                                          current_confidence, empties,
                                          0);
                     if end.full_output_mode != 0 {
-                        hash_expand_pv(side_to_move, 1,
-                                       4, selectivity);
+                        hash_expand_pv(side_to_move, 1, 4, selectivity, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
                         FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut board_state.pv[0], board_state.pv_depth[0]);
                     }
                 }
@@ -2439,8 +2438,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     if solve_status != DRAW as i32 as u32 {
                         flags_0 |= (2 | 1)
                     }
-                    hash_expand_pv(side_to_move, 1,
-                                   flags_0 as i32, selectivity);
+                    hash_expand_pv(side_to_move, 1, flags_0 as i32, selectivity, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
                     FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut board_state.pv[0], board_state.pv_depth[0]);
                 }
             }
@@ -2528,8 +2526,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                                      search_state.root_eval * 128, 0.0f64,
                                      empties, 0);
                 if end.full_output_mode != 0 {
-                    hash_expand_pv(side_to_move, 1,
-                                   flags_1 as i32, 0);
+                    hash_expand_pv(side_to_move, 1, flags_1 as i32, 0, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
                     FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut board_state.pv[0], board_state.pv_depth[0]);
                 }
             } else {
@@ -2538,7 +2535,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                                      search_state.root_eval * 128, 0.0f64,
                                      empties, 0);
                 if end.full_output_mode != 0 {
-                    hash_expand_pv(side_to_move, 1, 4, 0);
+                    hash_expand_pv(side_to_move, 1, 4, 0, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
                     FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut board_state.pv[0], board_state.pv_depth[0]);
                 }
             }
@@ -2556,7 +2553,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     if search_state.root_eval != 0 {
                         flags_2 |= 2 | 1
                     }
-                    hash_expand_pv(side_to_move, 1, flags_2 as i32, 0);
+                    hash_expand_pv(side_to_move, 1, flags_2 as i32, 0, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
                     FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes,
                                           &mut board_state.pv[0], board_state.pv_depth[0]);
                 }
@@ -2588,7 +2585,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         if echo != 0 {
             FE::end_report_semi_panic_abort_2( g_timer.get_elapsed_time::<FE>());
             if end.full_output_mode != 0 {
-                hash_expand_pv(side_to_move, 1, 4, 0);
+                hash_expand_pv(side_to_move, 1, 4, 0, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
                 FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut board_state.pv[0], board_state.pv_depth[0]);
             }
             if echo != 0 || force_echo != 0 {
@@ -2614,7 +2611,7 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         eval_info.score = search_state.root_eval * 128
     }
     if wld == 0 && exact_score_failed == 0 {
-        hash_expand_pv(side_to_move, 1, 4, 0);
+        hash_expand_pv(side_to_move, 1, 4, 0, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
         FE::send_solve_status(empties, side_to_move, eval_info, &mut search_state.nodes, &mut board_state.pv[0], board_state.pv_depth[0]);
     }
     if echo != 0 || force_echo != 0 {

@@ -1,6 +1,6 @@
 use libc_wrapper::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc, puts, printf, putc, sprintf, fflush, time_t, stdout};
 use engine::src::error::{FrontEnd, FatalError};
-use engine::src::hash::HashEntry;
+use engine::src::hash::{HashEntry, hash_state};
 use engine::src::thordb::{ThorDatabase};
 use engine::src::zebra::{EvaluationType};
 use crate::src::thordb::{sort_thor_games};
@@ -27,6 +27,9 @@ use std::env::args;
 use thordb_types::C2RustUnnamed;
 use crate::src::zebra::g_config;
 use std::convert::TryFrom;
+use flip::unflip::flip_stack_;
+use engine::src::moves::moves_state;
+use engine::src::globals::board_state;
 
 static mut buffer: [i8; 16] = [0; 16];
 
@@ -540,8 +543,7 @@ impl FrontEnd for LibcFatalError {
                              '0' as i32 +
                                  search_state.get_ponder_move() / 10 as i32);
              }
-             hash_expand_pv(side_to_move, 0 as i32, 4 as i32,
-                            12345678 as i32);
+             hash_expand_pv(side_to_move, 0 as i32, 4 as i32, 12345678 as i32, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
              send_status_pv(pv_zero, max_depth, pv_depth_zero);
              send_status_time( g_timer.get_elapsed_time::<FE>());
              if  g_timer.get_elapsed_time::<FE>() != 0.0f64 {
