@@ -320,7 +320,13 @@ pub unsafe fn engine_play_game<
                     if config.skill[side_to_move as usize] == 0 as i32 {
                         if config.use_book != 0 && config.display_pv != 0 {
                             fill_move_alternatives::<FE>(side_to_move,
-                                                   0 as i32);
+                                                   0 as i32,
+                                                         &mut g_book,
+                                                         &mut board_state,
+                                                         &mut moves_state,
+                                                         &search_state,
+                                                         &mut flip_stack_,
+                                                         &mut hash_state);
                             if echo != 0 {
                                 ZF::print_move_alternatives(side_to_move);
                             }
@@ -601,7 +607,13 @@ pub async unsafe fn engine_play_game_async<
                     if config.skill[side_to_move as usize] == 0 as i32 {
                         if config.use_book != 0 && config.display_pv != 0 {
                             fill_move_alternatives::<FE>(side_to_move,
-                                                   0 as i32);
+                                                   0 as i32,
+                                                         &mut g_book,
+                                                         &mut board_state,
+                                                         &mut moves_state,
+                                                         &search_state,
+                                                         &mut flip_stack_,
+                                                         &mut hash_state);
                             if echo != 0 {
                                 ZF::print_move_alternatives(side_to_move);
                             }

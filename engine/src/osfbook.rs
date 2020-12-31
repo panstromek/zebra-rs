@@ -793,14 +793,14 @@ pub fn fill_endgame_hash(cutoff: i32, level: i32
 */
 
 pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
-                                     flags: i32) {
-    let mut book = &mut g_book;
-    let board_state_ = &mut board_state;
-    let moves_state_ = &mut moves_state;
-    let search_state_ = &search_state;
-    let flip_stack = &mut flip_stack_;
-    let hash_state_ = &mut hash_state;
-
+                                                   flags: i32,
+                                                   book: &mut Book,
+                                                   board_state_: &mut BoardState,
+                                                   moves_state_: &mut MovesState,
+                                                   search_state_: &SearchState,
+                                                   flip_stack: &mut FlipStack,
+                                                   hash_state_: &mut HashState
+) {
     let mut temp =
         CandidateMove{move_0: 0, score: 0, flags: 0, parent_flags: 0,};
     let mut sign: i32 = 0;
@@ -844,7 +844,7 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                 usize].offset(alternative_move as isize);
         alternative_score =
             adjust_score((*book.node.offset(index as isize)).alternative_score as
-                             i32, side_to_move, &mut book, moves_state_.disks_played)
+                             i32, side_to_move, book, moves_state_.disks_played)
     } else { alternative_score = -(12345678 as i32) }
     generate_all(side_to_move, moves_state_, search_state_, &board_state_.board);
     book.candidate_count = 0;
@@ -856,7 +856,7 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
         let val1___ = &mut val2;
         let orientation___ = &mut orientation;
         get_hash(val0___, val1___, orientation___, book, &board_state_.board);
-        slot = probe_hash_table(val1, val2, &mut book);
+        slot = probe_hash_table(val1, val2, book);
         let move_0 = this_move;
         {
             unmake_move(side_to_move, move_0, &mut board_state_.board, moves_state_, hash_state_, flip_stack);

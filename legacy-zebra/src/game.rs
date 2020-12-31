@@ -467,7 +467,13 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
         if empties <= exact {
             flags = 16 as i32
         } else if empties <= wld { flags = 4 as i32 }
-        fill_move_alternatives::<FE>(side_to_move, flags);
+        fill_move_alternatives::<FE>(side_to_move, flags,
+                                     &mut g_book,
+                                     &mut board_state,
+                                     &mut moves_state,
+                                     &search_state,
+                                     &mut flip_stack_,
+                                     &mut hash_state);
         game_evaluated_count = g_book.get_candidate_count();
         i = 0;
         while i < game_evaluated_count {

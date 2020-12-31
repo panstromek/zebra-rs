@@ -491,7 +491,13 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             if empties <= wld { flags = 4 as i32 }
             if empties <= exact { flags = 16 as i32 }
         }
-        fill_move_alternatives::<FE>(side_to_move, flags);
+        fill_move_alternatives::<FE>(side_to_move, flags,
+                                     &mut g_book,
+                                     &mut board_state,
+                                     &mut moves_state,
+                                     &search_state,
+                                     &mut flip_stack_,
+                                     &mut hash_state);
         curr_move =
              get_book_move::<FE>(side_to_move, update_all, &mut book_eval_info, echo);
         if curr_move != -(1 as i32) {
