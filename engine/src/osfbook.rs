@@ -973,6 +973,14 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                                           update_slack: i32,
                                           mut eval_info: &mut EvaluationType, echo: i32)
                                           -> i32 {
+    let board_state_ = &mut board_state;
+    let book = &mut g_book;
+    let search_state_ = &search_state;
+    let mut  moves_state_ = &mut moves_state;
+    let mut hash_state_ = &mut hash_state;
+    let random = &mut crate::src::myrandom::random_instance;
+    let flip_stack = &mut flip_stack_;
+
     let mut i: i32 = 0;
     let mut original_side_to_move: i32 = 0;
     let mut remaining_slack: i32 = 0;
@@ -1004,7 +1012,6 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     let mut temp_stm: [i32; 60] = [0; 60];
     /* Disable opening book randomness unless the move is going to
        be played on the board by Zebra */
-    let book = &mut g_book;
     if update_slack != 0 {
         remaining_slack =
             if book.max_slack - book.used_slack[side_to_move as usize] >
@@ -1013,7 +1020,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
             } else { 0 as i32 }
     } else { remaining_slack = 0 as i32 }
     if echo != 0 && book.candidate_count > 0 as i32 &&
-        search_state.get_ponder_move() == 0 {
+        search_state_.get_ponder_move() == 0 {
         FE::report_in_get_book_move_1(side_to_move, remaining_slack);
     }
     /* No book move found? */
@@ -1022,7 +1029,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     let val0___ = &mut val1;
     let val1___ = &mut val2;
     let orientation___ = &mut orientation;
-    get_hash(val0___, val1___, orientation___, book, &board_state.board);
+    get_hash(val0___, val1___, orientation___, book, &board_state_.board);
     slot = probe_hash_table(val1, val2, book);
     if slot == -(1 as i32) ||
         *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
@@ -1072,7 +1079,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         chosen_index = 0 as i32
     } else {
         random_point =
-            ((crate::src::myrandom::random_instance.my_random() >> 10 as i32) %
+            ((random.my_random() >> 10 as i32) %
                 total_weight as i64) as i32;
         chosen_index = 0;
         acc_weight = weight[chosen_index as usize];
@@ -1137,12 +1144,12 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         book.candidate_list[chosen_index as usize].move_0;
     loop  {
         temp_stm[level as usize] = side_to_move;
-        make_move(side_to_move, temp_move[level as usize], 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+        make_move(side_to_move, temp_move[level as usize], 1 as i32, &mut moves_state_, board_state_, &mut hash_state_, flip_stack);
         level += 1;
         let val0___ = &mut val1;
         let val1___ = &mut val2;
         let orientation___ = &mut orientation;
-        get_hash(val0___, val1___, orientation___, book, &board_state.board);
+        get_hash(val0___, val1___, orientation___, book, &board_state_.board);
         slot = probe_hash_table(val1, val2, book);
         continuation = 1;
         if slot == -(1 as i32) ||
@@ -1163,7 +1170,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                         isize)
                         as
                         isize)).alternative_score
-                                     as i32, side_to_move, book, moves_state.disks_played)
+                                     as i32, side_to_move, book, moves_state_.disks_played)
             } else { alternative_score = -(12345678 as i32) }
             if (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                 isize)).flags as i32 &
@@ -1174,21 +1181,21 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                 side_to_move = 2;
                 sign = -(1 as i32)
             }
-            generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+            generate_all(side_to_move, &mut moves_state_, search_state_, &board_state_.board);
             best_score = -(12345678 as i32);
             best_move = -(1 as i32);
             i = 0;
-            while i < moves_state.move_count[moves_state.disks_played as usize] {
-                this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
-                make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+            while i < moves_state_.move_count[moves_state_.disks_played as usize] {
+                this_move = moves_state_.move_list[moves_state_.disks_played as usize][i as usize];
+                make_move(side_to_move, this_move, 1 as i32, &mut moves_state_, board_state_, &mut hash_state_, flip_stack);
                 let val0___ = &mut val1;
                 let val1___ = &mut val2;
                 let orientation___ = &mut orientation;
-                get_hash(val0___, val1___, orientation___, book, &board_state.board);
+                get_hash(val0___, val1___, orientation___, book, &board_state_.board);
                 slot = probe_hash_table(val1, val2, book);
                 let move_0 = this_move;
                 {
-                    unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                    unmake_move(side_to_move, move_0, &mut board_state_.board, &mut moves_state_, &mut hash_state_, flip_stack);
                 };
                 if slot == -(1 as i32) ||
                     *book.book_hash_table.offset(slot as isize) ==
@@ -1228,10 +1235,10 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         }
         if !(continuation != 0) { break ; }
     }
-    board_state.pv_depth[0] = level;
+    board_state_.pv_depth[0] = level;
     i = 0;
     while i < level {
-        board_state.pv[0][i as usize] = temp_move[i as usize];
+        board_state_.pv[0][i as usize] = temp_move[i as usize];
         i += 1
     }
     loop  {
@@ -1239,7 +1246,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         let side_to_move = temp_stm[level as usize];
         let move_0 = temp_move[level as usize];
         {
-            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            unmake_move(side_to_move, move_0, &mut board_state_.board, &mut moves_state_, &mut hash_state_, flip_stack);
         };
         if !(level > 0 as i32) { break ; }
     }
