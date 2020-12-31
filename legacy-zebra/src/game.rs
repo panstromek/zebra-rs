@@ -23,6 +23,7 @@ use crate::src::zebra::g_config;
 use engine::src::thordb::ThorDatabase;
 use engine::src::midgame::midgame_state;
 use flip::unflip::flip_stack_;
+use engine::src::myrandom::random_instance;
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
 pub static mut prefix_move: i32 = 0;
@@ -520,7 +521,14 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
         if game_evaluated_count > 0 as i32 {
             best_move =
                  get_book_move::<FE>(side_to_move, 0 as i32,
-                              &mut book_eval_info, echo);
+                              &mut book_eval_info, echo,
+                                     &mut board_state,
+                                     &mut g_book,
+                                     &search_state,
+                                     &mut moves_state,
+                                     &mut hash_state,
+                                     &mut random_instance,
+                                     &mut flip_stack_);
             let eval = book_eval_info;
             search_state.set_current_eval(eval);
         } else {

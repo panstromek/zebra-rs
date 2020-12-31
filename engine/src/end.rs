@@ -30,6 +30,7 @@ use crate::src::zebra::EvalResult::{WON_POSITION, DRAWN_POSITION, LOST_POSITION,
 use crate::src::moves::{moves_state, generate_all, unmake_move, valid_move};
 use crate::src::search::SearchState;
 use crate::src::stable::stable_state;
+use crate::src::myrandom::random_instance;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -2281,7 +2282,15 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                                      &mut flip_stack_,
                                      &mut hash_state
         );
-        book_move = get_book_move::<FE>(side_to_move, 0, eval_info, echo);
+        book_move = get_book_move::<FE>(side_to_move, 0, eval_info, echo,
+                                        &mut board_state,
+                                        &mut g_book,
+                                        &search_state,
+                                        &mut moves_state,
+                                        &mut hash_state,
+                                        &mut random_instance,
+                                        &mut flip_stack_
+        );
         if book_move != -(1 as i32) {
             search_state.root_eval = (*eval_info).score / 128;
             hash_expand_pv(side_to_move, 1, 4, 0, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
@@ -2297,7 +2306,14 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                                      &mut flip_stack_,
                                      &mut hash_state);
         if end. komi_shift == 0 {
-            book_move = get_book_move::<FE>(side_to_move, 0, eval_info, echo);
+            book_move = get_book_move::<FE>(side_to_move, 0, eval_info, echo,
+                                            &mut board_state,
+                                            &mut g_book,
+                                            &search_state,
+                                            &mut moves_state,
+                                            &mut hash_state,
+                                            &mut random_instance,
+                                            &mut flip_stack_);
             if book_move != -1 {
                 if wld != 0 {
                     search_state.root_eval = eval_info.score / 128;
