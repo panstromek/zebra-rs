@@ -648,6 +648,9 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
 
 pub unsafe fn fill_endgame_hash(cutoff: i32,
                                 level: i32) {
+    let mut book = &mut g_book;
+    let board_state_ = &mut board_state;
+
     let mut i: i32 = 0;
     let mut this_index: i32 = 0;
     let mut child_index: i32 = 0;
@@ -666,8 +669,7 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
     let val0___ = &mut val1;
     let val1___ = &mut val2;
     let orientation___ = &mut orientation;
-    get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
-    let mut book = &mut g_book;
+    get_hash(val0___, val1___, orientation___, book, &board_state_.board);
     slot = probe_hash_table(val1, val2, book);
     this_index = *book.book_hash_table.offset(slot as isize);
     /* If the position wasn't found in the hash table, return. */
@@ -689,15 +691,15 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
     matching_move = -(1 as i32);
-    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state_.board);
     i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
-        make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+        make_move(side_to_move, this_move, 1 as i32, &mut moves_state, board_state_, &mut hash_state, &mut flip_stack_ );
         let val0___ = &mut val1;
         let val1___ = &mut val2;
         let orientation___ = &mut orientation;
-        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+        get_hash(val0___, val1___, orientation___, book, &board_state_.board);
         slot = probe_hash_table(val1, val2, &mut book);
         child_index = *book.book_hash_table.offset(slot as isize);
         if child_index != -(1 as i32) {
@@ -742,7 +744,7 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
         }
         let move_0 = this_move;
         {
-            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            unmake_move(side_to_move, move_0, &mut board_state_.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
         };
         i += 1
     }
@@ -782,6 +784,13 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
 
 pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                                      flags: i32) {
+    let mut book = &mut g_book;
+    let board_state_ = &mut board_state;
+    let moves_state_ = &mut moves_state;
+    let search_state_ = &search_state;
+    let flip_stack = &mut flip_stack_;
+    let hash_state_ = &mut hash_state;
+
     let mut temp =
         CandidateMove{move_0: 0, score: 0, flags: 0, parent_flags: 0,};
     let mut sign: i32 = 0;
@@ -799,8 +808,7 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
     let mut child_feasible: i32 = 0;
     let mut deviation: i32 = 0;
     let mut root_flags: i32 = 0;
-    let mut book = &mut g_book;
-    let board1 = &board_state.board;
+    let board1 = &board_state_.board;
     get_hash(&mut val1, &mut val2, &mut orientation, book, board1);
     slot = probe_hash_table(val1, val2, book);
     /* If the position wasn't found in the hash table, return. */
@@ -826,22 +834,22 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                 usize].offset(alternative_move as isize);
         alternative_score =
             adjust_score((*book.node.offset(index as isize)).alternative_score as
-                             i32, side_to_move, &mut book, moves_state.disks_played)
+                             i32, side_to_move, &mut book, moves_state_.disks_played)
     } else { alternative_score = -(12345678 as i32) }
-    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+    generate_all(side_to_move, moves_state_, search_state_, &board_state_.board);
     book.candidate_count = 0;
     i = 0;
-    while i < moves_state.move_count[moves_state.disks_played as usize] {
-        this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
-        make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+    while i < moves_state_.move_count[moves_state_.disks_played as usize] {
+        this_move = moves_state_.move_list[moves_state_.disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32, moves_state_, board_state_, hash_state_, flip_stack);
         let val0___ = &mut val1;
         let val1___ = &mut val2;
         let orientation___ = &mut orientation;
-        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+        get_hash(val0___, val1___, orientation___, book, &board_state_.board);
         slot = probe_hash_table(val1, val2, &mut book);
         let move_0 = this_move;
         {
-            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            unmake_move(side_to_move, move_0, &mut board_state_.board, moves_state_, hash_state_, flip_stack);
         };
         /* Check if the move leads to a book position and, if it does,
            whether it has the solve status (WLD or FULL) specified by FLAGS. */
@@ -906,7 +914,7 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
         }
         if child_feasible != 0 {
             book.candidate_list[book.candidate_count as usize].move_0 =
-                moves_state.move_list[moves_state.disks_played as usize][i as usize];
+                moves_state_.move_list[moves_state_.disks_played as usize][i as usize];
             book.candidate_list[book.candidate_count as usize].score = sign * score;
             if deviation != 0 {
                 book.candidate_list[book.candidate_count as usize].flags =
@@ -1004,7 +1012,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     let val0___ = &mut val1;
     let val1___ = &mut val2;
     let orientation___ = &mut orientation;
-    get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+    get_hash(val0___, val1___, orientation___, book, &board_state.board);
     slot = probe_hash_table(val1, val2, book);
     if slot == -(1 as i32) ||
         *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
@@ -1124,7 +1132,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         let val0___ = &mut val1;
         let val1___ = &mut val2;
         let orientation___ = &mut orientation;
-        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+        get_hash(val0___, val1___, orientation___, book, &board_state.board);
         slot = probe_hash_table(val1, val2, book);
         continuation = 1;
         if slot == -(1 as i32) ||
@@ -1166,7 +1174,7 @@ pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                 let val0___ = &mut val1;
                 let val1___ = &mut val2;
                 let orientation___ = &mut orientation;
-                get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+                get_hash(val0___, val1___, orientation___, book, &board_state.board);
                 slot = probe_hash_table(val1, val2, book);
                 let move_0 = this_move;
                 {
