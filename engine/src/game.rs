@@ -499,7 +499,14 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                                      &mut flip_stack_,
                                      &mut hash_state);
         curr_move =
-             get_book_move::<FE>(side_to_move, update_all, &mut book_eval_info, echo);
+             get_book_move::<FE>(side_to_move, update_all, &mut book_eval_info, echo,
+                                 &mut board_state,
+                                 &mut g_book,
+                                 &search_state,
+                                 &mut moves_state,
+                                 &mut hash_state,
+                                 &mut random_instance,
+                                 &mut flip_stack_);
         if curr_move != -(1 as i32) {
             let eval = book_eval_info;
             search_state.set_current_eval(eval);
