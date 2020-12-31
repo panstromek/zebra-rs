@@ -650,6 +650,10 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
                                 level: i32) {
     let mut book = &mut g_book;
     let board_state_ = &mut board_state;
+    let moves_state_ = &mut moves_state;
+    let search_state_ = &search_state;
+    let hash_state_ = &mut hash_state;
+    let flip_stack = &mut flip_stack_;
 
     let mut i: i32 = 0;
     let mut this_index: i32 = 0;
@@ -691,11 +695,11 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
     matching_move = -(1 as i32);
-    generate_all(side_to_move, &mut moves_state, &search_state, &board_state_.board);
+    generate_all(side_to_move, moves_state_, search_state_, &board_state_.board);
     i = 0;
-    while i < moves_state.move_count[moves_state.disks_played as usize] {
-        this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
-        make_move(side_to_move, this_move, 1 as i32, &mut moves_state, board_state_, &mut hash_state, &mut flip_stack_ );
+    while i < moves_state_.move_count[moves_state_.disks_played as usize] {
+        this_move = moves_state_.move_list[moves_state_.disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32, moves_state_, board_state_, hash_state_, flip_stack );
         let val0___ = &mut val1;
         let val1___ = &mut val2;
         let orientation___ = &mut orientation;
@@ -703,7 +707,7 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
         slot = probe_hash_table(val1, val2, &mut book);
         child_index = *book.book_hash_table.offset(slot as isize);
         if child_index != -(1 as i32) {
-            if moves_state.disks_played < 60 as i32 - cutoff {
+            if moves_state_.disks_played < 60 as i32 - cutoff {
                 fill_endgame_hash(cutoff, level + 1 as i32);
             }
             if is_full != 0 {
@@ -744,7 +748,7 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
         }
         let move_0 = this_move;
         {
-            unmake_move(side_to_move, move_0, &mut board_state_.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            unmake_move(side_to_move, move_0, &mut board_state_.board, moves_state_, hash_state_, flip_stack);
         };
         i += 1
     }
@@ -767,8 +771,8 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
         } else if signed_score >= 0 as i32 {
             bound = 1 as i32
         } else { bound = 2 as i32 }
-        add_hash(&mut hash_state,1 as i32, signed_score, matching_move,
-                 16 as i32 | bound, 60 as i32 - moves_state.disks_played,
+        add_hash(hash_state_, 1 as i32, signed_score, matching_move,
+                 16 as i32 | bound, 60 as i32 - moves_state_.disks_played,
                  0 as i32);
     };
 }
