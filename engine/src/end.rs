@@ -20,7 +20,7 @@ use crate::{
 use crate::src::error::FrontEnd;
 use crate::src::hash::{add_hash};
 use crate::src::midgame::{tree_search, midgame_state};
-use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_move};
+use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_move, g_book};
 use crate::src::stubs::{abs, ceil};
 use crate::src::timer::{g_timer};
 use crate::src::zebra::EvaluationType;
@@ -2297,7 +2297,14 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 } else { book_eval_info = *eval_info }
             }
         }
-        fill_endgame_hash(8 + 1, 0);
+        fill_endgame_hash(8 + 1, 0,
+                          &mut g_book
+            ,                  &mut board_state
+            ,&mut moves_state
+            ,&search_state
+            ,&mut hash_state
+            ,&mut flip_stack_
+        );
     }
     g_timer.last_panic_check = 0.0f64;
     solve_status = UNKNOWN;
