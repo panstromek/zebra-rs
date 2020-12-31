@@ -535,11 +535,14 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
                                    opening:
                                    *const i8)
                                    -> i32 {
-    let mut i: i32 = 0;
+    let random = &mut crate::src::myrandom::random_instance;
+    let disks_played = moves_state.disks_played;
+    let board = &board_state.board;
+    let book = &g_book;
+
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
     let mut count: i32 = 0;
-    let mut move_count_0: i32 = 0;
     let mut local_side_to_move: i32 = 0;
     let mut same_position: i32 = 0;
     let mut symm_index: i32 = 0;
@@ -550,11 +553,11 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
         [1 as i32, -(1 as i32), 9 as i32,
             -(9 as i32), 10 as i32, -(10 as i32),
             11 as i32, -(11 as i32)];
-    move_count_0 =
+    let move_count_0 =
          FE::strlen(opening).wrapping_div(2 as i32 as u64) as
             i32;
-    if move_count_0 <= moves_state.disks_played { return -(1 as i32) }
-    i = 0;
+    if move_count_0 <= disks_played { return -(1 as i32) }
+    let mut i = 0;
     while i < move_count_0 {
         move_0[i as usize] =
             10 as i32 *
@@ -579,7 +582,7 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
         local_board[55];
     local_side_to_move = 0;
     i = 0;
-    while i < moves_state.disks_played {
+    while i < disks_played {
         j = 0;
         while j < 8 as i32 {
             pos = move_0[i as usize] + move_offset[j as usize];
@@ -609,7 +612,7 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
        line match the current board. The initial symmetry is chosen
        randomly to avoid the same symmetry being chosen all the time.
        This is not a perfect scheme but good enough. */
-    symmetry = abs(crate::src::myrandom::random_instance.my_random() as i32) % 8 as i32;
+    symmetry = abs(random.my_random() as i32) % 8 as i32;
     symm_index = 0;
     while symm_index < 8 as i32 {
         same_position = 1;
@@ -618,8 +621,8 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
             j = 1;
             while j <= 8 as i32 {
                 pos = 10 as i32 * i + j;
-                if board_state.board[pos as usize] !=
-                    local_board[*g_book.symmetry_map[symmetry as
+                if board[pos as usize] !=
+                    local_board[*book.symmetry_map[symmetry as
                         usize].offset(pos as
                         isize)
                         as usize] {
@@ -630,8 +633,8 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
             i += 1
         }
         if same_position != 0 {
-            return *g_book.inv_symmetry_map[symmetry as
-                usize].offset(move_0[moves_state.disks_played as
+            return *book.inv_symmetry_map[symmetry as
+                usize].offset(move_0[disks_played as
                 usize] as
                 isize)
         }
