@@ -540,36 +540,32 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
     let board = &board_state.board;
     let book = &g_book;
 
-    let mut j: i32 = 0;
-    let mut pos: i32 = 0;
-    let mut count: i32 = 0;
-    let mut local_side_to_move: i32 = 0;
-    let mut same_position: i32 = 0;
-    let mut symm_index: i32 = 0;
-    let mut symmetry: i32 = 0;
+
+    let move_count_0 = FE::strlen(opening).wrapping_div(2) as i32;
+    if move_count_0 <= disks_played { return -(1 as i32) }
+    let mut i = 0;
     let mut move_0: [i32; 60] = [0; 60];
+    while i < move_count_0 {
+        move_0[i as usize] = 10 * (*opening.offset((2 * i + 1) as isize) as i32 - '0' as i32) +
+                FE::tolower(*opening.offset((2 * i) as isize) as i32) - 'a' as i32 + 1;
+        i += 1
+    }
+
     let mut local_board: [i32; 100] = [0; 100];
     let move_offset: [i32; 8] =
         [1 as i32, -(1 as i32), 9 as i32,
             -(9 as i32), 10 as i32, -(10 as i32),
             11 as i32, -(11 as i32)];
-    let move_count_0 =
-         FE::strlen(opening).wrapping_div(2 as i32 as u64) as
-            i32;
-    if move_count_0 <= disks_played { return -(1 as i32) }
-    let mut i = 0;
-    while i < move_count_0 {
-        move_0[i as usize] =
-            10 as i32 *
-                (*opening.offset((2 as i32 * i + 1 as i32) as
-                    isize) as i32 - '0' as i32) +
-               FE::tolower(*opening.offset((2 as i32 * i) as isize) as
-                    i32) - 'a' as i32 + 1 as i32;
-        i += 1
-    }
+    let mut j: i32 = 0;
+    let mut count: i32 = 0;
+    let mut local_side_to_move: i32 = 0;
+    let mut same_position: i32 = 0;
+    let mut symm_index: i32 = 0;
+    let mut symmetry: i32 = 0;
+
     /* Play through the given opening line until the number of discs
        matches that on the actual board. */
-    pos = 11;
+    let mut pos = 11;
     while pos <= 88 as i32 {
         local_board[pos as usize] = 1;
         pos += 1
@@ -581,7 +577,7 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
     local_board[44] =
         local_board[55];
     local_side_to_move = 0;
-    i = 0;
+    let mut i = 0;
     while i < disks_played {
         j = 0;
         while j < 8 as i32 {
