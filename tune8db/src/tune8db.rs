@@ -11,56 +11,27 @@ extern "C" {
     pub type _IO_wide_data;
     pub type _IO_codecvt;
     pub type _IO_marker;
-    #[no_mangle]
     fn sqrt(_: f64) -> f64;
-    #[no_mangle]
     fn fabs(_: f64) -> f64;
-    #[no_mangle]
     static mut stdout: *mut FILE;
-    #[no_mangle]
     fn fclose(__stream: *mut FILE) -> i32;
-    #[no_mangle]
     fn fflush(__stream: *mut FILE) -> i32;
-    #[no_mangle]
-    fn fopen(__filename: *const i8, __modes: *const i8)
-             -> *mut FILE;
-    #[no_mangle]
+    fn fopen(__filename: *const i8, __modes: *const i8) -> *mut FILE;
     fn fprintf(_: *mut FILE, _: *const i8, _: ...) -> i32;
-    #[no_mangle]
     fn printf(_: *const i8, _: ...) -> i32;
-    #[no_mangle]
-    fn sprintf(_: *mut i8, _: *const i8, _: ...)
-               -> i32;
-    #[no_mangle]
+    fn sprintf(_: *mut i8, _: *const i8, _: ...) -> i32;
     fn fscanf(_: *mut FILE, _: *const i8, _: ...) -> i32;
-    #[no_mangle]
-    fn sscanf(_: *const i8, _: *const i8, _: ...)
-              -> i32;
-    #[no_mangle]
-    fn fgets(__s: *mut i8, __n: i32, __stream: *mut FILE)
-             -> *mut i8;
-    #[no_mangle]
+    fn sscanf(_: *const i8, _: *const i8, _: ...) -> i32;
+    fn fgets(__s: *mut i8, __n: i32, __stream: *mut FILE) -> *mut i8;
     fn puts(__s: *const i8) -> i32;
-    #[no_mangle]
-    fn fread(__ptr: *mut ::std::ffi::c_void, __size: size_t, __n: size_t,
-             __stream: *mut FILE) -> size_t;
-    #[no_mangle]
-    fn fwrite(__ptr: *const ::std::ffi::c_void, __size: size_t, __n: size_t,
-              __s: *mut FILE) -> size_t;
-    #[no_mangle]
+    fn fread(__ptr: *mut ::std::ffi::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
+    fn fwrite(__ptr: *const ::std::ffi::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
     fn feof(__stream: *mut FILE) -> i32;
-    #[no_mangle]
-    fn strtol(__nptr: *const i8, __endptr: *mut *mut i8,
-              __base: i32) -> i64;
-    #[no_mangle]
+    fn strtol(__nptr: *const i8, __endptr: *mut *mut i8, __base: i32) -> i64;
     fn malloc(_: u64) -> *mut ::std::ffi::c_void;
-    #[no_mangle]
     fn free(__ptr: *mut ::std::ffi::c_void);
-    #[no_mangle]
     fn exit(_: i32) -> !;
-    #[no_mangle]
     fn abs(_: i32) -> i32;
-    #[no_mangle]
     fn time(__timer: *mut time_t) -> time_t;
 }
 pub type __off_t = i64;

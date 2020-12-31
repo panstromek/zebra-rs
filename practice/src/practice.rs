@@ -18,27 +18,16 @@ use engine::src::hash::hash_state;
 use flip::unflip::flip_stack_;
 
 extern "C" {
-
-    #[no_mangle]
     static mut stdout: *mut FILE;
-    #[no_mangle]
     fn fflush(__stream: *mut FILE) -> i32;
-    #[no_mangle]
     fn printf(_: *const i8, _: ...) -> i32;
-    #[no_mangle]
     fn scanf(_: *const i8, _: ...) -> i32;
-    #[no_mangle]
     fn puts(__s: *const i8) -> i32;
-    #[no_mangle]
     fn strtol(__nptr: *const i8, __endptr: *mut *mut i8,
               __base: i32) -> i64;
-    #[no_mangle]
     fn free(__ptr: *mut ::std::ffi::c_void);
-    #[no_mangle]
     fn exit(_: i32) -> !;
-    #[no_mangle]
     fn strcmp(_: *const i8, _: *const i8) -> i32;
-    #[no_mangle]
     fn strdup(_: *const i8) -> *mut i8;
 }
 pub type size_t = u64;

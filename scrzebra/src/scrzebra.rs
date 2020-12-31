@@ -24,35 +24,22 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use legacy_zebra::src::zebra::g_config;
 
 extern "C" {
-    #[no_mangle]
     static mut stdout: *mut FILE;
-    #[no_mangle]
     fn fclose(__stream: *mut FILE) -> i32;
-    #[no_mangle]
     fn fopen(__filename: *const i8, __modes: *const i8)
              -> *mut FILE;
-    #[no_mangle]
     fn fprintf(_: *mut FILE, _: *const i8, _: ...) -> i32;
-    #[no_mangle]
     fn printf(_: *const i8, _: ...) -> i32;
-    #[no_mangle]
     fn sscanf(_: *const i8, _: *const i8, _: ...)
               -> i32;
-    #[no_mangle]
     fn fgets(__s: *mut i8, __n: i32, __stream: *mut FILE)
              -> *mut i8;
-    #[no_mangle]
     fn fputs(__s: *const i8, __stream: *mut FILE) -> i32;
-    #[no_mangle]
     fn puts(__s: *const i8) -> i32;
-    #[no_mangle]
     fn feof(__stream: *mut FILE) -> i32;
-    #[no_mangle]
     fn strtol(__nptr: *const i8, __endptr: *mut *mut i8,
               __base: i32) -> i64;
-    #[no_mangle]
     fn exit(_: i32) -> !;
-    #[no_mangle]
     fn strcasecmp(_: *const i8, _: *const i8)
                   -> i32;
 }
