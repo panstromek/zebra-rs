@@ -2273,7 +2273,14 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     book_move = -1;
     if allow_book != 0 {
         /* Is the exact score known? */
-        fill_move_alternatives::<FE>(side_to_move, 16);
+        fill_move_alternatives::<FE>(side_to_move, 16,
+                                     &mut g_book,
+                                     &mut board_state,
+                                     &mut moves_state,
+                                     &search_state,
+                                     &mut flip_stack_,
+                                     &mut hash_state
+        );
         book_move = get_book_move::<FE>(side_to_move, 0, eval_info, echo);
         if book_move != -(1 as i32) {
             search_state.root_eval = (*eval_info).score / 128;
@@ -2282,7 +2289,13 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
             return book_move
         }
         /* Is the WLD status known? */
-        fill_move_alternatives::<FE>(side_to_move, 4);
+        fill_move_alternatives::<FE>(side_to_move, 4,
+                                     &mut g_book,
+                                     &mut board_state,
+                                     &mut moves_state,
+                                     &search_state,
+                                     &mut flip_stack_,
+                                     &mut hash_state);
         if end. komi_shift == 0 {
             book_move = get_book_move::<FE>(side_to_move, 0, eval_info, echo);
             if book_move != -1 {

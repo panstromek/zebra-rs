@@ -2897,7 +2897,13 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
         if moves_state.move_count[moves_state.disks_played as usize] > 0 as i32 {
             printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
                        *const i8, 60 as i32 - moves_state.disks_played);
-            fill_move_alternatives::<FE>(side_to_move, 16 as i32);
+            fill_move_alternatives::<FE>(side_to_move, 16 as i32,
+                                         &mut g_book,
+                                         &mut board_state,
+                                         &mut moves_state,
+                                         &search_state,
+                                         &mut flip_stack_,
+                                         &mut hash_state);
             if g_book.get_candidate_count() > 0 as i32 ||
                 moves_state.disks_played >= 40 as i32 {
                 print_move_alternatives(side_to_move);
@@ -2957,7 +2963,13 @@ unsafe fn do_endgame_statistics(index: i32,
         determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
         printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
                    *const i8, 60 as i32 - moves_state.disks_played);
-        fill_move_alternatives::<FE>(side_to_move, 16 as i32);
+        fill_move_alternatives::<FE>(side_to_move, 16 as i32,
+                                     &mut g_book,
+                                     &mut board_state,
+                                     &mut moves_state,
+                                     &search_state,
+                                     &mut flip_stack_,
+                                     &mut hash_state);
         if g_book.get_candidate_count() > 0 as i32 ||
             moves_state.disks_played >= 40 as i32 {
             print_move_alternatives(side_to_move);
