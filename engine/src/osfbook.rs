@@ -15,7 +15,7 @@ use crate::{
 use crate::src::stubs::{abs, ceil, floor};
 use crate::src::error::{FrontEnd};
 use crate::src::midgame::tree_search;
-use crate::src::hash::{add_hash, setup_hash, hash_state};
+use crate::src::hash::{add_hash, setup_hash, hash_state, HashState};
 use crate::src::game::{setup_non_file_based_game};
 use engine_traits::Offset;
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, WLD_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
@@ -23,10 +23,10 @@ use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, DRAWN_POSITION,
 use crate::src::zebra::DrawMode::{OPPONENT_WINS, BLACK_WINS, WHITE_WINS};
 use crate::src::zebra::GameMode::PRIVATE_GAME;
 use crate::src::zebra::{GameMode, DrawMode};
-use crate::src::search::search_state;
-use crate::src::moves::{unmake_move, generate_all};
-use crate::src::globals::Board;
-use flip::unflip::flip_stack_;
+use crate::src::search::{search_state, SearchState};
+use crate::src::moves::{unmake_move, generate_all, MovesState};
+use crate::src::globals::{Board, BoardState};
+use flip::unflip::{flip_stack_, FlipStack};
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -646,15 +646,14 @@ pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
   book hash table to the game hash table.
 */
 
-pub unsafe fn fill_endgame_hash(cutoff: i32,
-                                level: i32) {
-    let mut book = &mut g_book;
-    let board_state_ = &mut board_state;
-    let moves_state_ = &mut moves_state;
-    let search_state_ = &search_state;
-    let hash_state_ = &mut hash_state;
-    let flip_stack = &mut flip_stack_;
-
+pub fn fill_endgame_hash(cutoff: i32, level: i32
+                                ,book: &mut Book
+                                ,board_state_: &mut BoardState
+                                ,moves_state_: &mut MovesState
+                                ,search_state_: &SearchState
+                                ,hash_state_: &mut HashState
+                                ,flip_stack: &mut FlipStack
+) {
     let mut i: i32 = 0;
     let mut this_index: i32 = 0;
     let mut child_index: i32 = 0;
@@ -704,11 +703,18 @@ pub unsafe fn fill_endgame_hash(cutoff: i32,
         let val1___ = &mut val2;
         let orientation___ = &mut orientation;
         get_hash(val0___, val1___, orientation___, book, &board_state_.board);
-        slot = probe_hash_table(val1, val2, &mut book);
+        slot = probe_hash_table(val1, val2, book);
         child_index = *book.book_hash_table.offset(slot as isize);
         if child_index != -(1 as i32) {
             if moves_state_.disks_played < 60 as i32 - cutoff {
-                fill_endgame_hash(cutoff, level + 1 as i32);
+                fill_endgame_hash(cutoff, level + 1 as i32,
+                book
+                ,board_state_
+                ,moves_state_
+                ,search_state_
+                ,hash_state_
+                ,flip_stack
+                );
             }
             if is_full != 0 {
                 /* Any child with matching exact score? */
