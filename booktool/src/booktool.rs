@@ -13,19 +13,13 @@ use engine::src::myrandom::random_instance;
 pub type FE = LibcFatalError;
 
 extern "C" {
-    #[no_mangle]
     fn printf(_: *const i8, _: ...) -> i32;
-    #[no_mangle]
     fn puts(__s: *const i8) -> i32;
-    #[no_mangle]
     fn strtod(__nptr: *const i8, __endptr: *mut *mut i8)
               -> f64;
-    #[no_mangle]
     fn strtol(__nptr: *const i8, __endptr: *mut *mut i8,
               __base: i32) -> i64;
-    #[no_mangle]
     fn exit(_: i32) -> !;
-    #[no_mangle]
     fn strcasecmp(_: *const i8, _: *const i8)
                   -> i32;
 }

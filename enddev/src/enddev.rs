@@ -22,40 +22,22 @@ use engine::src::timer::g_timer;
 use flip::unflip::flip_stack_;
 
 extern "C" {
-    #[no_mangle]
     fn __assert_fail(__assertion: *const i8,
                      __file: *const i8, __line: u32,
                      __function: *const i8) -> !;
-    #[no_mangle]
     fn __ctype_b_loc() -> *mut *const u16;
-    #[no_mangle]
     fn __ctype_tolower_loc() -> *mut *const __int32_t;
-    #[no_mangle]
     fn exp(_: f64) -> f64;
-    #[no_mangle]
     static mut stderr: *mut FILE;
-    #[no_mangle]
-    fn fopen(__filename: *const i8, __modes: *const i8)
-             -> *mut FILE;
-    #[no_mangle]
+    fn fopen(__filename: *const i8, __modes: *const i8) -> *mut FILE;
     fn fprintf(_: *mut FILE, _: *const i8, _: ...) -> i32;
-    #[no_mangle]
     fn printf(_: *const i8, _: ...) -> i32;
-    #[no_mangle]
-    fn sscanf(_: *const i8, _: *const i8, _: ...)
-              -> i32;
-    #[no_mangle]
-    fn fgets(__s: *mut i8, __n: i32, __stream: *mut FILE)
-             -> *mut i8;
-    #[no_mangle]
+    fn sscanf(_: *const i8, _: *const i8, _: ...) -> i32;
+    fn fgets(__s: *mut i8, __n: i32, __stream: *mut FILE) -> *mut i8;
     fn fputs(__s: *const i8, __stream: *mut FILE) -> i32;
-    #[no_mangle]
     fn puts(__s: *const i8) -> i32;
-    #[no_mangle]
     fn feof(__stream: *mut FILE) -> i32;
-    #[no_mangle]
     fn exit(_: i32) -> !;
-    #[no_mangle]
     fn strlen(_: *const i8) -> u64;
 }
 pub type __int32_t = i32;
