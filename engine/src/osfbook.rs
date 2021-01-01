@@ -86,20 +86,12 @@ pub struct Book {
     pub force_black: i32,
     pub force_white: i32,
     pub used_slack: [i32; 3],
-    pub b1_b1_map: [i32; 100],
-    pub g1_b1_map: [i32; 100],
-    pub g8_b1_map: [i32; 100],
-    pub b8_b1_map: [i32; 100],
-    pub a2_b1_map: [i32; 100],
-    pub a7_b1_map: [i32; 100],
-    pub h7_b1_map: [i32; 100],
-    pub h2_b1_map: [i32; 100],
     pub exact_count: [i32; 61],
     pub wld_count: [i32; 61],
     pub exhausted_count: [i32; 61],
     pub common_count: [i32; 61],
-    pub symmetry_map: [*mut i32; 8],
-    pub inv_symmetry_map: [*mut i32; 8],
+    pub symmetry_map: [*const i32; 8],
+    pub inv_symmetry_map: [*const i32; 8],
     pub line_hash: [[[i32; 6561]; 8]; 2],
     pub book_hash_table: Vec<i32>,
     pub draw_mode: DrawMode,
@@ -109,7 +101,71 @@ pub struct Book {
     pub row_pattern: [i32; 8],
     pub col_pattern: [i32; 8],
 }
+pub struct BookMaps {
+    pub b1_b1_map: [i32; 100],
+    pub g1_b1_map: [i32; 100],
+    pub g8_b1_map: [i32; 100],
+    pub b8_b1_map: [i32; 100],
+    pub a2_b1_map: [i32; 100],
+    pub a7_b1_map: [i32; 100],
+    pub h7_b1_map: [i32; 100],
+    pub h2_b1_map: [i32; 100],
+}
+pub static BOOK_MAPS: BookMaps = create_book_maps();
 
+pub const fn create_book_maps() -> BookMaps {
+    let mut maps = BookMaps {
+        //FIXME it seems like these maps are only initialized in legacy-zebra, not in the engine,
+        // why is that? Is it my mistake?
+        b1_b1_map: [0; 100],
+        g1_b1_map: [0; 100],
+        g8_b1_map: [0; 100],
+        b8_b1_map: [0; 100],
+        a2_b1_map: [0; 100],
+        a7_b1_map: [0; 100],
+        h7_b1_map: [0; 100],
+        h2_b1_map: [0; 100],
+    };
+    let mut i = 0;
+    let mut j = 0;
+    let mut pos = 0;
+    i = 1;
+    while i <= 8 {
+        j = 1;
+        while j <= 8 {
+            pos = 10  * i + j;
+            maps.b1_b1_map[pos as usize] = pos;
+            maps.g1_b1_map[pos as usize] = 10 * i + (9 - j);
+            maps.g8_b1_map[pos as usize] = 10 * (9 - i) + (9 - j);
+            maps.b8_b1_map[pos as usize] = 10 * (9 - i) + j;
+            maps.a2_b1_map[pos as usize] = 10 * j + i;
+            maps.a7_b1_map[pos as usize] = 10 * j + (9 - i);
+            maps.h7_b1_map[pos as usize] = 10 * (9 - j) + (9 - i);
+            maps.h2_b1_map[pos as usize] = 10 * (9 - j) + i;
+            j += 1
+        }
+        i += 1
+    };
+
+    // Following block should be equivalent of this commented out block from the original code
+    // I don't really understand its original purpose, though
+
+    // let mut i = 0;
+    // while i < 8 as i32 {
+    //     *book.symmetry_map[i as usize] = 0;
+    //     i += 1
+    // }
+
+    maps.b1_b1_map[0] = 0;
+    maps.g1_b1_map[0] = 0;
+    maps.g8_b1_map[0] = 0;
+    maps.b8_b1_map[0] = 0;
+    maps.a2_b1_map[0] = 0;
+    maps.a7_b1_map[0] = 0;
+    maps.h7_b1_map[0] = 0;
+    maps.h2_b1_map[0] = 0;
+    maps
+}
 pub static mut g_book: Book = Book {
     deviation_bonus: 0.,
     search_depth: 0,
@@ -137,20 +193,12 @@ pub static mut g_book: Book = Book {
     force_black: 0,
     force_white: 0,
     used_slack: [0; 3],
-    b1_b1_map: [0; 100],
-    g1_b1_map: [0; 100],
-    g8_b1_map: [0; 100],
-    b8_b1_map: [0; 100],
-    a2_b1_map: [0; 100],
-    a7_b1_map: [0; 100],
-    h7_b1_map: [0; 100],
-    h2_b1_map: [0; 100],
     exact_count: [0; 61],
     wld_count: [0; 61],
     exhausted_count: [0; 61],
     common_count: [0; 61],
-    symmetry_map: [0 as *mut i32; 8],
-    inv_symmetry_map: [0 as *mut i32; 8],
+    symmetry_map: [0 as *const i32; 8],
+    inv_symmetry_map: [0 as *const i32; 8],
     line_hash: [[[0; 6561]; 8]; 2],
     book_hash_table: Vec::new(),
     draw_mode: OPPONENT_WINS,
