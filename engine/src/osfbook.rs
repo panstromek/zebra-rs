@@ -841,7 +841,7 @@ pub fn fill_endgame_hash(cutoff: i32, level: i32
   any flag combination.
 */
 
-pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
+pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                                                    flags: i32,
                                                    book: &mut Book,
                                                    board_state_: &mut BoardState,
@@ -1018,7 +1018,7 @@ pub unsafe fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
    evaluation by too much.
 */
 
-pub unsafe fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
+pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                                           update_slack: i32,
                                           mut eval_info: &mut EvaluationType, echo: i32,
                                           board_state_: &mut BoardState,
