@@ -20,7 +20,7 @@ use engine::src::zebra::{EvaluationType};
 use engine::src::timer::{g_timer};
 use crate::src::safemem::safe_malloc;
 use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fputs, sprintf, free, fputc, strstr, toupper, __ctype_b_loc, strlen, sscanf, fgets, ctime, strcpy, malloc, feof, strcmp, fwrite, fread, fscanf, qsort, stdout, stderr, exit, FILE};
-use engine::src::osfbook::{__time_t, probe_hash_table, get_hash, get_node_depth, clear_node_depth, fill_move_alternatives, _ISupper, _ISprint, _ISspace, _ISgraph, BookNode, adjust_score, g_book, size_t, set_node_depth, Book, reset_book_search};
+use engine::src::osfbook::{__time_t, probe_hash_table, get_hash, get_node_depth, clear_node_depth, fill_move_alternatives, _ISupper, _ISprint, _ISspace, _ISgraph, BookNode, adjust_score, g_book, size_t, set_node_depth, Book, reset_book_search, BOOK_MAPS};
 use engine_traits::Offset;
 use engine::src::getcoeff::{remove_coeffs, coeff_state};
 use engine::src::game::{engine_game_init, setup_non_file_based_game};
@@ -4555,7 +4555,7 @@ pub unsafe fn do_minimax(index: i32,
 
 
 pub unsafe fn engine_init_osf<FE: FrontEnd>() {
-    init_maps::<FE>();
+    init_maps::<FE>(); //FIXME why is this not called from zebra everytime in the engine?????
     prepare_hash(&mut g_book, &mut engine::src::myrandom::random_instance);
     setup_hash(1 as i32, &mut hash_state, &mut random_instance);
     init_book_tree(&mut g_book);
@@ -4598,58 +4598,35 @@ pub unsafe fn prepare_tree_traversal() {
    orientation value from get_hash() OR YOU WILL LOSE BIG.
 */
 pub unsafe fn init_maps<FE: FrontEnd>() {
+    let book = &mut g_book;
+    book.symmetry_map[0] = BOOK_MAPS.b1_b1_map.as_ptr();
+    book.inv_symmetry_map[0] = BOOK_MAPS.b1_b1_map.as_ptr();
+    book.symmetry_map[1] = BOOK_MAPS.g1_b1_map.as_ptr();
+    book.inv_symmetry_map[1] = BOOK_MAPS.g1_b1_map.as_ptr();
+    book.symmetry_map[2] = BOOK_MAPS.g8_b1_map.as_ptr();
+    book.inv_symmetry_map[2] = BOOK_MAPS.g8_b1_map.as_ptr();
+    book.symmetry_map[3] = BOOK_MAPS.b8_b1_map.as_ptr();
+    book.inv_symmetry_map[3] = BOOK_MAPS.b8_b1_map.as_ptr();
+    book.symmetry_map[4] = BOOK_MAPS.a2_b1_map.as_ptr();
+    book.inv_symmetry_map[4] = BOOK_MAPS.a2_b1_map.as_ptr();
+    book.symmetry_map[5] = BOOK_MAPS.a7_b1_map.as_ptr();
+    book.inv_symmetry_map[5] = BOOK_MAPS.h2_b1_map.as_ptr();
+    book.symmetry_map[6] = BOOK_MAPS.h7_b1_map.as_ptr();
+    book.inv_symmetry_map[6] = BOOK_MAPS.h7_b1_map.as_ptr();
+    book.symmetry_map[7] = BOOK_MAPS.h2_b1_map.as_ptr();
+    book.inv_symmetry_map[7] = BOOK_MAPS.a7_b1_map.as_ptr();
+    let book = & g_book;
     let mut i = 0;
-    let mut j = 0;
     let mut k = 0;
-    let mut pos = 0;
-    i = 1;
-    while i <= 8 {
-        j = 1;
-        while j <= 8 {
-            pos = 10  * i + j;
-            g_book.b1_b1_map[pos as usize] = pos;
-            g_book.g1_b1_map[pos as usize] = 10 * i + (9 - j);
-            g_book.g8_b1_map[pos as usize] = 10 * (9 - i) + (9 - j);
-            g_book.b8_b1_map[pos as usize] = 10 * (9 - i) + j;
-            g_book.a2_b1_map[pos as usize] = 10 * j + i;
-            g_book.a7_b1_map[pos as usize] = 10 * j + (9 - i);
-            g_book.h7_b1_map[pos as usize] = 10 * (9 - j) + (9 - i);
-            g_book.h2_b1_map[pos as usize] = 10 * (9 - j) + i;
-            j += 1
-        }
-        i += 1
-    }
-    g_book.symmetry_map[0] = g_book.b1_b1_map.as_mut_ptr();
-    g_book.inv_symmetry_map[0] = g_book.b1_b1_map.as_mut_ptr();
-    g_book.symmetry_map[1] = g_book.g1_b1_map.as_mut_ptr();
-    g_book.inv_symmetry_map[1] = g_book.g1_b1_map.as_mut_ptr();
-    g_book.symmetry_map[2] = g_book.g8_b1_map.as_mut_ptr();
-    g_book.inv_symmetry_map[2] = g_book.g8_b1_map.as_mut_ptr();
-    g_book.symmetry_map[3] = g_book.b8_b1_map.as_mut_ptr();
-    g_book.inv_symmetry_map[3] = g_book.b8_b1_map.as_mut_ptr();
-    g_book.symmetry_map[4] = g_book.a2_b1_map.as_mut_ptr();
-    g_book.inv_symmetry_map[4] = g_book.a2_b1_map.as_mut_ptr();
-    g_book.symmetry_map[5] = g_book.a7_b1_map.as_mut_ptr();
-    g_book.inv_symmetry_map[5] = g_book.h2_b1_map.as_mut_ptr();
-    g_book.symmetry_map[6] = g_book.h7_b1_map.as_mut_ptr();
-    g_book.inv_symmetry_map[6] = g_book.h7_b1_map.as_mut_ptr();
-    g_book.symmetry_map[7] = g_book.h2_b1_map.as_mut_ptr();
-    g_book.inv_symmetry_map[7] = g_book.a7_b1_map.as_mut_ptr();
-    i = 0;
     while i < 8 as i32 {
-        *g_book.symmetry_map[i as usize] = 0;
-        i += 1
-    }
-    i = 0;
-    while i < 8 as i32 {
-        j = 1;
+        let mut j = 1;
         while j <= 8 as i32 {
             k = 1;
             while k <= 8 as i32 {
-                pos = 10 as i32 * j + k;
-                if *g_book.inv_symmetry_map[i as usize]
-                    .offset(*g_book.symmetry_map[i as usize].offset(pos as isize) as isize) != pos {
-                    let symmetry_map_item = *g_book.inv_symmetry_map[i as usize].offset(*g_book.symmetry_map[i as usize].offset(pos as isize) as isize);
+                let pos = 10 as i32 * j + k;
+                if *book.inv_symmetry_map[i as usize]
+                    .offset(*book.symmetry_map[i as usize].offset(pos as isize) as isize) != pos {
+                    let symmetry_map_item = *book.inv_symmetry_map[i as usize].offset(*book.symmetry_map[i as usize].offset(pos as isize) as isize);
                     FE::error_in_map(i, pos, symmetry_map_item);
                 }
                 k += 1
