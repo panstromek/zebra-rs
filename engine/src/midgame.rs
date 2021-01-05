@@ -1058,7 +1058,7 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
   Perturbs SCORE by PERTURBATION if it doesn't appear to be
   a midgame win.
 */
-pub unsafe fn perturb_score(score: i32,
+pub fn perturb_score(score: i32,
                         perturbation: i32)
                         -> i32 {
     if abs(score) < 29000 as i32 - 4000 as i32 {
