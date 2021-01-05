@@ -28,6 +28,7 @@ use crate::src::moves::{unmake_move, generate_all, MovesState};
 use crate::src::globals::{Board, BoardState};
 use flip::unflip::{flip_stack_, FlipStack};
 use crate::src::myrandom::MyRandom;
+use crate::src::game::ForcedOpening;
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -580,25 +581,16 @@ pub fn clear_osf(book: &mut Book) {
   otherwise PASS is returned.
 */
 
-pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32,
-                                   opening:
-                                   *const i8)
+pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32, opening: ForcedOpening)
                                    -> i32 {
     let random = &mut crate::src::myrandom::random_instance;
     let disks_played = moves_state.disks_played;
     let board = &board_state.board;
     let book = &g_book;
 
-
-    let move_count_0 = FE::strlen(opening).wrapping_div(2) as i32;
+    let move_count_0 = opening.move_count;
     if move_count_0 <= disks_played { return -(1 as i32) }
-    let mut i = 0;
-    let mut move_0: [i32; 60] = [0; 60];
-    while i < move_count_0 {
-        move_0[i as usize] = 10 * (*opening.offset((2 * i + 1) as isize) as i32 - '0' as i32) +
-                FE::tolower(*opening.offset((2 * i) as isize) as i32) - 'a' as i32 + 1;
-        i += 1
-    }
+    let mut move_0 = &opening.moves;
 
     let mut local_board: [i32; 100] = [0; 100];
     let move_offset: [i32; 8] =
