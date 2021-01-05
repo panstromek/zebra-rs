@@ -581,12 +581,7 @@ pub fn clear_osf(book: &mut Book) {
   otherwise PASS is returned.
 */
 
-pub unsafe fn check_forced_opening<FE: FrontEnd>(side_to_move: i32, opening: ForcedOpening)
-                                   -> i32 {
-    let random = &mut crate::src::myrandom::random_instance;
-    let disks_played = moves_state.disks_played;
-    let board = &board_state.board;
-    let book = &g_book;
+pub fn check_forced_opening<FE: FrontEnd>(side_to_move: i32, opening: ForcedOpening, board: &[i32; 128], disks_played: i32, book: &Book, random: &mut MyRandom) -> i32 {
 
     let move_count_0 = opening.move_count;
     if move_count_0 <= disks_played { return -(1 as i32) }
