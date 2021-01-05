@@ -20,6 +20,8 @@ use flip::unflip::{flip_stack_};
 use crate::src::zebra::EvalResult::{WON_POSITION, UNSOLVED_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, INTERRUPTED_EVAL, UNDEFINED_EVAL, FORCED_EVAL, PASS_EVAL, EXACT_EVAL, WLD_EVAL};
 use std::ffi::CStr;
+use std::ops::{Index, RangeFrom};
+use std::borrow::Borrow;
 
 
 #[derive(Copy, Clone)]
@@ -412,7 +414,13 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     let mut midgame_move = -(1 as i32);
     if !game_state.forced_opening.is_null() {
         /* Check if the position fits the currently forced opening */
-        curr_move = check_forced_opening::<FE>(side_to_move, ForcedOpening::from_ptr::<FE>(game_state.forced_opening));
+        curr_move = check_forced_opening::<FE>(
+            side_to_move,
+            ForcedOpening::from_ptr::<FE>(game_state.forced_opening),
+            &board_state.board,
+            moves_state.disks_played,
+            &g_book,
+            &mut random_instance);
         if curr_move != -(1 as i32) {
             book_eval_info =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
