@@ -20,8 +20,6 @@ use flip::unflip::{flip_stack_};
 use crate::src::zebra::EvalResult::{WON_POSITION, UNSOLVED_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, INTERRUPTED_EVAL, UNDEFINED_EVAL, FORCED_EVAL, PASS_EVAL, EXACT_EVAL, WLD_EVAL};
 use std::ffi::CStr;
-use std::ops::{Index, RangeFrom};
-use std::borrow::Borrow;
 
 
 #[derive(Copy, Clone)]
