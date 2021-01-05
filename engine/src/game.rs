@@ -355,7 +355,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     let empties = 60 as i32 - moves_state.disks_played;
     FE::reset_buffer_display();
     g_timer.determine_move_time(my_time as f64, my_incr as f64,
-                        moves_state.disks_played + 4 as i32);
+                       moves_state.disks_played + 4 as i32);
     if search_state.get_ponder_move() == 0 {  g_timer.clear_ponder_times(); }
     remove_coeffs(moves_state.disks_played, &mut coeff_state);
     /* No feasible moves? */
@@ -412,7 +412,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     let mut midgame_move = -(1 as i32);
     if !game_state.forced_opening.is_null() {
         /* Check if the position fits the currently forced opening */
-        curr_move = check_forced_opening::<FE>(side_to_move, game_state.forced_opening);
+        curr_move = check_forced_opening::<FE>(side_to_move, ForcedOpening::from_ptr::<FE>(game_state.forced_opening));
         if curr_move != -(1 as i32) {
             book_eval_info =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
@@ -751,4 +751,27 @@ pub trait ComputeMoveLogger {
     fn log_board(logger: &mut Self, board_: & crate::src::globals::Board, side_to_move_: i32);
     fn create(log_file_path_: &mut [i8]) -> Option<Self> where Self:Sized;
     fn create_log_file_if_needed() -> Option<Self> where Self:Sized;
+}
+
+pub struct ForcedOpening {
+    pub move_count: i32,
+    pub moves: [i32; 60],
+}
+impl ForcedOpening {
+    pub unsafe fn from_ptr<FE: FrontEnd>(opening: *const i8) -> Self {
+        let mut i = 0;
+        let mut move_0: [i32; 60] = [0; 60];
+        let move_count_0 = unsafe { FE::strlen(opening) }.wrapping_div(2) as i32;
+        while i < move_count_0 {
+            unsafe {
+                move_0[i as usize] = 10 * (*opening.offset((2 * i + 1) as isize) as i32 - '0' as i32) +
+                    FE::tolower(*opening.offset((2 * i) as isize) as i32) - 'a' as i32 + 1;
+            }
+            i += 1
+        };
+        ForcedOpening {
+            move_count: move_count_0,
+            moves: move_0
+        }
+    }
 }
