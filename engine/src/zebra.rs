@@ -3,7 +3,7 @@ use crate::src::moves::{make_move, game_in_progress, get_move, get_move_async, m
 use crate::src::search::{disc_count, produce_compact_eval, search_state};
 use crate::src::counter::{counter_value, adjust_counter};
 use crate::src::stubs::{floor};
-use crate::src::globals::{board_state};
+use crate::src::globals::{board_state, BoardState};
 use crate::src::learn::{Learner, LearnState};
 use crate::src::error::{FrontEnd};
 use crate::src::myrandom::{random_instance};
@@ -264,7 +264,7 @@ pub unsafe fn engine_play_game<
         ZF::set_move_list(
             board_state.score_sheet_row);
         ZF::set_evals(0.0f64, 0.0f64);
-        clear_moves();
+        clear_moves(&mut board_state);
         move_vec[0] = 0;
         // these are not used because their usage was disabled by preprocessor
         // byt for deterministic testing, we need to call random the same way, so we keep them.
@@ -551,7 +551,7 @@ pub async unsafe fn engine_play_game_async<
         set_names_from_skills::<ZF>(config);
         ZF::set_move_list(board_state.score_sheet_row);
         ZF::set_evals(0.0f64, 0.0f64);
-        clear_moves();
+        clear_moves(&mut board_state);
         move_vec[0] = 0;
         // these are not used because their usage was disabled by preprocessor
         // byt for deterministic testing, we need to call random the same way, so we keep them.
@@ -750,7 +750,7 @@ pub async unsafe fn engine_play_game_async<
     Ok(())
 }
 
-unsafe fn clear_moves() {
-    board_state.black_moves = [-1; 60];
-    board_state.white_moves = [-1; 60];
+fn clear_moves(state: &mut BoardState) {
+    state.black_moves = [-1; 60];
+    state.white_moves = [-1; 60];
 }
