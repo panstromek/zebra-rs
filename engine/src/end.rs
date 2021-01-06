@@ -1,38 +1,38 @@
-use flip::doflip::{DoFlips_hash};
+use flip::doflip::DoFlips_hash;
 use flip::unflip::flip_stack_;
 
 use crate::{
     src:: {
-        epcstat::{END_SIGMA, END_MEAN, END_STATS_AVAILABLE},
-        moves::{dir_mask,  make_move},
-        search::{force_return, hash_expand_pv, search_state, store_pv, restore_pv, create_eval_info, disc_count, select_move},
-        hash::{hash_state, find_hash, HashEntry},
         bitbcnt::CountFlips_bitboard,
-        bitboard::{set_bitboards, BitBoard},
         bitbmob::{bitboard_mobility, weighted_mobility},
-        bitbtest::{TestFlips_bitboard},
-        probcut::prob_cut,
-        stable::{count_stable, count_edge_stable},
+        bitboard::{BitBoard, set_bitboards},
+        bitbtest::TestFlips_bitboard,
         counter::{adjust_counter, counter_value},
+        epcstat::{END_MEAN, END_SIGMA, END_STATS_AVAILABLE},
         globals::board_state,
+        hash::{find_hash, hash_state, HashEntry},
+        moves::{dir_mask, make_move},
+        probcut::prob_cut,
+        search::{create_eval_info, disc_count, force_return, hash_expand_pv, restore_pv, search_state, select_move, store_pv},
+        stable::{count_edge_stable, count_stable},
     }
 };
 use crate::src::error::FrontEnd;
-use crate::src::hash::{add_hash};
-use crate::src::midgame::{tree_search};
-use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_move, g_book};
-use crate::src::stubs::{abs, ceil};
-use crate::src::timer::{g_timer};
-use crate::src::zebra::EvaluationType;
+use crate::src::game::{end_g, midgame_state};
+use crate::src::getcoeff::coeff_state;
 use crate::src::globals::Board;
-use crate::src::zebra::EvalType::{EXACT_EVAL, WLD_EVAL, SELECTIVE_EVAL, MIDGAME_EVAL};
-use crate::src::zebra::EvalResult::{WON_POSITION, DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION};
-use crate::src::moves::{moves_state, generate_all, unmake_move, valid_move};
+use crate::src::hash::add_hash;
+use crate::src::midgame::tree_search;
+use crate::src::moves::{generate_all, moves_state, unmake_move, valid_move};
+use crate::src::myrandom::random_instance;
+use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, g_book, get_book_move};
 use crate::src::search::SearchState;
 use crate::src::stable::stable_state;
-use crate::src::myrandom::random_instance;
-use crate::src::getcoeff::coeff_state;
-use crate::src::game::midgame_state;
+use crate::src::stubs::{abs, ceil};
+use crate::src::timer::g_timer;
+use crate::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
+use crate::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, SELECTIVE_EVAL, WLD_EVAL};
+use crate::src::zebra::EvaluationType;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -75,20 +75,24 @@ pub struct End {
     komi_shift: i32,
 }
 
-pub static mut end_g: End = End {
-    /* The parities of the regions are in the region_parity bit vector. */
-    region_parity: 0,
-    end_move_list: [MoveLink { pred: 0, succ: 0 }; 100],
-    best_move: 0,
-    best_end_root_move: 0,
-    full_output_mode: 0,
-    earliest_wld_solve: 0,
-    earliest_full_solve: 0,
-    fast_first_threshold: [[0; 64]; 61],
-    ff_mob_factor: [0; 61],
-    neighborhood_mask: [BitBoard { high: 0, low: 0 }; 100],
-    komi_shift: 0,
-};
+impl End {
+    pub const fn new() -> End {
+        End {
+            /* The parities of the regions are in the region_parity bit vector. */
+            region_parity: 0,
+            end_move_list: [MoveLink { pred: 0, succ: 0 }; 100],
+            best_move: 0,
+            best_end_root_move: 0,
+            full_output_mode: 0,
+            earliest_wld_solve: 0,
+            earliest_full_solve: 0,
+            fast_first_threshold: [[0; 64]; 61],
+            ff_mob_factor: [0; 61],
+            neighborhood_mask: [BitBoard { high: 0, low: 0 }; 100],
+            komi_shift: 0,
+        }
+    }
+}
 
 
 /* Pseudo-probabilities corresponding to the percentiles.

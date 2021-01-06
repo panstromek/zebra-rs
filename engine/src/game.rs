@@ -1,26 +1,27 @@
-use crate::src::zebra::EvaluationType;
-use crate::src::counter::{adjust_counter, counter_value, reset_counter, add_counter};
-use crate::src::search::{setup_search, disc_count, complete_pv, create_eval_info, force_return, float_move, sort_moves, search_state};
-use crate::src::globals::{board_state, Board, BoardState};
-use crate::src::osfbook::{clear_osf, get_book_move, fill_move_alternatives, check_forced_opening, g_book};
-use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init_coeffs_calculate_terminal_patterns, process_coeffs_from_fn_source, CoeffAdjustments, remove_coeffs, coeff_state};
-use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
-use crate::src::timer::{time_t, g_timer};
-use crate::src::end::{setup_end, end_game};
-use crate::src::midgame::{setup_midgame, middle_game, calculate_perturbation, MidgameState};
-use crate::src::moves::{  make_move, moves_state, generate_all, valid_move};
-use crate::src::stable::{init_stable, stable_state};
-use crate::src::probcut::{init_probcut, prob_cut};
-use crate::src::myrandom::{random_instance};
-use crate::src::stubs::{abs};
-use crate::src::error::{FrontEnd};
-use crate::src::thordb::{ThorDatabase};
-use engine_traits::CoeffSource;
-use flip::unflip::{flip_stack_};
-use crate::src::zebra::EvalResult::{WON_POSITION, UNSOLVED_POSITION};
-use crate::src::zebra::EvalType::{MIDGAME_EVAL, INTERRUPTED_EVAL, UNDEFINED_EVAL, FORCED_EVAL, PASS_EVAL, EXACT_EVAL, WLD_EVAL};
 use std::ffi::CStr;
 
+use engine_traits::CoeffSource;
+use flip::unflip::flip_stack_;
+
+use crate::src::counter::{add_counter, adjust_counter, counter_value, reset_counter};
+use crate::src::end::{End, end_game, setup_end};
+use crate::src::error::FrontEnd;
+use crate::src::getcoeff::{clear_coeffs, coeff_state, CoeffAdjustments, eval_adjustment, init_coeffs_calculate_terminal_patterns, post_init_coeffs, process_coeffs_from_fn_source, remove_coeffs};
+use crate::src::globals::{Board, board_state, BoardState};
+use crate::src::hash::{determine_hash_values, find_hash, hash_state, HashEntry};
+use crate::src::midgame::{calculate_perturbation, middle_game, MidgameState, setup_midgame};
+use crate::src::moves::{generate_all, make_move, moves_state, valid_move};
+use crate::src::myrandom::random_instance;
+use crate::src::osfbook::{check_forced_opening, clear_osf, fill_move_alternatives, g_book, get_book_move};
+use crate::src::probcut::{init_probcut, prob_cut};
+use crate::src::search::{complete_pv, create_eval_info, disc_count, float_move, force_return, search_state, setup_search, sort_moves};
+use crate::src::stable::{init_stable, stable_state};
+use crate::src::stubs::abs;
+use crate::src::thordb::ThorDatabase;
+use crate::src::timer::{g_timer, time_t};
+use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, WON_POSITION};
+use crate::src::zebra::EvalType::{EXACT_EVAL, FORCED_EVAL, INTERRUPTED_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL, WLD_EVAL};
+use crate::src::zebra::EvaluationType;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -801,3 +802,5 @@ impl ForcedOpening {
         }
     }
 }
+
+pub static mut end_g: End = End::new();
