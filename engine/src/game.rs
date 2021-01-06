@@ -7,7 +7,7 @@ use crate::src::getcoeff::{clear_coeffs, post_init_coeffs, eval_adjustment, init
 use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
 use crate::src::timer::{time_t, g_timer};
 use crate::src::end::{setup_end, end_game};
-use crate::src::midgame::{setup_midgame, middle_game,calculate_perturbation, midgame_state};
+use crate::src::midgame::{setup_midgame, middle_game, calculate_perturbation, MidgameState};
 use crate::src::moves::{  make_move, moves_state, generate_all, valid_move};
 use crate::src::stable::{init_stable, stable_state};
 use crate::src::probcut::{init_probcut, prob_cut};
@@ -68,7 +68,21 @@ pub static mut game_state: GameState = GameState {
     komi: 0,
     endgame_performed: [0; 3],
 };
-
+pub static mut midgame_state: MidgameState = MidgameState {
+    allow_midgame_hash_probe: 0,
+    allow_midgame_hash_update: 0,
+    best_mid_move: 0,
+    best_mid_root_move: 0,
+    midgame_abort: 0,
+    do_check_midgame_abort: 1,
+    counter_phase: 0,
+    apply_perturbation: 1,
+    perturbation_amplitude: 0,
+    stage_reached: [0; 62],
+    stage_score: [0; 62],
+    score_perturbation: [0; 100],
+    feas_index_list: [[0; 64]; 64],
+};
 /*
   TOGGLE_THOR_MATCH_OPENINGS
   Specifies whether matching Thor games are used as opening book
@@ -586,7 +600,13 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
             game_state.max_depth_reached = midgame_depth;
             midgame_move =
                 middle_game::<FE>(side_to_move, midgame_depth, update_all,
-                            &mut mid_eval_info, echo);
+                            &mut mid_eval_info, echo,  &mut moves_state ,
+                                  &mut search_state ,
+                                  &mut board_state ,
+                                  &mut hash_state,
+                                  &mut flip_stack_,
+                                  &mut coeff_state, &mut prob_cut,
+                                  &mut g_timer, &mut midgame_state);
             let eval = mid_eval_info;
             search_state.set_current_eval(eval);
             midgame_diff =
