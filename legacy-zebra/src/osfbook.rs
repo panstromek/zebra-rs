@@ -5,7 +5,7 @@ use crate::{
     }
 };
 use crate::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
-use engine::src::midgame::{middle_game, tree_search, midgame_state};
+use engine::src::midgame::{middle_game, tree_search};
 use engine::src::myrandom::{random_instance, MyRandom};
 use engine::src::hash::{setup_hash, clear_hash_drafts, hash_state, determine_hash_values};
 use engine::src::error::{FrontEnd};
@@ -23,12 +23,13 @@ use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fpu
 use engine::src::osfbook::{__time_t, probe_hash_table, get_hash, get_node_depth, clear_node_depth, fill_move_alternatives, _ISupper, _ISprint, _ISspace, _ISgraph, BookNode, adjust_score, g_book, size_t, set_node_depth, Book, reset_book_search, BOOK_MAPS};
 use engine_traits::Offset;
 use engine::src::getcoeff::{remove_coeffs, coeff_state};
-use engine::src::game::{engine_game_init, setup_non_file_based_game};
+use engine::src::game::{engine_game_init, setup_non_file_based_game, midgame_state};
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use crate::src::zebra::g_config;
 use flip::unflip::flip_stack_;
+use engine::src::probcut::prob_cut;
 
 pub type FE = LibcFatalError;
 static mut correction_script_name: *const i8 = 0 as *const i8;
@@ -2707,7 +2708,13 @@ unsafe fn do_midgame_statistics(index: i32,
         depth = 1;
         while depth <= spec.max_depth {
             middle_game::<FE>(side_to_move, depth, 0 as i32,
-                        &mut dummy_info, echo);
+                        &mut dummy_info, echo,  &mut moves_state ,
+                              &mut search_state ,
+                              &mut board_state ,
+                              &mut hash_state,
+                              &mut flip_stack_,
+                              &mut coeff_state, &mut prob_cut,
+                              &mut g_timer, &mut midgame_state);
             eval_list[depth as usize] = search_state.root_eval;
             printf(b"%2d: %-5d \x00" as *const u8 as *const i8,
                    depth, eval_list[depth as usize]);
@@ -2719,7 +2726,13 @@ unsafe fn do_midgame_statistics(index: i32,
         depth = 2;
         while depth <= spec.max_depth {
             middle_game::<FE>(side_to_move, depth, 0 as i32,
-                        &mut dummy_info, echo);
+                        &mut dummy_info, echo,  &mut moves_state ,
+                              &mut search_state ,
+                              &mut board_state ,
+                              &mut hash_state,
+                              &mut flip_stack_,
+                              &mut coeff_state, &mut prob_cut,
+                              &mut g_timer, &mut midgame_state);
             eval_list[depth as usize] = search_state.root_eval;
             printf(b"%2d: %-5d \x00" as *const u8 as *const i8,
                    depth, eval_list[depth as usize]);
@@ -2859,7 +2872,13 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
     determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     depth = 1;
     while depth <= spec.max_depth {
-        middle_game::<FE>(side_to_move, depth, 0 as i32, &mut dummy_info, echo);
+        middle_game::<FE>(side_to_move, depth, 0 as i32, &mut dummy_info, echo,  &mut moves_state ,
+                          &mut search_state ,
+                          &mut board_state ,
+                          &mut hash_state,
+                          &mut flip_stack_,
+                          &mut coeff_state, &mut prob_cut,
+                          &mut g_timer, &mut midgame_state);
         eval_list[depth as usize] = search_state.root_eval;
         printf(b"%2d: %-6.2f \x00" as *const u8 as *const i8, depth,
                eval_list[depth as usize] as f64 / 128.0f64);
@@ -4110,7 +4129,13 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                                        0 as i32 + 2 as i32 -
                                            side_to_move, -(12345678 as i32),
                                        12345678 as i32, 1 as i32,
-                                       allow_mpc, 1 as i32, echo);
+                                       allow_mpc, 1 as i32, echo,  &mut moves_state ,
+                                       &mut search_state ,
+                                       &mut board_state ,
+                                       &mut hash_state,
+                                       &mut flip_stack_,
+                                       &mut coeff_state,
+                                       &mut prob_cut ,&mut g_timer, &mut midgame_state);
                 low_score = current_score;
                 *best_index = i
             } else {
@@ -4124,7 +4149,13 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                                            side_to_move,
                                        -(curr_alpha + 1 as i32),
                                        -curr_alpha, 1 as i32, allow_mpc,
-                                       1 as i32, echo);
+                                       1 as i32, echo,  &mut moves_state ,
+                                       &mut search_state ,
+                                       &mut board_state ,
+                                       &mut hash_state,
+                                       &mut flip_stack_,
+                                       &mut coeff_state,
+                                       &mut prob_cut ,&mut g_timer, &mut midgame_state);
                 if current_score > curr_alpha {
                     current_score =
                         -tree_search::<FE>(1 as i32, curr_depth,
@@ -4133,7 +4164,13 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                                            -(12345678 as i32),
                                            12345678 as i32,
                                            1 as i32, allow_mpc,
-                                           1 as i32, echo);
+                                           1 as i32, echo,  &mut moves_state ,
+                                           &mut search_state ,
+                                           &mut board_state ,
+                                           &mut hash_state,
+                                           &mut flip_stack_,
+                                           &mut coeff_state,
+                                           &mut prob_cut ,&mut g_timer, &mut midgame_state);
                     if current_score > low_score {
                         low_score = current_score;
                         *best_index = i
@@ -4174,7 +4211,13 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
         -tree_search::<FE>(1 as i32, depth + 1 as i32,
                            0 as i32 + 2 as i32 - side_to_move,
                            -(12345678 as i32), 12345678 as i32,
-                           1 as i32, allow_mpc, 1 as i32, echo);
+                           1 as i32, allow_mpc, 1 as i32, echo,  &mut moves_state ,
+                           &mut search_state ,
+                           &mut board_state ,
+                           &mut hash_state,
+                           &mut flip_stack_,
+                           &mut coeff_state,
+                           &mut prob_cut ,&mut g_timer, &mut midgame_state);
     let move_0 = *allowed_moves.offset(*best_index as isize);
     {
         unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);

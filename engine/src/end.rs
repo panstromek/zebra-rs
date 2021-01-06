@@ -19,7 +19,7 @@ use crate::{
 };
 use crate::src::error::FrontEnd;
 use crate::src::hash::{add_hash};
-use crate::src::midgame::{tree_search, midgame_state};
+use crate::src::midgame::{tree_search};
 use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_move, g_book};
 use crate::src::stubs::{abs, ceil};
 use crate::src::timer::{g_timer};
@@ -31,6 +31,8 @@ use crate::src::moves::{moves_state, generate_all, unmake_move, valid_move};
 use crate::src::search::SearchState;
 use crate::src::stable::stable_state;
 use crate::src::myrandom::random_instance;
+use crate::src::getcoeff::coeff_state;
+use crate::src::game::midgame_state;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -1711,7 +1713,13 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             let shallow_val =
                 tree_search::<FE>(level, level + shallow_remains, side_to_move,
                             alpha_bound, beta_bound, use_hash,
-                            0 as i32, void_legal, echo);
+                            0 as i32, void_legal, echo,  &mut moves_state ,
+                                  &mut search_state ,
+                                  &mut board_state ,
+                                  &mut hash_state,
+                                  &mut flip_stack_,
+                                  &mut coeff_state,
+                                  &mut prob_cut, &mut g_timer, &mut midgame_state);
             if shallow_val >= beta_bound {
                 if use_hash != 0 {
                     add_hash(&mut hash_state,1 as i32, alpha,
@@ -1913,7 +1921,13 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                                 128 as i32,
                                             1 as i32,
                                             1 as i32,
-                                            1 as i32,echo)
+                                            1 as i32,echo,  &mut moves_state ,
+                                                  &mut search_state ,
+                                                  &mut board_state ,
+                                                  &mut hash_state,
+                                                  &mut flip_stack_,
+                                                  &mut coeff_state,
+                                                  &mut prob_cut, &mut g_timer, &mut midgame_state)
                         }
                         /* Make the moves which are highly likely to result in
                            fail-high in decreasing order of mobility for the

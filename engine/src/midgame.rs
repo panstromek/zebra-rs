@@ -1,27 +1,26 @@
 use crate::{
     src::{
-        search::{search_state, force_return, hash_expand_pv, create_eval_info, inherit_move_lists, disc_count, reorder_move_list},
+        search::{force_return, hash_expand_pv, create_eval_info, inherit_move_lists, disc_count, reorder_move_list},
         counter::{counter_value, adjust_counter},
         moves::{make_move_no_hash},
-        hash::{find_hash, HashEntry, hash_state},
-        globals::board_state,
+        hash::{find_hash, HashEntry},
         eval::terminal_evaluation,
-        probcut::prob_cut,
         zebra::{EvaluationType}
     }
 };
-use crate::src::getcoeff::{coeff_state, pattern_evaluation, CoeffState};
+use crate::src::getcoeff::{pattern_evaluation, CoeffState};
 use crate::src::stubs::abs;
-use crate::src::timer::{g_timer};
-use crate::src::hash::add_hash;
+use crate::src::hash::{add_hash, HashState};
 use crate::src::error::FrontEnd;
 use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, LOST_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
-use crate::src::myrandom::{random_instance, MyRandom};
+use crate::src::myrandom::{MyRandom};
 use crate::src::search::SearchState;
-use crate::src::moves::{MovesState, generate_all, moves_state, valid_move, unmake_move, unmake_move_no_hash, make_move};
+use crate::src::moves::{MovesState, generate_all, valid_move, unmake_move, unmake_move_no_hash, make_move};
 use crate::src::globals::BoardState;
-use flip::unflip::flip_stack_;
+use flip::unflip::FlipStack;
+use crate::src::probcut::ProbCut;
+use crate::src::timer::Timer;
 
 
 #[derive(Copy, Clone)]
@@ -52,22 +51,6 @@ pub struct MidgameState {
     pub score_perturbation: [i32; 100],
     pub feas_index_list: [[i32; 64]; 64],
 }
-
-pub static mut midgame_state: MidgameState = MidgameState {
-    allow_midgame_hash_probe: 0,
-    allow_midgame_hash_update: 0,
-    best_mid_move: 0,
-    best_mid_root_move: 0,
-    midgame_abort: 0,
-    do_check_midgame_abort: 1,
-    counter_phase: 0,
-    apply_perturbation: 1,
-    perturbation_amplitude: 0,
-    stage_reached: [0; 62],
-    stage_score: [0; 62],
-    score_perturbation: [0; 100],
-    feas_index_list: [[0; 64]; 64],
-};
 
 impl MidgameState {
     /*
@@ -215,7 +198,17 @@ pub fn calculate_perturbation(state: &mut MidgameState, random: &mut MyRandom) {
   while avoiding all moves which allow an immediate loss
   (if that is possible).
 */
-pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32)
+pub fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32,
+                                                     mut moves_state : &mut MovesState,
+                                                     mut search_state : &mut SearchState,
+                                                     mut board_state : &mut BoardState,
+                                                     mut hash_state: &mut HashState,
+                                                     mut flip_stack_: &mut FlipStack,
+                                                    mut coeff_state: &mut CoeffState,
+                                                     mut prob_cut: &mut ProbCut,
+    mut g_timer: &mut Timer,
+    mut midgame_state: &mut MidgameState,
+)
                                                      -> i32 {
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
@@ -245,7 +238,14 @@ pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32
                          0 as i32 + 2 as i32 - side_to_move,
                          -(12345678 as i32), 12345678 as i32,
                          0 as i32, 0 as i32,
-                         0 as i32, echo);
+                         0 as i32, echo,
+        &mut moves_state ,
+        &mut search_state ,
+        &mut board_state ,
+        &mut hash_state,
+        &mut flip_stack_,
+        &mut coeff_state,
+        &mut prob_cut, &mut g_timer, midgame_state);
         {
             unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
         };
@@ -279,14 +279,24 @@ pub unsafe fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32
    tree pruning.
 */
 
-pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
+pub fn tree_search<FE: FrontEnd>(level: i32,
                                         max_depth: i32,
                                         side_to_move: i32,
                                         alpha: i32,
                                         beta: i32,
                                         allow_hash: i32,
                                         allow_mpc: i32,
-                                        void_legal: i32, echo: i32)
+                                        void_legal: i32, echo: i32,
+                                        mut moves_state : &mut MovesState,
+                                        mut search_state : &mut SearchState,
+                                        mut board_state : &mut BoardState,
+                                        mut hash_state: &mut HashState,
+                                        mut flip_stack_: &mut FlipStack,
+                                        mut coeff_state: &mut CoeffState,
+                                        mut prob_cut: &mut ProbCut,
+                                        mut g_timer: &mut Timer,
+                                        mut midgame_state: &mut MidgameState
+)
                                         -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -322,7 +332,6 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             draft: 0,
             selectivity: 0,
             flags: 0,};
-    let mpc_cut_ = &prob_cut.mpc_cut;
     if level >= max_depth {
         search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
         return static_or_terminal_evaluation(side_to_move, &moves_state, &mut board_state, &mut search_state, &mut coeff_state)
@@ -331,7 +340,12 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
     if remains < 3 as i32 {
         curr_val =
             fast_tree_search::<FE>(level, max_depth, side_to_move, alpha, beta,
-                             allow_hash, void_legal);
+                             allow_hash, void_legal,  &mut moves_state ,
+                                   &mut search_state ,
+                                   &mut board_state ,
+                                   &mut hash_state,
+                                   &mut flip_stack_,
+                                   &mut coeff_state, midgame_state);
         board_state.pv_depth[level as usize] = level + 1 as i32;
         board_state.pv[level as usize][level as usize] = midgame_state.best_mid_move;
         return curr_val
@@ -374,13 +388,13 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
         let mut alpha_test = 1;
         let mut beta_test = 1;
         cut = 0;
-        while cut < mpc_cut_[remains as usize].cut_tries {
+        while cut < prob_cut.mpc_cut[remains as usize].cut_tries {
             /* Determine the fail-high and fail-low bounds */
             let bias =
-                mpc_cut_[remains as
+                &prob_cut.mpc_cut[remains as
                     usize].bias[cut as usize][moves_state.disks_played as usize];
             let window =
-                mpc_cut_[remains as
+                &prob_cut.mpc_cut[remains as
                     usize].window[cut as
                     usize][moves_state.disks_played as usize];
             let alpha_bound = alpha + bias - window;
@@ -388,7 +402,7 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             /* Don't use an MPC cut which results in the full-width depth
             being less than some predefined constant */
             shallow_remains =
-                mpc_cut_[remains as usize].cut_depth[cut as usize];
+                prob_cut.mpc_cut[remains as usize].cut_depth[cut as usize];
             if !(level + shallow_remains < 8 as i32) {
                 if shallow_remains > 1 as i32 {
                     /* "Deep" shallow search */
@@ -411,7 +425,13 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                             tree_search::<FE>(level, level + shallow_remains,
                                         side_to_move, alpha_bound, beta_bound,
                                         allow_hash, 0 as i32,
-                                        void_legal, echo);
+                                        void_legal, echo,  &mut moves_state ,
+                                              &mut search_state ,
+                                              &mut board_state ,
+                                              &mut hash_state,
+                                              &mut flip_stack_,
+                                              &mut coeff_state,
+                                              &mut prob_cut ,&mut g_timer, &mut midgame_state);
                         if shallow_val >= beta_bound {
                             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
                             {
@@ -457,7 +477,13 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                        side_to_move,
                                        beta_bound - 1 as i32,
                                        beta_bound, allow_hash,
-                                       0 as i32, void_legal, echo) >=
+                                       0 as i32, void_legal, echo, &mut moves_state ,
+                                             &mut search_state ,
+                                             &mut board_state ,
+                                             &mut hash_state,
+                                             &mut flip_stack_,
+                                             &mut coeff_state,
+                                             &mut prob_cut ,&mut g_timer, midgame_state) >=
                             beta_bound {
                             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
                             {
@@ -474,7 +500,13 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                        side_to_move, alpha_bound,
                                        alpha_bound + 1 as i32,
                                        allow_hash, 0 as i32,
-                                       void_legal, echo) <= alpha_bound {
+                                       void_legal, echo, &mut moves_state ,
+                                             &mut search_state ,
+                                             &mut board_state ,
+                                             &mut hash_state,
+                                             &mut flip_stack_,
+                                             &mut coeff_state,
+                                             &mut prob_cut ,&mut g_timer, midgame_state) <= alpha_bound {
                             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
                             {
                                 add_hash(&mut hash_state,0 as i32, alpha,
@@ -644,7 +676,13 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                                              -(12345678 as i32),
                                              -pre_best, 0 as i32,
                                              0 as i32,
-                                             1 as i32, echo);
+                                             1 as i32, echo, &mut moves_state ,
+                                                   &mut search_state ,
+                                                   &mut board_state ,
+                                                   &mut hash_state,
+                                                   &mut flip_stack_,
+                                                   &mut coeff_state,
+                                                   &mut prob_cut ,&mut g_timer, midgame_state);
                             pre_best =
                                 if pre_best > curr_val {
                                     pre_best
@@ -732,7 +770,13 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                 -tree_search::<FE>(level + 1 as i32, max_depth,
                              0 as i32 + 2 as i32 -
                                  side_to_move, -beta, -curr_alpha, allow_hash,
-                             allow_mpc, 1 as i32, echo);
+                             allow_mpc, 1 as i32, echo, &mut moves_state ,
+                                   &mut search_state ,
+                                   &mut board_state ,
+                                   &mut hash_state,
+                                   &mut flip_stack_,
+                                   &mut coeff_state,
+                                   &mut prob_cut ,&mut g_timer, midgame_state);
             best = curr_val;
             best_move_index = move_index;
             update_pv = 1 as i32
@@ -743,14 +787,26 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
                              0 as i32 + 2 as i32 -
                                  side_to_move,
                              -(curr_alpha + 1 as i32), -curr_alpha,
-                             allow_hash, allow_mpc, 1 as i32, echo);
+                             allow_hash, allow_mpc, 1 as i32, echo, &mut moves_state ,
+                                   &mut search_state ,
+                                   &mut board_state ,
+                                   &mut hash_state,
+                                   &mut flip_stack_,
+                                   &mut coeff_state,
+                                   &mut prob_cut ,&mut g_timer, midgame_state);
             if curr_val > curr_alpha && curr_val < beta {
                 curr_val =
                     -tree_search::<FE>(level + 1 as i32, max_depth,
                                  0 as i32 + 2 as i32 -
                                      side_to_move, -beta,
                                  12345678 as i32, allow_hash,
-                                 allow_mpc, 1 as i32, echo);
+                                 allow_mpc, 1 as i32, echo, &mut moves_state ,
+                                       &mut search_state ,
+                                       &mut board_state ,
+                                       &mut hash_state,
+                                       &mut flip_stack_,
+                                       &mut coeff_state,
+                                       &mut prob_cut ,&mut g_timer, midgame_state);
                 if curr_val > best {
                     best = curr_val;
                     best_move_index = move_index;
@@ -821,7 +877,14 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
             -tree_search::<FE>(level, max_depth,
                          0 as i32 + 2 as i32 - side_to_move,
                          -beta, -alpha, allow_hash, allow_mpc,
-                         0 as i32, echo);
+                         0 as i32, echo, &mut moves_state ,
+                               &mut search_state ,
+                               &mut board_state ,
+                               &mut hash_state,
+                               &mut flip_stack_,
+                               &mut coeff_state,
+                               &mut prob_cut,
+                               &mut g_timer, midgame_state);
         hash_state.hash1 ^= hash_state.hash_flip_color1;
         hash_state.hash2 ^= hash_state.hash_flip_color2;
         return curr_val
@@ -836,13 +899,20 @@ pub unsafe fn tree_search<FE: FrontEnd>(level: i32,
    The recursive tree search function. It uses negascout for
    tree pruning.
 */
-unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
+fn fast_tree_search<FE: FrontEnd>(level: i32,
                                          max_depth: i32,
                                          side_to_move: i32,
                                          alpha: i32,
                                          beta: i32,
                                          allow_hash: i32,
-                                         void_legal: i32)
+                                         void_legal: i32,
+                                  mut moves_state : &mut MovesState,
+                                  mut search_state : &mut SearchState,
+                                  mut board_state : &mut BoardState,
+                                  mut hash_state: &mut HashState,
+                                  mut flip_stack_: &mut FlipStack,
+                                  mut coeff_state: &mut CoeffState, mut midgame_state: &mut MidgameState
+)
                                          -> i32 {
     let mut curr_val: i32 = 0;
     let mut best: i32 = 0;
@@ -964,7 +1034,12 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
                                                   2 as i32 -
                                                   side_to_move, -beta,
                                               -curr_alpha, allow_hash,
-                                              1 as i32);
+                                              1 as i32,  &mut moves_state ,
+                                                    &mut search_state ,
+                                                    &mut board_state ,
+                                                    &mut hash_state,
+                                                    &mut flip_stack_,
+                                                    &mut coeff_state, midgame_state);
                         best = curr_val;
                         best_move = move_0;
                         best_move_index = move_index
@@ -980,7 +1055,12 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
                                               -(curr_alpha +
                                                   1 as i32),
                                               -curr_alpha, allow_hash,
-                                              1 as i32);
+                                              1 as i32,  &mut moves_state ,
+                                                    &mut search_state ,
+                                                    &mut board_state ,
+                                                    &mut hash_state,
+                                                    &mut flip_stack_,
+                                                    &mut coeff_state, midgame_state);
                         if curr_val > curr_alpha && curr_val < beta {
                             curr_val =
                                 -fast_tree_search::<FE>(level + 1 as i32,
@@ -990,7 +1070,12 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
                                                       side_to_move, -beta,
                                                   12345678 as i32,
                                                   allow_hash,
-                                                  1 as i32)
+                                                  1 as i32,  &mut moves_state ,
+                                                        &mut search_state ,
+                                                        &mut board_state ,
+                                                        &mut hash_state,
+                                                        &mut flip_stack_,
+                                                        &mut coeff_state, midgame_state)
                         }
                         if curr_val > best {
                             best_move = move_0;
@@ -1042,7 +1127,12 @@ unsafe fn fast_tree_search<FE: FrontEnd>(level: i32,
             -fast_tree_search::<FE>(level, max_depth,
                               0 as i32 + 2 as i32 -
                                   side_to_move, -beta, -alpha, allow_hash,
-                              0 as i32);
+                              0 as i32,  &mut moves_state ,
+                                    &mut search_state ,
+                                    &mut board_state ,
+                                    &mut hash_state,
+                                    &mut flip_stack_,
+                                    &mut coeff_state, midgame_state);
         hash_state.hash1 ^= hash_state.hash_flip_color1;
         hash_state.hash2 ^= hash_state.hash_flip_color2;
         return curr_val
@@ -1073,14 +1163,24 @@ pub fn perturb_score(score: i32,
    for the root of the search tree.
 */
 
-pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
+pub fn root_tree_search<FE: FrontEnd>(level: i32,
                                              max_depth: i32,
                                              side_to_move: i32,
                                              alpha: i32,
                                              beta: i32,
                                              allow_hash: i32,
                                              allow_mpc: i32,
-                                             void_legal: i32, echo: i32)
+                                             void_legal: i32, echo: i32,
+                                      mut moves_state : &mut MovesState,
+                                      mut search_state : &mut SearchState,
+                                      mut board_state : &mut BoardState,
+                                      mut hash_state: &mut HashState,
+                                      mut flip_stack_: &mut FlipStack,
+                                      mut coeff_state: &mut CoeffState,
+                                      mut prob_cut: &mut ProbCut,
+                                      mut g_timer: &mut Timer,
+                                      mut midgame_state: &mut MidgameState,
+)
                                              -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -1205,7 +1305,13 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                                              side_to_move,
                                          -(12345678 as i32),
                                          -pre_best, 0 as i32,
-                                         0 as i32, 1 as i32, echo);
+                                         0 as i32, 1 as i32, echo,  &mut moves_state ,
+                                               &mut search_state ,
+                                               &mut board_state ,
+                                               &mut hash_state,
+                                               &mut flip_stack_,
+                                               &mut coeff_state,
+                                               &mut prob_cut ,&mut g_timer, midgame_state);
                         pre_best =
                             if pre_best > curr_val {
                                 pre_best
@@ -1277,7 +1383,13 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                                                - side_to_move,
                                            -(beta - offset),
                                            -(curr_alpha - offset), allow_hash,
-                                           allow_mpc, 1 as i32, echo),
+                                           allow_mpc, 1 as i32, echo,  &mut moves_state ,
+                                                 &mut search_state ,
+                                                 &mut board_state ,
+                                                 &mut hash_state,
+                                                 &mut flip_stack_,
+                                                 &mut coeff_state,
+                                                 &mut prob_cut ,&mut g_timer, midgame_state),
                               offset);
             best = curr_val;
             best_move_index = move_index;
@@ -1293,7 +1405,13 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                                            -(curr_alpha - offset +
                                                1 as i32),
                                            -(curr_alpha - offset), allow_hash,
-                                           allow_mpc, 1 as i32, echo),
+                                           allow_mpc, 1 as i32, echo,  &mut moves_state ,
+                                                 &mut search_state ,
+                                                 &mut board_state ,
+                                                 &mut hash_state,
+                                                 &mut flip_stack_,
+                                                 &mut coeff_state,
+                                                 &mut prob_cut ,&mut g_timer, midgame_state),
                               offset);
             if curr_val > curr_alpha && curr_val < beta {
                 curr_val =
@@ -1305,7 +1423,13 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
                                                -(beta - offset),
                                                12345678 as i32,
                                                allow_hash, allow_mpc,
-                                               1 as i32, echo), offset);
+                                               1 as i32, echo,  &mut moves_state ,
+                                                     &mut search_state ,
+                                                     &mut board_state ,
+                                                     &mut hash_state,
+                                                     &mut flip_stack_,
+                                                     &mut coeff_state,
+                                                     &mut prob_cut ,&mut g_timer, midgame_state), offset);
                 if curr_val > best {
                     best = curr_val;
                     best_move_index = move_index;
@@ -1390,7 +1514,13 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
             -root_tree_search::<FE>(level, max_depth,
                               0 as i32 + 2 as i32 -
                                   side_to_move, -beta, -alpha, allow_hash,
-                              allow_mpc, 0 as i32, echo);
+                              allow_mpc, 0 as i32, echo,  &mut moves_state ,
+                                    &mut search_state ,
+                                    &mut board_state ,
+                                    &mut hash_state,
+                                    &mut flip_stack_,
+                                    &mut coeff_state, &mut prob_cut,
+                                    &mut g_timer, midgame_state);
         hash_state.hash1 ^= hash_state.hash_flip_color1;
         hash_state.hash2 ^= hash_state.hash_flip_color2;
         return curr_val
@@ -1406,10 +1536,20 @@ pub unsafe fn root_tree_search<FE: FrontEnd>(level: i32,
    side_to_move = the side whose turn it is to move
 */
 
-pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
+pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                          max_depth: i32,
                                          update_evals: i32,
-                                         eval_info: &mut EvaluationType, echo:i32)
+                                         eval_info: &mut EvaluationType, echo:i32,
+                                  mut moves_state : &mut MovesState,
+                                  mut search_state : &mut SearchState,
+                                  mut board_state : &mut BoardState,
+                                  mut hash_state: &mut HashState,
+                                  mut flip_stack_: &mut FlipStack,
+                                  mut coeff_state: &mut CoeffState,
+                                  mut prob_cut: &mut ProbCut,
+                                  mut g_timer: &mut Timer,
+                                  mut midgame_state: &mut MidgameState,
+)
                                          -> i32 {
     let mut adjusted_val: i32;
     let mut alpha: i32;
@@ -1451,12 +1591,24 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
         /* The actual search */
         if depth == 1 as i32 {
             /* Fix to make it harder to wipe out depth-1 Zebra */
-            val = protected_one_ply_search::<FE>(side_to_move, echo)
+            val = protected_one_ply_search::<FE>(side_to_move, echo, &mut moves_state ,
+                                                 &mut search_state ,
+                                                 &mut board_state ,
+                                                 &mut hash_state,
+                                                 &mut flip_stack_,
+                                                 &mut coeff_state, &mut prob_cut,
+                                                 &mut g_timer, midgame_state)
         } else if enable_mpc != 0 {
             val =
                 root_tree_search::<FE>(0 as i32, depth, side_to_move, alpha,
                                  beta, 1 as i32, 1 as i32,
-                                 1 as i32, echo);
+                                 1 as i32, echo,  &mut moves_state ,
+                                       &mut search_state ,
+                                       &mut board_state ,
+                                       &mut hash_state,
+                                       &mut flip_stack_,
+                                       &mut coeff_state, &mut prob_cut,
+                                       &mut g_timer, midgame_state);
             if force_return == 0 && g_timer.is_panic_abort() == 0 &&
                 (val <= alpha || val >= beta) {
                 val =
@@ -1464,13 +1616,25 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                      -(12345678 as i32),
                                      12345678 as i32,
                                      1 as i32, 1 as i32,
-                                     1 as i32, echo)
+                                     1 as i32, echo,  &mut moves_state ,
+                                           &mut search_state ,
+                                           &mut board_state ,
+                                           &mut hash_state,
+                                           &mut flip_stack_,
+                                           &mut coeff_state, &mut prob_cut,
+                                           &mut g_timer, midgame_state)
             }
         } else {
             val =
                 root_tree_search::<FE>(0 as i32, depth, side_to_move, alpha,
                                  beta, 1 as i32, 0 as i32,
-                                 1 as i32, echo);
+                                 1 as i32, echo,  &mut moves_state ,
+                                       &mut search_state ,
+                                       &mut board_state ,
+                                       &mut hash_state,
+                                       &mut flip_stack_,
+                                       &mut coeff_state, &mut prob_cut,
+                                       &mut g_timer, midgame_state);
             if g_timer.is_panic_abort() == 0 && force_return == 0 {
                 if val <= alpha {
                     val =
@@ -1478,14 +1642,26 @@ pub unsafe fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                          side_to_move,
                                          -(29000 as i32), alpha,
                                          1 as i32, 0 as i32,
-                                         1 as i32, echo)
+                                         1 as i32, echo,  &mut moves_state ,
+                                               &mut search_state ,
+                                               &mut board_state ,
+                                               &mut hash_state,
+                                               &mut flip_stack_,
+                                               &mut coeff_state, &mut prob_cut,
+                                               &mut g_timer, midgame_state)
                 } else if val >= beta {
                     val =
                         root_tree_search::<FE>(0 as i32, depth,
                                          side_to_move, beta,
                                          29000 as i32,
                                          1 as i32, 0 as i32,
-                                         1 as i32, echo)
+                                         1 as i32, echo,  &mut moves_state ,
+                                               &mut search_state ,
+                                               &mut board_state ,
+                                               &mut hash_state,
+                                               &mut flip_stack_,
+                                               &mut coeff_state, &mut prob_cut,
+                                               &mut g_timer, midgame_state)
                 }
             }
         }

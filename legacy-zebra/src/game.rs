@@ -14,14 +14,13 @@ use engine::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values}
 use engine::src::getcoeff::{coeff_state, pattern_evaluation};
 use engine::src::stubs::abs;
 use engine::src::osfbook::{get_book_move, fill_move_alternatives, g_book};
-use engine::src::game::{ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, PonderMoveReport, game_state};
+use engine::src::game::{ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, PonderMoveReport, game_state, midgame_state};
 use std::ffi::CStr;
 use crate::src::thordb::LegacyThor;
 use engine::src::zebra::EvalResult::{UNSOLVED_POSITION, WON_POSITION, LOST_POSITION, DRAWN_POSITION};
 use engine::src::zebra::EvalType::{UNDEFINED_EVAL, EXACT_EVAL, PASS_EVAL, MIDGAME_EVAL, WLD_EVAL};
 use crate::src::zebra::g_config;
 use engine::src::thordb::ThorDatabase;
-use engine::src::midgame::midgame_state;
 use flip::unflip::flip_stack_;
 use engine::src::myrandom::random_instance;
 
