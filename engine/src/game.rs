@@ -144,7 +144,20 @@ pub unsafe fn global_terminate() {
 pub unsafe fn engine_game_init() {
     setup_search(&mut search_state);
     setup_midgame(&mut midgame_state, &mut random_instance);
-    setup_end();
+    setup_end(
+     &mut flip_stack_
+    ,&mut search_state
+    ,&mut board_state
+    ,&mut hash_state
+    ,&mut g_timer
+    ,&mut end_g
+    ,&mut midgame_state
+    ,&mut coeff_state
+    ,&mut moves_state
+    ,&mut random_instance
+    ,&mut g_book
+    ,&mut stable_state
+    );
     g_timer.clear_ponder_times();
     reset_counter(&mut search_state.total_nodes);
     reset_counter(&mut search_state.total_evaluations);
@@ -660,15 +673,52 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                    end_game::<FE>(side_to_move,
                              (moves_state.disks_played < 60 as i32 - exact) as
                                  i32, 0 as i32, book, game_state.komi,
-                             &mut end_eval_info, echo)
+                             &mut end_eval_info, echo
+                                  , &mut flip_stack_
+                                  , &mut search_state
+                                  , &mut board_state
+                                  , &mut hash_state
+                                  , &mut g_timer
+                                  , &mut end_g
+                                  , &mut midgame_state
+                                  , &mut coeff_state
+                                  , &mut moves_state
+                                  , &mut random_instance
+                                  , &mut g_book
+                                  , &mut stable_state
+                                  , &mut prob_cut)
             } else if empties <= exact {
                 curr_move =
                    end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
-                             book, game_state.komi, &mut end_eval_info, echo)
+                             book, game_state.komi, &mut end_eval_info, echo , &mut flip_stack_
+                                  , &mut search_state
+                                  , &mut board_state
+                                  , &mut hash_state
+                                  , &mut g_timer
+                                  , &mut end_g
+                                  , &mut midgame_state
+                                  , &mut coeff_state
+                                  , &mut moves_state
+                                  , &mut random_instance
+                                  , &mut g_book
+                                  , &mut stable_state
+                                  , &mut prob_cut)
             } else {
                 curr_move =
                    end_game::<FE>(side_to_move, 1 as i32, 0 as i32,
-                             book, game_state.komi, &mut end_eval_info, echo)
+                             book, game_state.komi, &mut end_eval_info, echo , &mut flip_stack_
+                                  , &mut search_state
+                                  , &mut board_state
+                                  , &mut hash_state
+                                  , &mut g_timer
+                                  , &mut end_g
+                                  , &mut midgame_state
+                                  , &mut coeff_state
+                                  , &mut moves_state
+                                  , &mut random_instance
+                                  , &mut g_book
+                                  , &mut stable_state
+                                  , &mut prob_cut)
             }
             let eval = end_eval_info;
             search_state.set_current_eval(eval);
