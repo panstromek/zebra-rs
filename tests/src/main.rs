@@ -143,20 +143,20 @@ mod tests {
             std::fs::copy(log_path, snapshot_path).unwrap();
             panic!("WARNING: Snapshot doesn't exists, creating new one. Rerun the tests to make them green again.");
         }
-        let x = |line: &&str| !(line.starts_with("-->") || line.starts_with("Log file created"));
-        assert!(
-            std::fs::read_to_string(snapshot_path)
+        fn variable_lines(line: &&str) -> bool {
+            !(line.starts_with("-->") || line.starts_with("Log file created"))
+        }
+        std::fs::read_to_string(snapshot_path)
+            .unwrap()
+            .lines()
+            .skip(1)
+            .filter(variable_lines)
+            .zip(std::fs::read_to_string(log_path)
                 .unwrap()
                 .lines()
                 .skip(1)
-                .filter(|line|
-                    !(line.starts_with("-->") || line.starts_with("Log file created")))
-                .eq(std::fs::read_to_string(log_path)
-                    .unwrap()
-                    .lines()
-                    .skip(1)
-                    .filter(x))
-        );
+                .filter(variable_lines))
+            .for_each(|(expected, actual)| assert_eq!(expected, actual))
     }
 
     #[test]
