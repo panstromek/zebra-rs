@@ -161,7 +161,6 @@ pub trait ZebraFrontend {
                                 black_moves_: &[i32; 60], white_moves_: &[i32; 60]);
     fn print_out_thor_matches(thor_max_games_: i32);
     unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32);
-    unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32);
     fn get_pass();
     fn report_engine_override();
     fn prompt_get_move(side_to_move: i32, buffer: &mut [i8; 255]) -> i32;
@@ -380,7 +379,7 @@ pub unsafe fn engine_play_game<
                     config.player_time[side_to_move as usize] -= move_stop - move_start
                 }
                 learn_state.store_move(moves_state.disks_played, curr_move);
-                ZF::push_move(&mut move_vec, curr_move, moves_state.disks_played);
+                push_move(&mut move_vec, curr_move, moves_state.disks_played);
                 make_move(side_to_move, curr_move, 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
                 if side_to_move == 0 as i32 {
                     board_state.black_moves[board_state.score_sheet_row as usize] = curr_move
@@ -463,6 +462,12 @@ pub unsafe fn engine_play_game<
         if !(repeat > 0) { break; }
     }
 }
+
+fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32) {
+    move_vec[(2 as i32 * disks_played_) as usize] = 'a' as i8 + (curr_move % 10) as i8 - 1;
+    move_vec[(2 as i32 * disks_played_) as usize + 1] = '0' as i8 + (curr_move / 10) as i8;
+}
+
 pub async unsafe fn engine_play_game_async<
     ZF: ZebraFrontend,
     Source: InitialMoveSource,
@@ -665,7 +670,8 @@ pub async unsafe fn engine_play_game_async<
                     config.player_time[side_to_move as usize] -= move_stop - move_start
                 }
                 learn_state.store_move(moves_state.disks_played, curr_move);
-                ZF::push_move(&mut move_vec, curr_move, moves_state.disks_played);
+                push_move(&mut move_vec, curr_move, moves_state.disks_played);
+
                 make_move(side_to_move, curr_move, 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
                 if side_to_move == 0 as i32 {
                     board_state.black_moves[board_state.score_sheet_row as usize] = curr_move
