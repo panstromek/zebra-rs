@@ -23,13 +23,14 @@ use libc_wrapper::{fclose, fprintf, fopen, puts, printf, time, fflush, putc, fpu
 use engine::src::osfbook::{__time_t, probe_hash_table, get_hash, get_node_depth, clear_node_depth, fill_move_alternatives, _ISupper, _ISprint, _ISspace, _ISgraph, BookNode, adjust_score, g_book, size_t, set_node_depth, Book, reset_book_search, BOOK_MAPS};
 use engine_traits::Offset;
 use engine::src::getcoeff::{remove_coeffs, coeff_state};
-use engine::src::game::{engine_game_init, setup_non_file_based_game, midgame_state};
+use engine::src::game::{engine_game_init, setup_non_file_based_game, midgame_state, end_g};
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use crate::src::zebra::g_config;
 use flip::unflip::flip_stack_;
 use engine::src::probcut::prob_cut;
+use engine::src::stable::stable_state;
 
 pub type FE = LibcFatalError;
 static mut correction_script_name: *const i8 = 0 as *const i8;
@@ -625,7 +626,19 @@ pub unsafe fn add_new_game(move_count_0: i32,
             }
         }
        end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
-                 1 as i32, 0 as i32, &mut dummy_info, echo);
+                 1 as i32, 0 as i32, &mut dummy_info, echo , &mut flip_stack_
+                      , &mut search_state
+                      , &mut board_state
+                      , &mut hash_state
+                      , &mut g_timer
+                      , &mut end_g
+                      , &mut midgame_state
+                      , &mut coeff_state
+                      , &mut moves_state
+                      , &mut random_instance
+                      , &mut g_book
+                      , &mut stable_state
+                      , &mut prob_cut);
         outcome = search_state.root_eval;
         if side_to_move == 2 as i32 { outcome = -outcome }
     }
@@ -715,7 +728,19 @@ pub unsafe fn add_new_game(move_count_0: i32,
                        16 as i32 == 0 {
                    end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
                              1 as i32, 0 as i32,
-                             &mut dummy_info, echo);
+                             &mut dummy_info, echo , &mut flip_stack_
+                                  , &mut search_state
+                                  , &mut board_state
+                                  , &mut hash_state
+                                  , &mut g_timer
+                                  , &mut end_g
+                                  , &mut midgame_state
+                                  , &mut coeff_state
+                                  , &mut moves_state
+                                  , &mut random_instance
+                                  , &mut g_book
+                                  , &mut stable_state
+                                  , &mut prob_cut);
                     if side_to_move == 0 as i32 {
                         outcome = search_state.root_eval
                     } else { outcome = -search_state.root_eval }
@@ -763,7 +788,19 @@ pub unsafe fn add_new_game(move_count_0: i32,
                        4 as i32 == 0 {
                    end_game::<FE>(side_to_move, 1 as i32, 0 as i32,
                              1 as i32, 0 as i32,
-                             &mut dummy_info, echo);
+                             &mut dummy_info, echo , &mut flip_stack_
+                                  , &mut search_state
+                                  , &mut board_state
+                                  , &mut hash_state
+                                  , &mut g_timer
+                                  , &mut end_g
+                                  , &mut midgame_state
+                                  , &mut coeff_state
+                                  , &mut moves_state
+                                  , &mut random_instance
+                                  , &mut g_book
+                                  , &mut stable_state
+                                  , &mut prob_cut);
                     if side_to_move == 0 as i32 {
                         outcome = search_state.root_eval
                     } else { outcome = -search_state.root_eval }
@@ -2929,7 +2966,19 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                 hash_state.set_hash_transformation(0 as i32 as u32,
                                         0 as i32 as u32);
                end_game::<FE>(side_to_move, 0 as i32, 1 as i32,
-                         1 as i32, 0 as i32, &mut dummy_info, echo);
+                         1 as i32, 0 as i32, &mut dummy_info, echo , &mut flip_stack_
+                              , &mut search_state
+                              , &mut board_state
+                              , &mut hash_state
+                              , &mut g_timer
+                              , &mut end_g
+                              , &mut midgame_state
+                              , &mut coeff_state
+                              , &mut moves_state
+                              , &mut random_instance
+                              , &mut g_book
+                              , &mut stable_state
+                              , &mut prob_cut);
                 endgame_correlation(side_to_move, search_state.root_eval,
                                     board_state.pv[0][0],
                                     min_disks, max_disks, spec, echo);
@@ -2995,7 +3044,19 @@ unsafe fn do_endgame_statistics(index: i32,
             hash_state.set_hash_transformation(0 as i32 as u32,
                                     0 as i32 as u32);
            end_game::<FE>(side_to_move, 0 as i32, 1 as i32,
-                     1 as i32, 0 as i32, &mut dummy_info, echo);
+                     1 as i32, 0 as i32, &mut dummy_info, echo , &mut flip_stack_
+                          , &mut search_state
+                          , &mut board_state
+                          , &mut hash_state
+                          , &mut g_timer
+                          , &mut end_g
+                          , &mut midgame_state
+                          , &mut coeff_state
+                          , &mut moves_state
+                          , &mut random_instance
+                          , &mut g_book
+                          , &mut stable_state
+                          , &mut prob_cut);
             if abs(search_state.root_eval) <= spec.max_diff {
                 endgame_correlation(side_to_move, search_state.root_eval,
                                     board_state.pv[0][0],
@@ -3312,7 +3373,19 @@ unsafe fn do_correct(index: i32,
                 reset_counter(&mut search_state.nodes);
                end_game::<FE>(side_to_move, (full_solve == 0) as i32,
                          0 as i32, 1 as i32, 0 as i32,
-                         &mut dummy_info, echo);
+                         &mut dummy_info, echo , &mut flip_stack_
+                              , &mut search_state
+                              , &mut board_state
+                              , &mut hash_state
+                              , &mut g_timer
+                              , &mut end_g
+                              , &mut midgame_state
+                              , &mut coeff_state
+                              , &mut moves_state
+                              , &mut random_instance
+                              , &mut g_book
+                              , &mut stable_state
+                              , &mut prob_cut);
                 if side_to_move == 0 as i32 {
                     outcome = search_state.root_eval
                 } else { outcome = -search_state.root_eval }

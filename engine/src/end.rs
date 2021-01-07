@@ -1,5 +1,4 @@
 use flip::doflip::DoFlips_hash;
-use flip::unflip::flip_stack_;
 
 use crate::{
     src:: {
@@ -9,30 +8,30 @@ use crate::{
         bitbtest::TestFlips_bitboard,
         counter::{adjust_counter, counter_value},
         epcstat::{END_MEAN, END_SIGMA, END_STATS_AVAILABLE},
-        globals::board_state,
-        hash::{find_hash, hash_state, HashEntry},
+        hash::{find_hash,  HashEntry},
         moves::{dir_mask, make_move},
-        probcut::prob_cut,
-        search::{create_eval_info, disc_count, force_return, hash_expand_pv, restore_pv, search_state, select_move, store_pv},
+        search::{create_eval_info, disc_count, force_return, hash_expand_pv, restore_pv, select_move, store_pv},
         stable::{count_edge_stable, count_stable},
     }
 };
 use crate::src::error::FrontEnd;
-use crate::src::game::{end_g, midgame_state};
-use crate::src::getcoeff::coeff_state;
-use crate::src::globals::Board;
-use crate::src::hash::add_hash;
-use crate::src::midgame::tree_search;
-use crate::src::moves::{generate_all, moves_state, unmake_move, valid_move};
-use crate::src::myrandom::random_instance;
-use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, g_book, get_book_move};
+use crate::src::globals::{Board, BoardState};
+use crate::src::hash::{add_hash, HashState};
+use crate::src::midgame::{tree_search, MidgameState};
+use crate::src::moves::{generate_all, unmake_move, valid_move, MovesState};
+use crate::src::osfbook::{fill_endgame_hash, fill_move_alternatives, get_book_move, Book};
 use crate::src::search::SearchState;
-use crate::src::stable::stable_state;
 use crate::src::stubs::{abs, ceil};
-use crate::src::timer::g_timer;
 use crate::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, SELECTIVE_EVAL, WLD_EVAL};
 use crate::src::zebra::EvaluationType;
+use crate::src::stable::StableState;
+use std::collections::hash_map::RandomState;
+use crate::src::myrandom::MyRandom;
+use crate::src::getcoeff::CoeffState;
+use crate::src::timer::Timer;
+use flip::unflip::FlipStack;
+use crate::src::probcut::ProbCut;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -507,19 +506,22 @@ impl End {
 //   Toggles output of intermediate search status on/off.
 // */
 //
-// pub unsafe fn set_output_mode(end:&mut End, full: i32) {
+// pub un safe fn set_output_mode(end:&mut End, full: i32) {
 //     end.full_output_mode = full;
 // }
 
 
-unsafe fn solve_parity(end:&mut End, my_bits: BitBoard,
+fn solve_parity(end:&mut End, my_bits: BitBoard,
                            opp_bits: BitBoard,
                            mut alpha: i32,
                            mut beta: i32,
                            color: i32,
                            empties: i32,
                            disc_diff: i32,
-                           pass_legal: i32, bb_flips_: &mut BitBoard)
+                           pass_legal: i32, bb_flips_: &mut BitBoard,
+                       mut search_state: &mut SearchState,
+                       mut stable_state: &mut StableState,
+)
                            -> i32 {
     let mut new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut score = -(12345678 as i32);
@@ -582,7 +584,7 @@ unsafe fn solve_parity(end:&mut End, my_bits: BitBoard,
                             -solve_parity(end, new_opp_bits, *bb_flips_, -beta,
                                           -alpha, oppcol,
                                           empties - 1 as i32,
-                                          new_disc_diff, 1 as i32, bb_flips_);
+                                          new_disc_diff, 1 as i32, bb_flips_, &mut search_state, &mut stable_state);
                         end.region_parity ^= holepar
                     }
                     end. end_move_list[old_sq as usize].succ = sq;
@@ -631,7 +633,7 @@ unsafe fn solve_parity(end:&mut End, my_bits: BitBoard,
                     ev =
                         -solve_parity(end, new_opp_bits, *bb_flips_, -beta, -alpha,
                                       oppcol, empties - 1 as i32,
-                                      new_disc_diff, 1 as i32, bb_flips_);
+                                      new_disc_diff, 1 as i32, bb_flips_, &mut search_state, &mut stable_state);
                     end.region_parity ^= holepar_0
                 }
                 end. end_move_list[old_sq as usize].succ = sq;
@@ -655,7 +657,7 @@ unsafe fn solve_parity(end:&mut End, my_bits: BitBoard,
             return 0 as i32
         } else {
             return -solve_parity(end, opp_bits, my_bits, -beta, -alpha, oppcol,
-                                 empties, -disc_diff, 0 as i32, bb_flips_)
+                                 empties, -disc_diff, 0 as i32, bb_flips_, &mut search_state, &mut stable_state)
         }
     }
     end.  best_move = best_sq;
@@ -666,7 +668,18 @@ unsafe fn solve_parity(end:&mut End, my_bits: BitBoard,
    Prepares the endgame solver for a new game.
    This means clearing a few status fields.
 */
-pub unsafe fn setup_end() {
+pub fn setup_end(flip_stack_: &mut FlipStack,
+                                               mut search_state: &mut SearchState,
+                                               mut board_state: &mut BoardState,
+                                               mut hash_state: &mut HashState,
+                                               mut g_timer: &mut Timer,
+                                               mut end_g: &mut End,
+                                               mut midgame_state: &mut MidgameState,
+                                               mut coeff_state: &mut CoeffState,
+                                               mut moves_state: &mut MovesState,
+                                               mut random_instance: &mut MyRandom,
+                                               mut g_book: &mut Book,
+                                               mut stable_state: &mut StableState,) {
     let mut last_mean: f64 = 0.;
     let mut last_sigma: f64 = 0.;
     let mut ff_threshold: [f64; 61] = [0.; 61];
@@ -773,14 +786,18 @@ pub unsafe fn setup_end() {
 }
 
 
-unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
+fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
                                 opp_bits: BitBoard,
                                 mut alpha: i32,
                                 mut beta: i32,
                                 color: i32,
                                 empties: i32,
                                 disc_diff: i32,
-                                pass_legal: i32, bb_flips_: &mut BitBoard)
+                                pass_legal: i32, bb_flips_: &mut BitBoard,
+                            mut search_state: &mut SearchState,
+                            mut board_state: &mut BoardState,
+                            mut hash_state: &mut HashState,
+                            mut stable_state: &mut StableState,)
                                 -> i32 {
     let mut new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut score = -(12345678 as i32);
@@ -853,7 +870,7 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
                     ev =
                         -solve_parity(end, new_opp_bits, *bb_flips_, -beta, -alpha,
                                       oppcol, empties - 1 as i32,
-                                      new_disc_diff, 1 as i32, bb_flips_);
+                                      new_disc_diff, 1 as i32, bb_flips_, &mut search_state, &mut stable_state);
                     end.region_parity ^= holepar;
                     end. end_move_list[old_sq as usize].succ = sq;
                     if ev > score {
@@ -896,7 +913,7 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
                 ev =
                     -solve_parity(end, new_opp_bits,*bb_flips_, -beta, -alpha,
                                   oppcol, empties - 1 as i32,
-                                  new_disc_diff, 1 as i32, bb_flips_);
+                                  new_disc_diff, 1 as i32, bb_flips_, &mut search_state, &mut stable_state);
                 end.region_parity ^= holepar_0;
                 end. end_move_list[old_sq as usize].succ = sq;
                 if ev > score {
@@ -928,7 +945,10 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
             hash_state.hash2 ^= hash_state.hash_flip_color2;
             score =
                 -solve_parity_hash(end, opp_bits, my_bits, -beta, -alpha, oppcol,
-                                   empties, -disc_diff, 0 as i32, bb_flips_);
+                                   empties, -disc_diff, 0 as i32, bb_flips_,search_state
+                                   ,board_state
+                                   ,hash_state
+                                   ,stable_state);
             hash_state.hash1 ^= hash_state.hash_flip_color1;
             hash_state.hash2 ^= hash_state.hash_flip_color2
         }
@@ -947,14 +967,19 @@ unsafe fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
     return score;
 }
 
-unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
+fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
                                      opp_bits: BitBoard,
                                      mut alpha: i32,
                                      mut beta: i32,
                                      color: i32,
                                      empties: i32,
                                      disc_diff: i32,
-                                     pass_legal: i32, bb_flips_: &mut BitBoard)
+                                     pass_legal: i32, bb_flips_: &mut BitBoard,
+                                 mut flip_stack_: &mut FlipStack,
+                                 mut search_state: &mut SearchState,
+                                 mut board_state: &mut BoardState,
+                                 mut hash_state: &mut HashState,
+                                 mut stable_state: &mut StableState,)
                                      -> i32 {
     /* Move bonuses without and with parity for the squares.
        These are only used when sorting moves in the 9-12 empties
@@ -1336,7 +1361,11 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
             score =
                 -solve_parity_hash_high(end, opp_bits, my_bits, -beta, -alpha,
                                         oppcol, empties, -disc_diff,
-                                        0 as i32, bb_flips_);
+                                        0 as i32, bb_flips_,flip_stack_
+                                        ,search_state
+                                        ,board_state
+                                        ,hash_state
+                                        ,stable_state);
             hash_state.hash1 ^= hash_state.hash_flip_color1;
             hash_state.hash2 ^= hash_state.hash_flip_color2;
             return score
@@ -1361,13 +1390,20 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
         score =
             -solve_parity_hash(end, best_new_opp_bits, best_new_my_bits, -beta,
                                -alpha, oppcol, empties - 1 as i32,
-                               new_disc_diff, 1 as i32, bb_flips_)
+                               new_disc_diff, 1 as i32, bb_flips_,search_state
+                               ,board_state
+                               ,hash_state
+                               ,stable_state)
     } else {
         score =
             -solve_parity_hash_high(end, best_new_opp_bits, best_new_my_bits,
                                     -beta, -alpha, oppcol,
                                     empties - 1 as i32, new_disc_diff,
-                                    1 as i32, bb_flips_)
+                                    1 as i32, bb_flips_,flip_stack_
+                                    ,search_state
+                                    ,board_state
+                                    ,hash_state
+                                    ,stable_state)
     }
     flip_stack_.UndoFlips(&mut board_state.board, best_flipped, oppcol);
     hash_state.hash1 ^= diff1;
@@ -1428,12 +1464,19 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
             ev =
                 -solve_parity_hash(end,new_opp_bits, *bb_flips_, -beta, -alpha,
                                    oppcol, empties - 1 as i32,
-                                   new_disc_diff, 1 as i32, bb_flips_)
+                                   new_disc_diff, 1 as i32, bb_flips_,search_state
+                                   ,board_state
+                                   ,hash_state
+                                   ,stable_state)
         } else {
             ev =
                 -solve_parity_hash_high(end, new_opp_bits, *bb_flips_, -beta, -alpha,
                                         oppcol, empties - 1 as i32,
-                                        new_disc_diff, 1 as i32, bb_flips_)
+                                        new_disc_diff, 1 as i32, bb_flips_,flip_stack_
+                                        ,search_state
+                                        ,board_state
+                                        ,hash_state
+                                        ,stable_state)
         }
         end.region_parity ^= quadrant_mask[sq as usize];
         flip_stack_.UndoFlips(&mut board_state.board, flipped, oppcol);
@@ -1477,21 +1520,32 @@ unsafe fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
   PREPARE_TO_SOLVE(). Returns difference between disc count for
   COLOR and disc count for the opponent of COLOR.
 */
-unsafe fn end_solve(end:&mut End, my_bits: BitBoard, opp_bits: BitBoard,
+fn end_solve(end:&mut End, my_bits: BitBoard, opp_bits: BitBoard,
                     alpha: i32, beta: i32,
                     color: i32,
                     empties: i32,
                     discdiff: i32,
-                    prevmove: i32, bb_flips_ : &mut BitBoard) -> i32 {
+                    prevmove: i32, bb_flips_ : &mut BitBoard
+                    ,flip_stack: &mut FlipStack
+                    ,search_state: &mut SearchState
+                    ,board_state: &mut BoardState
+                    ,hash_state: &mut HashState
+                    ,stable_state: &mut StableState
+
+) -> i32 {
     let mut result: i32 = 0;
     if empties <= 8 as i32 {
         result =
             solve_parity(end, my_bits, opp_bits, alpha, beta, color, empties,
-                         discdiff, prevmove, bb_flips_)
+                         discdiff, prevmove, bb_flips_, search_state, stable_state)
     } else {
         result =
             solve_parity_hash_high(end, my_bits, opp_bits, alpha, beta, color,
-                                   empties, discdiff, prevmove, bb_flips_)
+                                   empties, discdiff, prevmove, bb_flips_,flip_stack
+                                   ,search_state
+                                   ,board_state
+                                   ,hash_state
+                                   ,stable_state)
     }
     return result;
 }
@@ -1537,7 +1591,7 @@ pub fn update_best_list<FE: FrontEnd>(best_list: &mut [i32; 4],
   END_TREE_SEARCH
   Plain nega-scout with fastest-first move ordering.
 */
-unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
+fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                             max_depth: i32,
                                             my_bits: BitBoard,
                                             opp_bits: BitBoard,
@@ -1546,7 +1600,18 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                             mut beta: i32,
                                             selectivity: i32,
                                             selective_cutoff: &mut i32,
-                                            void_legal: i32, bb_flips_: &mut BitBoard, echo: i32)
+                                            void_legal: i32, bb_flips_: &mut BitBoard, echo: i32,
+                                        mut flip_stack_: &mut FlipStack,
+                                        mut search_state: &mut SearchState,
+                                        mut board_state: &mut BoardState,
+                                        mut hash_state: &mut HashState,
+                                        mut g_timer: &mut Timer,
+                                        mut midgame_state: &mut MidgameState,
+                                        mut coeff_state: &mut CoeffState,
+                                        mut moves_state: &mut MovesState,
+                                        mut stable_state: &mut StableState,
+                                        mut prob_cut: &mut ProbCut
+)
                                             -> i32 {
     let mut node_val: f64 = 0.;
     let mut i: i32 = 0;
@@ -1638,7 +1703,11 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         prepare_to_solve(&board_state.board, end);
         result =
             end_solve(end, my_bits, opp_bits, alpha, beta, side_to_move, empties,
-                      disk_diff, previous_move, bb_flips_);
+                      disk_diff, previous_move, bb_flips_,flip_stack_
+                      ,search_state
+                      ,board_state
+                      ,hash_state
+                      ,stable_state);
         board_state.pv_depth[level as usize] = level + 1 as i32;
         board_state.pv[level as usize][level as usize] = end.  best_move;
         if level == 0 as i32 && search_state.get_ponder_move() == 0 {
@@ -2013,7 +2082,17 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                        0 as i32 + 2 as i32 -
                                      side_to_move, -beta, -curr_alpha,
                                        selectivity, &mut child_selective_cutoff,
-                                       1 as i32, bb_flips_,echo);
+                                       1 as i32, bb_flips_, echo
+                                       , flip_stack_
+                                       , search_state
+                                       , board_state
+                                       , hash_state
+                                       , g_timer
+                                       , midgame_state
+                                       , coeff_state
+                                       , moves_state
+                                       , stable_state
+                                       , prob_cut);
             best = curr_val;
             update_pv = 1;
             if level == 0 as i32 { end. best_end_root_move = move_0 }
@@ -2027,7 +2106,16 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                        -(curr_alpha + 1 as i32),
                                        -curr_alpha, selectivity,
                                        &mut child_selective_cutoff,
-                                       1 as i32, bb_flips_,echo);
+                                       1 as i32, bb_flips_,echo, flip_stack_
+                                       , search_state
+                                       , board_state
+                                       , hash_state
+                                       , g_timer
+                                       , midgame_state
+                                       , coeff_state
+                                       , moves_state
+                                       , stable_state
+                                       , prob_cut);
             if curr_val > curr_alpha && curr_val < beta {
                 if selectivity > 0 as i32 {
                     curr_val =
@@ -2038,7 +2126,16 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                              side_to_move, -beta,
                                                12345678 as i32, selectivity,
                                                &mut child_selective_cutoff,
-                                               1 as i32, bb_flips_,echo)
+                                               1 as i32, bb_flips_,echo, flip_stack_
+                                               , search_state
+                                               , board_state
+                                               , hash_state
+                                               , g_timer
+                                               , midgame_state
+                                               , coeff_state
+                                               , moves_state
+                                               , stable_state
+                                               , prob_cut)
                 } else {
                     curr_val =
                         -end_tree_search::<FE>(end,level + 1 as i32,
@@ -2048,7 +2145,16 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                              side_to_move, -beta, -curr_val,
                                                selectivity,
                                                &mut child_selective_cutoff,
-                                               1 as i32, bb_flips_,echo)
+                                               1 as i32, bb_flips_,echo, flip_stack_
+                                               , search_state
+                                               , board_state
+                                               , hash_state
+                                               , g_timer
+                                               , midgame_state
+                                               , coeff_state
+                                               , moves_state
+                                               , stable_state
+                                               , prob_cut)
                 }
                 if curr_val > best {
                     best = curr_val;
@@ -2142,7 +2248,16 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             -end_tree_search::<FE>(end ,level, max_depth, opp_bits, my_bits,
                                    0 as i32 + 2 as i32 -
                                  side_to_move, -beta, -alpha, selectivity,
-                                   selective_cutoff, 0 as i32, bb_flips_,echo);
+                                   selective_cutoff, 0 as i32, bb_flips_,echo, flip_stack_
+                                   , search_state
+                                   , board_state
+                                   , hash_state
+                                   , g_timer
+                                   , midgame_state
+                                   , coeff_state
+                                   , moves_state
+                                   , stable_state
+                                   , prob_cut);
         if use_hash != 0 {
             hash_state.hash1 ^= hash_state.hash_flip_color1;
             hash_state.hash2 ^= hash_state.hash_flip_color2
@@ -2169,15 +2284,27 @@ unsafe fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
   Wrapper onto END_TREE_SEARCH which applies the knowledge that
   the range of valid scores is [-64,+64].  Komi, if any, is accounted for.
 */
-unsafe fn end_tree_wrapper<FE: FrontEnd>(end: &mut End, level: i32,
+fn end_tree_wrapper<FE: FrontEnd>(end: &mut End, level: i32,
                                              max_depth: i32,
                                              side_to_move: i32,
                                              alpha: i32,
                                              beta: i32,
                                              selectivity: i32,
                                              void_legal: i32,
-                                             echo:i32)
+                                             echo:i32,
+                                         flip_stack_: &mut FlipStack,
+                                         search_state: &mut SearchState,
+                                         board_state: &mut BoardState,
+                                         hash_state: &mut HashState,
+                                         g_timer: &mut Timer,
+                                         midgame_state: &mut MidgameState,
+                                         coeff_state: &mut CoeffState,
+                                         moves_state: &mut MovesState,
+                                         random_instance: &mut MyRandom,
+                                         stable_state: &mut StableState,
+                                         prob_cut: &mut ProbCut)
                                              -> i32 {
+    // FIXME get rid of this
     static mut bb_flips: BitBoard = BitBoard { high: 0, low: 0 };
     let mut selective_cutoff: i32 = 0;
     let mut my_bits = BitBoard{high: 0, low: 0,};
@@ -2191,14 +2318,37 @@ unsafe fn end_tree_wrapper<FE: FrontEnd>(end: &mut End, level: i32,
                            if beta - end. komi_shift < 64 as i32 {
                                (beta) - end. komi_shift
                            } else { 64 as i32 }, selectivity,
-                                 &mut selective_cutoff, void_legal, &mut bb_flips,echo) + end. komi_shift;
+                                 &mut selective_cutoff, void_legal,
+                                 // FIXME this is wrong - it only works in single threaded context
+                                 unsafe { &mut bb_flips },
+                                 echo, flip_stack_
+                                 , search_state
+                                 , board_state
+                                 , hash_state
+                                 , g_timer
+                                 , midgame_state
+                                 , coeff_state
+                                 , moves_state
+                                 , stable_state
+                                 , prob_cut) + end. komi_shift;
 }
 /*
    FULL_EXPAND_PV
    Pad the PV with optimal moves in the low-level phase.
 */
-unsafe fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
-                                           selectivity: i32, echo:i32) {
+fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
+                                           selectivity: i32, echo:i32,
+                                mut flip_stack_: &mut FlipStack,
+                                search_state: &mut SearchState,
+                                mut board_state: &mut BoardState,
+                                mut hash_state: &mut HashState,
+                                g_timer: &mut Timer,
+                                midgame_state: &mut MidgameState,
+                                coeff_state: &mut CoeffState,
+                                mut moves_state: &mut MovesState,
+                                random_instance: &mut MyRandom,
+                                stable_state: &mut StableState,
+                                prob_cut: &mut ProbCut) {
     let mut i: i32 = 0;
     let mut pass_count: i32 = 0;
     let mut new_pv_depth: i32 = 0;
@@ -2208,18 +2358,30 @@ unsafe fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
     pass_count = 0;
     while pass_count < 2 as i32 {
         let mut move_0: i32 = 0;
-        generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+        generate_all(side_to_move, &mut moves_state, search_state, &board_state.board);
         if moves_state.move_count[moves_state.disks_played as usize] > 0 as i32 {
             let empties =
                 64 as i32 - disc_count(0 as i32, &board_state.board) -
                     disc_count(2 as i32, &board_state.board);
             end_tree_wrapper::<FE>(end, new_pv_depth, empties, side_to_move,
                              -(64 as i32), 64 as i32,
-                             selectivity, 1 as i32, echo);
+                             selectivity, 1 as i32, echo
+            ,flip_stack_
+            ,search_state
+            ,board_state
+            ,hash_state
+            ,g_timer
+            ,midgame_state
+            ,coeff_state
+            ,moves_state
+            ,random_instance
+            ,stable_state
+            ,prob_cut
+            );
             move_0 = board_state.pv[new_pv_depth as usize][new_pv_depth as usize];
             new_pv[new_pv_depth as usize] = move_0;
             new_side_to_move[new_pv_depth as usize] = side_to_move;
-            make_move(side_to_move, move_0, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+            make_move(side_to_move, move_0, 1 as i32 , moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
             new_pv_depth += 1
         } else {
             hash_state.hash1 ^= hash_state.hash_flip_color1;
@@ -2251,14 +2413,26 @@ unsafe fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
   Provides an interface to the fast endgame solver.
 */
 
-pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
-                                     wld: i32,
-                                     force_echo: i32,
-                                     allow_book: i32,
-                                     komi: i32,
-                                     mut eval_info: &mut EvaluationType, echo: i32)
-                                     -> i32 {
-    let end: &mut End = &mut end_g;
+pub fn end_game<FE: FrontEnd>(side_to_move: i32,
+                              wld: i32,
+                              force_echo: i32,
+                              allow_book: i32,
+                              komi: i32,
+                              mut eval_info: &mut EvaluationType, echo: i32,
+                              mut flip_stack_: &mut FlipStack,
+                              mut search_state: &mut SearchState,
+                              mut board_state: &mut BoardState,
+                              mut hash_state: &mut HashState,
+                              mut g_timer: &mut Timer,
+                              mut end: &mut End,
+                              mut midgame_state: &mut MidgameState,
+                              mut coeff_state: &mut CoeffState,
+                              mut moves_state: &mut MovesState,
+                              mut random_instance: &mut MyRandom,
+                              mut g_book: &mut Book,
+                              mut stable_state: &mut StableState,
+                              mut prob_cut: &mut ProbCut)
+                              -> i32 {
     let mut current_confidence: f64 = 0.;
     let mut solve_status = WIN;
     let mut book_move: i32 = 0;
@@ -2385,7 +2559,17 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 alpha = -1;
                 beta = 1;
                 search_state.root_eval = end_tree_wrapper::<FE>(end, 0, empties, side_to_move,
-                                     alpha, beta, selectivity, 1, echo);
+                                                                alpha, beta, selectivity, 1, echo, flip_stack_
+                                                                , search_state
+                                                                , board_state
+                                                                , hash_state
+                                                                , g_timer
+                                                                , midgame_state
+                                                                , coeff_state
+                                                                , moves_state
+                                                                , random_instance
+                                                                , stable_state
+                                                                , prob_cut);
                 adjust_counter(&mut search_state.nodes);
                 if g_timer.is_panic_abort() != 0 || force_return != 0 { break ; }
                 any_search_result = 1;
@@ -2420,8 +2604,18 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                 beta = last_window_center + 1;
                 search_state.root_eval =
                     end_tree_wrapper::<FE>(end, 0, empties, side_to_move,
-                                     alpha, beta, selectivity,
-                                     1, echo);
+                                           alpha, beta, selectivity,
+                                           1, echo, flip_stack_
+                                           , search_state
+                                           , board_state
+                                           , hash_state
+                                           , g_timer
+                                           , midgame_state
+                                           , coeff_state
+                                           , moves_state
+                                           , random_instance
+                                           , stable_state
+                                           , prob_cut);
                 if search_state.root_eval <= alpha {
                     loop  {
                         last_window_center -= 2;
@@ -2431,8 +2625,18 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                             break ;
                         }
                         search_state.root_eval = end_tree_wrapper::<FE>(end, 0, empties,
-                                             side_to_move, alpha, beta,
-                                             selectivity, 1, echo);
+                                                                        side_to_move, alpha, beta,
+                                                                        selectivity, 1, echo, flip_stack_
+                                                                        , search_state
+                                                                        , board_state
+                                                                        , hash_state
+                                                                        , g_timer
+                                                                        , midgame_state
+                                                                        , coeff_state
+                                                                        , moves_state
+                                                                        , random_instance
+                                                                        , stable_state
+                                                                        , prob_cut);
                         if !(search_state.root_eval <= alpha) { break ; }
                     }
                     search_state.root_eval = last_window_center
@@ -2446,8 +2650,18 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                         }
                         search_state.root_eval =
                            end_tree_wrapper::<FE>(end, 0, empties,
-                                             side_to_move, alpha, beta,
-                                             selectivity, 1 as i32, echo);
+                                                  side_to_move, alpha, beta,
+                                                  selectivity, 1 as i32, echo, flip_stack_
+                                                  , search_state
+                                                  , board_state
+                                                  , hash_state
+                                                  , g_timer
+                                                  , midgame_state
+                                                  , coeff_state
+                                                  , moves_state
+                                                  , random_instance
+                                                  , stable_state
+                                                  , prob_cut);
                         if !(search_state.root_eval >= beta) { break ; }
                     }
                     search_state.root_eval = last_window_center
@@ -2529,7 +2743,17 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
         beta = last_window_center + 1;
     }
     search_state.root_eval = end_tree_wrapper::<FE>(end, 0, empties, side_to_move, alpha, beta,
-                         0, 1, echo);
+                                                    0, 1, echo, flip_stack_
+                                                    , search_state
+                                                    , board_state
+                                                    , hash_state
+                                                    , g_timer
+                                                    , midgame_state
+                                                    , coeff_state
+                                                    , moves_state
+                                                    , random_instance
+                                                    , stable_state
+                                                    , prob_cut);
     adjust_counter(&mut search_state.nodes);
     if g_timer.is_panic_abort() == 0 && force_return == 0 {
         if wld == 0 {
@@ -2539,8 +2763,18 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     alpha = ceiling_value - 1;
                     beta = ceiling_value;
                     search_state.root_eval = end_tree_wrapper::<FE>(end, 0, empties,
-                                         side_to_move, alpha, beta,
-                                         0, 1, echo);
+                                                                    side_to_move, alpha, beta,
+                                                                    0, 1, echo, flip_stack_
+                                                                    , search_state
+                                                                    , board_state
+                                                                    , hash_state
+                                                                    , g_timer
+                                                                    , midgame_state
+                                                                    , coeff_state
+                                                                    , moves_state
+                                                                    , random_instance
+                                                                    , stable_state
+                                                                    , prob_cut);
                     if g_timer.is_panic_abort() != 0 || force_return != 0 { break ; }
                     if search_state.root_eval > alpha { break ; }
                     ceiling_value -= 2
@@ -2552,8 +2786,18 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
                     beta = floor_value + 1 as i32;
                     search_state.root_eval =
                        end_tree_wrapper::<FE>(end, 0 as i32, empties,
-                                         side_to_move, alpha, beta,
-                                         0 as i32, 1 as i32, echo);
+                                              side_to_move, alpha, beta,
+                                              0 as i32, 1 as i32, echo, flip_stack_
+                                              , search_state
+                                              , board_state
+                                              , hash_state
+                                              , g_timer
+                                              , midgame_state
+                                              , coeff_state
+                                              , moves_state
+                                              , random_instance
+                                              , stable_state
+                                              , prob_cut);
                     if g_timer.is_panic_abort() != 0 || force_return != 0 { break ; }
                     assert!( search_state.root_eval > alpha );
                     if search_state.root_eval < beta { break ; }
@@ -2674,7 +2918,17 @@ pub unsafe fn end_game<FE: FrontEnd>(side_to_move: i32,
     /* For shallow endgames, we can afford to compute the entire PV
        move by move. */
     if wld == 0 && incomplete_search == 0 && force_return == 0 && empties <= 16 {
-        full_expand_pv::<FE>(end, side_to_move, 0,echo);
+        full_expand_pv::<FE>(end, side_to_move, 0, echo, flip_stack_
+                             , search_state
+                             , board_state
+                             , hash_state
+                             , g_timer
+                             , midgame_state
+                             , coeff_state
+                             , moves_state
+                             , random_instance
+                             , stable_state
+                             , prob_cut);
     }
     board_state.pv[0][0]
 }
