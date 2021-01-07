@@ -101,6 +101,8 @@ mod tests {
 
     snap_test!(with_repeat, "-l 6 6 6 6 6 6 -r 0 -repeat 2");
 
+    snap_test!(with_repeat_and_log, "-l 6 6 6 6 6 6 -r 0 -repeat 2 -log zebra.log");
+
     snap_test!(no_wld, "-l 6 6 0 6 6 0 -r 0 -repeat 2");
 
     snap_test!(wld_only, "-l 6 6 6 6 6 6 -r 0 -repeat 2 -wld 1");
@@ -144,7 +146,23 @@ mod tests {
             panic!("WARNING: Snapshot doesn't exists, creating new one. Rerun the tests to make them green again.");
         }
         fn variable_lines(line: &&str) -> bool {
-            !(line.starts_with("-->") || line.starts_with("Log file created"))
+            !(
+                line.starts_with("-->")
+                || line.starts_with("Log file created")
+                || (line.starts_with("#") && matches_ctime(&line[1..]).unwrap_or(false) )
+            )
+        }
+        fn matches_ctime(line :&str) -> Option<bool> {
+            // Www Mmm dd hh:mm:ss yyyy
+            let mut split = line.trim().split_whitespace();
+            // Just rougly matches ctime by lenghts - there's very low chance that some
+            // other text will match this too
+            Some(split.next()?.len() == 3 &&
+                split.next()?.len() == 3 &&
+                split.next()?.len() < 3 &&
+                split.next()?.len() == 8 &&
+                split.next()?.len() == 4 &&
+                split.next().is_none())
         }
         std::fs::read_to_string(snapshot_path)
             .unwrap()
