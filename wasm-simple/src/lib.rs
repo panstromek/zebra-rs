@@ -348,12 +348,6 @@ impl ZebraFrontend for WasmFrontend {
         unimplemented!()
     }
 
-    unsafe fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32) {
-        //FIXME verify this actually works the same way as the original
-        move_vec[(2 as i32 * disks_played_) as usize] = 'a' as i8 + curr_move as i8 % 10 as i8 - 1 as i8;
-        move_vec[(2 as i32 * disks_played_) as usize + 1] = '0' as i8 + curr_move as i8 / 10 as i8;
-    }
-
     fn get_pass() {
         unimplemented!()
     }
