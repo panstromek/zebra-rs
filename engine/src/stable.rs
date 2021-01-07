@@ -3,6 +3,7 @@ use ::patterns::pow3;
 use crate::src::search::position_list;
 use crate::src::bitbtest::{TestFlips_bitboard};
 use crate::src::globals::Board;
+use crate::src::end::End;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -384,13 +385,13 @@ pub fn count_stable(color: i32,
   find variations in which the discs in CANDIDATE_BITS are
   flipped. Aborts if all those discs are stable in the subtree.
 */
-fn stability_search(my_bits: BitBoard,
+fn stability_search(end: &mut End, my_bits: BitBoard,
                            opp_bits: BitBoard,
                            side_to_move: i32,
                            mut candidate_bits: &mut BitBoard,
                            max_depth: i32,
                            last_was_pass: i32,
-                           stability_nodes: &mut i32, bb_flips_: &mut BitBoard, state: &mut StableState) {
+                           stability_nodes: &mut i32, state: &mut StableState) {
     let mut sq: i32 = 0;
     let mut old_sq: i32 = 0;
     let mut mobility: i32 = 0;
@@ -437,24 +438,24 @@ fn stability_search(my_bits: BitBoard,
                    my_bits.low,
                    opp_bits.high,
                    opp_bits.low);
-        bb_flips_.high = flip_test_result.1.high;
-        bb_flips_.low = flip_test_result.1.low;
+        end.bb_flips.high = flip_test_result.1.high;
+        end.bb_flips.low = flip_test_result.1.low;
         if flip_test_result.0 != 0 {
-            new_my_bits = *bb_flips_;
-            bb_flips_.high &= !my_bits.high;
-            bb_flips_.low &= !my_bits.low;
-            (*candidate_bits).high &= !bb_flips_.high;
-            (*candidate_bits).low &= !bb_flips_.low;
+            new_my_bits = end.bb_flips;
+            end.bb_flips.high &= !my_bits.high;
+            end.bb_flips.low &= !my_bits.low;
+            (*candidate_bits).high &= !end.bb_flips.high;
+            (*candidate_bits).low &= !end.bb_flips.low;
             if max_depth > 1 as i32 {
-                new_opp_bits.high = opp_bits.high & !bb_flips_.high;
-                new_opp_bits.low = opp_bits.low & !bb_flips_.low;
+                new_opp_bits.high = opp_bits.high & !end.bb_flips.high;
+                new_opp_bits.low = opp_bits.low & !end.bb_flips.low;
                 state.stab_move_list[old_sq as usize].succ =
                     state.stab_move_list[sq as usize].succ;
-                stability_search(new_opp_bits, new_my_bits,
+                stability_search(end, new_opp_bits, new_my_bits,
                                  0 as i32 + 2 as i32 -
                                      side_to_move, candidate_bits,
                                  max_depth - 1 as i32,
-                                 0 as i32, stability_nodes, bb_flips_, state);
+                                 0 as i32, stability_nodes, state);
                 state.stab_move_list[old_sq as usize].succ = sq
             }
             mobility += 1
@@ -463,10 +464,10 @@ fn stability_search(my_bits: BitBoard,
         sq = state.stab_move_list[sq as usize].succ
     }
     if mobility == 0 as i32 && last_was_pass == 0 {
-        stability_search(opp_bits, my_bits,
+        stability_search(end, opp_bits, my_bits,
                          0 as i32 + 2 as i32 - side_to_move,
                          candidate_bits, max_depth, 1 as i32,
-                         stability_nodes, bb_flips_, state);
+                         stability_nodes,  state);
     };
 }
 /*
@@ -474,10 +475,10 @@ fn stability_search(my_bits: BitBoard,
   Tries to compute all stable discs by search the entire game tree.
   The actual work is performed by STABILITY_SEARCH above.
 */
-fn complete_stability_search(board: &Board,
+fn complete_stability_search(end: &mut End,  board: &Board,
                                     side_to_move: i32,
                                     mut stable_bits:
-                                                   &mut BitBoard, bb_flips_: &mut BitBoard, state: &mut StableState) {
+                                                   &mut BitBoard, state: &mut StableState) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut empties: i32 = 0;
@@ -524,11 +525,11 @@ fn complete_stability_search(board: &Board,
        to weed out those easily flippable */
     stability_nodes = 0;
     shallow_depth = 4;
-    stability_search(my_bits, opp_bits, side_to_move, &mut candidate_bits,
+    stability_search(end, my_bits, opp_bits, side_to_move, &mut candidate_bits,
                      if empties < shallow_depth {
                          empties
                      } else { shallow_depth }, 0 as i32,
-                     &mut stability_nodes, bb_flips_,  state);
+                     &mut stability_nodes, state);
     /* Scan through the rest of the discs one at a time until the
        maximum number of stability nodes is exceeded. Hopefully
        a subset of the stable discs is found also if this happens. */
@@ -541,9 +542,9 @@ fn complete_stability_search(board: &Board,
             test_bits = square_mask[sq_0 as usize];
             if test_bits.high & candidate_bits.high |
                    test_bits.low & candidate_bits.low != 0 {
-                stability_search(my_bits, opp_bits, side_to_move,
+                stability_search(end, my_bits, opp_bits, side_to_move,
                                  &mut test_bits, empties, 0 as i32,
-                                 &mut stability_nodes, bb_flips_,  state);
+                                 &mut stability_nodes,  state);
                 abort =
                     (stability_nodes > 10000 as i32) as i32;
                 if abort == 0 {
@@ -565,9 +566,9 @@ fn complete_stability_search(board: &Board,
   is returned in the boolean vector IS_STABLE.
 */
 
-pub fn get_stable(board: &Board,
+pub fn get_stable(end:&mut End, board: &Board,
                          side_to_move: i32,
-                         is_stable: &mut [i32], bb_flips_: &mut BitBoard, state: &mut StableState) {
+                         is_stable: &mut [i32], state: &mut StableState) {
     use engine_traits::Offset;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -600,7 +601,7 @@ pub fn get_stable(board: &Board,
         count_stable(2 as i32, white_bits, black_bits, state);
         all_stable.high = state.last_black_stable.high | state.last_white_stable.high;
         all_stable.low = state.last_black_stable.low | state.last_white_stable.low;
-        complete_stability_search(board, side_to_move, &mut all_stable, bb_flips_, state);
+        complete_stability_search(end, board, side_to_move, &mut all_stable, state);
         i = 1;
         mask = 1;
         while i <= 4 as i32 {
