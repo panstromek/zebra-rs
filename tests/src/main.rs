@@ -115,6 +115,7 @@ mod tests {
 
     snap_test!(with_repeat_and_log, "-l 6 6 6 6 6 6 -r 0 -repeat 2 -log zebra.log");
 
+    // FIXME this test is failing against old zebra, investigate that
     snap_test!(no_wld, "-l 6 6 0 6 6 0 -r 0 -repeat 2");
 
     snap_test!(wld_only, "-l 6 6 6 6 6 6 -r 0 -repeat 2 -wld 1");
@@ -164,6 +165,7 @@ mod tests {
             !(
                 line.starts_with("-->")
                 || line.starts_with("Log file created")
+                || line.starts_with("Engine compiled")
                 || (line.starts_with("#") && matches_ctime(&line[1..]).unwrap_or(false) )
             )
         }
@@ -205,10 +207,14 @@ mod tests {
             .arg("?")
             .output()
             .unwrap();
-
-        assert_eq!(
-            std::fs::read("./snapshots/zebra.log-help_works").unwrap(),
-            output.stdout
-        );
+        let expected = std::fs::read_to_string("./snapshots/zebra.log-help_works").unwrap();
+        let actual = String::from_utf8(output.stdout).unwrap();
+        fn not_variable(line: &&str) -> bool {
+            !line.contains("compile date")
+        }
+        expected.lines()
+            .filter(not_variable)
+            .zip(actual.lines().filter(not_variable))
+            .for_each(|(expected, actual)| assert_eq!(expected, actual));
     }
 }
