@@ -324,7 +324,6 @@ pub unsafe fn engine_play_game<
                 if moves_state.disks_played >= provided_move_count {
                     if config.skill[side_to_move as usize] == 0 as i32 {
                         if config.use_book != 0 && config.display_pv != 0 {
-                            panic!("this branch is not tested");
                             fill_move_alternatives::<FE>(side_to_move,
                                                    0 as i32,
                                                          &mut g_book,
@@ -337,7 +336,6 @@ pub unsafe fn engine_play_game<
                                 ZF::print_move_alternatives(side_to_move);
                             }
                         }
-                        panic!("this branch is not tested");
 
                         ZF::before_get_move();
                         curr_move = get_move::<ZF>(side_to_move, &board_state.board);
@@ -411,8 +409,6 @@ pub unsafe fn engine_play_game<
                     board_state.white_moves[board_state.score_sheet_row as usize] = -(1)
                 }
                 if config.skill[side_to_move as usize] == 0 {
-                    panic!("this branch is not tested");
-
                     ZF::get_pass();
                 }
             }

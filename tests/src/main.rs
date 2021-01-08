@@ -5,10 +5,11 @@ mod tests {
     use flate2_coeff_source::Flate2Source;
     use std::ffi::CStr;
     use legacy_zebra::src::getcoeff::new_z_lib_source;
-    use std::process::Command;
+    use std::process::{Command, Stdio};
     use std::path::Path;
     use std::fs::File;
-    use std::io::{Write};
+    use std::io::{Write, Read};
+    use std::thread;
 
     #[test]
     fn coeff_source_test() {
@@ -154,6 +155,62 @@ mod tests {
         );
     }
 
+    #[test]
+    fn basic_interactive() {
+        let mut command = Command::new("./target/release/zebra");
+        let command = command
+            .stdin(Stdio::piped())
+            // .stdout(Stdio::inherit())
+            .stdout(Stdio::piped())
+            .current_dir("./../"); // TODO use temp to run in parallel
+
+        command.args("-l 6 6 6 0 -r 0 -b 0 -repeat 2".split_whitespace());
+
+        let mut child = command.spawn().unwrap();
+
+        let mut input = child.stdin.as_mut().unwrap();
+        let mut output = child.stdout.expect("Failed to read stdout");
+        //
+        //
+        let mut move_buf = String::with_capacity(3);
+        let thread = thread::spawn(move || {
+            let mut buf = vec![0; 10];
+
+            while let Ok(count) = output.read(&mut buf) {
+                // println!("{}", String::from_utf8_lossy(&buf));
+                if count == 0 {
+                    break;
+                }
+            }
+        });
+        loop {
+            let mut written = 0;
+            // TODO this is very dumb, we should prerecord some games and test them directly
+            for char in 'a'..='h' {
+                for num in '1'..='8' {
+                    move_buf.truncate(0);
+                    move_buf.push(char);
+                    move_buf.push(num);
+                    move_buf.push('\n');
+                    written = input.write(move_buf.as_ref()).unwrap_or(0);
+                    input.flush();
+                }
+            }
+            move_buf.truncate(0);
+            move_buf.push('\n'); // try pass
+            written = input.write(move_buf.as_ref()).unwrap_or(0);
+            input.flush();
+            if written == 0 {
+                break;
+            }
+        }
+        thread.join().unwrap();
+
+        // TODO add other tests that are in non-interactive snaphsot test
+        // TODO assert stderr is empty
+        assert_snapshot("./snapshots/zebra.log-basic_interactive");
+    }
+
     fn snapshot_test(binary: &str, arguments: &str, snapshot_path: &str, with_adjust: bool, has_error: bool) {
         if with_adjust {
             create_adjust_file();
@@ -172,10 +229,10 @@ mod tests {
             // TODO check snapshot here
         }
         // TODO assert stdout too?? for echo tests for example
-        assert_log_file(snapshot_path);
+        assert_snapshot(snapshot_path);
     }
 
-    fn assert_log_file(snapshot_path: &str) {
+    fn assert_snapshot(snapshot_path: &str) {
         let snapshot_path: &Path = snapshot_path.as_ref();
         let log_path = "./../zebra.log";
         ensure_snapshot(snapshot_path, log_path);
