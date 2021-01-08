@@ -41,6 +41,8 @@ mod tests {
     // TODO these snapshot tests don't test for the last position
     //  (because zebra doesn't put it in the log file for some reason)
     //  it'd be good to improve that and test that one as well
+    //fixme
+    // also include analysis.log file into the tests
 
     #[test]
     fn full_game_test() {
@@ -115,11 +117,15 @@ mod tests {
 
     snap_test!(with_repeat_and_log, "-l 6 6 6 6 6 6 -r 0 -repeat 2 -log zebra.log");
 
-    // FIXME this test is failing against old zebra, investigate that
     snap_test!(no_wld, "-l 6 6 0 6 6 0 -r 0 -repeat 2");
 
     snap_test!(wld_only, "-l 6 6 6 6 6 6 -r 0 -repeat 2 -wld 1");
 
+    // FIXME this test is failing against old zebra, investigate that
+    /*
+    run this to verify
+     cargo test --release --package tests "tests::no_exact_no_wld::no_exact_no_wld" -- --test-threads 1 --nocapture
+    */
     snap_test!(no_exact_no_wld, "-l 6 0 0 6 0 0 -r 0 -repeat 2");
 
     snap_test!(minus_p_zero_without_book, "-l 6 6 6 6 6 6 -r 0 -p 0 -b 0");
@@ -186,11 +192,15 @@ mod tests {
             .lines()
             .skip(1)
             .filter(variable_lines)
+            // This is a workaround for checking that these iterators have the same length
+            .chain(std::iter::once("sentinel"))
             .zip(std::fs::read_to_string(log_path)
                 .unwrap()
                 .lines()
                 .skip(1)
-                .filter(variable_lines))
+                .filter(variable_lines)
+                .chain(std::iter::once("sentinel"))
+            )
             .for_each(|(expected, actual)| assert_eq!(expected, actual))
     }
 
