@@ -48,6 +48,7 @@ mod tests {
             "./target/release/zebra",
             "-l 16 16 16 16 16 16 -r 0",
             "./snapshots/zebra.log-full_game_test",
+            false,
             false
         );
     }
@@ -58,12 +59,17 @@ mod tests {
             "./target/release/zebra",
             "-l 6 6 6 6 6 6 -r 0",
             "./snapshots/zebra.log-small_game_test",
+            false,
             false
         );
     }
 
     macro_rules! snap_test {
         ($id:ident, $args:literal) => {
+            snap_test!($id, $args, false);
+        };
+
+        ($id:ident, $args:literal, $has_err:expr) => {
             mod $id {
                 use crate::tests::*;
                 #[test]
@@ -72,7 +78,8 @@ mod tests {
                         "./target/release/zebra",
                         $args,
                         &("./snapshots/zebra.log-".to_owned() + stringify!($id)),
-                        false
+                        false,
+                        $has_err
                     );
                 }
                 mod with_adjust {
@@ -83,7 +90,8 @@ mod tests {
                             "./target/release/zebra",
                             $args,
                             &("./snapshots/zebra.log-".to_owned() + stringify!($id) + "-with-adjust"),
-                            true
+                            true,
+                            $has_err
                         );
                     }
                 }
@@ -92,6 +100,10 @@ mod tests {
     }
 
     snap_test!(minus_p_zero, "-l 6 6 6 6 6 6 -r 0 -p 0");
+
+    snap_test!(with_seq, "-seq f5d6c3 -l 6 6 6 6 6 6 -r 0");
+
+    snap_test!(with_seq_invalid, "-seq f5d6h1 -l 6 6 6 6 6 6 -r 0", true);
 
     snap_test!(with_no_echo, "-l 6 6 6 6 6 6 -r 0 -e 0");
 
@@ -119,10 +131,11 @@ mod tests {
             "-l 6 6 6 6 6 6 -r 0 -b 0",
             "./snapshots/zebra.log-small_game_test_without_book",
             false,
+            false
         );
     }
 
-    fn snapshot_test(binary: &str, arguments: &str, snapshot_path: &str, with_adjust: bool) {
+    fn snapshot_test(binary: &str, arguments: &str, snapshot_path: &str, with_adjust: bool, has_error: bool) {
         if with_adjust {
             create_adjust_file();
         } else {
@@ -133,18 +146,20 @@ mod tests {
             .args(arguments.split_whitespace())
             .output()
             .unwrap();
-        assert_eq!(String::from_utf8_lossy(&output.stderr).trim() , "");
-        // TODO maybe assert stdout too?? for echo tests for example
+        if !has_error {
+            assert_eq!(String::from_utf8_lossy(&output.stderr).trim() , "");
+        } else {
+            assert_ne!(String::from_utf8_lossy(&output.stderr).trim() , "");
+            // TODO check snapshot here
+        }
+        // TODO assert stdout too?? for echo tests for example
         assert_log_file(snapshot_path);
     }
 
     fn assert_log_file(snapshot_path: &str) {
         let snapshot_path: &Path = snapshot_path.as_ref();
         let log_path = "./../zebra.log";
-        if !snapshot_path.exists() {
-            std::fs::copy(log_path, snapshot_path).unwrap();
-            panic!("WARNING: Snapshot doesn't exists, creating new one. Rerun the tests to make them green again.");
-        }
+        ensure_snapshot(snapshot_path, log_path);
         fn variable_lines(line: &&str) -> bool {
             !(
                 line.starts_with("-->")
@@ -175,6 +190,13 @@ mod tests {
                 .skip(1)
                 .filter(variable_lines))
             .for_each(|(expected, actual)| assert_eq!(expected, actual))
+    }
+
+    fn ensure_snapshot(snapshot_path: &Path, log_path: &str) {
+        if !snapshot_path.exists() {
+            std::fs::copy(log_path, snapshot_path).unwrap();
+            panic!("WARNING: Snapshot doesn't exists, creating new one. Rerun the tests to make them green again.");
+        }
     }
 
     #[test]
