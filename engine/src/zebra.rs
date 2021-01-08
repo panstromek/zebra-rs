@@ -224,7 +224,6 @@ pub unsafe fn engine_play_game<
         if move_string.is_null() {
             provided_move_count = 0
         } else {
-            panic!("this branch is not tested");
             provided_move_count = FE::strlen(move_string).wrapping_div(2) as i32;
             if provided_move_count > 60 ||
                 FE::strlen(move_string).wrapping_rem(2) == 1 {
@@ -233,7 +232,6 @@ pub unsafe fn engine_play_game<
             }
             let mut i = 0;
             while i < provided_move_count {
-                panic!("this branch is not tested");
                 let col = FE::tolower(
                     *move_string.offset((2 * i) as _) as i32) - 'a' as i32 + 1;
                 let row =
@@ -382,8 +380,6 @@ pub unsafe fn engine_play_game<
                         }
                     }
                 } else {
-                    panic!("this branch is not tested");
-
                     curr_move = provided_move[moves_state.disks_played as usize];
                     if valid_move(curr_move, side_to_move, &board_state.board) == 0 {
                         FE::invalid_move_in_move_sequence(curr_move);
