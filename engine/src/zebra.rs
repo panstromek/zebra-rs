@@ -216,6 +216,7 @@ pub unsafe fn engine_play_game<
     loop  {
         /* Decode the predefined move sequence */
         if let Some(ref mut move_file) = &mut move_file {
+            panic!("this branch is not tested");
             move_file.fill_line_buffer(&mut line_buffer);
             move_string = line_buffer.as_mut_ptr()
         }
@@ -223,13 +224,16 @@ pub unsafe fn engine_play_game<
         if move_string.is_null() {
             provided_move_count = 0
         } else {
+            panic!("this branch is not tested");
             provided_move_count = FE::strlen(move_string).wrapping_div(2) as i32;
             if provided_move_count > 60 ||
                 FE::strlen(move_string).wrapping_rem(2) == 1 {
+                panic!("this branch is not tested");
                 FE::invalid_move_string_provided();
             }
             let mut i = 0;
             while i < provided_move_count {
+                panic!("this branch is not tested");
                 let col = FE::tolower(
                     *move_string.offset((2 * i) as _) as i32) - 'a' as i32 + 1;
                 let row =
@@ -252,11 +256,13 @@ pub unsafe fn engine_play_game<
         g_book.set_slack(floor(config.slack * 128.0f64) as i32);
         game_state.toggle_human_openings(0);
         if use_learning_ {
+            panic!("this branch is not tested");
             learn_state.set_learning_parameters(config.deviation_depth, config.cutoff_empty);
         }
         reset_book_search(&mut g_book);
         set_deviation_value(config.low_thresh, config.high_thresh, config.dev_bonus, &mut g_book);
         if use_thor_ {
+            panic!("this branch is not tested");
             ZF::load_thor_files();
         }
         set_names_from_skills::<ZF>(config);
@@ -289,6 +295,8 @@ pub unsafe fn engine_play_game<
                         ZF::report_opening_name(opening_name);
                     }
                     if use_thor_ {
+                        panic!("this branch is not tested");
+
                         let database_start =  g_timer.get_real_timer::<FE>();
                         Thor::database_search(&board_state.board, side_to_move);
                         thor_position_count = Thor::get_match_count();
@@ -318,6 +326,7 @@ pub unsafe fn engine_play_game<
                 if moves_state.disks_played >= provided_move_count {
                     if config.skill[side_to_move as usize] == 0 as i32 {
                         if config.use_book != 0 && config.display_pv != 0 {
+                            panic!("this branch is not tested");
                             fill_move_alternatives::<FE>(side_to_move,
                                                    0 as i32,
                                                          &mut g_book,
@@ -330,6 +339,8 @@ pub unsafe fn engine_play_game<
                                 ZF::print_move_alternatives(side_to_move);
                             }
                         }
+                        panic!("this branch is not tested");
+
                         ZF::before_get_move();
                         curr_move = get_move::<ZF>(side_to_move, &board_state.board);
                     } else {
@@ -362,6 +373,8 @@ pub unsafe fn engine_play_game<
                             config.rand_move_freq > 0 &&
                             side_to_move == rand_color &&
                             crate::src::myrandom::random_instance.my_random() % config.rand_move_freq as i64 == 0 {
+                            panic!("this branch is not tested");
+
                             ZF::report_engine_override();
                             rand_color = 2 - rand_color;
                             curr_move = moves_state.move_list[moves_state.disks_played as usize]
@@ -369,6 +382,8 @@ pub unsafe fn engine_play_game<
                         }
                     }
                 } else {
+                    panic!("this branch is not tested");
+
                     curr_move = provided_move[moves_state.disks_played as usize];
                     if valid_move(curr_move, side_to_move, &board_state.board) == 0 {
                         FE::invalid_move_in_move_sequence(curr_move);
@@ -376,6 +391,8 @@ pub unsafe fn engine_play_game<
                 }
                 let move_stop =  g_timer.get_real_timer::<FE>();
                 if config.player_time[side_to_move as usize] != 10000000.0f64 {
+                    panic!("this branch is not tested");
+
                     config.player_time[side_to_move as usize] -= move_stop - move_start
                 }
                 learn_state.store_move(moves_state.disks_played, curr_move);
@@ -385,6 +402,8 @@ pub unsafe fn engine_play_game<
                     board_state.black_moves[board_state.score_sheet_row as usize] = curr_move
                 } else {
                     if board_state.white_moves[board_state.score_sheet_row as usize] != -(1) {
+                        panic!("this branch is not tested");
+
                         board_state.score_sheet_row += 1
                     }
                     board_state.white_moves[board_state.score_sheet_row as usize] = curr_move
@@ -396,6 +415,8 @@ pub unsafe fn engine_play_game<
                     board_state.white_moves[board_state.score_sheet_row as usize] = -(1)
                 }
                 if config.skill[side_to_move as usize] == 0 {
+                    panic!("this branch is not tested");
+
                     ZF::get_pass();
                 }
             }
@@ -413,6 +434,8 @@ pub unsafe fn engine_play_game<
             ZF::set_move_list(
                 board_state.score_sheet_row);
             if use_thor_ {
+                panic!("this branch is not tested");
+
                 let database_start =  g_timer.get_real_timer::<FE>();
                 Thor::database_search(&board_state.board, side_to_move);
                 thor_position_count = Thor::get_match_count();
@@ -454,6 +477,8 @@ pub unsafe fn engine_play_game<
         repeat -= 1;
         g_timer.toggle_abort_check(0 as i32);
         if use_learning_ && config.one_position_only == 0 {
+            panic!("this branch is not tested");
+
             Learn::learn_game(moves_state.disks_played,
                               (config.skill[0] != 0 && config.skill[2] != 0) as i32,
                               (repeat == 0 as i32) as i32);
