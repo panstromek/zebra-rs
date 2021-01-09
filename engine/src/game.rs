@@ -841,10 +841,8 @@ impl ForcedOpening {
         let mut move_0: [i32; 60] = [0; 60];
         let move_count_0 = opening.len().wrapping_div(2) as i32;
         while i < move_count_0 {
-            unsafe {
-                move_0[i as usize] = 10 * (*opening.offset((2 * i + 1) as isize) as i32 - '0' as i32) +
-                    FE::tolower(*opening.offset((2 * i) as isize) as i32) - 'a' as i32 + 1;
-            }
+            move_0[i as usize] = 10 * (*opening.offset((2 * i + 1) as isize) as i32 - '0' as i32) +
+                FE::tolower(*opening.offset((2 * i) as isize) as i32) - 'a' as i32 + 1;
             i += 1
         };
         ForcedOpening {
