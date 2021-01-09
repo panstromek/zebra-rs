@@ -129,7 +129,15 @@ mod tests {
 
     snap_test!(small_game_test, "-l 6 6 6 6 6 6 -r 0", false, with_adjust: false);
 
+    snap_test!(rand_move, "-l 6 6 6 6 6 6 -r 0 -randmove 3", false, with_adjust: false);
+
+    snap_test!(rand_move_without_book, "-l 6 6 6 6 6 6 -r 0 -randmove 3 -b 0", false, with_adjust: false);
+
+    snap_test!(rand_move_one, "-l 6 6 6 6 6 6 -r 0 -randmove 1", false, with_adjust: false);
+
     snap_test!(basic_interactive, "-l 6 6 6 0 -r 0 -b 0 -repeat 2", false, interactive: true);
+
+    snap_test!(basic_interactive_flipped, "-l 0 6 6 6 -r 0 -b 0 -repeat 1", false, interactive: true);
 
     snap_test!(two_players, "-l 0 0 -r 0 -b 0 -repeat 2", false, interactive: true);
 

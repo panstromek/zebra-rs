@@ -369,7 +369,6 @@ pub unsafe fn engine_play_game<
                             config.rand_move_freq > 0 &&
                             side_to_move == rand_color &&
                             crate::src::myrandom::random_instance.my_random() % config.rand_move_freq as i64 == 0 {
-                            panic!("this branch is not tested");
 
                             ZF::report_engine_override();
                             rand_color = 2 - rand_color;

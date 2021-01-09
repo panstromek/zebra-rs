@@ -1,0 +1,378 @@
+Log file created Sat Jan  9 17:37:08 2021
+
+Engine compiled Jul  2 2020 19:33:59
+
+         a b c d e f g h
+
+      1                       Black    Player
+      2                       
+      3                                4 discs
+      4      * * *            
+      5        * O            White    Zebra
+      6                       
+      7                        (O)     1 discs
+      8                       
+
+3 moves generated: c3 e3 c5 
+-->   6  +1.07           1259  e3 f6 c5 d3 e6     0.0 s  
+PV: e3 f6 c5 d3 e6
+
+         a b c d e f g h
+
+      1                       Black    Player
+      2            *          
+      3          *                     5 discs
+      4      * * O            
+      5        * O            White    Zebra
+      6                       
+      7                        (O)     2 discs
+      8                       
+
+5 moves generated: c5 c3 c6 b4 e2 
+-->   6  +11.70          1688  c5 f4 f3 g3 c3     0.0 s  
+PV: c5 f4 f3 g3 c3
+
+         a b c d e f g h
+
+      1                       Black    Player
+      2            *          
+      3          *                     6 discs
+      4      * * * *          
+      5      O O O            White    Zebra
+      6                       
+      7                        (O)     3 discs
+      8                       
+
+7 moves generated: c3 f3 d3 e2 g3 b3 g1 
+-->   6  +10.83          2915  f3 g3 b3 c6 e6     0.0 s  
+PV: f3 g3 b3 c6 e6
+
+         a b c d e f g h
+
+      1                       Black    Player
+      2            *          
+      3          * O                   7 discs
+      4      * * O *          
+      5      O O *            White    Zebra
+      6            *          
+      7                        (O)     4 discs
+      8                       
+
+10 moves generated: c3 d3 f1 f5 e6 b4 g4 e2 b3 g1 
+-->   6  +17.57          6075  c3 d6 c6 b5 d3     0.0 s  
+PV: c3 d6 c6 b5 d3
+
+         a b c d e f g h
+
+      1                       Black    Player
+      2            *          
+      3      O   * * *                 8 discs
+      4      O * O *          
+      5      O O *            White    Zebra
+      6            *          
+      7                        (O)     5 discs
+      8                       
+
+8 moves generated: d3 f5 e6 e2 g4 g1 g2 g7 
+-->   6  +19.80          4111  d3 c6 e6 d6 f5     0.0 s  
+PV: d3 c6 e6 d6 f5
+
+         a b c d e f g h
+
+      1                       Black    Player
+      2    *       *          
+      3      * O * * *                 10 discs
+      4      O * O *          
+      5      O O *            White    Zebra
+      6            *          
+      7                        (O)     5 discs
+      8                       
+
+9 moves generated: e6 f5 e2 h3 g4 b3 c2 g1 g2 
+-->   6  +36.59          7786  b3 c6 e6 d2 d1     0.0 s  
+PV: b3 c6 e6 d2 d1
+
+         a b c d e f g h
+
+      1                       Black    Player
+      2    *       *          
+      3    * O O * * *                 12 discs
+      4    * * * O *          
+      5      O O *            White    Zebra
+      6            *          
+      7                        (O)     5 discs
+      8                       
+
+14 moves generated: e2 f5 e6 a3 a1 h3 b5 a4 a5 g4 g1 a2 g2 g7 
+-->   6  +44.20         12393  b5 e6 c6 c2 f5     0.0 s  
+PV: b5 e6 c6 c2 f5
+
+         a b c d e f g h
+
+      1                       Black    Player
+      2    *       *          
+      3    * O O * * *                 14 discs
+      4    * O * O *          
+      5    * * O *            White    Zebra
+      6    *       *          
+      7                        (O)     5 discs
+      8                       
+
+14 moves generated: e2 a1 f5 e6 a3 c6 g4 h3 a6 a4 a5 a2 g2 g7 
+-->   6  +53.03         12920  c6 e6 d6 c2 f5     0.0 s  
+PV: c6 e6 d6 c2 f5
+
+         a b c d e f g h
+
+      1                       Black    Player
+      2    *       *          
+      3    * O O * * *                 17 discs
+      4    * O * * *          
+      5    * O * *            White    Zebra
+      6    * *     *          
+      7    *                   (O)     4 discs
+      8                       
+
+15 moves generated: f5 a1 e6 d6 a3 g4 a4 h3 a6 a5 a2 c7 g1 a7 g7 
+-->   6  +66.53         14559  e6 e7 c7 d8 a1     0.0 s  
+PV: e6 e7 c7 d8 a1
+
+         a b c d e f g h
+
+      1                       Black    Player
+      2    * *     *          
+      3    * * * * * *                 21 discs
+      4    * * * * *          
+      5    * * O *            White    Zebra
+      6    * *   O *          
+      7    *                   (O)     2 discs
+      8                       
+
+8 moves generated: f5 d2 e2 a8 a5 a2 g6 g2 
+-->   6  +65.76          5960  d2 e1 d1 c1 a1     0.0 s  
+PV: d2 e1 d1 c1 a1
+
+         a b c d e f g h
+
+      1                       Black    Player
+      2    * * O   *          
+      3    * * O * * *                 21 discs
+      4    * * O * *          
+      5    * * O *            White    Zebra
+      6    * * * * *          
+      7    *                   (O)     4 discs
+      8                       
+
+18 moves generated: a1 f5 a6 g4 a3 a4 a8 a5 d7 a2 h3 g5 b1 a7 f7 g2 g1 g7 
+-->   6  +71.52         21530  a1 e1 a3 a2 a4     0.0 s  
+PV: a1 e1 a3 a2 a4
+
+         a b c d e f g h
+
+      1  O       *            Black    Player
+      2    O * *   *          
+      3    * * O * * *                 22 discs
+      4    * * O * *          
+      5    * * O *            White    Zebra
+      6    * * * * *          
+      7    *                   (O)     5 discs
+      8                       
+
+19 moves generated: f5 a6 d1 e2 a3 a4 g4 a8 a5 a2 h3 d7 b1 f7 a7 g1 g2 b8 g7 
+-->   6  +73.84         21777  d1 c1 b1 a2 a3     0.0 s  
+PV: d1 c1 b1 a2 a3
+
+         a b c d e f g h
+
+      1  O     O *            Black    Player
+      2    O * * * *          
+      3    * * * * * *                 24 discs
+      4    * * O * *          
+      5    * * O *            White    Zebra
+      6    * * * * *          
+      7    *                   (O)     5 discs
+      8                       
+
+14 moves generated: a2 f5 a4 a5 a8 f1 g4 d7 a7 f7 g2 g1 b8 g7 
+-->   6  +73.97         14384  f1 a2 g1 g2 f5     0.0 s  
+PV: f1 a2 g1 g2 f5
+
+         a b c d e f g h
+
+      1  O     O O O          Black    Player
+      2  * * * * * *          
+      3    * * * * * *                 25 discs
+      4    * * O * *          
+      5    * * O *            White    Zebra
+      6    * * * * *          
+      7    *                   (O)     6 discs
+      8                       
+
+15 moves generated: a5 a4 f5 a3 a6 a8 g4 a7 d7 h4 g1 f7 e7 g2 g7 
+-->   6  +74.38         18219  g1 g2 c1 h4 h3     0.0 s  
+PV: g1 g2 c1 -- h4 h3
+
+         a b c d e f g h
+
+      1  O     O O O O        Black    Player
+      2  * * * * * * *        
+      3    * * * O * *                 25 discs
+      4    * * O * *          
+      5    * * O *            White    Zebra
+      6    * * * * *          
+      7    *                   (O)     8 discs
+      8                       
+
+17 moves generated: a4 f5 a5 a3 g4 a6 c1 a8 h3 d7 a7 h1 h4 e7 g5 f7 g7 
+-->   6  +78.10         23094  c1 a6 a5 b1 a7     0.0 s  
+PV: c1 -- a6 a5 b1 a7
+
+         a b c d e f g h
+
+      1  O   O O O O O        Black    Player
+      2  * * * O * * *        
+      3    * * * O * *                 24 discs
+      4    * * O * *          
+      5    * * O *            White    Zebra
+      6    * * * * *          
+      7    *                   (O)     10 discs
+      8                       
+
+18 moves generated: f5 a6 e7 g4 a5 d7 h3 a4 a3 g5 h1 h4 a8 a7 h2 f7 c7 g7 
+-->   6  +78.72          9932  a6 a5 b1 a7 a3     0.0 s  
+PV: a6 a5 b1 a7 a3
+
+         a b c d e f g h
+
+      1  O   O O O O O        Black    Player
+      2  * * * O O * *        
+      3    * * O O * *                 22 discs
+      4  * * O O * *          
+      5    * * O *            White    Zebra
+      6  O * * * * *          
+      7    *                   (O)     14 discs
+      8                       
+
+19 moves generated: f5 c7 h1 g6 b1 g4 d7 h3 c8 a5 g5 e7 a3 a8 h4 h2 a7 f7 g7 
+-->   6  +87.29         31317  b1 a3 a5 f5 g4     0.0 s  
+PV: b1 -- a3 -- a5 -- f5 g4
+
+         a b c d e f g h
+
+      1  O O O O O O O        Black    Player
+      2  * * O O O * *        
+      3    * * O O * *                 21 discs
+      4  * * O O * *          
+      5    * * O *            White    Zebra
+      6  O * * * * *          
+      7    *                   (O)     16 discs
+      8                       
+
+19 moves generated: h1 d7 f5 a3 c7 a8 g4 a5 h3 a7 h2 e7 h4 g5 g6 c8 f7 b8 g7 
+-->   6  +90.32         21624  a3 h1 h2 h4 g4     0.0 s  
+PV: a3 -- h1 h2 h4 g4
+
+         a b c d e f g h
+
+      1  O O O O O O O        Black    Player
+      2  O O O O O * *        
+      3  O O O O O * *                 17 discs
+      4  * * O O * *          
+      5    * * O *            White    Zebra
+      6  O * * * * *          
+      7    *                   (O)     21 discs
+      8                       
+
+18 moves generated: c7 h4 f5 h1 g4 d7 a8 e7 a5 h3 h2 g6 a7 g5 c8 f7 b8 g7 
+-->   6  +93.52         18539  h1 h2 h4 g4 a5     0.0 s  
+PV: h1 h2 h4 g4 a5
+
+         a b c d e f g h
+
+      1  O O O O O O O O      Black    Player
+      2  O O O O O * * *      
+      3  O O O O O O *                 16 discs
+      4  * * O O O *          
+      5    * * O *            White    Zebra
+      6  O * * * * *          
+      7    *                   (O)     24 discs
+      8                       
+
+16 moves generated: a7 f5 a8 g4 d7 a5 h3 c7 h4 e7 g6 c8 f7 g5 b8 g7 
+-->   6  +92.59         20164  h4 g4 a5 a8 b8     0.0 s  
+PV: h4 g4 a5 -- a8 b8
+
+         a b c d e f g h
+
+      1  O O O O O O O O      Black    Player
+      2  O O O O O O * *      
+      3  O O O O O O *                 16 discs
+      4  * * O O O * * O      
+      5    * * O *            White    Zebra
+      6  O * * * * *          
+      7    *                   (O)     26 discs
+      8                       
+
+15 moves generated: a5 a7 c7 b8 h3 g6 f5 h5 e7 a8 d7 g5 f7 c8 g7 
+-->   6  +64            23081  a5 h3 f5 g6 b8     0.0 s  
+PV: a5 -- h3 -- f5 -- g6 -- b8
+
+         a b c d e f g h
+
+      1  O O O O O O O O      Black    Player
+      2  O O O O O O * *      
+      3  O O O O O O *                 12 discs
+      4  O O O O O * * O      
+      5  O O O O *            White    Zebra
+      6  O * * * * *          
+      7    *                   (O)     31 discs
+      8                       
+
+14 moves generated: c7 a8 a7 g5 e7 f5 d7 h3 c8 b8 f7 h5 g6 g7 
+-->   6  +64            13156  h3 f5 g6 b8 c7     0.0 s  
+PV: h3 -- f5 -- g6 -- b8
+
+         a b c d e f g h
+
+      1  O O O O O O O O      Black    Player
+      2  O O O O O O O O      
+      3  O O O O O O O O               9 discs
+      4  O O O O O * * O      
+      5  O O O O *            White    Zebra
+      6  O * * * * *          
+      7    *                   (O)     35 discs
+      8                       
+
+13 moves generated: c7 b8 e7 g6 a7 f5 a8 g5 d7 h5 f7 c8 g7 
+-->   6  +64            10419  f5 g6 b8           0.0 s  
+PV: f5 -- g6 -- b8
+
+         a b c d e f g h
+
+      1  O O O O O O O O      Black    Player
+      2  O O O O O O O O      
+      3  O O O O O O O O               6 discs
+      4  O O O O O O O O      
+      5  O O O O O O          White    Zebra
+      6  O * * * * *          
+      7    *                   (O)     39 discs
+      8                       
+
+10 moves generated: b8 c7 g6 a8 a7 e7 f7 d7 c8 g7 
+-->   6  +64             3219  g6 b8              0.0 s  
+PV: g6 -- b8
+
+         a b c d e f g h
+
+      1  O O O O O O O O      Black    Player
+      2  O O O O O O O O      
+      3  O O O O O O O O               1 discs
+      4  O O O O O O O O      
+      5  O O O O O O          White    Zebra
+      6  O O O O O O O        
+      7    *                   (O)     45 discs
+      8                       
+
+3 moves generated: b8 a8 c8 
+-->   6  +64               45  b8                 0.0 s  
+PV: b8
