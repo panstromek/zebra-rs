@@ -192,7 +192,7 @@ mod tests {
 
         // TODO add other tests that are in non-interactive snaphsot test
         // TODO assert stderr is empty
-        assert_log_snapshot("./snapshots/zebra.log-basic_interactive", "./../zebra.log");
+        assert_snapshot("./snapshots/zebra.log-basic_interactive", "./../zebra.log");
     }
 
     fn snapshot_test(arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool) {
@@ -206,8 +206,6 @@ mod tests {
             std::fs::create_dir_all(&snapshots_dir).unwrap();
         }
 
-        let snapshot_path = snapshots_dir.join("zebra.log").to_str().unwrap();
-
         let run_directory = snapshot_test_dir.join("run_dir");
         let _ = std::fs::remove_dir_all(&run_directory);
         std::fs::create_dir_all(&run_directory).unwrap();
@@ -220,7 +218,7 @@ mod tests {
         let book_path = run_directory.join("./../../../../book.bin").canonicalize().unwrap();
         let canon_run_dir = run_directory.canonicalize().unwrap();
 
-        let output = Command::new(binpath)
+        let exit_status = Command::new(binpath)
             .current_dir(&canon_run_dir)
             .args(arguments.split_whitespace())
             .env("COEFFS_PATH", coeffs_path.to_str().unwrap())
@@ -233,16 +231,33 @@ mod tests {
             .wait()
             .unwrap();
 
-        assert_log_snapshot(snapshots_dir.join("zebra.log").to_str().unwrap(), run_directory.join("zebra.log").to_str().unwrap() );
-        assert_log_snapshot(snapshots_dir.join("zebra-stderr").to_str().unwrap(), run_directory.join("zebra-stderr").to_str().unwrap() );
-        assert_log_snapshot(snapshots_dir.join("zebra-stdout").to_str().unwrap(), run_directory.join("zebra-stdout").to_str().unwrap() );
-        assert_log_snapshot(snapshots_dir.join("current.gam").to_str().unwrap(), run_directory.join("current.gam").to_str().unwrap() );
-        assert_log_snapshot(snapshots_dir.join("current.mov").to_str().unwrap(), run_directory.join("current.mov").to_str().unwrap() );
+        assert_eq!(exit_status.success(), !has_error);
+
+        assert_snapshot(snapshots_dir.join("zebra.log").to_str().unwrap(), run_directory.join("zebra.log").to_str().unwrap() );
+        assert_snapshot(snapshots_dir.join("zebra-stderr").to_str().unwrap(), run_directory.join("zebra-stderr").to_str().unwrap() );
+        assert_snapshot(snapshots_dir.join("zebra-stdout").to_str().unwrap(), run_directory.join("zebra-stdout").to_str().unwrap() );
+        assert_snapshot(snapshots_dir.join("current.gam").to_str().unwrap(), run_directory.join("current.gam").to_str().unwrap() );
+        assert_snapshot(snapshots_dir.join("current.mov").to_str().unwrap(), run_directory.join("current.mov").to_str().unwrap() );
     }
 
-    fn assert_log_snapshot(snapshot_path: &str, log_path: &str) {
+    fn assert_snapshot(snapshot_path: &str, result_path: &str) {
         let snapshot_path: &Path = snapshot_path.as_ref();
-        ensure_snapshot(snapshot_path, log_path);
+        let result_path: &Path = result_path.as_ref();
+
+        if result_path.exists() {
+            if !snapshot_path.exists() {
+                if std::env::var("BLESS").map(|v| v == "true").unwrap_or(false) {
+                    std::fs::copy(result_path, snapshot_path).unwrap();
+                } else {
+                    panic!("\n\nWARNING: Snapshot doesn't exists. Rerun the tests with BLESS=true environment variable to make them green again.\n\n\n");
+                }
+            }
+        } else {
+            if !snapshot_path.exists() {
+                return // this means that this run doesn't have output any snapshot
+            }
+        }
+
         fn variable_lines(line: &&str) -> bool {
             !(
                 line.starts_with("-->")
@@ -273,7 +288,7 @@ mod tests {
             .filter(variable_lines)
             // This is a workaround for checking that these iterators have the same length
             .chain(std::iter::once("sentinel"))
-            .zip(std::fs::read_to_string(log_path)
+            .zip(std::fs::read_to_string(result_path)
                 .unwrap()
                 .lines()
                 .skip(1)
@@ -283,27 +298,5 @@ mod tests {
             .for_each(|(expected, actual)| assert_eq!(expected, actual))
     }
 
-    fn ensure_snapshot(snapshot_path: &Path, log_path: &str) {
-        if !snapshot_path.exists() {
-            std::fs::copy(log_path, snapshot_path).unwrap();
-            panic!("\n\nWARNING: Snapshot doesn't exists, creating new one. Rerun the tests to make them green again.\n\n\n");
-        }
-    }
-
-    #[test]
-    fn help_works() {
-        let output = Command::new("./../target/release/zebra")
-            .arg("?")
-            .output()
-            .unwrap();
-        let expected = std::fs::read_to_string("./snapshots/zebra.log-help_works").unwrap();
-        let actual = String::from_utf8(output.stdout).unwrap();
-        fn not_variable(line: &&str) -> bool {
-            !line.contains("compile date")
-        }
-        expected.lines()
-            .filter(not_variable)
-            .zip(actual.lines().filter(not_variable))
-            .for_each(|(expected, actual)| assert_eq!(expected, actual));
-    }
+    snap_test!(help, "?", true);
 }
