@@ -216,7 +216,6 @@ pub unsafe fn engine_play_game<
     loop  {
         /* Decode the predefined move sequence */
         if let Some(ref mut move_file) = &mut move_file {
-            panic!("this branch is not tested");
             move_file.fill_line_buffer(&mut line_buffer);
             move_string = line_buffer.as_mut_ptr()
         }
@@ -380,7 +379,7 @@ pub unsafe fn engine_play_game<
                 }
                 let move_stop =  g_timer.get_real_timer::<FE>();
                 if config.player_time[side_to_move as usize] != 10000000.0f64 {
-                    panic!("this branch is not tested");
+                    // panic!("this branch is not tested"); I don't know how to trigger this in tests
 
                     config.player_time[side_to_move as usize] -= move_stop - move_start
                 }
@@ -391,7 +390,7 @@ pub unsafe fn engine_play_game<
                     board_state.black_moves[board_state.score_sheet_row as usize] = curr_move
                 } else {
                     if board_state.white_moves[board_state.score_sheet_row as usize] != -(1) {
-                        panic!("this branch is not tested");
+                        // panic!("this branch is not tested"); to trigger this in tests
 
                         board_state.score_sheet_row += 1
                     }

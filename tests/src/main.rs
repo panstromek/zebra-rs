@@ -152,6 +152,12 @@ mod tests {
 
     snap_test!(learn, "-l 2 2 2 2 2 2 -r 0 -learn 3 5", false, with_adjust: false);
 
+    snap_test!(
+        seqfile,
+         "-l 2 2 2 2 2 2 -r 0 -seqfile ../../../resources/seq-file.txt -log zebra.log",
+        false,
+        with_adjust: false
+    );
 
     fn interact_basically(input: &mut ChildStdin) {
         let mut move_buf = String::with_capacity(3);
