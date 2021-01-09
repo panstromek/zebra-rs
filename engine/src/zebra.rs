@@ -159,7 +159,7 @@ pub trait ZebraFrontend {
     fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: & crate::src::globals::Board,
                                 black_moves_: &[i32; 60], white_moves_: &[i32; 60]);
     fn print_out_thor_matches(thor_max_games_: i32);
-    unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32);
+    fn log_game_ending(log_file_name_: &CStr, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32);
     fn get_pass();
     fn report_engine_override();
     fn prompt_get_move(side_to_move: i32, buffer: &mut [i8; 255]) -> i32;
@@ -463,7 +463,7 @@ pub unsafe fn engine_play_game<
         ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
         if !log_file_name_.is_null() && config.one_position_only == 0 {
-            ZF::log_game_ending(log_file_name_,
+            ZF::log_game_ending(CStr::from_ptr(log_file_name_),
                                 &mut move_vec,
                                 disc_count(0, &board_state.board),
                                 disc_count(2, &board_state.board))
@@ -767,7 +767,7 @@ pub async unsafe fn engine_play_game_async<
         ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
         if !log_file_name_.is_null() && config.one_position_only == 0 {
-            ZF::log_game_ending(log_file_name_,
+            ZF::log_game_ending(CStr::from_ptr(log_file_name_),
                                 &mut move_vec,
                                 disc_count(0, &board_state.board),
                                 disc_count(2, &board_state.board))
