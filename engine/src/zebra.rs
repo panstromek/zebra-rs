@@ -260,7 +260,6 @@ pub unsafe fn engine_play_game<
         reset_book_search(&mut g_book);
         set_deviation_value(config.low_thresh, config.high_thresh, config.dev_bonus, &mut g_book);
         if use_thor_ {
-            panic!("this branch is not tested");
             ZF::load_thor_files();
         }
         set_names_from_skills::<ZF>(config);
@@ -293,8 +292,6 @@ pub unsafe fn engine_play_game<
                         ZF::report_opening_name(opening_name);
                     }
                     if use_thor_ {
-                        panic!("this branch is not tested");
-
                         let database_start =  g_timer.get_real_timer::<FE>();
                         Thor::database_search(&board_state.board, side_to_move);
                         thor_position_count = Thor::get_match_count();
@@ -425,8 +422,6 @@ pub unsafe fn engine_play_game<
             ZF::set_move_list(
                 board_state.score_sheet_row);
             if use_thor_ {
-                panic!("this branch is not tested");
-
                 let database_start =  g_timer.get_real_timer::<FE>();
                 Thor::database_search(&board_state.board, side_to_move);
                 thor_position_count = Thor::get_match_count();
