@@ -133,7 +133,9 @@ mod tests {
 
     snap_test!(two_players, "-l 0 0 -r 0 -b 0 -repeat 2", false, interactive: true);
 
+    snap_test!(two_players_with_log, "-l 0 0 -r 0 -b 0 -repeat 2  -log zebra.log", false, interactive: true);
 
+// todo test -randmove flag
 
     fn interact_basically(input: &mut ChildStdin) {
         let mut move_buf = String::with_capacity(3);
