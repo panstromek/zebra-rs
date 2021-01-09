@@ -150,7 +150,8 @@ mod tests {
 
     snap_test!(two_players_with_log, "-l 0 0 -r 0 -b 0 -repeat 2  -log zebra.log", false, interactive: true);
 
-// todo test -randmove flag
+    snap_test!(learn, "-l 2 2 2 2 2 2 -r 0 -learn 3 5", false, with_adjust: false);
+
 
     fn interact_basically(input: &mut ChildStdin) {
         let mut move_buf = String::with_capacity(3);
@@ -206,13 +207,23 @@ mod tests {
         }
         let binpath = run_directory.join(binary).canonicalize().unwrap();
         let coeffs_path = run_directory.join("./../../../../coeffs2.bin").canonicalize().unwrap();
-        let book_path = run_directory.join("./../../../../book.bin").canonicalize().unwrap();
+        let mut book_path = run_directory.join("./../../../../book.bin").canonicalize().unwrap();
         let canon_run_dir = run_directory.canonicalize().unwrap();
+
+        let compare_books = arguments.contains("-learn");
+        if compare_books {
+            let buf = canon_run_dir.join("book.bin");
+            std::fs::copy("resources/book-tmp.bin", &buf).unwrap();
+            book_path = buf;
+        }
 
         let mut child = Command::new(binpath)
             .current_dir(&canon_run_dir)
             .args(arguments.split_whitespace())
             .env("COEFFS_PATH", coeffs_path.to_str().unwrap())
+
+            // we probably don't need this when -learn parameter is set, because we copy the
+            // investigate that
             .env("BOOK_PATH", book_path.to_str().unwrap())
             .stdin(Stdio::piped())
             .stderr(Stdio::from(File::create(canon_run_dir.join("zebra-stderr")).unwrap()))
@@ -230,28 +241,40 @@ mod tests {
         // TODO make this flag part of some metadata snapshot file
         //  so that we don't need to guess its value when writing new test
         assert_eq!(exit_status.success(), !has_error);
-
-        assert_snapshot(snapshots_dir.join("zebra.log").as_ref(), run_directory.join("zebra.log").as_ref() );
-        assert_snapshot(snapshots_dir.join("zebra-stderr").as_ref(), run_directory.join("zebra-stderr").as_ref() );
-        assert_snapshot(snapshots_dir.join("zebra-stdout").as_ref(), run_directory.join("zebra-stdout").as_ref() );
-        assert_snapshot(snapshots_dir.join("current.gam").as_ref(), run_directory.join("current.gam").as_ref() );
-        assert_snapshot(snapshots_dir.join("current.mov").as_ref(), run_directory.join("current.mov").as_ref() );
+        if compare_books {
+            assert_snapshot(&*snapshots_dir.join("book.bin"), &*book_path, true);
+        }
+        // TODO detect other files that may be created or not created durinng run and report them
+        assert_snapshot(snapshots_dir.join("zebra.log").as_ref(), run_directory.join("zebra.log").as_ref() , false);
+        assert_snapshot(snapshots_dir.join("zebra-stderr").as_ref(), run_directory.join("zebra-stderr").as_ref() , false);
+        assert_snapshot(snapshots_dir.join("zebra-stdout").as_ref(), run_directory.join("zebra-stdout").as_ref() , false);
+        assert_snapshot(snapshots_dir.join("current.gam").as_ref(), run_directory.join("current.gam").as_ref() , false);
+        assert_snapshot(snapshots_dir.join("current.mov").as_ref(), run_directory.join("current.mov").as_ref(), false);
     }
 
-    fn assert_snapshot(snapshot_path: &Path, result_path: &Path) {
+    fn assert_snapshot(snapshot_path: &Path, result_path: &Path, binary: bool) {
 
         if result_path.exists() {
             if !snapshot_path.exists() {
                 if std::env::var("BLESS").map(|v| v == "true").unwrap_or(false) {
                     std::fs::copy(result_path, snapshot_path).unwrap();
                 } else {
-                    panic!("\n\nWARNING: Snapshot doesn't exists. Rerun the tests with BLESS=true environment variable to make them green again.\n\n\n");
+                    panic!(
+                        "\n\nWARNING: Snapshot for \n{:?}\n ... doesn't exist. Rerun the tests with BLESS=true environment variable to make them green again.\n\n\n",
+                        result_path
+                    );
                 }
             }
         } else {
             if !snapshot_path.exists() {
                 return // this means that this run doesn't have output any snapshot
             }
+        }
+        if binary {
+            let actual = std::fs::read(snapshot_path).unwrap() ;
+            let expected = std::fs::read(result_path).unwrap();
+            assert_eq!(expected, actual);
+            return;
         }
 
         fn variable_lines(line: &&str) -> bool {
