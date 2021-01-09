@@ -290,8 +290,8 @@ impl BoardSource for WasmBoardSource {
 
 struct WasmInitialMoveSource;
 
-unsafe impl InitialMoveSource for WasmInitialMoveSource {
-    fn fill_line_buffer(&mut self, line_buffer: &mut [i8; 1000]) {
+impl InitialMoveSource for WasmInitialMoveSource {
+    fn fill_line_buffer(&mut self, line_buffer: &mut [u8]) {
         line_buffer[0] = 0;
     }
 }
