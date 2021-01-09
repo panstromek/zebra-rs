@@ -168,7 +168,7 @@ pub trait ZebraFrontend {
     fn report_skill_levels(black_level: i32, white_level: i32);
     fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64);
     fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
-    unsafe fn report_opening_name(opening_name: *const i8);
+    fn report_opening_name(opening_name: &CStr);
     fn report_book_randomness(slack_: f64);
     fn load_thor_files();
     fn print_move_alternatives(side_to_move: i32);
@@ -297,7 +297,7 @@ pub unsafe fn engine_play_game<
                               floor(config.player_time[2]) as i32);
                     let opening_name = find_opening_name( &mut g_book, &board_state.board);
                     if !opening_name.is_null() {
-                        ZF::report_opening_name(opening_name);
+                        ZF::report_opening_name(CStr::from_ptr(opening_name));
                     }
                     if use_thor_ {
                         let database_start =  g_timer.get_real_timer::<FE>();
@@ -608,7 +608,7 @@ pub async unsafe fn engine_play_game_async<
                               floor(config.player_time[2]) as i32);
                     let opening_name = find_opening_name( &mut g_book, &board_state.board);
                     if !opening_name.is_null() {
-                        ZF::report_opening_name(opening_name);
+                        ZF::report_opening_name(CStr::from_ptr(opening_name));
                     }
                     if use_thor_ {
                         let database_start =  g_timer.get_real_timer::<FE>();

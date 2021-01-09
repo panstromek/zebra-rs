@@ -973,8 +973,8 @@ impl ZebraFrontend for LibcFrontend {
                    64.0f64 - black_average_score);
         }
     }
-    unsafe fn report_opening_name(opening_name: *const i8) {
-        printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8, opening_name);
+    fn report_opening_name(opening_name: &CStr) {
+        unsafe { printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8, opening_name.as_ptr()); }
     }
     fn report_book_randomness(slack_: f64) {
         unsafe { printf(b"Book randomness: %.2f disks\n\x00" as *const u8 as *const i8, slack_); }
