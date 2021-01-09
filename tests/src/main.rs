@@ -76,7 +76,7 @@ mod tests {
             mod $id {
                 use crate::tests::*;
                 #[test]
-                fn $id() {
+                fn basic() {
                     snapshot_test(
                         "./target/release/zebra",
                         $args,
@@ -85,18 +85,15 @@ mod tests {
                         $has_err
                     );
                 }
-                mod with_adjust {
-                    use crate::tests::*;
-                    #[test]
-                    fn $id() {
-                        snapshot_test(
-                            "./target/release/zebra",
-                            $args,
-                            &("./snapshots/zebra.log-".to_owned() + stringify!($id) + "-with-adjust"),
-                            true,
-                            $has_err
-                        );
-                    }
+                #[test]
+                fn with_adjust() {
+                    snapshot_test(
+                        "./target/release/zebra",
+                        $args,
+                        &("./snapshots/zebra.log-".to_owned() + stringify!($id) + "-with-adjust"),
+                        true,
+                        $has_err
+                    );
                 }
             }
         };
@@ -119,8 +116,6 @@ mod tests {
     snap_test!(with_repeat_and_log, "-l 6 6 6 6 6 6 -r 0 -repeat 2 -log zebra.log");
 
     snap_test!(no_wld, "-l 6 6 0 6 6 0 -r 0 -repeat 2");
-
-    snap_test!(wld_only, "-l 6 6 6 6 6 6 -r 0 -repeat 2 -wld 1");
 
     // FIXME this test is failing against old zebra, investigate that
     //  it's because there's UB - index out of bounds when accessing
@@ -157,6 +152,7 @@ mod tests {
 
     #[test]
     fn basic_interactive() {
+        delete_adjust_file();
         let mut command = Command::new("./target/release/zebra");
         let command = command
             .stdin(Stdio::piped())
