@@ -46,9 +46,7 @@ mod tests {
     #[test]
     fn full_game_test() {
         snapshot_test(
-            "./../../../../target/release/zebra",
             "-l 16 16 16 16 16 16 -r 0",
-            "./snapshots/zebra.log-full_game_test",
             "./snapshot-tests/full_game_test",
             false,
             false
@@ -58,9 +56,7 @@ mod tests {
     #[test]
     fn small_game_test() {
         snapshot_test(
-            "./../../../../target/release/zebra",
             "-l 6 6 6 6 6 6 -r 0",
-            "./snapshots/zebra.log-small_game_test",
             "./snapshot-tests/small_game_test",
             false,
             false
@@ -78,9 +74,7 @@ mod tests {
                 #[test]
                 fn basic() {
                     snapshot_test(
-                        "./../../../../target/release/zebra",
                         $args,
-                        &("./snapshots/zebra.log-".to_owned() + stringify!($id)),
                         &("./snapshot-tests/basic-".to_owned() + stringify!($id) + "-basic"),
                         false,
                         $has_err
@@ -89,9 +83,7 @@ mod tests {
                 #[test]
                 fn with_adjust() {
                     snapshot_test(
-                        "./../../../../target/release/zebra",
                         $args,
-                        &("./snapshots/zebra.log-".to_owned() + stringify!($id) + "-with-adjust"),
                         &("./snapshot-tests/".to_owned() + stringify!($id) + "-with-adjust" ),
                         true,
                         $has_err
@@ -144,9 +136,7 @@ mod tests {
     fn small_game_test_without_book() {
         snapshot_test(
              // TODO run those tests on original zebra too
-            "./../../../../target/release/zebra",
             "-l 6 6 6 6 6 6 -r 0 -b 0",
-            "./snapshots/zebra.log-small_game_test_without_book",
              "./snapshot-tests/small_game_test_without_book",
         false,
             false
@@ -205,7 +195,8 @@ mod tests {
         assert_log_snapshot("./snapshots/zebra.log-basic_interactive", "./../zebra.log");
     }
 
-    fn snapshot_test(binary: &str, arguments: &str, _snapshot_path: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool) {
+    fn snapshot_test(arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool) {
+        let binary: &str = "./../../../../target/release/zebra";
         let snapshot_test_dir = Path::new(snapshot_test_dir);
         if !snapshot_test_dir.exists() {
             std::fs::create_dir_all(snapshot_test_dir).unwrap();
