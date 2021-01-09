@@ -15,7 +15,7 @@ use engine::src::getcoeff::{coeff_state, pattern_evaluation};
 use engine::src::stubs::abs;
 use engine::src::osfbook::{get_book_move, fill_move_alternatives, g_book};
 use engine::src::game::{ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, PonderMoveReport, game_state, midgame_state};
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 use crate::src::thordb::LegacyThor;
 use engine::src::zebra::EvalResult::{UNSOLVED_POSITION, WON_POSITION, LOST_POSITION, DRAWN_POSITION};
 use engine::src::zebra::EvalType::{UNDEFINED_EVAL, EXACT_EVAL, PASS_EVAL, MIDGAME_EVAL, WLD_EVAL};
@@ -77,9 +77,14 @@ pub unsafe fn global_setup(use_random: i32,
                                       hash_bits: i32) {
     LogFileHandler::on_global_setup();
     let coeff_adjustments = load_coeff_adjustments();
-    let file_name = CStr::from_bytes_with_nul(b"./coeffs2.bin\x00").unwrap();
 
-    engine_global_setup::<_,LibcFatalError>(use_random, hash_bits, coeff_adjustments, new_z_lib_source(file_name));
+    let file_name = if let Ok(var) = std::env::var("COEFFS_PATH") {
+        CString::new(var).unwrap()
+    } else {
+        CString::new("./coeffs2.bin").unwrap()
+    };
+
+    engine_global_setup::<_,LibcFatalError>(use_random, hash_bits, coeff_adjustments, new_z_lib_source(file_name.as_ref()));
 }
 trait Logger {
     fn on_global_setup();

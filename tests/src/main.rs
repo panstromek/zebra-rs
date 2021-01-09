@@ -27,16 +27,15 @@ mod tests {
 
         assert!(flate2_source.try_next_word().is_none());
     }
-    fn create_adjust_file() {
-        File::create("./../adjust.txt")
+    fn create_adjust_file<P: AsRef<Path>>(path: P) {
+        File::create(path)
             .unwrap()
             .write("3.5 2.8 5.1 12.3\n".as_ref())
             .unwrap();
     }
-    fn delete_adjust_file() {
-        let filename = "./../adjust.txt";
-        if Path::new(filename).exists() {
-            std::fs::remove_file(filename).unwrap();
+    fn delete_adjust_file<P: AsRef<Path>>(path: P) {
+        if Path::new(path.as_ref()).exists() {
+            std::fs::remove_file(path.as_ref()).unwrap();
         }
     }
     // TODO these snapshot tests don't test for the last position
@@ -48,9 +47,10 @@ mod tests {
     #[test]
     fn full_game_test() {
         snapshot_test(
-            "./target/release/zebra",
+            "./../../../../target/release/zebra",
             "-l 16 16 16 16 16 16 -r 0",
             "./snapshots/zebra.log-full_game_test",
+            "./snapshot-tests/full_game_test",
             false,
             false
         );
@@ -59,9 +59,10 @@ mod tests {
     #[test]
     fn small_game_test() {
         snapshot_test(
-            "./target/release/zebra",
+            "./../../../../target/release/zebra",
             "-l 6 6 6 6 6 6 -r 0",
             "./snapshots/zebra.log-small_game_test",
+            "./snapshot-tests/small_game_test",
             false,
             false
         );
@@ -78,9 +79,10 @@ mod tests {
                 #[test]
                 fn basic() {
                     snapshot_test(
-                        "./target/release/zebra",
+                        "./../../../../target/release/zebra",
                         $args,
                         &("./snapshots/zebra.log-".to_owned() + stringify!($id)),
+                        &("./snapshot-tests/basic-".to_owned() + stringify!($id) + "-basic"),
                         false,
                         $has_err
                     );
@@ -88,9 +90,10 @@ mod tests {
                 #[test]
                 fn with_adjust() {
                     snapshot_test(
-                        "./target/release/zebra",
+                        "./../../../../target/release/zebra",
                         $args,
                         &("./snapshots/zebra.log-".to_owned() + stringify!($id) + "-with-adjust"),
+                        &("./snapshot-tests/".to_owned() + stringify!($id) + "-with-adjust" ),
                         true,
                         $has_err
                     );
@@ -142,17 +145,18 @@ mod tests {
     fn small_game_test_without_book() {
         snapshot_test(
              // TODO run those tests on original zebra too
-            "./target/release/zebra",
+            "./../../../../target/release/zebra",
             "-l 6 6 6 6 6 6 -r 0 -b 0",
             "./snapshots/zebra.log-small_game_test_without_book",
-            false,
+             "./snapshot-tests/small_game_test_without_book",
+        false,
             false
         );
     }
 
     #[test]
     fn basic_interactive() {
-        delete_adjust_file();
+        delete_adjust_file("./../adjust.txt");
         let mut command = Command::new("./target/release/zebra");
         let command = command
             .stdin(Stdio::piped())
@@ -216,15 +220,32 @@ mod tests {
         assert_log_snapshot("./snapshots/zebra.log-basic_interactive", "./../zebra.log");
     }
 
-    fn snapshot_test(binary: &str, arguments: &str, snapshot_path: &str, with_adjust: bool, has_error: bool) {
-        if with_adjust {
-            create_adjust_file();
-        } else {
-            delete_adjust_file();
+    fn snapshot_test(binary: &str, arguments: &str, snapshot_path: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool) {
+        let snapshot_test_dir = Path::new(snapshot_test_dir);
+        if !snapshot_test_dir.exists() {
+            std::fs::create_dir_all(snapshot_test_dir).unwrap();
         }
-        let output = Command::new(binary)
-            .current_dir("./../")
+        let snapshots_dir = snapshot_test_dir.join("snapshots");
+        if !snapshots_dir.exists() {
+            std::fs::create_dir_all(snapshots_dir).unwrap();
+        }
+        let run_directory = snapshot_test_dir.join("run_dir");
+        let _ = std::fs::remove_dir_all(&run_directory);
+        std::fs::create_dir_all(&run_directory).unwrap();
+
+        if with_adjust {
+            create_adjust_file(run_directory.join("adjust.txt"));
+        }
+        let binpath = run_directory.join(binary).canonicalize().unwrap();
+        let coeffs_path = run_directory.join("./../../../../coeffs2.bin").canonicalize().unwrap();
+        let book_path = run_directory.join("./../../../../book.bin").canonicalize().unwrap();
+        let canon_run_dir = run_directory.canonicalize().unwrap();
+
+        let output = Command::new(binpath)
+            .current_dir(&canon_run_dir)
             .args(arguments.split_whitespace())
+            .env("COEFFS_PATH", coeffs_path.to_str().unwrap())
+            .env("BOOK_PATH", book_path.to_str().unwrap())
             .output()
             .unwrap();
         if !has_error {
@@ -234,7 +255,7 @@ mod tests {
             // TODO check snapshot here
         }
         // TODO assert stdout too?? for echo tests for example
-        assert_log_snapshot(snapshot_path, "./../zebra.log");
+        assert_log_snapshot(snapshot_path, run_directory.join("zebra.log").to_str().unwrap() );
     }
 
     fn assert_log_snapshot(snapshot_path: &str, log_path: &str) {

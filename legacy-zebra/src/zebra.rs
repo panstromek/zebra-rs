@@ -31,6 +31,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::DrawMode::{OPPONENT_WINS, WHITE_WINS, BLACK_WINS, NEUTRAL};
 use engine::src::zebra::GameMode::{PUBLIC_GAME, PRIVATE_GAME};
 use flip::unflip::flip_stack_;
+use std::ffi::CString;
 
 pub static mut g_config: Config = INITIAL_CONFIG;
 /* ------------------- Function prototypes ---------------------- */
@@ -584,7 +585,12 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     global_setup(use_random, hash_bits);
     init_thor_database::<LibcFatalError>();
     if config.use_book != 0 {
-        init_learn(b"book.bin\x00" as *const u8 as *const i8,
+        let file_name = if let Ok(var) = std::env::var("BOOK_PATH") {
+            CString::new(var).unwrap()
+        } else {
+            CString::new("book.bin").unwrap()
+        };
+        init_learn(file_name.as_ref().as_ptr() as *const u8 as *const i8,
                    1 as i32);
     }
     if use_random != 0 {
