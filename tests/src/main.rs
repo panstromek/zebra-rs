@@ -164,7 +164,7 @@ mod tests {
 
         let mut child = command.spawn().unwrap();
 
-        let mut input = child.stdin.as_mut().unwrap();
+        let input = child.stdin.as_mut().unwrap();
         let mut output = child.stdout.expect("Failed to read stdout");
         //
         //
@@ -189,13 +189,22 @@ mod tests {
                     move_buf.push(num);
                     move_buf.push('\n');
                     written = input.write(move_buf.as_ref()).unwrap_or(0);
-                    input.flush();
+                    let _ = input.flush();
+                    if written == 0 {
+                        break;
+                    }
                 }
+                if written == 0 {
+                    break;
+                }
+            }
+            if written == 0 {
+                break;
             }
             move_buf.truncate(0);
             move_buf.push('\n'); // try pass
             written = input.write(move_buf.as_ref()).unwrap_or(0);
-            input.flush();
+            let _ = input.flush();
             if written == 0 {
                 break;
             }
