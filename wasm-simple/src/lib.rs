@@ -344,7 +344,7 @@ impl ZebraFrontend for WasmFrontend {
         unimplemented!()
     }
 
-    unsafe fn log_game_ending(log_file_name_: *mut i8, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32) {
+    fn log_game_ending(log_file_name_: &CStr, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32) {
         unimplemented!()
     }
 
