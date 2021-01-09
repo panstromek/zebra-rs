@@ -17,6 +17,8 @@ use crate::src::thordb::ThorDatabase;
 use crate::src::zebra::EvalResult::WON_POSITION;
 use crate::src::zebra::EvalType::MIDGAME_EVAL;
 use flip::unflip::flip_stack_;
+use std::ffi::CStr;
+use engine_traits::Offset;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum EvalType {
@@ -211,28 +213,33 @@ pub unsafe fn engine_play_game<
     let mut thor_position_count= 0;
     let mut provided_move = [0; 61];
     let mut move_vec = [0; 121];
-    let mut line_buffer = [0; 1001];
-
+    let mut line_buffer = [0u8; 1001];
+    let mut move_string = if move_string.is_null() {
+        &[]
+    } else {
+        CStr::from_ptr(move_string).to_bytes()
+    };
     loop  {
         /* Decode the predefined move sequence */
         if let Some(ref mut move_file) = &mut move_file {
             {
                 // this is kindof a hack just to preserve null teminator at the absolute end of this string
                 // we slice the buffer at the end and pass along just smaller slice to the trait function
-                // todo remove
                 let end = line_buffer.len() - 2;
-                let mut line_buffer: &mut [u8] = &mut line_buffer[..end];
+                let mut line_buffer: &mut [u8] = &mut line_buffer[0..end];
                 move_file.fill_line_buffer(&mut line_buffer);
             }
-            move_string = line_buffer.as_mut_ptr() as _
+            let end = line_buffer.iter().enumerate().find(|(i, ch)| ch == &&0)
+                .unwrap().0;
+            move_string = &line_buffer[0..end]
         }
         let mut provided_move_count = 0;
-        if move_string.is_null() {
+        if false {
             provided_move_count = 0
         } else {
-            provided_move_count = FE::strlen(move_string).wrapping_div(2) as i32;
+            provided_move_count = move_string.len().wrapping_div(2) as i32;
             if provided_move_count > 60 ||
-                FE::strlen(move_string).wrapping_rem(2) == 1 {
+                move_string.len().wrapping_rem(2) == 1 {
                 FE::invalid_move_string_provided();
             }
             let mut i = 0;
@@ -518,8 +525,12 @@ pub async unsafe fn engine_play_game_async<
     let mut thor_position_count= 0;
     let mut provided_move = [0; 61];
     let mut move_vec = [0; 121];
-    let mut line_buffer = [0; 1001];
-
+    let mut line_buffer = [0u8; 1001];
+    let mut move_string = if move_string.is_null() {
+        &[]
+    } else {
+        CStr::from_ptr(move_string).to_bytes()
+    };
     loop  {
         /* Decode the predefined move sequence */
         if let Some(ref mut move_file) = &mut move_file {
@@ -527,18 +538,20 @@ pub async unsafe fn engine_play_game_async<
                 // this is kindof a hack just to preserve null teminator at the absolute end of this string
                 // we slice the buffer at the end and pass along just smaller slice to the trait function
                 let end = line_buffer.len() - 2;
-                let mut line_buffer: &mut [u8] = &mut line_buffer[..end];
+                let mut line_buffer: &mut [u8] = &mut line_buffer[0..end];
                 move_file.fill_line_buffer(&mut line_buffer);
             }
-            move_string = line_buffer.as_mut_ptr() as _
+            let end = line_buffer.iter().enumerate().find(|(i, ch)| ch == &&0)
+                .unwrap().0;
+            move_string = &line_buffer[0..end]
         }
         let mut provided_move_count = 0;
-        if move_string.is_null() {
+        if false {
             provided_move_count = 0
         } else {
-            provided_move_count = FE::strlen(move_string).wrapping_div(2) as i32;
+            provided_move_count = move_string.len().wrapping_div(2) as i32;
             if provided_move_count > 60 ||
-                FE::strlen(move_string).wrapping_rem(2) == 1 {
+                move_string.len().wrapping_rem(2) == 1 {
                 FE::invalid_move_string_provided();
             }
             let mut i = 0;
