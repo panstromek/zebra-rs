@@ -286,7 +286,7 @@ mod tests {
     fn ensure_snapshot(snapshot_path: &Path, log_path: &str) {
         if !snapshot_path.exists() {
             std::fs::copy(log_path, snapshot_path).unwrap();
-            panic!("WARNING: Snapshot doesn't exists, creating new one. Rerun the tests to make them green again.");
+            panic!("\n\nWARNING: Snapshot doesn't exists, creating new one. Rerun the tests to make them green again.\n\n\n");
         }
     }
 
