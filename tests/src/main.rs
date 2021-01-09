@@ -131,6 +131,9 @@ mod tests {
 
     snap_test!(micro_game, "-l 1 1 1 1 1 1 -r 0", false, with_adjust: false);
 
+    // TODO find some thor files to verify - this doesn't really do anything at the moment
+    snap_test!(thor_five, "-l 2 2 2 2 2 2 -r 0 -thor 5", false, with_adjust: false);
+
     snap_test!(uneven, "-l 1 1 1 8 8 8 -r 0", false, with_adjust: false);
 
     snap_test!(rand_move, "-l 6 6 6 6 6 6 -r 0 -randmove 3", false, with_adjust: false);
