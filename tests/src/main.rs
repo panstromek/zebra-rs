@@ -131,6 +131,8 @@ mod tests {
 
     snap_test!(basic_interactive, "-l 6 6 6 0 -r 0 -b 0 -repeat 2", false, interactive: true);
 
+    snap_test!(two_players, "-l 0 0 -r 0 -b 0 -repeat 2", false, interactive: true);
+
 
 
     fn interact_basically(input: &mut ChildStdin) {
