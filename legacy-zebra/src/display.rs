@@ -1,4 +1,4 @@
-use libc_wrapper::{sprintf, fprintf, vsprintf, fputs, fputc, exit, strcpy, getc, stdin, FILE, size_t, strdup};
+use libc_wrapper::{sprintf, fprintf, vsprintf, fputs, fputc, exit, strcpy, getc, stdin, FILE, size_t, strdup, strlen};
 use crate::src::error::{FE};
 use engine::src::error::FrontEnd;
 use engine::src::stubs::{floor, abs, ceil};
@@ -416,7 +416,7 @@ pub unsafe fn send_status_pv(pv: &[i32; 64], max_depth: i32, pv_depth_zero: i32)
 pub unsafe fn display_status(stream: *mut FILE,
                                         allow_repeat: i32) {
     if (status_pos != 0 as i32 || allow_repeat != 0) &&
-             FE::strlen(status_buffer.as_mut_ptr()) >
+             strlen(status_buffer.as_mut_ptr()) >
                0 as i32 as u64 {
         fprintf(stream, b"%s\n\x00" as *const u8 as *const i8,
                 status_buffer.as_mut_ptr());

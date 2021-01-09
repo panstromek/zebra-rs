@@ -18,7 +18,7 @@ use legacy_zebra::src::display::{display_move, display_board, white_eval, white_
 use engine::src::zebra::{EvaluationType};
 use legacy_zebra::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
-use libc_wrapper::{strstr, FILE};
+use libc_wrapper::{strstr, FILE, strlen};
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use legacy_zebra::src::zebra::g_config;
@@ -220,7 +220,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                        i + 1 as i32);
                 exit(1 as i32);
             }
-            if   FE::strlen(stm_string.as_mut_ptr()) !=
+            if   strlen(stm_string.as_mut_ptr()) !=
                 1 as i32 as u64 {
                 printf(b"\nAmbiguous side to move on line %d - aborting\n\n\x00"
                            as *const u8 as *const i8,
@@ -236,7 +236,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                            i + 1 as i32);
                 }
             }
-            if   FE::strlen(board_string.as_mut_ptr()) !=
+            if   strlen(board_string.as_mut_ptr()) !=
                 64 as i32 as u64 {
                 printf(b"\nBoard on line %d doesn\'t contain 64 positions - aborting\n\n\x00"
                            as *const u8 as *const i8,

@@ -1,4 +1,4 @@
-use libc_wrapper::{puts, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FILE, size_t};
+use libc_wrapper::{puts, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FILE, size_t, strlen};
 use crate::src::error::LibcFatalError;
 use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
@@ -2179,7 +2179,7 @@ unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
         branch_depth = THOR_OPENING_LIST[i as usize].first_unique;
         end_depth =
             (branch_depth as
-                u64).wrapping_add(FE::strlen(THOR_OPENING_LIST[i as
+                u64).wrapping_add(strlen(THOR_OPENING_LIST[i as
                 usize].move_str).wrapping_div(2
                 as
                 i32
