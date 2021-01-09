@@ -394,8 +394,8 @@ impl ZebraFrontend for WasmFrontend {
                64.0f64 - black_average_score);
     }
 
-    unsafe fn report_opening_name(opening_name: *const i8) {
-        c_log!("\nOpening: {}\n", CStr::from_ptr(opening_name).to_str().unwrap() );
+    fn report_opening_name(opening_name: &CStr) {
+        c_log!("\nOpening: {}\n", opening_name.to_str().unwrap() );
     }
 
     fn report_book_randomness(slack_: f64) {
