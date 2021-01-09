@@ -226,7 +226,6 @@ pub unsafe fn engine_play_game<
             provided_move_count = FE::strlen(move_string).wrapping_div(2) as i32;
             if provided_move_count > 60 ||
                 FE::strlen(move_string).wrapping_rem(2) == 1 {
-                panic!("this branch is not tested");
                 FE::invalid_move_string_provided();
             }
             let mut i = 0;

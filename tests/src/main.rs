@@ -159,6 +159,20 @@ mod tests {
         with_adjust: false
     );
 
+    snap_test!(
+        seqfile_too_long,
+         "-l 2 2 2 2 2 2 -r 0 -seqfile ../../../resources/seq-file-too-long.txt -log zebra.log",
+        true,
+        with_adjust: false
+    );
+
+    snap_test!(
+        seqfile_invalid,
+         "-l 2 2 2 2 2 2 -r 0 -seqfile ../../../resources/seq-file-invalid.txt -log zebra.log",
+        true,
+        with_adjust: false
+    );
+
     fn interact_basically(input: &mut ChildStdin) {
         let mut move_buf = String::with_capacity(3);
         loop {
