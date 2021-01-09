@@ -1,8 +1,8 @@
 ./zebra.log
 .idea
 target
-current.gam
-current.mov
+./current.gam
+./current.mov
 /booktool/zebra.err
 /booktool/zebra.log
 /practice/zebra.err

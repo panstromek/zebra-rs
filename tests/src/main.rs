@@ -205,9 +205,8 @@ mod tests {
         if !snapshots_dir.exists() {
             std::fs::create_dir_all(&snapshots_dir).unwrap();
         }
-        let log_snapshot_path = snapshots_dir.join("zebra.log");
 
-        let snapshot_path = log_snapshot_path.to_str().unwrap();
+        let snapshot_path = snapshots_dir.join("zebra.log").to_str().unwrap();
 
         let run_directory = snapshot_test_dir.join("run_dir");
         let _ = std::fs::remove_dir_all(&run_directory);
@@ -226,16 +225,19 @@ mod tests {
             .args(arguments.split_whitespace())
             .env("COEFFS_PATH", coeffs_path.to_str().unwrap())
             .env("BOOK_PATH", book_path.to_str().unwrap())
-            .output()
+            .stdin(Stdio::piped())
+            .stderr(Stdio::from(File::create(canon_run_dir.join("zebra-stderr")).unwrap() ))
+            .stdout(Stdio::from(File::create(canon_run_dir.join("zebra-stdout")).unwrap() ))
+            .spawn()
+            .unwrap()
+            .wait()
             .unwrap();
-        if !has_error {
-            assert_eq!(String::from_utf8_lossy(&output.stderr).trim() , "");
-        } else {
-            assert_ne!(String::from_utf8_lossy(&output.stderr).trim() , "");
-            // TODO check snapshot here
-        }
-        // TODO assert stdout too?? for echo tests for example
-        assert_log_snapshot(snapshot_path, run_directory.join("zebra.log").to_str().unwrap() );
+
+        assert_log_snapshot(snapshots_dir.join("zebra.log").to_str().unwrap(), run_directory.join("zebra.log").to_str().unwrap() );
+        assert_log_snapshot(snapshots_dir.join("zebra-stderr").to_str().unwrap(), run_directory.join("zebra-stderr").to_str().unwrap() );
+        assert_log_snapshot(snapshots_dir.join("zebra-stdout").to_str().unwrap(), run_directory.join("zebra-stdout").to_str().unwrap() );
+        assert_log_snapshot(snapshots_dir.join("current.gam").to_str().unwrap(), run_directory.join("current.gam").to_str().unwrap() );
+        assert_log_snapshot(snapshots_dir.join("current.mov").to_str().unwrap(), run_directory.join("current.mov").to_str().unwrap() );
     }
 
     fn assert_log_snapshot(snapshot_path: &str, log_path: &str) {
@@ -246,6 +248,9 @@ mod tests {
                 line.starts_with("-->")
                 || line.starts_with("Log file created")
                 || line.starts_with("Engine compiled")
+                || line.starts_with("Total time:")
+                || line.starts_with("[-inf,inf]:")
+                || line.starts_with("Reading binary opening database... done (took ")
                 || (line.starts_with("#") && matches_ctime(&line[1..]).unwrap_or(false) )
             )
         }
