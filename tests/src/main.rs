@@ -129,6 +129,10 @@ mod tests {
 
     snap_test!(small_game_test, "-l 6 6 6 6 6 6 -r 0", false, with_adjust: false);
 
+    snap_test!(micro_game, "-l 1 1 1 1 1 1 -r 0", false, with_adjust: false);
+
+    snap_test!(uneven, "-l 1 1 1 8 8 8 -r 0", false, with_adjust: false);
+
     snap_test!(rand_move, "-l 6 6 6 6 6 6 -r 0 -randmove 3", false, with_adjust: false);
 
     snap_test!(rand_move_without_book, "-l 6 6 6 6 6 6 -r 0 -randmove 3 -b 0", false, with_adjust: false);
