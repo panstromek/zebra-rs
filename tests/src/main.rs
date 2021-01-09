@@ -5,7 +5,7 @@ mod tests {
     use flate2_coeff_source::Flate2Source;
     use std::ffi::CStr;
     use legacy_zebra::src::getcoeff::new_z_lib_source;
-    use std::process::{Command, Stdio};
+    use std::process::{Command, Stdio, ChildStdin};
     use std::path::Path;
     use std::fs::File;
     use std::io::{Write};
@@ -32,11 +32,6 @@ mod tests {
             .write("3.5 2.8 5.1 12.3\n".as_ref())
             .unwrap();
     }
-    fn delete_adjust_file<P: AsRef<Path>>(path: P) {
-        if Path::new(path.as_ref()).exists() {
-            std::fs::remove_file(path.as_ref()).unwrap();
-        }
-    }
     // TODO these snapshot tests don't test for the last position
     //  (because zebra doesn't put it in the log file for some reason)
     //  it'd be good to improve that and test that one as well
@@ -49,6 +44,10 @@ mod tests {
         };
 
         ($func:ident, $suffix:literal, $id:ident, $args:literal, $has_err:expr, $has_adjust:expr) => {
+            snap_test!($func, $suffix, $id, $args, $has_err,  $has_adjust, interactive: false);
+        };
+
+        ($func:ident, $suffix:literal, $id:ident, $args:literal, $has_err:expr, $has_adjust:expr, interactive: $interactive:expr) => {
                 #[test]
                 fn $func() {
                     use crate::tests::*;
@@ -56,7 +55,8 @@ mod tests {
                         $args,
                         &("./snapshot-tests/".to_owned() + stringify!($id) + $suffix),
                         $has_adjust,
-                        $has_err
+                        $has_err,
+                        $interactive
                     );
                 }
         };
@@ -70,6 +70,12 @@ mod tests {
         ($id:ident, $args:literal, $has_err:expr, with_adjust: false) => {
             mod $id {
                 snap_test!(basic, "-basic", $id, $args, $has_err, false);
+            }
+        };
+
+        ($id:ident, $args:literal, $has_err:expr, interactive: true) => {
+            mod $id {
+                snap_test!(basic, "-basic", $id, $args, $has_err, false, interactive: true);
             }
         };
 
@@ -123,21 +129,11 @@ mod tests {
 
     snap_test!(small_game_test, "-l 6 6 6 6 6 6 -r 0", false, with_adjust: false);
 
-    #[test]
-    fn basic_interactive() {
-        delete_adjust_file("./../adjust.txt");
-        let mut command = Command::new("./target/release/zebra");
-        let command = command
-            .stdin(Stdio::piped())
-            .stderr(Stdio::from(File::create("./../zebra-stderr").unwrap() ))
-            .stdout(Stdio::from(File::create("./../zebra-stdout").unwrap() ))
-            .current_dir("./../"); // TODO use temp to run in parallel
+    snap_test!(basic_interactive, "-l 6 6 6 0 -r 0 -b 0 -repeat 2", false, interactive: true);
 
-        command.args("-l 6 6 6 0 -r 0 -b 0 -repeat 2".split_whitespace());
 
-        let mut child = command.spawn().unwrap();
 
-        let input = child.stdin.as_mut().unwrap();
+    fn interact_basically(input: &mut ChildStdin) {
         let mut move_buf = String::with_capacity(3);
         loop {
             let mut written = 0;
@@ -169,13 +165,9 @@ mod tests {
                 break;
             }
         }
-
-        // TODO add other tests that are in non-interactive snaphsot test
-        // TODO assert stderr is empty
-        assert_snapshot("./snapshots/zebra.log-basic_interactive".as_ref(), "./../zebra.log".as_ref());
     }
 
-    fn snapshot_test(arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool) {
+    fn snapshot_test(arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool, interactive: bool) {
         let binary: &str = "./../../../../target/release/zebra";
         let snapshot_test_dir = Path::new(snapshot_test_dir);
         if !snapshot_test_dir.exists() {
@@ -198,19 +190,24 @@ mod tests {
         let book_path = run_directory.join("./../../../../book.bin").canonicalize().unwrap();
         let canon_run_dir = run_directory.canonicalize().unwrap();
 
-        let exit_status = Command::new(binpath)
+        let mut child = Command::new(binpath)
             .current_dir(&canon_run_dir)
             .args(arguments.split_whitespace())
             .env("COEFFS_PATH", coeffs_path.to_str().unwrap())
             .env("BOOK_PATH", book_path.to_str().unwrap())
             .stdin(Stdio::piped())
-            .stderr(Stdio::from(File::create(canon_run_dir.join("zebra-stderr")).unwrap() ))
-            .stdout(Stdio::from(File::create(canon_run_dir.join("zebra-stdout")).unwrap() ))
+            .stderr(Stdio::from(File::create(canon_run_dir.join("zebra-stderr")).unwrap()))
+            .stdout(Stdio::from(File::create(canon_run_dir.join("zebra-stdout")).unwrap()))
             .spawn()
-            .unwrap()
-            .wait()
             .unwrap();
 
+        if interactive {
+            let input = child.stdin.as_mut().unwrap();
+            interact_basically(input);
+        }
+        let exit_status = child
+            .wait()
+            .unwrap();
         // TODO make this flag part of some metadata snapshot file
         //  so that we don't need to guess its value when writing new test
         assert_eq!(exit_status.success(), !has_error);
