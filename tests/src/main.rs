@@ -172,7 +172,7 @@ mod tests {
 
         // TODO add other tests that are in non-interactive snaphsot test
         // TODO assert stderr is empty
-        assert_snapshot("./snapshots/zebra.log-basic_interactive", "./../zebra.log");
+        assert_snapshot("./snapshots/zebra.log-basic_interactive".as_ref(), "./../zebra.log".as_ref());
     }
 
     fn snapshot_test(arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool) {
@@ -215,16 +215,14 @@ mod tests {
         //  so that we don't need to guess its value when writing new test
         assert_eq!(exit_status.success(), !has_error);
 
-        assert_snapshot(snapshots_dir.join("zebra.log").to_str().unwrap(), run_directory.join("zebra.log").to_str().unwrap() );
-        assert_snapshot(snapshots_dir.join("zebra-stderr").to_str().unwrap(), run_directory.join("zebra-stderr").to_str().unwrap() );
-        assert_snapshot(snapshots_dir.join("zebra-stdout").to_str().unwrap(), run_directory.join("zebra-stdout").to_str().unwrap() );
-        assert_snapshot(snapshots_dir.join("current.gam").to_str().unwrap(), run_directory.join("current.gam").to_str().unwrap() );
-        assert_snapshot(snapshots_dir.join("current.mov").to_str().unwrap(), run_directory.join("current.mov").to_str().unwrap() );
+        assert_snapshot(snapshots_dir.join("zebra.log").as_ref(), run_directory.join("zebra.log").as_ref() );
+        assert_snapshot(snapshots_dir.join("zebra-stderr").as_ref(), run_directory.join("zebra-stderr").as_ref() );
+        assert_snapshot(snapshots_dir.join("zebra-stdout").as_ref(), run_directory.join("zebra-stdout").as_ref() );
+        assert_snapshot(snapshots_dir.join("current.gam").as_ref(), run_directory.join("current.gam").as_ref() );
+        assert_snapshot(snapshots_dir.join("current.mov").as_ref(), run_directory.join("current.mov").as_ref() );
     }
 
-    fn assert_snapshot(snapshot_path: &str, result_path: &str) {
-        let snapshot_path: &Path = snapshot_path.as_ref();
-        let result_path: &Path = result_path.as_ref();
+    fn assert_snapshot(snapshot_path: &Path, result_path: &Path) {
 
         if result_path.exists() {
             if !snapshot_path.exists() {
