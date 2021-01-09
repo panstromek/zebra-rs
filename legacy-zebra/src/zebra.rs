@@ -31,7 +31,9 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::DrawMode::{OPPONENT_WINS, WHITE_WINS, BLACK_WINS, NEUTRAL};
 use engine::src::zebra::GameMode::{PUBLIC_GAME, PRIVATE_GAME};
 use flip::unflip::flip_stack_;
-use std::ffi::CString;
+use std::ffi::{CString, CStr};
+use std::fs::File;
+use std::io::Read;
 
 pub static mut g_config: Config = INITIAL_CONFIG;
 /* ------------------- Function prototypes ---------------------- */
@@ -760,48 +762,33 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
     puts(b"\x00" as *const u8 as *const i8);
 }
 
-impl Drop for LibcFileMoveSource {
-    fn drop(&mut self) {
-        if !self.move_file.is_null() {
-            unsafe { fclose(self.move_file); }
-        };
-    }
-}
-//TODO test this trait and impl
-unsafe impl InitialMoveSource for LibcFileMoveSource {
-    fn fill_line_buffer(&mut self, line_buffer: &mut [i8; 1000]) {
-        if !self.move_file.is_null() {
-            unsafe {
-                let mut newline_pos = 0 as *mut i8;
-                fgets(line_buffer.as_mut_ptr(),
-                      ::std::mem::size_of::<[i8; 1000]>() as
-                          u64 as i32,self.move_file);
-                newline_pos = strchr(line_buffer.as_mut_ptr(), '\n' as i32);
-                if !newline_pos.is_null() {
-                    *newline_pos = 0 as i32 as i8
-                }
-            }
-        }
-    }
-}
+impl InitialMoveSource for FileMoveSource {
+    fn fill_line_buffer(&mut self, line_buffer: &mut [u8]) {
+        self.move_file.read(line_buffer.as_mut());
 
-struct LibcFileMoveSource {
-    move_file: *mut FILE
-}
+        let newline_pos = line_buffer.iter()
+            .enumerate()
+            .find(|(i, ch)| **ch == '\n' as i8 as u8 );
 
-impl LibcFileMoveSource {
-    pub unsafe fn open(move_file_name: *const i8) -> Option<LibcFileMoveSource> {
-        let move_file = if !move_file_name.is_null() {
-            fopen(move_file_name, b"r\x00" as *const u8 as *const i8)
+        if let Some(newline_pos) = newline_pos {
+            line_buffer[newline_pos.0] = 0;
         } else {
-            null_mut()
-        };
-        if move_file.is_null() {
-            return None;
+            line_buffer[line_buffer.len() - 1] = 0;
         }
-        Some(LibcFileMoveSource {
-            move_file
-        })
+    }
+}
+
+struct FileMoveSource {
+    move_file: File
+}
+
+impl FileMoveSource {
+    pub fn open(move_file_name: &str) -> Option<FileMoveSource> {
+        File::open(move_file_name).map(|file| {
+            FileMoveSource {
+                move_file: file
+            }
+        }).ok()
     }
 }
 /*
@@ -812,7 +799,12 @@ unsafe fn play_game(mut file_name: *const i8,
                     mut move_string: *const i8,
                     mut move_file_name: *const i8,
                     mut repeat: i32, log_file_name_: *mut i8, use_thor_: bool, use_learning_: bool) {
-    let mut move_file = LibcFileMoveSource::open(move_file_name);
+    let mut move_file = if move_file_name.is_null() {
+        None
+    } else {
+        let move_file_name = CStr::from_ptr(move_file_name).to_str().unwrap();
+        FileMoveSource::open(move_file_name)
+    };
 
     engine_play_game
         ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner, LibcFatalError, LegacyThor>

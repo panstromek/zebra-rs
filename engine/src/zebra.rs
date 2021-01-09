@@ -139,8 +139,8 @@ pub fn set_default_engine_globals(config: &mut Config) {
 /// so this function needs to ensure that the line_buffer contains at
 /// least one null character (there's definitely better way to do this, but I
 /// don't want to deviate from the original source for first implementation)
-pub unsafe trait InitialMoveSource {
-    fn fill_line_buffer(&mut self, line_buffer: &mut [i8; 1000]);
+pub trait InitialMoveSource {
+    fn fill_line_buffer(&mut self, line_buffer: &mut [u8]);
 }
 
 
@@ -211,13 +211,20 @@ pub unsafe fn engine_play_game<
     let mut thor_position_count= 0;
     let mut provided_move = [0; 61];
     let mut move_vec = [0; 121];
-    let mut line_buffer = [0; 1000];
+    let mut line_buffer = [0; 1001];
 
     loop  {
         /* Decode the predefined move sequence */
         if let Some(ref mut move_file) = &mut move_file {
-            move_file.fill_line_buffer(&mut line_buffer);
-            move_string = line_buffer.as_mut_ptr()
+            {
+                // this is kindof a hack just to preserve null teminator at the absolute end of this string
+                // we slice the buffer at the end and pass along just smaller slice to the trait function
+                // todo remove
+                let end = line_buffer.len() - 2;
+                let mut line_buffer: &mut [u8] = &mut line_buffer[..end];
+                move_file.fill_line_buffer(&mut line_buffer);
+            }
+            move_string = line_buffer.as_mut_ptr() as _
         }
         let mut provided_move_count = 0;
         if move_string.is_null() {
@@ -511,13 +518,19 @@ pub async unsafe fn engine_play_game_async<
     let mut thor_position_count= 0;
     let mut provided_move = [0; 61];
     let mut move_vec = [0; 121];
-    let mut line_buffer = [0; 1000];
+    let mut line_buffer = [0; 1001];
 
     loop  {
         /* Decode the predefined move sequence */
         if let Some(ref mut move_file) = &mut move_file {
-            move_file.fill_line_buffer(&mut line_buffer);
-            move_string = line_buffer.as_mut_ptr()
+            {
+                // this is kindof a hack just to preserve null teminator at the absolute end of this string
+                // we slice the buffer at the end and pass along just smaller slice to the trait function
+                let end = line_buffer.len() - 2;
+                let mut line_buffer: &mut [u8] = &mut line_buffer[..end];
+                move_file.fill_line_buffer(&mut line_buffer);
+            }
+            move_string = line_buffer.as_mut_ptr() as _
         }
         let mut provided_move_count = 0;
         if move_string.is_null() {
