@@ -8,8 +8,7 @@ mod tests {
     use std::process::{Command, Stdio};
     use std::path::Path;
     use std::fs::File;
-    use std::io::{Write, Read};
-    use std::thread;
+    use std::io::{Write};
 
     #[test]
     fn coeff_source_test() {
@@ -160,8 +159,8 @@ mod tests {
         let mut command = Command::new("./target/release/zebra");
         let command = command
             .stdin(Stdio::piped())
-            // .stdout(Stdio::inherit())
-            .stdout(Stdio::piped())
+            .stderr(Stdio::from(File::create("./../zebra-stderr").unwrap() ))
+            .stdout(Stdio::from(File::create("./../zebra-stdout").unwrap() ))
             .current_dir("./../"); // TODO use temp to run in parallel
 
         command.args("-l 6 6 6 0 -r 0 -b 0 -repeat 2".split_whitespace());
@@ -169,20 +168,7 @@ mod tests {
         let mut child = command.spawn().unwrap();
 
         let input = child.stdin.as_mut().unwrap();
-        let mut output = child.stdout.expect("Failed to read stdout");
-        //
-        //
         let mut move_buf = String::with_capacity(3);
-        let thread = thread::spawn(move || {
-            let mut buf = vec![0; 10];
-
-            while let Ok(count) = output.read(&mut buf) {
-                // println!("{}", String::from_utf8_lossy(&buf));
-                if count == 0 {
-                    break;
-                }
-            }
-        });
         loop {
             let mut written = 0;
             // TODO this is very dumb, we should prerecord some games and test them directly
@@ -213,7 +199,6 @@ mod tests {
                 break;
             }
         }
-        thread.join().unwrap();
 
         // TODO add other tests that are in non-interactive snaphsot test
         // TODO assert stderr is empty
