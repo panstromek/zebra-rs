@@ -205,15 +205,19 @@ mod tests {
         assert_log_snapshot("./snapshots/zebra.log-basic_interactive", "./../zebra.log");
     }
 
-    fn snapshot_test(binary: &str, arguments: &str, snapshot_path: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool) {
+    fn snapshot_test(binary: &str, arguments: &str, _snapshot_path: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool) {
         let snapshot_test_dir = Path::new(snapshot_test_dir);
         if !snapshot_test_dir.exists() {
             std::fs::create_dir_all(snapshot_test_dir).unwrap();
         }
         let snapshots_dir = snapshot_test_dir.join("snapshots");
         if !snapshots_dir.exists() {
-            std::fs::create_dir_all(snapshots_dir).unwrap();
+            std::fs::create_dir_all(&snapshots_dir).unwrap();
         }
+        let log_snapshot_path = snapshots_dir.join("zebra.log");
+
+        let snapshot_path = log_snapshot_path.to_str().unwrap();
+
         let run_directory = snapshot_test_dir.join("run_dir");
         let _ = std::fs::remove_dir_all(&run_directory);
         std::fs::create_dir_all(&run_directory).unwrap();
