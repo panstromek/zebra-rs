@@ -1,0 +1,46 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Jul  2 2020 at 19:33:54
+
+Reading binary opening database... done (took 0 s)
+Book randomness: 0.25 disks
+
+         a b c d e f g h
+
+      1                       Black    Zebra        
+      2                                             
+      3                        (*)     2 discs      
+      4        O *                                  
+      5        * O            White    Zebra        
+      6                                             
+      7                                2 discs      
+      8                                             
+
+Thor database:        f5: 100.0%    
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. f5  
+      2                                             
+      3                                4 discs      
+      4        O *                                  
+      5        * * *          White    Zebra        
+      6                                             
+      7                        (O)     1 discs      
+      8                                             
+
+Thor database:        d6: 66.3%    f6: 32.3%    f4:  1.4%    
+
+Opening: Perpendicular Opening
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. f5  d6
+      2                                             
+      3                        (*)     3 discs      
+      4        O *                                  
+      5        O * *          White    Zebra        
+      6        O                                    
+      7                                3 discs      
+      8                                             
+
+Thor database:        c3: 46.8%    c5: 30.8%    c4: 20.3%    c6:  1.6%    c7:  0.4%    
