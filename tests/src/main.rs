@@ -204,7 +204,7 @@ mod tests {
 
         // TODO add other tests that are in non-interactive snaphsot test
         // TODO assert stderr is empty
-        assert_snapshot("./snapshots/zebra.log-basic_interactive");
+        assert_log_snapshot("./snapshots/zebra.log-basic_interactive", "./../zebra.log");
     }
 
     fn snapshot_test(binary: &str, arguments: &str, snapshot_path: &str, with_adjust: bool, has_error: bool) {
@@ -225,12 +225,11 @@ mod tests {
             // TODO check snapshot here
         }
         // TODO assert stdout too?? for echo tests for example
-        assert_snapshot(snapshot_path);
+        assert_log_snapshot(snapshot_path, "./../zebra.log");
     }
 
-    fn assert_snapshot(snapshot_path: &str) {
+    fn assert_log_snapshot(snapshot_path: &str, log_path: &str) {
         let snapshot_path: &Path = snapshot_path.as_ref();
-        let log_path = "./../zebra.log";
         ensure_snapshot(snapshot_path, log_path);
         fn variable_lines(line: &&str) -> bool {
             !(
