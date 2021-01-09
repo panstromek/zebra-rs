@@ -263,21 +263,17 @@ mod tests {
                 split.next()?.len() == 4 &&
                 split.next().is_none())
         }
-        std::fs::read_to_string(snapshot_path)
-            .unwrap()
-            .lines()
-            .skip(1)
-            .filter(variable_lines)
-            // This is a workaround for checking that these iterators have the same length
-            .chain(std::iter::once("sentinel"))
-            .zip(std::fs::read_to_string(result_path)
-                .unwrap()
-                .lines()
-                .skip(1)
-                .filter(variable_lines)
-                .chain(std::iter::once("sentinel"))
-            )
-            .for_each(|(expected, actual)| assert_eq!(expected, actual))
+        let snapshot = std::fs::read_to_string(snapshot_path).unwrap();
+        let output = std::fs::read_to_string(result_path).unwrap();
+
+        let mut first = snapshot.lines().filter(variable_lines);
+        let mut second = output.lines().filter(variable_lines);
+
+        while let (Some(expected), Some(actual)) = (first.next(), second.next()) {
+            assert_eq!(expected, actual)
+        }
+        assert!(first.next().is_none());
+        assert!(second.next().is_none());
     }
 
     snap_test!(help, "?", true);
