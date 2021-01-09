@@ -75,7 +75,7 @@ mod tests {
                 fn basic() {
                     snapshot_test(
                         $args,
-                        &("./snapshot-tests/basic-".to_owned() + stringify!($id) + "-basic"),
+                        &("./snapshot-tests/".to_owned() + stringify!($id) + "-basic"),
                         false,
                         $has_err
                     );
