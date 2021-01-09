@@ -137,10 +137,7 @@ pub fn set_default_engine_globals(config: &mut Config) {
     config.player_increment[2] = 0.0f64;
     config.player_increment[0] = 0.0f64;
 }
-/// This trait is unsafe because line buffer is used as a c-style string later
-/// so this function needs to ensure that the line_buffer contains at
-/// least one null character (there's definitely better way to do this, but I
-/// don't want to deviate from the original source for first implementation)
+
 pub trait InitialMoveSource {
     fn fill_line_buffer(&mut self, line_buffer: &mut [u8]);
 }
