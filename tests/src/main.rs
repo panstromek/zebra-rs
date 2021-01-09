@@ -65,31 +65,36 @@ mod tests {
 
     macro_rules! snap_test {
         ($id:ident, $args:literal) => {
-            snap_test!($id, $args, false);
+            snap_test!($id, $args, false, with_adjust: true);
+        };
+
+        ($func:ident, $suffix:literal, $id:ident, $args:literal, $has_err:expr, $has_adjust:expr) => {
+                #[test]
+                fn $func() {
+                    use crate::tests::*;
+                    snapshot_test(
+                        $args,
+                        &("./snapshot-tests/".to_owned() + stringify!($id) + $suffix),
+                        $has_adjust,
+                        $has_err
+                    );
+                }
+        };
+
+        ($id:ident, $args:literal, $has_err:expr, with_adjust: true) => {
+            mod $id {
+                snap_test!(basic, "-basic", $id, $args, $has_err, false);
+                snap_test!(with_adjust, "-with-adjust", $id, $args, $has_err, true);
+            }
+        };
+        ($id:ident, $args:literal, $has_err:expr, with_adjust: false) => {
+            mod $id {
+                snap_test!(basic, "-basic", $id, $args, $has_err, false);
+            }
         };
 
         ($id:ident, $args:literal, $has_err:expr) => {
-            mod $id {
-                use crate::tests::*;
-                #[test]
-                fn basic() {
-                    snapshot_test(
-                        $args,
-                        &("./snapshot-tests/".to_owned() + stringify!($id) + "-basic"),
-                        false,
-                        $has_err
-                    );
-                }
-                #[test]
-                fn with_adjust() {
-                    snapshot_test(
-                        $args,
-                        &("./snapshot-tests/".to_owned() + stringify!($id) + "-with-adjust" ),
-                        true,
-                        $has_err
-                    );
-                }
-            }
+            snap_test!($id, $args, $has_err, with_adjust: true);
         };
     }
 
@@ -231,6 +236,8 @@ mod tests {
             .wait()
             .unwrap();
 
+        // TODO make this flag part of some metadata snapshot file
+        //  so that we don't need to guess its value when writing new test
         assert_eq!(exit_status.success(), !has_error);
 
         assert_snapshot(snapshots_dir.join("zebra.log").to_str().unwrap(), run_directory.join("zebra.log").to_str().unwrap() );
