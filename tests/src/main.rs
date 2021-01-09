@@ -43,26 +43,6 @@ mod tests {
     //fixme
     // also include analysis.log file into the tests
 
-    #[test]
-    fn full_game_test() {
-        snapshot_test(
-            "-l 16 16 16 16 16 16 -r 0",
-            "./snapshot-tests/full_game_test",
-            false,
-            false
-        );
-    }
-
-    #[test]
-    fn small_game_test() {
-        snapshot_test(
-            "-l 6 6 6 6 6 6 -r 0",
-            "./snapshot-tests/small_game_test",
-            false,
-            false
-        );
-    }
-
     macro_rules! snap_test {
         ($id:ident, $args:literal) => {
             snap_test!($id, $args, false, with_adjust: true);
@@ -137,16 +117,11 @@ mod tests {
 
     snap_test!(minus_p_zero_without_book, "-l 6 6 6 6 6 6 -r 0 -p 0 -b 0");
 
-    #[test]
-    fn small_game_test_without_book() {
-        snapshot_test(
-             // TODO run those tests on original zebra too
-            "-l 6 6 6 6 6 6 -r 0 -b 0",
-             "./snapshot-tests/small_game_test_without_book",
-        false,
-            false
-        );
-    }
+    snap_test!(small_game_test_without_book, "-l 6 6 6 6 6 6 -r 0 -b 0", false, with_adjust: false);
+
+    snap_test!(full_game_test, "-l 16 16 16 16 16 16 -r 0", false, with_adjust: false);
+
+    snap_test!(small_game_test, "-l 6 6 6 6 6 6 -r 0", false, with_adjust: false);
 
     #[test]
     fn basic_interactive() {
