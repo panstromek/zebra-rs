@@ -119,11 +119,11 @@ unsafe extern "C" fn read_game(mut stream: *mut FILE,
         }
         *ch = 0;
         *game_length =
-              FE::strlen(buffer.as_mut_ptr()).wrapping_div(2 as i32 as
+              strlen(buffer.as_mut_ptr()).wrapping_div(2 as i32 as
                 u64) as
                 i32;
         if *game_length > 60 as i32 ||
-              FE::strlen(buffer.as_mut_ptr()).wrapping_rem(2 as i32 as
+              strlen(buffer.as_mut_ptr()).wrapping_rem(2 as i32 as
                 u64) ==
                 1 as i32 as u64 {
             fprintf(stderr,

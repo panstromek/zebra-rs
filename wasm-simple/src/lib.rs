@@ -499,10 +499,6 @@ impl FrontEnd for WasmFrontend {
         return time;
     }
 
-    unsafe fn strlen(s: *const i8) -> u64 {
-        std::ffi::CStr::from_ptr(s).to_bytes().len() as _
-    }
-
     fn tolower(num: i32) -> i32 {
         // if num >= 'A' as i32 && num <= 'Z' as i32 {
         //     let offset = ('a' as i32) - ('A' as i32);

@@ -1,6 +1,6 @@
 use std::ffi::CStr;
 
-use engine_traits::CoeffSource;
+use engine_traits::{CoeffSource, Offset};
 use flip::unflip::flip_stack_;
 
 use crate::src::counter::{add_counter, adjust_counter, counter_value, reset_counter};
@@ -836,9 +836,10 @@ pub struct ForcedOpening {
 }
 impl ForcedOpening {
     pub unsafe fn from_ptr<FE: FrontEnd>(opening: *const i8) -> Self {
+        let opening = CStr::from_ptr(opening).to_bytes();
         let mut i = 0;
         let mut move_0: [i32; 60] = [0; 60];
-        let move_count_0 = unsafe { FE::strlen(opening) }.wrapping_div(2) as i32;
+        let move_count_0 = opening.len().wrapping_div(2) as i32;
         while i < move_count_0 {
             unsafe {
                 move_0[i as usize] = 10 * (*opening.offset((2 * i + 1) as isize) as i32 - '0' as i32) +

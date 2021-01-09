@@ -928,7 +928,7 @@ pub unsafe fn build_tree(file_name: *const i8,
                b"%s %d\x00" as *const u8 as *const i8,
                move_string.as_mut_ptr(), &mut diff as *mut i32);
         move_count_0 =
-              FE::strlen(move_string.as_mut_ptr()).wrapping_sub(1 as i32 as
+              strlen(move_string.as_mut_ptr()).wrapping_sub(1 as i32 as
                                                               u64).wrapping_div(3
                                                                                               as
                                                                                               i32
@@ -2404,7 +2404,7 @@ pub unsafe fn convert_opening_list(base_file:
         }
         *scan_ptr = 0;
         op_move_count =
-              FE::strlen(move_seq.as_mut_ptr()).wrapping_div(2 as i32 as
+              strlen(move_seq.as_mut_ptr()).wrapping_div(2 as i32 as
                                                            u64) as
                 i32;
         j = 0;

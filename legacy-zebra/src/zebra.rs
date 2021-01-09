@@ -9,7 +9,7 @@ use crate::src::learn::{LibcLearner, init_learn};
 use crate::src::thordb::{read_game_database, read_tournament_database, read_player_database, print_thor_matches, LegacyThor, get_total_game_count, choose_thor_opening_move, get_thor_game_size, init_thor_database};
 use crate::src::error::{LibcFatalError, FE, fatal_error};
 use engine::src::error::{FrontEnd, FatalError};
-use libc_wrapper::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, sscanf, feof, fgets, atoi, scanf, sprintf, ctime, time, strchr, strcasecmp, atof, stdout};
+use libc_wrapper::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, sscanf, feof, fgets, atoi, scanf, sprintf, ctime, time, strchr, strcasecmp, atof, stdout, strlen};
 use engine::src::globals::{board_state};
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType, adjust_counter};
 use engine::src::timer::{g_timer};
@@ -1100,11 +1100,11 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         provided_move_count = 0 as i32
     } else {
         provided_move_count =
-              FE::strlen(move_string).wrapping_div(2 as i32 as
+              strlen(move_string).wrapping_div(2 as i32 as
                                                  u64) as
                 i32;
         if provided_move_count > 60 as i32 ||
-                 FE::strlen(move_string).wrapping_rem(2 as i32 as
+                 strlen(move_string).wrapping_rem(2 as i32 as
                                                     u64) ==
                    1 as i32 as u64 {
             FE::invalid_move_string_provided();
@@ -1539,7 +1539,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                        i + 1 as i32);
                 exit(1 as i32);
             }
-            if   FE::strlen(stm_string.as_mut_ptr()) !=
+            if   strlen(stm_string.as_mut_ptr()) !=
                    1 as i32 as u64 {
                 printf(b"\nAmbiguous side to move on line %d - aborting\n\n\x00"
                            as *const u8 as *const i8,
@@ -1555,7 +1555,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                            i + 1 as i32);
                 }
             }
-            if  FE::strlen(board_string.as_mut_ptr()) !=
+            if  strlen(board_string.as_mut_ptr()) !=
                    64 as i32 as u64 {
                 printf(b"\nBoard on line %d doesn\'t contain 64 positions - aborting\n\n\x00"
                            as *const u8 as *const i8,

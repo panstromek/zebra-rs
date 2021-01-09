@@ -384,10 +384,7 @@ impl FrontEnd for LibcFatalError {
     fn time(__timer: &mut i64) -> i64 {
         unsafe { time(__timer) }
     }
-    #[inline(always)]
-    unsafe fn strlen(s: *const i8) -> u64 {
-        unsafe { strlen(s) }
-    }
+
     #[inline(always)]
     fn tolower(num: i32) -> i32 {
         unsafe { tolower(num) }
