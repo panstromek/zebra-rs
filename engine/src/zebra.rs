@@ -254,7 +254,6 @@ pub unsafe fn engine_play_game<
         g_book.set_slack(floor(config.slack * 128.0f64) as i32);
         game_state.toggle_human_openings(0);
         if use_learning_ {
-            panic!("this branch is not tested");
             learn_state.set_learning_parameters(config.deviation_depth, config.cutoff_empty);
         }
         reset_book_search(&mut g_book);
@@ -463,8 +462,6 @@ pub unsafe fn engine_play_game<
         repeat -= 1;
         g_timer.toggle_abort_check(0 as i32);
         if use_learning_ && config.one_position_only == 0 {
-            panic!("this branch is not tested");
-
             Learn::learn_game(moves_state.disks_played,
                               (config.skill[0] != 0 && config.skill[2] != 0) as i32,
                               (repeat == 0 as i32) as i32);
