@@ -32,7 +32,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 use flip::unflip;
 use flip::unflip::FlipStack;
-use libc_wrapper::{atof, atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time};
+use libc_wrapper::{atof, atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time, fflush};
 use libc_wrapper::{FILE, time_t};
 
 use crate::src::display::{black_eval, black_player, black_time, current_row, display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, white_eval, white_player, white_time};
@@ -432,158 +432,115 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         arg_index += 1
     }
     if help != 0 {
-        puts(b"Usage:\x00" as *const u8 as *const i8);
-        puts(b"  zebra [-b -e -g -h -l -p -t -time -w -learn -slack -dev -log\x00"
-                 as *const u8 as *const i8);
-        puts(b"         -keepdraw -draw2black -draw2white -draw2none\x00" as
-                 *const u8 as *const i8);
-        puts(b"         -private -public -test -seq -thor -script -analyze ?\x00"
-                 as *const u8 as *const i8);
-        puts(b"         -repeat -seqfile]\x00" as *const u8 as
-                 *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"Flags:\x00" as *const u8 as *const i8);
-        puts(b"  ? \x00" as *const u8 as *const i8);
-        puts(b"    Displays this text.\x00" as *const u8 as
-                 *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -b <use book?>\x00" as *const u8 as *const i8);
-        printf(b"    Toggles usage of opening book on/off (default %d).\n\x00"
-                   as *const u8 as *const i8, 1 as i32);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -e <echo?>\x00" as *const u8 as *const i8);
-        printf(b"    Toggles screen output on/off (default %d).\n\x00" as
-                   *const u8 as *const i8, 1 as i32);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -g <game file>\x00" as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -h <bits in hash key>\x00" as *const u8 as
-                 *const i8);
-        printf(b"    Size of hash table is 2^{this value} (default %d).\n\x00"
-                   as *const u8 as *const i8, 18 as i32);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -l <black depth> [<black exact depth> <black WLD depth>]\x00"
-                 as *const u8 as *const i8);
-        puts(b"     <white depth> [<white exact depth> <white WLD depth>]\x00"
-                 as *const u8 as *const i8);
-        printf(b"    Sets the search depth. If <black depth> or <white depth> \x00"
-                   as *const u8 as *const i8);
-        printf(b"are set to 0, a\n\x00" as *const u8 as *const i8);
-        printf(b"    human player is assumed. In this case the other \x00" as
-                   *const u8 as *const i8);
-        printf(b"parameters must be omitted.\n\x00" as *const u8 as
-                   *const i8);
-        printf(b"    <* exact depth> specify the number of moves before the \x00"
-                   as *const u8 as *const i8);
-        printf(b"(at move 60) when\n\x00" as *const u8 as
-                   *const i8);
-        printf(b"    the exact game-theoretical value is calculated. <* WLD \x00"
-                   as *const u8 as *const i8);
-        printf(b"depth> are used\n\x00" as *const u8 as *const i8);
-        puts(b"    analogously for the calculation of Win/Loss/Draw.\x00" as
-                 *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -p <display principal variation?>\x00" as *const u8 as
-                 *const i8);
-        printf(b"    Toggles output of principal variation on/off (default %d).\n\x00"
-                   as *const u8 as *const i8, 1 as i32);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -r <use randomization?>\x00" as *const u8 as
-                 *const i8);
-        printf(b"    Toggles randomization on/off (default %d)\n\x00" as
-                   *const u8 as *const i8, 1 as i32);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -t <number of levels> <(first) depth> ... <(last) wld depth>\x00"
-                 as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -time <black time> <black increment> <white time> <white increment>\x00"
-                 as *const u8 as *const i8);
-        puts(b"    Tournament mode; the format for the players is as above.\x00"
-                 as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -w <wait?>\x00" as *const u8 as *const i8);
-        printf(b"    Toggles wait between moves on/off (default %d).\n\x00" as
-                   *const u8 as *const i8, 0 as i32);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -learn <depth> <cutoff>\x00" as *const u8 as
-                 *const i8);
-        puts(b"    Learn the game with <depth> deviations up to <cutoff> empty.\x00"
-                 as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -slack <disks>\x00" as *const u8 as *const i8);
-        printf(b"    Zebra\'s opening randomness is <disks> disks (default %f).\n\x00"
-                   as *const u8 as *const i8, 0.25f64);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -dev <low> <high> <bonus>\x00" as *const u8 as
-                 *const i8);
-        puts(b"    Give deviations before move <high> a <bonus> disk bonus but\x00"
-                 as *const u8 as *const i8);
-        puts(b"    don\'t give any extra bonus for deviations before move <low>.\x00"
-                 as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -log <file name>\x00" as *const u8 as *const i8);
-        puts(b"    Append all game results to the specified file.\x00" as
-                 *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -private\x00" as *const u8 as *const i8);
-        puts(b"    Treats all draws as losses for both sides.\x00" as
-                 *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -public\x00" as *const u8 as *const i8);
-        puts(b"    No tweaking of draw scores.\x00" as *const u8 as
-                 *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -keepdraw\x00" as *const u8 as *const i8);
-        puts(b"    Book draws are counted as draws.\x00" as *const u8 as
-                 *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -draw2black\x00" as *const u8 as *const i8);
-        puts(b"    Book draws scored as 32-31 for black.\x00" as *const u8 as
-                 *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -draw2white\x00" as *const u8 as *const i8);
-        puts(b"    Book draws scored as 32-31 for white.\x00" as *const u8 as
-                 *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -draw2none\x00" as *const u8 as *const i8);
-        puts(b"    Book draws scored as 32-31 for the opponent.\x00" as
-                 *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -test\x00" as *const u8 as *const i8);
-        puts(b"    Only evaluate one position, then exit.\x00" as *const u8 as
-                 *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -seq <move sequence>\x00" as *const u8 as
-                 *const i8);
-        puts(b"    Forces the game to start with a predefined move sequence;\x00"
-                 as *const u8 as *const i8);
-        puts(b"    e.g. f4d6c3.\x00" as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -seqfile <filename\x00" as *const u8 as *const i8);
-        puts(b"    Specifies a file from which move sequences are read.\x00"
-                 as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -thor <game count>\x00" as *const u8 as *const i8);
-        puts(b"    Look for each position in the Thor database; list the first <game count>.\x00"
-                 as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -script <script file> <output file>\x00" as *const u8 as
-                 *const i8);
-        puts(b"    Solves all positions in script file for exact score.\x00"
-                 as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"  -wld <only solve WLD?>\x00" as *const u8 as
-                 *const i8);
-        printf(b"    Toggles WLD only solve on/off (default %d).\n\n\x00" as
-                   *const u8 as *const i8, 0 as i32);
-        puts(b"  -analyze\x00" as *const u8 as *const i8);
-        puts(b"    Used in conjunction with -seq; all positions are analyzed.\x00"
-                 as *const u8 as *const i8);
-        puts(b"  -repeat <#iterations>\x00" as *const u8 as
-                 *const i8);
-        puts(b"    Repeats the operation the specified number of times. \x00"
-                 as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
+        fflush(stdout);
+        println!(r"Usage:
+  zebra [-b -e -g -h -l -p -t -time -w -learn -slack -dev -log
+         -keepdraw -draw2black -draw2white -draw2none
+         -private -public -test -seq -thor -script -analyze ?
+         -repeat -seqfile]
+
+Flags:
+  ?{space}
+    Displays this text.
+
+  -b <use book?>
+    Toggles usage of opening book on/off (default {default_use_book}).
+
+  -e <echo?>
+    Toggles screen output on/off (default {default_echo}).
+
+  -g <game file>
+
+  -h <bits in hash key>
+    Size of hash table is 2^{{this value}} (default {default_hash_bits}).
+
+  -l <black depth> [<black exact depth> <black WLD depth>]
+     <white depth> [<white exact depth> <white WLD depth>]
+    Sets the search depth. If <black depth> or <white depth> are set to 0, a
+    human player is assumed. In this case the other parameters must be omitted.
+    <* exact depth> specify the number of moves before the (at move 60) when
+    the exact game-theoretical value is calculated. <* WLD depth> are used
+    analogously for the calculation of Win/Loss/Draw.
+
+  -p <display principal variation?>
+    Toggles output of principal variation on/off (default {default_pv}).
+
+  -r <use randomization?>
+    Toggles randomization on/off (default {default_random})
+
+  -t <number of levels> <(first) depth> ... <(last) wld depth>
+
+  -time <black time> <black increment> <white time> <white increment>
+    Tournament mode; the format for the players is as above.
+
+  -w <wait?>
+    Toggles wait between moves on/off (default {default_wait}).
+
+  -learn <depth> <cutoff>
+    Learn the game with <depth> deviations up to <cutoff> empty.
+
+  -slack <disks>
+    Zebra's opening randomness is <disks> disks (default {default_slack:.6}).
+
+  -dev <low> <high> <bonus>
+    Give deviations before move <high> a <bonus> disk bonus but
+    don't give any extra bonus for deviations before move <low>.
+
+  -log <file name>
+    Append all game results to the specified file.
+
+  -private
+    Treats all draws as losses for both sides.
+
+  -public
+    No tweaking of draw scores.
+
+  -keepdraw
+    Book draws are counted as draws.
+
+  -draw2black
+    Book draws scored as 32-31 for black.
+
+  -draw2white
+    Book draws scored as 32-31 for white.
+
+  -draw2none
+    Book draws scored as 32-31 for the opponent.
+
+  -test
+    Only evaluate one position, then exit.
+
+  -seq <move sequence>
+    Forces the game to start with a predefined move sequence;
+    e.g. f4d6c3.
+
+  -seqfile <filename
+    Specifies a file from which move sequences are read.
+
+  -thor <game count>
+    Look for each position in the Thor database; list the first <game count>.
+
+  -script <script file> <output file>
+    Solves all positions in script file for exact score.
+
+  -wld <only solve WLD?>
+    Toggles WLD only solve on/off (default {default_wld}).
+
+  -analyze
+    Used in conjunction with -seq; all positions are analyzed.
+  -repeat <#iterations>
+    Repeats the operation the specified number of times.{space}",
+                 default_use_book = 1,
+                 default_echo = 1,
+                 default_hash_bits = 18,
+                 default_pv = 1,
+                 default_random = 1,
+                 default_wait = 0,
+                 default_slack = 0.25f64,
+                 default_wld = 0,
+                 // This is kindof a hack to get around CLion stripping trailing
+                 // whitespace from the format string - todo report this
+                 space = ' ');
         exit(1 as i32);
     }
     if hash_bits < 1 as i32 {
