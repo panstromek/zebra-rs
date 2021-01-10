@@ -529,7 +529,8 @@ Flags:
   -analyze
     Used in conjunction with -seq; all positions are analyzed.
   -repeat <#iterations>
-    Repeats the operation the specified number of times.{space}",
+    Repeats the operation the specified number of times.{space}
+",
                  default_use_book = 1,
                  default_echo = 1,
                  default_hash_bits = 18,
