@@ -24,7 +24,7 @@ use engine::src::zebra::EvalResult::{LOST_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 use flip::unflip;
-use flip::unflip::flip_stack_;
+use engine::src::zebra::flip_stack_;
 use libc_wrapper::{atof, atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time};
 use libc_wrapper::{FILE, time_t};
 

@@ -62,9 +62,10 @@ impl FlipStack {
             board[self.global_flip_stack[self.flip_stack]] = UndoFlips__oppcol
         };
     }
+    pub const fn new() -> Self {
+        FlipStack {
+            global_flip_stack: [0; 2048],
+            flip_stack: 0,
+        }
+    }
 }
-
-pub static mut flip_stack_: FlipStack = FlipStack {
-    global_flip_stack: [0; 2048],
-    flip_stack: 0,
-};

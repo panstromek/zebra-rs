@@ -12,7 +12,7 @@ use engine::src::zebra::{board_state, EvaluationType, moves_state, hash_state};
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::g_timer;
-use flip::unflip::flip_stack_;
+use engine::src::zebra::flip_stack_;
 use legacy_zebra::src::display::{black_eval, black_player, black_time, current_row, display_board, white_eval, white_player, white_time};
 use legacy_zebra::src::error::{FE, LibcFatalError};
 use legacy_zebra::src::game::{compute_move, extended_compute_move, game_init, get_evaluated, get_evaluated_count, global_setup};

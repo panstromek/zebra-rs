@@ -1,7 +1,7 @@
 use std::ffi::CStr;
 
 use engine_traits::{CoeffSource, Offset};
-use flip::unflip::flip_stack_;
+use crate::src::zebra::flip_stack_;
 
 use crate::src::counter::{add_counter, adjust_counter, counter_value, reset_counter};
 use crate::src::end::{End, end_game, setup_end};
