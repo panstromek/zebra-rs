@@ -6,7 +6,7 @@ use engine::src::game::{global_terminate};
 use legacy_zebra::src::thordb::init_thor_database;
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
 use engine::src::search::{disc_count};
-use engine::src::zebra::{moves_state, hash_state, random_instance, g_book, search_state};
+use engine::src::zebra::{moves_state, hash_state, random_instance, g_book, search_state, coeff_state};
 use engine::src::zebra::board_state;
 use engine::src::hash::{setup_hash};
 use engine::src::osfbook::{set_deviation_value, reset_book_search};
@@ -618,7 +618,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line);
     }
-    global_terminate();
+    global_terminate(&mut hash_state, &mut coeff_state, &mut g_book);
     return 0 as i32;
 }
 static mut use_thor: i32 = 0;

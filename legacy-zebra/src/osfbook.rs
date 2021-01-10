@@ -3,7 +3,7 @@ use engine::src::end::end_game;
 use engine::src::error::FrontEnd;
 use engine::src::game::{engine_game_init, setup_non_file_based_game};
 use engine::src::getcoeff::{remove_coeffs};
-use engine::src::zebra::{board_state, hash_state, random_instance, g_book, search_state};
+use engine::src::zebra::{board_state, hash_state, random_instance, g_book, search_state, game_state};
 use engine::src::hash::{clear_hash_drafts, determine_hash_values, setup_hash};
 use engine::src::midgame::{middle_game, tree_search};
 use engine::src::moves::{generate_all, generate_specific, make_move, make_move_no_hash, unmake_move, unmake_move_no_hash};
@@ -4699,8 +4699,11 @@ pub unsafe fn engine_init_osf<FE: FrontEnd>() {
 */
 pub unsafe fn prepare_tree_traversal() {
     let mut side_to_move: i32 = 0;
-    setup_non_file_based_game(&mut side_to_move);
-    engine_game_init();
+    setup_non_file_based_game(&mut side_to_move,&mut board_state
+                              ,&mut hash_state
+                              ,&mut moves_state);
+    engine_game_init(&mut flip_stack_, &mut search_state, &mut board_state, &mut hash_state, &mut g_timer,
+                     &mut end_g, &mut midgame_state, &mut coeff_state, &mut moves_state, &mut random_instance, &mut g_book, &mut stable_state, &mut game_state);
     midgame_state.toggle_midgame_hash_usage(1 as i32, 1 as i32);
     g_timer.toggle_abort_check(0 as i32);
     midgame_state.toggle_midgame_abort_check(0 as i32);

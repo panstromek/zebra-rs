@@ -13,7 +13,7 @@ use engine::src::game::{generic_game_init, global_terminate};
 use engine::src::getcoeff::remove_coeffs;
 use engine::src::hash::{setup_hash};
 use engine::src::moves::{game_in_progress, generate_all, make_move, unmake_move, valid_move};
-use engine::src::zebra::{random_instance, g_book, search_state};
+use engine::src::zebra::{random_instance, g_book, search_state, stable_state, midgame_state, end_g};
 use engine::src::myrandom;
 use engine::src::osfbook::{find_opening_name, reset_book_search, set_deviation_value};
 use engine::src::search::{disc_count, produce_compact_eval};
@@ -645,7 +645,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     } else {
         play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name, use_thor != 0, use_learning != 0);
     }
-    global_terminate();
+    global_terminate(&mut hash_state, &mut coeff_state, &mut g_book);
     return 0 as i32;
 }
 /*
@@ -1141,7 +1141,19 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         puts(b"Analyzing provided game...\x00" as *const u8 as
                  *const i8);
     }
-    generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move);
+    generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move,   &mut flip_stack_,
+                                                             &mut search_state,
+                                                             &mut board_state,
+                                                             &mut hash_state,
+                                                             &mut g_timer,
+                                                             &mut end_g,
+                                                             &mut midgame_state,
+                                                             &mut coeff_state,
+                                                             &mut moves_state,
+                                                             &mut random_instance,
+                                                             &mut g_book,
+                                                             &mut stable_state,
+                                                             &mut game_state);
     setup_hash(1 as i32, &mut hash_state, &mut  random_instance);
     learn_state.clear_stored_game();
     if g_config.echo != 0 && config.use_book != 0 {
@@ -1525,7 +1537,19 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 exit(1 as i32);
             }
             /* Parse the script line containing board and side to move */
-            generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move);
+            generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move,   &mut flip_stack_,
+                                                                     &mut search_state,
+                                                                     &mut board_state,
+                                                                     &mut hash_state,
+                                                                     &mut g_timer,
+                                                                     &mut end_g,
+                                                                     &mut midgame_state,
+                                                                     &mut coeff_state,
+                                                                     &mut moves_state,
+                                                                     &mut random_instance,
+                                                                     &mut g_book,
+                                                                     &mut stable_state,
+                                                                     &mut game_state);
             g_book.set_slack(0.0f64 as i32);
             game_state.toggle_human_openings(0 as i32);
             reset_book_search(&mut g_book);

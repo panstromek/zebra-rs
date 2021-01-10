@@ -4,7 +4,7 @@ use engine::src::counter::{adjust_counter, counter_value, reset_counter};
 use engine::src::error::FrontEnd;
 use engine::src::game::{BoardSource, CandidateMove, compare_eval, ComputeMoveLogger, ComputeMoveOutput, engine_global_setup, EvaluatedMove, FileBoardSource, generic_compute_move, generic_game_init, PonderMoveReport};
 use engine::src::getcoeff::{pattern_evaluation};
-use engine::src::zebra::{board_state, hash_state, g_book, search_state};
+use engine::src::zebra::{board_state, hash_state, g_book, search_state, stable_state, end_g, prob_cut};
 use engine::src::hash::{determine_hash_values, find_hash, HashEntry};
 use engine::src::moves::{generate_all, make_move, unmake_move};
 use engine::src::zebra::random_instance;
@@ -85,7 +85,13 @@ pub unsafe fn global_setup(use_random: i32,
         CString::new("./coeffs2.bin").unwrap()
     };
 
-    engine_global_setup::<_,LibcFatalError>(use_random, hash_bits, coeff_adjustments, new_z_lib_source(file_name.as_ref()));
+    engine_global_setup::<_,LibcFatalError>(use_random, hash_bits, coeff_adjustments, new_z_lib_source(file_name.as_ref()),&mut search_state
+                                            ,&mut hash_state
+                                            ,&mut g_timer
+                                            ,&mut coeff_state
+                                            ,&mut random_instance
+                                            ,&mut stable_state
+                                            ,&mut prob_cut);
 }
 trait Logger {
     fn on_global_setup();
@@ -173,7 +179,19 @@ impl BoardSource for LibcBoardFileSource {
 */
 
 pub unsafe fn game_init(file_name: *const i8, side_to_move: &mut i32) {
-    generic_game_init::<LibcBoardFileSource, LibcFatalError>(file_name, side_to_move);
+    generic_game_init::<LibcBoardFileSource, LibcFatalError>(file_name, side_to_move,   &mut flip_stack_,
+                                                             &mut search_state,
+                                                             &mut board_state,
+                                                             &mut hash_state,
+                                                             &mut g_timer,
+                                                             &mut end_g,
+                                                             &mut midgame_state,
+                                                             &mut coeff_state,
+                                                             &mut moves_state,
+                                                             &mut random_instance,
+                                                             &mut g_book,
+                                                             &mut stable_state,
+                                                             &mut game_state);
 }
 /*
   PONDER_MOVE

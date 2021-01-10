@@ -5,7 +5,7 @@ extern crate console_error_panic_hook;
 
 use std::panic;
 use wasm_bindgen::prelude::*;
-use engine::src::zebra::{set_default_engine_globals, EvaluationType, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, engine_play_game_async, Config, INITIAL_CONFIG};
+use engine::src::zebra::{set_default_engine_globals, EvaluationType, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, engine_play_game_async, Config, INITIAL_CONFIG, g_book, coeff_state, hash_state, prob_cut, stable_state, random_instance, g_timer, search_state};
 use engine::src::game::{engine_global_setup, global_terminate, BoardSource, FileBoardSource, ComputeMoveLogger, ComputeMoveOutput, CandidateMove};
 use engine::src::error::{FrontEnd, FatalError};
 use wasm_bindgen::__rt::core::ffi::c_void;
@@ -90,7 +90,13 @@ pub fn init() {
         config.use_book = 0;
         let coeffs = Flate2Source::new_from_data(COEFFS);
 
-        engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs);
+        engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs,&mut search_state
+                                               ,&mut hash_state
+                                               ,&mut g_timer
+                                               ,&mut coeff_state
+                                               ,&mut random_instance
+                                               ,&mut stable_state
+                                               ,&mut prob_cut);
         // init_thor_database::<WasmFrontend>();
 
         let x = 1 as i32;
@@ -113,7 +119,7 @@ pub fn init() {
 #[wasm_bindgen]
 pub fn terminate() {
     // I never call this and it's probably pointless..., just putting it here so it is there
-    unsafe { global_terminate(); }
+    unsafe { global_terminate(&mut hash_state, &mut coeff_state, &mut g_book); }
 }
 
 #[wasm_bindgen]
