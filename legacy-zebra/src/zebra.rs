@@ -1141,7 +1141,7 @@ unsafe fn analyze_game(mut move_string: *const i8) {
         puts(b"Analyzing provided game...\x00" as *const u8 as
                  *const i8);
     }
-    generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move,   &mut flip_stack_,
+    generic_game_init::<LibcBoardFileSource, LibcFatalError>(None, &mut side_to_move,   &mut flip_stack_,
                                                              &mut search_state,
                                                              &mut board_state,
                                                              &mut hash_state,
@@ -1537,7 +1537,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 exit(1 as i32);
             }
             /* Parse the script line containing board and side to move */
-            generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut side_to_move,   &mut flip_stack_,
+            generic_game_init::<LibcBoardFileSource, LibcFatalError>(None, &mut side_to_move,   &mut flip_stack_,
                                                                      &mut search_state,
                                                                      &mut board_state,
                                                                      &mut hash_state,

@@ -55,7 +55,7 @@ pub unsafe fn learn_game(game_length: i32,
     let full_solve = end_g.get_earliest_full_solve();
     let wld_solve = end_g.get_earliest_wld_solve();
     let mut dummy: i32 = 0;
-    generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut dummy,   &mut flip_stack_,
+    generic_game_init::<LibcBoardFileSource, LibcFatalError>(None, &mut dummy,   &mut flip_stack_,
                                                              &mut search_state,
                                                              &mut board_state,
                                                              &mut hash_state,

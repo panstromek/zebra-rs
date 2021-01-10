@@ -333,7 +333,7 @@ pub fn generic_setup_game<Source: FileBoardSource, FE: FrontEnd>(file_name: Opti
     }
 }
 
-pub unsafe fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32,
+pub fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: Option<&CStr>, side_to_move: &mut i32,
                                                                        flip_stack_: &mut FlipStack,
                                                                        search_state: &mut SearchState,
                                                                        board_state: &mut BoardState,
@@ -348,8 +348,7 @@ pub unsafe fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name
                                                                        stable_state: &mut StableState,
                                                                        game_state: &mut GameState
 ) {
-    let name = (!file_name.is_null()).then(|| CStr::from_ptr(file_name));
-    generic_setup_game::<Source, FE>(name, side_to_move, board_state, hash_state, moves_state);
+    generic_setup_game::<Source, FE>(file_name, side_to_move, board_state, hash_state, moves_state);
     engine_game_init(
         flip_stack_, search_state, board_state, hash_state, g_timer,
         end_g, midgame_state, coeff_state, moves_state, random_instance, g_book, stable_state, game_state,

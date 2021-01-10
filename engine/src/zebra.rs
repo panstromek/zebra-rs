@@ -258,6 +258,7 @@ pub unsafe fn engine_play_game<
                 i += 1
             }
         }
+        let file_name = (!file_name.is_null()).then(|| CStr::from_ptr(file_name));
         /* Set up the position and the search engine */
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move,
                                           &mut flip_stack_,
@@ -584,6 +585,7 @@ pub async unsafe fn engine_play_game_async<
                 i += 1
             }
         }
+        let file_name = (!file_name.is_null()).then(|| CStr::from_ptr(file_name));
         /* Set up the position and the search engine */
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move,    &mut flip_stack_,
                                           &mut search_state,
