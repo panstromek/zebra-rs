@@ -15,7 +15,7 @@ use wasm_bindgen::prelude::*;
 
 use engine::src::counter::CounterType;
 use engine::src::error::{FatalError, FrontEnd};
-use engine::src::game::{BoardSource, CandidateMove, ComputeMoveLogger, ComputeMoveOutput, engine_global_setup, FileBoardSource, global_terminate, GameState};
+use engine::src::game::{BoardSource, CandidateMove, ComputeMoveLogger, ComputeMoveOutput, engine_global_setup, FileBoardSource, GameState};
 use engine::src::hash::{HashEntry, HashState};
 use engine::src::learn::{Learner, LearnState};
 use engine::src::myrandom;
@@ -146,11 +146,6 @@ pub fn init() {
         }
 
     }
-}
-#[wasm_bindgen]
-pub fn terminate() {
-    // I never call this and it's probably pointless..., just putting it here so it is there
-    unsafe { global_terminate(&mut hash_state, &mut coeff_state, &mut g_book); }
 }
 
 #[wasm_bindgen]

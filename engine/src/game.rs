@@ -5,12 +5,12 @@ use engine_traits::{CoeffSource, Offset};
 use crate::src::counter::{add_counter, adjust_counter, counter_value, reset_counter};
 use crate::src::end::{End, end_game, setup_end};
 use crate::src::error::FrontEnd;
-use crate::src::getcoeff::{clear_coeffs, CoeffAdjustments, eval_adjustment, init_coeffs_calculate_terminal_patterns, post_init_coeffs, process_coeffs_from_fn_source, remove_coeffs, CoeffState};
+use crate::src::getcoeff::{CoeffAdjustments, eval_adjustment, init_coeffs_calculate_terminal_patterns, post_init_coeffs, process_coeffs_from_fn_source, remove_coeffs, CoeffState};
 use crate::src::globals::{Board, BoardState};
 use crate::src::hash::{determine_hash_values, find_hash, HashEntry, HashState};
 use crate::src::midgame::{calculate_perturbation, middle_game, MidgameState, setup_midgame};
 use crate::src::moves::{generate_all, make_move, valid_move, MovesState};
-use crate::src::osfbook::{check_forced_opening, clear_osf, fill_move_alternatives, get_book_move, Book};
+use crate::src::osfbook::{check_forced_opening, fill_move_alternatives, get_book_move, Book};
 use crate::src::probcut::{init_probcut, ProbCut};
 use crate::src::search::{complete_pv, create_eval_info, disc_count, float_move, force_return, setup_search, sort_moves, SearchState};
 use crate::src::stable::{init_stable, StableState};
@@ -118,21 +118,6 @@ pub fn compare_eval(mut e1: EvaluationType, mut e2: EvaluationType) -> i32 {
         }
     }
     e1.score - e2.score
-}
-
-/*
-   GLOBAL_TERMINATE
-   Free all dynamically allocated memory.
-*/
-
-pub fn global_terminate(
-    hash_state: &mut HashState,
-    coeff_state: &mut CoeffState,
-    g_book: &mut Book
-) {
-    hash_state.free_hash();
-    clear_coeffs(coeff_state);
-    clear_osf(g_book);
 }
 
 pub fn engine_game_init(

@@ -510,13 +510,6 @@ impl HashState {
         self.init_hash(new_hash_bits);
         setup_hash(1, self, random_instance_);
     }
-    /*
-       FREE_HASH
-       Remove the hash table.
-    */
-    pub fn free_hash(&mut self) {
-        self.hash_table.clear()
-    }
 
     /*
       SET_HASH_TRANSFORMATION
