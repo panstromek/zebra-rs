@@ -268,7 +268,7 @@ impl ComputeMoveLogger for WasmComputeMoveLogger {
 struct WasmBoardSource;
 
 impl FileBoardSource for WasmBoardSource {
-    unsafe fn open(file_name: *const i8) -> Option<Self> where Self: Sized {
+    fn open(file_name: &CStr) -> Option<Self> where Self: Sized {
 //        todo??
         None
     }

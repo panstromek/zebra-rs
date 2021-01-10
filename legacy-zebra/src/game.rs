@@ -127,8 +127,8 @@ pub struct LibcBoardFileSource {
     stream: *mut FILE
 }
 impl FileBoardSource for LibcBoardFileSource {
-    unsafe fn open(file_name: *const i8) -> Option<LibcBoardFileSource> {
-        let stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
+    fn open(file_name: &CStr) -> Option<LibcBoardFileSource> {
+        let stream = unsafe { fopen(file_name.as_ptr(), b"r\x00" as *const u8 as *const i8) };
         if stream.is_null() {
             return None;
         }
