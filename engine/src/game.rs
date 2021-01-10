@@ -7,7 +7,7 @@ use crate::src::counter::{add_counter, adjust_counter, counter_value, reset_coun
 use crate::src::end::{End, end_game, setup_end};
 use crate::src::error::FrontEnd;
 use crate::src::getcoeff::{clear_coeffs, coeff_state, CoeffAdjustments, eval_adjustment, init_coeffs_calculate_terminal_patterns, post_init_coeffs, process_coeffs_from_fn_source, remove_coeffs};
-use crate::src::globals::{Board, board_state, BoardState};
+use crate::src::globals::{Board, board_state as g_board_state, BoardState};
 use crate::src::hash::{determine_hash_values, find_hash, hash_state, HashEntry};
 use crate::src::midgame::{calculate_perturbation, middle_game, MidgameState, setup_midgame};
 use crate::src::moves::{generate_all, make_move, moves_state, valid_move};
@@ -142,6 +142,7 @@ pub unsafe fn global_terminate() {
 }
 
 pub unsafe fn engine_game_init() {
+    let mut board_state = &mut g_board_state;
     setup_search(&mut search_state);
     setup_midgame(&mut midgame_state, &mut random_instance);
     setup_end(
@@ -189,6 +190,7 @@ pub const fn create_fresh_board() -> Board {
 }
 
 pub unsafe fn setup_game_finalize(side_to_move:  &mut i32) {
+    let mut board_state = &mut g_board_state;
     moves_state.disks_played = disc_count(0, &board_state.board) + disc_count(2, &board_state.board) - 4;
     determine_hash_values(*side_to_move, &board_state.board, &mut hash_state);
     /* Make the game score look right */
@@ -202,6 +204,7 @@ pub unsafe fn setup_game_finalize(side_to_move:  &mut i32) {
 
 
 pub unsafe fn setup_non_file_based_game(side_to_move: &mut i32) {
+    let mut board_state = &mut g_board_state;
     board_state.board = create_fresh_board();
     board_state.board[54] = 0;
     board_state.board[45] = 0;
@@ -285,6 +288,7 @@ pub trait FileBoardSource : BoardSource {
 }
 
 pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32) {
+    let mut board_state = &mut g_board_state;
     board_state.board = create_fresh_board();
     assert!(!file_name.is_null());
     match S::open(CStr::from_ptr(file_name)) {
@@ -350,6 +354,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     let mut max_depth: i32 = 0;
     let mut endgame_reached: i32 = 0;
     let mut offset: i32 = 0;
+    let mut board_state = &mut g_board_state;
 
     if let Some(logger) = logger {
         let board_ = &board_state.board;
