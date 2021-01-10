@@ -52,11 +52,10 @@ Interprets the command-line parameters and starts the game.
 */
 unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
  -> i32 {
-    printf(b"\nZebra (c) 1997-2005 Gunnar Andersson, compile date %s at %s\n\n\x00"
-               as *const u8 as *const i8,
+    print!("\nZebra (c) 1997-2005 Gunnar Andersson, compile date {} at {}\n\n",
            // TODO add macro or smth for these (it's in the C code)
-           b"Jul  2 2020\x00" as *const u8 as *const i8,
-           b"19:33:54\x00" as *const u8 as *const i8);
+           "Jul  2 2020",
+           "19:33:54");
     let mut config = &mut g_config;
 
     let mut move_sequence = 0 as *const i8;
