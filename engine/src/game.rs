@@ -307,30 +307,29 @@ pub trait FileBoardSource : BoardSource {
     fn open(file_name: &CStr) -> Option<Self> where Self: Sized;
 }
 
-pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32,
+pub fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: &CStr, side_to_move: &mut i32,
                                                                       board_state: &mut BoardState,
                                                                       hash_state: &mut HashState,
                                                                       moves_state: &mut MovesState,
 ) {
     board_state.board = create_fresh_board();
-    assert!(!file_name.is_null());
-    match S::open(CStr::from_ptr(file_name)) {
+    match S::open((file_name)) {
         Some(file_source) => process_board_source::<_, FE>(side_to_move, file_source,  board_state),
         None => {
-            FE::cannot_open_game_file(CStr::from_ptr(file_name).to_str().unwrap());
+            FE::cannot_open_game_file((file_name).to_str().unwrap());
         },
     };
     setup_game_finalize(side_to_move, board_state, hash_state, moves_state);
 }
 
-pub unsafe fn generic_setup_game<Source: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32,
+pub fn generic_setup_game<Source: FileBoardSource, FE: FrontEnd>(file_name: Option<&CStr>, side_to_move: &mut i32,
                                                                         board_state: &mut BoardState,
                                                                         hash_state: &mut HashState,
                                                                         moves_state: &mut MovesState,) {
-    if file_name.is_null() {
-        setup_non_file_based_game(side_to_move,  board_state, hash_state, moves_state);
-    } else {
+    if let Some(file_name) = file_name {
         setup_file_based_game::<Source, FE>(file_name, side_to_move,  board_state, hash_state, moves_state);
+    } else {
+        setup_non_file_based_game(side_to_move,  board_state, hash_state, moves_state);
     }
 }
 
@@ -349,7 +348,8 @@ pub unsafe fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name
                                                                        stable_state: &mut StableState,
                                                                        game_state: &mut GameState
 ) {
-    generic_setup_game::<Source, FE>(file_name, side_to_move,  board_state, hash_state, moves_state);
+    let name = (!file_name.is_null()).then(|| CStr::from_ptr(file_name));
+    generic_setup_game::<Source, FE>(name, side_to_move, board_state, hash_state, moves_state);
     engine_game_init(
         flip_stack_, search_state, board_state, hash_state, g_timer,
         end_g, midgame_state, coeff_state, moves_state, random_instance, g_book, stable_state, game_state,
