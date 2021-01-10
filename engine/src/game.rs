@@ -1,4 +1,4 @@
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 
 use engine_traits::{CoeffSource, Offset};
 
@@ -54,7 +54,7 @@ pub struct CandidateMove {
   Specifies an opening line that Zebra is forced to follow when playing.
 */
 pub struct GameState {
-    forced_opening: *const i8,
+    forced_opening: Option<CString>,
     last_time_used: f64,
     pub max_depth_reached: i32,
     play_human_openings: i32,
@@ -65,7 +65,7 @@ pub struct GameState {
 impl GameState {
     pub const fn new() -> Self {
         GameState {
-            forced_opening: 0 as *const i8,
+            forced_opening: None,
             last_time_used: 0.,
             max_depth_reached: 0,
             play_human_openings: 1,
@@ -355,7 +355,7 @@ pub fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: Optio
     );
 }
 
-pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, Thor: ThorDatabase>(side_to_move: i32,
+pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, Thor: ThorDatabase>(side_to_move: i32,
                                                                                                update_all: i32,
                                                                                                my_time: i32,
                                                                                                my_incr: i32,
@@ -499,11 +499,11 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     /* Check the opening book for midgame moves */
     let mut book_move_found = 0;
     let mut midgame_move = -(1 as i32);
-    if !game_state.forced_opening.is_null() {
+    if let Some(forced_opening) = game_state.forced_opening.as_ref() {
         /* Check if the position fits the currently forced opening */
         curr_move = check_forced_opening::<FE>(
             side_to_move,
-            ForcedOpening::from_ptr::<FE>(game_state.forced_opening),
+            ForcedOpening::from_c_str::<FE>(forced_opening),
             &board_state.board,
             moves_state.disks_played,
             &g_book,
@@ -532,7 +532,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         Thor::database_search(&board_state.board, side_to_move);
         if Thor::get_match_count() >= threshold {
             let game_index =
-                ((crate::src::zebra::random_instance.my_random() >> 8 as i32) %
+                ((random_instance.my_random() >> 8 as i32) %
                     Thor::get_match_count() as i64) as i32;
             curr_move = Thor::get_thor_game_move(game_index, moves_state.disks_played);
             if valid_move(curr_move, side_to_move, &board_state.board) != 0 {
@@ -842,7 +842,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
    COMPUTE_MOVE
    Returns the best move in a position given search parameters.
 */
-pub unsafe fn compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, Thor: ThorDatabase>(
+pub fn compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, Thor: ThorDatabase>(
     side_to_move: i32,
     update_all: i32,
     my_time: i32,
@@ -922,8 +922,8 @@ pub struct ForcedOpening {
     pub moves: [i32; 60],
 }
 impl ForcedOpening {
-    pub unsafe fn from_ptr<FE: FrontEnd>(opening: *const i8) -> Self {
-        let opening = CStr::from_ptr(opening).to_bytes();
+    pub fn from_c_str<FE: FrontEnd>(opening: &CStr) -> Self {
+        let opening = opening.to_bytes();
         let mut i = 0;
         let mut move_0: [i32; 60] = [0; 60];
         let move_count_0 = opening.len().wrapping_div(2) as i32;
