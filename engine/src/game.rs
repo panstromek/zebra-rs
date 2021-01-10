@@ -281,13 +281,13 @@ pub fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &mut i32
 
 
 pub trait FileBoardSource : BoardSource {
-    unsafe fn open(file_name: *const i8) -> Option<Self> where Self: Sized;
+    fn open(file_name: &CStr) -> Option<Self> where Self: Sized;
 }
 
 pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32) {
     board_state.board = create_fresh_board();
     assert!(!file_name.is_null());
-    match S::open(file_name) {
+    match S::open(CStr::from_ptr(file_name)) {
         Some(file_source) => process_board_source::<_, FE>(side_to_move, file_source, &mut board_state),
         None => {
             FE::cannot_open_game_file(CStr::from_ptr(file_name).to_str().unwrap());
