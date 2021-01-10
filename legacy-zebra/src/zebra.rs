@@ -1113,7 +1113,6 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                        confidence: 0.,
                        search_depth: 0,
                        is_book: 0,};
-    let mut opening_name = 0 as *const i8;
     let mut move_start: f64 = 0.;
     let mut move_stop: f64 = 0.;
     let mut i: i32 = 0;
@@ -1225,10 +1224,10 @@ unsafe fn analyze_game(mut move_string: *const i8) {
                               i32,
                           floor(config.player_time[2]) as
                               i32);
-                opening_name = find_opening_name( &mut g_book, &board_state.board);
-                if !opening_name.is_null() {
+                let opening_name = find_opening_name( &mut g_book, &board_state.board);
+                if let Some(opening_name) = opening_name {
                     printf(b"\nOpening: %s\n\x00" as *const u8 as
-                               *const i8, opening_name);
+                               *const i8, CStr::from_bytes_with_nul(opening_name).unwrap().as_ptr());
                 }
                 display_board(stdout, &board_state.board, side_to_move,
                               1, config.use_timer, 1,

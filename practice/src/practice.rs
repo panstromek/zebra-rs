@@ -13,6 +13,7 @@ use legacy_zebra::src::zebra::{board_state, game_state, moves_state, search_stat
 use legacy_zebra::src::zebra::{g_book, g_config, hash_state};
 use legacy_zebra::src::zebra::flip_stack_;
 use libc_wrapper::_IO_FILE;
+use std::ffi::CStr;
 
 extern "C" {
     static mut stdout: *mut FILE;
@@ -103,10 +104,10 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         let mut orientation: i32 = 0;
         set_move_list(board_state.black_moves.as_mut_ptr(), board_state.white_moves.as_mut_ptr(),
                       board_state.score_sheet_row);
-        opening_name = find_opening_name( &mut g_book, &board_state.board);
-        if !opening_name.is_null() {
+        let opening_name = find_opening_name( &mut g_book, &board_state.board);
+        if let Some(opening_name) = opening_name {
             printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8,
-                   opening_name);
+                   CStr::from_bytes_with_nul(opening_name).unwrap().as_ptr());
         }
         let val0___ = &mut val0;
         let val1___ = &mut val1;
