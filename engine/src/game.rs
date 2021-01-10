@@ -6,22 +6,22 @@ use flip::unflip::flip_stack_;
 use crate::src::counter::{add_counter, adjust_counter, counter_value, reset_counter};
 use crate::src::end::{End, end_game, setup_end};
 use crate::src::error::FrontEnd;
-use crate::src::getcoeff::{clear_coeffs, coeff_state, CoeffAdjustments, eval_adjustment, init_coeffs_calculate_terminal_patterns, post_init_coeffs, process_coeffs_from_fn_source, remove_coeffs};
-use crate::src::globals::{Board, board_state as g_board_state, BoardState};
-use crate::src::hash::{determine_hash_values, find_hash, hash_state, HashEntry};
+use crate::src::getcoeff::{clear_coeffs, CoeffAdjustments, eval_adjustment, init_coeffs_calculate_terminal_patterns, post_init_coeffs, process_coeffs_from_fn_source, remove_coeffs};
+use crate::src::globals::{Board, BoardState};
+use crate::src::hash::{determine_hash_values, find_hash, HashEntry};
 use crate::src::midgame::{calculate_perturbation, middle_game, MidgameState, setup_midgame};
-use crate::src::moves::{generate_all, make_move, moves_state, valid_move};
-use crate::src::myrandom::random_instance;
-use crate::src::osfbook::{check_forced_opening, clear_osf, fill_move_alternatives, g_book, get_book_move};
-use crate::src::probcut::{init_probcut, prob_cut};
-use crate::src::search::{complete_pv, create_eval_info, disc_count, float_move, force_return, search_state, setup_search, sort_moves};
-use crate::src::stable::{init_stable, stable_state};
+use crate::src::moves::{generate_all, make_move, valid_move};
+use crate::src::osfbook::{check_forced_opening, clear_osf, fill_move_alternatives, get_book_move};
+use crate::src::probcut::init_probcut;
+use crate::src::search::{complete_pv, create_eval_info, disc_count, float_move, force_return, setup_search, sort_moves};
+use crate::src::stable::init_stable;
 use crate::src::stubs::abs;
 use crate::src::thordb::ThorDatabase;
-use crate::src::timer::{g_timer, time_t};
+use crate::src::timer::time_t;
+use crate::src::zebra::{g_book, prob_cut, random_instance, search_state};
+use crate::src::zebra::{board_state as g_board_state, coeff_state, end_g, EvaluationType, g_timer, game_state, hash_state, midgame_state, moves_state, stable_state};
 use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{EXACT_EVAL, FORCED_EVAL, INTERRUPTED_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL, WLD_EVAL};
-use crate::src::zebra::EvaluationType;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -61,29 +61,18 @@ pub struct GameState {
     endgame_performed: [i32; 3],
 }
 
-pub static mut game_state: GameState = GameState {
-    forced_opening: 0 as *const i8,
-    last_time_used: 0.,
-    max_depth_reached: 0,
-    play_human_openings: 1,
-    komi: 0,
-    endgame_performed: [0; 3],
-};
-pub static mut midgame_state: MidgameState = MidgameState {
-    allow_midgame_hash_probe: 0,
-    allow_midgame_hash_update: 0,
-    best_mid_move: 0,
-    best_mid_root_move: 0,
-    midgame_abort: 0,
-    do_check_midgame_abort: 1,
-    counter_phase: 0,
-    apply_perturbation: 1,
-    perturbation_amplitude: 0,
-    stage_reached: [0; 62],
-    stage_score: [0; 62],
-    score_perturbation: [0; 100],
-    feas_index_list: [[0; 64]; 64],
-};
+impl GameState {
+    pub const fn new() -> Self {
+        GameState {
+            forced_opening: 0 as *const i8,
+            last_time_used: 0.,
+            max_depth_reached: 0,
+            play_human_openings: 1,
+            komi: 0,
+            endgame_performed: [0; 3],
+        }
+    }
+}
 /*
   TOGGLE_THOR_MATCH_OPENINGS
   Specifies whether matching Thor games are used as opening book
@@ -476,7 +465,7 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
         Thor::database_search(&board_state.board, side_to_move);
         if Thor::get_match_count() >= threshold {
             let game_index =
-                ((crate::src::myrandom::random_instance.my_random() >> 8 as i32) %
+                ((crate::src::zebra::random_instance.my_random() >> 8 as i32) %
                     Thor::get_match_count() as i64) as i32;
             curr_move = Thor::get_thor_game_move(game_index, moves_state.disks_played);
             if valid_move(curr_move, side_to_move, &board_state.board) != 0 {
@@ -856,5 +845,3 @@ impl ForcedOpening {
         }
     }
 }
-
-pub static mut end_g: End = End::new();

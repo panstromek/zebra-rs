@@ -1,39 +1,39 @@
 #![allow(dead_code, non_camel_case_types, non_snake_case,
          non_upper_case_globals, unused_assignments, unused_mut)]
 
-use std::process::exit;
-use std::ptr::null_mut;
-use engine::src::game::{generic_game_init, global_terminate, game_state};
-use crate::src::game::{LibcBoardFileSource, LibcZebraOutput, LogFileHandler, compute_move, global_setup, toggle_status_log};
-use crate::src::learn::{LibcLearner, init_learn};
-use crate::src::thordb::{read_game_database, read_tournament_database, read_player_database, print_thor_matches, LegacyThor, get_total_game_count, choose_thor_opening_move, get_thor_game_size, init_thor_database};
-use crate::src::error::{LibcFatalError, FE, fatal_error};
-use engine::src::error::{FrontEnd, FatalError};
-use libc_wrapper::{fclose, fputs, fprintf, fopen, fputc, puts, printf, strstr, sscanf, feof, fgets, atoi, scanf, sprintf, ctime, time, strchr, strcasecmp, atof, stdout, strlen};
-use engine::src::globals::{board_state};
-use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType, adjust_counter};
-use engine::src::timer::{g_timer};
-use engine::src::search::{disc_count, produce_compact_eval, search_state};
-use crate::src::display::{display_move, display_board, dumpch, set_names, set_move_list, set_evals, set_times, toggle_smart_buffer_management, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
-use engine::src::moves::{make_move, game_in_progress, moves_state, generate_all, valid_move, unmake_move};
-use engine::src::hash::{setup_hash, hash_state};
-use engine::src::osfbook::{set_deviation_value, reset_book_search, find_opening_name, g_book};
-use engine::src::stubs::floor;
-use engine::src::getcoeff::{remove_coeffs, coeff_state};
-use engine::src::myrandom::{random_instance};
-use crate::src::osfbook::print_move_alternatives;
-use engine::src::zebra::{set_default_engine_globals, DumpHandler, EvaluationType, ZebraFrontend, engine_play_game, InitialMoveSource, Config, INITIAL_CONFIG, learn_state};
-use libc_wrapper::{FILE, time_t};
-use engine::src::myrandom;
-use flip::unflip;
-use engine::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION};
-use engine::src::zebra::EvalType::MIDGAME_EVAL;
-use engine::src::zebra::DrawMode::{OPPONENT_WINS, WHITE_WINS, BLACK_WINS, NEUTRAL};
-use engine::src::zebra::GameMode::{PUBLIC_GAME, PRIVATE_GAME};
-use flip::unflip::flip_stack_;
-use std::ffi::{CString, CStr};
+use std::ffi::{CStr, CString};
 use std::fs::File;
 use std::io::Read;
+use std::process::exit;
+use std::ptr::null_mut;
+
+use engine::src::counter::{add_counter, adjust_counter, counter_value, CounterType, reset_counter};
+use engine::src::error::{FatalError, FrontEnd};
+use engine::src::game::{generic_game_init, global_terminate};
+use engine::src::getcoeff::remove_coeffs;
+use engine::src::hash::{setup_hash};
+use engine::src::moves::{game_in_progress, generate_all, make_move, unmake_move, valid_move};
+use engine::src::zebra::{random_instance, g_book, search_state};
+use engine::src::myrandom;
+use engine::src::osfbook::{find_opening_name, reset_book_search, set_deviation_value};
+use engine::src::search::{disc_count, produce_compact_eval};
+use engine::src::stubs::floor;
+use engine::src::zebra::{board_state, coeff_state, Config, DumpHandler, engine_play_game, EvaluationType, g_timer, game_state, INITIAL_CONFIG, InitialMoveSource, learn_state, moves_state, set_default_engine_globals, ZebraFrontend, hash_state};
+use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WINS};
+use engine::src::zebra::EvalResult::{LOST_POSITION, WON_POSITION};
+use engine::src::zebra::EvalType::MIDGAME_EVAL;
+use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
+use flip::unflip;
+use flip::unflip::flip_stack_;
+use libc_wrapper::{atof, atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time};
+use libc_wrapper::{FILE, time_t};
+
+use crate::src::display::{black_eval, black_player, black_time, current_row, display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, white_eval, white_player, white_time};
+use crate::src::error::{fatal_error, FE, LibcFatalError};
+use crate::src::game::{compute_move, global_setup, LibcBoardFileSource, LibcZebraOutput, LogFileHandler, toggle_status_log};
+use crate::src::learn::{init_learn, LibcLearner};
+use crate::src::osfbook::print_move_alternatives;
+use crate::src::thordb::{choose_thor_opening_move, get_thor_game_size, get_total_game_count, init_thor_database, LegacyThor, print_thor_matches, read_game_database, read_player_database, read_tournament_database};
 
 pub static mut g_config: Config = INITIAL_CONFIG;
 /* ------------------- Function prototypes ---------------------- */

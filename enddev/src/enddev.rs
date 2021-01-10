@@ -2,24 +2,23 @@
 non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, label_break_value, register_tool)]
 
-use engine::src::moves::{moves_state, make_move, generate_all, valid_move};
-use engine::src::globals::{board_state};
-use engine::src::myrandom::{random_instance};
-use engine::src::game::{EvaluatedMove};
-use engine::src::zebra::{EvaluationType};
-use engine::src::hash::{setup_hash, hash_state, determine_hash_values};
-use engine::src::search::{disc_count, search_state};
-use legacy_zebra::src::display::{display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row};
-use legacy_zebra::src::game::{extended_compute_move, compute_move, game_init, global_setup, get_evaluated, get_evaluated_count};
-use legacy_zebra::src::learn::init_learn;
-use legacy_zebra::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
-use libc_wrapper::_IO_FILE;
+use engine::src::game::EvaluatedMove;
+use engine::src::hash::{determine_hash_values, setup_hash};
+use engine::src::moves::{generate_all, make_move, valid_move};
+use engine::src::zebra::{random_instance, search_state};
+use engine::src::search::{disc_count};
+use engine::src::zebra::{board_state, EvaluationType, moves_state, hash_state};
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
-use legacy_zebra::src::zebra::g_config;
-use engine::src::timer::g_timer;
+use engine::src::zebra::g_timer;
 use flip::unflip::flip_stack_;
+use legacy_zebra::src::display::{black_eval, black_player, black_time, current_row, display_board, white_eval, white_player, white_time};
+use legacy_zebra::src::error::{FE, LibcFatalError};
+use legacy_zebra::src::game::{compute_move, extended_compute_move, game_init, get_evaluated, get_evaluated_count, global_setup};
+use legacy_zebra::src::learn::init_learn;
+use legacy_zebra::src::zebra::g_config;
+use libc_wrapper::_IO_FILE;
 
 extern "C" {
     fn __assert_fail(__assertion: *const i8,
@@ -306,7 +305,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 if moves_state.disks_played >= first_allowed_dev &&
                     moves_state.disks_played <= latest_dev &&
                     (0.0001f64 *
-                        ((engine::src::myrandom::random_instance.my_random() >> 9 as i32) %
+                        ((engine::src::zebra::random_instance.my_random() >> 9 as i32) %
                             10000 as i32 as i64) as
                             f64) < rand_prob {
                     let mut i_0: i32 = 0;
@@ -389,7 +388,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         }
                     }
                     rand_val =
-                        ((engine::src::myrandom::random_instance.my_random() >> 4 as i32) %
+                        ((engine::src::zebra::random_instance.my_random() >> 4 as i32) %
                             (total_prob + 1 as i32) as i64)
                             as i32;
                     accum_prob = 0;

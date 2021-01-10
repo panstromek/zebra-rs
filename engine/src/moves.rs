@@ -1,13 +1,16 @@
-use crate::src::cntflip::AnyFlips_compact;
-use crate::src::globals::{board_state, Board, BoardState};
-use crate::src::hash::{hash_state, HashState};
-use crate::src::search::{search_state, SearchState};
-use crate::src::zebra::ZebraFrontend;
-use std::future::Future;
-use flip::unflip::{flip_stack_, FlipStack};
-use flip::doflip::{DoFlips_no_hash, DoFlips_hash};
 use std::error::Error;
+use std::future::Future;
+
 use engine_traits::Offset;
+use flip::doflip::{DoFlips_hash, DoFlips_no_hash};
+use flip::unflip::{flip_stack_, FlipStack};
+
+use crate::src::cntflip::AnyFlips_compact;
+use crate::src::globals::{Board, BoardState};
+use crate::src::hash::{HashState};
+use crate::src::search::{SearchState};
+use crate::src::zebra::{board_state, ZebraFrontend, hash_state, search_state};
+
 /*
    File:              moves.c
 
@@ -27,14 +30,17 @@ pub struct MovesState {
     flip_count: [i32; 65],
     sweep_status: [i32; 64],
 }
-
-pub static mut moves_state: MovesState = MovesState {
-    disks_played: 0,
-    move_count: [0; 64],
-    move_list: [[0; 64]; 64],
-    flip_count: [0; 65],
-    sweep_status: [0; 64],
-};
+impl MovesState {
+    pub const fn new() -> Self {
+        MovesState {
+            disks_played: 0,
+            move_count: [0; 64],
+            move_list: [[0; 64]; 64],
+            flip_count: [0; 65],
+            sweep_status: [0; 64],
+        }
+    }
+}
 
 pub static flip_direction: [[i32; 16]; 100] = init_flip_direction();
 

@@ -36,22 +36,23 @@ pub struct BoardState {
     pub board: Board,
 }
 
-pub static mut board_state: BoardState = BoardState {
-    pv: [[0; 64]; 64],
-    pv_depth: [0; 64],
-    score_sheet_row: 0,
-    piece_count: [[0; 64]; 3],
-    black_moves: [0; 60],
-    white_moves: [0; 60],
-    board: [0; 128],
-};
-
 pub struct PieceCounts {
     pub my_discs: i32,
     pub opp_discs: i32,
 }
 
 impl BoardState {
+    pub const fn new() -> Self {
+        BoardState {
+            pv: [[0; 64]; 64],
+            pv_depth: [0; 64],
+            score_sheet_row: 0,
+            piece_count: [[0; 64]; 3],
+            black_moves: [0; 60],
+            white_moves: [0; 60],
+            board: [0; 128],
+        }
+    }
     pub fn get_piece_counts(&self, side_to_move: i32, disks_played: i32) -> PieceCounts {
         let my_discs = self.piece_count[side_to_move as usize][disks_played as usize];
         let opp_discs = self.piece_count[(2 - side_to_move) as usize][disks_played as usize];

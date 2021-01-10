@@ -1,12 +1,12 @@
-use engine::src::game::{end_g, generic_game_init};
-use engine::src::globals::board_state;
-use engine::src::hash::hash_state;
+use engine::src::game::generic_game_init;
+use engine::src::zebra::board_state;
+use engine::src::zebra::hash_state;
 use engine::src::learn::Learner;
-use engine::src::moves::{generate_all, make_move, moves_state};
-use engine::src::osfbook::g_book;
-use engine::src::search::search_state;
-use engine::src::timer::g_timer;
-use engine::src::zebra::learn_state;
+use engine::src::moves::{generate_all, make_move};
+use engine::src::zebra::g_book;
+use engine::src::zebra::search_state;
+use engine::src::zebra::{g_timer, moves_state};
+use engine::src::zebra::{end_g, learn_state};
 use flip::unflip::flip_stack_;
 use libc_wrapper::{fclose, fopen, fprintf, fputs, strcpy};
 

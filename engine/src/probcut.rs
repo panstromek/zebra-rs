@@ -1,7 +1,8 @@
 use crate::src::epcstat::END_STATS_AVAILABLE;
-use crate::src::pcstat::MID_CORR;
 use crate::src::midgame::DepthInfo;
+use crate::src::pcstat::MID_CORR;
 use crate::src::stubs::floor;
+
 /*
    File:          probcut.c
 
@@ -19,11 +20,15 @@ pub struct ProbCut {
     pub mpc_cut: [DepthInfo; 23],
 }
 
-pub static mut prob_cut: ProbCut = ProbCut {
-    use_end_cut: [0; 61],
-    end_mpc_depth: [[0; 4]; 61],
-    mpc_cut: [DepthInfo { cut_tries: 0, cut_depth: [0; 2], bias: [[0; 61]; 2], window: [[0; 61]; 2] }; 23],
-};
+impl ProbCut {
+    pub const fn new() -> Self {
+        ProbCut {
+            use_end_cut: [0; 61],
+            end_mpc_depth: [[0; 4]; 61],
+            mpc_cut: [DepthInfo { cut_tries: 0, cut_depth: [0; 2], bias: [[0; 61]; 2], window: [[0; 61]; 2] }; 23],
+        }
+    }
+}
 
 /*
    SET_END_PROBCUT

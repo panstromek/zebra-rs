@@ -150,5 +150,3 @@ impl MyRandom {
         i
     }
 }
-
-pub static mut random_instance: MyRandom = MyRandom::new();

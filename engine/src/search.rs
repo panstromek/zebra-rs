@@ -1,12 +1,12 @@
-use crate::src::globals::{Board, board_state, BoardState};
-use crate::src::counter::CounterType;
-use crate::src::zebra::{EvaluationType, EvalResult, EvalType};
-use crate::src::moves::{make_move, moves_state, unmake_move, MovesState};
-use crate::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values, HashState};
-use crate::src::error::FrontEnd;
-use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, UNSOLVED_POSITION};
-use crate::src::zebra::EvalType::{MIDGAME_EVAL, UNINITIALIZED_EVAL};
 use flip::unflip::{flip_stack_, FlipStack};
+use crate::src::counter::CounterType;
+use crate::src::error::FrontEnd;
+use crate::src::globals::{Board, BoardState};
+use crate::src::hash::{determine_hash_values, find_hash, HashEntry, HashState};
+use crate::src::moves::{make_move, MovesState, unmake_move};
+use crate::src::zebra::{board_state, EvalResult, EvalType, EvaluationType, moves_state, hash_state};
+use crate::src::zebra::EvalResult::{LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
+use crate::src::zebra::EvalType::{MIDGAME_EVAL, UNINITIALIZED_EVAL};
 
 /*
    File:          search.c
@@ -39,22 +39,26 @@ pub struct SearchState {
     pub last_eval: EvaluationType,
 }
 
-pub static mut search_state: SearchState = SearchState {
-    total_time: 0.,
-    root_eval: 0,
-    full_pv_depth: 0,
-    full_pv: [0; 120],
-    list_inherited: [0; 62],
-    sorted_move_order: [[0; 64]; 64],
-    evals: [[0; 128]; 61],
-    nodes: CounterType { hi: 0, lo: 0 },
-    total_nodes: CounterType { hi: 0, lo: 0 },
-    evaluations: CounterType { hi: 0, lo: 0 },
-    total_evaluations: CounterType { hi: 0, lo: 0 },
-    pondered_move: 0,
-    negate_eval: 0,
-    last_eval: EvaluationType { type_0: MIDGAME_EVAL, res: WON_POSITION, score: 0, confidence: 0., search_depth: 0, is_book: 0 },
-};
+impl SearchState {
+    pub const fn new() -> Self {
+        Self {
+            total_time: 0.,
+            root_eval: 0,
+            full_pv_depth: 0,
+            full_pv: [0; 120],
+            list_inherited: [0; 62],
+            sorted_move_order: [[0; 64]; 64],
+            evals: [[0; 128]; 61],
+            nodes: CounterType { hi: 0, lo: 0 },
+            total_nodes: CounterType { hi: 0, lo: 0 },
+            evaluations: CounterType { hi: 0, lo: 0 },
+            total_evaluations: CounterType { hi: 0, lo: 0 },
+            pondered_move: 0,
+            negate_eval: 0,
+            last_eval: EvaluationType { type_0: MIDGAME_EVAL, res: WON_POSITION, score: 0, confidence: 0., search_depth: 0, is_book: 0 },
+        }
+    }
+}
 
 pub static force_return: i32 = 0;
 

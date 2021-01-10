@@ -1,8 +1,9 @@
-use crate::src::myrandom::{random_instance, MyRandom};
+use crate::src::myrandom::{MyRandom};
 use std::ffi::c_void;
 use crate::src::globals::Board;
 use engine_traits::Offset;
 use std::collections::hash_map::RandomState;
+use crate::src::zebra::random_instance;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -44,27 +45,30 @@ pub struct HashState {
     pub hash_color1: [u32; 3],
     pub hash_color2: [u32; 3],
 }
-
-pub static mut hash_state: HashState = HashState {
-    hash1: 0,
-    hash2: 0,
-    hash_put_value1: [[0; 128]; 3],
-    hash_put_value2: [[0; 128]; 3],
-    hash_flip1: [0; 128],
-    hash_flip2: [0; 128],
-    hash_flip_color1: 0,
-    hash_flip_color2: 0,
-    hash_stored1: [0; 64],
-    hash_stored2: [0; 64],
-    hash_mask: 0,
-    hash_trans1: 0,
-    hash_trans2: 0,
-    hash_table: Vec::new(),
-    hash_value1: [[0; 128]; 3],
-    hash_value2: [[0; 128]; 3],
-    hash_color1: [0; 3],
-    hash_color2: [0; 3],
-};
+impl HashState {
+    pub const fn new() -> Self {
+        HashState {
+            hash1: 0,
+            hash2: 0,
+            hash_put_value1: [[0; 128]; 3],
+            hash_put_value2: [[0; 128]; 3],
+            hash_flip1: [0; 128],
+            hash_flip2: [0; 128],
+            hash_flip_color1: 0,
+            hash_flip_color2: 0,
+            hash_stored1: [0; 64],
+            hash_stored2: [0; 64],
+            hash_mask: 0,
+            hash_trans1: 0,
+            hash_trans2: 0,
+            hash_table: Vec::new(),
+            hash_value1: [[0; 128]; 3],
+            hash_value2: [[0; 128]; 3],
+            hash_color1: [0; 3],
+            hash_color2: [0; 3],
+        }
+    }
+}
 
 /*
    DETERMINE_HASH_VALUES
