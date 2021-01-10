@@ -58,7 +58,6 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                  -> i32 {
     let mut book_name: *mut i8 = 0 as *mut i8;
     let mut buffer: *mut i8 = 0 as *mut i8;
-    let mut opening_name: *const i8 = 0 as *const i8;
     let mut move_string: [i8; 10] = [0; 10];
     let mut i: i32 = 0;
     let mut side_to_move: i32 = 0;
