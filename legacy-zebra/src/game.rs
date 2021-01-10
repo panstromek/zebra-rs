@@ -179,6 +179,7 @@ impl BoardSource for LibcBoardFileSource {
 */
 
 pub unsafe fn game_init(file_name: *const i8, side_to_move: &mut i32) {
+    let file_name = (!file_name.is_null()).then(|| CStr::from_ptr(file_name));
     generic_game_init::<LibcBoardFileSource, LibcFatalError>(file_name, side_to_move,   &mut flip_stack_,
                                                              &mut search_state,
                                                              &mut board_state,
