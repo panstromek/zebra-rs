@@ -1,10 +1,11 @@
-use flip::unflip::{FlipStack};
+use flip::unflip::FlipStack;
+
 use crate::src::counter::CounterType;
 use crate::src::error::FrontEnd;
 use crate::src::globals::{Board, BoardState};
 use crate::src::hash::{determine_hash_values, find_hash, HashEntry, HashState};
 use crate::src::moves::{make_move, MovesState, unmake_move};
-use crate::src::zebra::{board_state, EvalResult, EvalType, EvaluationType, moves_state, hash_state, flip_stack_};
+use crate::src::zebra::{EvalResult, EvalType, EvaluationType};
 use crate::src::zebra::EvalResult::{LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{MIDGAME_EVAL, UNINITIALIZED_EVAL};
 

@@ -12,7 +12,6 @@ use crate::src::globals::{Board, BoardState};
 use crate::src::globals;
 use crate::src::moves::MovesState;
 use crate::src::stubs::floor;
-use crate::src::zebra::{board_state, moves_state};
 
 pub struct CoeffAdjustments {
     pub disc_adjust: f64,

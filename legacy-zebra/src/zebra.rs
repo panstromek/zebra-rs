@@ -8,23 +8,30 @@ use std::process::exit;
 use std::ptr::null_mut;
 
 use engine::src::counter::{add_counter, adjust_counter, counter_value, CounterType, reset_counter};
+use engine::src::end::End;
 use engine::src::error::{FatalError, FrontEnd};
-use engine::src::game::{generic_game_init, global_terminate};
-use engine::src::getcoeff::remove_coeffs;
-use engine::src::hash::{setup_hash};
-use engine::src::moves::{game_in_progress, generate_all, make_move, unmake_move, valid_move};
-use engine::src::zebra::{random_instance, g_book, search_state, stable_state, midgame_state, end_g};
+use engine::src::game::{GameState, generic_game_init, global_terminate};
+use engine::src::getcoeff::{CoeffState, remove_coeffs};
+use engine::src::globals::BoardState;
+use engine::src::hash::{HashState, setup_hash};
+use engine::src::learn::LearnState;
+use engine::src::midgame::MidgameState;
+use engine::src::moves::{game_in_progress, generate_all, make_move, MovesState, unmake_move, valid_move};
 use engine::src::myrandom;
-use engine::src::osfbook::{find_opening_name, reset_book_search, set_deviation_value};
-use engine::src::search::{disc_count, produce_compact_eval};
+use engine::src::myrandom::MyRandom;
+use engine::src::osfbook::{Book, find_opening_name, reset_book_search, set_deviation_value};
+use engine::src::probcut::ProbCut;
+use engine::src::search::{disc_count, produce_compact_eval, SearchState};
+use engine::src::stable::StableState;
 use engine::src::stubs::floor;
-use engine::src::zebra::{board_state, coeff_state, Config, DumpHandler, engine_play_game, EvaluationType, g_timer, game_state, INITIAL_CONFIG, InitialMoveSource, learn_state, moves_state, set_default_engine_globals, ZebraFrontend, hash_state};
+use engine::src::timer::Timer;
+use engine::src::zebra::{Config, DumpHandler, engine_play_game, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend};
 use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WINS};
 use engine::src::zebra::EvalResult::{LOST_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 use flip::unflip;
-use engine::src::zebra::flip_stack_;
+use flip::unflip::FlipStack;
 use libc_wrapper::{atof, atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time};
 use libc_wrapper::{FILE, time_t};
 
@@ -808,7 +815,22 @@ unsafe fn play_game(mut file_name: *const i8,
 
     engine_play_game
         ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner, LibcFatalError, LegacyThor>
-        (file_name, move_string, repeat, log_file_name_, move_file, use_thor_, use_learning_, &mut g_config)
+        (file_name, move_string, repeat, log_file_name_, move_file, use_thor_, use_learning_, &mut g_config
+         ,&mut learn_state
+    ,&mut midgame_state
+    ,&mut game_state
+    ,&mut end_g
+    ,&mut coeff_state
+    ,&mut g_timer
+    ,&mut moves_state
+    ,&mut stable_state
+    ,&mut board_state
+    ,&mut hash_state
+    ,&mut random_instance
+    ,&mut g_book
+    ,&mut prob_cut
+    ,&mut search_state
+    ,&mut flip_stack_)
 }
 
 struct LibcFrontend {} //TODO this could probably be merged with the FrontEnd trait or something
@@ -1877,3 +1899,19 @@ pub fn main() {
                                         *mut *mut i8) as i32)
     }
 }
+
+pub static mut learn_state: LearnState = LearnState::new();
+pub static mut midgame_state: MidgameState = MidgameState::new();
+pub static mut game_state: GameState = GameState::new();
+pub static mut end_g: End = End::new();
+pub static mut coeff_state: CoeffState = CoeffState::new();
+pub static mut g_timer: Timer = Timer::new();
+pub static mut moves_state: MovesState = MovesState::new();
+pub static mut stable_state: StableState = StableState::new();
+pub static mut board_state: BoardState = BoardState ::new();
+pub static mut hash_state: HashState = HashState::new();
+pub static mut random_instance: MyRandom = MyRandom::new();
+pub static mut g_book: Book = Book::new();
+pub static mut prob_cut: ProbCut = ProbCut::new();
+pub static mut search_state: SearchState = SearchState::new();
+pub static mut flip_stack_: FlipStack = FlipStack::new();

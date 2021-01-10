@@ -3,7 +3,7 @@ use std::ffi::CStr;
 use std::future::Future;
 
 use engine_traits::Offset;
-use flip::unflip::{FlipStack};
+use flip::unflip::FlipStack;
 
 use crate::src::counter::{adjust_counter, counter_value};
 use crate::src::end::End;
@@ -125,12 +125,6 @@ pub const INITIAL_CONFIG: Config = Config {
     display_pv: 0,
 };
 
-pub static mut learn_state: LearnState = LearnState {
-    learn_depth: 0,
-    cutoff_empty: 0,
-    game_move: [0; 61],
-};
-
 
 pub fn set_default_engine_globals(config: &mut Config) {
     config.wait = 0;
@@ -199,7 +193,24 @@ pub unsafe fn engine_play_game<
     Thor: ThorDatabase
 >(file_name: *const i8, mut move_string: *const i8,
   mut repeat: i32, log_file_name_: *mut i8,
-  mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool, config: &mut Config) {
+  mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool, config: &mut Config
+  ,mut learn_state: &mut LearnState
+  ,mut midgame_state: &mut MidgameState
+  ,mut game_state: &mut GameState
+  ,mut end_g: &mut End
+  ,mut coeff_state: &mut CoeffState
+  ,mut g_timer: &mut Timer
+  ,mut moves_state: &mut MovesState
+  ,mut stable_state: &mut StableState
+  ,mut board_state: &mut BoardState
+  ,mut hash_state: &mut HashState
+  ,mut random_instance: &mut MyRandom
+  ,mut g_book: &mut Book
+  ,mut prob_cut: &mut ProbCut
+  ,mut search_state: &mut SearchState
+  ,mut flip_stack_: &mut FlipStack
+
+) {
     let echo = config.echo;
     let mut eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,
@@ -546,39 +557,3 @@ fn clear_moves(state: &mut BoardState) {
     state.black_moves = [-1; 60];
     state.white_moves = [-1; 60];
 }
-
-pub static mut midgame_state: MidgameState = MidgameState {
-    allow_midgame_hash_probe: 0,
-    allow_midgame_hash_update: 0,
-    best_mid_move: 0,
-    best_mid_root_move: 0,
-    midgame_abort: 0,
-    do_check_midgame_abort: 1,
-    counter_phase: 0,
-    apply_perturbation: 1,
-    perturbation_amplitude: 0,
-    stage_reached: [0; 62],
-    stage_score: [0; 62],
-    score_perturbation: [0; 100],
-    feas_index_list: [[0; 64]; 64],
-};
-
-pub static mut game_state: GameState = GameState::new();
-
-pub static mut end_g: End = End::new();
-pub static mut coeff_state: CoeffState = CoeffState::new();
-pub static mut g_timer: Timer = Timer::new();
-pub static mut moves_state: MovesState = MovesState::new();
-pub static mut stable_state: StableState = StableState::new();
-
-pub static mut board_state: BoardState = BoardState ::new();
-pub static mut hash_state: HashState = HashState::new();
-
-pub static mut random_instance: MyRandom = MyRandom::new();
-
-pub static mut g_book: Book = Book::new();
-pub static mut prob_cut: ProbCut = ProbCut::new();
-
-pub static mut search_state: SearchState = SearchState::new();
-
-pub static mut flip_stack_: FlipStack = FlipStack::new();

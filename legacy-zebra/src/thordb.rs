@@ -17,7 +17,7 @@ use thor_opening_list::THOR_OPENING_LIST;
 use engine_traits::Offset;
 use engine::src::patterns::pow3;
 use engine::src::thordb::ThorDatabase;
-use engine::src::zebra::random_instance;
+use crate::src::zebra::random_instance;
 
 /* Local variables */
 pub static mut thor_game_count: i32 = 0;
@@ -2097,7 +2097,7 @@ unsafe fn init_thor_hash() {
     while i < 8 as i32 {
         j = 0;
         while j < 6561 as i32 {
-            buffer[j as usize] = abs(engine::src::zebra::random_instance.my_random() as i32);
+            buffer[j as usize] = abs(crate::src::zebra::random_instance.my_random() as i32);
             j += 1
         }
         j = 0;
@@ -2112,7 +2112,7 @@ unsafe fn init_thor_hash() {
         }
         j = 0;
         while j < 6561 as i32 {
-            buffer[j as usize] = abs(engine::src::zebra::random_instance.my_random() as i32);
+            buffer[j as usize] = abs(crate::src::zebra::random_instance.my_random() as i32);
             j += 1
         }
         j = 0;
@@ -2710,7 +2710,7 @@ pub unsafe fn choose_thor_opening_move(in_board:
     while i < 8 as i32 { symmetries[i as usize] = i; i += 1 }
     i = 0;
     while i < 7 as i32 {
-        j = i + abs(engine::src::zebra::random_instance.my_random() as i32) % (8 as i32 - i);
+        j = i + abs(crate::src::zebra::random_instance.my_random() as i32) % (8 as i32 - i);
         temp_symm = symmetries[i as usize];
         symmetries[i as usize] = symmetries[j as usize];
         symmetries[j as usize] = temp_symm;

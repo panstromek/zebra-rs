@@ -2,24 +2,19 @@ use engine::src::counter::reset_counter;
 use engine::src::end::end_game;
 use engine::src::error::FrontEnd;
 use engine::src::game::{engine_game_init, setup_non_file_based_game};
-use engine::src::getcoeff::{remove_coeffs};
-use engine::src::zebra::{board_state, hash_state, random_instance, g_book, search_state, game_state};
+use engine::src::getcoeff::remove_coeffs;
 use engine::src::hash::{clear_hash_drafts, determine_hash_values, setup_hash};
 use engine::src::midgame::{middle_game, tree_search};
 use engine::src::moves::{generate_all, generate_specific, make_move, make_move_no_hash, unmake_move, unmake_move_no_hash};
-use engine::src::myrandom::{MyRandom};
+use engine::src::myrandom::MyRandom;
 use engine::src::osfbook::{__time_t, _ISgraph, _ISprint, _ISspace, _ISupper, adjust_score, Book, BOOK_MAPS, BookNode, clear_node_depth, fill_move_alternatives, get_hash, get_node_depth, probe_hash_table, reset_book_search, set_node_depth, size_t};
-use engine::src::zebra::prob_cut;
-use engine::src::search::{disc_count};
-use engine::src::zebra::stable_state;
+use engine::src::search::disc_count;
 use engine::src::stubs::{abs, floor};
-use engine::src::zebra::{g_timer, moves_state};
-use engine::src::zebra::{end_g, EvaluationType, midgame_state, coeff_state};
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
+use engine::src::zebra::EvaluationType;
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
-use engine::src::zebra::flip_stack_;
 use libc_wrapper::{__ctype_b_loc, ctime, exit, fclose, feof, fflush, fgets, FILE, fopen, fprintf, fputc, fputs, fread, free, fscanf, fwrite, malloc, printf, putc, puts, qsort, sprintf, sscanf, stderr, stdout, strcmp, strcpy, strlen, strstr, time, toupper};
 
 use crate::{
@@ -31,7 +26,10 @@ use crate::{
 use crate::src::display::{black_eval, black_player, black_time, current_row, display_board, white_eval, white_player, white_time};
 use crate::src::error::LibcFatalError;
 use crate::src::safemem::safe_malloc;
-use crate::src::zebra::g_config;
+use crate::src::zebra::{coeff_state, end_g, g_timer, midgame_state, moves_state, prob_cut};
+use crate::src::zebra::{board_state, g_book, g_config, game_state, hash_state, random_instance, search_state};
+use crate::src::zebra::flip_stack_;
+use crate::src::zebra::stable_state;
 
 pub type FE = LibcFatalError;
 static mut correction_script_name: *const i8 = 0 as *const i8;
@@ -2730,7 +2728,7 @@ unsafe fn do_midgame_statistics(index: i32,
     generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
     /* With a certain probability, search the position to a variety
      of different depths in order to determine correlations. */
-    if ((engine::src::zebra::random_instance.my_random() % 1000 as i32 as i64) as f64)
+    if ((crate::src::zebra::random_instance.my_random() % 1000 as i32 as i64) as f64)
         < 1000.0f64 * spec.prob &&
         abs((*g_book.node.offset(index as isize)).black_minimax_score as
             i32) < spec.max_diff {
@@ -2865,7 +2863,7 @@ pub unsafe fn generate_midgame_statistics(max_depth:
     spec.max_depth = max_depth;
     spec.out_file_name = statistics_file_name;
     let x = start_time as i32;
-    engine::src::zebra::random_instance.my_srandom(x);
+    crate::src::zebra::random_instance.my_srandom(x);
     do_midgame_statistics(0 as i32, spec, g_config.echo);
     time(&mut stop_time);
     printf(b"\nDone (took %d s)\n\x00" as *const u8 as *const i8,
@@ -2905,8 +2903,8 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                   white_player, white_time, white_eval,
                   &board_state.black_moves, &board_state.white_moves
     );
-    hash_state.set_hash_transformation(abs(engine::src::zebra::random_instance.my_random() as i32) as u32,
-                                       abs(engine::src::zebra::random_instance.my_random() as i32) as u32);
+    hash_state.set_hash_transformation(abs(crate::src::zebra::random_instance.my_random() as i32) as u32,
+                                       abs(crate::src::zebra::random_instance.my_random() as i32) as u32);
     determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
     depth = 1;
     while depth <= spec.max_depth {
@@ -3026,7 +3024,7 @@ unsafe fn do_endgame_statistics(index: i32,
     /* With a certain probability, search the position to a variety
      of different depths in order to determine correlations. */
     if moves_state.disks_played == 33 as i32 &&
-        ((engine::src::zebra::random_instance.my_random() % 1000 as i32 as i64) as
+        ((crate::src::zebra::random_instance.my_random() % 1000 as i32 as i64) as
             f64) < 1000.0f64 * spec.prob {
         setup_hash(0 as i32, &mut hash_state, &mut  random_instance);
         determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
@@ -3125,7 +3123,7 @@ pub unsafe fn generate_endgame_statistics(max_depth:
     spec.max_depth = max_depth;
     spec.out_file_name = statistics_file_name;
     let x = start_time as i32;
-    engine::src::zebra::random_instance.my_srandom(x);
+    crate::src::zebra::random_instance.my_srandom(x);
     do_endgame_statistics(0 as i32, spec, g_config.echo);
     time(&mut stop_time);
     printf(b"\nDone (took %d s)\n\x00" as *const u8 as *const i8,
@@ -4673,7 +4671,7 @@ pub unsafe fn do_minimax(index: i32,
 
 pub unsafe fn engine_init_osf<FE: FrontEnd>() {
     init_maps::<FE>(); //FIXME why is this not called from zebra everytime in the engine?????
-    prepare_hash(&mut g_book, &mut engine::src::zebra::random_instance);
+    prepare_hash(&mut g_book, &mut crate::src::zebra::random_instance);
     setup_hash(1 as i32, &mut hash_state, &mut random_instance);
     init_book_tree(&mut g_book);
     reset_book_search(&mut g_book);

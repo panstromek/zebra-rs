@@ -17,6 +17,13 @@ pub struct LearnState {
 */
 
 impl LearnState {
+    pub const fn new() -> Self {
+        LearnState {
+            learn_depth: 0,
+            cutoff_empty: 0,
+            game_move: [0; 61],
+        }
+    }
     /*
        CLEAR_STORED_GAME
        Remove all stored moves.

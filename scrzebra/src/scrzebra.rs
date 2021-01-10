@@ -2,24 +2,23 @@
 non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types)]
 
-use engine::src::game::{global_terminate};
-use legacy_zebra::src::thordb::init_thor_database;
-use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
-use engine::src::search::{disc_count};
-use engine::src::zebra::{moves_state, hash_state, random_instance, g_book, search_state, coeff_state};
-use engine::src::zebra::board_state;
-use engine::src::hash::{setup_hash};
-use engine::src::osfbook::{set_deviation_value, reset_book_search};
-use legacy_zebra::src::learn::init_learn;
-use legacy_zebra::src::game::{global_setup, compute_move, game_init, toggle_status_log};
-use legacy_zebra::src::display::{display_move, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_evals, set_names};
-use engine::src::zebra::{EvaluationType, game_state, g_timer};
-use legacy_zebra::src::error::{LibcFatalError, FE};
+use engine::src::counter::{add_counter, counter_value, CounterType, reset_counter};
 use engine::src::error::FrontEnd;
-use libc_wrapper::{strstr, FILE, strlen};
+use engine::src::game::global_terminate;
+use engine::src::hash::setup_hash;
+use engine::src::osfbook::{reset_book_search, set_deviation_value};
+use engine::src::search::disc_count;
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
-use legacy_zebra::src::zebra::g_config;
+use engine::src::zebra::EvaluationType;
+use legacy_zebra::src::display::{black_eval, black_player, black_time, current_row, display_board, display_move, set_evals, set_move_list, set_names, white_eval, white_player, white_time};
+use legacy_zebra::src::error::{FE, LibcFatalError};
+use legacy_zebra::src::game::{compute_move, game_init, global_setup, toggle_status_log};
+use legacy_zebra::src::learn::init_learn;
+use legacy_zebra::src::thordb::init_thor_database;
+use legacy_zebra::src::zebra::{board_state, g_timer, game_state};
+use legacy_zebra::src::zebra::{coeff_state, g_book, g_config, hash_state, moves_state, random_instance, search_state};
+use libc_wrapper::{FILE, strlen, strstr};
 
 extern "C" {
     static mut stdout: *mut FILE;
@@ -610,10 +609,10 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     if use_random != 0 && 1 as i32 == 0 {
         FE::time(&mut timer);
         let x = timer as i32;
-        engine::src::zebra::random_instance.my_srandom(x);
+        legacy_zebra::src::zebra::random_instance.my_srandom(x);
     } else {
         let x = 1 as i32;
-        engine::src::zebra::random_instance.my_srandom(x); }
+        legacy_zebra::src::zebra::random_instance.my_srandom(x); }
     if run_script != 0 {
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line);

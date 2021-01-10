@@ -1,35 +1,35 @@
-use libc_wrapper::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc, puts, printf, putc, sprintf, fflush, time_t, stdout};
-use engine::src::error::{FrontEnd, FatalError};
-use engine::src::hash::{HashEntry};
-use engine::src::thordb::{ThorDatabase};
-use engine::src::zebra::{EvaluationType, g_timer, hash_state, search_state};
-use crate::src::thordb::{sort_thor_games};
-use crate::src::osfbook::{print_move_alternatives};
+use std::convert::TryFrom;
+use std::env::args;
 use std::ffi::{c_void, CStr, CString};
+
 use engine::{
     src:: {
-        counter::{counter_value},
+        counter::counter_value,
     }
 };
+use engine::src::counter::CounterType;
+use engine::src::error::{FatalError, FrontEnd};
+use engine::src::game::CandidateMove;
+use engine::src::hash::HashEntry;
+use engine::src::search::hash_expand_pv;
+use engine::src::thordb::ThorDatabase;
+use engine::src::zebra::EvaluationType;
+use libc_wrapper::{ctime, exit, fflush, fopen, fprintf, free, malloc, printf, putc, puts, realloc, sprintf, stderr, stdout, strchr, strdup, strlen, time, time_t, tolower, toupper, vfprintf};
+use thordb_types::C2RustUnnamed;
+
 use crate::{
     src::{
-        display::{display_status, send_status, send_status_time,
-                  send_status_pv, send_status_nodes, produce_eval_text, display_sweep, send_sweep},
+        display::{display_status, display_sweep, produce_eval_text,
+                  send_status, send_status_nodes, send_status_pv, send_status_time, send_sweep},
     }
 };
-use engine::src::timer::{};
-use engine::src::search::{hash_expand_pv};
-
-use engine::src::game::CandidateMove;
-use engine::src::counter::CounterType;
-use crate::src::display::{reset_buffer_display, clear_status, clear_sweep, interval2, interval1, last_output, sweep_modified, status_modified, timed_buffer_management};
-use std::env::args;
-use thordb_types::C2RustUnnamed;
-use crate::src::zebra::g_config;
-use std::convert::TryFrom;
-use engine::src::zebra::flip_stack_;
-use engine::src::zebra::moves_state;
-use engine::src::zebra::board_state;
+use crate::src::display::{clear_status, clear_sweep, interval1, interval2, last_output, reset_buffer_display, status_modified, sweep_modified, timed_buffer_management};
+use crate::src::osfbook::print_move_alternatives;
+use crate::src::thordb::sort_thor_games;
+use crate::src::zebra::{g_config, g_timer, hash_state, search_state};
+use crate::src::zebra::board_state;
+use crate::src::zebra::flip_stack_;
+use crate::src::zebra::moves_state;
 
 static mut buffer: [i8; 16] = [0; 16];
 

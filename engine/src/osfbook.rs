@@ -1,5 +1,5 @@
 use engine_traits::Offset;
-use flip::unflip::{FlipStack};
+use flip::unflip::FlipStack;
 
 use crate::{
     src::{
@@ -15,16 +15,16 @@ use crate::{
     }
 };
 use crate::src::error::FrontEnd;
-use crate::src::game::setup_non_file_based_game;
 use crate::src::game::ForcedOpening;
+use crate::src::game::setup_non_file_based_game;
 use crate::src::globals::{Board, BoardState};
 use crate::src::hash::{add_hash, HashState, setup_hash};
 use crate::src::midgame::tree_search;
 use crate::src::moves::{generate_all, MovesState, unmake_move};
 use crate::src::myrandom::MyRandom;
-use crate::src::search::{SearchState};
+use crate::src::search::SearchState;
 use crate::src::stubs::{abs, ceil, floor};
-use crate::src::zebra::{board_state, DrawMode, GameMode, moves_state, hash_state, search_state, flip_stack_};
+use crate::src::zebra::{DrawMode, GameMode};
 use crate::src::zebra::DrawMode::{BLACK_WINS, OPPONENT_WINS, WHITE_WINS};
 use crate::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, UNDEFINED_EVAL, WLD_EVAL};

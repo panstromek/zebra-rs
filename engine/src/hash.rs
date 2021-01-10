@@ -3,7 +3,6 @@ use std::ffi::c_void;
 use crate::src::globals::Board;
 use engine_traits::Offset;
 use std::collections::hash_map::RandomState;
-use crate::src::zebra::random_instance;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
