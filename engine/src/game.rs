@@ -368,12 +368,23 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                                                                                                eval_info: &mut EvaluationType,
                                                                                                logger: &mut Option<L>,
                                                                                                display_pv:i32,
-                                                                                               echo:i32)
+                                                                                               echo:i32,
+                                                                                                                   mut flip_stack_: &mut FlipStack,
+                                                                                                                   mut search_state: &mut SearchState,
+                                                                                                                   mut board_state: &mut BoardState,
+                                                                                                                   mut hash_state: &mut HashState,
+                                                                                                                   mut g_timer: &mut Timer,
+                                                                                                                   mut end_g: &mut End,
+                                                                                                                   mut midgame_state: &mut MidgameState,
+                                                                                                                   mut coeff_state: &mut CoeffState,
+                                                                                                                   mut moves_state: &mut MovesState,
+                                                                                                                   mut random_instance: &mut MyRandom,
+                                                                                                                   mut g_book: &mut Book,
+                                                                                                                   mut stable_state: &mut StableState,
+                                                                                                                   mut game_state: &mut GameState,
+                                                                                                                   mut prob_cut: &mut ProbCut,
+)
                                                                                                -> i32 {
-use crate::src::zebra::{g_book, prob_cut, random_instance, search_state};
-use crate::src::zebra::{board_state, coeff_state, end_g, g_timer, game_state, hash_state, midgame_state, moves_state, stable_state};
-use crate::src::zebra::flip_stack_;
-
     let mut book_eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -842,14 +853,40 @@ pub unsafe fn compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fro
     exact: i32,
     wld: i32,
     search_forced: i32,
-    eval_info: &mut EvaluationType, display_pv:i32, echo:i32)
+    eval_info: &mut EvaluationType, display_pv:i32, echo:i32,
+    mut flip_stack_: &mut FlipStack,
+    mut search_state: &mut SearchState,
+    mut board_state: &mut BoardState,
+    mut hash_state: &mut HashState,
+    mut g_timer: &mut Timer,
+    mut end_g: &mut End,
+    mut midgame_state: &mut MidgameState,
+    mut coeff_state: &mut CoeffState,
+    mut moves_state: &mut MovesState,
+    mut random_instance: &mut MyRandom,
+    mut g_book: &mut Book,
+    mut stable_state: &mut StableState,
+    mut game_state: &mut GameState,
+    mut prob_cut: &mut ProbCut,)
     -> i32 {
     return generic_compute_move::<L, Out, FE, Thor>(
         side_to_move, update_all, my_time,
         my_incr, timed_depth,
         book, mid,
         exact, wld,
-        search_forced, eval_info, &mut L::create_log_file_if_needed(), display_pv, echo);
+        search_forced, eval_info, &mut L::create_log_file_if_needed(), display_pv, echo,   &mut flip_stack_,
+        &mut search_state,
+        &mut board_state,
+        &mut hash_state,
+        &mut g_timer,
+        &mut end_g,
+        &mut midgame_state,
+        &mut coeff_state,
+        &mut moves_state,
+        &mut random_instance,
+        &mut g_book,
+        &mut stable_state,
+        &mut game_state, &mut prob_cut);
 }
 
 pub trait PonderMoveReport {

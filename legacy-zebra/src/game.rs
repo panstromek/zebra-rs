@@ -289,7 +289,19 @@ pub unsafe fn ponder_move<
                                      if (8 as i32) < mid {
                                          8 as i32
                                      } else { mid }, 0 as i32, 0 as i32,
-                                     0 as i32, &mut eval_info, display_pv, echo);
+                                     0 as i32, &mut eval_info, display_pv, echo,   &mut flip_stack_,
+                                                        &mut search_state,
+                                                        &mut board_state,
+                                                        &mut hash_state,
+                                                        &mut g_timer,
+                                                        &mut end_g,
+                                                        &mut midgame_state,
+                                                        &mut coeff_state,
+                                                        &mut moves_state,
+                                                        &mut random_instance,
+                                                        &mut g_book,
+                                                        &mut stable_state,
+                                                        &mut game_state, &mut prob_cut);
     echo = stored_echo;
     /* Sort the opponents on the score and push the table move (if any)
        to the front of the list */
@@ -323,7 +335,19 @@ pub unsafe fn ponder_move<
         engine::src::game::compute_move::<L, Out, FE, Thor>(0 as i32 + 2 as i32 - side_to_move,
                                          0 as i32, 0 as i32, 0 as i32,
                                          1 as i32, 0 as i32, mid, exact, wld,
-                                         0 as i32, &mut eval_info, display_pv, echo);
+                                         0 as i32, &mut eval_info, display_pv, echo,   &mut flip_stack_,
+                                                            &mut search_state,
+                                                            &mut board_state,
+                                                            &mut hash_state,
+                                                            &mut g_timer,
+                                                            &mut end_g,
+                                                            &mut midgame_state,
+                                                            &mut coeff_state,
+                                                            &mut moves_state,
+                                                            &mut random_instance,
+                                                            &mut g_book,
+                                                            &mut stable_state,
+                                                            &mut game_state, &mut prob_cut);
         let move_0 = this_move;
         {
             unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
@@ -1240,7 +1264,19 @@ pub unsafe fn compute_move(side_to_move: i32,
                                 my_incr, timed_depth,
                                 book, mid,
                                 exact, wld,
-                                search_forced, eval_info, &mut LogFileHandler::create_log_file_if_needed(), g_config.display_pv, g_config.echo);
+                                search_forced, eval_info, &mut LogFileHandler::create_log_file_if_needed(), g_config.display_pv, g_config.echo,   &mut flip_stack_,
+                                                                                               &mut search_state,
+                                                                                               &mut board_state,
+                                                                                               &mut hash_state,
+                                                                                               &mut g_timer,
+                                                                                               &mut end_g,
+                                                                                               &mut midgame_state,
+                                                                                               &mut coeff_state,
+                                                                                               &mut moves_state,
+                                                                                               &mut random_instance,
+                                                                                               &mut g_book,
+                                                                                               &mut stable_state,
+                                                                                               &mut game_state, &mut prob_cut);
 }
 
 pub struct LibcZebraOutput;
