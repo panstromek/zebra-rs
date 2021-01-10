@@ -1799,49 +1799,38 @@ impl DumpHandler for LibcDumpHandler {
       Writes the current game score to disk.
     */
     fn dump_game_score(side_to_move: i32, score_sheet_row_: i32,
-                       black_moves_: &[i32; 60], white_moves_: &[i32; 60]) { unsafe {
-        let mut stream = 0 as *mut FILE;
+                       black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
         let mut i: i32 = 0;
-        stream =
-            fopen(b"current.mov\x00" as *const u8 as *const i8,
-                  b"w\x00" as *const u8 as *const i8);
-        if stream.is_null() {
-            fatal_error(b"File creation error when writing CURRENT.MOV\n\x00" as
-                *const u8 as *const i8);
-        }
+
+        let mut stream = File::create("current.mov").unwrap_or_else(|_| {
+            unsafe { fatal_error(b"File creation error when writing CURRENT.MOV\n\x00" as *const u8 as *const i8); }
+        });
+
         i = 0;
         while i <= score_sheet_row_ {
-            fprintf(stream,
-                    b"   %2d.    \x00" as *const u8 as *const i8,
-                    i + 1 as i32);
+            write!(stream, "   {: >2}.    ", i + 1);
             if black_moves_[i as usize] == -(1 as i32) {
-                fputs(b"- \x00" as *const u8 as *const i8, stream);
+                write!(stream, "- " );
             } else {
-                fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
-                        'a' as i32 + black_moves_[i as usize] % 10 as i32 -
-                            1 as i32,
-                        '0' as i32 + black_moves_[i as usize] / 10 as i32);
+                write!(stream, "{}{}",
+                       ('a' as u8 + (black_moves_[i as usize] % 10) as u8 - 1) as char,
+                       ('0' as u8 + (black_moves_[i as usize] / 10) as u8) as char);
             }
-            fputs(b"  \x00" as *const u8 as *const i8, stream);
+            write!(stream, "  ");
             if i < score_sheet_row_ ||
                 i == score_sheet_row_ && side_to_move == 0 as i32 {
                 if white_moves_[i as usize] == -(1 as i32) {
-                    fputs(b"- \x00" as *const u8 as *const i8, stream);
+                    write!(stream, "- ");
                 } else {
-                    fprintf(stream,
-                            b"%c%c\x00" as *const u8 as *const i8,
-                            'a' as i32 +
-                                white_moves_[i as usize] % 10 as i32 -
-                                1 as i32,
-                            '0' as i32 +
-                                white_moves_[i as usize] / 10 as i32);
+                    write!(stream, "{}{}",
+                           ('a' as u8 + (white_moves_[i as usize] % 10) as u8  - 1 ) as char,
+                           ('0' as u8 + (white_moves_[i as usize] / 10) as u8 ) as char );
                 }
             }
-            fputs(b"\n\x00" as *const u8 as *const i8, stream);
+            write!(stream ,"\n");
             i += 1
         }
-        fclose(stream);
-    }}
+    }
 }
 
 pub fn main() {
