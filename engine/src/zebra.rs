@@ -243,11 +243,8 @@ pub fn engine_play_game<
                 .unwrap().0;
             move_string = &line_buffer[0..end]
         }
-        let mut provided_move_count = 0;
-        if false {
-            provided_move_count = 0
-        } else {
-            provided_move_count = move_string.len().wrapping_div(2) as i32;
+        let provided_move_count = {
+            let provided_move_count = move_string.len().wrapping_div(2) as i32;
             if provided_move_count > 60 ||
                 move_string.len().wrapping_rem(2) == 1 {
                 FE::invalid_move_string_provided();
@@ -264,7 +261,8 @@ pub fn engine_play_game<
                 provided_move[i as usize] = 10 * row + col;
                 i += 1
             }
-        }
+            provided_move_count
+        };
         /* Set up the position and the search engine */
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move,
                                           &mut flip_stack_,
