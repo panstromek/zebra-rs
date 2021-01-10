@@ -553,7 +553,7 @@ pub fn adjust_score(score: i32, side_to_move: i32, book: &mut Book, disks_played
   NULL otherwise.
 */
 
-pub fn find_opening_name(book: &mut Book, board: &Board) -> *const i8 {
+pub fn find_opening_name(book: &mut Book, board: &Board) -> Option<&'static [u8]> {
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
@@ -562,11 +562,11 @@ pub fn find_opening_name(book: &mut Book, board: &Board) -> *const i8 {
     while i < opening_list.len() {
         if val1 == opening_list[i].hash_val1 &&
             val2 == opening_list[i].hash_val2 {
-            return opening_list[i].name.as_ptr() as *const i8
+            return Some(opening_list[i].name)
         }
         i += 1
     }
-    0 as *const i8
+    None
 }
 /*
   CLEAR_OSF

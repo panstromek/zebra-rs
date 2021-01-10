@@ -323,11 +323,8 @@ pub fn engine_play_game<
                     ZF::set_times(floor(config.player_time[0]) as i32,
                               floor(config.player_time[2]) as i32);
                     let opening_name = find_opening_name( &mut g_book, &board_state.board);
-                    if !opening_name.is_null() {
-                        // FIXME
-                        // I know this is safe because opening names are all defined
-                        // as static b-stringswith null terminators
-                        unsafe { ZF::report_opening_name(CStr::from_ptr(opening_name)); }
+                    if let Some(opening_name) = opening_name {
+                        ZF::report_opening_name(CStr::from_bytes_with_nul(opening_name).unwrap());
                     }
                     if use_thor_ {
                         let database_start =  g_timer.get_real_timer::<FE>();
