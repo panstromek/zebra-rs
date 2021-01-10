@@ -3,7 +3,7 @@
 
 use std::ffi::{CStr, CString};
 use std::fs::File;
-use std::io::Read;
+use std::io::{Read, Write};
 use std::process::exit;
 use std::ptr::null_mut;
 
@@ -1761,44 +1761,39 @@ impl DumpHandler for LibcDumpHandler {
        DUMP_POSITION
        Saves the current board position to disk.
     */
-    fn dump_position(side_to_move: i32, board_: &[i32; 128]) { unsafe {
+    fn dump_position(side_to_move: i32, board_: &[i32; 128]) {
         let mut i: i32 = 0;
         let mut j: i32 = 0;
-        let mut stream = 0 as *mut FILE;
-        stream =
-            fopen(b"current.gam\x00" as *const u8 as *const i8,
-                  b"w\x00" as *const u8 as *const i8);
-        if stream.is_null() {
-            fatal_error(b"File creation error when writing CURRENT.GAM\n\x00" as
-                *const u8 as *const i8);
-        }
+        // let mut stream = 0 as *mut FILE;
+        let mut stream = File::create("current.gam").unwrap_or_else(|_| {
+            unsafe { fatal_error(b"File creation error when writing CURRENT.GAM\n\x00" as *const u8 as *const i8); }
+        });
+
         i = 1;
         while i <= 8 as i32 {
             j = 1;
             while j <= 8 as i32 {
                 match board_[(10 as i32 * i + j) as usize] {
-                    0 => { fputc('X' as i32, stream); }
-                    2 => { fputc('O' as i32, stream); }
-                    1 => { fputc('-' as i32, stream); }
+                    0 => stream.write(b"X"),
+                    2 => stream.write(b"O"),
+                    1 => stream.write(b"-"),
                     _ => {
                         /* This really can't happen but shouldn't cause a crash */
-                        fputc('?' as i32, stream);
+                        stream.write(b"?")
                     }
-                }
+                };
                 j += 1
             }
             i += 1
         }
-        fputs(b"\n\x00" as *const u8 as *const i8, stream);
+        stream.write(&['\n' as u8]);
         if side_to_move == 0 as i32 {
-            fputs(b"Black\x00" as *const u8 as *const i8, stream);
+            stream.write(b"Black");
         } else {
-            fputs(b"White\x00" as *const u8 as *const i8, stream);
+            stream.write(b"White");
         }
-        fputs(b" to move\nThis file was automatically generated\n\x00" as
-                  *const u8 as *const i8, stream);
-        fclose(stream);
-    }}
+        stream.write(b" to move\nThis file was automatically generated\n");
+    }
     /*
       DUMP_GAME_SCORE
       Writes the current game score to disk.
