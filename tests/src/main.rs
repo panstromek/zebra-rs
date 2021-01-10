@@ -32,9 +32,7 @@ mod tests {
             .write("3.5 2.8 5.1 12.3\n".as_ref())
             .unwrap();
     }
-    // TODO these snapshot tests don't test for the last position
-    //  (because zebra doesn't put it in the log file for some reason)
-    //  it'd be good to improve that and test that one as well
+
     //fixme
     // also include analysis.log file into the tests
 
