@@ -518,7 +518,7 @@ fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32) {
     move_vec[(2 as i32 * disks_played_) as usize + 1] = '0' as i8 + (curr_move / 10) as i8;
 }
 
-pub async unsafe fn engine_play_game_async<
+pub async fn engine_play_game_async<
     ZF: ZebraFrontend,
     Source: InitialMoveSource,
     Dump: DumpHandler,
