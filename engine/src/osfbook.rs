@@ -568,16 +568,6 @@ pub fn find_opening_name(book: &mut Book, board: &Board) -> Option<&'static [u8]
     }
     None
 }
-/*
-  CLEAR_OSF
-  Free all dynamically allocated memory.
-*/
-
-pub fn clear_osf(book: &mut Book) {
-    book.book_hash_table.clear();
-    book.node.clear();
-}
-
 
 /*
   CHECK_FORCED_OPENING

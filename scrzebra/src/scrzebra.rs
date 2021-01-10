@@ -4,7 +4,6 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 
 use engine::src::counter::{add_counter, counter_value, CounterType, reset_counter};
 use engine::src::error::FrontEnd;
-use engine::src::game::global_terminate;
 use engine::src::hash::setup_hash;
 use engine::src::osfbook::{reset_book_search, set_deviation_value};
 use engine::src::search::disc_count;
@@ -17,7 +16,7 @@ use legacy_zebra::src::game::{compute_move, game_init, global_setup, toggle_stat
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::thordb::init_thor_database;
 use legacy_zebra::src::zebra::{board_state, g_timer, game_state};
-use legacy_zebra::src::zebra::{coeff_state, g_book, g_config, hash_state, moves_state, random_instance, search_state};
+use legacy_zebra::src::zebra::{g_book, g_config, hash_state, moves_state, random_instance, search_state};
 use libc_wrapper::{FILE, strlen, strstr};
 
 extern "C" {
@@ -617,8 +616,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line);
     }
-    global_terminate(&mut hash_state, &mut coeff_state, &mut g_book);
-    return 0 as i32;
+    0
 }
 static mut use_thor: i32 = 0;
 static mut use_learning: i32 = 0;

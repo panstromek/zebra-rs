@@ -10,7 +10,7 @@ use std::ptr::null_mut;
 use engine::src::counter::{add_counter, adjust_counter, counter_value, CounterType, reset_counter};
 use engine::src::end::End;
 use engine::src::error::{FatalError, FrontEnd};
-use engine::src::game::{GameState, generic_game_init, global_terminate};
+use engine::src::game::{GameState, generic_game_init};
 use engine::src::getcoeff::{CoeffState, remove_coeffs};
 use engine::src::globals::BoardState;
 use engine::src::hash::{HashState, setup_hash};
@@ -608,8 +608,7 @@ Flags:
     } else {
         play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name, use_thor != 0, use_learning != 0);
     }
-    global_terminate(&mut hash_state, &mut coeff_state, &mut g_book);
-    return 0 as i32;
+    0
 }
 /*
    PLAY_TOURNAMENT

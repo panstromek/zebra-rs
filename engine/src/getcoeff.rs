@@ -298,13 +298,6 @@ pub fn remove_coeffs(phase: i32, state: &mut CoeffState) {
         i += 1
     };
 }
-/*
-   CLEAR_COEFFS
-   Remove all coefficients loaded from memory.
-*/
-pub fn clear_coeffs(state: &mut CoeffState) {
-    remove_coeffs(state.set.len() as i32, state);
-}
 
 
 /*
