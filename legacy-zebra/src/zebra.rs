@@ -431,7 +431,6 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         arg_index += 1
     }
     if help != 0 {
-        fflush(stdout);
         println!(r"Usage:
   zebra [-b -e -g -h -l -p -t -time -w -learn -slack -dev -log
          -keepdraw -draw2black -draw2white -draw2none
