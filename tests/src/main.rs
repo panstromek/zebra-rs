@@ -173,6 +173,16 @@ mod tests {
         with_adjust: false
     );
 
+    snap_test!(
+        board_source,
+         "-l 2 2 2 2 2 2 -r 0 -g ../../../resources/board.txt -log zebra.log",
+        false,
+        with_adjust: false
+    );
+
+    // TODO test all these parameters at once: -g, -seq and -seqfile, how they interact??
+    //  what if they conflict??
+
     fn interact_basically(input: &mut ChildStdin) {
         let mut move_buf = String::with_capacity(3);
         loop {
