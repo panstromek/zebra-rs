@@ -3,13 +3,13 @@ use std::future::Future;
 
 use engine_traits::Offset;
 use flip::doflip::{DoFlips_hash, DoFlips_no_hash};
-use flip::unflip::{FlipStack};
+use flip::unflip::FlipStack;
 
 use crate::src::cntflip::AnyFlips_compact;
 use crate::src::globals::{Board, BoardState};
-use crate::src::hash::{HashState};
-use crate::src::search::{SearchState};
-use crate::src::zebra::{board_state, ZebraFrontend, hash_state, search_state, flip_stack_};
+use crate::src::hash::HashState;
+use crate::src::search::SearchState;
+use crate::src::zebra::ZebraFrontend;
 
 /*
    File:              moves.c

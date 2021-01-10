@@ -1,19 +1,17 @@
 use engine::src::game::generic_game_init;
-use engine::src::zebra::{board_state, game_state, stable_state, random_instance, coeff_state, midgame_state};
-use engine::src::zebra::hash_state;
 use engine::src::learn::Learner;
 use engine::src::moves::{generate_all, make_move};
-use engine::src::zebra::g_book;
-use engine::src::zebra::search_state;
-use engine::src::zebra::{g_timer, moves_state};
-use engine::src::zebra::{end_g, learn_state};
-use engine::src::zebra::flip_stack_;
 use libc_wrapper::{fclose, fopen, fprintf, fputs, strcpy};
 
 use crate::src::error::LibcFatalError;
 use crate::src::game::{game_init, LibcBoardFileSource};
 use crate::src::osfbook::{add_new_game, init_osf, read_binary_database, read_text_database, write_binary_database, write_text_database};
-use crate::src::zebra::g_config;
+use crate::src::zebra::{board_state, coeff_state, g_config, g_timer, game_state, learn_state, midgame_state, moves_state, random_instance, stable_state};
+use crate::src::zebra::end_g;
+use crate::src::zebra::flip_stack_;
+use crate::src::zebra::g_book;
+use crate::src::zebra::hash_state;
+use crate::src::zebra::search_state;
 
 pub static mut binary_database: i32 = 0;
 pub static mut database_name: [i8; 256] = [0; 256];

@@ -53,6 +53,23 @@ pub struct MidgameState {
 }
 
 impl MidgameState {
+    pub const fn new() -> Self {
+        MidgameState {
+            allow_midgame_hash_probe: 0,
+            allow_midgame_hash_update: 0,
+            best_mid_move: 0,
+            best_mid_root_move: 0,
+            midgame_abort: 0,
+            do_check_midgame_abort: 1,
+            counter_phase: 0,
+            apply_perturbation: 1,
+            perturbation_amplitude: 0,
+            stage_reached: [0; 62],
+            stage_score: [0; 62],
+            score_perturbation: [0; 100],
+            feas_index_list: [[0; 64]; 64],
+        }
+    }
     /*
       CLEAR_MIDGAME_ABORT
       IS_MIDGAME_ABORT

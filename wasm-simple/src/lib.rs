@@ -3,28 +3,59 @@
 
 extern crate console_error_panic_hook;
 
-use std::panic;
-use wasm_bindgen::prelude::*;
-use engine::src::zebra::{set_default_engine_globals, EvaluationType, engine_play_game, ZebraFrontend, InitialMoveSource, DumpHandler, engine_play_game_async, Config, INITIAL_CONFIG, g_book, coeff_state, hash_state, prob_cut, stable_state, random_instance, g_timer, search_state};
-use engine::src::game::{engine_global_setup, global_terminate, BoardSource, FileBoardSource, ComputeMoveLogger, ComputeMoveOutput, CandidateMove};
-use engine::src::error::{FrontEnd, FatalError};
-use wasm_bindgen::__rt::core::ffi::c_void;
-use engine::src::hash::HashEntry;
-use wasm_bindgen::__rt::core::ptr::null_mut;
-use engine::src::learn::Learner;
-use wasm_bindgen::__rt::std::ffi::CStr;
 use std::convert::{TryFrom, TryInto};
+use std::error::Error;
+use std::panic;
+
+use thiserror::Error;
+use wasm_bindgen::__rt::core::ffi::c_void;
+use wasm_bindgen::__rt::core::ptr::null_mut;
+use wasm_bindgen::__rt::std::ffi::CStr;
+use wasm_bindgen::prelude::*;
+
 use engine::src::counter::CounterType;
+use engine::src::error::{FatalError, FrontEnd};
+use engine::src::game::{BoardSource, CandidateMove, ComputeMoveLogger, ComputeMoveOutput, engine_global_setup, FileBoardSource, global_terminate, GameState};
+use engine::src::hash::{HashEntry, HashState};
+use engine::src::learn::{Learner, LearnState};
+use engine::src::myrandom;
+use engine::src::thordb::ThorDatabase;
+use engine::src::zebra::{Config, DumpHandler, engine_play_game, engine_play_game_async, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend};
 use engine_traits::CoeffSource;
 use flate2_coeff_source::Flate2Source;
 use flip::unflip;
-use engine::src::myrandom;
-use std::error::Error;
-use thiserror::Error;
 use thordb_types::C2RustUnnamed;
-use engine::src::thordb::ThorDatabase;
+use flip::unflip::FlipStack;
+use engine::src::search::SearchState;
+use engine::src::probcut::ProbCut;
+use engine::src::osfbook::Book;
+use engine::src::myrandom::MyRandom;
+use engine::src::globals::BoardState;
+use engine::src::stable::StableState;
+use engine::src::moves::MovesState;
+use engine::src::timer::Timer;
+use engine::src::getcoeff::CoeffState;
+use engine::src::end::End;
+use engine::src::midgame::MidgameState;
 
 extern crate engine;
+
+// FIXME get rid of these globals
+pub static mut learn_state: LearnState = LearnState::new();
+pub static mut midgame_state: MidgameState = MidgameState::new();
+pub static mut game_state: GameState = GameState::new();
+pub static mut end_g: End = End::new();
+pub static mut coeff_state: CoeffState = CoeffState::new();
+pub static mut g_timer: Timer = Timer::new();
+pub static mut moves_state: MovesState = MovesState::new();
+pub static mut stable_state: StableState = StableState::new();
+pub static mut board_state: BoardState = BoardState ::new();
+pub static mut hash_state: HashState = HashState::new();
+pub static mut random_instance: MyRandom = MyRandom::new();
+pub static mut g_book: Book = Book::new();
+pub static mut prob_cut: ProbCut = ProbCut::new();
+pub static mut search_state: SearchState = SearchState::new();
+pub static mut flip_stack_: FlipStack = FlipStack::new();
 
 #[wasm_bindgen]
 extern "C" {
@@ -100,7 +131,7 @@ pub fn init() {
         // init_thor_database::<WasmFrontend>();
 
         let x = 1 as i32;
-        engine::src::zebra::random_instance.my_srandom(x);
+        random_instance.my_srandom(x);
 
         // FIXME don't run this init code on every start - my set_skills doesn't work because of that
         if config.skill[0] < 0 {
