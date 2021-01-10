@@ -1,5 +1,5 @@
 use engine::src::game::generic_game_init;
-use engine::src::zebra::board_state;
+use engine::src::zebra::{board_state, game_state, stable_state, random_instance, coeff_state, midgame_state};
 use engine::src::zebra::hash_state;
 use engine::src::learn::Learner;
 use engine::src::moves::{generate_all, make_move};
@@ -55,7 +55,19 @@ pub unsafe fn learn_game(game_length: i32,
     let full_solve = end_g.get_earliest_full_solve();
     let wld_solve = end_g.get_earliest_wld_solve();
     let mut dummy: i32 = 0;
-    generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut dummy);
+    generic_game_init::<LibcBoardFileSource, LibcFatalError>(0 as *const i8, &mut dummy,   &mut flip_stack_,
+                                                             &mut search_state,
+                                                             &mut board_state,
+                                                             &mut hash_state,
+                                                             &mut g_timer,
+                                                             &mut end_g,
+                                                             &mut midgame_state,
+                                                             &mut coeff_state,
+                                                             &mut moves_state,
+                                                             &mut random_instance,
+                                                             &mut g_book,
+                                                             &mut stable_state,
+                                                             &mut game_state);
     let mut side_to_move = 0;
     let mut i = 0;
     while i < game_length {

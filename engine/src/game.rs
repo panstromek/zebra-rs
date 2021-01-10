@@ -1,27 +1,28 @@
 use std::ffi::CStr;
 
 use engine_traits::{CoeffSource, Offset};
-use crate::src::zebra::flip_stack_;
 
 use crate::src::counter::{add_counter, adjust_counter, counter_value, reset_counter};
 use crate::src::end::{End, end_game, setup_end};
 use crate::src::error::FrontEnd;
-use crate::src::getcoeff::{clear_coeffs, CoeffAdjustments, eval_adjustment, init_coeffs_calculate_terminal_patterns, post_init_coeffs, process_coeffs_from_fn_source, remove_coeffs};
+use crate::src::getcoeff::{clear_coeffs, CoeffAdjustments, eval_adjustment, init_coeffs_calculate_terminal_patterns, post_init_coeffs, process_coeffs_from_fn_source, remove_coeffs, CoeffState};
 use crate::src::globals::{Board, BoardState};
-use crate::src::hash::{determine_hash_values, find_hash, HashEntry};
+use crate::src::hash::{determine_hash_values, find_hash, HashEntry, HashState};
 use crate::src::midgame::{calculate_perturbation, middle_game, MidgameState, setup_midgame};
-use crate::src::moves::{generate_all, make_move, valid_move};
-use crate::src::osfbook::{check_forced_opening, clear_osf, fill_move_alternatives, get_book_move};
-use crate::src::probcut::init_probcut;
-use crate::src::search::{complete_pv, create_eval_info, disc_count, float_move, force_return, setup_search, sort_moves};
-use crate::src::stable::init_stable;
+use crate::src::moves::{generate_all, make_move, valid_move, MovesState};
+use crate::src::osfbook::{check_forced_opening, clear_osf, fill_move_alternatives, get_book_move, Book};
+use crate::src::probcut::{init_probcut, ProbCut};
+use crate::src::search::{complete_pv, create_eval_info, disc_count, float_move, force_return, setup_search, sort_moves, SearchState};
+use crate::src::stable::{init_stable, StableState};
 use crate::src::stubs::abs;
 use crate::src::thordb::ThorDatabase;
-use crate::src::timer::time_t;
-use crate::src::zebra::{g_book, prob_cut, random_instance, search_state};
-use crate::src::zebra::{board_state as g_board_state, coeff_state, end_g, EvaluationType, g_timer, game_state, hash_state, midgame_state, moves_state, stable_state};
+use crate::src::timer::{time_t, Timer};
+
 use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{EXACT_EVAL, FORCED_EVAL, INTERRUPTED_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL, WLD_EVAL};
+use crate::src::zebra::EvaluationType;
+use flip::unflip::FlipStack;
+use crate::src::myrandom::MyRandom;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -124,14 +125,31 @@ pub fn compare_eval(mut e1: EvaluationType, mut e2: EvaluationType) -> i32 {
    Free all dynamically allocated memory.
 */
 
-pub unsafe fn global_terminate() {
+pub fn global_terminate(
+    hash_state: &mut HashState,
+    coeff_state: &mut CoeffState,
+    g_book: &mut Book
+) {
     hash_state.free_hash();
-    clear_coeffs(&mut coeff_state);
-    clear_osf(&mut g_book);
+    clear_coeffs(coeff_state);
+    clear_osf(g_book);
 }
 
-pub unsafe fn engine_game_init() {
-    let mut board_state = &mut g_board_state;
+pub fn engine_game_init(
+    mut flip_stack_: &mut FlipStack,
+    mut search_state: &mut SearchState,
+    mut board_state: &mut BoardState,
+    mut hash_state: &mut HashState,
+    mut g_timer: &mut Timer,
+    mut end_g: &mut End,
+    mut midgame_state: &mut MidgameState,
+    mut coeff_state: &mut CoeffState,
+    mut moves_state: &mut MovesState,
+    mut random_instance: &mut MyRandom,
+    mut g_book: &mut Book,
+    mut stable_state: &mut StableState,
+    mut game_state: &mut GameState
+) {
     setup_search(&mut search_state);
     setup_midgame(&mut midgame_state, &mut random_instance);
     setup_end(
@@ -178,10 +196,13 @@ pub const fn create_fresh_board() -> Board {
     board_
 }
 
-pub unsafe fn setup_game_finalize(side_to_move:  &mut i32) {
-    let mut board_state = &mut g_board_state;
+pub fn setup_game_finalize(side_to_move:  &mut i32,
+                                  board_state: &mut BoardState,
+                                  hash_state: &mut HashState,
+                                  moves_state: &mut MovesState,
+) {
     moves_state.disks_played = disc_count(0, &board_state.board) + disc_count(2, &board_state.board) - 4;
-    determine_hash_values(*side_to_move, &board_state.board, &mut hash_state);
+    determine_hash_values(*side_to_move, &board_state.board, hash_state);
     /* Make the game score look right */
     if *side_to_move == 0 as i32 {
         board_state.score_sheet_row = -(1 as i32)
@@ -192,21 +213,31 @@ pub unsafe fn setup_game_finalize(side_to_move:  &mut i32) {
 }
 
 
-pub unsafe fn setup_non_file_based_game(side_to_move: &mut i32) {
-    let mut board_state = &mut g_board_state;
+pub fn setup_non_file_based_game(side_to_move: &mut i32,
+                                        board_state: &mut BoardState,
+                                        hash_state: &mut HashState,
+                                        moves_state: &mut MovesState,) {
     board_state.board = create_fresh_board();
     board_state.board[54] = 0;
     board_state.board[45] = 0;
     board_state.board[55] = 2;
     board_state.board[44] = 2;
     *side_to_move = 0;
-    setup_game_finalize(side_to_move);
+    setup_game_finalize(side_to_move, board_state,hash_state,moves_state);
 }
 
 
-pub unsafe fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
+pub fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     use_random: i32, hash_bits: i32, coeff_adjustments:
-    Option<CoeffAdjustments>, coeffs: S) {
+    Option<CoeffAdjustments>, coeffs: S,
+    mut search_state: &mut SearchState,
+    mut hash_state: &mut HashState,
+    mut g_timer: &mut Timer,
+    mut coeff_state: &mut CoeffState,
+    mut random_instance: &mut MyRandom,
+    mut stable_state: &mut StableState,
+    mut prob_cut: &mut ProbCut,
+) {
     let mut timer: time_t = 0;
     if use_random != 0 {
         FE::time(&mut timer);
@@ -276,30 +307,53 @@ pub trait FileBoardSource : BoardSource {
     fn open(file_name: &CStr) -> Option<Self> where Self: Sized;
 }
 
-pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32) {
-    let mut board_state = &mut g_board_state;
+pub unsafe fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32,
+                                                                      board_state: &mut BoardState,
+                                                                      hash_state: &mut HashState,
+                                                                      moves_state: &mut MovesState,
+) {
     board_state.board = create_fresh_board();
     assert!(!file_name.is_null());
     match S::open(CStr::from_ptr(file_name)) {
-        Some(file_source) => process_board_source::<_, FE>(side_to_move, file_source, &mut board_state),
+        Some(file_source) => process_board_source::<_, FE>(side_to_move, file_source,  board_state),
         None => {
             FE::cannot_open_game_file(CStr::from_ptr(file_name).to_str().unwrap());
         },
     };
-    setup_game_finalize(side_to_move);
+    setup_game_finalize(side_to_move, board_state, hash_state, moves_state);
 }
 
-pub unsafe fn generic_setup_game<Source: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32) {
+pub unsafe fn generic_setup_game<Source: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32,
+                                                                        board_state: &mut BoardState,
+                                                                        hash_state: &mut HashState,
+                                                                        moves_state: &mut MovesState,) {
     if file_name.is_null() {
-        setup_non_file_based_game(side_to_move);
+        setup_non_file_based_game(side_to_move,  board_state, hash_state, moves_state);
     } else {
-        setup_file_based_game::<Source, FE>(file_name, side_to_move);
+        setup_file_based_game::<Source, FE>(file_name, side_to_move,  board_state, hash_state, moves_state);
     }
 }
 
-pub unsafe fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32) {
-    generic_setup_game::<Source, FE>(file_name, side_to_move);
-    engine_game_init();
+pub unsafe fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: *const i8, side_to_move: &mut i32,
+                                                                       flip_stack_: &mut FlipStack,
+                                                                       search_state: &mut SearchState,
+                                                                       board_state: &mut BoardState,
+                                                                       hash_state: &mut HashState,
+                                                                       g_timer: &mut Timer,
+                                                                       end_g: &mut End,
+                                                                       midgame_state: &mut MidgameState,
+                                                                       coeff_state: &mut CoeffState,
+                                                                       moves_state: &mut MovesState,
+                                                                       random_instance: &mut MyRandom,
+                                                                       g_book: &mut Book,
+                                                                       stable_state: &mut StableState,
+                                                                       game_state: &mut GameState
+) {
+    generic_setup_game::<Source, FE>(file_name, side_to_move,  board_state, hash_state, moves_state);
+    engine_game_init(
+        flip_stack_, search_state, board_state, hash_state, g_timer,
+        end_g, midgame_state, coeff_state, moves_state, random_instance, g_book, stable_state, game_state,
+    );
 }
 
 pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, Thor: ThorDatabase>(side_to_move: i32,
@@ -317,6 +371,10 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
                                                                                                display_pv:i32,
                                                                                                echo:i32)
                                                                                                -> i32 {
+use crate::src::zebra::{g_book, prob_cut, random_instance, search_state};
+use crate::src::zebra::{board_state, coeff_state, end_g, g_timer, game_state, hash_state, midgame_state, moves_state, stable_state};
+use crate::src::zebra::flip_stack_;
+
     let mut book_eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -343,7 +401,6 @@ pub unsafe fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput,
     let mut max_depth: i32 = 0;
     let mut endgame_reached: i32 = 0;
     let mut offset: i32 = 0;
-    let mut board_state = &mut g_board_state;
 
     if let Some(logger) = logger {
         let board_ = &board_state.board;
