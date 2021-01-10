@@ -806,13 +806,20 @@ unsafe fn play_game(mut file_name: *const i8,
                     mut move_string: *const i8,
                     mut move_file_name: *const i8,
                     mut repeat: i32, log_file_name_: *mut i8, use_thor_: bool, use_learning_: bool) {
-    let mut move_file = if move_file_name.is_null() {
+    let move_file = if move_file_name.is_null() {
         None
     } else {
         let move_file_name = CStr::from_ptr(move_file_name).to_str().unwrap();
         FileMoveSource::open(move_file_name)
     };
+    let file_name: Option<&CStr> = (!file_name.is_null()).then(|| CStr::from_ptr(file_name));
+    let log_file_name_: Option<&CStr> = (!log_file_name_.is_null()).then(|| CStr::from_ptr(log_file_name_));
 
+    let move_string = if move_string.is_null() {
+        &[]
+    } else {
+        CStr::from_ptr(move_string).to_bytes()
+    };
     engine_play_game
         ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner, LibcFatalError, LegacyThor>
         (file_name, move_string, repeat, log_file_name_, move_file, use_thor_, use_learning_, &mut g_config

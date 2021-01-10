@@ -181,7 +181,7 @@ pub trait DumpHandler {
 }
 
 
-pub unsafe fn engine_play_game<
+pub fn engine_play_game<
     ZF: ZebraFrontend,
     Source: InitialMoveSource,
     Dump: DumpHandler,
@@ -191,8 +191,8 @@ pub unsafe fn engine_play_game<
     Learn: Learner,
     FE: FrontEnd,
     Thor: ThorDatabase
->(file_name: *const i8, mut move_string: *const i8,
-  mut repeat: i32, log_file_name_: *mut i8,
+>(file_name: Option<&CStr>, mut move_string: &[u8],
+  mut repeat: i32, log_file_name_: Option<&CStr>,
   mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool, config: &mut Config
   ,mut learn_state: &mut LearnState
   ,mut midgame_state: &mut MidgameState
@@ -228,11 +228,7 @@ pub unsafe fn engine_play_game<
     let mut provided_move = [0; 61];
     let mut move_vec = [0; 121];
     let mut line_buffer = [0u8; 1001];
-    let mut move_string = if move_string.is_null() {
-        &[]
-    } else {
-        CStr::from_ptr(move_string).to_bytes()
-    };
+    let mut move_string = move_string;
     loop  {
         /* Decode the predefined move sequence */
         if let Some(ref mut move_file) = &mut move_file {
@@ -269,7 +265,6 @@ pub unsafe fn engine_play_game<
                 i += 1
             }
         }
-        let file_name = (!file_name.is_null()).then(|| CStr::from_ptr(file_name));
         /* Set up the position and the search engine */
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move,
                                           &mut flip_stack_,
@@ -329,7 +324,10 @@ pub unsafe fn engine_play_game<
                               floor(config.player_time[2]) as i32);
                     let opening_name = find_opening_name( &mut g_book, &board_state.board);
                     if !opening_name.is_null() {
-                        ZF::report_opening_name(CStr::from_ptr(opening_name));
+                        // FIXME
+                        // I know this is safe because opening names are all defined
+                        // as static b-stringswith null terminators
+                        unsafe { ZF::report_opening_name(CStr::from_ptr(opening_name)); }
                     }
                     if use_thor_ {
                         let database_start =  g_timer.get_real_timer::<FE>();
@@ -506,8 +504,8 @@ pub unsafe fn engine_play_game<
         let total_time_ = search_state.total_time;
         ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
-        if !log_file_name_.is_null() && config.one_position_only == 0 {
-            ZF::log_game_ending(CStr::from_ptr(log_file_name_),
+        if let (Some(log_file_name_), 0) = (log_file_name_, config.one_position_only) {
+            ZF::log_game_ending((log_file_name_),
                                 &mut move_vec,
                                 disc_count(0, &board_state.board),
                                 disc_count(2, &board_state.board))
