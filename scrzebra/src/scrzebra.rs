@@ -2,20 +2,18 @@
 non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types)]
 
-use engine::src::game::{global_terminate, game_state};
-use engine::src::myrandom::{random_instance};
+use engine::src::game::{global_terminate};
 use legacy_zebra::src::thordb::init_thor_database;
 use engine::src::counter::{counter_value, add_counter, reset_counter, CounterType};
-use engine::src::timer::{g_timer};
-use engine::src::search::{disc_count, search_state};
-use engine::src::moves::moves_state;
-use engine::src::globals::board_state;
-use engine::src::hash::{setup_hash, hash_state};
-use engine::src::osfbook::{set_deviation_value, reset_book_search, g_book};
+use engine::src::search::{disc_count};
+use engine::src::zebra::{moves_state, hash_state, random_instance, g_book, search_state};
+use engine::src::zebra::board_state;
+use engine::src::hash::{setup_hash};
+use engine::src::osfbook::{set_deviation_value, reset_book_search};
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::game::{global_setup, compute_move, game_init, toggle_status_log};
 use legacy_zebra::src::display::{display_move, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_evals, set_names};
-use engine::src::zebra::{EvaluationType};
+use engine::src::zebra::{EvaluationType, game_state, g_timer};
 use legacy_zebra::src::error::{LibcFatalError, FE};
 use engine::src::error::FrontEnd;
 use libc_wrapper::{strstr, FILE, strlen};
@@ -612,10 +610,10 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     if use_random != 0 && 1 as i32 == 0 {
         FE::time(&mut timer);
         let x = timer as i32;
-        engine::src::myrandom::random_instance.my_srandom(x);
+        engine::src::zebra::random_instance.my_srandom(x);
     } else {
         let x = 1 as i32;
-        engine::src::myrandom::random_instance.my_srandom(x); }
+        engine::src::zebra::random_instance.my_srandom(x); }
     if run_script != 0 {
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line);

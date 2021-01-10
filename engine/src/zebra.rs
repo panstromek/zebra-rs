@@ -1,24 +1,30 @@
-use crate::src::timer::{g_timer};
-use crate::src::moves::{make_move, game_in_progress, get_move, get_move_async, moves_state, generate_all, valid_move};
-use crate::src::search::{disc_count, produce_compact_eval, search_state};
-use crate::src::counter::{counter_value, adjust_counter};
-use crate::src::stubs::{floor};
-use crate::src::globals::{board_state, BoardState};
-use crate::src::learn::{Learner, LearnState};
-use crate::src::error::{FrontEnd};
-use crate::src::myrandom::{random_instance};
-use crate::src::osfbook::{fill_move_alternatives, find_opening_name, set_deviation_value, reset_book_search, g_book};
-use crate::src::getcoeff::{remove_coeffs, coeff_state};
-use crate::src::game::{generic_game_init, FileBoardSource, generic_compute_move, ComputeMoveOutput, ComputeMoveLogger, game_state};
-use crate::src::hash::{setup_hash, hash_state};
-use std::future::Future;
 use std::error::Error;
+use std::ffi::CStr;
+use std::future::Future;
+
+use engine_traits::Offset;
+use flip::unflip::flip_stack_;
+
+use crate::src::counter::{adjust_counter, counter_value};
+use crate::src::end::End;
+use crate::src::error::FrontEnd;
+use crate::src::game::{ComputeMoveLogger, ComputeMoveOutput, FileBoardSource, GameState, generic_compute_move, generic_game_init};
+use crate::src::getcoeff::{CoeffState, remove_coeffs};
+use crate::src::globals::BoardState;
+use crate::src::hash::{HashState, setup_hash};
+use crate::src::learn::{Learner, LearnState};
+use crate::src::midgame::MidgameState;
+use crate::src::moves::{game_in_progress, generate_all, get_move, get_move_async, make_move, MovesState, valid_move};
+use crate::src::myrandom::MyRandom;
+use crate::src::osfbook::{Book, fill_move_alternatives, find_opening_name, reset_book_search, set_deviation_value};
+use crate::src::probcut::ProbCut;
+use crate::src::search::{disc_count, produce_compact_eval, SearchState};
+use crate::src::stable::StableState;
+use crate::src::stubs::floor;
 use crate::src::thordb::ThorDatabase;
+use crate::src::timer::Timer;
 use crate::src::zebra::EvalResult::WON_POSITION;
 use crate::src::zebra::EvalType::MIDGAME_EVAL;
-use flip::unflip::flip_stack_;
-use std::ffi::CStr;
-use engine_traits::Offset;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum EvalType {
@@ -278,10 +284,10 @@ pub unsafe fn engine_play_game<
         move_vec[0] = 0;
         // these are not used because their usage was disabled by preprocessor
         // byt for deterministic testing, we need to call random the same way, so we keep them.
-        let _black_hash1 = crate::src::myrandom::random_instance.my_random();
-        let _black_hash2 = crate::src::myrandom::random_instance.my_random();
-        let _white_hash1 = crate::src::myrandom::random_instance.my_random();
-        let _white_hash2 = crate::src::myrandom::random_instance.my_random();
+        let _black_hash1 = random_instance.my_random();
+        let _black_hash2 = random_instance.my_random();
+        let _white_hash1 = random_instance.my_random();
+        let _white_hash2 = random_instance.my_random();
         while game_in_progress(&mut moves_state, &search_state, &board_state.board) != 0 {
             remove_coeffs(moves_state.disks_played, &mut coeff_state);
             generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
@@ -373,12 +379,12 @@ pub unsafe fn engine_play_game<
                         if eval_info.is_book != 0 &&
                             config.rand_move_freq > 0 &&
                             side_to_move == rand_color &&
-                            crate::src::myrandom::random_instance.my_random() % config.rand_move_freq as i64 == 0 {
+                            random_instance.my_random() % config.rand_move_freq as i64 == 0 {
 
                             ZF::report_engine_override();
                             rand_color = 2 - rand_color;
                             curr_move = moves_state.move_list[moves_state.disks_played as usize]
-                                [(crate::src::myrandom::random_instance.my_random() % moves_state.move_count[moves_state.disks_played as usize] as i64) as usize]
+                                [(random_instance.my_random() % moves_state.move_count[moves_state.disks_played as usize] as i64) as usize]
                         }
                     }
                 } else {
@@ -589,10 +595,10 @@ pub async unsafe fn engine_play_game_async<
         move_vec[0] = 0;
         // these are not used because their usage was disabled by preprocessor
         // byt for deterministic testing, we need to call random the same way, so we keep them.
-        let _black_hash1 = crate::src::myrandom::random_instance.my_random();
-        let _black_hash2 = crate::src::myrandom::random_instance.my_random();
-        let _white_hash1 = crate::src::myrandom::random_instance.my_random();
-        let _white_hash2 = crate::src::myrandom::random_instance.my_random();
+        let _black_hash1 = random_instance.my_random();
+        let _black_hash2 = random_instance.my_random();
+        let _white_hash1 = random_instance.my_random();
+        let _white_hash2 = random_instance.my_random();
         while game_in_progress(&mut moves_state, &search_state, &board_state.board) != 0 {
             remove_coeffs(moves_state.disks_played,&mut coeff_state);
             generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
@@ -681,11 +687,11 @@ pub async unsafe fn engine_play_game_async<
                         if eval_info.is_book != 0 &&
                             config.rand_move_freq > 0 &&
                             side_to_move == rand_color &&
-                            crate::src::myrandom::random_instance.my_random() % config.rand_move_freq as i64 == 0 {
+                            random_instance.my_random() % config.rand_move_freq as i64 == 0 {
                             ZF::report_engine_override();
                             rand_color = 2 - rand_color;
                             curr_move = moves_state.move_list[moves_state.disks_played as usize]
-                                [(crate::src::myrandom::random_instance.my_random() % moves_state.move_count[moves_state.disks_played as usize] as i64) as usize]
+                                [(random_instance.my_random() % moves_state.move_count[moves_state.disks_played as usize] as i64) as usize]
                         }
                     }
                 } else {
@@ -789,3 +795,37 @@ fn clear_moves(state: &mut BoardState) {
     state.black_moves = [-1; 60];
     state.white_moves = [-1; 60];
 }
+
+pub static mut midgame_state: MidgameState = MidgameState {
+    allow_midgame_hash_probe: 0,
+    allow_midgame_hash_update: 0,
+    best_mid_move: 0,
+    best_mid_root_move: 0,
+    midgame_abort: 0,
+    do_check_midgame_abort: 1,
+    counter_phase: 0,
+    apply_perturbation: 1,
+    perturbation_amplitude: 0,
+    stage_reached: [0; 62],
+    stage_score: [0; 62],
+    score_perturbation: [0; 100],
+    feas_index_list: [[0; 64]; 64],
+};
+
+pub static mut game_state: GameState = GameState::new();
+
+pub static mut end_g: End = End::new();
+pub static mut coeff_state: CoeffState = CoeffState::new();
+pub static mut g_timer: Timer = Timer::new();
+pub static mut moves_state: MovesState = MovesState::new();
+pub static mut stable_state: StableState = StableState::new();
+
+pub static mut board_state: BoardState = BoardState ::new();
+pub static mut hash_state: HashState = HashState::new();
+
+pub static mut random_instance: MyRandom = MyRandom::new();
+
+pub static mut g_book: Book = Book::new();
+pub static mut prob_cut: ProbCut = ProbCut::new();
+
+pub static mut search_state: SearchState = SearchState::new();

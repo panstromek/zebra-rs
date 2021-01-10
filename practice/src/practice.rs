@@ -3,19 +3,18 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 #![register_tool(c2rust)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, main, register_tool)]
 
-use engine::src::globals::{board_state};
-use engine::src::moves::{make_move, moves_state, generate_all, valid_move, unmake_move};
-use engine::src::osfbook::{get_hash, find_opening_name, g_book};
-use legacy_zebra::src::display::{produce_eval_text, display_board, white_eval, white_time, white_player, black_eval, black_time, black_player, current_row, set_move_list, set_names};
-use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
-use legacy_zebra::src::osfbook::{read_binary_database, init_osf};
-use legacy_zebra::src::error::{LibcFatalError, FE};
-use libc_wrapper::_IO_FILE;
-use legacy_zebra::src::zebra::g_config;
-use engine::src::game::game_state;
-use engine::src::search::search_state;
-use engine::src::hash::hash_state;
+use engine::src::zebra::{hash_state, g_book};
+use engine::src::moves::{generate_all, make_move, unmake_move, valid_move};
+use engine::src::osfbook::{find_opening_name, get_hash};
+use engine::src::zebra::search_state;
+use engine::src::zebra::{board_state, game_state, moves_state};
 use flip::unflip::flip_stack_;
+use legacy_zebra::src::display::{black_eval, black_player, black_time, current_row, display_board, produce_eval_text, set_move_list, set_names, white_eval, white_player, white_time};
+use legacy_zebra::src::error::{FE, LibcFatalError};
+use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
+use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
+use legacy_zebra::src::zebra::g_config;
+use libc_wrapper::_IO_FILE;
 
 extern "C" {
     static mut stdout: *mut FILE;

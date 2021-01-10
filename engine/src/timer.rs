@@ -20,22 +20,26 @@ pub struct Timer {
     pub frozen_ponder_depth: i32,
 }
 
-pub static mut g_timer: Timer = Timer {
-    frozen_ponder_time: 0.,
-    panic_value: 0.,
-    time_per_move: 0.,
-    start_time: 0.,
-    total_move_time: 0.,
-    ponder_time: [0.; 100],
-    panic_abort: 0,
-    do_check_abort: 1,
-    init_time: 0,
-    current_ponder_depth: 0,
-    current_ponder_time: 0.,
-    last_panic_check: 0.,
-    ponder_depth: [0; 100],
-    frozen_ponder_depth: 0,
-};
+impl Timer {
+    pub const fn new() -> Self {
+        Timer {
+            frozen_ponder_time: 0.,
+            panic_value: 0.,
+            time_per_move: 0.,
+            start_time: 0.,
+            total_move_time: 0.,
+            ponder_time: [0.; 100],
+            panic_abort: 0,
+            do_check_abort: 1,
+            init_time: 0,
+            current_ponder_depth: 0,
+            current_ponder_time: 0.,
+            last_panic_check: 0.,
+            ponder_depth: [0; 100],
+            frozen_ponder_depth: 0,
+        }
+    }
+}
 
 /*
    File:          timer.h

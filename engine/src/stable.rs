@@ -1,9 +1,10 @@
-use crate::src::bitboard::{BitBoard, non_iterative_popcount, set_bitboards, square_mask};
 use ::patterns::pow3;
-use crate::src::search::position_list;
-use crate::src::bitbtest::{TestFlips_bitboard};
-use crate::src::globals::Board;
+
+use crate::src::bitboard::{BitBoard, non_iterative_popcount, set_bitboards, square_mask};
+use crate::src::bitbtest::TestFlips_bitboard;
 use crate::src::end::End;
+use crate::src::globals::Board;
+use crate::src::search::position_list;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -39,19 +40,23 @@ pub struct StableState {
     stab_move_list: [MoveLink; 100],
 }
 
-pub static mut stable_state: StableState = StableState {
-    last_black_stable: BitBoard { high: 0, low: 0 },
-    last_white_stable: BitBoard { high: 0, low: 0 },
-    edge_stable: [0; 6561],
-    black_stable: [0; 6561],
-    white_stable: [0; 6561],
-    base_conversion: [0; 256],
-    edge_a1h1: 0,
-    edge_a8h8: 0,
-    edge_a1a8: 0,
-    edge_h1h8: 0,
-    stab_move_list: [MoveLink { pred: 0, succ: 0 }; 100],
-};
+impl StableState {
+    pub const fn new() -> Self {
+        StableState {
+            last_black_stable: BitBoard { high: 0, low: 0 },
+            last_white_stable: BitBoard { high: 0, low: 0 },
+            edge_stable: [0; 6561],
+            black_stable: [0; 6561],
+            white_stable: [0; 6561],
+            base_conversion: [0; 256],
+            edge_a1h1: 0,
+            edge_a8h8: 0,
+            edge_a1a8: 0,
+            edge_h1h8: 0,
+            stab_move_list: [MoveLink { pred: 0, succ: 0 }; 100],
+        }
+    }
+}
 
 fn and_line_shift_64(target: &mut BitBoard,
                                        base: BitBoard,

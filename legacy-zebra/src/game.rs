@@ -1,28 +1,29 @@
-use libc_wrapper::{fclose, free, fprintf, fputs, fopen, puts, printf, fgets, time, ctime, strcpy, stdout, FILE, time_t};
-use crate::src::display::{display_optimal_line, display_status, produce_eval_text, send_status, send_status_time, send_status_pv, send_status_nodes, display_board, current_row, white_eval, white_time, white_player, black_eval, black_time, black_player, clear_status};
-
-use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
-use engine::src::error::{FrontEnd};
-use crate::src::error::{LibcFatalError, FE};
-use engine::src::globals::{board_state};
-use engine::src::search::{search_state, force_return, create_eval_info, disc_count, float_move, sort_moves};
-use engine::src::zebra::{EvaluationType};
-use engine::src::timer::{g_timer};
-use engine::src::moves::{make_move, moves_state, generate_all, unmake_move};
-use engine::src::counter::{reset_counter, adjust_counter, counter_value};
-use engine::src::hash::{find_hash, HashEntry, hash_state, determine_hash_values};
-use engine::src::getcoeff::{coeff_state, pattern_evaluation};
-use engine::src::stubs::abs;
-use engine::src::osfbook::{get_book_move, fill_move_alternatives, g_book};
-use engine::src::game::{ComputeMoveLogger, ComputeMoveOutput, generic_compute_move, EvaluatedMove, compare_eval, CandidateMove, generic_game_init, BoardSource, FileBoardSource, engine_global_setup, PonderMoveReport, game_state, midgame_state};
 use std::ffi::{CStr, CString};
-use crate::src::thordb::LegacyThor;
-use engine::src::zebra::EvalResult::{UNSOLVED_POSITION, WON_POSITION, LOST_POSITION, DRAWN_POSITION};
-use engine::src::zebra::EvalType::{UNDEFINED_EVAL, EXACT_EVAL, PASS_EVAL, MIDGAME_EVAL, WLD_EVAL};
-use crate::src::zebra::g_config;
+
+use engine::src::counter::{adjust_counter, counter_value, reset_counter};
+use engine::src::error::FrontEnd;
+use engine::src::game::{BoardSource, CandidateMove, compare_eval, ComputeMoveLogger, ComputeMoveOutput, engine_global_setup, EvaluatedMove, FileBoardSource, generic_compute_move, generic_game_init, PonderMoveReport};
+use engine::src::getcoeff::{pattern_evaluation};
+use engine::src::zebra::{board_state, hash_state, g_book, search_state};
+use engine::src::hash::{determine_hash_values, find_hash, HashEntry};
+use engine::src::moves::{generate_all, make_move, unmake_move};
+use engine::src::zebra::random_instance;
+use engine::src::osfbook::{fill_move_alternatives, get_book_move};
+use engine::src::search::{create_eval_info, disc_count, float_move, force_return, sort_moves};
+use engine::src::stubs::abs;
 use engine::src::thordb::ThorDatabase;
+use engine::src::zebra::{g_timer, moves_state};
+use engine::src::zebra::{EvaluationType, midgame_state, game_state, coeff_state};
+use engine::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
+use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL, WLD_EVAL};
 use flip::unflip::flip_stack_;
-use engine::src::myrandom::random_instance;
+use libc_wrapper::{ctime, fclose, fgets, FILE, fopen, fprintf, fputs, free, printf, puts, stdout, strcpy, time, time_t};
+
+use crate::src::display::{black_eval, black_player, black_time, clear_status, current_row, display_board, display_optimal_line, display_status, produce_eval_text, send_status, send_status_nodes, send_status_pv, send_status_time, white_eval, white_player, white_time};
+use crate::src::error::{FE, LibcFatalError};
+use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
+use crate::src::thordb::LegacyThor;
+use crate::src::zebra::g_config;
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
 pub static mut prefix_move: i32 = 0;
@@ -695,9 +696,9 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                 unsearched_move[i as usize];
             if empties_0 > (if wld > exact { wld } else { exact }) {
                 transform1[i as usize] =
-                    abs(engine::src::myrandom::random_instance.my_random() as i32) as u32;
+                    abs(engine::src::zebra::random_instance.my_random() as i32) as u32;
                 transform2[i as usize] =
-                    abs(engine::src::myrandom::random_instance.my_random() as i32) as u32
+                    abs(engine::src::zebra::random_instance.my_random() as i32) as u32
             } else {
                 transform1[i as usize] = 0;
                 transform2[i as usize] = 0 as i32 as u32

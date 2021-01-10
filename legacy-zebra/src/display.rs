@@ -3,11 +3,11 @@ use crate::src::error::{FE};
 use engine::src::error::FrontEnd;
 use engine::src::stubs::{floor, abs, ceil};
 use crate::src::safemem::safe_malloc;
-use engine::src::zebra::EvaluationType;
+use engine::src::zebra::{EvaluationType, g_timer};
 
 
 use engine::src::search::disc_count;
-use engine::src::timer::{g_timer};
+use engine::src::timer::{};
 use std::ffi::c_void;
 
 static mut stored_status_buffer: [i8; 256] = [0; 256];

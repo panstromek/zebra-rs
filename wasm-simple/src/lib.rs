@@ -94,7 +94,7 @@ pub fn init() {
         // init_thor_database::<WasmFrontend>();
 
         let x = 1 as i32;
-        engine::src::myrandom::random_instance.my_srandom(x);
+        engine::src::zebra::random_instance.my_srandom(x);
 
         // FIXME don't run this init code on every start - my set_skills doesn't work because of that
         if config.skill[0] < 0 {

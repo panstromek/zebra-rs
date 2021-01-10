@@ -1,15 +1,18 @@
-use crate::src::globals::{board_state, Board, BoardState};
-use crate::src::moves::{moves_state, MovesState};
-use ::patterns::{flip8, pow3};
-use crate::src::stubs::{floor};
-use crate::src::error::{FrontEnd};
 use std::ffi::c_void;
 use std::process::exit;
-use engine_traits::{CoeffSource, Offset};
-use crate::src::globals;
-use coeff::{constant_and_parity_feature, CoeffSet, terminal_patterns, CoeffSetData, AllocationBlock};
 use std::ptr::null_mut;
 use std::slice::from_raw_parts_mut;
+
+use ::patterns::{flip8, pow3};
+use coeff::{AllocationBlock, CoeffSet, CoeffSetData, constant_and_parity_feature, terminal_patterns};
+use engine_traits::{CoeffSource, Offset};
+
+use crate::src::error::FrontEnd;
+use crate::src::globals::{Board, BoardState};
+use crate::src::globals;
+use crate::src::moves::MovesState;
+use crate::src::stubs::floor;
+use crate::src::zebra::{board_state, moves_state};
 
 pub struct CoeffAdjustments {
     pub disc_adjust: f64,
@@ -28,12 +31,16 @@ pub struct CoeffState {
     pub set: [CoeffSet; 61],
 }
 
-pub static mut coeff_state: CoeffState = CoeffState {
-    stage_count: 0,
-    stage: [0; 61],
-    eval_map: [0; 61],
-    set: [NEW_COEFF_SET; 61],
-};
+impl CoeffState {
+    pub const fn new() -> CoeffState {
+        CoeffState {
+            stage_count: 0,
+            stage: [0; 61],
+            eval_map: [0; 61],
+            set: [NEW_COEFF_SET; 61],
+        }
+    }
+}
 
 /*
    GENERATE_BATCH

@@ -1,34 +1,34 @@
+use engine_traits::Offset;
+use flip::unflip::{flip_stack_, FlipStack};
+
 use crate::{
     src::{
-        search::{create_eval_info, disc_count},
-        moves::{make_move, generate_specific, moves_state,  unmake_move_no_hash, make_move_no_hash},
-        opname::opening_list,
-        hash::{clear_hash_drafts},
-        game::{CandidateMove},
-        globals::board_state,
-        getcoeff::remove_coeffs,
         counter::reset_counter,
-        patterns::{flip8, compute_line_patterns},
-        zebra::{EvaluationType}
+        game::CandidateMove,
+        getcoeff::remove_coeffs,
+        hash::clear_hash_drafts,
+        moves::{generate_specific, make_move, make_move_no_hash, unmake_move_no_hash},
+        opname::opening_list,
+        patterns::{compute_line_patterns, flip8},
+        search::{create_eval_info, disc_count},
+        zebra::EvaluationType
     }
 };
-use crate::src::stubs::{abs, ceil, floor};
-use crate::src::error::{FrontEnd};
-use crate::src::midgame::tree_search;
-use crate::src::hash::{add_hash, setup_hash, hash_state, HashState};
-use crate::src::game::{setup_non_file_based_game};
-use engine_traits::Offset;
-use crate::src::zebra::EvalType::{MIDGAME_EVAL, WLD_EVAL, EXACT_EVAL, UNDEFINED_EVAL};
-use crate::src::zebra::EvalResult::{WON_POSITION, LOST_POSITION, DRAWN_POSITION, UNSOLVED_POSITION};
-use crate::src::zebra::DrawMode::{OPPONENT_WINS, BLACK_WINS, WHITE_WINS};
-use crate::src::zebra::GameMode::PRIVATE_GAME;
-use crate::src::zebra::{GameMode, DrawMode};
-use crate::src::search::{search_state, SearchState};
-use crate::src::moves::{unmake_move, generate_all, MovesState};
-use crate::src::globals::{Board, BoardState};
-use flip::unflip::{flip_stack_, FlipStack};
-use crate::src::myrandom::MyRandom;
+use crate::src::error::FrontEnd;
+use crate::src::game::setup_non_file_based_game;
 use crate::src::game::ForcedOpening;
+use crate::src::globals::{Board, BoardState};
+use crate::src::hash::{add_hash, HashState, setup_hash};
+use crate::src::midgame::tree_search;
+use crate::src::moves::{generate_all, MovesState, unmake_move};
+use crate::src::myrandom::MyRandom;
+use crate::src::search::{SearchState};
+use crate::src::stubs::{abs, ceil, floor};
+use crate::src::zebra::{board_state, DrawMode, GameMode, moves_state, hash_state, search_state};
+use crate::src::zebra::DrawMode::{BLACK_WINS, OPPONENT_WINS, WHITE_WINS};
+use crate::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
+use crate::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, UNDEFINED_EVAL, WLD_EVAL};
+use crate::src::zebra::GameMode::PRIVATE_GAME;
 
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -167,48 +167,53 @@ pub const fn create_book_maps() -> BookMaps {
     maps.h2_b1_map[0] = 0;
     maps
 }
-pub static mut g_book: Book = Book {
-    deviation_bonus: 0.,
-    search_depth: 0,
-    node_table_size: 0,
-    hash_table_size: 0,
-    total_game_count: 0,
-    book_node_count: 0,
-    evaluated_count: 0,
-    evaluation_stage: 0,
-    max_eval_count: 0,
-    max_batch_size: 0,
-    exhausted_node_count: 0,
-    max_slack: 0,
-    low_deviation_threshold: 0,
-    high_deviation_threshold: 0,
-    min_eval_span: 0,
-    max_eval_span: 0,
-    min_negamax_span: 0,
-    max_negamax_span: 0,
-    leaf_count: 0,
-    bad_leaf_count: 0,
-    really_bad_leaf_count: 0,
-    unreachable_count: 0,
-    candidate_count: 0,
-    force_black: 0,
-    force_white: 0,
-    used_slack: [0; 3],
-    exact_count: [0; 61],
-    wld_count: [0; 61],
-    exhausted_count: [0; 61],
-    common_count: [0; 61],
-    symmetry_map: [&[]; 8],
-    inv_symmetry_map: [&[]; 8],
-    line_hash: [[[0; 6561]; 8]; 2],
-    book_hash_table: Vec::new(),
-    draw_mode: OPPONENT_WINS,
-    game_mode: PRIVATE_GAME,
-    node: Vec::new(),
-    candidate_list: [CandidateMove { move_0: 0, score: 0, flags: 0, parent_flags: 0 }; 60],
-    row_pattern: [0; 8],
-    col_pattern: [0; 8],
-};
+
+impl Book {
+    pub const fn new() -> Self {
+        Book {
+            deviation_bonus: 0.,
+            search_depth: 0,
+            node_table_size: 0,
+            hash_table_size: 0,
+            total_game_count: 0,
+            book_node_count: 0,
+            evaluated_count: 0,
+            evaluation_stage: 0,
+            max_eval_count: 0,
+            max_batch_size: 0,
+            exhausted_node_count: 0,
+            max_slack: 0,
+            low_deviation_threshold: 0,
+            high_deviation_threshold: 0,
+            min_eval_span: 0,
+            max_eval_span: 0,
+            min_negamax_span: 0,
+            max_negamax_span: 0,
+            leaf_count: 0,
+            bad_leaf_count: 0,
+            really_bad_leaf_count: 0,
+            unreachable_count: 0,
+            candidate_count: 0,
+            force_black: 0,
+            force_white: 0,
+            used_slack: [0; 3],
+            exact_count: [0; 61],
+            wld_count: [0; 61],
+            exhausted_count: [0; 61],
+            common_count: [0; 61],
+            symmetry_map: [&[]; 8],
+            inv_symmetry_map: [&[]; 8],
+            line_hash: [[[0; 6561]; 8]; 2],
+            book_hash_table: Vec::new(),
+            draw_mode: OPPONENT_WINS,
+            game_mode: PRIVATE_GAME,
+            node: Vec::new(),
+            candidate_list: [CandidateMove { move_0: 0, score: 0, flags: 0, parent_flags: 0 }; 60],
+            row_pattern: [0; 8],
+            col_pattern: [0; 8],
+        }
+    }
+}
 
 
 /*

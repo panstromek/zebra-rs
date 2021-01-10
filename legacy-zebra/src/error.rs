@@ -1,8 +1,8 @@
 use libc_wrapper::{vfprintf, ctime, fprintf, time, fopen, stderr, exit, strchr, strdup, toupper, tolower, strlen, free, malloc, realloc, puts, printf, putc, sprintf, fflush, time_t, stdout};
 use engine::src::error::{FrontEnd, FatalError};
-use engine::src::hash::{HashEntry, hash_state};
+use engine::src::hash::{HashEntry};
 use engine::src::thordb::{ThorDatabase};
-use engine::src::zebra::{EvaluationType};
+use engine::src::zebra::{EvaluationType, g_timer, hash_state, search_state};
 use crate::src::thordb::{sort_thor_games};
 use crate::src::osfbook::{print_move_alternatives};
 use std::ffi::{c_void, CStr, CString};
@@ -17,8 +17,8 @@ use crate::{
                   send_status_pv, send_status_nodes, produce_eval_text, display_sweep, send_sweep},
     }
 };
-use engine::src::timer::{g_timer};
-use engine::src::search::{hash_expand_pv, search_state};
+use engine::src::timer::{};
+use engine::src::search::{hash_expand_pv};
 
 use engine::src::game::CandidateMove;
 use engine::src::counter::CounterType;
@@ -28,8 +28,8 @@ use thordb_types::C2RustUnnamed;
 use crate::src::zebra::g_config;
 use std::convert::TryFrom;
 use flip::unflip::flip_stack_;
-use engine::src::moves::moves_state;
-use engine::src::globals::board_state;
+use engine::src::zebra::moves_state;
+use engine::src::zebra::board_state;
 
 static mut buffer: [i8; 16] = [0; 16];
 
