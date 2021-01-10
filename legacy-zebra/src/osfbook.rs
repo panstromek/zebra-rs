@@ -19,7 +19,7 @@ use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
-use flip::unflip::flip_stack_;
+use engine::src::zebra::flip_stack_;
 use libc_wrapper::{__ctype_b_loc, ctime, exit, fclose, feof, fflush, fgets, FILE, fopen, fprintf, fputc, fputs, fread, free, fscanf, fwrite, malloc, printf, putc, puts, qsort, sprintf, sscanf, stderr, stdout, strcmp, strcpy, strlen, strstr, time, toupper};
 
 use crate::{

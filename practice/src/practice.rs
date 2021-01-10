@@ -8,7 +8,7 @@ use engine::src::moves::{generate_all, make_move, unmake_move, valid_move};
 use engine::src::osfbook::{find_opening_name, get_hash};
 use engine::src::zebra::search_state;
 use engine::src::zebra::{board_state, game_state, moves_state};
-use flip::unflip::flip_stack_;
+use engine::src::zebra::flip_stack_;
 use legacy_zebra::src::display::{black_eval, black_player, black_time, current_row, display_board, produce_eval_text, set_move_list, set_names, white_eval, white_player, white_time};
 use legacy_zebra::src::error::{FE, LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};

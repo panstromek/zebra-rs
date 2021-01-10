@@ -27,7 +27,7 @@ use std::env::args;
 use thordb_types::C2RustUnnamed;
 use crate::src::zebra::g_config;
 use std::convert::TryFrom;
-use flip::unflip::flip_stack_;
+use engine::src::zebra::flip_stack_;
 use engine::src::zebra::moves_state;
 use engine::src::zebra::board_state;
 

@@ -16,7 +16,7 @@ use engine::src::zebra::{g_timer, moves_state};
 use engine::src::zebra::{EvaluationType, midgame_state, game_state, coeff_state};
 use engine::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL, WLD_EVAL};
-use flip::unflip::flip_stack_;
+use engine::src::zebra::flip_stack_;
 use libc_wrapper::{ctime, fclose, fgets, FILE, fopen, fprintf, fputs, free, printf, puts, stdout, strcpy, time, time_t};
 
 use crate::src::display::{black_eval, black_player, black_time, clear_status, current_row, display_board, display_optimal_line, display_status, produce_eval_text, send_status, send_status_nodes, send_status_pv, send_status_time, white_eval, white_player, white_time};

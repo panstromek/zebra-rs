@@ -3,7 +3,7 @@ use std::ffi::CStr;
 use std::future::Future;
 
 use engine_traits::Offset;
-use flip::unflip::flip_stack_;
+use flip::unflip::{FlipStack};
 
 use crate::src::counter::{adjust_counter, counter_value};
 use crate::src::end::End;
@@ -829,3 +829,5 @@ pub static mut g_book: Book = Book::new();
 pub static mut prob_cut: ProbCut = ProbCut::new();
 
 pub static mut search_state: SearchState = SearchState::new();
+
+pub static mut flip_stack_: FlipStack = FlipStack::new();
