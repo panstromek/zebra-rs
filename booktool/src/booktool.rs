@@ -2,13 +2,13 @@
 non_upper_case_globals, unused_assignments, unused_mut)]
 
 use engine_traits::Offset;
-use engine::src::osfbook::{set_deviation_value, set_max_batch_size, size_t, BookNode, probe_hash_table, get_hash, fill_move_alternatives, clear_node_depth, get_node_depth};
+use engine::src::osfbook::{set_deviation_value, set_max_batch_size, size_t, BookNode, probe_hash_table, get_hash, fill_move_alternatives, clear_node_depth, get_node_depth, adjust_score};
 use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WINS};
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 use legacy_zebra::src::error::{LibcFatalError, fatal_error};
 use legacy_zebra::src::zebra::{g_book, g_config, hash_state, board_state, moves_state, search_state, flip_stack_, coeff_state, prob_cut, g_timer, midgame_state, end_g, stable_state};
 use legacy_zebra::src::zebra::random_instance;
-use libc_wrapper::{time, fflush, stdout, fopen, fread, fclose, FILE, fprintf, fputc, free, sprintf, putc, fputs, stderr};
+use libc_wrapper::{time, fflush, stdout, fopen, fread, fclose, FILE, fprintf, fputc, free, sprintf, putc, fputs, stderr, sscanf, strlen, fgets, qsort};
 use legacy_zebra::src::osfbook;
 use engine::src::moves::{generate_all, make_move, unmake_move};
 use engine::src::search::disc_count;
@@ -16,13 +16,15 @@ use legacy_zebra::src::safemem::safe_malloc;
 use engine::src::zebra::EvaluationType;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvalResult::WON_POSITION;
-use engine::src::stubs::abs;
+use engine::src::stubs::{abs, floor};
 use legacy_zebra::src::display::{display_board, current_row, black_player, black_time, black_eval, white_player, white_time, white_eval};
 use engine::src::hash::{setup_hash, determine_hash_values};
 use engine::src::midgame::middle_game;
 use engine::src::end::end_game;
 use engine::src::counter::reset_counter;
-use legacy_zebra::src::osfbook::{StatisticsSpec, minimax_tree, write_text_database, write_compressed_database, write_binary_database, display_doubly_optimal_line, merge_position_list, evaluate_tree, book_statistics, convert_opening_list, unpack_compressed_database, read_text_database, read_binary_database, build_tree, init_osf, time_t};
+use legacy_zebra::src::osfbook::{StatisticsSpec, write_text_database, write_compressed_database, write_binary_database,
+                                 merge_position_list, convert_opening_list, unpack_compressed_database, read_text_database, read_binary_database,
+                                 init_osf, time_t, add_new_game, prepare_tree_traversal, engine_examine_tree, do_evaluate, compute_feasible_count, engine_minimax_tree};
 
 pub type FE = LibcFatalError;
 
@@ -1931,4 +1933,547 @@ pub unsafe fn export_tree(file_name: *const i8) {
     }
     do_export(0 as i32, stream, &mut move_vec);
     fclose(stream);
+}
+
+
+/*
+   MINIMAX_TREE
+   Calculates the minimax values of all nodes in the tree.
+*/
+
+pub unsafe fn minimax_tree() {
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    printf(b"Calculating minimax value... \x00" as *const u8 as
+        *const i8);
+    fflush(stdout);
+    prepare_tree_traversal();
+    time(&mut start_time);
+    engine_minimax_tree();
+    time(&mut stop_time);
+    printf(b"done (took %d s)\n\x00" as *const u8 as *const i8, stop_time - start_time);
+    puts(b"\x00" as *const u8 as *const i8);
+}
+
+/*
+   EVALUATE_TREE
+   Finds the most promising deviations from all nodes in the tree.
+*/
+
+pub unsafe fn evaluate_tree() {
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    prepare_tree_traversal();
+    g_book.exhausted_node_count = 0;
+    g_book.evaluated_count = 0;
+    g_book.evaluation_stage = 0;
+    time(&mut start_time);
+    let feasible_count = compute_feasible_count();
+    g_book.max_eval_count =
+        if feasible_count < g_book.max_batch_size {
+            feasible_count
+        } else { g_book.max_batch_size };
+    printf(b"Evaluating to depth %d. \x00" as *const u8 as
+               *const i8, g_book.search_depth);
+    if g_book.min_eval_span > 0 as i32 ||
+        g_book.max_eval_span < 1000 as i32 * 128 as i32 {
+        printf(b"Eval interval is [%.2f,%.2f]. \x00" as *const u8 as
+                   *const i8,
+               g_book.min_eval_span as f64 / 128.0f64,
+               g_book.max_eval_span as f64 / 128.0f64);
+    }
+    if g_book.min_negamax_span > 0 as i32 ||
+        g_book.max_negamax_span < 1000 as i32 * 128 as i32 {
+        printf(b"Negamax interval is [%.2f,%.2f]. \x00" as *const u8 as
+                   *const i8,
+               g_book.min_negamax_span as f64 / 128.0f64,
+               g_book.max_negamax_span as f64 / 128.0f64);
+    }
+    if g_book.max_eval_count == feasible_count {
+        printf(b"\n%d relevant nodes.\x00" as *const u8 as
+                   *const i8, feasible_count);
+    } else {
+        printf(b"\nMax batch size is %d.\x00" as *const u8 as
+                   *const i8, g_book.max_batch_size);
+    }
+    puts(b"\x00" as *const u8 as *const i8);
+    printf(b"Progress: \x00" as *const u8 as *const i8);
+    fflush(stdout);
+    if feasible_count > 0 as i32 { do_evaluate::<LibcFatalError>(0 as i32, g_config.echo ); }
+    time(&mut stop_time);
+    printf(b"(took %d s)\n\x00" as *const u8 as *const i8,
+           (stop_time - start_time) as i32);
+    printf(b"%d nodes evaluated \x00" as *const u8 as *const i8,
+           g_book.evaluated_count);
+    printf(b"(%d exhausted nodes ignored)\n\x00" as *const u8 as
+               *const i8, g_book.exhausted_node_count);
+    puts(b"\x00" as *const u8 as *const i8);
+}
+/*
+   EXAMINE_TREE
+   Generates some statistics about the book tree.
+*/
+
+pub unsafe fn examine_tree() {
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    printf(b"Examining tree... \x00" as *const u8 as *const i8);
+    fflush(stdout);
+    prepare_tree_traversal();
+    time(&mut start_time);
+    engine_examine_tree();
+    time(&mut stop_time);
+    printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
+           (stop_time - start_time) as i32);
+    puts(b"\x00" as *const u8 as *const i8);
+}
+unsafe extern "C" fn int_compare(i1: *const std::ffi::c_void,
+                                 i2: *const std::ffi::c_void) -> i32 {
+    return *(i1 as *mut i32) - *(i2 as *mut i32);
+}
+/*
+   BOOK_STATISTICS
+   Describe the status of the nodes in the tree.
+*/
+
+pub unsafe fn book_statistics(full_statistics: i32) {
+    let strata: [f64; 11] =
+        [0.01f64, 0.02f64, 0.03f64, 0.05f64, 0.10f64, 0.30f64, 0.50f64,
+            0.70f64, 0.90f64, 0.99f64, 1.01f64];
+    let mut eval_strata: [f64; 10] = [0.; 10];
+    let mut negamax_strata: [f64; 10] = [0.; 10];
+    let mut i: i32 = 0;
+    let mut full_solved: i32 = 0;
+    let mut wld_solved: i32 = 0;
+    let mut unevaluated: i32 = 0;
+    let mut eval_count: i32 = 0;
+    let mut negamax_count: i32 = 0;
+    let mut private_count: i32 = 0;
+    let mut this_strata: i32 = 0;
+    let mut strata_shift: i32 = 0;
+    let mut first: i32 = 0;
+    let mut last: i32 = 0;
+    let mut evals = 0 as *mut i32;
+    let mut negamax = 0 as *mut i32;
+    let mut depth: [i32; 60] = [0; 60];
+    let mut total_count: [i32; 61] = [0; 61];
+    evals =
+        safe_malloc((g_book.book_node_count as
+            u64).wrapping_mul(::std::mem::size_of::<i32>()
+            as u64)) as
+            *mut i32;
+    negamax =
+        safe_malloc((g_book.book_node_count as
+            u64).wrapping_mul(::std::mem::size_of::<i32>()
+            as u64)) as
+            *mut i32;
+    wld_solved = 0;
+    full_solved = wld_solved;
+    eval_count = 0;
+    negamax_count = 0;
+    private_count = 0;
+    unevaluated = 0;
+    i = 0;
+    while i < 60 as i32 {
+        depth[i as usize] = 0;
+        i += 1
+    }
+    i = 0;
+    while i < g_book.book_node_count {
+        if (*g_book.node.offset(i as isize)).flags as i32 & 16 as i32
+            != 0 {
+            full_solved += 1
+        } else if (*g_book.node.offset(i as isize)).flags as i32 &
+            4 as i32 != 0 {
+            wld_solved += 1
+        } else {
+            depth[get_node_depth(i, &mut g_book) as usize] += 1;
+            if (*g_book.node.offset(i as isize)).alternative_score as i32 ==
+                9999 as i32 &&
+                (*g_book.node.offset(i as isize)).best_alternative_move as
+                    i32 == -(1 as i32) {
+                unevaluated += 1
+            } else {
+                if (*g_book.node.offset(i as isize)).alternative_score as i32
+                    != 9999 as i32 {
+                    let fresh24 = eval_count;
+                    eval_count = eval_count + 1;
+                    *evals.offset(fresh24 as isize) =
+                        abs((*g_book.node.offset(i as isize)).alternative_score as
+                            i32)
+                }
+                let fresh25 = negamax_count;
+                negamax_count = negamax_count + 1;
+                *negamax.offset(fresh25 as isize) =
+                    abs((*g_book.node.offset(i as isize)).black_minimax_score as
+                        i32)
+            }
+        }
+        if (*g_book.node.offset(i as isize)).flags as i32 & 32 as i32
+            != 0 {
+            private_count += 1
+        }
+        i += 1
+    }
+    qsort(evals as *mut std::ffi::c_void, eval_count as size_t,
+          ::std::mem::size_of::<i32>() as u64,
+          Some(int_compare as
+              unsafe extern "C" fn(_: *const std::ffi::c_void,
+                                   _: *const std::ffi::c_void)
+                                   -> i32));
+    qsort(negamax as *mut std::ffi::c_void, negamax_count as size_t,
+          ::std::mem::size_of::<i32>() as u64,
+          Some(int_compare as
+              unsafe extern "C" fn(_: *const std::ffi::c_void,
+                                   _: *const std::ffi::c_void)
+                                   -> i32));
+    puts(b"\x00" as *const u8 as *const i8);
+    printf(b"#nodes:       %d\x00" as *const u8 as *const i8,
+           g_book.book_node_count);
+    if private_count > 0 as i32 {
+        printf(b"  (%d private)\x00" as *const u8 as *const i8,
+               private_count);
+    }
+    puts(b"\x00" as *const u8 as *const i8);
+    printf(b"#full solved: %d\n\x00" as *const u8 as *const i8,
+           full_solved);
+    printf(b"#WLD solved:  %d\n\x00" as *const u8 as *const i8,
+           wld_solved);
+    printf(b"#unevaluated: %d\n\n\x00" as *const u8 as *const i8,
+           unevaluated);
+    i = 0;
+    while i <= 59 as i32 {
+        if depth[i as usize] > 0 as i32 {
+            printf(b"#nodes with %2d-ply deviations: %d\n\x00" as *const u8 as
+                       *const i8, i, depth[i as usize]);
+        }
+        i += 1
+    }
+    puts(b"\x00" as *const u8 as *const i8);
+    this_strata = 0;
+    strata_shift =
+        floor(strata[this_strata as usize] * eval_count as f64) as
+            i32;
+    i = 0;
+    while i < eval_count {
+        if i == strata_shift {
+            eval_strata[this_strata as usize] =
+                *evals.offset(i as isize) as f64 / 128.0f64;
+            this_strata += 1;
+            strata_shift =
+                floor(strata[this_strata as usize] *
+                    eval_count as f64) as i32
+        }
+        i += 1
+    }
+    this_strata = 0;
+    strata_shift =
+        floor(strata[this_strata as usize] * negamax_count as f64)
+            as i32;
+    i = 0;
+    while i < negamax_count {
+        if i == strata_shift {
+            negamax_strata[this_strata as usize] =
+                *evals.offset(i as isize) as f64 / 128.0f64;
+            this_strata += 1;
+            strata_shift =
+                floor(strata[this_strata as usize] *
+                    negamax_count as f64) as i32
+        }
+        i += 1
+    }
+    i = 0;
+    while i < 10 as i32 {
+        printf(b"%2.0f%%:  \x00" as *const u8 as *const i8,
+               100 as i32 as f64 * strata[i as usize]);
+        printf(b"%5.2f   \x00" as *const u8 as *const i8,
+               eval_strata[i as usize]);
+        printf(b"%5.2f   \x00" as *const u8 as *const i8,
+               negamax_strata[i as usize]);
+        puts(b"\x00" as *const u8 as *const i8);
+        i += 1
+    }
+    puts(b"\x00" as *const u8 as *const i8);
+    free(negamax as *mut std::ffi::c_void);
+    free(evals as *mut std::ffi::c_void);
+    if full_statistics != 0 {
+        examine_tree();
+        first = 61;
+        last = -(1 as i32);
+        i = 0;
+        while i <= 60 as i32 {
+            total_count[i as usize] =
+                g_book.exact_count[i as usize] + g_book.wld_count[i as usize] +
+                    g_book.exhausted_count[i as usize] + g_book.common_count[i as usize];
+            if total_count[i as usize] > 0 as i32 {
+                first = if first < i { first } else { i };
+                last = if last > i { last } else { i }
+            }
+            i += 1
+        }
+        printf(b"%d unreachable nodes\n\n\x00" as *const u8 as
+                   *const i8, g_book.unreachable_count);
+        printf(b"%d leaf nodes; %d lack exact score and %d lack WLD status\n\x00"
+                   as *const u8 as *const i8, g_book.leaf_count,
+               g_book.bad_leaf_count, g_book.really_bad_leaf_count);
+        i = first;
+        while i <= last {
+            printf(b"%2d moves\x00" as *const u8 as *const i8, i);
+            printf(b"   \x00" as *const u8 as *const i8);
+            printf(b"%5d g_book.node\x00" as *const u8 as *const i8,
+                   total_count[i as usize]);
+            if total_count[i as usize] == 1 as i32 {
+                printf(b" :  \x00" as *const u8 as *const i8);
+            } else {
+                printf(b"s:  \x00" as *const u8 as *const i8);
+            }
+            if g_book.common_count[i as usize] > 0 as i32 {
+                printf(b"%5d midgame\x00" as *const u8 as *const i8,
+                       g_book.common_count[i as usize]);
+            } else {
+                printf(b"             \x00" as *const u8 as
+                    *const i8);
+            }
+            printf(b"  \x00" as *const u8 as *const i8);
+            if g_book.wld_count[i as usize] > 0 as i32 {
+                printf(b"%5d WLD\x00" as *const u8 as *const i8,
+                       g_book.wld_count[i as usize]);
+            } else {
+                printf(b"         \x00" as *const u8 as *const i8);
+            }
+            printf(b"  \x00" as *const u8 as *const i8);
+            if g_book.exact_count[i as usize] > 0 as i32 {
+                printf(b"%5d exact\x00" as *const u8 as *const i8,
+                       g_book.exact_count[i as usize]);
+            } else {
+                printf(b"           \x00" as *const u8 as
+                    *const i8);
+            }
+            printf(b"  \x00" as *const u8 as *const i8);
+            if g_book.exhausted_count[i as usize] > 0 as i32 {
+                printf(b"%2d exhausted\x00" as *const u8 as
+                           *const i8, g_book.exhausted_count[i as usize]);
+            }
+            puts(b"\x00" as *const u8 as *const i8);
+            i += 1
+        }
+        puts(b"\x00" as *const u8 as *const i8);
+    };
+}
+/*
+   DISPLAY_OPTIMAL_LINE
+   Outputs the sequence of moves which is optimal according
+   to both players.
+*/
+
+pub unsafe fn display_doubly_optimal_line(original_side_to_move:
+                                          i32) {
+    let mut i: i32 = 0;
+    let mut done: i32 = 0;
+    let mut show_move: i32 = 0;
+    let mut line: i32 = 0;
+    let mut root_score: i32 = 0;
+    let mut child_score: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut base_orientation: i32 = 0;
+    let mut child_orientation: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut current: i32 = 0;
+    let mut child: i32 = 0;
+    let mut next: i32 = 0;
+    prepare_tree_traversal();
+    printf(b"Root evaluation with Zebra playing \x00" as *const u8 as
+        *const i8);
+    if original_side_to_move == 0 as i32 {
+        root_score =
+            g_book.node[0].black_minimax_score as
+                i32;
+        printf(b"black\x00" as *const u8 as *const i8);
+    } else {
+        root_score =
+            g_book.node[0].white_minimax_score as
+                i32;
+        printf(b"white\x00" as *const u8 as *const i8);
+    }
+    printf(b": %+.2f\n\x00" as *const u8 as *const i8,
+           root_score as f64 / 128.0f64);
+    current = 0;
+    puts(b"Preferred line: \x00" as *const u8 as *const i8);
+    line = 0;
+    done = 0;
+    show_move = 1;
+    while (*g_book.node.offset(current as isize)).flags as i32 &
+        (16 as i32 | 4 as i32) == 0 && done == 0 {
+        if (*g_book.node.offset(current as isize)).flags as i32 &
+            1 as i32 != 0 {
+            side_to_move = 0 as i32
+        } else { side_to_move = 2 as i32 }
+        generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+        next = -(1 as i32);
+        this_move = -(1 as i32);
+        i = 0;
+        while i < moves_state.move_count[moves_state.disks_played as usize] {
+            let val0___ = &mut val1;
+            let val1___ = &mut val2;
+            let orientation___ = &mut base_orientation;
+            get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+            this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
+            make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+            let val0___ = &mut val1;
+            let val1___ = &mut val2;
+            let orientation___ = &mut child_orientation;
+            get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+            slot = probe_hash_table(val1, val2, &mut g_book);
+            child = *g_book.book_hash_table.offset(slot as isize);
+            if child != -(1 as i32) {
+                if original_side_to_move == 0 as i32 {
+                    child_score =
+                        (*g_book.node.offset(child as isize)).black_minimax_score as
+                            i32
+                } else {
+                    child_score =
+                        (*g_book.node.offset(child as isize)).white_minimax_score as
+                            i32
+                }
+                if child_score == root_score { next = child }
+            }
+            if child != -(1 as i32) && next == child { break ; }
+            let move_0 = this_move;
+            {
+                unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            };
+            i += 1
+        }
+        if next == -(1 as i32) {
+            done = 1;
+            if adjust_score((*g_book.node.offset(current as isize)).alternative_score
+                                as i32, side_to_move, &mut g_book, moves_state.disks_played) != root_score {
+                puts(b"(failed to find continuation)\x00" as *const u8 as
+                    *const i8);
+                show_move = 0 as i32
+            } else {
+                this_move =
+                    (*g_book.node.offset(current as isize)).best_alternative_move as
+                        i32;
+                this_move =
+                    *g_book.inv_symmetry_map[base_orientation as
+                        usize].offset(this_move as isize)
+            }
+        }
+        if show_move != 0 {
+            if side_to_move == 0 as i32 {
+                line += 1;
+                printf(b"%2d. \x00" as *const u8 as *const i8,
+                       line);
+            }
+            printf(b"%c%c  \x00" as *const u8 as *const i8,
+                   'a' as i32 + this_move % 10 as i32 -
+                       1 as i32,
+                   '0' as i32 + this_move / 10 as i32);
+            if side_to_move == 2 as i32 {
+                puts(b"\x00" as *const u8 as *const i8);
+            }
+            if done != 0 {
+                puts(b"(deviation)\x00" as *const u8 as *const i8);
+            }
+        }
+        current = next
+    }
+    puts(b"\x00" as *const u8 as *const i8);
+}
+
+/*
+   BUILD_TREE
+   Reads games from the file pointed to by FILE_NAME and
+   incorporates them into the game tree.
+*/
+
+pub unsafe fn build_tree(file_name: *const i8,
+                         max_game_count: i32,
+                         max_diff: i32,
+                         min_empties: i32, echo:i32) {
+    let mut move_string: [i8; 200] = [0; 200];
+    let mut line_buffer: [i8; 1000] = [0; 1000];
+    let mut sign: i8 = 0;
+    let mut column: i8 = 0;
+    let mut row: i8 = 0;
+    let mut i: i32 = 0;
+    let mut games_parsed: i32 = 0;
+    let mut games_imported: i32 = 0;
+    let mut move_count_0: i32 = 0;
+    let mut diff: i32 = 0;
+    let mut game_move_list: [i16; 60] = [0; 60];
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    let mut stream = 0 as *mut FILE;
+    puts(b"Importing game list...\x00" as *const u8 as *const i8);
+    fflush(stdout);
+    stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
+    if stream.is_null() {
+        fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
+                    b"Could not open game file\x00" as *const u8 as
+                        *const i8, file_name);
+    }
+    time(&mut start_time);
+    games_parsed = 0;
+    games_imported = 0;
+    loop  {
+        fgets(line_buffer.as_mut_ptr(), 998 as i32, stream);
+        sscanf(line_buffer.as_mut_ptr(),
+               b"%s %d\x00" as *const u8 as *const i8,
+               move_string.as_mut_ptr(), &mut diff as *mut i32);
+        move_count_0 =
+            strlen(move_string.as_mut_ptr()).wrapping_sub(1 as i32 as
+                u64).wrapping_div(3
+                as
+                i32
+                as
+                u64)
+                as i32;
+        games_parsed += 1;
+        i = 0;
+        while i < move_count_0 {
+            sscanf(move_string.as_mut_ptr().offset((3 as i32 * i) as
+                isize),
+                   b"%c%c%c\x00" as *const u8 as *const i8,
+                   &mut sign as *mut i8,
+                   &mut column as *mut i8,
+                   &mut row as *mut i8);
+            game_move_list[i as usize] =
+                (10 as i32 * (row as i32 - '0' as i32) +
+                    (column as i32 - 'a' as i32 + 1 as i32))
+                    as i16;
+            if sign as i32 == '-' as i32 {
+                game_move_list[i as usize] =
+                    -(game_move_list[i as usize] as i32) as
+                        i16
+            }
+            i += 1
+        }
+        if abs(diff) <= max_diff {
+            add_new_game(move_count_0, game_move_list.as_mut_ptr(),
+                         min_empties, 0 as i32, 0 as i32,
+                         0 as i32, 0 as i32, echo);
+            printf(b"|\x00" as *const u8 as *const i8);
+            if games_imported % 100 as i32 == 0 as i32 {
+                printf(b" --- %d games --- \x00" as *const u8 as
+                           *const i8, games_imported);
+            }
+            fflush(stdout);
+            games_imported += 1
+        }
+        if !(games_parsed < max_game_count) { break ; }
+    }
+    time(&mut stop_time);
+    fclose(stream);
+    printf(b"\ndone (took %d s)\n\x00" as *const u8 as *const i8,
+           (stop_time - start_time) as i32);
+    printf(b"%d games read; %d games imported\n\x00" as *const u8 as
+               *const i8, games_parsed, games_imported);
+    printf(b"Games with final difference <= %d were read until %d empties.\n\x00"
+               as *const u8 as *const i8, max_diff, min_empties);
+    puts(b"\x00" as *const u8 as *const i8);
 }
