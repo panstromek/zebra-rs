@@ -13,6 +13,7 @@ name = "booktool"
 
 [dependencies]
 engine = { path= "./../engine" }
+engine-traits = { path= "./../engine/engine-traits" }
 legacy-zebra = { path= "./../legacy-zebra" }
 libc = "0.2"
 libc-wrapper = { path = "./../libc-wrapper"}

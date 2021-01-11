@@ -28,6 +28,7 @@ name = "booktool"
 version = "0.1.0"
 dependencies = [
  "engine",
+ "engine-traits",
  "legacy-zebra",
  "libc",
  "libc-wrapper",
