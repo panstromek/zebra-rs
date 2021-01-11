@@ -1,13 +1,28 @@
 #![allow(dead_code,  non_camel_case_types, non_snake_case,
 non_upper_case_globals, unused_assignments, unused_mut)]
 
-use engine::src::osfbook::{set_deviation_value, set_max_batch_size};
+use engine_traits::Offset;
+use engine::src::osfbook::{set_deviation_value, set_max_batch_size, size_t, BookNode, probe_hash_table, get_hash, fill_move_alternatives, clear_node_depth, get_node_depth};
 use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WINS};
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
-use legacy_zebra::src::error::LibcFatalError;
-use legacy_zebra::src::osfbook::{book_statistics, build_tree, clear_tree, convert_opening_list, correct_tree, display_doubly_optimal_line, evaluate_tree, export_tree, generate_endgame_statistics, generate_midgame_statistics, init_osf, merge_binary_database, merge_position_list, minimax_tree, read_binary_database, read_text_database, restricted_minimax_tree, set_output_script_name, unpack_compressed_database, write_binary_database, write_compressed_database, write_text_database};
-use legacy_zebra::src::zebra::{g_book, g_config, hash_state};
+use legacy_zebra::src::error::{LibcFatalError, fatal_error};
+use legacy_zebra::src::zebra::{g_book, g_config, hash_state, board_state, moves_state, search_state, flip_stack_, coeff_state, prob_cut, g_timer, midgame_state, end_g, stable_state};
 use legacy_zebra::src::zebra::random_instance;
+use libc_wrapper::{time, fflush, stdout, fopen, fread, fclose, FILE, fprintf, fputc, free, sprintf, putc, fputs, stderr};
+use legacy_zebra::src::osfbook;
+use engine::src::moves::{generate_all, make_move, unmake_move};
+use engine::src::search::disc_count;
+use legacy_zebra::src::safemem::safe_malloc;
+use engine::src::zebra::EvaluationType;
+use engine::src::zebra::EvalType::MIDGAME_EVAL;
+use engine::src::zebra::EvalResult::WON_POSITION;
+use engine::src::stubs::abs;
+use legacy_zebra::src::display::{display_board, current_row, black_player, black_time, black_eval, white_player, white_time, white_eval};
+use engine::src::hash::{setup_hash, determine_hash_values};
+use engine::src::midgame::middle_game;
+use engine::src::end::end_game;
+use engine::src::counter::reset_counter;
+use legacy_zebra::src::osfbook::{StatisticsSpec, minimax_tree, write_text_database, write_compressed_database, write_binary_database, display_doubly_optimal_line, merge_position_list, evaluate_tree, book_statistics, convert_opening_list, unpack_compressed_database, read_text_database, read_binary_database, build_tree, init_osf, time_t};
 
 pub type FE = LibcFatalError;
 
@@ -605,4 +620,1315 @@ pub fn main() {
                                     args.as_mut_ptr() as
                                         *mut *mut i8) as i32)
     }
+}
+
+/*
+   MERGE_BINARY_DATABASE
+   Merges a binary database file with the current book.
+*/
+pub unsafe fn merge_binary_database(file_name:
+                                                   *const i8) {
+    let mut start_time: time_t = 0;
+    time(&mut start_time);
+    libc_wrapper::printf(b"Importing binary opening database... \x00" as *const u8 as
+               *const i8);
+    fflush(stdout);
+    let stream =
+        fopen(file_name, b"rb\x00" as *const u8 as *const i8);
+    if stream.is_null() {
+        fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
+                    b"Could not open database file\x00" as *const u8 as
+                        *const i8, file_name);
+    }
+    let mut magic1: i16 = 0;
+    let mut magic2: i16 = 0;
+    fread(&mut magic1 as *mut i16 as *mut std::ffi::c_void,
+          std::mem::size_of::<i16>() as u64,
+          1 as i32 as size_t, stream);
+    fread(&mut magic2 as *mut i16 as *mut std::ffi::c_void,
+          std::mem::size_of::<i16>() as u64,
+          1 as i32 as size_t, stream);
+    if magic1 as i32 != 2718 as i32 ||
+           magic2 as i32 != 2818 as i32 {
+        fatal_error(b"%s: %s\x00" as *const u8 as *const i8,
+                    b"Wrong checksum, might be an old version\x00" as
+                        *const u8 as *const i8, file_name);
+    }
+    let mut merge_book_node_count: i32 = 0;
+    fread(&mut merge_book_node_count as *mut i32 as *mut std::ffi::c_void,
+          std::mem::size_of::<i32>() as u64,
+          1 as i32 as size_t, stream);
+    let mut merge_use_count = 0;
+    let mut i: i32 = 0;
+    i = 0;
+    while i < merge_book_node_count {
+        let mut merge_node =
+            BookNode{hash_val1: 0,
+                     hash_val2: 0,
+                     black_minimax_score: 0,
+                     white_minimax_score: 0,
+                     best_alternative_move: 0,
+                     alternative_score: 0,
+                     flags: 0,};
+        /* Read g_book.node. */
+        fread(&mut merge_node.hash_val1 as *mut i32 as
+                  *mut std::ffi::c_void,
+              std::mem::size_of::<i32>() as u64,
+              1 as i32 as size_t, stream);
+        fread(&mut merge_node.hash_val2 as *mut i32 as
+                  *mut std::ffi::c_void,
+              std::mem::size_of::<i32>() as u64,
+              1 as i32 as size_t, stream);
+        fread(&mut merge_node.black_minimax_score as *mut i16 as
+                  *mut std::ffi::c_void,
+              std::mem::size_of::<i16>() as u64,
+              1 as i32 as size_t, stream);
+        fread(&mut merge_node.white_minimax_score as *mut i16 as
+                  *mut std::ffi::c_void,
+              std::mem::size_of::<i16>() as u64,
+              1 as i32 as size_t, stream);
+        fread(&mut merge_node.best_alternative_move as *mut i16 as
+                  *mut std::ffi::c_void,
+              std::mem::size_of::<i16>() as u64,
+              1 as i32 as size_t, stream);
+        fread(&mut merge_node.alternative_score as *mut i16 as
+                  *mut std::ffi::c_void,
+              std::mem::size_of::<i16>() as u64,
+              1 as i32 as size_t, stream);
+        fread(&mut merge_node.flags as *mut u16 as
+                  *mut std::ffi::c_void,
+              std::mem::size_of::<u16>() as u64,
+              1 as i32 as size_t, stream);
+        /* Look up g_book.node in existing database. */
+        let slot =
+            probe_hash_table(merge_node.hash_val1, merge_node.hash_val2, &mut g_book);
+        if slot == -(1 as i32) ||
+               *g_book.book_hash_table.offset(slot as isize) == -(1 as i32) {
+            /* New position, add it without modifications. */
+            let this_node =
+                osfbook::create_BookNode(merge_node.hash_val1, merge_node.hash_val2,
+                                         merge_node.flags, &mut g_book);
+            *g_book.node.offset(this_node as isize) = merge_node;
+            merge_use_count += 1
+        } else {
+            /* Existing position, use the book from the merge file if it contains
+            better endgame information. */
+            let index = *g_book.book_hash_table.offset(slot as isize);
+            if merge_node.flags as i32 & 16 as i32 != 0 &&
+                   (*g_book.node.offset(index as isize)).flags as i32 &
+                       16 as i32 == 0 ||
+                   merge_node.flags as i32 & 4 as i32 != 0 &&
+                       (*g_book.node.offset(index as isize)).flags as i32 &
+                           4 as i32 == 0 {
+                *g_book.node.offset(index as isize) = merge_node;
+                merge_use_count += 1
+            }
+        }
+        i += 1
+    }
+    fclose(stream);
+    /* Make sure the tree is in reasonably good shape after the merge. */
+    minimax_tree();
+    let mut stop_time: time_t = 0;
+    time(&mut stop_time);
+    libc_wrapper::printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
+                         (stop_time - start_time) as i32);
+    libc_wrapper::printf(b"Used %d out of %d nodes from the merge file.\x00" as *const u8 as
+               *const i8, merge_use_count, merge_book_node_count);
+}
+
+/*
+  EXPORT_POSITION
+  Output the position and its value according to the database
+  to file.
+*/
+unsafe fn export_position(side_to_move: i32,
+                          score: i32,
+                          target_file: *mut FILE) {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut pos: i32 = 0;
+    let mut black_mask: i32 = 0;
+    let mut white_mask: i32 = 0;
+    let mut hi_mask: i32 = 0;
+    let mut lo_mask: i32 = 0;
+    i = 1;
+    while i <= 8 as i32 {
+        black_mask = 0;
+        white_mask = 0;
+        j = 0;
+        pos = 10 as i32 * i + 1 as i32;
+        while j < 8 as i32 {
+            if board_state.board[pos as usize] == 0 as i32 {
+                black_mask |= (1 as i32) << j
+            } else if board_state.board[pos as usize] == 2 as i32 {
+                white_mask |= (1 as i32) << j
+            }
+            j += 1;
+            pos += 1
+        }
+        hi_mask = black_mask >> 4 as i32;
+        lo_mask = black_mask % 16 as i32;
+        fprintf(target_file, b"%c%c\x00" as *const u8 as *const i8,
+                hi_mask + ' ' as i32, lo_mask + ' ' as i32);
+        hi_mask = white_mask >> 4 as i32;
+        lo_mask = white_mask % 16 as i32;
+        fprintf(target_file, b"%c%c\x00" as *const u8 as *const i8,
+                hi_mask + ' ' as i32, lo_mask + ' ' as i32);
+        i += 1
+    }
+    fprintf(target_file, b" \x00" as *const u8 as *const i8);
+    if side_to_move == 0 as i32 {
+        fputc('*' as i32, target_file);
+    } else { fputc('O' as i32, target_file); }
+    fprintf(target_file,
+            b" %2d %+d\n\x00" as *const u8 as *const i8,
+            moves_state.disks_played, score);
+}
+
+/*
+   DO_RESTRICTED_MINIMAX
+   Calculates the book-only minimax value of g_book.node INDEX,
+   not caring about deviations from the database.
+*/
+unsafe fn do_restricted_minimax(index: i32,
+                                low: i32,
+                                high: i32,
+                                target_file: *mut FILE,
+                                minimax_values:
+                                           *mut i32) {
+    let mut i: i32 = 0;
+    let mut child: i32 = 0;
+    let mut corrected_score: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut child_count: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    let mut best_score: i16 = 0;
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        return
+    }
+    /* Recursively minimax all children of the g_book.node */
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    if side_to_move == 0 as i32 {
+        best_score = -(32000 as i32) as i16
+    } else { best_score = 32000 as i32 as i16 }
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+    child_count = 0;
+    i = 0;
+    while i < moves_state.move_count[moves_state.disks_played as usize] {
+        board_state.piece_count[0][moves_state.disks_played as usize] =
+            disc_count(0 as i32, &board_state.board);
+        board_state.piece_count[2][moves_state.disks_played as usize] =
+            disc_count(2 as i32, &board_state.board);
+        this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+        slot = probe_hash_table(val1, val2, &mut g_book);
+        child = *g_book.book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) {
+            do_restricted_minimax(child, low, high, target_file,
+                                  minimax_values);
+            corrected_score = *minimax_values.offset(child as isize);
+            if side_to_move == 0 as i32 &&
+                corrected_score > best_score as i32 ||
+                side_to_move == 2 as i32 &&
+                    corrected_score < best_score as i32 {
+                best_score = corrected_score as i16
+            }
+            child_count += 1
+        }
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
+        i += 1
+    }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 16 as i32
+        != 0 ||
+        (*g_book.node.offset(index as isize)).flags as i32 &
+            4 as i32 != 0 && child_count == 0 as i32 {
+        best_score = (*g_book.node.offset(index as isize)).black_minimax_score
+    } else if child_count == 0 as i32 {
+        libc_wrapper::printf(b"%d disks played\n\x00" as *const u8 as *const i8,
+                             moves_state.disks_played);
+        libc_wrapper::printf(b"Node #%d has no children and lacks WLD status\n\x00" as
+                   *const u8 as *const i8, index);
+        libc_wrapper::exit(1 as i32);
+    }
+    if best_score as i32 > 30000 as i32 {
+        best_score =
+            (best_score as i32 - 30000 as i32) as
+                i16
+    } else if (best_score as i32) < -(30000 as i32) {
+        best_score =
+            (best_score as i32 + 30000 as i32) as
+                i16
+    }
+    *minimax_values.offset(index as isize) = best_score as i32;
+    let ref mut fresh16 = (*g_book.node.offset(index as isize)).flags;
+    *fresh16 = (*fresh16 as i32 ^ 8 as i32) as u16;
+    if moves_state.disks_played >= low && moves_state.disks_played <= high {
+        export_position(side_to_move, best_score as i32, target_file);
+    };
+}
+
+/*
+   RESTRICTED_MINIMAX_TREE
+   Calculates the minimax values of all nodes in the tree,
+   not
+*/
+pub unsafe fn restricted_minimax_tree(low: i32,
+                                      high: i32,
+                                      pos_file_name:
+                                                 *const i8) {
+    let mut pos_file: *mut FILE = 0 as *mut FILE;
+    let mut i: i32 = 0;
+    let mut minimax_values: *mut i32 = 0 as *mut i32;
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    libc_wrapper::printf(b"Calculating restricted minimax value... \x00" as *const u8 as
+        *const i8);
+    fflush(stdout);
+    osfbook::prepare_tree_traversal();
+    time(&mut start_time);
+    /* Mark all nodes as not traversed */
+    i = 0;
+    while i < g_book.book_node_count {
+        let ref mut fresh17 = (*g_book.node.offset(i as isize)).flags;
+        *fresh17 =
+            (*fresh17 as i32 | 8 as i32) as u16;
+        i += 1
+    }
+    minimax_values =
+        safe_malloc((g_book.book_node_count as
+            u64).wrapping_mul(std::mem::size_of::<i32>()
+            as u64)) as
+            *mut i32;
+    pos_file =
+        fopen(pos_file_name, b"a\x00" as *const u8 as *const i8);
+    do_restricted_minimax(0 as i32, low, high, pos_file,
+                          minimax_values);
+    time(&mut stop_time);
+    libc_wrapper::printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
+                         (stop_time - start_time) as i32);
+    libc_wrapper::puts(b"\x00" as *const u8 as *const i8);
+    free(minimax_values as *mut ::std::ffi::c_void);
+    fclose(pos_file);
+}
+
+/*
+   DO_MIDGAME_STATISTICS
+   Recursively makes sure a subtree is evaluated to the specified depth.
+*/
+unsafe fn do_midgame_statistics(index: i32,
+                                spec: StatisticsSpec, echo:i32) {
+    let mut dummy_info: EvaluationType =
+        EvaluationType{type_0: MIDGAME_EVAL,
+            res: WON_POSITION,
+            score: 0,
+            confidence: 0.,
+            search_depth: 0,
+            is_book: 0,};
+    let mut i: i32 = 0;
+    let mut depth: i32 = 0;
+    let mut child: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    let mut eval_list: [i32; 64] = [0; 64];
+    let mut out_file: *mut FILE = 0 as *mut FILE;
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        return
+    }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+    /* With a certain probability, search the position to a variety
+     of different depths in order to determine correlations. */
+    if ((legacy_zebra::src::zebra::random_instance.my_random() % 1000 as i32 as i64) as f64)
+        < 1000.0f64 * spec.prob &&
+        abs((*g_book.node.offset(index as isize)).black_minimax_score as
+            i32) < spec.max_diff {
+        display_board(stdout, &board_state.board, 0 as i32,
+                      0 as i32, 0 as i32, 0 as i32,
+                      current_row,
+                      black_player, black_time, black_eval,
+                      white_player, white_time, white_eval,
+                      &board_state.black_moves, &board_state.white_moves
+        );
+        setup_hash(0 as i32, &mut hash_state, &mut  random_instance);
+        determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
+        depth = 1;
+        while depth <= spec.max_depth {
+            middle_game::<osfbook::FE>(side_to_move, depth, 0 as i32,
+                                       &mut dummy_info, echo, &mut moves_state,
+                                       &mut search_state,
+                                       &mut board_state,
+                                       &mut hash_state,
+                                       &mut flip_stack_,
+                                       &mut coeff_state, &mut prob_cut,
+                                       &mut g_timer, &mut midgame_state);
+            eval_list[depth as usize] = search_state.root_eval;
+            libc_wrapper::printf(b"%2d: %-5d \x00" as *const u8 as *const i8,
+                                 depth, eval_list[depth as usize]);
+            depth += 2 as i32
+        }
+        libc_wrapper::puts(b"\x00" as *const u8 as *const i8);
+        setup_hash(0 as i32, &mut hash_state, &mut  random_instance);
+        determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
+        depth = 2;
+        while depth <= spec.max_depth {
+            middle_game::<osfbook::FE>(side_to_move, depth, 0 as i32,
+                                       &mut dummy_info, echo, &mut moves_state,
+                                       &mut search_state,
+                                       &mut board_state,
+                                       &mut hash_state,
+                                       &mut flip_stack_,
+                                       &mut coeff_state, &mut prob_cut,
+                                       &mut g_timer, &mut midgame_state);
+            eval_list[depth as usize] = search_state.root_eval;
+            libc_wrapper::printf(b"%2d: %-5d \x00" as *const u8 as *const i8,
+                                 depth, eval_list[depth as usize]);
+            depth += 2 as i32
+        }
+        libc_wrapper::puts(b"\x00" as *const u8 as *const i8);
+        /* Store the scores if the last eval is in the range [-20,20] */
+        out_file =
+            fopen(spec.out_file_name,
+                  b"a\x00" as *const u8 as *const i8);
+        if !out_file.is_null() &&
+            abs(eval_list[spec.max_depth as usize]) <=
+                20 as i32 * 128 as i32 {
+            let val0___ = &mut val1;
+            let val1___ = &mut val2;
+            let orientation___ = &mut orientation;
+            get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+            fprintf(out_file,
+                    b"%08x%08x %2d \x00" as *const u8 as *const i8,
+                    val1, val2, moves_state.disks_played);
+            fprintf(out_file,
+                    b"%2d %2d \x00" as *const u8 as *const i8,
+                    1 as i32, spec.max_depth);
+            i = 1;
+            while i <= spec.max_depth {
+                fprintf(out_file,
+                        b"%5d \x00" as *const u8 as *const i8,
+                        eval_list[i as usize]);
+                i += 1
+            }
+            fprintf(out_file, b"\n\x00" as *const u8 as *const i8);
+            fclose(out_file);
+        }
+    }
+    /* Recursively search the children of the g_book.node */
+    i = 0;
+    while i < moves_state.move_count[moves_state.disks_played as usize] {
+        this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+        slot = probe_hash_table(val1, val2, &mut g_book);
+        child = *g_book.book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) {
+            do_midgame_statistics(child, spec, echo);
+        }
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
+        i += 1
+    }
+    let ref mut fresh18 = (*g_book.node.offset(index as isize)).flags;
+    *fresh18 = (*fresh18 as i32 ^ 8 as i32) as u16;
+}
+
+/*
+   GENERATE_MIDGAME_STATISTICS
+   Calculates the minimax values of all nodes in the tree.
+*/
+pub unsafe fn generate_midgame_statistics(max_depth:
+                                                     i32,
+                                          probability:
+                                                     f64,
+                                          max_diff:
+                                                     i32,
+                                          statistics_file_name:
+                                                     *const i8) {
+    let mut i: i32 = 0;
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    let mut spec: StatisticsSpec =
+        StatisticsSpec{out_file_name: 0 as *const i8,
+            prob: 0.,
+            max_diff: 0,
+            max_depth: 0,};
+    libc_wrapper::puts(b"Generating statistics...\n\x00" as *const u8 as
+        *const i8);
+    osfbook::prepare_tree_traversal();
+    g_timer.toggle_abort_check(0 as i32);
+    time(&mut start_time);
+    i = 0;
+    while i < g_book.book_node_count {
+        let ref mut fresh19 = (*g_book.node.offset(i as isize)).flags;
+        *fresh19 =
+            (*fresh19 as i32 | 8 as i32) as u16;
+        i += 1
+    }
+    spec.prob = probability;
+    spec.max_diff = max_diff;
+    spec.max_depth = max_depth;
+    spec.out_file_name = statistics_file_name;
+    let x = start_time as i32;
+    legacy_zebra::src::zebra::random_instance.my_srandom(x);
+    do_midgame_statistics(0 as i32, spec, g_config.echo);
+    time(&mut stop_time);
+    libc_wrapper::printf(b"\nDone (took %d s)\n\x00" as *const u8 as *const i8,
+                         (stop_time - start_time) as i32);
+    libc_wrapper::puts(b"\x00" as *const u8 as *const i8);
+}
+
+/*
+   ENDGAME_CORRELATION
+   Compare the scores produced by shallow searches to the
+   exact score in an endgame position.
+*/
+unsafe fn endgame_correlation(mut side_to_move: i32,
+                              best_score: i32,
+                              best_move: i32,
+                              min_disks: i32,
+                              max_disks: i32,
+                              spec: StatisticsSpec, echo:i32) {
+    let mut dummy_info: EvaluationType =
+        EvaluationType{type_0: MIDGAME_EVAL,
+            res: WON_POSITION,
+            score: 0,
+            confidence: 0.,
+            search_depth: 0,
+            is_book: 0,};
+    let mut out_file: *mut FILE = 0 as *mut FILE;
+    let mut i: i32 = 0;
+    let mut depth: i32 = 0;
+    let mut stored_side_to_move: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    let mut eval_list: [i32; 64] = [0; 64];
+    display_board(stdout, &board_state.board, 0 as i32,
+                  0 as i32, 0 as i32, 0 as i32,
+                  current_row,
+                  black_player, black_time, black_eval,
+                  white_player, white_time, white_eval,
+                  &board_state.black_moves, &board_state.white_moves
+    );
+    hash_state.set_hash_transformation(abs(legacy_zebra::src::zebra::random_instance.my_random() as i32) as u32,
+                                       abs(legacy_zebra::src::zebra::random_instance.my_random() as i32) as u32);
+    determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
+    depth = 1;
+    while depth <= spec.max_depth {
+        middle_game::<osfbook::FE>(side_to_move, depth, 0 as i32, &mut dummy_info, echo, &mut moves_state,
+                                   &mut search_state,
+                                   &mut board_state,
+                                   &mut hash_state,
+                                   &mut flip_stack_,
+                                   &mut coeff_state, &mut prob_cut,
+                                   &mut g_timer, &mut midgame_state);
+        eval_list[depth as usize] = search_state.root_eval;
+        libc_wrapper::printf(b"%2d: %-6.2f \x00" as *const u8 as *const i8, depth,
+                             eval_list[depth as usize] as f64 / 128.0f64);
+        depth += 1
+    }
+    out_file =
+        fopen(spec.out_file_name,
+              b"a\x00" as *const u8 as *const i8);
+    if !out_file.is_null() {
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+        fprintf(out_file,
+                b"%08x%08x %2d \x00" as *const u8 as *const i8,
+                val1, val2, moves_state.disks_played);
+        fprintf(out_file, b"%+3d \x00" as *const u8 as *const i8,
+                best_score);
+        fprintf(out_file, b"%2d %2d \x00" as *const u8 as *const i8,
+                1 as i32, spec.max_depth);
+        i = 1;
+        while i <= spec.max_depth {
+            fprintf(out_file, b"%5d \x00" as *const u8 as *const i8,
+                    eval_list[i as usize]);
+            i += 1
+        }
+        fprintf(out_file, b"\n\x00" as *const u8 as *const i8);
+        fclose(out_file);
+    }
+    if moves_state.disks_played < max_disks {
+        make_move(side_to_move, best_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+        stored_side_to_move = side_to_move;
+        side_to_move = 0 as i32 + 2 as i32 - side_to_move;
+        generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+        if moves_state.move_count[moves_state.disks_played as usize] > 0 as i32 {
+            libc_wrapper::printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
+                       *const i8, 60 as i32 - moves_state.disks_played);
+            fill_move_alternatives::<osfbook::FE>(side_to_move, 16 as i32,
+                                                  &mut g_book,
+                                                  &mut board_state,
+                                                  &mut moves_state,
+                                                  &search_state,
+                                                  &mut flip_stack_,
+                                                  &mut hash_state);
+            if g_book.get_candidate_count() > 0 as i32 ||
+                moves_state.disks_played >= 40 as i32 {
+                osfbook::print_move_alternatives(side_to_move);
+                hash_state.set_hash_transformation(0 as i32 as u32,
+                                        0 as i32 as u32);
+               end_game::<osfbook::FE>(side_to_move, 0 as i32, 1 as i32,
+                                       1 as i32, 0 as i32, &mut dummy_info, echo, &mut flip_stack_
+                                       , &mut search_state
+                                       , &mut board_state
+                                       , &mut hash_state
+                                       , &mut g_timer
+                                       , &mut end_g
+                                       , &mut midgame_state
+                                       , &mut coeff_state
+                                       , &mut moves_state
+                                       , &mut random_instance
+                                       , &mut g_book
+                                       , &mut stable_state
+                                       , &mut prob_cut);
+                endgame_correlation(side_to_move, search_state.root_eval,
+                                    board_state.pv[0][0],
+                                    min_disks, max_disks, spec, echo);
+            }
+        }
+        let side_to_move = stored_side_to_move;
+        let move_0 = best_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
+    };
+}
+
+/*
+   DO_ENDGAME_STATISTICS
+   Recursively makes sure a subtree is evaluated to
+   the specified depth.
+*/
+unsafe fn do_endgame_statistics(index: i32,
+                                spec: StatisticsSpec, echo:i32 ) {
+    let mut dummy_info: EvaluationType =
+        EvaluationType{type_0: MIDGAME_EVAL,
+            res: WON_POSITION,
+            score: 0,
+            confidence: 0.,
+            search_depth: 0,
+            is_book: 0,};
+    let mut i: i32 = 0;
+    let mut child: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        return
+    }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+    /* With a certain probability, search the position to a variety
+     of different depths in order to determine correlations. */
+    if moves_state.disks_played == 33 as i32 &&
+        ((legacy_zebra::src::zebra::random_instance.my_random() % 1000 as i32 as i64) as
+            f64) < 1000.0f64 * spec.prob {
+        setup_hash(0 as i32, &mut hash_state, &mut  random_instance);
+        determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
+        libc_wrapper::printf(b"\nSolving with %d empty...\n\n\x00" as *const u8 as
+                   *const i8, 60 as i32 - moves_state.disks_played);
+        fill_move_alternatives::<osfbook::FE>(side_to_move, 16 as i32,
+                                              &mut g_book,
+                                              &mut board_state,
+                                              &mut moves_state,
+                                              &search_state,
+                                              &mut flip_stack_,
+                                              &mut hash_state);
+        if g_book.get_candidate_count() > 0 as i32 ||
+            moves_state.disks_played >= 40 as i32 {
+            osfbook::print_move_alternatives(side_to_move);
+            hash_state.set_hash_transformation(0 as i32 as u32,
+                                    0 as i32 as u32);
+           end_game::<osfbook::FE>(side_to_move, 0 as i32, 1 as i32,
+                                   1 as i32, 0 as i32, &mut dummy_info, echo, &mut flip_stack_
+                                   , &mut search_state
+                                   , &mut board_state
+                                   , &mut hash_state
+                                   , &mut g_timer
+                                   , &mut end_g
+                                   , &mut midgame_state
+                                   , &mut coeff_state
+                                   , &mut moves_state
+                                   , &mut random_instance
+                                   , &mut g_book
+                                   , &mut stable_state
+                                   , &mut prob_cut);
+            if abs(search_state.root_eval) <= spec.max_diff {
+                endgame_correlation(side_to_move, search_state.root_eval,
+                                    board_state.pv[0][0],
+                                    moves_state.disks_played, 48 as i32, spec, echo);
+            }
+        }
+    }
+    /* Recursively search the children of the g_book.node */
+    i = 0;
+    while i < moves_state.move_count[moves_state.disks_played as usize] {
+        this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+        slot = probe_hash_table(val1, val2, &mut g_book);
+        child = *g_book.book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) {
+            do_endgame_statistics(child, spec, echo);
+        }
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
+        i += 1
+    }
+    let ref mut fresh20 = (*g_book.node.offset(index as isize)).flags;
+    *fresh20 = (*fresh20 as i32 ^ 8 as i32) as u16;
+}
+
+/*
+   GENERATE_ENDGAME_STATISTICS
+   Calculates the minimax values of all nodes in the tree.
+*/
+pub unsafe fn generate_endgame_statistics(max_depth:
+                                                     i32,
+                                          probability:
+                                                     f64,
+                                          max_diff:
+                                                     i32,
+                                          statistics_file_name:
+                                                     *const i8) {
+    let mut i: i32 = 0;
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    let mut spec: StatisticsSpec =
+        StatisticsSpec{out_file_name: 0 as *const i8,
+            prob: 0.,
+            max_diff: 0,
+            max_depth: 0,};
+    libc_wrapper::puts(b"Generating endgame statistics...\x00" as *const u8 as
+        *const i8);
+    osfbook::prepare_tree_traversal();
+    g_timer.toggle_abort_check(0 as i32);
+    time(&mut start_time);
+    i = 0;
+    while i < g_book.book_node_count {
+        let ref mut fresh21 = (*g_book.node.offset(i as isize)).flags;
+        *fresh21 =
+            (*fresh21 as i32 | 8 as i32) as u16;
+        i += 1
+    }
+    spec.prob = probability;
+    spec.max_diff = max_diff;
+    spec.max_depth = max_depth;
+    spec.out_file_name = statistics_file_name;
+    let x = start_time as i32;
+    legacy_zebra::src::zebra::random_instance.my_srandom(x);
+    do_endgame_statistics(0 as i32, spec, g_config.echo);
+    time(&mut stop_time);
+    libc_wrapper::printf(b"\nDone (took %d s)\n\x00" as *const u8 as *const i8,
+                         (stop_time - start_time) as i32);
+    libc_wrapper::puts(b"\x00" as *const u8 as *const i8);
+}
+
+
+/*
+   DO_CLEAR
+   Clears depth and flag information for all nodes with >= LOW
+   and <= HIGH discs played. FLAGS specifies what kind of information
+   is to be cleared - midgame, WLD or exact.
+*/
+unsafe fn do_clear(index: i32, low: i32,
+                              high: i32, flags: i32) {
+    let mut i: i32 = 0;
+    let mut child: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        return
+    }
+    if moves_state.disks_played >= low && moves_state.disks_played <= high {
+        if flags & 1 as i32 != 0 { clear_node_depth(index, &mut g_book); }
+        if (*g_book.node.offset(index as isize)).flags as i32 &
+            4 as i32 != 0 && flags & 2 as i32 != 0 {
+            let ref mut fresh27 = (*g_book.node.offset(index as isize)).flags;
+            *fresh27 =
+                (*fresh27 as i32 ^ 4 as i32) as u16
+        }
+        if (*g_book.node.offset(index as isize)).flags as i32 &
+            16 as i32 != 0 && flags & 4 as i32 != 0 {
+            let ref mut fresh28 = (*g_book.node.offset(index as isize)).flags;
+            *fresh28 =
+                (*fresh28 as i32 ^ 16 as i32) as
+                    u16
+        }
+    }
+    if moves_state.disks_played <= high {
+        if (*g_book.node.offset(index as isize)).flags as i32 &
+            1 as i32 != 0 {
+            side_to_move = 0 as i32
+        } else { side_to_move = 2 as i32 }
+        generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+        i = 0;
+        while i < moves_state.move_count[moves_state.disks_played as usize] {
+            this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
+            make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+            let val0___ = &mut val1;
+            let val1___ = &mut val2;
+            let orientation___ = &mut orientation;
+            get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+            slot = probe_hash_table(val1, val2, &mut g_book);
+            child = *g_book.book_hash_table.offset(slot as isize);
+            if child != -(1 as i32) {
+                do_clear(child, low, high, flags);
+            }
+            let move_0 = this_move;
+            {
+                unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+            };
+            i += 1
+        }
+    }
+    let ref mut fresh29 = (*g_book.node.offset(index as isize)).flags;
+    *fresh29 = (*fresh29 as i32 ^ 8 as i32) as u16;
+}
+
+/*
+   CLEAR_TREE
+   Resets the labels on nodes satisfying certain conditions.
+*/
+pub unsafe fn clear_tree(low: i32,
+                         high: i32,
+                         flags: i32) {
+    let mut i: i32 = 0;
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    osfbook::prepare_tree_traversal();
+    libc_wrapper::printf(b"Clearing from %d moves to %d modes: \x00" as *const u8 as
+               *const i8, low, high);
+    if flags & 1 as i32 != 0 {
+        libc_wrapper::printf(b"midgame \x00" as *const u8 as *const i8);
+    }
+    if flags & 2 as i32 != 0 {
+        libc_wrapper::printf(b"wld \x00" as *const u8 as *const i8);
+    }
+    if flags & 4 as i32 != 0 {
+        libc_wrapper::printf(b"exact \x00" as *const u8 as *const i8);
+    }
+    libc_wrapper::puts(b"\x00" as *const u8 as *const i8);
+    time(&mut start_time);
+    i = 0;
+    while i < g_book.book_node_count {
+        let ref mut fresh30 = (*g_book.node.offset(i as isize)).flags;
+        *fresh30 =
+            (*fresh30 as i32 | 8 as i32) as u16;
+        i += 1
+    }
+    do_clear(0 as i32, low, high, flags);
+    time(&mut stop_time);
+    libc_wrapper::printf(b"(took %d s)\n\x00" as *const u8 as *const i8,
+                         (stop_time - start_time) as i32);
+    libc_wrapper::puts(b"\x00" as *const u8 as *const i8);
+}
+
+/*
+   DO_CORRECT
+   Performs endgame correction (WLD or full solve) of a g_book.node
+   and (recursively) the subtree below it.
+*/
+unsafe fn do_correct(index: i32,
+                     max_empty: i32,
+                     full_solve: i32,
+                     target_name: *const i8,
+                     move_hist: *mut i8, echo:i32) {
+    let mut dummy_info: EvaluationType =
+        EvaluationType{type_0: MIDGAME_EVAL,
+            res: WON_POSITION,
+            score: 0,
+            confidence: 0.,
+            search_depth: 0,
+            is_book: 0,};
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut pos: i32 = 0;
+    let mut child: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    let mut this_move: i32 = 0;
+    let mut outcome: i32 = 0;
+    let mut really_evaluate: i32 = 0;
+    let mut slot: i32 = 0;
+    let mut val1: i32 = 0;
+    let mut val2: i32 = 0;
+    let mut orientation: i32 = 0;
+    let mut child_count: i32 = 0;
+    let mut child_move: [i32; 64] = [0; 64];
+    let mut child_node: [i32; 64] = [0; 64];
+    if g_book.evaluated_count >= g_book.max_eval_count { return }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 8 as i32
+        == 0 {
+        return
+    }
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    /* First correct the children */
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+    child_count = 0;
+    i = 0;
+    while i < moves_state.move_count[moves_state.disks_played as usize] {
+        this_move = moves_state.move_list[moves_state.disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+        slot = probe_hash_table(val1, val2, &mut g_book);
+        child = *g_book.book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) {
+            child_move[child_count as usize] = this_move;
+            child_node[child_count as usize] = child;
+            child_count += 1
+        }
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
+        i += 1
+    }
+    let mut current_block_29: u64;
+    i = 0;
+    while i < child_count {
+        if side_to_move == 0 as i32 {
+            if g_book.force_black != 0 &&
+                (*g_book.node.offset(child_node[i as usize] as
+                    isize)).black_minimax_score as
+                    i32 !=
+                    (*g_book.node.offset(index as isize)).black_minimax_score as
+                        i32 {
+                current_block_29 = 14818589718467733107;
+            } else { current_block_29 = 11913429853522160501; }
+        } else if g_book.force_white != 0 &&
+            (*g_book.node.offset(child_node[i as usize] as
+                isize)).white_minimax_score as
+                i32 !=
+                (*g_book.node.offset(index as isize)).white_minimax_score
+                    as i32 {
+            current_block_29 = 14818589718467733107;
+        } else { current_block_29 = 11913429853522160501; }
+        match current_block_29 {
+            11913429853522160501 => {
+                this_move = child_move[i as usize];
+                sprintf(move_hist.offset((2 as i32 * moves_state.disks_played) as
+                    isize),
+                        b"%c%c\x00" as *const u8 as *const i8,
+                        'a' as i32 + this_move % 10 as i32 -
+                            1 as i32,
+                        '0' as i32 + this_move / 10 as i32);
+                make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+                do_correct(child_node[i as usize], max_empty, full_solve,
+                           target_name, move_hist, echo);
+                let move_0 = this_move;
+                {
+                    unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                };
+                *move_hist.offset((2 as i32 * moves_state.disks_played) as isize)
+                    = '\u{0}' as i32 as i8
+            }
+            _ => { }
+        }
+        i += 1
+    }
+    /* Then correct the g_book.node itself (hopefully exploiting lots
+     of useful information in the hash table) */
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+    determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
+    if moves_state.disks_played >= 60 as i32 - max_empty {
+        really_evaluate =
+            (full_solve != 0 &&
+                (*g_book.node.offset(index as isize)).flags as i32 &
+                    16 as i32 == 0 ||
+                full_solve == 0 &&
+                    (*g_book.node.offset(index as isize)).flags as i32 &
+                        (4 as i32 | 16 as i32) == 0) as
+                i32;
+        if abs((*g_book.node.offset(index as isize)).alternative_score as
+            i32) < g_book.min_eval_span ||
+            abs((*g_book.node.offset(index as isize)).alternative_score as
+                i32) > g_book.max_eval_span {
+            really_evaluate = 0 as i32
+        }
+        if abs((*g_book.node.offset(index as isize)).black_minimax_score as
+            i32) < g_book.min_negamax_span ||
+            abs((*g_book.node.offset(index as isize)).black_minimax_score as
+                i32) > g_book.max_negamax_span {
+            really_evaluate = 0 as i32
+        }
+        if really_evaluate != 0 {
+            if target_name.is_null() {
+                /* Solve now */
+                reset_counter(&mut search_state.nodes);
+               end_game::<osfbook::FE>(side_to_move, (full_solve == 0) as i32,
+                                       0 as i32, 1 as i32, 0 as i32,
+                                       &mut dummy_info, echo, &mut flip_stack_
+                                       , &mut search_state
+                                       , &mut board_state
+                                       , &mut hash_state
+                                       , &mut g_timer
+                                       , &mut end_g
+                                       , &mut midgame_state
+                                       , &mut coeff_state
+                                       , &mut moves_state
+                                       , &mut random_instance
+                                       , &mut g_book
+                                       , &mut stable_state
+                                       , &mut prob_cut);
+                if side_to_move == 0 as i32 {
+                    outcome = search_state.root_eval
+                } else { outcome = -search_state.root_eval }
+                let ref mut fresh31 =
+                    (*g_book.node.offset(index as isize)).white_minimax_score;
+                *fresh31 = outcome as i16;
+                (*g_book.node.offset(index as isize)).black_minimax_score = *fresh31;
+                if outcome > 0 as i32 {
+                    let ref mut fresh32 =
+                        (*g_book.node.offset(index as isize)).black_minimax_score;
+                    *fresh32 =
+                        (*fresh32 as i32 + 30000 as i32) as
+                            i16;
+                    let ref mut fresh33 =
+                        (*g_book.node.offset(index as isize)).white_minimax_score;
+                    *fresh33 =
+                        (*fresh33 as i32 + 30000 as i32) as
+                            i16
+                }
+                if outcome < 0 as i32 {
+                    let ref mut fresh34 =
+                        (*g_book.node.offset(index as isize)).black_minimax_score;
+                    *fresh34 =
+                        (*fresh34 as i32 - 30000 as i32) as
+                            i16;
+                    let ref mut fresh35 =
+                        (*g_book.node.offset(index as isize)).white_minimax_score;
+                    *fresh35 =
+                        (*fresh35 as i32 - 30000 as i32) as
+                            i16
+                }
+                if full_solve != 0 {
+                    let ref mut fresh36 =
+                        (*g_book.node.offset(index as isize)).flags;
+                    *fresh36 =
+                        (*fresh36 as i32 | 16 as i32) as
+                            u16
+                } else {
+                    let ref mut fresh37 =
+                        (*g_book.node.offset(index as isize)).flags;
+                    *fresh37 =
+                        (*fresh37 as i32 | 4 as i32) as
+                            u16
+                }
+            } else {
+                /* Defer solving to a standalone scripted solver */
+                let target_file: *mut FILE =
+                    fopen(target_name,
+                          b"a\x00" as *const u8 as *const i8);
+                if !target_file.is_null() {
+                    fprintf(target_file,
+                            b"%% %s\n\x00" as *const u8 as
+                                *const i8, move_hist);
+                    let val0___ = &mut val1;
+                    let val1___ = &mut val2;
+                    let orientation___ = &mut orientation;
+                    get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+                    fprintf(target_file,
+                            b"%% %d %d\n\x00" as *const u8 as
+                                *const i8, val1, val2);
+                    i = 1;
+                    while i <= 8 as i32 {
+                        j = 1;
+                        while j <= 8 as i32 {
+                            pos = 10 as i32 * i + j;
+                            if board_state.board[pos as usize] == 0 as i32 {
+                                putc('X' as i32, target_file);
+                            } else if board_state.board[pos as usize] == 2 as i32
+                            {
+                                putc('O' as i32, target_file);
+                            } else { putc('-' as i32, target_file); }
+                            j += 1
+                        }
+                        i += 1
+                    }
+                    if side_to_move == 0 as i32 {
+                        fputs(b" X\n\x00" as *const u8 as *const i8,
+                              target_file);
+                    } else {
+                        fputs(b" O\n\x00" as *const u8 as *const i8,
+                              target_file);
+                    }
+                    fputs(b"%\n\x00" as *const u8 as *const i8,
+                          target_file);
+                    fclose(target_file);
+                }
+            }
+            g_book.evaluated_count += 1
+        }
+    }
+    if g_book.evaluated_count >=
+        (g_book.evaluation_stage + 1 as i32) * g_book.max_eval_count /
+            25 as i32 {
+        g_book.evaluation_stage += 1;
+        putc('|' as i32, stdout);
+        if g_book.evaluation_stage % 5 as i32 == 0 as i32 {
+            libc_wrapper::printf(b" %d%% \x00" as *const u8 as *const i8,
+                                 4 as i32 * g_book.evaluation_stage);
+        }
+        fflush(stdout);
+    }
+    let ref mut fresh38 = (*g_book.node.offset(index as isize)).flags;
+    *fresh38 = (*fresh38 as i32 ^ 8 as i32) as u16;
+}
+static mut correction_script_name: *const i8 = 0 as *const i8;
+
+/*
+  SET_OUTPUT_SCRIPT_NAME
+  Makes SCRIPT_NAME the target for the positions generated by
+  do_correct() (instead of the positions being solved, the normal
+  mode of operation).
+*/
+pub unsafe fn set_output_script_name(script_name:
+                                                *const i8) {
+    correction_script_name = script_name;
+}
+
+/*
+   CORRECT_TREE
+   Endgame-correct the lowest levels of the tree.
+*/
+pub unsafe fn correct_tree(max_empty: i32,
+                           full_solve: i32) {
+    let mut move_buffer: [i8; 150] = [0; 150];
+    let mut i: i32 = 0;
+    let mut feasible_count: i32 = 0;
+    let mut start_time: time_t = 0;
+    let mut stop_time: time_t = 0;
+    osfbook::prepare_tree_traversal();
+    g_book.exhausted_node_count = 0;
+    g_book.evaluated_count = 0;
+    g_book.evaluation_stage = 0;
+    time(&mut start_time);
+    i = 0;
+    while i < g_book.book_node_count {
+        let ref mut fresh39 = (*g_book.node.offset(i as isize)).flags;
+        *fresh39 =
+            (*fresh39 as i32 | 8 as i32) as u16;
+        i += 1
+    }
+    feasible_count = 0;
+    i = 0;
+    while i < g_book.book_node_count {
+        let ref mut fresh40 = (*g_book.node.offset(i as isize)).flags;
+        *fresh40 =
+            (*fresh40 as i32 | 8 as i32) as u16;
+        if get_node_depth(i, &mut g_book) < max_empty &&
+            abs((*g_book.node.offset(i as isize)).alternative_score as
+                i32) >= g_book.min_eval_span &&
+            abs((*g_book.node.offset(i as isize)).alternative_score as
+                i32) <= g_book.max_eval_span &&
+            abs((*g_book.node.offset(i as isize)).black_minimax_score as
+                i32) >= g_book.min_negamax_span &&
+            abs((*g_book.node.offset(i as isize)).black_minimax_score as
+                i32) <= g_book.max_negamax_span {
+            feasible_count += 1
+        }
+        i += 1
+    }
+    g_book.max_eval_count =
+        if feasible_count < g_book.max_batch_size {
+            feasible_count
+        } else { g_book.max_batch_size };
+    libc_wrapper::printf(b"Correcting <= %d empty \x00" as *const u8 as *const i8,
+                         max_empty);
+    if full_solve != 0 {
+        libc_wrapper::printf(b"(full solve). \x00" as *const u8 as *const i8);
+    } else {
+        libc_wrapper::printf(b"(WLD solve). \x00" as *const u8 as *const i8);
+    }
+    if g_book.min_eval_span > 0 as i32 ||
+        g_book.max_eval_span < 1000 as i32 * 128 as i32 {
+        libc_wrapper::printf(b"Eval interval is [%.2f,%.2f]. \x00" as *const u8 as
+                   *const i8,
+                             g_book.min_eval_span as f64 / 128.0f64,
+                             g_book.max_eval_span as f64 / 128.0f64);
+    }
+    if g_book.min_negamax_span > 0 as i32 ||
+        g_book.max_negamax_span < 1000 as i32 * 128 as i32 {
+        libc_wrapper::printf(b"Negamax interval is [%.2f,%.2f]. \x00" as *const u8 as
+                   *const i8,
+                             g_book.min_negamax_span as f64 / 128.0f64,
+                             g_book.max_negamax_span as f64 / 128.0f64);
+    }
+    if g_book.max_eval_count == feasible_count {
+        libc_wrapper::printf(b"\n%d relevant nodes.\x00" as *const u8 as
+                   *const i8, feasible_count);
+    } else {
+        libc_wrapper::printf(b"\nMax batch size is %d.\x00" as *const u8 as
+                   *const i8, g_book.max_batch_size);
+    }
+    libc_wrapper::puts(b"\x00" as *const u8 as *const i8);
+    libc_wrapper::printf(b"Progress: \x00" as *const u8 as *const i8);
+    fflush(stdout);
+    move_buffer[0] = '\u{0}' as i32 as i8;
+    do_correct(0 as i32, max_empty, full_solve,
+               correction_script_name, move_buffer.as_mut_ptr(), g_config.echo);
+    time(&mut stop_time);
+    libc_wrapper::printf(b"(took %d s)\n\x00" as *const u8 as *const i8,
+                         (stop_time - start_time) as i32);
+    if correction_script_name.is_null() {
+        /* Positions solved */
+        libc_wrapper::printf(b"%d nodes solved\n\x00" as *const u8 as *const i8,
+                             g_book.evaluated_count);
+    } else {
+        libc_wrapper::printf(b"%d nodes exported to %s\n\x00" as *const u8 as
+                   *const i8, g_book.evaluated_count,
+                             correction_script_name);
+    }
+    libc_wrapper::puts(b"\x00" as *const u8 as *const i8);
+}
+
+/*
+   DO_EXPORT
+   Recursively exports all variations rooted at book position # INDEX.
+*/
+
+unsafe fn do_export(index: i32, stream: *mut FILE,
+                    move_vec: &mut [i32; 60]) {
+    let mut i: i32 = 0;
+    let mut child_count: i32 = 0;
+    let mut allow_branch: i32 = 0;
+    let mut side_to_move: i32 = 0;
+    allow_branch =
+        (*g_book.node.offset(index as isize)).flags as i32 &
+            8 as i32;
+    if (*g_book.node.offset(index as isize)).flags as i32 & 1 as i32
+        != 0 {
+        side_to_move = 0 as i32
+    } else { side_to_move = 2 as i32 }
+    generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
+    child_count = 0;
+    i = 0;
+    while i < moves_state.move_count[moves_state.disks_played as usize] {
+        let mut child: i32 = 0;
+        let mut slot: i32 = 0;
+        let mut val1: i32 = 0;
+        let mut val2: i32 = 0;
+        let mut orientation: i32 = 0;
+        let this_move: i32 =
+            moves_state.move_list[moves_state.disks_played as usize][i as usize];
+        *(move_vec.as_mut_ptr()).offset(moves_state.disks_played as isize) = this_move;
+        make_move(side_to_move, this_move, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
+        let val0___ = &mut val1;
+        let val1___ = &mut val2;
+        let orientation___ = &mut orientation;
+        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+        slot = probe_hash_table(val1, val2, &mut g_book);
+        child = *g_book.book_hash_table.offset(slot as isize);
+        if child != -(1 as i32) {
+            do_export(child, stream, move_vec);
+            child_count += 1
+        }
+        let move_0 = this_move;
+        {
+            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+        };
+        if child_count == 1 as i32 && allow_branch == 0 { break ; }
+        i += 1
+    }
+    if child_count == 0 as i32 {
+        /* We've reached a leaf in the opening tree. */
+        i = 0;
+        while i < moves_state.disks_played {
+            fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
+                    'a' as i32 +
+                        *(move_vec.as_mut_ptr()).offset(i as isize) % 10 as i32 -
+                        1 as i32,
+                    '0' as i32 +
+                        *(move_vec.as_mut_ptr()).offset(i as isize) / 10 as i32);
+            i += 1
+        }
+        fprintf(stream, b"\n\x00" as *const u8 as *const i8);
+    }
+    let ref mut fresh41 = (*g_book.node.offset(index as isize)).flags;
+    *fresh41 =
+        (*fresh41 as i32 & !(8 as i32)) as u16;
+}
+
+
+
+/*
+  EXPORT_TREE
+  Exports a set of lines that cover the tree.
+*/
+
+pub unsafe fn export_tree(file_name: *const i8) {
+    let stream = fopen(file_name, b"w\x00" as *const u8 as *const i8);
+    if stream.is_null() {
+        fprintf(stderr,
+                b"Cannot open %s for writing.\n\x00" as *const u8 as
+                    *const i8, file_name);
+        return
+    }
+    osfbook::prepare_tree_traversal();
+    let mut move_vec: [i32; 60] = [0; 60];
+    let mut i = 0;
+    while i < g_book.book_node_count {
+        let ref mut fresh42 = (*g_book.node.offset(i as isize)).flags;
+        *fresh42 =
+            (*fresh42 as i32 | 8 as i32) as u16;
+        i += 1
+    }
+    do_export(0 as i32, stream, &mut move_vec);
+    fclose(stream);
 }
