@@ -1291,7 +1291,19 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
 }
 
 fn create_terminal_pattern() -> [[f64; 8]; 8] {
-    static HIT: [[i32; 8]; 8] = create_hit();
+    // created byt function: create_hit(); commented out because we don't
+    // need to run it during each compilation. IF you need to change it,
+    // uncomment it and inline instead of the following expression
+    static HIT: [[i32; 8]; 8] = [
+        [6, 6, 5, 6, 6, 5, 6, 6],
+        [6, 8, 6, 6, 6, 6, 8, 6],
+        [5, 6, 5, 4, 4, 5, 6, 5],
+        [6, 6, 4, 4, 4, 4, 6, 6],
+        [6, 6, 4, 4, 4, 4, 6, 6],
+        [5, 6, 5, 4, 4, 5, 6, 5],
+        [6, 8, 6, 6, 6, 6, 8, 6],
+        [6, 6, 5, 6, 6, 5, 6, 6]
+    ];
 
     let mut i = 0;
     let mut value: [[f64; 8]; 8] = [[0.; 8]; 8];
@@ -1306,120 +1318,120 @@ fn create_terminal_pattern() -> [[f64; 8]; 8] {
     i = 0;
     value
 }
-
-const fn create_hit() -> [[i32; 8]; 8] {
-    let mut j: i32;
-    let mut hit: [[i32; 8]; 8] = [[0; 8]; 8];
-    /* Count the number of times each square is counted */
-
-    let mut i = 0;
-    while i < 8 as i32 {
-        hit[0][i as usize] += 1;
-        hit[i as usize][0] += 1;
-        hit[7][i as usize] += 1;
-        hit[i as usize][7] += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 8 as i32 {
-        hit[1][i as usize] += 1;
-        hit[i as usize][1] += 1;
-        hit[6][i as usize] += 1;
-        hit[i as usize][6] += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 8 as i32 {
-        hit[2][i as usize] += 1;
-        hit[i as usize][2] += 1;
-        hit[5][i as usize] += 1;
-        hit[i as usize][5] += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 8 as i32 {
-        hit[3][i as usize] += 1;
-        hit[i as usize][3] += 1;
-        hit[4][i as usize] += 1;
-        hit[i as usize][4] += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 3 as i32 {
-        j = 0;
-        while j < 3 as i32 {
-            hit[i as usize][j as usize] += 1;
-            hit[i as usize][(7 as i32 - j) as usize] += 1;
-            hit[(7 as i32 - i) as usize][j as usize] += 1;
-            hit[(7 as i32 - i) as
-                usize][(7 as i32 - j) as usize] += 1;
-            j += 1
-        }
-        i += 1
-    }
-    i = 0;
-    while i < 2 as i32 {
-        j = 0;
-        while j < 5 as i32 {
-            hit[i as usize][j as usize] += 1;
-            hit[j as usize][i as usize] += 1;
-            hit[i as usize][(7 as i32 - j) as usize] += 1;
-            hit[j as usize][(7 as i32 - i) as usize] += 1;
-            hit[(7 as i32 - i) as usize][j as usize] += 1;
-            hit[(7 as i32 - j) as usize][i as usize] += 1;
-            hit[(7 as i32 - i) as
-                usize][(7 as i32 - j) as usize] += 1;
-            hit[(7 as i32 - j) as
-                usize][(7 as i32 - i) as usize] += 1;
-            j += 1
-        }
-        i += 1
-    }
-    i = 0;
-    while i < 8 as i32 {
-        hit[i as usize][i as usize] += 1;
-        hit[i as usize][(7 as i32 - i) as usize] += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 7 as i32 {
-        hit[i as usize][(i + 1 as i32) as usize] += 1;
-        hit[(i + 1 as i32) as usize][i as usize] += 1;
-        hit[i as usize][(6 as i32 - i) as usize] += 1;
-        hit[(i + 1 as i32) as usize][(7 as i32 - i) as usize]
-            += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 6 as i32 {
-        hit[i as usize][(i + 2 as i32) as usize] += 1;
-        hit[(i + 2 as i32) as usize][i as usize] += 1;
-        hit[i as usize][(5 as i32 - i) as usize] += 1;
-        hit[(i + 2 as i32) as usize][(7 as i32 - i) as usize]
-            += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 5 as i32 {
-        hit[i as usize][(i + 3 as i32) as usize] += 1;
-        hit[(i + 3 as i32) as usize][i as usize] += 1;
-        hit[i as usize][(4 as i32 - i) as usize] += 1;
-        hit[(i + 3 as i32) as usize][(7 as i32 - i) as usize]
-            += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 4 as i32 {
-        hit[i as usize][(i + 4 as i32) as usize] += 1;
-        hit[(i + 4 as i32) as usize][i as usize] += 1;
-        hit[i as usize][(3 as i32 - i) as usize] += 1;
-        hit[(i + 4 as i32) as usize][(7 as i32 - i) as usize]
-            += 1;
-        i += 1
-    }
-    hit[1][1] += 2 as i32;
-    hit[1][6] += 2 as i32;
-    hit[6][1] += 2 as i32;
-    hit[6][6] += 2 as i32;
-    hit
-}
+// computes static HIT - uncomment if you need to recompute it
+// const fn create_hit() -> [[i32; 8]; 8] {
+//     let mut j: i32;
+//     let mut hit: [[i32; 8]; 8] = [[0; 8]; 8];
+//     /* Count the number of times each square is counted */
+//
+//     let mut i = 0;
+//     while i < 8 as i32 {
+//         hit[0][i as usize] += 1;
+//         hit[i as usize][0] += 1;
+//         hit[7][i as usize] += 1;
+//         hit[i as usize][7] += 1;
+//         i += 1
+//     }
+//     i = 0;
+//     while i < 8 as i32 {
+//         hit[1][i as usize] += 1;
+//         hit[i as usize][1] += 1;
+//         hit[6][i as usize] += 1;
+//         hit[i as usize][6] += 1;
+//         i += 1
+//     }
+//     i = 0;
+//     while i < 8 as i32 {
+//         hit[2][i as usize] += 1;
+//         hit[i as usize][2] += 1;
+//         hit[5][i as usize] += 1;
+//         hit[i as usize][5] += 1;
+//         i += 1
+//     }
+//     i = 0;
+//     while i < 8 as i32 {
+//         hit[3][i as usize] += 1;
+//         hit[i as usize][3] += 1;
+//         hit[4][i as usize] += 1;
+//         hit[i as usize][4] += 1;
+//         i += 1
+//     }
+//     i = 0;
+//     while i < 3 as i32 {
+//         j = 0;
+//         while j < 3 as i32 {
+//             hit[i as usize][j as usize] += 1;
+//             hit[i as usize][(7 as i32 - j) as usize] += 1;
+//             hit[(7 as i32 - i) as usize][j as usize] += 1;
+//             hit[(7 as i32 - i) as
+//                 usize][(7 as i32 - j) as usize] += 1;
+//             j += 1
+//         }
+//         i += 1
+//     }
+//     i = 0;
+//     while i < 2 as i32 {
+//         j = 0;
+//         while j < 5 as i32 {
+//             hit[i as usize][j as usize] += 1;
+//             hit[j as usize][i as usize] += 1;
+//             hit[i as usize][(7 as i32 - j) as usize] += 1;
+//             hit[j as usize][(7 as i32 - i) as usize] += 1;
+//             hit[(7 as i32 - i) as usize][j as usize] += 1;
+//             hit[(7 as i32 - j) as usize][i as usize] += 1;
+//             hit[(7 as i32 - i) as
+//                 usize][(7 as i32 - j) as usize] += 1;
+//             hit[(7 as i32 - j) as
+//                 usize][(7 as i32 - i) as usize] += 1;
+//             j += 1
+//         }
+//         i += 1
+//     }
+//     i = 0;
+//     while i < 8 as i32 {
+//         hit[i as usize][i as usize] += 1;
+//         hit[i as usize][(7 as i32 - i) as usize] += 1;
+//         i += 1
+//     }
+//     i = 0;
+//     while i < 7 as i32 {
+//         hit[i as usize][(i + 1 as i32) as usize] += 1;
+//         hit[(i + 1 as i32) as usize][i as usize] += 1;
+//         hit[i as usize][(6 as i32 - i) as usize] += 1;
+//         hit[(i + 1 as i32) as usize][(7 as i32 - i) as usize]
+//             += 1;
+//         i += 1
+//     }
+//     i = 0;
+//     while i < 6 as i32 {
+//         hit[i as usize][(i + 2 as i32) as usize] += 1;
+//         hit[(i + 2 as i32) as usize][i as usize] += 1;
+//         hit[i as usize][(5 as i32 - i) as usize] += 1;
+//         hit[(i + 2 as i32) as usize][(7 as i32 - i) as usize]
+//             += 1;
+//         i += 1
+//     }
+//     i = 0;
+//     while i < 5 as i32 {
+//         hit[i as usize][(i + 3 as i32) as usize] += 1;
+//         hit[(i + 3 as i32) as usize][i as usize] += 1;
+//         hit[i as usize][(4 as i32 - i) as usize] += 1;
+//         hit[(i + 3 as i32) as usize][(7 as i32 - i) as usize]
+//             += 1;
+//         i += 1
+//     }
+//     i = 0;
+//     while i < 4 as i32 {
+//         hit[i as usize][(i + 4 as i32) as usize] += 1;
+//         hit[(i + 4 as i32) as usize][i as usize] += 1;
+//         hit[i as usize][(3 as i32 - i) as usize] += 1;
+//         hit[(i + 4 as i32) as usize][(7 as i32 - i) as usize]
+//             += 1;
+//         i += 1
+//     }
+//     hit[1][1] += 2 as i32;
+//     hit[1][6] += 2 as i32;
+//     hit[6][1] += 2 as i32;
+//     hit[6][6] += 2 as i32;
+//     hit
+// }
