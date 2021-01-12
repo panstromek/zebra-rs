@@ -99,12 +99,12 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
     //  functions. Using this helper cuts down the number of generated llvm-ir lines by a huge number
     //  (from 14742 to 5442), which improves build time + runtime doesn't seem to be affected
     /// (tests still run in ~2.5 seconds like before this change)
-    fn update_pattern( pat0:i32, board: &[i32; 128], index: usize) -> i32 {
+    fn update_pattern( pat0:i32, board: &[i32; 128], index: u8) -> i32 {
         (3 as i32).wrapping_mul(pat0).wrapping_add(
-            board[index]
+            board[index as usize]
         )
     }
-    fn compute_pattern(board: &[i32; 128], indexes: &[usize]) -> i32 {
+    fn compute_pattern(board: &[i32; 128], indexes: &[u8]) -> i32 {
         let mut pattern = 0;
         let mut indexes = indexes.iter();
         while let Some(&index) = indexes.next() {
@@ -113,18 +113,18 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         return pattern
     }
 
-    fn update_score(board: &[i32; 128], score: i16, set_item: &[i16], indexes: &[usize]) -> i16 {
+    fn update_score(board: &[i32; 128], score: i16, set_item: &[i16], indexes: &[u8]) -> i16 {
         let pattern = compute_pattern(board, indexes);
         let score =(score as i32 + *set_item.offset(pattern as isize) as i32) as i16;
         return score;
     }
 
-    fn update_score_back(board: &[i32; 128], score: i16, set_item: &[i16], indexes: &[usize]) -> i16 {
+    fn update_score_back(board: &[i32; 128], score: i16, set_item: &[i16], indexes: &[u8]) -> i16 {
         let pattern = compute_pattern(board, indexes);
         let score =(score as i32 + *set_item.offset((set_item.len() as isize - 1 - pattern as isize) as isize) as i32) as i16;
         return score;
     }
-    let x: &[(&[i16], &[usize])] = &[
+    let x: &[(&[i16], &[u8])] = &[
         (&*set.afile2x(), &[72, 22, 81, 71, 61, 51, 41, 31, 21, 11]),
         (&*set.afile2x(), &[77, 27, 88, 78, 68, 58, 48, 38, 28, 18]),
         (&*set.afile2x(), &[27, 22, 18, 17, 16, 15, 14, 13, 12, 11]),
