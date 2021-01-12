@@ -1114,144 +1114,12 @@ pub fn floor(num: f64) -> f64{
 pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
     let coeff_set = coeff_set.data.as_mut().unwrap();
     /* Calculate the patterns which correspond to the board being filled */
-    let mut result: f64;
-    let mut value: [[f64; 8]; 8] = [[0.; 8]; 8];
-    let mut i: i32;
-    let mut j: i32;
-    let mut k: i32;
+    let value = create_terminal_pattern();
     let mut row: [i32; 10] = [0; 10];
-    let mut hit: [[i32; 8]; 8] = [[0; 8]; 8];
-    /* Count the number of times each square is counted */
-    i = 0;
-    while i < 8 as i32 {
-        j = 0;
-        while j < 8 as i32 {
-            hit[i as usize][j as usize] = 0;
-            j += 1
-        }
-        i += 1
-    }
-    i = 0;
-    while i < 8 as i32 {
-        hit[0][i as usize] += 1;
-        hit[i as usize][0] += 1;
-        hit[7][i as usize] += 1;
-        hit[i as usize][7] += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 8 as i32 {
-        hit[1][i as usize] += 1;
-        hit[i as usize][1] += 1;
-        hit[6][i as usize] += 1;
-        hit[i as usize][6] += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 8 as i32 {
-        hit[2][i as usize] += 1;
-        hit[i as usize][2] += 1;
-        hit[5][i as usize] += 1;
-        hit[i as usize][5] += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 8 as i32 {
-        hit[3][i as usize] += 1;
-        hit[i as usize][3] += 1;
-        hit[4][i as usize] += 1;
-        hit[i as usize][4] += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 3 as i32 {
-        j = 0;
-        while j < 3 as i32 {
-            hit[i as usize][j as usize] += 1;
-            hit[i as usize][(7 as i32 - j) as usize] += 1;
-            hit[(7 as i32 - i) as usize][j as usize] += 1;
-            hit[(7 as i32 - i) as
-                usize][(7 as i32 - j) as usize] += 1;
-            j += 1
-        }
-        i += 1
-    }
-    i = 0;
-    while i < 2 as i32 {
-        j = 0;
-        while j < 5 as i32 {
-            hit[i as usize][j as usize] += 1;
-            hit[j as usize][i as usize] += 1;
-            hit[i as usize][(7 as i32 - j) as usize] += 1;
-            hit[j as usize][(7 as i32 - i) as usize] += 1;
-            hit[(7 as i32 - i) as usize][j as usize] += 1;
-            hit[(7 as i32 - j) as usize][i as usize] += 1;
-            hit[(7 as i32 - i) as
-                usize][(7 as i32 - j) as usize] += 1;
-            hit[(7 as i32 - j) as
-                usize][(7 as i32 - i) as usize] += 1;
-            j += 1
-        }
-        i += 1
-    }
-    i = 0;
-    while i < 8 as i32 {
-        hit[i as usize][i as usize] += 1;
-        hit[i as usize][(7 as i32 - i) as usize] += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 7 as i32 {
-        hit[i as usize][(i + 1 as i32) as usize] += 1;
-        hit[(i + 1 as i32) as usize][i as usize] += 1;
-        hit[i as usize][(6 as i32 - i) as usize] += 1;
-        hit[(i + 1 as i32) as usize][(7 as i32 - i) as usize]
-            += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 6 as i32 {
-        hit[i as usize][(i + 2 as i32) as usize] += 1;
-        hit[(i + 2 as i32) as usize][i as usize] += 1;
-        hit[i as usize][(5 as i32 - i) as usize] += 1;
-        hit[(i + 2 as i32) as usize][(7 as i32 - i) as usize]
-            += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 5 as i32 {
-        hit[i as usize][(i + 3 as i32) as usize] += 1;
-        hit[(i + 3 as i32) as usize][i as usize] += 1;
-        hit[i as usize][(4 as i32 - i) as usize] += 1;
-        hit[(i + 3 as i32) as usize][(7 as i32 - i) as usize]
-            += 1;
-        i += 1
-    }
-    i = 0;
-    while i < 4 as i32 {
-        hit[i as usize][(i + 4 as i32) as usize] += 1;
-        hit[(i + 4 as i32) as usize][i as usize] += 1;
-        hit[i as usize][(3 as i32 - i) as usize] += 1;
-        hit[(i + 4 as i32) as usize][(7 as i32 - i) as usize]
-            += 1;
-        i += 1
-    }
-    hit[1][1] +=2 as i32;
-    hit[1][6] +=2 as i32;
-    hit[6][1] +=2 as i32;
-    hit[6][6] +=2 as i32;
-    i = 0;
-    while i < 8 as i32 {
-        j = 0;
-        while j < 8 as i32 {
-            value[i as usize][j as usize] =1.0f64 / hit[i as usize][j as usize] as f64;
-            j += 1
-        }
-        i += 1
-    }
-    i = 0;
-    while i < 10 as i32 { row[i as usize] = 0; i += 1 }
-    i = 0;
+    let mut result: f64;
+    let mut j = 0;
+    let mut k = 0;
+    let mut i = 0;
     while i < 59049 as i32 {
         result = 0.0f64;
         j = 0;
@@ -1420,4 +1288,141 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
         }
         i += 1
     };
+}
+
+fn create_terminal_pattern() -> [[f64; 8]; 8] {
+    let mut value: [[f64; 8]; 8] = [[0.; 8]; 8];
+    let mut i: i32;
+    let mut j: i32;
+    let mut hit: [[i32; 8]; 8] = [[0; 8]; 8];
+    /* Count the number of times each square is counted */
+    i = 0;
+    while i < 8 as i32 {
+        j = 0;
+        while j < 8 as i32 {
+            hit[i as usize][j as usize] = 0;
+            j += 1
+        }
+        i += 1
+    }
+    i = 0;
+    while i < 8 as i32 {
+        hit[0][i as usize] += 1;
+        hit[i as usize][0] += 1;
+        hit[7][i as usize] += 1;
+        hit[i as usize][7] += 1;
+        i += 1
+    }
+    i = 0;
+    while i < 8 as i32 {
+        hit[1][i as usize] += 1;
+        hit[i as usize][1] += 1;
+        hit[6][i as usize] += 1;
+        hit[i as usize][6] += 1;
+        i += 1
+    }
+    i = 0;
+    while i < 8 as i32 {
+        hit[2][i as usize] += 1;
+        hit[i as usize][2] += 1;
+        hit[5][i as usize] += 1;
+        hit[i as usize][5] += 1;
+        i += 1
+    }
+    i = 0;
+    while i < 8 as i32 {
+        hit[3][i as usize] += 1;
+        hit[i as usize][3] += 1;
+        hit[4][i as usize] += 1;
+        hit[i as usize][4] += 1;
+        i += 1
+    }
+    i = 0;
+    while i < 3 as i32 {
+        j = 0;
+        while j < 3 as i32 {
+            hit[i as usize][j as usize] += 1;
+            hit[i as usize][(7 as i32 - j) as usize] += 1;
+            hit[(7 as i32 - i) as usize][j as usize] += 1;
+            hit[(7 as i32 - i) as
+                usize][(7 as i32 - j) as usize] += 1;
+            j += 1
+        }
+        i += 1
+    }
+    i = 0;
+    while i < 2 as i32 {
+        j = 0;
+        while j < 5 as i32 {
+            hit[i as usize][j as usize] += 1;
+            hit[j as usize][i as usize] += 1;
+            hit[i as usize][(7 as i32 - j) as usize] += 1;
+            hit[j as usize][(7 as i32 - i) as usize] += 1;
+            hit[(7 as i32 - i) as usize][j as usize] += 1;
+            hit[(7 as i32 - j) as usize][i as usize] += 1;
+            hit[(7 as i32 - i) as
+                usize][(7 as i32 - j) as usize] += 1;
+            hit[(7 as i32 - j) as
+                usize][(7 as i32 - i) as usize] += 1;
+            j += 1
+        }
+        i += 1
+    }
+    i = 0;
+    while i < 8 as i32 {
+        hit[i as usize][i as usize] += 1;
+        hit[i as usize][(7 as i32 - i) as usize] += 1;
+        i += 1
+    }
+    i = 0;
+    while i < 7 as i32 {
+        hit[i as usize][(i + 1 as i32) as usize] += 1;
+        hit[(i + 1 as i32) as usize][i as usize] += 1;
+        hit[i as usize][(6 as i32 - i) as usize] += 1;
+        hit[(i + 1 as i32) as usize][(7 as i32 - i) as usize]
+            += 1;
+        i += 1
+    }
+    i = 0;
+    while i < 6 as i32 {
+        hit[i as usize][(i + 2 as i32) as usize] += 1;
+        hit[(i + 2 as i32) as usize][i as usize] += 1;
+        hit[i as usize][(5 as i32 - i) as usize] += 1;
+        hit[(i + 2 as i32) as usize][(7 as i32 - i) as usize]
+            += 1;
+        i += 1
+    }
+    i = 0;
+    while i < 5 as i32 {
+        hit[i as usize][(i + 3 as i32) as usize] += 1;
+        hit[(i + 3 as i32) as usize][i as usize] += 1;
+        hit[i as usize][(4 as i32 - i) as usize] += 1;
+        hit[(i + 3 as i32) as usize][(7 as i32 - i) as usize]
+            += 1;
+        i += 1
+    }
+    i = 0;
+    while i < 4 as i32 {
+        hit[i as usize][(i + 4 as i32) as usize] += 1;
+        hit[(i + 4 as i32) as usize][i as usize] += 1;
+        hit[i as usize][(3 as i32 - i) as usize] += 1;
+        hit[(i + 4 as i32) as usize][(7 as i32 - i) as usize]
+            += 1;
+        i += 1
+    }
+    hit[1][1] += 2 as i32;
+    hit[1][6] += 2 as i32;
+    hit[6][1] += 2 as i32;
+    hit[6][6] += 2 as i32;
+    i = 0;
+    while i < 8 as i32 {
+        j = 0;
+        while j < 8 as i32 {
+            value[i as usize][j as usize] = 1.0f64 / hit[i as usize][j as usize] as f64;
+            j += 1
+        }
+        i += 1
+    }
+    i = 0;
+    value
 }
