@@ -1308,20 +1308,11 @@ fn create_terminal_pattern() -> [[f64; 8]; 8] {
 }
 
 const fn create_hit() -> [[i32; 8]; 8] {
-    let mut i: i32;
     let mut j: i32;
     let mut hit: [[i32; 8]; 8] = [[0; 8]; 8];
     /* Count the number of times each square is counted */
-    i = 0;
-    while i < 8 as i32 {
-        j = 0;
-        while j < 8 as i32 {
-            hit[i as usize][j as usize] = 0;
-            j += 1
-        }
-        i += 1
-    }
-    i = 0;
+
+    let mut i = 0;
     while i < 8 as i32 {
         hit[0][i as usize] += 1;
         hit[i as usize][0] += 1;
