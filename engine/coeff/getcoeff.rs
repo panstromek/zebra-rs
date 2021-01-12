@@ -1117,8 +1117,8 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
     let value = create_terminal_pattern();
     let mut row: [i32; 10] = [0; 10];
     let mut result: f64;
-    let mut j = 0;
-    let mut k = 0;
+    let mut j;
+    let mut k;
     let mut i = 0;
     while i < 59049 as i32 {
         result = 0.0f64;
@@ -1315,7 +1315,6 @@ fn create_terminal_pattern() -> [[f64; 8]; 8] {
         }
         i += 1
     }
-    i = 0;
     value
 }
 // computes static HIT - uncomment if you need to recompute it

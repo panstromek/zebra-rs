@@ -21,8 +21,8 @@
  * the front and rear pointers have wrapped.
  */
 
-const my_rand_deg: i32 = 31;
-const my_rand_sep: i32 = 3;
+const MY_RAND_DEG: i32 = 31;
+const MY_RAND_SEP: i32 = 3;
 
 
 pub struct MyRandom {
@@ -36,7 +36,7 @@ pub struct MyRandom {
 impl MyRandom {
     pub const fn new() -> Self {
         MyRandom {
-            my_randtbl,
+            my_randtbl: MY_RANDTBL,
             my_fptr: 4,
             my_rptr: 1,
             my_state: 1,
@@ -54,7 +54,7 @@ impl MyRandom {
  * position of the rear pointer is just
  *  MAX_TYPES*(rptr - state) + TYPE_3 == TYPE_3.
  */
-const my_randtbl: [u64; 32] =
+const MY_RANDTBL: [u64; 32] =
     [3 as i32 as u64,
         0x9a319039 as u32 as u64,
         0x32d9c024 as u32 as u64,
@@ -104,17 +104,17 @@ impl MyRandom {
     pub fn my_srandom(&mut self, x: i32) -> i32 {
         self.my_randtbl[self.my_state] = x as u64;
         let mut i = 1;
-        while i < my_rand_deg {
+        while i < MY_RAND_DEG {
             self.my_randtbl[(self.my_state + (i as usize))] =
                 1103515245i64
                     .wrapping_mul(self.my_randtbl[(self.my_state + ((i - 1) as usize))] as i64)
                     .wrapping_add(12345) as u64;
             i += 1
         }
-        self.my_fptr = (self.my_state + (my_rand_sep as usize));
+        self.my_fptr = self.my_state + (MY_RAND_SEP as usize);
         self.my_rptr = self.my_state;
         let mut i = 0;
-        while i < 10 * my_rand_deg {
+        while i < 10 * MY_RAND_DEG {
             self.my_random();
             i += 1
         }
@@ -138,7 +138,7 @@ impl MyRandom {
     pub fn my_random(&mut self) -> i64 {
         // let i: i64 = 0; /* chucking least random bit */
         self.my_randtbl[self.my_fptr] = self.my_randtbl[self.my_fptr].wrapping_add(self.my_randtbl[self.my_rptr]);
-        let mut i = (self.my_randtbl[self.my_fptr] >> 1 & 0x7fffffff) as i64;
+        let i = (self.my_randtbl[self.my_fptr] >> 1 & 0x7fffffff) as i64;
         self.my_fptr = self.my_fptr + (1);
         if self.my_fptr >= self.my_end_ptr {
             self.my_fptr = self.my_state;
