@@ -1,0 +1,13 @@
+[package]
+name = "my-random"
+version = "0.1.0"
+authors = ["panstromek <panstromek@seznam.cz>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "my_random"
+path = "myrandom.rs"
+
+[dependencies]

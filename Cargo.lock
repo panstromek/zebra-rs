@@ -93,6 +93,7 @@ dependencies = [
  "engine-traits",
  "epcstat",
  "flip",
+ "my-random",
  "patterns",
  "pcstat",
  "thordb-types",
@@ -198,6 +199,10 @@ checksum = "4d7559a8a40d0f97e1edea3220f698f78b1c5ab67532e49f68fde3910323b722"
 dependencies = [
  "adler",
 ]
+
+[[package]]
+name = "my-random"
+version = "0.1.0"
 
 [[package]]
 name = "patterns"

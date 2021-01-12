@@ -9,13 +9,14 @@ pub mod src {
     pub use ::bitboard::bitboard;
     pub use ::bitboard::bitbmob;
     pub use ::bitboard::bitbtest;
+    pub use ::my_random as myrandom;
 
     pub mod counter;
     pub mod opname;
     pub use ::patterns;
     pub use ::pcstat::pcstat;
     pub mod globals;
-    pub mod myrandom;
+
     pub use ::epcstat::epcstat;
     pub mod search;
     pub mod zebra;
