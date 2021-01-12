@@ -1291,7 +1291,23 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
 }
 
 fn create_terminal_pattern() -> [[f64; 8]; 8] {
+    let hit = create_hit();
+
+    let mut i = 0;
     let mut value: [[f64; 8]; 8] = [[0.; 8]; 8];
+    while i < 8 as i32 {
+        let mut j = 0;
+        while j < 8 as i32 {
+            value[i as usize][j as usize] = 1.0f64 / hit[i as usize][j as usize] as f64;
+            j += 1
+        }
+        i += 1
+    }
+    i = 0;
+    value
+}
+
+const fn create_hit() -> [[i32; 8]; 8] {
     let mut i: i32;
     let mut j: i32;
     let mut hit: [[i32; 8]; 8] = [[0; 8]; 8];
@@ -1414,15 +1430,5 @@ fn create_terminal_pattern() -> [[f64; 8]; 8] {
     hit[1][6] += 2 as i32;
     hit[6][1] += 2 as i32;
     hit[6][6] += 2 as i32;
-    i = 0;
-    while i < 8 as i32 {
-        j = 0;
-        while j < 8 as i32 {
-            value[i as usize][j as usize] = 1.0f64 / hit[i as usize][j as usize] as f64;
-            j += 1
-        }
-        i += 1
-    }
-    i = 0;
-    value
+    hit
 }
