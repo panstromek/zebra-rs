@@ -115,810 +115,190 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
     /* The pattern features. */
     if side_to_move == 0 as i32 {
         let mut pattern0: i32;
-        pattern0 = compute_pattern(board, &[72,
-         22,
-         81,
-         71,
-         61,
-         51,
-         41,
-         31,
-         21,
-         11]);
+        pattern0 = compute_pattern(board, &[72, 22, 81, 71, 61, 51, 41, 31, 21, 11]);
         score =(score as i32 + *set.afile2x_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[77,
-         27,
-         88,
-         78,
-         68,
-         58,
-         48,
-         38,
-         28,
-         18]);
+        pattern0 = compute_pattern(board, &[77, 27, 88, 78, 68, 58, 48, 38, 28, 18]);
         score =(score as i32 + *set.afile2x_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[27,
-         22,
-         18,
-         17,
-         16,
-         15,
-         14,
-         13,
-         12,
-         11]);
+        pattern0 = compute_pattern(board, &[27, 22, 18, 17, 16, 15, 14, 13, 12, 11]);
         score =(score as i32 + *set.afile2x_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[77,
-         72,
-         88,
-         87,
-         86,
-         85,
-         84,
-         83,
-         82,
-         81]);
+        pattern0 = compute_pattern(board, &[77, 72, 88, 87, 86, 85, 84, 83, 82, 81]);
         score =(score as i32 + *set.afile2x_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[82,
-         72,
-         62,
-         52,
-         42,
-         32,
-         22,
-         12]);
+        pattern0 = compute_pattern(board, &[82, 72, 62, 52, 42, 32, 22, 12]);
         score =(score as i32 + *set.bfile_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[87,
-         77,
-         67,
-         57,
-         47,
-         37,
-         27,
-         17]);
+        pattern0 = compute_pattern(board, &[87, 77, 67, 57, 47, 37, 27, 17]);
         score =(score as i32 + *set.bfile_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[28,
-         27,
-         26,
-         25,
-         24,
-         23,
-         22,
-         21]);
+        pattern0 = compute_pattern(board, &[28, 27, 26, 25, 24, 23, 22, 21]);
         score =(score as i32 + *set.bfile_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[78,
-         77,
-         76,
-         75,
-         74,
-         73,
-         72,
-         71]);
+        pattern0 = compute_pattern(board, &[78, 77, 76, 75, 74, 73, 72, 71]);
         score =(score as i32 + *set.bfile_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[83,
-         73,
-         63,
-         53,
-         43,
-         33,
-         23,
-         13]);
+        pattern0 = compute_pattern(board, &[83, 73, 63, 53, 43, 33, 23, 13]);
         score =(score as i32 + *set.cfile_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[86,
-         76,
-         66,
-         56,
-         46,
-         36,
-         26,
-         16]);
+        pattern0 = compute_pattern(board, &[86, 76, 66, 56, 46, 36, 26, 16]);
         score =(score as i32 + *set.cfile_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[38,
-         37,
-         36,
-         35,
-         34,
-         33,
-         32,
-         31]);
+        pattern0 = compute_pattern(board, &[38, 37, 36, 35, 34, 33, 32, 31]);
         score =(score as i32 + *set.cfile_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[68,
-         67,
-         66,
-         65,
-         64,
-         63,
-         62,
-         61]);
+        pattern0 = compute_pattern(board, &[68, 67, 66, 65, 64, 63, 62, 61]);
         score =(score as i32 + *set.cfile_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[84,
-         74,
-         64,
-         54,
-         44,
-         34,
-         24,
-         14]);
+        pattern0 = compute_pattern(board, &[84, 74, 64, 54, 44, 34, 24, 14]);
         score =(score as i32 + *set.dfile_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[85,
-         75,
-         65,
-         55,
-         45,
-         35,
-         25,
-         15]);
+        pattern0 = compute_pattern(board, &[85, 75, 65, 55, 45, 35, 25, 15]);
         score =(score as i32 + *set.dfile_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[48,
-         47,
-         46,
-         45,
-         44,
-         43,
-         42,
-         41]);
+        pattern0 = compute_pattern(board, &[48, 47, 46, 45, 44, 43, 42, 41]);
         score =(score as i32 + *set.dfile_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[58,
-         57,
-         56,
-         55,
-         54,
-         53,
-         52,
-         51]);
+        pattern0 = compute_pattern(board, &[58, 57, 56, 55, 54, 53, 52, 51]);
         score =(score as i32 + *set.dfile_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[88,
-         77,
-         66,
-         55,
-         44,
-         33,
-         22,
-         11]);
+        pattern0 = compute_pattern(board, &[88, 77, 66, 55, 44, 33, 22, 11]);
         score =(score as i32 + *set.diag8_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[81,
-         72,
-         63,
-         54,
-         45,
-         36,
-         27,
-         18]);
+        pattern0 = compute_pattern(board, &[81, 72, 63, 54, 45, 36, 27, 18]);
         score =(score as i32 + *set.diag8_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[78,
-         67,
-         56,
-         45,
-         34,
-         23,
-         12]);
+        pattern0 = compute_pattern(board, &[78, 67, 56, 45, 34, 23, 12]);
         score =(score as i32 + *set.diag7_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[87,
-         76,
-         65,
-         54,
-         43,
-         32,
-         21]);
+        pattern0 = compute_pattern(board, &[87, 76, 65, 54, 43, 32, 21]);
         score =(score as i32 + *set.diag7_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[71,
-         62,
-         53,
-         44,
-         35,
-         26,
-         17]);
+        pattern0 = compute_pattern(board, &[71, 62, 53, 44, 35, 26, 17]);
         score =(score as i32 + *set.diag7_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[82,
-         73,
-         64,
-         55,
-         46,
-         37,
-         28]);
+        pattern0 = compute_pattern(board, &[82, 73, 64, 55, 46, 37, 28]);
         score =(score as i32 + *set.diag7_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[68,
-         57,
-         46,
-         35,
-         24,
-         13]);
+        pattern0 = compute_pattern(board, &[68, 57, 46, 35, 24, 13]);
         score =(score as i32 + *set.diag6().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[86,
-         75,
-         64,
-         53,
-         42,
-         31]);
+        pattern0 = compute_pattern(board, &[86, 75, 64, 53, 42, 31]);
         score =(score as i32 + *set.diag6_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[61,
-         52,
-         43,
-         34,
-         25,
-         16]);
+        pattern0 = compute_pattern(board, &[61, 52, 43, 34, 25, 16]);
         score =(score as i32 + *set.diag6_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[83,
-         74,
-         65,
-         56,
-         47,
-         38]);
+        pattern0 = compute_pattern(board, &[83, 74, 65, 56, 47, 38]);
         score =(score as i32 + *set.diag6_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[58,
-         47,
-         36,
-         25,
-         14]);
+        pattern0 = compute_pattern(board, &[58, 47, 36, 25, 14]);
         score =(score as i32 + *set.diag5_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[85,
-         74,
-         63,
-         52,
-         41]);
+        pattern0 = compute_pattern(board, &[85, 74, 63, 52, 41]);
         score =(score as i32 + *set.diag5_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[51,
-         42,
-         33,
-         24,
-         15]);
+        pattern0 = compute_pattern(board, &[51, 42, 33, 24, 15]);
         score =(score as i32 + *set.diag5_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[84,
-         75,
-         66,
-         57,
-         48]);
+        pattern0 = compute_pattern(board, &[84, 75, 66, 57, 48]);
         score =(score as i32 + *set.diag5_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[48,
-         37,
-         26,
-         15]);
+        pattern0 = compute_pattern(board, &[48, 37, 26, 15]);
         score =(score as i32 + *set.diag4_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[84,
-         73,
-         62,
-         51]);
+        pattern0 = compute_pattern(board, &[84, 73, 62, 51]);
         score =(score as i32 + *set.diag4_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[41,
-         32,
-         23,
-         14]);
+        pattern0 = compute_pattern(board, &[41, 32, 23, 14]);
         score =(score as i32 + *set.diag4_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[85,
-         76,
-         67,
-         58]);
+        pattern0 = compute_pattern(board, &[85, 76, 67, 58]);
         score =(score as i32 + *set.diag4_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[33,
-         32,
-         31,
-         23,
-         22,
-         21,
-         13,
-         12,
-         11]);
+        pattern0 = compute_pattern(board, &[33, 32, 31, 23, 22, 21, 13, 12, 11]);
         score =(score as i32 + *set.corner33_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[63,
-         62,
-         61,
-         73,
-         72,
-         71,
-         83,
-         82,
-         81]);
+        pattern0 = compute_pattern(board, &[63, 62, 61, 73, 72, 71, 83, 82, 81]);
         score =(score as i32 + *set.corner33_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[36,
-         37,
-         38,
-         26,
-         27,
-         28,
-         16,
-         17,
-         18]);
+        pattern0 = compute_pattern(board, &[36, 37, 38, 26, 27, 28, 16, 17, 18]);
         score =(score as i32 + *set.corner33_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[66,
-         67,
-         68,
-         76,
-         77,
-         78,
-         86,
-         87,
-         88]);
+        pattern0 = compute_pattern(board, &[66, 67, 68, 76, 77, 78, 86, 87, 88]);
         score =(score as i32 + *set.corner33_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[25,
-         24,
-         23,
-         22,
-         21,
-         15,
-         14,
-         13,
-         12,
-         11]);
+        pattern0 = compute_pattern(board, &[25, 24, 23, 22, 21, 15, 14, 13, 12, 11]);
         score =(score as i32 + *set.corner52_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[75,
-         74,
-         73,
-         72,
-         71,
-         85,
-         84,
-         83,
-         82,
-         81]);
+        pattern0 = compute_pattern(board, &[75, 74, 73, 72, 71, 85, 84, 83, 82, 81]);
         score =(score as i32 + *set.corner52_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[24,
-         25,
-         26,
-         27,
-         28,
-         14,
-         15,
-         16,
-         17,
-         18]);
+        pattern0 = compute_pattern(board, &[24, 25, 26, 27, 28, 14, 15, 16, 17, 18]);
         score =(score as i32 + *set.corner52_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[74,
-         75,
-         76,
-         77,
-         78,
-         84,
-         85,
-         86,
-         87,
-         88]);
+        pattern0 = compute_pattern(board, &[74, 75, 76, 77, 78, 84, 85, 86, 87, 88]);
         score =(score as i32 + *set.corner52_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[52,
-         42,
-         32,
-         22,
-         12,
-         51,
-         41,
-         31,
-         21,
-         11]);
+        pattern0 = compute_pattern(board, &[52, 42, 32, 22, 12, 51, 41, 31, 21, 11]);
         score =(score as i32 + *set.corner52_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[57,
-         47,
-         37,
-         27,
-         17,
-         58,
-         48,
-         38,
-         28,
-         18]);
+        pattern0 = compute_pattern(board, &[57, 47, 37, 27, 17, 58, 48, 38, 28, 18]);
         score =(score as i32 + *set.corner52_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[42,
-         52,
-         62,
-         72,
-         82,
-         41,
-         51,
-         61,
-         71,
-         81]);
+        pattern0 = compute_pattern(board, &[42, 52, 62, 72, 82, 41, 51, 61, 71, 81]);
         score =(score as i32 + *set.corner52_mut().offset(pattern0 as isize) as i32) as i16;
-        pattern0 = compute_pattern(board, &[47,
-         57,
-         67,
-         77,
-         87,
-         48,
-         58,
-         68,
-         78,
-         88]);
+        pattern0 = compute_pattern(board, &[47, 57, 67, 77, 87, 48, 58, 68, 78, 88]);
         score =(score as i32 + *set.corner52_mut().offset(pattern0 as isize) as i32) as i16 } else {
         let mut pattern0_0: i32;
-        pattern0_0 = compute_pattern(board, &[72,
-         22,
-         81,
-         71,
-         61,
-         51,
-         41,
-         31,
-         21,
-         11]);
+        pattern0_0 = compute_pattern(board, &[72, 22, 81, 71, 61, 51, 41, 31, 21, 11]);
         score =(score as i32 + *set.afile2x_mut().offset(59048-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[77,
-         27,
-         88,
-         78,
-         68,
-         58,
-         48,
-         38,
-         28,
-         18]);
+        pattern0_0 = compute_pattern(board, &[77, 27, 88, 78, 68, 58, 48, 38, 28, 18]);
         score =(score as i32 + *set.afile2x_mut().offset(59048-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[27,
-         22,
-         18,
-         17,
-         16,
-         15,
-         14,
-         13,
-         12,
-         11]);
+        pattern0_0 = compute_pattern(board, &[27, 22, 18, 17, 16, 15, 14, 13, 12, 11]);
         score =(score as i32 + *set.afile2x_mut().offset(59048-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[77,
-         72,
-         88,
-         87,
-         86,
-         85,
-         84,
-         83,
-         82,
-         81]);
+        pattern0_0 = compute_pattern(board, &[77, 72, 88, 87, 86, 85, 84, 83, 82, 81]);
         score =(score as i32 + *set.afile2x_mut().offset(59048 - pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[82,
-         72,
-         62,
-         52,
-         42,
-         32,
-         22,
-         12]);
+        pattern0_0 = compute_pattern(board, &[82, 72, 62, 52, 42, 32, 22, 12]);
         score =(score as i32 + *set.bfile_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[87,
-         77,
-         67,
-         57,
-         47,
-         37,
-         27,
-         17]);
+        pattern0_0 = compute_pattern(board, &[87, 77, 67, 57, 47, 37, 27, 17]);
         score =(score as i32 + *set.bfile_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[28,
-         27,
-         26,
-         25,
-         24,
-         23,
-         22,
-         21]);
+        pattern0_0 = compute_pattern(board, &[28, 27, 26, 25, 24, 23, 22, 21]);
         score =(score as i32 + *set.bfile_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[78,
-         77,
-         76,
-         75,
-         74,
-         73,
-         72,
-         71]);
+        pattern0_0 = compute_pattern(board, &[78, 77, 76, 75, 74, 73, 72, 71]);
         score =(score as i32 + *set.bfile_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[83,
-         73,
-         63,
-         53,
-         43,
-         33,
-         23,
-         13]);
+        pattern0_0 = compute_pattern(board, &[83, 73, 63, 53, 43, 33, 23, 13]);
         score =(score as i32 + *set.cfile_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[86,
-         76,
-         66,
-         56,
-         46,
-         36,
-         26,
-         16]);
+        pattern0_0 = compute_pattern(board, &[86, 76, 66, 56, 46, 36, 26, 16]);
         score =(score as i32 + *set.cfile_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[38,
-         37,
-         36,
-         35,
-         34,
-         33,
-         32,
-         31]);
+        pattern0_0 = compute_pattern(board, &[38, 37, 36, 35, 34, 33, 32, 31]);
         score =(score as i32 + *set.cfile_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[68,
-         67,
-         66,
-         65,
-         64,
-         63,
-         62,
-         61]);
+        pattern0_0 = compute_pattern(board, &[68, 67, 66, 65, 64, 63, 62, 61]);
         score =(score as i32 + *set.cfile_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[84,
-         74,
-         64,
-         54,
-         44,
-         34,
-         24,
-         14]);
+        pattern0_0 = compute_pattern(board, &[84, 74, 64, 54, 44, 34, 24, 14]);
         score =(score as i32 + *set.dfile_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[85,
-         75,
-         65,
-         55,
-         45,
-         35,
-         25,
-         15]);
+        pattern0_0 = compute_pattern(board, &[85, 75, 65, 55, 45, 35, 25, 15]);
         score =(score as i32 + *set.dfile_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[48,
-         47,
-         46,
-         45,
-         44,
-         43,
-         42,
-         41]);
+        pattern0_0 = compute_pattern(board, &[48, 47, 46, 45, 44, 43, 42, 41]);
         score =(score as i32 + *set.dfile_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[58,
-         57,
-         56,
-         55,
-         54,
-         53,
-         52,
-         51]);
+        pattern0_0 = compute_pattern(board, &[58, 57, 56, 55, 54, 53, 52, 51]);
         score =(score as i32 + *set.dfile_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[88,
-         77,
-         66,
-         55,
-         44,
-         33,
-         22,
-         11]);
+        pattern0_0 = compute_pattern(board, &[88, 77, 66, 55, 44, 33, 22, 11]);
         score =(score as i32 + *set.diag8_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[81,
-         72,
-         63,
-         54,
-         45,
-         36,
-         27,
-         18]);
+        pattern0_0 = compute_pattern(board, &[81, 72, 63, 54, 45, 36, 27, 18]);
         score =(score as i32 + *set.diag8_mut().offset(6560-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[78,
-         67,
-         56,
-         45,
-         34,
-         23,
-         12]);
+        pattern0_0 = compute_pattern(board, &[78, 67, 56, 45, 34, 23, 12]);
         score =(score as i32 + *set.diag7_mut().offset(2186-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[87,
-         76,
-         65,
-         54,
-         43,
-         32,
-         21]);
+        pattern0_0 = compute_pattern(board, &[87, 76, 65, 54, 43, 32, 21]);
         score =(score as i32 + *set.diag7_mut().offset(2186-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[71,
-         62,
-         53,
-         44,
-         35,
-         26,
-         17]);
+        pattern0_0 = compute_pattern(board, &[71, 62, 53, 44, 35, 26, 17]);
         score =(score as i32 + *set.diag7_mut().offset(2186-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[82,
-         73,
-         64,
-         55,
-         46,
-         37,
-         28]);
+        pattern0_0 = compute_pattern(board, &[82, 73, 64, 55, 46, 37, 28]);
         score =(score as i32 + *set.diag7_mut().offset(2186-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[68,
-         57,
-         46,
-         35,
-         24,
-         13]);
+        pattern0_0 = compute_pattern(board, &[68, 57, 46, 35, 24, 13]);
         score =(score as i32 + *set.diag6_mut().offset(728-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[86,
-         75,
-         64,
-         53,
-         42,
-         31]);
+        pattern0_0 = compute_pattern(board, &[86, 75, 64, 53, 42, 31]);
         score =(score as i32 + *set.diag6_mut().offset(728-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[61,
-         52,
-         43,
-         34,
-         25,
-         16]);
+        pattern0_0 = compute_pattern(board, &[61, 52, 43, 34, 25, 16]);
         score =(score as i32 + *set.diag6_mut().offset(728-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[83,
-         74,
-         65,
-         56,
-         47,
-         38]);
+        pattern0_0 = compute_pattern(board, &[83, 74, 65, 56, 47, 38]);
         score =(score as i32 + *set.diag6_mut().offset(728-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[58,
-         47,
-         36,
-         25,
-         14]);
+        pattern0_0 = compute_pattern(board, &[58, 47, 36, 25, 14]);
         score =(score as i32 + *set.diag5_mut().offset(242-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[85,
-         74,
-         63,
-         52,
-         41]);
+        pattern0_0 = compute_pattern(board, &[85, 74, 63, 52, 41]);
         score =(score as i32 + *set.diag5_mut().offset(242-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[51,
-         42,
-         33,
-         24,
-         15]);
+        pattern0_0 = compute_pattern(board, &[51, 42, 33, 24, 15]);
         score =(score as i32 + *set.diag5_mut().offset(242-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[84,
-         75,
-         66,
-         57,
-         48]);
+        pattern0_0 = compute_pattern(board, &[84, 75, 66, 57, 48]);
         score =(score as i32 + *set.diag5_mut().offset(242-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[48,
-         37,
-         26,
-         15]);
+        pattern0_0 = compute_pattern(board, &[48, 37, 26, 15]);
         score =(score as i32 + *set.diag4_mut().offset(80-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[84,
-         73,
-         62,
-         51]);
+        pattern0_0 = compute_pattern(board, &[84, 73, 62, 51]);
         score =(score as i32 + *set.diag4_mut().offset(80-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[41,
-         32,
-         23,
-         14]);
+        pattern0_0 = compute_pattern(board, &[41, 32, 23, 14]);
         score =(score as i32 + *set.diag4_mut().offset(80-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[85,
-         76,
-         67,
-         58]);
+        pattern0_0 = compute_pattern(board, &[85, 76, 67, 58]);
         score =(score as i32 + *set.diag4_mut().offset(80-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[33,
-         32,
-         31,
-         23,
-         22,
-         21,
-         13,
-         12,
-         11]);
+        pattern0_0 = compute_pattern(board, &[33, 32, 31, 23, 22, 21, 13, 12, 11]);
         score =(score as i32 + *set.corner33_mut().offset(19682-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[63,
-         62,
-         61,
-         73,
-         72,
-         71,
-         83,
-         82,
-         81]);
+        pattern0_0 = compute_pattern(board, &[63, 62, 61, 73, 72, 71, 83, 82, 81]);
         score =(score as i32 + *set.corner33_mut().offset(19682-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[36,
-         37,
-         38,
-         26,
-         27,
-         28,
-         16,
-         17,
-         18]);
+        pattern0_0 = compute_pattern(board, &[36, 37, 38, 26, 27, 28, 16, 17, 18]);
         score =(score as i32 + *set.corner33_mut().offset(19682-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[66,
-         67,
-         68,
-         76,
-         77,
-         78,
-         86,
-         87,
-         88]);
+        pattern0_0 = compute_pattern(board, &[66, 67, 68, 76, 77, 78, 86, 87, 88]);
         score =(score as i32 + *set.corner33_mut().offset(19682-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[25,
-         24,
-         23,
-         22,
-         21,
-         15,
-         14,
-         13,
-         12,
-         11]);
+        pattern0_0 = compute_pattern(board, &[25, 24, 23, 22, 21, 15, 14, 13, 12, 11]);
         score =(score as i32 + *set.corner52_mut().offset(59048-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[75,
-         74,
-         73,
-         72,
-         71,
-         85,
-         84,
-         83,
-         82,
-         81]);
+        pattern0_0 = compute_pattern(board, &[75, 74, 73, 72, 71, 85, 84, 83, 82, 81]);
         score =(score as i32 + *set.corner52_mut().offset(59048-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[24,
-         25,
-         26,
-         27,
-         28,
-         14,
-         15,
-         16,
-         17,
-         18]);
+        pattern0_0 = compute_pattern(board, &[24, 25, 26, 27, 28, 14, 15, 16, 17, 18]);
         score =(score as i32 + *set.corner52_mut().offset(59048-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[74,
-         75,
-         76,
-         77,
-         78,
-         84,
-         85,
-         86,
-         87,
-         88]);
+        pattern0_0 = compute_pattern(board, &[74, 75, 76, 77, 78, 84, 85, 86, 87, 88]);
         score =(score as i32 + *set.corner52_mut().offset(59048-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[52,
-         42,
-         32,
-         22,
-         12,
-         51,
-         41,
-         31,
-         21,
-         11]);
+        pattern0_0 = compute_pattern(board, &[52, 42, 32, 22, 12, 51, 41, 31, 21, 11]);
         score =(score as i32 + *set.corner52_mut().offset(59048-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[57,
-         47,
-         37,
-         27,
-         17,
-         58,
-         48,
-         38,
-         28,
-         18]);
+        pattern0_0 = compute_pattern(board, &[57, 47, 37, 27, 17, 58, 48, 38, 28, 18]);
         score =(score as i32 + *set.corner52_mut().offset(59048-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[42,
-         52,
-         62,
-         72,
-         82,
-         41,
-         51,
-         61,
-         71,
-         81]);
+        pattern0_0 = compute_pattern(board, &[42, 52, 62, 72, 82, 41, 51, 61, 71, 81]);
         score =(score as i32 + *set.corner52_mut().offset(59048-pattern0_0 as isize) as i32) as i16;
-        pattern0_0 = compute_pattern(board, &[47,
-         57,
-         67,
-         77,
-         87,
-         48,
-         58,
-         68,
-         78,
-         88]);
+        pattern0_0 = compute_pattern(board, &[47, 57, 67, 77, 87, 48, 58, 68, 78, 88]);
         score =(score as i32 + *set.corner52_mut().offset(59048-pattern0_0 as isize) as i32) as i16
     }
     return score as i32;
