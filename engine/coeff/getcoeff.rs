@@ -1294,7 +1294,7 @@ fn create_terminal_pattern() -> [[f64; 8]; 8] {
     // created byt function: create_hit(); commented out because we don't
     // need to run it during each compilation. IF you need to change it,
     // uncomment it and inline instead of the following expression
-    static HIT: [[i32; 8]; 8] = [
+    static HIT: [[u8; 8]; 8] = [
         [6, 6, 5, 6, 6, 5, 6, 6],
         [6, 8, 6, 6, 6, 6, 8, 6],
         [5, 6, 5, 4, 4, 5, 6, 5],
