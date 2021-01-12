@@ -186,10 +186,10 @@ impl FrontEnd for LibcFatalError {
                 send_sweep(b"=%d\x00" as *const u8 as *const i8,
                            curr_val);
 
-                // TODO wtf are these???? they are not used...
             /*
-                pub static mut true_found: i32 = 0;
-                pub static mut true_val: i32 = 0;
+            // these were not used in the original code
+                pub static  mut true_found: i32 = 0;
+                pub static  mut true_val: i32 = 0;
                 ****
                 true_found = 1;
                 true_val = curr_val;
