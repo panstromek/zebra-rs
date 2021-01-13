@@ -74,14 +74,14 @@ const fn transformation_setup() -> [i32; 6561] {
    Pre-computes some tables needed for fast pattern access.
 */
 
-const fn init_patterns() -> [[i32; 100]; 4] {
-    let mut row_no_: [i32; 100] = [0; 100];
-    let mut row_index_: [i32; 100] = [0; 100];
-    let mut col_no_: [i32; 100] = [0; 100];
-    let mut col_index_: [i32; 100] = [0; 100];
+const fn init_patterns() -> [[u8; 100]; 4] {
+    let mut row_no_: [u8; 100] = [0; 100];
+    let mut row_index_: [u8; 100] = [0; 100];
+    let mut col_no_: [u8; 100] = [0; 100];
+    let mut col_index_: [u8; 100] = [0; 100];
 
-    let mut i = 1;
-    while i <= 8 as i32 {
+    let mut i = 1u8;
+    while i <= 8 {
         let mut j = 1;
         while j <= 8  {
             let pos = (10 * i + j) as usize;
@@ -106,11 +106,11 @@ const fn init_patterns() -> [[i32; 100]; 4] {
 */
 
 pub fn compute_line_patterns(in_board: &[i32; 128], row_pattern_: &mut [i32; 8], col_pattern_: &mut [i32; 8]) {
-    static patterns: [[i32; 100]; 4] = init_patterns();
-    static row_no: &[i32; 100] = &patterns[0];
-    static row_index: &[i32; 100] = &patterns[1];
-    static col_no: &[i32; 100] = &patterns[2];
-    static col_index: &[i32; 100] = &patterns[3];
+    static patterns: [[u8; 100]; 4] = init_patterns();
+    static row_no: &[u8; 100] = &patterns[0];
+    static row_index: &[u8; 100] = &patterns[1];
+    static col_no: &[u8; 100] = &patterns[2];
+    static col_index: &[u8; 100] = &patterns[3];
 
     let mut i: i32 = 0;
     let mut j: i32 = 0;
