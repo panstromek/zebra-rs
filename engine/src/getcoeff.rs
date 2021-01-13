@@ -511,6 +511,8 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
     let mut mirror_pattern: i32 = 0;
     let mut row: [i32; 10] = [0; 10];
 
+    /* Allocate the memory needed for the temporary mirror maps from the
+       heap rather than the stack to reduce memory requirements. */
     let mut map_mirror3 = vec![0; 27];
     let mut map_mirror4 = vec![0; 81];
     let mut map_mirror5 = vec![0; 243];
@@ -520,16 +522,6 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
     let mut map_mirror33 = vec![0; 19683];
     let mut map_mirror8x2 = vec![0; 59049];
 
-    /* Allocate the memory needed for the temporary mirror maps from the
-       heap rather than the stack to reduce memory requirements. */
-    let mut map_mirror3 = map_mirror3.as_mut_slice();
-    let mut map_mirror4 = map_mirror4.as_mut_slice();
-    let mut map_mirror5 = map_mirror5.as_mut_slice();
-    let mut map_mirror6 = map_mirror6.as_mut_slice();
-    let mut map_mirror7 = map_mirror7.as_mut_slice();
-    let mut map_mirror8 = map_mirror8.as_mut_slice();
-    let mut map_mirror33 = map_mirror33.as_mut_slice();
-    let mut map_mirror8x2 = map_mirror8x2.as_mut_slice();
     /* Build the pattern tables for 8*1-patterns */
     i = 0;
     while i < 8 as i32 { row[i as usize] = 0; i += 1 }
