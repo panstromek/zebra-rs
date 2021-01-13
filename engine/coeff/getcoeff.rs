@@ -113,69 +113,63 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
         return pattern
     }
 
-    fn update_score(board: &[i32; 128], score: i16, set_item: &[i16], indexes: &[u8]) -> i16 {
+    fn update_score(board: &[i32; 128], side_to_move: i32, score: i16, set_item: &[i16], indexes: &[u8]) -> i16 {
         let pattern = compute_pattern(board, indexes);
-        let score =(score as i32 + *set_item.offset(pattern as isize) as i32) as i16;
+        let off = if side_to_move == 0 as i32 {
+            pattern as isize
+        } else {
+            (set_item.len() as isize - 1 - pattern as isize) as isize
+        };
+        let score =(score as i32 + *set_item.offset(off) as i32) as i16;
         return score;
     }
 
-    fn update_score_back(board: &[i32; 128], score: i16, set_item: &[i16], indexes: &[u8]) -> i16 {
-        let pattern = compute_pattern(board, indexes);
-        let score =(score as i32 + *set_item.offset((set_item.len() as isize - 1 - pattern as isize) as isize) as i32) as i16;
-        return score;
-    }
-    let fun = if side_to_move == 0 as i32 {
-        update_score
-    } else {
-        update_score_back
-    };
-
-    score = fun(board, score, set.afile2x(), &[72, 22, 81, 71, 61, 51, 41, 31, 21, 11]);
-    score = fun(board, score, set.afile2x(), &[77, 27, 88, 78, 68, 58, 48, 38, 28, 18]);
-    score = fun(board, score, set.afile2x(), &[27, 22, 18, 17, 16, 15, 14, 13, 12, 11]);
-    score = fun(board, score, set.afile2x(), &[77, 72, 88, 87, 86, 85, 84, 83, 82, 81]);
-    score = fun(board, score, set.bfile(), &[82, 72, 62, 52, 42, 32, 22, 12]);
-    score = fun(board, score, set.bfile(), &[87, 77, 67, 57, 47, 37, 27, 17]);
-    score = fun(board, score, set.bfile(), &[28, 27, 26, 25, 24, 23, 22, 21]);
-    score = fun(board, score, set.bfile(), &[78, 77, 76, 75, 74, 73, 72, 71]);
-    score = fun(board, score, set.cfile(), &[83, 73, 63, 53, 43, 33, 23, 13]);
-    score = fun(board, score, set.cfile(), &[86, 76, 66, 56, 46, 36, 26, 16]);
-    score = fun(board, score, set.cfile(), &[38, 37, 36, 35, 34, 33, 32, 31]);
-    score = fun(board, score, set.cfile(), &[68, 67, 66, 65, 64, 63, 62, 61]);
-    score = fun(board, score, set.dfile(), &[84, 74, 64, 54, 44, 34, 24, 14]);
-    score = fun(board, score, set.dfile(), &[85, 75, 65, 55, 45, 35, 25, 15]);
-    score = fun(board, score, set.dfile(), &[48, 47, 46, 45, 44, 43, 42, 41]);
-    score = fun(board, score, set.dfile(), &[58, 57, 56, 55, 54, 53, 52, 51]);
-    score = fun(board, score, set.diag8(), &[88, 77, 66, 55, 44, 33, 22, 11]);
-    score = fun(board, score, set.diag8(), &[81, 72, 63, 54, 45, 36, 27, 18]);
-    score = fun(board, score, set.diag7(), &[78, 67, 56, 45, 34, 23, 12]);
-    score = fun(board, score, set.diag7(), &[87, 76, 65, 54, 43, 32, 21]);
-    score = fun(board, score, set.diag7(), &[71, 62, 53, 44, 35, 26, 17]);
-    score = fun(board, score, set.diag7(), &[82, 73, 64, 55, 46, 37, 28]);
-    score = fun(board, score, set.diag6(), &[68, 57, 46, 35, 24, 13]);
-    score = fun(board, score, set.diag6(), &[86, 75, 64, 53, 42, 31]);
-    score = fun(board, score, set.diag6(), &[61, 52, 43, 34, 25, 16]);
-    score = fun(board, score, set.diag6(), &[83, 74, 65, 56, 47, 38]);
-    score = fun(board, score, set.diag5(), &[58, 47, 36, 25, 14]);
-    score = fun(board, score, set.diag5(), &[85, 74, 63, 52, 41]);
-    score = fun(board, score, set.diag5(), &[51, 42, 33, 24, 15]);
-    score = fun(board, score, set.diag5(), &[84, 75, 66, 57, 48]);
-    score = fun(board, score, set.diag4(), &[48, 37, 26, 15]);
-    score = fun(board, score, set.diag4(), &[84, 73, 62, 51]);
-    score = fun(board, score, set.diag4(), &[41, 32, 23, 14]);
-    score = fun(board, score, set.diag4(), &[85, 76, 67, 58]);
-    score = fun(board, score, set.corner33(), &[33, 32, 31, 23, 22, 21, 13, 12, 11]);
-    score = fun(board, score, set.corner33(), &[63, 62, 61, 73, 72, 71, 83, 82, 81]);
-    score = fun(board, score, set.corner33(), &[36, 37, 38, 26, 27, 28, 16, 17, 18]);
-    score = fun(board, score, set.corner33(), &[66, 67, 68, 76, 77, 78, 86, 87, 88]);
-    score = fun(board, score, set.corner52(), &[25, 24, 23, 22, 21, 15, 14, 13, 12, 11]);
-    score = fun(board, score, set.corner52(), &[75, 74, 73, 72, 71, 85, 84, 83, 82, 81]);
-    score = fun(board, score, set.corner52(), &[24, 25, 26, 27, 28, 14, 15, 16, 17, 18]);
-    score = fun(board, score, set.corner52(), &[74, 75, 76, 77, 78, 84, 85, 86, 87, 88]);
-    score = fun(board, score, set.corner52(), &[52, 42, 32, 22, 12, 51, 41, 31, 21, 11]);
-    score = fun(board, score, set.corner52(), &[57, 47, 37, 27, 17, 58, 48, 38, 28, 18]);
-    score = fun(board, score, set.corner52(), &[42, 52, 62, 72, 82, 41, 51, 61, 71, 81]);
-    score = fun(board, score, set.corner52(), &[47, 57, 67, 77, 87, 48, 58, 68, 78, 88]);
+    score = update_score(board, side_to_move, score, set.afile2x(), &[72, 22, 81, 71, 61, 51, 41, 31, 21, 11]);
+    score = update_score(board, side_to_move, score, set.afile2x(), &[77, 27, 88, 78, 68, 58, 48, 38, 28, 18]);
+    score = update_score(board, side_to_move, score, set.afile2x(), &[27, 22, 18, 17, 16, 15, 14, 13, 12, 11]);
+    score = update_score(board, side_to_move, score, set.afile2x(), &[77, 72, 88, 87, 86, 85, 84, 83, 82, 81]);
+    score = update_score(board, side_to_move, score, set.bfile(), &[82, 72, 62, 52, 42, 32, 22, 12]);
+    score = update_score(board, side_to_move, score, set.bfile(), &[87, 77, 67, 57, 47, 37, 27, 17]);
+    score = update_score(board, side_to_move, score, set.bfile(), &[28, 27, 26, 25, 24, 23, 22, 21]);
+    score = update_score(board, side_to_move, score, set.bfile(), &[78, 77, 76, 75, 74, 73, 72, 71]);
+    score = update_score(board, side_to_move, score, set.cfile(), &[83, 73, 63, 53, 43, 33, 23, 13]);
+    score = update_score(board, side_to_move, score, set.cfile(), &[86, 76, 66, 56, 46, 36, 26, 16]);
+    score = update_score(board, side_to_move, score, set.cfile(), &[38, 37, 36, 35, 34, 33, 32, 31]);
+    score = update_score(board, side_to_move, score, set.cfile(), &[68, 67, 66, 65, 64, 63, 62, 61]);
+    score = update_score(board, side_to_move, score, set.dfile(), &[84, 74, 64, 54, 44, 34, 24, 14]);
+    score = update_score(board, side_to_move, score, set.dfile(), &[85, 75, 65, 55, 45, 35, 25, 15]);
+    score = update_score(board, side_to_move, score, set.dfile(), &[48, 47, 46, 45, 44, 43, 42, 41]);
+    score = update_score(board, side_to_move, score, set.dfile(), &[58, 57, 56, 55, 54, 53, 52, 51]);
+    score = update_score(board, side_to_move, score, set.diag8(), &[88, 77, 66, 55, 44, 33, 22, 11]);
+    score = update_score(board, side_to_move, score, set.diag8(), &[81, 72, 63, 54, 45, 36, 27, 18]);
+    score = update_score(board, side_to_move, score, set.diag7(), &[78, 67, 56, 45, 34, 23, 12]);
+    score = update_score(board, side_to_move, score, set.diag7(), &[87, 76, 65, 54, 43, 32, 21]);
+    score = update_score(board, side_to_move, score, set.diag7(), &[71, 62, 53, 44, 35, 26, 17]);
+    score = update_score(board, side_to_move, score, set.diag7(), &[82, 73, 64, 55, 46, 37, 28]);
+    score = update_score(board, side_to_move, score, set.diag6(), &[68, 57, 46, 35, 24, 13]);
+    score = update_score(board, side_to_move, score, set.diag6(), &[86, 75, 64, 53, 42, 31]);
+    score = update_score(board, side_to_move, score, set.diag6(), &[61, 52, 43, 34, 25, 16]);
+    score = update_score(board, side_to_move, score, set.diag6(), &[83, 74, 65, 56, 47, 38]);
+    score = update_score(board, side_to_move, score, set.diag5(), &[58, 47, 36, 25, 14]);
+    score = update_score(board, side_to_move, score, set.diag5(), &[85, 74, 63, 52, 41]);
+    score = update_score(board, side_to_move, score, set.diag5(), &[51, 42, 33, 24, 15]);
+    score = update_score(board, side_to_move, score, set.diag5(), &[84, 75, 66, 57, 48]);
+    score = update_score(board, side_to_move, score, set.diag4(), &[48, 37, 26, 15]);
+    score = update_score(board, side_to_move, score, set.diag4(), &[84, 73, 62, 51]);
+    score = update_score(board, side_to_move, score, set.diag4(), &[41, 32, 23, 14]);
+    score = update_score(board, side_to_move, score, set.diag4(), &[85, 76, 67, 58]);
+    score = update_score(board, side_to_move, score, set.corner33(), &[33, 32, 31, 23, 22, 21, 13, 12, 11]);
+    score = update_score(board, side_to_move, score, set.corner33(), &[63, 62, 61, 73, 72, 71, 83, 82, 81]);
+    score = update_score(board, side_to_move, score, set.corner33(), &[36, 37, 38, 26, 27, 28, 16, 17, 18]);
+    score = update_score(board, side_to_move, score, set.corner33(), &[66, 67, 68, 76, 77, 78, 86, 87, 88]);
+    score = update_score(board, side_to_move, score, set.corner52(), &[25, 24, 23, 22, 21, 15, 14, 13, 12, 11]);
+    score = update_score(board, side_to_move, score, set.corner52(), &[75, 74, 73, 72, 71, 85, 84, 83, 82, 81]);
+    score = update_score(board, side_to_move, score, set.corner52(), &[24, 25, 26, 27, 28, 14, 15, 16, 17, 18]);
+    score = update_score(board, side_to_move, score, set.corner52(), &[74, 75, 76, 77, 78, 84, 85, 86, 87, 88]);
+    score = update_score(board, side_to_move, score, set.corner52(), &[52, 42, 32, 22, 12, 51, 41, 31, 21, 11]);
+    score = update_score(board, side_to_move, score, set.corner52(), &[57, 47, 37, 27, 17, 58, 48, 38, 28, 18]);
+    score = update_score(board, side_to_move, score, set.corner52(), &[42, 52, 62, 72, 82, 41, 51, 61, 71, 81]);
+    score = update_score(board, side_to_move, score, set.corner52(), &[47, 57, 67, 77, 87, 48, 58, 68, 78, 88]);
     return score as i32;
 }
 // FIXME get rid of this stub
