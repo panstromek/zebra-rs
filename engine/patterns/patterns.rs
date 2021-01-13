@@ -19,11 +19,6 @@
 pub const pow3: [i32; 10] = [1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683];
 /* Connections between the squares and the bit masks */
 
-pub static row_no: [i32; 100] = init_patterns()[0];
-pub static row_index: [i32; 100] = init_patterns()[1];
-pub static col_no: [i32; 100] = init_patterns()[2];
-pub static col_index: [i32; 100] = init_patterns()[3];
-
 /* These values needed for compatibility with the old book format */
 // color_pattern[0] = 1;
 // color_pattern[2] = 2;
@@ -111,6 +106,12 @@ const fn init_patterns() -> [[i32; 100]; 4] {
 */
 
 pub fn compute_line_patterns(in_board: &[i32; 128], row_pattern_: &mut [i32; 8], col_pattern_: &mut [i32; 8]) {
+    static patterns: [[i32; 100]; 4] = init_patterns();
+    static row_no: &[i32; 100] = &patterns[0];
+    static row_index: &[i32; 100] = &patterns[1];
+    static col_no: &[i32; 100] = &patterns[2];
+    static col_index: &[i32; 100] = &patterns[3];
+
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
