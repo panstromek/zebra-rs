@@ -172,11 +172,6 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
     score = update_score(board, side_to_move, score, set.corner52(), &[47, 57, 67, 77, 87, 48, 58, 68, 78, 88]);
     return score as i32;
 }
-// FIXME get rid of this stub
-#[inline(always)]
-pub fn floor(num: f64) -> f64{
-    num.floor()
-}
 
 /*
    TERMINAL_PATTERNS
@@ -213,7 +208,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
         } else if row[9] == 2 as i32 {
             result -=value[1][6]
         }
-        coeff_set.afile2x_mut()[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16;
+        coeff_set.afile2x_mut()[i as usize] = f64::floor(result * 128.0f64 + 0.5f64) as i16;
         result = 0.0f64;
         j = 0;
         while j < 5 as i32 {
@@ -228,7 +223,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
             }
             j += 1
         }
-        coeff_set.corner52_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16;
+        coeff_set.corner52_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16;
         if i < 19683 as i32 {
             result = 0.0f64;
             j = 0;
@@ -244,7 +239,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.corner33_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.corner33_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 6561 as i32 {
             result = 0.0f64;
@@ -257,7 +252,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.bfile_mut()[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16;
+            coeff_set.bfile_mut()[i as usize] = f64::floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
             while j < 8 as i32 {
@@ -268,7 +263,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.cfile_mut()[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16;
+            coeff_set.cfile_mut()[i as usize] = f64::floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
             while j < 8 as i32 {
@@ -279,7 +274,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.dfile_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16;
+            coeff_set.dfile_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
             while j < 8 as i32 {
@@ -290,7 +285,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.diag8_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag8_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 2187 as i32 {
             result = 0.0f64;
@@ -303,7 +298,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.diag7_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag7_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 729 as i32 {
             result = 0.0f64;
@@ -316,7 +311,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.diag6_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag6_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 243 as i32 {
             result = 0.0f64;
@@ -329,7 +324,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.diag5_mut()[i as usize] =floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag5_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16
         }
         if i < 81 as i32 {
             result = 0.0f64;
@@ -342,7 +337,7 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
                 }
                 j += 1
             }
-            coeff_set.diag4_mut()[i as usize] = floor(result * 128.0f64 + 0.5f64) as i16
+            coeff_set.diag4_mut()[i as usize] = f64::floor(result * 128.0f64 + 0.5f64) as i16
         }
         /* Next configuration */
         j = 0;
