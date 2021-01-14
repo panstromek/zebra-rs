@@ -50,8 +50,16 @@ pub static mut g_config: Config = INITIAL_CONFIG;
    MAIN
 Interprets the command-line parameters and starts the game.
 */
-unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
+unsafe fn main_0()
  -> i32 {
+    let mut args: Vec<*mut i8> = Vec::new();
+    for arg in ::std::env::args() {
+        args.push(::std::ffi::CString::new(arg).expect("Failed to convert argument into CString.").into_raw());
+    };
+    args.push(::std::ptr::null_mut());
+    let mut argc = (args.len() - 1) as i32;
+    let mut argv = args.as_mut_ptr() as *mut *mut i8;
+
     print!("\nZebra (c) 1997-2005 Gunnar Andersson, compile date {} at {}\n\n",
            // TODO add macro or smth for these (it's in the C code)
            "Jul  2 2020",
@@ -1833,15 +1841,8 @@ impl DumpHandler for LibcDumpHandler {
 }
 
 pub fn main() {
-    let mut args: Vec<*mut i8> = Vec::new();
-    for arg in ::std::env::args() {
-        args.push(::std::ffi::CString::new(arg).expect("Failed to convert argument into CString.").into_raw());
-    };
-    args.push(::std::ptr::null_mut());
     unsafe {
-        ::std::process::exit(main_0((args.len() - 1) as i32,
-                                    args.as_mut_ptr() as
-                                        *mut *mut i8) as i32)
+        ::std::process::exit(main_0() as i32)
     }
 }
 
