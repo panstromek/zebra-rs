@@ -20,7 +20,7 @@
 
    Contents:        Provides safer memory allocation than malloc().
 */
-use engine::src::error::{FrontEnd, FatalError};
+
 use std::ffi::c_void;
 use crate::src::error::LibcFatalError;
 

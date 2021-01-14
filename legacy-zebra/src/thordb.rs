@@ -6,7 +6,7 @@ use crate::src::safemem::{safe_malloc, safe_realloc};
 use thordb_types::{Int8, Int16, Int32};
 
 use engine::src::bitboard::bit_reverse_32;
-use engine::src::myrandom::{};
+
 use engine::src::moves::dir_mask;
 use std::ffi::c_void;
 use thordb_types::{GameType, DatabaseType, C2RustUnnamed, EITHER_SELECTED_FILTER,
