@@ -52,13 +52,13 @@ Interprets the command-line parameters and starts the game.
 */
 unsafe fn main_0()
  -> i32 {
-    let mut args: Vec<*mut i8> = Vec::new();
+    use engine_traits::Offset;
+    let mut argv: Vec<*mut i8> = Vec::new();
     for arg in ::std::env::args() {
-        args.push(::std::ffi::CString::new(arg).expect("Failed to convert argument into CString.").into_raw());
+        argv.push(::std::ffi::CString::new(arg).expect("Failed to convert argument into CString.").into_raw());
     };
-    args.push(::std::ptr::null_mut());
-    let mut argc = (args.len() - 1) as i32;
-    let mut argv = args.as_mut_ptr() as *mut *mut i8;
+    argv.push(::std::ptr::null_mut());
+    let mut argc = (argv.len() - 1) as i32;
 
     print!("\nZebra (c) 1997-2005 Gunnar Andersson, compile date {} at {}\n\n",
            // TODO add macro or smth for these (it's in the C code)
