@@ -211,7 +211,6 @@ pub fn engine_play_game<
   ,mut flip_stack_: &mut FlipStack
 
 ) {
-    let echo = config.echo;
     let mut eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,
         res: WON_POSITION,
@@ -281,7 +280,7 @@ pub fn engine_play_game<
         );
         setup_hash(1, &mut hash_state, &mut  random_instance);
         learn_state.clear_stored_game();
-        if echo != 0 && config.use_book != 0 {
+        if config.echo != 0 && config.use_book != 0 {
             let slack_ = config.slack;
             ZF::report_book_randomness(slack_);
         }
@@ -316,7 +315,7 @@ pub fn engine_play_game<
             if moves_state.move_count[moves_state.disks_played as usize] != 0 {
                 let move_start =  g_timer.get_real_timer::<FE>();
                 g_timer.clear_panic_abort();
-                if echo != 0 {
+                if config.echo != 0 {
                     ZF::set_move_list(board_state.score_sheet_row);
                     ZF::set_times(floor(config.player_time[0]) as i32,
                               floor(config.player_time[2]) as i32);
@@ -349,8 +348,8 @@ pub fn engine_play_game<
                 Dump::dump_position(side_to_move, &board_state.board);
                 Dump::dump_game_score(side_to_move, board_state.score_sheet_row, &board_state.black_moves, &board_state.white_moves);
                 /* Check what the Thor opening statistics has to say */
-                Thor::choose_thor_opening_move(&board_state.board, side_to_move, echo);
-                if echo != 0 && config.wait != 0 { ZF::dumpch(); }
+                Thor::choose_thor_opening_move(&board_state.board, side_to_move, config.echo);
+                if config.echo != 0 && config.wait != 0 { ZF::dumpch(); }
                 if moves_state.disks_played >= provided_move_count {
                     if config.skill[side_to_move as usize] == 0 as i32 {
                         if config.use_book != 0 && config.display_pv != 0 {
@@ -362,7 +361,7 @@ pub fn engine_play_game<
                                                          &search_state,
                                                          &mut flip_stack_,
                                                          &mut hash_state);
-                            if echo != 0 {
+                            if config.echo != 0 {
                                 ZF::print_move_alternatives(side_to_move);
                             }
                         }
@@ -389,7 +388,7 @@ pub fn engine_play_game<
                                 0 as i32, &mut eval_info,
                                 &mut ComputeMoveLog::create_log_file_if_needed(),
                                 config.display_pv,
-                                echo,   &mut flip_stack_,
+                                config.echo, &mut flip_stack_,
                                 &mut search_state,
                                 &mut board_state,
                                 &mut hash_state,
@@ -456,14 +455,14 @@ pub fn engine_play_game<
             side_to_move = 2 - side_to_move;
             if config.one_position_only != 0 { break; }
         }
-        if echo == 0 && config.one_position_only == 0 {
+        if config.echo == 0 && config.one_position_only == 0 {
             let black_level = config.skill[0];
             let white_level = config.skill[2];
             ZF::report_skill_levels(black_level, white_level);
         }
         if side_to_move == 0 as i32 { board_state.score_sheet_row += 1 }
         Dump::dump_game_score(side_to_move, board_state.score_sheet_row, &board_state.black_moves, &board_state.white_moves);
-        if echo != 0 && config.one_position_only == 0 {
+        if config.echo != 0 && config.one_position_only == 0 {
             ZF::set_move_list(
                 board_state.score_sheet_row);
             if use_thor_ {
