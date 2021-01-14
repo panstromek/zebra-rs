@@ -925,9 +925,9 @@ unsafe fn compute_thor_patterns(in_board: &[i32]) {
         pos = 10 as i32 * i + 11 as i32;
         while j < 8 as i32 {
             thor_row_pattern[i as usize] +=
-                pow3[j as usize] * *in_board.offset(pos as isize);
+                pow3(j as usize) * *in_board.offset(pos as isize);
             thor_col_pattern[j as usize] +=
-                pow3[i as usize] * *in_board.offset(pos as isize);
+                pow3(i as usize) * *in_board.offset(pos as isize);
             j += 1;
             pos += 1
         }
@@ -2074,7 +2074,7 @@ unsafe fn init_thor_hash() {
         j = 0;
         while j < 8 as i32 {
             flip_row[i as usize] +=
-                row[j as usize] * pow3[(7 as i32 - j) as usize];
+                row[j as usize] * pow3((7 as i32 - j) as usize);
             j += 1
         }
         /* Next configuration */

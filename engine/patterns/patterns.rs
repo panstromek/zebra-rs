@@ -16,7 +16,9 @@
 */
 
 
-pub const pow3: [i32; 10] = [1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683];
+pub const fn pow3(n: usize) -> i32 {
+    3i32.pow(n as _)
+}
 /* Connections between the squares and the bit masks */
 
 /* These values needed for compatibility with the old book format */
@@ -34,6 +36,8 @@ pub static flip8: [i32; 6561] = transformation_setup();
    Calculate the various symmetry and color transformations.
 */
 const fn transformation_setup() -> [i32; 6561] {
+    pub const pow3: [i32; 10] = [1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683];
+
     let mut flip8_: [i32; 6561] = [0;6561];
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -133,9 +137,9 @@ pub fn compute_line_patterns(in_board: &[i32; 128], row_pattern_: &mut [i32; 8],
                 mask = color_pattern[in_board[pos as usize] as usize]
             }
             row_pattern_[row_no[pos as usize] as usize] +=
-                mask * pow3[row_index[pos as usize] as usize];
+                mask * pow3(row_index[pos as usize] as usize);
             col_pattern_[col_no[pos as usize] as usize] +=
-                mask * pow3[col_index[pos as usize] as usize];
+                mask * pow3(col_index[pos as usize] as usize);
             j += 1
         }
         i += 1

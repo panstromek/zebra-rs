@@ -718,7 +718,7 @@ fn recursive_find_stable(&mut self, pattern: i32)
             new_pattern = 0;
             j = 0;
             while j < 8 as i32 {
-                new_pattern += pow3[j as usize] * row[j as usize];
+                new_pattern += pow3(j as usize) * row[j as usize];
                 j += 1
             }
             stable &= self.recursive_find_stable(new_pattern);
@@ -763,7 +763,7 @@ fn recursive_find_stable(&mut self, pattern: i32)
             new_pattern = 0;
             j = 0;
             while j < 8 as i32 {
-                new_pattern += pow3[j as usize] * row[j as usize];
+                new_pattern += pow3(j as usize) * row[j as usize];
                 j += 1
             }
             stable &= self.recursive_find_stable(new_pattern)
@@ -849,7 +849,7 @@ pub fn init_stable(state: &mut StableState) {
             if i & (1 as i32) << j != 0 {
                 state.base_conversion[i as usize] =
                     (state.base_conversion[i as usize] as i32 +
-                         pow3[j as usize]) as i16
+                         pow3(j as usize)) as i16
             }
             j += 1
         }
