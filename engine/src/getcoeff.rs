@@ -531,7 +531,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         j = 0;
         while j < 8 as i32 {
             mirror_pattern +=
-                row[j as usize] * pow3[(7 as i32 - j) as usize];
+                row[j as usize] * pow3((7 as i32 - j) as usize);
             j += 1
         }
         /* Create the symmetry map */
@@ -562,7 +562,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         j = 0;
         while j < 7 as i32 {
             mirror_pattern +=
-                row[j as usize] * pow3[(6 as i32 - j) as usize];
+                row[j as usize] * pow3((6 as i32 - j) as usize);
             j += 1
         }
         *map_mirror7.offset(i as isize) =
@@ -592,7 +592,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         j = 0;
         while j < 6 as i32 {
             mirror_pattern +=
-                row[j as usize] * pow3[(5 as i32 - j) as usize];
+                row[j as usize] * pow3((5 as i32 - j) as usize);
             j += 1
         }
         *map_mirror6.offset(i as isize) =
@@ -622,7 +622,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         j = 0;
         while j < 5 as i32 {
             mirror_pattern +=
-                row[j as usize] * pow3[(4 as i32 - j) as usize];
+                row[j as usize] * pow3((4 as i32 - j) as usize);
             j += 1
         }
         *map_mirror5.offset(i as isize) =
@@ -652,7 +652,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         j = 0;
         while j < 4 as i32 {
             mirror_pattern +=
-                row[j as usize] * pow3[(3 as i32 - j) as usize];
+                row[j as usize] * pow3((3 as i32 - j) as usize);
             j += 1
         }
         *map_mirror4.offset(i as isize) =
@@ -682,7 +682,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         j = 0;
         while j < 3 as i32 {
             mirror_pattern +=
-                row[j as usize] * pow3[(2 as i32 - j) as usize];
+                row[j as usize] * pow3((2 as i32 - j) as usize);
             j += 1
         }
         *map_mirror3.offset(i as isize) =

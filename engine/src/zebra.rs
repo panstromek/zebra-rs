@@ -367,6 +367,7 @@ pub fn engine_play_game<
                         }
 
                         ZF::before_get_move();
+                        // FIXME interaction
                         curr_move = get_move::<ZF>(side_to_move, &board_state.board);
                     } else {
                          g_timer.start_move::<FE>(config.player_time[side_to_move as usize],
@@ -449,7 +450,7 @@ pub fn engine_play_game<
                     board_state.white_moves[board_state.score_sheet_row as usize] = -(1)
                 }
                 if config.skill[side_to_move as usize] == 0 {
-                    ZF::get_pass();
+                    ZF::get_pass();// FIXME interaction
                 }
             }
             side_to_move = 2 - side_to_move;
