@@ -5,7 +5,7 @@
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
 
-use std::ffi::c_void;
+use std::ffi::{c_void, CString, CStr};
 extern crate libc;
 
 
@@ -66,6 +66,48 @@ pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 pub type __compar_fn_t =  Option<unsafe extern "C" fn(_: *const c_void, _: *const c_void) -> i32>;
 
+/// #SAFETY implementor must ensure that this pointer is valid
+pub trait AsConstPtr<T: Sized> {
+     fn as_const_ptr(self) -> *const T;
+}
+impl AsConstPtr<i8> for *const i8 {
+    fn as_const_ptr(self) -> *const i8 {
+        self
+    }
+}
+impl AsConstPtr<i8> for *mut i8 {
+    fn as_const_ptr(self) -> *const i8 {
+        self
+    }
+}
+
+impl AsConstPtr<i8> for &CStr {
+    fn as_const_ptr(self) -> *const i8 {
+        self.as_ptr()
+    }
+}
+
+pub unsafe fn atoi<T: AsConstPtr<i8>>(__nptr: T) -> i32 {
+    inner::atoi(__nptr.as_const_ptr())
+}
+
+pub unsafe fn atof<T: AsConstPtr<i8>>(__nptr: T) -> f64 {
+    inner::atof(__nptr.as_const_ptr())
+}
+
+pub unsafe fn strcasecmp<T: AsConstPtr<i8>, U: AsConstPtr<i8>>(a: T, b: U) -> i32
+{
+    inner::strcasecmp(a.as_const_ptr(), b.as_const_ptr())
+}
+
+mod inner  {
+    extern "C" {
+        pub fn atoi(__nptr: *const i8) -> i32;
+        pub fn atof(__nptr: *const i8) -> f64;
+        pub fn strcasecmp(_: *const i8, _: *const i8) -> i32;
+
+    }
+}
 extern "C" {
     pub fn malloc(_: u64) -> *mut c_void;
     pub fn realloc(_: *mut c_void, _: u64) -> *mut c_void;
@@ -95,13 +137,9 @@ extern "C" {
     pub fn fputs(__s: *const i8, __stream: *mut FILE) -> i32;
     pub fn puts(__s: *const i8) -> i32;
     pub fn feof(__stream: *mut FILE) -> i32;
-    pub fn atof(__nptr: *const i8) -> f64;
-    pub fn atoi(__nptr: *const i8) -> i32;
     pub fn exit(_: i32) -> !;
     pub fn strstr(_: *const i8, _: *const i8)
                   -> *mut i8;
-    pub fn strcasecmp(_: *const i8, _: *const i8)
-                      -> i32;
     pub fn ctime(__timer: *const time_t) -> *mut i8;
     pub fn __ctype_b_loc() -> *mut *const u16;
     pub static mut stderr: *mut FILE;
