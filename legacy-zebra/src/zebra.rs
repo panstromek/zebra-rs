@@ -53,12 +53,12 @@ Interprets the command-line parameters and starts the game.
 unsafe fn main_0()
  -> i32 {
     use engine_traits::Offset;
-    let mut argv: Vec<*mut i8> = Vec::new();
+    let mut args = Vec::new();
     for arg in ::std::env::args() {
-        argv.push(::std::ffi::CString::new(arg).expect("Failed to convert argument into CString.").into_raw());
+        args.push(::std::ffi::CString::new(arg).expect("Failed to convert argument into CString."));
     };
-    argv.push(::std::ptr::null_mut());
-    let mut argc = (argv.len() - 1) as i32;
+    let mut argc = (args.len()) as i32;
+    let mut argv = args.iter().map(|s| s.as_ref()).collect::<Vec<_>>();
 
     print!("\nZebra (c) 1997-2005 Gunnar Andersson, compile date {} at {}\n\n",
            // TODO add macro or smth for these (it's in the C code)
@@ -229,7 +229,7 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                game_file_name = *argv.offset(arg_index as isize);
+                game_file_name = argv.offset(arg_index as isize).as_ptr();
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
@@ -324,7 +324,7 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                log_file_name = *argv.offset(arg_index as isize);
+                log_file_name = argv.offset(arg_index as isize).as_ptr() as _;
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
@@ -370,7 +370,7 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                move_sequence = *argv.offset(arg_index as isize);
+                move_sequence = (argv.offset(arg_index as isize)).as_ptr();
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
@@ -381,7 +381,7 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                move_file_name = *argv.offset(arg_index as isize);
+                move_file_name = argv.offset(arg_index as isize).as_ptr();
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
