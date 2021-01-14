@@ -17,7 +17,7 @@
 
 
 pub const fn pow3(n: usize) -> i32 {
-    3i32.pow(n as _)
+    3i32.wrapping_pow(n as _)
 }
 /* Connections between the squares and the bit masks */
 
