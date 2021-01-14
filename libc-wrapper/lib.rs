@@ -5,7 +5,7 @@
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
 
-use std::ffi::{c_void, CString, CStr};
+use std::ffi::{c_void, CStr};
 extern crate libc;
 
 
