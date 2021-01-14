@@ -1,6 +1,6 @@
-use std::convert::TryFrom;
-use std::env::args;
-use std::ffi::{c_void, CStr, CString};
+
+
+use std::ffi::{c_void, CString};
 
 use engine::{
     src:: {
@@ -12,7 +12,7 @@ use engine::src::error::{FatalError, FrontEnd};
 use engine::src::game::CandidateMove;
 use engine::src::hash::HashEntry;
 use engine::src::search::hash_expand_pv;
-use engine::src::thordb::ThorDatabase;
+
 use engine::src::zebra::EvaluationType;
 use libc_wrapper::{ctime, exit, fflush, fopen, fprintf, free, malloc, printf, putc, puts, realloc, sprintf, stderr, stdout, strchr, strdup, strlen, time, time_t, tolower, toupper, vfprintf};
 use thordb_types::C2RustUnnamed;
@@ -485,7 +485,7 @@ impl FrontEnd for LibcFatalError {
     fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32,
                                    searched: i32, update_pv: i32) {
         unsafe {
-            let mut echo = g_config.echo;
+            let echo = g_config.echo;
 
             if update_pv != 0 {
                 if curr_val <= alpha {

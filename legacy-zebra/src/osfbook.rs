@@ -4,12 +4,12 @@ use engine::src::error::FrontEnd;
 use engine::src::game::{engine_game_init, setup_non_file_based_game};
 use engine::src::getcoeff::remove_coeffs;
 use engine::src::hash::{clear_hash_drafts, determine_hash_values, setup_hash};
-use engine::src::midgame::{middle_game, tree_search};
+use engine::src::midgame::{tree_search};
 use engine::src::moves::{generate_all, generate_specific, make_move, make_move_no_hash, unmake_move, unmake_move_no_hash};
 use engine::src::myrandom::MyRandom;
 use engine::src::osfbook::{__time_t, _ISgraph, _ISprint, _ISspace, _ISupper, adjust_score, Book, BOOK_MAPS, BookNode, clear_node_depth, fill_move_alternatives, get_hash, get_node_depth, probe_hash_table, reset_book_search, set_node_depth, size_t};
 use engine::src::search::disc_count;
-use engine::src::stubs::{abs, floor};
+use engine::src::stubs::{abs};
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvaluationType;
@@ -20,14 +20,14 @@ use libc_wrapper::{__ctype_b_loc, ctime, exit, fclose, feof, fflush, fgets, FILE
 use crate::{
     src::{
         error::fatal_error,
-        game::{game_init, global_setup}
+        game::{global_setup}
     }
 };
-use crate::src::display::{black_eval, black_player, black_time, current_row, display_board, white_eval, white_player, white_time};
+
 use crate::src::error::LibcFatalError;
-use crate::src::safemem::safe_malloc;
+
 use crate::src::zebra::{coeff_state, end_g, g_timer, midgame_state, moves_state, prob_cut};
-use crate::src::zebra::{board_state, g_book, g_config, game_state, hash_state, random_instance, search_state};
+use crate::src::zebra::{board_state, g_book, game_state, hash_state, random_instance, search_state};
 use crate::src::zebra::flip_stack_;
 use crate::src::zebra::stable_state;
 

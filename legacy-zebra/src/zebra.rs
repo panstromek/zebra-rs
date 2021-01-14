@@ -17,7 +17,7 @@ use engine::src::hash::{HashState, setup_hash};
 use engine::src::learn::LearnState;
 use engine::src::midgame::MidgameState;
 use engine::src::moves::{game_in_progress, generate_all, make_move, MovesState, unmake_move, valid_move};
-use engine::src::myrandom;
+
 use engine::src::myrandom::MyRandom;
 use engine::src::osfbook::{Book, find_opening_name, reset_book_search, set_deviation_value};
 use engine::src::probcut::ProbCut;
@@ -30,7 +30,7 @@ use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WIN
 use engine::src::zebra::EvalResult::{LOST_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
-use flip::unflip;
+
 use flip::unflip::FlipStack;
 use libc_wrapper::{atof, atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time, fflush};
 use libc_wrapper::{FILE, time_t};
@@ -738,7 +738,7 @@ impl InitialMoveSource for FileMoveSource {
 
         let newline_pos = line_buffer.iter()
             .enumerate()
-            .find(|(i, ch)| **ch == '\n' as i8 as u8 );
+            .find(|(_i, ch)| **ch == '\n' as i8 as u8 );
 
         if let Some(newline_pos) = newline_pos {
             line_buffer[newline_pos.0] = 0;
