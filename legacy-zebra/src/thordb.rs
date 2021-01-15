@@ -17,7 +17,8 @@ use thor_opening_list::THOR_OPENING_LIST;
 use engine_traits::Offset;
 use engine::src::patterns::pow3;
 use engine::src::thordb::ThorDatabase;
-use crate::src::zebra::random_instance;
+use crate::src::zebra::{FullState};
+use engine::src::myrandom::MyRandom;
 
 /* Local variables */
 pub static mut thor_game_count: i32 = 0;
@@ -141,8 +142,8 @@ impl ThorDatabase for LegacyThor {
         unsafe { get_black_average_score() }
     }
 
-    fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32) -> i32 {
-        unsafe { choose_thor_opening_move(in_board, side_to_move, echo) }
+    fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32, random: &mut MyRandom) -> i32 {
+        unsafe { choose_thor_opening_move(in_board, side_to_move, echo, random) }
     }
 }
 
@@ -2060,7 +2061,11 @@ pub unsafe fn prepare_game(mut game: *mut GameType) {
 
   which speeds up the computation of the hash functions.
 */
-unsafe fn init_thor_hash() {
+unsafe fn init_thor_hash(g_state: &mut FullState) {
+    let FullState {
+        ref mut random_instance,
+        ..
+    } : &mut FullState = g_state;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut row: [i32; 10] = [0; 10];
@@ -2097,7 +2102,7 @@ unsafe fn init_thor_hash() {
     while i < 8 as i32 {
         j = 0;
         while j < 6561 as i32 {
-            buffer[j as usize] = abs(crate::src::zebra::random_instance.my_random() as i32);
+            buffer[j as usize] = abs(random_instance.my_random() as i32);
             j += 1
         }
         j = 0;
@@ -2112,7 +2117,7 @@ unsafe fn init_thor_hash() {
         }
         j = 0;
         while j < 6561 as i32 {
-            buffer[j as usize] = abs(crate::src::zebra::random_instance.my_random() as i32);
+            buffer[j as usize] = abs(random_instance.my_random() as i32);
             j += 1
         }
         j = 0;
@@ -2317,7 +2322,7 @@ unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
   must be called.
 */
 
-pub unsafe fn init_thor_database<FE: FrontEnd>() {
+pub unsafe fn init_thor_database<FE: FrontEnd>(g_state: &mut FullState) {
     let mut i: i32 = 0; /* "infinity" */
     thor_game_count = 0;
     thor_database_count = 0;
@@ -2346,7 +2351,7 @@ pub unsafe fn init_thor_database<FE: FrontEnd>() {
     thor_games_filtered = 0;
     init_move_masks();
     init_symmetry_maps::<FE>();
-    init_thor_hash();
+    init_thor_hash(g_state);
     prepare_thor_board();
     build_thor_opening_tree::<FE>();
     filter.game_categories =
@@ -2654,12 +2659,8 @@ pub unsafe fn thor_compare(g1: *const c_void,
   towards common moves. (If no moves are found, PASS is returned.)
 */
 
-pub unsafe fn choose_thor_opening_move(in_board:
-                                                    &[i32],
-                                                    side_to_move:
-                                                    i32,
-                                                    echo: i32)
-                                                    -> i32 {
+pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32,
+                                       random_instance: &mut MyRandom) -> i32 {
     use engine_traits::Offset;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -2710,7 +2711,7 @@ pub unsafe fn choose_thor_opening_move(in_board:
     while i < 8 as i32 { symmetries[i as usize] = i; i += 1 }
     i = 0;
     while i < 7 as i32 {
-        j = i + abs(crate::src::zebra::random_instance.my_random() as i32) % (8 as i32 - i);
+        j = i + abs(random_instance.my_random() as i32) % (8 as i32 - i);
         temp_symm = symmetries[i as usize];
         symmetries[i as usize] = symmetries[j as usize];
         symmetries[j as usize] = temp_symm;

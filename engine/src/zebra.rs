@@ -170,8 +170,8 @@ pub trait ZebraFrontend {
     fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
     fn report_opening_name(opening_name: &CStr);
     fn report_book_randomness(slack_: f64);
-    fn load_thor_files();
-    fn print_move_alternatives(side_to_move: i32);
+    fn load_thor_files(g_timer: &mut Timer);
+    fn print_move_alternatives(side_to_move: i32,  board_state: &mut BoardState, g_book: &mut Book);
     fn dumpch();
 }
 /* File handling procedures */
@@ -193,24 +193,10 @@ pub fn engine_play_game<
     Thor: ThorDatabase
 >(file_name: Option<&CStr>, mut move_string: &[u8],
   mut repeat: i32, log_file_name_: Option<&CStr>,
-  mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool, config: &mut Config
-  ,mut learn_state: &mut LearnState
-  ,mut midgame_state: &mut MidgameState
-  ,mut game_state: &mut GameState
-  ,mut end_g: &mut End
-  ,mut coeff_state: &mut CoeffState
-  ,mut g_timer: &mut Timer
-  ,mut moves_state: &mut MovesState
-  ,mut stable_state: &mut StableState
-  ,mut board_state: &mut BoardState
-  ,mut hash_state: &mut HashState
-  ,mut random_instance: &mut MyRandom
-  ,mut g_book: &mut Book
-  ,mut prob_cut: &mut ProbCut
-  ,mut search_state: &mut SearchState
-  ,mut flip_stack_: &mut FlipStack
-
+  mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool,
+    g_state: &mut FullState
 ) {
+
     let mut eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,
         res: WON_POSITION,
@@ -229,6 +215,23 @@ pub fn engine_play_game<
     let mut line_buffer = [0u8; 1001];
     let mut move_string = move_string;
     loop  {
+        let mut config = (&mut g_state.g_config);
+        let mut learn_state = (&mut g_state.learn_state);
+        let mut midgame_state = (&mut g_state.midgame_state);
+        let mut game_state = (&mut g_state.game_state);
+        let mut end_g = (&mut g_state.end_g);
+        let mut coeff_state = (&mut g_state.coeff_state);
+        let mut g_timer = (&mut g_state.g_timer);
+        let mut moves_state = (&mut g_state.moves_state);
+        let mut stable_state = (&mut g_state.stable_state);
+        let mut board_state = (&mut g_state.board_state);
+        let mut hash_state = (&mut g_state.hash_state);
+        let mut random_instance = (&mut g_state.random_instance);
+        let mut g_book = (&mut g_state.g_book);
+        let mut prob_cut = (&mut g_state.prob_cut);
+        let mut search_state = (&mut g_state.search_state);
+        let mut flip_stack_ = (&mut g_state.flip_stack_);
+
         /* Decode the predefined move sequence */
         if let Some(ref mut move_file) = &mut move_file {
             {
@@ -292,7 +295,7 @@ pub fn engine_play_game<
         reset_book_search(&mut g_book);
         set_deviation_value(config.low_thresh, config.high_thresh, config.dev_bonus, &mut g_book);
         if use_thor_ {
-            ZF::load_thor_files();
+            ZF::load_thor_files(g_timer);
         }
         set_names_from_skills::<ZF>(config);
         ZF::set_move_list(
@@ -348,7 +351,7 @@ pub fn engine_play_game<
                 Dump::dump_position(side_to_move, &board_state.board);
                 Dump::dump_game_score(side_to_move, board_state.score_sheet_row, &board_state.black_moves, &board_state.white_moves);
                 /* Check what the Thor opening statistics has to say */
-                Thor::choose_thor_opening_move(&board_state.board, side_to_move, config.echo);
+                Thor::choose_thor_opening_move(&board_state.board, side_to_move, config.echo, random_instance);
                 if config.echo != 0 && config.wait != 0 { ZF::dumpch(); }
                 if moves_state.disks_played >= provided_move_count {
                     if config.skill[side_to_move as usize] == 0 as i32 {
@@ -362,7 +365,7 @@ pub fn engine_play_game<
                                                          &mut flip_stack_,
                                                          &mut hash_state);
                             if config.echo != 0 {
-                                ZF::print_move_alternatives(side_to_move);
+                                ZF::print_move_alternatives(side_to_move, board_state, g_book);
                             }
                         }
 
@@ -510,9 +513,9 @@ pub fn engine_play_game<
         if use_learning_ && config.one_position_only == 0 {
             Learn::learn_game(moves_state.disks_played,
                               (config.skill[0] != 0 && config.skill[2] != 0) as i32,
-                              (repeat == 0 as i32) as i32);
+                              (repeat == 0 as i32) as i32, g_state);
         }
-        g_timer.toggle_abort_check(1);
+        g_state.g_timer.toggle_abort_check(1);
         if !(repeat > 0) { break; }
     }
 }
@@ -549,4 +552,63 @@ pub async fn engine_play_game_async<
 fn clear_moves(state: &mut BoardState) {
     state.black_moves = [-1; 60];
     state.white_moves = [-1; 60];
+}
+
+pub struct FullState {
+    pub g_config: Config,
+    pub learn_state: LearnState,
+    pub midgame_state: MidgameState,
+    pub game_state: GameState,
+    pub end_g: End,
+    pub coeff_state: CoeffState,
+    pub g_timer: Timer,
+    pub moves_state: MovesState,
+    pub stable_state: StableState,
+    pub board_state: BoardState,
+    pub hash_state: HashState,
+    pub random_instance: MyRandom,
+    pub g_book: Book,
+    pub prob_cut: ProbCut,
+    pub search_state: SearchState,
+    pub flip_stack_: FlipStack,
+}
+
+impl FullState {
+    pub fn new() -> Self {
+        let g_config: Config = INITIAL_CONFIG;
+        let learn_state: LearnState = LearnState::new();
+        let midgame_state: MidgameState = MidgameState::new();
+        let game_state: GameState = GameState::new();
+        let end_g: End = End::new();
+        let coeff_state: CoeffState = CoeffState::new();
+        let g_timer: Timer = Timer::new();
+        let moves_state: MovesState = MovesState::new();
+        let stable_state: StableState = StableState::new();
+        let board_state: BoardState = BoardState::new();
+        let hash_state: HashState = HashState::new();
+        let random_instance: MyRandom = MyRandom::new();
+        let g_book: Book = Book::new();
+        let prob_cut: ProbCut = ProbCut::new();
+        let search_state: SearchState = SearchState::new();
+        let flip_stack_: FlipStack = FlipStack::new();
+
+        return FullState {
+            g_config,
+            learn_state,
+            midgame_state,
+            game_state,
+            end_g,
+            coeff_state,
+            g_timer,
+            moves_state,
+            stable_state,
+            board_state,
+            hash_state,
+            random_instance,
+            g_book,
+            prob_cut,
+            search_state,
+            flip_stack_,
+        }
+    }
 }

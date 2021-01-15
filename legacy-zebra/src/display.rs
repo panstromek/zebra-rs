@@ -8,7 +8,8 @@ use libc_wrapper::{exit, FILE, fprintf, fputc, fputs, getc, size_t, sprintf, std
 
 use crate::src::error::FE;
 use crate::src::safemem::safe_malloc;
-use crate::src::zebra::g_timer;
+use crate::src::zebra::FullState;
+use engine::src::timer::Timer;
 
 static mut stored_status_buffer: [i8; 256] = [0; 256];
 
@@ -98,7 +99,7 @@ pub unsafe fn toggle_smart_buffer_management(use_smart: i32) {
   Clear all buffers and initialize time variables.
 */
 
-pub unsafe fn reset_buffer_display<FE: FrontEnd>() {
+pub unsafe fn reset_buffer_display<FE: FrontEnd>(g_timer:&mut Timer) {
     /* The first two Fibonacci numbers */
     clear_status();
     clear_sweep();
@@ -313,7 +314,7 @@ pub unsafe fn display_move(stream: *mut FILE,
    Displays the principal variation found during the tree search.
 */
 
-pub unsafe fn display_optimal_line(stream: *mut FILE, full_pv_depth_: i32, full_pv_: [i32; 120]) {
+pub unsafe fn display_optimal_line(stream: *mut FILE, full_pv_depth_: i32, full_pv_: [i32; 120]) {//FIXME passs this by a reference
     let mut i: i32 = 0;
     if full_pv_depth_ == 0 as i32 { return }
     fprintf(stream, b"%s: \x00" as *const u8 as *const i8,

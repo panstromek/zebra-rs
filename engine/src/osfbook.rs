@@ -1052,7 +1052,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     } else { remaining_slack = 0 as i32 }
     if echo != 0 && book.candidate_count > 0 as i32 &&
         search_state_.get_ponder_move() == 0 {
-        FE::report_in_get_book_move_1(side_to_move, remaining_slack);
+        FE::report_in_get_book_move_1(side_to_move, remaining_slack, board_state_, book);
     }
     /* No book move found? */
     if book.candidate_count == 0 as i32 { return -(1 as i32) }
@@ -1166,7 +1166,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         (*eval_info).type_0 = MIDGAME_EVAL
     }
     if echo != 0 {
-        FE::report_in_get_book_move_2(chosen_score, chosen_index, &flags, &book.candidate_list);
+        FE::report_in_get_book_move_2(chosen_score, chosen_index, &flags, &book.candidate_list, search_state_);
     }
     /* Fill the PV structure with the optimal book line */
     original_side_to_move = side_to_move;

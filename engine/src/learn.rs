@@ -1,3 +1,5 @@
+use crate::src::zebra::FullState;
+
 pub struct LearnState {
     pub learn_depth: i32,
     pub cutoff_empty: i32,
@@ -81,5 +83,5 @@ impl LearnState {
 }
 
 pub trait Learner {
-    fn learn_game(game_length: i32, private_game: i32, save_database: i32);
+    fn learn_game(game_length: i32, private_game: i32, save_database: i32, state: &mut FullState);
 }

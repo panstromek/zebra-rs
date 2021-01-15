@@ -10,10 +10,10 @@ use engine::{
 use engine::src::counter::CounterType;
 use engine::src::error::{FatalError, FrontEnd};
 use engine::src::game::CandidateMove;
-use engine::src::hash::HashEntry;
-use engine::src::search::hash_expand_pv;
+use engine::src::hash::{HashEntry, HashState};
+use engine::src::search::{hash_expand_pv, SearchState};
 
-use engine::src::zebra::EvaluationType;
+use engine::src::zebra::{EvaluationType, Config};
 use libc_wrapper::{ctime, exit, fflush, fopen, fprintf, free, malloc, printf, putc, puts, realloc, sprintf, stderr, stdout, strchr, strdup, strlen, time, time_t, tolower, toupper, vfprintf};
 use thordb_types::C2RustUnnamed;
 
@@ -26,10 +26,16 @@ use crate::{
 use crate::src::display::{clear_status, clear_sweep, interval1, interval2, last_output, reset_buffer_display, status_modified, sweep_modified, timed_buffer_management};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::sort_thor_games;
-use crate::src::zebra::{g_config, g_timer, hash_state, search_state};
-use crate::src::zebra::board_state;
-use crate::src::zebra::flip_stack_;
-use crate::src::zebra::moves_state;
+use crate::src::zebra::FullState;
+use engine::src::timer::Timer;
+use engine::src::osfbook::Book;
+use engine::src::globals::BoardState;
+use engine::src::moves::MovesState;
+use flip::unflip::FlipStack;
+// use crate::src::zebra::{g_config, g_timer, hash_state, search_state};
+// use crate::src::zebra::board_state;
+// use crate::src::zebra::flip_stack_;
+// use crate::src::zebra::moves_state;
 
 static mut buffer: [i8; 16] = [0; 16];
 
@@ -111,15 +117,15 @@ impl LibcFatalError {
     }
 }
 impl FrontEnd for LibcFatalError {
-    fn reset_buffer_display() {
-        unsafe { reset_buffer_display::<FE>() }
+    fn reset_buffer_display(g_timer:&mut Timer) {
+        unsafe { reset_buffer_display::<FE>(g_timer) }
     }
     /*
       DISPLAY_BUFFERS
       If an update has happened and the last display was long enough ago,
       output relevant buffers.
     */
-    fn display_buffers() {
+    fn display_buffers(g_timer: &mut Timer) {
         unsafe {
             let timer =  g_timer.get_real_timer::<FE>();
             if timer - last_output >= interval2 || timed_buffer_management == 0 {
@@ -162,13 +168,13 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-    fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32) {
+    fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32, echo: i32) {
         unsafe {
             if update_pv != 0 {
                 Self::end_tree_search_some_pv_stats_report(alpha, beta, curr_val)
             }
             send_sweep(b" \x00" as *const u8 as *const i8);
-            if update_pv != 0 && move_index > 0 as i32 && g_config.echo != 0 {
+            if update_pv != 0 && move_index > 0 as i32 && echo != 0 {
                 display_sweep(stdout);
             }
         }
@@ -271,7 +277,10 @@ impl FrontEnd for LibcFatalError {
       Displays endgame results - partial or full.
     */
     fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType,
-                         nodes_counter: &mut CounterType, pv_zero: &mut [i32; 64], pv_depth_zero: i32) {
+                          pv_zero: &mut [i32; 64],
+                         pv_depth_zero: i32,
+                         mut g_timer: &mut Timer,
+                         mut search_state: &mut SearchState) {
         unsafe {
             let eval = *eval_info;
             search_state.set_current_eval(eval);
@@ -280,6 +289,7 @@ impl FrontEnd for LibcFatalError {
             let eval_str = produce_eval_text(&*eval_info, 1 as i32);
             send_status(b"%-10s  \x00" as *const u8 as *const i8, eval_str);
             free(eval_str as *mut std::ffi::c_void);
+            let nodes_counter: &mut CounterType = &mut search_state.nodes;
             let node_val = counter_value(nodes_counter);
             send_status_nodes(node_val);
             if search_state.get_ponder_move() != 0 {
@@ -405,15 +415,15 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-    fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32) {
+    fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32, board_state: &mut BoardState, g_book: &mut Book) {
         unsafe {
             printf(b"Slack left is %.2f. \x00" as *const u8 as
                        *const i8,
                    remaining_slack as f64 / 128.0f64);
-            print_move_alternatives(side_to_move);
+            print_move_alternatives(side_to_move,board_state, g_book );
         }
     }
-    fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, candidate_list_: &[CandidateMove; 60]) {
+    fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, candidate_list_: &[CandidateMove; 60], search_state: & SearchState) {
         unsafe {
             send_status(b"-->   Book     \x00" as *const u8 as
                 *const i8);
@@ -483,9 +493,8 @@ impl FrontEnd for LibcFatalError {
     }
 
     fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32,
-                                   searched: i32, update_pv: i32) {
+                                   searched: i32, update_pv: i32, echo: i32) {
         unsafe {
-            let echo = g_config.echo;
 
             if update_pv != 0 {
                 if curr_val <= alpha {
@@ -514,8 +523,18 @@ impl FrontEnd for LibcFatalError {
 
      fn midgame_display_status(side_to_move: i32, max_depth: i32,
                                eval_info: &EvaluationType, depth: i32,
-                               force_return_: bool, nodes_counter: &mut CounterType,
-                               pv_zero: &mut [i32; 64], pv_depth_zero: i32) {
+                               force_return_: bool,
+                               mut g_timer: &mut Timer,
+                               mut moves_state: &mut MovesState,
+                               mut board_state: &mut BoardState,
+                               mut hash_state: &mut HashState,
+                               mut search_state: &mut SearchState,
+                               mut flip_stack_: &mut FlipStack
+     ) {
+         let mut nodes_counter: &mut CounterType = &mut search_state.nodes;
+
+
+
          unsafe {
              clear_status();
              send_status(b"--> \x00" as *const u8 as *const i8);
@@ -541,6 +560,9 @@ impl FrontEnd for LibcFatalError {
                                  search_state.get_ponder_move() / 10 as i32);
              }
              hash_expand_pv(side_to_move, 0 as i32, 4 as i32, 12345678 as i32, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
+             let mut pv_zero: &mut [i32; 64] = &mut board_state.pv[0];
+             let mut pv_depth_zero: i32 = board_state.pv_depth[0];
+
              send_status_pv(pv_zero, max_depth, pv_depth_zero);
              send_status_time( g_timer.get_elapsed_time::<FE>());
              if  g_timer.get_elapsed_time::<FE>() != 0.0f64 {
