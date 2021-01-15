@@ -20,7 +20,7 @@ use crate::src::timer::{time_t, Timer};
 
 use crate::src::zebra::EvalResult::{UNSOLVED_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{EXACT_EVAL, FORCED_EVAL, INTERRUPTED_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL, WLD_EVAL};
-use crate::src::zebra::EvaluationType;
+use crate::src::zebra::{EvaluationType};
 use flip::unflip::FlipStack;
 use crate::src::myrandom::MyRandom;
 
@@ -398,9 +398,9 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
     let mut offset: i32 = 0;
 
     if let Some(logger) = logger {
-        let board_ = &board_state.board;
+
         let side_to_move_ = side_to_move;
-        L::log_board(logger, board_, side_to_move_);
+        L::log_board(logger, &board_state, side_to_move_);
     }
     /* Initialize various components of the move system */
     board_state.piece_count[0][moves_state.disks_played as usize] =
@@ -427,7 +427,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
     }
     game_state.max_depth_reached = 1;
     let empties = 60 as i32 - moves_state.disks_played;
-    FE::reset_buffer_display();
+    FE::reset_buffer_display(g_timer);
     g_timer.determine_move_time(my_time as f64, my_incr as f64,
                        moves_state.disks_played + 4 as i32);
     if search_state.get_ponder_move() == 0 {  g_timer.clear_ponder_times(); }
@@ -545,7 +545,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
         /* Check Thor statistics for a move */
         curr_move =
             Thor::choose_thor_opening_move(&board_state.board, side_to_move,
-                                           0 as i32);
+                                           0 as i32, random_instance);
         if curr_move != -(1 as i32) {
             book_eval_info =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
@@ -785,7 +785,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
             let info = &*eval_info;
             let counter_value = counter_value(&mut search_state.nodes);
             let elapsed_time =  g_timer.get_elapsed_time::<FE>();
-            Out::send_move_type_0_status(interrupted_depth, info, counter_value, elapsed_time);
+            Out::send_move_type_0_status(interrupted_depth, info, counter_value, elapsed_time, board_state);
         }
         1 => { *eval_info = book_eval_info }
         2 => { *eval_info = mid_eval_info }
@@ -814,8 +814,8 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
        and, optionally, to screen. */
     if search_state.get_ponder_move() == 0 {
         complete_pv::<FE>(side_to_move, &mut search_state, &mut board_state, &mut flip_stack_, &mut hash_state, &mut moves_state);
-        if display_pv != 0 && echo != 0 { Out::display_out_optimal_line(); }
-        if let Some(logger) = logger { L::log_optimal_line(logger); }
+        if display_pv != 0 && echo != 0 { Out::display_out_optimal_line(search_state); }
+        if let Some(logger) = logger { L::log_optimal_line(logger, search_state); }
     }
     if let Some(logger) = logger {
         L::close_logger(logger);
@@ -880,8 +880,8 @@ pub trait PonderMoveReport {
 }
 
 pub trait ComputeMoveOutput {
-    fn display_out_optimal_line();
-    fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64);
+    fn display_out_optimal_line(search_state: &SearchState);
+    fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64, board_state: &BoardState);
     fn display_status_out();
     fn echo_ponder_move_4(curr_move: i32, ponder_move: i32);
     fn echo_ponder_move_2(curr_move: i32, ponder_move: i32);
@@ -895,9 +895,9 @@ pub trait ComputeMoveLogger {
     fn log_best_move(logger: &mut Self, best_move: i32);
     fn log_chosen_move(logger: &mut Self, curr_move: i32, info: &EvaluationType);
     fn log_status(logger: &mut Self);
-    fn log_optimal_line(logger: &mut Self);
+    fn log_optimal_line(logger: &mut Self, search_state: &SearchState);
     fn close_logger(logger: &mut Self);
-    fn log_board(logger: &mut Self, board_: & crate::src::globals::Board, side_to_move_: i32);
+    fn log_board(logger: &mut Self, board_: & BoardState, side_to_move_: i32);
     fn create(log_file_path_: &mut [i8]) -> Option<Self> where Self:Sized;
     fn create_log_file_if_needed() -> Option<Self> where Self:Sized;
 }

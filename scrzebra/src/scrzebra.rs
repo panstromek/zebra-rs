@@ -15,7 +15,7 @@ use legacy_zebra::src::error::{FE, LibcFatalError};
 use legacy_zebra::src::game::{compute_move, game_init, global_setup, toggle_status_log};
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::thordb::init_thor_database;
-use legacy_zebra::src::zebra::{board_state, g_timer, game_state};
+use legacy_zebra::src::zebra::{board_state, g_timer, game_state, FullState};
 use legacy_zebra::src::zebra::{g_book, g_config, hash_state, moves_state, random_instance, search_state};
 use libc_wrapper::{FILE, strlen, strstr};
 
@@ -600,7 +600,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         exit(1 as i32);
     }
     global_setup(use_random, hash_bits);
-    init_thor_database::<LibcFatalError>();
+    init_thor_database::<LibcFatalError>(&mut g_state);
     if use_book != 0 {
         init_learn(b"book.bin\x00" as *const u8 as *const i8,
                    1 as i32);

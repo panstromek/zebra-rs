@@ -6,7 +6,7 @@ use engine::src::osfbook::{set_deviation_value, set_max_batch_size, size_t, Book
 use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WINS};
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 use legacy_zebra::src::error::{LibcFatalError, fatal_error};
-use legacy_zebra::src::zebra::{g_book, g_config, hash_state, board_state, moves_state, search_state, flip_stack_, coeff_state, prob_cut, g_timer, midgame_state, end_g, stable_state};
+use legacy_zebra::src::zebra::{g_book, g_config, hash_state, board_state, moves_state, search_state, flip_stack_, coeff_state, prob_cut, g_timer, midgame_state, end_g, stable_state, FullState};
 use legacy_zebra::src::zebra::random_instance;
 use libc_wrapper::{time, fflush, stdout, fopen, fread, fclose, FILE, fprintf, fputc, free, sprintf, putc, fputs, stderr, sscanf, strlen, fgets, qsort, feof, strcmp, strstr, __ctype_b_loc, fwrite, malloc, toupper, ctime, strcpy};
 use legacy_zebra::src::osfbook;
@@ -104,7 +104,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let mut clear_flags: i32 = 0;
     let mut clear_low: i32 = 0;
     let mut clear_high: i32 = 0;
-    init_osf(1 as i32);
+    init_osf(1 as i32, g_state);
     cutoff = 16;
     max_diff = 24;
     max_game_count = 0;
@@ -182,7 +182,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             arg_index += 1;
             input_file_name = *argv.offset(arg_index as isize);
             if input_binary != 0 {
-                read_binary_database(input_file_name);
+                read_binary_database(input_file_name, g_state);
             } else { read_text_database(input_file_name); }
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-w\x00" as *const u8 as *const i8) ==
@@ -895,7 +895,7 @@ unsafe fn do_restricted_minimax(index: i32,
 pub unsafe fn restricted_minimax_tree(low: i32,
                                       high: i32,
                                       pos_file_name:
-                                                 *const i8) {
+                                                 *const i8, g_state:&mut FullState) {
     let mut pos_file: *mut FILE = 0 as *mut FILE;
     let mut i: i32 = 0;
     let mut minimax_values: *mut i32 = 0 as *mut i32;
@@ -904,7 +904,7 @@ pub unsafe fn restricted_minimax_tree(low: i32,
     libc_wrapper::printf(b"Calculating restricted minimax value... \x00" as *const u8 as
         *const i8);
     fflush(stdout);
-    osfbook::prepare_tree_traversal();
+    osfbook::prepare_tree_traversal(g_state);
     time(&mut start_time);
     /* Mark all nodes as not traversed */
     i = 0;
@@ -1076,7 +1076,7 @@ pub unsafe fn generate_midgame_statistics(max_depth:
                                           max_diff:
                                                      i32,
                                           statistics_file_name:
-                                                     *const i8) {
+                                                     *const i8, g_state: &mut FullState) {
     let mut i: i32 = 0;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
@@ -1087,7 +1087,25 @@ pub unsafe fn generate_midgame_statistics(max_depth:
             max_depth: 0,};
     libc_wrapper::puts(b"Generating statistics...\n\x00" as *const u8 as
         *const i8);
-    osfbook::prepare_tree_traversal();
+    osfbook::prepare_tree_traversal(g_state);
+    let FullState {
+        mut g_config,
+        mut learn_state,
+        mut midgame_state,
+        mut game_state,
+        mut end_g,
+        mut coeff_state,
+        mut g_timer,
+        mut moves_state,
+        mut stable_state,
+        mut board_state,
+        mut hash_state,
+        mut random_instance,
+        mut g_book,
+        mut prob_cut,
+        mut search_state,
+        mut flip_stack_,
+    } : &mut FullState = g_state;
     g_timer.toggle_abort_check(0 as i32);
     time(&mut start_time);
     i = 0;
@@ -2458,7 +2476,7 @@ pub unsafe fn build_tree(file_name: *const i8,
         if abs(diff) <= max_diff {
             add_new_game(move_count_0, game_move_list.as_mut_ptr(),
                          min_empties, 0 as i32, 0 as i32,
-                         0 as i32, 0 as i32, echo);
+                         0 as i32, 0 as i32, echo, g_state);
             printf(b"|\x00" as *const u8 as *const i8);
             if games_imported % 100 as i32 == 0 as i32 {
                 printf(b" --- %d games --- \x00" as *const u8 as
@@ -3604,7 +3622,7 @@ pub unsafe fn do_validate<FE: FrontEnd>(index: i32, echo:i32) {
             9999 as i32 &&
         (*g_book.node.offset(index as isize)).best_alternative_move as i32
             != -(2 as i32) {
-        evaluate_node::<FE>(index, echo);
+        evaluate_node::<FE>(index, echo, g_state);
     }
     i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {

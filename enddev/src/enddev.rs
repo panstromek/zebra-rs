@@ -214,8 +214,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         exit(1 as i32);
     }
     init_learn(b"book.bin\x00" as *const u8 as *const i8,
-               1 as i32);
-    global_setup(0 as i32, hash_bits);
+               1 as i32, g_state);
+    global_setup(0 as i32, hash_bits, g_state);
     games_read = 0;
     first_allowed_dev = earliest_dev;
     last_was_pass = 0;

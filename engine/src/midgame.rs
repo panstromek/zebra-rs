@@ -773,7 +773,7 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
                 g_timer.last_panic_check = node_val;
                  g_timer.check_panic_abort::<FE>();
                 /* Display available search information */
-                if echo != 0 { FE::display_buffers(); }
+                if echo != 0 { FE::display_buffers(g_timer); }
                 /* Check for events */
                 if g_timer.is_panic_abort() != 0 || force_return != 0 {
                     return -(27000 as i32)
@@ -1469,7 +1469,7 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
         }
         search_state.evals[moves_state.disks_played as usize][move_0 as usize] = curr_val;
         if search_state.get_ponder_move() == 0 {
-            FE::midgame_display_ponder_move(max_depth, alpha, beta, curr_val, searched, update_pv)
+            FE::midgame_display_ponder_move(max_depth, alpha, beta, curr_val, searched, update_pv, echo)
         }
         if update_pv != 0 {
             midgame_c__update_best_list(&mut best_list, move_0,
@@ -1759,8 +1759,8 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
         /* Display and store search info */
         if depth == max_depth {
             FE::midgame_display_status(side_to_move, max_depth, eval_info, depth,
-                                       force_return != 0, &mut search_state.nodes,
-                                       &mut board_state.pv[0], board_state.pv_depth[0])
+                                       force_return != 0,
+                                       g_timer, moves_state, board_state, hash_state, search_state, flip_stack_)
         }
         if g_timer.is_panic_abort() != 0 || force_return != 0 { break ; }
         /* Check if search time or adjusted search time are long enough
