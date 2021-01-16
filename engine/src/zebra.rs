@@ -386,48 +386,61 @@ pub fn engine_play_game<
             play_state.side_to_move = 2 - play_state.side_to_move;
             if play_state.g_state.g_config.one_position_only != 0 { break; }
         }
-        if play_state.g_state.g_config.echo == 0 && play_state.g_state.g_config.one_position_only == 0 {
-            let black_level = play_state.g_state.g_config.skill[0];
-            let white_level = play_state.g_state.g_config.skill[2];
-            ZF::report_skill_levels(black_level, white_level);
-        }
-        if play_state.side_to_move == 0 as i32 { play_state.g_state.board_state.score_sheet_row += 1 }
-        Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
-        if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.one_position_only == 0 {
-            ZF::set_move_list(
-                play_state.g_state.board_state.score_sheet_row);
-            deal_with_thor_2::<ZF, Thor>(play_state.g_state.g_config.use_thor, play_state.side_to_move, &mut play_state.g_state.g_config, &mut play_state.g_state.g_timer, &mut play_state.g_state.board_state, &mut play_state.total_search_time);
-            ZF::set_times(floor(play_state.g_state.g_config.player_time[0]) as _, floor(play_state.g_state.g_config.player_time[2]) as _);
-            ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer, &play_state.g_state.board_state.board,
-                                         &play_state.g_state.board_state.black_moves,
-                                         &play_state.g_state.board_state.white_moves,
-            );
-        }
-        adjust_counter(&mut play_state.g_state.search_state.total_nodes);
-        let node_val = counter_value(&mut play_state.g_state.search_state.total_nodes);
-        adjust_counter(&mut play_state.g_state.search_state.total_evaluations);
-        let eval_val = counter_value(&mut play_state.g_state.search_state.total_evaluations);
-        let black_disc_count = disc_count(0, &play_state.g_state.board_state.board);
-        let white_disc_count = disc_count(2, &play_state.g_state.board_state.board);
-        let total_time_ = play_state.g_state.search_state.total_time;
-        ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
+        after_main_loop::<ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, Learn, FE, Thor>(&mut play_state);
 
-        if let (Some(log_file_name_), 0) = (play_state.log_file_name_, play_state.g_state.g_config.one_position_only) {
-            ZF::log_game_ending((log_file_name_),
-                                &play_state.move_vec,
-                                disc_count(0, &play_state.g_state.board_state.board),
-                                disc_count(2, &play_state.g_state.board_state.board))
-        }
-        play_state.repeat -= 1;
-        play_state.g_state.g_timer.toggle_abort_check(0 as i32);
-        if play_state.g_state.g_config.use_learning && play_state.g_state.g_config.one_position_only == 0 {
-            Learn::learn_game(play_state.g_state.moves_state.disks_played,
-                              (play_state.g_state.g_config.skill[0] != 0 && play_state.g_state.g_config.skill[2] != 0) as i32,
-                              (play_state.repeat == 0 as i32) as i32, play_state.g_state);
-        }
-        play_state.g_state.g_timer.toggle_abort_check(1);
         if !(play_state.repeat > 0) { break; }
     }
+}
+
+fn after_main_loop<  ZF: ZebraFrontend,
+    Source: InitialMoveSource,
+    Dump: DumpHandler,
+    BoardSrc : FileBoardSource,
+    ComputeMoveLog: ComputeMoveLogger,
+    ComputeMoveOut: ComputeMoveOutput,
+    Learn: Learner,
+    FE: FrontEnd,
+    Thor: ThorDatabase>(mut play_state: &mut PlayGameState<Source>) {
+    if play_state.g_state.g_config.echo == 0 && play_state.g_state.g_config.one_position_only == 0 {
+        let black_level = play_state.g_state.g_config.skill[0];
+        let white_level = play_state.g_state.g_config.skill[2];
+        ZF::report_skill_levels(black_level, white_level);
+    }
+    if play_state.side_to_move == 0 as i32 { play_state.g_state.board_state.score_sheet_row += 1 }
+    Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
+    if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.one_position_only == 0 {
+        ZF::set_move_list(
+            play_state.g_state.board_state.score_sheet_row);
+        deal_with_thor_2::<ZF, Thor>(play_state.g_state.g_config.use_thor, play_state.side_to_move, &mut play_state.g_state.g_config, &mut play_state.g_state.g_timer, &mut play_state.g_state.board_state, &mut play_state.total_search_time);
+        ZF::set_times(floor(play_state.g_state.g_config.player_time[0]) as _, floor(play_state.g_state.g_config.player_time[2]) as _);
+        ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer, &play_state.g_state.board_state.board,
+                                     &play_state.g_state.board_state.black_moves,
+                                     &play_state.g_state.board_state.white_moves,
+        );
+    }
+    adjust_counter(&mut play_state.g_state.search_state.total_nodes);
+    let node_val = counter_value(&mut play_state.g_state.search_state.total_nodes);
+    adjust_counter(&mut play_state.g_state.search_state.total_evaluations);
+    let eval_val = counter_value(&mut play_state.g_state.search_state.total_evaluations);
+    let black_disc_count = disc_count(0, &play_state.g_state.board_state.board);
+    let white_disc_count = disc_count(2, &play_state.g_state.board_state.board);
+    let total_time_ = play_state.g_state.search_state.total_time;
+    ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
+
+    if let (Some(log_file_name_), 0) = (play_state.log_file_name_, play_state.g_state.g_config.one_position_only) {
+        ZF::log_game_ending((log_file_name_),
+                            &play_state.move_vec,
+                            disc_count(0, &play_state.g_state.board_state.board),
+                            disc_count(2, &play_state.g_state.board_state.board))
+    }
+    play_state.repeat -= 1;
+    play_state.g_state.g_timer.toggle_abort_check(0 as i32);
+    if play_state.g_state.g_config.use_learning && play_state.g_state.g_config.one_position_only == 0 {
+        Learn::learn_game(play_state.g_state.moves_state.disks_played,
+                          (play_state.g_state.g_config.skill[0] != 0 && play_state.g_state.g_config.skill[2] != 0) as i32,
+                          (play_state.repeat == 0 as i32) as i32, play_state.g_state);
+    }
+    play_state.g_state.g_timer.toggle_abort_check(1);
 }
 
 fn before_main_loop<
