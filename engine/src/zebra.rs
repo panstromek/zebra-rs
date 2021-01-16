@@ -255,7 +255,8 @@ pub fn engine_play_game<
         AfterGame,
         End,
         SwitchingSides{ provided_move_count: i32 },
-        GetPass{ provided_move_count: i32 }
+        GetPass{ provided_move_count: i32 },
+        MoveStop{ provided_move_count: i32, move_start: f64 }
     }
     let mut state = State::Initial;
     loop  {
@@ -366,26 +367,7 @@ pub fn engine_play_game<
                                 FE::invalid_move_in_move_sequence(play_state.curr_move);
                             }
                         }
-                        let move_stop =  play_state.g_state.g_timer.get_real_timer();
-                        if play_state.g_state.g_config.player_time[play_state.side_to_move as usize] != 10000000.0f64 {
-                            // panic!("this branch is not tested"); I don't know how to trigger this in tests
-
-                            play_state.g_state.g_config.player_time[play_state.side_to_move as usize] -= move_stop - move_start
-                        }
-                        play_state.g_state.learn_state.store_move(play_state.g_state.moves_state.disks_played, play_state.curr_move);
-                        push_move(&mut play_state.move_vec, play_state.curr_move, play_state.g_state.moves_state.disks_played);
-                        make_move(play_state.side_to_move, play_state.curr_move, 1, &mut play_state.g_state.moves_state, &mut play_state.g_state.board_state, &mut play_state.g_state.hash_state, &mut play_state.g_state.flip_stack_);
-                        if play_state.side_to_move == 0 as i32 {
-                            play_state.g_state.board_state.black_moves[play_state.g_state.board_state.score_sheet_row as usize] = play_state.curr_move
-                        } else {
-                            if play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] != -(1) {
-                                // panic!("this branch is not tested"); to trigger this in tests
-
-                                play_state.g_state.board_state.score_sheet_row += 1
-                            }
-                            play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] = play_state.curr_move
-                        }
-                        State::SwitchingSides { provided_move_count }
+                        State::MoveStop { provided_move_count, move_start }
                     } else {
                         if play_state.side_to_move == 0 {
                             play_state.g_state.board_state.black_moves[play_state.g_state.board_state.score_sheet_row as usize] = -(1)
@@ -423,6 +405,28 @@ pub fn engine_play_game<
             }
             State::GetPass { provided_move_count } => {
                 ZF::get_pass();
+                State::SwitchingSides { provided_move_count }
+            }
+            State::MoveStop { provided_move_count, move_start } => {
+                let move_stop =  play_state.g_state.g_timer.get_real_timer();
+                if play_state.g_state.g_config.player_time[play_state.side_to_move as usize] != 10000000.0f64 {
+                    // panic!("this branch is not tested"); I don't know how to trigger this in tests
+
+                    play_state.g_state.g_config.player_time[play_state.side_to_move as usize] -= move_stop - move_start
+                }
+                play_state.g_state.learn_state.store_move(play_state.g_state.moves_state.disks_played, play_state.curr_move);
+                push_move(&mut play_state.move_vec, play_state.curr_move, play_state.g_state.moves_state.disks_played);
+                make_move(play_state.side_to_move, play_state.curr_move, 1, &mut play_state.g_state.moves_state, &mut play_state.g_state.board_state, &mut play_state.g_state.hash_state, &mut play_state.g_state.flip_stack_);
+                if play_state.side_to_move == 0 as i32 {
+                    play_state.g_state.board_state.black_moves[play_state.g_state.board_state.score_sheet_row as usize] = play_state.curr_move
+                } else {
+                    if play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] != -(1) {
+                        // panic!("this branch is not tested"); to trigger this in tests
+
+                        play_state.g_state.board_state.score_sheet_row += 1
+                    }
+                    play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] = play_state.curr_move
+                }
                 State::SwitchingSides { provided_move_count }
             }
         };
