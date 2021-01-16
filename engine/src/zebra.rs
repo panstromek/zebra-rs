@@ -211,7 +211,6 @@ pub fn engine_play_game<
     let mut side_to_move = 0;
     let mut curr_move = 0;
     let mut rand_color = 0;
-    let mut thor_position_count= 0;
     let mut provided_move = [0; 61];
     let mut move_vec = [0; 121];
     let mut line_buffer = [0u8; 1001];
@@ -299,7 +298,8 @@ pub fn engine_play_game<
                     if let Some(opening_name) = opening_name {
                         ZF::report_opening_name(CStr::from_bytes_with_nul(opening_name).unwrap());
                     }
-                    deal_with_thor_1::<ZF, Thor>(use_thor_, total_search_time, side_to_move, thor_position_count, &mut g_state.g_config, &mut g_state.g_timer, &mut g_state.board_state);
+                    deal_with_thor_1::<ZF, Thor>(use_thor_, side_to_move, &mut g_state.g_config, &mut g_state.g_timer, &mut g_state.board_state, &mut total_search_time);
+
                     ZF::display_board_after_thor(side_to_move, g_state.g_config.use_timer,
                                                  &g_state.board_state.board, &g_state.board_state.black_moves, &g_state.board_state.white_moves);
                 }
@@ -424,7 +424,7 @@ pub fn engine_play_game<
         if g_state.g_config.echo != 0 && g_state.g_config.one_position_only == 0 {
             ZF::set_move_list(
                 g_state.board_state.score_sheet_row);
-            deal_with_thor_2::<ZF, Thor>(use_thor_, total_search_time, side_to_move, thor_position_count, &mut g_state.g_config, &mut g_state.g_timer, &mut g_state.board_state);
+            deal_with_thor_2::<ZF, Thor>(use_thor_,  side_to_move, &mut g_state.g_config, &mut g_state.g_timer, &mut g_state.board_state, &mut total_search_time);
             ZF::set_times(floor(g_state.g_config.player_time[0]) as _, floor(g_state.g_config.player_time[2]) as _);
             ZF::display_board_after_thor(side_to_move, g_state.g_config.use_timer, &g_state.board_state.board,
                                          &g_state.board_state.black_moves,
@@ -458,18 +458,17 @@ pub fn engine_play_game<
     }
 }
 
-fn deal_with_thor_1<ZF: ZebraFrontend, Thor: ThorDatabase>(use_thor_: bool, mut total_search_time: f64,
-                                                           mut side_to_move: i32, mut thor_position_count: i32,
+fn deal_with_thor_1<ZF: ZebraFrontend, Thor: ThorDatabase>(use_thor_: bool, side_to_move: i32,
                                                            mut config: &mut Config, g_timer: &mut Timer,
-                                                           board_state: &mut BoardState) {
+                                                           board_state: &mut BoardState,total_search_time: &mut f64) {
     if use_thor_ {
         let database_start = g_timer.get_real_timer();
         Thor::database_search(&board_state.board, side_to_move);
-        thor_position_count = Thor::get_match_count();
+        let thor_position_count = Thor::get_match_count();
         let database_stop = g_timer.get_real_timer();
         let database_time = database_stop - database_start;
-        total_search_time += database_time;
-        ZF::report_thor_matching_games_stats(total_search_time, thor_position_count, database_time);
+        *total_search_time += database_time;
+        ZF::report_thor_matching_games_stats(*total_search_time, thor_position_count, database_time);
         if thor_position_count > 0 as i32 {
             let black_win_count = Thor::get_black_win_count();
             let draw_count = Thor::get_draw_count();
@@ -483,17 +482,17 @@ fn deal_with_thor_1<ZF: ZebraFrontend, Thor: ThorDatabase>(use_thor_: bool, mut 
     }
 }
 
-fn deal_with_thor_2<ZF: ZebraFrontend, Thor:ThorDatabase>(use_thor_: bool, mut total_search_time: f64,
-                                                          mut side_to_move: i32, mut thor_position_count: i32,
-                                                          mut config: &mut Config, g_timer: &mut Timer, board_state: &mut BoardState) {
+fn deal_with_thor_2<ZF: ZebraFrontend, Thor:ThorDatabase>(use_thor_: bool, side_to_move: i32,
+                                                          config: &mut Config, g_timer: &mut Timer,
+                                                          board_state: &mut BoardState, total_search_time: &mut f64){
     if use_thor_ {
         let database_start = g_timer.get_real_timer();
         Thor::database_search(&board_state.board, side_to_move);
-        thor_position_count = Thor::get_match_count();
+        let thor_position_count = Thor::get_match_count();
         let database_stop = g_timer.get_real_timer();
         let db_search_time = database_stop - database_start;
-        total_search_time += db_search_time;
-        ZF::report_some_thor_stats(total_search_time, thor_position_count, db_search_time);
+        *total_search_time += db_search_time;
+        ZF::report_some_thor_stats(*total_search_time, thor_position_count, db_search_time);
         if thor_position_count > 0 {
             let black_win_count = Thor::get_black_win_count();
             let draw_count = Thor::get_draw_count();
