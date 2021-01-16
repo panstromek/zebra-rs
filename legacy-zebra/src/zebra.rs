@@ -42,7 +42,7 @@ use crate::src::learn::{init_learn, LibcLearner};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_size, get_total_game_count, init_thor_database, LegacyThor, print_thor_matches, read_game_database, read_player_database, read_tournament_database};
 
-struct LibcTimeSource;
+pub struct LibcTimeSource;
 
 impl TimeSource for LibcTimeSource {
     fn time(& self, __timer: &mut i64) -> i64 {
