@@ -15,8 +15,8 @@ use legacy_zebra::src::error::{FE, LibcFatalError};
 use legacy_zebra::src::game::{compute_move, game_init, global_setup, toggle_status_log};
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::thordb::init_thor_database;
-use legacy_zebra::src::zebra::{board_state, g_timer, game_state, FullState};
-use legacy_zebra::src::zebra::{g_book, g_config, hash_state, moves_state, random_instance, search_state};
+use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
+// use legacy_zebra::src::zebra::{board_state, g_timer, game_state,g_book, g_config, hash_state, moves_state, random_instance, search_state};
 use libc_wrapper::{FILE, strlen, strstr};
 
 extern "C" {
@@ -86,7 +86,7 @@ unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
 unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                                         mut out_file_name:
                                         *const i8,
-                                        mut display_line: i32) {
+                                        mut display_line: i32, g_state: &mut FullState) {
     let mut script_nodes: CounterType = CounterType{hi: 0, lo: 0,};
     let mut eval_info: EvaluationType =
         EvaluationType{type_0: MIDGAME_EVAL,
@@ -143,13 +143,13 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     /* Initialize display subsystem and search parameters */
     set_names(b"\x00" as *const u8 as *const i8,
               b"\x00" as *const u8 as *const i8);
-    set_move_list(board_state.black_moves.as_mut_ptr(), board_state.white_moves.as_mut_ptr(),
-                  board_state.score_sheet_row);
+    set_move_list(g_state.board_state.black_moves.as_mut_ptr(), g_state.board_state.white_moves.as_mut_ptr(),
+                  g_state.board_state.score_sheet_row);
     set_evals(0.0f64, 0.0f64);
     i = 0;
     while i < 60 as i32 {
-        board_state.black_moves[i as usize] = -(1 as i32);
-        board_state.white_moves[i as usize] = -(1 as i32);
+        g_state.board_state.black_moves[i as usize] = -(1 as i32);
+        g_state.board_state.white_moves[i as usize] = -(1 as i32);
         i += 1
     }
     my_time = 100000000;
@@ -165,7 +165,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     reset_counter(&mut script_nodes);
     position_count = 0;
     max_search = -0.0f64;
-    start_time =  g_timer.get_real_timer::<FE>();
+    start_time =  g_state.g_timer.get_real_timer();
     /* Scan through the script file */
     i = 0;
     loop  {
@@ -199,12 +199,12 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                 exit(1 as i32);
             }
             /* Parse the script line containing board and side to move */
-            game_init(0 as *const i8, &mut side_to_move);
-            g_book.set_slack(0.0f64 as i32);
-            game_state.toggle_human_openings(0 as i32);
-            reset_book_search(&mut g_book);
-            set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_book);
-            setup_hash(1 as i32, &mut hash_state, &mut  random_instance);
+            game_init(0 as *const i8, &mut side_to_move, g_state);
+            g_state.g_book.set_slack(0.0f64 as i32);
+            g_state.game_state.toggle_human_openings(0 as i32);
+            reset_book_search(&mut g_state.g_book);
+            set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_state.g_book);
+            setup_hash(1 as i32, &mut g_state.hash_state, &mut g_state.random_instance);
             position_count += 1;
             scanned =
                 sscanf(buffer.as_mut_ptr(),
@@ -247,12 +247,12 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                     pos = 10 as i32 * row + col;
                     match board_string[token as usize] as i32 {
                         42 | 88 | 120 => {
-                            board_state.board[pos as usize] = 0 as i32
+                            g_state.board_state.board[pos as usize] = 0 as i32
                         }
                         79 | 48 | 111 => {
-                            board_state.board[pos as usize] = 2 as i32
+                            g_state.board_state.board[pos as usize] = 2 as i32
                         }
-                        45 | 46 => { board_state.board[pos as usize] = 1 as i32 }
+                        45 | 46 => { g_state.board_state.board[pos as usize] = 1 as i32 }
                         _ => {
                             printf(b"\nBad character \'%c\' in board on line %d - aborting\n\n\x00"
                                        as *const u8 as *const i8,
@@ -265,31 +265,31 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                 }
                 row += 1
             }
-            moves_state.disks_played =
-                disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board) -
+            g_state.moves_state.disks_played =
+                disc_count(0 as i32, &g_state.board_state.board) + disc_count(2 as i32, &g_state.board_state.board) -
                     4 as i32;
             /* Search the position */
-            if g_config.echo != 0 {
-                set_move_list(board_state.black_moves.as_mut_ptr(),
-                              board_state.white_moves.as_mut_ptr(), board_state.score_sheet_row);
-                display_board(stdout, &board_state.board, side_to_move,
+            if g_state.g_config.echo != 0 {
+                set_move_list(g_state.board_state.black_moves.as_mut_ptr(),
+                              g_state.board_state.white_moves.as_mut_ptr(), g_state.board_state.score_sheet_row);
+                display_board(stdout, &g_state.board_state.board, side_to_move,
                               1 as i32, 0 as i32,
                               1 as i32, current_row,
                               black_player, black_time, black_eval,
                               white_player, white_time, white_eval,
-                              &board_state.black_moves, &board_state.white_moves);
+                              &g_state.board_state.black_moves, &g_state.board_state.white_moves);
             }
-            search_start =  g_timer.get_real_timer::<FE>();
-             g_timer.start_move::<FE>(my_time as f64, my_incr as f64,
-                             moves_state.disks_played + 4 as i32);
-            g_timer.determine_move_time(my_time as f64,
-                                my_incr as f64,
-                                moves_state.disks_played + 4 as i32);
+            search_start =  g_state.g_timer.get_real_timer();
+             g_state.g_timer.start_move(my_time as f64, my_incr as f64,
+                                        g_state.moves_state.disks_played + 4 as i32);
+            g_state.g_timer.determine_move_time(my_time as f64,
+                                                my_incr as f64,
+                                                g_state.moves_state.disks_played + 4 as i32);
             pass_count = 0;
             move_0 =
                 compute_move(side_to_move, 1 as i32, my_time, my_incr,
                              timed_search, book, mid, exact, wld,
-                             1 as i32, &mut eval_info);
+                             1 as i32, &mut eval_info, g_state);
             if move_0 == -(1 as i32) {
                 pass_count += 1;
                 side_to_move =
@@ -297,12 +297,12 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                 move_0 =
                     compute_move(side_to_move, 1 as i32, my_time,
                                  my_incr, timed_search, book, mid, exact, wld,
-                                 1 as i32, &mut eval_info);
+                                 1 as i32, &mut eval_info, g_state);
                 if move_0 == -(1 as i32) {
                     /* Both pass, game over. */
-                    let mut my_discs: i32 = disc_count(side_to_move, &board_state.board);
+                    let mut my_discs: i32 = disc_count(side_to_move, &g_state.board_state.board);
                     let mut opp_discs: i32 =
-                        disc_count(0 as i32 + 2 as i32 - side_to_move, &board_state.board);
+                        disc_count(0 as i32 + 2 as i32 - side_to_move, &g_state.board_state.board);
                     if my_discs > opp_discs {
                         my_discs = 64 as i32 - opp_discs
                     } else if opp_discs > my_discs {
@@ -317,11 +317,11 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                 }
             }
             score = eval_info.score / 128 as i32;
-            search_stop =  g_timer.get_real_timer::<FE>();
+            search_stop =  g_state.g_timer.get_real_timer();
             if search_stop - search_start > max_search {
                 max_search = search_stop - search_start
             }
-            add_counter(&mut script_nodes, &mut search_state.nodes);
+            add_counter(&mut script_nodes, &mut g_state.search_state.nodes);
             output_stream =
                 fopen(out_file_name,
                       b"a\x00" as *const u8 as *const i8);
@@ -372,10 +372,10 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                           output_stream);
                 }
                 j = 0;
-                while j < search_state.full_pv_depth {
+                while j < g_state.search_state.full_pv_depth {
                     fputs(b" \x00" as *const u8 as *const i8,
                           output_stream);
-                    display_move(output_stream, search_state.full_pv[j as usize]);
+                    display_move(output_stream, g_state.search_state.full_pv[j as usize]);
                     j += 1
                 }
             }
@@ -392,7 +392,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                       output_stream);
             }
             fclose(output_stream);
-            if g_config.echo != 0 {
+            if g_state.g_config.echo != 0 {
                 puts(b"\n\n\n\x00" as *const u8 as *const i8);
             }
         }
@@ -400,7 +400,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     }
     /* Clean up and terminate */
     fclose(script_stream);
-    stop_time =  g_timer.get_real_timer::<FE>();
+    stop_time =  g_state.g_timer.get_real_timer();
     printf(b"Total positions solved:   %d\n\x00" as *const u8 as
                *const i8, position_count);
     printf(b"Total time:               %.1f s\n\x00" as *const u8 as
@@ -437,6 +437,11 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
            b"20:20:01\x00" as *const u8 as *const i8);
     use_random = 1;
     wait = 0;
+    static src: LibcTimeSource = LibcTimeSource {};
+    let mut full_state = FullState::new(&src);
+    let g_state: &mut FullState = &mut full_state;
+    let mut g_config = &mut g_state.g_config;
+    let mut game_state = &mut g_state.game_state;
     g_config.echo = 1;
     g_config.display_pv = 1;
     use_learning = 0;
@@ -599,22 +604,22 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             *const u8 as *const i8);
         exit(1 as i32);
     }
-    global_setup(use_random, hash_bits);
-    init_thor_database::<LibcFatalError>(&mut g_state);
+    global_setup(use_random, hash_bits, g_state);
+    init_thor_database::<LibcFatalError>(g_state);
     if use_book != 0 {
         init_learn(b"book.bin\x00" as *const u8 as *const i8,
-                   1 as i32);
+                   1 as i32, g_state);
     }
     if use_random != 0 && 1 as i32 == 0 {
         FE::time(&mut timer);
         let x = timer as i32;
-        legacy_zebra::src::zebra::random_instance.my_srandom(x);
+        g_state.random_instance.my_srandom(x);
     } else {
         let x = 1 as i32;
-        legacy_zebra::src::zebra::random_instance.my_srandom(x); }
+        g_state.random_instance.my_srandom(x); }
     if run_script != 0 {
         run_endgame_script(script_in_file, script_out_file,
-                           script_optimal_line);
+                           script_optimal_line, g_state);
     }
     0
 }
