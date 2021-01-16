@@ -115,6 +115,59 @@ impl LibcFatalError {
                             *const u8 as *const i8, size);
         }
     }
+    pub fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
+        unsafe {
+            printf(b"%s:        \x00" as *const u8 as *const i8,
+                   b"Thor database\x00" as *const u8 as *const i8);
+            let mut i = 0;
+            while i < match_count {
+                printf(b"%c%c: %4.1f%%    \x00" as *const u8 as
+                           *const i8,
+                       'a' as i32 +
+                           move_list[i as usize].move_0 % 10 as i32 -
+                           1 as i32,
+                       '0' as i32 +
+                           move_list[i as usize].move_0 / 10 as i32,
+                       100.0f64 *
+                           move_list[i as usize].frequency as f64 /
+                           freq_sum as f64);
+                if i % 6 as i32 == 4 as i32 {
+                    puts(b"\x00" as *const u8 as *const i8);
+                }
+                i += 1
+            }
+            if match_count % 6 as i32 != 5 as i32 {
+                puts(b"\x00" as *const u8 as *const i8);
+            }
+        }
+    }
+    #[inline(always)]
+    pub fn sort_thor_games(count: i32) {
+        unsafe { sort_thor_games(count) }
+    }
+    pub fn memory_allocation_failure(block_count_: i32) -> ! {
+        unsafe {
+            fatal_error(b"%s @ #%d\n\x00" as *const u8 as *const i8,
+                        b"Memory allocation failure\x00" as *const u8 as
+                            *const i8, block_count_);
+        }
+    }
+
+    pub fn error_in_map(i: i32, pos: i32, symmetry_map_item: i32) -> ! {
+        unsafe {
+            fatal_error(b"Error in map %d: inv(map(%d))=%d\n\x00" as
+                            *const u8 as *const i8, i, pos, symmetry_map_item);
+        }
+    }
+
+    pub fn error_in_map_thor(i: i32, pos: i32, to_report: i32) -> ! {
+        unsafe {
+            fatal_error(b"Error in map %d: inv(map(%d))=%d\n\x00" as
+                            *const u8 as *const i8, i, pos,
+                        to_report);
+        }
+    }
+
 }
 impl FrontEnd for LibcFatalError {
     fn reset_buffer_display(g_timer:&mut Timer) {
@@ -598,36 +651,6 @@ impl FrontEnd for LibcFatalError {
             puts(b"This COULD happen (2) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
         }
     }
-    fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
-        unsafe {
-            printf(b"%s:        \x00" as *const u8 as *const i8,
-                   b"Thor database\x00" as *const u8 as *const i8);
-            let mut i = 0;
-            while i < match_count {
-                printf(b"%c%c: %4.1f%%    \x00" as *const u8 as
-                           *const i8,
-                       'a' as i32 +
-                           move_list[i as usize].move_0 % 10 as i32 -
-                           1 as i32,
-                       '0' as i32 +
-                           move_list[i as usize].move_0 / 10 as i32,
-                       100.0f64 *
-                           move_list[i as usize].frequency as f64 /
-                           freq_sum as f64);
-                if i % 6 as i32 == 4 as i32 {
-                    puts(b"\x00" as *const u8 as *const i8);
-                }
-                i += 1
-            }
-            if match_count % 6 as i32 != 5 as i32 {
-                puts(b"\x00" as *const u8 as *const i8);
-            }
-        }
-    }
-    #[inline(always)]
-    fn sort_thor_games(count: i32) {
-        unsafe { sort_thor_games(count) }
-    }
 }
 
 impl FatalError for LibcFatalError {
@@ -661,14 +684,6 @@ fn cannot_open_game_file(file_name: &str) -> ! {
 }
 
 
- fn memory_allocation_failure(block_count_: i32) -> ! {
-  unsafe {
-    fatal_error(b"%s @ #%d\n\x00" as *const u8 as *const i8,
-                b"Memory allocation failure\x00" as *const u8 as
-                    *const i8, block_count_);
-  }
-}
-
 fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
   unsafe {
     fatal_error(b"Invalid move %c%c in move sequence\x00"
@@ -680,25 +695,10 @@ fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
   }
 }
 
- fn error_in_map(i: i32, pos: i32, symmetry_map_item: i32) -> ! {
-  unsafe {
-    fatal_error(b"Error in map %d: inv(map(%d))=%d\n\x00" as
-                    *const u8 as *const i8, i, pos, symmetry_map_item);
-  }
-}
-
  fn internal_error_in_book_code() -> ! {
     unsafe {
         fatal_error(b"Internal error in book code.\x00" as *const u8 as
             *const i8);
-    }
-}
-
- fn error_in_map_thor(i: i32, pos: i32, to_report: i32) -> ! {
-    unsafe {
-        fatal_error(b"Error in map %d: inv(map(%d))=%d\n\x00" as
-                        *const u8 as *const i8, i, pos,
-                    to_report);
     }
 }
 

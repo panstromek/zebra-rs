@@ -107,7 +107,7 @@ pub struct LegacyThor;
 
 impl ThorDatabase for LegacyThor {
     fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
-        unsafe { FE::choose_thor_opening_move_report(freq_sum, match_count, move_list) }
+        unsafe { LibcFatalError::choose_thor_opening_move_report(freq_sum, match_count, move_list) }
     }
 
     fn get_thor_game_move(index: i32, move_number: i32) -> i32 {
@@ -1877,7 +1877,7 @@ unsafe fn init_symmetry_maps<FE: FrontEnd>() {
                         isize)
                         as
                         isize);
-                    FE::error_in_map_thor(i, pos, to_report);
+                    LibcFatalError::error_in_map_thor(i, pos, to_report);
                 }
                 k += 1
             }
@@ -2787,7 +2787,7 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
                 }
                 i += 1
             }
-            FE::choose_thor_opening_move_report(freq_sum, match_count, &move_list)
+            LibcFatalError::choose_thor_opening_move_report(freq_sum, match_count, &move_list)
         }
         return random_move
     }
@@ -2868,7 +2868,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
             }
             current_db = (*current_db).next
         }
-        FE::sort_thor_games(thor_game_count);
+        LibcFatalError::sort_thor_games(thor_game_count);
         j = 0;
         while j < thor_game_count {
             (**thor_search.match_list.offset(j as isize)).sort_order = j;

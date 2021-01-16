@@ -56,18 +56,13 @@ pub trait FrontEnd : FatalError {
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32);
     fn thordb_report_flipped_0_first();
     fn thordb_report_flipped_0_second();
-    fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[thordb_types::C2RustUnnamed; 64]);
-    fn sort_thor_games(count: i32);
 }
 pub trait FatalError {
     fn invalid_move(curr_move: i32) -> !;
     fn unrecognized_character(unrecognized: i8) -> !;
     fn cannot_open_game_file(file_name: &str) -> !;
-    fn memory_allocation_failure(block_count_: i32) -> !;
     fn invalid_move_in_move_sequence(curr_move: i32) -> !;
-    fn error_in_map(i: i32, pos: i32, symmetry_map_item: i32) -> !;
     fn internal_error_in_book_code() -> !;
-    fn error_in_map_thor(i: i32, pos: i32, to_report: i32) -> !;
     fn unexpected_character_in_a_move_string() -> !;
     fn invalid_move_string_provided() -> !;
 }
