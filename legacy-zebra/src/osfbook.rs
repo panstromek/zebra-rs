@@ -1618,7 +1618,7 @@ pub unsafe fn init_maps<FE: FrontEnd>(g_state: &mut FullState) {
                 if *book.inv_symmetry_map[i as usize]
                     .offset(*book.symmetry_map[i as usize].offset(pos as isize) as isize) != pos {
                     let symmetry_map_item = *book.inv_symmetry_map[i as usize].offset(*book.symmetry_map[i as usize].offset(pos as isize) as isize);
-                    FE::error_in_map(i, pos, symmetry_map_item);
+                    LibcFatalError::error_in_map(i, pos, symmetry_map_item);
                 }
                 k += 1
             }
