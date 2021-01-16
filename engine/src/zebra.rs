@@ -22,10 +22,11 @@ use crate::src::search::{disc_count, produce_compact_eval, SearchState};
 use crate::src::stable::StableState;
 use crate::src::stubs::floor;
 use crate::src::thordb::ThorDatabase;
-use crate::src::timer::Timer;
+use crate::src::timer::{Timer, TimeSource};
 use crate::src::zebra::EvalResult::WON_POSITION;
 use crate::src::zebra::EvalType::MIDGAME_EVAL;
 use crate::src::zebra::MoveStringError::{InvalidMoveString, UnexpectedCharacter};
+use std::thread::park_timeout;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum EvalType {
@@ -305,7 +306,7 @@ pub fn engine_play_game<
                 board_state.score_sheet_row += 1
             }
             if moves_state.move_count[moves_state.disks_played as usize] != 0 {
-                let move_start =  g_timer.get_real_timer::<FE>();
+                let move_start =  g_timer.get_real_timer();
                 g_timer.clear_panic_abort();
                 if config.echo != 0 {
                     ZF::set_move_list(board_state.score_sheet_row);
@@ -316,10 +317,10 @@ pub fn engine_play_game<
                         ZF::report_opening_name(CStr::from_bytes_with_nul(opening_name).unwrap());
                     }
                     if use_thor_ {
-                        let database_start =  g_timer.get_real_timer::<FE>();
+                        let database_start =  g_timer.get_real_timer();
                         Thor::database_search(&board_state.board, side_to_move);
                         thor_position_count = Thor::get_match_count();
-                        let database_stop =  g_timer.get_real_timer::<FE>();
+                        let database_stop =  g_timer.get_real_timer();
                         let database_time = database_stop - database_start;
                         total_search_time += database_time;
                         ZF::report_thor_matching_games_stats(total_search_time, thor_position_count, database_time);
@@ -362,7 +363,7 @@ pub fn engine_play_game<
                         // FIXME interaction
                         curr_move = get_move::<ZF>(side_to_move, &board_state.board);
                     } else {
-                         g_timer.start_move::<FE>(config.player_time[side_to_move as usize],
+                         g_timer.start_move(config.player_time[side_to_move as usize],
                                          config.player_increment[side_to_move as usize],
                                          moves_state.disks_played + 4);
                         g_timer.determine_move_time(config.player_time[side_to_move as usize],
@@ -416,7 +417,7 @@ pub fn engine_play_game<
                         FE::invalid_move_in_move_sequence(curr_move);
                     }
                 }
-                let move_stop =  g_timer.get_real_timer::<FE>();
+                let move_stop =  g_timer.get_real_timer();
                 if config.player_time[side_to_move as usize] != 10000000.0f64 {
                     // panic!("this branch is not tested"); I don't know how to trigger this in tests
 
@@ -459,10 +460,10 @@ pub fn engine_play_game<
             ZF::set_move_list(
                 board_state.score_sheet_row);
             if use_thor_ {
-                let database_start =  g_timer.get_real_timer::<FE>();
+                let database_start =  g_timer.get_real_timer();
                 Thor::database_search(&board_state.board, side_to_move);
                 thor_position_count = Thor::get_match_count();
-                let database_stop =  g_timer.get_real_timer::<FE>();
+                let database_stop =  g_timer.get_real_timer();
                 let db_search_time = database_stop - database_start;
                 total_search_time += db_search_time;
                 ZF::report_some_thor_stats(total_search_time, thor_position_count, db_search_time);
@@ -586,14 +587,14 @@ pub struct FullState {
 }
 
 impl FullState {
-    pub fn new() -> Self {
+    pub fn new(time_source: &'static dyn TimeSource) -> Self {
         let g_config: Config = INITIAL_CONFIG;
         let learn_state: LearnState = LearnState::new();
         let midgame_state: MidgameState = MidgameState::new();
         let game_state: GameState = GameState::new();
         let end_g: End = End::new();
         let coeff_state: CoeffState = CoeffState::new();
-        let g_timer: Timer = Timer::new();
+        let g_timer: Timer = Timer::new(time_source);
         let moves_state: MovesState = MovesState::new();
         let stable_state: StableState = StableState::new();
         let board_state: BoardState = BoardState::new();

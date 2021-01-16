@@ -2060,7 +2060,7 @@ fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
         if node_val - g_timer.last_panic_check >= 250000.0f64 {
             /* Check for time abort */
             g_timer.last_panic_check = node_val;
-             g_timer.check_panic_abort::<FE>();
+             g_timer.check_panic_abort();
             /* Output status buffers if in interactive mode */
             if echo != 0 { FE::display_buffers(g_timer); }
             /* Check for events */
@@ -2687,17 +2687,17 @@ pub fn end_game<FE: FrontEnd>(side_to_move: i32,
     } else { selectivity = 0 }
     /* Check if the selective search took more than 40% of the allocated
          time. If this is the case, there is no point attempting WLD. */
-    long_selective_search =  g_timer.check_threshold::<FE>(0.35f64);
+    long_selective_search =  g_timer.check_threshold(0.35f64);
     /* Make sure the panic abort flag is set properly; it must match
        the status of long_selective_search. This is not automatic as
        it is not guaranteed that any selective search was performed. */
-     g_timer.check_panic_abort::<FE>();
+     g_timer.check_panic_abort();
     if g_timer.is_panic_abort() != 0 || force_return != 0 ||
         long_selective_search != 0 {
         /* Don't try non-selective solve. */
         if any_search_result != 0 {
             if echo != 0 && (g_timer.is_panic_abort() != 0 || force_return != 0) {
-                FE::end_report_semi_panic_abort( g_timer.get_elapsed_time::<FE>());
+                FE::end_report_semi_panic_abort( g_timer.get_elapsed_time());
                 if end.full_output_mode != 0 {
                     let mut flags_0: u32 = 4;
                     if solve_status != DRAW as i32 as u32 {
@@ -2713,7 +2713,7 @@ pub fn end_game<FE: FrontEnd>(side_to_move: i32,
             g_timer.clear_panic_abort();
         } else {
             if echo != 0 {
-                FE::end_report_panic_abort_2( g_timer.get_elapsed_time::<FE>());
+                FE::end_report_panic_abort_2( g_timer.get_elapsed_time());
             }
             search_state.root_eval = -(27000 as i32)
         }
@@ -2841,7 +2841,7 @@ pub fn end_game<FE: FrontEnd>(side_to_move: i32,
     if g_timer.is_panic_abort() != 0 || force_return != 0 {
         if any_search_result != 0 {
             if echo != 0 {
-                FE::end_report_semi_panic_abort_3( g_timer.get_elapsed_time::<FE>());
+                FE::end_report_semi_panic_abort_3( g_timer.get_elapsed_time());
                 if end.full_output_mode != 0 {
                     let mut flags_2: u32 = 0;
                     flags_2 = 4;
@@ -2861,7 +2861,7 @@ pub fn end_game<FE: FrontEnd>(side_to_move: i32,
             g_timer.clear_panic_abort();
         } else {
             if echo != 0 {
-                FE::end_report_panic_abort( g_timer.get_elapsed_time::<FE>());
+                FE::end_report_panic_abort( g_timer.get_elapsed_time());
             }
             search_state.root_eval = - 27000;
         }
@@ -2878,7 +2878,7 @@ pub fn end_game<FE: FrontEnd>(side_to_move: i32,
     exact_score_failed = 0;
     if incomplete_search != 0 {
         if echo != 0 {
-            FE::end_report_semi_panic_abort_2( g_timer.get_elapsed_time::<FE>());
+            FE::end_report_semi_panic_abort_2( g_timer.get_elapsed_time());
             if end.full_output_mode != 0 {
                 hash_expand_pv(side_to_move, 1, 4, 0, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
                 FE::send_solve_status(empties, side_to_move, eval_info,  &mut board_state.pv[0], board_state.pv_depth[0], g_timer, search_state);

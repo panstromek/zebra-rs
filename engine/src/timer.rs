@@ -3,7 +3,12 @@ use crate::src::error::FrontEnd;
 
 pub type time_t = i64;
 
+pub trait TimeSource{
+    fn time(&self, __timer: &mut time_t) -> time_t;
+}
+
 pub struct Timer {
+    source: &'static dyn TimeSource,
     frozen_ponder_time: f64,
     panic_value: f64,
     time_per_move: f64,
@@ -21,8 +26,9 @@ pub struct Timer {
 }
 
 impl Timer {
-    pub const fn new() -> Self {
+    pub fn new(source: &'static dyn TimeSource) -> Self {
         Timer {
+            source,
             frozen_ponder_time: 0.,
             panic_value: 0.,
             time_per_move: 0.,
@@ -141,14 +147,14 @@ impl Timer {
     /*
       RESET_REAL_TIMER
     */
-    pub fn reset_real_timer<FE: FrontEnd>(&mut self) { FE::time(&mut self.init_time); }
+    pub fn reset_real_timer(&mut self) { self.source.time(&mut self.init_time); }
     /*
       INIT_TIMER
       Initializes the timer. This is really only needed when
       CRON_SUPPORTED is defined; in this case the cron daemon
       is used for timing.
     */
-    pub fn init_timer<FE: FrontEnd>(&mut self) { self.reset_real_timer::<FE>(); }
+    pub fn init_timer(&mut self) { self.reset_real_timer(); }
 
     /*
       CLEAR_PONDER_TIMES
@@ -173,9 +179,9 @@ impl Timer {
       Returns the time passed since the last call to timer.init_timer() or reset_timer().
     */
 
-    pub fn get_real_timer<FE: FrontEnd>(&self) -> f64 {
+    pub fn get_real_timer(&self) -> f64 {
         let mut curr_time: time_t = 0;
-        FE::time(&mut curr_time);
+        self.source.time(&mut curr_time);
         return (curr_time - self.init_time) as f64;
     }
 
@@ -185,14 +191,14 @@ impl Timer {
       This is the actual time, not adjusted for pondering.
     */
 
-    pub fn get_elapsed_time<FE: FrontEnd>(&self) -> f64 {
-        return fabs(self.get_real_timer::<FE>() - self.start_time);
+    pub fn get_elapsed_time(&self) -> f64 {
+        return fabs(self.get_real_timer() - self.start_time);
     }
     /*
       START_MOVE
     */
 
-    pub fn start_move<FE: FrontEnd>(&mut self, in_total_time: f64,
+    pub fn start_move(&mut self, in_total_time: f64,
                                     _increment: f64,
                                     _discs: i32) {
         /*
@@ -206,7 +212,7 @@ impl Timer {
                 (in_total_time) - 10.0f64
             } else { 0.1f64 };
         self.panic_abort = 0;
-        self.start_time = self.get_real_timer::<FE>();
+        self.start_time = self.get_real_timer();
     }
     /*
       CHECK_PANIC_ABORT
@@ -214,10 +220,10 @@ impl Timer {
       sets the timer.panic_abort flags.
     */
 
-    pub fn check_panic_abort<FE: FrontEnd>(&mut self) {
+    pub fn check_panic_abort(&mut self) {
         let mut curr_time: f64 = 0.;
         let mut adjusted_total_time: f64 = 0.;
-        curr_time = self.get_elapsed_time::<FE>();
+        curr_time = self.get_elapsed_time();
         adjusted_total_time = self.total_move_time;
         if self.do_check_abort != 0 && curr_time >= self.panic_value * adjusted_total_time {
             self.panic_abort = 1 as i32
@@ -228,11 +234,11 @@ impl Timer {
       Checks if a certain fraction of the panic time has been used.
     */
 
-    pub fn check_threshold<FE: FrontEnd>(&self, threshold: f64)
+    pub fn check_threshold(&self, threshold: f64)
                                          -> i32 {
         let mut curr_time: f64 = 0.;
         let mut adjusted_total_time: f64 = 0.;
-        curr_time = self.get_elapsed_time::<FE>();
+        curr_time = self.get_elapsed_time();
         adjusted_total_time = self.total_move_time;
         return (self.do_check_abort != 0 &&
             curr_time >= self.panic_value * threshold * adjusted_total_time) as
@@ -246,12 +252,12 @@ impl Timer {
       The extended version takes the ponder time into account.
     */
 
-    pub fn above_recommended<FE: FrontEnd>(&self) -> i32 {
-        return (self.get_elapsed_time::<FE>() >= self.time_per_move) as i32;
+    pub fn above_recommended(&self) -> i32 {
+        return (self.get_elapsed_time() >= self.time_per_move) as i32;
     }
 
-    pub fn extended_above_recommended<FE: FrontEnd>(&self) -> i32 {
-        return (self.get_elapsed_time::<FE>() + self.frozen_ponder_time >= 1.5f64 * self.time_per_move)
+    pub fn extended_above_recommended(&self) -> i32 {
+        return (self.get_elapsed_time() + self.frozen_ponder_time >= 1.5f64 * self.time_per_move)
             as i32;
     }
 }
