@@ -256,7 +256,8 @@ pub fn engine_play_game<
         End,
         SwitchingSides{ provided_move_count: i32 },
         GetPass{ provided_move_count: i32 },
-        MoveStop{ provided_move_count: i32, move_start: f64 }
+        MoveStop { provided_move_count: i32, move_start: f64 },
+        GetMove { provided_move_count: i32 , move_start: f64 }
     }
     let mut state = State::Initial;
     loop  {
@@ -308,11 +309,7 @@ pub fn engine_play_game<
                                         ZF::print_move_alternatives(play_state.side_to_move, &mut play_state.g_state.board_state, &mut play_state.g_state.g_book);
                                     }
                                 }
-
-                                ZF::before_get_move();
-                                // FIXME interaction
-                                play_state.curr_move = get_move::<ZF>(play_state.side_to_move, &play_state.g_state.board_state.board);
-                                State::MoveStop { provided_move_count, move_start }
+                                State::GetMove { provided_move_count, move_start }
                             } else {
                                 play_state.g_state.g_timer.start_move(play_state.g_state.g_config.player_time[play_state.side_to_move as usize],
                                                                       play_state.g_state.g_config.player_increment[play_state.side_to_move as usize],
@@ -430,6 +427,12 @@ pub fn engine_play_game<
                     play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] = play_state.curr_move
                 }
                 State::SwitchingSides { provided_move_count }
+            }
+            State::GetMove { provided_move_count, move_start } => {
+                ZF::before_get_move();
+                // FIXME interaction
+                play_state.curr_move = get_move::<ZF>(play_state.side_to_move, &play_state.g_state.board_state.board);
+                State::MoveStop { provided_move_count, move_start }
             }
         };
     }
