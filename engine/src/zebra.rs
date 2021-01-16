@@ -220,19 +220,11 @@ pub fn engine_play_game<
     let mut move_string = move_string;
     loop  {
         /* Decode the predefined move sequence */
-        if let Some(ref mut move_file) = &mut move_file {
-            {
-                // this is kindof a hack just to preserve null teminator at the absolute end of this string
-                // we slice the buffer at the end and pass along just smaller slice to the trait function
-                let end = line_buffer.len() - 2;
-                let mut line_buffer: &mut [u8] = &mut line_buffer[0..end];
-                move_file.fill_line_buffer(&mut line_buffer);
-            }
-            let end = line_buffer.iter().enumerate().find(|(i, ch)| ch == &&0)
-                .unwrap().0;
-            move_string = &line_buffer[0..end]
-        }
-        let provided_move_count = parse_provided_moves(&mut provided_move, &mut move_string);
+        let provided_move_count = parse_provided_moves(
+            &mut provided_move,
+            load_moves_from_source(&mut move_file, &mut line_buffer)
+                .unwrap_or(&mut move_string));
+
         let provided_move_count = match provided_move_count {
             Ok(c) => c,
             Err(e) => match e {
@@ -459,6 +451,21 @@ pub fn engine_play_game<
         g_state.g_timer.toggle_abort_check(1);
         if !(repeat > 0) { break; }
     }
+}
+
+fn load_moves_from_source<'a, Source: InitialMoveSource>(mut move_file: &mut Option<Source>, line_buffer: &'a mut [u8; 1001]) -> Option<&'a [u8]> {
+    if let Some(ref mut move_file) = &mut move_file {
+        {
+            // this is kindof a hack just to preserve null teminator at the absolute end of this string
+            // we slice the buffer at the end and pass along just smaller slice to the trait function
+            let end = line_buffer.len() - 2;
+            let mut line_buffer: &mut [u8] = &mut line_buffer[0..end];
+            move_file.fill_line_buffer(&mut line_buffer);
+        }
+        let end = line_buffer.iter().enumerate().find(|(i, ch)| ch == &&0)
+            .unwrap().0;
+        Some(&line_buffer[0..end])
+    } else { None }
 }
 
 fn deal_with_thor_1<ZF: ZebraFrontend, Thor: ThorDatabase>(use_thor_: bool, side_to_move: i32,
