@@ -263,7 +263,7 @@ pub fn engine_play_game<
                 State::InGame {provided_move_count }
             }
             State::InGame { provided_move_count } => {
-                while game_in_progress(&mut play_state.g_state.moves_state, &play_state.g_state.search_state, &play_state.g_state.board_state.board) != 0 {
+                if game_in_progress(&mut play_state.g_state.moves_state, &play_state.g_state.search_state, &play_state.g_state.board_state.board) != 0 {
                     remove_coeffs(play_state.g_state.moves_state.disks_played, &mut play_state.g_state.coeff_state);
                     generate_all(play_state.side_to_move, &mut play_state.g_state.moves_state, &play_state.g_state.search_state, &play_state.g_state.board_state.board);
                     if play_state.side_to_move == 0 {
@@ -394,9 +394,14 @@ pub fn engine_play_game<
                         }
                     }
                     play_state.side_to_move = 2 - play_state.side_to_move;
-                    if play_state.g_state.g_config.one_position_only != 0 { break; }
+                    if play_state.g_state.g_config.one_position_only != 0 {
+                        State::AfterGame
+                    }else {
+                        State::InGame { provided_move_count }
+                    }
+                } else {
+                    State::AfterGame
                 }
-                State::AfterGame
             }
             State::AfterGame => {
                 after_main_loop::<ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, Learn, FE, Thor>(&mut play_state);
