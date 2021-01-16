@@ -202,8 +202,6 @@ pub fn engine_play_game<
   mut move_file: Option<Source>,
     g_state: &mut FullState
 ) {
-    let use_thor_: bool = g_state.g_config.use_thor;
-    let use_learning_: bool = g_state.g_config.use_learning;
     let mut eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,
         res: WON_POSITION,
@@ -266,12 +264,12 @@ pub fn engine_play_game<
         }
         g_state.g_book.set_slack(floor(g_state.g_config.slack * 128.0f64) as i32);
         g_state.game_state.toggle_human_openings(0);
-        if use_learning_ {
+        if g_state.g_config.use_learning {
             g_state.learn_state.set_learning_parameters(g_state.g_config.deviation_depth, g_state.g_config.cutoff_empty);
         }
         reset_book_search(&mut g_state.g_book);
         set_deviation_value(g_state.g_config.low_thresh, g_state.g_config.high_thresh, g_state.g_config.dev_bonus, &mut g_state.g_book);
-        if use_thor_ {
+        if g_state.g_config.use_thor {
             ZF::load_thor_files(&mut g_state.g_timer);
         }
         set_names_from_skills::<ZF>(&mut g_state.g_config);
@@ -303,7 +301,7 @@ pub fn engine_play_game<
                     if let Some(opening_name) = opening_name {
                         ZF::report_opening_name(CStr::from_bytes_with_nul(opening_name).unwrap());
                     }
-                    deal_with_thor_1::<ZF, Thor>(use_thor_, side_to_move, &mut g_state.g_config, &mut g_state.g_timer, &mut g_state.board_state, &mut total_search_time);
+                    deal_with_thor_1::<ZF, Thor>(g_state.g_config.use_thor, side_to_move, &mut g_state.g_config, &mut g_state.g_timer, &mut g_state.board_state, &mut total_search_time);
 
                     ZF::display_board_after_thor(side_to_move, g_state.g_config.use_timer,
                                                  &g_state.board_state.board, &g_state.board_state.black_moves, &g_state.board_state.white_moves);
@@ -429,7 +427,7 @@ pub fn engine_play_game<
         if g_state.g_config.echo != 0 && g_state.g_config.one_position_only == 0 {
             ZF::set_move_list(
                 g_state.board_state.score_sheet_row);
-            deal_with_thor_2::<ZF, Thor>(use_thor_,  side_to_move, &mut g_state.g_config, &mut g_state.g_timer, &mut g_state.board_state, &mut total_search_time);
+            deal_with_thor_2::<ZF, Thor>(g_state.g_config.use_thor, side_to_move, &mut g_state.g_config, &mut g_state.g_timer, &mut g_state.board_state, &mut total_search_time);
             ZF::set_times(floor(g_state.g_config.player_time[0]) as _, floor(g_state.g_config.player_time[2]) as _);
             ZF::display_board_after_thor(side_to_move, g_state.g_config.use_timer, &g_state.board_state.board,
                                          &g_state.board_state.black_moves,
@@ -453,7 +451,7 @@ pub fn engine_play_game<
         }
         repeat -= 1;
         g_state.g_timer.toggle_abort_check(0 as i32);
-        if use_learning_ && g_state.g_config.one_position_only == 0 {
+        if g_state.g_config.use_learning && g_state.g_config.one_position_only == 0 {
             Learn::learn_game(g_state.moves_state.disks_played,
                               (g_state.g_config.skill[0] != 0 && g_state.g_config.skill[2] != 0) as i32,
                               (repeat == 0 as i32) as i32, g_state);
