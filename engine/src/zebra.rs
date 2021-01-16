@@ -271,7 +271,6 @@ pub fn engine_play_game<
                     if play_state.side_to_move == 0 {
                         play_state.g_state.board_state.score_sheet_row += 1
                     }
-                    let mut next_state = State::SwitchingSides { provided_move_count };
                     if play_state.g_state.moves_state.move_count[play_state.g_state.moves_state.disks_played as usize] != 0 {
                         let move_start =  play_state.g_state.g_timer.get_real_timer();
                         play_state.g_state.g_timer.clear_panic_abort();
@@ -386,6 +385,7 @@ pub fn engine_play_game<
                             }
                             play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] = play_state.curr_move
                         }
+                        State::SwitchingSides { provided_move_count }
                     } else {
                         if play_state.side_to_move == 0 {
                             play_state.g_state.board_state.black_moves[play_state.g_state.board_state.score_sheet_row as usize] = -(1)
@@ -393,10 +393,11 @@ pub fn engine_play_game<
                             play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] = -(1)
                         }
                         if play_state.g_state.g_config.skill[play_state.side_to_move as usize] == 0 {
-                            next_state = State::GetPass{  provided_move_count }
+                            State::GetPass{  provided_move_count }
+                        } else {
+                            State::SwitchingSides { provided_move_count }
                         }
                     }
-                    next_state
                 } else {
                     State::AfterGame
                 }
