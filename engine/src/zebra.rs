@@ -335,10 +335,6 @@ pub fn engine_play_game<
                     State::InGame { provided_move_count }
                 }
             }
-            State::GetPass { provided_move_count } => {
-                ZF::get_pass();
-                State::SwitchingSides { provided_move_count }
-            }
             State::MoveStop { provided_move_count, move_start } => {
                 let move_stop =  play_state.g_state.g_timer.get_real_timer();
                 if play_state.g_state.g_config.player_time[play_state.side_to_move as usize] != 10000000.0f64 {
@@ -360,12 +356,6 @@ pub fn engine_play_game<
                     play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] = play_state.curr_move
                 }
                 State::SwitchingSides { provided_move_count }
-            }
-            State::GetMove { provided_move_count, move_start } => {
-                ZF::before_get_move();
-                // FIXME interaction
-                play_state.curr_move = get_move::<ZF>(play_state.side_to_move, &play_state.g_state.board_state.board);
-                State::MoveStop { provided_move_count, move_start }
             }
             State::AfterDumpch { provided_move_count, move_start } => {
                 if play_state.g_state.moves_state.disks_played >= provided_move_count {
@@ -442,9 +432,19 @@ pub fn engine_play_game<
                     State::MoveStop { provided_move_count, move_start }
                 }
             }
+            // FIXME extract out this interaction
             State::Dumpch { provided_move_count, move_start } => {
                 ZF::dumpch();
                 State::AfterDumpch { provided_move_count, move_start }
+            }
+            State::GetPass { provided_move_count } => {
+                ZF::get_pass();
+                State::SwitchingSides { provided_move_count }
+            }
+            State::GetMove { provided_move_count, move_start } => {
+                ZF::before_get_move();
+                play_state.curr_move = get_move::<ZF>(play_state.side_to_move, &play_state.g_state.board_state.board);
+                State::MoveStop { provided_move_count, move_start }
             }
         };
     }
