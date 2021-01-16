@@ -217,7 +217,6 @@ pub fn engine_play_game<
     let mut provided_move = [0; 61];
     let mut move_vec = [0; 121];
     let mut line_buffer = [0u8; 1001];
-    let mut move_string = move_string;
     loop  {
         /* Decode the predefined move sequence */
         let provided_move_count = parse_provided_moves(
