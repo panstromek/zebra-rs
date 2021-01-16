@@ -316,25 +316,7 @@ pub fn engine_play_game<
                     if let Some(opening_name) = opening_name {
                         ZF::report_opening_name(CStr::from_bytes_with_nul(opening_name).unwrap());
                     }
-                    if use_thor_ {
-                        let database_start =  g_timer.get_real_timer();
-                        Thor::database_search(&board_state.board, side_to_move);
-                        thor_position_count = Thor::get_match_count();
-                        let database_stop =  g_timer.get_real_timer();
-                        let database_time = database_stop - database_start;
-                        total_search_time += database_time;
-                        ZF::report_thor_matching_games_stats(total_search_time, thor_position_count, database_time);
-                        if thor_position_count > 0 as i32 {
-                            let black_win_count = Thor::get_black_win_count();
-                            let draw_count = Thor::get_draw_count();
-                            let white_win_count = Thor::get_white_win_count();
-                            let black_median_score = Thor::get_black_median_score();
-                            let black_average_score = Thor::get_black_average_score();
-
-                            ZF::report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
-                        }
-                        ZF::print_out_thor_matches(config.thor_max_games);
-                    }
+                    deal_with_thor_1::<ZF, Thor>(use_thor_, total_search_time, side_to_move, thor_position_count, config, &mut g_timer, &mut board_state);
                     ZF::display_board_after_thor(side_to_move, config.use_timer,
                                                  &board_state.board, &board_state.black_moves, &board_state.white_moves);
                 }
@@ -490,6 +472,31 @@ pub fn engine_play_game<
         }
         g_state.g_timer.toggle_abort_check(1);
         if !(repeat > 0) { break; }
+    }
+}
+
+fn deal_with_thor_1<ZF: ZebraFrontend, Thor: ThorDatabase>(use_thor_: bool, mut total_search_time: f64,
+                                                           mut side_to_move: i32, mut thor_position_count: i32,
+                                                           mut config: &mut Config, g_timer: &mut Timer,
+                                                           board_state: &mut BoardState) {
+    if use_thor_ {
+        let database_start = g_timer.get_real_timer();
+        Thor::database_search(&board_state.board, side_to_move);
+        thor_position_count = Thor::get_match_count();
+        let database_stop = g_timer.get_real_timer();
+        let database_time = database_stop - database_start;
+        total_search_time += database_time;
+        ZF::report_thor_matching_games_stats(total_search_time, thor_position_count, database_time);
+        if thor_position_count > 0 as i32 {
+            let black_win_count = Thor::get_black_win_count();
+            let draw_count = Thor::get_draw_count();
+            let white_win_count = Thor::get_white_win_count();
+            let black_median_score = Thor::get_black_median_score();
+            let black_average_score = Thor::get_black_average_score();
+
+            ZF::report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
+        }
+        ZF::print_out_thor_matches(config.thor_max_games);
     }
 }
 
