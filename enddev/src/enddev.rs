@@ -9,15 +9,13 @@ use engine::src::moves::{generate_all, make_move, valid_move};
 use engine::src::search::disc_count;
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
-use engine::src::zebra::EvaluationType;
+use engine::src::zebra::{EvaluationType, FullState};
 use legacy_zebra::src::display::{black_eval, black_player, black_time, current_row, display_board, white_eval, white_player, white_time};
 use legacy_zebra::src::error::{FE, LibcFatalError};
 use legacy_zebra::src::game::{compute_move, extended_compute_move, game_init, get_evaluated, get_evaluated_count, global_setup};
 use legacy_zebra::src::learn::init_learn;
-use legacy_zebra::src::zebra::{board_state, g_config, hash_state, moves_state, random_instance, search_state};
-use legacy_zebra::src::zebra::flip_stack_;
-use legacy_zebra::src::zebra::g_timer;
 use libc_wrapper::_IO_FILE;
+use legacy_zebra::src::zebra::LibcTimeSource;
 
 extern "C" {
     fn __assert_fail(__assertion: *const i8,
@@ -213,6 +211,9 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 *argv.offset(1));
         exit(1 as i32);
     }
+    static src: LibcTimeSource = LibcTimeSource {};
+    let mut full_state = FullState::new(&src);
+    let g_state: &mut FullState = &mut full_state;
     init_learn(b"book.bin\x00" as *const u8 as *const i8,
                1 as i32, g_state);
     global_setup(0 as i32, hash_bits, g_state);
@@ -224,7 +225,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     loop  {
         if restart != 0 {
             if in_branch != 0 {
-                game_length = moves_state.disks_played
+                game_length = g_state.moves_state.disks_played
             } else {
                 read_game(stream, game_moves.as_mut_ptr(), &mut game_length);
                 if games_read % 1000 as i32 == 0 as i32 {
@@ -236,14 +237,14 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 games_read += 1;
                 first_allowed_dev = earliest_dev
             }
-            game_init(0 as *const i8, &mut side_to_move);
-            setup_hash(1 as i32, &mut hash_state, &mut  random_instance);
+            game_init(0 as *const i8, &mut side_to_move, g_state);
+            setup_hash(1 as i32, &mut g_state.hash_state, &mut g_state.random_instance);
             last_was_pass = 0;
             restart = 0;
             in_branch = 0 as i32
         }
-        if disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board) ==
-            moves_state.disks_played + 4 as i32 {
+        if disc_count(0 as i32, &g_state.board_state.board) + disc_count(2 as i32, &g_state.board_state.board) ==
+            g_state.moves_state.disks_played + 4 as i32 {
         } else {
             __assert_fail(b"disc_count( BLACKSQ ) + disc_count( WHITESQ ) == disks_played + 4\x00"
                               as *const u8 as *const i8,
@@ -252,16 +253,16 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                           (*::std::mem::transmute::<&[u8; 23],
                               &[i8; 23]>(b"int main(int, char **)\x00")).as_ptr());
         }
-        determine_hash_values(side_to_move, &board_state.board, &mut hash_state);
-        generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
-        if moves_state.move_count[moves_state.disks_played as usize] == 0 as i32 {
+        determine_hash_values(side_to_move, &g_state.board_state.board, &mut g_state.hash_state);
+        generate_all(side_to_move, &mut g_state.moves_state, &g_state.search_state, &g_state.board_state.board);
+        if g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] == 0 as i32 {
             if last_was_pass != 0 {
                 /* Game over? */
                 restart = 1; /* Must pass. */
                 if in_branch != 0 {
                     let mut i: i32 = 0;
                     i = 0;
-                    while i < moves_state.disks_played {
+                    while i < g_state.moves_state.disks_played {
                         printf(b"%c%c\x00" as *const u8 as
                                    *const i8,
                                'a' as i32 +
@@ -281,9 +282,9 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             }
         } else {
             let mut move_0: i32 = 0;
-             g_timer.start_move::<FE>(100000 as i32 as f64,
-                             0 as i32 as f64,
-                             moves_state.disks_played + 4 as i32);
+             g_state.g_timer.start_move(100000 as i32 as f64,
+                                        0 as i32 as f64,
+                                        g_state.moves_state.disks_played + 4 as i32);
             if in_branch != 0 {
                 let mut ev_info: EvaluationType =
                     EvaluationType{type_0: MIDGAME_EVAL,
@@ -298,13 +299,13 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                  0 as i32, 0 as i32,
                                  8 as i32, 60 as i32,
                                  60 as i32, 1 as i32,
-                                 &mut ev_info)
+                                 &mut ev_info, g_state)
             } else {
-                move_0 = game_moves[moves_state.disks_played as usize];
-                if moves_state.disks_played >= first_allowed_dev &&
-                    moves_state.disks_played <= latest_dev &&
+                move_0 = game_moves[g_state.moves_state.disks_played as usize];
+                if g_state.moves_state.disks_played >= first_allowed_dev &&
+                    g_state.moves_state.disks_played <= latest_dev &&
                     (0.0001f64 *
-                        ((legacy_zebra::src::zebra::random_instance.my_random() >> 9 as i32) %
+                        ((g_state.random_instance.my_random() >> 9 as i32) %
                             10000 as i32 as i64) as
                             f64) < rand_prob {
                     let mut i_0: i32 = 0;
@@ -318,14 +319,14 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         fprintf(stderr,
                                 b"Evaluating moves in game %d after %d moves:\n\x00"
                                     as *const u8 as *const i8,
-                                games_read, moves_state.disks_played);
+                                games_read, g_state.moves_state.disks_played);
                     }
                     extended_compute_move::<LibcFatalError>(side_to_move, 0 as i32,
-                                          0 as i32, 8 as i32,
-                                          60 as i32,
-                                          60 as i32, g_config.echo);
+                                                            0 as i32, 8 as i32,
+                                                            60 as i32,
+                                                            60 as i32, g_state.g_config.echo, g_state);
                     if get_evaluated_count() ==
-                        moves_state.move_count[moves_state.disks_played as usize] {
+                        g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] {
                     } else {
                         __assert_fail(b"get_evaluated_count() == move_count[disks_played]\x00"
                                           as *const u8 as *const i8,
@@ -387,7 +388,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         }
                     }
                     rand_val =
-                        ((legacy_zebra::src::zebra::random_instance.my_random() >> 4 as i32) %
+                        ((g_state.random_instance.my_random() >> 4 as i32) %
                             (total_prob + 1 as i32) as i64)
                             as i32;
                     accum_prob = 0;
@@ -397,7 +398,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         if !(accum_prob < rand_val) { break ; }
                         i_0 += 1
                     }
-                    if i_0 < moves_state.move_count[moves_state.disks_played as usize] {
+                    if i_0 < g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] {
                     } else {
                         __assert_fail(b"i < move_count[disks_played]\x00" as
                                           *const u8 as *const i8,
@@ -416,15 +417,15 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                     1 as i32,
                                 '0' as i32 + move_0 / 10 as i32,
                                 'a' as i32 +
-                                    game_moves[moves_state.disks_played as usize] %
+                                    game_moves[g_state.moves_state.disks_played as usize] %
                                         10 as i32 - 1 as i32,
                                 '0' as i32 +
-                                    game_moves[moves_state.disks_played as usize] /
+                                    game_moves[g_state.moves_state.disks_played as usize] /
                                         10 as i32);
                     }
-                    if move_0 != game_moves[moves_state.disks_played as usize] {
+                    if move_0 != game_moves[g_state.moves_state.disks_played as usize] {
                         in_branch = 1;
-                        first_allowed_dev = moves_state.disks_played + 1 as i32;
+                        first_allowed_dev = g_state.moves_state.disks_played + 1 as i32;
                         if VERBOSE != 0 {
                             fputs(b"  branching\n\x00" as *const u8 as
                                       *const i8, stderr);
@@ -432,21 +433,21 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     }
                 }
             }
-            if valid_move(move_0, side_to_move, &board_state.board) == 0 {
+            if valid_move(move_0, side_to_move, &g_state.board_state.board) == 0 {
                 fprintf(stderr,
                         b"Game #%d contains illegal move %d @ #%d.\n\x00" as
                             *const u8 as *const i8, games_read,
-                        move_0, moves_state.disks_played);
-                display_board(stderr, &board_state.board, side_to_move,
+                        move_0, g_state.moves_state.disks_played);
+                display_board(stderr, &g_state.board_state.board, side_to_move,
                               0 as i32, 0 as i32,
                               0 as i32, current_row,
                               black_player, black_time, black_eval,
                               white_player, white_time, white_eval,
-                              &board_state.black_moves, &board_state.white_moves);
+                              &g_state.board_state.black_moves, &g_state.board_state.white_moves);
                 exit(1 as i32);
             }
-            game_moves[moves_state.disks_played as usize] = move_0;
-            if make_move(side_to_move, move_0, 1 as i32 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) ==
+            game_moves[g_state.moves_state.disks_played as usize] = move_0;
+            if make_move(side_to_move, move_0, 1 as i32, &mut g_state.moves_state, &mut g_state.board_state, &mut g_state.hash_state, &mut &mut g_state.flip_stack_) ==
                 0 as i32 {
                 fprintf(stderr,
                         b"Internal error: \'Legal\' move flips no discs.\n\x00"
