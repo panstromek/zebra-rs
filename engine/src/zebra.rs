@@ -249,146 +249,167 @@ pub fn engine_play_game<
         move_vec,
         line_buffer,
     };
-
+    enum State {
+        Initial,
+        InGame { provided_move_count: i32 },
+        AfterGame,
+        End
+    }
+    let mut state = State::Initial;
     loop  {
-        let provided_move_count = before_main_loop::<ZF, Source, BoardSrc, FE>(&mut play_state);
-
-        while game_in_progress(&mut play_state.g_state.moves_state, &play_state.g_state.search_state, &play_state.g_state.board_state.board) != 0 {
-            remove_coeffs(play_state.g_state.moves_state.disks_played, &mut play_state.g_state.coeff_state);
-            generate_all(play_state.side_to_move, &mut play_state.g_state.moves_state, &play_state.g_state.search_state, &play_state.g_state.board_state.board);
-            if play_state.side_to_move == 0 {
-                play_state.g_state.board_state.score_sheet_row += 1
+        state = match state {
+            State::Initial => {
+                let provided_move_count = before_main_loop::<ZF, Source, BoardSrc, FE>(&mut play_state);
+                State::InGame {provided_move_count }
             }
-            if play_state.g_state.moves_state.move_count[play_state.g_state.moves_state.disks_played as usize] != 0 {
-                let move_start =  play_state.g_state.g_timer.get_real_timer();
-                play_state.g_state.g_timer.clear_panic_abort();
-                if play_state.g_state.g_config.echo != 0 {
-                    ZF::set_move_list(play_state.g_state.board_state.score_sheet_row);
-                    ZF::set_times(floor(play_state.g_state.g_config.player_time[0]) as i32,
-                                  floor(play_state.g_state.g_config.player_time[2]) as i32);
-                    let opening_name = find_opening_name(&mut play_state.g_state.g_book, &play_state.g_state.board_state.board);
-                    if let Some(opening_name) = opening_name {
-                        ZF::report_opening_name(CStr::from_bytes_with_nul(opening_name).unwrap());
-                    }
-                    deal_with_thor_1::<ZF, Thor>(play_state.g_state.g_config.use_thor, play_state.side_to_move, &mut play_state.g_state.g_config, &mut play_state.g_state.g_timer, &mut play_state.g_state.board_state, &mut play_state.total_search_time);
-
-                    ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer,
-                                                 &play_state.g_state.board_state.board, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
-                }
-                Dump::dump_position(play_state.side_to_move, &play_state.g_state.board_state.board);
-                Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
-                /* Check what the Thor opening statistics has to say */
-                Thor::choose_thor_opening_move(&play_state.g_state.board_state.board, play_state.side_to_move, play_state.g_state.g_config.echo, &mut play_state.g_state.random_instance);
-                if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.wait != 0 { ZF::dumpch(); }
-                if play_state.g_state.moves_state.disks_played >= provided_move_count {
-                    if play_state.g_state.g_config.skill[play_state.side_to_move as usize] == 0 as i32 {
-                        if play_state.g_state.g_config.use_book != 0 && play_state.g_state.g_config.display_pv != 0 {
-                            fill_move_alternatives::<FE>(play_state.side_to_move,
-                                                         0 as i32,
-                                                         &mut play_state.g_state.g_book,
-                                                         &mut play_state.g_state.board_state,
-                                                         &mut play_state.g_state.moves_state,
-                                                         &play_state.g_state.search_state,
-                                                         &mut play_state.g_state.flip_stack_,
-                                                         &mut play_state.g_state.hash_state);
-                            if play_state.g_state.g_config.echo != 0 {
-                                ZF::print_move_alternatives(play_state.side_to_move, &mut play_state.g_state.board_state, &mut play_state.g_state.g_book);
-                            }
-                        }
-
-                        ZF::before_get_move();
-                        // FIXME interaction
-                        play_state.curr_move = get_move::<ZF>(play_state.side_to_move, &play_state.g_state.board_state.board);
-                    } else {
-                         play_state.g_state.g_timer.start_move(play_state.g_state.g_config.player_time[play_state.side_to_move as usize],
-                                                               play_state.g_state.g_config.player_increment[play_state.side_to_move as usize],
-                                                               play_state.g_state.moves_state.disks_played + 4);
-                        play_state.g_state.g_timer.determine_move_time(play_state.g_state.g_config.player_time[play_state.side_to_move as usize],
-                                                                       play_state.g_state.g_config.player_increment[play_state.side_to_move as usize],
-                                                                       play_state.g_state.moves_state.disks_played + 4);
-                        let timed_search = (play_state.g_state.g_config.skill[play_state.side_to_move as usize] >= 60) as i32;
-                        play_state.curr_move =
-                            generic_compute_move::<ComputeMoveLog, ComputeMoveOut, FE, Thor>(
-                                play_state.side_to_move, 1,
-                                play_state.g_state.g_config.player_time[play_state.side_to_move as usize] as i32,
-                                play_state.g_state.g_config.player_increment[play_state.side_to_move as usize] as i32, timed_search,
-                                play_state.g_state.g_config.use_book,
-                                play_state.g_state.g_config.skill[play_state.side_to_move as usize],
-                                play_state.g_state.g_config.exact_skill[play_state.side_to_move as usize],
-                                play_state.g_state.g_config.wld_skill[play_state.side_to_move as usize],
-                                0 as i32, &mut play_state.eval_info,
-                                &mut ComputeMoveLog::create_log_file_if_needed(),
-                                play_state.g_state.g_config.display_pv,
-                                play_state.g_state.g_config.echo, &mut play_state.g_state.flip_stack_,
-                                &mut play_state.g_state.search_state,
-                                &mut play_state.g_state.board_state,
-                                &mut play_state.g_state.hash_state,
-                                &mut play_state.g_state.g_timer,
-                                &mut play_state.g_state.end_g,
-                                &mut play_state.g_state.midgame_state,
-                                &mut play_state.g_state.coeff_state,
-                                &mut play_state.g_state.moves_state,
-                                &mut play_state.g_state.random_instance,
-                                &mut play_state.g_state.g_book,
-                                &mut play_state.g_state.stable_state,
-                                &mut play_state.g_state.game_state, &mut play_state.g_state.prob_cut);
-                        if play_state.side_to_move == 0 as i32 {
-                            ZF::set_evals(produce_compact_eval(play_state.eval_info), 0.0f64);
-                        } else {
-                            ZF::set_evals(0.0f64, produce_compact_eval(play_state.eval_info));
-                        }
-                        if play_state.eval_info.is_book != 0 &&
-                            play_state.g_state.g_config.rand_move_freq > 0 &&
-                            play_state.side_to_move == play_state.rand_color &&
-                            play_state.g_state.random_instance.my_random() % play_state.g_state.g_config.rand_move_freq as i64 == 0 {
-
-                            ZF::report_engine_override();
-                            play_state.rand_color = 2 - play_state.rand_color;
-                            play_state.curr_move = play_state.g_state.moves_state.move_list[play_state.g_state.moves_state.disks_played as usize]
-                                [(play_state.g_state.random_instance.my_random() % play_state.g_state.moves_state.move_count[play_state.g_state.moves_state.disks_played as usize] as i64) as usize]
-                        }
-                    }
-                } else {
-                    play_state.curr_move = play_state.provided_move[play_state.g_state.moves_state.disks_played as usize];
-                    if valid_move(play_state.curr_move, play_state.side_to_move, &play_state.g_state.board_state.board) == 0 {
-                        FE::invalid_move_in_move_sequence(play_state.curr_move);
-                    }
-                }
-                let move_stop =  play_state.g_state.g_timer.get_real_timer();
-                if play_state.g_state.g_config.player_time[play_state.side_to_move as usize] != 10000000.0f64 {
-                    // panic!("this branch is not tested"); I don't know how to trigger this in tests
-
-                    play_state.g_state.g_config.player_time[play_state.side_to_move as usize] -= move_stop - move_start
-                }
-                play_state.g_state.learn_state.store_move(play_state.g_state.moves_state.disks_played, play_state.curr_move);
-                push_move(&mut play_state.move_vec, play_state.curr_move, play_state.g_state.moves_state.disks_played);
-                make_move(play_state.side_to_move, play_state.curr_move, 1, &mut play_state.g_state.moves_state, &mut play_state.g_state.board_state, &mut play_state.g_state.hash_state, &mut play_state.g_state.flip_stack_);
-                if play_state.side_to_move == 0 as i32 {
-                    play_state.g_state.board_state.black_moves[play_state.g_state.board_state.score_sheet_row as usize] = play_state.curr_move
-                } else {
-                    if play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] != -(1) {
-                        // panic!("this branch is not tested"); to trigger this in tests
-
+            State::InGame { provided_move_count } => {
+                while game_in_progress(&mut play_state.g_state.moves_state, &play_state.g_state.search_state, &play_state.g_state.board_state.board) != 0 {
+                    remove_coeffs(play_state.g_state.moves_state.disks_played, &mut play_state.g_state.coeff_state);
+                    generate_all(play_state.side_to_move, &mut play_state.g_state.moves_state, &play_state.g_state.search_state, &play_state.g_state.board_state.board);
+                    if play_state.side_to_move == 0 {
                         play_state.g_state.board_state.score_sheet_row += 1
                     }
-                    play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] = play_state.curr_move
+                    if play_state.g_state.moves_state.move_count[play_state.g_state.moves_state.disks_played as usize] != 0 {
+                        let move_start =  play_state.g_state.g_timer.get_real_timer();
+                        play_state.g_state.g_timer.clear_panic_abort();
+                        if play_state.g_state.g_config.echo != 0 {
+                            ZF::set_move_list(play_state.g_state.board_state.score_sheet_row);
+                            ZF::set_times(floor(play_state.g_state.g_config.player_time[0]) as i32,
+                                          floor(play_state.g_state.g_config.player_time[2]) as i32);
+                            let opening_name = find_opening_name(&mut play_state.g_state.g_book, &play_state.g_state.board_state.board);
+                            if let Some(opening_name) = opening_name {
+                                ZF::report_opening_name(CStr::from_bytes_with_nul(opening_name).unwrap());
+                            }
+                            deal_with_thor_1::<ZF, Thor>(play_state.g_state.g_config.use_thor, play_state.side_to_move, &mut play_state.g_state.g_config, &mut play_state.g_state.g_timer, &mut play_state.g_state.board_state, &mut play_state.total_search_time);
+
+                            ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer,
+                                                         &play_state.g_state.board_state.board, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
+                        }
+                        Dump::dump_position(play_state.side_to_move, &play_state.g_state.board_state.board);
+                        Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
+                        /* Check what the Thor opening statistics has to say */
+                        Thor::choose_thor_opening_move(&play_state.g_state.board_state.board, play_state.side_to_move, play_state.g_state.g_config.echo, &mut play_state.g_state.random_instance);
+                        if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.wait != 0 { ZF::dumpch(); }
+                        if play_state.g_state.moves_state.disks_played >= provided_move_count {
+                            if play_state.g_state.g_config.skill[play_state.side_to_move as usize] == 0 as i32 {
+                                if play_state.g_state.g_config.use_book != 0 && play_state.g_state.g_config.display_pv != 0 {
+                                    fill_move_alternatives::<FE>(play_state.side_to_move,
+                                                                 0 as i32,
+                                                                 &mut play_state.g_state.g_book,
+                                                                 &mut play_state.g_state.board_state,
+                                                                 &mut play_state.g_state.moves_state,
+                                                                 &play_state.g_state.search_state,
+                                                                 &mut play_state.g_state.flip_stack_,
+                                                                 &mut play_state.g_state.hash_state);
+                                    if play_state.g_state.g_config.echo != 0 {
+                                        ZF::print_move_alternatives(play_state.side_to_move, &mut play_state.g_state.board_state, &mut play_state.g_state.g_book);
+                                    }
+                                }
+
+                                ZF::before_get_move();
+                                // FIXME interaction
+                                play_state.curr_move = get_move::<ZF>(play_state.side_to_move, &play_state.g_state.board_state.board);
+                            } else {
+                                play_state.g_state.g_timer.start_move(play_state.g_state.g_config.player_time[play_state.side_to_move as usize],
+                                                                      play_state.g_state.g_config.player_increment[play_state.side_to_move as usize],
+                                                                      play_state.g_state.moves_state.disks_played + 4);
+                                play_state.g_state.g_timer.determine_move_time(play_state.g_state.g_config.player_time[play_state.side_to_move as usize],
+                                                                               play_state.g_state.g_config.player_increment[play_state.side_to_move as usize],
+                                                                               play_state.g_state.moves_state.disks_played + 4);
+                                let timed_search = (play_state.g_state.g_config.skill[play_state.side_to_move as usize] >= 60) as i32;
+                                play_state.curr_move =
+                                    generic_compute_move::<ComputeMoveLog, ComputeMoveOut, FE, Thor>(
+                                        play_state.side_to_move, 1,
+                                        play_state.g_state.g_config.player_time[play_state.side_to_move as usize] as i32,
+                                        play_state.g_state.g_config.player_increment[play_state.side_to_move as usize] as i32, timed_search,
+                                        play_state.g_state.g_config.use_book,
+                                        play_state.g_state.g_config.skill[play_state.side_to_move as usize],
+                                        play_state.g_state.g_config.exact_skill[play_state.side_to_move as usize],
+                                        play_state.g_state.g_config.wld_skill[play_state.side_to_move as usize],
+                                        0 as i32, &mut play_state.eval_info,
+                                        &mut ComputeMoveLog::create_log_file_if_needed(),
+                                        play_state.g_state.g_config.display_pv,
+                                        play_state.g_state.g_config.echo, &mut play_state.g_state.flip_stack_,
+                                        &mut play_state.g_state.search_state,
+                                        &mut play_state.g_state.board_state,
+                                        &mut play_state.g_state.hash_state,
+                                        &mut play_state.g_state.g_timer,
+                                        &mut play_state.g_state.end_g,
+                                        &mut play_state.g_state.midgame_state,
+                                        &mut play_state.g_state.coeff_state,
+                                        &mut play_state.g_state.moves_state,
+                                        &mut play_state.g_state.random_instance,
+                                        &mut play_state.g_state.g_book,
+                                        &mut play_state.g_state.stable_state,
+                                        &mut play_state.g_state.game_state, &mut play_state.g_state.prob_cut);
+                                if play_state.side_to_move == 0 as i32 {
+                                    ZF::set_evals(produce_compact_eval(play_state.eval_info), 0.0f64);
+                                } else {
+                                    ZF::set_evals(0.0f64, produce_compact_eval(play_state.eval_info));
+                                }
+                                if play_state.eval_info.is_book != 0 &&
+                                    play_state.g_state.g_config.rand_move_freq > 0 &&
+                                    play_state.side_to_move == play_state.rand_color &&
+                                    play_state.g_state.random_instance.my_random() % play_state.g_state.g_config.rand_move_freq as i64 == 0 {
+
+                                    ZF::report_engine_override();
+                                    play_state.rand_color = 2 - play_state.rand_color;
+                                    play_state.curr_move = play_state.g_state.moves_state.move_list[play_state.g_state.moves_state.disks_played as usize]
+                                        [(play_state.g_state.random_instance.my_random() % play_state.g_state.moves_state.move_count[play_state.g_state.moves_state.disks_played as usize] as i64) as usize]
+                                }
+                            }
+                        } else {
+                            play_state.curr_move = play_state.provided_move[play_state.g_state.moves_state.disks_played as usize];
+                            if valid_move(play_state.curr_move, play_state.side_to_move, &play_state.g_state.board_state.board) == 0 {
+                                FE::invalid_move_in_move_sequence(play_state.curr_move);
+                            }
+                        }
+                        let move_stop =  play_state.g_state.g_timer.get_real_timer();
+                        if play_state.g_state.g_config.player_time[play_state.side_to_move as usize] != 10000000.0f64 {
+                            // panic!("this branch is not tested"); I don't know how to trigger this in tests
+
+                            play_state.g_state.g_config.player_time[play_state.side_to_move as usize] -= move_stop - move_start
+                        }
+                        play_state.g_state.learn_state.store_move(play_state.g_state.moves_state.disks_played, play_state.curr_move);
+                        push_move(&mut play_state.move_vec, play_state.curr_move, play_state.g_state.moves_state.disks_played);
+                        make_move(play_state.side_to_move, play_state.curr_move, 1, &mut play_state.g_state.moves_state, &mut play_state.g_state.board_state, &mut play_state.g_state.hash_state, &mut play_state.g_state.flip_stack_);
+                        if play_state.side_to_move == 0 as i32 {
+                            play_state.g_state.board_state.black_moves[play_state.g_state.board_state.score_sheet_row as usize] = play_state.curr_move
+                        } else {
+                            if play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] != -(1) {
+                                // panic!("this branch is not tested"); to trigger this in tests
+
+                                play_state.g_state.board_state.score_sheet_row += 1
+                            }
+                            play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] = play_state.curr_move
+                        }
+                    } else {
+                        if play_state.side_to_move == 0 {
+                            play_state.g_state.board_state.black_moves[play_state.g_state.board_state.score_sheet_row as usize] = -(1)
+                        } else {
+                            play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] = -(1)
+                        }
+                        if play_state.g_state.g_config.skill[play_state.side_to_move as usize] == 0 {
+                            ZF::get_pass();// FIXME interaction
+                        }
+                    }
+                    play_state.side_to_move = 2 - play_state.side_to_move;
+                    if play_state.g_state.g_config.one_position_only != 0 { break; }
                 }
-            } else {
-                if play_state.side_to_move == 0 {
-                    play_state.g_state.board_state.black_moves[play_state.g_state.board_state.score_sheet_row as usize] = -(1)
+                State::AfterGame
+            }
+            State::AfterGame => {
+                after_main_loop::<ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, Learn, FE, Thor>(&mut play_state);
+                if !(play_state.repeat > 0) {
+                    State::End
                 } else {
-                    play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] = -(1)
-                }
-                if play_state.g_state.g_config.skill[play_state.side_to_move as usize] == 0 {
-                    ZF::get_pass();// FIXME interaction
+                    State::Initial
                 }
             }
-            play_state.side_to_move = 2 - play_state.side_to_move;
-            if play_state.g_state.g_config.one_position_only != 0 { break; }
-        }
-        after_main_loop::<ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, Learn, FE, Thor>(&mut play_state);
-
-        if !(play_state.repeat > 0) { break; }
+            State::End => {
+                return
+            }
+        };
     }
 }
 
