@@ -87,8 +87,6 @@ unsafe fn main_0()
     let run_script = 0;
     let script_out_file = 0 as *const i8;
     let script_in_file = script_out_file;
-    let mut use_learning = 0;
-    let mut use_thor = 0;
     set_default_engine_globals((&mut g_state.g_config));
     let mut current_block_107: u64;
     let mut arg_index = 1;
@@ -296,7 +294,7 @@ unsafe fn main_0()
                 (g_state.g_config).deviation_depth = atoi(*argv.offset(arg_index as isize));
                 arg_index += 1;
                 (g_state.g_config).cutoff_empty = atoi(*argv.offset(arg_index as isize));
-                use_learning = 1;
+                g_state.g_config.use_learning = true;
                 current_block_107 = 10485226111480991281;
             }
         } else if strcasecmp(*argv.offset(arg_index as isize),
@@ -412,7 +410,7 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                use_thor = 1;
+                g_state.g_config.use_thor = true;
                 (g_state.g_config).thor_max_games = atoi(*argv.offset(arg_index as isize));
                 current_block_107 = 10485226111480991281;
             }
@@ -619,11 +617,11 @@ Flags:
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line, &mut g_state);
     } else if (g_state.g_config).tournament != 0 {
-        play_tournament(move_sequence, log_file_name, use_thor != 0, use_learning != 0, &mut g_state);
+        play_tournament(move_sequence, log_file_name,  &mut g_state);
     } else if (g_state.g_config).only_analyze != 0 {
         analyze_game(move_sequence, &mut g_state);
     } else {
-        play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name, use_thor != 0, use_learning != 0, &mut g_state);
+        play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name, &mut g_state);
     }
     0
 }
@@ -632,7 +630,7 @@ Flags:
    Administrates the tournament between different levels
    of the program.
 */
-unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8, use_thor_: bool, use_learning_: bool, mut g_state: &mut FullState) {
+unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8, mut g_state: &mut FullState) {
     let mut result: [[[i32; 3]; 8]; 8] = [[[0; 3]; 8]; 8];
     let mut tourney_time: f64 = 0.;
     let mut score: [f64; 8] = [0.; 8];
@@ -661,8 +659,7 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
             (g_state.g_config).exact_skill[2] = (g_state.g_config).tournament_skill[j as usize][1];
             (g_state.g_config).wld_skill[2] = (g_state.g_config).tournament_skill[j as usize][2];
             play_game(0 as *const i8, move_sequence,
-                      0 as *const i8, 1 as i32, log_file_name_, use_thor_, use_learning_,
-                      &mut g_state);
+                      0 as *const i8, 1 as i32, log_file_name_, &mut g_state);
             add_counter(&mut tourney_nodes, &mut (g_state.search_state).total_nodes);
             tourney_time += (&mut g_state.search_state).total_time;
             result[i as usize][j as usize][0] =
@@ -771,7 +768,7 @@ impl FileMoveSource {
 unsafe fn play_game(mut file_name: *const i8,
                     mut move_string: *const i8,
                     mut move_file_name: *const i8,
-                    mut repeat: i32, log_file_name_: *mut i8, use_thor_: bool, use_learning_: bool,
+                    mut repeat: i32, log_file_name_: *mut i8,
                    g_state: &mut FullState
 
 ) {
@@ -791,8 +788,7 @@ unsafe fn play_game(mut file_name: *const i8,
     };
     engine_play_game
         ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner, LibcFatalError, LegacyThor>
-        (file_name, move_string, repeat, log_file_name_, move_file, use_thor_, use_learning_,
-          g_state)
+        (file_name, move_string, repeat, log_file_name_, move_file, g_state)
 }
 
 struct LibcFrontend {} //TODO this could probably be merged with the FrontEnd trait or something

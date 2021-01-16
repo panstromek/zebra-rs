@@ -97,7 +97,9 @@ pub struct Config {
     pub use_book: i32,
     pub wld_only: i32,
     pub echo: i32,
-    pub display_pv: i32
+    pub display_pv: i32,
+    pub use_thor: bool,
+    pub use_learning: bool,
 }
 
 pub const INITIAL_CONFIG: Config = Config {
@@ -125,6 +127,8 @@ pub const INITIAL_CONFIG: Config = Config {
     wld_only: 0,
     echo: 0,
     display_pv: 0,
+    use_thor: false,
+    use_learning: false
 };
 
 
@@ -195,10 +199,11 @@ pub fn engine_play_game<
     Thor: ThorDatabase
 >(file_name: Option<&CStr>, mut move_string: &[u8],
   mut repeat: i32, log_file_name_: Option<&CStr>,
-  mut move_file: Option<Source>, use_thor_: bool, use_learning_: bool,
+  mut move_file: Option<Source>,
     g_state: &mut FullState
 ) {
-
+    let use_thor_: bool = g_state.g_config.use_thor;
+    let use_learning_: bool = g_state.g_config.use_learning;
     let mut eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,
         res: WON_POSITION,
