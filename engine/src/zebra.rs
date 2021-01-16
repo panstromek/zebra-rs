@@ -254,7 +254,8 @@ pub fn engine_play_game<
         InGame { provided_move_count: i32 },
         AfterGame,
         End,
-        SwitchingSides{ provided_move_count: i32 }
+        SwitchingSides{ provided_move_count: i32 },
+        GetPass{ provided_move_count: i32 }
     }
     let mut state = State::Initial;
     loop  {
@@ -270,6 +271,7 @@ pub fn engine_play_game<
                     if play_state.side_to_move == 0 {
                         play_state.g_state.board_state.score_sheet_row += 1
                     }
+                    let mut next_state = State::SwitchingSides { provided_move_count };
                     if play_state.g_state.moves_state.move_count[play_state.g_state.moves_state.disks_played as usize] != 0 {
                         let move_start =  play_state.g_state.g_timer.get_real_timer();
                         play_state.g_state.g_timer.clear_panic_abort();
@@ -391,10 +393,10 @@ pub fn engine_play_game<
                             play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] = -(1)
                         }
                         if play_state.g_state.g_config.skill[play_state.side_to_move as usize] == 0 {
-                            ZF::get_pass();// FIXME interaction
+                            next_state = State::GetPass{  provided_move_count }
                         }
                     }
-                    State::SwitchingSides{ provided_move_count }
+                    next_state
                 } else {
                     State::AfterGame
                 }
@@ -417,6 +419,10 @@ pub fn engine_play_game<
                 } else {
                     State::InGame { provided_move_count }
                 }
+            }
+            State::GetPass { provided_move_count } => {
+                ZF::get_pass();
+                State::SwitchingSides { provided_move_count }
             }
         };
     }
