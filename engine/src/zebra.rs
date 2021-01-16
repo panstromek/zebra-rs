@@ -25,6 +25,7 @@ use crate::src::thordb::ThorDatabase;
 use crate::src::timer::Timer;
 use crate::src::zebra::EvalResult::WON_POSITION;
 use crate::src::zebra::EvalType::MIDGAME_EVAL;
+use crate::src::zebra::MoveStringError::{InvalidMoveString, UnexpectedCharacter};
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum EvalType {
@@ -245,25 +246,13 @@ pub fn engine_play_game<
                 .unwrap().0;
             move_string = &line_buffer[0..end]
         }
-        let provided_move_count = {
-            let provided_move_count = move_string.len().wrapping_div(2) as i32;
-            if provided_move_count > 60 ||
-                move_string.len().wrapping_rem(2) == 1 {
-                FE::invalid_move_string_provided();
-            }
-            let mut i = 0;
-            while i < provided_move_count {
-                let col = FE::tolower(
-                    *move_string.offset((2 * i) as _) as i32) - 'a' as i32 + 1;
-                let row =
-                    *move_string.offset((2 * i + 1) as _) as i32 - '0' as i32;
-                if col < 1 || col > 8 || row < 1 || row > 8 {
-                    FE::unexpected_character_in_a_move_string();
-                }
-                provided_move[i as usize] = 10 * row + col;
-                i += 1
-            }
-            provided_move_count
+        let provided_move_count = parse_provided_moves(&mut provided_move, &mut move_string);
+        let provided_move_count = match provided_move_count {
+            Ok(c) => c,
+            Err(e) => match e {
+                InvalidMoveString => FE::invalid_move_string_provided(),
+                UnexpectedCharacter => FE::unexpected_character_in_a_move_string(),
+            },
         };
         /* Set up the position and the search engine */
         generic_game_init::<BoardSrc, FE>(file_name, &mut side_to_move,
@@ -518,6 +507,29 @@ pub fn engine_play_game<
         g_state.g_timer.toggle_abort_check(1);
         if !(repeat > 0) { break; }
     }
+}
+
+enum MoveStringError {
+    InvalidMoveString,
+    UnexpectedCharacter
+}
+fn parse_provided_moves(provided_move: &mut [i32; 61], move_string: &[u8]) -> Result<i32, MoveStringError> {
+    let provided_move_count = move_string.len().wrapping_div(2) as i32;
+    if provided_move_count > 60 ||
+        move_string.len().wrapping_rem(2) == 1 {
+        return Err(InvalidMoveString)
+    }
+    let mut i = 0;
+    while i < provided_move_count {
+        let col = (*move_string.offset((2 * i) as _) as char).to_ascii_lowercase() as i32 - 'a' as i32 + 1;
+        let row = *move_string.offset((2 * i + 1) as _) as i32 - '0' as i32;
+        if col < 1 || col > 8 || row < 1 || row > 8 {
+            return Err(UnexpectedCharacter)
+        }
+        provided_move[i as usize] = 10 * row + col;
+        i += 1
+    }
+    Ok(provided_move_count)
 }
 
 fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32) {
