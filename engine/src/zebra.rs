@@ -312,6 +312,7 @@ pub fn engine_play_game<
                                 ZF::before_get_move();
                                 // FIXME interaction
                                 play_state.curr_move = get_move::<ZF>(play_state.side_to_move, &play_state.g_state.board_state.board);
+                                State::MoveStop { provided_move_count, move_start }
                             } else {
                                 play_state.g_state.g_timer.start_move(play_state.g_state.g_config.player_time[play_state.side_to_move as usize],
                                                                       play_state.g_state.g_config.player_increment[play_state.side_to_move as usize],
@@ -360,14 +361,15 @@ pub fn engine_play_game<
                                     play_state.curr_move = play_state.g_state.moves_state.move_list[play_state.g_state.moves_state.disks_played as usize]
                                         [(play_state.g_state.random_instance.my_random() % play_state.g_state.moves_state.move_count[play_state.g_state.moves_state.disks_played as usize] as i64) as usize]
                                 }
+                                State::MoveStop { provided_move_count, move_start }
                             }
                         } else {
                             play_state.curr_move = play_state.provided_move[play_state.g_state.moves_state.disks_played as usize];
                             if valid_move(play_state.curr_move, play_state.side_to_move, &play_state.g_state.board_state.board) == 0 {
                                 FE::invalid_move_in_move_sequence(play_state.curr_move);
                             }
+                            State::MoveStop { provided_move_count, move_start }
                         }
-                        State::MoveStop { provided_move_count, move_start }
                     } else {
                         if play_state.side_to_move == 0 {
                             play_state.g_state.board_state.black_moves[play_state.g_state.board_state.score_sheet_row as usize] = -(1)
