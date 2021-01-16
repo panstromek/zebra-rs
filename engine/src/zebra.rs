@@ -230,39 +230,10 @@ pub fn engine_play_game<
   mut move_file: Option<Source>,
     g_state: &mut FullState
 ) {
-    let mut eval_info = EvaluationType {
-        type_0: MIDGAME_EVAL,
-        res: WON_POSITION,
-        score: 0,
-        confidence: 0.,
-        search_depth: 0,
-        is_book: 0,
-    };
-    let mut total_search_time = 0.0f64;
-    let mut side_to_move = 0;
-    let mut curr_move = 0;
-    let mut rand_color = 0;
-    let mut provided_move = [0; 61];
-    let mut move_vec = [0; 121];
-    let mut line_buffer = [0u8; 1001];
-    let mut state = PlayGameState::Initial;
-    let mut play_state = PlayGame {
-        file_name,
-        move_string,
-        repeat,
-        log_file_name_,
-        move_file,
-        g_state,
-        eval_info,
-        total_search_time,
-        side_to_move,
-        curr_move,
-        rand_color,
-        provided_move,
-        move_vec,
-        line_buffer,
-        state
-    };
+    let mut play_state = PlayGame::new::<
+        ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, Learn, FE, Thor
+    >(file_name, move_string, repeat, log_file_name_, move_file, g_state);
+
     loop  {
         play_state.state = match play_state.state {
             PlayGameState::Initial => {
@@ -448,6 +419,58 @@ pub fn engine_play_game<
                 PlayGameState::MoveStop { provided_move_count, move_start }
             }
         };
+    }
+}
+impl<Src: InitialMoveSource> PlayGame<'_, '_ , '_ , '_, Src> {
+    pub fn new<'a, 'b, 'c, 'd,
+        ZF: ZebraFrontend,
+        Source: InitialMoveSource,
+        Dump: DumpHandler,
+        BoardSrc : FileBoardSource,
+        ComputeMoveLog: ComputeMoveLogger,
+        ComputeMoveOut: ComputeMoveOutput,
+        Learn: Learner,
+        FE: FrontEnd,
+        Thor: ThorDatabase
+    >(file_name: Option<&'a CStr>, mut move_string: &'b [u8],
+      mut repeat: i32, log_file_name_: Option<&'c CStr>,
+      mut move_file: Option<Src>,
+      g_state: &'d mut FullState
+    ) -> PlayGame<'a, 'b, 'c, 'd, Src> {
+        let mut eval_info = EvaluationType {
+            type_0: MIDGAME_EVAL,
+            res: WON_POSITION,
+            score: 0,
+            confidence: 0.,
+            search_depth: 0,
+            is_book: 0,
+        };
+        let mut total_search_time = 0.0f64;
+        let mut side_to_move = 0;
+        let mut curr_move = 0;
+        let mut rand_color = 0;
+        let mut provided_move = [0; 61];
+        let mut move_vec = [0; 121];
+        let mut line_buffer = [0u8; 1001];
+        let mut state = PlayGameState::Initial;
+        let mut play_state = PlayGame {
+            file_name,
+            move_string,
+            repeat,
+            log_file_name_,
+            move_file,
+            g_state,
+            eval_info,
+            total_search_time,
+            side_to_move,
+            curr_move,
+            rand_color,
+            provided_move,
+            move_vec,
+            line_buffer,
+            state
+        };
+        play_state
     }
 }
 
