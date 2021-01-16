@@ -771,7 +771,7 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
                 100000 as i32 as f64 {
                 /* Time abort? */
                 g_timer.last_panic_check = node_val;
-                 g_timer.check_panic_abort::<FE>();
+                 g_timer.check_panic_abort();
                 /* Display available search information */
                 if echo != 0 { FE::display_buffers(g_timer); }
                 /* Check for events */
@@ -1767,8 +1767,8 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
            for the search to be discontinued */
         old_val = adjusted_val;
         if midgame_state.do_check_midgame_abort != 0 {
-            if  g_timer.above_recommended::<FE>() != 0 ||
-                 g_timer.extended_above_recommended::<FE>() != 0 &&
+            if  g_timer.above_recommended() != 0 ||
+                 g_timer.extended_above_recommended() != 0 &&
                     depth >= g_timer.frozen_ponder_depth {
                 midgame_state.set_midgame_abort();
                 break ;

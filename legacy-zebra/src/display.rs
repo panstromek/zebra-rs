@@ -105,7 +105,7 @@ pub unsafe fn reset_buffer_display<FE: FrontEnd>(g_timer:&mut Timer) {
     clear_sweep();
     interval1 = 0.0f64;
     interval2 = 1.0f64;
-    last_output =  g_timer.get_real_timer::<FE>();
+    last_output =  g_timer.get_real_timer();
 }
 
 /*

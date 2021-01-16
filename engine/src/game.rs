@@ -239,7 +239,7 @@ pub fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     };
     post_init_coeffs(&mut coeff_state);
 
-    g_timer.init_timer::<FE>();
+    g_timer.init_timer();
     init_probcut(&mut prob_cut.mpc_cut, &mut prob_cut.use_end_cut, &mut prob_cut.end_mpc_depth);
     init_stable(&mut stable_state);
     setup_search(&mut search_state);
@@ -784,7 +784,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
                                  0 as i32, 0 as i32);
             let info = &*eval_info;
             let counter_value = counter_value(&mut search_state.nodes);
-            let elapsed_time =  g_timer.get_elapsed_time::<FE>();
+            let elapsed_time =  g_timer.get_elapsed_time();
             Out::send_move_type_0_status(interrupted_depth, info, counter_value, elapsed_time, board_state);
         }
         1 => { *eval_info = book_eval_info }
@@ -794,7 +794,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
     }
     let eval = *eval_info;
     search_state.set_current_eval(eval);
-    game_state.last_time_used =  g_timer.get_elapsed_time::<FE>();
+    game_state.last_time_used =  g_timer.get_elapsed_time();
     if update_all != 0 {
         search_state.total_time += game_state.last_time_used;
         add_counter(&mut search_state.total_evaluations, &mut search_state.evaluations);

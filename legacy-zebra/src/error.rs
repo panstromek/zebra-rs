@@ -127,7 +127,7 @@ impl FrontEnd for LibcFatalError {
     */
     fn display_buffers(g_timer: &mut Timer) {
         unsafe {
-            let timer =  g_timer.get_real_timer::<FE>();
+            let timer =  g_timer.get_real_timer();
             if timer - last_output >= interval2 || timed_buffer_management == 0 {
                 display_status(stdout, 0 as i32);
                 status_modified = 0;
@@ -299,10 +299,10 @@ impl FrontEnd for LibcFatalError {
                             '0' as i32 + search_state.get_ponder_move() / 10 as i32);
             }
             send_status_pv(pv_zero, empties, pv_depth_zero);
-            send_status_time( g_timer.get_elapsed_time::<FE>());
-            if  g_timer.get_elapsed_time::<FE>() > 0.0001f64 {
+            send_status_time( g_timer.get_elapsed_time());
+            if  g_timer.get_elapsed_time() > 0.0001f64 {
                 send_status(b"%6.0f %s  \x00" as *const u8 as *const i8,
-                            node_val / ( g_timer.get_elapsed_time::<FE>() + 0.0001f64),
+                            node_val / ( g_timer.get_elapsed_time() + 0.0001f64),
                             b"nps\x00" as *const u8 as *const i8);
             };
         }
@@ -564,11 +564,11 @@ impl FrontEnd for LibcFatalError {
              let mut pv_depth_zero: i32 = board_state.pv_depth[0];
 
              send_status_pv(pv_zero, max_depth, pv_depth_zero);
-             send_status_time( g_timer.get_elapsed_time::<FE>());
-             if  g_timer.get_elapsed_time::<FE>() != 0.0f64 {
+             send_status_time( g_timer.get_elapsed_time());
+             if  g_timer.get_elapsed_time() != 0.0f64 {
                  send_status(b"%6.0f %s\x00" as *const u8 as
                                  *const i8,
-                             node_val / ( g_timer.get_elapsed_time::<FE>() + 0.001f64),
+                             node_val / ( g_timer.get_elapsed_time() + 0.001f64),
                              b"nps\x00" as *const u8 as *const i8);
              }
 

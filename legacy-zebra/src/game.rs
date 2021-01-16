@@ -317,7 +317,7 @@ pub unsafe fn ponder_move<
        time we're using */
     g_timer.toggle_abort_check(0 as i32);
     midgame_state.toggle_midgame_abort_check(0 as i32);
-     g_timer.start_move::<FE>(0 as i32 as f64,
+     g_timer.start_move(0 as i32 as f64,
                      0 as i32 as f64,
                      disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board));
      g_timer.clear_ponder_times();
@@ -378,7 +378,7 @@ pub unsafe fn ponder_move<
     let mut best_pv_depth = 0;
     let mut i = 0;
     while force_return == 0 && i < expect_count {
-        move_start_time =  g_timer.get_real_timer::<FE>();
+        move_start_time =  g_timer.get_real_timer();
         let move_0 = expect_list[i as usize];
         search_state.set_ponder_move(move_0);
         this_move = expect_list[i as usize];
@@ -405,7 +405,7 @@ pub unsafe fn ponder_move<
             unmake_move(side_to_move, move_0, &mut board_state.board,  moves_state,  hash_state,  flip_stack_);
         };
         search_state.clear_ponder_move();
-        move_stop_time =  g_timer.get_real_timer::<FE>();
+        move_stop_time =  g_timer.get_real_timer();
         let move_0 = expect_list[i as usize];
         let time_0 = move_stop_time - move_start_time;
         g_timer.add_ponder_time(move_0, time_0);
@@ -575,7 +575,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
     (g_state.g_timer).toggle_abort_check(0 as i32);
     (g_state.midgame_state).toggle_midgame_abort_check(0 as i32);
     (g_state.midgame_state).toggle_perturbation_usage(0 as i32);
-     (g_state.g_timer).start_move::<FE>(0 as i32 as f64,
+     (g_state.g_timer).start_move(0 as i32 as f64,
                                         0 as i32 as f64,
                                         disc_count(0 as i32, &(g_state.board_state).board) + disc_count(2 as i32, &(g_state.board_state).board));
     (g_state.g_timer).clear_ponder_times();
@@ -1169,7 +1169,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     ( g_state.g_timer).toggle_abort_check(0 as i32);
     ( g_state.midgame_state).toggle_midgame_abort_check(0 as i32);
     ( g_state.midgame_state).toggle_perturbation_usage(0 as i32);
-     ( g_state.g_timer).start_move::<FE>(0 as i32 as f64,
+     ( g_state.g_timer).start_move(0 as i32 as f64,
                                          0 as i32 as f64,
                                          disc_count(0 as i32, &( g_state.board_state).board) + disc_count(2 as i32, &( g_state.board_state).board));
      ( g_state.g_timer).clear_ponder_times();
