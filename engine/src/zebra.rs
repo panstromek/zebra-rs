@@ -253,7 +253,8 @@ pub fn engine_play_game<
         Initial,
         InGame { provided_move_count: i32 },
         AfterGame,
-        End
+        End,
+        SwitchingSides{ provided_move_count: i32 }
     }
     let mut state = State::Initial;
     loop  {
@@ -393,12 +394,7 @@ pub fn engine_play_game<
                             ZF::get_pass();// FIXME interaction
                         }
                     }
-                    play_state.side_to_move = 2 - play_state.side_to_move;
-                    if play_state.g_state.g_config.one_position_only != 0 {
-                        State::AfterGame
-                    }else {
-                        State::InGame { provided_move_count }
-                    }
+                    State::SwitchingSides{ provided_move_count }
                 } else {
                     State::AfterGame
                 }
@@ -413,6 +409,14 @@ pub fn engine_play_game<
             }
             State::End => {
                 return
+            }
+            State::SwitchingSides{ provided_move_count } => {
+                play_state.side_to_move = 2 - play_state.side_to_move;
+                if play_state.g_state.g_config.one_position_only != 0 {
+                    State::AfterGame
+                } else {
+                    State::InGame { provided_move_count }
+                }
             }
         };
     }
