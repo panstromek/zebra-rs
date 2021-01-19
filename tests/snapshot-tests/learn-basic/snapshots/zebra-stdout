@@ -16,7 +16,7 @@ Book randomness: 0.25 disks
       8                                             
 
 Thor database:        f5: 100.0%    
-Slack left is 0.25. Book score is +0.20. Private g_book.node.
+Slack left is 0.25. Book score is +0.20. Private node.
    d3   +0.20 
    c4   +0.20 
    f5   +0.20 
@@ -36,7 +36,7 @@ PV: e6 f6 f5 f4 g5 e7 f7 h6
       8                                             
 
 Thor database:        f4: 66.3%    f6: 32.3%    d6:  1.4%    
-Slack left is 0.25. Book score is -0.20. Private g_book.node.
+Slack left is 0.25. Book score is -0.20. Private node.
    f6   -0.20 
    f4   -0.99 
    d6   -5.20 
@@ -57,7 +57,7 @@ Opening: Diagonal Opening
       8                                             
 
 Thor database:        f5: 97.9%    d3:  1.0%    c4:  0.7%    g6:  0.5%    
-Slack left is 0.25. Book score is +0.20. Private g_book.node.
+Slack left is 0.25. Book score is +0.20. Private node.
    f5   +0.20 
    d3   -7.22   (deviation)
 -->   Book      +0.20        f5
@@ -75,7 +75,7 @@ PV: f5 f4 g5 e7 f7 h6
       8                                             
 
 Thor database:        f4: 100.0%    
-Slack left is 0.25. Book score is -0.20. Private g_book.node.
+Slack left is 0.25. Book score is -0.20. Private node.
    f4   -0.20 
    d6   -0.20 
 -->   Book      -0.20        d6
@@ -94,7 +94,7 @@ PV: d6 e7 g5 g6 f8
 
 Thor database:        e7: 38.7%    c5: 34.1%    f7: 11.1%    c3: 11.1%    c4:  1.6%    
 c6:  1.5%    c7:  1.0%    g7:  0.5%    d7:  0.4%    
-Slack left is 0.25. Book score is +0.20. Private g_book.node.
+Slack left is 0.25. Book score is +0.20. Private node.
    e7   +0.20 
    c5   -0.36   (deviation)
 -->   Book      +0.20        e7
@@ -115,7 +115,7 @@ Opening: Heath / Tobidashi
 
 Thor database:        g5: 69.9%    f4: 19.2%    f7:  7.0%    f3:  1.9%    d8:  1.1%    
 f8:  0.9%    
-Slack left is 0.25. Book score is -0.20. Private g_book.node.
+Slack left is 0.25. Book score is -0.20. Private node.
    g5   -0.20 
    f7   -1.10   (deviation)
 -->   Book      -0.20        g5
@@ -133,7 +133,7 @@ PV: g5 g6 f8
       8                                             
 
 Thor database:        c5: 52.7%    g6: 37.8%    g4:  9.5%    
-Slack left is 0.25. Book score is +0.20. Private g_book.node.
+Slack left is 0.25. Book score is +0.20. Private node.
    g6   +0.20 
    g4   -0.59 
    c5   -0.66 
@@ -153,7 +153,7 @@ PV: g6 f8
       8                                             
 
 Thor database:        e8: 61.5%    f7: 17.7%    e3: 14.4%    f4:  6.4%    
-Slack left is 0.25. Book score is -0.20. Private g_book.node.
+Slack left is 0.25. Book score is -0.20. Private node.
    f8   -0.20   (deviation)
    f7   -0.38 
 -->   Book      -0.38        f7
@@ -171,7 +171,7 @@ PV: f7 e8
       8                                             
 
 Thor database:        e8: 53.6%    d7: 23.5%    f8: 23.0%    
-Slack left is 0.25. Book score is +0.38. Private g_book.node.
+Slack left is 0.25. Book score is +0.38. Private node.
    e8   +0.38   (deviation)
    d7   -1.26 
 -->   Book      +0.38        e8
