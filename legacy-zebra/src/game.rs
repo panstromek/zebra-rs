@@ -108,13 +108,11 @@ pub unsafe fn global_setup(use_random: i32,
                                             , stable_state
                                             , prob_cut);
 }
-trait Logger {
-    fn on_global_setup();
-}
+
 pub struct LogFileHandler {
     log_file: *mut FILE
 }
-impl Logger for LogFileHandler {
+impl LogFileHandler {
     fn on_global_setup() {
         unsafe { setup_log_file() }
     }
