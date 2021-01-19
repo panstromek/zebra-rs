@@ -310,6 +310,7 @@ mod tests {
                 line.starts_with("-->")
                 || line.starts_with("Log file created")
                 || line.starts_with("Engine compiled")
+                || line.starts_with("Zebra (c) 1997-2005 Gunnar Andersson, compile date")
                 || line.starts_with("Total time:")
                 || line.starts_with("[-inf,inf]:")
                 || line.starts_with("Reading binary opening database... done (took ")
