@@ -68,6 +68,7 @@ impl CoeffSource for ZLibSource {
     }
 }
 
+#[derive(Debug)]
 pub enum LoadError {
     UnableToOpenCoefficientFile,
     WrongChecksum,

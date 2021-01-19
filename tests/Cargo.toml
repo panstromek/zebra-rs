@@ -10,4 +10,4 @@ edition = "2018"
 [dependencies]
 flate2-coeff-source = { path = "./../flate2-coeff-source" }
 engine-traits = { path = "./../engine/engine-traits" }
-legacy-zebra = { path = "./../legacy-zebra" }
+zlib-coeff-source = { path = "./../legacy-zebra/zlib-coeff-source" }

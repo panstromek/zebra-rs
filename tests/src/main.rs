@@ -4,7 +4,7 @@ fn main() {}
 mod tests {
     use flate2_coeff_source::Flate2Source;
     use std::ffi::CStr;
-    use legacy_zebra::src::getcoeff::new_z_lib_source;
+    use zlib_coeff_source::{ZLibSource};
     use std::process::{Command, Stdio, ChildStdin};
     use std::path::Path;
     use std::fs::File;
@@ -15,7 +15,7 @@ mod tests {
         use engine_traits::CoeffSource;
         let file_name: &CStr = CStr::from_bytes_with_nul(b"./../coeffs2.bin\x00").unwrap();
 
-        let mut z_lib_source = new_z_lib_source(file_name);
+        let mut z_lib_source = ZLibSource::try_new(file_name).unwrap();
 
         let mut flate2_source = Flate2Source::new_from_data(&std::fs::read("./../coeffs2.bin").unwrap());
 

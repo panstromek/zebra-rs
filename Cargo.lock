@@ -299,7 +299,7 @@ version = "0.1.0"
 dependencies = [
  "engine-traits",
  "flate2-coeff-source",
- "legacy-zebra",
+ "zlib-coeff-source",
 ]
 
 [[package]]
