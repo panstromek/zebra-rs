@@ -123,6 +123,9 @@ mod tests {
 
     snap_test!(small_game_test_without_book, "-l 6 6 6 6 6 6 -r 0 -b 0", false, with_adjust: false);
 
+    // FIXME this test suddenly started to fail against old zebra, investigate that.
+    //  It's not clear if it's caused by changes in C or in Rust version though
+    //  (my bet would be Rust, because I was restructuring some core coeff algorithms)
     snap_test!(full_game_test, "-l 16 16 16 16 16 16 -r 0", false, with_adjust: false);
 
     snap_test!(small_game_test, "-l 6 6 6 6 6 6 -r 0", false, with_adjust: false);
@@ -216,7 +219,10 @@ mod tests {
     }
 
     fn snapshot_test(arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool, interactive: bool) {
-        let binary: &str = "./../../../../target/release/zebra";
+        let binary: &str =
+            // "./../../../../../zebra-1/zebra"
+            "./../../../../target/release/zebra"
+            ;
         let snapshot_test_dir = Path::new(snapshot_test_dir);
         if !snapshot_test_dir.exists() {
             std::fs::create_dir_all(snapshot_test_dir).unwrap();
