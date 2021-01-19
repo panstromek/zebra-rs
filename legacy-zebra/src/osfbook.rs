@@ -820,7 +820,7 @@ pub unsafe fn print_move_alternatives(side_to_move: i32, mut board_state: &mut B
         if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
                              isize)).flags as i32 & 32 as i32
                != 0 {
-            printf(b" Private g_book.node.\x00" as *const u8 as *const i8);
+            printf(b" Private node.\x00" as *const u8 as *const i8);
         }
         puts(b"\x00" as *const u8 as *const i8);
         i = 0;

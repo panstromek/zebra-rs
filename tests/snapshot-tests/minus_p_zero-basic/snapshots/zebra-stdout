@@ -366,7 +366,7 @@ Slack left is 0.25. Book score is +0.07.
       7      *                0.07     11 discs      8. c7  c6
       8                                              9. c5  b6
 
-Slack left is 0.18. Book score is -0.07. Private g_book.node.
+Slack left is 0.18. Book score is -0.07. Private node.
    d7   -0.07 
    h5   -0.48 
    h6   -1.55 
@@ -384,7 +384,7 @@ Slack left is 0.18. Book score is -0.07. Private g_book.node.
       7      * *               (O)     10 discs      9. c5  b6
       8                                             10. d7  
 
-Slack left is 0.25. Book score is +0.07. Private g_book.node.
+Slack left is 0.25. Book score is +0.07. Private node.
    b5   +0.07 
    e8   -2.11   (deviation)
 -->   Book      +0.07        b5
@@ -400,7 +400,7 @@ Slack left is 0.25. Book score is +0.07. Private g_book.node.
       7      * *              0.07     14 discs      9. c5  b6
       8                                             10. d7  b5
 
-Slack left is 0.18. Book score is -0.07. Private g_book.node.
+Slack left is 0.18. Book score is -0.07. Private node.
    f7   -0.07 
    b4   -0.38 
    e7   -0.86 
@@ -418,7 +418,7 @@ Slack left is 0.18. Book score is -0.07. Private g_book.node.
       7      * *   *           (O)     10 discs     10. d7  b5
       8                                             11. f7  
 
-Slack left is 0.25. Book score is +0.07. Private g_book.node.
+Slack left is 0.25. Book score is +0.07. Private node.
    f3   +0.07 
    e7   -2.20   (deviation)
 -->   Book      +0.07        f3
@@ -434,7 +434,7 @@ Slack left is 0.25. Book score is +0.07. Private g_book.node.
       7      * *   *          0.07     13 discs     10. d7  b5
       8                                             11. f7  f3
 
-Slack left is 0.18. Book score is -0.07. Private g_book.node.
+Slack left is 0.18. Book score is -0.07. Private node.
    b4   -0.07 
    f2   -1.10   (deviation)
 -->   Book      -0.07        b4
@@ -450,7 +450,7 @@ Slack left is 0.18. Book score is -0.07. Private g_book.node.
       7      * *   *           (O)     12 discs     11. f7  f3
       8                                             12. b4  
 
-Slack left is 0.25. Book score is +0.07. Private g_book.node.
+Slack left is 0.25. Book score is +0.07. Private node.
    f2   +0.07   (deviation)
    f8   +0.03 
 -->   Book      +0.03        f8
@@ -466,7 +466,7 @@ Slack left is 0.25. Book score is +0.07. Private g_book.node.
       7      * *   O          0.03     17 discs     11. f7  f3
       8            O                                12. b4  f8
 
-Slack left is 0.18. Book score is -0.03. Private g_book.node.
+Slack left is 0.18. Book score is -0.03. Private node.
    h4   -0.03 
    g7   -1.27   (deviation)
 -->   Book      -0.03        h4
@@ -482,7 +482,7 @@ Slack left is 0.18. Book score is -0.03. Private g_book.node.
       7      * *   O           (O)     14 discs     12. b4  f8
       8            O                                13. h4  
 
-Slack left is 0.21. Book score is +0.03. Private g_book.node.
+Slack left is 0.21. Book score is +0.03. Private node.
    h5   +0.03 
    f2   -0.85   (deviation)
 -->   Book      +0.03        h5
@@ -498,7 +498,7 @@ Slack left is 0.21. Book score is +0.03. Private g_book.node.
       7      * *   O          0.03     17 discs     12. b4  f8
       8            O                                13. h4  h5
 
-Slack left is 0.18. Book score is -0.03. Private g_book.node.
+Slack left is 0.18. Book score is -0.03. Private node.
    f2   -0.03 
    g7   -2.68   (deviation)
 -->   Book      -0.03        f2
@@ -514,7 +514,7 @@ Slack left is 0.18. Book score is -0.03. Private g_book.node.
       7      * *   O           (O)     16 discs     13. h4  h5
       8            O                                14. f2  
 
-Slack left is 0.21. Book score is +0.03. Private g_book.node.
+Slack left is 0.21. Book score is +0.03. Private node.
    e8   +0.03 
    f1   -0.02   (deviation)
 -->   Book      -0.02        f1
