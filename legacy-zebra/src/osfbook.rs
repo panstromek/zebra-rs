@@ -1552,7 +1552,7 @@ pub unsafe fn engine_init_osf<FE: FrontEnd>(g_state :&mut FullState) {
    Prepares all relevant data structures for a tree search
    or traversal.
 */
-pub unsafe fn prepare_tree_traversal(mut g_state: &mut FullState) {
+pub fn prepare_tree_traversal(mut g_state: &mut FullState) {
     let mut midgame_state = (&mut g_state.midgame_state);
     let mut game_state = (&mut g_state.game_state);
     let mut end_g = (&mut g_state.end_g);
@@ -1586,7 +1586,7 @@ pub unsafe fn prepare_tree_traversal(mut g_state: &mut FullState) {
    Notice that the order of these MUST coincide with the returned
    orientation value from get_hash() OR YOU WILL LOSE BIG.
 */
-pub unsafe fn init_maps<FE: FrontEnd>(g_state: &mut FullState) {
+pub fn init_maps<FE: FrontEnd>(g_state: &mut FullState) {
     let mut g_book = (&mut g_state.g_book);
 
     let book = &mut g_book;

@@ -1504,19 +1504,21 @@ fn echo_compute_move_1(info: &EvaluationType) {
     }
 }
 }
-impl ComputeMoveLogger for LogFileHandler {
-fn create(log_file_path_: &mut [i8]) -> Option<Self> {
-    let log_file = unsafe {
-        fopen(log_file_path_.as_mut_ptr(),
-              b"a\x00" as *const u8 as *const i8)
-    };
-    if !log_file.is_null() {
-        let logger = LogFileHandler { log_file };
-        Some(logger)
-    } else {
-        None
+impl LogFileHandler {
+    fn create(log_file_path_: &mut [i8]) -> Option<Self> {
+        let log_file = unsafe {
+            fopen(log_file_path_.as_mut_ptr(),
+                  b"a\x00" as *const u8 as *const i8)
+        };
+        if !log_file.is_null() {
+            let logger = LogFileHandler { log_file };
+            Some(logger)
+        } else {
+            None
+        }
     }
 }
+impl ComputeMoveLogger for LogFileHandler {
 
 fn create_log_file_if_needed() -> Option<Self> {
     unsafe {

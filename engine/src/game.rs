@@ -898,7 +898,6 @@ pub trait ComputeMoveLogger {
     fn log_optimal_line(logger: &mut Self, search_state: &SearchState);
     fn close_logger(logger: &mut Self);
     fn log_board(logger: &mut Self, board_: & BoardState, side_to_move_: i32);
-    fn create(log_file_path_: &mut [i8]) -> Option<Self> where Self:Sized;
     fn create_log_file_if_needed() -> Option<Self> where Self:Sized;
 }
 
