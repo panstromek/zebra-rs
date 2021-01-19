@@ -112,7 +112,7 @@ trait Logger {
     fn on_global_setup();
 }
 pub struct LogFileHandler {
-    log_file: *mut FILE // FIXME does this code need phantomData to be safe?
+    log_file: *mut FILE
 }
 impl Logger for LogFileHandler {
     fn on_global_setup() {
