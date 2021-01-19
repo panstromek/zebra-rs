@@ -1373,7 +1373,7 @@ pub struct LibcZebraOutput;
 impl ComputeMoveOutput for LibcZebraOutput {
 fn display_out_optimal_line(search_state: &SearchState) {
     //FIXME parametrize, this touches global state
-    unsafe { display_optimal_line(stdout, search_state.full_pv_depth, search_state.full_pv) }
+    unsafe { display_optimal_line(stdout, search_state.full_pv_depth, &search_state.full_pv) }
 }
 
 fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64, board_state: &BoardState) {
@@ -1594,7 +1594,7 @@ fn log_status(logger: &mut LogFileHandler) {
 }
 
 fn log_optimal_line(logger: &mut LogFileHandler, search_state: &SearchState) {
-    unsafe { display_optimal_line(logger.log_file, search_state.full_pv_depth, search_state.full_pv); }
+    unsafe { display_optimal_line(logger.log_file, search_state.full_pv_depth, &search_state.full_pv); }
 }
 
 fn close_logger(logger: &mut LogFileHandler) {
