@@ -727,5 +727,6 @@ pub unsafe fn produce_eval_text(eval_info: &EvaluationType,
                     b" (%s)\x00" as *const u8 as *const i8,
                     b"book\x00" as *const u8 as *const i8)
     }
+    // assert!(len < 19); // TODO this is true in all tests now, we could optimize that
     buf
 }
