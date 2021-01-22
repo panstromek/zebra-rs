@@ -371,6 +371,12 @@ impl DisplayState {
         self.status_pos += written;
         self.status_modified = 1;
     }
+    pub unsafe fn sweep(&mut self, mut writer: impl FnMut(*mut i8) -> i32) {
+        let cursor = display_state.sweep_buffer.as_mut_ptr().offset(display_state.sweep_pos as isize);
+        let written = writer(cursor);
+        display_state.sweep_pos += written;
+        display_state.sweep_modified = 1;
+    }
 }
 
 pub unsafe fn send_status_2<T: CFormat, U: CFormat>(format: *const i8, arg: T, arg2: U) {
@@ -470,21 +476,15 @@ pub unsafe fn display_status(stream: *mut FILE,
 */
 
 pub unsafe fn send_sweep_1<T: CFormat>(format: *const i8, arg: T) {
-    let written = sprintf(display_state.sweep_buffer.as_mut_ptr().offset(display_state.sweep_pos as isize), format, arg);
-    display_state.sweep_pos += written;
-    display_state.sweep_modified = 1;
+    display_state.sweep(|cursor| sprintf(cursor, format, arg));
 }
 
 pub unsafe fn send_sweep_2<T: CFormat, U: CFormat>(format: *const i8, arg: T, arg2: U) {
-    let written = sprintf(display_state.sweep_buffer.as_mut_ptr().offset(display_state.sweep_pos as isize), format, arg, arg2);
-    display_state.sweep_pos += written;
-    display_state.sweep_modified = 1;
+    display_state.sweep(|cursor| sprintf(cursor, format, arg, arg2));
 }
 
 pub unsafe fn send_sweep_0(format: *const i8) {
-    let written = sprintf(display_state.sweep_buffer.as_mut_ptr().offset(display_state.sweep_pos as isize), format);
-    display_state.sweep_pos += written;
-    display_state.sweep_modified = 1;
+    display_state.sweep(|cursor| sprintf(cursor, format));
 }
 /*
   DISPLAY_SWEEP
