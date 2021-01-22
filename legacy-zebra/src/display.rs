@@ -4,7 +4,7 @@ use engine::src::error::FrontEnd;
 use engine::src::search::disc_count;
 use engine::src::stubs::{abs, ceil, floor};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{exit, FILE, fprintf, fputc, fputs, getc, size_t, sprintf, stdin, strcpy, strdup, strlen, vsprintf, free};
+use libc_wrapper::{exit, FILE, fprintf, fputc, fputs, getc, size_t, sprintf, stdin, strcpy, strdup, strlen, free};
 
 use crate::src::error::FE;
 use crate::src::zebra::FullState;
