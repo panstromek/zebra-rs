@@ -469,12 +469,20 @@ pub unsafe fn display_status(stream: *mut FILE,
   Store information about the current search.
 */
 
-pub unsafe extern "C" fn send_sweep(format: *const i8,
-                                    args: ...) {
-    let mut arg_ptr = args.clone();
-    let written =
-        vsprintf(display_state.sweep_buffer.as_mut_ptr().offset(display_state.sweep_pos as isize), format,
-                 arg_ptr.as_va_list());
+pub unsafe fn send_sweep_1<T: CFormat>(format: *const i8, arg: T) {
+    let written = sprintf(display_state.sweep_buffer.as_mut_ptr().offset(display_state.sweep_pos as isize), format, arg);
+    display_state.sweep_pos += written;
+    display_state.sweep_modified = 1;
+}
+
+pub unsafe fn send_sweep_2<T: CFormat, U: CFormat>(format: *const i8, arg: T, arg2: U) {
+    let written = sprintf(display_state.sweep_buffer.as_mut_ptr().offset(display_state.sweep_pos as isize), format, arg, arg2);
+    display_state.sweep_pos += written;
+    display_state.sweep_modified = 1;
+}
+
+pub unsafe fn send_sweep_0(format: *const i8) {
+    let written = sprintf(display_state.sweep_buffer.as_mut_ptr().offset(display_state.sweep_pos as isize), format);
     display_state.sweep_pos += written;
     display_state.sweep_modified = 1;
 }

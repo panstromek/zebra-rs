@@ -20,10 +20,10 @@ use thordb_types::C2RustUnnamed;
 use crate::{
     src::{
         display::{display_status, display_sweep, produce_eval_text,
-                  send_status_nodes, send_status_pv, send_status_time, send_sweep},
+                  send_status_nodes, send_status_pv, send_status_time, send_sweep_1},
     }
 };
-use crate::src::display::{clear_status, clear_sweep, reset_buffer_display, display_state, send_status_1, send_status_2, send_status_0};
+use crate::src::display::{clear_status, clear_sweep, reset_buffer_display, display_state, send_status_1, send_status_2, send_status_0, send_sweep_0, send_sweep_2};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::sort_thor_games;
 use crate::src::zebra::FullState;
@@ -226,7 +226,7 @@ impl FrontEnd for LibcFatalError {
             if update_pv != 0 {
                 Self::end_tree_search_some_pv_stats_report(alpha, beta, curr_val)
             }
-            send_sweep(b" \x00" as *const u8 as *const i8);
+            send_sweep_0(b" \x00" as *const u8 as *const i8);
             if update_pv != 0 && move_index > 0 as i32 && echo != 0 {
                 display_sweep(stdout);
             }
@@ -236,14 +236,14 @@ impl FrontEnd for LibcFatalError {
     fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32) {
         unsafe {
             if curr_val <= alpha {
-                send_sweep(b"<%d\x00" as *const u8 as *const i8,
-                           curr_val + 1 as i32);
+                send_sweep_1(b"<%d\x00" as *const u8 as *const i8,
+                             curr_val + 1 as i32);
             } else if curr_val >= beta {
-                send_sweep(b">%d\x00" as *const u8 as *const i8,
-                           curr_val - 1 as i32);
+                send_sweep_1(b">%d\x00" as *const u8 as *const i8,
+                             curr_val - 1 as i32);
             } else {
-                send_sweep(b"=%d\x00" as *const u8 as *const i8,
-                           curr_val);
+                send_sweep_1(b"=%d\x00" as *const u8 as *const i8,
+                             curr_val);
 
             /*
             // these were not used in the original code
@@ -260,39 +260,39 @@ impl FrontEnd for LibcFatalError {
     fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32) {
         unsafe {
             if first != 0 {
-                send_sweep(b"%-10s \x00" as *const u8 as *const i8,
-                           buffer.as_mut_ptr());
+                send_sweep_1(b"%-10s \x00" as *const u8 as *const i8,
+                             buffer.as_mut_ptr());
             }
-            send_sweep(b"%c%c\x00" as *const u8 as *const i8,
-                       'a' as i32 + move_0 % 10 as i32 -
+            send_sweep_2(b"%c%c\x00" as *const u8 as *const i8,
+                         'a' as i32 + move_0 % 10 as i32 -
                            1 as i32,
-                       '0' as i32 + move_0 / 10 as i32);
+                         '0' as i32 + move_0 / 10 as i32);
         }
     }
 
     fn end_tree_search_output_some_stats(entry: &HashEntry) {
         /* Output some stats */
         unsafe {
-            send_sweep(b"%c%c\x00" as *const u8 as *const i8,
-                       'a' as i32 +
+            send_sweep_2(b"%c%c\x00" as *const u8 as *const i8,
+                         'a' as i32 +
                            entry.move_0[0] %
                                10 as i32 - 1 as i32,
-                       '0' as i32 +
+                         '0' as i32 +
                            entry.move_0[0] /
                                10 as i32);
             if entry.flags as i32 & 16 as i32 != 0 &&
                 entry.flags as i32 & 4 as i32 != 0 {
-                send_sweep(b"=%d\x00" as *const u8 as *const i8,
-                           entry.eval);
+                send_sweep_1(b"=%d\x00" as *const u8 as *const i8,
+                             entry.eval);
             } else if entry.flags as i32 & 16 as i32 != 0
                 &&
                 entry.flags as i32 & 1 as i32 !=
                     0 {
-                send_sweep(b">%d\x00" as *const u8 as *const i8,
-                           entry.eval - 1 as i32);
+                send_sweep_1(b">%d\x00" as *const u8 as *const i8,
+                             entry.eval - 1 as i32);
             } else {
-                send_sweep(b"<%d\x00" as *const u8 as *const i8,
-                           entry.eval + 1 as i32);
+                send_sweep_1(b"<%d\x00" as *const u8 as *const i8,
+                             entry.eval + 1 as i32);
             }
             fflush(stdout);
         }
@@ -300,21 +300,21 @@ impl FrontEnd for LibcFatalError {
 
      fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32, best_move_: i32) {
          unsafe {
-             send_sweep(b"%-10s \x00" as *const u8 as *const i8,
-                        buffer.as_mut_ptr());
-             send_sweep(b"%c%c\x00" as *const u8 as *const i8,
-                        'a' as i32 + best_move_ % 10 as i32 -
+             send_sweep_1(b"%-10s \x00" as *const u8 as *const i8,
+                          buffer.as_mut_ptr());
+             send_sweep_2(b"%c%c\x00" as *const u8 as *const i8,
+                          'a' as i32 + best_move_ % 10 as i32 -
                             1 as i32,
-                        '0' as i32 + best_move_ / 10 as i32);
+                          '0' as i32 + best_move_ / 10 as i32);
              if result <= alpha {
-                 send_sweep(b"<%d\x00" as *const u8 as *const i8,
-                            result + 1 as i32);
+                 send_sweep_1(b"<%d\x00" as *const u8 as *const i8,
+                              result + 1 as i32);
              } else if result >= beta {
-                 send_sweep(b">%d\x00" as *const u8 as *const i8,
-                            result - 1 as i32);
+                 send_sweep_1(b">%d\x00" as *const u8 as *const i8,
+                              result - 1 as i32);
              } else {
-                 send_sweep(b"=%d\x00" as *const u8 as *const i8,
-                            result);
+                 send_sweep_1(b"=%d\x00" as *const u8 as *const i8,
+                              result);
              }
          }
     }
@@ -510,10 +510,10 @@ impl FrontEnd for LibcFatalError {
     }
     fn midgame_display_simple_ponder_move(move_0: i32) {
         unsafe {
-            send_sweep(b"%c%c\x00" as *const u8 as *const i8,
-                       'a' as i32 + move_0 % 10 as i32 -
+            send_sweep_2(b"%c%c\x00" as *const u8 as *const i8,
+                         'a' as i32 + move_0 % 10 as i32 -
                            1 as i32,
-                       '0' as i32 + move_0 / 10 as i32);
+                         '0' as i32 + move_0 / 10 as i32);
         }
     }
 
@@ -540,8 +540,8 @@ impl FrontEnd for LibcFatalError {
                         beta as f64 / 128.0f64);
             }
             clear_sweep();
-            send_sweep(b"%-14s \x00" as *const u8 as *const i8,
-                       buffer_.as_mut_ptr());
+            send_sweep_1(b"%-14s \x00" as *const u8 as *const i8,
+                         buffer_.as_mut_ptr());
         }
     }
 
@@ -551,22 +551,22 @@ impl FrontEnd for LibcFatalError {
 
             if update_pv != 0 {
                 if curr_val <= alpha {
-                    send_sweep(b"<%.2f\x00" as *const u8 as
+                    send_sweep_1(b"<%.2f\x00" as *const u8 as
                                    *const i8,
-                               (curr_val + 1 as i32) as f64
+                                 (curr_val + 1 as i32) as f64
                                    / 128.0f64);
                 } else if curr_val >= beta {
-                    send_sweep(b">%.2f\x00" as *const u8 as
+                    send_sweep_1(b">%.2f\x00" as *const u8 as
                                    *const i8,
-                               (curr_val - 1 as i32) as f64
+                                 (curr_val - 1 as i32) as f64
                                    / 128.0f64);
                 } else {
-                    send_sweep(b"=%.2f\x00" as *const u8 as
+                    send_sweep_1(b"=%.2f\x00" as *const u8 as
                                    *const i8,
-                               curr_val as f64 / 128.0f64);
+                                 curr_val as f64 / 128.0f64);
                 }
             }
-            send_sweep(b" \x00" as *const u8 as *const i8);
+            send_sweep_0(b" \x00" as *const u8 as *const i8);
             if update_pv != 0 && searched > 0 as i32 && echo != 0 &&
                 max_depth >= 10 as i32 {
                 display_sweep(stdout);
