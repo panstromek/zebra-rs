@@ -1,5 +1,4 @@
 #![feature(c_variadic)]
-// #![feature(extern_types)]
 #![allow(dead_code)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
@@ -156,11 +155,7 @@ extern "C" {
                   -> *mut i8;
     pub fn strcmp(_: *const i8, _: *const i8) -> i32;
     pub static mut stdin: *mut FILE;
-    pub fn vsprintf(_: *mut i8, _: *const i8,
-                    _: ::std::ffi::VaList) -> i32;
     pub fn getc(__stream: *mut FILE) -> i32;
-    pub fn vfprintf(_: *mut FILE, _: *const i8, _: ::std::ffi::VaList)
-                    -> i32;
     pub fn gzgetc(file: gzFile) -> i32;
     pub fn gzclose(file: gzFile) -> i32;
     pub fn gzopen(_: *const i8, _: *const i8) -> gzFile;
