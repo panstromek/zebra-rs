@@ -28,20 +28,20 @@ pub static color_pattern: [i32; 3] = [1, 0, 2];
 /* The patterns describing the current state of the board. */
 /* Symmetry maps */
 
-pub static flip8: [i32; 6561] = transformation_setup();
+pub static flip8: [i16; 6561] = transformation_setup();
 /* Bit masks which represent dependencies between discs and patterns */
 
 /*
    TRANSFORMATION_SET_UP
    Calculate the various symmetry and color transformations.
 */
-const fn transformation_setup() -> [i32; 6561] {
-    pub const pow3: [i32; 10] = [1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683];
+const fn transformation_setup() -> [i16; 6561] {
+    pub const pow3: [i16; 10] = [1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683];
 
-    let mut flip8_: [i32; 6561] = [0;6561];
+    let mut flip8_: [i16; 6561] = [0;6561];
     let mut i: i32 = 0;
     let mut j: i32 = 0;
-    let mut row: [i32; 10] = [0; 10];
+    let mut row: [i16; 10] = [0; 10];
     /* Build the pattern tables for 8*1-patterns */
     i = 0;
     while i < 8 as i32 { row[i as usize] = 0; i += 1 }
@@ -51,8 +51,7 @@ const fn transformation_setup() -> [i32; 6561] {
         flip8_[i as usize] = 0;
         j = 0;
         while j < 8 as i32 {
-            flip8_[i as usize] +=
-                row[j as usize] * pow3[(7 as i32 - j) as usize];
+            flip8_[i as usize] += row[j as usize] * pow3[(7 as i32 - j) as usize];
             j += 1
         }
         /* Next configuration */
@@ -60,11 +59,11 @@ const fn transformation_setup() -> [i32; 6561] {
         loop  {
             /* The odometer principle */
             row[j as usize] += 1;
-            if row[j as usize] == 3 as i32 {
-                row[j as usize] = 0 as i32
+            if row[j as usize] == 3 {
+                row[j as usize] = 0
             }
             j += 1;
-            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
+            if !(row[(j - 1 as i32) as usize] == 0  &&
                      j < 8 as i32) {
                 break ;
             }

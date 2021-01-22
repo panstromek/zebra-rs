@@ -715,11 +715,11 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
                 *map_mirror8x2.offset((i + 6561 as i32 * j +
                     19683 as i32 * k) as isize)
                     =
-                    if flip8[i as usize] + 6561 as i32 * k +
+                    if flip8[i as usize]  as i32 + 6561 as i32 * k +
                         19683 as i32 * j <
                         i + 6561 as i32 * j +
                             19683 as i32 * k {
-                        (flip8[i as usize] + 6561 as i32 * k) +
+                        (flip8[i as usize] as i32 + 6561 as i32 * k) +
                             19683 as i32 * j
                     } else {
                         (i + 6561 as i32 * j) +
