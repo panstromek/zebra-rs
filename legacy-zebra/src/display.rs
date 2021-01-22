@@ -334,7 +334,7 @@ pub unsafe fn display_move(stream: *mut FILE,
    Displays the principal variation found during the tree search.
 */
 
-pub unsafe fn display_optimal_line(stream: *mut FILE, full_pv_depth_: i32, full_pv_: &[i32; 120]) {//FIXME passs this by a reference
+pub unsafe fn display_optimal_line(stream: *mut FILE, full_pv_depth_: i32, full_pv_: &[i32; 120]) {
     let mut i: i32 = 0;
     if full_pv_depth_ == 0 as i32 { return }
     fprintf(stream, b"%s: \x00" as *const u8 as *const i8,
