@@ -357,7 +357,7 @@ pub unsafe fn display_optimal_line(stream: *mut FILE, full_pv_depth_: i32, full_
   Store information about the last completed search.
 */
 
-pub unsafe trait CFormat {}
+pub unsafe trait CFormat: Copy {}
 unsafe impl CFormat for i32 {}
 unsafe impl CFormat for f64 {}
 unsafe impl CFormat for *mut i8 {}
