@@ -6,7 +6,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 use engine::src::moves::{generate_all, make_move, unmake_move, valid_move};
 use engine::src::osfbook::{find_opening_name, get_hash};
 use legacy_zebra::src::display::{display_board, produce_eval_text, set_move_list, set_names, display_state};
-use legacy_zebra::src::error::{FE, LibcFatalError};
+use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
 use legacy_zebra::src::zebra::{ LibcTimeSource};

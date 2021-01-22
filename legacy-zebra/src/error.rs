@@ -23,7 +23,7 @@ use crate::{
                   send_status_nodes, send_status_pv, send_status_time, send_sweep_1},
     }
 };
-use crate::src::display::{clear_status, clear_sweep, reset_buffer_display, display_state, send_status_1, send_status_2, send_status_0, send_sweep_0, send_sweep_2};
+use crate::src::display::{clear_status, clear_sweep, reset_buffer_display, display_state, send_status_1, send_status_2, send_status_0, send_sweep_0, send_sweep_2, CFormat};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::sort_thor_games;
 use crate::src::zebra::FullState;
@@ -32,10 +32,6 @@ use engine::src::osfbook::Book;
 use engine::src::globals::BoardState;
 use engine::src::moves::MovesState;
 use flip::unflip::FlipStack;
-// use crate::src::zebra::{g_config, g_timer, hash_state, search_state};
-// use crate::src::zebra::board_state;
-// use crate::src::zebra::flip_stack_;
-// use crate::src::zebra::moves_state;
 
 static mut buffer: [i8; 16] = [0; 16];
 
@@ -62,7 +58,19 @@ static mut buffer: [i8; 16] = [0; 16];
    Contents:   The text-based error handler.
 */
 
-pub unsafe extern "C" fn fatal_error(format: *const i8, args: ...) -> ! {
+pub unsafe fn fatal_error_3<T: CFormat, U: CFormat, V: CFormat>(format: *const i8, arg: T, arg2: U, arg3: V) -> ! {
+    fatal_error(format, arg, arg2, arg3)
+}
+pub unsafe fn fatal_error_2<T: CFormat, U: CFormat>(format: *const i8, arg: T, arg2: U) -> ! {
+    fatal_error(format, arg, arg2)
+}
+pub unsafe fn fatal_error_1<T: CFormat>(format: *const i8, arg: T) -> ! {
+    fatal_error(format, arg)
+}
+pub unsafe fn fatal_error_0(format: *const i8) -> ! {
+    fatal_error(format)
+}
+unsafe extern "C" fn fatal_error(format: *const i8, args: ...) -> ! {
     let mut timer: time_t = 0;
     let mut arg_ptr = args.clone();
     fprintf(stderr, b"\n%s: \x00" as *const u8 as *const i8,
@@ -102,7 +110,7 @@ impl LibcFatalError {
 
     pub fn safe_malloc_failure(size: u64) -> ! {
         unsafe {
-            fatal_error(b"%s %d\n\x00" as *const u8 as *const i8,
+            fatal_error_2(b"%s %d\n\x00" as *const u8 as *const i8,
                         b"Memory allocation failure when allocating\x00" as
                             *const u8 as *const i8, size);
         }
@@ -110,7 +118,7 @@ impl LibcFatalError {
 
     pub fn safe_realloc_failure(size: u64) -> ! {
         unsafe {
-            fatal_error(b"%s %d\n\x00" as *const u8 as *const i8,
+            fatal_error_2(b"%s %d\n\x00" as *const u8 as *const i8,
                         b"Memory allocation failure when allocating\x00" as
                             *const u8 as *const i8, size);
         }
@@ -147,7 +155,7 @@ impl LibcFatalError {
     }
     pub fn memory_allocation_failure(block_count_: i32) -> ! {
         unsafe {
-            fatal_error(b"%s @ #%d\n\x00" as *const u8 as *const i8,
+            fatal_error_2(b"%s @ #%d\n\x00" as *const u8 as *const i8,
                         b"Memory allocation failure\x00" as *const u8 as
                             *const i8, block_count_);
         }
@@ -155,14 +163,14 @@ impl LibcFatalError {
 
     pub fn error_in_map(i: i32, pos: i32, symmetry_map_item: i32) -> ! {
         unsafe {
-            fatal_error(b"Error in map %d: inv(map(%d))=%d\n\x00" as
+            fatal_error_3(b"Error in map %d: inv(map(%d))=%d\n\x00" as
                             *const u8 as *const i8, i, pos, symmetry_map_item);
         }
     }
 
     pub fn error_in_map_thor(i: i32, pos: i32, to_report: i32) -> ! {
         unsafe {
-            fatal_error(b"Error in map %d: inv(map(%d))=%d\n\x00" as
+            fatal_error_3(b"Error in map %d: inv(map(%d))=%d\n\x00" as
                             *const u8 as *const i8, i, pos,
                         to_report);
         }
@@ -439,7 +447,7 @@ impl FrontEnd for LibcFatalError {
             }
             puts(b"\x00" as *const u8 as *const i8);
             printf(b"i=%d\n\x00" as *const u8 as *const i8, i);
-            fatal_error(b"Error in PV completion\x00" as *const u8 as
+            fatal_error_0(b"Error in PV completion\x00" as *const u8 as
                 *const i8);
         }
     }
@@ -656,14 +664,14 @@ impl FrontEnd for LibcFatalError {
 impl FatalError for LibcFatalError {
   fn invalid_move(curr_move: i32) -> ! {
     unsafe {
-      fatal_error(b"Thor book move %d is invalid!\x00" as *const u8
+        fatal_error_1(b"Thor book move %d is invalid!\x00" as *const u8
                       as *const i8, curr_move);
     }
   }
 
  fn unrecognized_character(unrecognized: i8) -> ! {
   unsafe {
-    fatal_error(b"%s \'%c\' %s\n\x00" as *const u8 as
+      fatal_error_3(b"%s \'%c\' %s\n\x00" as *const u8 as
                     *const i8,
                 b"Unrecognized character\x00" as *const u8 as
                     *const i8,
@@ -676,7 +684,7 @@ impl FatalError for LibcFatalError {
 fn cannot_open_game_file(file_name: &str) -> ! {
     let file_name: *const i8 = CString::new(file_name).unwrap().as_c_str().as_ptr();
     unsafe {
-        fatal_error(b"%s \'%s\'\n\x00" as *const u8 as
+        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as
                         *const i8,
                     b"Cannot open game file\x00" as *const u8 as
                         *const i8, file_name);
@@ -686,7 +694,7 @@ fn cannot_open_game_file(file_name: &str) -> ! {
 
 fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
   unsafe {
-    fatal_error(b"Invalid move %c%c in move sequence\x00"
+    fatal_error_2(b"Invalid move %c%c in move sequence\x00"
                     as *const u8 as *const i8,
                 'a' as i32 + curr_move % 10 as i32
                     - 1 as i32,
@@ -697,20 +705,20 @@ fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
 
  fn internal_error_in_book_code() -> ! {
     unsafe {
-        fatal_error(b"Internal error in book code.\x00" as *const u8 as
+        fatal_error_0(b"Internal error in book code.\x00" as *const u8 as
             *const i8);
     }
 }
 
  fn unexpected_character_in_a_move_string() -> ! {
     unsafe {
-        fatal_error(b"Unexpected character in move string\x00" as *const u8 as *const i8);
+        fatal_error_0(b"Unexpected character in move string\x00" as *const u8 as *const i8);
     }
 }
 
  fn invalid_move_string_provided() -> ! {
     unsafe {
-        fatal_error(b"Invalid move string provided\x00" as *const u8 as *const i8);
+        fatal_error_0(b"Invalid move string provided\x00" as *const u8 as *const i8);
     }
 }
 }

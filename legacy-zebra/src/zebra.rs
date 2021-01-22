@@ -36,7 +36,7 @@ use libc_wrapper::{atof, atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc
 use libc_wrapper::{FILE, time_t};
 
 use crate::src::display::{display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state};
-use crate::src::error::{fatal_error, FE, LibcFatalError};
+use crate::src::error::{FE, LibcFatalError, fatal_error_0, fatal_error_2};
 use crate::src::game::{compute_move, global_setup, LibcBoardFileSource, LibcZebraOutput, LogFileHandler, toggle_status_log};
 use crate::src::learn::{init_learn, LibcLearner};
 use crate::src::osfbook::print_move_alternatives;
@@ -1113,7 +1113,7 @@ unsafe fn analyze_game(mut move_string: *const i8,
         fopen(b"analysis.log\x00" as *const u8 as *const i8,
               b"w\x00" as *const u8 as *const i8);
     if output_stream.is_null() {
-        fatal_error(b"Can\'t create log file analysis.log - aborting\x00" as
+        fatal_error_0(b"Can\'t create log file analysis.log - aborting\x00" as
                         *const u8 as *const i8);
     }
     /* Set up the position and the search engine */
@@ -1344,7 +1344,7 @@ unsafe fn analyze_game(mut move_string: *const i8,
             fputs(b"\n\x00" as *const u8 as *const i8,
                   output_stream);
             if valid_move(curr_move, side_to_move, &(g_state.board_state).board) == 0 {
-                fatal_error(b"Invalid move %c%c in move sequence\x00" as
+                fatal_error_2(b"Invalid move %c%c in move sequence\x00" as
                                 *const u8 as *const i8,
                             'a' as i32 + curr_move % 10 as i32 -
                                 1 as i32,
@@ -1763,7 +1763,7 @@ impl DumpHandler for LibcDumpHandler {
         let mut j: i32 = 0;
         // let mut stream = 0 as *mut FILE;
         let mut stream = File::create("current.gam").unwrap_or_else(|_| {
-            unsafe { fatal_error(b"File creation error when writing CURRENT.GAM\n\x00" as *const u8 as *const i8); }
+            unsafe { fatal_error_0(b"File creation error when writing CURRENT.GAM\n\x00" as *const u8 as *const i8); }
         });
 
         i = 1;
@@ -1800,7 +1800,7 @@ impl DumpHandler for LibcDumpHandler {
         let mut i: i32 = 0;
 
         let mut stream = File::create("current.mov").unwrap_or_else(|_| {
-            unsafe { fatal_error(b"File creation error when writing CURRENT.MOV\n\x00" as *const u8 as *const i8); }
+            unsafe { fatal_error_0(b"File creation error when writing CURRENT.MOV\n\x00" as *const u8 as *const i8); }
         });
 
         i = 0;

@@ -19,12 +19,11 @@ use libc_wrapper::{__ctype_b_loc, ctime, exit, fclose, feof, fflush, fgets, FILE
 
 use crate::{
     src::{
-        error::fatal_error,
         game::{global_setup}
     }
 };
 
-use crate::src::error::LibcFatalError;
+use crate::src::error::{LibcFatalError, fatal_error_2};
 use crate::src::zebra::FullState;
 use std::sync::mpsc::TrySendError::Full;
 use engine::src::globals::BoardState;
@@ -136,7 +135,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                            *game_move_list.offset(j as isize) as i32);
                     j += 1
                 }
-                fatal_error(b"%s: %d\n\x00" as *const u8 as
+                fatal_error_2(b"%s: %d\n\x00" as *const u8 as
                                 *const i8,
                             b"Invalid move generated\x00" as *const u8 as
                                 *const i8, this_move);
@@ -231,7 +230,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
             if generate_specific(this_move, side_to_move, &(g_state.board_state).board) == 0 {
-                fatal_error(b"%s: %d\n\x00" as *const u8 as
+                fatal_error_2(b"%s: %d\n\x00" as *const u8 as
                                 *const i8,
                             b"Invalid move generated\x00" as *const u8 as
                                 *const i8, this_move);
@@ -473,7 +472,7 @@ pub unsafe fn read_text_database(file_name:
     fflush(stdout);
     stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
+        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
                     b"Could not open database file\x00" as *const u8 as
                         *const i8, file_name);
     }
@@ -482,7 +481,7 @@ pub unsafe fn read_text_database(file_name:
     fscanf(stream, b"%d\x00" as *const u8 as *const i8,
            &mut magic2 as *mut i32);
     if magic1 != 2718 as i32 || magic2 != 2818 as i32 {
-        fatal_error(b"%s: %s\x00" as *const u8 as *const i8,
+        fatal_error_2(b"%s: %s\x00" as *const u8 as *const i8,
                     b"Wrong checksum, might be an old version\x00" as
                         *const u8 as *const i8, file_name);
     }
@@ -551,7 +550,7 @@ pub unsafe fn read_binary_database(file_name: *const i8, g_state: &mut FullState
     fflush(stdout);
     stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
+        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
                     b"Could not open database file\x00" as *const u8 as
                         *const i8, file_name);
     }
@@ -563,7 +562,7 @@ pub unsafe fn read_binary_database(file_name: *const i8, g_state: &mut FullState
           1 as i32 as size_t, stream);
     if magic1 as i32 != 2718 as i32 ||
            magic2 as i32 != 2818 as i32 {
-        fatal_error(b"%s: %s\x00" as *const u8 as *const i8,
+        fatal_error_2(b"%s: %s\x00" as *const u8 as *const i8,
                     b"Wrong checksum, might be an old version\x00" as
                         *const u8 as *const i8, file_name);
     }
@@ -642,7 +641,7 @@ pub unsafe fn write_text_database(file_name:
     fflush(stdout);
     let stream = fopen(file_name, b"w\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
+        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
                     b"Could not create database file\x00" as *const u8 as
                         *const i8, file_name);
     }
@@ -700,7 +699,7 @@ pub unsafe fn write_binary_database(file_name: *const i8, g_state: &mut FullStat
     fflush(stdout);
     let stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
+        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
                     b"Could not create database file\x00" as *const u8 as
                         *const i8, file_name);
     }
