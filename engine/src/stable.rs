@@ -5,6 +5,7 @@ use crate::src::bitbtest::TestFlips_bitboard;
 use crate::src::end::End;
 use crate::src::globals::Board;
 use crate::src::search::position_list;
+use crate::src::getcoeff::odometer_principle;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -788,13 +789,11 @@ fn count_color_stable(stable_state_: &mut StableState) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pattern: i32 = 0;
-    let mut row: [i32; 8] = [0; 8];
+    let mut row: [i32; 10] = [0; 10];
     static stable_incr: [i32; 8] =
         [1 as i32, 2 as i32, 2 as i32,
          2 as i32, 2 as i32, 2 as i32,
          2 as i32, 1 as i32];
-    i = 0;
-    while i < 8 as i32 { row[i as usize] = 0; i += 1 }
     pattern = 0;
     while pattern < 6561 as i32 {
         stable_state_.black_stable[pattern as usize] = 0;
@@ -816,19 +815,7 @@ fn count_color_stable(stable_state_: &mut StableState) {
             j += 1
         }
         /* Next configuration */
-        i = 0;
-        loop  {
-            /* The odometer principle */
-            row[i as usize] += 1;
-            if row[i as usize] == 3 as i32 {
-                row[i as usize] = 0 as i32
-            }
-            i += 1;
-            if !(row[(i - 1 as i32) as usize] == 0 as i32 &&
-                     i < 8 as i32) {
-                break ;
-            }
-        }
+        odometer_principle(&mut row);
         pattern += 1
     };
 }
