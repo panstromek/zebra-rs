@@ -4,7 +4,7 @@ use engine::src::error::FrontEnd;
 use engine::src::search::disc_count;
 use engine::src::stubs::{abs, ceil, floor};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{exit, FILE, fprintf, fputc, fputs, getc, size_t, sprintf, stdin, strcpy, strdup, strlen, vsprintf};
+use libc_wrapper::{exit, FILE, fprintf, fputc, fputs, getc, size_t, sprintf, stdin, strcpy, strdup, strlen, vsprintf, free};
 
 use crate::src::error::FE;
 use crate::src::zebra::FullState;
@@ -62,8 +62,8 @@ pub static mut display_state: DisplayState = DisplayState {
 */
 
 pub unsafe fn set_names(black_name: *const i8, white_name: *const i8) {
-    if !display_state.black_player.is_null() { FE::free(display_state.black_player as *mut c_void); }
-    if !display_state.white_player.is_null() { FE::free(display_state.white_player as *mut c_void); }
+    if !display_state.black_player.is_null() { free(display_state.black_player as *mut c_void); }
+    if !display_state.white_player.is_null() { free(display_state.white_player as *mut c_void); }
     display_state.black_player = strdup(black_name);
     display_state.white_player = strdup(white_name);
 }

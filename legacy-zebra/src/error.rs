@@ -107,34 +107,6 @@ pub struct LibcFatalError; // FIXME rename this, it's not only error anymore
 pub type FE = LibcFatalError;
 
 impl LibcFatalError {
-    #[inline(always)]
-    pub unsafe fn malloc(size: u64) -> *mut c_void {
-        unsafe { malloc(size) }
-    }
-    #[inline(always)]
-    pub unsafe fn realloc(ptr: *mut c_void, size: u64) -> *mut c_void {
-        unsafe { realloc(ptr, size) }
-    }
-    #[inline(always)]
-    pub unsafe fn free(__ptr: *mut c_void) {
-        unsafe { free(__ptr) }
-    }
-
-    pub fn safe_malloc_failure(size: u64) -> ! {
-        unsafe {
-            fatal_error_2(b"%s %d\n\x00" as *const u8 as *const i8,
-                        b"Memory allocation failure when allocating\x00" as
-                            *const u8 as *const i8, size);
-        }
-    }
-
-    pub fn safe_realloc_failure(size: u64) -> ! {
-        unsafe {
-            fatal_error_2(b"%s %d\n\x00" as *const u8 as *const i8,
-                        b"Memory allocation failure when allocating\x00" as
-                            *const u8 as *const i8, size);
-        }
-    }
     pub fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
         unsafe {
             printf(b"%s:        \x00" as *const u8 as *const i8,
