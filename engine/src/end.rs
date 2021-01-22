@@ -1504,15 +1504,10 @@ fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
         i += 1
     }
     end.  best_move = best_sq;
-    if score > in_alpha {
-        add_hash(&mut hash_state,1 as i32, score, end.  best_move,
-                 16 as i32 | 4 as i32, empties,
-                 0 as i32);
-    } else {
-        add_hash(&mut hash_state,1 as i32, score, end.  best_move,
-                 16 as i32 | 2 as i32, empties,
-                 0 as i32);
-    }
+
+    let flags = 16 as i32 | if score > in_alpha { 4 } else { 2 };
+    add_hash(&mut hash_state, 1 as i32, score, end.best_move,
+             flags, empties, 0);
     return score;
 }
 
