@@ -15,7 +15,7 @@ use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINE
 use engine::src::zebra::EvaluationType;
 use libc_wrapper::{ctime, fclose, fgets, FILE, fopen, fprintf, fputs, free, printf, puts, stdout, strcpy, time, time_t};
 
-use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status, send_status_nodes, send_status_pv, send_status_time, display_state};
+use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, send_status_1, send_status_2, send_status_0};
 use crate::src::error::{FE, LibcFatalError};
 use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
 use crate::src::thordb::LegacyThor;
@@ -1379,17 +1379,17 @@ fn display_out_optimal_line(search_state: &SearchState) {
 fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64, board_state: &BoardState) {
     unsafe {
         clear_status();
-        send_status(b"--> *%2d\x00" as *const u8 as *const i8,
+        send_status_1(b"--> *%2d\x00" as *const u8 as *const i8,
                     interrupted_depth);
         let mut eval_str_ = produce_eval_text(info, 1 as i32);
         let eval_str = eval_str_.as_mut_ptr();
-        send_status(b"%10s  \x00" as *const u8 as *const i8,
+        send_status_1(b"%10s  \x00" as *const u8 as *const i8,
                     eval_str);
         send_status_nodes(counter_value);
         send_status_pv(&board_state.pv[0], interrupted_depth, board_state.pv_depth[0]);
         send_status_time(elapsed_time);
         if elapsed_time != 0.0f64 {
-            send_status(b"%6.0f %s\x00" as *const u8 as
+            send_status_2(b"%6.0f %s\x00" as *const u8 as
                             *const i8,
                         counter_value /
                             (elapsed_time + 0.001f64),
@@ -1404,12 +1404,12 @@ fn display_status_out() {
 
 fn echo_ponder_move_4(curr_move: i32, ponder_move: i32) {
     unsafe {
-        send_status(b"-->   %s        \x00" as *const u8 as
+        send_status_1(b"-->   %s        \x00" as *const u8 as
                         *const i8,
                     b"Thor database\x00" as *const u8 as
                         *const i8);
         if ponder_move != 0 {
-            send_status(b"{%c%c} \x00" as *const u8 as
+            send_status_2(b"{%c%c} \x00" as *const u8 as
                             *const i8,
                         'a' as i32 +
                             ponder_move % 10 as i32 -
@@ -1417,7 +1417,7 @@ fn echo_ponder_move_4(curr_move: i32, ponder_move: i32) {
                         '0' as i32 +
                             ponder_move / 10 as i32);
         }
-        send_status(b"%c%c\x00" as *const u8 as *const i8,
+        send_status_2(b"%c%c\x00" as *const u8 as *const i8,
                     'a' as i32 + curr_move % 10 as i32 -
                         1 as i32,
                     '0' as i32 + curr_move / 10 as i32);
@@ -1427,12 +1427,12 @@ fn echo_ponder_move_4(curr_move: i32, ponder_move: i32) {
 
 fn echo_ponder_move_2(curr_move: i32, ponder_move: i32) {
     unsafe {
-        send_status(b"-->   %s        \x00" as *const u8 as
+        send_status_1(b"-->   %s        \x00" as *const u8 as
                         *const i8,
                     b"Thor database\x00" as *const u8 as
                         *const i8);
         if ponder_move != 0 {
-            send_status(b"{%c%c} \x00" as *const u8 as
+            send_status_2(b"{%c%c} \x00" as *const u8 as
                             *const i8,
                         'a' as i32 +
                             ponder_move % 10 as i32
@@ -1441,7 +1441,7 @@ fn echo_ponder_move_2(curr_move: i32, ponder_move: i32) {
                             ponder_move /
                                 10 as i32);
         }
-        send_status(b"%c%c\x00" as *const u8 as
+        send_status_2(b"%c%c\x00" as *const u8 as
                         *const i8,
                     'a' as i32 + curr_move % 10 as i32 -
                         1 as i32,
@@ -1452,10 +1452,10 @@ fn echo_ponder_move_2(curr_move: i32, ponder_move: i32) {
 
 fn echo_ponder_move(curr_move: i32, ponder_move: i32) {
     unsafe {
-        send_status(b"-->   Forced opening move        \x00" as
+        send_status_0(b"-->   Forced opening move        \x00" as
             *const u8 as *const i8);
         if ponder_move != 0 {
-            send_status(b"{%c%c} \x00" as *const u8 as
+            send_status_2(b"{%c%c} \x00" as *const u8 as
                             *const i8,
                         'a' as i32 +
                             ponder_move % 10 as i32 -
@@ -1463,7 +1463,7 @@ fn echo_ponder_move(curr_move: i32, ponder_move: i32) {
                         '0' as i32 +
                             ponder_move / 10 as i32);
         }
-        send_status(b"%c%c\x00" as *const u8 as *const i8,
+        send_status_2(b"%c%c\x00" as *const u8 as *const i8,
                     'a' as i32 + curr_move % 10 as i32 -
                         1 as i32,
                     '0' as i32 + curr_move / 10 as i32);
@@ -1475,11 +1475,11 @@ fn echo_compute_move_2(info: &EvaluationType, disk: i32) {
     unsafe {
         let mut eval_str_ = produce_eval_text(info, 0 as i32);
         let eval_str = eval_str_.as_mut_ptr();
-        send_status(b"-->         \x00" as *const u8 as
+        send_status_0(b"-->         \x00" as *const u8 as
             *const i8);
-        send_status(b"%-8s  \x00" as *const u8 as *const i8,
+        send_status_1(b"%-8s  \x00" as *const u8 as *const i8,
                     eval_str);
-        send_status(b"%c%c \x00" as *const u8 as *const i8,
+        send_status_2(b"%c%c \x00" as *const u8 as *const i8,
                     'a' as i32 +
                         disk %
                             10 as i32 - 1 as i32,
@@ -1494,9 +1494,9 @@ fn echo_compute_move_1(info: &EvaluationType) {
     unsafe {
         let mut eval_str_ = produce_eval_text(info, 0 as i32);
         let eval_str = eval_str_.as_mut_ptr();
-        send_status(b"-->         \x00" as *const u8 as
+        send_status_0(b"-->         \x00" as *const u8 as
             *const i8);
-        send_status(b"%-8s  \x00" as *const u8 as *const i8,
+        send_status_1(b"%-8s  \x00" as *const u8 as *const i8,
                     eval_str);
         display_status(stdout, 0 as i32);
     }
