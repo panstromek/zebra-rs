@@ -505,7 +505,6 @@ pub fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: &mut [i16],
 */
 pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state: &mut CoeffState) {
 
-    let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
     let mut mirror_pattern: i32 = 0;
@@ -523,9 +522,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
     let mut map_mirror8x2 = vec![0; 59049];
 
     /* Build the pattern tables for 8*1-patterns */
-    i = 0;
-    while i < 8 as i32 { row[i as usize] = 0; i += 1 }
-    i = 0;
+    let mut i = 0;
     while i < 6561 as i32 {
         mirror_pattern = 0;
         j = 0;
