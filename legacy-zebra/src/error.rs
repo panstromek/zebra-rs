@@ -14,7 +14,7 @@ use engine::src::hash::{HashEntry, HashState};
 use engine::src::search::{hash_expand_pv, SearchState};
 
 use engine::src::zebra::{EvaluationType, Config};
-use libc_wrapper::{ctime, exit, fflush, fopen, fprintf, free, malloc, printf, putc, puts, realloc, sprintf, stderr, stdout, strchr, strdup, strlen, time, time_t, tolower, toupper, vfprintf};
+use libc_wrapper::{ctime, exit, fflush, fopen, fprintf, free, malloc, printf, putc, puts, realloc, sprintf, stderr, stdout, strchr, strdup, strlen, time, time_t, tolower, toupper, vfprintf, FILE};
 use thordb_types::C2RustUnnamed;
 
 use crate::{
@@ -59,23 +59,36 @@ static mut buffer: [i8; 16] = [0; 16];
 */
 
 pub unsafe fn fatal_error_3<T: CFormat, U: CFormat, V: CFormat>(format: *const i8, arg: T, arg2: U, arg3: V) -> ! {
-    fatal_error(format, arg, arg2, arg3)
+    fatal_error(|stream| {
+        fprintf(stream, format, arg, arg2, arg3);
+    })
 }
+
 pub unsafe fn fatal_error_2<T: CFormat, U: CFormat>(format: *const i8, arg: T, arg2: U) -> ! {
-    fatal_error(format, arg, arg2)
+    fatal_error(|stream| {
+        fprintf(stream, format, arg, arg2);
+    })
 }
+
 pub unsafe fn fatal_error_1<T: CFormat>(format: *const i8, arg: T) -> ! {
-    fatal_error(format, arg)
+    fatal_error(|stream| {
+        fprintf(stream, format, arg);
+    })
 }
+
 pub unsafe fn fatal_error_0(format: *const i8) -> ! {
-    fatal_error(format)
+    fatal_error(|stream| {
+        fprintf(stream, format);
+    })
 }
-unsafe extern "C" fn fatal_error(format: *const i8, args: ...) -> ! {
+
+unsafe fn fatal_error(mut variadic_printer: impl FnMut(*mut FILE)) -> ! {
     let mut timer: time_t = 0;
-    let mut arg_ptr = args.clone();
+    // let mut arg_ptr = args.clone();
     fprintf(stderr, b"\n%s: \x00" as *const u8 as *const i8,
             b"Fatal error\x00" as *const u8 as *const i8);
-    vfprintf(stderr, format, arg_ptr.as_va_list());
+
+    variadic_printer(stderr);
     let stream =
         fopen(b"zebra.err\x00" as *const u8 as *const i8,
               b"a\x00" as *const u8 as *const i8);
@@ -85,8 +98,7 @@ unsafe extern "C" fn fatal_error(format: *const i8, args: ...) -> ! {
                 b"%s @ %s\n  \x00" as *const u8 as *const i8,
                 b"Fatal error\x00" as *const u8 as *const i8,
                 ctime(&mut timer));
-        arg_ptr = args.clone();
-        vfprintf(stream, format, arg_ptr.as_va_list());
+        variadic_printer(stream);
     }
     exit(1 as i32);
 }
