@@ -209,25 +209,13 @@ pub fn clear_hash_drafts(state: &mut HashState) {
 }
 
 /*
-  POPCOUNT
-*/
-pub fn popcount(mut b: u32) -> u32 {
-    let mut n: u32 = 0;
-    n = 0;
-    while b != 0 as i32 as u32 {
-        n = n.wrapping_add(1);
-        b &= b.wrapping_sub(1 as i32 as u32)
-    }
-    return n;
-}
-/*
   GET_CLOSENESS
   Returns the closeness between the 64-bit integers (a0,a1) and (b0,b1).
   A closeness of 0 means that 32 bits differ.
 */
 pub fn get_closeness(a0: u32, a1: u32, b0: u32, b1: u32) -> u32 {
-    (popcount(a0 ^ b0)
-        .wrapping_add(popcount(a1 ^ b1))
+    (u32::count_ones(a0 ^ b0)
+        .wrapping_add(u32::count_ones(a1 ^ b1))
         .wrapping_sub(32) as i32
     ).abs() as u32
 }
