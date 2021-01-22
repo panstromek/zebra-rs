@@ -362,6 +362,7 @@ unsafe impl CFormat for i32 {}
 unsafe impl CFormat for f64 {}
 unsafe impl CFormat for *mut i8 {}
 unsafe impl CFormat for *const i8 {}
+unsafe impl CFormat for u64 {}
 
 pub unsafe fn send_status_2<T: CFormat, U: CFormat>(format: *const i8, arg: T, arg2: U) {
     let written =
