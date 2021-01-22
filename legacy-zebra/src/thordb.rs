@@ -2837,7 +2837,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
                 as *mut *mut GameType;
         thor_search.allocation = thor_game_count
     } else if thor_search.allocation < thor_game_count {
-        FE::free(thor_search.match_list as *mut c_void);
+        free(thor_search.match_list as *mut c_void);
         thor_search.match_list =
             safe_malloc((thor_game_count as
                 u64).wrapping_mul(::std::mem::size_of::<*mut GameType>()
