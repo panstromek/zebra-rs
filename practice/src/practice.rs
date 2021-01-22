@@ -5,7 +5,7 @@ non_upper_case_globals, unused_assignments, unused_mut)]
 
 use engine::src::moves::{generate_all, make_move, unmake_move, valid_move};
 use engine::src::osfbook::{find_opening_name, get_hash};
-use legacy_zebra::src::display::{black_eval, black_player, black_time, current_row, display_board, produce_eval_text, set_move_list, set_names, white_eval, white_player, white_time};
+use legacy_zebra::src::display::{display_board, produce_eval_text, set_move_list, set_names, display_state};
 use legacy_zebra::src::error::{FE, LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
@@ -116,9 +116,9 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         get_hash(val0___, val1___, orientation___, &mut (g_state.g_book), &(g_state.board_state).board);
         display_board(stdout, &(g_state.board_state).board, side_to_move,
                       1 as i32, 0 as i32, 0 as i32,
-                      current_row,
-                      black_player, black_time, black_eval,
-                      white_player, white_time, white_eval,
+                      display_state.current_row,
+                      display_state.black_player, display_state.black_time, display_state.black_eval,
+                      display_state.white_player, display_state.white_time, display_state.white_eval,
                       &(g_state.board_state).black_moves, &(g_state.board_state).white_moves
         );
         printf(b"Book hash: %d %d (%d)\n\n\x00" as *const u8 as

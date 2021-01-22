@@ -10,7 +10,7 @@ use engine::src::search::disc_count;
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvaluationType;
-use legacy_zebra::src::display::{black_eval, black_player, black_time, current_row, display_board, display_move, set_evals, set_move_list, set_names, white_eval, white_player, white_time};
+use legacy_zebra::src::display::{display_board, display_move, set_evals, set_move_list, set_names, display_state};
 use legacy_zebra::src::error::{FE, LibcFatalError};
 use legacy_zebra::src::game::{compute_move, game_init, global_setup, toggle_status_log};
 use legacy_zebra::src::learn::init_learn;
@@ -274,9 +274,9 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                               g_state.board_state.white_moves.as_mut_ptr(), g_state.board_state.score_sheet_row);
                 display_board(stdout, &g_state.board_state.board, side_to_move,
                               1 as i32, 0 as i32,
-                              1 as i32, current_row,
-                              black_player, black_time, black_eval,
-                              white_player, white_time, white_eval,
+                              1 as i32, display_state.current_row,
+                              display_state.black_player, display_state.black_time, display_state.black_eval,
+                              display_state.white_player, display_state.white_time, display_state.white_eval,
                               &g_state.board_state.black_moves, &g_state.board_state.white_moves);
             }
             search_start =  g_state.g_timer.get_real_timer();

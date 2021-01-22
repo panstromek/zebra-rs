@@ -35,7 +35,7 @@ use flip::unflip::FlipStack;
 use libc_wrapper::{atof, atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time, fflush};
 use libc_wrapper::{FILE, time_t};
 
-use crate::src::display::{black_eval, black_player, black_time, current_row, display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, white_eval, white_player, white_time};
+use crate::src::display::{display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state};
 use crate::src::error::{fatal_error, FE, LibcFatalError};
 use crate::src::game::{compute_move, global_setup, LibcBoardFileSource, LibcZebraOutput, LogFileHandler, toggle_status_log};
 use crate::src::learn::{init_learn, LibcLearner};
@@ -847,8 +847,8 @@ impl ZebraFrontend for LibcFrontend {
             display_board(stdout, board_,
                           side_to_move, 1,
                           give_time_, 1,
-                          current_row, black_player, black_time, black_eval,
-                          white_player, white_time, white_eval, black_moves_, white_moves_);
+                          display_state.current_row, display_state.black_player, display_state.black_time, display_state.black_eval,
+                          display_state.white_player, display_state.white_time, display_state.white_eval, black_moves_, white_moves_);
         }
     }
     fn print_out_thor_matches(thor_max_games_: i32) {
@@ -1183,9 +1183,9 @@ unsafe fn analyze_game(mut move_string: *const i8,
                 }
                 display_board(stdout, &(g_state.board_state).board, side_to_move,
                               1, (&mut g_state.g_config).use_timer, 1,
-                              current_row,
-                              black_player, black_time, black_eval,
-                              white_player, white_time, white_eval,
+                              display_state.current_row,
+                              display_state.black_player, display_state.black_time, display_state.black_eval,
+                              display_state.white_player, display_state.white_time, display_state.white_eval,
                               &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
             }
             /* Check what the Thor opening statistics has to say */
@@ -1388,9 +1388,9 @@ unsafe fn analyze_game(mut move_string: *const i8,
                       i32);
         display_board(stdout, &(g_state.board_state).board, side_to_move,
                       1 as i32, (&mut g_state.g_config).use_timer, 1 as i32,
-                      current_row,
-                      black_player, black_time, black_eval,
-                      white_player, white_time, white_eval,
+                      display_state.current_row,
+                      display_state.black_player, display_state.black_time, display_state.black_eval,
+                      display_state.white_player, display_state.white_time, display_state.white_eval,
                       &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
     }
     fclose(output_stream);
@@ -1605,9 +1605,9 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                               (g_state.board_state).white_moves.as_mut_ptr(), (g_state.board_state).score_sheet_row);
                 display_board(stdout, &(g_state.board_state).board, side_to_move,
                               1 as i32, 0 as i32,
-                              1 as i32, current_row,
-                              black_player, black_time, black_eval,
-                              white_player, white_time, white_eval,
+                              1 as i32, display_state.current_row,
+                              display_state.black_player, display_state.black_time, display_state.black_eval,
+                              display_state.white_player, display_state.white_time, display_state.white_eval,
                               &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
             }
             search_start =  (&mut g_state.g_timer).get_real_timer();

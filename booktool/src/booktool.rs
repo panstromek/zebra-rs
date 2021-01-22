@@ -17,7 +17,7 @@ use engine::src::zebra::EvaluationType;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvalResult::{WON_POSITION};
 use engine::src::stubs::{abs, floor};
-use legacy_zebra::src::display::{display_board, current_row, black_player, black_time, black_eval, white_player, white_time, white_eval};
+use legacy_zebra::src::display::{display_board, display_state};
 use engine::src::hash::{setup_hash, determine_hash_values};
 use engine::src::midgame::middle_game;
 use engine::src::end::end_game;
@@ -975,9 +975,9 @@ unsafe fn do_midgame_statistics(index: i32,
             i32) < spec.max_diff {
         display_board(stdout, &g_state.board_state.board, 0 as i32,
                       0 as i32, 0 as i32, 0 as i32,
-                      current_row,
-                      black_player, black_time, black_eval,
-                      white_player, white_time, white_eval,
+                      display_state.current_row,
+                      display_state.black_player, display_state.black_time, display_state.black_eval,
+                      display_state.white_player, display_state.white_time, display_state.white_eval,
                       &g_state.board_state.black_moves, &g_state.board_state.white_moves
         );
         setup_hash(0 as i32, &mut g_state.hash_state, &mut  g_state.random_instance);
@@ -1141,9 +1141,9 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
     let mut eval_list: [i32; 64] = [0; 64];
     display_board(stdout, &g_state.board_state.board, 0 as i32,
                   0 as i32, 0 as i32, 0 as i32,
-                  current_row,
-                  black_player, black_time, black_eval,
-                  white_player, white_time, white_eval,
+                  display_state.current_row,
+                  display_state.black_player, display_state.black_time, display_state.black_eval,
+                  display_state.white_player, display_state.white_time, display_state.white_eval,
                   &g_state.board_state.black_moves, &g_state.board_state.white_moves
     );
     g_state.hash_state.set_hash_transformation(abs(g_state.random_instance.my_random() as i32) as u32,
@@ -3961,4 +3961,3 @@ pub unsafe fn do_compress(index: i32,
     let ref mut fresh44 = (*g_state.g_book.node.offset(index as isize)).flags;
     *fresh44 = (*fresh44 as i32 ^ 8 as i32) as u16;
 }
-

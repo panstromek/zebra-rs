@@ -15,7 +15,7 @@ use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINE
 use engine::src::zebra::EvaluationType;
 use libc_wrapper::{ctime, fclose, fgets, FILE, fopen, fprintf, fputs, free, printf, puts, stdout, strcpy, time, time_t};
 
-use crate::src::display::{black_eval, black_player, black_time, clear_status, current_row, display_board, display_optimal_line, display_status, produce_eval_text, send_status, send_status_nodes, send_status_pv, send_status_time, white_eval, white_player, white_time};
+use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status, send_status_nodes, send_status_pv, send_status_time, display_state};
 use crate::src::error::{FE, LibcFatalError};
 use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
 use crate::src::thordb::LegacyThor;
@@ -1606,9 +1606,9 @@ fn log_board(logger: &mut LogFileHandler, board_state: &BoardState, side_to_move
     unsafe {
         display_board(logger.log_file, board_, side_to_move_,
                       0 as i32, 0 as i32, 0 as i32,
-                      current_row,
-                      black_player, black_time, black_eval,
-                      white_player, white_time, white_eval,
+                      display_state.current_row,
+                      display_state.black_player, display_state.black_time, display_state.black_eval,
+                      display_state.white_player, display_state.white_time, display_state.white_eval,
                       &board_state.black_moves, &board_state.white_moves
         );
     }

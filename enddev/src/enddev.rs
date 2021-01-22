@@ -10,7 +10,7 @@ use engine::src::search::disc_count;
 use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::{EvaluationType, FullState};
-use legacy_zebra::src::display::{black_eval, black_player, black_time, current_row, display_board, white_eval, white_player, white_time};
+use legacy_zebra::src::display::{display_board, display_state};
 use legacy_zebra::src::error::{FE, LibcFatalError};
 use legacy_zebra::src::game::{compute_move, extended_compute_move, game_init, get_evaluated, get_evaluated_count, global_setup};
 use legacy_zebra::src::learn::init_learn;
@@ -440,9 +440,9 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         move_0, g_state.moves_state.disks_played);
                 display_board(stderr, &g_state.board_state.board, side_to_move,
                               0 as i32, 0 as i32,
-                              0 as i32, current_row,
-                              black_player, black_time, black_eval,
-                              white_player, white_time, white_eval,
+                              0 as i32, display_state.current_row,
+                              display_state.black_player, display_state.black_time, display_state.black_eval,
+                              display_state.white_player, display_state.white_time, display_state.white_eval,
                               &g_state.board_state.black_moves, &g_state.board_state.white_moves);
                 exit(1 as i32);
             }

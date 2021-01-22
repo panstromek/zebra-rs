@@ -10,26 +10,47 @@ use crate::src::error::FE;
 use crate::src::zebra::FullState;
 use engine::src::timer::Timer;
 
-static mut stored_status_buffer: [i8; 256] = [0; 256];
+pub struct DisplayState {
+    stored_status_buffer: [i8; 256],
+    pub black_player: *mut i8,
+    pub white_player: *mut i8,
+    pub status_buffer: [i8; 256],
+    pub sweep_buffer: [i8; 256],
+    pub black_eval: f64,
+    pub white_eval: f64,
+    pub last_output: f64,
+    pub interval1: f64,
+    pub interval2: f64,
+    pub black_time: i32,
+    pub white_time: i32,
+    pub current_row: i32,
+    pub status_modified: i32,
+    pub sweep_modified: i32,
+    pub timed_buffer_management: i32,
+    pub status_pos: i32,
+    pub sweep_pos: i32,
+}
 
-/* Local variables */
-pub static mut black_player: *mut i8 = 0 as *const i8 as *mut i8;
-pub static mut white_player: *mut i8 = 0 as *const i8 as *mut i8;
-pub static mut status_buffer: [i8; 256] = [0; 256];
-pub static mut sweep_buffer: [i8; 256] = [0; 256];
-pub static mut black_eval: f64 = 0.0f64;
-pub static mut white_eval: f64 = 0.0f64;
-pub static mut last_output: f64 = 0.0f64;
-pub static mut interval1: f64 = 0.;
-pub static mut interval2: f64 = 0.;
-pub static mut black_time: i32 = 0;
-pub static mut white_time: i32 = 0;
-pub static mut current_row: i32 = 0;
-pub static mut status_modified: i32 = 0;
-pub static mut sweep_modified: i32 = 0;
-pub static mut timed_buffer_management: i32 = 1;
-pub static mut status_pos: i32 = 0;
-pub static mut sweep_pos: i32 = 0;
+pub static mut display_state: DisplayState = DisplayState {
+    stored_status_buffer: [0; 256],
+    black_player: 0 as *const i8 as *mut i8,
+    white_player: 0 as *const i8 as *mut i8,
+    status_buffer: [0; 256],
+    sweep_buffer: [0; 256],
+    black_eval: 0.0f64,
+    white_eval: 0.0f64,
+    last_output: 0.0f64,
+    interval1: 0.,
+    interval2: 0.,
+    black_time: 0,
+    white_time: 0,
+    current_row: 0,
+    status_modified: 0,
+    sweep_modified: 0,
+    timed_buffer_management: 1,
+    status_pos: 0,
+    sweep_pos: 0,
+};
 
 /*
   SET_NAMES
@@ -41,24 +62,24 @@ pub static mut sweep_pos: i32 = 0;
 */
 
 pub unsafe fn set_names(black_name: *const i8, white_name: *const i8) {
-    if !black_player.is_null() { FE::free(black_player as *mut c_void); }
-    if !white_player.is_null() { FE::free(white_player as *mut c_void); }
-    black_player = strdup(black_name);
-    white_player = strdup(white_name);
+    if !display_state.black_player.is_null() { FE::free(display_state.black_player as *mut c_void); }
+    if !display_state.white_player.is_null() { FE::free(display_state.white_player as *mut c_void); }
+    display_state.black_player = strdup(black_name);
+    display_state.white_player = strdup(white_name);
 }
 
 pub unsafe fn set_times(black: i32, white: i32) {
-    black_time = black;
-    white_time = white;
+    display_state.black_time = black;
+    display_state.white_time = white;
 }
 
 pub unsafe fn set_evals(black: f64, white: f64) {
-    black_eval = black;
-    white_eval = white;
+    display_state.black_eval = black;
+    display_state.white_eval = white;
 }
 
 pub unsafe fn set_move_list(_black: *mut i32, _white: *mut i32, row: i32) {
-    current_row = row;
+    display_state.current_row = row;
 }
 
 /*
@@ -67,9 +88,9 @@ pub unsafe fn set_move_list(_black: *mut i32, _white: *mut i32, row: i32) {
 */
 
 pub unsafe fn clear_status() {
-    status_pos = 0;
-    status_buffer[0] = 0;
-    status_modified = 1;
+    display_state.status_pos = 0;
+    display_state.status_buffer[0] = 0;
+    display_state.status_modified = 1;
 }
 
 /*
@@ -78,9 +99,9 @@ pub unsafe fn clear_status() {
 */
 
 pub unsafe fn clear_sweep() {
-    sweep_pos = 0;
-    sweep_buffer[0] = 0;
-    sweep_modified = 1;
+    display_state.sweep_pos = 0;
+    display_state.sweep_buffer[0] = 0;
+    display_state.sweep_modified = 1;
 }
 
 /*
@@ -91,7 +112,7 @@ pub unsafe fn clear_sweep() {
 */
 
 pub unsafe fn toggle_smart_buffer_management(use_smart: i32) {
-    timed_buffer_management = use_smart;
+    display_state.timed_buffer_management = use_smart;
 }
 /*
   RESET_BUFFER_DISPLAY
@@ -102,9 +123,9 @@ pub unsafe fn reset_buffer_display<FE: FrontEnd>(g_timer:&mut Timer) {
     /* The first two Fibonacci numbers */
     clear_status();
     clear_sweep();
-    interval1 = 0.0f64;
-    interval2 = 1.0f64;
-    last_output =  g_timer.get_real_timer();
+    display_state.interval1 = 0.0f64;
+    display_state.interval2 = 1.0f64;
+    display_state.last_output =  g_timer.get_real_timer();
 }
 
 /*
@@ -339,10 +360,10 @@ pub unsafe fn display_optimal_line(stream: *mut FILE, full_pv_depth_: i32, full_
 pub unsafe extern "C" fn send_status(format: *const i8, args: ...) {
     let mut arg_ptr = args.clone();
     let written =
-        vsprintf(status_buffer.as_mut_ptr().offset(status_pos as isize),
+        vsprintf(display_state.status_buffer.as_mut_ptr().offset(display_state.status_pos as isize),
                  format, arg_ptr.as_va_list());
-    status_pos += written;
-    status_modified = 1;
+    display_state.status_pos += written;
+    display_state.status_modified = 1;
 }
 /*
   SEND_STATUS_TIME
@@ -415,14 +436,14 @@ pub unsafe fn send_status_pv(pv: &[i32; 64], max_depth: i32, pv_depth_zero: i32)
 
 pub unsafe fn display_status(stream: *mut FILE,
                                         allow_repeat: i32) {
-    if (status_pos != 0 as i32 || allow_repeat != 0) &&
-             strlen(status_buffer.as_mut_ptr()) >
+    if (display_state.status_pos != 0 as i32 || allow_repeat != 0) &&
+             strlen(display_state.status_buffer.as_mut_ptr()) >
                0 as i32 as u64 {
         fprintf(stream, b"%s\n\x00" as *const u8 as *const i8,
-                status_buffer.as_mut_ptr());
-        strcpy(stored_status_buffer.as_mut_ptr(), status_buffer.as_mut_ptr());
+                display_state.status_buffer.as_mut_ptr());
+        strcpy(display_state.stored_status_buffer.as_mut_ptr(), display_state.status_buffer.as_mut_ptr());
     }
-    status_pos = 0;
+    display_state.status_pos = 0;
 }
 /*
   SEND_SWEEP
@@ -433,10 +454,10 @@ pub unsafe extern "C" fn send_sweep(format: *const i8,
                                     args: ...) {
     let mut arg_ptr = args.clone();
     let written =
-        vsprintf(sweep_buffer.as_mut_ptr().offset(sweep_pos as isize), format,
+        vsprintf(display_state.sweep_buffer.as_mut_ptr().offset(display_state.sweep_pos as isize), format,
                  arg_ptr.as_va_list());
-    sweep_pos += written;
-    sweep_modified = 1;
+    display_state.sweep_pos += written;
+    display_state.sweep_modified = 1;
 }
 /*
   DISPLAY_SWEEP
@@ -444,11 +465,11 @@ pub unsafe extern "C" fn send_sweep(format: *const i8,
 */
 
 pub unsafe fn display_sweep(stream: *mut FILE) {
-    if sweep_pos != 0 as i32 {
+    if display_state.sweep_pos != 0 as i32 {
         fprintf(stream, b"%s\n\x00" as *const u8 as *const i8,
-                sweep_buffer.as_mut_ptr());
+                display_state.sweep_buffer.as_mut_ptr());
     }
-    sweep_modified = 0;
+    display_state.sweep_modified = 0;
 }
 /*
   PRODUCE_EVAL_TEXT
