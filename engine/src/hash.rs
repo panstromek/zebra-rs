@@ -147,34 +147,16 @@ pub fn find_hash(entry: &mut HashEntry, reverse_mode: i32, hash_state_: &mut Has
    in the hash table to something more usable.
 */
 fn compact_to_wide(compact_entry: &CompactHashEntry, entry: &mut HashEntry) {
-    (*entry).key2 = (*compact_entry).key2;
-    (*entry).eval = (*compact_entry).eval;
-    (*entry).move_0[0] =
-        ((*compact_entry).moves & 255 as i32 as u32) as
-            i32;
-    (*entry).move_0[1] =
-        ((*compact_entry).moves >> 8 as i32 &
-            255 as i32 as u32) as i32;
-    (*entry).move_0[2] =
-        ((*compact_entry).moves >> 16 as i32 &
-            255 as i32 as u32) as i32;
-    (*entry).move_0[3] =
-        ((*compact_entry).moves >> 24 as i32 &
-            255 as i32 as u32) as i32;
-    (*entry).key1 =
-        (*compact_entry).key1_selectivity_flags_draft &
-            0xff000000 as u32;
-    (*entry).selectivity =
-        (((*compact_entry).key1_selectivity_flags_draft &
-            0xffffff as i32 as u32) >> 16 as i32)
-            as i16;
-    (*entry).flags =
-        (((*compact_entry).key1_selectivity_flags_draft &
-            0xffff as i32 as u32) >> 8 as i32) as
-            i16;
-    (*entry).draft =
-        ((*compact_entry).key1_selectivity_flags_draft &
-            0xff as i32 as u32) as i16;
+    entry.key2 = compact_entry.key2;
+    entry.eval = compact_entry.eval;
+    entry.move_0[0] = (compact_entry.moves & 255) as i32;
+    entry.move_0[1] = (compact_entry.moves >> 8 & 255) as i32;
+    entry.move_0[2] = (compact_entry.moves >> 16 & 255) as i32;
+    entry.move_0[3] = (compact_entry.moves >> 24 & 255) as i32;
+    entry.key1 = compact_entry.key1_selectivity_flags_draft & 0xff000000 as u32;
+    entry.selectivity = ((compact_entry.key1_selectivity_flags_draft & 0xffffff) >> 16) as i16;
+    entry.flags = ((compact_entry.key1_selectivity_flags_draft & 0xffff) >> 8) as i16;
+    entry.draft = (compact_entry.key1_selectivity_flags_draft & 0xff) as i16;
 }
 
 /*
