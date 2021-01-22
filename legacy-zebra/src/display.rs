@@ -364,26 +364,25 @@ unsafe impl CFormat for *mut i8 {}
 unsafe impl CFormat for *const i8 {}
 unsafe impl CFormat for u64 {}
 
+impl DisplayState {
+    pub unsafe fn status(&mut self, mut writer: impl FnMut(*mut i8) -> i32) {
+        let cursor = self.status_buffer.as_mut_ptr().offset(display_state.status_pos as isize);
+        let written = writer(cursor);
+        self.status_pos += written;
+        self.status_modified = 1;
+    }
+}
+
 pub unsafe fn send_status_2<T: CFormat, U: CFormat>(format: *const i8, arg: T, arg2: U) {
-    let written =
-        sprintf(display_state.status_buffer.as_mut_ptr().offset(display_state.status_pos as isize),
-                 format, arg, arg2);
-    display_state.status_pos += written;
-    display_state.status_modified = 1;
+    display_state.status(|cursor| sprintf(cursor, format, arg, arg2));
 }
+
 pub unsafe fn send_status_1<T: CFormat>(format: *const i8, arg: T) {
-    let written =
-        sprintf(display_state.status_buffer.as_mut_ptr().offset(display_state.status_pos as isize),
-                 format, arg);
-    display_state.status_pos += written;
-    display_state.status_modified = 1;
+    display_state.status(|cursor| sprintf(cursor, format, arg));
 }
+
 pub unsafe fn send_status_0(format: *const i8) {
-    let written =
-        sprintf(display_state.status_buffer.as_mut_ptr().offset(display_state.status_pos as isize),
-                 format);
-    display_state.status_pos += written;
-    display_state.status_modified = 1;
+    display_state.status(|cursor| sprintf(cursor, format));
 }
 /*
   SEND_STATUS_TIME
