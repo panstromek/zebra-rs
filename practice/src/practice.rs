@@ -56,7 +56,6 @@ unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
 unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                  -> i32 {
     let mut book_name: *mut i8 = 0 as *mut i8;
-    let mut buffer: *mut i8 = 0 as *mut i8;
     let mut move_string: [i8; 10] = [0; 10];
     let mut i: i32 = 0;
     let mut side_to_move: i32 = 0;
@@ -131,14 +130,13 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                    *const i8, get_evaluated_count());
         i = 0;
         while i < get_evaluated_count() {
-            buffer =
-                produce_eval_text(&get_evaluated(i).eval, 0 as i32);
+            let mut eval_str_ = produce_eval_text(&get_evaluated(i).eval, 0 as i32);
+            let buffer = eval_str_.as_mut_ptr();
             printf(b"   %c%c   %s\n\x00" as *const u8 as *const i8,
                    'a' as i32 + get_evaluated(i).move_0 % 10 as i32 -
                        1 as i32,
                    '0' as i32 + get_evaluated(i).move_0 / 10 as i32,
                    buffer);
-            FE::free(buffer as *mut ::std::ffi::c_void);
             i += 1
         }
         puts(b"\x00" as *const u8 as *const i8);

@@ -7,7 +7,6 @@ use engine::src::zebra::EvaluationType;
 use libc_wrapper::{exit, FILE, fprintf, fputc, fputs, getc, size_t, sprintf, stdin, strcpy, strdup, strlen, vsprintf};
 
 use crate::src::error::FE;
-use crate::src::safemem::safe_malloc;
 use crate::src::zebra::FullState;
 use engine::src::timer::Timer;
 
@@ -458,11 +457,13 @@ pub unsafe fn display_sweep(stream: *mut FILE) {
 
 pub unsafe fn produce_eval_text(eval_info: &EvaluationType,
                                            short_output: i32)
- -> *mut i8 {
+ -> [i8; 32] {
+
+    let mut buf = [0i8; 32];
+    let buffer =  buf.as_mut_ptr();
+    let mut len = 0;
     let disk_diff: f64;
     let int_confidence: i32;
-    let buffer = safe_malloc(32 as i32 as size_t) as *mut i8;
-    let mut len = 0;
     match eval_info.type_0 as u32 {
         0 => {
             if eval_info.score >= 29000 as i32 {
@@ -726,5 +727,5 @@ pub unsafe fn produce_eval_text(eval_info: &EvaluationType,
                     b" (%s)\x00" as *const u8 as *const i8,
                     b"book\x00" as *const u8 as *const i8)
     }
-    buffer
+    buf
 }
