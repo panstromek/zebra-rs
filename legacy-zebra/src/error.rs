@@ -339,9 +339,9 @@ impl FrontEnd for LibcFatalError {
             search_state.set_current_eval(eval);
             clear_status();
             send_status(b"-->  %2d  \x00" as *const u8 as *const i8, empties);
-            let eval_str = produce_eval_text(&*eval_info, 1 as i32);
+            let mut eval_str_ = produce_eval_text(&*eval_info, 1 as i32);
+            let eval_str = eval_str_.as_mut_ptr();
             send_status(b"%-10s  \x00" as *const u8 as *const i8, eval_str);
-            free(eval_str as *mut std::ffi::c_void);
             let nodes_counter: &mut CounterType = &mut search_state.nodes;
             let node_val = counter_value(nodes_counter);
             send_status_nodes(node_val);
@@ -598,10 +598,10 @@ impl FrontEnd for LibcFatalError {
              }
              send_status(b"%2d  \x00" as *const u8 as *const i8,
                          depth);
-             let eval_str = produce_eval_text(eval_info, 1 as i32);
+             let mut eval_str_ = produce_eval_text(eval_info, 1 as i32);
+             let eval_str = eval_str_.as_mut_ptr();
              send_status(b"%-10s  \x00" as *const u8 as *const i8,
                          eval_str);
-             free(eval_str as *mut std::ffi::c_void);
              let node_val = counter_value(nodes_counter);
              send_status_nodes(node_val);
              if search_state.get_ponder_move() != 0 {

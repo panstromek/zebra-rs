@@ -1381,10 +1381,10 @@ fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counte
         clear_status();
         send_status(b"--> *%2d\x00" as *const u8 as *const i8,
                     interrupted_depth);
-        let eval_str = produce_eval_text(info, 1 as i32);
+        let mut eval_str_ = produce_eval_text(info, 1 as i32);
+        let eval_str = eval_str_.as_mut_ptr();
         send_status(b"%10s  \x00" as *const u8 as *const i8,
                     eval_str);
-        free(eval_str as *mut std::ffi::c_void);
         send_status_nodes(counter_value);
         send_status_pv(&board_state.pv[0], interrupted_depth, board_state.pv_depth[0]);
         send_status_time(elapsed_time);
@@ -1473,12 +1473,12 @@ fn echo_ponder_move(curr_move: i32, ponder_move: i32) {
 
 fn echo_compute_move_2(info: &EvaluationType, disk: i32) {
     unsafe {
-        let eval_str = produce_eval_text(info, 0 as i32);
+        let mut eval_str_ = produce_eval_text(info, 0 as i32);
+        let eval_str = eval_str_.as_mut_ptr();
         send_status(b"-->         \x00" as *const u8 as
             *const i8);
         send_status(b"%-8s  \x00" as *const u8 as *const i8,
                     eval_str);
-        free(eval_str as *mut std::ffi::c_void);
         send_status(b"%c%c \x00" as *const u8 as *const i8,
                     'a' as i32 +
                         disk %
@@ -1492,13 +1492,13 @@ fn echo_compute_move_2(info: &EvaluationType, disk: i32) {
 
 fn echo_compute_move_1(info: &EvaluationType) {
     unsafe {
-        let eval_str = produce_eval_text(info, 0 as i32);
+        let mut eval_str_ = produce_eval_text(info, 0 as i32);
+        let eval_str = eval_str_.as_mut_ptr();
         send_status(b"-->         \x00" as *const u8 as
             *const i8);
         send_status(b"%-8s  \x00" as *const u8 as *const i8,
                     eval_str);
         display_status(stdout, 0 as i32);
-        free(eval_str as *mut std::ffi::c_void);
     }
 }
 }
@@ -1578,14 +1578,14 @@ fn log_best_move(logger: &mut LogFileHandler, best_move: i32) {
 
 fn log_chosen_move(logger: &mut LogFileHandler, curr_move: i32, info: &EvaluationType) {
     unsafe {
-        let eval_str = produce_eval_text(info, 0 as i32);
+        let mut eval_str_ = produce_eval_text(info, 0 as i32);
+        let eval_str = eval_str_.as_mut_ptr();
         fprintf(logger.log_file,
                 b"%s: %c%c  %s\n\x00" as *const u8 as *const i8,
                 b"Move chosen\x00" as *const u8 as *const i8,
                 'a' as i32 + curr_move % 10 as i32 -
                     1 as i32,
                 '0' as i32 + curr_move / 10 as i32, eval_str);
-        free(eval_str as *mut std::ffi::c_void);
     }
 }
 
