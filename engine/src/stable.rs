@@ -815,7 +815,7 @@ fn count_color_stable(stable_state_: &mut StableState) {
             j += 1
         }
         /* Next configuration */
-        odometer_principle(&mut row);
+        odometer_principle(&mut row, 8);
         pattern += 1
     };
 }

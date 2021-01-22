@@ -19,6 +19,7 @@ use engine::src::patterns::pow3;
 use engine::src::thordb::ThorDatabase;
 use crate::src::zebra::{FullState};
 use engine::src::myrandom::MyRandom;
+use engine::src::getcoeff::odometer_principle;
 
 /* Local variables */
 pub static mut thor_game_count: i32 = 0;
@@ -2083,19 +2084,7 @@ unsafe fn init_thor_hash(g_state: &mut FullState) {
             j += 1
         }
         /* Next configuration */
-        j = 0;
-        loop  {
-            /* The odometer principle */
-            row[j as usize] += 1;
-            if row[j as usize] == 3 as i32 {
-                row[j as usize] = 0 as i32
-            }
-            j += 1;
-            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
-                j < 8 as i32) {
-                break ;
-            }
-        }
+        odometer_principle(&mut row, 8);
         i += 1
     }
     i = 0;

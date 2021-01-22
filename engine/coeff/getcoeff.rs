@@ -340,21 +340,24 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
             coeff_set.diag4_mut()[i as usize] = f64::floor(result * 128.0f64 + 0.5f64) as i16
         }
         /* Next configuration */
-        j = 0;
-        loop  {
-            /* The odometer principle */
-            row[j as usize] += 1;
-            if row[j as usize] == 3 as i32 {
-                row[j as usize] = 0 as i32
-            }
-            j += 1;
-            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
-                j < 10 as i32) {
-                break ;
-            }
-        }
+        odometer_principle(&mut row, 10);
         i += 1
     };
+}
+
+pub fn odometer_principle(row: &mut [i32; 10], cutoff: i32) {
+    let mut j = 0;
+    loop {
+        /* The odometer principle */
+        row[j as usize] += 1;
+        if row[j as usize] == 3 as i32 {
+            row[j as usize] = 0 as i32
+        }
+        j += 1;
+        if !(row[(j - 1 as i32) as usize] == 0 as i32 && j < cutoff) {
+            break;
+        }
+    }
 }
 
 fn create_terminal_pattern() -> [[f64; 8]; 8] {
