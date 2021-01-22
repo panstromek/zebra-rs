@@ -2,9 +2,9 @@ use regex::{Captures, Regex};
 use std::process::{Command};
 
 fn main() {
-    let filename = "../engine/flip/unflip.rs";
-    let struct_name = "FlipStack___";
-    let global_name = "flip_stack___";
+    let filename = "../legacy-zebra/src/display.rs";
+    let struct_name = "DisplayState___";
+    let global_name = "display_state";
 
     let file = std::fs::read_to_string(filename).unwrap();
     let declaration = Regex::new(

@@ -23,7 +23,7 @@ use crate::{
                   send_status, send_status_nodes, send_status_pv, send_status_time, send_sweep},
     }
 };
-use crate::src::display::{clear_status, clear_sweep, interval1, interval2, last_output, reset_buffer_display, status_modified, sweep_modified, timed_buffer_management};
+use crate::src::display::{clear_status, clear_sweep, reset_buffer_display, display_state};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::sort_thor_games;
 use crate::src::zebra::FullState;
@@ -181,16 +181,16 @@ impl FrontEnd for LibcFatalError {
     fn display_buffers(g_timer: &mut Timer) {
         unsafe {
             let timer =  g_timer.get_real_timer();
-            if timer - last_output >= interval2 || timed_buffer_management == 0 {
+            if timer - display_state.last_output >= display_state.interval2 || display_state.timed_buffer_management == 0 {
                 display_status(stdout, 0 as i32);
-                status_modified = 0;
-                if timer - last_output >= interval2 {
-                    if sweep_modified != 0 { display_sweep(stdout); }
-                    last_output = timer;
+                display_state.status_modified = 0;
+                if timer - display_state.last_output >= display_state.interval2 {
+                    if display_state.sweep_modified != 0 { display_sweep(stdout); }
+                    display_state.last_output = timer;
                     /* Display the sweep at Fibonacci-spaced times */
-                    let new_interval = interval1 + interval2;
-                    interval1 = interval2;
-                    interval2 = new_interval
+                    let new_interval = display_state.interval1 + display_state.interval2;
+                    display_state.interval1 = display_state.interval2;
+                    display_state.interval2 = new_interval
                 }
             };
         }
