@@ -20,10 +20,10 @@ use thordb_types::C2RustUnnamed;
 use crate::{
     src::{
         display::{display_status, display_sweep, produce_eval_text,
-                  send_status, send_status_nodes, send_status_pv, send_status_time, send_sweep},
+                  send_status_nodes, send_status_pv, send_status_time, send_sweep},
     }
 };
-use crate::src::display::{clear_status, clear_sweep, reset_buffer_display, display_state};
+use crate::src::display::{clear_status, clear_sweep, reset_buffer_display, display_state, send_status_1, send_status_2, send_status_0};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::sort_thor_games;
 use crate::src::zebra::FullState;
@@ -338,15 +338,15 @@ impl FrontEnd for LibcFatalError {
             let eval = *eval_info;
             search_state.set_current_eval(eval);
             clear_status();
-            send_status(b"-->  %2d  \x00" as *const u8 as *const i8, empties);
+            send_status_1(b"-->  %2d  \x00" as *const u8 as *const i8, empties);
             let mut eval_str_ = produce_eval_text(&*eval_info, 1 as i32);
             let eval_str = eval_str_.as_mut_ptr();
-            send_status(b"%-10s  \x00" as *const u8 as *const i8, eval_str);
+            send_status_1(b"%-10s  \x00" as *const u8 as *const i8, eval_str);
             let nodes_counter: &mut CounterType = &mut search_state.nodes;
             let node_val = counter_value(nodes_counter);
             send_status_nodes(node_val);
             if search_state.get_ponder_move() != 0 {
-                send_status(b"{%c%c} \x00" as *const u8 as *const i8,
+                send_status_2(b"{%c%c} \x00" as *const u8 as *const i8,
                             'a' as i32 + search_state.get_ponder_move() % 10 as i32 -
                                 1 as i32,
                             '0' as i32 + search_state.get_ponder_move() / 10 as i32);
@@ -354,7 +354,7 @@ impl FrontEnd for LibcFatalError {
             send_status_pv(pv_zero, empties, pv_depth_zero);
             send_status_time( g_timer.get_elapsed_time());
             if  g_timer.get_elapsed_time() > 0.0001f64 {
-                send_status(b"%6.0f %s  \x00" as *const u8 as *const i8,
+                send_status_2(b"%6.0f %s  \x00" as *const u8 as *const i8,
                             node_val / ( g_timer.get_elapsed_time() + 0.0001f64),
                             b"nps\x00" as *const u8 as *const i8);
             };
@@ -478,28 +478,28 @@ impl FrontEnd for LibcFatalError {
     }
     fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, candidate_list_: &[CandidateMove; 60], search_state: & SearchState) {
         unsafe {
-            send_status(b"-->   Book     \x00" as *const u8 as
+            send_status_0(b"-->   Book     \x00" as *const u8 as
                 *const i8);
             if flags & 16 as i32 != 0 {
-                send_status(b"%+3d (exact)   \x00" as *const u8 as
+                send_status_1(b"%+3d (exact)   \x00" as *const u8 as
                                 *const i8,
                             chosen_score / 128 as i32);
             } else if flags & 4 as i32 != 0 {
-                send_status(b"%+3d (WLD)     \x00" as *const u8 as
+                send_status_1(b"%+3d (WLD)     \x00" as *const u8 as
                                 *const i8,
                             chosen_score / 128 as i32);
             } else {
-                send_status(b"%+6.2f        \x00" as *const u8 as
+                send_status_1(b"%+6.2f        \x00" as *const u8 as
                                 *const i8,
                             chosen_score as f64 / 128.0f64);
             }
             if search_state.get_ponder_move() != 0 {
-                send_status(b"{%c%c} \x00" as *const u8 as *const i8,
+                send_status_2(b"{%c%c} \x00" as *const u8 as *const i8,
                             'a' as i32 + search_state.get_ponder_move() % 10 as i32 -
                                 1 as i32,
                             '0' as i32 + search_state.get_ponder_move() / 10 as i32);
             }
-            send_status(b"%c%c\x00" as *const u8 as *const i8,
+            send_status_2(b"%c%c\x00" as *const u8 as *const i8,
                         'a' as i32 +
                             candidate_list_[chosen_index as usize].move_0 %
                                 10 as i32 - 1 as i32,
@@ -590,22 +590,22 @@ impl FrontEnd for LibcFatalError {
 
          unsafe {
              clear_status();
-             send_status(b"--> \x00" as *const u8 as *const i8);
+             send_status_0(b"--> \x00" as *const u8 as *const i8);
              if g_timer.is_panic_abort() != 0 || force_return_ {
-                 send_status(b"*\x00" as *const u8 as *const i8);
+                 send_status_0(b"*\x00" as *const u8 as *const i8);
              } else {
-                 send_status(b" \x00" as *const u8 as *const i8);
+                 send_status_0(b" \x00" as *const u8 as *const i8);
              }
-             send_status(b"%2d  \x00" as *const u8 as *const i8,
+             send_status_1(b"%2d  \x00" as *const u8 as *const i8,
                          depth);
              let mut eval_str_ = produce_eval_text(eval_info, 1 as i32);
              let eval_str = eval_str_.as_mut_ptr();
-             send_status(b"%-10s  \x00" as *const u8 as *const i8,
+             send_status_1(b"%-10s  \x00" as *const u8 as *const i8,
                          eval_str);
              let node_val = counter_value(nodes_counter);
              send_status_nodes(node_val);
              if search_state.get_ponder_move() != 0 {
-                 send_status(b"{%c%c} \x00" as *const u8 as
+                 send_status_2(b"{%c%c} \x00" as *const u8 as
                                  *const i8,
                              'a' as i32 + search_state.get_ponder_move() % 10 as i32
                                  - 1 as i32,
@@ -619,7 +619,7 @@ impl FrontEnd for LibcFatalError {
              send_status_pv(pv_zero, max_depth, pv_depth_zero);
              send_status_time( g_timer.get_elapsed_time());
              if  g_timer.get_elapsed_time() != 0.0f64 {
-                 send_status(b"%6.0f %s\x00" as *const u8 as
+                 send_status_2(b"%6.0f %s\x00" as *const u8 as
                                  *const i8,
                              node_val / ( g_timer.get_elapsed_time() + 0.001f64),
                              b"nps\x00" as *const u8 as *const i8);

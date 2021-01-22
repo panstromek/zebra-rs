@@ -357,11 +357,30 @@ pub unsafe fn display_optimal_line(stream: *mut FILE, full_pv_depth_: i32, full_
   Store information about the last completed search.
 */
 
-pub unsafe extern "C" fn send_status(format: *const i8, args: ...) {
-    let mut arg_ptr = args.clone();
+pub unsafe trait CFormat {}
+unsafe impl CFormat for i32 {}
+unsafe impl CFormat for f64 {}
+unsafe impl CFormat for *mut i8 {}
+unsafe impl CFormat for *const i8 {}
+
+pub unsafe fn send_status_2<T: CFormat, U: CFormat>(format: *const i8, arg: T, arg2: U) {
     let written =
-        vsprintf(display_state.status_buffer.as_mut_ptr().offset(display_state.status_pos as isize),
-                 format, arg_ptr.as_va_list());
+        sprintf(display_state.status_buffer.as_mut_ptr().offset(display_state.status_pos as isize),
+                 format, arg, arg2);
+    display_state.status_pos += written;
+    display_state.status_modified = 1;
+}
+pub unsafe fn send_status_1<T: CFormat>(format: *const i8, arg: T) {
+    let written =
+        sprintf(display_state.status_buffer.as_mut_ptr().offset(display_state.status_pos as isize),
+                 format, arg);
+    display_state.status_pos += written;
+    display_state.status_modified = 1;
+}
+pub unsafe fn send_status_0(format: *const i8) {
+    let written =
+        sprintf(display_state.status_buffer.as_mut_ptr().offset(display_state.status_pos as isize),
+                 format);
     display_state.status_pos += written;
     display_state.status_modified = 1;
 }
@@ -374,13 +393,13 @@ pub unsafe extern "C" fn send_status(format: *const i8, args: ...) {
 
 pub unsafe fn send_status_time(elapsed_time: f64) {
     if elapsed_time < 10000.0f64 {
-        send_status(b"%6.1f %c\x00" as *const u8 as *const i8,
+        send_status_2(b"%6.1f %c\x00" as *const u8 as *const i8,
                     elapsed_time, 's' as i32);
     } else {
-        send_status(b"%6d %c\x00" as *const u8 as *const i8,
+        send_status_2(b"%6d %c\x00" as *const u8 as *const i8,
                     ceil(elapsed_time) as i32, 's' as i32);
     }
-    send_status(b"  \x00" as *const u8 as *const i8);
+    send_status_0(b"  \x00" as *const u8 as *const i8);
 }
 /*
   SEND_STATUS_NODES
@@ -391,16 +410,16 @@ pub unsafe fn send_status_time(elapsed_time: f64) {
 
 pub unsafe fn send_status_nodes(node_count: f64) {
     if node_count < 1.0e8f64 {
-        send_status(b"%8.0f  \x00" as *const u8 as *const i8,
+        send_status_1(b"%8.0f  \x00" as *const u8 as *const i8,
                     node_count);
     } else if node_count < 1.0e10f64 {
-        send_status(b"%7.0f%c  \x00" as *const u8 as *const i8,
+        send_status_2(b"%7.0f%c  \x00" as *const u8 as *const i8,
                     node_count / 1000.0f64, 'k' as i32);
     } else if node_count < 1.0e13f64 {
-        send_status(b"%7.0f%c  \x00" as *const u8 as *const i8,
+        send_status_2(b"%7.0f%c  \x00" as *const u8 as *const i8,
                     node_count / 1000000.0f64, 'M' as i32);
     } else {
-        send_status(b"%7.0f%c  \x00" as *const u8 as *const i8,
+        send_status_2(b"%7.0f%c  \x00" as *const u8 as *const i8,
                     node_count / 1000000000.0f64, 'G' as i32);
     };
 }
@@ -416,18 +435,18 @@ pub unsafe fn send_status_pv(pv: &[i32; 64], max_depth: i32, pv_depth_zero: i32)
                    max_depth
                } else { 5 as i32 }) {
         if i < pv_depth_zero {
-            send_status(b"%c%c \x00" as *const u8 as *const i8,
+            send_status_2(b"%c%c \x00" as *const u8 as *const i8,
                         'a' as i32 +
                             pv[i as usize] % 10 as i32 -
                             1 as i32,
                         '0' as i32 +
                             pv[i as usize] / 10 as i32);
         } else {
-            send_status(b"   \x00" as *const u8 as *const i8);
+            send_status_0(b"   \x00" as *const u8 as *const i8);
         }
         i += 1
     }
-    send_status(b" \x00" as *const u8 as *const i8);
+    send_status_0(b" \x00" as *const u8 as *const i8);
 }
 /*
   DISPLAY_STATUS
