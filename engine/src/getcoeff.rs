@@ -4,7 +4,13 @@ use std::ptr::null_mut;
 use std::slice::from_raw_parts_mut;
 
 use ::patterns::{flip8, pow3};
-use coeff::{AllocationBlock, CoeffSet, CoeffSetData, constant_and_parity_feature, terminal_patterns};
+use coeff::terminal_patterns;
+use coeff::constant_and_parity_feature;
+use coeff::CoeffSetData;
+use coeff::CoeffSet;
+use coeff::AllocationBlock;
+
+pub use coeff::odometer_principle;
 use engine_traits::{CoeffSource, Offset};
 
 use crate::src::error::FrontEnd;
@@ -252,19 +258,7 @@ pub fn eval_adjustment(disc_adjust: f64,
                 *(stage_set.afile2x_mut() as &mut [i16]).offset(j as isize);
             *fresh13 = (*fresh13 as i32 + adjust) as i16;
             /* Next configuration */
-            k = 0;
-            loop  {
-                /* The odometer principle */
-                row[k as usize] += 1;
-                if row[k as usize] == 3 as i32 {
-                    row[k as usize] = 0 as i32
-                }
-                k += 1;
-                if !(row[(k - 1 as i32) as usize] == 0 as i32
-                    && k < 10 as i32) {
-                    break ;
-                }
-            }
+            odometer_principle(&mut row, 10);
             j += 1
         }
         i += 1
@@ -535,7 +529,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         *map_mirror8.offset(i as isize) =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        odometer_principle(&mut row);
+        odometer_principle(&mut row, 8);
         i += 1
     }
     /* Build the tables for 7*1-patterns */
@@ -553,19 +547,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         *map_mirror7.offset(i as isize) =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0;
-        loop  {
-            /* The odometer principle */
-            row[j as usize] += 1;
-            if row[j as usize] == 3 as i32 {
-                row[j as usize] = 0 as i32
-            }
-            j += 1;
-            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
-                j < 7 as i32) {
-                break ;
-            }
-        }
+        odometer_principle(&mut row, 7);
         i += 1
     }
     /* Build the tables for 6*1-patterns */
@@ -583,19 +565,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         *map_mirror6.offset(i as isize) =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0;
-        loop  {
-            /* The odometer principle */
-            row[j as usize] += 1;
-            if row[j as usize] == 3 as i32 {
-                row[j as usize] = 0 as i32
-            }
-            j += 1;
-            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
-                j < 6 as i32) {
-                break ;
-            }
-        }
+        odometer_principle(&mut row, 6);
         i += 1
     }
     /* Build the tables for 5*1-patterns */
@@ -613,19 +583,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         *map_mirror5.offset(i as isize) =
             if mirror_pattern < i { mirror_pattern } else { i };
         /* Next configuration */
-        j = 0;
-        loop  {
-            /* The odometer principle */
-            row[j as usize] += 1;
-            if row[j as usize] == 3 as i32 {
-                row[j as usize] = 0 as i32
-            }
-            j += 1;
-            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
-                j < 5 as i32) {
-                break ;
-            }
-        }
+        odometer_principle(&mut row, 5);
         i += 1
     }
     /* Build the tables for 4*1-patterns */
@@ -643,19 +601,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         *map_mirror4.offset(i as isize) =
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
-        j = 0;
-        loop  {
-            /* The odometer principle */
-            row[j as usize] += 1;
-            if row[j as usize] == 3 as i32 {
-                row[j as usize] = 0 as i32
-            }
-            j += 1;
-            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
-                j < 4 as i32) {
-                break ;
-            }
-        }
+        odometer_principle(&mut row, 4);
         i += 1
     }
     /* Build the tables for 3*1-patterns */
@@ -674,18 +620,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
         j = 0;
-        loop  {
-            /* The odometer principle */
-            row[j as usize] += 1;
-            if row[j as usize] == 3 as i32 {
-                row[j as usize] = 0 as i32
-            }
-            j += 1;
-            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
-                j < 3 as i32) {
-                break ;
-            }
-        }
+        odometer_principle(&mut row, 3);
         i += 1
     }
     /* Build the tables for 5*2-patterns */
@@ -735,18 +670,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
             if i < mirror_pattern { i } else { mirror_pattern };
         /* Next configuration */
         j = 0;
-        loop  {
-            /* The odometer principle */
-            row[j as usize] += 1;
-            if row[j as usize] == 3 as i32 {
-                row[j as usize] = 0 as i32
-            }
-            j += 1;
-            if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
-                j < 9 as i32) {
-                break ;
-            }
-        }
+        odometer_principle(&mut row, 9);
         i += 1
     }
     /* Read and unpack - using symmetries - the coefficient tables. */
@@ -770,22 +694,6 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         unpack_batch::<FE, S>(stage_set.corner33_mut() , Some(&map_mirror33), next_word);
         unpack_batch::<FE, S>(stage_set.corner52_mut() , None, next_word);
         i += 1
-    }
-}
-
-pub fn odometer_principle(row: &mut [i32; 10]) {
-    let mut j = 0;
-    loop {
-        /* The odometer principle */
-        row[j as usize] += 1;
-        if row[j as usize] == 3 as i32 {
-            row[j as usize] = 0 as i32
-        }
-        j += 1;
-        if !(row[(j - 1 as i32) as usize] == 0 as i32 &&
-            j < 8 as i32) {
-            break;
-        }
     }
 }
 
