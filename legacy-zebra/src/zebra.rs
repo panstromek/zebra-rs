@@ -37,7 +37,7 @@ use libc_wrapper::{FILE, time_t};
 
 use crate::src::display::{display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state};
 use crate::src::error::{FE, LibcFatalError, fatal_error_0, fatal_error_2};
-use crate::src::game::{compute_move, global_setup, LibcBoardFileSource, LibcZebraOutput, LogFileHandler, toggle_status_log};
+use crate::src::game::{compute_move, global_setup, BasicBoardFileSource, LibcZebraOutput, LogFileHandler, toggle_status_log};
 use crate::src::learn::{init_learn, LibcLearner};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_size, get_total_game_count, init_thor_database, LegacyThor, print_thor_matches, read_game_database, read_player_database, read_tournament_database};
@@ -787,7 +787,7 @@ unsafe fn play_game(mut file_name: *const i8,
         CStr::from_ptr(move_string).to_bytes()
     };
     engine_play_game
-        ::<LibcFrontend, _, LibcDumpHandler, LibcBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner, LibcFatalError, LegacyThor>
+        ::<LibcFrontend, _, LibcDumpHandler, BasicBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner, LibcFatalError, LegacyThor>
         (file_name, move_string, repeat, log_file_name_, move_file, g_state)
 }
 
@@ -1121,19 +1121,19 @@ unsafe fn analyze_game(mut move_string: *const i8,
         puts(b"Analyzing provided game...\x00" as *const u8 as
                  *const i8);
     }
-    generic_game_init::<LibcBoardFileSource, LibcFatalError>(None, &mut side_to_move, &mut (&mut g_state.flip_stack_),
-                                                             &mut (&mut g_state.search_state),
-                                                             &mut (&mut g_state.board_state),
-                                                             &mut (&mut g_state.hash_state),
-                                                             &mut (&mut g_state.g_timer),
-                                                             &mut (&mut g_state.end_g),
-                                                             &mut (&mut g_state.midgame_state),
-                                                             &mut (&mut g_state.coeff_state),
-                                                             (&mut g_state.moves_state),
-                                                             &mut (&mut g_state.random_instance),
-                                                             &mut (&mut g_state.g_book),
-                                                             &mut (&mut g_state.stable_state),
-                                                             &mut (&mut g_state.game_state));
+    generic_game_init::<BasicBoardFileSource, LibcFatalError>(None, &mut side_to_move, &mut (&mut g_state.flip_stack_),
+                                                              &mut (&mut g_state.search_state),
+                                                              &mut (&mut g_state.board_state),
+                                                              &mut (&mut g_state.hash_state),
+                                                              &mut (&mut g_state.g_timer),
+                                                              &mut (&mut g_state.end_g),
+                                                              &mut (&mut g_state.midgame_state),
+                                                              &mut (&mut g_state.coeff_state),
+                                                              (&mut g_state.moves_state),
+                                                              &mut (&mut g_state.random_instance),
+                                                              &mut (&mut g_state.g_book),
+                                                              &mut (&mut g_state.stable_state),
+                                                              &mut (&mut g_state.game_state));
     setup_hash(1 as i32, &mut (&mut g_state.hash_state), &mut (&mut g_state.random_instance));
     (&mut g_state.learn_state).clear_stored_game();
     if (&mut g_state.g_config).echo != 0 && (&mut g_state.g_config).use_book != 0 {
@@ -1518,19 +1518,19 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 exit(1 as i32);
             }
             /* Parse the script line containing board and side to move */
-            generic_game_init::<LibcBoardFileSource, LibcFatalError>(None, &mut side_to_move, &mut (&mut g_state.flip_stack_),
-                                                                     &mut (&mut g_state.search_state),
-                                                                     &mut (&mut g_state.board_state),
-                                                                     &mut (&mut g_state.hash_state),
-                                                                     &mut (&mut g_state.g_timer),
-                                                                     &mut (&mut g_state.end_g),
-                                                                     &mut (&mut g_state.midgame_state),
-                                                                     &mut (&mut g_state.coeff_state),
-                                                                     (&mut g_state.moves_state),
-                                                                     &mut (&mut g_state.random_instance),
-                                                                     &mut (&mut g_state.g_book),
-                                                                     &mut (&mut g_state.stable_state),
-                                                                     &mut (&mut g_state.game_state));
+            generic_game_init::<BasicBoardFileSource, LibcFatalError>(None, &mut side_to_move, &mut (&mut g_state.flip_stack_),
+                                                                      &mut (&mut g_state.search_state),
+                                                                      &mut (&mut g_state.board_state),
+                                                                      &mut (&mut g_state.hash_state),
+                                                                      &mut (&mut g_state.g_timer),
+                                                                      &mut (&mut g_state.end_g),
+                                                                      &mut (&mut g_state.midgame_state),
+                                                                      &mut (&mut g_state.coeff_state),
+                                                                      (&mut g_state.moves_state),
+                                                                      &mut (&mut g_state.random_instance),
+                                                                      &mut (&mut g_state.g_book),
+                                                                      &mut (&mut g_state.stable_state),
+                                                                      &mut (&mut g_state.game_state));
             (&mut g_state.g_book).set_slack(0.0f64 as i32);
             (&mut g_state.game_state).toggle_human_openings(0 as i32);
             reset_book_search(&mut (&mut g_state.g_book));

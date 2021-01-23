@@ -4,7 +4,7 @@ use engine::src::moves::{generate_all, make_move};
 use libc_wrapper::{fclose, fopen, fprintf, fputs, strcpy};
 
 use crate::src::error::LibcFatalError;
-use crate::src::game::{game_init, LibcBoardFileSource};
+use crate::src::game::{game_init, BasicBoardFileSource};
 use crate::src::osfbook::{add_new_game, init_osf, read_binary_database, read_text_database, write_binary_database, write_text_database};
 use crate::src::zebra::FullState;
 
@@ -48,19 +48,19 @@ pub unsafe fn learn_game(game_length: i32,
     let full_solve = (g_state.end_g).get_earliest_full_solve();
     let wld_solve = (g_state.end_g).get_earliest_wld_solve();
     let mut dummy: i32 = 0;
-    generic_game_init::<LibcBoardFileSource, LibcFatalError>(None, &mut dummy, &mut (g_state.flip_stack_),
-                                                             &mut (g_state.search_state),
-                                                             &mut (g_state.board_state),
-                                                             &mut (g_state.hash_state),
-                                                             &mut (g_state.g_timer),
-                                                             &mut (g_state.end_g),
-                                                             &mut (g_state.midgame_state),
-                                                             &mut (g_state.coeff_state),
-                                                             &mut (g_state.moves_state),
-                                                             &mut (g_state.random_instance),
-                                                             &mut (g_state.g_book),
-                                                             &mut (g_state.stable_state),
-                                                             &mut (g_state.game_state));
+    generic_game_init::<BasicBoardFileSource, LibcFatalError>(None, &mut dummy, &mut (g_state.flip_stack_),
+                                                              &mut (g_state.search_state),
+                                                              &mut (g_state.board_state),
+                                                              &mut (g_state.hash_state),
+                                                              &mut (g_state.g_timer),
+                                                              &mut (g_state.end_g),
+                                                              &mut (g_state.midgame_state),
+                                                              &mut (g_state.coeff_state),
+                                                              &mut (g_state.moves_state),
+                                                              &mut (g_state.random_instance),
+                                                              &mut (g_state.g_book),
+                                                              &mut (g_state.stable_state),
+                                                              &mut (g_state.game_state));
     let mut side_to_move = 0;
     let mut i = 0;
     while i < game_length {

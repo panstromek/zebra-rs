@@ -246,14 +246,14 @@ pub fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
 }
 
 pub trait BoardSource {
-    fn fill_board_buffer(&mut self, buffer: &mut [i8; 70]);
-    fn fill_buffer_with_side_to_move(&mut self, buffer: &mut [i8; 70]);
+    fn fill_board_buffer(&mut self, buffer: &mut String);
+    fn fill_buffer_with_side_to_move(&mut self, buffer: &mut Vec<u8>);
     fn report_unrecognized_character(unrecognized: i8);
 }
 
 
 pub fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &mut i32, mut file_source: S, board_state_: &mut BoardState) {
-    let mut buffer: [i8; 70] = [0; 70];
+    let mut buffer = String::with_capacity(70);
     file_source.fill_board_buffer(&mut buffer);
     let mut token = 0;
     let mut i = 1;
@@ -261,13 +261,13 @@ pub fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &mut i32
         let mut j = 1;
         while j <= 8 as i32 {
             let pos = 10 as i32 * i + j;
-            match buffer[token as usize] as i32 {
+            match buffer.as_bytes()[token as usize] as i32 {
                 42 | 88 => { board_state_.board[pos as usize] = 0 as i32 }
                 79 | 48 => { board_state_.board[pos as usize] = 2 as i32 }
                 45 | 46 => {}
                 _ => {
-                    let unrecognized = buffer[pos as usize];
-                    S::report_unrecognized_character(unrecognized);
+                    let unrecognized = buffer.as_bytes()[pos as usize];
+                    S::report_unrecognized_character(unrecognized as _);
                 }
             }
             token += 1;
@@ -275,6 +275,7 @@ pub fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &mut i32
         }
         i += 1
     }
+    let mut buffer = buffer.into_bytes();
     file_source.fill_buffer_with_side_to_move(&mut buffer);
     if buffer[0] as i32 == 'B' as i32 {
         *side_to_move = 0 as i32
@@ -283,7 +284,7 @@ pub fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &mut i32
         *side_to_move = 2 as i32
     } else {
         let unrecognized = buffer[0];
-        FE::unrecognized_character(unrecognized);
+        FE::unrecognized_character(unrecognized as _);
     }
 }
 
