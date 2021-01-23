@@ -168,7 +168,7 @@ pub trait ZebraFrontend {
     fn log_game_ending(log_file_name_: &CStr, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32);
     fn get_pass();
     fn report_engine_override();
-    fn prompt_get_move(side_to_move: i32, buffer: &mut [i8; 255]) -> i32;
+    fn prompt_get_move(side_to_move: i32, buffer: &mut [i8; 4]) -> i32;
     fn before_get_move();
     fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64);
     fn report_skill_levels(black_level: i32, white_level: i32);
@@ -195,7 +195,8 @@ pub enum PlayGameState {
     SwitchingSides{ provided_move_count: i32 },
     GetPass{ provided_move_count: i32 },
     MoveStop { provided_move_count: i32, move_start: f64 },
-    GetMove { provided_move_count: i32 , move_start: f64 },
+    StartGetMove { provided_move_count: i32 , move_start: f64 },
+    GettingMove { provided_move_count: i32 , move_start: f64 },
     AfterDumpch { provided_move_count:i32 , move_start: f64 },
     Dumpch { provided_move_count:i32 , move_start: f64 },
 }
@@ -460,7 +461,7 @@ pub fn next_state<
                             ZF::print_move_alternatives(play_state.side_to_move, &mut play_state.g_state.board_state, &mut play_state.g_state.g_book);
                         }
                     }
-                    PlayGameState::GetMove { provided_move_count, move_start }
+                    PlayGameState::StartGetMove { provided_move_count, move_start }
                 } else {
                     play_state.g_state.g_timer.start_move(play_state.g_state.g_config.player_time[play_state.side_to_move as usize],
                                                           play_state.g_state.g_config.player_increment[play_state.side_to_move as usize],
@@ -527,27 +528,32 @@ pub fn next_state<
             ZF::get_pass();
             PlayGameState::SwitchingSides { provided_move_count }
         }
-        PlayGameState::GetMove { provided_move_count, move_start } => {
+        PlayGameState::StartGetMove { provided_move_count, move_start } => {
             ZF::before_get_move();
-            play_state.curr_move = {
-                let side_to_move: i32 = play_state.side_to_move;
-                let board = &play_state.g_state.board_state.board;
-                let mut buffer: [i8; 255] = [0; 255];
-                let mut ready = 0;
-                let mut curr_move: i32 = 0;
-                while ready == 0 {
-                    curr_move = ZF::prompt_get_move(side_to_move, &mut buffer);
-                    ready = valid_move(curr_move, side_to_move, board);
-                    if ready == 0 {
-                        curr_move =
-                            buffer[0] as i32 - 'a' as i32 + 1 + 10 * (buffer[1] as i32 - '0' as i32);
-                        ready = valid_move(curr_move, side_to_move, board)
-                    }
+            PlayGameState::GettingMove  { provided_move_count, move_start }
+        },
+        PlayGameState::GettingMove { provided_move_count, move_start } => {
+            let side_to_move: i32 = play_state.side_to_move;
+            let board = &play_state.g_state.board_state.board;
+
+            let mut buffer: [i8; 4] = [0; 4];
+            let curr_move = ZF::prompt_get_move(side_to_move, &mut buffer);
+            let ready = valid_move(curr_move, side_to_move, board);
+            if ready == 0 {
+                let curr_move =
+                    buffer[0] as i32 - 'a' as i32 + 1 + 10 * (buffer[1] as i32 - '0' as i32);
+                let ready = valid_move(curr_move, side_to_move, board);
+                if ready != 0 {
+                    play_state.curr_move = curr_move;
+                    PlayGameState::MoveStop { provided_move_count, move_start }
+                } else {
+                    PlayGameState::GettingMove { provided_move_count, move_start }
                 }
-                curr_move
-            };
-            PlayGameState::MoveStop { provided_move_count, move_start }
-        }
+            } else {
+                play_state.curr_move = curr_move;
+                PlayGameState::MoveStop { provided_move_count, move_start }
+            }
+        },
     };
     return play_state.state;
 }
