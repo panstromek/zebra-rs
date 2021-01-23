@@ -402,24 +402,3 @@ pub fn valid_move(move_0: i32, side_to_move: i32, board: &[i32; 128]) -> i32{
     }
     return 0 as i32;
 }
-
-
-/*
-   GET_MOVE
-   Prompts the user to enter a move and checks if the move is legal.
-*/
-pub fn get_move<ZFE: ZebraFrontend>(side_to_move: i32, board: &Board) -> i32 {
-    let mut buffer: [i8; 255] = [0; 255];
-    let mut ready = 0;
-    let mut curr_move: i32 = 0;
-    while ready == 0 {
-        ZFE::prompt_get_move(side_to_move, &mut buffer);
-        ready = valid_move(curr_move, side_to_move, board);
-        if ready == 0 {
-            curr_move =
-                buffer[0] as i32 - 'a' as i32 + 1 + 10 * (buffer[1] as i32 - '0' as i32);
-            ready = valid_move(curr_move, side_to_move, board)
-        }
-    }
-    curr_move
-}
