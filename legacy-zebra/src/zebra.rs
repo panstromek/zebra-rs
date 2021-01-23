@@ -890,7 +890,8 @@ impl ZebraFrontend for LibcFrontend {
         }
     }
 
-    fn prompt_get_move(side_to_move: i32, buffer: &mut [i8; 4]) -> i32 {
+    fn prompt_get_move(side_to_move: i32) -> (i32, i32) {
+        let mut buffer: [i8; 4] = [0; 4];
         unsafe {
             if side_to_move == 0 as i32 {
                 printf(b"%s: \x00" as *const u8 as *const i8,
@@ -900,7 +901,10 @@ impl ZebraFrontend for LibcFrontend {
                        b"White move\x00" as *const u8 as *const i8);
             }
             scanf(b"%3s\x00" as *const u8 as *const i8, buffer.as_mut_ptr());
-            atoi(buffer.as_mut_ptr())
+            let curr_move = atoi(buffer.as_mut_ptr());
+            let curr_move_2 =
+                buffer[0] as i32 - 'a' as i32 + 1 + 10 * (buffer[1] as i32 - '0' as i32);
+            (curr_move, curr_move_2)
         }
     }
 
