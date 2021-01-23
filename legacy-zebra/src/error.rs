@@ -236,15 +236,6 @@ impl FrontEnd for LibcFatalError {
             } else {
                 send_sweep_1(b"=%d\x00" as *const u8 as *const i8,
                              curr_val);
-
-            /*
-            // these were not used in the original code
-                pub static  mut true_found: i32 = 0;
-                pub static  mut true_val: i32 = 0;
-                ****
-                true_found = 1;
-                true_val = curr_val;
-            */
             }
         }
     }
