@@ -378,13 +378,13 @@ pub fn engine_play_game<
                                         disc_count(2, &play_state.g_state.board_state.board))
                 }
                 play_state.repeat -= 1;
-                play_state.g_state.g_timer.toggle_abort_check(0 as i32);
                 if play_state.g_state.g_config.use_learning && play_state.g_state.g_config.one_position_only == 0 {
+                    play_state.g_state.g_timer.toggle_abort_check(0);
                     Learn::learn_game(play_state.g_state.moves_state.disks_played,
                                       (play_state.g_state.g_config.skill[0] != 0 && play_state.g_state.g_config.skill[2] != 0) as i32,
                                       (play_state.repeat == 0 as i32) as i32, play_state.g_state);
+                    play_state.g_state.g_timer.toggle_abort_check(1);
                 }
-                play_state.g_state.g_timer.toggle_abort_check(1);
                 if !(play_state.repeat > 0) {
                     PlayGameState::End
                 } else {
