@@ -45,7 +45,7 @@ const UNKNOWN: u32 = 3;
 const LOSS: u32 = 1;
 const WIN: u32 = 0;
 
-static quadrant_mask: [u32; 100] = [
+static quadrant_mask: [u8; 100] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 2, 2, 2, 2, 0,
     0, 1, 1, 1, 1, 2, 2, 2, 2, 0,
@@ -157,7 +157,7 @@ fn prepare_to_solve(board_0: &Board, end:&mut End) {
         if board_0[sq as usize] == 1 {
             end. end_move_list[last_sq as usize].succ = sq as i32;
             end. end_move_list[sq as usize].pred = last_sq as i32;
-           end.region_parity ^= quadrant_mask[sq as usize];
+           end.region_parity ^= quadrant_mask[sq as usize] as u32;
             last_sq = sq
         }
         if i == 0 {
@@ -559,7 +559,7 @@ fn solve_parity(end:&mut End, my_bits: BitBoard,
         old_sq = 0;
         sq = end. end_move_list[old_sq as usize].succ;
         while sq != 99 as i32 {
-            let holepar = quadrant_mask[sq as usize];
+            let holepar = quadrant_mask[sq as usize] as u32;
             if holepar & parity_mask != 0 {
                 flipped = TestFlips_wrapper(end,sq, my_bits, opp_bits, );
                 if flipped != 0 as i32 {
@@ -609,7 +609,7 @@ fn solve_parity(end:&mut End, my_bits: BitBoard,
     old_sq = 0;
     sq = end. end_move_list[old_sq as usize].succ;
     while sq != 99 as i32 {
-        let holepar_0 = quadrant_mask[sq as usize];
+        let holepar_0 = quadrant_mask[sq as usize] as u32;
         if holepar_0 & parity_mask != 0 {
             flipped = TestFlips_wrapper(end,sq, my_bits, opp_bits, );
             if flipped != 0 as i32 {
@@ -857,7 +857,7 @@ fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
         old_sq = 0;
         sq = end. end_move_list[old_sq as usize].succ;
         while sq != 99 as i32 {
-            let holepar = quadrant_mask[sq as usize];
+            let holepar = quadrant_mask[sq as usize] as u32;
             if holepar & parity_mask != 0 {
                 flipped = TestFlips_wrapper(end,sq, my_bits, opp_bits, );
                 if flipped != 0 as i32 {
@@ -900,7 +900,7 @@ fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
     old_sq = 0;
     sq = end. end_move_list[old_sq as usize].succ;
     while sq != 99 as i32 {
-        let holepar_0 = quadrant_mask[sq as usize];
+        let holepar_0 = quadrant_mask[sq as usize] as u32;
         if holepar_0 & parity_mask != 0 {
             flipped = TestFlips_wrapper(end,sq, my_bits, opp_bits, );
             if flipped != 0 as i32 {
@@ -1324,7 +1324,7 @@ fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
             new_opp_bits.low = opp_bits.low & !end.bb_flips.low;
             end. end_move_list[old_sq as usize].succ =
                 end. end_move_list[sq as usize].succ;
-            if quadrant_mask[sq as usize] & end.region_parity != 0 {
+            if quadrant_mask[sq as usize] as u32 & end.region_parity != 0 {
                 parity = 1 as i32
             } else { parity = 0 as i32 }
             goodness[moves as usize] =
@@ -1381,7 +1381,7 @@ fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
     diff2 = hash_update2_ ^ hash_state.hash_put_value2[color as usize][sq as usize];
     hash_state.hash1 ^= diff1;
     hash_state.hash2 ^= diff2;
-    end.region_parity ^= quadrant_mask[sq as usize];
+    end.region_parity ^= quadrant_mask[sq as usize] as u32;
     pred = end. end_move_list[sq as usize].pred;
     succ = end. end_move_list[sq as usize].succ;
     end. end_move_list[pred as usize].succ = succ;
@@ -1411,7 +1411,7 @@ fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
     hash_state.hash1 ^= diff1;
     hash_state.hash2 ^= diff2;
     board_state.board[sq as usize] = 1;
-    end.region_parity ^= quadrant_mask[sq as usize];
+    end.region_parity ^= quadrant_mask[sq as usize] as u32;
     end. end_move_list[pred as usize].succ = sq;
     end. end_move_list[succ as usize].pred = sq;
     best_sq = sq;
@@ -1454,7 +1454,7 @@ fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
         diff2 = hash_update2_ ^ hash_state.hash_put_value2[color as usize][sq as usize];
         hash_state.hash1 ^= diff1;
         hash_state.hash2 ^= diff2;
-        end.region_parity ^= quadrant_mask[sq as usize];
+        end.region_parity ^= quadrant_mask[sq as usize] as u32;
         pred = end. end_move_list[sq as usize].pred;
         succ = end. end_move_list[sq as usize].succ;
         end. end_move_list[pred as usize].succ = succ;
@@ -1480,7 +1480,7 @@ fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
                                         ,hash_state
                                         ,stable_state)
         }
-        end.region_parity ^= quadrant_mask[sq as usize];
+        end.region_parity ^= quadrant_mask[sq as usize] as u32;
         flip_stack_.UndoFlips(&mut board_state.board, flipped, oppcol);
         hash_state.hash1 ^= diff1;
         hash_state.hash2 ^= diff2;
