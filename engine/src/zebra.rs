@@ -196,7 +196,7 @@ pub enum PlayGameState {
     GetPass{ provided_move_count: i32 },
     MoveStop { provided_move_count: i32, move_start: f64 },
     StartGetMove { provided_move_count: i32 , move_start: f64 },
-    GettingMove { provided_move_count: i32 , move_start: f64 },
+    GettingMove { provided_move_count: i32 , move_start: f64, side_to_move: i32 },
     AfterDumpch { provided_move_count:i32 , move_start: f64 },
     Dumpch { provided_move_count:i32 , move_start: f64 },
 }
@@ -235,15 +235,30 @@ pub fn engine_play_game<
     let mut play_state: PlayGame<Source> = PlayGame::new::<
         ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, Learn, FE, Thor
     >(file_name, move_string, repeat, log_file_name_, move_file, g_state);
+    let mut move_attempt = None;
     loop {
         next_state::<
             ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, Learn, FE, Thor
-        >(&mut play_state);
-        if let PlayGameState::End = play_state.state  {
-            return;
+        >(&mut play_state, move_attempt.take());
+        match play_state.state {
+            PlayGameState::End => {
+                return;
+            }
+            PlayGameState::Dumpch { provided_move_count, move_start } => {
+                ZF::dumpch();
+            }
+            PlayGameState::GetPass { provided_move_count } => {
+                ZF::get_pass();
+            }
+            PlayGameState::GettingMove { provided_move_count, move_start, side_to_move } => {
+                let res = ZF::prompt_get_move(side_to_move);
+                move_attempt = Some(MoveAttempt(res.0, res.1))
+            }
+            _ => {}
         }
     }
 }
+pub struct MoveAttempt(i32, i32);
 
 pub fn next_state<
     ZF: ZebraFrontend,
@@ -255,7 +270,7 @@ pub fn next_state<
     Learn: Learner,
     FE: FrontEnd,
     Thor: ThorDatabase
->(play_state: &mut PlayGame<Source>) -> PlayGameState {
+>(play_state: &mut PlayGame<Source>, move_attempt : Option<MoveAttempt>) -> PlayGameState {
     play_state.state = match play_state.state {
         PlayGameState::Initial => {
             /* Decode the predefined move sequence */
@@ -519,36 +534,35 @@ pub fn next_state<
                 PlayGameState::MoveStop { provided_move_count, move_start }
             }
         }
-        // FIXME extract out this interaction
         PlayGameState::Dumpch { provided_move_count, move_start } => {
-            ZF::dumpch();
             PlayGameState::AfterDumpch { provided_move_count, move_start }
         }
         PlayGameState::GetPass { provided_move_count } => {
-            ZF::get_pass();
             PlayGameState::SwitchingSides { provided_move_count }
         }
         PlayGameState::StartGetMove { provided_move_count, move_start } => {
             ZF::before_get_move();
-            PlayGameState::GettingMove  { provided_move_count, move_start }
-        },
-        PlayGameState::GettingMove { provided_move_count, move_start } => {
             let side_to_move: i32 = play_state.side_to_move;
-            let (curr_move, curr_move_2) = ZF::prompt_get_move(side_to_move);
-
-            let board = &play_state.g_state.board_state.board;
-            let ready = valid_move(curr_move, side_to_move, board);
-            if ready == 0 {
-                let ready = valid_move(curr_move_2, side_to_move, board);
-                if ready != 0 {
-                    play_state.curr_move = curr_move_2;
-                    PlayGameState::MoveStop { provided_move_count, move_start }
+            PlayGameState::GettingMove  { provided_move_count, move_start, side_to_move }
+        },
+        PlayGameState::GettingMove { provided_move_count, move_start, side_to_move } => {
+            if let Some(MoveAttempt(curr_move, curr_move_2)) = move_attempt {
+                let board = &play_state.g_state.board_state.board;
+                let ready = valid_move(curr_move, side_to_move, board);
+                if ready == 0 {
+                    let ready = valid_move(curr_move_2, side_to_move, board);
+                    if ready != 0 {
+                        play_state.curr_move = curr_move_2;
+                        PlayGameState::MoveStop { provided_move_count, move_start }
+                    } else {
+                        PlayGameState::GettingMove { provided_move_count, move_start, side_to_move }
+                    }
                 } else {
-                    PlayGameState::GettingMove { provided_move_count, move_start }
+                    play_state.curr_move = curr_move;
+                    PlayGameState::MoveStop { provided_move_count, move_start }
                 }
-            } else {
-                play_state.curr_move = curr_move;
-                PlayGameState::MoveStop { provided_move_count, move_start }
+            }else {
+                PlayGameState::GettingMove { provided_move_count, move_start, side_to_move }
             }
         },
     };
