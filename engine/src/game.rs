@@ -261,10 +261,10 @@ pub fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &mut i32
         let mut j = 1;
         while j <= 8 as i32 {
             let pos = 10 as i32 * i + j;
-            match buffer.as_bytes()[token as usize] as i32 {
-                42 | 88 => { board_state_.board[pos as usize] = 0 as i32 }
-                79 | 48 => { board_state_.board[pos as usize] = 2 as i32 }
-                45 | 46 => {}
+            match buffer.as_bytes()[token as usize] {
+                b'*' | b'X' => { board_state_.board[pos as usize] = 0 }
+                b'O' | b'0' => { board_state_.board[pos as usize] = 2 }
+                b'-' | b'.' => {}
                 _ => {
                     let unrecognized = buffer.as_bytes()[pos as usize];
                     S::report_unrecognized_character(unrecognized as _);
@@ -277,10 +277,9 @@ pub fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &mut i32
     }
     let mut buffer = buffer.into_bytes();
     file_source.fill_buffer_with_side_to_move(&mut buffer);
-    if buffer[0] as i32 == 'B' as i32 {
+    if buffer[0] == b'B' {
         *side_to_move = 0 as i32
-    } else if buffer[0] as i32 ==
-        'W' as i32 {
+    } else if buffer[0] == b'W' {
         *side_to_move = 2 as i32
     } else {
         let unrecognized = buffer[0];
