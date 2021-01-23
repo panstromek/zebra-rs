@@ -440,24 +440,8 @@ pub unsafe fn add_new_game(move_count_0: i32,
    Reads an existing ASCII database file.
 */
 
-pub unsafe fn read_text_database(file_name:
-                                                *const i8, g_state: &mut FullState) {
-    let mut g_config = (&mut g_state.g_config);
-    let mut learn_state = (&mut g_state.learn_state);
-    let mut midgame_state = (&mut g_state.midgame_state);
-    let mut game_state = (&mut g_state.game_state);
-    let mut end_g = (&mut g_state.end_g);
-    let mut coeff_state = (&mut g_state.coeff_state);
-    let mut g_timer = (&mut g_state.g_timer);
-    let mut moves_state = (&mut g_state.moves_state);
-    let mut stable_state = (&mut g_state.stable_state);
-    let mut board_state = (&mut g_state.board_state);
-    let mut hash_state = (&mut g_state.hash_state);
-    let mut random_instance = (&mut g_state.random_instance);
+pub unsafe fn read_text_database(file_name: *const i8, g_state: &mut FullState) {
     let mut g_book = (&mut g_state.g_book);
-    let mut prob_cut = (&mut g_state.prob_cut);
-    let mut search_state = (&mut g_state.search_state);
-    let mut flip_stack_ = (&mut g_state.flip_stack_);
 
     let mut i: i32 = 0;
     let mut magic1: i32 = 0;
