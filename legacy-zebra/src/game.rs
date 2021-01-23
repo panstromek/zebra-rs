@@ -21,6 +21,8 @@ use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
 use crate::src::thordb::LegacyThor;
 use crate::src::zebra::FullState;
 use engine::src::globals::BoardState;
+use std::fs::{File, read};
+use std::io::{Read, BufReader, BufRead};
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
 pub static mut prefix_move: i32 = 0;
@@ -143,33 +145,25 @@ unsafe fn setup_log_file() {
     }
 }
 
-pub struct LibcBoardFileSource {
-    stream: *mut FILE
+pub struct BasicBoardFileSource {
+    stream: BufReader<File>
 }
-impl FileBoardSource for LibcBoardFileSource {
-    fn open(file_name: &CStr) -> Option<LibcBoardFileSource> {
-        let stream = unsafe { fopen(file_name.as_ptr(), b"r\x00" as *const u8 as *const i8) };
-        if stream.is_null() {
-            return None;
-        }
-        Some(LibcBoardFileSource {
-            stream
+impl FileBoardSource for BasicBoardFileSource {
+    fn open(file_name: &CStr) -> Option<BasicBoardFileSource> {
+        Some(BasicBoardFileSource {
+            stream: BufReader::new(File::open(file_name.to_str().ok()?).ok()?)
         })
     }
 }
-impl BoardSource for LibcBoardFileSource {
+impl BoardSource for BasicBoardFileSource {
     // These methods and this whole scheme of loading the data honestly doesn't make any sense
     // but I don't want to refactor it for the better at the moment.
-    fn fill_board_buffer(&mut self, buffer: &mut [i8; 70]) {
-        unsafe {
-            fgets(buffer.as_mut_ptr(), 70 as i32, self.stream);
-        }
+    fn fill_board_buffer(&mut self, buffer: &mut String) {
+        self.stream.read_line(buffer);
     }
 
-    fn fill_buffer_with_side_to_move(&mut self, buffer: &mut [i8; 70]) {
-        unsafe {
-            fgets(buffer.as_mut_ptr(), 10 as i32, self.stream);
-        }
+    fn fill_buffer_with_side_to_move(&mut self, buffer: &mut Vec<u8>) {
+        self.stream.read(&mut buffer.as_mut_slice()[0..10]);
     }
 
     fn report_unrecognized_character(unrecognized: i8) {
@@ -211,20 +205,20 @@ pub unsafe fn game_init(file_name: *const i8, side_to_move: &mut i32, g_state: &
         ref mut search_state,
         ref mut flip_stack_,
     } : &mut FullState = g_state;
-    generic_game_init::<LibcBoardFileSource, LibcFatalError>(file_name, side_to_move,
-                                                             flip_stack_,
-                                                             search_state,
-                                                             board_state,
-                                                             hash_state,
-                                                             g_timer,
-                                                             end_g,
-                                                             midgame_state,
-                                                             coeff_state,
-                                                             moves_state,
-                                                             random_instance,
-                                                             g_book,
-                                                             stable_state,
-                                                             game_state);
+    generic_game_init::<BasicBoardFileSource, LibcFatalError>(file_name, side_to_move,
+                                                              flip_stack_,
+                                                              search_state,
+                                                              board_state,
+                                                              hash_state,
+                                                              g_timer,
+                                                              end_g,
+                                                              midgame_state,
+                                                              coeff_state,
+                                                              moves_state,
+                                                              random_instance,
+                                                              g_book,
+                                                              stable_state,
+                                                              game_state);
 }
 /*
   PONDER_MOVE
