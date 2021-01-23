@@ -1319,7 +1319,7 @@ pub unsafe fn do_minimax(index: i32,
             get_hash(&mut val1, &mut val2, &mut orientation, &mut (g_state.g_book), &( g_state.board_state).board);
             alternative_move =
                 *(g_state.g_book).inv_symmetry_map[orientation as
-                    usize].offset(alternative_move as isize)
+                    usize].offset(alternative_move as isize) as _
         }
     } else {
         alternative_move_found = 1;
@@ -1615,9 +1615,9 @@ pub fn init_maps<FE: FrontEnd>(g_state: &mut FullState) {
             while k <= 8 as i32 {
                 let pos = 10 as i32 * j + k;
                 if *book.inv_symmetry_map[i as usize]
-                    .offset(*book.symmetry_map[i as usize].offset(pos as isize) as isize) != pos {
+                    .offset(*book.symmetry_map[i as usize].offset(pos as isize) as isize) as i32 != pos {
                     let symmetry_map_item = *book.inv_symmetry_map[i as usize].offset(*book.symmetry_map[i as usize].offset(pos as isize) as isize);
-                    LibcFatalError::error_in_map(i, pos, symmetry_map_item);
+                    LibcFatalError::error_in_map(i, pos, symmetry_map_item as _);
                 }
                 k += 1
             }

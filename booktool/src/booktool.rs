@@ -2365,7 +2365,7 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
                         i32;
                 this_move =
                     *g_state.g_book.inv_symmetry_map[base_orientation as
-                        usize].offset(this_move as isize)
+                        usize].offset(this_move as isize) as _
             }
         }
         if show_move != 0 {

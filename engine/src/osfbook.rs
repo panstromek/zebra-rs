@@ -91,8 +91,8 @@ pub struct Book {
     pub wld_count: [i32; 61],
     pub exhausted_count: [i32; 61],
     pub common_count: [i32; 61],
-    pub symmetry_map: [&'static [i32]; 8],
-    pub inv_symmetry_map: [&'static [i32]; 8],
+    pub symmetry_map: [&'static [i16]; 8],
+    pub inv_symmetry_map: [&'static [i16]; 8],
     pub line_hash: [[[i32; 6561]; 8]; 2],
     pub book_hash_table: Vec<i32>,
     pub draw_mode: DrawMode,
@@ -103,14 +103,14 @@ pub struct Book {
     pub col_pattern: [i32; 8],
 }
 pub struct BookMaps {
-    pub b1_b1_map: [i32; 100],
-    pub g1_b1_map: [i32; 100],
-    pub g8_b1_map: [i32; 100],
-    pub b8_b1_map: [i32; 100],
-    pub a2_b1_map: [i32; 100],
-    pub a7_b1_map: [i32; 100],
-    pub h7_b1_map: [i32; 100],
-    pub h2_b1_map: [i32; 100],
+    pub b1_b1_map: [i16; 100],
+    pub g1_b1_map: [i16; 100],
+    pub g8_b1_map: [i16; 100],
+    pub b8_b1_map: [i16; 100],
+    pub a2_b1_map: [i16; 100],
+    pub a7_b1_map: [i16; 100],
+    pub h7_b1_map: [i16; 100],
+    pub h2_b1_map: [i16; 100],
 }
 pub static BOOK_MAPS: BookMaps = create_book_maps();
 
@@ -662,8 +662,7 @@ pub fn check_forced_opening<FE: FrontEnd>(side_to_move: i32, opening: ForcedOpen
         if same_position != 0 {
             return *book.inv_symmetry_map[symmetry as
                 usize].offset(move_0[disks_played as
-                usize] as
-                isize)
+                usize] as isize) as _
         }
         symm_index += 1;
         symmetry = (symmetry + 1 as i32) % 8 as i32
@@ -872,7 +871,7 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
     if alternative_move > 0 as i32 {
         alternative_move =
             *book.inv_symmetry_map[orientation as
-                usize].offset(alternative_move as isize);
+                usize].offset(alternative_move as isize) as _;
         alternative_score =
             adjust_score((*book.node.offset(index as isize)).alternative_score as
                              i32, side_to_move, book, moves_state_.disks_played)
@@ -1195,7 +1194,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                 alternative_move =
                     *book.inv_symmetry_map[orientation as
                         usize].offset(alternative_move as
-                        isize);
+                        isize) as _;
                 alternative_score =
                     adjust_score((*book.node.offset(*book.book_hash_table.offset(slot as
                         isize)
