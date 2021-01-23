@@ -14,7 +14,7 @@ use crate::src::globals::BoardState;
 use crate::src::hash::{HashState, setup_hash};
 use crate::src::learn::{Learner, LearnState};
 use crate::src::midgame::MidgameState;
-use crate::src::moves::{game_in_progress, generate_all, get_move, get_move_async, make_move, MovesState, valid_move};
+use crate::src::moves::{game_in_progress, generate_all, get_move, make_move, MovesState, valid_move};
 use crate::src::myrandom::MyRandom;
 use crate::src::osfbook::{Book, fill_move_alternatives, find_opening_name, reset_book_search, set_deviation_value};
 use crate::src::probcut::ProbCut;
