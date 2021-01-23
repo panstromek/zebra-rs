@@ -42,7 +42,7 @@ impl MovesState {
     }
 }
 
-pub static flip_direction: [[i32; 16]; 100] = init_flip_direction();
+pub static flip_direction: [[i8; 16]; 100] = init_flip_direction();
 
 pub static dir_mask: [i32; 100] = const_dir_mask;
 pub const const_dir_mask: [i32; 100] =
@@ -78,8 +78,8 @@ pub const const_dir_mask: [i32; 100] =
         0 as i32, 0 as i32, 0 as i32, 0 as i32,
         0 as i32, 0 as i32, 0 as i32];
 
-pub const const_move_offset: [i32; 8] = [1, -1, 9, -9, 10, -10, 11, -11];
-pub static move_offset: [i32; 8] = const_move_offset;
+pub const const_move_offset: [i8; 8] = [1, -1, 9, -9, 10, -10, 11, -11];
+pub static move_offset: [i8; 8] = const_move_offset;
 
 /*
    MAKE_MOVE
@@ -98,8 +98,8 @@ pub static move_offset: [i32; 8] = const_move_offset;
   Initialize the move generation subsystem.
 */
 
-pub const fn init_flip_direction() -> [[i32; 16]; 100] {
-    let mut flip_direction_ : [[i32; 16]; 100] = [[0; 16]; 100];
+pub const fn init_flip_direction() -> [[i8; 16]; 100] {
+    let mut flip_direction_ : [[i8; 16]; 100] = [[0; 16]; 100];
     let mut feasible = 0;
     let mut i = 1;
     while i <= 8 {
@@ -387,11 +387,11 @@ pub fn valid_move(move_0: i32, side_to_move: i32, board: &[i32; 128]) -> i32{
     i = 0;
     while i < 8 as i32 {
         if dir_mask[move_0 as usize] & (1 as i32) << i != 0 {
-            pos = move_0 + move_offset[i as usize];
+            pos = move_0 + move_offset[i as usize] as i32;
             count = 0;
             while board[pos as usize] ==
                 0 as i32 + 2 as i32 - side_to_move {
-                pos += move_offset[i as usize];
+                pos += move_offset[i as usize] as i32;
                 count += 1
             }
             if board[pos as usize] == side_to_move {
