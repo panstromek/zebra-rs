@@ -23,6 +23,7 @@ use crate::src::zebra::EvalType::{EXACT_EVAL, FORCED_EVAL, INTERRUPTED_EVAL, MID
 use crate::src::zebra::{EvaluationType};
 use flip::unflip::FlipStack;
 use crate::src::myrandom::MyRandom;
+use crate::src::game::BoardSourceError::UnrecognizedCharacter;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -251,8 +252,10 @@ pub trait BoardSource {
     fn report_unrecognized_character(unrecognized: i8);
 }
 
-
-pub fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &mut i32, mut file_source: S, board_state_: &mut BoardState) {
+pub enum BoardSourceError {
+    UnrecognizedCharacter(u8)
+}
+pub fn process_board_source<S: BoardSource>(side_to_move: &mut i32, mut file_source: S, board_state_: &mut BoardState) -> Result<(), BoardSourceError> {
     let mut buffer = String::with_capacity(70);
     file_source.fill_board_buffer(&mut buffer);
     let mut token = 0;
@@ -283,8 +286,9 @@ pub fn process_board_source<S: BoardSource, FE: FrontEnd>(side_to_move: &mut i32
         *side_to_move = 2 as i32
     } else {
         let unrecognized = buffer[0];
-        FE::unrecognized_character(unrecognized as _);
+        return Err(UnrecognizedCharacter(unrecognized));
     }
+    return Ok(())
 }
 
 
@@ -299,7 +303,12 @@ pub fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: &CStr,
 ) {
     board_state.board = create_fresh_board();
     match S::open((file_name)) {
-        Some(file_source) => process_board_source::<_, FE>(side_to_move, file_source,  board_state),
+        Some(file_source) => {
+            match process_board_source(side_to_move, file_source, board_state) {
+                Ok(_) => {}
+                Err(BoardSourceError::UnrecognizedCharacter(unrecognized)) => FE::unrecognized_character(unrecognized as _),
+            }
+        },
         None => {
             FE::cannot_open_game_file((file_name).to_str().unwrap());
         },
