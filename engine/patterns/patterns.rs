@@ -119,12 +119,8 @@ pub fn compute_line_patterns(in_board: &[i32; 128], row_pattern_: &mut [i32; 8],
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
     let mut mask: i32 = 0;
-    i = 0;
-    while i < 8 as i32 {
-        row_pattern_[i as usize] = 0;
-        col_pattern_[i as usize] = 0;
-        i += 1
-    }
+    *row_pattern_ = [0; 8];
+    *col_pattern_ = [0; 8];
     i = 1;
     while i <= 8 as i32 {
         j = 1;
