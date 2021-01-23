@@ -14,7 +14,7 @@ use crate::src::globals::BoardState;
 use crate::src::hash::{HashState, setup_hash};
 use crate::src::learn::{Learner, LearnState};
 use crate::src::midgame::MidgameState;
-use crate::src::moves::{game_in_progress, generate_all, get_move, make_move, MovesState, valid_move};
+use crate::src::moves::{game_in_progress, generate_all, make_move, MovesState, valid_move};
 use crate::src::myrandom::MyRandom;
 use crate::src::osfbook::{Book, fill_move_alternatives, find_opening_name, reset_book_search, set_deviation_value};
 use crate::src::probcut::ProbCut;
@@ -415,7 +415,23 @@ pub fn engine_play_game<
             }
             PlayGameState::GetMove { provided_move_count, move_start } => {
                 ZF::before_get_move();
-                play_state.curr_move = get_move::<ZF>(play_state.side_to_move, &play_state.g_state.board_state.board);
+                play_state.curr_move = {
+                    let side_to_move: i32 = play_state.side_to_move;
+                    let board = &play_state.g_state.board_state.board;
+                    let mut buffer: [i8; 255] = [0; 255];
+                    let mut ready = 0;
+                    let mut curr_move: i32 = 0;
+                    while ready == 0 {
+                        ZF::prompt_get_move(side_to_move, &mut buffer);
+                        ready = valid_move(curr_move, side_to_move, board);
+                        if ready == 0 {
+                            curr_move =
+                                buffer[0] as i32 - 'a' as i32 + 1 + 10 * (buffer[1] as i32 - '0' as i32);
+                            ready = valid_move(curr_move, side_to_move, board)
+                        }
+                    }
+                    curr_move
+                };
                 PlayGameState::MoveStop { provided_move_count, move_start }
             }
         };
