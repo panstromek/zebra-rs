@@ -681,30 +681,6 @@ fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32) {
     move_vec[(2 as i32 * disks_played_) as usize + 1] = '0' as i8 + (curr_move / 10) as i8;
 }
 
-pub async fn engine_play_game_async<
-    ZF: ZebraFrontend,
-    Source: InitialMoveSource,
-    Dump: DumpHandler,
-    BoardSrc : FileBoardSource,
-    ComputeMoveLog: ComputeMoveLogger,
-    ComputeMoveOut: ComputeMoveOutput,
-    Learn: Learner,
-    FE: FrontEnd,
-    Thor: ThorDatabase,
-    GetMove,
-    Fut
->(file_name: *const i8, mut move_string: *const i8,
-  mut repeat: i32, log_file_name_: *mut i8,
-  mut move_file: Option<Source>, use_thor_: bool,
-  use_learning_: bool, mut get_move_cb: GetMove,
-  config: &mut Config) -> Result<(), Box<dyn Error>>
-    where
-        GetMove: FnMut(i32) -> Fut,
-        Fut: Future<Output=Result<i32, Box<dyn Error>>>
-{
-    todo!("Temporarily disabled for refactoring")
-}
-
 fn clear_moves(state: &mut BoardState) {
     state.black_moves = [-1; 60];
     state.white_moves = [-1; 60];
