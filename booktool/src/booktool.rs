@@ -185,8 +185,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             arg_index += 1;
             input_file_name = *argv.offset(arg_index as isize);
             if input_binary != 0 {
-                read_binary_database(input_file_name, g_state);
-            } else { read_text_database(input_file_name, g_state); }
+                read_binary_database(input_file_name, &mut g_state.g_book);
+            } else { read_text_database(input_file_name, &mut g_state.g_book); }
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-w\x00" as *const u8 as *const i8) ==
             0 ||
@@ -608,10 +608,10 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     }
     if output_database != 0 {
         if output_binary != 0 {
-            write_binary_database(output_file_name,g_state);
+            write_binary_database(output_file_name, &mut g_state.g_book);
         } else if output_compressed != 0 {
             write_compressed_database(output_file_name, g_state);
-        } else { write_text_database(output_file_name,g_state); }
+        } else { write_text_database(output_file_name,&mut g_state.g_book); }
     }
     return 0 as i32;
 }

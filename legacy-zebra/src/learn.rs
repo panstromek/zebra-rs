@@ -19,8 +19,8 @@ pub static mut database_name: [i8; 256] = [0; 256];
 pub unsafe fn init_learn(file_name: *const i8, is_binary: i32, g_state: &mut FullState) {
     init_osf(0 as i32, g_state);
     if is_binary != 0 {
-        read_binary_database(file_name, g_state);
-    } else { read_text_database(file_name, g_state); }
+        read_binary_database(file_name, &mut g_state.g_book);
+    } else { read_text_database(file_name, &mut g_state.g_book); }
     strcpy(database_name.as_mut_ptr(), file_name);
     binary_database = is_binary;
 }
@@ -83,8 +83,8 @@ pub unsafe fn learn_game(game_length: i32,
                  full_solve, wld_solve, 1 as i32, private_game, echo, g_state);
     if save_database != 0 {
         if binary_database != 0 {
-            write_binary_database(database_name.as_mut_ptr(), g_state);
-        } else { write_text_database(database_name.as_mut_ptr(), g_state); }
+            write_binary_database(database_name.as_mut_ptr(), &mut g_state.g_book);
+        } else { write_text_database(database_name.as_mut_ptr(), &mut g_state.g_book); }
     }
     (g_state.g_timer).toggle_abort_check(1 as i32);
 }
@@ -153,7 +153,7 @@ pub unsafe fn full_learn_public_game(length: i32,
     add_new_game(length, ( g_state.learn_state).game_move.as_mut_ptr(), cutoff, exact, wld,
                  1 as i32, 0 as i32, echo, g_state);
     if binary_database != 0 {
-        write_binary_database(database_name.as_mut_ptr(), g_state);
-    } else { write_text_database(database_name.as_mut_ptr(), g_state); }
+        write_binary_database(database_name.as_mut_ptr(), &mut g_state.g_book);
+    } else { write_text_database(database_name.as_mut_ptr(), &mut g_state.g_book); }
     ( g_state.g_timer).toggle_abort_check(1 as i32);
 }
