@@ -536,7 +536,7 @@ pub fn next_state<
                 let mut ready = 0;
                 let mut curr_move: i32 = 0;
                 while ready == 0 {
-                    ZF::prompt_get_move(side_to_move, &mut buffer);
+                    curr_move = ZF::prompt_get_move(side_to_move, &mut buffer);
                     ready = valid_move(curr_move, side_to_move, board);
                     if ready == 0 {
                         curr_move =
