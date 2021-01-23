@@ -440,9 +440,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
    Reads an existing ASCII database file.
 */
 
-pub unsafe fn read_text_database(file_name: *const i8, g_state: &mut FullState) {
-    let mut g_book = (&mut g_state.g_book);
-
+pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
     let mut i: i32 = 0;
     let mut magic1: i32 = 0;
     let mut magic2: i32 = 0;
@@ -471,7 +469,7 @@ pub unsafe fn read_text_database(file_name: *const i8, g_state: &mut FullState) 
     }
     fscanf(stream, b"%d\x00" as *const u8 as *const i8,
            &mut new_book_node_count as *mut i32);
-    set_allocation(new_book_node_count + 1000 as i32, &mut g_book);
+    set_allocation(new_book_node_count + 1000 as i32, g_book);
     i = 0;
     while i < new_book_node_count {
         fscanf(stream,
@@ -491,7 +489,7 @@ pub unsafe fn read_text_database(file_name: *const i8, g_state: &mut FullState) 
         i += 1
     }
     g_book.book_node_count = new_book_node_count;
-    create_hash_reference(&mut g_book);
+    create_hash_reference(g_book);
     fclose(stream);
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
@@ -503,24 +501,7 @@ pub unsafe fn read_text_database(file_name: *const i8, g_state: &mut FullState) 
    Reads a binary database file.
 */
 
-pub unsafe fn read_binary_database(file_name: *const i8, g_state: &mut FullState) {
-    let mut g_config = (&mut g_state.g_config);
-    let mut learn_state = (&mut g_state.learn_state);
-    let mut midgame_state = (&mut g_state.midgame_state);
-    let mut game_state = (&mut g_state.game_state);
-    let mut end_g = (&mut g_state.end_g);
-    let mut coeff_state = (&mut g_state.coeff_state);
-    let mut g_timer = (&mut g_state.g_timer);
-    let mut moves_state = (&mut g_state.moves_state);
-    let mut stable_state = (&mut g_state.stable_state);
-    let mut board_state = (&mut g_state.board_state);
-    let mut hash_state = (&mut g_state.hash_state);
-    let mut random_instance = (&mut g_state.random_instance);
-    let mut g_book = (&mut g_state.g_book);
-    let mut prob_cut = (&mut g_state.prob_cut);
-    let mut search_state = (&mut g_state.search_state);
-    let mut flip_stack_ = (&mut g_state.flip_stack_);
-
+pub unsafe fn read_binary_database(file_name: *const i8, g_book: &mut Book) {
     let mut i: i32 = 0;
     let mut new_book_node_count: i32 = 0;
     let mut magic1: i16 = 0;
@@ -553,7 +534,7 @@ pub unsafe fn read_binary_database(file_name: *const i8, g_state: &mut FullState
     fread(&mut new_book_node_count as *mut i32 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
-    set_allocation(new_book_node_count + 1000 as i32, &mut g_book);
+    set_allocation(new_book_node_count + 1000 as i32, g_book);
     i = 0;
     while i < new_book_node_count {
         fread(&mut (*g_book.node.offset(i as isize)).hash_val1 as *mut i32 as
@@ -588,7 +569,7 @@ pub unsafe fn read_binary_database(file_name: *const i8, g_state: &mut FullState
     }
     fclose(stream);
     g_book.book_node_count = new_book_node_count;
-    create_hash_reference(&mut g_book);
+    create_hash_reference(g_book);
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
@@ -599,25 +580,7 @@ pub unsafe fn read_binary_database(file_name: *const i8, g_state: &mut FullState
    Writes the database to an ASCII file.
 */
 
-pub unsafe fn write_text_database(file_name:
-                                                 *const i8, g_state: &mut FullState) {
-    let mut g_config = (&mut g_state.g_config);
-    let mut learn_state = (&mut g_state.learn_state);
-    let mut midgame_state = (&mut g_state.midgame_state);
-    let mut game_state = (&mut g_state.game_state);
-    let mut end_g = (&mut g_state.end_g);
-    let mut coeff_state = (&mut g_state.coeff_state);
-    let mut g_timer = (&mut g_state.g_timer);
-    let mut moves_state = (&mut g_state.moves_state);
-    let mut stable_state = (&mut g_state.stable_state);
-    let mut board_state = (&mut g_state.board_state);
-    let mut hash_state = (&mut g_state.hash_state);
-    let mut random_instance = (&mut g_state.random_instance);
-    let mut g_book = (&mut g_state.g_book);
-    let mut prob_cut = (&mut g_state.prob_cut);
-    let mut search_state = (&mut g_state.search_state);
-    let mut flip_stack_ = (&mut g_state.flip_stack_);
-
+pub unsafe fn write_text_database(file_name: *const i8, g_book: &mut Book) {
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     time(&mut start_time);
@@ -658,24 +621,7 @@ pub unsafe fn write_text_database(file_name:
    Writes the database to a binary file.
 */
 
-pub unsafe fn write_binary_database(file_name: *const i8, g_state: &mut FullState) {
-    let mut g_config = (&mut g_state.g_config);
-    let mut learn_state = (&mut g_state.learn_state);
-    let mut midgame_state = (&mut g_state.midgame_state);
-    let mut game_state = (&mut g_state.game_state);
-    let mut end_g = (&mut g_state.end_g);
-    let mut coeff_state = (&mut g_state.coeff_state);
-    let mut g_timer = (&mut g_state.g_timer);
-    let mut moves_state = (&mut g_state.moves_state);
-    let mut stable_state = (&mut g_state.stable_state);
-    let mut board_state = (&mut g_state.board_state);
-    let mut hash_state = (&mut g_state.hash_state);
-    let mut random_instance = (&mut g_state.random_instance);
-    let mut g_book = (&mut g_state.g_book);
-    let mut prob_cut = (&mut g_state.prob_cut);
-    let mut search_state = (&mut g_state.search_state);
-    let mut flip_stack_ = (&mut g_state.flip_stack_);
-
+pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book) {
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     time(&mut start_time);
@@ -982,19 +928,12 @@ pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
                                        _alpha: i32, _beta: i32,
                                        best_score: &mut i32,
                                        best_index: &mut i32, echo:i32, g_state: &mut FullState) {
-    let mut g_config = (&mut g_state.g_config);
-    let mut learn_state = (&mut g_state.learn_state);
     let mut midgame_state = (&mut g_state.midgame_state);
-    let mut game_state = (&mut g_state.game_state);
-    let mut end_g = (&mut g_state.end_g);
     let mut coeff_state = (&mut g_state.coeff_state);
     let mut g_timer = (&mut g_state.g_timer);
     let mut moves_state = (&mut g_state.moves_state);
-    let mut stable_state = (&mut g_state.stable_state);
     let mut board_state = (&mut g_state.board_state);
     let mut hash_state = (&mut g_state.hash_state);
-    let mut random_instance = (&mut g_state.random_instance);
-    let mut g_book = (&mut g_state.g_book);
     let mut prob_cut = (&mut g_state.prob_cut);
     let mut search_state = (&mut g_state.search_state);
     let mut flip_stack_ = (&mut g_state.flip_stack_);
