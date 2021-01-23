@@ -296,37 +296,6 @@ pub trait FileBoardSource : BoardSource {
     fn open(file_name: &CStr) -> Option<Self> where Self: Sized;
 }
 
-pub fn setup_file_based_game<S: FileBoardSource, FE: FrontEnd>(file_name: &CStr, side_to_move: &mut i32,
-                                                                      board_state: &mut BoardState,
-                                                                      hash_state: &mut HashState,
-                                                                      moves_state: &mut MovesState,
-) {
-    board_state.board = create_fresh_board();
-    match S::open((file_name)) {
-        Some(file_source) => {
-            match process_board_source(side_to_move, file_source, board_state) {
-                Ok(_) => {}
-                Err(BoardSourceError::UnrecognizedCharacter(unrecognized)) => FE::unrecognized_character(unrecognized as _),
-            }
-        },
-        None => {
-            FE::cannot_open_game_file((file_name).to_str().unwrap());
-        },
-    };
-    setup_game_finalize(side_to_move, board_state, hash_state, moves_state);
-}
-
-pub fn generic_setup_game<Source: FileBoardSource, FE: FrontEnd>(file_name: Option<&CStr>, side_to_move: &mut i32,
-                                                                        board_state: &mut BoardState,
-                                                                        hash_state: &mut HashState,
-                                                                        moves_state: &mut MovesState,) {
-    if let Some(file_name) = file_name {
-        setup_file_based_game::<Source, FE>(file_name, side_to_move,  board_state, hash_state, moves_state);
-    } else {
-        setup_non_file_based_game(side_to_move,  board_state, hash_state, moves_state);
-    }
-}
-
 pub fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: Option<&CStr>, side_to_move: &mut i32,
                                                                        flip_stack_: &mut FlipStack,
                                                                        search_state: &mut SearchState,
@@ -342,7 +311,23 @@ pub fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: Optio
                                                                        stable_state: &mut StableState,
                                                                        game_state: &mut GameState
 ) {
-    generic_setup_game::<Source, FE>(file_name, side_to_move, board_state, hash_state, moves_state);
+    if let Some(file_name) = file_name {
+        board_state.board = create_fresh_board();
+        match Source::open((file_name)) {
+            Some(file_source) => {
+                match process_board_source(side_to_move, file_source, board_state) {
+                    Ok(_) => {}
+                    Err(BoardSourceError::UnrecognizedCharacter(unrecognized)) => FE::unrecognized_character(unrecognized as _),
+                }
+            },
+            None => {
+                FE::cannot_open_game_file((file_name).to_str().unwrap());
+            },
+        };
+        setup_game_finalize(side_to_move, board_state, hash_state, moves_state);
+    } else {
+        setup_non_file_based_game(side_to_move,  board_state, hash_state, moves_state);
+    }
     engine_game_init(
         flip_stack_, search_state, board_state, hash_state, g_timer,
         end_g, midgame_state, coeff_state, moves_state, random_instance, g_book, stable_state, game_state,
