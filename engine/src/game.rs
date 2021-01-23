@@ -226,7 +226,7 @@ pub fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
 ) {
     let mut timer: time_t = 0;
     if use_random != 0 {
-        FE::time(&mut timer);
+        g_timer.time(&mut timer);
         random_instance.my_srandom(timer as i32);
     } else { random_instance.my_srandom(1 as i32); }
     hash_state.init_hash(hash_bits);

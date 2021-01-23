@@ -26,6 +26,9 @@ pub struct Timer {
 }
 
 impl Timer {
+    pub fn time(&self, t: &mut time_t) -> time_t {
+        return self.source.time(t)
+    }
     pub fn new(source: &'static dyn TimeSource) -> Self {
         Timer {
             source,
