@@ -168,7 +168,7 @@ pub trait ZebraFrontend {
     fn log_game_ending(log_file_name_: &CStr, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32);
     fn get_pass();
     fn report_engine_override();
-    fn prompt_get_move(side_to_move: i32, buffer: &mut [i8; 4]) -> i32;
+    fn prompt_get_move(side_to_move: i32) -> (i32, i32);
     fn before_get_move();
     fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64);
     fn report_skill_levels(black_level: i32, white_level: i32);
@@ -534,17 +534,14 @@ pub fn next_state<
         },
         PlayGameState::GettingMove { provided_move_count, move_start } => {
             let side_to_move: i32 = play_state.side_to_move;
-            let board = &play_state.g_state.board_state.board;
+            let (curr_move, curr_move_2) = ZF::prompt_get_move(side_to_move);
 
-            let mut buffer: [i8; 4] = [0; 4];
-            let curr_move = ZF::prompt_get_move(side_to_move, &mut buffer);
+            let board = &play_state.g_state.board_state.board;
             let ready = valid_move(curr_move, side_to_move, board);
             if ready == 0 {
-                let curr_move =
-                    buffer[0] as i32 - 'a' as i32 + 1 + 10 * (buffer[1] as i32 - '0' as i32);
-                let ready = valid_move(curr_move, side_to_move, board);
+                let ready = valid_move(curr_move_2, side_to_move, board);
                 if ready != 0 {
-                    play_state.curr_move = curr_move;
+                    play_state.curr_move = curr_move_2;
                     PlayGameState::MoveStop { provided_move_count, move_start }
                 } else {
                     PlayGameState::GettingMove { provided_move_count, move_start }
