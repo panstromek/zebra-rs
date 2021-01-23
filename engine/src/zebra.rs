@@ -607,8 +607,8 @@ fn load_moves_from_source<'a, Source: InitialMoveSource>(mut move_file: &mut Opt
 }
 
 fn deal_with_thor_1<ZF: ZebraFrontend, Thor: ThorDatabase>(use_thor_: bool, side_to_move: i32,
-                                                           mut config: &mut Config, g_timer: &mut Timer,
-                                                           board_state: &mut BoardState,total_search_time: &mut f64) {
+                                                           mut config: &mut Config, g_timer: &Timer,
+                                                           board_state: &BoardState,total_search_time: &mut f64) {
     if use_thor_ {
         let database_start = g_timer.get_real_timer();
         Thor::database_search(&board_state.board, side_to_move);
@@ -631,8 +631,8 @@ fn deal_with_thor_1<ZF: ZebraFrontend, Thor: ThorDatabase>(use_thor_: bool, side
 }
 
 fn deal_with_thor_2<ZF: ZebraFrontend, Thor:ThorDatabase>(use_thor_: bool, side_to_move: i32,
-                                                          config: &mut Config, g_timer: &mut Timer,
-                                                          board_state: &mut BoardState, total_search_time: &mut f64){
+                                                          config: &Config, g_timer: &Timer,
+                                                          board_state: &BoardState, total_search_time: &mut f64){
     if use_thor_ {
         let database_start = g_timer.get_real_timer();
         Thor::database_search(&board_state.board, side_to_move);
