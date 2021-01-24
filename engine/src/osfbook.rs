@@ -98,9 +98,7 @@ pub struct Book {
     pub draw_mode: DrawMode,
     pub game_mode: GameMode,
     pub node: Vec<BookNode>,
-    pub candidate_list: [CandidateMove; 60],
-    pub row_pattern: [i32; 8],
-    pub col_pattern: [i32; 8],
+    pub candidate_list: [CandidateMove; 60]
 }
 pub struct BookMaps {
     pub b1_b1_map: [i8; 100],
@@ -208,9 +206,7 @@ impl Book {
             draw_mode: OPPONENT_WINS,
             game_mode: PRIVATE_GAME,
             node: Vec::new(),
-            candidate_list: [CandidateMove { move_0: 0, score: 0, flags: 0, parent_flags: 0 }; 60],
-            row_pattern: [0; 8],
-            col_pattern: [0; 8],
+            candidate_list: [CandidateMove { move_0: 0, score: 0, flags: 0, parent_flags: 0 }; 60]
         }
     }
 }
@@ -365,7 +361,7 @@ impl Book {
 */
 
 
-pub fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32, book: &mut Book, board1: &Board) {
+pub fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32, book: & Book, board1: &Board) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut min_map: i32 = 0;
@@ -374,7 +370,9 @@ pub fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32, book: &mu
     let mut out: [[i32; 2]; 8] = [[0; 2]; 8];
     /* Calculate the 8 different 64-bit hash values for the
        different rotations. */
-    compute_line_patterns(board1, &mut book.row_pattern, &mut book.col_pattern);
+    let mut row_pattern: [i32; 8] = [0;8];
+    let mut col_pattern: [i32; 8] = [0; 8];
+    compute_line_patterns(board1, &mut row_pattern, &mut col_pattern);
     i = 0;
     while i < 8 as i32 {
         j = 0;
@@ -389,30 +387,30 @@ pub fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32, book: &mu
         /* b1 -> b1 */
         out[0][0] ^=
             book.line_hash[0][i as
-                usize][book.row_pattern[i as usize] as usize];
+                usize][row_pattern[i as usize] as usize];
         out[0][1] ^=
             book.line_hash[1][i as
-                usize][book.row_pattern[i as usize] as usize];
+                usize][row_pattern[i as usize] as usize];
         /* g1 -> b1 */
         out[1][0] ^=
             book.line_hash[0][i as
-                usize][flip8[book.row_pattern[i as usize] as
+                usize][flip8[row_pattern[i as usize] as
                 usize] as usize];
         out[1][1] ^=
             book.line_hash[1][i as
-                usize][flip8[book.row_pattern[i as usize] as
+                usize][flip8[row_pattern[i as usize] as
                 usize] as usize];
         /* g8 -> b1 */
         out[2][0] ^=
             book.line_hash[0][i as
-                usize][flip8[book.row_pattern[(7 as
+                usize][flip8[row_pattern[(7 as
                 i32
                 - i) as
                 usize] as
                 usize] as usize];
         out[2][1] ^=
             book.line_hash[1][i as
-                usize][flip8[book.row_pattern[(7 as
+                usize][flip8[row_pattern[(7 as
                 i32
                 - i) as
                 usize] as
@@ -420,41 +418,41 @@ pub fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32, book: &mu
         /* b8 -> b1 */
         out[3][0] ^=
             book.line_hash[0][i as
-                usize][book.row_pattern[(7 as i32 - i)
+                usize][row_pattern[(7 as i32 - i)
                 as usize] as
                 usize];
         out[3][1] ^=
             book.line_hash[1][i as
-                usize][book.row_pattern[(7 as i32 - i)
+                usize][row_pattern[(7 as i32 - i)
                 as usize] as
                 usize];
         /* a2 -> b1 */
         out[4][0] ^=
             book.line_hash[0][i as
-                usize][book.col_pattern[i as usize] as usize];
+                usize][col_pattern[i as usize] as usize];
         out[4][1] ^=
             book.line_hash[1][i as
-                usize][book.col_pattern[i as usize] as usize];
+                usize][col_pattern[i as usize] as usize];
         /* a7 -> b1 */
         out[5][0] ^=
             book.line_hash[0][i as
-                usize][flip8[book.col_pattern[i as usize] as
+                usize][flip8[col_pattern[i as usize] as
                 usize] as usize];
         out[5][1] ^=
             book.line_hash[1][i as
-                usize][flip8[book.col_pattern[i as usize] as
+                usize][flip8[col_pattern[i as usize] as
                 usize] as usize];
         /* h7 -> b1 */
         out[6][0] ^=
             book.line_hash[0][i as
-                usize][flip8[book.col_pattern[(7 as
+                usize][flip8[col_pattern[(7 as
                 i32
                 - i) as
                 usize] as
                 usize] as usize];
         out[6][1] ^=
             book.line_hash[1][i as
-                usize][flip8[book.col_pattern[(7 as
+                usize][flip8[col_pattern[(7 as
                 i32
                 - i) as
                 usize] as
@@ -462,12 +460,12 @@ pub fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32, book: &mu
         /* h2 -> b1 */
         out[7][0] ^=
             book.line_hash[0][i as
-                usize][book.col_pattern[(7 as i32 - i)
+                usize][col_pattern[(7 as i32 - i)
                 as usize] as
                 usize];
         out[7][1] ^=
             book.line_hash[1][i as
-                usize][book.col_pattern[(7 as i32 - i)
+                usize][col_pattern[(7 as i32 - i)
                 as usize] as
                 usize];
         i += 1
