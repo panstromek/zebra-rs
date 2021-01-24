@@ -233,7 +233,7 @@ pub fn engine_play_game<
     let mut move_attempt = None;
     loop {
         next_state::<
-            ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, FE, Thor
+            ZF, Source, BoardSrc, ComputeMoveLog, ComputeMoveOut, FE, Thor
         >(&mut play_state, move_attempt.take());
         match play_state.state {
             // TODO here in all these branches, we should ideally not need mutable reference to play_state
@@ -323,7 +323,6 @@ pub struct MoveAttempt(i32, i32);
 pub fn next_state<
     ZF: ZebraFrontend,
     Source: InitialMoveSource,
-    Dump: DumpHandler,
     BoardSrc : FileBoardSource,
     ComputeMoveLog: ComputeMoveLogger,
     ComputeMoveOut: ComputeMoveOutput,
