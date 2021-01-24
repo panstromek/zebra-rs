@@ -193,6 +193,7 @@ pub enum PlayGameState {
     GettingMove { provided_move_count: i32 , move_start: f64, side_to_move: i32 },
     AfterDumpch { provided_move_count:i32 , move_start: f64 },
     Dumpch { provided_move_count:i32 , move_start: f64 },
+    NeedsDump { provided_move_count:i32 , move_start: f64 },
 }
 pub struct PlayGame<'a, 'b, 'c, 'd, Source: InitialMoveSource> {
     file_name: Option<&'a CStr>,
@@ -321,7 +322,7 @@ pub fn next_state<
             clear_moves(&mut play_state.g_state.board_state);
             play_state.move_vec[0] = 0;
             // these are not used because their usage was disabled by preprocessor
-            // byt for deterministic testing, we need to call random the same way, so we keep them.
+            // but for deterministic testing, we need to call random the same way, so we keep them.
             let _black_hash1 = play_state.g_state.random_instance.my_random();
             let _black_hash2 = play_state.g_state.random_instance.my_random();
             let _white_hash1 = play_state.g_state.random_instance.my_random();
@@ -351,15 +352,7 @@ pub fn next_state<
                         ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer,
                                                      &play_state.g_state.board_state.board, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
                     }
-                    Dump::dump_position(play_state.side_to_move, &play_state.g_state.board_state.board);
-                    Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
-                    /* Check what the Thor opening statistics has to say */
-                    Thor::choose_thor_opening_move(&play_state.g_state.board_state.board, play_state.side_to_move, play_state.g_state.g_config.echo, &mut play_state.g_state.random_instance);
-                    if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.wait != 0 {
-                        PlayGameState::Dumpch { provided_move_count, move_start }
-                    } else {
-                        PlayGameState::AfterDumpch { provided_move_count, move_start }
-                    }
+                    PlayGameState::NeedsDump { provided_move_count, move_start }
                 } else {
                     if play_state.side_to_move == 0 {
                         play_state.g_state.board_state.black_moves[play_state.g_state.board_state.score_sheet_row as usize] = -(1)
@@ -374,6 +367,17 @@ pub fn next_state<
                 }
             } else {
                 PlayGameState::AfterGame
+            }
+        }
+        PlayGameState::NeedsDump { provided_move_count, move_start } => {
+            Dump::dump_position(play_state.side_to_move, &play_state.g_state.board_state.board);
+            Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
+            /* Check what the Thor opening statistics has to say */
+            Thor::choose_thor_opening_move(&play_state.g_state.board_state.board, play_state.side_to_move, play_state.g_state.g_config.echo, &mut play_state.g_state.random_instance);
+            if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.wait != 0 {
+                PlayGameState::Dumpch { provided_move_count, move_start }
+            } else {
+                PlayGameState::AfterDumpch { provided_move_count, move_start }
             }
         }
         PlayGameState::AfterGame => {
