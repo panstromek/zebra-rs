@@ -397,12 +397,13 @@ pub fn next_state<
             }
         }
         PlayGameState::AfterGame => {
+            if play_state.side_to_move == 0 as i32 { play_state.g_state.board_state.score_sheet_row += 1 }
+
             if play_state.g_state.g_config.echo == 0 && play_state.g_state.g_config.one_position_only == 0 {
                 let black_level = play_state.g_state.g_config.skill[0];
                 let white_level = play_state.g_state.g_config.skill[2];
                 ZF::report_skill_levels(black_level, white_level);
             }
-            if play_state.side_to_move == 0 as i32 { play_state.g_state.board_state.score_sheet_row += 1 }
             Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
             if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.one_position_only == 0 {
                 ZF::set_move_list(
