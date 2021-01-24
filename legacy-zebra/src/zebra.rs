@@ -778,7 +778,7 @@ unsafe fn play_game(mut file_name: *const i8,
         let move_file_name = CStr::from_ptr(move_file_name).to_str().unwrap();
         FileMoveSource::open(move_file_name)
     };
-    let file_name: Option<&CStr> = (!file_name.is_null()).then(|| CStr::from_ptr(file_name));
+    let file_name: Option<CString> = (!file_name.is_null()).then(|| CStr::from_ptr(file_name).into());
     let log_file_name_: Option<&CStr> = (!log_file_name_.is_null()).then(|| CStr::from_ptr(log_file_name_));
 
     let move_string = if move_string.is_null() {
