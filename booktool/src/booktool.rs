@@ -8,7 +8,7 @@ use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 use legacy_zebra::src::error::{LibcFatalError, fatal_error_2};
 use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
 
-use libc_wrapper::{time, fflush, stdout, fopen, fread, fclose, FILE, fprintf, fputc, free, sprintf, putc, fputs, stderr, sscanf, strlen, fgets, qsort, feof, strcmp, strstr, __ctype_b_loc, fwrite, malloc, toupper, ctime, strcpy};
+use libc_wrapper::{time, fflush, stdout, fopen, fread, fclose, FILE, fprintf, fputc, free, sprintf, putc, fputs, stderr, sscanf, strlen, fgets, qsort, feof, strcmp, strstr, __ctype_b_loc, fwrite, malloc, toupper, ctime, strcpy, tolower};
 use legacy_zebra::src::osfbook;
 use engine::src::moves::{generate_all, make_move, unmake_move, unmake_move_no_hash, make_move_no_hash, generate_specific};
 use engine::src::search::disc_count;
@@ -2004,7 +2004,7 @@ pub unsafe fn evaluate_tree(g_state: &mut FullState) {
     puts(b"\x00" as *const u8 as *const i8);
     printf(b"Progress: \x00" as *const u8 as *const i8);
     fflush(stdout);
-    if feasible_count > 0 as i32 { do_evaluate::<LibcFatalError>(0 as i32, g_state.g_config.echo, g_state); }
+    if feasible_count > 0 as i32 { do_evaluate(0 as i32, g_state.g_config.echo, g_state); }
     time(&mut stop_time);
     printf(b"(took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
@@ -3343,7 +3343,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                     move_buffer[1] as i32 -
                         '0' as i32;
                 col_0 =
-                    FE::tolower(move_buffer[0] as
+                    tolower(move_buffer[0] as
                         i32) - 'a' as i32 + 1 as i32;
                 move_0 = 10 as i32 * row + col_0;
                 if row >= 1 as i32 && row <= 8 as i32 &&
@@ -3536,13 +3536,13 @@ pub struct StatisticsSpec {
   The number of positions evaluated is returned.
 */
 
-pub unsafe fn validate_tree<FE: FrontEnd>(echo: i32, g_state: &mut FullState) -> i32 {
+pub unsafe fn validate_tree(echo: i32, g_state: &mut FullState) -> i32 {
     prepare_tree_traversal(g_state);
-    validate_prepared_tree::<FE>(echo, g_state)
+    validate_prepared_tree(echo, g_state)
 }
 
 // extracted from validate_tree
-pub unsafe fn validate_prepared_tree<FE: FrontEnd>(echo: i32, g_state: &mut FullState) -> i32 {
+pub unsafe fn validate_prepared_tree(echo: i32, g_state: &mut FullState) -> i32 {
     g_state.g_book.exhausted_node_count = 0;
     g_state.g_book.evaluated_count = 0;
     g_state.g_book.evaluation_stage = 0;
@@ -3572,7 +3572,7 @@ pub unsafe fn validate_prepared_tree<FE: FrontEnd>(echo: i32, g_state: &mut Full
                     u16;
             i += 1
         }
-        do_validate::<FE>(0 as i32, echo, g_state);
+        do_validate(0 as i32, echo, g_state);
     }
     return g_state.g_book.evaluated_count;
 }
@@ -3582,7 +3582,7 @@ pub unsafe fn validate_prepared_tree<FE: FrontEnd>(echo: i32, g_state: &mut Full
    Recursively makes sure a subtree doesn't contain any midgame
    g_state.g_book.node without a deviation move.
 */
-pub unsafe fn do_validate<FE: FrontEnd>(index: i32, echo:i32, g_state: &mut FullState) {
+pub unsafe fn do_validate(index: i32, echo:i32, g_state: &mut FullState) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
@@ -3607,7 +3607,7 @@ pub unsafe fn do_validate<FE: FrontEnd>(index: i32, echo:i32, g_state: &mut Full
             9999 as i32 &&
         (*g_state.g_book.node.offset(index as isize)).best_alternative_move as i32
             != -(2 as i32) {
-        evaluate_node::<FE>(index, echo, g_state);
+        evaluate_node(index, echo, g_state);
     }
     i = 0;
     while i < g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] {
@@ -3619,7 +3619,7 @@ pub unsafe fn do_validate<FE: FrontEnd>(index: i32, echo:i32, g_state: &mut Full
         get_hash(val0___, val1___, orientation___, &mut g_state.g_book, &g_state.board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_state.g_book);
         child = *g_state.g_book.book_hash_table.offset(slot as isize);
-        if child != -(1 as i32) { do_validate::<FE>(child, echo, g_state); }
+        if child != -(1 as i32) { do_validate(child, echo, g_state); }
         let move_0 = this_move;
         {
             unmake_move(side_to_move, move_0, &mut g_state.board_state.board, &mut g_state.moves_state, &mut g_state.hash_state, &mut g_state.flip_stack_);
@@ -3636,7 +3636,7 @@ pub unsafe fn do_validate<FE: FrontEnd>(index: i32, echo:i32, g_state: &mut Full
    Recursively makes sure a subtree is evaluated to
    the specified depth.
 */
-pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32, echo:i32, g_state: &mut FullState) {
+pub unsafe fn do_evaluate(index: i32, echo:i32, g_state: &mut FullState) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
@@ -3657,13 +3657,13 @@ pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32, echo:i32, g_state: &mut Full
     generate_all(side_to_move, &mut g_state.moves_state, &g_state.search_state, &g_state.board_state.board);
     if (*g_state.g_book.node.offset(index as isize)).flags as i32 &
         (16 as i32 | 4 as i32) == 0 {
-        evaluate_node::<FE>(index, echo, g_state);
+        evaluate_node(index, echo, g_state);
     }
     if g_state.g_book.evaluated_count >=
         (g_state.g_book.evaluation_stage + 1 as i32) * g_state.g_book.max_eval_count /
             25 as i32 {
         g_state.g_book.evaluation_stage += 1;
-        FE::report_do_evaluate(g_state.g_book.evaluation_stage);
+        LibcFatalError::report_do_evaluate(g_state.g_book.evaluation_stage);
     }
     i = 0;
     while i < g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] {
@@ -3675,7 +3675,7 @@ pub unsafe fn do_evaluate<FE: FrontEnd>(index: i32, echo:i32, g_state: &mut Full
         get_hash(val0___, val1___, orientation___, &mut g_state.g_book, &g_state.board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_state.g_book);
         child = *g_state.g_book.book_hash_table.offset(slot as isize);
-        if child != -(1 as i32) { do_evaluate::<FE>(child, echo, g_state); }
+        if child != -(1 as i32) { do_evaluate(child, echo, g_state); }
         let move_0 = this_move;
         {
             unmake_move(side_to_move, move_0, &mut g_state.board_state.board, &mut g_state.moves_state, &mut g_state.hash_state, &mut g_state.flip_stack_);

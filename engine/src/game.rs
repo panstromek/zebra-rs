@@ -482,7 +482,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
         /* Check if the position fits the currently forced opening */
         curr_move = check_forced_opening::<FE>(
             side_to_move,
-            ForcedOpening::from_c_str::<FE>(forced_opening),
+            ForcedOpening::from_c_str(forced_opening),
             &board_state.board,
             moves_state.disks_played,
             &g_book,
@@ -868,11 +868,6 @@ pub fn compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, 
         &mut game_state, &mut prob_cut);
 }
 
-pub trait PonderMoveReport {
-    fn report_move_evals(expect_count: i32, move_list_item: &[i32; 64], evals_item: &[i32; 128]);
-    fn report_hash_move(hash_move: i32);
-}
-
 pub trait ComputeMoveOutput {
     fn display_out_optimal_line(search_state: &SearchState);
     fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64, board_state: &BoardState);
@@ -894,20 +889,22 @@ pub trait ComputeMoveLogger {
     fn log_board(logger: &mut Self, board_: & BoardState, side_to_move_: i32);
     fn create_log_file_if_needed() -> Option<Self> where Self:Sized;
 }
-
+pub fn to_lower(ch: i32) -> i32 {
+    char::from(ch as u8).to_ascii_lowercase() as i32
+}
 pub struct ForcedOpening {
     pub move_count: i32,
     pub moves: [i32; 60],
 }
 impl ForcedOpening {
-    pub fn from_c_str<FE: FrontEnd>(opening: &CStr) -> Self {
+    pub fn from_c_str(opening: &CStr) -> Self {
         let opening = opening.to_bytes();
         let mut i = 0;
         let mut move_0: [i32; 60] = [0; 60];
         let move_count_0 = opening.len().wrapping_div(2) as i32;
         while i < move_count_0 {
             move_0[i as usize] = 10 * (*opening.offset((2 * i + 1) as isize) as i32 - '0' as i32) +
-                FE::tolower(*opening.offset((2 * i) as isize) as i32) - 'a' as i32 + 1;
+                to_lower(*opening.offset((2 * i) as isize) as i32) - 'a' as i32 + 1;
             i += 1
         };
         ForcedOpening {

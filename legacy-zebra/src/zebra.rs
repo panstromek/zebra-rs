@@ -25,14 +25,14 @@ use engine::src::search::{disc_count, produce_compact_eval, SearchState};
 use engine::src::stable::StableState;
 use engine::src::stubs::floor;
 use engine::src::timer::{Timer, TimeSource};
-use engine::src::zebra::{Config, DumpHandler, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend, next_state, PlayGameState, MoveAttempt, PlayGame};
+use engine::src::zebra::{Config, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend, next_state, PlayGameState, MoveAttempt, PlayGame};
 use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WINS};
 use engine::src::zebra::EvalResult::{LOST_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 use flip::unflip::FlipStack;
-use libc_wrapper::{atof, atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time, fflush};
+use libc_wrapper::{atof, atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time, fflush, tolower};
 use libc_wrapper::{FILE, time_t};
 
 use crate::src::display::{display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state};
@@ -826,7 +826,7 @@ unsafe fn play_game(mut file_name: *const i8,
                     if let Some(opening_name) = opening_name {
                         ZF::report_opening_name(CStr::from_bytes_with_nul(opening_name).unwrap());
                     }
-                    deal_with_thor_1::<ZF, Thor>(play_state.g_state.g_config.use_thor,
+                    deal_with_thor_1(play_state.g_state.g_config.use_thor,
                                                  play_state.side_to_move,
                                                  &play_state.g_state.g_config,
                                                  &play_state.g_state.g_timer,
@@ -862,7 +862,7 @@ unsafe fn play_game(mut file_name: *const i8,
                 if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.one_position_only == 0 {
                     ZF::set_move_list(
                         play_state.g_state.board_state.score_sheet_row);
-                    deal_with_thor_2::<ZF, Thor>(play_state.g_state.g_config.use_thor, play_state.side_to_move,
+                    deal_with_thor_2(play_state.g_state.g_config.use_thor, play_state.side_to_move,
                                                  &play_state.g_state.g_config,
                                                  &play_state.g_state.g_timer,
                                                  &play_state.g_state.board_state,
@@ -890,9 +890,12 @@ unsafe fn play_game(mut file_name: *const i8,
     }
 }
 
-fn deal_with_thor_1<ZF: ZebraFrontend, Thor: ThorDatabase>(use_thor_: bool, side_to_move: i32,
+fn deal_with_thor_1(use_thor_: bool, side_to_move: i32,
                                                            mut config: &Config, g_timer: &Timer,
                                                            board_state: &BoardState, total_search_time: &mut f64) {
+    type ZF = LibcFrontend;
+    type Thor = LegacyThor;
+
     if use_thor_ {
         let database_start = g_timer.get_real_timer();
         Thor::database_search(&board_state.board, side_to_move);
@@ -914,9 +917,11 @@ fn deal_with_thor_1<ZF: ZebraFrontend, Thor: ThorDatabase>(use_thor_: bool, side
     }
 }
 
-fn deal_with_thor_2<ZF: ZebraFrontend, Thor:ThorDatabase>(use_thor_: bool, side_to_move: i32,
+fn deal_with_thor_2(use_thor_: bool, side_to_move: i32,
                                                           config: &Config, g_timer: &Timer,
                                                           board_state: &BoardState, total_search_time: &mut f64){
+    type ZF = LibcFrontend;
+    type Thor = LegacyThor;
     if use_thor_ {
         let database_start = g_timer.get_real_timer();
         Thor::database_search(&board_state.board, side_to_move);
@@ -938,29 +943,8 @@ fn deal_with_thor_2<ZF: ZebraFrontend, Thor:ThorDatabase>(use_thor_: bool, side_
 }
 
 
-struct LibcFrontend {} //TODO this could probably be merged with the FrontEnd trait or something
-impl ZebraFrontend for LibcFrontend {
-    fn set_evals(black: f64, white: f64) {
-        unsafe { set_evals(black, white); }
-    }
-
-    fn set_move_list(row: i32) {
-        unsafe { set_move_list(null_mut(), null_mut(), row) }
-    }
-
-    fn set_names(white_is_player: bool, black_is_player: bool) {
-        let black_name = if white_is_player {
-            b"Player\x00" as *const u8 as *const i8
-        } else {
-            b"Zebra\x00" as *const u8 as *const i8
-        };
-        let white_name = if black_is_player {
-            b"Player\x00" as *const u8 as *const i8
-        } else {
-            b"Zebra\x00" as *const u8 as *const i8
-        };
-        unsafe { set_names(black_name, white_name) }
-    }
+pub struct LibcFrontend {} //TODO this could probably be merged with the FrontEnd trait or something
+impl LibcFrontend {
 
     fn set_times(black: i32, white: i32) {
         unsafe { set_times(black, white) }
@@ -1002,7 +986,7 @@ impl ZebraFrontend for LibcFrontend {
         unsafe { print_thor_matches(stdout, thor_max_games_); }
     }
     fn log_game_ending(log_file_name_: &CStr, move_vec: &[i8; 121],
-                              first_side_to_move: i32, second_side_to_move: i32) {
+                       first_side_to_move: i32, second_side_to_move: i32) {
         let log_file_name_ = log_file_name_.as_ptr();
         unsafe {
             let log_file = fopen(log_file_name_,
@@ -1030,12 +1014,6 @@ impl ZebraFrontend for LibcFrontend {
             dumpch();
         }
     }
-    fn report_engine_override() {
-        unsafe {
-            puts(b"Engine override: Random move selected.\x00"
-                as *const u8 as *const i8);
-        }
-    }
 
     fn prompt_get_move(side_to_move: i32) -> (i32, i32) {
         let mut buffer: [i8; 4] = [0; 4];
@@ -1052,12 +1030,6 @@ impl ZebraFrontend for LibcFrontend {
             let curr_move_2 =
                 buffer[0] as i32 - 'a' as i32 + 1 + 10 * (buffer[1] as i32 - '0' as i32);
             (curr_move, curr_move_2)
-        }
-    }
-
-    fn before_get_move()  {
-        unsafe {
-            puts(b"\x00" as *const u8 as *const i8);
         }
     }
     fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {
@@ -1110,6 +1082,47 @@ impl ZebraFrontend for LibcFrontend {
     fn report_opening_name(opening_name: &CStr) {
         unsafe { printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8, opening_name.as_ptr()); }
     }
+
+    fn dumpch() {
+        unsafe { dumpch() }
+    }
+}
+impl ZebraFrontend for LibcFrontend {
+    fn set_evals(black: f64, white: f64) {
+        unsafe { set_evals(black, white); }
+    }
+
+    fn set_move_list(row: i32) {
+        unsafe { set_move_list(null_mut(), null_mut(), row) }
+    }
+
+    fn set_names(white_is_player: bool, black_is_player: bool) {
+        let black_name = if white_is_player {
+            b"Player\x00" as *const u8 as *const i8
+        } else {
+            b"Zebra\x00" as *const u8 as *const i8
+        };
+        let white_name = if black_is_player {
+            b"Player\x00" as *const u8 as *const i8
+        } else {
+            b"Zebra\x00" as *const u8 as *const i8
+        };
+        unsafe { set_names(black_name, white_name) }
+    }
+
+    fn report_engine_override() {
+        unsafe {
+            puts(b"Engine override: Random move selected.\x00"
+                as *const u8 as *const i8);
+        }
+    }
+
+    fn before_get_move()  {
+        unsafe {
+            puts(b"\x00" as *const u8 as *const i8);
+        }
+    }
+
     fn report_book_randomness(slack_: f64) {
         unsafe { printf(b"Book randomness: %.2f disks\n\x00" as *const u8 as *const i8, slack_); }
     }
@@ -1174,10 +1187,6 @@ impl ZebraFrontend for LibcFrontend {
 
     fn print_move_alternatives(side_to_move: i32, mut board_state: &mut BoardState, mut g_book: &mut Book) {
         unsafe { print_move_alternatives(side_to_move, board_state,  g_book) }
-    }
-
-    fn dumpch() {
-        unsafe { dumpch() }
     }
 }
 
@@ -1246,7 +1255,7 @@ unsafe fn analyze_game(mut move_string: *const i8,
         i = 0;
         while i < provided_move_count {
             col =
-               FE::tolower(*move_string.offset((2 as i32 * i) as isize)
+               tolower(*move_string.offset((2 as i32 * i) as isize)
                             as i32) - 'a' as i32 + 1 as i32;
             row =
                 *move_string.offset((2 as i32 * i + 1 as i32)
@@ -1904,7 +1913,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
 }
 
 struct LibcDumpHandler;
-impl DumpHandler for LibcDumpHandler {
+impl LibcDumpHandler {
     /*
        DUMP_POSITION
        Saves the current board position to disk.

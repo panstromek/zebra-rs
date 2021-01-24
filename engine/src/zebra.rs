@@ -153,31 +153,11 @@ pub trait ZebraFrontend {
     fn set_evals(black: f64, white: f64);
     fn set_move_list(row: i32);
     fn set_names(white_is_player: bool, black_is_player: bool);
-    fn set_times(black: i32, white: i32);
-    fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
-    fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64);
-    fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: & crate::src::globals::Board,
-                                black_moves_: &[i32; 60], white_moves_: &[i32; 60]);
-    fn print_out_thor_matches(thor_max_games_: i32);
-    fn log_game_ending(log_file_name_: &CStr, move_vec: &[i8; 121], first_side_to_move: i32, second_side_to_move: i32);
-    fn get_pass();
     fn report_engine_override();
-    fn prompt_get_move(side_to_move: i32) -> (i32, i32);
     fn before_get_move();
-    fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64);
-    fn report_skill_levels(black_level: i32, white_level: i32);
-    fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64);
-    fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64);
-    fn report_opening_name(opening_name: &CStr);
     fn report_book_randomness(slack_: f64);
     fn load_thor_files(g_timer: &mut Timer);
     fn print_move_alternatives(side_to_move: i32,  board_state: &mut BoardState, g_book: &mut Book);
-    fn dumpch();
-}
-/* File handling procedures */
-pub trait DumpHandler {
-    fn dump_position(side_to_move: i32, board_: & crate::src::globals::Board);
-    fn dump_game_score(side_to_move: i32, score_sheet_row_: i32, black_moves_: &[i32; 60], white_moves_: &[i32; 60]);
 }
 
 #[derive(Copy, Clone)]

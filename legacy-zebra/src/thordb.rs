@@ -1,4 +1,4 @@
-use libc_wrapper::{puts, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FILE, size_t, strlen};
+use libc_wrapper::{puts, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FILE, size_t, strlen, tolower};
 use crate::src::error::LibcFatalError;
 use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
@@ -354,7 +354,7 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
     i = 0;
     loop  {
         ch = *(*player1).name.offset(i as isize);
-        buffer1[i as usize] =FE::tolower(ch as i32) as i8;
+        buffer1[i as usize] = tolower(ch as i32) as i8;
         i += 1;
         if !(ch as i32 != 0 as i32) { break ; }
     }
@@ -365,7 +365,7 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
     i = 0;
     loop  {
         ch = *(*player2).name.offset(i as isize);
-        buffer2[i as usize] =FE::tolower(ch as i32) as i8;
+        buffer2[i as usize] = tolower(ch as i32) as i8;
         i += 1;
         if !(ch as i32 != 0 as i32) { break ; }
     }
@@ -2145,7 +2145,8 @@ unsafe fn new_thor_opening_node<FE: FrontEnd>(parent: *mut ThorOpeningNode)
   Builds the opening tree from the statically computed
   structure THOR_OPENING_LIST (see thorop.c).
 */
-unsafe fn build_thor_opening_tree<FE: FrontEnd>() {
+unsafe fn build_thor_opening_tree() {
+    type FE = LibcFatalError;
     let mut thor_move_list: [i8; 61] = [0; 61];
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -2342,7 +2343,7 @@ pub unsafe fn init_thor_database<FE: FrontEnd>(g_state: &mut FullState) {
     init_symmetry_maps::<FE>();
     init_thor_hash(g_state);
     prepare_thor_board();
-    build_thor_opening_tree::<FE>();
+    build_thor_opening_tree();
     filter.game_categories =
         1 as i32 | 2 as i32 | 4 as i32;
     filter.player_filter = EITHER_SELECTED_FILTER;
