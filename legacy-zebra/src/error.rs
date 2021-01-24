@@ -427,20 +427,6 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-    #[inline(always)]
-    fn tolower(num: i32) -> i32 {
-        unsafe { tolower(num) }
-    }
-    fn report_do_evaluate(evaluation_stage_: i32) {
-        unsafe {
-            putc('|' as i32, stdout);
-            if evaluation_stage_ % 5 as i32 == 0 as i32 {
-                printf(b" %d%% \x00" as *const u8 as *const i8,
-                       4 as i32 * evaluation_stage_);
-            }
-            fflush(stdout);
-        }
-    }
     fn report_unwanted_book_draw(this_move: i32) {
         unsafe {
             printf(b"%c%c leads to an unwanted book draw\n\x00" as *const u8 as *const i8, 'a' as i32 + this_move % 10 as i32 - 1 as i32, '0' as i32 + this_move / 10 as i32);
@@ -620,14 +606,27 @@ impl FrontEnd for LibcFatalError {
                    second_item);
         }
     }
-    fn thordb_report_flipped_0_first() {
+}
+impl LibcFatalError {
+    pub fn thordb_report_flipped_0_first() {
         unsafe {
             puts(b"This COULD happen (1) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
         }
     }
-    fn thordb_report_flipped_0_second() {
+    pub fn thordb_report_flipped_0_second() {
         unsafe {
             puts(b"This COULD happen (2) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
+        }
+    }
+
+    pub fn report_do_evaluate(evaluation_stage_: i32) {
+        unsafe {
+            putc('|' as i32, stdout);
+            if evaluation_stage_ % 5 as i32 == 0 as i32 {
+                printf(b" %d%% \x00" as *const u8 as *const i8,
+                       4 as i32 * evaluation_stage_);
+            }
+            fflush(stdout);
         }
     }
 }

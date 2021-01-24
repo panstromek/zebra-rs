@@ -405,7 +405,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 }
                 midgame_eval_done = 1;
                 if force_eval != 0 { clear_node_depth(this_node, &mut (g_state.g_book)); }
-                evaluate_node::<LibcFatalError>(this_node, echo, g_state);
+                evaluate_node(this_node, echo, g_state);
                 printf(b"|\x00" as *const u8 as *const i8);
                 fflush(stdout);
             }
@@ -423,7 +423,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                     i32 == 9999 as i32 {
                 /* Minimax discovered that the g_book.node hasn't got a deviation any
                    longer because that move has been played. */
-                evaluate_node::<FE>(this_node, echo, g_state);
+                evaluate_node(this_node, echo, g_state);
                 printf(b"-|-\x00" as *const u8 as *const i8);
                 do_minimax(this_node, &mut dummy_black_score,
                            &mut dummy_white_score, g_state);
@@ -807,7 +807,7 @@ pub unsafe fn init_osf(do_global_setup: i32, g_state: &mut FullState) {
    Note: This function assumes that generate_all() has been
          called prior to it being called.
 */
-pub unsafe fn evaluate_node<FE: FrontEnd>(index: i32, echo: i32, g_state: &mut FullState) {
+pub unsafe fn evaluate_node(index: i32, echo: i32, g_state: &mut FullState) {
     let mut i: i32 = 0;
     let mut side_to_move: i32 = 0;
     let mut alternative_move_count: i32 = 0;

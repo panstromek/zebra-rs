@@ -2,7 +2,7 @@ use std::ffi::{CStr, CString};
 
 use engine::src::counter::{adjust_counter, counter_value, reset_counter};
 use engine::src::error::FrontEnd;
-use engine::src::game::{BoardSource, CandidateMove, compare_eval, ComputeMoveLogger, ComputeMoveOutput, engine_global_setup, EvaluatedMove, FileBoardSource, generic_compute_move, generic_game_init, PonderMoveReport};
+use engine::src::game::{BoardSource, CandidateMove, compare_eval, ComputeMoveLogger, ComputeMoveOutput, engine_global_setup, EvaluatedMove, FileBoardSource, generic_compute_move, generic_game_init};
 use engine::src::getcoeff::pattern_evaluation;
 use engine::src::hash::{determine_hash_values, find_hash, HashEntry};
 use engine::src::moves::{generate_all, make_move, unmake_move};
@@ -228,7 +228,7 @@ pub unsafe fn game_init(file_name: *const i8, side_to_move: &mut i32, g_state: &
 */
 
 pub struct LibcPonderMoveReport;
-impl PonderMoveReport for LibcFatalError {
+impl LibcFatalError {
     fn report_move_evals(expect_count: i32, move_list_item: &[i32; 64], evals_item: &[i32; 128]) {
         let mut i = 0;
         while i < expect_count {
@@ -258,12 +258,12 @@ pub unsafe fn ponder_move<
     L: ComputeMoveLogger,
     Out: ComputeMoveOutput,
     FE: FrontEnd,
-    Thor: ThorDatabase,
-    Rep: PonderMoveReport>(side_to_move: i32,
+    Thor: ThorDatabase>(side_to_move: i32,
                            _book: i32,
                            mid: i32,
                            exact: i32,
                            wld: i32, display_pv: i32, mut echo:i32, g_state: &mut FullState) {
+    type Rep = LibcFatalError;
     let FullState {
         ref mut g_config,
         ref mut learn_state,

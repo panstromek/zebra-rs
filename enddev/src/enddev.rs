@@ -2,7 +2,6 @@
 non_upper_case_globals, unused_assignments, unused_mut)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, label_break_value, register_tool)]
 
-use engine::src::error::FrontEnd;
 use engine::src::game::EvaluatedMove;
 use engine::src::hash::{determine_hash_values, setup_hash};
 use engine::src::moves::{generate_all, make_move, valid_move};
@@ -11,7 +10,7 @@ use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::{EvaluationType, FullState};
 use legacy_zebra::src::display::{display_board, display_state};
-use legacy_zebra::src::error::{FE, LibcFatalError};
+use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{compute_move, extended_compute_move, game_init, get_evaluated, get_evaluated_count, global_setup};
 use legacy_zebra::src::learn::init_learn;
 use libc_wrapper::_IO_FILE;
@@ -148,7 +147,7 @@ unsafe extern "C" fn read_game(mut stream: *mut FILE,
                                 }
                         } else {
                             __res =
-                               FE::tolower(buffer[(2 as i32 * i) as
+                               tolower(buffer[(2 as i32 * i) as
                                     usize] as i32)
                         }
                     } else {

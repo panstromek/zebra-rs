@@ -33,8 +33,6 @@ pub trait FrontEnd : FatalError {
     fn end_report_semi_panic_abort(elapsed_time: f64);
     fn end_display_zero_status();
     fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i32; 64]);
-    fn tolower(num: i32) -> i32;
-    fn report_do_evaluate(evaluation_stage_: i32);
     fn report_unwanted_book_draw(this_move: i32);
     fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32, board_state: &mut BoardState, g_book: &mut Book);
     fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, x: &[CandidateMove; 60], search_state: &SearchState);
@@ -53,8 +51,6 @@ pub trait FrontEnd : FatalError {
                               search_state: &mut SearchState,
                               flip_stack_: &mut FlipStack);
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32);
-    fn thordb_report_flipped_0_first();
-    fn thordb_report_flipped_0_second();
 }
 pub trait FatalError {
     fn invalid_move(curr_move: i32) -> !;
