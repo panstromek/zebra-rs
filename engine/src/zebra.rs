@@ -249,6 +249,12 @@ pub fn engine_play_game<
                 let res = ZF::prompt_get_move(side_to_move);
                 move_attempt = Some(MoveAttempt(res.0, res.1))
             }
+            PlayGameState::NeedsDump {..} => {
+                Dump::dump_position(play_state.side_to_move, &play_state.g_state.board_state.board);
+                Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
+                /* Check what the Thor opening statistics has to say */
+                Thor::choose_thor_opening_move(&play_state.g_state.board_state.board, play_state.side_to_move, play_state.g_state.g_config.echo, &mut play_state.g_state.random_instance);
+            }
             _ => {}
         }
     }
@@ -370,10 +376,6 @@ pub fn next_state<
             }
         }
         PlayGameState::NeedsDump { provided_move_count, move_start } => {
-            Dump::dump_position(play_state.side_to_move, &play_state.g_state.board_state.board);
-            Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
-            /* Check what the Thor opening statistics has to say */
-            Thor::choose_thor_opening_move(&play_state.g_state.board_state.board, play_state.side_to_move, play_state.g_state.g_config.echo, &mut play_state.g_state.random_instance);
             if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.wait != 0 {
                 PlayGameState::Dumpch { provided_move_count, move_start }
             } else {
