@@ -200,128 +200,19 @@ pub enum PlayGameState {
 pub struct PlayGame<'a, 'b, 'd, Source: InitialMoveSource> {
     file_name: Option<&'a CStr>,
     move_string: &'b [u8],
-    repeat: i32,
+    pub repeat: i32,
     move_file: Option<Source>,
-    g_state: &'d mut FullState,
+    pub g_state: &'d mut FullState,
     eval_info: EvaluationType,
-    side_to_move: i32,
+    pub side_to_move: i32,
     curr_move: i32,
     rand_color: i32,
     provided_move: [i32; 61],
-    move_vec: [i8; 121],
+    pub move_vec: [i8; 121],
     line_buffer: [u8; 1001],
     state: PlayGameState
 }
-pub fn engine_play_game<
-    ZF: ZebraFrontend,
-    Source: InitialMoveSource,
-    Dump: DumpHandler,
-    BoardSrc : FileBoardSource,
-    ComputeMoveLog: ComputeMoveLogger,
-    ComputeMoveOut: ComputeMoveOutput,
-    Learn: Learner,
-    FE: FrontEnd,
-    Thor: ThorDatabase
->(file_name: Option<&CStr>, mut move_string: &[u8],
-  mut repeat: i32, log_file_name_: Option<&CStr>,
-  mut move_file: Option<Source>,
-    g_state: &mut FullState
-) {
-    let mut play_state: PlayGame<Source> = PlayGame::new(file_name, move_string, repeat, move_file, g_state);
-    let mut move_attempt = None;
-    let mut total_search_time: f64 = 0.;
-    loop {
-        next_state::<
-            ZF, Source, BoardSrc, ComputeMoveLog, ComputeMoveOut, FE, Thor
-        >(&mut play_state, move_attempt.take());
-        match play_state.state {
-            // TODO here in all these branches, we should ideally not need mutable reference to play_state
-            PlayGameState::End => {
-                return;
-            }
-            PlayGameState::Dumpch { provided_move_count, move_start } => {
-                ZF::dumpch();
-            }
-            PlayGameState::GetPass { provided_move_count } => {
-                ZF::get_pass();
-            }
-            PlayGameState::GettingMove { provided_move_count, move_start, side_to_move } => {
-                let res = ZF::prompt_get_move(side_to_move);
-                move_attempt = Some(MoveAttempt(res.0, res.1))
-            }
-            PlayGameState::NeedsDump {..} => {
-                if play_state.g_state.g_config.echo != 0 {
-                    ZF::set_move_list(play_state.g_state.board_state.score_sheet_row);
-                    ZF::set_times(floor(play_state.g_state.g_config.player_time[0]) as i32,
-                                  floor(play_state.g_state.g_config.player_time[2]) as i32);
-                    let opening_name = find_opening_name(&play_state.g_state.g_book, &play_state.g_state.board_state.board);
-                    if let Some(opening_name) = opening_name {
-                        ZF::report_opening_name(CStr::from_bytes_with_nul(opening_name).unwrap());
-                    }
-                    deal_with_thor_1::<ZF, Thor>(play_state.g_state.g_config.use_thor,
-                                                 play_state.side_to_move,
-                                                 &play_state.g_state.g_config,
-                                                 &play_state.g_state.g_timer,
-                                                 &play_state.g_state.board_state,
-                                                 &mut total_search_time);
-
-                    ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer,
-                                                 &play_state.g_state.board_state.board,
-                                                 &play_state.g_state.board_state.black_moves,
-                                                 &play_state.g_state.board_state.white_moves);
-                }
-                Dump::dump_position(play_state.side_to_move, &play_state.g_state.board_state.board);
-                Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
-                /* Check what the Thor opening statistics has to say */
-                Thor::choose_thor_opening_move(&play_state.g_state.board_state.board, play_state.side_to_move, play_state.g_state.g_config.echo, &mut play_state.g_state.random_instance);
-            }
-            PlayGameState::CanLearn => {
-                if play_state.g_state.g_config.use_learning && play_state.g_state.g_config.one_position_only == 0 {
-                    play_state.g_state.g_timer.toggle_abort_check(0);
-                    Learn::learn_game(play_state.g_state.moves_state.disks_played,
-                                      (play_state.g_state.g_config.skill[0] != 0 && play_state.g_state.g_config.skill[2] != 0) as i32,
-                                      (play_state.repeat == 0 as i32) as i32, play_state.g_state);
-                    play_state.g_state.g_timer.toggle_abort_check(1);
-                }
-            }
-            PlayGameState::AfterGameReport { node_val, eval_val } => {
-                if play_state.g_state.g_config.echo == 0 && play_state.g_state.g_config.one_position_only == 0 {
-                    let black_level = play_state.g_state.g_config.skill[0];
-                    let white_level = play_state.g_state.g_config.skill[2];
-                    ZF::report_skill_levels(black_level, white_level);
-                }
-                Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
-                if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.one_position_only == 0 {
-                    ZF::set_move_list(
-                        play_state.g_state.board_state.score_sheet_row);
-                    deal_with_thor_2::<ZF, Thor>(play_state.g_state.g_config.use_thor, play_state.side_to_move,
-                                                 &play_state.g_state.g_config,
-                                                 &play_state.g_state.g_timer,
-                                                 &play_state.g_state.board_state,
-                                                 &mut total_search_time);
-                    ZF::set_times(floor(play_state.g_state.g_config.player_time[0]) as _, floor(play_state.g_state.g_config.player_time[2]) as _);
-                    ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer, &play_state.g_state.board_state.board,
-                                                 &play_state.g_state.board_state.black_moves,
-                                                 &play_state.g_state.board_state.white_moves,
-                    );
-                }
-                let black_disc_count = disc_count(0, &play_state.g_state.board_state.board);
-                let white_disc_count = disc_count(2, &play_state.g_state.board_state.board);
-                let total_time_ = play_state.g_state.search_state.total_time;
-                ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
-
-                if let (Some(log_file_name_), 0) = (log_file_name_, play_state.g_state.g_config.one_position_only) {
-                    ZF::log_game_ending((log_file_name_),
-                                        &play_state.move_vec,
-                                        disc_count(0, &play_state.g_state.board_state.board),
-                                        disc_count(2, &play_state.g_state.board_state.board))
-                }
-            }
-            _ => {}
-        }
-    }
-}
-pub struct MoveAttempt(i32, i32);
+pub struct MoveAttempt(pub i32, pub i32);
 
 pub fn next_state<
     ZF: ZebraFrontend,
@@ -640,53 +531,6 @@ fn load_moves_from_source<'a, Source: InitialMoveSource>(mut move_file: &mut Opt
             .unwrap().0;
         Some(&line_buffer[0..end])
     } else { None }
-}
-
-fn deal_with_thor_1<ZF: ZebraFrontend, Thor: ThorDatabase>(use_thor_: bool, side_to_move: i32,
-                                                           mut config: &Config, g_timer: &Timer,
-                                                           board_state: &BoardState, total_search_time: &mut f64) {
-    if use_thor_ {
-        let database_start = g_timer.get_real_timer();
-        Thor::database_search(&board_state.board, side_to_move);
-        let thor_position_count = Thor::get_match_count();
-        let database_stop = g_timer.get_real_timer();
-        let database_time = database_stop - database_start;
-        *total_search_time += database_time;
-        ZF::report_thor_matching_games_stats(*total_search_time, thor_position_count, database_time);
-        if thor_position_count > 0 as i32 {
-            let black_win_count = Thor::get_black_win_count();
-            let draw_count = Thor::get_draw_count();
-            let white_win_count = Thor::get_white_win_count();
-            let black_median_score = Thor::get_black_median_score();
-            let black_average_score = Thor::get_black_average_score();
-
-            ZF::report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
-        }
-        ZF::print_out_thor_matches(config.thor_max_games);
-    }
-}
-
-fn deal_with_thor_2<ZF: ZebraFrontend, Thor:ThorDatabase>(use_thor_: bool, side_to_move: i32,
-                                                          config: &Config, g_timer: &Timer,
-                                                          board_state: &BoardState, total_search_time: &mut f64){
-    if use_thor_ {
-        let database_start = g_timer.get_real_timer();
-        Thor::database_search(&board_state.board, side_to_move);
-        let thor_position_count = Thor::get_match_count();
-        let database_stop = g_timer.get_real_timer();
-        let db_search_time = database_stop - database_start;
-        *total_search_time += db_search_time;
-        ZF::report_some_thor_stats(*total_search_time, thor_position_count, db_search_time);
-        if thor_position_count > 0 {
-            let black_win_count = Thor::get_black_win_count();
-            let draw_count = Thor::get_draw_count();
-            let white_win_count = Thor::get_white_win_count();
-            let black_median_score = Thor::get_black_median_score();
-            let black_average_score = Thor::get_black_average_score();
-            ZF::report_some_thor_scores(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
-        }
-        ZF::print_out_thor_matches(config.thor_max_games);
-    }
 }
 
 enum MoveStringError {
