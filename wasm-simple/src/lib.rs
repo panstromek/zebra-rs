@@ -1,61 +1,44 @@
-#![allow(unused)]
-#![allow(non_upper_case_globals)]
-
-extern crate console_error_panic_hook;
-
-use std::convert::{TryFrom, TryInto};
-use std::error::Error;
-use std::panic;
-
-use thiserror::Error;
-use wasm_bindgen::__rt::core::ffi::c_void;
-use wasm_bindgen::__rt::core::ptr::null_mut;
-use wasm_bindgen::__rt::std::ffi::CStr;
-use wasm_bindgen::prelude::*;
-
-use engine::src::counter::CounterType;
-use engine::src::error::{FatalError, FrontEnd};
-use engine::src::game::{BoardSource, CandidateMove, ComputeMoveLogger, ComputeMoveOutput, engine_global_setup, FileBoardSource, GameState};
-use engine::src::hash::{HashEntry, HashState};
-use engine::src::learn::{Learner, LearnState};
-use engine::src::myrandom;
-use engine::src::thordb::ThorDatabase;
-use engine::src::zebra::{Config, DumpHandler, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend};
-use engine_traits::CoeffSource;
-use flate2_coeff_source::Flate2Source;
-use flip::unflip;
-use thordb_types::C2RustUnnamed;
-use flip::unflip::FlipStack;
-use engine::src::search::SearchState;
-use engine::src::probcut::ProbCut;
-use engine::src::osfbook::Book;
-use engine::src::myrandom::MyRandom;
-use engine::src::globals::BoardState;
-use engine::src::stable::StableState;
-use engine::src::moves::MovesState;
-use engine::src::timer::Timer;
-use engine::src::getcoeff::CoeffState;
-use engine::src::end::End;
-use engine::src::midgame::MidgameState;
-
-extern crate engine;
+// #![allow(unused)]
+// #![allow(non_upper_case_globals)]
 //
-// // FIXME get rid of these globals
-// pub static mut learn_state: LearnState = LearnState::new();
-// pub static mut midgame_state: MidgameState = MidgameState::new();
-// pub static mut game_state: GameState = GameState::new();
-// pub static mut end_g: End = End::new();
-// pub static mut coeff_state: CoeffState = CoeffState::new();
-// pub static mut g_timer: Timer = Timer::new();
-// pub static mut moves_state: MovesState = MovesState::new();
-// pub static mut stable_state: StableState = StableState::new();
-// pub static mut board_state: BoardState = BoardState ::new();
-// pub static mut hash_state: HashState = HashState::new();
-// pub static mut random_instance: MyRandom = MyRandom::new();
-// pub static mut g_book: Book = Book::new();
-// pub static mut prob_cut: ProbCut = ProbCut::new();
-// pub static mut search_state: SearchState = SearchState::new();
-// pub static mut flip_stack_: FlipStack = FlipStack::new();
+extern crate console_error_panic_hook;
+//
+// use std::convert::{TryFrom, TryInto};
+// use std::error::Error;
+// use std::panic;
+//
+// use thiserror::Error;
+// use wasm_bindgen::__rt::core::ffi::c_void;
+// use wasm_bindgen::__rt::core::ptr::null_mut;
+// use wasm_bindgen::__rt::std::ffi::CStr;
+// use wasm_bindgen::prelude::*;
+//
+// use engine::src::counter::CounterType;
+// use engine::src::error::{FatalError, FrontEnd};
+// use engine::src::game::{BoardSource, CandidateMove, ComputeMoveLogger, ComputeMoveOutput, engine_global_setup, FileBoardSource, GameState};
+// use engine::src::hash::{HashEntry, HashState};
+// use engine::src::learn::{Learner, LearnState};
+// use engine::src::myrandom;
+// use engine::src::thordb::ThorDatabase;
+// use engine::src::zebra::{Config, DumpHandler, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend, FullState};
+// use engine_traits::CoeffSource;
+// use flate2_coeff_source::Flate2Source;
+// use flip::unflip;
+// use thordb_types::C2RustUnnamed;
+// use flip::unflip::FlipStack;
+// use engine::src::search::SearchState;
+// use engine::src::probcut::ProbCut;
+// use engine::src::osfbook::Book;
+// use engine::src::myrandom::MyRandom;
+// use engine::src::globals::BoardState;
+// use engine::src::stable::StableState;
+// use engine::src::moves::MovesState;
+// use engine::src::timer::Timer;
+// use engine::src::getcoeff::CoeffState;
+// use engine::src::end::End;
+// use engine::src::midgame::MidgameState;
+//
+extern crate engine;
 //
 // #[wasm_bindgen]
 // extern "C" {
@@ -65,8 +48,6 @@ extern crate engine;
 //     fn js_time() -> f64;
 //     #[wasm_bindgen(js_namespace = zebra)]
 //     fn display_board(board: &[i32]);
-//     #[wasm_bindgen(catch)]
-//     pub async fn get_move_from_js(side_to_move: i32) -> Result<JsValue, JsValue>;
 // }
 //
 // #[derive(Error, Debug)]
@@ -77,13 +58,6 @@ extern crate engine;
 //     MissingValue,
 // }
 //
-// async fn get_move_from_wasm(side_to_move: i32) -> Result<i32, Box<dyn Error>> {
-//     Ok(get_move_from_js(side_to_move).await
-//         .map_err(|_e| ZebraError::MissingValue)?
-//         .as_f64()
-//         .ok_or(ZebraError::MoveIsNotANumber)? as i32
-//     )
-// }
 // macro_rules! c_log {
 //     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
 // }
@@ -149,23 +123,8 @@ extern crate engine;
 // }
 //
 // #[wasm_bindgen]
-// pub async fn start_game() {
-//     unsafe {
-//         let repeat = 1;
-//         // let mut move_file = LibcFileMoveSource::open(move_file_name);
-//
-//         engine_play_game_async::<
-//             WasmFrontend, WasmInitialMoveSource, WasmFrontend, WasmBoardSource,
-//             WasmComputeMoveLogger, WasmFrontend, WasmLearner, WasmFrontend, WasmThor,
-//             _, _
-//         >(null_mut(),
-//           null_mut(),
-//           repeat,
-//           null_mut(),
-//           None,
-//           false, false,
-//           get_move_from_wasm, &mut config).await;
-//     }
+// pub fn start_game() {
+//     engine::src::zebra::PlayGame::new(None, &[], 1, None, &mut FullState::new());
 //     c_log!("Zebra ended");
 // }
 //
@@ -207,24 +166,18 @@ extern crate engine;
 //         unimplemented!()
 //     }
 //
-//     fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32) -> i32 {
+//     fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32, random: &mut MyRandom) -> i32 {
 //         unimplemented!()
 //     }
 // }
 // struct WasmLearner;
 //
-// impl Learner for WasmLearner {
-//     fn learn_game(game_length: i32, private_game: i32, save_database: i32) {
-//         unimplemented!()
-//     }
-// }
-//
 // impl ComputeMoveOutput for WasmFrontend {
-//     fn display_out_optimal_line() {
+//     fn display_out_optimal_line(search_state: &SearchState) {
 //         c_log!("Display out optimal line")
 //     }
 //
-//     fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64) {
+//     fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64, board_state: &BoardState){
 //         unimplemented!()
 //     }
 //
@@ -286,10 +239,6 @@ extern crate engine;
 //
 //     fn log_board(logger: &mut Self, board_: &[i32; 128], side_to_move_: i32) {
 //         unimplemented!()
-//     }
-//
-//     fn create(log_file_path_: &mut [i8]) -> Option<Self> where Self: Sized {
-//         None
 //     }
 //
 //     fn create_log_file_if_needed() -> Option<Self> where Self: Sized {
@@ -388,7 +337,7 @@ extern crate engine;
 //         unimplemented!()
 //     }
 //
-//     fn prompt_get_move(side_to_move: i32, buffer: &mut [i8; 255]) -> i32 {
+//     fn prompt_get_move(side_to_move: i32) -> i32 {
 //         unimplemented!()
 //     }
 //
@@ -434,8 +383,8 @@ extern crate engine;
 //         c_log!("Book randomness: {} disks\n", slack_);
 //     }
 //
-//     fn load_thor_files() {
-//         c_log!("load_thor_files - ignored \n");
+//     fn load_thor_files(g_timer: &mut Timer) {
+//         unimplemented!()
 //     }
 //
 //     fn print_move_alternatives(side_to_move: i32,  board_state: &mut BoardState, g_book: &mut Book) {
@@ -527,12 +476,6 @@ extern crate engine;
 //         unimplemented!()
 //     }
 //
-//     fn time(__timer: &mut i64) -> i64 {
-//         let time = js_time().round() as i64;
-//         *__timer = time;
-//         return time;
-//     }
-//
 //     fn tolower(num: i32) -> i32 {
 //         // if num >= 'A' as i32 && num <= 'Z' as i32 {
 //         //     let offset = ('a' as i32) - ('A' as i32);
@@ -588,28 +531,6 @@ extern crate engine;
 //     fn thordb_report_flipped_0_second() {
 //         unimplemented!()
 //     }
-//
-//     fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
-//         c_log!("Thor database:");
-//         let mut i = 0;
-//         while i < match_count {
-//             c_log!("{}{}: {}",
-//                    ('a' as i32 + move_list[i as usize].move_0 % 10 - 1) as u8 as char,
-//                    ('0' as i32 + move_list[i as usize].move_0 / 10 as i32) as u8 as char,
-//                    100.0f64 *move_list[i as usize].frequency as f64 / freq_sum as f64);
-//             if i % 6 as i32 == 4 as i32 {
-//                 c_log!("");
-//             }
-//             i += 1
-//         }
-//         if match_count % 6 as i32 != 5 as i32 {
-//             c_log!("");
-//         }
-//     }
-//
-//     fn sort_thor_games(count: i32) {
-//         unimplemented!()
-//     }
 // }
 //
 // impl FatalError for WasmFrontend {
@@ -625,23 +546,11 @@ extern crate engine;
 //         unimplemented!()
 //     }
 //
-//     fn memory_allocation_failure(block_count_: i32) -> ! {
-//         unimplemented!()
-//     }
-//
 //     fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
 //         unimplemented!()
 //     }
 //
-//     fn error_in_map(i: i32, pos: i32, symmetry_map_item: i32) -> ! {
-//         unimplemented!()
-//     }
-//
 //     fn internal_error_in_book_code() -> ! {
-//         unimplemented!()
-//     }
-//
-//     fn error_in_map_thor(i: i32, pos: i32, to_report: i32) -> ! {
 //         unimplemented!()
 //     }
 //
