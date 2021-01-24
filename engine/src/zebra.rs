@@ -197,12 +197,12 @@ pub enum PlayGameState {
     Dumpch { provided_move_count:i32 , move_start: f64 },
     NeedsDump { provided_move_count:i32 , move_start: f64 },
 }
-pub struct PlayGame<'a, 'b, 'd, Source: InitialMoveSource> {
+pub struct PlayGame<'a, 'b,Source: InitialMoveSource> {
     file_name: Option<&'a CStr>,
     move_string: &'b [u8],
     pub repeat: i32,
     move_file: Option<Source>,
-    pub g_state: &'d mut FullState,
+    pub g_state: FullState,
     eval_info: EvaluationType,
     pub side_to_move: i32,
     curr_move: i32,
@@ -478,12 +478,12 @@ pub fn next_state<
     };
     return play_state.state;
 }
-impl<Src: InitialMoveSource> PlayGame<'_, '_ , '_ , Src> {
+impl<Src: InitialMoveSource> PlayGame<'_, '_ , Src> {
     pub fn new<'a, 'b, 'c, 'd>(file_name: Option<&'a CStr>, mut move_string: &'b [u8],
       mut repeat: i32,
       mut move_file: Option<Src>,
-      g_state: &'d mut FullState
-    ) -> PlayGame<'a, 'b, 'd, Src> {
+      g_state: FullState
+    ) -> PlayGame<'a, 'b, Src> {
         let mut eval_info = EvaluationType {
             type_0: MIDGAME_EVAL,
             res: WON_POSITION,

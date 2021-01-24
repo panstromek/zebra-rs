@@ -617,11 +617,11 @@ Flags:
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line, &mut g_state);
     } else if (g_state.g_config).tournament != 0 {
-        play_tournament(move_sequence, log_file_name,  &mut g_state);
+        play_tournament(move_sequence, log_file_name, g_state);
     } else if (g_state.g_config).only_analyze != 0 {
         analyze_game(move_sequence, &mut g_state);
     } else {
-        play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name, &mut g_state);
+        play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name, g_state);
     }
     0
 }
@@ -630,7 +630,7 @@ Flags:
    Administrates the tournament between different levels
    of the program.
 */
-unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8, mut g_state: &mut FullState) {
+unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8, mut g_state: FullState) {
     let mut result: [[[i32; 3]; 8]; 8] = [[[0; 3]; 8]; 8];
     let mut tourney_time: f64 = 0.;
     let mut score: [f64; 8] = [0.; 8];
@@ -658,8 +658,8 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
             (g_state.g_config).skill[2] = (g_state.g_config).tournament_skill[j as usize][0];
             (g_state.g_config).exact_skill[2] = (g_state.g_config).tournament_skill[j as usize][1];
             (g_state.g_config).wld_skill[2] = (g_state.g_config).tournament_skill[j as usize][2];
-            play_game(0 as *const i8, move_sequence,
-                      0 as *const i8, 1 as i32, log_file_name_, &mut g_state);
+            g_state = play_game(0 as *const i8, move_sequence,
+                      0 as *const i8, 1 as i32, log_file_name_, g_state);
             add_counter(&mut tourney_nodes, &mut (g_state.search_state).total_nodes);
             tourney_time += (&mut g_state.search_state).total_time;
             result[i as usize][j as usize][0] =
@@ -769,9 +769,9 @@ unsafe fn play_game(mut file_name: *const i8,
                     mut move_string: *const i8,
                     mut move_file_name: *const i8,
                     mut repeat: i32, log_file_name_: *mut i8,
-                   g_state: &mut FullState
+                   g_state: FullState
 
-) {
+) -> FullState {
     let move_file = if move_file_name.is_null() {
         None
     } else {
@@ -805,7 +805,7 @@ unsafe fn play_game(mut file_name: *const i8,
         match state {
             // TODO here in all these branches, we should ideally not need mutable reference to play_state
             PlayGameState::End => {
-                return;
+                return play_state.g_state;
             }
             PlayGameState::Dumpch { provided_move_count, move_start } => {
                 ZF::dumpch();
@@ -848,7 +848,7 @@ unsafe fn play_game(mut file_name: *const i8,
                     play_state.g_state.g_timer.toggle_abort_check(0);
                     Learn::learn_game(play_state.g_state.moves_state.disks_played,
                                       (play_state.g_state.g_config.skill[0] != 0 && play_state.g_state.g_config.skill[2] != 0) as i32,
-                                      (play_state.repeat == 0 as i32) as i32, play_state.g_state);
+                                      (play_state.repeat == 0 as i32) as i32, &mut play_state.g_state);
                     play_state.g_state.g_timer.toggle_abort_check(1);
                 }
             }
