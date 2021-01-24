@@ -346,7 +346,6 @@ pub fn next_state<
             if play_state.g_state.g_config.use_thor {
                 ZF::load_thor_files(&mut play_state.g_state.g_timer);
             }
-            let config = &mut play_state.g_state.g_config;
             let white_is_player = play_state.g_state.g_config.skill[0] == 0;
             let black_is_player = play_state.g_state.g_config.skill[2] == 0;
             ZF::set_names(white_is_player, black_is_player);
