@@ -197,9 +197,9 @@ pub enum PlayGameState {
     Dumpch { provided_move_count:i32 , move_start: f64 },
     NeedsDump { provided_move_count:i32 , move_start: f64 },
 }
-pub struct PlayGame<'b, Source: InitialMoveSource> {
+pub struct PlayGame<Source: InitialMoveSource> {
     file_name: Option<CString>,
-    move_string: &'b [u8],
+    move_string: Vec<u8>,
     pub repeat: i32,
     move_file: Option<Source>,
     pub g_state: FullState,
@@ -478,8 +478,8 @@ pub fn next_state<
     };
     return play_state.state;
 }
-impl<Src: InitialMoveSource> PlayGame<'_ , Src> {
-    pub fn new(file_name: Option<CString>, mut move_string: &[u8],
+impl<Src: InitialMoveSource> PlayGame<Src> {
+    pub fn new(file_name: Option<CString>, move_string: Vec<u8>,
                mut repeat: i32,
                mut move_file: Option<Src>,
                g_state: FullState
