@@ -415,9 +415,7 @@ pub fn next_state<
                                              &play_state.g_state.board_state.white_moves,
                 );
             }
-            adjust_counter(&mut play_state.g_state.search_state.total_nodes);
             let node_val = counter_value(&mut play_state.g_state.search_state.total_nodes);
-            adjust_counter(&mut play_state.g_state.search_state.total_evaluations);
             let eval_val = counter_value(&mut play_state.g_state.search_state.total_evaluations);
             let black_disc_count = disc_count(0, &play_state.g_state.board_state.board);
             let white_disc_count = disc_count(2, &play_state.g_state.board_state.board);
