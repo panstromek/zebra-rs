@@ -204,7 +204,6 @@ pub struct PlayGame<'a, 'b, 'd, Source: InitialMoveSource> {
     move_file: Option<Source>,
     g_state: &'d mut FullState,
     eval_info: EvaluationType,
-    total_search_time: f64,
     side_to_move: i32,
     curr_move: i32,
     rand_color: i32,
@@ -230,6 +229,7 @@ pub fn engine_play_game<
 ) {
     let mut play_state: PlayGame<Source> = PlayGame::new(file_name, move_string, repeat, move_file, g_state);
     let mut move_attempt = None;
+    let mut total_search_time: f64 = 0.;
     loop {
         next_state::<
             ZF, Source, BoardSrc, ComputeMoveLog, ComputeMoveOut, FE, Thor
@@ -263,7 +263,7 @@ pub fn engine_play_game<
                                                  &play_state.g_state.g_config,
                                                  &play_state.g_state.g_timer,
                                                  &play_state.g_state.board_state,
-                                                 &mut play_state.total_search_time);
+                                                 &mut total_search_time);
 
                     ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer,
                                                  &play_state.g_state.board_state.board,
@@ -294,7 +294,11 @@ pub fn engine_play_game<
                 if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.one_position_only == 0 {
                     ZF::set_move_list(
                         play_state.g_state.board_state.score_sheet_row);
-                    deal_with_thor_2::<ZF, Thor>(play_state.g_state.g_config.use_thor, play_state.side_to_move, &mut play_state.g_state.g_config, &mut play_state.g_state.g_timer, &mut play_state.g_state.board_state, &mut play_state.total_search_time);
+                    deal_with_thor_2::<ZF, Thor>(play_state.g_state.g_config.use_thor, play_state.side_to_move,
+                                                 &play_state.g_state.g_config,
+                                                 &play_state.g_state.g_timer,
+                                                 &play_state.g_state.board_state,
+                                                 &mut total_search_time);
                     ZF::set_times(floor(play_state.g_state.g_config.player_time[0]) as _, floor(play_state.g_state.g_config.player_time[2]) as _);
                     ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer, &play_state.g_state.board_state.board,
                                                  &play_state.g_state.board_state.black_moves,
@@ -597,7 +601,6 @@ impl<Src: InitialMoveSource> PlayGame<'_, '_ , '_ , Src> {
             search_depth: 0,
             is_book: 0,
         };
-        let mut total_search_time = 0.0f64;
         let mut side_to_move = 0;
         let mut curr_move = 0;
         let mut rand_color = 0;
@@ -612,7 +615,6 @@ impl<Src: InitialMoveSource> PlayGame<'_, '_ , '_ , Src> {
             move_file,
             g_state,
             eval_info,
-            total_search_time,
             side_to_move,
             curr_move,
             rand_color,
