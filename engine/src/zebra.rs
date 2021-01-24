@@ -186,6 +186,7 @@ pub enum PlayGameState {
     InGame { provided_move_count: i32 },
     AfterGame,
     End,
+    CanLearn,
     SwitchingSides{ provided_move_count: i32 },
     GetPass{ provided_move_count: i32 },
     MoveStop { provided_move_count: i32, move_start: f64 },
@@ -228,12 +229,12 @@ pub fn engine_play_game<
     g_state: &mut FullState
 ) {
     let mut play_state: PlayGame<Source> = PlayGame::new::<
-        ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, Learn, FE, Thor
+        ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, FE, Thor
     >(file_name, move_string, repeat, log_file_name_, move_file, g_state);
     let mut move_attempt = None;
     loop {
         next_state::<
-            ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, Learn, FE, Thor
+            ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, FE, Thor
         >(&mut play_state, move_attempt.take());
         match play_state.state {
             PlayGameState::End => {
@@ -255,6 +256,15 @@ pub fn engine_play_game<
                 /* Check what the Thor opening statistics has to say */
                 Thor::choose_thor_opening_move(&play_state.g_state.board_state.board, play_state.side_to_move, play_state.g_state.g_config.echo, &mut play_state.g_state.random_instance);
             }
+            PlayGameState::CanLearn => {
+                if play_state.g_state.g_config.use_learning && play_state.g_state.g_config.one_position_only == 0 {
+                    play_state.g_state.g_timer.toggle_abort_check(0);
+                    Learn::learn_game(play_state.g_state.moves_state.disks_played,
+                                      (play_state.g_state.g_config.skill[0] != 0 && play_state.g_state.g_config.skill[2] != 0) as i32,
+                                      (play_state.repeat == 0 as i32) as i32, play_state.g_state);
+                    play_state.g_state.g_timer.toggle_abort_check(1);
+                }
+            }
             _ => {}
         }
     }
@@ -268,7 +278,6 @@ pub fn next_state<
     BoardSrc : FileBoardSource,
     ComputeMoveLog: ComputeMoveLogger,
     ComputeMoveOut: ComputeMoveOutput,
-    Learn: Learner,
     FE: FrontEnd,
     Thor: ThorDatabase
 >(play_state: &mut PlayGame<Source>, move_attempt : Option<MoveAttempt>) -> PlayGameState {
@@ -416,13 +425,9 @@ pub fn next_state<
                                     disc_count(2, &play_state.g_state.board_state.board))
             }
             play_state.repeat -= 1;
-            if play_state.g_state.g_config.use_learning && play_state.g_state.g_config.one_position_only == 0 {
-                play_state.g_state.g_timer.toggle_abort_check(0);
-                Learn::learn_game(play_state.g_state.moves_state.disks_played,
-                                  (play_state.g_state.g_config.skill[0] != 0 && play_state.g_state.g_config.skill[2] != 0) as i32,
-                                  (play_state.repeat == 0 as i32) as i32, play_state.g_state);
-                play_state.g_state.g_timer.toggle_abort_check(1);
-            }
+            PlayGameState::CanLearn
+        }
+        PlayGameState::CanLearn => {
             if !(play_state.repeat > 0) {
                 PlayGameState::End
             } else {
@@ -578,7 +583,6 @@ impl<Src: InitialMoveSource> PlayGame<'_, '_ , '_ , '_, Src> {
         BoardSrc : FileBoardSource,
         ComputeMoveLog: ComputeMoveLogger,
         ComputeMoveOut: ComputeMoveOutput,
-        Learn: Learner,
         FE: FrontEnd,
         Thor: ThorDatabase
     >(file_name: Option<&'a CStr>, mut move_string: &'b [u8],
