@@ -249,6 +249,26 @@ pub fn engine_play_game<
                 move_attempt = Some(MoveAttempt(res.0, res.1))
             }
             PlayGameState::NeedsDump {..} => {
+                if play_state.g_state.g_config.echo != 0 {
+                    ZF::set_move_list(play_state.g_state.board_state.score_sheet_row);
+                    ZF::set_times(floor(play_state.g_state.g_config.player_time[0]) as i32,
+                                  floor(play_state.g_state.g_config.player_time[2]) as i32);
+                    let opening_name = find_opening_name(&play_state.g_state.g_book, &play_state.g_state.board_state.board);
+                    if let Some(opening_name) = opening_name {
+                        ZF::report_opening_name(CStr::from_bytes_with_nul(opening_name).unwrap());
+                    }
+                    deal_with_thor_1::<ZF, Thor>(play_state.g_state.g_config.use_thor,
+                                                 play_state.side_to_move,
+                                                 &play_state.g_state.g_config,
+                                                 &play_state.g_state.g_timer,
+                                                 &play_state.g_state.board_state,
+                                                 &mut play_state.total_search_time);
+
+                    ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer,
+                                                 &play_state.g_state.board_state.board,
+                                                 &play_state.g_state.board_state.black_moves,
+                                                 &play_state.g_state.board_state.white_moves);
+                }
                 Dump::dump_position(play_state.side_to_move, &play_state.g_state.board_state.board);
                 Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
                 /* Check what the Thor opening statistics has to say */
@@ -352,19 +372,6 @@ pub fn next_state<
                 if play_state.g_state.moves_state.move_count[play_state.g_state.moves_state.disks_played as usize] != 0 {
                     let move_start = play_state.g_state.g_timer.get_real_timer();
                     play_state.g_state.g_timer.clear_panic_abort();
-                    if play_state.g_state.g_config.echo != 0 {
-                        ZF::set_move_list(play_state.g_state.board_state.score_sheet_row);
-                        ZF::set_times(floor(play_state.g_state.g_config.player_time[0]) as i32,
-                                      floor(play_state.g_state.g_config.player_time[2]) as i32);
-                        let opening_name = find_opening_name(&mut play_state.g_state.g_book, &play_state.g_state.board_state.board);
-                        if let Some(opening_name) = opening_name {
-                            ZF::report_opening_name(CStr::from_bytes_with_nul(opening_name).unwrap());
-                        }
-                        deal_with_thor_1::<ZF, Thor>(play_state.g_state.g_config.use_thor, play_state.side_to_move, &mut play_state.g_state.g_config, &mut play_state.g_state.g_timer, &mut play_state.g_state.board_state, &mut play_state.total_search_time);
-
-                        ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer,
-                                                     &play_state.g_state.board_state.board, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
-                    }
                     PlayGameState::NeedsDump { provided_move_count, move_start }
                 } else {
                     if play_state.side_to_move == 0 {
@@ -632,8 +639,8 @@ fn load_moves_from_source<'a, Source: InitialMoveSource>(mut move_file: &mut Opt
 }
 
 fn deal_with_thor_1<ZF: ZebraFrontend, Thor: ThorDatabase>(use_thor_: bool, side_to_move: i32,
-                                                           mut config: &mut Config, g_timer: &Timer,
-                                                           board_state: &BoardState,total_search_time: &mut f64) {
+                                                           mut config: &Config, g_timer: &Timer,
+                                                           board_state: &BoardState, total_search_time: &mut f64) {
     if use_thor_ {
         let database_start = g_timer.get_real_timer();
         Thor::database_search(&board_state.board, side_to_move);

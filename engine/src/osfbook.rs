@@ -551,7 +551,7 @@ pub fn adjust_score(score: i32, side_to_move: i32, book: &mut Book, disks_played
   NULL otherwise.
 */
 
-pub fn find_opening_name(book: &mut Book, board: &Board) -> Option<&'static [u8]> {
+pub fn find_opening_name(book: &Book, board: &Board) -> Option<&'static [u8]> {
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
