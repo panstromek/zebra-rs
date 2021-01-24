@@ -149,12 +149,6 @@ pub trait InitialMoveSource {
 }
 
 
-pub fn set_names_from_skills<ZF: ZebraFrontend>(config: &Config) {
-    let white_is_player = config.skill[0] == 0;
-    let black_is_player = config.skill[2] == 0;
-    ZF::set_names(white_is_player, black_is_player);
-}
-
 pub trait ZebraFrontend {
     fn set_evals(black: f64, white: f64);
     fn set_move_list(row: i32);
@@ -318,9 +312,11 @@ pub fn next_state<
             if play_state.g_state.g_config.use_thor {
                 ZF::load_thor_files(&mut play_state.g_state.g_timer);
             }
-            set_names_from_skills::<ZF>(&mut play_state.g_state.g_config);
-            ZF::set_move_list(
-                play_state.g_state.board_state.score_sheet_row);
+            let config = &mut play_state.g_state.g_config;
+            let white_is_player = play_state.g_state.g_config.skill[0] == 0;
+            let black_is_player = play_state.g_state.g_config.skill[2] == 0;
+            ZF::set_names(white_is_player, black_is_player);
+            ZF::set_move_list(play_state.g_state.board_state.score_sheet_row);
             ZF::set_evals(0.0f64, 0.0f64);
             clear_moves(&mut play_state.g_state.board_state);
             play_state.move_vec[0] = 0;
