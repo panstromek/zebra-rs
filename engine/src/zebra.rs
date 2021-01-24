@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 use std::future::Future;
 
 use engine_traits::Offset;
@@ -197,8 +197,8 @@ pub enum PlayGameState {
     Dumpch { provided_move_count:i32 , move_start: f64 },
     NeedsDump { provided_move_count:i32 , move_start: f64 },
 }
-pub struct PlayGame<'a, 'b,Source: InitialMoveSource> {
-    file_name: Option<&'a CStr>,
+pub struct PlayGame<'b, Source: InitialMoveSource> {
+    file_name: Option<CString>,
     move_string: &'b [u8],
     pub repeat: i32,
     move_file: Option<Source>,
@@ -239,7 +239,7 @@ pub fn next_state<
                 },
             };
             /* Set up the position and the search engine */
-            generic_game_init::<BoardSrc, FE>(play_state.file_name, &mut play_state.side_to_move,
+            generic_game_init::<BoardSrc, FE>(play_state.file_name.as_ref().map(CString::as_ref), &mut play_state.side_to_move,
                                               &mut play_state.g_state.flip_stack_,
                                               &mut play_state.g_state.search_state,
                                               &mut play_state.g_state.board_state,
@@ -478,12 +478,12 @@ pub fn next_state<
     };
     return play_state.state;
 }
-impl<Src: InitialMoveSource> PlayGame<'_, '_ , Src> {
-    pub fn new<'a, 'b, 'c, 'd>(file_name: Option<&'a CStr>, mut move_string: &'b [u8],
-      mut repeat: i32,
-      mut move_file: Option<Src>,
-      g_state: FullState
-    ) -> PlayGame<'a, 'b, Src> {
+impl<Src: InitialMoveSource> PlayGame<'_ , Src> {
+    pub fn new(file_name: Option<CString>, mut move_string: &[u8],
+               mut repeat: i32,
+               mut move_file: Option<Src>,
+               g_state: FullState
+    ) -> PlayGame<Src> {
         let mut eval_info = EvaluationType {
             type_0: MIDGAME_EVAL,
             res: WON_POSITION,
