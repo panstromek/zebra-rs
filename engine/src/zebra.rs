@@ -459,6 +459,7 @@ pub fn next_state<
     return play_state.state;
 }
 impl<Src: InitialMoveSource> PlayGame<Src> {
+    #[inline(always)]
     pub fn new(file_name: Option<CString>, move_string: Vec<u8>,
                mut repeat: i32,
                mut move_file: Option<Src>,
@@ -566,6 +567,7 @@ pub struct FullState {
 }
 
 impl FullState {
+    #[inline(always)]
     pub fn new(time_source: &'static dyn TimeSource) -> Self {
         let g_config: Config = INITIAL_CONFIG;
         let learn_state: LearnState = LearnState::new();
@@ -573,6 +575,7 @@ impl FullState {
         let game_state: GameState = GameState::new();
         let end_g: End = End::new();
         let coeff_state: CoeffState = CoeffState::new();
+
         let g_timer: Timer = Timer::new(time_source);
         let moves_state: MovesState = MovesState::new();
         let stable_state: StableState = StableState::new();
@@ -583,7 +586,6 @@ impl FullState {
         let prob_cut: ProbCut = ProbCut::new();
         let search_state: SearchState = SearchState::new();
         let flip_stack_: FlipStack = FlipStack::new();
-
         return FullState {
             g_config,
             learn_state,

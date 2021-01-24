@@ -38,8 +38,6 @@ use engine::src::getcoeff::CoeffState;
 use engine::src::end::End;
 use engine::src::midgame::MidgameState;
 
-extern crate engine;
-
 #[wasm_bindgen]
 extern "C" {
     fn alert(s: &str);
@@ -82,15 +80,7 @@ pub fn init() {
     {
         // set_default_engine_globals(&mut config);
         // config.use_book = 0;
-        // let coeffs = Flate2Source::new_from_data(COEFFS);
-        //
-        // engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs,&mut search_state
-        //                                        ,&mut hash_state
-        //                                        ,&mut g_timer
-        //                                        ,&mut coeff_state
-        //                                        ,&mut random_instance
-        //                                        ,&mut stable_state
-        //                                        ,&mut prob_cut);
+
         // // init_thor_database::<WasmFrontend>();
         //
         // let x = 1 as i32;
@@ -122,16 +112,49 @@ static time_source: JsTimeSource = JsTimeSource {};
 
 #[wasm_bindgen]
 pub struct ZebraGame {
-    game: PlayGame<WasmInitialMoveSource>
+    game: Box<PlayGame<WasmInitialMoveSource>>
 }
 
 #[wasm_bindgen]
 impl ZebraGame {
     #[wasm_bindgen]
     pub fn new() -> Self {
-        ZebraGame {
-            game: PlayGame::new(None, Vec::new(), 1, None, FullState::new(&JsTimeSource))
+        let coeffs = Flate2Source::new_from_data(COEFFS);
+        //
+        let mut zebra =  ZebraGame {
+            game: Box::new(PlayGame::new(None, Vec::new(), 1, None,
+                                         (FullState::new(&JsTimeSource))))
+        };
+
+        let state = &mut zebra.game.g_state;
+
+        engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs,
+                                                &mut state.search_state
+                                               ,&mut state.hash_state
+                                               ,&mut state.g_timer
+                                               ,&mut state.coeff_state
+                                               ,&mut state.random_instance
+                                               ,&mut state.stable_state
+                                               ,&mut state.prob_cut);
+
+        set_default_engine_globals(&mut state.g_config);
+        state.g_config.use_book = 0;
+
+        // // init_thor_database::<WasmFrontend>();
+        //
+        let x = 1 as i32;
+        state.random_instance.my_srandom(x);
+        if state.g_config.skill[0] < 0 {
+            state.g_config.skill[0] = 6;
+            state.g_config.exact_skill[0] = 6;
+            state.g_config.wld_skill[0] = 6;
         }
+        if state.g_config.skill[2] < 0 {
+            state.g_config.skill[2] = 0;
+            state.g_config.exact_skill[2] = 0;
+            state.g_config.wld_skill[2] = 0;
+        }
+        return zebra;
     }
     #[wasm_bindgen]
     pub fn next_state(&mut self) {
