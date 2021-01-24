@@ -782,9 +782,9 @@ unsafe fn play_game(mut file_name: *const i8,
     let log_file_name_: Option<&CStr> = (!log_file_name_.is_null()).then(|| CStr::from_ptr(log_file_name_));
 
     let move_string = if move_string.is_null() {
-        &[]
+        vec![]
     } else {
-        CStr::from_ptr(move_string).to_bytes()
+        CStr::from_ptr(move_string).to_bytes().into()
     };
     type ZF = LibcFrontend;
     type Source = FileMoveSource;
