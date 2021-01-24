@@ -30,7 +30,8 @@ const workerConfig = {
   plugins: [
     new WasmPackPlugin({
       crateDirectory: path.resolve(__dirname, "./"),
-      forceMode: 'production'
+      forceMode: 'production',
+      watchDirectories: ['../engine']
     })
   ],
   resolve: {
