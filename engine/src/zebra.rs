@@ -386,6 +386,7 @@ pub fn next_state<
                     }
                 }
             } else {
+                if play_state.side_to_move == 0 as i32 { play_state.g_state.board_state.score_sheet_row += 1 }
                 PlayGameState::AfterGame
             }
         }
@@ -397,8 +398,6 @@ pub fn next_state<
             }
         }
         PlayGameState::AfterGame => {
-            if play_state.side_to_move == 0 as i32 { play_state.g_state.board_state.score_sheet_row += 1 }
-
             if play_state.g_state.g_config.echo == 0 && play_state.g_state.g_config.one_position_only == 0 {
                 let black_level = play_state.g_state.g_config.skill[0];
                 let white_level = play_state.g_state.g_config.skill[2];
@@ -444,6 +443,7 @@ pub fn next_state<
         PlayGameState::SwitchingSides { provided_move_count } => {
             play_state.side_to_move = 2 - play_state.side_to_move;
             if play_state.g_state.g_config.one_position_only != 0 {
+                if play_state.side_to_move == 0 as i32 { play_state.g_state.board_state.score_sheet_row += 1 }
                 PlayGameState::AfterGame
             } else {
                 PlayGameState::InGame { provided_move_count }
