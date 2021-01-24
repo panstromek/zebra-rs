@@ -20,7 +20,7 @@ use engine::src::hash::{HashEntry, HashState};
 use engine::src::learn::{Learner, LearnState};
 use engine::src::myrandom;
 use engine::src::thordb::ThorDatabase;
-use engine::src::zebra::{Config, DumpHandler, engine_play_game, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend};
+use engine::src::zebra::{Config, DumpHandler, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend};
 use engine_traits::CoeffSource;
 use flate2_coeff_source::Flate2Source;
 use flip::unflip;
