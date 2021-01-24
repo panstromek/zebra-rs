@@ -197,11 +197,10 @@ pub enum PlayGameState {
     Dumpch { provided_move_count:i32 , move_start: f64 },
     NeedsDump { provided_move_count:i32 , move_start: f64 },
 }
-pub struct PlayGame<'a, 'b, 'c, 'd, Source: InitialMoveSource> {
+pub struct PlayGame<'a, 'b, 'd, Source: InitialMoveSource> {
     file_name: Option<&'a CStr>,
     move_string: &'b [u8],
     repeat: i32,
-    log_file_name_: Option<&'c CStr>,
     move_file: Option<Source>,
     g_state: &'d mut FullState,
     eval_info: EvaluationType,
@@ -229,7 +228,7 @@ pub fn engine_play_game<
   mut move_file: Option<Source>,
     g_state: &mut FullState
 ) {
-    let mut play_state: PlayGame<Source> = PlayGame::new(file_name, move_string, repeat, log_file_name_, move_file, g_state);
+    let mut play_state: PlayGame<Source> = PlayGame::new(file_name, move_string, repeat, move_file, g_state);
     let mut move_attempt = None;
     loop {
         next_state::<
@@ -307,7 +306,7 @@ pub fn engine_play_game<
                 let total_time_ = play_state.g_state.search_state.total_time;
                 ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
-                if let (Some(log_file_name_), 0) = (play_state.log_file_name_, play_state.g_state.g_config.one_position_only) {
+                if let (Some(log_file_name_), 0) = (log_file_name_, play_state.g_state.g_config.one_position_only) {
                     ZF::log_game_ending((log_file_name_),
                                         &play_state.move_vec,
                                         disc_count(0, &play_state.g_state.board_state.board),
@@ -584,12 +583,12 @@ pub fn next_state<
     };
     return play_state.state;
 }
-impl<Src: InitialMoveSource> PlayGame<'_, '_ , '_ , '_, Src> {
+impl<Src: InitialMoveSource> PlayGame<'_, '_ , '_ , Src> {
     pub fn new<'a, 'b, 'c, 'd>(file_name: Option<&'a CStr>, mut move_string: &'b [u8],
-      mut repeat: i32, log_file_name_: Option<&'c CStr>,
+      mut repeat: i32,
       mut move_file: Option<Src>,
       g_state: &'d mut FullState
-    ) -> PlayGame<'a, 'b, 'c, 'd, Src> {
+    ) -> PlayGame<'a, 'b, 'd, Src> {
         let mut eval_info = EvaluationType {
             type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -610,7 +609,6 @@ impl<Src: InitialMoveSource> PlayGame<'_, '_ , '_ , '_, Src> {
             file_name,
             move_string,
             repeat,
-            log_file_name_,
             move_file,
             g_state,
             eval_info,
