@@ -3,6 +3,8 @@ let resolver = identity
 let rejecter = identity
 
 let wasm = undefined
+/** @type {ZebraGame} */
+let game = undefined
 
 self.addEventListener("message", ev => {
     if (!wasm) {
@@ -19,7 +21,7 @@ self.addEventListener("message", ev => {
     } else if (messageType === 'new-game') {
         rejecter();
         rejecter = identity
-        wasm.start_game()
+        game = wasm.ZebraGame.new()
     } else if (messageType === 'set-skills') {
         wasm.set_skills(...messageData)
     } else {
