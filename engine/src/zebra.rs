@@ -228,9 +228,7 @@ pub fn engine_play_game<
   mut move_file: Option<Source>,
     g_state: &mut FullState
 ) {
-    let mut play_state: PlayGame<Source> = PlayGame::new::<
-        ZF, Source, Dump, BoardSrc, ComputeMoveLog, ComputeMoveOut, FE, Thor
-    >(file_name, move_string, repeat, log_file_name_, move_file, g_state);
+    let mut play_state: PlayGame<Source> = PlayGame::new(file_name, move_string, repeat, log_file_name_, move_file, g_state);
     let mut move_attempt = None;
     loop {
         next_state::<
@@ -576,16 +574,7 @@ pub fn next_state<
     return play_state.state;
 }
 impl<Src: InitialMoveSource> PlayGame<'_, '_ , '_ , '_, Src> {
-    pub fn new<'a, 'b, 'c, 'd,
-        ZF: ZebraFrontend,
-        Source: InitialMoveSource,
-        Dump: DumpHandler,
-        BoardSrc : FileBoardSource,
-        ComputeMoveLog: ComputeMoveLogger,
-        ComputeMoveOut: ComputeMoveOutput,
-        FE: FrontEnd,
-        Thor: ThorDatabase
-    >(file_name: Option<&'a CStr>, mut move_string: &'b [u8],
+    pub fn new<'a, 'b, 'c, 'd>(file_name: Option<&'a CStr>, mut move_string: &'b [u8],
       mut repeat: i32, log_file_name_: Option<&'c CStr>,
       mut move_file: Option<Src>,
       g_state: &'d mut FullState
