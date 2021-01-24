@@ -786,25 +786,15 @@ unsafe fn play_game(mut file_name: *const i8,
     } else {
         CStr::from_ptr(move_string).to_bytes()
     };
-    engine_play_game
-        ::<LibcFrontend, _, LibcDumpHandler, BasicBoardFileSource, LogFileHandler, LibcZebraOutput, LibcLearner, LibcFatalError, LegacyThor>
-        (file_name, move_string, repeat, log_file_name_, move_file, g_state)
-}
-pub fn engine_play_game<
-    ZF: ZebraFrontend,
-    Source: InitialMoveSource,
-    Dump: DumpHandler,
-    BoardSrc : FileBoardSource,
-    ComputeMoveLog: ComputeMoveLogger,
-    ComputeMoveOut: ComputeMoveOutput,
-    Learn: Learner,
-    FE: FrontEnd,
-    Thor: ThorDatabase
->(file_name: Option<&CStr>, mut move_string: &[u8],
-  mut repeat: i32, log_file_name_: Option<&CStr>,
-  mut move_file: Option<Source>,
-  g_state: &mut FullState
-) {
+    type ZF = LibcFrontend;
+    type Source = FileMoveSource;
+    type Dump = LibcDumpHandler;
+    type BoardSrc = BasicBoardFileSource;
+    type ComputeMoveLog = LogFileHandler;
+    type ComputeMoveOut = LibcZebraOutput;
+    type Learn = LibcLearner;
+    type FE = LibcFatalError;
+    type Thor = LegacyThor;
     let mut play_state: PlayGame<Source> = PlayGame::new(file_name, move_string, repeat, move_file, g_state);
     let mut move_attempt = None;
     let mut total_search_time: f64 = 0.;
