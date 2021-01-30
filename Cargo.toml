@@ -6,7 +6,6 @@ members = [
     "scrzebra",
     "practice",
     "enddev",
-    "wasm-simple",
     "engine/bitboard",
     "engine/pcstat",
     "engine/epcstat",
@@ -23,7 +22,8 @@ members = [
     "legacy-zebra/zlib-coeff-source",
     "engine/flip",
     "engine/coeff",
-    "script"
+    "script",
+    "webzebra/crate"
 ]
 
 [profile.release]

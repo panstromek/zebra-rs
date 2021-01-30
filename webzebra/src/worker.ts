@@ -1,16 +1,15 @@
-const identity = _ => _;
+import init, {InitOutput, set_skills, ZebraGame} from '../crate/pkg'
+
+
+const identity = (a: any) => a;
 let resolver = identity
 let rejecter = identity
 
-let wasm = undefined
-/** @type {ZebraGame} */
-let game = undefined
+
+let game: ZebraGame | undefined = undefined
 
 self.addEventListener("message", ev => {
-    if (!wasm) {
-        console.log('wasm is not defined, skipping')
-        return
-    }
+
     console.log('message recieved in worker', ev)
     const messageType = ev.data[0];
     const messageData = ev.data[1];
@@ -19,47 +18,56 @@ self.addEventListener("message", ev => {
     } else if (messageType === 'get_pass_from_js') {
         resolver(ev.data[1])
     } else if (messageType === 'new-game') {
-        rejecter();
+        rejecter(undefined);
         rejecter = identity
-        game = wasm.ZebraGame.new()
+        if(game) {
+            game.free()
+        }
+        game = ZebraGame.new()
     } else if (messageType === 'set-skills') {
-        wasm.set_skills(...messageData)
+        set_skills(...messageData)
     } else {
         console.error('rejecting promise because message from from main doesn\'t have known name.')
-        rejecter()
+        rejecter(undefined)
     }
 });
 
-global.get_move_from_js = function (side_to_move) {
+self.get_move_from_js = function (side_to_move : number) {
     console.log('get move from js invoked -> side_to_move', side_to_move)
     return new Promise(((resolve, reject) => {
         resolver = resolve
         rejecter = reject
         if (side_to_move === -1) {
-            postMessage(['get_pass_from_js'])
+            self.postMessage(['get_pass_from_js'])
         } else {
-            postMessage(['get_move_from_js'])
+            self.postMessage(['get_move_from_js'])
         }
     })).then(val => {
         resolver = identity
         rejecter = identity
         return val
     })
-
 }
 
-global.js_time = function js_time() {
+self.js_time = function js_time() {
     console.log('js_time requested')
     return Math.round(Date.now() / 1000)
 }
 
-global.zebra = {
+self.zebra = {
     display_board(arr) {
-        postMessage(['display_board', arr])
+        self.postMessage(['display_board', arr])
     }
 }
 
-import("./pkg").then(w => {
-    wasm = w
-    wasm.init()
-});
+
+
+// FIXME is it possible to get rid of this nonsense cascade?
+// I'm fighting some transpile process or something with this
+
+init('../crate/pkg/webzebra_bg.wasm')
+    .then(() => import('../crate/pkg'))
+    .then(res => {
+        res.initialize()
+
+    })
