@@ -1,0 +1,79 @@
+[package]
+name = "webzebra"
+version = "0.1.0"
+authors = ["panstromek <panstromek@seznam.cz>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+
+[lib]
+crate-type = ["cdylib"]
+
+[profile.dev]
+debug = true
+opt-level = 2
+
+[profile.release]
+# This makes the compiled code faster and smaller, but it makes compiling slower,
+# so it's only enabled in release mode.
+lto = true
+opt-level = 3
+
+
+[package.metadata.wasm-pack.profile.dev]
+wasm-opt = false
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
+[features]
+# If you uncomment this line, it will enable `wee_alloc`:
+default = ["wee_alloc"]
+
+[dependencies]
+engine = { path= "./../../engine" }
+flip = { path= "./../../engine/flip" }
+engine-traits = { path = "./../../engine/engine-traits" }
+flate2-coeff-source = { path = "./../../flate2-coeff-source" }
+thordb-types = { path = "../../engine/thordb-types" }
+console_error_panic_hook = "0.1.6"
+wasm-bindgen-futures = "0.4.18"
+js-sys = "0.3.45"
+thiserror = "1.0.21"
+
+# The `wasm-bindgen` crate provides the bare minimum functionality needed
+# to interact with JavaScript.
+wasm-bindgen = { version= "^0.2.60",features = ["serde-serialize"] }
+#serde =  { version = "1.0", features = ["derive"] }
+#serde_json =  "1.0.61"
+#js-sys = "^0.3.37"
+#tinyvec = { version = "1.1.0", features = ["serde", "alloc"] }
+#itertools = "0.9.0"
+
+# `wee_alloc` is a tiny allocator for wasm that is only ~1K in code size
+# compared to the default allocator's ~10K. However, it is slower than the default
+# allocator, so it's not enabled by default.
+wee_alloc = { version = "^0.4.5", optional = true }
+
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so it's only enabled
+# in debug mode.
+[target."cfg(debug_assertions)".dependencies]
+console_error_panic_hook = "0.1.6"
+
+# These crates are used for running unit tests.
+[dev-dependencies]
+#wasm-bindgen-test = "^0.3.10"
+#futures = "^0.3.4"
+#wasm-bindgen-futures = "^0.4.10"
+
+
+[package.metadata.wasm-pack.profile.dev.wasm-bindgen]
+# Should we enable wasm-bindgen's debug assertions in its generated JS glue?
+debug-js-glue = true
+# Should wasm-bindgen demangle the symbols in the "name" custom section?
+demangle-name-section = true
+# Should we emit the DWARF debug info custom sections?
+dwarf-debug-info = true

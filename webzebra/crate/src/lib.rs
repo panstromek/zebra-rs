@@ -59,7 +59,7 @@ enum ZebraError {
 macro_rules! c_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
 }
-static COEFFS: &[u8; 1336662] = include_bytes!("./../../coeffs2.bin");
+static COEFFS: &[u8; 1336662] = include_bytes!("./../../../coeffs2.bin");
 
 #[wasm_bindgen]
 pub fn set_skills(
@@ -75,7 +75,7 @@ pub fn set_skills(
 
 
 #[wasm_bindgen]
-pub fn init() {
+pub fn initialize() {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
     {
         // set_default_engine_globals(&mut config);
@@ -99,6 +99,7 @@ pub fn init() {
         // }
     }
 }
+
 pub struct JsTimeSource;
 impl TimeSource for JsTimeSource {
     fn time(&self, __timer: &mut i64) -> i64 {
@@ -129,7 +130,7 @@ impl ZebraGame {
         let state = &mut zebra.game.g_state;
 
         engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs,
-                                                &mut state.search_state
+                                               &mut state.search_state
                                                ,&mut state.hash_state
                                                ,&mut state.g_timer
                                                ,&mut state.coeff_state
