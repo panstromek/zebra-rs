@@ -1,5 +1,5 @@
 <template>
-  <div class="flex">
+  <div class="flex flex-wrap">
     <div>
       <svg width="600" height="600" viewBox="0 0 800 800" style="background-color: green"
            @click="clickBoard">
@@ -29,8 +29,12 @@
         </g>
       </svg>
     </div>
-    <div>
-      <button @click="newGame">New Game</button>
+    <div class="max-w-sm text-left p-1.5">
+      <button
+          @click="newGame"
+          class="focus:outline-none border border-solid border-black bg-green-900 text-white p-0.5 m-0.5">
+        New Game
+      </button>
       <br>
       <h4>Skills</h4>
       <div>
@@ -75,7 +79,6 @@ const worker = new Worker()
 // }
 
 
-
 export default defineComponent({
   name: 'HelloWorld',
   props: {
@@ -91,7 +94,7 @@ export default defineComponent({
           .map(a => a * 2)
           .map(Math.round),
       waitingForMove: false,
-      waitingForPass : false,
+      waitingForPass: false,
     }
   },
   created() {
@@ -130,10 +133,10 @@ export default defineComponent({
       const boardSize = 600
       const fieldSize = boardSize / 8
 
-      if (waitingForPass) {
+      if (this.waitingForPass) {
         worker.postMessage(['get_pass_from_js', -1])
         this.waitingForPass = false
-      } else if (waitingForMove) {
+      } else if (this.waitingForMove) {
         let x = e.clientX
         let y = e.clientY
         let j = Math.floor(x / fieldSize) + 1

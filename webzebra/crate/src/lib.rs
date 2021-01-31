@@ -48,14 +48,6 @@ extern "C" {
     fn display_board(board: &[i32]);
 }
 
-#[derive(Error, Debug)]
-enum ZebraError {
-    #[error("Move recieved from JS is not a number.")]
-    MoveIsNotANumber,
-    #[error("Move from JS not recieved")]
-    MissingValue,
-}
-
 macro_rules! c_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
 }
@@ -69,43 +61,21 @@ pub fn set_skills(
     white_skill: i32,
     white_exact_skill: i32,
     white_wld_skill: i32,
-) {
-
-}
+) {}
 
 
 #[wasm_bindgen]
 pub fn initialize() {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
-    {
-        // set_default_engine_globals(&mut config);
-        // config.use_book = 0;
-
-        // // init_thor_database::<WasmFrontend>();
-        //
-        // let x = 1 as i32;
-        // random_instance.my_srandom(x);
-        //
-        // // FIXME don't run this init code on every start - my set_skills doesn't work because of that
-        // if config.skill[0] < 0 {
-        //     config.skill[0] = 6;
-        //     config.exact_skill[0] = 6;
-        //     config.wld_skill[0] = 6;
-        // }
-        // if config.skill[2] < 0 {
-        //     config.skill[2] = 0;
-        //     config.exact_skill[2] = 0;
-        //     config.wld_skill[2] = 0;
-        // }
-    }
 }
 
 pub struct JsTimeSource;
+
 impl TimeSource for JsTimeSource {
     fn time(&self, __timer: &mut i64) -> i64 {
         let time = js_time() as i64;
         *__timer = time;
-        return time
+        return time;
     }
 }
 
@@ -122,7 +92,7 @@ impl ZebraGame {
     pub fn new() -> Self {
         let coeffs = Flate2Source::new_from_data(COEFFS);
         //
-        let mut zebra =  ZebraGame {
+        let mut zebra = ZebraGame {
             game: Box::new(PlayGame::new(None, Vec::new(), 1, None,
                                          (FullState::new(&JsTimeSource))))
         };
@@ -131,15 +101,16 @@ impl ZebraGame {
 
         engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs,
                                                &mut state.search_state
-                                               ,&mut state.hash_state
-                                               ,&mut state.g_timer
-                                               ,&mut state.coeff_state
-                                               ,&mut state.random_instance
-                                               ,&mut state.stable_state
-                                               ,&mut state.prob_cut);
+                                               , &mut state.hash_state
+                                               , &mut state.g_timer
+                                               , &mut state.coeff_state
+                                               , &mut state.random_instance
+                                               , &mut state.stable_state
+                                               , &mut state.prob_cut);
 
         set_default_engine_globals(&mut state.g_config);
         state.g_config.use_book = 0;
+        state.g_config.use_thor = false;
 
         // // init_thor_database::<WasmFrontend>();
         //
@@ -157,9 +128,32 @@ impl ZebraGame {
         }
         return zebra;
     }
+
     #[wasm_bindgen]
-    pub fn next_state(&mut self) {
-        let mut move_attempt = None;
+    pub fn play_until_next_interaction(&mut self, move_attempt: Option<i32>) -> InteractionRequest {
+        let mut  move_attempt = move_attempt
+            .map(|num| MoveAttempt(num, num));
+
+        loop {
+            match self.next_state(move_attempt.take()) {
+                None => { continue; }
+                Some(interaction) => return interaction
+            }
+        }
+    }
+
+    #[wasm_bindgen]
+    pub fn side_to_move(&self) -> i32 {
+        self.game.side_to_move
+    }
+
+    #[wasm_bindgen]
+    pub fn get_board(&self) -> Box<[i32]> {
+        self.game.g_state.board_state.board.into()
+    }
+}
+impl ZebraGame {
+    pub fn next_state(&mut self, mut move_attempt: Option<MoveAttempt>) -> Option<InteractionRequest> {
         let mut play_state = &mut self.game;
         let state = next_state::<
             WasmFrontend, WasmInitialMoveSource, WasmBoardSource, WasmComputeMoveLogger, WasmFrontend, WasmFrontend, WasmThor
@@ -167,12 +161,20 @@ impl ZebraGame {
         match state {
             PlayGameState::GetPass { provided_move_count } => {
                 // TODO signal this to frontend
+                display_board(&play_state.g_state.board_state.board);
+
+                return Some(InteractionRequest::Pass);
             }
             PlayGameState::GettingMove { provided_move_count, move_start, side_to_move } => {
+                display_board(&play_state.g_state.board_state.board);
+
                 // TODO signal that we need move
                 // move_attempt =  Some(MoveAttempt(res.0, res.1))
+                return Some(InteractionRequest::Move);
             }
             PlayGameState::AfterGameReport { node_val, eval_val } => {
+                display_board(&play_state.g_state.board_state.board);
+
                 // TODO report game score?
                 // TODO display
                 let black_disc_count = disc_count(0, &play_state.g_state.board_state.board);
@@ -180,12 +182,27 @@ impl ZebraGame {
                 let total_time_ = play_state.g_state.search_state.total_time;
                 report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
             }
-            _ => {}
-        }
+            PlayGameState::End => {
+                display_board(&play_state.g_state.board_state.board);
+                return Some(InteractionRequest::End);
+            }
+            _ => {
+                display_board(&play_state.g_state.board_state.board)
+            }
+        };
+        None
     }
 }
 
+#[wasm_bindgen]
+pub enum InteractionRequest {
+    Move,
+    Pass,
+    End,
+}
+
 struct WasmThor;
+
 impl ThorDatabase for WasmThor {
     fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[thordb_types::C2RustUnnamed; 64]) {
         unimplemented!()
@@ -196,11 +213,12 @@ impl ThorDatabase for WasmThor {
     }
 
     fn database_search(in_board: &[i32], side_to_move: i32) {
-        unimplemented!()
+        // unimplemented!()
     }
 
     fn get_match_count() -> i32 {
-        unimplemented!()
+        // unimplemented!()
+        0
     }
 
     fn get_black_win_count() -> i32 {
@@ -227,6 +245,7 @@ impl ThorDatabase for WasmThor {
         unimplemented!()
     }
 }
+
 struct WasmLearner;
 
 impl ComputeMoveOutput for WasmFrontend {
@@ -234,7 +253,7 @@ impl ComputeMoveOutput for WasmFrontend {
         c_log!("Display out optimal line")
     }
 
-    fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64, board_state: &BoardState){
+    fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64, board_state: &BoardState) {
         unimplemented!()
     }
 
@@ -286,7 +305,7 @@ impl ComputeMoveLogger for WasmComputeMoveLogger {
         // unimplemented!()
     }
 
-    fn log_optimal_line(logger: &mut Self, search_state: &SearchState){
+    fn log_optimal_line(logger: &mut Self, search_state: &SearchState) {
         // unimplemented!()
     }
 
@@ -296,6 +315,7 @@ impl ComputeMoveLogger for WasmComputeMoveLogger {
 
     fn log_board(logger: &mut Self, board_: &BoardState, side_to_move_: i32) {
         // unimplemented!()
+        display_board(& board_.board)
     }
 
     fn create_log_file_if_needed() -> Option<Self> where Self: Sized {
@@ -310,12 +330,14 @@ impl InitialMoveSource for WasmInitialMoveSource {
         line_buffer[0] = 0;
     }
 }
+
 fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {
     c_log!("\nBlack: {}   White: {}", black_disc_count, white_disc_count);
     c_log!("Nodes searched:        {}", node_val);
     c_log!("Positions evaluated:   {}", eval_val);
     c_log!("Total time: {} s", total_time_);
 }
+
 struct WasmFrontend;
 
 impl ZebraFrontend for WasmFrontend {
@@ -375,7 +397,7 @@ impl ZebraFrontend for WasmFrontend {
         unimplemented!()
     }
 
-    fn print_move_alternatives(side_to_move: i32,  board_state: &mut BoardState, g_book: &mut Book) {
+    fn print_move_alternatives(side_to_move: i32, board_state: &mut BoardState, g_book: &mut Book) {
         unimplemented!()
     }
 }
@@ -388,7 +410,7 @@ macro_rules! to_square {
 
 impl FrontEnd for WasmFrontend {
     fn reset_buffer_display(g_timer: &mut Timer) {
-        unimplemented!()
+        // unimplemented!()
     }
 
     fn display_buffers(g_timer: &mut Timer) {
@@ -484,15 +506,16 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32, searched: i32, update_pv: i32, echo: i32) {
-        unimplemented!()
+        // unimplemented!()
     }
 
     fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: &EvaluationType, depth: i32, force_return_: bool, g_timer: &mut Timer, moves_state: &mut MovesState, board_state: &mut BoardState, hash_state: &mut HashState, search_state: &mut SearchState, flip_stack_: &mut FlipStack) {
-        unimplemented!()
+        display_board(& board_state.board)
+        // unimplemented!()
     }
 
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
-        unimplemented!()
+        // unimplemented!()
     }
 }
 
