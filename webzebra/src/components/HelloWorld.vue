@@ -38,13 +38,13 @@
       <br>
       <h4>Skills</h4>
       <div>
-        <input placeholder="black_skill" type="text">
-        <input placeholder="black_exact_skill" type="text">
-        <input placeholder="black_wld_skill" type="text">
+        <input v-model="black_skill" placeholder="black_skill" type="number">
+        <input v-model="black_exact_skill" placeholder="black_exact_skill" type="number">
+        <input v-model="black_wld_skill" placeholder="black_wld_skill" type="number">
         <br>
-        <input placeholder="white_skill" type="text">
-        <input placeholder="white_exact_skill" type="text">
-        <input placeholder="white_wld_skill" type="text">
+        <input v-model="white_skill" placeholder="white_skill" type="number">
+        <input v-model="white_exact_skill" placeholder="white_exact_skill" type="number">
+        <input v-model="white_wld_skill" placeholder="white_wld_skill" type="number">
         <br>
         <button @click="setSkills">Set Skills</button>
       </div>
@@ -53,38 +53,16 @@
 </template>
 
 <script lang="ts">
-import {ref, defineComponent, reactive} from 'vue'
+import {defineComponent} from 'vue'
 
 import Worker from '../worker.ts?worker=true'
-
-const worker = new Worker()
-
-//todo
-// document.getElementById('set-skills').addEventListener('click', set_skills)
-//
-// function set_skills() {
-//   let numbers = [
-//     Number(document.getElementById('black_skill').value),
-//     Number(document.getElementById('black_exact_skill').value),
-//     Number(document.getElementById('black_wld_skill').value),
-//     Number(document.getElementById('white_skill').value),
-//     Number(document.getElementById('white_exact_skill').value),
-//     Number(document.getElementById('white_wld_skill').value)
-//   ];
-//   if (numbers.some(num => isNaN(num) && !Number.isInteger(num))) {
-//     alert('Some values are not integers')
-//     return
-//   }
-//   worker.postMessage(['set-skills', numbers])
-// }
-
 
 export default defineComponent({
   name: 'HelloWorld',
   props: {
     msg: {
       type: String,
-      required: true
+      required: true,
     }
   },
   data() {
@@ -95,9 +73,17 @@ export default defineComponent({
           .map(Math.round),
       waitingForMove: false,
       waitingForPass: false,
+      black_skill: 6,
+      black_exact_skill: 6,
+      black_wld_skill: 6,
+      white_skill: 6,
+      white_exact_skill: 6,
+      white_wld_skill: 6,
     }
   },
   created() {
+    const worker = new Worker()
+    this.worker = worker
     worker.addEventListener("message", this.workerListener = ev => {
       const [type, data] = ev.data;
       switch (type) {
@@ -120,21 +106,34 @@ export default defineComponent({
     })
   },
   beforeUnmount() {
-    worker.removeEventListener('message', this.workerListener)
+    this.worker.removeEventListener('message', this.workerListener)
   },
   methods: {
     setSkills() {
-      //todo
+      let numbers = [
+        Number(this.black_skill),
+        Number(this.black_exact_skill),
+        Number(this.black_wld_skill),
+        Number(this.white_skill),
+        Number(this.white_exact_skill),
+        Number(this.white_wld_skill)
+      ];
+      if (numbers.some(num => isNaN(num) && !Number.isInteger(num))) {
+        alert('Some values are not integers')
+        return
+      }
+      this.worker.postMessage(['set-skills', numbers])
+
     },
     newGame() {
-      worker.postMessage(['new-game'])
+      this.worker.postMessage(['new-game'])
     },
     clickBoard(e: MouseEvent) {
       const boardSize = 600
       const fieldSize = boardSize / 8
 
       if (this.waitingForPass) {
-        worker.postMessage(['get_pass_from_js', -1])
+        this.worker.postMessage(['get_pass_from_js', -1])
         this.waitingForPass = false
       } else if (this.waitingForMove) {
         let x = e.clientX
@@ -143,7 +142,7 @@ export default defineComponent({
         let i = Math.floor(y / fieldSize) + 1
         let move = (10 * i + j)
         console.log(x, y, i, j)
-        worker.postMessage(['get_move_from_js', move])
+        this.worker.postMessage(['get_move_from_js', move])
         this.waitingForMove = false
       }
     }

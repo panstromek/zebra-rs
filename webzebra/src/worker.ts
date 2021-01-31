@@ -1,4 +1,4 @@
-import init, {InitOutput, InteractionRequest, set_skills, ZebraGame} from '../crate/pkg'
+import init, {InteractionRequest, ZebraGame} from '../crate/pkg'
 
 
 let game: ZebraGame | undefined = undefined
@@ -21,8 +21,10 @@ self.addEventListener("message", ev => {
         game = ZebraGame.new()
         play_game(game)
     } else if (messageType === 'set-skills') {
-        set_skills(...messageData)
-    } else {}
+        if (game)
+            game.set_skills(...messageData)
+    } else {
+    }
 });
 
 function play_game(game: ZebraGame, move?: number) {
