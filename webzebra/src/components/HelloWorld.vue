@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex">
     <div>
       <svg width="600" height="600" viewBox="0 0 800 800" style="background-color: green"
            @click="clickBoard">
