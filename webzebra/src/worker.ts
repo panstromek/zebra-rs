@@ -4,8 +4,6 @@ import init, {InitOutput, InteractionRequest, set_skills, ZebraGame} from '../cr
 let game: ZebraGame | undefined = undefined
 
 self.addEventListener("message", ev => {
-
-    console.log('message recieved in worker')
     const messageType = ev.data[0];
     const messageData = ev.data[1];
     if (messageType === 'get_move_from_js') {
@@ -41,17 +39,14 @@ function play_game(game: ZebraGame, move?: number) {
 }
 
 function get_move_from_js(side_to_move: number) {
-    console.log('get move from js invoked -> side_to_move', side_to_move)
     if (side_to_move === -1) {
         self.postMessage(['get_pass_from_js'])
     } else {
         self.postMessage(['get_move_from_js'])
     }
-    return
 }
 
 self.js_time = function js_time() {
-    console.log('js_time requested')
     return Math.round(Date.now() / 1000)
 }
 
