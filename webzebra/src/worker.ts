@@ -54,6 +54,7 @@ self.js_time = function js_time() {
 
 self.zebra = {
     display_board(arr) {
+        // TODO this call is really expensive for some reason, investigate that.
         self.postMessage([Message.DisplayBoard, arr])
     }
 }
