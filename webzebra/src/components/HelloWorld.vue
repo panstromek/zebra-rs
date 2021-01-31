@@ -100,9 +100,9 @@ export default defineComponent({
   created() {
     worker.addEventListener("message", this.workerListener = ev => {
       const [type, data] = ev.data;
-      console.log(ev)
       switch (type) {
         case 'display_board': {
+          console.log('display_board')
           this.board = data
           break
         }

@@ -5,7 +5,7 @@ let game: ZebraGame | undefined = undefined
 
 self.addEventListener("message", ev => {
 
-    console.log('message recieved in worker', ev)
+    console.log('message recieved in worker')
     const messageType = ev.data[0];
     const messageData = ev.data[1];
     if (messageType === 'get_move_from_js') {
@@ -32,7 +32,7 @@ function play_game(game: ZebraGame, move?: number) {
     let request = game.play_until_next_interaction(move);
     if (request == InteractionRequest.End) {
         // just don't do anything
-        self.zebra.display_board(game.get_board())
+        // self.zebra.display_board(game.get_board())
     } else if (request == InteractionRequest.Pass) {
         self.postMessage(['get_pass_from_js'])
     } else if (request == InteractionRequest.Move) {
