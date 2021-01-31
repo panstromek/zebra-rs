@@ -451,7 +451,7 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType, pv_zero: &mut [i32; 64], pv_depth_zero: i32, g_timer: &mut Timer, search_state: &mut SearchState) {
-        unimplemented!()
+        c_log!("Solve status TODO")
     }
 
     fn end_report_panic_abort_2(elapsed_time: f64) {
@@ -479,7 +479,7 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i32; 64]) {
-        unimplemented!()
+        panic!("FATAL PV ERROR");
     }
 
     fn report_unwanted_book_draw(this_move: i32) {
