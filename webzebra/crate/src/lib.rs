@@ -260,7 +260,7 @@ struct WasmLearner;
 
 impl ComputeMoveOutput for WasmFrontend {
     fn display_out_optimal_line(search_state: &SearchState) {
-        c_log!("Display out optimal line")
+        // c_log!("Display out optimal line")
     }
 
     fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64, board_state: &BoardState) {
@@ -268,7 +268,7 @@ impl ComputeMoveOutput for WasmFrontend {
     }
 
     fn display_status_out() {
-        c_log!("todo display_status_out")
+        // c_log!("todo display_status_out")
     }
 
     fn echo_ponder_move_4(curr_move: i32, ponder_move: i32) {
@@ -458,11 +458,11 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
-        c_log!("[{},{}]", alpha, beta);
+        // c_log!("[{},{}]", alpha, beta);
     }
 
     fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType, pv_zero: &mut [i32; 64], pv_depth_zero: i32, g_timer: &mut Timer, search_state: &mut SearchState) {
-        c_log!("Solve status TODO")
+        // c_log!("Solve status TODO")
     }
 
     fn end_report_panic_abort_2(elapsed_time: f64) {
@@ -486,7 +486,7 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn end_display_zero_status() {
-        c_log!("end_display_zero_status")
+        // c_log!("end_display_zero_status")
     }
 
     fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i32; 64]) {
