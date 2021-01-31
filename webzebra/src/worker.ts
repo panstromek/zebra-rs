@@ -28,6 +28,7 @@ self.addEventListener("message", ev => {
         if (game)
             game.set_skills(...messageData)
     } else {
+        console.log('Unknown message')
     }
 });
 
