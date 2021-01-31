@@ -3,6 +3,7 @@ import {Message} from "./message";
 
 
 let game: ZebraGame | undefined = undefined
+let skills = [6, 6, 6, 0, 0, 0]
 
 self.addEventListener("message", ev => {
     const messageType = ev.data[0];
@@ -20,8 +21,10 @@ self.addEventListener("message", ev => {
             game.free()
         }
         game = ZebraGame.new()
+        game.set_skills(...skills)
         play_game(game)
     } else if (messageType === Message.SetSkill) {
+        skills = messageData
         if (game)
             game.set_skills(...messageData)
     } else {
