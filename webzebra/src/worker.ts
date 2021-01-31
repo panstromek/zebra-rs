@@ -1,4 +1,5 @@
 import init, {InteractionRequest, ZebraGame} from '../crate/pkg'
+import {Message} from "./message";
 
 
 let game: ZebraGame | undefined = undefined
@@ -6,21 +7,21 @@ let game: ZebraGame | undefined = undefined
 self.addEventListener("message", ev => {
     const messageType = ev.data[0];
     const messageData = ev.data[1];
-    if (messageType === 'get_move_from_js') {
+    if (messageType === Message.GetMove) {
         if (game) {
             play_game(game, ev.data[1])
         }
-    } else if (messageType === 'get_pass_from_js') {
+    } else if (messageType === Message.GetPass) {
         if (game) {
             play_game(game, ev.data[1])
         }
-    } else if (messageType === 'new-game') {
+    } else if (messageType === Message.NewGame) {
         if (game) {
             game.free()
         }
         game = ZebraGame.new()
         play_game(game)
-    } else if (messageType === 'set-skills') {
+    } else if (messageType === Message.SetSkill) {
         if (game)
             game.set_skills(...messageData)
     } else {
@@ -34,17 +35,13 @@ function play_game(game: ZebraGame, move?: number) {
         // just don't do anything
         // self.zebra.display_board(game.get_board())
     } else if (request == InteractionRequest.Pass) {
-        self.postMessage(['get_pass_from_js'])
+        self.postMessage([Message.GetPass])
     } else if (request == InteractionRequest.Move) {
-        get_move_from_js(game.side_to_move())
-    }
-}
-
-function get_move_from_js(side_to_move: number) {
-    if (side_to_move === -1) {
-        self.postMessage(['get_pass_from_js'])
-    } else {
-        self.postMessage(['get_move_from_js'])
+        if (game.side_to_move() === -1) {
+            self.postMessage([Message.GetPass])
+        } else {
+            self.postMessage([Message.GetMove])
+        }
     }
 }
 
@@ -54,7 +51,7 @@ self.js_time = function js_time() {
 
 self.zebra = {
     display_board(arr) {
-        self.postMessage(['display_board', arr])
+        self.postMessage([Message.DisplayBoard, arr])
     }
 }
 
