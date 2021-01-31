@@ -53,16 +53,6 @@ macro_rules! c_log {
 }
 static COEFFS: &[u8; 1336662] = include_bytes!("./../../../coeffs2.bin");
 
-#[wasm_bindgen]
-pub fn set_skills(
-    black_skill: i32,
-    black_exact_skill: i32,
-    black_wld_skill: i32,
-    white_skill: i32,
-    white_exact_skill: i32,
-    white_wld_skill: i32,
-) {}
-
 
 #[wasm_bindgen]
 pub fn initialize() {
@@ -150,6 +140,24 @@ impl ZebraGame {
     #[wasm_bindgen]
     pub fn get_board(&self) -> Box<[i32]> {
         self.game.g_state.board_state.board.into()
+    }
+    #[wasm_bindgen]
+    pub fn set_skills(
+        &mut self,
+        black_skill: i32,
+        black_exact_skill: i32,
+        black_wld_skill: i32,
+        white_skill: i32,
+        white_exact_skill: i32,
+        white_wld_skill: i32,
+    ) {
+        let state = &mut self.game.g_state;
+        state.g_config.skill[0] = black_skill;
+        state.g_config.exact_skill[0] = black_exact_skill;
+        state.g_config.wld_skill[0] = black_wld_skill;
+        state.g_config.skill[2] = white_skill;
+        state.g_config.exact_skill[2] = white_exact_skill;
+        state.g_config.wld_skill[2] = white_wld_skill;
     }
 }
 impl ZebraGame {
@@ -414,7 +422,7 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn display_buffers(g_timer: &mut Timer) {
-        unimplemented!()
+        // TODO?
     }
 
     fn after_update_best_list_verbose(best_list: &mut [i32; 4]) {
@@ -435,7 +443,8 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32) {
-        unimplemented!()
+        // TODO
+        //  unimplemented!()
     }
 
     fn end_tree_search_output_some_stats(entry: &HashEntry) {
