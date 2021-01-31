@@ -121,7 +121,7 @@ impl ZebraGame {
 
     #[wasm_bindgen]
     pub fn play_until_next_interaction(&mut self, move_attempt: Option<i32>) -> InteractionRequest {
-        let mut  move_attempt = move_attempt
+        let mut move_attempt = move_attempt
             .map(|num| MoveAttempt(num, num));
 
         loop {
@@ -160,6 +160,7 @@ impl ZebraGame {
         state.g_config.wld_skill[2] = white_wld_skill;
     }
 }
+
 impl ZebraGame {
     pub fn next_state(&mut self, mut move_attempt: Option<MoveAttempt>) -> Option<InteractionRequest> {
         let mut play_state = &mut self.game;
@@ -194,9 +195,10 @@ impl ZebraGame {
                 display_board(&play_state.g_state.board_state.board);
                 return Some(InteractionRequest::End);
             }
-            _ => {
-                display_board(&play_state.g_state.board_state.board)
+            PlayGameState::NeedsDump { .. } => {
+                display_board(&play_state.g_state.board_state.board);
             }
+            _ => {}
         };
         None
     }
@@ -323,7 +325,6 @@ impl ComputeMoveLogger for WasmComputeMoveLogger {
 
     fn log_board(logger: &mut Self, board_: &BoardState, side_to_move_: i32) {
         // unimplemented!()
-        display_board(& board_.board)
     }
 
     fn create_log_file_if_needed() -> Option<Self> where Self: Sized {
@@ -415,6 +416,7 @@ macro_rules! to_square {
        ( ('a' as u8 +($index as u8 % 10 as u8) - 1 as u8) as char, ('0' as u8 +($index as u8 / 10 as u8)) as char )
     };
 }
+const LOG_PONDER_MOVE: bool = false;
 
 impl FrontEnd for WasmFrontend {
     fn reset_buffer_display(g_timer: &mut Timer) {
@@ -452,7 +454,7 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32, best_move_: i32) {
-        c_log!("end_tree_search_level_0_ponder_0_report TODO")
+        // c_log!("end_tree_search_level_0_ponder_0_report TODO")
     }
 
     fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
@@ -505,13 +507,17 @@ impl FrontEnd for WasmFrontend {
 
 
     fn midgame_display_simple_ponder_move(move_0: i32) {
-        c_log!("{}{}", ('a' as u8 + move_0 as u8 % 10 - 1) as char,
+        // Maybe I'm gonna need this??
+        if LOG_PONDER_MOVE {
+            c_log!("{}{}", ('a' as u8 + move_0 as u8 % 10 - 1) as char,
                    ('0' as u8 + move_0 as u8 / 10) as char);
+        }
     }
 
-    //fixme remove this fricking buffer param
     fn midgame_display_initial_ponder_move(alpha: i32, beta: i32) {
-        c_log!("pondering move [{},{}] ", alpha, beta)
+        if LOG_PONDER_MOVE {
+            c_log!("pondering move [{},{}] ", alpha, beta)
+        }
     }
 
     fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32, searched: i32, update_pv: i32, echo: i32) {
@@ -519,7 +525,6 @@ impl FrontEnd for WasmFrontend {
     }
 
     fn midgame_display_status(side_to_move: i32, max_depth: i32, eval_info: &EvaluationType, depth: i32, force_return_: bool, g_timer: &mut Timer, moves_state: &mut MovesState, board_state: &mut BoardState, hash_state: &mut HashState, search_state: &mut SearchState, flip_stack_: &mut FlipStack) {
-        display_board(& board_state.board)
         // unimplemented!()
     }
 
