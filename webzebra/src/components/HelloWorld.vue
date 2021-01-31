@@ -48,6 +48,9 @@
         <br>
         <button @click="setSkills">Set Skills</button>
       </div>
+      <div v-if="waitingForMove">Waiting for move</div>
+      <div v-if="waitingForPass">Waiting for pass (click anywhere on the board)</div>
+
     </div>
   </div>
 </template>
@@ -56,6 +59,7 @@
 import {defineComponent} from 'vue'
 
 import Worker from '../worker.ts?worker=true'
+import {Message} from "../message";
 
 export default defineComponent({
   name: 'HelloWorld',
@@ -84,21 +88,18 @@ export default defineComponent({
   created() {
     const worker = new Worker()
     this.worker = worker
-    worker.addEventListener("message", this.workerListener = ev => {
+    worker.addEventListener('message', this.workerListener = ev => {
       const [type, data] = ev.data;
       switch (type) {
-        case 'display_board': {
-          console.log('display_board')
+        case Message.DisplayBoard: {
           this.board = data
           break
         }
-        case 'get_move_from_js' : {
-          console.log('waiting for move')
+        case Message.GetMove : {
           this.waitingForMove = true
           break
         }
-        case 'get_pass_from_js' : {
-          console.log('waiting for pass')
+        case Message.GetPass : {
           this.waitingForPass = true
           break
         }
@@ -122,18 +123,18 @@ export default defineComponent({
         alert('Some values are not integers')
         return
       }
-      this.worker.postMessage(['set-skills', numbers])
+      this.worker.postMessage([Message.SetSkill, numbers])
 
     },
     newGame() {
-      this.worker.postMessage(['new-game'])
+      this.worker.postMessage([Message.NewGame])
     },
     clickBoard(e: MouseEvent) {
       const boardSize = 600
       const fieldSize = boardSize / 8
 
       if (this.waitingForPass) {
-        this.worker.postMessage(['get_pass_from_js', -1])
+        this.worker.postMessage([Message.GetPass, -1])
         this.waitingForPass = false
       } else if (this.waitingForMove) {
         let x = e.clientX
@@ -142,18 +143,20 @@ export default defineComponent({
         let i = Math.floor(y / fieldSize) + 1
         let move = (10 * i + j)
         console.log(x, y, i, j)
-        this.worker.postMessage(['get_move_from_js', move])
+        this.worker.postMessage([Message.GetMove, move])
         this.waitingForMove = false
       }
     }
   },
   computed: {
     circles() {
+      let board = this.board;
+
       const arr = []
       for (let i = 1; i <= 8; i++) {
         for (let j = 1; j <= 8; j++) {
           let color;
-          switch (this.board[(10 * i + j)]) {
+          switch (board[(10 * i + j)]) {
             case 0  :
               color = 'black'
               break;
