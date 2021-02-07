@@ -356,7 +356,7 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
     remains = max_depth - level;
     if remains < 3 as i32 {
         curr_val =
-            fast_tree_search::<FE>(level, max_depth, side_to_move, alpha, beta,
+            fast_tree_search(level, max_depth, side_to_move, alpha, beta,
                              allow_hash, void_legal,  &mut moves_state ,
                                    &mut search_state ,
                                    &mut board_state ,
@@ -916,7 +916,7 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
    The recursive tree search function. It uses negascout for
    tree pruning.
 */
-fn fast_tree_search<FE: FrontEnd>(level: i32,
+fn fast_tree_search(level: i32,
                                          max_depth: i32,
                                          side_to_move: i32,
                                          alpha: i32,
@@ -1045,7 +1045,7 @@ fn fast_tree_search<FE: FrontEnd>(level: i32,
                     0 as i32 {
                     if first != 0 {
                         curr_val =
-                            -fast_tree_search::<FE>(level + 1 as i32,
+                            -fast_tree_search(level + 1 as i32,
                                               max_depth,
                                               0 as i32 +
                                                   2 as i32 -
@@ -1064,7 +1064,7 @@ fn fast_tree_search<FE: FrontEnd>(level: i32,
                         curr_alpha =
                             if best > curr_alpha { best } else { curr_alpha };
                         curr_val =
-                            -fast_tree_search::<FE>(level + 1 as i32,
+                            -fast_tree_search(level + 1 as i32,
                                               max_depth,
                                               0 as i32 +
                                                   2 as i32 -
@@ -1080,7 +1080,7 @@ fn fast_tree_search<FE: FrontEnd>(level: i32,
                                                     &mut coeff_state, midgame_state);
                         if curr_val > curr_alpha && curr_val < beta {
                             curr_val =
-                                -fast_tree_search::<FE>(level + 1 as i32,
+                                -fast_tree_search(level + 1 as i32,
                                                   max_depth,
                                                   0 as i32 +
                                                       2 as i32 -
@@ -1141,7 +1141,7 @@ fn fast_tree_search<FE: FrontEnd>(level: i32,
         hash_state.hash1 ^= hash_state.hash_flip_color1;
         hash_state.hash2 ^= hash_state.hash_flip_color2;
         curr_val =
-            -fast_tree_search::<FE>(level, max_depth,
+            -fast_tree_search(level, max_depth,
                               0 as i32 + 2 as i32 -
                                   side_to_move, -beta, -alpha, allow_hash,
                               0 as i32,  &mut moves_state ,
