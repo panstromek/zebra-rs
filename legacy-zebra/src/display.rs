@@ -513,265 +513,139 @@ pub unsafe fn produce_eval_text(eval_info: &EvaluationType,
     let disk_diff: f64;
     let int_confidence: i32;
     match eval_info.type_0 as u32 {
-        0 => {
-            if eval_info.score >= 29000 as i32 {
-                len =
-                    sprintf(buffer,
-                            b"Win\x00" as *const u8 as *const i8)
-            } else if eval_info.score <= -(29000 as i32) {
-                len =
-                    sprintf(buffer,
-                            b"Loss\x00" as *const u8 as *const i8)
-            } else {
-                disk_diff = eval_info.score as f64 / 128.0f64;
-                if short_output != 0 {
-                    len =
-                        sprintf(buffer,
-                                b"%+.2f\x00" as *const u8 as
-                                    *const i8, disk_diff)
-                } else {
-                    len =
-                        sprintf(buffer,
-                                b"%+.2f %s\x00" as *const u8 as
-                                    *const i8, disk_diff,
-                                b"discs\x00" as *const u8 as
-                                    *const i8)
-                }
-            }
-        }
-        1 => {
+        0 => if eval_info.score >= 29000 as i32 {
+            len = sprintf(buffer, b"Win\x00" as *const u8 as *const i8)
+        } else if eval_info.score <= -(29000 as i32) {
+            len = sprintf(buffer, b"Loss\x00" as *const u8 as *const i8)
+        } else {
+            disk_diff = eval_info.score as f64 / 128.0f64;
             if short_output != 0 {
-                len =
-                    sprintf(buffer,
-                            b"%+d\x00" as *const u8 as *const i8,
-                            eval_info.score >> 7 as i32)
-            } else if eval_info.score > 0 as i32 {
-                len =
-                    sprintf(buffer,
-                            b"%s %d-%d\x00" as *const u8 as
-                                *const i8,
-                            b"Win by\x00" as *const u8 as *const i8,
-                            32 as i32 +
-                                (eval_info.score >> 8 as i32),
-                            32 as i32 -
-                                (eval_info.score >> 8 as i32))
-            } else if eval_info.score < 0 as i32 {
-                len =
-                    sprintf(buffer,
-                            b"%s %d-%d\x00" as *const u8 as
-                                *const i8,
-                            b"Loss by\x00" as *const u8 as
-                                *const i8,
-                            32 as i32 -
-                                (abs(eval_info.score) >> 8 as i32),
-                            32 as i32 +
-                                (abs(eval_info.score) >> 8 as i32))
+                len = sprintf(buffer,
+                              b"%+.2f\x00" as *const u8 as *const i8,
+                              disk_diff)
             } else {
-                len =
-                    sprintf(buffer,
-                            b"Draw\x00" as *const u8 as *const i8)
+                len = sprintf(buffer,
+                            b"%+.2f %s\x00" as *const u8 as *const i8,
+                            disk_diff,
+                            b"discs\x00" as *const u8 as *const i8)
             }
-        }
-        2 => {
-            if short_output != 0 {
-                match eval_info.res as u32 {
-                    0 => {
-                        len =
-                            sprintf(buffer,
-                                    b"Win\x00" as *const u8 as
-                                        *const i8)
-                    }
-                    1 => {
-                        len =
-                            sprintf(buffer,
-                                    b"Draw\x00" as *const u8 as
-                                        *const i8)
-                    }
-                    2 => {
-                        len =
-                            sprintf(buffer,
-                                    b"Loss\x00" as *const u8 as
-                                        *const i8)
-                    }
-                    3 => {
-                        len =
-                            sprintf(buffer,
-                                    b"???\x00" as *const u8 as
-                                        *const i8)
-                    }
-                    _ => { }
-                }
-            } else {
-                match eval_info.res as u32 {
-                    0 => {
-                        if eval_info.score !=
-                               1 as i32 * 128 as i32 {
-                            /* Lower bound on win */
-                            len =
-                                sprintf(buffer,
-                                        b"%s %d-%d\x00" as *const u8 as
-                                            *const i8,
-                                        b"Win by at least\x00" as *const u8 as
-                                            *const i8,
-                                        32 as i32 +
-                                            (eval_info.score >>
-                                                 8 as i32),
-                                        32 as i32 -
-                                            (eval_info.score >>
-                                                 8 as i32))
-                        } else {
-                            len =
-                                sprintf(buffer,
-                                        b"Win\x00" as *const u8 as
-                                            *const i8)
-                        }
-                    }
-                    1 => {
-                        len =
-                            sprintf(buffer,
-                                    b"Draw\x00" as *const u8 as
-                                        *const i8)
-                    }
-                    2 => {
-                        if eval_info.score !=
-                               -(1 as i32) * 128 as i32 {
-                            /* Upper bound on win */
-                            len =
-                                sprintf(buffer,
-                                        b"%s %d-%d\x00" as *const u8 as
-                                            *const i8,
-                                        b"Loss by at least\x00" as *const u8
-                                            as *const i8,
-                                        32 as i32 -
-                                            (abs(eval_info.score) >>
-                                                 8 as i32),
-                                        32 as i32 +
-                                            (abs(eval_info.score) >>
-                                                 8 as i32))
-                        } else {
-                            len =
-                                sprintf(buffer,
-                                        b"Loss\x00" as *const u8 as
-                                            *const i8)
-                        }
-                    }
-                    3 => {
-                        len =
-                            sprintf(buffer,
-                                    b"???\x00" as *const u8 as
-                                        *const i8)
-                    }
-                    _ => { }
-                }
-            }
-        }
-        3 => {
-            int_confidence =
-                floor(eval_info.confidence * 100.0f64) as i32;
+        },
+        1 => if short_output != 0 {
+            len = sprintf(buffer,
+                        b"%+d\x00" as *const u8 as *const i8,
+                        eval_info.score >> 7)
+        } else if eval_info.score > 0 {
+            len = sprintf(buffer,
+                        b"%s %d-%d\x00" as *const u8 as *const i8,
+                        b"Win by\x00" as *const u8 as *const i8,
+                        32 + (eval_info.score >> 8),
+                        32 - (eval_info.score >> 8))
+        } else if eval_info.score < 0 {
+            len = sprintf(buffer,
+                        b"%s %d-%d\x00" as *const u8 as *const i8,
+                        b"Loss by\x00" as *const u8 as *const i8,
+                        32 - (abs(eval_info.score) >> 8),
+                        32 + (abs(eval_info.score) >> 8))
+        } else {
+            len = sprintf(buffer, b"Draw\x00" as *const u8 as *const i8)
+        },
+        2 => if short_output != 0 {
             match eval_info.res as u32 {
-                0 => {
-                    if eval_info.score !=
-                           1 as i32 * 128 as i32 {
-                        len =
-                            sprintf(buffer,
-                                    b"%+d @ %d%%\x00" as *const u8 as
-                                        *const i8,
-                                    eval_info.score / 128 as i32,
-                                    int_confidence)
-                    } else {
-                        len =
-                            sprintf(buffer,
-                                    b"%s @ %d%%\x00" as *const u8 as
-                                        *const i8,
-                                    b"Win\x00" as *const u8 as
-                                        *const i8, int_confidence)
-                    }
-                }
-                1 => {
-                    len =
-                        sprintf(buffer,
-                                b"%s @ %d%%\x00" as *const u8 as
-                                    *const i8,
-                                b"Draw\x00" as *const u8 as
-                                    *const i8, int_confidence)
-                }
-                2 => {
-                    if eval_info.score !=
-                           -(1 as i32) * 128 as i32 {
-                        len =
-                            sprintf(buffer,
-                                    b"%+d @ %d%%\x00" as *const u8 as
-                                        *const i8,
-                                    eval_info.score >> 7 as i32,
-                                    int_confidence)
-                    } else {
-                        len =
-                            sprintf(buffer,
-                                    b"%s @ %d%%\x00" as *const u8 as
-                                        *const i8,
-                                    b"Loss\x00" as *const u8 as
-                                        *const i8, int_confidence)
-                    }
-                }
-                3 => {
-                    if eval_info.score == 0 as i32 {
-                        len =
-                            sprintf(buffer,
-                                    b"Draw @ %d%%\x00" as *const u8 as
-                                        *const i8, int_confidence)
-                    } else {
-                        len =
-                            sprintf(buffer,
-                                    b"%+d @ %d%%\x00" as *const u8 as
-                                        *const i8,
-                                    eval_info.score / 128 as i32,
-                                    int_confidence)
-                    }
-                }
+                0 => len = sprintf(buffer, b"Win\x00" as *const u8 as *const i8),
+                1 => len = sprintf(buffer, b"Draw\x00" as *const u8 as *const i8),
+                2 => len = sprintf(buffer, b"Lodss\x00" as *const u8 as *const i8),
+                3 => len = sprintf(buffer, b"???\x00" as *const u8 as *const i8),
+                _ => {}
+            }
+        } else {
+            match eval_info.res as u32 {
+                0 => if eval_info.score != 1 * 128 {
+                    /* Lower bound on win */
+                    len = sprintf(
+                        buffer,
+                        b"%s %d-%d\x00" as *const u8 as *const i8,
+                        b"Win by at least\x00" as *const u8 as *const i8,
+                        32 + (eval_info.score >> 8),
+                        32 - (eval_info.score >> 8))
+                } else {
+                    len = sprintf(buffer, b"Win\x00" as *const u8 as *const i8)
+                },
+                1 => len = sprintf(buffer, b"Draw\x00" as *const u8 as *const i8),
+                2 => if eval_info.score != -128 {
+                    /* Upper bound on win */
+                    len = sprintf(buffer, b"%s %d-%d\x00" as *const u8 as *const i8,
+                                  b"Loss by at least\x00" as *const u8 as *const i8,
+                                  32 - (abs(eval_info.score) >> 8),
+                                  32 + (abs(eval_info.score) >> 8))
+                } else {
+                    len = sprintf(buffer, b"Loss\x00" as *const u8 as *const i8)
+                },
+                3 => len = sprintf(buffer, b"???\x00" as *const u8 as *const i8),
+                _ => {}
+            }
+        },
+        3 => {
+            int_confidence = floor(eval_info.confidence * 100.0f64) as i32;
+            match eval_info.res as u32 {
+                0 => if eval_info.score != 128 {
+                    len = sprintf(buffer, b"%+d @ %d%%\x00" as *const u8 as *const i8,
+                                  eval_info.score / 128,
+                                  int_confidence)
+                } else {
+                    len = sprintf(buffer,
+                                  b"%s @ %d%%\x00" as *const u8 as *const i8,
+                                  b"Win\x00" as *const u8 as *const i8,
+                                  int_confidence)
+                },
+                1 => len = sprintf(buffer,
+                                   b"%s @ %d%%\x00" as *const u8 as *const i8,
+                                   b"Draw\x00" as *const u8 as *const i8,
+                                   int_confidence),
+                2 => if eval_info.score != -128 {
+                    len = sprintf(buffer,
+                                  b"%+d @ %d%%\x00" as *const u8 as *const i8,
+                                  eval_info.score >> 7 as i32,
+                                  int_confidence)
+                } else {
+                    len = sprintf(buffer,
+                                  b"%s @ %d%%\x00" as *const u8 as *const i8,
+                                  b"Loss\x00" as *const u8 as *const i8,
+                                  int_confidence)
+                },
+                3 => if eval_info.score == 0 as i32 {
+                    len = sprintf(buffer,
+                                  b"Draw @ %d%%\x00" as *const u8 as *const i8,
+                                  int_confidence)
+                } else {
+                    len = sprintf(buffer,
+                                  b"%+d @ %d%%\x00" as *const u8 as *const i8,
+                                  eval_info.score / 128,
+                                  int_confidence)
+                },
                 _ => { }
             }
         }
-        4 => {
-            if short_output != 0 {
-                len =
-                    sprintf(buffer,
-                            b"-\x00" as *const u8 as *const i8)
-            } else {
-                len =
-                    sprintf(buffer,
-                            b"forced\x00" as *const u8 as *const i8)
-            }
-        }
-        5 => {
-            if short_output != 0 {
-                len =
-                    sprintf(buffer,
-                            b"-\x00" as *const u8 as *const i8)
-            } else {
-                len =
-                    sprintf(buffer,
-                            b"pass\x00" as *const u8 as *const i8)
-            }
-        }
-        7 => {
-            len =
-                sprintf(buffer,
-                        b"incompl\x00" as *const u8 as *const i8)
-        }
+        4 => if short_output != 0 {
+            len = sprintf(buffer, b"-\x00" as *const u8 as *const i8)
+        } else {
+            len = sprintf(buffer, b"forced\x00" as *const u8 as *const i8)
+        },
+        5 => if short_output != 0 {
+            len = sprintf(buffer, b"-\x00" as *const u8 as *const i8)
+        } else {
+            len = sprintf(buffer, b"pass\x00" as *const u8 as *const i8)
+        },
+        7 => len = sprintf(buffer, b"incompl\x00" as *const u8 as *const i8),
         6 => {
             /* We really want to perform len = sprintf( buffer, "" ); */
             *buffer = 0;
-            len = 0 as i32
+            len = 0
         }
-        8 => {
-            len =
-                sprintf(buffer, b"--\x00" as *const u8 as *const i8)
-        }
+        8 => len = sprintf(buffer, b"--\x00" as *const u8 as *const i8),
         _ => { }
     }
     if eval_info.is_book != 0 {
-        len +=
-            sprintf(buffer.offset(len as isize),
+        len += sprintf(buffer.offset(len as isize),
                     b" (%s)\x00" as *const u8 as *const i8,
                     b"book\x00" as *const u8 as *const i8)
     }
