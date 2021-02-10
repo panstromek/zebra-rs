@@ -1,6 +1,5 @@
 use std::ffi::c_void;
 
-use engine::src::error::FrontEnd;
 use engine::src::search::disc_count;
 use engine::src::stubs::{abs, ceil, floor};
 use engine::src::zebra::EvaluationType;
@@ -119,7 +118,7 @@ pub unsafe fn toggle_smart_buffer_management(use_smart: i32) {
   Clear all buffers and initialize time variables.
 */
 
-pub unsafe fn reset_buffer_display<FE: FrontEnd>(g_timer:&mut Timer) {
+pub unsafe fn reset_buffer_display(g_timer:&mut Timer) {
     /* The first two Fibonacci numbers */
     clear_status();
     clear_sweep();

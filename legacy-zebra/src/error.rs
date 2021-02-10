@@ -84,9 +84,7 @@ pub unsafe fn fatal_error_0(format: *const i8) -> ! {
 
 unsafe fn fatal_error(mut variadic_printer: impl FnMut(*mut FILE)) -> ! {
     let mut timer: time_t = 0;
-    // let mut arg_ptr = args.clone();
-    fprintf(stderr, b"\n%s: \x00" as *const u8 as *const i8,
-            b"Fatal error\x00" as *const u8 as *const i8);
+    eprint!("\nFatal error: ");
 
     variadic_printer(stderr);
     let stream =
@@ -100,7 +98,7 @@ unsafe fn fatal_error(mut variadic_printer: impl FnMut(*mut FILE)) -> ! {
                 ctime(&mut timer));
         variadic_printer(stream);
     }
-    exit(1 as i32);
+    std::process::exit(1);
 }
 
 pub struct LibcFatalError; // FIXME rename this, it's not only error anymore
@@ -163,7 +161,7 @@ impl LibcFatalError {
 }
 impl FrontEnd for LibcFatalError {
     fn reset_buffer_display(g_timer:&mut Timer) {
-        unsafe { reset_buffer_display::<FE>(g_timer) }
+        unsafe { reset_buffer_display(g_timer) }
     }
     /*
       DISPLAY_BUFFERS
