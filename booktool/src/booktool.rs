@@ -8,7 +8,7 @@ use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 use legacy_zebra::src::error::{LibcFatalError, fatal_error_2};
 use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
 
-use libc_wrapper::{time, fflush, stdout, fopen, fread, fclose, FILE, fprintf, fputc, free, sprintf, putc, fputs, stderr, sscanf, strlen, fgets, qsort, feof, strcmp, strstr, __ctype_b_loc, fwrite, malloc, toupper, ctime, strcpy, tolower};
+use libc_wrapper::{time, fflush, stdout, fopen, fread, fclose, FileHandle, fprintf, fputc, free, sprintf, putc, fputs, stderr, sscanf, strlen, fgets, qsort, feof, strcmp, strstr, __ctype_b_loc, fwrite, malloc, toupper, ctime, strcpy, tolower};
 use legacy_zebra::src::osfbook;
 use engine::src::moves::{generate_all, make_move, unmake_move, unmake_move_no_hash, make_move_no_hash, generate_specific};
 use engine::src::search::disc_count;
@@ -751,7 +751,7 @@ pub unsafe fn merge_binary_database(file_name:
 */
 unsafe fn export_position(side_to_move: i32,
                           score: i32,
-                          target_file: *mut FILE, g_state: &mut FullState) {
+                          target_file: FileHandle, g_state: &mut FullState) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -801,7 +801,7 @@ unsafe fn export_position(side_to_move: i32,
 unsafe fn do_restricted_minimax(index: i32,
                                 low: i32,
                                 high: i32,
-                                target_file: *mut FILE,
+                                target_file: FileHandle,
                                 minimax_values:
                                            *mut i32, g_state: &mut FullState) {
     let mut i: i32 = 0;
@@ -899,7 +899,7 @@ pub unsafe fn restricted_minimax_tree(low: i32,
                                       high: i32,
                                       pos_file_name:
                                                  *const i8, g_state:&mut FullState) {
-    let mut pos_file: *mut FILE = 0 as *mut FILE;
+    let mut pos_file: FileHandle = FileHandle::null();
     let mut i: i32 = 0;
     let mut minimax_values: *mut i32 = 0 as *mut i32;
     let mut start_time: time_t = 0;
@@ -957,7 +957,7 @@ unsafe fn do_midgame_statistics(index: i32,
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
     let mut eval_list: [i32; 64] = [0; 64];
-    let mut out_file: *mut FILE = 0 as *mut FILE;
+    let mut out_file: FileHandle = FileHandle::null();
     if (*g_state.g_book.node.offset(index as isize)).flags as i32 & 8 as i32
         == 0 {
         return
@@ -1131,7 +1131,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
             confidence: 0.,
             search_depth: 0,
             is_book: 0,};
-    let mut out_file: *mut FILE = 0 as *mut FILE;
+    let mut out_file: FileHandle = FileHandle::null();
     let mut i: i32 = 0;
     let mut depth: i32 = 0;
     let mut stored_side_to_move: i32 = 0;
@@ -1679,7 +1679,7 @@ unsafe fn do_correct(index: i32,
                 }
             } else {
                 /* Defer solving to a standalone scripted solver */
-                let target_file: *mut FILE =
+                let target_file: FileHandle =
                     fopen(target_name,
                           b"a\x00" as *const u8 as *const i8);
                 if !target_file.is_null() {
@@ -1850,7 +1850,7 @@ pub unsafe fn correct_tree(max_empty: i32,
    Recursively exports all variations rooted at book position # INDEX.
 */
 
-unsafe fn do_export(index: i32, stream: *mut FILE,
+unsafe fn do_export(index: i32, stream: FileHandle,
                     move_vec: &mut [i32; 60], g_state: &mut FullState) {
     let mut i: i32 = 0;
     let mut child_count: i32 = 0;
@@ -2413,7 +2413,7 @@ pub unsafe fn build_tree(file_name: *const i8,
     let mut game_move_list: [i16; 60] = [0; 60];
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
-    let mut stream = 0 as *mut FILE;
+    let mut stream = FileHandle::null();
     puts(b"Importing game list...\x00" as *const u8 as *const i8);
     fflush(stdout);
     stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
@@ -2504,8 +2504,8 @@ unsafe fn dupstr(str: *const i8)
 pub unsafe fn convert_opening_list(base_file:
                                    *const i8, g_state: &mut FullState) {
     let mut in_stream =
-        0 as *mut FILE; /* Max number of opening names occurring */
-    let mut out_stream = 0 as *mut FILE;
+        FileHandle::null(); /* Max number of opening names occurring */
+    let mut out_stream = FileHandle::null();
     let mut name_start = 0 as *mut i8;
     let mut scan_ptr = 0 as *mut i8;
     let mut move_ptr = 0 as *mut i8;
@@ -2830,7 +2830,7 @@ pub unsafe fn write_compressed_database(file_name:
   in preorder.
 */
 unsafe fn do_uncompress(depth: i32,
-                        stream: *mut FILE,
+                        stream: FileHandle,
                         node_index: *mut i32,
                         child_index: *mut i32,
                         child_count: *mut i16,
@@ -2940,7 +2940,7 @@ pub unsafe fn unpack_compressed_database(in_name:
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     let mut flags = 0 as *mut u16;
-    let mut stream = 0 as *mut FILE;
+    let mut stream = FileHandle::null();
     printf(b"Uncompressing compressed database... \x00" as *const u8 as
         *const i8);
     fflush(stdout);
@@ -3097,8 +3097,8 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
     let mut moves_read: i32 = 0;
     let mut new_nodes_created: i32 = 0;
     let mut probable_error: i32 = 0;
-    let mut script_stream = 0 as *mut FILE;
-    let mut result_stream = 0 as *mut FILE;
+    let mut script_stream = FileHandle::null();
+    let mut result_stream = FileHandle::null();
     script_stream =
         fopen(script_file, b"r\x00" as *const u8 as *const i8);
     if script_stream.is_null() {

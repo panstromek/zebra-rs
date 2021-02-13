@@ -1,4 +1,4 @@
-use libc_wrapper::{puts, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FILE, size_t, strlen, tolower};
+use libc_wrapper::{puts, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FileHandle, size_t, strlen, tolower};
 use crate::src::error::LibcFatalError;
 use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
@@ -157,8 +157,8 @@ pub type FE = LibcFatalError;
   Reads an 8-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe fn get_int_8(stream: *mut FILE, value: *mut Int8)
- -> i32 {
+unsafe fn get_int_8(stream: FileHandle, value: *mut Int8)
+                    -> i32 {
     let mut actually_read: i32 = 0;
     actually_read =
         fread(value as *mut std::ffi::c_void,
@@ -171,8 +171,8 @@ unsafe fn get_int_8(stream: *mut FILE, value: *mut Int8)
   Reads a 16-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe fn get_int_16(stream: *mut FILE, value: *mut Int16)
- -> i32 {
+unsafe fn get_int_16(stream: FileHandle, value: *mut Int16)
+                     -> i32 {
     let mut actually_read: i32 = 0;
     actually_read =
         fread(value as *mut std::ffi::c_void,
@@ -185,8 +185,8 @@ unsafe fn get_int_16(stream: *mut FILE, value: *mut Int16)
   Reads a 32-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe fn get_int_32(stream: *mut FILE, value: *mut Int32)
- -> i32 {
+unsafe fn get_int_32(stream: FileHandle, value: *mut Int32)
+                     -> i32 {
     let mut actually_read: i32 = 0;
     actually_read =
         fread(value as *mut std::ffi::c_void,
@@ -201,8 +201,8 @@ unsafe fn get_int_32(stream: *mut FILE, value: *mut Int32)
   values which aren't used are read.
   Returns TRUE upon success, otherwise FALSE.
 */
-unsafe fn read_prolog(stream: *mut FILE,
-                                 mut prolog: *mut PrologType) -> i32 {
+unsafe fn read_prolog(stream: FileHandle,
+                      mut prolog: *mut PrologType) -> i32 {
     let mut success: i32 = 0;
     let mut byte_val: Int8 = 0;
     let mut word_val: Int16 = 0;
@@ -293,7 +293,7 @@ unsafe extern "C" fn sort_tournament_database() {
 pub unsafe fn read_tournament_database(file_name:
                                                       *const i8)
  -> i32 {
-    let mut stream = 0 as *mut FILE;
+    let mut stream = FileHandle::null();
     let mut i: i32 = 0;
     let mut success: i32 = 0;
     let mut actually_read: i32 = 0;
@@ -416,7 +416,7 @@ unsafe fn sort_player_database() {
 pub unsafe fn read_player_database(file_name:
                                                   *const i8)
  -> i32 {
-    let mut stream = 0 as *mut FILE;
+    let mut stream = FileHandle::null();
     let mut i: i32 = 0;
     let mut success: i32 = 0;
     let mut actually_read: i32 = 0;
@@ -477,8 +477,8 @@ pub unsafe fn read_player_database(file_name:
   for database questions. Returns TRUE upon success,
   otherwise FALSE.
 */
-unsafe fn read_game(stream: *mut FILE, mut game: *mut GameType)
- -> i32 {
+unsafe fn read_game(stream: FileHandle, mut game: *mut GameType)
+                    -> i32 {
     let mut success: i32 = 0;
     let mut actually_read: i32 = 0;
     let mut byte_val: Int8 = 0;
@@ -517,7 +517,7 @@ unsafe fn read_game(stream: *mut FILE, mut game: *mut GameType)
 pub unsafe fn read_game_database(file_name:
                                                 *const i8)
  -> i32 {
-    let mut stream = 0 as *mut FILE;
+    let mut stream = FileHandle::null();
     let mut i: i32 = 0;
     let mut success: i32 = 0;
     let mut old_database_head = 0 as *mut DatabaseType;
@@ -568,7 +568,7 @@ pub unsafe fn read_game_database(file_name:
 pub unsafe fn game_database_already_loaded(file_name:
                                                           *const i8)
  -> i32 {
-    let mut stream = 0 as *mut FILE;
+    let mut stream = FileHandle::null();
     let mut current_db = 0 as *mut DatabaseType;
     let mut new_prolog =
         PrologType{creation_century: 0,
@@ -611,9 +611,9 @@ pub unsafe fn game_database_already_loaded(file_name:
   The flag DISPLAY_MOVES specifies if the moves of the
   game are to be output or not.
 */
-unsafe fn print_game(stream: *mut FILE,
-                                game: *mut GameType,
-                                display_moves: i32) {
+unsafe fn print_game(stream: FileHandle,
+                     game: *mut GameType,
+                     display_moves: i32) {
     let mut i: i32 = 0;
     fprintf(stream, b"%s  %d\n\x00" as *const u8 as *const i8,
             tournament_name((*game).tournament_no as i32),
@@ -676,8 +676,8 @@ pub unsafe fn sort_thor_games(count: i32) {
   database search to STREAM.
 */
 
-pub unsafe fn print_thor_matches(stream: *mut FILE,
-                                            max_games: i32) {
+pub unsafe fn print_thor_matches(stream: FileHandle,
+                                 max_games: i32) {
     let mut i: i32 = 0;
     i = 0;
     while i <

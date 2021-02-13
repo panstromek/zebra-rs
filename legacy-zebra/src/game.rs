@@ -13,7 +13,7 @@ use engine::src::thordb::ThorDatabase;
 use engine::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL, WLD_EVAL};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{ctime, fclose, fgets, FILE, fopen, fprintf, fputs, free, printf, puts, stdout, strcpy, time, time_t};
+use libc_wrapper::{ctime, fclose, fgets, FileHandle, fopen, fprintf, fputs, free, printf, puts, stdout, strcpy, time, time_t, fflush};
 
 use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, send_status_1, send_status_2, send_status_0};
 use crate::src::error::{FE, LibcFatalError};
@@ -21,8 +21,9 @@ use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
 use crate::src::thordb::LegacyThor;
 use crate::src::zebra::FullState;
 use engine::src::globals::BoardState;
-use std::fs::{File, read};
-use std::io::{Read, BufReader, BufRead};
+use std::fs::{File, read, OpenOptions};
+use std::io::{Read, BufReader, BufRead, Write};
+use std::iter::FromIterator;
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
 pub static mut prefix_move: i32 = 0;
@@ -112,7 +113,7 @@ pub unsafe fn global_setup(use_random: i32,
 }
 
 pub struct LogFileHandler {
-    log_file: *mut FILE
+    log_file: FileHandle,
 }
 impl LogFileHandler {
     fn on_global_setup() {
@@ -1367,7 +1368,7 @@ pub struct LibcZebraOutput;
 impl ComputeMoveOutput for LibcZebraOutput {
 fn display_out_optimal_line(search_state: &SearchState) {
     //FIXME parametrize, this touches global state
-    unsafe { display_optimal_line(stdout, search_state.full_pv_depth, &search_state.full_pv) }
+    unsafe { display_optimal_line(&mut stdout, search_state.full_pv_depth, &search_state.full_pv) }
 }
 
 fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64, board_state: &BoardState) {
@@ -1588,7 +1589,7 @@ fn log_status(logger: &mut LogFileHandler) {
 }
 
 fn log_optimal_line(logger: &mut LogFileHandler, search_state: &SearchState) {
-    unsafe { display_optimal_line(logger.log_file, search_state.full_pv_depth, &search_state.full_pv); }
+    unsafe { display_optimal_line(&mut logger.log_file, search_state.full_pv_depth, &search_state.full_pv); }
 }
 
 fn close_logger(logger: &mut LogFileHandler) {

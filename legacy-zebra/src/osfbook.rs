@@ -15,7 +15,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvaluationType;
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
-use libc_wrapper::{__ctype_b_loc, ctime, exit, fclose, feof, fflush, fgets, FILE, fopen, fprintf, fputc, fputs, fread, free, fscanf, fwrite, malloc, printf, putc, puts, qsort, sprintf, sscanf, stderr, stdout, strcmp, strcpy, strlen, strstr, time, toupper};
+use libc_wrapper::{__ctype_b_loc, ctime, exit, fclose, feof, fflush, fgets, FileHandle, fopen, fprintf, fputc, fputs, fread, free, fscanf, fwrite, malloc, printf, putc, puts, qsort, sprintf, sscanf, stderr, stdout, strcmp, strcpy, strlen, strstr, time, toupper};
 
 use crate::{
     src::{
@@ -447,7 +447,7 @@ pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
     let mut new_book_node_count: i32 = 0;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
-    let mut stream = 0 as *mut FILE;
+    let mut stream = FileHandle::null();
     time(&mut start_time);
     printf(b"Reading text opening database... \x00" as *const u8 as
                *const i8);
@@ -458,21 +458,21 @@ pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
                     b"Could not open database file\x00" as *const u8 as
                         *const i8, file_name);
     }
-    fscanf(stream, b"%d\x00" as *const u8 as *const i8,
+    fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8,
            &mut magic1 as *mut i32);
-    fscanf(stream, b"%d\x00" as *const u8 as *const i8,
+    fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8,
            &mut magic2 as *mut i32);
     if magic1 != 2718 as i32 || magic2 != 2818 as i32 {
         fatal_error_2(b"%s: %s\x00" as *const u8 as *const i8,
                     b"Wrong checksum, might be an old version\x00" as
                         *const u8 as *const i8, file_name);
     }
-    fscanf(stream, b"%d\x00" as *const u8 as *const i8,
+    fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8,
            &mut new_book_node_count as *mut i32);
     set_allocation(new_book_node_count + 1000 as i32, g_book);
     i = 0;
     while i < new_book_node_count {
-        fscanf(stream,
+        fscanf(stream.file(),
                b"%d %d %hd %hd %hd %hd %hd\n\x00" as *const u8 as
                    *const i8,
                &mut (*g_book.node.offset(i as isize)).hash_val1 as *mut i32,
@@ -508,7 +508,7 @@ pub unsafe fn read_binary_database(file_name: *const i8, g_book: &mut Book) {
     let mut magic2: i16 = 0;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
-    let mut stream = 0 as *mut FILE;
+    let mut stream = FileHandle::null();
     time(&mut start_time);
     printf(b"Reading binary opening database... \x00" as *const u8 as
                *const i8);

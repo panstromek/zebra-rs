@@ -3,11 +3,12 @@ use std::ffi::c_void;
 use engine::src::search::disc_count;
 use engine::src::stubs::{abs, ceil, floor};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{exit, FILE, fprintf, fputc, fputs, getc, size_t, sprintf, stdin, strcpy, strdup, strlen, free};
+use libc_wrapper::{exit, FileHandle, fprintf, fputc, fputs, getc, size_t, sprintf, stdin, strcpy, strdup, strlen, free};
 
 use crate::src::error::FE;
 use crate::src::zebra::FullState;
 use engine::src::timer::Timer;
+use std::io::Write;
 
 pub struct DisplayState {
     stored_status_buffer: [i8; 256],
@@ -173,12 +174,12 @@ pub unsafe fn dumpch() {
 
    The board is displayed using '*' for black and 'O' for white.
 */
-pub unsafe fn display_board(stream: *mut FILE, board: &[i32; 128],
-                                 side_to_move: i32, give_game_score: i32,
-                                 give_time: i32, give_evals: i32, current_row_: i32,
-                                 black_player_: *mut i8, black_time_: i32, black_eval_: f64,
-                                 white_player_: *mut i8, white_time_: i32, white_eval_: f64,
-                                 black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
+pub unsafe fn display_board(stream: FileHandle, board: &[i32; 128],
+                            side_to_move: i32, give_game_score: i32,
+                            give_time: i32, give_evals: i32, current_row_: i32,
+                            black_player_: *mut i8, black_time_: i32, black_eval_: f64,
+                            white_player_: *mut i8, white_time_: i32, white_eval_: f64,
+                            black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
     let mut buffer: [i8; 16] = [0; 16];
     let mut j;
     let mut written;
@@ -318,14 +319,14 @@ pub unsafe fn display_board(stream: *mut FILE, board: &[i32; 128],
   Outputs a move or a pass to STREAM.
 */
 
-pub unsafe fn display_move(stream: *mut FILE,
+pub fn display_move(stream: &mut dyn Write,
                                       move_0: i32) {
     if move_0 == -(1 as i32) {
-        fprintf(stream, b"--\x00" as *const u8 as *const i8);
+        write!(stream, "--");
     } else {
-        fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
-                'a' as i32 + move_0 % 10 as i32 - 1 as i32,
-                '0' as i32 + move_0 / 10 as i32);
+        write!(stream, "{}{}",
+                char::from('a' as u8 + (move_0 % 10) as u8 - 1 as u8),
+                char::from('0' as u8 + (move_0 / 10) as u8));
     };
 }
 /*
@@ -333,23 +334,21 @@ pub unsafe fn display_move(stream: *mut FILE,
    Displays the principal variation found during the tree search.
 */
 
-pub unsafe fn display_optimal_line(stream: *mut FILE, full_pv_depth_: i32, full_pv_: &[i32; 120]) {
+pub fn display_optimal_line(stream: &mut dyn Write, full_pv_depth_: i32, full_pv_: &[i32; 120]) {
     let mut i: i32 = 0;
     if full_pv_depth_ == 0 as i32 { return }
-    fprintf(stream, b"%s: \x00" as *const u8 as *const i8,
-            b"PV\x00" as *const u8 as *const i8);
+    write!(stream, "PV: ");
     i = 0;
     while i < full_pv_depth_ {
         if i % 25 as i32 != 0 as i32 {
-            fputc(' ' as i32, stream);
+            write!(stream, " ");
         } else if i > 0 as i32 {
-            fprintf(stream,
-                    b"\n    \x00" as *const u8 as *const i8);
+            write!(stream, "\n    ");
         }
         display_move(stream, full_pv_[i as usize]);
         i += 1
     }
-    fputs(b"\n\x00" as *const u8 as *const i8, stream);
+    write!(stream, "\n");
 }
 /*
   SEND_STATUS
@@ -458,8 +457,8 @@ pub unsafe fn send_status_pv(pv: &[i32; 64], max_depth: i32, pv_depth_zero: i32)
   Output and clear the stored status information.
 */
 
-pub unsafe fn display_status(stream: *mut FILE,
-                                        allow_repeat: i32) {
+pub unsafe fn display_status(stream: FileHandle,
+                             allow_repeat: i32) {
     if (display_state.status_pos != 0 as i32 || allow_repeat != 0) &&
              strlen(display_state.status_buffer.as_mut_ptr()) >
                0 as i32 as u64 {
@@ -490,7 +489,7 @@ pub unsafe fn send_sweep_0(format: *const i8) {
   Display and clear the current search information.
 */
 
-pub unsafe fn display_sweep(stream: *mut FILE) {
+pub unsafe fn display_sweep(stream: FileHandle) {
     if display_state.sweep_pos != 0 as i32 {
         fprintf(stream, b"%s\n\x00" as *const u8 as *const i8,
                 display_state.sweep_buffer.as_mut_ptr());

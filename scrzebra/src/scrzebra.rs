@@ -15,22 +15,22 @@ use legacy_zebra::src::game::{compute_move, game_init, global_setup, toggle_stat
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::thordb::init_thor_database;
 use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
-use libc_wrapper::{FILE, strlen, strstr, time};
+use libc_wrapper::{FileHandle, strlen, strstr, time};
 
 extern "C" {
-    static mut stdout: *mut FILE;
-    fn fclose(__stream: *mut FILE) -> i32;
+    static mut stdout: FileHandle;
+    fn fclose(__stream: FileHandle) -> i32;
     fn fopen(__filename: *const i8, __modes: *const i8)
-             -> *mut FILE;
-    fn fprintf(_: *mut FILE, _: *const i8, _: ...) -> i32;
+             -> FileHandle;
+    fn fprintf(_: FileHandle, _: *const i8, _: ...) -> i32;
     fn printf(_: *const i8, _: ...) -> i32;
     fn sscanf(_: *const i8, _: *const i8, _: ...)
               -> i32;
-    fn fgets(__s: *mut i8, __n: i32, __stream: *mut FILE)
+    fn fgets(__s: *mut i8, __n: i32, __stream: FileHandle)
              -> *mut i8;
-    fn fputs(__s: *const i8, __stream: *mut FILE) -> i32;
+    fn fputs(__s: *const i8, __stream: FileHandle) -> i32;
     fn puts(__s: *const i8) -> i32;
-    fn feof(__stream: *mut FILE) -> i32;
+    fn feof(__stream: FileHandle) -> i32;
     fn strtol(__nptr: *const i8, __endptr: *mut *mut i8,
               __base: i32) -> i64;
     fn exit(_: i32) -> !;
@@ -120,8 +120,8 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     let mut scanned: i32 = 0;
     let mut token: i32 = 0;
     let mut position_count: i32 = 0;
-    let mut script_stream: *mut FILE = 0 as *mut FILE;
-    let mut output_stream: *mut FILE = 0 as *mut FILE;
+    let mut script_stream: FileHandle = FileHandle::null();
+    let mut output_stream: FileHandle = FileHandle::null();
     /* Open the files and get the number of positions */
     script_stream =
         fopen(in_file_name, b"r\x00" as *const u8 as *const i8);
@@ -373,7 +373,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                 while j < g_state.search_state.full_pv_depth {
                     fputs(b" \x00" as *const u8 as *const i8,
                           output_stream);
-                    display_move(output_stream, g_state.search_state.full_pv[j as usize]);
+                    display_move(&mut output_stream, g_state.search_state.full_pv[j as usize]);
                     j += 1
                 }
             }

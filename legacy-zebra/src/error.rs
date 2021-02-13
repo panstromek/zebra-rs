@@ -14,7 +14,7 @@ use engine::src::hash::{HashEntry, HashState};
 use engine::src::search::{hash_expand_pv, SearchState};
 
 use engine::src::zebra::{EvaluationType, Config};
-use libc_wrapper::{ctime, exit, fflush, fopen, fprintf, free, malloc, printf, putc, puts, realloc, sprintf, stderr, stdout, strchr, strdup, strlen, time, time_t, tolower, toupper, FILE};
+use libc_wrapper::{ctime, exit, fflush, fopen, fprintf, free, malloc, printf, putc, puts, realloc, sprintf, stderr, stdout, strchr, strdup, strlen, time, time_t, tolower, toupper, FileHandle};
 use thordb_types::C2RustUnnamed;
 
 use crate::{
@@ -82,7 +82,7 @@ pub unsafe fn fatal_error_0(format: *const i8) -> ! {
     })
 }
 
-unsafe fn fatal_error(mut variadic_printer: impl FnMut(*mut FILE)) -> ! {
+unsafe fn fatal_error(mut variadic_printer: impl FnMut(FileHandle)) -> ! {
     let mut timer: time_t = 0;
     eprint!("\nFatal error: ");
 
