@@ -10,13 +10,11 @@ use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
 use legacy_zebra::src::zebra::{ LibcTimeSource};
-use libc_wrapper::_IO_FILE;
+use libc_wrapper::{_IO_FILE, stdout, fflush};
 use std::ffi::CStr;
 use engine::src::zebra::FullState;
 
 extern "C" {
-    static mut stdout: *mut FILE;
-    fn fflush(__stream: *mut FILE) -> i32;
     fn printf(_: *const i8, _: ...) -> i32;
     fn scanf(_: *const i8, _: ...) -> i32;
     fn puts(__s: *const i8) -> i32;

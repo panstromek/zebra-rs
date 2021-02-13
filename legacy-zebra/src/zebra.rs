@@ -33,7 +33,7 @@ use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 use flip::unflip::FlipStack;
 use libc_wrapper::{atof, atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time, fflush, tolower};
-use libc_wrapper::{FILE, time_t};
+use libc_wrapper::{FileHandle, time_t};
 
 use crate::src::display::{display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state};
 use crate::src::error::{FE, LibcFatalError, fatal_error_0, fatal_error_2};
@@ -1596,8 +1596,8 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     let mut scanned: i32 = 0;
     let mut token: i32 = 0;
     let mut position_count: i32 = 0;
-    let mut script_stream = 0 as *mut FILE;
-    let mut output_stream = 0 as *mut FILE;
+    let mut script_stream = FileHandle::null();
+    let mut output_stream = FileHandle::null();
     /* If the played move is the best, output the already calculated
                    score for the best move - that way we avoid a subtle problem:
                    Suppose (N-1)-ply move is X but N-ply move is Y, where Y is
@@ -1867,7 +1867,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 while j < (&mut g_state.search_state).full_pv_depth {
                     fputs(b" \x00" as *const u8 as *const i8,
                           output_stream);
-                    display_move(output_stream, (&mut g_state.search_state).full_pv[j as usize]);
+                    display_move(&mut output_stream, (&mut g_state.search_state).full_pv[j as usize]);
                     j += 1
                 }
             }
