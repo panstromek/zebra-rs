@@ -1546,18 +1546,12 @@ fn log_best_move_pass(logger: &mut LogFileHandler) {
 }
 
 fn log_best_move(logger: &mut LogFileHandler, best_move: i32) {
+    write!(&mut logger.log_file, "{}: {}{}  ({})\n",
+           "Best move",
+           char::from('a' as u8 + (best_move % 10) as u8 - 1),
+           char::from('0' as u8 + (best_move / 10) as u8),
+           "forced");
     unsafe {
-        fprintf(logger.log_file,
-                b"%s: %c%c  (%s)\n\x00" as *const u8 as
-                    *const i8,
-                b"Best move\x00" as *const u8 as *const i8,
-                'a' as i32 +
-                    best_move %
-                        10 as i32 - 1 as i32,
-                '0' as i32 +
-                    best_move /
-                        10 as i32,
-                b"forced\x00" as *const u8 as *const i8);
         fclose(logger.log_file);
     }
 }
