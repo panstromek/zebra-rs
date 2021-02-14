@@ -13,7 +13,7 @@ use engine::src::thordb::ThorDatabase;
 use engine::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL, WLD_EVAL};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{ctime, fclose, fgets, FileHandle, fopen, fprintf, fputs, free, printf, puts, stdout, strcpy, time, time_t, fflush};
+use libc_wrapper::{ctime, fclose, FileHandle, fopen, fprintf, printf, puts, stdout, strcpy, time, time_t};
 
 use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, send_status_1, send_status_2, send_status_0};
 use crate::src::error::{FE, LibcFatalError};
