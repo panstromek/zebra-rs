@@ -1,4 +1,4 @@
-use std::ffi::c_void;
+use std::ffi::{c_void, CStr};
 
 use engine::src::search::disc_count;
 use engine::src::stubs::{abs, ceil, floor};
@@ -174,15 +174,17 @@ pub unsafe fn dumpch() {
 
    The board is displayed using '*' for black and 'O' for white.
 */
-pub unsafe fn display_board(stream: FileHandle, board: &[i32; 128],
+pub unsafe fn display_board(mut stream: FileHandle, board: &[i32; 128],
                             side_to_move: i32, give_game_score: i32,
                             give_time: i32, give_evals: i32, current_row_: i32,
                             black_player_: *mut i8, black_time_: i32, black_eval_: f64,
                             white_player_: *mut i8, white_time_: i32, white_eval_: f64,
                             black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
-    let mut buffer: [i8; 16] = [0; 16];
+    let stream: &mut dyn std::io::Write = &mut stream;
+    use std::fmt::Write;
+    let mut buffer: [u8; 16] = [0; 16];
     let mut j;
-    let mut written;
+    let mut written:usize;
     let first_row;
     let mut row;
     if side_to_move == 0 {
@@ -199,120 +201,121 @@ pub unsafe fn display_board(stream: FileHandle, board: &[i32; 128],
         }
     }
     buffer[15] = 0;
-    fputs(b"\n\x00" as *const u8 as *const i8, stream);
-    fprintf(stream, b"%s   a b c d e f g h\n\x00" as *const u8 as *const i8,
-            b"      \x00" as *const u8 as *const i8);
-    fputs(b"\n\x00" as *const u8 as *const i8, stream);
+    write!(stream, "\n");
+    write!(stream, "{}   a b c d e f g h\n", "      ");
+    write!(stream, "\n");
     let mut i = 1;
     while i <= 8 {
         j = 0;
         while j < 15 {
-            buffer[j as usize] = ' ' as i32 as i8;
+            buffer[j as usize] = ' ' as i32 as u8;
             j += 1
         }
         j = 1;
         while j <= 8 {
             match board[(10 * i + j) as usize] {
                 0 => {
-                    buffer[(2 * (j - 1)) as usize] = '*' as i32 as i8
+                    buffer[(2 * (j - 1)) as usize] = '*' as i32 as u8
                 }
                 2 => {
-                    buffer[(2 * (j - 1)) as usize] = 'O' as i32 as i8
+                    buffer[(2 * (j - 1)) as usize] = 'O' as i32 as u8
                 }
                 _ => {
-                    buffer[(2 * (j - 1)) as usize] = ' ' as i32 as i8
+                    buffer[(2 * (j - 1)) as usize] = ' ' as i32 as u8
                 }
             }
             j += 1
         }
-        fprintf(stream, b"%s%d  %s      \x00" as *const u8 as *const i8,
-                b"      \x00" as *const u8 as *const i8, i, buffer.as_mut_ptr());
-        written = 0;
+        write!(stream, "{}{}  {}      ",
+                "      ", i, CStr::from_bytes_with_nul(&buffer).unwrap().to_str().unwrap());
+        let mut buf = String::with_capacity(22);
         if i == 1 {
-            written += fprintf(stream,
-                        b"%-9s\x00" as *const u8 as *const i8,
-                        b"Black\x00" as *const u8 as *const i8);
+            write!(buf,
+                        "{:<9}",
+                        "Black");
             if !black_player_.is_null() {
-                written += fprintf(stream, b"%s\x00" as *const u8 as *const i8, black_player_)
+                write!(buf, "{}", CStr::from_ptr(black_player_).to_str().unwrap() );
             }
         }
         if i == 2 && give_time != 0 {
-            written += fprintf(stream, b"         %02d:%02d\x00" as *const u8 as *const i8,
-                        black_time_ / 60, black_time_ % 60)
+            write!(buf, "         {:02}:{:02}",
+                        black_time_ / 60, black_time_ % 60);
         }
         if i == 3 {
             if side_to_move == 0 {
-                written += fprintf(stream, b" (*)  \x00" as *const u8 as *const i8)
+                write!(buf, " (*)  ");
             } else if give_evals != 0 && black_eval_ != 0.0f64 {
                 if black_eval_ >= 0.0f64 && black_eval_ <= 1.0f64 {
-                    written += fprintf(stream, b"%-6.2f\x00" as *const u8 as *const i8, black_eval_)
+                    write!(buf, "{:<6.2}", black_eval_);
                 } else {
-                    written += fprintf(stream, b"%+-6.2f\x00" as *const u8 as *const i8, black_eval_)
+                    write!(buf, "{:<+6.2}", black_eval_);
                 }
             } else {
-                written += fprintf(stream, b"      \x00" as *const u8 as *const i8)
+                write!(buf, "      ");
             }
-            written += fprintf(stream, b"   %d %s\x00" as *const u8 as *const i8,
+            write!(buf, "   {} {}",
                         disc_count(0, &board),
-                        b"discs\x00" as *const u8 as *const i8)
+                        "discs");
         }
         if i == 5 {
-            written += fprintf(stream,
-                        b"%-9s\x00" as *const u8 as *const i8,
-                        b"White\x00" as *const u8 as *const i8);
+            write!(buf,
+                        "{:<9}",
+                        "White");
             if !white_player_.is_null() {
-                written += fprintf(stream, b"%s\x00" as *const u8 as *const i8, white_player_)
+                write!(buf, "{}", CStr::from_ptr(white_player_).to_str().unwrap());
             }
         }
         if i == 6 && give_time != 0 {
-            written += fprintf(stream, b"         %02d:%02d\x00" as *const u8 as *const i8,
-                               white_time_ / 60, white_time_ % 60)
+            write!(buf, "         {:02}:{:02}",
+                               white_time_ / 60, white_time_ % 60);
         }
         if i == 7 {
             if side_to_move == 2 {
-                written += fprintf(stream, b" (O)  \x00" as *const u8 as *const i8)
+                write!(buf, " (O)  ");
             } else if give_evals != 0 && white_eval_ != 0.0f64 {
                 if white_eval_ >= 0.0f64 && white_eval_ <= 1.0f64 {
-                    written += fprintf(stream, b"%-6.2f\x00" as *const u8 as *const i8, white_eval_)
+                    write!(buf, "{:<6.2}", white_eval_);
                 } else {
-                    written += fprintf(stream, b"%+-6.2f\x00" as *const u8 as *const i8, white_eval_)
+                    write!(buf, "{:<+6.2}", white_eval_);
                 }
             } else {
-                written += fprintf(stream, b"      \x00" as *const u8 as *const i8)
+                write!(buf, "      ");
             }
-            written += fprintf(stream, b"   %d %s\x00" as *const u8 as *const i8,
+            write!(buf, "   {} {}",
                         disc_count(2, &board),
-                        b"discs\x00" as *const u8 as *const i8)
+                        "discs");
         }
+        stream.write(&buf.as_bytes());
         if give_game_score != 0 {
-            fprintf(stream, b"%*s\x00" as *const u8 as *const i8,
-                    22 - written, b"\x00" as *const u8 as *const i8);
+            let written = buf.len();
+            write!(stream, "{:width$}", "",
+                    width = (22 - written));
             row = first_row + (i - 1);
             if row < current_row_ || row == current_row_ && side_to_move == 2 {
-                fprintf(stream, b"%2d. \x00" as *const u8 as *const i8, row + 1);
+                write!(stream, "{:2}. ", row + 1);
                 if black_moves_[row as usize] == -1 {
-                    fprintf(stream, b"- \x00" as *const u8 as *const i8);
+                    write!(stream, "- ");
                 } else {
-                    fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
-                            'a' as i32 + black_moves_[row as usize] % 10 - 1,
-                            '0' as i32 + black_moves_[row as usize] / 10);
+                    write!(stream, "{}{}",
+                            char::from('a' as u8 + (black_moves_[row as usize] % 10) as u8  - 1),
+                            char::from('0' as u8 + (black_moves_[row as usize] / 10) as u8));
                 }
-                fprintf(stream, b"  \x00" as *const u8 as *const i8);
+                write!(stream, "  ");
                 if row < current_row_ || row == current_row_ && side_to_move == 0 {
                     if white_moves_[row as usize] == -1 {
-                        fprintf(stream, b"- \x00" as *const u8 as *const i8);
+                        write!(stream, "- ");
                     } else {
-                        fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
-                                'a' as i32 + white_moves_[row as usize] % 10 - 1,
-                                '0' as i32 + white_moves_[row as usize] / 10);
+                        write!(stream, "{}{}",
+                                char::from('a' as u8 + (white_moves_[row as usize] % 10) as u8  - 1) ,
+                                char::from('0' as u8 + (white_moves_[row as usize] / 10) as u8 ));
                     }
                 }
             }
         }
-        fputs(b"\n\x00" as *const u8 as *const i8, stream);
+        write!(stream, "\n");
         i += 1
     }
-    fputs(b"\n\x00" as *const u8 as *const i8, stream);
+    write!(stream, "\n");
 }
 /*
   DISPLAY_MOVE
