@@ -100,8 +100,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         let mut val0: i32 = 0;
         let mut val1: i32 = 0;
         let mut orientation: i32 = 0;
-        set_move_list((g_state.board_state).black_moves.as_mut_ptr(), (g_state.board_state).white_moves.as_mut_ptr(),
-                      (g_state.board_state).score_sheet_row);
+        set_move_list((g_state.board_state).score_sheet_row);
         let opening_name = find_opening_name(&mut (g_state.g_book), &(g_state.board_state).board);
         if let Some(opening_name) = opening_name {
             printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8,
