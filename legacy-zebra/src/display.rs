@@ -626,8 +626,8 @@ pub fn produce_eval_text(eval_info: &EvaluationType,
     // assert!(buffer.len < 19); // TODO this is true in all tests now, we could optimize that
     // todo remove this ugliness
     buf.resize(32, 0);
-    buf.iter()
-        .map(|&byte| byte as i8)
+    buf.into_iter()
+        .map(|byte| byte as i8)
         .collect::<Vec<_>>()
         .try_into()
         .unwrap()
