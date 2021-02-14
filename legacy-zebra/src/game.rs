@@ -1539,12 +1539,10 @@ fn log_moves_generated(logger: &mut LogFileHandler, moves_generated: i32, move_l
 }
 
 fn log_best_move_pass(logger: &mut LogFileHandler) {
-   unsafe{ fprintf(logger.log_file,
-            b"%s: %s\n\x00" as *const u8 as *const i8,
-            b"Best move\x00" as *const u8 as *const i8,
-            b"pass\x00" as *const u8 as *const i8);
-     fclose(logger.log_file);
-   }
+    write!(&mut logger.log_file, "{}: {}\n", "Best move", "pass");
+    unsafe {
+        fclose(logger.log_file);
+    }
 }
 
 fn log_best_move(logger: &mut LogFileHandler, best_move: i32) {
