@@ -437,7 +437,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         b"Game #%d contains illegal move %d @ #%d.\n\x00" as
                             *const u8 as *const i8, games_read,
                         move_0, g_state.moves_state.disks_played);
-                display_board(libc_wrapper::stderr, &g_state.board_state.board, side_to_move,
+                display_board(&mut libc_wrapper::stderr, &g_state.board_state.board, side_to_move,
                               0 as i32, 0 as i32,
                               0 as i32, display_state.current_row,
                               display_state.black_player, display_state.black_time, display_state.black_eval,
