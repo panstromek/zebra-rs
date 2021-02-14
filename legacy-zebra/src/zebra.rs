@@ -1098,14 +1098,14 @@ impl ZebraFrontend for LibcFrontend {
 
     fn set_names(white_is_player: bool, black_is_player: bool) {
         let black_name = if white_is_player {
-            b"Player\x00" as *const u8 as *const i8
+            "Player"
         } else {
-            b"Zebra\x00" as *const u8 as *const i8
+            "Zebra"
         };
         let white_name = if black_is_player {
-            b"Player\x00" as *const u8 as *const i8
+            "Player"
         } else {
-            b"Zebra\x00" as *const u8 as *const i8
+            "Zebra"
         };
         unsafe { set_names(black_name, white_name) }
     }
@@ -1302,8 +1302,8 @@ unsafe fn analyze_game(mut move_string: *const i8,
     }
     (&mut g_state.g_config).use_book = 0;
     reset_book_search(&mut (&mut g_state.g_book));
-    let black_name = b"Zebra\x00" as *const u8 as *const i8;
-    let white_name = b"Zebra\x00" as *const u8 as *const i8;
+    let black_name = "Zebra";
+    let white_name = "Zebra";
     set_names(black_name, white_name);
     set_move_list((g_state.board_state).black_moves.as_mut_ptr(), (g_state.board_state).white_moves.as_mut_ptr(),
                   (g_state.board_state).score_sheet_row);
@@ -1620,8 +1620,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     }
     fclose(output_stream);
     /* Initialize display subsystem and search parameters */
-    set_names(b"\x00" as *const u8 as *const i8,
-              b"\x00" as *const u8 as *const i8);
+    set_names("", "");
     set_move_list((g_state.board_state).black_moves.as_mut_ptr(), (g_state.board_state).white_moves.as_mut_ptr(),
                   (g_state.board_state).score_sheet_row);
     set_evals(0.0f64, 0.0f64);

@@ -94,8 +94,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     read_binary_database(book_name, &mut g_state.g_book);
     game_init(0 as *const i8, &mut side_to_move, g_state);
     (g_state.game_state).toggle_human_openings(0 as i32);
-    set_names(b"\x00" as *const u8 as *const i8,
-              b"\x00" as *const u8 as *const i8);
+    set_names("", "");
     quit = 0;
     while quit == 0 {
         let mut val0: i32 = 0;
