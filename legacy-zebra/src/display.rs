@@ -545,7 +545,7 @@ pub fn produce_eval_text(eval_info: &EvaluationType,
             match eval_info.res as u32 {
                 0 => { write!(buffer, "Win"); },
                 1 => { write!(buffer, "Draw"); },
-                2 => { write!(buffer, "Lodss"); },
+                2 => { write!(buffer, "Loss"); },
                 3 => { write!(buffer, "???"); },
                 _ => {}
             }
