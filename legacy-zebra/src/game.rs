@@ -1525,24 +1525,17 @@ fn create_log_file_if_needed() -> Option<Self> {
 }
 
 fn log_moves_generated(logger: &mut LogFileHandler, moves_generated: i32, move_list_for_disks_played: &[i32; 64]) {
-    unsafe {
-        fprintf(logger.log_file, b"%d %s: \x00" as *const u8 as *const i8,
-                moves_generated,
-                b"moves generated\x00" as *const u8 as *const i8);
-        let mut i = 0;
-        while i < moves_generated {
-            fprintf(logger.log_file,
-                    b"%c%c \x00" as *const u8 as *const i8,
-                    'a' as i32 +
-                        move_list_for_disks_played[i as usize] %
-                            10 as i32 - 1 as i32,
-                    '0' as i32 +
-                        move_list_for_disks_played[i as usize] /
-                            10 as i32);
-            i += 1
-        }
-        fputs(b"\n\x00" as *const u8 as *const i8, logger.log_file);
+    write!(&mut logger.log_file, "{} {}: ", moves_generated, "moves generated");
+    let mut i = 0;
+    while i < moves_generated {
+        write!(&mut logger.log_file,
+               "{}{} ",
+               char::from('a' as u8 + (move_list_for_disks_played[i as usize] % 10) as u8 - 1),
+               char::from('0' as u8 + (move_list_for_disks_played[i as usize] / 10) as u8)
+        );
+        i += 1
     }
+    write!(&mut logger.log_file, "\n");
 }
 
 fn log_best_move_pass(logger: &mut LogFileHandler) {
