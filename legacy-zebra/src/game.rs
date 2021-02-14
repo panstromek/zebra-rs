@@ -1599,7 +1599,7 @@ fn close_logger(logger: &mut LogFileHandler) {
 fn log_board(logger: &mut LogFileHandler, board_state: &BoardState, side_to_move_: i32) {
     let board_ = &board_state.board;
     unsafe {
-        display_board(logger.log_file, board_, side_to_move_,
+        display_board(&mut logger.log_file, board_, side_to_move_,
                       0 as i32, 0 as i32, 0 as i32,
                       display_state.current_row,
                       display_state.black_player, display_state.black_time, display_state.black_eval,

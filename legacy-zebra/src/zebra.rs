@@ -975,7 +975,7 @@ impl LibcFrontend {
     fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
                                 black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
         unsafe {
-            display_board(stdout, board_,
+            display_board(&mut stdout, board_,
                           side_to_move, 1,
                           give_time_, 1,
                           display_state.current_row, display_state.black_player, display_state.black_time, display_state.black_eval,
@@ -1341,7 +1341,7 @@ unsafe fn analyze_game(mut move_string: *const i8,
                     printf(b"\nOpening: %s\n\x00" as *const u8 as
                                *const i8, CStr::from_bytes_with_nul(opening_name).unwrap().as_ptr());
                 }
-                display_board(stdout, &(g_state.board_state).board, side_to_move,
+                display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
                               1, (&mut g_state.g_config).use_timer, 1,
                               display_state.current_row,
                               display_state.black_player, display_state.black_time, display_state.black_eval,
@@ -1546,7 +1546,7 @@ unsafe fn analyze_game(mut move_string: *const i8,
                       i32,
                   floor((&mut g_state.g_config).player_time[2]) as
                       i32);
-        display_board(stdout, &(g_state.board_state).board, side_to_move,
+        display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
                       1 as i32, (&mut g_state.g_config).use_timer, 1 as i32,
                       display_state.current_row,
                       display_state.black_player, display_state.black_time, display_state.black_eval,
@@ -1763,7 +1763,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             if (&mut g_state.g_config).echo != 0 {
                 set_move_list((g_state.board_state).black_moves.as_mut_ptr(),
                               (g_state.board_state).white_moves.as_mut_ptr(), (g_state.board_state).score_sheet_row);
-                display_board(stdout, &(g_state.board_state).board, side_to_move,
+                display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
                               1 as i32, 0 as i32,
                               1 as i32, display_state.current_row,
                               display_state.black_player, display_state.black_time, display_state.black_eval,

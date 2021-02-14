@@ -174,13 +174,12 @@ pub unsafe fn dumpch() {
 
    The board is displayed using '*' for black and 'O' for white.
 */
-pub unsafe fn display_board(mut stream: FileHandle, board: &[i32; 128],
+pub unsafe fn display_board(mut stream: &mut dyn std::io::Write, board: &[i32; 128],
                             side_to_move: i32, give_game_score: i32,
                             give_time: i32, give_evals: i32, current_row_: i32,
                             black_player_: *mut i8, black_time_: i32, black_eval_: f64,
                             white_player_: *mut i8, white_time_: i32, white_eval_: f64,
                             black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
-    let stream: &mut dyn std::io::Write = &mut stream;
     use std::fmt::Write;
     let mut buffer: [u8; 16] = [0; 16];
     let mut j;

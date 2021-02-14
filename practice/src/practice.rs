@@ -112,7 +112,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         let val1___ = &mut val1;
         let orientation___ = &mut orientation;
         get_hash(val0___, val1___, orientation___, &mut (g_state.g_book), &(g_state.board_state).board);
-        display_board(stdout, &(g_state.board_state).board, side_to_move,
+        display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
                       1 as i32, 0 as i32, 0 as i32,
                       display_state.current_row,
                       display_state.black_player, display_state.black_time, display_state.black_eval,
