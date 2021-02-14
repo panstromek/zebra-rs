@@ -15,7 +15,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvaluationType;
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
-use libc_wrapper::{__ctype_b_loc, ctime, exit, fclose, feof, fflush, fgets, FileHandle, fopen, fprintf, fputc, fputs, fread, free, fscanf, fwrite, malloc, printf, putc, puts, qsort, sprintf, sscanf, stderr, stdout, strcmp, strcpy, strlen, strstr, time, toupper};
+use libc_wrapper::{fclose, fflush, FileHandle, fopen, fprintf, fread, fscanf, fwrite, printf, puts, stdout, time};
 
 use crate::{
     src::{
