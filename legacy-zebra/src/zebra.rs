@@ -1093,7 +1093,7 @@ impl ZebraFrontend for LibcFrontend {
     }
 
     fn set_move_list(row: i32) {
-        unsafe { set_move_list(null_mut(), null_mut(), row) }
+        unsafe { set_move_list(row) }
     }
 
     fn set_names(white_is_player: bool, black_is_player: bool) {
@@ -1305,8 +1305,7 @@ unsafe fn analyze_game(mut move_string: *const i8,
     let black_name = "Zebra";
     let white_name = "Zebra";
     set_names(black_name, white_name);
-    set_move_list((g_state.board_state).black_moves.as_mut_ptr(), (g_state.board_state).white_moves.as_mut_ptr(),
-                  (g_state.board_state).score_sheet_row);
+    set_move_list((g_state.board_state).score_sheet_row);
     set_evals(0.0f64, 0.0f64);
     let mut i = 0;
     while i < 60 as i32 {
@@ -1330,8 +1329,7 @@ unsafe fn analyze_game(mut move_string: *const i8,
             move_start =  (&mut g_state.g_timer).get_real_timer();
             (&mut g_state.g_timer).clear_panic_abort();
             if (&mut g_state.g_config).echo != 0 {
-                set_move_list((g_state.board_state).black_moves.as_mut_ptr(),
-                              (g_state.board_state).white_moves.as_mut_ptr(), (g_state.board_state).score_sheet_row);
+                set_move_list((g_state.board_state).score_sheet_row);
                 set_times(floor((&mut g_state.g_config).player_time[0]) as
                               i32,
                           floor((&mut g_state.g_config).player_time[2]) as
@@ -1540,8 +1538,7 @@ unsafe fn analyze_game(mut move_string: *const i8,
     if side_to_move == 0 as i32 { (g_state.board_state).score_sheet_row += 1 }
     LibcDumpHandler::dump_game_score(side_to_move, (g_state.board_state).score_sheet_row, &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
     if (g_state.g_config).echo != 0 && (&mut g_state.g_config).one_position_only == 0 {
-        set_move_list((g_state.board_state).black_moves.as_mut_ptr(), (g_state.board_state).white_moves.as_mut_ptr(),
-                      (g_state.board_state).score_sheet_row);
+        set_move_list((g_state.board_state).score_sheet_row);
         set_times(floor((&mut g_state.g_config).player_time[0]) as
                       i32,
                   floor((&mut g_state.g_config).player_time[2]) as
@@ -1621,8 +1618,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     fclose(output_stream);
     /* Initialize display subsystem and search parameters */
     set_names("", "");
-    set_move_list((g_state.board_state).black_moves.as_mut_ptr(), (g_state.board_state).white_moves.as_mut_ptr(),
-                  (g_state.board_state).score_sheet_row);
+    set_move_list((g_state.board_state).score_sheet_row);
     set_evals(0.0f64, 0.0f64);
     i = 0;
     while i < 60 as i32 {
@@ -1760,8 +1756,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                     4 as i32;
             /* Search the position */
             if (&mut g_state.g_config).echo != 0 {
-                set_move_list((g_state.board_state).black_moves.as_mut_ptr(),
-                              (g_state.board_state).white_moves.as_mut_ptr(), (g_state.board_state).score_sheet_row);
+                set_move_list((g_state.board_state).score_sheet_row);
                 display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
                               1 as i32, 0 as i32,
                               1 as i32, display_state.current_row,

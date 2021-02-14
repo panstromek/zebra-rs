@@ -140,8 +140,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     fclose(output_stream);
     /* Initialize display subsystem and search parameters */
     set_names("", "");
-    set_move_list(g_state.board_state.black_moves.as_mut_ptr(), g_state.board_state.white_moves.as_mut_ptr(),
-                  g_state.board_state.score_sheet_row);
+    set_move_list(g_state.board_state.score_sheet_row);
     set_evals(0.0f64, 0.0f64);
     i = 0;
     while i < 60 as i32 {
@@ -267,8 +266,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                     4 as i32;
             /* Search the position */
             if g_state.g_config.echo != 0 {
-                set_move_list(g_state.board_state.black_moves.as_mut_ptr(),
-                              g_state.board_state.white_moves.as_mut_ptr(), g_state.board_state.score_sheet_row);
+                set_move_list(g_state.board_state.score_sheet_row);
                 display_board(&mut stdout, &g_state.board_state.board, side_to_move,
                               1 as i32, 0 as i32,
                               1 as i32, display_state.current_row,
