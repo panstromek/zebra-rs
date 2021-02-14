@@ -12,8 +12,8 @@ use std::io::Write;
 
 pub struct DisplayState {
     stored_status_buffer: [i8; 256],
-    pub black_player: *mut i8,
-    pub white_player: *mut i8,
+    pub black_player: &'static str,
+    pub white_player: &'static str,
     pub status_buffer: [i8; 256],
     pub sweep_buffer: [i8; 256],
     pub black_eval: f64,
@@ -33,8 +33,8 @@ pub struct DisplayState {
 
 pub static mut display_state: DisplayState = DisplayState {
     stored_status_buffer: [0; 256],
-    black_player: 0 as *const i8 as *mut i8,
-    white_player: 0 as *const i8 as *mut i8,
+    black_player: "",
+    white_player: "",
     status_buffer: [0; 256],
     sweep_buffer: [0; 256],
     black_eval: 0.0f64,
@@ -61,11 +61,9 @@ pub static mut display_state: DisplayState = DisplayState {
   board by DISPLAY_BOARD.
 */
 
-pub unsafe fn set_names(black_name: *const i8, white_name: *const i8) {
-    if !display_state.black_player.is_null() { free(display_state.black_player as *mut c_void); }
-    if !display_state.white_player.is_null() { free(display_state.white_player as *mut c_void); }
-    display_state.black_player = strdup(black_name);
-    display_state.white_player = strdup(white_name);
+pub unsafe fn set_names(black_name: &'static str, white_name: &'static str) {
+    display_state.black_player = black_name;
+    display_state.white_player = white_name;
 }
 
 pub unsafe fn set_times(black: i32, white: i32) {
@@ -177,8 +175,8 @@ pub unsafe fn dumpch() {
 pub unsafe fn display_board(mut stream: &mut dyn std::io::Write, board: &[i32; 128],
                             side_to_move: i32, give_game_score: i32,
                             give_time: i32, give_evals: i32, current_row_: i32,
-                            black_player_: *mut i8, black_time_: i32, black_eval_: f64,
-                            white_player_: *mut i8, white_time_: i32, white_eval_: f64,
+                            black_player_: &'static str, black_time_: i32, black_eval_: f64,
+                            white_player_: &'static str, white_time_: i32, white_eval_: f64,
                             black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
     use std::fmt::Write;
     let mut buffer: [u8; 16] = [0; 16];
@@ -232,8 +230,8 @@ pub unsafe fn display_board(mut stream: &mut dyn std::io::Write, board: &[i32; 1
             write!(buf,
                         "{:<9}",
                         "Black");
-            if !black_player_.is_null() {
-                write!(buf, "{}", CStr::from_ptr(black_player_).to_str().unwrap() );
+            if !black_player_.is_empty() {
+                write!(buf, "{}", black_player_ );
             }
         }
         if i == 2 && give_time != 0 {
@@ -260,8 +258,8 @@ pub unsafe fn display_board(mut stream: &mut dyn std::io::Write, board: &[i32; 1
             write!(buf,
                         "{:<9}",
                         "White");
-            if !white_player_.is_null() {
-                write!(buf, "{}", CStr::from_ptr(white_player_).to_str().unwrap());
+            if !white_player_.is_empty() {
+                write!(buf, "{}", white_player_);
             }
         }
         if i == 6 && give_time != 0 {

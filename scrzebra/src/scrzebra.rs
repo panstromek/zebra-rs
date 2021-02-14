@@ -139,8 +139,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     }
     fclose(output_stream);
     /* Initialize display subsystem and search parameters */
-    set_names(b"\x00" as *const u8 as *const i8,
-              b"\x00" as *const u8 as *const i8);
+    set_names("", "");
     set_move_list(g_state.board_state.black_moves.as_mut_ptr(), g_state.board_state.white_moves.as_mut_ptr(),
                   g_state.board_state.score_sheet_row);
     set_evals(0.0f64, 0.0f64);
