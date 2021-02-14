@@ -1,6 +1,6 @@
 
 
-use std::ffi::{c_void, CString};
+use std::ffi::{c_void, CString, CStr};
 
 use engine::{
     src:: {
@@ -81,21 +81,19 @@ pub unsafe fn fatal_error_0(format: *const i8) -> ! {
         fprintf(stream, format);
     })
 }
-
+use std::io::Write;
 unsafe fn fatal_error(mut variadic_printer: impl FnMut(FileHandle)) -> ! {
     let mut timer: time_t = 0;
     eprint!("\nFatal error: ");
 
     variadic_printer(stderr);
-    let stream =
+    let mut stream =
         fopen(b"zebra.err\x00" as *const u8 as *const i8,
               b"a\x00" as *const u8 as *const i8);
     if !stream.is_null() {
         time(&mut timer);
-        fprintf(stream,
-                b"%s @ %s\n  \x00" as *const u8 as *const i8,
-                b"Fatal error\x00" as *const u8 as *const i8,
-                ctime(&mut timer));
+        let ctime1 = CStr::from_ptr(ctime(&mut timer)).to_str().unwrap();
+        write!(stream, "{} @ {}\n  ", "Fatal error", ctime1);
         variadic_printer(stream);
     }
     std::process::exit(1);
