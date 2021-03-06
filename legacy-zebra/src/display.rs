@@ -365,16 +365,16 @@ unsafe impl CFormat for u64 {}
 
 impl DisplayState {
     pub unsafe fn status(&mut self, mut writer: impl FnMut(*mut i8) -> i32) {
-        let cursor = self.status_buffer.as_mut_ptr().offset(display_state.status_pos as isize);
+        let cursor = self.status_buffer.as_mut_ptr().offset(self.status_pos as isize);
         let written = writer(cursor);
         self.status_pos += written;
         self.status_modified = 1;
     }
     pub unsafe fn sweep(&mut self, mut writer: impl FnMut(*mut i8) -> i32) {
-        let cursor = display_state.sweep_buffer.as_mut_ptr().offset(display_state.sweep_pos as isize);
+        let cursor = self.sweep_buffer.as_mut_ptr().offset(self.sweep_pos as isize);
         let written = writer(cursor);
-        display_state.sweep_pos += written;
-        display_state.sweep_modified = 1;
+        self.sweep_pos += written;
+        self.sweep_modified = 1;
     }
 }
 
