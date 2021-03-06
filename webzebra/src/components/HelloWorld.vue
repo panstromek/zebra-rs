@@ -55,7 +55,7 @@
         Black: {{ score.black }} <br>
         White: {{ score.white }}
       </div>
-    </div>i
+    </div>
   </div>
 </template>
 
