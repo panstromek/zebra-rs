@@ -241,7 +241,7 @@ impl LibcFatalError {
                        '0' as i32 + move__ / 10 as i32, move_eval as f64 / 128.0f64);
             }
             if i % 7 as i32 == 6 as i32 || i == expect_count - 1 as i32 {
-                unsafe { puts(b"\x00" as *const u8 as *const i8); }
+                unsafe { write!(stdout, "\n"); }
             }
             i += 1
         }

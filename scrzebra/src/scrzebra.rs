@@ -1,5 +1,5 @@
 #![allow(dead_code,  non_camel_case_types, non_snake_case,
-non_upper_case_globals, unused_assignments, unused_mut)]
+non_upper_case_globals, unused_assignments, unused_mut, unused_must_use)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types)]
 
 use engine::src::counter::{add_counter, counter_value, CounterType, reset_counter};
@@ -16,6 +16,7 @@ use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::thordb::init_thor_database;
 use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
 use libc_wrapper::{FileHandle, strlen, strstr, time};
+use std::io::Write;
 
 extern "C" {
     static mut stdout: FileHandle;
@@ -402,17 +403,17 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                *const i8, stop_time - start_time);
     printf(b"Total nodes:              %.0f\n\x00" as *const u8 as
                *const i8, counter_value(&mut script_nodes));
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
     printf(b"Average time for solve:   %.1f s\n\x00" as *const u8 as
                *const i8,
            (stop_time - start_time) / position_count as f64);
     printf(b"Maximum time for solve:   %.1f s\n\x00" as *const u8 as
                *const i8, max_search);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
     printf(b"Average speed:            %.0f nps\n\x00" as *const u8 as
                *const i8,
            counter_value(&mut script_nodes) / (stop_time - start_time));
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                  -> i32 {
@@ -563,7 +564,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         puts(b"Usage:\x00" as *const u8 as *const i8);
         puts(b"  scrzebra [-e ...] [-h ...] [-wld ...] [-line ...] [-b ...] [-komi ...] -script ...\x00"
             as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
+        write!(stdout, "\n");
         puts(b"  -e <echo?>\x00" as *const u8 as *const i8);
         printf(b"    Toggles screen output on/off (default %d).\n\n\x00" as
                    *const u8 as *const i8, 1 as i32);
@@ -586,12 +587,12 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         puts(b"  -b <use book?>\x00" as *const u8 as *const i8);
         printf(b"    Toggles usage of opening book on/off (default %d).\n\x00"
                    as *const u8 as *const i8, 0 as i32);
-        puts(b"\x00" as *const u8 as *const i8);
+        write!(stdout, "\n");
         puts(b"  -komi <komi>\x00" as *const u8 as *const i8);
         puts(b"    Number of discs that white has to win with (only WLD).\x00"
             as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
+        write!(stdout, "\n");
+        write!(stdout, "\n");
         exit(1 as i32);
     }
     if hash_bits < 1 as i32 {

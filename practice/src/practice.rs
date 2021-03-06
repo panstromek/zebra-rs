@@ -1,5 +1,5 @@
 #![allow(dead_code,  non_camel_case_types, non_snake_case,
-non_upper_case_globals, unused_assignments, unused_mut)]
+non_upper_case_globals, unused_assignments, unused_mut, unused_must_use)]
 #![register_tool(c2rust)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, main, register_tool)]
 
@@ -13,6 +13,7 @@ use legacy_zebra::src::zebra::{ LibcTimeSource};
 use libc_wrapper::{_IO_FILE, stdout, fflush};
 use std::ffi::CStr;
 use engine::src::zebra::FullState;
+use std::io::Write;
 
 extern "C" {
     fn printf(_: *const i8, _: ...) -> i32;
@@ -84,7 +85,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             as *const u8 as *const i8);
         puts(b"To exit the program, type \'quit\'.\x00" as *const u8 as
             *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
+        write!(stdout, "\n");
         printf(b"Gunnar Andersson, %s\n\x00" as *const u8 as
                    *const i8,
                b"Aug  9 2020\x00" as *const u8 as *const i8);
@@ -135,7 +136,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                    buffer);
             i += 1
         }
-        puts(b"\x00" as *const u8 as *const i8);
+        write!(stdout, "\n");
         loop  {
             repeat = 0;
             if side_to_move == 0 as i32 {

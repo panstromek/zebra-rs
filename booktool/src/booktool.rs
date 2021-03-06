@@ -1,5 +1,5 @@
 #![allow(dead_code,  non_camel_case_types, non_snake_case,
-non_upper_case_globals, unused_assignments, unused_mut)]
+non_upper_case_globals, unused_assignments, unused_mut, unused_must_use)]
 
 use engine_traits::Offset;
 use engine::src::osfbook::{set_deviation_value, set_max_batch_size, size_t, BookNode, probe_hash_table, get_hash, fill_move_alternatives, clear_node_depth, get_node_depth, adjust_score, _ISgraph, _ISupper, _ISprint, _ISspace};
@@ -27,6 +27,7 @@ use legacy_zebra::src::osfbook::{write_text_database,write_binary_database,
                                  do_minimax, evaluate_node, create_BookNode};
 use engine::src::error::FrontEnd;
 use legacy_zebra::src::game::game_init;
+use std::io::Write;
 
 pub type FE = LibcFatalError;
 
@@ -476,7 +477,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         puts(b"      [-export <file>]\x00" as *const u8 as
             *const i8);
         puts(b"      [-help]\x00" as *const u8 as *const i8);
-        puts(b"\x00" as *const u8 as *const i8);
+        write!(stdout, "\n");
         if give_help != 0 {
             puts(b"Flags:\x00" as *const u8 as *const i8);
             puts(b"  -i        Imports the game list in <game file>. At most <#games> are loaded.\x00"
@@ -563,7 +564,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 as *const u8 as *const i8);
             puts(b"  -export   Saves all lines in the book to <file>.\x00" as
                 *const u8 as *const i8);
-            puts(b"\x00" as *const u8 as *const i8);
+            write!(stdout, "\n");
             puts(b"Gunnar Andersson, December 30, 2004\x00" as *const u8 as
                 *const i8);
         } else {
@@ -1957,7 +1958,7 @@ pub unsafe fn minimax_tree(g_state: &mut FullState) {
     engine_minimax_tree(g_state);
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8, stop_time - start_time);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 
 /*
@@ -2001,7 +2002,7 @@ pub unsafe fn evaluate_tree(g_state: &mut FullState) {
         printf(b"\nMax batch size is %d.\x00" as *const u8 as
                    *const i8, g_state.g_book.max_batch_size);
     }
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
     printf(b"Progress: \x00" as *const u8 as *const i8);
     fflush(stdout);
     if feasible_count > 0 as i32 { do_evaluate(0 as i32, g_state.g_config.echo, g_state); }
@@ -2012,7 +2013,7 @@ pub unsafe fn evaluate_tree(g_state: &mut FullState) {
            g_state.g_book.evaluated_count);
     printf(b"(%d exhausted nodes ignored)\n\x00" as *const u8 as
                *const i8, g_state.g_book.exhausted_node_count);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 /*
    EXAMINE_TREE
@@ -2030,7 +2031,7 @@ pub unsafe fn examine_tree(g_state: &mut FullState) {
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 unsafe extern "C" fn int_compare(i1: *const std::ffi::c_void,
                                  i2: *const std::ffi::c_void) -> i32 {
@@ -2132,14 +2133,14 @@ pub unsafe fn book_statistics(full_statistics: i32, g_state: &mut FullState) {
               unsafe extern "C" fn(_: *const std::ffi::c_void,
                                    _: *const std::ffi::c_void)
                                    -> i32));
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
     printf(b"#nodes:       %d\x00" as *const u8 as *const i8,
            g_state.g_book.book_node_count);
     if private_count > 0 as i32 {
         printf(b"  (%d private)\x00" as *const u8 as *const i8,
                private_count);
     }
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
     printf(b"#full solved: %d\n\x00" as *const u8 as *const i8,
            full_solved);
     printf(b"#WLD solved:  %d\n\x00" as *const u8 as *const i8,
@@ -2154,7 +2155,7 @@ pub unsafe fn book_statistics(full_statistics: i32, g_state: &mut FullState) {
         }
         i += 1
     }
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
     this_strata = 0;
     strata_shift =
         floor(strata[this_strata as usize] * eval_count as f64) as
@@ -2195,10 +2196,10 @@ pub unsafe fn book_statistics(full_statistics: i32, g_state: &mut FullState) {
                eval_strata[i as usize]);
         printf(b"%5.2f   \x00" as *const u8 as *const i8,
                negamax_strata[i as usize]);
-        puts(b"\x00" as *const u8 as *const i8);
+        write!(stdout, "\n");
         i += 1
     }
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
     free(negamax as *mut std::ffi::c_void);
     free(evals as *mut std::ffi::c_void);
     if full_statistics != 0 {
@@ -2259,10 +2260,10 @@ pub unsafe fn book_statistics(full_statistics: i32, g_state: &mut FullState) {
                 printf(b"%2d exhausted\x00" as *const u8 as
                            *const i8, g_state.g_book.exhausted_count[i as usize]);
             }
-            puts(b"\x00" as *const u8 as *const i8);
+            write!(stdout, "\n");
             i += 1
         }
-        puts(b"\x00" as *const u8 as *const i8);
+        write!(stdout, "\n");
     };
 }
 /*
@@ -2379,7 +2380,7 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
                        1 as i32,
                    '0' as i32 + this_move / 10 as i32);
             if side_to_move == 2 as i32 {
-                puts(b"\x00" as *const u8 as *const i8);
+                write!(stdout, "\n");
             }
             if done != 0 {
                 puts(b"(deviation)\x00" as *const u8 as *const i8);
@@ -2387,7 +2388,7 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
         }
         current = next
     }
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 
 /*
@@ -2480,7 +2481,7 @@ pub unsafe fn build_tree(file_name: *const i8,
                *const i8, games_parsed, games_imported);
     printf(b"Games with final difference <= %d were read until %d empties.\n\x00"
                as *const u8 as *const i8, max_diff, min_empties);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 
 /*
@@ -2822,7 +2823,7 @@ pub unsafe fn write_compressed_database(file_name:
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 /*
   DO_UNCOMPRESS
@@ -3060,7 +3061,7 @@ pub unsafe fn unpack_compressed_database(in_name:
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 /*
   MERGE_POSITION_LIST
@@ -3516,7 +3517,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
                *const i8, already_wld_count);
     printf(b"%d positions had optimal moves leading to new positions\n\x00" as
                *const u8 as *const i8, new_nodes_created);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
     fclose(script_stream);
     fclose(result_stream);
 }
