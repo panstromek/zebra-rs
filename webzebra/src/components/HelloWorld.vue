@@ -50,8 +50,12 @@
       </div>
       <div v-if="waitingForMove">Waiting for move</div>
       <div v-if="waitingForPass">Waiting for pass (click anywhere on the board)</div>
-
-    </div>
+      <div class="mt-8">
+        Score: <br>
+        Black: {{ score.black }} <br>
+        White: {{ score.white }}
+      </div>
+    </div>i
   </div>
 </template>
 
@@ -149,6 +153,13 @@ export default defineComponent({
     }
   },
   computed: {
+    score() {
+      return {
+        // todo this is slow, use something better when we use some more efficient board representation
+        white: this.circles.reduce((count, circle) => circle.color === 'white' ? count + 1 : count, 0),
+        black: this.circles.reduce((count, circle) => circle.color === 'black' ? count + 1 : count, 0)
+      }
+    },
     circles() {
       let board = this.board;
 
