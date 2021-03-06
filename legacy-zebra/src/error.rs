@@ -105,27 +105,20 @@ pub type FE = LibcFatalError;
 impl LibcFatalError {
     pub fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
         unsafe {
-            printf(b"%s:        \x00" as *const u8 as *const i8,
-                   b"Thor database\x00" as *const u8 as *const i8);
+            write!(stdout, "{}:        ", "Thor database");
             let mut i = 0;
             while i < match_count {
-                printf(b"%c%c: %4.1f%%    \x00" as *const u8 as
-                           *const i8,
-                       'a' as i32 +
-                           move_list[i as usize].move_0 % 10 as i32 -
-                           1 as i32,
-                       '0' as i32 +
-                           move_list[i as usize].move_0 / 10 as i32,
-                       100.0f64 *
-                           move_list[i as usize].frequency as f64 /
-                           freq_sum as f64);
+                write!(stdout, "{}{}: {:4.1}%    " ,
+                       char::from('a' as u8 + (move_list[i as usize].move_0 % 10) as u8 - 1) ,
+                       char::from('0' as u8 + (move_list[i as usize].move_0 / 10) as u8),
+                       100.0f64 * move_list[i as usize].frequency as f64 / freq_sum as f64);
                 if i % 6 as i32 == 4 as i32 {
-                    puts(b"\x00" as *const u8 as *const i8);
+                    write!(stdout, "\n");
                 }
                 i += 1
             }
             if match_count % 6 as i32 != 5 as i32 {
-                puts(b"\x00" as *const u8 as *const i8);
+                write!(stdout, "\n");
             }
         }
     }
@@ -193,7 +186,7 @@ impl FrontEnd for LibcFatalError {
                 printf(b"%2d \x00" as *const u8 as *const i8, best_list[i]);
                 i += 1
             }
-            puts(b"\x00" as *const u8 as *const i8);
+            write!(stdout, "\n");
         }
     }
     fn before_update_best_list_verbose(best_list: &mut [i32; 4], move_0: i32, best_list_index: i32, best_list_length: &mut i32) {
@@ -416,7 +409,7 @@ impl FrontEnd for LibcFatalError {
                                10 as i32);
                 j += 1
             }
-            puts(b"\x00" as *const u8 as *const i8);
+            write!(stdout, "\n");
             printf(b"i=%d\n\x00" as *const u8 as *const i8, i);
             fatal_error_0(b"Error in PV completion\x00" as *const u8 as
                 *const i8);

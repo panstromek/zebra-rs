@@ -16,6 +16,7 @@ use engine::src::zebra::EvaluationType;
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
 use libc_wrapper::{fclose, fflush, FileHandle, fopen, fprintf, fread, fscanf, fwrite, printf, puts, stdout, time};
+use std::io::Write;
 
 use crate::{
     src::{
@@ -122,7 +123,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
             if generate_specific(this_move, side_to_move, &(g_state.board_state).board) == 0 {
-                puts(b"\x00" as *const u8 as *const i8);
+                write!(stdout, "\n");
                 printf(b"i=%d, side_to_move=%d, this_move=%d\n\x00" as
                            *const u8 as *const i8, i, side_to_move,
                        this_move);
@@ -162,7 +163,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
         generate_all(side_to_move, &mut (g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board);
         determine_hash_values(side_to_move, &(g_state.board_state).board, &mut (g_state.hash_state));
         if echo != 0 {
-            puts(b"\x00" as *const u8 as *const i8);
+            write!(stdout, "\n");
             if side_to_move == 0 as i32 {
                 printf(b"Full solving with %d empty (black)\n\x00" as
                            *const u8 as *const i8,
@@ -430,7 +431,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
             }
             i -= 1
         }
-        puts(b"\x00" as *const u8 as *const i8);
+        write!(stdout, "\n");
     }
     echo = stored_echo;
     (g_state.g_book).total_game_count += 1;
@@ -494,7 +495,7 @@ pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 /*
    READ_BINARY_DATABASE
@@ -614,7 +615,7 @@ pub unsafe fn write_text_database(file_name: *const i8, g_book: &mut Book) {
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 /*
    WRITE_BINARY_DATABASE
@@ -680,7 +681,7 @@ pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book)
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 
 /*
@@ -751,7 +752,7 @@ pub unsafe fn print_move_alternatives(side_to_move: i32, mut board_state: &mut B
                != 0 {
             printf(b" Private node.\x00" as *const u8 as *const i8);
         }
-        puts(b"\x00" as *const u8 as *const i8);
+        write!(stdout, "\n");
         i = 0;
         while i < g_book.candidate_count {
             printf(b"   %c%c   \x00" as *const u8 as *const i8,
@@ -781,7 +782,7 @@ pub unsafe fn print_move_alternatives(side_to_move: i32, mut board_state: &mut B
                                *const i8);
                 }
             }
-            puts(b"\x00" as *const u8 as *const i8);
+            write!(stdout, "\n");
             i += 1
         }
     };

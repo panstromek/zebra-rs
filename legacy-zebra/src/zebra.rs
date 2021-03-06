@@ -724,12 +724,12 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
                score[i as usize]);
         i += 1
     }
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
     printf(b"Black score: %.1f\n\x00" as *const u8 as *const i8,
            color_score[0]);
     printf(b"White score: %.1f\n\x00" as *const u8 as *const i8,
            color_score[2]);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 
 impl InitialMoveSource for FileMoveSource {
@@ -1119,7 +1119,7 @@ impl ZebraFrontend for LibcFrontend {
 
     fn before_get_move()  {
         unsafe {
-            puts(b"\x00" as *const u8 as *const i8);
+            write!(stdout, "\n");
         }
     }
 
@@ -1893,17 +1893,17 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                *const i8, stop_time - start_time);
     printf(b"Total nodes:              %.0f\n\x00" as *const u8 as
                *const i8, counter_value(&mut script_nodes));
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
     printf(b"Average time for solve:   %.1f s\n\x00" as *const u8 as
                *const i8,
            (stop_time - start_time) / position_count as f64);
     printf(b"Maximum time for solve:   %.1f s\n\x00" as *const u8 as
                *const i8, max_search);
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
     printf(b"Average speed:            %.0f nps\n\x00" as *const u8 as
                *const i8,
            counter_value(&mut script_nodes) / (stop_time - start_time));
-    puts(b"\x00" as *const u8 as *const i8);
+    write!(stdout, "\n");
 }
 
 struct LibcDumpHandler;

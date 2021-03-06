@@ -1,5 +1,5 @@
 #![allow(dead_code,  non_camel_case_types, non_snake_case,
-non_upper_case_globals, unused_assignments, unused_mut)]
+non_upper_case_globals, unused_assignments, unused_mut, unused_must_use)]
 #![feature(const_raw_ptr_to_usize_cast, extern_types, label_break_value, register_tool)]
 
 use engine::src::game::EvaluatedMove;
@@ -13,8 +13,9 @@ use legacy_zebra::src::display::{display_board, display_state};
 use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{compute_move, extended_compute_move, game_init, get_evaluated, get_evaluated_count, global_setup};
 use legacy_zebra::src::learn::init_learn;
-use libc_wrapper::_IO_FILE;
+use libc_wrapper::{_IO_FILE, stdout};
 use legacy_zebra::src::zebra::LibcTimeSource;
+use std::io::Write;
 
 extern "C" {
     fn __assert_fail(__assertion: *const i8,
@@ -272,7 +273,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                        10 as i32);
                         i += 1
                     }
-                    puts(b"\x00" as *const u8 as *const i8);
+                    write!(stdout, "\n");
                 }
             } else {
                 side_to_move =
