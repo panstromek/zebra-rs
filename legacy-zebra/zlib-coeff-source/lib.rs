@@ -3,7 +3,7 @@
    Reads a 16-bit signed integer from a file.
 */
 use libc_wrapper::{gzgetc, gzFile};
-use libc_wrapper::{gzopen, strcpy, gzclose, gzFile_s};
+use libc_wrapper::{gzopen, gzclose, gzFile_s};
 use engine_traits::CoeffSource;
 use std::ffi::CStr;
 
@@ -76,11 +76,9 @@ pub enum LoadError {
 
 impl ZLibSource {
     pub fn try_new(file_name: &CStr) -> Result<Self, LoadError> {
-        let mut file_name_copy: [i8; 260] = [0; 260];
         unsafe {
             /* Linux don't support current directory. */
-            strcpy(file_name_copy.as_mut_ptr(), file_name.as_ptr() as *const u8 as *const i8);
-            let coeff_stream = gzopen(file_name_copy.as_mut_ptr(), b"rb\x00" as *const u8 as *const i8);
+            let coeff_stream = gzopen(file_name.as_ptr(), b"rb\x00" as *const u8 as *const i8);
             if coeff_stream.is_null() {
                 return Err(LoadError::UnableToOpenCoefficientFile);
             }
