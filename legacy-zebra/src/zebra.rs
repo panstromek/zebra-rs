@@ -501,8 +501,7 @@ Flags:
         exit(1 as i32);
     }
     if hash_bits < 1 as i32 {
-        printf(b"Hash table key must contain at least 1 bit\n\x00" as
-                   *const u8 as *const i8);
+        write!(stdout, "Hash table key must contain at least 1 bit\n");
         exit(1 as i32);
     }
     global_setup(use_random, hash_bits,&mut g_state);
@@ -525,8 +524,7 @@ Flags:
         (g_state.random_instance).my_srandom(x); }
     if (g_state.g_config).tournament == 0 && run_script == 0 {
         while (g_state.g_config).skill[0] < 0 as i32 {
-            printf(b"Black parameters: \x00" as *const u8 as
-                       *const i8);
+            write!(stdout, "Black parameters: ");
             scanf(b"%d\x00" as *const u8 as *const i8,
                   &mut *(g_state.g_config).skill.as_mut_ptr()
                       as *mut i32);
@@ -539,8 +537,7 @@ Flags:
             }
         }
         while (g_state.g_config).skill[2] < 0 as i32 {
-            printf(b"White parameters: \x00" as *const u8 as
-                       *const i8);
+            write!(stdout, "White parameters: ");
             scanf(b"%d\x00" as *const u8 as *const i8,
                   &mut *(g_state.g_config).skill.as_mut_ptr().offset(2)
                       as *mut i32);
@@ -951,8 +948,7 @@ impl LibcFrontend {
 
     fn get_pass() {
         unsafe {
-            puts(b"You must pass - please press Enter\x00" as
-                *const u8 as *const i8);
+            write!(stdout, "You must pass - please press Enter\n");
             dumpch();
         }
     }
@@ -960,12 +956,10 @@ impl LibcFrontend {
     fn prompt_get_move(side_to_move: i32) -> (i32, i32) {
         let mut buffer: [i8; 4] = [0; 4];
         unsafe {
-            if side_to_move == 0 as i32 {
-                printf(b"%s: \x00" as *const u8 as *const i8,
-                       b"Black move\x00" as *const u8 as *const i8);
+            if side_to_move == 0 {
+                write!(stdout, "{}: ", "Black move");
             } else {
-                printf(b"%s: \x00" as *const u8 as *const i8,
-                       b"White move\x00" as *const u8 as *const i8);
+                write!(stdout, "{}: ", "White move");
             }
             scanf(b"%3s\x00" as *const u8 as *const i8, buffer.as_mut_ptr());
             let curr_move = atoi(buffer.as_mut_ptr());
@@ -976,49 +970,32 @@ impl LibcFrontend {
     }
     fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {
         unsafe {
-            printf(b"\nBlack: %d   White: %d\n\x00" as *const u8 as
-                       *const i8, black_disc_count,
-                   white_disc_count);
-            printf(b"Nodes searched:        %-10.0f\n\x00" as *const u8 as
-                       *const i8, node_val);
-            printf(b"Positions evaluated:   %-10.0f\n\x00" as *const u8 as
-                       *const i8, eval_val);
-
-            printf(b"Total time: %.1f s\n\x00" as *const u8 as
-                       *const i8, total_time_);
+            write!(stdout, "\nBlack: {}   White: {}\n", black_disc_count, white_disc_count);
+            write!(stdout, "Nodes searched:        {:<-10.0}\n", node_val);
+            write!(stdout, "Positions evaluated:   {:<-10.0}\n", eval_val);
+            write!(stdout, "Total time: {:.1} s\n", total_time_);
         }
     }
     fn report_skill_levels(black_level: i32, white_level: i32) {
         unsafe {
-            printf(b"\n\x00" as *const u8 as *const i8);
-            printf(b"Black level: %d\n\x00" as *const u8 as *const i8, black_level);
-            printf(b"White level: %d\n\x00" as *const u8 as *const i8, white_level);
+            write!(stdout, "\n");
+            write!(stdout, "Black level: {}\n", black_level);
+            write!(stdout, "White level: {}\n", white_level);
         }
     }
     fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64) {
         unsafe {
-            printf(b"%d matching games  (%.3f s search time, %.3f s total)\n\x00"
-                       as *const u8 as *const i8,
-                   thor_position_count,
-                   database_time,
-                   total_search_time);
+            write!(stdout, "{} matching games  ({:.3} s search time, {:.3} s total)\n",
+                   thor_position_count, database_time, total_search_time);
         }
     }
     fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
         unsafe {
-            printf(b"%d black wins, %d draws, %d white wins\n\x00"
-                       as *const u8 as *const i8,
-                   black_win_count, draw_count,
-                   white_win_count);
-            printf(b"Median score %d-%d\x00" as *const u8 as
-                       *const i8,
-                   black_median_score,
-                   64 as i32 -
-                       black_median_score);
-            printf(b", average score %.2f-%.2f\n\x00" as
-                       *const u8 as *const i8,
-                   black_average_score,
-                   64.0f64 - black_average_score);
+            write!(stdout, "{} black wins, {} draws, {} white wins\n",
+                   black_win_count, draw_count, white_win_count);
+            write!(stdout, "Median score {}-{}", black_median_score, 64 - black_median_score);
+            write!(stdout, ", average score {:.2}-{:.2}\n",
+                   black_average_score, 64.0f64 - black_average_score);
         }
     }
     fn report_opening_name(opening_name: &CStr) {
@@ -1054,8 +1031,7 @@ impl ZebraFrontend for LibcFrontend {
 
     fn report_engine_override() {
         unsafe {
-            puts(b"Engine override: Random move selected.\x00"
-                as *const u8 as *const i8);
+            write!(stdout, "Engine override: Random move selected.\n");
         }
     }
 
@@ -1066,7 +1042,7 @@ impl ZebraFrontend for LibcFrontend {
     }
 
     fn report_book_randomness(slack_: f64) {
-        unsafe { printf(b"Book randomness: %.2f disks\n\x00" as *const u8 as *const i8, slack_); }
+        unsafe { write!(stdout, "Book randomness: {:.2} disks\n", slack_); }
     }
     fn load_thor_files(g_timer: &mut Timer) { unsafe {
         /* No error checking done as it's only for testing purposes */
@@ -1120,11 +1096,9 @@ impl ZebraFrontend for LibcFrontend {
         read_game_database(b"thor\\wth_1980.wtb\x00" as *const u8 as
             *const i8);
         let database_stop =  g_timer.get_real_timer();
-        printf(b"Loaded %d games in %.3f s.\n\x00" as *const u8 as
-                   *const i8, get_total_game_count(),
-               database_stop - database_start);
-        printf(b"Each Thor game occupies %d bytes.\n\x00" as *const u8 as
-                   *const i8, get_thor_game_size());
+        write!(stdout, "Loaded {} games in {:.3} s.\n",
+               get_total_game_count(), database_stop - database_start);
+        write!(stdout, "Each Thor game occupies {} bytes.\n", get_thor_game_size());
     }}
 
     fn print_move_alternatives(side_to_move: i32, mut board_state: &mut BoardState, mut g_book: &mut Book) {
@@ -1215,8 +1189,7 @@ unsafe fn analyze_game(mut move_string: &str,
     }
     /* Set up the position and the search engine */
     if (&mut g_state.g_config).echo != 0 {
-        puts(b"Analyzing provided game...\x00" as *const u8 as
-                 *const i8);
+        write!(stdout, "Analyzing provided game...\n");
     }
     generic_game_init::<BasicBoardFileSource, LibcFatalError>(None, &mut side_to_move, &mut (&mut g_state.flip_stack_),
                                                               &mut (&mut g_state.search_state),
@@ -1234,8 +1207,7 @@ unsafe fn analyze_game(mut move_string: &str,
     setup_hash(1 as i32, &mut (&mut g_state.hash_state), &mut (&mut g_state.random_instance));
     (&mut g_state.learn_state).clear_stored_game();
     if (&mut g_state.g_config).echo != 0 && (&mut g_state.g_config).use_book != 0 {
-        puts(b"Disabling usage of opening book\x00" as *const u8 as
-                 *const i8);
+        write!(stdout, "Disabling usage of opening book\n");
     }
     (&mut g_state.g_config).use_book = 0;
     reset_book_search(&mut (&mut g_state.g_book));
@@ -1466,11 +1438,9 @@ unsafe fn analyze_game(mut move_string: &str,
         side_to_move = 0 as i32 + 2 as i32 - side_to_move
     }
     if (g_state.g_config).echo == 0 {
-        printf(b"\n\x00" as *const u8 as *const i8);
-        printf(b"Black level: %d\n\x00" as *const u8 as *const i8,
-               (&mut g_state.g_config).skill[0]);
-        printf(b"White level: %d\n\x00" as *const u8 as *const i8,
-               (&mut g_state.g_config).skill[2]);
+        write!(stdout, "\n");
+        write!(stdout, "Black level: {}\n", (&mut g_state.g_config).skill[0]);
+        write!(stdout, "White level: {}\n", (&mut g_state.g_config).skill[2]);
     }
     if side_to_move == 0 as i32 { (g_state.board_state).score_sheet_row += 1 }
     LibcDumpHandler::dump_game_score(side_to_move, (g_state.board_state).score_sheet_row, &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
@@ -1605,9 +1575,7 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
             }
         } else {
             if feof(script_stream) != 0 {
-                printf(b"\nEOF encountered when reading position #%d - aborting\n\n\x00"
-                           as *const u8 as *const i8,
-                       i + 1 as i32);
+                write!(stdout, "\nEOF encountered when reading position #{} - aborting\n\n", i + 1 as i32);
                 exit(1 as i32);
             }
             /* Parse the script line containing board and side to move */
@@ -1635,32 +1603,24 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
                        b"%s %s\x00" as *const u8 as *const i8,
                        board_string.as_mut_ptr(), stm_string.as_mut_ptr());
             if scanned != 2 as i32 {
-                printf(b"\nError parsing line %d - aborting\n\n\x00" as
-                           *const u8 as *const i8,
-                       i + 1 as i32);
+                write!(stdout, "\nError parsing line {} - aborting\n\n", i + 1);
                 exit(1 as i32);
             }
             if   strlen(stm_string.as_mut_ptr()) !=
                    1 as i32 as u64 {
-                printf(b"\nAmbiguous side to move on line %d - aborting\n\n\x00"
-                           as *const u8 as *const i8,
-                       i + 1 as i32);
+                write!(stdout, "\nAmbiguous side to move on line {} - aborting\n\n", i + 1);
                 exit(1 as i32);
             }
             match stm_string[0] as i32 {
                 79 | 48 => { side_to_move = 2 as i32 }
                 42 | 88 => { side_to_move = 0 as i32 }
                 _ => {
-                    printf(b"\nBad side-to-move indicator on line %d - aborting\n\n\x00"
-                               as *const u8 as *const i8,
-                           i + 1 as i32);
+                    write!(stdout, "\nBad side-to-move indicator on line {} - aborting\n\n", i + 1);
                 }
             }
             if  strlen(board_string.as_mut_ptr()) !=
                    64 as i32 as u64 {
-                printf(b"\nBoard on line %d doesn\'t contain 64 positions - aborting\n\n\x00"
-                           as *const u8 as *const i8,
-                       i + 1 as i32);
+                write!(stdout, "\nBoard on line {} doesn\'t contain 64 positions - aborting\n\n", i + 1);
                 exit(1 as i32);
             }
             token = 0;
@@ -1678,10 +1638,8 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
                         }
                         45 | 46 => { (g_state.board_state).board[pos as usize] = 1 as i32 }
                         _ => {
-                            printf(b"\nBad character \'%c\' in board on line %d - aborting\n\n\x00"
-                                       as *const u8 as *const i8,
-                                   board_string[token as usize] as
-                                       i32, i + 1 as i32);
+                            write!(stdout, "\nBad character \'{}\' in board on line {} - aborting\n\n",
+                                   char::from(board_string[token as usize] as u8), i + 1);
                         }
                     }
                     token += 1;
@@ -1825,21 +1783,14 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
     /* Clean up and terminate */
     fclose(script_stream);
     stop_time =  (&mut g_state.g_timer).get_real_timer();
-    printf(b"Total positions solved:   %d\n\x00" as *const u8 as
-               *const i8, position_count);
-    printf(b"Total time:               %.1f s\n\x00" as *const u8 as
-               *const i8, stop_time - start_time);
-    printf(b"Total nodes:              %.0f\n\x00" as *const u8 as
-               *const i8, counter_value(&mut script_nodes));
+    write!(stdout, "Total positions solved:   {}\n", position_count);
+    write!(stdout, "Total time:               {:.1} s\n", stop_time - start_time);
+    write!(stdout, "Total nodes:              {:.0}\n", counter_value(&mut script_nodes));
     write!(stdout, "\n");
-    printf(b"Average time for solve:   %.1f s\n\x00" as *const u8 as
-               *const i8,
-           (stop_time - start_time) / position_count as f64);
-    printf(b"Maximum time for solve:   %.1f s\n\x00" as *const u8 as
-               *const i8, max_search);
+    write!(stdout, "Average time for solve:   {:.1} s\n", (stop_time - start_time) / position_count as f64);
+    write!(stdout, "Maximum time for solve:   {:.1} s\n", max_search);
     write!(stdout, "\n");
-    printf(b"Average speed:            %.0f nps\n\x00" as *const u8 as
-               *const i8,
+    write!(stdout, "Average speed:            {:.0} nps\n",
            counter_value(&mut script_nodes) / (stop_time - start_time));
     write!(stdout, "\n");
 }
