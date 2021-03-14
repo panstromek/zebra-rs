@@ -46,6 +46,8 @@ pub struct LibcTimeSource;
 
 impl TimeSource for LibcTimeSource {
     fn time(& self, __timer: &mut i64) -> i64 {
+        // fixme.. with the mutable reference here.. this is probably unsound
+        /// this can be called from multiple threads. Is it safe?
         unsafe { time(__timer) }
     }
 }
@@ -59,12 +61,12 @@ Interprets the command-line parameters and starts the game.
 unsafe fn main_0()
  -> i32 {
     use engine_traits::Offset;
-    let mut args = Vec::new();
-    for arg in ::std::env::args() {
-        args.push(::std::ffi::CString::new(arg).expect("Failed to convert argument into CString."));
+    let mut argv = Vec::new();
+    let args1 = ::std::env::args().collect::<Vec<_>>();
+    for arg in args1.iter() {
+        argv.push(arg.as_str());
     };
-    let mut argc = (args.len()) as i32;
-    let mut argv = args.iter().map(|s| s.as_ref()).collect::<Vec<_>>();
+    let mut argc = (argv.len()) as i32;
 
     print!("\nZebra (c) 1997-2005 Gunnar Andersson, compile date {} at {}\n\n",
            // TODO add macro or smth for these (it's in the C code)
@@ -75,47 +77,42 @@ unsafe fn main_0()
     let mut g_state = FullState::new(&time_src);
 
 
-    let mut move_sequence = 0 as *const i8;
-    let mut move_file_name = 0 as *const i8;
+    let mut move_sequence = "";
+    let mut move_file_name = "";
     let mut repeat = 1;
     let mut script_optimal_line = 0;
     let mut timer: time_t = 0;
     let mut use_random = 1;
     let mut hash_bits = 18;
-    let mut game_file_name = 0 as *const i8;
-    let mut log_file_name = 0 as *mut i8;
+    let mut game_file_name = "";
+    let mut log_file_name = "";
     let run_script = 0;
-    let script_out_file = 0 as *const i8;
-    let script_in_file = script_out_file;
+    let script_out_file = "";
+    let script_in_file = "";
     set_default_engine_globals((&mut g_state.g_config));
     let mut current_block_107: u64;
     let mut arg_index = 1;
     let mut help = 0;
     while arg_index < argc && help == 0 {
-        if strcasecmp(*argv.offset(arg_index as isize),
-                      b"-e\x00" as *const u8 as *const i8) == 0 {
+        if argv[arg_index as usize] == "-e" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).echo = atoi(*argv.offset(arg_index as isize));
+                (g_state.g_config).echo = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-h\x00" as *const u8 as *const i8) ==
-                      0 {
+        } else if argv[arg_index as usize] == "-h" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                hash_bits = atoi(*argv.offset(arg_index as isize));
+                hash_bits = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-l\x00" as *const u8 as *const i8) ==
-                      0 {
+        } else if argv[arg_index as usize] == "-l" {
             (g_state.g_config).tournament = 0;
             arg_index += 1;
             if arg_index == argc {
@@ -123,7 +120,7 @@ unsafe fn main_0()
                 current_block_107 = 2668756484064249700;
             } else {
                 (g_state.g_config).skill[0] =
-                    atoi(*argv.offset(arg_index as isize));
+                    (argv[arg_index as usize]).parse().unwrap_or(0);
                 if (g_state.g_config).skill[0] > 0 as i32 {
                     if arg_index + 2 as i32 >= argc {
                         help = 1;
@@ -131,10 +128,10 @@ unsafe fn main_0()
                     } else {
                         arg_index += 1;
                         (g_state.g_config).exact_skill[0] =
-                            atoi(*argv.offset(arg_index as isize));
+                            (argv[arg_index as usize]).parse().unwrap_or(0);
                         arg_index += 1;
                         (g_state.g_config).wld_skill[0] =
-                            atoi(*argv.offset(arg_index as isize));
+                            (argv[arg_index as usize]).parse().unwrap_or(0);
                         current_block_107 = 15004371738079956865;
                     }
                 } else { current_block_107 = 15004371738079956865; }
@@ -147,7 +144,7 @@ unsafe fn main_0()
                             current_block_107 = 2668756484064249700;
                         } else {
                             (g_state.g_config).skill[2] =
-                                atoi(*argv.offset(arg_index as isize));
+                                (argv[arg_index as usize]).parse().unwrap_or(0);
                             if (g_state.g_config).skill[2] >
                                    0 as i32 {
                                 if arg_index + 2 as i32 >= argc {
@@ -155,13 +152,9 @@ unsafe fn main_0()
                                     current_block_107 = 2668756484064249700;
                                 } else {
                                     arg_index += 1;
-                                    (g_state.g_config).exact_skill[2] =
-                                        atoi(*argv.offset(arg_index as
-                                                              isize));
+                                    (g_state.g_config).exact_skill[2] = argv[arg_index as usize].parse().unwrap_or(0);
                                     arg_index += 1;
-                                    (g_state.g_config).wld_skill[2] =
-                                        atoi(*argv.offset(arg_index as
-                                                              isize));
+                                    (g_state.g_config).wld_skill[2] = argv[arg_index as usize].parse().unwrap_or(0);
                                     current_block_107 = 10485226111480991281;
                                 }
                             } else {
@@ -171,9 +164,7 @@ unsafe fn main_0()
                     }
                 }
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-t\x00" as *const u8 as *const i8) ==
-                      0 {
+        } else if argv[arg_index as usize] == "-t" {
             let mut i: i32 = 0;
             let mut j: i32 = 0;
             arg_index += 1;
@@ -182,7 +173,7 @@ unsafe fn main_0()
                 current_block_107 = 2668756484064249700;
             } else {
                 (g_state.g_config).tournament = 1;
-                (g_state.g_config).tournament_levels = atoi(*argv.offset(arg_index as isize));
+                (g_state.g_config).tournament_levels = (argv[arg_index as usize]).parse().unwrap_or(0);
                 if arg_index + 3 as i32 * (g_state.g_config).tournament_levels >= argc {
                     help = 1;
                     current_block_107 = 2668756484064249700;
@@ -193,7 +184,7 @@ unsafe fn main_0()
                         while j < 3 as i32 {
                             arg_index += 1;
                             (g_state.g_config).tournament_skill[i as usize][j as usize] =
-                                atoi(*argv.offset(arg_index as isize));
+                                (argv[arg_index as usize]).parse().unwrap_or(0);
                             j += 1
                         }
                         i += 1
@@ -201,233 +192,185 @@ unsafe fn main_0()
                     current_block_107 = 10485226111480991281;
                 }
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-w\x00" as *const u8 as *const i8) ==
-                      0 {
+        } else if argv[arg_index as usize] == "-w" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).wait = atoi(*argv.offset(arg_index as isize));
+                (g_state.g_config).wait = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-p\x00" as *const u8 as *const i8) ==
-                      0 {
+        } else if argv[arg_index as usize] == "-p" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).display_pv = atoi(*argv.offset(arg_index as isize));
+                (g_state.g_config).display_pv = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"?\x00" as *const u8 as *const i8) ==
-                      0 {
+        } else if argv[arg_index as usize] == "?" {
             help = 1;
             current_block_107 = 10485226111480991281;
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-g\x00" as *const u8 as *const i8) ==
-                      0 {
+        } else if argv[arg_index as usize] == "-g" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                game_file_name = argv.offset(arg_index as isize).as_ptr();
+                game_file_name = argv.offset(arg_index as isize);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-r\x00" as *const u8 as *const i8) ==
-                      0 {
+        } else if argv[arg_index as usize] == "-r" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                use_random = atoi(*argv.offset(arg_index as isize));
+                use_random = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-b\x00" as *const u8 as *const i8) ==
-                      0 {
+        } else if argv[arg_index as usize] == "-b" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).use_book = atoi(*argv.offset(arg_index as isize));
+                (g_state.g_config).use_book = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-time\x00" as *const u8 as *const i8)
-                      == 0 {
+        } else if argv[arg_index as usize] == "-time" {
             if arg_index + 4 as i32 >= argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
                 arg_index += 1;
                 (g_state.g_config).player_time[0] =
-                    atoi(*argv.offset(arg_index as isize)) as f64;
+                    (argv[arg_index as usize]).parse().unwrap_or(0) as f64;
                 arg_index += 1;
                 (g_state.g_config).player_increment[0] =
-                    atoi(*argv.offset(arg_index as isize)) as f64;
+                    (argv[arg_index as usize]).parse().unwrap_or(0) as f64;
                 arg_index += 1;
                 (g_state.g_config).player_time[2] =
-                    atoi(*argv.offset(arg_index as isize)) as f64;
+                    (argv[arg_index as usize]).parse().unwrap_or(0) as f64;
                 arg_index += 1;
                 (g_state.g_config).player_increment[2] =
-                    atoi(*argv.offset(arg_index as isize)) as f64;
+                    (argv[arg_index as usize]).parse().unwrap_or(0) as f64;
                 (g_state.g_config).use_timer = 1;
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-learn\x00" as *const u8 as
-                                 *const i8) == 0 {
+        } else if argv[arg_index as usize] == "-learn" {
             if arg_index + 2 as i32 >= argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
                 arg_index += 1;
-                (g_state.g_config).deviation_depth = atoi(*argv.offset(arg_index as isize));
+                (g_state.g_config).deviation_depth = (argv[arg_index as usize]).parse().unwrap_or(0);
                 arg_index += 1;
-                (g_state.g_config).cutoff_empty = atoi(*argv.offset(arg_index as isize));
+                (g_state.g_config).cutoff_empty = (argv[arg_index as usize]).parse().unwrap_or(0);
                 g_state.g_config.use_learning = true;
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-slack\x00" as *const u8 as
-                                 *const i8) == 0 {
+        } else if argv[arg_index as usize] == "-slack" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).slack = atof(*argv.offset(arg_index as isize));
+                (g_state.g_config).slack = (argv[arg_index as usize]).parse().unwrap_or(0.0);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-dev\x00" as *const u8 as *const i8)
-                      == 0 {
+        } else if argv[arg_index as usize] == "-dev" {
             if arg_index + 3 as i32 >= argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
                 arg_index += 1;
-                (g_state.g_config).low_thresh = atoi(*argv.offset(arg_index as isize));
+                (g_state.g_config).low_thresh = (argv[arg_index as usize]).parse().unwrap_or(0);
                 arg_index += 1;
-                (g_state.g_config).high_thresh = atoi(*argv.offset(arg_index as isize));
+                (g_state.g_config).high_thresh = (argv[arg_index as usize]).parse().unwrap_or(0);
                 arg_index += 1;
-                (g_state.g_config).dev_bonus = atof(*argv.offset(arg_index as isize));
+                (g_state.g_config).dev_bonus = (argv[arg_index as usize]).parse().unwrap_or(0.0);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-log\x00" as *const u8 as *const i8)
-                      == 0 {
+        } else if argv[arg_index as usize] == "-log" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                log_file_name = argv.offset(arg_index as isize).as_ptr() as _;
+                log_file_name = argv.offset(arg_index as isize);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-private\x00" as *const u8 as
-                                 *const i8) == 0 {
+        } else if argv[arg_index as usize] == "-private" {
             (g_state.g_book).set_game_mode(PRIVATE_GAME);
             current_block_107 = 10485226111480991281;
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-public\x00" as *const u8 as
-                                 *const i8) == 0 {
+        } else if argv[arg_index as usize] == "-public" {
             (g_state.g_book).set_game_mode(PUBLIC_GAME);
             current_block_107 = 10485226111480991281;
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-keepdraw\x00" as *const u8 as
-                                 *const i8) == 0 {
+        } else if argv[arg_index as usize] == "-keepdraw" {
             (g_state.g_book).set_draw_mode(NEUTRAL);
             current_block_107 = 10485226111480991281;
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-draw2black\x00" as *const u8 as
-                                 *const i8) == 0 {
+        } else if argv[arg_index as usize] == "-draw2black" {
             (g_state.g_book).set_draw_mode(BLACK_WINS);
             current_block_107 = 10485226111480991281;
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-draw2white\x00" as *const u8 as
-                                 *const i8) == 0 {
+        } else if argv[arg_index as usize] == "-draw2white" {
             (g_state.g_book).set_draw_mode(WHITE_WINS);
             current_block_107 = 10485226111480991281;
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-draw2none\x00" as *const u8 as
-                                 *const i8) == 0 {
+        } else if argv[arg_index as usize] == "-draw2none" {
             (g_state.g_book).set_draw_mode(OPPONENT_WINS);
             current_block_107 = 10485226111480991281;
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-test\x00" as *const u8 as *const i8)
-                      == 0 {
+        } else if argv[arg_index as usize] == "-test" {
             (g_state.g_config).one_position_only = 1;
             current_block_107 = 10485226111480991281;
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-seq\x00" as *const u8 as *const i8)
-                      == 0 {
+        } else if argv[arg_index as usize] == "-seq" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                move_sequence = (argv.offset(arg_index as isize)).as_ptr();
+                move_sequence = (argv.offset(arg_index as isize));
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-seqfile\x00" as *const u8 as
-                                 *const i8) == 0 {
+        } else if argv[arg_index as usize] == "-seqfile" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                move_file_name = argv.offset(arg_index as isize).as_ptr();
+                move_file_name = argv.offset(arg_index as isize);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-repeat\x00" as *const u8 as
-                                 *const i8) == 0 {
+        } else if argv[arg_index as usize] == "-repeat" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                repeat = atoi(*argv.offset(arg_index as isize));
+                repeat = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-thor\x00" as *const u8 as *const i8)
-                      == 0 {
+        } else if argv[arg_index as usize] == "-thor" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
                 g_state.g_config.use_thor = true;
-                (g_state.g_config).thor_max_games = atoi(*argv.offset(arg_index as isize));
+                (g_state.g_config).thor_max_games = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-analyze\x00" as *const u8 as
-                                 *const i8) == 0 {
+        } else if argv[arg_index as usize] == "-analyze" {
             (g_state.g_config).only_analyze = 1;
             current_block_107 = 10485226111480991281;
-        } else if strcasecmp(*argv.offset(arg_index as isize),
-                             b"-randmove\x00" as *const u8 as
-                                 *const i8) == 0 {
+        } else if argv[arg_index as usize] == "-randmove" {
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).rand_move_freq = atoi(*argv.offset(arg_index as isize));
+                (g_state.g_config).rand_move_freq = (argv[arg_index as usize]).parse().unwrap_or(0);
                 if (g_state.g_config).rand_move_freq < 0 as i32 {
                     help = 1;
                     current_block_107 = 2668756484064249700;
@@ -630,7 +573,7 @@ Flags:
    Administrates the tournament between different levels
    of the program.
 */
-unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8, mut g_state: FullState) {
+unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state: FullState) {
     let mut result: [[[i32; 3]; 8]; 8] = [[[0; 3]; 8]; 8];
     let mut tourney_time: f64 = 0.;
     let mut score: [f64; 8] = [0.; 8];
@@ -658,8 +601,8 @@ unsafe fn play_tournament(mut move_sequence: *const i8, log_file_name_: *mut i8,
             (g_state.g_config).skill[2] = (g_state.g_config).tournament_skill[j as usize][0];
             (g_state.g_config).exact_skill[2] = (g_state.g_config).tournament_skill[j as usize][1];
             (g_state.g_config).wld_skill[2] = (g_state.g_config).tournament_skill[j as usize][2];
-            g_state = play_game(0 as *const i8, move_sequence,
-                      0 as *const i8, 1 as i32, log_file_name_, g_state);
+            g_state = play_game("", move_sequence,
+                      "", 1 as i32, log_file_name_, g_state);
             add_counter(&mut tourney_nodes, &mut (g_state.search_state).total_nodes);
             tourney_time += (&mut g_state.search_state).total_time;
             result[i as usize][j as usize][0] =
@@ -765,26 +708,25 @@ impl FileMoveSource {
    PLAY_GAME
    Administrates the game between two players, humans or computers.
 */
-unsafe fn play_game(mut file_name: *const i8,
-                    mut move_string: *const i8,
-                    mut move_file_name: *const i8,
-                    mut repeat: i32, log_file_name_: *mut i8,
-                   g_state: FullState
-
+unsafe fn play_game(mut file_name: &str,
+                    mut move_string: &str,
+                    mut move_file_name: &str,
+                    mut repeat: i32,
+                    log_file_name_: &str,
+                    g_state: FullState
 ) -> FullState {
-    let move_file = if move_file_name.is_null() {
+    let move_file = if move_file_name.is_empty() {
         None
     } else {
-        let move_file_name = CStr::from_ptr(move_file_name).to_str().unwrap();
         FileMoveSource::open(move_file_name)
     };
-    let file_name: Option<CString> = (!file_name.is_null()).then(|| CStr::from_ptr(file_name).into());
-    let log_file_name_: Option<&CStr> = (!log_file_name_.is_null()).then(|| CStr::from_ptr(log_file_name_));
+    let file_name: Option<CString> = (!file_name.is_empty()).then(|| CString::new(file_name).unwrap());
+    let log_file_name_: Option<CString> = (!log_file_name_.is_empty()).then(|| CString::new(log_file_name_).unwrap());
 
-    let move_string = if move_string.is_null() {
+    let move_string = if move_string.is_empty() {
         vec![]
     } else {
-        CStr::from_ptr(move_string).to_bytes().into()
+        move_string.as_bytes().into()
     };
     type ZF = LibcFrontend;
     type Source = FileMoveSource;
@@ -878,8 +820,8 @@ unsafe fn play_game(mut file_name: *const i8,
                 let total_time_ = play_state.g_state.search_state.total_time;
                 ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
-                if let (Some(log_file_name_), 0) = (log_file_name_, play_state.g_state.g_config.one_position_only) {
-                    ZF::log_game_ending((log_file_name_),
+                if let (Some(log_file_name_), 0) = (log_file_name_.as_ref(), play_state.g_state.g_config.one_position_only) {
+                    ZF::log_game_ending((&*log_file_name_),
                                         &play_state.move_vec,
                                         disc_count(0, &play_state.g_state.board_state.board),
                                         disc_count(2, &play_state.g_state.board_state.board))
@@ -1194,7 +1136,7 @@ impl ZebraFrontend for LibcFrontend {
    ANALYZE_GAME
    Analyzes all positions arising from a given move sequence.
 */
-unsafe fn analyze_game(mut move_string: *const i8,
+unsafe fn analyze_game(mut move_string: &str,
                        g_state : &mut FullState
 ) {
     let mut best_info1 =
@@ -1239,20 +1181,15 @@ unsafe fn analyze_game(mut move_string: *const i8,
     let mut empties: i32 = 0;
     let mut provided_move: [i32; 61] = [0; 61];
     /* Decode the predefined move sequence */
-    if move_string.is_null() {
+    if move_string.is_empty() {
         provided_move_count = 0 as i32
     } else {
-        provided_move_count =
-              strlen(move_string).wrapping_div(2 as i32 as
-                                                 u64) as
-                i32;
-        if provided_move_count > 60 as i32 ||
-                 strlen(move_string).wrapping_rem(2 as i32 as
-                                                    u64) ==
-                   1 as i32 as u64 {
+        provided_move_count = (move_string.len()).wrapping_div(2) as i32;
+        if provided_move_count > 60 || (move_string.len()).wrapping_rem(2) == 1 {
             FE::invalid_move_string_provided();
         }
         i = 0;
+        let move_string = move_string.as_bytes();
         while i < provided_move_count {
             col =
                tolower(*move_string.offset((2 as i32 * i) as isize)
@@ -1552,12 +1489,13 @@ unsafe fn analyze_game(mut move_string: *const i8,
     }
     fclose(output_stream);
 }
-unsafe fn run_endgame_script(mut in_file_name: *const i8,
-                                        mut out_file_name:
-                                            *const i8,
-                                        mut display_line: i32,
+
+unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mut display_line: i32,
                             mut g_state: &mut FullState
 ) {
+    // fixme this leaks memory, but it's okay for temporary code
+    let mut in_file_name = if in_file_name.is_empty() { null_mut() } else { CString::new(in_file_name).unwrap().into_raw() };
+    let mut out_file_name = if out_file_name.is_empty() { null_mut() } else { CString::new(out_file_name).unwrap().into_raw() };
     let mut script_nodes = CounterType{hi: 0, lo: 0,};
     let mut eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
@@ -1991,3 +1929,4 @@ pub fn main() {
 }
 pub use engine::src::zebra::FullState;
 use engine::src::thordb::ThorDatabase;
+use engine_traits::Offset;
