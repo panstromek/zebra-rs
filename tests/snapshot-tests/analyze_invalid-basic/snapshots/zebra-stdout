@@ -1,0 +1,23 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Jul  2 2020 at 19:33:54
+
+Reading binary opening database... done (took 0 s)
+Analyzing provided game...
+Disabling usage of opening book
+
+         a b c d e f g h
+
+      1                       Black    Zebra        
+      2                                             
+      3                        (*)     2 discs      
+      4        O *                                  
+      5        * O            White    Zebra        
+      6                                             
+      7                                2 discs      
+      8                                             
+
+Thor database:        d3: 100.0%    
+-->   5  -5.65            246  e3 f5 f6 d3        0.0 s  
+PV: e3 f5 f6 d3
+-->   6  +1.34            243  e3 f5 d6 d3 f3     0.0 s  
+PV: e3 f5 d6 d3 f3

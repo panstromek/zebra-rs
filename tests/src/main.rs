@@ -86,6 +86,10 @@ mod tests {
 
     snap_test!(with_seq, "-seq f5d6c3 -l 6 6 6 6 6 6 -r 0");
 
+    snap_test!(analyze_basic, "-analyze -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1 -l 7 7 7 7 7 7 -r 0");
+
+    snap_test!(analyze_invalid, "-analyze -seq f1h2h1 -l 7 7 7 7 7 7 -r 0", true, with_adjust: false);
+
     snap_test!(with_seq_invalid, "-seq f5d6h1 -l 6 6 6 6 6 6 -r 0", true);
 
     snap_test!(with_no_echo, "-l 6 6 6 6 6 6 -r 0 -e 0");
@@ -284,6 +288,7 @@ mod tests {
         assert_snapshot(snapshots_dir.join("zebra-stdout").as_ref(), run_directory.join("zebra-stdout").as_ref() , false);
         assert_snapshot(snapshots_dir.join("current.gam").as_ref(), run_directory.join("current.gam").as_ref() , false);
         assert_snapshot(snapshots_dir.join("current.mov").as_ref(), run_directory.join("current.mov").as_ref(), false);
+        assert_snapshot(snapshots_dir.join("analysis.log").as_ref(), run_directory.join("analysis.log").as_ref(), false);
     }
 
     fn assert_snapshot(snapshot_path: &Path, result_path: &Path, binary: bool) {
