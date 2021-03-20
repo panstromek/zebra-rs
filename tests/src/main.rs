@@ -47,6 +47,7 @@ mod tests {
                 fn $func() {
                     use crate::tests::*;
                     snapshot_test(
+                        "zebra",
                         $args,
                         &("./snapshot-tests/".to_owned() + stringify!($id) + $suffix),
                         $has_adjust,
@@ -219,10 +220,10 @@ mod tests {
         }
     }
 
-    fn snapshot_test(arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool, interactive: bool) {
-        let binary: &str =
-            // "./../../../../../zebra-1/zebra"
-            "./../../../../target/release/zebra"
+    fn snapshot_test(binary: &str, arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool, interactive: bool) {
+        let binary_folder =
+            // "./../../../../../zebra-1/"
+            "./../../../../target/release/"
             ;
         let snapshot_test_dir = Path::new(snapshot_test_dir);
         if !snapshot_test_dir.exists() {
@@ -240,7 +241,12 @@ mod tests {
         if with_adjust {
             create_adjust_file(run_directory.join("adjust.txt"));
         }
-        let binpath = run_directory.join(binary).canonicalize().unwrap();
+        let binpath = run_directory
+            .join(binary_folder)
+            .join(binary)
+            .canonicalize()
+            .unwrap();
+
         let coeffs_path = run_directory.join("./../../../../coeffs2.bin").canonicalize().unwrap();
         let mut book_path = run_directory.join("./../../../../book.bin").canonicalize().unwrap();
         let canon_run_dir = run_directory.canonicalize().unwrap();
