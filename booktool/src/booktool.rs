@@ -2003,7 +2003,7 @@ pub unsafe fn evaluate_tree(g_state: &mut FullState) {
                    *const i8, g_state.g_book.max_batch_size);
     }
     write!(stdout, "\n");
-    printf(b"Progress: \x00" as *const u8 as *const i8);
+    write!(stdout, "Progress: ");
     fflush(stdout);
     if feasible_count > 0 as i32 { do_evaluate(0 as i32, g_state.g_config.echo, g_state); }
     time(&mut stop_time);
@@ -2023,7 +2023,7 @@ pub unsafe fn evaluate_tree(g_state: &mut FullState) {
 pub unsafe fn examine_tree(g_state: &mut FullState) {
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
-    printf(b"Examining tree... \x00" as *const u8 as *const i8);
+    write!(stdout, "Examining tree... ");
     fflush(stdout);
     prepare_tree_traversal(g_state);
     time(&mut start_time);
@@ -2225,13 +2225,13 @@ pub unsafe fn book_statistics(full_statistics: i32, g_state: &mut FullState) {
         i = first;
         while i <= last {
             printf(b"%2d moves\x00" as *const u8 as *const i8, i);
-            printf(b"   \x00" as *const u8 as *const i8);
+            write!(stdout, "   ");
             printf(b"%5d g_state.g_book.node\x00" as *const u8 as *const i8,
                    total_count[i as usize]);
             if total_count[i as usize] == 1 as i32 {
-                printf(b" :  \x00" as *const u8 as *const i8);
+                write!(stdout, " :  ");
             } else {
-                printf(b"s:  \x00" as *const u8 as *const i8);
+                write!(stdout, "s:  ");
             }
             if g_state.g_book.common_count[i as usize] > 0 as i32 {
                 printf(b"%5d midgame\x00" as *const u8 as *const i8,
@@ -2240,14 +2240,14 @@ pub unsafe fn book_statistics(full_statistics: i32, g_state: &mut FullState) {
                 printf(b"             \x00" as *const u8 as
                     *const i8);
             }
-            printf(b"  \x00" as *const u8 as *const i8);
+            write!(stdout, "  ");
             if g_state.g_book.wld_count[i as usize] > 0 as i32 {
                 printf(b"%5d WLD\x00" as *const u8 as *const i8,
                        g_state.g_book.wld_count[i as usize]);
             } else {
-                printf(b"         \x00" as *const u8 as *const i8);
+                write!(stdout, "         ");
             }
-            printf(b"  \x00" as *const u8 as *const i8);
+            write!(stdout, "  ");
             if g_state.g_book.exact_count[i as usize] > 0 as i32 {
                 printf(b"%5d exact\x00" as *const u8 as *const i8,
                        g_state.g_book.exact_count[i as usize]);
@@ -2255,7 +2255,7 @@ pub unsafe fn book_statistics(full_statistics: i32, g_state: &mut FullState) {
                 printf(b"           \x00" as *const u8 as
                     *const i8);
             }
-            printf(b"  \x00" as *const u8 as *const i8);
+            write!(stdout, "  ");
             if g_state.g_book.exhausted_count[i as usize] > 0 as i32 {
                 printf(b"%2d exhausted\x00" as *const u8 as
                            *const i8, g_state.g_book.exhausted_count[i as usize]);
@@ -2297,12 +2297,12 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
         root_score =
             g_state.g_book.node[0].black_minimax_score as
                 i32;
-        printf(b"black\x00" as *const u8 as *const i8);
+        write!(stdout, "black");
     } else {
         root_score =
             g_state.g_book.node[0].white_minimax_score as
                 i32;
-        printf(b"white\x00" as *const u8 as *const i8);
+        write!(stdout, "white");
     }
     printf(b": %+.2f\n\x00" as *const u8 as *const i8,
            root_score as f64 / 128.0f64);
@@ -2463,7 +2463,7 @@ pub unsafe fn build_tree(file_name: *const i8,
             add_new_game(move_count_0, game_move_list.as_mut_ptr(),
                          min_empties, 0 as i32, 0 as i32,
                          0 as i32, 0 as i32, echo, g_state);
-            printf(b"|\x00" as *const u8 as *const i8);
+            write!(stdout, "|");
             if games_imported % 100 as i32 == 0 as i32 {
                 printf(b" --- %d games --- \x00" as *const u8 as
                            *const i8, games_imported);
@@ -2728,7 +2728,7 @@ pub unsafe fn write_compressed_database(file_name:
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     time(&mut start_time);
-    printf(b"Writing compressed database... \x00" as *const u8 as *const i8);
+    write!(stdout, "Writing compressed database... ");
     fflush(stdout);
     let stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
     if stream.is_null() {
