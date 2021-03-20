@@ -33,9 +33,6 @@ mod tests {
             .unwrap();
     }
 
-    //fixme
-    // also include analysis.log file into the tests
-
     macro_rules! snap_test {
         ($id:ident, $args:literal) => {
             snap_test!($id, $args, false, with_adjust: true);
