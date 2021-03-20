@@ -32,7 +32,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 use flip::unflip::FlipStack;
-use libc_wrapper::{atof, atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time, fflush, tolower};
+use libc_wrapper::{atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time, fflush, tolower};
 use libc_wrapper::{FileHandle, time_t};
 
 use crate::src::display::{display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state};
@@ -640,7 +640,7 @@ unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state
                tournament_skill_[i as usize][2]);
         i += 1
     }
-    printf(b"\n       \x00" as *const u8 as *const i8);
+    write!(stdout, "\n       ");
     let mut i = 0;
     while i < tournament_levels_ {
         printf(b" %2d    \x00" as *const u8 as *const i8,

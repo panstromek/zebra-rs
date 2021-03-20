@@ -407,7 +407,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 midgame_eval_done = 1;
                 if force_eval != 0 { clear_node_depth(this_node, &mut (g_state.g_book)); }
                 evaluate_node(this_node, echo, g_state);
-                printf(b"|\x00" as *const u8 as *const i8);
+                write!(stdout, "|");
                 fflush(stdout);
             }
             let ref mut fresh43 = (*(g_state.g_book).node.offset(this_node as isize)).flags;
@@ -425,7 +425,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 /* Minimax discovered that the g_book.node hasn't got a deviation any
                    longer because that move has been played. */
                 evaluate_node(this_node, echo, g_state);
-                printf(b"-|-\x00" as *const u8 as *const i8);
+                write!(stdout, "-|-");
                 do_minimax(this_node, &mut dummy_black_score,
                            &mut dummy_white_score, g_state);
             }
@@ -585,7 +585,7 @@ pub unsafe fn write_text_database(file_name: *const i8, g_book: &mut Book) {
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     time(&mut start_time);
-    printf(b"Writing text database... \x00" as *const u8 as *const i8);
+    write!(stdout, "Writing text database... ");
     fflush(stdout);
     let stream = fopen(file_name, b"w\x00" as *const u8 as *const i8);
     if stream.is_null() {
@@ -626,7 +626,7 @@ pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book)
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     time(&mut start_time);
-    printf(b"Writing binary database... \x00" as *const u8 as *const i8);
+    write!(stdout, "Writing binary database... ");
     fflush(stdout);
     let stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
     if stream.is_null() {
@@ -732,7 +732,7 @@ pub unsafe fn print_move_alternatives(side_to_move: i32, mut board_state: &mut B
         }
         if score > 30000 as i32 { score -= 30000 as i32 }
         if score < -(30000 as i32) { score += 30000 as i32 }
-        printf(b"Book score is \x00" as *const u8 as *const i8);
+        write!(stdout, "Book score is ");
         if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
                              isize)).flags as i32 & 16 as i32
                != 0 {
@@ -750,7 +750,7 @@ pub unsafe fn print_move_alternatives(side_to_move: i32, mut board_state: &mut B
         if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
                              isize)).flags as i32 & 32 as i32
                != 0 {
-            printf(b" Private node.\x00" as *const u8 as *const i8);
+            write!(stdout, " Private node.");
         }
         write!(stdout, "\n");
         i = 0;

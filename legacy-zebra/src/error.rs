@@ -180,7 +180,7 @@ impl FrontEnd for LibcFatalError {
     fn after_update_best_list_verbose(best_list: &mut [i32; 4]) {
         unsafe {
             // let best_list = best_list.as_mut_ptr();
-            printf(b"      After:  \x00" as *const u8 as *const i8);
+            write!(stdout, "      After:  ");
             let mut i = 0;
             while i < 4 {
                 printf(b"%2d \x00" as *const u8 as *const i8, best_list[i]);
@@ -193,7 +193,7 @@ impl FrontEnd for LibcFatalError {
         unsafe {
             printf(b"move=%2d  index=%d  length=%d      \x00" as *const u8 as
                        *const i8, move_0, best_list_index, *best_list_length);
-            printf(b"Before:  \x00" as *const u8 as *const i8);
+            write!(stdout, "Before:  ");
             let mut i = 0;
             while i < 4 {
                 printf(b"%2d \x00" as *const u8 as *const i8, best_list[i]);

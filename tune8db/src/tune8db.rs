@@ -450,14 +450,14 @@ pub unsafe  fn display_board(mut index: i32) {
     puts(b"\x00" as *const u8 as *const i8);
     i = 1;
     while i <= 8 as i32 {
-        printf(b"      \x00" as *const u8 as *const i8);
+        write!(stdout, "      ");
         j = 1;
         while j <= 8 as i32 {
             match board[(10 as i32 * i + j) as usize] {
-                1 => { printf(b" \x00" as *const u8 as *const i8); }
-                0 => { printf(b"*\x00" as *const u8 as *const i8); }
-                2 => { printf(b"O\x00" as *const u8 as *const i8); }
-                _ => { printf(b"?\x00" as *const u8 as *const i8); }
+                1 => { write!(stdout, " "); }
+                0 => { write!(stdout, "*"); }
+                2 => { write!(stdout, "O"); }
+                _ => { write!(stdout, "?"); }
             }
             j += 1
         }
@@ -2122,7 +2122,7 @@ pub unsafe  fn store_patterns() {
     let mut suffix: [i8; 8] = [0; 8];
     let mut file_name: [i8; 16] = [0; 16];
     let mut stream: *mut FILE = 0 as *mut FILE;
-    printf(b"Saving patterns...\x00" as *const u8 as *const i8);
+    write!(stdout, "Saving patterns...");
     fflush(stdout);
     sprintf(suffix.as_mut_ptr(),
             b".b%d\x00" as *const u8 as *const i8, analysis_stage);
@@ -2497,7 +2497,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     /* Initialize the database */
     read_position_file(game_file);
     /* Determine pattern frequencies */
-    printf(b"\nPreparing...\x00" as *const u8 as *const i8);
+    write!(stdout, "\nPreparing...");
     fflush(stdout);
     analyze_games();
     printf(b" done (%d relevant nodes out of %d)\n\x00" as *const u8 as
