@@ -38,40 +38,57 @@ mod tests {
             snap_test!($id, $args, false, with_adjust: true);
         };
 
-        ($func:ident, $suffix:literal, $id:ident, $args:literal, $has_err:expr, $has_adjust:expr) => {
-            snap_test!($func, $suffix, $id, $args, $has_err,  $has_adjust, interactive: false);
+        ($binary:literal, $func:ident, $suffix:literal, $id:ident, $args:literal, $has_err:expr, $has_adjust:expr) => {
+            snap_test!($binary, $func, $suffix, $id, $args, $has_err,  $has_adjust, interactive: None);
         };
 
-        ($func:ident, $suffix:literal, $id:ident, $args:literal, $has_err:expr, $has_adjust:expr, interactive: $interactive:expr) => {
+        ($binary:literal, $func:ident, $suffix:literal, $id:ident, $args:literal, $has_err:expr, $has_adjust:expr, interactive: $interactive:ident) => {
                 #[test]
                 fn $func() {
                     use crate::tests::*;
                     snapshot_test(
-                        "zebra",
+                        $binary,
                         $args,
                         &("./snapshot-tests/".to_owned() + stringify!($id) + $suffix),
                         $has_adjust,
                         $has_err,
-                        $interactive
+                        Interactive::$interactive
                     );
                 }
         };
 
         ($id:ident, $args:literal, $has_err:expr, with_adjust: true) => {
             mod $id {
-                snap_test!(basic, "-basic", $id, $args, $has_err, false);
-                snap_test!(with_adjust, "-with-adjust", $id, $args, $has_err, true);
+                snap_test!("zebra", basic, "-basic", $id, $args, $has_err, false);
+                snap_test!("zebra", with_adjust, "-with-adjust", $id, $args, $has_err, true);
             }
         };
-        ($id:ident, $args:literal, $has_err:expr, with_adjust: false) => {
+        ($binary:literal, $id:ident, $args:literal, $has_err:expr, with_adjust: false) => {
             mod $id {
-                snap_test!(basic, "-basic", $id, $args, $has_err, false);
+                snap_test!($binary, basic, "-basic", $id, $args, $has_err, false);
             }
         };
 
-        ($id:ident, $args:literal, $has_err:expr, interactive: true) => {
+        ($binary:literal, $id:ident, $args:literal) => {
             mod $id {
-                snap_test!(basic, "-basic", $id, $args, $has_err, false, interactive: true);
+                snap_test!($binary, basic, "-basic", $id, $args, false, false);
+            }
+        };
+
+        ($id:ident, $args:literal, $has_err:expr, with_adjust: false) => {
+            mod $id {
+                snap_test!("zebra", basic, "-basic", $id, $args, $has_err, false);
+            }
+        };
+
+        ($id:ident, $args:literal, $has_err:expr, interactive: Dumb) => {
+            mod $id {
+                snap_test!("zebra", basic, "-basic", $id, $args, $has_err, false, interactive: Dumb);
+            }
+        };
+        ($binary:literal, $id:ident, $args:literal, $has_err:expr, interactive: $interactive:ident) => {
+            mod $id {
+                snap_test!($binary, basic, "-basic", $id, $args, $has_err, false, interactive: $interactive);
             }
         };
 
@@ -86,6 +103,7 @@ mod tests {
 
     snap_test!(analyze_basic, "-analyze -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1 -l 7 7 7 7 7 7 -r 0");
 
+    // TODO this is broken against original zebra (panic vs invalid move err)
     snap_test!(analyze_invalid, "-analyze -seq f1h2h1 -l 7 7 7 7 7 7 -r 0", true, with_adjust: false);
 
     snap_test!(with_seq_invalid, "-seq f5d6h1 -l 6 6 6 6 6 6 -r 0", true);
@@ -145,13 +163,13 @@ mod tests {
 
     snap_test!(rand_move_one, "-l 6 6 6 6 6 6 -r 0 -randmove 1", false, with_adjust: false);
 
-    snap_test!(basic_interactive, "-l 6 6 6 0 -r 0 -b 0 -repeat 2", false, interactive: true);
+    snap_test!(basic_interactive, "-l 6 6 6 0 -r 0 -b 0 -repeat 2", false, interactive: Dumb);
 
-    snap_test!(basic_interactive_flipped, "-l 0 6 6 6 -r 0 -b 0 -repeat 1", false, interactive: true);
+    snap_test!(basic_interactive_flipped, "-l 0 6 6 6 -r 0 -b 0 -repeat 1", false, interactive: Dumb);
 
-    snap_test!(two_players, "-l 0 0 -r 0 -b 0 -repeat 2", false, interactive: true);
+    snap_test!(two_players, "-l 0 0 -r 0 -b 0 -repeat 2", false, interactive: Dumb);
 
-    snap_test!(two_players_with_log, "-l 0 0 -r 0 -b 0 -repeat 2  -log zebra.log", false, interactive: true);
+    snap_test!(two_players_with_log, "-l 0 0 -r 0 -b 0 -repeat 2  -log zebra.log", false, interactive: Dumb);
 
     snap_test!(learn, "-l 2 2 2 2 2 2 -r 0 -learn 3 5", false, with_adjust: false);
 
@@ -186,6 +204,23 @@ mod tests {
     // TODO test all these parameters at once: -g, -seq and -seqfile, how they interact??
     //  what if they conflict??
 
+    snap_test!("practice", practice, "./../../../../book.bin", false, interactive: Practice);
+
+    pub enum Interactive {
+        Dumb,
+        Practice,
+        None
+    }
+    fn interact_practice(input: &mut ChildStdin) {
+        let moves = "e6  f6 f5  f4 e3  d6 g4  d3 c3  h3 c4  g3 g5  g6 c7  c6 c5  b6 7  b5 f7 \
+         f3 b4  f8 h4  h5 f2  f1 g2  e8 e7  a3 h2  h1 h6  d8 c8  b8 g7  b7 a4  g8 a8  a7 h8  h7 \
+         g1  e1 e2  d1 a5  c2 d2  a6 b3  c1 a2  b2 a1  b1 quit";
+        moves.split_whitespace().for_each(|move_| {
+            let _ = input.write(move_.as_bytes());
+            let _ = input.write("\n".as_bytes());
+            let _ = input.flush();
+        });
+    }
     fn interact_basically(input: &mut ChildStdin) {
         let mut move_buf = String::with_capacity(3);
         loop {
@@ -220,7 +255,7 @@ mod tests {
         }
     }
 
-    fn snapshot_test(binary: &str, arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool, interactive: bool) {
+    fn snapshot_test(binary: &str, arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool, interactive: Interactive) {
         let binary_folder =
             // "./../../../../../zebra-1/"
             "./../../../../target/release/"
@@ -272,9 +307,16 @@ mod tests {
             .spawn()
             .unwrap();
 
-        if interactive {
-            let input = child.stdin.as_mut().unwrap();
-            interact_basically(input);
+        match interactive {
+            Interactive::Dumb => {
+                let input = child.stdin.as_mut().unwrap();
+                interact_basically(input);
+            },
+            Interactive::Practice => {
+                let input = child.stdin.as_mut().unwrap();
+                interact_practice(input);
+            }
+            _ => {}
         }
         let exit_status = child
             .wait()

@@ -1,0 +1,861 @@
+Reading binary opening database... done (took 0 s)
+
+         a b c d e f g h
+
+      1                       Black                 
+      2                                             
+      3                        (*)     2 discs      
+      4        O *                                  
+      5        * O            White                 
+      6                                             
+      7                                2 discs      
+      8                                             
+
+Book hash: 1367877565 1384641267 (1)
+
+Scores for the 4 moves:
+   d3   +0.00 discs (book)
+   c4   +0.00 discs (book)
+   f5   +0.00 discs (book)
+   e6   +0.00 discs (book)
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  
+      2                                             
+      3                                4 discs      
+      4        O *                                  
+      5        * *            White                 
+      6          *                                  
+      7                        (O)     1 discs      
+      8                                             
+
+Book hash: 1432552204 801822288 (1)
+
+Scores for the 3 moves:
+   f6   +0.00 discs (book)
+   f4   +0.00 discs (book)
+   d6   -5.91 discs (book)
+
+White move: 
+Opening: Diagonal Opening
+
+         a b c d e f g h
+
+      1                       Black                 
+      2                                             
+      3                        (*)     3 discs      
+      4        O *                                  
+      5        * O            White                 
+      6          * O                                
+      7                                3 discs      
+      8                                             
+
+Book hash: 1659994584 1512627031 (2)
+
+Scores for the 4 moves:
+   f5   +0.00 discs (book)
+   c4   -6.11 discs (book)
+   d3   -7.14 discs (book)
+   g6   -10.96 discs (book)
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  
+      3                                5 discs      
+      4        O *                                  
+      5        * * *          White                 
+      6          * O                                
+      7                        (O)     2 discs      
+      8                                             
+
+Book hash: 1761728371 1012508434 (3)
+
+Scores for the 2 moves:
+   f4   +0.00 discs (book)
+   d6   +0.00 discs (book)
+
+White move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                             
+      3                        (*)     3 discs      
+      4        O O O                                
+      5        * * O          White                 
+      6          * O                                
+      7                                5 discs      
+      8                                             
+
+Book hash: 1527643561 793603174 (0)
+
+Scores for the 9 moves:
+   e3   +0.00 discs (book)
+   g5   +0.00 discs (book)
+   g6   -1.16 discs (book)
+   c3   -1.38 discs (book)
+   f3   -2.56 discs (book)
+   g3   -2.65 discs (book)
+   d3   -3.28 discs (book)
+   g4   -4.05 discs (book)
+   g7   -21.66 discs
+
+Black move: 
+Opening: Cow
+
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3          *                     5 discs       3. e3  
+      4        O * O                                
+      5        * * O          White                 
+      6          * O                                
+      7                        (O)     4 discs      
+      8                                             
+
+Book hash: 1481949922 1585684585 (5)
+
+Scores for the 6 moves:
+   c5   +0.00 discs (book)
+   d6   +0.00 discs (book)
+   d7   -2.62 discs (book)
+   d3   -4.28 discs (book)
+   f2   -7.62 discs (book)
+   d2   -8.64 discs (book)
+
+White move: 
+Opening: Chimney
+
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3          *             (*)     2 discs      
+      4        O * O                                
+      5        O O O          White                 
+      6        O O O                                
+      7                                8 discs      
+      8                                             
+
+Book hash: 1693540789 1417640656 (7)
+
+Scores for the 7 moves:
+   g4   +0.00 discs (book)
+   e7   -0.51 discs (book)
+   c4   -0.53 discs (book)
+   c6   -0.88 discs (book)
+   g5   -0.98 discs (book)
+   g6   -1.11 discs (book)
+   c5   -1.65 discs (book)
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3          *                     4 discs       3. e3  d6
+      4        O * * *                               4. g4  
+      5        O O O          White                 
+      6        O O O                                
+      7                        (O)     7 discs      
+      8                                             
+
+Book hash: 2036628881 1657352684 (7)
+
+Scores for the 7 moves:
+   d3   +0.00 discs (book)
+   h3   -2.10 discs (book)
+   f3   -2.16 discs (book)
+   h4   -3.70 discs (book)
+   g3   -4.33 discs (book)
+   e2   -5.32 discs (book)
+   f2   -7.14 discs
+
+White move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3        O *             (*)     3 discs       3. e3  d6
+      4        O O * *                              
+      5        O O O          White                 
+      6        O O O                                
+      7                                9 discs      
+      8                                             
+
+Book hash: 1469464788 1767721412 (0)
+
+Scores for the 7 moves:
+   c3   +0.00 discs (book)
+   e7   -0.54 discs (book)
+   c7   -0.80 discs (book)
+   c4   -1.66 discs (book)
+   c5   -4.49 discs
+   f7   -4.58 discs
+   d7   -9.79 discs
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * *                     5 discs       3. e3  d6
+      4        O O * *                               4. g4  d3
+      5        O O O          White                  5. c3  
+      6        O O O                                
+      7                        (O)     8 discs      
+      8                                             
+
+Book hash: 1885125320 1763111335 (2)
+
+Scores for the 9 moves:
+   h3   +0.00 discs (book)
+   d2   -2.52 discs (book)
+   g3   -2.98 discs (book)
+   h4   -3.28 discs (book)
+   f3   -4.22 discs (book)
+   e2   -5.13 discs
+   f2   -5.51 discs
+   c2   -8.84 discs
+   b2   -21.68 discs
+
+White move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * *     O       (*)     4 discs       3. e3  d6
+      4        O O * O                               4. g4  d3
+      5        O O O          White                 
+      6        O O O                                
+      7                                10 discs     
+      8                                             
+
+Book hash: 2048727579 1495923911 (6)
+
+Scores for the 9 moves:
+   c4   +0.00 discs (book)
+   e7   -2.23 discs (book)
+   h4   -2.50 discs (book)
+   c7   -3.95 discs
+   g6   -4.55 discs
+   c5   -6.96 discs
+   f7   -8.17 discs
+   d7   -12.46 discs
+   g7   -24.78 discs
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * *     O               7 discs       3. e3  d6
+      4      * * * * O                               4. g4  d3
+      5        O O O          White                  5. c3  h3
+      6        O O O                                 6. c4  
+      7                        (O)     8 discs      
+      8                                             
+
+Book hash: 1404488410 1570252919 (6)
+
+Scores for the 8 moves:
+   g3   +0.00 discs (book)
+   f3   -2.94 discs (book)
+   c2   -9.66 discs
+   e2   -11.95 discs
+   d2   -14.59 discs
+   b3   -15.66 discs
+   b4   -18.64 discs
+   b2   -32.22 discs
+
+White move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * *   O O       (*)     6 discs       3. e3  d6
+      4      * * * O O                               4. g4  d3
+      5        O O O          White                  5. c3  h3
+      6        O O O                                
+      7                                10 discs     
+      8                                             
+
+Book hash: 1953609913 1134599946 (4)
+
+Scores for the 8 moves:
+   g5   +0.00 discs (book)
+   c6   +0.00 discs (book)
+   e7   -0.24 discs (book)
+   d7   -6.99 discs
+   f7   -7.54 discs
+   g6   -8.60 discs
+   h4   -9.58 discs
+   g7   -14.08 discs
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * *   O O               8 discs       3. e3  d6
+      4      * * * * O                               4. g4  d3
+      5        O O O *        White                  5. c3  h3
+      6        O O O                                 6. c4  g3
+      7                        (O)     9 discs       7. g5  
+      8                                             
+
+Book hash: 1197132535 1946950258 (3)
+
+Scores for the 10 moves:
+   g6   +0.00 discs (book)
+   h4   -0.56 discs (book)
+   h5   -5.67 discs
+   f3   -6.38 discs (book)
+   e2   -8.58 discs
+   c2   -9.63 discs
+   d2   -10.89 discs
+   b4   -11.98 discs
+   b3   -15.19 discs
+   b2   -27.59 discs
+
+White move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * *   O O       (*)     7 discs       3. e3  d6
+      4      * * * * O                               4. g4  d3
+      5        O O O O        White                  5. c3  h3
+      6        O O O O                               6. c4  g3
+      7                                11 discs     
+      8                                             
+
+Book hash: 1695878744 647520619 (0)
+
+Scores for the 10 moves:
+   e7   +0.00 discs (book)
+   c7   -0.07 discs (book)
+   c6   -0.46 discs (book)
+   h4   -2.50 discs (book)
+   h6   -3.10 discs (book)
+   d7   -6.23 discs
+   f7   -8.90 discs
+   h7   -13.36 discs
+   g7   -13.80 discs
+   h2   -26.05 discs
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * *   O O               10 discs      3. e3  d6
+      4      * * * * O                               4. g4  d3
+      5        O * O O        White                  5. c3  h3
+      6        * O O O                               6. c4  g3
+      7      *                 (O)     9 discs       7. g5  g6
+      8                                              8. c7  
+
+Book hash: 2120121309 1660483804 (2)
+
+Scores for the 10 moves:
+   c6   +0.07 discs (book)
+   d7   -3.26 discs (book)
+   f3   -4.35 discs (book)
+   e2   -5.50 discs
+   b3   -8.18 discs
+   c2   -10.54 discs
+   b4   -11.73 discs
+   d2   -14.58 discs
+   b8   -22.58 discs
+   b2   -26.94 discs
+
+White move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * *   O O       (*)     9 discs       3. e3  d6
+      4      * * * * O                               4. g4  d3
+      5        O * O O        White                  5. c3  h3
+      6      O O O O O                               6. c4  g3
+      7      *                         11 discs      7. g5  g6
+      8                                             
+
+Book hash: 1845538485 1315612968 (4)
+
+Scores for the 11 moves:
+   c5   -0.07 discs (book)
+   h5   -0.48 discs (book)
+   h6   -0.78 discs (book)
+   e7   -6.77 discs
+   h4   -7.89 discs
+   d7   -8.35 discs
+   f7   -10.08 discs
+   h7   -13.50 discs
+   g7   -15.20 discs
+   h2   -26.18 discs
+   b7   -26.25 discs
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black                  2. f5  f4
+      2                                              3. e3  d6
+      3      * * *   O O               12 discs      4. g4  d3
+      4      * * * * O                               5. c3  h3
+      5      * * * O O        White                  6. c4  g3
+      6      * O O O O                               7. g5  g6
+      7      *                 (O)     9 discs       8. c7  c6
+      8                                              9. c5  
+
+Book hash: 2111279182 1171298992 (0)
+
+Scores for the 10 moves:
+   b6   +0.07 discs (book)
+   b5   -0.34 discs (book)
+   f3   -2.39 discs (book)
+   e2   -8.43 discs
+   d2   -10.95 discs
+   b3   -11.35 discs
+   b8   -13.53 discs
+   c2   -13.77 discs
+   b4   -21.16 discs
+   b2   -21.94 discs
+
+White move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * *   O O       (*)     11 discs      3. e3  d6
+      4      * * * * O                               4. g4  d3
+      5      * * * O O        White                  5. c3  h3
+      6    O O O O O O                               6. c4  g3
+      7      *                         11 discs      7. g5  g6
+      8                                              8. c7  c6
+
+Book hash: 2025699327 618500301 (0)
+
+Scores for the 12 moves:
+   d7   -0.07 discs (book)
+   h5   -0.48 discs (book)
+   h6   -1.55 discs (book)
+   a5   -3.44 discs (book)
+   h4   -6.80 discs
+   f7   -7.01 discs
+   e7   -13.85 discs
+   g7   -13.92 discs
+   a7   -15.30 discs
+   h7   -17.76 discs
+   b7   -19.03 discs
+   h2   -22.58 discs
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * *     O               7 discs       3. e3  d6
+      4      * * * * O                               4. g4  d3
+      5        O O O          White                  5. c3  h3
+      6        O O O                                 6. c4  
+      7                        (O)     8 discs      
+      8                                             
+
+Book hash: 1404488410 1570252919 (6)
+
+Scores for the 8 moves:
+   g3   +0.00 discs (book)
+   f3   -2.94 discs (book)
+   c2   -9.66 discs
+   e2   -11.95 discs
+   d2   -14.59 discs
+   b3   -15.66 discs
+   b4   -18.64 discs
+   b2   -32.22 discs
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * * O   O       (*)     5 discs       3. e3  d6
+      4      * * O O O                               4. g4  d3
+      5        O O O          White                  5. c3  h3
+      6        O O O                                
+      7                                11 discs     
+      8                                             
+
+Book hash: 2083731489 319994926 (7)
+
+Scores for the 8 moves:
+   g5   +1.89 discs
+   e7   +1.27 discs
+   g3   -2.21 discs
+   h4   -3.32 discs
+   g6   -4.02 discs
+   d7   -4.51 discs
+   f7   -10.90 discs
+   g7   -15.45 discs
+
+Black move: Move infeasible
+
+Black move: Move infeasible
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * * O   O               9 discs       3. e3  d6
+      4      * * * * * *                             4. g4  d3
+      5        O O O          White                  5. c3  h3
+      6        O O O                                 6. c4  f3
+      7                        (O)     8 discs       7. h4  
+      8                                             
+
+Book hash: 2084369747 88068621 (3)
+
+Scores for the 7 moves:
+   h5   -0.99 discs
+   d2   -2.19 discs
+   e2   -2.27 discs
+   c2   -5.01 discs
+   g3   -5.64 discs
+   b3   -12.36 discs
+   b2   -24.95 discs
+
+White move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2                                              2. f5  f4
+      3      * * * O   O       (*)     7 discs       3. e3  d6
+      4      * * * * O O                             4. g4  d3
+      5        O O O   O      White                  5. c3  h3
+      6        O O O                                 6. c4  f3
+      7                                11 discs     
+      8                                             
+
+Book hash: 1965832399 1919560438 (1)
+
+Scores for the 10 moves:
+   g3   -1.30 discs
+   c6   -4.85 discs
+   f2   -4.85 discs
+   c7   -5.81 discs
+   g6   -6.52 discs
+   e7   -8.88 discs
+   d7   -11.23 discs
+   f7   -19.66 discs
+   g7   -20.12 discs
+   g2   -21.48 discs
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black                  1. e6  f6
+      2            *                                 2. f5  f4
+      3      * * * *   O               9 discs       3. e3  d6
+      4      * * * * O O                             4. g4  d3
+      5        O O O   O      White                  5. c3  h3
+      6        O O O                                 6. c4  f3
+      7                        (O)     10 discs      7. h4  h5
+      8                                              8. f2  
+
+Book hash: 1455210977 1806605800 (3)
+
+Scores for the 9 moves:
+   g3   +4.12 discs
+   e2   +1.29 discs
+   f1   -3.73 discs
+   c2   -4.55 discs
+   d2   -5.10 discs
+   b3   -5.16 discs
+   b4   -7.08 discs
+   b2   -21.84 discs
+   g2   -22.26 discs
+
+White move: 
+         a b c d e f g h
+
+      1            O          Black                  1. e6  f6
+      2            O                                 2. f5  f4
+      3      * * * O   O       (*)     6 discs       3. e3  d6
+      4      * * * O O O                             4. g4  d3
+      5        O O O   O      White                  5. c3  h3
+      6        O O O                                 6. c4  f3
+      7                                14 discs      7. h4  h5
+      8                                             
+
+Book hash: 512657397 854991394 (0)
+
+Scores for the 10 moves:
+   g5   +1.17 discs
+   e7   +0.00 discs
+   c6   -1.88 discs
+   g6   -4.07 discs
+   g3   -5.20 discs
+   d7   -5.53 discs
+   f7   -9.91 discs
+   g2   -11.20 discs
+   g7   -20.38 discs
+   g1   -25.80 discs
+
+Black move: 
+         a b c d e f g h
+
+      1            O          Black                  2. f5  f4
+      2            O *                               3. e3  d6
+      3      * * * *   O               8 discs       4. g4  d3
+      4      * * * O O O                             5. c3  h3
+      5        O O O   O      White                  6. c4  f3
+      6        O O O                                 7. h4  h5
+      7                        (O)     13 discs      8. f2  f1
+      8                                              9. g2  
+
+Book hash: 1533243815 634312183 (4)
+
+Scores for the 9 moves:
+   c5   +9.90 discs
+   e2   +5.45 discs
+   c2   -2.45 discs
+   b3   -3.30 discs
+   d2   -4.20 discs
+   b4   -5.06 discs
+   h1   -5.39 discs
+   b2   -17.52 discs
+   h2   -31.45 discs
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: 
+         a b c d e f g h
+
+      1            O          Black                  1. e6  f6
+      2            O O O                             2. f5  f4
+      3      * * * *   O       (*)     7 discs       3. e3  d6
+      4      * * * O O O                             4. g4  d3
+      5        O O O   O      White                  5. c3  h3
+      6        O O O                                 6. c4  f3
+      7                                15 discs      7. h4  h5
+      8                                              8. f2  f1
+
+Book hash: 1516886277 496370874 (4)
+
+Scores for the 9 moves:
+   e7   +29.73 discs
+   h1   +29.43 discs
+   c6   +26.45 discs
+   g5   +25.80 discs
+   g6   +21.16 discs
+   d7   +18.46 discs
+   g7   +11.09 discs
+   f7   +8.87 discs
+   g1   -33.55 discs
+
+Black move: 
+         a b c d e f g h
+
+      1            O   *      Black                  3. e3  d6
+      2            O * O                             4. g4  d3
+      3      * * * *   O               9 discs       5. c3  h3
+      4      * * * O O O                             6. c4  f3
+      5        O O O   O      White                  7. h4  h5
+      6        O O O                                 8. f2  f1
+      7                        (O)     14 discs      9. g2  h2
+      8                                             10. h1  
+
+Book hash: 1675813993 1501717367 (1)
+
+Scores for the 7 moves:
+   c5   -32.64 discs
+   d2   -39.23 discs
+   c2   -48.98 discs
+   e2   -55.89 discs
+   b3   -59.73 discs
+   b2   -59.77 discs
+   b4   -63.40 discs
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: Move infeasible
+
+White move: 
+         a b c d e f g h
+
+      1            O   *      Black                  2. f5  f4
+      2          O O * O                             3. e3  d6
+      3      * * O O   O       (*)     6 discs       4. g4  d3
+      4      * * O O O O                             5. c3  h3
+      5        O O O   O      White                  6. c4  f3
+      6        O O O                                 7. h4  h5
+      7                                18 discs      8. f2  f1
+      8                                              9. g2  h2
+
+Book hash: 1408137596 2087038698 (0)
+
+Scores for the 9 moves:
+   g1   +56.76 discs
+   g3   +36.19 discs
+   h6   +35.18 discs
+   g6   +35.05 discs
+   c6   +30.99 discs
+   f7   +29.85 discs
+   d7   +27.01 discs
+   d2   +25.15 discs
+   g7   +19.60 discs
+
+Black move: Move infeasible
+
+Black move: Move infeasible
+
+Black move: Move infeasible
+
+Black move: 
+         a b c d e f g h
+
+      1            O   *      Black                  4. g4  d3
+      2        * * * * O                             5. c3  h3
+      3      * * O O   O               9 discs       6. c4  f3
+      4      * * O O O O                             7. h4  h5
+      5        O O O   O      White                  8. f2  f1
+      6        O O O                                 9. g2  h2
+      7                        (O)     16 discs     10. h1  e2
+      8                                             11. d2  
+
+Book hash: 1975938824 464266537 (3)
+
+Scores for the 10 moves:
+   e1   -29.89 discs
+   c5   -32.55 discs
+   b3   -34.07 discs
+   c1   -35.28 discs
+   b5   -39.56 discs
+   b4   -45.61 discs
+   b2   -46.78 discs
+   d1   -47.02 discs
+   g1   -51.01 discs
+   c2   -65.24 discs
+
+White move: Move infeasible
+
+White move: 
+         a b c d e f g h
+
+      1            O   *      Black                  3. e3  d6
+      2        * * * * O                             4. g4  d3
+      3    O O O O O   O       (*)     6 discs       5. c3  h3
+      4      O * O O O O                             6. c4  f3
+      5        O O O   O      White                  7. h4  h5
+      6        O O O                                 8. f2  f1
+      7                                20 discs      9. g2  h2
+      8                                             10. h1  e2
+
+Book hash: 1022975061 506900065 (5)
+
+Scores for the 10 moves:
+   b5   +28.33 discs
+   g5   +27.88 discs
+   e7   +26.96 discs
+   h6   +24.98 discs
+   b4   +23.83 discs
+   d7   +22.84 discs
+   b2   +19.81 discs
+   c6   +19.57 discs
+   g7   +14.55 discs
+   f7   +9.02 discs
+
+Black move: Move infeasible
+
+Black move: Move infeasible
+
+Black move: 
+         a b c d e f g h
+
+      1            O   *      Black                  5. c3  h3
+      2    *   * * * * O                             6. c4  f3
+      3    O * O O O   O               8 discs       7. h4  h5
+      4      O * O O O O                             8. f2  f1
+      5        O O O   O      White                  9. g2  h2
+      6        O O O                                10. h1  e2
+      7                        (O)     19 discs     11. d2  b3
+      8                                             12. b2  
+
+Book hash: 1421384138 561435577 (5)
+
+Scores for the 8 moves:
+   a1   -24.33 discs
+   e1   -26.03 discs
+   c5   -28.66 discs
+   d1   -30.05 discs
+   c1   -34.26 discs
+   g1   -43.13 discs
+   b1   -48.96 discs
+   c2   -54.21 discs
+
+White move: 
+         a b c d e f g h
+
+      1  O         O   *      Black                  4. g4  d3
+      2    O   * * * * O                             5. c3  h3
+      3    O O O O O   O       (*)     5 discs       6. c4  f3
+      4      O O O O O O                             7. h4  h5
+      5        O O O   O      White                  8. f2  f1
+      6        O O O                                 9. g2  h2
+      7                                23 discs     10. h1  e2
+      8                                             11. d2  b3
+
+Book hash: 2025481446 315481277 (3)
+
+Scores for the 9 moves:
+   c5   +25.83 discs
+   h6   +25.83 discs
+   b5   +23.27 discs
+   e7   +20.03 discs
+   b4   +18.86 discs
+   g5   +18.45 discs
+   d7   +8.66 discs
+   c6   +7.59 discs
+   f7   +3.73 discs
+
+Black move: Move infeasible
+
+Black move: 

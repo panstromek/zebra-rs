@@ -1,0 +1,5673 @@
+Log file created Sat Mar 20 23:27:43 2021
+
+Engine compiled Jul  2 2020 19:33:59
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3                                5 discs
+      4        O O O          
+      5        * * O          White    
+      6          * *          
+      7              *         (O)     4 discs
+      8                       
+
+7 moves generated: h8 c6 c5 d6 d7 e7 f7 
+-->   5  +21.66          2605  f7 g6 c5 g4        0.0 s  
+PV: f7 g6 c5 g4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3                                5 discs
+      4        O O O          
+      5        * * O          White    
+      6          * *          
+      7              *         (O)     4 discs
+      8                       
+
+7 moves generated: h8 c6 c5 d6 d7 e7 f7 
+-->   5  +21.66          4730  f7 g6 c5 g4        0.0 s  
+PV: f7 g6 c5 g4
+
+         a b c d e f g h
+
+      1                       Black    
+      2            O          
+      3          O             (*)     3 discs
+      4        O * * *        
+      5        O O O          White    
+      6        O O O          
+      7                                9 discs
+      8                       
+
+9 moves generated: c6 c4 d7 d2 e2 e7 g6 c7 f7 
+-->   5  +7.14           1700  g6 g5 e7 f3        0.0 s  
+PV: g6 g5 e7 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2            O          
+      3          O             (*)     3 discs
+      4        O * * *        
+      5        O O O          White    
+      6        O O O          
+      7                                9 discs
+      8                       
+
+9 moves generated: c6 c4 d7 d2 e2 e7 g6 c7 f7 
+-->   5  +7.14           3458  g6 g5 e7 f3        0.0 s  
+PV: g6 g5 e7 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3        O *                     6 discs
+      4        O O * *        
+      5        O O *          White    
+      6        O * O          
+      7        *               (O)     7 discs
+      8                       
+
+10 moves generated: f3 e7 g5 g6 h4 d8 f7 e2 f2 g3 
+-->   5  +9.79           2592  e7 c4 g5 h6        0.0 s  
+PV: e7 c4 g5 h6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3        O *                     5 discs
+      4        * O * *        
+      5      * O O O          White    
+      6        O O O          
+      7                        (O)     8 discs
+      8                       
+
+9 moves generated: f3 h3 c3 h4 c4 e2 b4 b5 g3 
+-->   5  +4.49           5054  g3 g5 f3 e2        0.0 s  
+PV: g3 g5 f3 e2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3        O *                     6 discs
+      4        O O * *        
+      5        O O *          White    
+      6        O O *          
+      7            *           (O)     7 discs
+      8                       
+
+10 moves generated: f3 g5 h3 g6 h4 e2 g3 f2 g8 g7 
+-->   5  +4.58           8275  f3 c7 d7 c6        0.0 s  
+PV: f3 c7 d7 c6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3        O *                     5 discs
+      4        * O * *        
+      5      * O O O          White    
+      6        O O O          
+      7                        (O)     8 discs
+      8                       
+
+9 moves generated: f3 h3 c3 h4 c4 e2 b4 b5 g3 
+-->   5  +4.49          10624  g3 g5 f3 e2        0.0 s  
+PV: g3 g5 f3 e2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3        O *                     6 discs
+      4        O O * *        
+      5        O O *          White    
+      6        O O *          
+      7            *           (O)     7 discs
+      8                       
+
+10 moves generated: f3 g5 h3 g6 h4 e2 g3 f2 g8 g7 
+-->   5  +4.58          13765  f3 c7 d7 c6        0.0 s  
+PV: f3 c7 d7 c6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3        O *                     6 discs
+      4        O O * *        
+      5        O O *          White    
+      6        O * O          
+      7        *               (O)     7 discs
+      8                       
+
+10 moves generated: f3 e7 g5 g6 h4 d8 e2 f7 g3 f2 
+-->   5  +9.79          16281  e7 c4 g5 h6        0.0 s  
+PV: e7 c4 g5 h6
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O             (*)     4 discs
+      4        O O * *        
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+9 moves generated: f3 f1 c4 d7 d2 c7 f7 g6 g7 
+-->   5  +5.13           2113  f3 c4 c5 f2        0.0 s  
+PV: f3 c4 c5 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O *             (*)     4 discs
+      4        O O * *        
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+8 moves generated: e7 c1 c4 c5 d7 c7 f7 g7 
+-->   5  +8.84           4288  c4 g3 c6 f3        0.0 s  
+PV: c4 g3 c6 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2            O          
+      3      * * O             (*)     4 discs
+      4        O O * *        
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+8 moves generated: f3 c4 d7 d2 c7 f7 g6 g7 
+-->   5  +5.51           5845  f3 e2 d2 c4        0.0 s  
+PV: f3 e2 d2 c4
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * *             (*)     4 discs
+      4        O O * *        
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+8 moves generated: e7 c4 c5 d7 c7 f7 b3 g6 
+-->   5  +21.68          8073  c4 c5 b3 f3        0.0 s  
+PV: c4 c5 b3 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O             (*)     4 discs
+      4        O O * *        
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+9 moves generated: f3 c4 f1 d7 d2 c7 f7 g6 g7 
+-->   5  +5.13          10092  f3 c4 c5 f2        0.0 s  
+PV: f3 c4 c5 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2            O          
+      3      * * O             (*)     4 discs
+      4        O O * *        
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+8 moves generated: f3 c4 d7 d2 c7 f7 g6 g7 
+-->   5  +5.51          11739  f3 e2 d2 c4        0.0 s  
+PV: f3 e2 d2 c4
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O *             (*)     4 discs
+      4        O O * *        
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+8 moves generated: e7 c4 c1 c5 d7 c7 f7 g7 
+-->   5  +8.84          13973  c4 g3 c6 f3        0.0 s  
+PV: c4 g3 c6 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * *             (*)     4 discs
+      4        O O * *        
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+8 moves generated: c4 e7 c5 d7 c7 f7 b3 g6 
+-->   5  +21.68         16362  c4 c5 b3 f3        0.0 s  
+PV: c4 c5 b3 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O               6 discs
+      4        * O * O        
+      5      * O O O          White    
+      6        O O O          
+      7                        (O)     9 discs
+      8                       
+
+9 moves generated: f3 c4 g3 e2 d2 b4 b5 c2 b2 
+-->   5  +6.96           2328  g3 g5 c6 f7        0.0 s  
+PV: g3 g5 c6 f7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O               8 discs
+      4        * O * O        
+      5        * O O          White    
+      6        * O O          
+      7        *               (O)     7 discs
+      8                       
+
+10 moves generated: c6 f3 c4 g3 e2 c5 c8 c7 c2 b2 
+-->   5  +12.46          4627  c5 e7 c4 g3        0.0 s  
+PV: c5 e7 c4 g3
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O               7 discs
+      4        O O * O        
+      5        O * O          White    
+      6        * O O          
+      7      *                 (O)     8 discs
+      8                       
+
+8 moves generated: c6 f3 e2 d7 d2 f2 c2 b2 
+-->   5  +3.95           6627  f3 g5 e2 c4        0.0 s  
+PV: f3 g5 e2 c4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O               7 discs
+      4        O O * O        
+      5        O O *          White    
+      6        O O *          
+      7            *           (O)     8 discs
+      8                       
+
+10 moves generated: g5 g3 g6 e2 d2 f2 c2 g8 b2 g7 
+-->   5  +8.17           9516  g5 g6 e7 h5        0.0 s  
+PV: g5 g6 e7 h5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O               7 discs
+      4        O * * O        
+      5        O O *          White    
+      6        O O O *        
+      7                        (O)     8 discs
+      8                       
+
+8 moves generated: g5 f3 g3 e2 h6 d2 f2 b2 
+-->   5  +4.55          11336  g5 c4 g3 h6        0.0 s  
+PV: g5 c4 g3 h6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O               8 discs
+      4        * O * O        
+      5        O * O          White    
+      6        O O *          
+      7              *         (O)     7 discs
+      8                       
+
+8 moves generated: f3 c4 g3 g6 e2 f7 d2 c2 
+-->   5  +24.78         13384  g6 c5 c6 d7        0.0 s  
+PV: g6 c5 c6 d7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O               7 discs
+      4        O O * O        
+      5        O * O          White    
+      6        * O O          
+      7      *                 (O)     8 discs
+      8                       
+
+8 moves generated: f3 c6 e2 d7 d2 f2 c2 b2 
+-->   5  +3.95          15455  f3 g5 e2 c4        0.0 s  
+PV: f3 g5 e2 c4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O               7 discs
+      4        O * * O        
+      5        O O *          White    
+      6        O O O *        
+      7                        (O)     8 discs
+      8                       
+
+8 moves generated: f3 g5 g3 e2 h6 d2 f2 b2 
+-->   5  +4.55          17255  g5 c4 g3 h6        0.0 s  
+PV: g5 c4 g3 h6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O               6 discs
+      4        * O * O        
+      5      * O O O          White    
+      6        O O O          
+      7                        (O)     9 discs
+      8                       
+
+9 moves generated: f3 c4 g3 e2 d2 b4 b5 c2 b2 
+-->   5  +6.96          19565  g3 g5 c6 f7        0.0 s  
+PV: g3 g5 c6 f7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O               7 discs
+      4        O O * O        
+      5        O O *          White    
+      6        O O *          
+      7            *           (O)     8 discs
+      8                       
+
+10 moves generated: g5 g3 g6 e2 d2 f2 c2 g8 b2 g7 
+-->   5  +8.17          22476  g5 g6 e7 h5        0.0 s  
+PV: g5 g6 e7 h5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O               8 discs
+      4        * O * O        
+      5        * O O          White    
+      6        * O O          
+      7        *               (O)     7 discs
+      8                       
+
+10 moves generated: f3 c6 c4 g3 c5 e2 c8 c7 c2 b2 
+-->   5  +12.46         24891  c5 e7 c4 g3        0.0 s  
+PV: c5 e7 c4 g3
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O               8 discs
+      4        * O * O        
+      5        O * O          White    
+      6        O O *          
+      7              *         (O)     7 discs
+      8                       
+
+8 moves generated: f3 c4 g3 g6 e2 f7 d2 c2 
+-->   5  +24.78         27016  g6 c5 c6 d7        0.0 s  
+PV: g6 c5 c6 d7
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O     O       (*)     5 discs
+      4      * * O * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+10 moves generated: f3 d7 d2 f1 h4 g6 c7 f2 g7 f7 
+-->   5  +11.95          2219  f3 g3 g5 h4        0.0 s  
+PV: f3 g3 g5 h4
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O              
+      3      * O *     O       (*)     5 discs
+      4      * O * * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+12 moves generated: c5 e7 c6 e2 h4 c1 g6 c7 e1 c2 g7 f7 
+-->   5  +14.59          4868  c5 f3 e2 c2        0.0 s  
+PV: c5 f3 e2 c2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O       (*)     3 discs
+      4    O O O O O O        
+      5        O O O          White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+8 moves generated: c5 g5 e7 d7 b5 g6 a5 g7 
+-->   5  +18.64          6792  b5 f2 f3 e2        0.0 s  
+PV: b5 f2 f3 e2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3    O * * *     O       (*)     6 discs
+      4      O * * * O        
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+12 moves generated: c5 e7 d7 c6 h4 b5 a3 g6 c7 b4 g7 f7 
+-->   5  +15.66         10039  c5 g3 c6 b5        0.0 s  
+PV: c5 g3 c6 b5
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O *     O       (*)     5 discs
+      4      * * O * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+9 moves generated: e7 d7 d2 e2 h4 c1 c7 g7 f7 
+-->   5  +9.66          12380  d2 f3 g5 g3        0.0 s  
+PV: d2 f3 g5 g3
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * *     O       (*)     5 discs
+      4      * O * * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+10 moves generated: c5 e7 d7 c6 h4 b3 g6 c7 c2 f7 
+-->   5  +32.22         15673  c5 d2 e2 c2        0.0 s  
+PV: c5 d2 e2 c2
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O *     O       (*)     5 discs
+      4      * * O * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+9 moves generated: e7 d2 d7 e2 h4 c1 c7 g7 f7 
+-->   5  +9.66          18057  d2 f3 g5 g3        0.0 s  
+PV: d2 f3 g5 g3
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O     O       (*)     5 discs
+      4      * * O * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+10 moves generated: d2 f3 d7 f1 h4 g6 c7 f2 g7 f7 
+-->   5  +11.95         20177  f3 g3 g5 h4        0.0 s  
+PV: f3 g3 g5 h4
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O              
+      3      * O *     O       (*)     5 discs
+      4      * O * * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+12 moves generated: c5 e7 c6 e2 h4 c1 g6 c7 e1 c2 g7 f7 
+-->   5  +14.59         22801  c5 f3 e2 c2        0.0 s  
+PV: c5 f3 e2 c2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3    O * * *     O       (*)     6 discs
+      4      O * * * O        
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+12 moves generated: c5 e7 d7 c6 h4 b5 a3 g6 c7 b4 g7 f7 
+-->   5  +15.66         26391  c5 g3 c6 b5        0.0 s  
+PV: c5 g3 c6 b5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O       (*)     3 discs
+      4    O O O O O O        
+      5        O O O          White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+8 moves generated: c5 g5 e7 d7 b5 g6 a5 g7 
+-->   5  +18.64         28586  b5 e2 f3 f2        0.0 s  
+PV: b5 e2 f3 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * *     O       (*)     5 discs
+      4      * O * * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+10 moves generated: c5 e7 d7 c6 h4 b3 g6 c7 c2 f7 
+-->   5  +32.22         31615  c5 d2 e2 c2        0.0 s  
+PV: c5 d2 e2 c2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               9 discs
+      4      * * * O O        
+      5        * O O          White    
+      6        * O O          
+      7        *               (O)     8 discs
+      8                       
+
+10 moves generated: e2 c6 c5 d2 c8 c2 c7 b4 b3 b2 
+-->   5  +6.99           2547  c6 g5 h4 h6        0.0 s  
+PV: c6 g5 h4 h6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               9 discs
+      4      * * * * * *      
+      5        O O O          White    
+      6        O O O          
+      7                        (O)     8 discs
+      8                       
+
+8 moves generated: e2 f3 g5 d2 h5 c2 b3 b2 
+-->   5  +9.58           4407  h5 g6 h6 c5        0.0 s  
+PV: h5 g6 h6 c5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               8 discs
+      4      * * * O O        
+      5        O O *          White    
+      6        O O O *        
+      7                        (O)     9 discs
+      8                       
+
+8 moves generated: e2 f3 g5 d2 h6 b4 b3 b2 
+-->   5  +8.60           6029  g5 h6 h4 e7        0.0 s  
+PV: g5 h6 h4 e7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               9 discs
+      4      * * * O O        
+      5        O * O          White    
+      6        O O *          
+      7              *         (O)     8 discs
+      8                       
+
+8 moves generated: e2 f3 d2 g6 f7 c2 b4 b3 
+-->   5  +14.08          8005  f3 g5 f7 h4        0.0 s  
+PV: f3 g5 f7 h4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               9 discs
+      4      * * * O O        
+      5        * O O          White    
+      6        O * O          
+      7            *           (O)     8 discs
+      8                       
+
+9 moves generated: e2 c5 d7 d2 e7 f8 c2 b4 b2 
+-->   5  +7.54          10282  e7 g6 g5 f3        0.0 s  
+PV: e7 g6 g5 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               9 discs
+      4      * * * O O        
+      5        * O O          White    
+      6        * O O          
+      7        *               (O)     8 discs
+      8                       
+
+10 moves generated: c6 e2 c5 d2 c8 c2 c7 b4 b3 b2 
+-->   5  +6.99          12777  c6 g5 h4 h6        0.0 s  
+PV: c6 g5 h4 h6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               9 discs
+      4      * * * O O        
+      5        * O O          White    
+      6        O * O          
+      7            *           (O)     8 discs
+      8                       
+
+9 moves generated: e2 c5 e7 d7 d2 f8 c2 b4 b2 
+-->   5  +7.54          15095  e7 g6 g5 f3        0.0 s  
+PV: e7 g6 g5 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               8 discs
+      4      * * * O O        
+      5        O O *          White    
+      6        O O O *        
+      7                        (O)     9 discs
+      8                       
+
+8 moves generated: f3 e2 g5 d2 h6 b4 b3 b2 
+-->   5  +8.60          16978  g5 h6 h4 e7        0.0 s  
+PV: g5 h6 h4 e7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               9 discs
+      4      * * * * * *      
+      5        O O O          White    
+      6        O O O          
+      7                        (O)     8 discs
+      8                       
+
+8 moves generated: g5 f3 e2 d2 h5 c2 b3 b2 
+-->   5  +9.58          18718  h5 g6 h6 c5        0.0 s  
+PV: h5 g6 h6 c5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               9 discs
+      4      * * * O O        
+      5        O * O          White    
+      6        O O *          
+      7              *         (O)     8 discs
+      8                       
+
+8 moves generated: f3 e2 d2 g6 f7 c2 b4 b3 
+-->   5  +14.08         21005  f3 g5 f7 h4        0.0 s  
+PV: f3 g5 f7 h4
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O   O O       (*)     6 discs
+      4      * * O * O        
+      5        O O O *        White    
+      6        O O O          
+      7                                12 discs
+      8                       
+
+14 moves generated: e7 g6 c5 f3 d2 c7 f2 f1 h4 d7 f7 h2 g2 g7 
+-->   5  +8.58           3528  f3 h4 g6 f2        0.0 s  
+PV: f3 h4 g6 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O              
+      3      * O *   O O       (*)     6 discs
+      4      * O * * O        
+      5        O O O *        White    
+      6        O O O          
+      7                                12 discs
+      8                       
+
+14 moves generated: e7 c6 g6 c5 e2 c7 h4 c1 c2 f7 e1 h2 g2 g7 
+-->   5  +10.89          7049  g6 f3 c2 h4        0.0 s  
+PV: g6 f3 c2 h4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O       (*)     7 discs
+      4      * * * * O        
+      5        O O O O O      White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+10 moves generated: g6 e7 c6 h6 c7 h4 d7 f7 h2 g7 
+-->   5  +5.67           9048  g6 f3 h4 h6        0.0 s  
+PV: g6 f3 h4 h6
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O *   O O       (*)     6 discs
+      4      * * O * O        
+      5        O O O *        White    
+      6        O O O          
+      7                                12 discs
+      8                       
+
+12 moves generated: e7 c5 e2 d2 c7 h4 c1 d7 f7 h2 g2 g7 
+-->   5  +9.63          13452  h4 b4 c5 f3        0.0 s  
+PV: h4 b4 c5 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O       (*)     4 discs
+      4    O O O O O O        
+      5        O O O *        White    
+      6        O O O          
+      7                                14 discs
+      8                       
+
+8 moves generated: g6 c5 e7 b5 d7 a5 g2 g7 
+-->   5  +11.98         16137  b5 h6 c5 b3        0.0 s  
+PV: b5 h6 c5 b3
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3    O * * *   O O       (*)     7 discs
+      4      O * * * O        
+      5        O O O *        White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+14 moves generated: g6 c5 e7 c6 b4 c7 h4 b5 d7 a3 f7 h2 g2 g7 
+-->   5  +15.19         21201  g6 c2 c5 d2        0.0 s  
+PV: g6 c2 c5 d2
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * *   O O       (*)     6 discs
+      4      * O * * O        
+      5        O O O *        White    
+      6        O O O          
+      7                                12 discs
+      8                       
+
+12 moves generated: g6 c5 e7 c6 h4 c7 c2 d7 b3 f7 h2 g2 
+-->   5  +27.59         24975  c5 h4 c7 e2        0.0 s  
+PV: c5 h4 c7 e2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O       (*)     7 discs
+      4      * * * * O        
+      5        O O O O O      White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+10 moves generated: g6 e7 c6 h6 h4 c7 d7 f7 h2 g7 
+-->   5  +5.67          27092  g6 f3 h4 h6        0.0 s  
+PV: g6 f3 h4 h6
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O   O O       (*)     6 discs
+      4      * * O * O        
+      5        O O O *        White    
+      6        O O O          
+      7                                12 discs
+      8                       
+
+14 moves generated: g6 c5 f3 e7 d2 h4 c7 f2 f1 d7 f7 h2 g2 g7 
+-->   5  +8.58          30559  f3 h4 g6 f2        0.0 s  
+PV: f3 h4 g6 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O *   O O       (*)     6 discs
+      4      * * O * O        
+      5        O O O *        White    
+      6        O O O          
+      7                                12 discs
+      8                       
+
+12 moves generated: c5 e7 e2 d2 h4 c7 c1 d7 f7 h2 g2 g7 
+-->   5  +9.63          34784  h4 b4 c5 f3        0.0 s  
+PV: h4 b4 c5 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O              
+      3      * O *   O O       (*)     6 discs
+      4      * O * * O        
+      5        O O O *        White    
+      6        O O O          
+      7                                12 discs
+      8                       
+
+14 moves generated: c5 g6 e7 c6 e2 h4 c7 c1 c2 f7 e1 h2 g2 g7 
+-->   5  +10.89         38291  g6 f3 c2 h4        0.0 s  
+PV: g6 f3 c2 h4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O       (*)     4 discs
+      4    O O O O O O        
+      5        O O O *        White    
+      6        O O O          
+      7                                14 discs
+      8                       
+
+8 moves generated: g6 c5 e7 b5 d7 a5 g2 g7 
+-->   5  +11.98         40905  b5 h6 c5 b3        0.0 s  
+PV: b5 h6 c5 b3
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3    O * * *   O O       (*)     7 discs
+      4      O * * * O        
+      5        O O O *        White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+14 moves generated: g6 c5 e7 c6 h4 b4 c7 b5 d7 a3 f7 h2 g2 g7 
+-->   5  +15.19         45795  g6 c2 c5 d2        0.0 s  
+PV: g6 c2 c5 d2
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * *   O O       (*)     6 discs
+      4      * O * * O        
+      5        O O O *        White    
+      6        O O O          
+      7                                12 discs
+      8                       
+
+12 moves generated: g6 c5 e7 c6 h4 c7 c2 d7 b3 f7 h2 g2 
+-->   5  +27.59         49657  c5 h4 c7 e2        0.0 s  
+PV: c5 h4 c7 e2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               10 discs
+      4      * * * * O        
+      5        * O O O        White    
+      6        * O O O        
+      7        *               (O)     9 discs
+      8                       
+
+11 moves generated: c5 f3 e2 c6 d2 c2 b4 c8 b2 b3 c7 
+-->   5  +6.23           3218  c6 e7 f8 c7        0.0 s  
+PV: c6 e7 f8 c7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               12 discs
+      4      * * * * O        
+      5        * O * O        White    
+      6        O * * O        
+      7            *           (O)     7 discs
+      8                       
+
+10 moves generated: c5 e2 d2 e7 d7 c2 b4 e8 b2 g7 
+-->   5  +8.90           6639  e7 c7 f3 f8        0.0 s  
+PV: e7 c7 f3 f8
+
+         a b c d e f g h
+
+      1                       Black    
+      2                *      
+      3      * * *   * O               9 discs
+      4      * * * * O        
+      5        O O O O        White    
+      6        O O O O        
+      7                        (O)     10 discs
+      8                       
+
+9 moves generated: f3 e2 d2 c2 b4 h1 g2 b2 b3 
+-->   5  +26.05          9027  h1 c6 g2 f7        0.0 s  
+PV: h1 c6 g2 f7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               10 discs
+      4      * * * * O        
+      5        O O * O        White    
+      6        O O O *        
+      7                *       (O)     9 discs
+      8                       
+
+8 moves generated: f3 e2 h6 d2 b4 b2 g7 b3 
+-->   5  +13.36         10789  f3 e7 d7 h5        0.0 s  
+PV: f3 e7 d7 h5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               10 discs
+      4      * * * * O        
+      5        O * O O        White    
+      6        O O * O        
+      7              *         (O)     9 discs
+      8                       
+
+9 moves generated: f3 e2 d2 e7 f7 c2 b4 g8 b3 
+-->   5  +13.80         13273  f3 h5 f7 h4        0.0 s  
+PV: f3 h5 f7 h4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               10 discs
+      4      * * * * O        
+      5        * O O O        White    
+      6        * O O O        
+      7        *               (O)     9 discs
+      8                       
+
+11 moves generated: f3 c5 c6 e2 d2 c2 b4 c8 b2 b3 c7 
+-->   5  +6.23          16368  c6 e7 f8 c7        0.0 s  
+PV: c6 e7 f8 c7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               12 discs
+      4      * * * * O        
+      5        * O * O        White    
+      6        O * * O        
+      7            *           (O)     7 discs
+      8                       
+
+10 moves generated: c5 e2 d2 e7 d7 c2 b4 e8 b2 g7 
+-->   5  +8.90          19915  e7 c7 f3 f8        0.0 s  
+PV: e7 c7 f3 f8
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               10 discs
+      4      * * * * O        
+      5        O O * O        White    
+      6        O O O *        
+      7                *       (O)     9 discs
+      8                       
+
+8 moves generated: f3 h6 e2 d2 b4 b2 g7 b3 
+-->   5  +13.36         21822  f3 e7 d7 h5        0.0 s  
+PV: f3 e7 d7 h5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               10 discs
+      4      * * * * O        
+      5        O * O O        White    
+      6        O O * O        
+      7              *         (O)     9 discs
+      8                       
+
+9 moves generated: f3 e2 d2 e7 f7 c2 b4 g8 b3 
+-->   5  +13.80         24232  f3 h5 f7 h4        0.0 s  
+PV: f3 h5 f7 h4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                *      
+      3      * * *   * O               9 discs
+      4      * * * * O        
+      5        O O O O        White    
+      6        O O O O        
+      7                        (O)     10 discs
+      8                       
+
+9 moves generated: f3 e2 d2 c2 b4 h1 g2 b2 b3 
+-->   5  +26.05         27419  h1 c6 g2 f7        0.0 s  
+PV: h1 c6 g2 f7
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O   O O       (*)     7 discs
+      4      * * O * O        
+      5        O O O O        White    
+      6        * O O O        
+      7      *                         13 discs
+      8                       
+
+10 moves generated: f3 h4 h6 d2 f2 h2 f1 f7 h7 g7 
+-->   5  +5.50           2294  f3 f2 h4 h5        0.0 s  
+PV: f3 f2 h4 h5
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O              
+      3      * O O   O O       (*)     6 discs
+      4      * O * O O        
+      5        O * O O        White    
+      6        * O O O        
+      7      *                         14 discs
+      8                       
+
+15 moves generated: f3 e7 c5 c6 h4 h5 h6 e2 c2 h2 e1 f7 d1 h7 g7 
+-->   5  +14.58          6127  c5 c6 f3 b5        0.0 s  
+PV: c5 c6 f3 b5
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O *   O O       (*)     8 discs
+      4      * * O * O        
+      5        O * O O        White    
+      6        * O O O        
+      7      *                         12 discs
+      8                       
+
+11 moves generated: c5 e7 h4 h5 h6 e2 d2 h2 c1 f7 g7 
+-->   5  +10.54         10328  e7 e8 h4 c6        0.0 s  
+PV: e7 e8 h4 c6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O       (*)     6 discs
+      4    O O O O O O        
+      5        O * O O        White    
+      6        * O O O        
+      7      *                         14 discs
+      8                       
+
+9 moves generated: c5 e7 h5 h6 h2 b5 a5 h7 g7 
+-->   5  +11.73         13463  b5 c6 c5 b3        0.0 s  
+PV: b5 c6 c5 b3
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O       (*)     6 discs
+      4      * * * O O        
+      5        O O O O        White    
+      6        O O O O        
+      7      O                         14 discs
+      8    O                  
+
+8 moves generated: e7 c6 h4 h6 d7 f7 h7 g7 
+-->   5  +22.58         15480  c6 b6 e7 c5        0.0 s  
+PV: c6 b6 e7 c5
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * *   O O       (*)     7 discs
+      4      * O * * O        
+      5        O O O O        White    
+      6        * O O O        
+      7      *                         13 discs
+      8                       
+
+10 moves generated: c6 c5 e7 h4 h6 c2 h2 f7 b3 h7 
+-->   5  +26.94         18743  c5 d7 h4 c6        0.0 s  
+PV: c5 d7 h4 c6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3    O * * *   O O       (*)     9 discs
+      4      O * * * O        
+      5        O * O O        White    
+      6        * O O O        
+      7      *                         11 discs
+      8                       
+
+13 moves generated: c5 c6 e7 h4 h5 h6 b4 b5 h2 f7 a3 h7 g7 
+-->   5  +8.18          23350  c5 c6 d7 b5        0.0 s  
+PV: c5 c6 d7 b5
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O   O O       (*)     7 discs
+      4      * * O * O        
+      5        O O O O        White    
+      6        * O O O        
+      7      *                         13 discs
+      8                       
+
+10 moves generated: f3 h4 h6 d2 f2 h2 f1 f7 h7 g7 
+-->   5  +5.50          26231  f3 f2 h4 h5        0.0 s  
+PV: f3 f2 h4 h5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3    O * * *   O O       (*)     9 discs
+      4      O * * * O        
+      5        O * O O        White    
+      6        * O O O        
+      7      *                         11 discs
+      8                       
+
+13 moves generated: c5 e7 c6 h4 h5 h6 b4 b5 h2 f7 a3 h7 g7 
+-->   5  +8.18          30713  c5 c6 d7 b5        0.0 s  
+PV: c5 c6 d7 b5
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O *   O O       (*)     8 discs
+      4      * * O * O        
+      5        O * O O        White    
+      6        * O O O        
+      7      *                         12 discs
+      8                       
+
+11 moves generated: c5 e7 h4 h5 h6 e2 d2 h2 c1 f7 g7 
+-->   5  +10.54         34853  e7 e8 h4 c6        0.0 s  
+PV: e7 e8 h4 c6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O       (*)     6 discs
+      4    O O O O O O        
+      5        O * O O        White    
+      6        * O O O        
+      7      *                         14 discs
+      8                       
+
+9 moves generated: c5 e7 h5 h6 b5 h2 a5 h7 g7 
+-->   5  +11.73         38252  b5 c6 c5 b3        0.0 s  
+PV: b5 c6 c5 b3
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O              
+      3      * O O   O O       (*)     6 discs
+      4      * O * O O        
+      5        O * O O        White    
+      6        * O O O        
+      7      *                         14 discs
+      8                       
+
+15 moves generated: c5 e7 f3 c6 h4 h5 h6 e2 c2 h2 e1 f7 d1 h7 g7 
+-->   5  +14.58         42467  c5 c6 f3 b5        0.0 s  
+PV: c5 c6 f3 b5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O       (*)     6 discs
+      4      * * * O O        
+      5        O O O O        White    
+      6        O O O O        
+      7      O                         14 discs
+      8    O                  
+
+8 moves generated: e7 c6 h4 h6 d7 f7 h7 g7 
+-->   5  +22.58         44547  c6 b6 e7 c5        0.0 s  
+PV: c6 b6 e7 c5
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * *   O O       (*)     7 discs
+      4      * O * * O        
+      5        O O O O        White    
+      6        * O O O        
+      7      *                         13 discs
+      8                       
+
+10 moves generated: c6 c5 e7 h4 h6 c2 h2 f7 b3 h7 
+-->   5  +26.94         47994  c5 d7 h4 c6        0.0 s  
+PV: c5 d7 h4 c6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               11 discs
+      4      * * * * O        
+      5        O * O O        White    
+      6      O O * O O        
+      7      *   *             (O)     10 discs
+      8                       
+
+12 moves generated: f3 f7 d7 d2 f8 c2 d8 b3 b4 c8 b8 b2 
+-->   5  +6.77           4885  f7 f8 f3 f2        0.0 s  
+PV: f7 f8 f3 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               11 discs
+      4      * * * * * *      
+      5        O * O O        White    
+      6      O O O O O        
+      7      *                 (O)     10 discs
+      8                       
+
+9 moves generated: f3 h5 e2 d2 c2 b3 c8 b8 b2 
+-->   5  +7.89           7011  h5 c5 b6 h6        0.0 s  
+PV: h5 c5 b6 h6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               12 discs
+      4      * * * * O        
+      5        * * O O        White    
+      6      O * O O O        
+      7      * *               (O)     9 discs
+      8                       
+
+11 moves generated: f3 c5 e2 d2 c2 e8 b3 b4 c8 b8 b2 
+-->   5  +8.35           9640  c5 b4 b5 e7        0.0 s  
+PV: c5 b4 b5 e7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                *      
+      3      * * *   * O               11 discs
+      4      * * * * O        
+      5        O * O O        White    
+      6      O O O O O        
+      7      *                 (O)     10 discs
+      8                       
+
+11 moves generated: f3 h1 e2 d2 c2 b3 b4 c8 g2 b8 b2 
+-->   5  +26.18         13002  h1 e7 d7 c5        0.0 s  
+PV: h1 e7 d7 c5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               14 discs
+      4      * * * * O        
+      5        * * * O        White    
+      6      O O * * O        
+      7      *     *           (O)     7 discs
+      8                       
+
+10 moves generated: c5 f3 d7 e7 d2 c2 e8 b4 c8 b8 
+-->   5  +10.08         15969  c5 d7 f3 b4        0.0 s  
+PV: c5 d7 f3 b4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               12 discs
+      4      * * * * O        
+      5        O * * O        White    
+      6      O O O O *        
+      7      *         *       (O)     9 discs
+      8                       
+
+10 moves generated: f3 e2 h6 d2 b3 b4 c8 b8 b2 g7 
+-->   5  +13.50         18385  h6 h5 f3 e7        0.0 s  
+PV: h6 h5 f3 e7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               12 discs
+      4      * * * * O        
+      5        * * O O        White    
+      6      * O O O O        
+      7    * *                 (O)     9 discs
+      8                       
+
+10 moves generated: c5 f3 e2 d2 c2 b3 b4 b6 b8 b2 
+-->   5  +26.25         20903  c5 b6 b5 d7        0.0 s  
+PV: c5 b6 b5 d7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               11 discs
+      4      * * * * O        
+      5        O * O O        White    
+      6      O O O * O        
+      7      *       *         (O)     10 discs
+      8                       
+
+11 moves generated: f3 f7 e7 e2 d2 c2 b3 b4 c8 g8 b8 
+-->   5  +15.20         24734  f7 h5 f3 h4        0.0 s  
+PV: f7 h5 f3 h4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               11 discs
+      4      * * * * O        
+      5        O * O O        White    
+      6      O O * O O        
+      7      *   *             (O)     10 discs
+      8                       
+
+12 moves generated: f7 f3 d7 d2 f8 c2 d8 b3 b4 c8 b8 b2 
+-->   5  +6.77          29429  f7 f8 f3 f2        0.0 s  
+PV: f7 f8 f3 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               11 discs
+      4      * * * * * *      
+      5        O * O O        White    
+      6      O O O O O        
+      7      *                 (O)     10 discs
+      8                       
+
+9 moves generated: f3 h5 e2 d2 c2 b3 c8 b8 b2 
+-->   5  +7.89          31577  h5 c5 b6 h6        0.0 s  
+PV: h5 c5 b6 h6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               12 discs
+      4      * * * * O        
+      5        * * O O        White    
+      6      O * O O O        
+      7      * *               (O)     9 discs
+      8                       
+
+11 moves generated: f3 c5 e2 d2 c2 e8 b3 b4 c8 b8 b2 
+-->   5  +8.35          34296  c5 b4 b5 e7        0.0 s  
+PV: c5 b4 b5 e7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               14 discs
+      4      * * * * O        
+      5        * * * O        White    
+      6      O O * * O        
+      7      *     *           (O)     7 discs
+      8                       
+
+10 moves generated: c5 f3 d7 e7 d2 c2 e8 b4 c8 b8 
+-->   5  +10.08         37378  c5 d7 f3 b4        0.0 s  
+PV: c5 d7 f3 b4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               12 discs
+      4      * * * * O        
+      5        O * * O        White    
+      6      O O O O *        
+      7      *         *       (O)     9 discs
+      8                       
+
+10 moves generated: f3 h6 e2 d2 b3 b4 c8 b8 b2 g7 
+-->   5  +13.50         39884  h6 h5 f3 e7        0.0 s  
+PV: h6 h5 f3 e7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               11 discs
+      4      * * * * O        
+      5        O * O O        White    
+      6      O O O * O        
+      7      *       *         (O)     10 discs
+      8                       
+
+11 moves generated: f3 f7 e7 e2 d2 c2 b3 b4 c8 g8 b8 
+-->   5  +15.20         43358  f7 h5 f3 h4        0.0 s  
+PV: f7 h5 f3 h4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                *      
+      3      * * *   * O               11 discs
+      4      * * * * O        
+      5        O * O O        White    
+      6      O O O O O        
+      7      *                 (O)     10 discs
+      8                       
+
+11 moves generated: f3 h1 e2 d2 c2 b3 b4 c8 g2 b8 b2 
+-->   5  +26.18         46728  h1 e7 d7 c5        0.0 s  
+PV: h1 e7 d7 c5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               12 discs
+      4      * * * * O        
+      5        * * O O        White    
+      6      * O O O O        
+      7    * *                 (O)     9 discs
+      8                       
+
+10 moves generated: c5 f3 e2 d2 c2 b3 b4 b6 b8 b2 
+-->   5  +26.25         49245  c5 b6 b5 d7        0.0 s  
+PV: c5 b6 b5 d7
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O   O O       (*)     9 discs
+      4      * * O * O        
+      5      * * O O O        White    
+      6      * O O O O        
+      7      *                         13 discs
+      8                       
+
+13 moves generated: d7 e7 h5 h6 h4 f3 d2 h2 f7 f2 f1 g7 h7 
+-->   5  +8.43           3758  f3 f2 f1 d1        0.0 s  
+PV: f3 f2 f1 d1
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O              
+      3      * O O   O O       (*)     7 discs
+      4      * O * O O        
+      5      * O * O O        White    
+      6      * O O O O        
+      7      *                         15 discs
+      8                       
+
+13 moves generated: e7 f3 h5 h6 h4 c2 h2 f7 f2 e2 e1 g7 h7 
+-->   5  +10.95          7959  f3 b5 e7 f7        0.0 s  
+PV: f3 b5 e7 f7
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O *   O O       (*)     10 discs
+      4      * * O * O        
+      5      * * * O O        White    
+      6      * O O O O        
+      7      *                         12 discs
+      8                       
+
+12 moves generated: f3 d7 e7 h5 h6 h4 d2 h2 f7 e2 c1 g7 
+-->   5  +13.77         11552  f3 d2 e2 b6        0.0 s  
+PV: f3 d2 e2 b6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3    O * * *   O O       (*)     10 discs
+      4      O * * * O        
+      5      * O * O O        White    
+      6      * O O O O        
+      7      *                         12 discs
+      8                       
+
+12 moves generated: d7 e7 h5 h6 b4 h4 b5 h2 f7 a3 g7 h7 
+-->   5  +11.35         15763  b4 b6 d7 b5        0.0 s  
+PV: b4 b6 d7 b5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O       (*)     7 discs
+      4    O O O O O O        
+      5      O * * O O        White    
+      6      * O O O O        
+      7      *                         15 discs
+      8                       
+
+13 moves generated: d7 f3 e7 h5 h6 b5 b6 h2 f7 b3 a5 g7 h7 
+-->   5  +21.16         20044  f3 b6 b3 d8        0.0 s  
+PV: f3 b6 b3 d8
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O       (*)     11 discs
+      4      * * * * O        
+      5      * * * O O        White    
+      6      * O O O O        
+      7      O                         11 discs
+      8    O                  
+
+10 moves generated: d7 e7 h5 h6 h4 h2 f7 c8 g7 h7 
+-->   5  +13.53         23024  d7 c8 e8 f3        0.0 s  
+PV: d7 c8 e8 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * *   O O       (*)     9 discs
+      4      * O * * O        
+      5      * * O O O        White    
+      6      * O O O O        
+      7      *                         13 discs
+      8                       
+
+10 moves generated: d7 e7 h5 h6 h4 c2 h2 f7 b3 h7 
+-->   5  +21.94         27297  d7 d8 b3 f3        0.0 s  
+PV: d7 d8 b3 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O   O O       (*)     9 discs
+      4      * * O * O        
+      5      * * O O O        White    
+      6      * O O O O        
+      7      *                         13 discs
+      8                       
+
+13 moves generated: d7 f3 e7 h5 h6 h4 d2 h2 f7 f2 f1 g7 h7 
+-->   5  +8.43          31090  f3 f2 f1 d1        0.0 s  
+PV: f3 f2 f1 d1
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O              
+      3      * O O   O O       (*)     7 discs
+      4      * O * O O        
+      5      * O * O O        White    
+      6      * O O O O        
+      7      *                         15 discs
+      8                       
+
+13 moves generated: f3 e7 h5 h6 h4 c2 h2 f7 f2 e2 e1 g7 h7 
+-->   5  +10.95         35193  f3 b5 e7 f7        0.0 s  
+PV: f3 b5 e7 f7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3    O * * *   O O       (*)     10 discs
+      4      O * * * O        
+      5      * O * O O        White    
+      6      * O O O O        
+      7      *                         12 discs
+      8                       
+
+12 moves generated: d7 e7 b4 h5 h6 h4 b5 h2 f7 a3 g7 h7 
+-->   5  +11.35         39307  b4 b6 d7 b5        0.0 s  
+PV: b4 b6 d7 b5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O       (*)     11 discs
+      4      * * * * O        
+      5      * * * O O        White    
+      6      * O O O O        
+      7      O                         11 discs
+      8    O                  
+
+10 moves generated: d7 e7 h5 h6 h4 h2 f7 c8 g7 h7 
+-->   5  +13.53         42097  d7 c8 e8 f3        0.0 s  
+PV: d7 c8 e8 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O *   O O       (*)     10 discs
+      4      * * O * O        
+      5      * * * O O        White    
+      6      * O O O O        
+      7      *                         12 discs
+      8                       
+
+12 moves generated: d7 f3 e7 h5 h6 h4 d2 h2 f7 e2 c1 g7 
+-->   5  +13.77         45707  f3 d2 e2 b6        0.0 s  
+PV: f3 d2 e2 b6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O       (*)     7 discs
+      4    O O O O O O        
+      5      O * * O O        White    
+      6      * O O O O        
+      7      *                         15 discs
+      8                       
+
+13 moves generated: f3 d7 e7 h5 h6 b5 b6 h2 f7 b3 a5 g7 h7 
+-->   5  +21.16         50066  f3 b6 b3 d8        0.0 s  
+PV: f3 b6 b3 d8
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * *   O O       (*)     9 discs
+      4      * O * * O        
+      5      * * O O O        White    
+      6      * O O O O        
+      7      *                         13 discs
+      8                       
+
+10 moves generated: d7 e7 h5 h6 h4 c2 h2 f7 b3 h7 
+-->   5  +21.94         54170  d7 d8 b3 f3        0.0 s  
+PV: d7 d8 b3 f3
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               14 discs
+      4      * * * * O        
+      5      * * * O O        White    
+      6    O O * * O O        
+      7      *   *             (O)     9 discs
+      8                       
+
+11 moves generated: b5 f3 d7 f2 d8 d2 b4 c8 c2 b8 b2 
+-->   5  +13.85          3417  f3 h5 h4 f7        0.0 s  
+PV: f3 h5 h4 f7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               13 discs
+      4      * * * * * *      
+      5      * * * O O        White    
+      6    O O O O O O        
+      7      *                 (O)     10 discs
+      8                       
+
+13 moves generated: f3 b5 e2 f2 d8 h5 d2 b4 c8 c2 b3 b8 b2 
+-->   5  +6.80           7188  h5 d7 b5 b4        0.0 s  
+PV: h5 d7 b5 b4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                *      
+      3      * * *   * O               13 discs
+      4      * * * * O        
+      5      * * * O O        White    
+      6    O O O O O O        
+      7      *                 (O)     10 discs
+      8                       
+
+14 moves generated: f3 b5 e2 f2 h1 d8 d2 b4 c8 c2 b3 b8 g2 b2 
+-->   5  +22.58         11207  h1 d7 g2 e7        0.0 s  
+PV: h1 d7 g2 e7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               15 discs
+      4      * * * * O        
+      5      * * * * O        White    
+      6    O O O * * O        
+      7      *     *           (O)     8 discs
+      8                       
+
+12 moves generated: f3 b5 e7 d7 f2 d8 d2 b4 c8 e8 c2 b8 
+-->   5  +7.01          14997  e7 d7 b5 b4        0.0 s  
+PV: e7 d7 b5 b4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               13 discs
+      4      * * * * O        
+      5      * * * O O        White    
+      6    O O O O * O        
+      7      *       *         (O)     10 discs
+      8                       
+
+14 moves generated: f3 b5 e7 e2 f2 f7 d8 d2 b4 c8 c2 b3 b8 g8 
+-->   5  +13.92         19832  f7 d7 e8 h5        0.0 s  
+PV: f7 d7 e8 h5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               14 discs
+      4      * * * * O        
+      5      * * * * O        White    
+      6    O O O O O *        
+      7      *         *       (O)     9 discs
+      8                       
+
+14 moves generated: f3 b5 e2 f2 d8 d2 h6 b4 c8 c2 b3 b8 b2 g7 
+-->   5  +17.76         24578  b5 e7 d7 b4        0.0 s  
+PV: b5 e7 d7 b4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               13 discs
+      4      * * * * O        
+      5      * * * O O        White    
+      6    * O O O O O        
+      7  *   *                 (O)     10 discs
+      8                       
+
+11 moves generated: b5 f3 e2 d2 b4 c8 c2 b3 a6 b8 b2 
+-->   5  +15.30         28215  b5 d7 a6 a5        0.0 s  
+PV: b5 d7 a6 a5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               13 discs
+      4      * * * * O        
+      5      * * * O O        White    
+      6    O * O O O O        
+      7    * *                 (O)     10 discs
+      8                       
+
+11 moves generated: b5 f3 e2 f2 d8 d2 b4 c2 b3 b8 b2 
+-->   5  +19.03         31367  b5 e7 d7 f7        0.0 s  
+PV: b5 e7 d7 f7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               13 discs
+      4      * * * * * *      
+      5      * * * O O        White    
+      6    O O O O O O        
+      7      *                 (O)     10 discs
+      8                       
+
+13 moves generated: b5 f3 e2 f2 h5 d8 d2 b4 c8 c2 b3 b8 b2 
+-->   5  +6.80          34584  h5 d7 b5 b4        0.0 s  
+PV: h5 d7 b5 b4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               15 discs
+      4      * * * * O        
+      5      * * * * O        White    
+      6    O O O * * O        
+      7      *     *           (O)     8 discs
+      8                       
+
+12 moves generated: b5 f3 e7 d7 f2 d8 d2 b4 c8 e8 c2 b8 
+-->   5  +7.01          38459  e7 d7 b5 b4        0.0 s  
+PV: e7 d7 b5 b4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               14 discs
+      4      * * * * O        
+      5      * * * O O        White    
+      6    O O * * O O        
+      7      *   *             (O)     9 discs
+      8                       
+
+11 moves generated: b5 f3 d7 f2 d8 d2 b4 c8 c2 b8 b2 
+-->   5  +13.85         41590  f3 h5 h4 f7        0.0 s  
+PV: f3 h5 h4 f7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               13 discs
+      4      * * * * O        
+      5      * * * O O        White    
+      6    O O O O * O        
+      7      *       *         (O)     10 discs
+      8                       
+
+14 moves generated: f3 e7 b5 e2 f7 f2 d8 d2 b4 c8 c2 b3 b8 g8 
+-->   5  +13.92         46111  f7 d7 e8 h5        0.0 s  
+PV: f7 d7 e8 h5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               13 discs
+      4      * * * * O        
+      5      * * * O O        White    
+      6    * O O O O O        
+      7  *   *                 (O)     10 discs
+      8                       
+
+11 moves generated: f3 b5 e2 d2 b4 c8 c2 b3 a6 b8 b2 
+-->   5  +15.30         49530  b5 d7 a6 a5        0.0 s  
+PV: b5 d7 a6 a5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               14 discs
+      4      * * * * O        
+      5      * * * * O        White    
+      6    O O O O O *        
+      7      *         *       (O)     9 discs
+      8                       
+
+14 moves generated: b5 f3 e2 f2 h6 d8 d2 b4 c8 c2 b3 b8 b2 g7 
+-->   5  +17.76         54394  b5 e7 d7 b4        0.0 s  
+PV: b5 e7 d7 b4
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *   O O               13 discs
+      4      * * * * O        
+      5      * * * O O        White    
+      6    O * O O O O        
+      7    * *                 (O)     10 discs
+      8                       
+
+11 moves generated: b5 f3 e2 f2 d8 d2 b4 c2 b3 b8 b2 
+-->   5  +19.03         57581  b5 e7 d7 f7        0.0 s  
+PV: b5 e7 d7 f7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                *      
+      3      * * *   * O               13 discs
+      4      * * * * O        
+      5      * * * O O        White    
+      6    O O O O O O        
+      7      *                 (O)     10 discs
+      8                       
+
+14 moves generated: b5 f3 e2 h1 f2 d8 d2 b4 c8 c2 b3 b8 g2 b2 
+-->   5  +22.58         61376  h1 d7 g2 e7        0.0 s  
+PV: h1 d7 g2 e7
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O     O       (*)     5 discs
+      4      * * O * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+10 moves generated: f3 d2 d7 f1 h4 g6 c7 f2 g7 f7 
+-->   5  +11.95            98  f3 g3 g5 h4 g6     0.0 s  
+PV: f3 g3 g5 h4 g6 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O              
+      3      * O *     O       (*)     5 discs
+      4      * O * * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+12 moves generated: c5 e7 c6 e2 h4 c1 g6 c7 e1 c2 g7 f7 
+-->   5  +14.59           214  c5 f3 e2 c2        0.0 s  
+PV: c5 f3 e2 c2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O       (*)     3 discs
+      4    O O O O O O        
+      5        O O O          White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+8 moves generated: c5 g5 e7 d7 b5 g6 a5 g7 
+-->   5  +18.64           360  b5 f2 f3 e2        0.0 s  
+PV: b5 f2 f3 e2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3    O * * *     O       (*)     6 discs
+      4      O * * * O        
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+12 moves generated: c5 e7 d7 c6 b5 h4 a3 g6 c7 b4 g7 f7 
+-->   5  +15.66           476  c5 g3 c6 b5        0.0 s  
+PV: c5 g3 c6 b5
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O *     O       (*)     5 discs
+      4      * * O * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+9 moves generated: d2 e7 d7 e2 h4 c1 c7 g7 f7 
+-->   5  +9.66            566  d2 f3 g5 g3        0.0 s  
+PV: d2 f3 g5 g3
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * *     O       (*)     5 discs
+      4      * O * * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+10 moves generated: c5 e7 d7 c6 h4 b3 g6 c7 c2 f7 
+-->   5  +32.22           668  c5 d2 e2 c2        0.0 s  
+PV: c5 d2 e2 c2
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O *     O       (*)     5 discs
+      4      * * O * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+9 moves generated: d2 e7 d7 e2 h4 c1 c7 g7 f7 
+-->   5  +9.66           3017  d2 f3 g5 g3        0.0 s  
+PV: d2 f3 g5 g3
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O     O       (*)     5 discs
+      4      * * O * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+10 moves generated: d2 f3 d7 f1 h4 g6 c7 f2 g7 f7 
+-->   5  +11.95          5172  f3 g3 g5 h4        0.0 s  
+PV: f3 g3 g5 h4
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O              
+      3      * O *     O       (*)     5 discs
+      4      * O * * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+12 moves generated: c5 e7 c6 e2 h4 c1 g6 c7 e1 c2 g7 f7 
+-->   5  +14.59          7795  c5 f3 e2 c2        0.0 s  
+PV: c5 f3 e2 c2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3    O * * *     O       (*)     6 discs
+      4      O * * * O        
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+12 moves generated: c5 e7 d7 c6 b5 h4 a3 g6 c7 b4 g7 f7 
+-->   5  +15.66         11197  c5 g3 c6 b5        0.0 s  
+PV: c5 g3 c6 b5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * *     O       (*)     3 discs
+      4    O O O O O O        
+      5        O O O          White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+8 moves generated: c5 g5 e7 d7 b5 g6 a5 g7 
+-->   5  +18.64         13375  b5 e2 f3 f2        0.0 s  
+PV: b5 e2 f3 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * *     O       (*)     5 discs
+      4      * O * * O        
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+10 moves generated: c5 e7 d7 c6 h4 b3 g6 c7 c2 f7 
+-->   5  +32.22         16561  c5 d2 e2 c2        0.0 s  
+PV: c5 d2 e2 c2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               7 discs
+      4      * * O * O        
+      5        O O O *        White    
+      6        O O O          
+      7                        (O)     10 discs
+      8                       
+
+10 moves generated: e2 g3 d2 g6 h5 h4 c2 b4 b3 b2 
+-->   5  -1.89           2449  g6 g3 f2 e7        0.0 s  
+PV: g6 g3 f2 e7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               9 discs
+      4      * * * O O        
+      5        O * O          White    
+      6        O * O          
+      7          *             (O)     8 discs
+      8                       
+
+9 moves generated: d2 d7 f8 f7 d8 c2 b4 b3 b2 
+-->   5  -1.27           5378  f7 c6 c5 d7        0.0 s  
+PV: f7 c6 c5 d7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               8 discs
+      4      * * O O O        
+      5        * O O          White    
+      6        * O O          
+      7        *               (O)     9 discs
+      8                       
+
+10 moves generated: e2 c5 c6 d2 c8 c2 c7 b4 b3 b2 
+-->   5  +4.51           8146  e2 f1 d1 f2        0.0 s  
+PV: e2 f1 d1 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * * * O               7 discs
+      4      * * O O O        
+      5        O O O          White    
+      6        O O O          
+      7                        (O)     10 discs
+      8                       
+
+9 moves generated: e2 f2 d2 c2 b4 b3 g2 h2 b2 
+-->   5  +2.21          10224  f2 e7 d7 c6        0.0 s  
+PV: f2 e7 d7 c6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               9 discs
+      4      * * * * * *      
+      5        O O O          White    
+      6        O O O          
+      7                        (O)     8 discs
+      8                       
+
+7 moves generated: e2 g3 d2 h5 c2 b3 b2 
+-->   5  +3.32          11713  h5 g3 h2 g5        0.0 s  
+PV: h5 g3 h2 g5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               8 discs
+      4      * * * O O        
+      5        O O *          White    
+      6        O O O *        
+      7                        (O)     9 discs
+      8                       
+
+7 moves generated: e2 g5 d2 h6 b4 b3 b2 
+-->   5  +4.02          13617  g5 h4 h6 h2        0.0 s  
+PV: g5 h4 h6 h2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               8 discs
+      4      * * O O O        
+      5        O * O          White    
+      6        O O *          
+      7              *         (O)     9 discs
+      8                       
+
+7 moves generated: e2 g6 d2 f7 c2 b4 b3 
+-->   5  +15.45         15706  f7 g3 f2 c5        0.0 s  
+PV: f7 g3 f2 c5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               8 discs
+      4      * * O O O        
+      5        * O O          White    
+      6        O * O          
+      7            *           (O)     9 discs
+      8                       
+
+11 moves generated: e2 c5 c6 e7 d7 d2 f8 c2 b4 b3 b2 
+-->   5  +10.90         19426  e7 e8 c5 d7        0.0 s  
+PV: e7 e8 c5 d7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               7 discs
+      4      * * O * O        
+      5        O O O *        White    
+      6        O O O          
+      7                        (O)     10 discs
+      8                       
+
+10 moves generated: e2 g3 g6 d2 h5 h4 c2 b4 b3 b2 
+-->   5  -1.89          21617  g6 g3 f2 e7        0.0 s  
+PV: g6 g3 f2 e7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               9 discs
+      4      * * * O O        
+      5        O * O          White    
+      6        O * O          
+      7          *             (O)     8 discs
+      8                       
+
+9 moves generated: d7 d2 f8 f7 d8 c2 b4 b3 b2 
+-->   5  -1.27          24525  f7 c6 c5 d7        0.0 s  
+PV: f7 c6 c5 d7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * * * O               7 discs
+      4      * * O O O        
+      5        O O O          White    
+      6        O O O          
+      7                        (O)     10 discs
+      8                       
+
+9 moves generated: e2 f2 d2 c2 b4 b3 g2 h2 b2 
+-->   5  +2.21          26445  f2 e7 d7 c6        0.0 s  
+PV: f2 e7 d7 c6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               9 discs
+      4      * * * * * *      
+      5        O O O          White    
+      6        O O O          
+      7                        (O)     8 discs
+      8                       
+
+7 moves generated: g3 e2 d2 h5 c2 b3 b2 
+-->   5  +3.32          28007  h5 g3 h2 g5        0.0 s  
+PV: h5 g3 h2 g5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               8 discs
+      4      * * * O O        
+      5        O O *          White    
+      6        O O O *        
+      7                        (O)     9 discs
+      8                       
+
+7 moves generated: e2 g5 d2 h6 b4 b3 b2 
+-->   5  +4.02          30014  g5 h4 h6 h2        0.0 s  
+PV: g5 h4 h6 h2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               8 discs
+      4      * * O O O        
+      5        * O O          White    
+      6        * O O          
+      7        *               (O)     9 discs
+      8                       
+
+10 moves generated: e2 c5 c6 d2 c8 c2 c7 b4 b3 b2 
+-->   5  +4.51          32836  e2 f1 d1 f2        0.0 s  
+PV: e2 f1 d1 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               8 discs
+      4      * * O O O        
+      5        * O O          White    
+      6        O * O          
+      7            *           (O)     9 discs
+      8                       
+
+11 moves generated: e2 e7 c5 d7 c6 d2 f8 c2 b4 b3 b2 
+-->   5  +10.90         36660  e7 e8 c5 d7        0.0 s  
+PV: e7 e8 c5 d7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               8 discs
+      4      * * O O O        
+      5        O * O          White    
+      6        O O *          
+      7              *         (O)     9 discs
+      8                       
+
+7 moves generated: e2 g6 d2 f7 c2 b4 b3 
+-->   5  +15.45         38810  f7 g3 f2 c5        0.0 s  
+PV: f7 g3 f2 c5
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O O   O       (*)     7 discs
+      4      * * O * * *      
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+11 moves generated: g3 g6 d2 f1 c7 f2 f7 d7 h2 d1 g7 
+-->   5  +2.27           2070  d2 h5 g3 h2        0.0 s  
+PV: d2 h5 g3 h2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O O O       (*)     8 discs
+      4      * * * O * *      
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+11 moves generated: g5 e7 g6 c6 e2 f2 f7 d7 h2 g2 g7 
+-->   5  +5.64           3801  g5 h5 f2 e2        0.0 s  
+PV: g5 h5 f2 e2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O       (*)     7 discs
+      4      * * * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+10 moves generated: g3 e7 g6 c6 c7 f2 f7 d7 g2 g7 
+-->   5  +0.99           5176  g3 h2 g5 f2        0.0 s  
+PV: g3 h2 g5 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O              
+      3      * O * O   O       (*)     7 discs
+      4      * O * * * *      
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+16 moves generated: g3 c5 e7 g6 c6 e2 c7 f2 c2 c1 f7 d7 e1 h2 g2 g7 
+-->   5  +2.19           9528  g3 e2 c1 d1        0.0 s  
+PV: g3 e2 c1 d1
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O * O   O       (*)     7 discs
+      4      * * O * * *      
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+11 moves generated: g3 e7 d2 e2 c7 f2 c1 f7 d7 h2 g7 
+-->   5  +5.01          12374  d2 h5 g3 h2        0.0 s  
+PV: d2 h5 g3 h2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3    O O O O O   O       (*)     5 discs
+      4      O * * * * *      
+      5        O O O          White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+15 moves generated: d2 e7 g6 c6 e2 b4 c7 f2 c2 f7 d7 h2 g2 g7 b2 
+-->   5  +12.36         16949  h2 g3 b4 c5        0.0 s  
+PV: h2 g3 b4 c5
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * * O   O       (*)     7 discs
+      4      * O * * * *      
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+14 moves generated: g3 c5 c6 e7 g6 e2 c7 f2 c2 b3 f7 d7 h2 g2 
+-->   5  +24.95         20616  c5 e2 c2 h5        0.0 s  
+PV: c5 e2 c2 h5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O       (*)     7 discs
+      4      * * * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+10 moves generated: g3 c6 e7 g6 c7 f2 f7 d7 g2 g7 
+-->   5  +0.99          22327  g3 h2 g5 f2        0.0 s  
+PV: g3 h2 g5 f2
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O              
+      3      * O * O   O       (*)     7 discs
+      4      * O * * * *      
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+16 moves generated: g3 c5 c6 e7 g6 e2 c7 f2 c2 c1 f7 d7 h2 e1 g2 g7 
+-->   5  +2.19          26761  g3 e2 c1 d1        0.0 s  
+PV: g3 e2 c1 d1
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O            
+      3      * * O O   O       (*)     7 discs
+      4      * * O * * *      
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+11 moves generated: g3 d2 g6 f1 c7 f2 f7 d7 h2 d1 g7 
+-->   5  +2.27          28776  d2 h5 g3 h2        0.0 s  
+PV: d2 h5 g3 h2
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O                
+      3      * O * O   O       (*)     7 discs
+      4      * * O * * *      
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+11 moves generated: d2 g3 e7 e2 c7 f2 c1 f7 d7 h2 g7 
+-->   5  +5.01          31614  d2 h5 g3 h2        0.0 s  
+PV: d2 h5 g3 h2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O O O       (*)     8 discs
+      4      * * * O * *      
+      5        O O O          White    
+      6        O O O          
+      7                                10 discs
+      8                       
+
+11 moves generated: g5 c6 e7 g6 e2 f2 f7 d7 h2 g2 g7 
+-->   5  +5.64          33745  g5 h5 f2 e2        0.0 s  
+PV: g5 h5 f2 e2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3    O O O O O   O       (*)     5 discs
+      4      O * * * * *      
+      5        O O O          White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+15 moves generated: d2 c6 e7 g6 e2 b4 c7 f2 c2 f7 d7 h2 g2 g7 b2 
+-->   5  +12.36         38360  h2 g3 b4 c5        0.0 s  
+PV: h2 g3 b4 c5
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O                  
+      3      O * * O   O       (*)     7 discs
+      4      * O * * * *      
+      5        O O O          White    
+      6        O O O          
+      7                                11 discs
+      8                       
+
+14 moves generated: c6 g3 c5 e7 g6 e2 c7 f2 c2 b3 f7 d7 h2 g2 
+-->   5  +24.95         42010  c5 e2 c2 h5        0.0 s  
+PV: c5 e2 c2 h5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               9 discs
+      4      * * * * O O      
+      5        * O O   O      White    
+      6      * O O O          
+      7                        (O)     10 discs
+      8                       
+
+10 moves generated: e2 c5 g3 c2 d2 b4 b6 b3 b2 b7 
+-->   5  +4.85           2158  g3 g5 e2 d2        0.0 s  
+PV: g3 g5 e2 d2
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * * * O               9 discs
+      4      * * * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     10 discs
+      8                       
+
+9 moves generated: e2 f2 c2 d2 b4 h2 b3 b2 g2 
+-->   5  +1.30           3444  h2 g5 f2 g6        0.0 s  
+PV: h2 g5 f2 g6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               10 discs
+      4      * * * * O O      
+      5        O * O   O      White    
+      6        O * O          
+      7          *             (O)     9 discs
+      8                       
+
+10 moves generated: g3 c2 d2 d7 b4 f7 f8 d8 b3 b2 
+-->   5  +8.88           5790  g3 g5 e2 g6        0.0 s  
+PV: g3 g5 e2 g6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               9 discs
+      4      * * * * O O      
+      5        O O *   O      White    
+      6        O O O *        
+      7                        (O)     10 discs
+      8                       
+
+9 moves generated: g3 e2 g5 h6 d2 b4 f7 b3 b2 
+-->   5  +6.52           8296  h6 c5 c6 d7        1.0 s    8288 nps
+PV: h6 c5 c6 d7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               10 discs
+      4      * * * * O O      
+      5        O * O   O      White    
+      6        * O O          
+      7      *                 (O)     9 discs
+      8                       
+
+8 moves generated: e2 c6 c2 d2 d7 b4 b3 b2 
+-->   5  +5.81          10695  c6 g3 h2 c5        1.0 s   10684 nps
+PV: c6 g3 h2 c5
+
+         a b c d e f g h
+
+      1                       Black    
+      2            *          
+      3      * * * *   O               9 discs
+      4      * * * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     10 discs
+      8                       
+
+9 moves generated: e2 g3 c2 d2 b4 f1 b3 b2 g2 
+-->   5  +4.85          12225  g3 g5 g6 c6        1.0 s   12213 nps
+PV: g3 g5 g6 c6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               12 discs
+      4      * * * * O O      
+      5        * O *   O      White    
+      6        O * *          
+      7            *           (O)     7 discs
+      8                       
+
+14 moves generated: g3 e2 c6 g5 c5 g6 e7 d2 d7 b4 f8 b3 b2 g7 
+-->   5  +19.66         16537  c5 c7 g5 g6        1.0 s   16520 nps
+PV: c5 c7 g5 g6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               10 discs
+      4      * * * * O O      
+      5        * O O   O      White    
+      6        * O O          
+      7        *               (O)     9 discs
+      8                       
+
+10 moves generated: g3 e2 c5 c6 c2 b4 c8 c7 b3 b2 
+-->   5  +11.23         18707  g3 e7 c5 c6        1.0 s   18688 nps
+PV: g3 e7 c5 c6
+
+         a b c d e f g h
+
+      1                       Black    
+      2              *        
+      3      * * * *   O               9 discs
+      4      * * * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     10 discs
+      8                       
+
+10 moves generated: g3 e2 f2 c2 d2 b4 h1 f1 b3 b2 
+-->   5  +21.48         21520  g3 c6 f2 e7        1.0 s   21499 nps
+PV: g3 c6 f2 e7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               10 discs
+      4      * * * * O O      
+      5        O * O   O      White    
+      6        O O *          
+      7              *         (O)     9 discs
+      8                       
+
+8 moves generated: g3 e2 g6 c2 d2 b4 f7 b3 
+-->   5  +20.12         23601  g3 g5 f7 g6        1.0 s   23577 nps
+PV: g3 g5 f7 g6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * * * O               9 discs
+      4      * * * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     10 discs
+      8                       
+
+9 moves generated: e2 f2 c2 d2 b4 h2 b3 b2 g2 
+-->   5  +1.30          25228  h2 g5 f2 g6        1.0 s   25203 nps
+PV: h2 g5 f2 g6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               9 discs
+      4      * * * * O O      
+      5        * O O   O      White    
+      6      * O O O          
+      7                        (O)     10 discs
+      8                       
+
+10 moves generated: g3 e2 c5 c2 d2 b4 b6 b3 b2 b7 
+-->   5  +4.85          27614  g3 g5 e2 d2        1.0 s   27586 nps
+PV: g3 g5 e2 d2
+
+         a b c d e f g h
+
+      1                       Black    
+      2            *          
+      3      * * * *   O               9 discs
+      4      * * * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     10 discs
+      8                       
+
+9 moves generated: g3 e2 c2 d2 b4 f1 b3 b2 g2 
+-->   5  +4.85          29897  g3 g5 g6 c6        1.0 s   29867 nps
+PV: g3 g5 g6 c6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               10 discs
+      4      * * * * O O      
+      5        O * O   O      White    
+      6        * O O          
+      7      *                 (O)     9 discs
+      8                       
+
+8 moves generated: e2 c6 c2 d2 d7 b4 b3 b2 
+-->   5  +5.81          32512  c6 g3 h2 c5        1.0 s   32480 nps
+PV: c6 g3 h2 c5
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               9 discs
+      4      * * * * O O      
+      5        O O *   O      White    
+      6        O O O *        
+      7                        (O)     10 discs
+      8                       
+
+9 moves generated: e2 g3 g5 h6 d2 b4 f7 b3 b2 
+-->   5  +6.52          35030  h6 c5 c6 d7        1.0 s   34995 nps
+PV: h6 c5 c6 d7
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               10 discs
+      4      * * * * O O      
+      5        O * O   O      White    
+      6        O * O          
+      7          *             (O)     9 discs
+      8                       
+
+10 moves generated: g3 c2 d2 d7 b4 f7 f8 d8 b3 b2 
+-->   5  +8.88          37361  g3 g5 e2 g6        1.0 s   37324 nps
+PV: g3 g5 e2 g6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               10 discs
+      4      * * * * O O      
+      5        * O O   O      White    
+      6        * O O          
+      7        *               (O)     9 discs
+      8                       
+
+10 moves generated: g3 e2 c6 c5 c2 b4 c8 c7 b3 b2 
+-->   5  +11.23         39570  g3 e7 c5 c6        1.0 s   39530 nps
+PV: g3 e7 c5 c6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               12 discs
+      4      * * * * O O      
+      5        * O *   O      White    
+      6        O * *          
+      7            *           (O)     7 discs
+      8                       
+
+14 moves generated: g3 e2 c6 g5 c5 g6 e7 d2 d7 b4 f8 b3 b2 g7 
+-->   5  +19.66         43675  c5 c7 g5 g6        1.0 s   43631 nps
+PV: c5 c7 g5 g6
+
+         a b c d e f g h
+
+      1                       Black    
+      2                       
+      3      * * * O   O               10 discs
+      4      * * * * O O      
+      5        O * O   O      White    
+      6        O O *          
+      7              *         (O)     9 discs
+      8                       
+
+8 moves generated: g3 e2 g6 c2 d2 b4 f7 b3 
+-->   5  +20.12         45600  g3 g5 f7 g6        1.0 s   45554 nps
+PV: g3 g5 f7 g6
+
+         a b c d e f g h
+
+      1                       Black    
+      2              *        
+      3      * * * *   O               9 discs
+      4      * * * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     10 discs
+      8                       
+
+10 moves generated: g3 e2 f2 c2 d2 b4 h1 f1 b3 b2 
+-->   5  +21.48         48092  g3 c6 f2 e7        1.0 s   48044 nps
+PV: g3 c6 f2 e7
+
+         a b c d e f g h
+
+      1                       Black    
+      2            *          
+      3      * * * * O O       (*)     8 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                12 discs
+      8                       
+
+7 moves generated: g5 c6 e7 g6 d7 f7 g7 
+-->   5  -4.12           1290  g5 g6 h6 h7        0.0 s  
+PV: g5 g6 h6 h7
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O *          
+      3      * * O O   O       (*)     6 discs
+      4      * * O * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                14 discs
+      8                       
+
+8 moves generated: c7 d2 g3 g6 d7 f1 f7 g7 
+-->   5  -1.29           3274  g3 f1 g5 d2        0.0 s  
+PV: g3 f1 g5 d2
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O     *          
+      3      * O * *   O       (*)     7 discs
+      4      * * O * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+9 moves generated: c7 d2 c6 e7 d7 e2 c1 f7 g7 
+-->   5  +4.55           5603  d2 g3 g5 g6        0.0 s  
+PV: d2 g3 g5 g6
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O   *          
+      3      * O * *   O       (*)     7 discs
+      4      * O * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+11 moves generated: c7 c6 e7 c5 g6 e2 c2 c1 e1 f7 g7 
+-->   5  +5.10           8281  e2 g5 c5 c2        0.0 s  
+PV: e2 g5 c5 c2
+
+         a b c d e f g h
+
+      1                       Black    
+      2            *          
+      3      * * * *   O       (*)     5 discs
+      4    O O O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                15 discs
+      8                       
+
+10 moves generated: g5 c6 e7 c5 g6 d7 f7 b5 a5 g7 
+-->   5  +7.08          11657  c5 f1 g3 e2        0.0 s  
+PV: c5 f1 g3 e2
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O       (*)     6 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                14 discs
+      8                       
+
+10 moves generated: g3 g5 c6 e7 g6 d7 f7 g1 g2 g7 
+-->   5  +3.73          13759  g5 g3 g6 e2        0.0 s  
+PV: g5 g3 g6 e2
+
+         a b c d e f g h
+
+      1                       Black    
+      2            *          
+      3    O * * * *   O       (*)     8 discs
+      4      O * * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                12 discs
+      8                       
+
+11 moves generated: c7 e7 c5 c6 g6 d7 b4 b5 f7 a3 g7 
+-->   5  +5.16          16314  c5 e2 g3 f1        0.0 s  
+PV: c5 e2 g3 f1
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O       *          
+      3      O * * *   O       (*)     7 discs
+      4      * O * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+9 moves generated: c5 c7 e7 c6 g6 c2 d7 f7 b3 
+-->   5  +21.84         18597  c5 e2 g3 d2        0.0 s  
+PV: c5 e2 g3 d2
+
+         a b c d e f g h
+
+      1                       Black    
+      2            * O        
+      3      * * * O   O       (*)     7 discs
+      4      * * O * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+8 moves generated: g3 c7 e7 g6 h2 d7 f7 g7 
+-->   5  +22.26         20359  g3 f1 g5 e2        0.0 s  
+PV: g3 f1 g5 e2
+
+         a b c d e f g h
+
+      1                       Black    
+      2            *          
+      3      * * * * O O       (*)     8 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                12 discs
+      8                       
+
+7 moves generated: g5 e7 c6 g6 d7 f7 g7 
+-->   5  -4.12          21980  g5 g6 h6 h7        0.0 s  
+PV: g5 g6 h6 h7
+
+         a b c d e f g h
+
+      1                       Black    
+      2          O *          
+      3      * * O O   O       (*)     6 discs
+      4      * * O * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                14 discs
+      8                       
+
+8 moves generated: g3 d2 c7 g6 d7 f1 f7 g7 
+-->   5  -1.29          23636  g3 f1 g5 d2        0.0 s  
+PV: g3 f1 g5 d2
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O       (*)     6 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                14 discs
+      8                       
+
+10 moves generated: g3 g5 e7 c6 g6 d7 f7 g1 g2 g7 
+-->   5  +3.73          25726  g5 g3 g6 e2        0.0 s  
+PV: g5 g3 g6 e2
+
+         a b c d e f g h
+
+      1                       Black    
+      2      O     *          
+      3      * O * *   O       (*)     7 discs
+      4      * * O * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+9 moves generated: e7 d2 c7 c6 e2 d7 c1 f7 g7 
+-->   5  +4.55          27999  d2 g3 g5 g6        0.0 s  
+PV: d2 g3 g5 g6
+
+         a b c d e f g h
+
+      1                       Black    
+      2        O   *          
+      3      * O * *   O       (*)     7 discs
+      4      * O * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+11 moves generated: c5 e7 c6 c7 g6 e2 c2 c1 e1 f7 g7 
+-->   5  +5.10          30583  e2 c2 c6 g5        0.0 s  
+PV: e2 c2 c6 g5
+
+         a b c d e f g h
+
+      1                       Black    
+      2            *          
+      3    O * * * *   O       (*)     8 discs
+      4      O * * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                12 discs
+      8                       
+
+11 moves generated: c5 e7 c6 c7 g6 d7 b4 b5 f7 a3 g7 
+-->   5  +5.16          32935  c5 e2 g3 f1        0.0 s  
+PV: c5 e2 g3 f1
+
+         a b c d e f g h
+
+      1                       Black    
+      2            *          
+      3      * * * *   O       (*)     5 discs
+      4    O O O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                15 discs
+      8                       
+
+10 moves generated: c5 g5 e7 c6 g6 d7 b5 f7 a5 g7 
+-->   5  +7.08          36602  c5 f1 g3 e2        0.0 s  
+PV: c5 f1 g3 e2
+
+         a b c d e f g h
+
+      1                       Black    
+      2    O       *          
+      3      O * * *   O       (*)     7 discs
+      4      * O * * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+9 moves generated: c5 e7 c6 c7 g6 c2 d7 f7 b3 
+-->   5  +21.84         38971  c5 e2 g3 d2        0.0 s  
+PV: c5 e2 g3 d2
+
+         a b c d e f g h
+
+      1                       Black    
+      2            * O        
+      3      * * * O   O       (*)     7 discs
+      4      * * O * O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                13 discs
+      8                       
+
+8 moves generated: g3 e7 c7 g6 h2 d7 f7 g7 
+-->   5  +22.26         40590  g3 f1 g5 e2        0.0 s  
+PV: g3 f1 g5 e2
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * * * O               8 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     13 discs
+      8                       
+
+9 moves generated: e2 c5 c2 d2 b4 h2 b3 g2 b2 
+-->   5  +5.20           1996  e2 c7 g5 c5        0.0 s  
+PV: e2 c7 g5 c5
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               8 discs
+      4      * * * * O O      
+      5        O O O * O      White    
+      6        O O O          
+      7                        (O)     13 discs
+      8                       
+
+9 moves generated: e2 g3 c5 c2 d2 b4 g6 b3 b2 
+-->   5  -1.17           3367  g3 g6 f7 c5        0.0 s  
+PV: g3 g6 f7 c5
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               9 discs
+      4      * * * O O O      
+      5        O * O   O      White    
+      6        O * O          
+      7          *             (O)     12 discs
+      8                       
+
+10 moves generated: c5 c2 f7 d2 b4 d7 b3 f8 d8 b2 
+-->   5  +0.00           6000  f7 c6 e8 g3        0.0 s  
+PV: f7 c6 e8 g3
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               8 discs
+      4      * * * O O O      
+      5        * O O   O      White    
+      6      * O O O          
+      7                        (O)     13 discs
+      8                       
+
+9 moves generated: e2 c5 c2 d2 b4 b3 b6 b2 b7 
+-->   5  +1.88           7834  e2 d7 c5 f7        0.0 s  
+PV: e2 d7 c5 f7
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               8 discs
+      4      * * * O O O      
+      5        O O *   O      White    
+      6        O O O *        
+      7                        (O)     13 discs
+      8                       
+
+9 moves generated: e2 f7 g5 c5 d2 b4 b3 h6 b2 
+-->   5  +4.07           9747  e2 g3 g5 h6        0.0 s  
+PV: e2 g3 g5 h6
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               9 discs
+      4      * * * O O O      
+      5        * O O   O      White    
+      6        * O O          
+      7        *               (O)     12 discs
+      8                       
+
+10 moves generated: e2 c6 c5 c2 d2 b4 b3 c7 c8 b2 
+-->   5  +5.53          12100  e2 g3 c5 d2        0.0 s  
+PV: e2 g3 c5 d2
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               9 discs
+      4      * * * O O O      
+      5        * O O   O      White    
+      6        O * O          
+      7            *           (O)     12 discs
+      8                       
+
+11 moves generated: e2 c6 c5 c2 d2 b4 d7 e7 b3 f8 b2 
+-->   5  +9.91          15012  c6 g5 g3 g6        0.0 s  
+PV: c6 g5 g3 g6
+
+         a b c d e f g h
+
+      1            O *        Black    
+      2            *          
+      3      * * * O   O               8 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     13 discs
+      8                       
+
+7 moves generated: e2 c2 d2 b4 h1 b3 b2 
+-->   5  +25.80         16972  h1 c6 e2 g5        0.0 s  
+PV: h1 c6 e2 g5
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O *        
+      3      * * * *   O               8 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     13 discs
+      8                       
+
+9 moves generated: e2 c5 c2 h1 d2 b4 h2 b3 b2 
+-->   5  +11.20         18977  c5 c6 g3 d7        0.0 s  
+PV: c5 c6 g3 d7
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               9 discs
+      4      * * * O O O      
+      5        O * O   O      White    
+      6        O O *          
+      7              *         (O)     12 discs
+      8                       
+
+8 moves generated: e2 c5 f7 c2 d2 b4 g6 b3 
+-->   5  +20.38         20648  e2 g6 c5 g3        0.0 s  
+PV: e2 g6 c5 g3
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               8 discs
+      4      * * * * O O      
+      5        O O O * O      White    
+      6        O O O          
+      7                        (O)     13 discs
+      8                       
+
+9 moves generated: e2 c5 g3 c2 d2 b4 g6 b3 b2 
+-->   5  -1.17          22439  g3 g6 f7 c5        0.0 s  
+PV: g3 g6 f7 c5
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               9 discs
+      4      * * * O O O      
+      5        O * O   O      White    
+      6        O * O          
+      7          *             (O)     12 discs
+      8                       
+
+10 moves generated: c5 f7 c2 d2 b4 d7 b3 f8 d8 b2 
+-->   5  +0.00          25177  f7 c6 e8 g3        0.0 s  
+PV: f7 c6 e8 g3
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               8 discs
+      4      * * * O O O      
+      5        * O O   O      White    
+      6      * O O O          
+      7                        (O)     13 discs
+      8                       
+
+9 moves generated: e2 c5 c2 d2 b4 b3 b6 b2 b7 
+-->   5  +1.88          27162  e2 d7 c5 f7        0.0 s  
+PV: e2 d7 c5 f7
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               8 discs
+      4      * * * O O O      
+      5        O O *   O      White    
+      6        O O O *        
+      7                        (O)     13 discs
+      8                       
+
+9 moves generated: e2 f7 c5 g5 d2 b4 b3 h6 b2 
+-->   5  +4.07          29476  e2 g3 g5 h6        0.0 s  
+PV: e2 g3 g5 h6
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * * * O               8 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     13 discs
+      8                       
+
+9 moves generated: e2 c5 c2 d2 b4 h2 b3 g2 b2 
+-->   5  +5.20          31401  e2 c7 g5 c5        0.0 s  
+PV: e2 c7 g5 c5
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               9 discs
+      4      * * * O O O      
+      5        * O O   O      White    
+      6        * O O          
+      7        *               (O)     12 discs
+      8                       
+
+10 moves generated: e2 c5 c6 c2 d2 b4 b3 c7 c8 b2 
+-->   5  +5.53          33738  e2 g3 c5 d2        0.0 s  
+PV: e2 g3 c5 d2
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               9 discs
+      4      * * * O O O      
+      5        * O O   O      White    
+      6        O * O          
+      7            *           (O)     12 discs
+      8                       
+
+11 moves generated: e2 c5 c6 c2 d2 b4 d7 e7 b3 f8 b2 
+-->   5  +9.91          36753  c6 g5 g3 g6        0.0 s  
+PV: c6 g5 g3 g6
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O *        
+      3      * * * *   O               8 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     13 discs
+      8                       
+
+9 moves generated: e2 c5 c2 h1 d2 b4 h2 b3 b2 
+-->   5  +11.20         38787  c5 c6 g3 d7        0.0 s  
+PV: c5 c6 g3 d7
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O          
+      3      * * * O   O               9 discs
+      4      * * * O O O      
+      5        O * O   O      White    
+      6        O O *          
+      7              *         (O)     12 discs
+      8                       
+
+8 moves generated: e2 c5 f7 c2 d2 b4 g6 b3 
+-->   5  +20.38         40432  e2 g6 c5 g3        0.0 s  
+PV: e2 g6 c5 g3
+
+         a b c d e f g h
+
+      1            O *        Black    
+      2            *          
+      3      * * * O   O               8 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     13 discs
+      8                       
+
+7 moves generated: e2 c2 h1 d2 b4 b3 b2 
+-->   5  +25.80         42504  h1 c6 e2 g5        0.0 s  
+PV: h1 c6 e2 g5
+
+         a b c d e f g h
+
+      1            O          Black    
+      2          O O *        
+      3      * * O O   O       (*)     5 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+8 moves generated: g6 g3 c6 d7 d2 f7 g1 g7 
+-->   5  -5.45           1604  g1 h1 d2 e1        0.0 s  
+PV: g1 h1 d2 e1
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O *        
+      3      * * O *   O       (*)     6 discs
+      4      * O * O O O      
+      5      O O O O   O      White    
+      6        O O O          
+      7                                16 discs
+      8                       
+
+7 moves generated: g6 c6 e2 e7 d7 f7 g7 
+-->   5  -9.90           3408  c6 g3 d7 c7        0.0 s  
+PV: c6 g3 d7 c7
+
+         a b c d e f g h
+
+      1            O   O      Black    
+      2            O O        
+      3      * * * O   O       (*)     5 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+8 moves generated: g6 g3 e7 g5 d7 f7 g1 g7 
+-->   5  +5.39           7015  e7 c5 d7 c7        0.0 s  
+PV: e7 c5 d7 c7
+
+         a b c d e f g h
+
+      1            O          Black    
+      2      O     O *        
+      3      * O * *   O       (*)     6 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                16 discs
+      8                       
+
+10 moves generated: c6 e7 e2 g5 d7 d2 c1 f7 g1 g7 
+-->   5  +2.45           9316  d2 c1 e1 g3        0.0 s  
+PV: d2 c1 e1 g3
+
+         a b c d e f g h
+
+      1            O          Black    
+      2        O   O *        
+      3      * O O *   O       (*)     5 discs
+      4      * O * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+8 moves generated: g6 c6 e7 e2 e1 c2 f7 g7 
+-->   5  +4.20          11092  c2 g3 d1 b4        0.0 s  
+PV: c2 g3 d1 b4
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O *        
+      3      * * * *   O       (*)     5 discs
+      4    O O O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+12 moves generated: g6 c6 e7 c5 e2 g5 d7 f7 b5 g1 a5 g7 
+-->   5  +5.06          14108  g1 h1 b5 e2        0.0 s  
+PV: g1 h1 b5 e2
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O       (*)     7 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                15 discs
+      8                       
+
+9 moves generated: g6 c6 e7 g5 d7 f7 g1 h1 g7 
+-->   5  +31.45         16831  c6 e2 g3 c5        0.0 s  
+PV: c6 e2 g3 c5
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O *        
+      3    O * * * *   O       (*)     7 discs
+      4      O * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                15 discs
+      8                       
+
+13 moves generated: c6 g6 e7 c5 e2 g5 d7 b4 f7 g1 b5 a3 g7 
+-->   5  +3.30          20088  g1 e2 e1 c5        0.0 s  
+PV: g1 e2 e1 c5
+
+         a b c d e f g h
+
+      1            O          Black    
+      2    O       O *        
+      3      O * * *   O       (*)     6 discs
+      4      * O * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                16 discs
+      8                       
+
+11 moves generated: c6 c5 g6 e7 e2 g5 c2 d7 b3 g1 f7 
+-->   5  +17.52         22926  c5 d2 g1 h1        0.0 s  
+PV: c5 d2 g1 h1
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O *        
+      3      * * O *   O       (*)     6 discs
+      4      * O * O O O      
+      5      O O O O   O      White    
+      6        O O O          
+      7                                16 discs
+      8                       
+
+7 moves generated: c6 g6 e7 e2 d7 f7 g7 
+-->   5  -9.90          25109  c6 g3 d7 c7        0.0 s  
+PV: c6 g3 d7 c7
+
+         a b c d e f g h
+
+      1            O          Black    
+      2          O O *        
+      3      * * O O   O       (*)     5 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+8 moves generated: c6 g6 g3 d2 d7 g1 f7 g7 
+-->   5  -5.45          26900  g1 h1 d2 e1        0.0 s  
+PV: g1 h1 d2 e1
+
+         a b c d e f g h
+
+      1            O          Black    
+      2      O     O *        
+      3      * O * *   O       (*)     6 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                16 discs
+      8                       
+
+10 moves generated: c6 e7 e2 g5 d2 d7 c1 g1 f7 g7 
+-->   5  +2.45          29232  d2 c1 e1 g3        0.0 s  
+PV: d2 c1 e1 g3
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O *        
+      3    O * * * *   O       (*)     7 discs
+      4      O * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                15 discs
+      8                       
+
+13 moves generated: c6 c5 g6 e7 e2 g5 d7 g1 b4 f7 b5 a3 g7 
+-->   5  +3.30          32554  g1 e2 e1 c5        0.0 s  
+PV: g1 e2 e1 c5
+
+         a b c d e f g h
+
+      1            O          Black    
+      2        O   O *        
+      3      * O O *   O       (*)     5 discs
+      4      * O * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+8 moves generated: c6 g6 e7 e2 c2 e1 f7 g7 
+-->   5  +4.20          34308  c2 g3 d1 b4        0.0 s  
+PV: c2 g3 d1 b4
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O *        
+      3      * * * *   O       (*)     5 discs
+      4    O O O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+12 moves generated: c5 c6 g6 e7 g5 e2 d7 g1 f7 b5 a5 g7 
+-->   5  +5.06          37237  g1 h1 b5 e2        0.0 s  
+PV: g1 h1 b5 e2
+
+         a b c d e f g h
+
+      1            O   O      Black    
+      2            O O        
+      3      * * * O   O       (*)     5 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+8 moves generated: g6 g3 e7 g5 d7 g1 f7 g7 
+-->   5  +5.39          40660  e7 c5 d7 c7        0.0 s  
+PV: e7 c5 d7 c7
+
+         a b c d e f g h
+
+      1            O          Black    
+      2    O       O *        
+      3      O * * *   O       (*)     6 discs
+      4      * O * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                16 discs
+      8                       
+
+11 moves generated: c5 g6 c6 e7 c2 g5 e2 d7 g1 b3 f7 
+-->   5  +17.52         43590  c5 d2 g1 h1        0.0 s  
+PV: c5 d2 g1 h1
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O       (*)     7 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                15 discs
+      8                       
+
+9 moves generated: g6 c6 e7 g5 d7 g1 f7 h1 g7 
+-->   5  +31.45         46049  c6 e2 g3 c5        0.0 s  
+PV: c6 e2 g3 c5
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               9 discs
+      4      * * * O O O      
+      5        * O O   O      White    
+      6      * O O O          
+      7                        (O)     14 discs
+      8                       
+
+9 moves generated: e2 c5 d2 c2 b4 b6 b3 b2 b7 
+-->   5  -26.45          1766  c5 h1 g3 h6        0.0 s  
+PV: c5 h1 g3 h6
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               9 discs
+      4      * * * O O O      
+      5        O O *   O      White    
+      6        O O O *        
+      7                        (O)     14 discs
+      8                       
+
+9 moves generated: c5 e2 g5 h6 d2 f7 b4 b3 b2 
+-->   5  -21.16          3986  g5 e7 c5 e2        0.0 s  
+PV: g5 e7 c5 e2
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               10 discs
+      4      * * * O O O      
+      5        O * O   O      White    
+      6        O * O          
+      7          *             (O)     13 discs
+      8                       
+
+11 moves generated: c5 e2 d7 d2 c2 f7 b4 f8 b3 d8 b2 
+-->   5  -29.73          7304  d7 g3 e2 d2        0.0 s  
+PV: d7 g3 e2 d2
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               9 discs
+      4      * * * * O O      
+      5        O O O * O      White    
+      6        O O O          
+      7                        (O)     14 discs
+      8                       
+
+9 moves generated: e2 c5 g3 d2 c2 b4 g6 b3 b2 
+-->   5  -25.80          8598  g3 h1 c5 h6        0.0 s  
+PV: g3 h1 c5 h6
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               10 discs
+      4      * * * O O O      
+      5        * O O   O      White    
+      6        * O O          
+      7        *               (O)     13 discs
+      8                       
+
+10 moves generated: e2 c5 d2 c2 c6 b4 b3 c7 c8 b2 
+-->   5  -18.46         11992  d2 h1 g3 g1        0.0 s  
+PV: d2 h1 g3 g1
+
+         a b c d e f g h
+
+      1            O *        Black    
+      2            * O O      
+      3      * * * *   O               9 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     14 discs
+      8                       
+
+7 moves generated: e2 h1 d2 c2 b4 b3 b2 
+-->   5  +33.55         13084  h1 c6 b6 e7        0.0 s  
+PV: h1 c6 b6 e7
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               13 discs
+      4      * * * * O O      
+      5        * O *   O      White    
+      6        O * *          
+      7            *           (O)     10 discs
+      8                       
+
+13 moves generated: e2 g3 c5 g5 d7 d2 c6 b4 e7 f8 g6 g7 b2 
+-->   5  -8.87          15999  g3 h1 c5 h6        0.0 s  
+PV: g3 h1 c5 h6
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2            O * O      
+      3      * * * *   O               9 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     14 discs
+      8                       
+
+7 moves generated: e2 c5 d2 c2 b4 b3 b2 
+-->   5  -29.43         16859  c5 h6 b4 e2        0.0 s  
+PV: c5 h6 b4 e2
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               10 discs
+      4      * * * O O O      
+      5        O * O   O      White    
+      6        O O *          
+      7              *         (O)     13 discs
+      8                       
+
+8 moves generated: c5 e2 d2 c2 f7 b4 g6 b3 
+-->   5  -11.09         18116  e2 g3 c5 h1        0.0 s  
+PV: e2 g3 c5 h1
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               10 discs
+      4      * * * O O O      
+      5        O * O   O      White    
+      6        O * O          
+      7          *             (O)     13 discs
+      8                       
+
+11 moves generated: e2 c5 d7 d2 c2 f7 b4 f8 b3 d8 b2 
+-->   5  -29.73         21460  d7 g3 e2 d2        0.0 s  
+PV: d7 g3 e2 d2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2            O * O      
+      3      * * * *   O               9 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     14 discs
+      8                       
+
+7 moves generated: e2 c5 d2 c2 b4 b3 b2 
+-->   5  -29.43         22959  c5 h6 b4 e2        0.0 s  
+PV: c5 h6 b4 e2
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               9 discs
+      4      * * * O O O      
+      5        * O O   O      White    
+      6      * O O O          
+      7                        (O)     14 discs
+      8                       
+
+9 moves generated: c5 e2 d2 c2 b4 b6 b3 b2 b7 
+-->   5  -26.45         25072  c5 h1 g3 h6        0.0 s  
+PV: c5 h1 g3 h6
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               9 discs
+      4      * * * * O O      
+      5        O O O * O      White    
+      6        O O O          
+      7                        (O)     14 discs
+      8                       
+
+9 moves generated: c5 e2 g3 d2 c2 b4 g6 b3 b2 
+-->   5  -25.80         26518  g3 h1 c5 h6        0.0 s  
+PV: g3 h1 c5 h6
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               9 discs
+      4      * * * O O O      
+      5        O O *   O      White    
+      6        O O O *        
+      7                        (O)     14 discs
+      8                       
+
+9 moves generated: c5 e2 g5 d2 h6 f7 b4 b3 b2 
+-->   5  -21.16         28730  g5 e7 c5 e2        0.0 s  
+PV: g5 e7 c5 e2
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               10 discs
+      4      * * * O O O      
+      5        * O O   O      White    
+      6        * O O          
+      7        *               (O)     13 discs
+      8                       
+
+10 moves generated: e2 c5 d2 c2 c6 b4 b3 c7 c8 b2 
+-->   5  -18.46         32010  d2 h1 g3 g1        0.0 s  
+PV: d2 h1 g3 g1
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               10 discs
+      4      * * * O O O      
+      5        O * O   O      White    
+      6        O O *          
+      7              *         (O)     13 discs
+      8                       
+
+8 moves generated: e2 c5 d2 c2 f7 b4 g6 b3 
+-->   5  -11.09         33306  e2 g3 c5 h1        0.0 s  
+PV: e2 g3 c5 h1
+
+         a b c d e f g h
+
+      1            O          Black    
+      2            O O O      
+      3      * * * *   O               13 discs
+      4      * * * * O O      
+      5        * O *   O      White    
+      6        O * *          
+      7            *           (O)     10 discs
+      8                       
+
+13 moves generated: e2 g3 g5 c5 d7 d2 c6 b4 e7 f8 g6 g7 b2 
+-->   5  -8.87          36241  g3 h1 c5 h6        0.0 s  
+PV: g3 h1 c5 h6
+
+         a b c d e f g h
+
+      1            O *        Black    
+      2            * O O      
+      3      * * * *   O               9 discs
+      4      * * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     14 discs
+      8                       
+
+7 moves generated: e2 d2 h1 c2 b4 b3 b2 
+-->   5  +33.55         37237  h1 c6 b6 e7        0.0 s  
+PV: h1 c6 b6 e7
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * O O   O       (*)     6 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+9 moves generated: g6 g3 c6 g1 h6 d2 d7 f7 g7 
+-->   5  +55.89          1904  g1 c2 h6 d2        0.0 s  
+PV: g1 c2 h6 d2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2            O * O      
+      3      * * O *   O       (*)     7 discs
+      4      * O * O O O      
+      5      O O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+8 moves generated: g6 e2 c6 e7 h6 d7 f7 g7 
+-->   5  +32.64          4101  c6 b5 d7 g3        0.0 s  
+PV: c6 b5 d7 g3
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        O   O * O      
+      3      * O O *   O       (*)     6 discs
+      4      * O * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+9 moves generated: g6 e2 c6 h6 e7 c2 e1 f7 g7 
+-->   5  +39.23          6259  h6 b5 e1 d1        0.0 s  
+PV: h6 b5 e1 d1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2      O     O * O      
+      3      * O * *   O       (*)     7 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+11 moves generated: h6 e2 g1 c6 g5 e7 d2 d7 f7 c1 g7 
+-->   5  +48.98          8688  g1 d2 h6 b5        0.0 s  
+PV: g1 d2 h6 b5
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2            O * O      
+      3      * * * *   O       (*)     6 discs
+      4    O O O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+13 moves generated: g6 g1 h6 e2 c5 c6 g5 e7 d7 f7 b5 a5 g7 
+-->   5  +63.40         11503  g1 c2 e1 d2        0.0 s  
+PV: g1 c2 e1 d2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2            O * O      
+      3    O * * * *   O       (*)     8 discs
+      4      O * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                16 discs
+      8                       
+
+14 moves generated: g1 g6 h6 e2 c5 c6 g5 e7 d7 b4 f7 b5 a3 g7 
+-->   5  +59.73         15419  g1 c2 h6 d2        0.0 s  
+PV: g1 c2 h6 d2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2    O       O * O      
+      3      O * * *   O       (*)     7 discs
+      4      * O * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+12 moves generated: g1 g6 h6 e2 c5 c6 g5 e7 c2 b3 d7 f7 
+-->   5  +59.77         18517  g1 c5 h6 c2        0.0 s  
+PV: g1 c5 h6 c2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2            O * O      
+      3      * * O *   O       (*)     7 discs
+      4      * O * O O O      
+      5      O O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+8 moves generated: g6 h6 e2 c6 e7 d7 f7 g7 
+-->   5  +32.64         21270  c6 b5 d7 g3        0.0 s  
+PV: c6 b5 d7 g3
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        O   O * O      
+      3      * O O *   O       (*)     6 discs
+      4      * O * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+9 moves generated: h6 g6 c6 e2 e7 c2 e1 f7 g7 
+-->   5  +39.23         23396  h6 b5 e1 d1        0.0 s  
+PV: h6 b5 e1 d1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2      O     O * O      
+      3      * O * *   O       (*)     7 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+11 moves generated: h6 g1 c6 e2 g5 e7 d2 d7 f7 c1 g7 
+-->   5  +48.98         25941  g1 d2 h6 b5        0.0 s  
+PV: g1 d2 h6 b5
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * O O   O       (*)     6 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+9 moves generated: g1 h6 g6 g3 c6 d2 d7 f7 g7 
+-->   5  +55.89         27830  g1 c2 h6 d2        0.0 s  
+PV: g1 c2 h6 d2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2            O * O      
+      3    O * * * *   O       (*)     8 discs
+      4      O * * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                16 discs
+      8                       
+
+14 moves generated: g1 h6 g6 c6 e2 c5 g5 e7 d7 b4 f7 b5 a3 g7 
+-->   5  +59.73         31613  g1 c2 e1 d2        0.0 s  
+PV: g1 c2 e1 d2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2    O       O * O      
+      3      O * * *   O       (*)     7 discs
+      4      * O * O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                17 discs
+      8                       
+
+12 moves generated: g1 h6 g6 c6 e2 c5 g5 e7 c2 b3 d7 f7 
+-->   5  +59.77         34888  g1 c5 h6 c2        0.0 s  
+PV: g1 c5 h6 c2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2            O * O      
+      3      * * * *   O       (*)     6 discs
+      4    O O O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+13 moves generated: g1 h6 g6 c6 e2 c5 g5 e7 d7 f7 b5 a5 g7 
+-->   5  +63.40         37517  g1 c2 e1 d2        0.0 s  
+PV: g1 c2 e1 d2
+
+         a b c d e f g h
+
+      1            O * *      Black    
+      2          O * * O      
+      3      * * * O   O               9 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     16 discs
+      8                       
+
+6 moves generated: c2 d2 b5 b4 b3 b2 
+-->   5  -56.76           705  c2 h6 b5 g3        0.0 s  
+PV: c2 h6 b5 g3
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * *      
+      3      * * O O   *               11 discs
+      4      * * O O O *      
+      5        O O O   *      White    
+      6        O O O   *      
+      7                        (O)     14 discs
+      8                       
+
+7 moves generated: c2 d2 c5 b5 b4 b3 b2 
+-->   5  -35.18          1542  c5 g3 g1 e1        0.0 s  
+PV: c5 g3 g1 e1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * O O   O               9 discs
+      4      * * * O O O      
+      5        O O *   O      White    
+      6        O O O *        
+      7                        (O)     16 discs
+      8                       
+
+9 moves generated: c5 d2 g5 b5 b4 f7 h6 b3 b2 
+-->   5  -35.05          2925  c5 g3 g1 g5        0.0 s  
+PV: c5 g3 g1 g5
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * * * * O               9 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     16 discs
+      8                       
+
+8 moves generated: c5 c2 d2 b5 b4 b3 b2 g1 
+-->   5  -36.19          4676  c5 h6 g1 e1        0.0 s  
+PV: c5 h6 g1 e1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * O *   O               10 discs
+      4      * * * O O O      
+      5        * O O   O      White    
+      6      * O O O          
+      7                        (O)     15 discs
+      8                       
+
+9 moves generated: c5 c2 d2 g3 b5 b4 b6 b3 b2 
+-->   5  -30.99          7969  c5 e1 d1 g1        0.0 s  
+PV: c5 e1 d1 g1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3      * * O O   O               9 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     16 discs
+      8                       
+
+10 moves generated: c5 c2 e1 d1 b5 b4 b3 c1 b2 g1 
+-->   5  -25.15          9960  e1 g5 d1 h6        0.0 s  
+PV: e1 g5 d1 h6
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * O O   O               9 discs
+      4      * * O O O O      
+      5        * O O   O      White    
+      6        * O O          
+      7        *               (O)     16 discs
+      8                       
+
+9 moves generated: c5 c2 b5 b4 c6 c7 b3 c8 b2 
+-->   5  -27.01         12141  c5 g3 g1 e7        0.0 s  
+PV: c5 g3 g1 e7
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * O O   O               9 discs
+      4      * * O O O O      
+      5        * O O   O      White    
+      6        O * O          
+      7            *           (O)     16 discs
+      8                       
+
+11 moves generated: c5 c2 d2 b5 d7 b4 c6 e7 b3 f8 b2 
+-->   5  -29.85         16309  c5 h6 d2 g3        0.0 s  
+PV: c5 h6 d2 g3
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * O O   O               9 discs
+      4      * * O O O O      
+      5        O * O   O      White    
+      6        O O *          
+      7              *         (O)     16 discs
+      8                       
+
+8 moves generated: c5 c2 d2 b5 b4 f7 b3 g6 
+-->   5  -19.60         18205  c5 h6 g6 g3        0.0 s  
+PV: c5 h6 g6 g3
+
+         a b c d e f g h
+
+      1            O * *      Black    
+      2          O * * O      
+      3      * * * O   O               9 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     16 discs
+      8                       
+
+6 moves generated: c2 d2 b5 b4 b3 b2 
+-->   5  -56.76         19212  c2 h6 b5 g3        0.0 s  
+PV: c2 h6 b5 g3
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * * * * O               9 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     16 discs
+      8                       
+
+8 moves generated: c2 c5 d2 b5 b4 b3 b2 g1 
+-->   5  -36.19         21066  c5 h6 g1 e1        0.0 s  
+PV: c5 h6 g1 e1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * *      
+      3      * * O O   *               11 discs
+      4      * * O O O *      
+      5        O O O   *      White    
+      6        O O O   *      
+      7                        (O)     14 discs
+      8                       
+
+7 moves generated: c5 c2 d2 b5 b4 b3 b2 
+-->   5  -35.18         21972  c5 g3 g1 e1        0.0 s  
+PV: c5 g3 g1 e1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * O O   O               9 discs
+      4      * * * O O O      
+      5        O O *   O      White    
+      6        O O O *        
+      7                        (O)     16 discs
+      8                       
+
+9 moves generated: c5 d2 g5 b5 b4 f7 h6 b3 b2 
+-->   5  -35.05         23726  c5 g3 g1 g5        0.0 s  
+PV: c5 g3 g1 g5
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * O *   O               10 discs
+      4      * * * O O O      
+      5        * O O   O      White    
+      6      * O O O          
+      7                        (O)     15 discs
+      8                       
+
+9 moves generated: c5 c2 d2 g3 b5 b4 b6 b3 b2 
+-->   5  -30.99         27021  c5 e1 d1 g1        0.0 s  
+PV: c5 e1 d1 g1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * O O   O               9 discs
+      4      * * O O O O      
+      5        * O O   O      White    
+      6        O * O          
+      7            *           (O)     16 discs
+      8                       
+
+11 moves generated: c5 c2 d2 b5 b4 d7 c6 e7 b3 f8 b2 
+-->   5  -29.85         31275  c5 h6 d2 g3        0.0 s  
+PV: c5 h6 d2 g3
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * O O   O               9 discs
+      4      * * O O O O      
+      5        * O O   O      White    
+      6        * O O          
+      7        *               (O)     16 discs
+      8                       
+
+9 moves generated: c5 c2 b4 b5 c6 c7 b3 c8 b2 
+-->   5  -27.01         33278  c5 g3 g1 e7        0.0 s  
+PV: c5 g3 g1 e7
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3      * * O O   O               9 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     16 discs
+      8                       
+
+10 moves generated: c5 c2 e1 d1 b4 b5 b3 c1 g1 b2 
+-->   5  -25.15         35688  e1 g5 d1 h6        0.0 s  
+PV: e1 g5 d1 h6
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2          O O * O      
+      3      * * O O   O               9 discs
+      4      * * O O O O      
+      5        O * O   O      White    
+      6        O O *          
+      7              *         (O)     16 discs
+      8                       
+
+8 moves generated: c5 c2 d2 b4 b5 f7 b3 g6 
+-->   5  -19.60         37608  c5 h6 g6 g3        0.0 s  
+PV: c5 h6 g6 g3
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3      * * O O   O       (*)     8 discs
+      4      * O O O O O      
+      5      O O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+10 moves generated: h6 g3 g6 g5 c6 d7 e7 f7 b6 g7 
+-->   5  +32.55          1815  g3 c1 d1 e1        0.0 s  
+PV: g3 c1 d1 e1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2      O O O O O O      
+      3      * O O O   O       (*)     4 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                22 discs
+      8                       
+
+10 moves generated: g3 h6 g1 e1 c6 d7 d1 c1 f7 g7 
+-->   5  +65.24          4066  g3 b3 b4 c5        0.0 s  
+PV: g3 b3 b4 c5
+
+         a b c d e f g h
+
+      1          O O   *      Black    
+      2        * O * * O      
+      3      * * O O   O       (*)     8 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+8 moves generated: g3 h6 g6 g5 c6 d7 f7 g7 
+-->   5  +29.89          5520  g3 c1 h6 c5        0.0 s  
+PV: g3 c1 h6 c5
+
+         a b c d e f g h
+
+      1        O   O   *      Black    
+      2        O O * * O      
+      3      * O O O   O       (*)     5 discs
+      4      * O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                21 discs
+      8                       
+
+8 moves generated: g3 h6 e1 c5 c6 c2 f7 g7 
+-->   5  +47.02          7616  c5 b2 g3 b6        0.0 s  
+PV: c5 b2 g3 b6
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3      * * O O   O       (*)     7 discs
+      4    O O O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                19 discs
+      8                       
+
+12 moves generated: g3 h6 c5 g5 g6 c6 d7 e7 b5 f7 a5 g7 
+-->   5  +45.61         10916  g3 c1 d1 b3        0.0 s  
+PV: g3 c1 d1 b3
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * O * * O      
+      3      * O O O   O       (*)     6 discs
+      4      O * O O O O      
+      5    O   O O O   O      White    
+      6        O O O          
+      7                                20 discs
+      8                       
+
+9 moves generated: g3 h6 c5 g5 c6 d7 b4 f7 g7 
+-->   5  +39.56         14464  g3 c1 h6 c5        0.0 s  
+PV: g3 c1 h6 c5
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O O O   O       (*)     6 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                20 discs
+      8                       
+
+10 moves generated: h6 g5 c6 d7 e7 b4 b5 f7 g7 b2 
+-->   5  +34.07         17613  e7 e1 c1 d7        0.0 s  
+PV: e7 e1 c1 d7
+
+         a b c d e f g h
+
+      1      O     O   *      Black    
+      2        O * * * O      
+      3      * * O O   O       (*)     8 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+11 moves generated: g3 h6 g6 e1 c6 e7 d7 d1 c2 f7 g7 
+-->   5  +35.28         20236  g3 c2 h6 e1        0.0 s  
+PV: g3 c2 h6 e1
+
+         a b c d e f g h
+
+      1            O O *      Black    
+      2        * * O * O      
+      3      * * O O   O       (*)     8 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+10 moves generated: g3 h6 g5 g6 e1 c6 e7 d7 f7 g7 
+-->   5  +51.01         22312  e1 c5 h6 b4        0.0 s  
+PV: e1 c5 h6 b4
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2    O   * * * * O      
+      3      O * O O   O       (*)     7 discs
+      4      * O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                19 discs
+      8                       
+
+12 moves generated: g3 c5 h6 g5 g6 c6 e7 d7 c2 b4 b3 f7 
+-->   5  +46.78         25933  g3 c1 g5 d1        0.0 s  
+PV: g3 c1 g5 d1
+
+         a b c d e f g h
+
+      1          O O   *      Black    
+      2        * O * * O      
+      3      * * O O   O       (*)     8 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+8 moves generated: g3 h6 g5 g6 c6 d7 f7 g7 
+-->   5  +29.89         27910  g3 c1 h6 c5        0.0 s  
+PV: g3 c1 h6 c5
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3      * * O O   O       (*)     8 discs
+      4      * O O O O O      
+      5      O O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+10 moves generated: g3 g5 h6 g6 c6 e7 d7 f7 b6 g7 
+-->   5  +32.55         30181  g3 c1 d1 e1        0.0 s  
+PV: g3 c1 d1 e1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O O O   O       (*)     6 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                20 discs
+      8                       
+
+10 moves generated: g5 h6 c6 e7 d7 b4 b5 f7 g7 b2 
+-->   5  +34.07         33265  e7 e1 c1 d7        0.0 s  
+PV: e7 e1 c1 d7
+
+         a b c d e f g h
+
+      1      O     O   *      Black    
+      2        O * * * O      
+      3      * * O O   O       (*)     8 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+11 moves generated: g3 e1 h6 e7 g6 c6 d7 d1 c2 f7 g7 
+-->   5  +35.28         36089  g3 c2 h6 e1        0.0 s  
+PV: g3 c2 h6 e1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * O * * O      
+      3      * O O O   O       (*)     6 discs
+      4      O * O O O O      
+      5    O   O O O   O      White    
+      6        O O O          
+      7                                20 discs
+      8                       
+
+9 moves generated: g3 c5 g5 h6 c6 d7 b4 f7 g7 
+-->   5  +39.56         39683  g3 c1 h6 c5        0.0 s  
+PV: g3 c1 h6 c5
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3      * * O O   O       (*)     7 discs
+      4    O O O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                19 discs
+      8                       
+
+12 moves generated: g3 c5 g5 h6 e7 g6 c6 d7 b5 f7 a5 g7 
+-->   5  +45.61         43091  g3 c1 d1 b3        0.0 s  
+PV: g3 c1 d1 b3
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2    O   * * * * O      
+      3      O * O O   O       (*)     7 discs
+      4      * O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                19 discs
+      8                       
+
+12 moves generated: g3 c5 g5 h6 e7 g6 c6 d7 c2 b4 b3 f7 
+-->   5  +46.78         47309  g3 c1 g5 d1        0.0 s  
+PV: g3 c1 g5 d1
+
+         a b c d e f g h
+
+      1        O   O   *      Black    
+      2        O O * * O      
+      3      * O O O   O       (*)     5 discs
+      4      * O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                21 discs
+      8                       
+
+8 moves generated: g3 c5 e1 h6 c6 c2 f7 g7 
+-->   5  +47.02         49075  c5 b2 h6 b6        0.0 s  
+PV: c5 b2 h6 b6
+
+         a b c d e f g h
+
+      1            O O *      Black    
+      2        * * O * O      
+      3      * * O O   O       (*)     8 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                18 discs
+      8                       
+
+10 moves generated: g3 e1 g5 h6 e7 g6 c6 d7 f7 g7 
+-->   5  +51.01         51119  e1 c5 h6 b4        0.0 s  
+PV: e1 c5 h6 b4
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2      O O O O O O      
+      3      * O O O   O       (*)     4 discs
+      4      * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                22 discs
+      8                       
+
+10 moves generated: e1 g3 h6 g1 c6 d7 d1 c1 f7 g7 
+-->   5  +65.24         53301  g3 b3 b4 c5        0.0 s  
+PV: g3 b3 b4 c5
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O * O   O               9 discs
+      4      O * O * O O      
+      5        O O O * O      White    
+      6        O O O          
+      7                        (O)     18 discs
+      8                       
+
+5 moves generated: e1 c2 d1 g3 g6 
+-->   5  -27.88           861  g3 f7 e7 c2        0.0 s  
+PV: g3 f7 e7 c2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * *      
+      3    O O O O O   *               11 discs
+      4      O * O O O *      
+      5        O O O   *      White    
+      6        O O O   *      
+      7                        (O)     16 discs
+      8                       
+
+5 moves generated: c5 e1 c1 g1 d1 
+-->   5  -24.98          2027  c5 e7 e1 c1        0.0 s  
+PV: c5 e7 e1 c1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O * O   O               11 discs
+      4      O * * O O O      
+      5        O * O   O      White    
+      6        O * O          
+      7          *             (O)     16 discs
+      8                       
+
+8 moves generated: e1 c1 c2 d1 d7 f7 d8 f8 
+-->   5  -26.96          4614  c1 b4 e1 h6        0.0 s  
+PV: c1 b4 e1 h6
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O O *   O               10 discs
+      4      O * * O O O      
+      5        * O O   O      White    
+      6      * O O O          
+      7                        (O)     17 discs
+      8                       
+
+8 moves generated: e1 c5 c1 g3 c2 g1 d1 b6 
+-->   5  -19.57          5952  c5 h6 c1 b4        0.0 s  
+PV: c5 h6 c1 b4
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O O O   O               9 discs
+      4      O * O O O O      
+      5        * O O   O      White    
+      6        * O O          
+      7        *               (O)     18 discs
+      8                       
+
+10 moves generated: c5 e1 c1 c2 g1 d1 c6 c7 d8 c8 
+-->   5  -22.84          8231  e1 h6 c6 b4        0.0 s  
+PV: e1 h6 c6 b4
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O * O O O   O               9 discs
+      4    * * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     18 discs
+      8                       
+
+9 moves generated: e1 c5 c1 b5 c2 g1 d1 b2 a4 
+-->   5  -23.83          9727  e1 g5 d1 h6        0.0 s  
+PV: e1 g5 d1 h6
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O * O O   O               9 discs
+      4      * * O O O O      
+      5    *   O O O   O      White    
+      6        O O O          
+      7                        (O)     18 discs
+      8                       
+
+8 moves generated: e1 c5 c1 c2 g1 d1 b4 a6 
+-->   5  -28.33         10890  e1 g3 c2 h6        0.0 s  
+PV: e1 g3 c2 h6
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O O *   O               11 discs
+      4      O * O * O O      
+      5        O O *   O      White    
+      6        O O *          
+      7            *           (O)     16 discs
+      8                       
+
+12 moves generated: e1 c5 c1 g3 c2 g1 d1 g5 g6 f8 g8 g7 
+-->   5  -9.02          13296  g5 e7 g3 c2        0.0 s  
+PV: g5 e7 g3 c2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O O O   O               9 discs
+      4      O * O O O O      
+      5        O * O   O      White    
+      6        O O *          
+      7              *         (O)     18 discs
+      8                       
+
+9 moves generated: c5 e1 c1 c2 g1 d1 g6 f7 h8 
+-->   5  -14.55         15049  c5 g3 g5 e7        0.0 s  
+PV: c5 g3 g5 e7
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2    *   * * * * O      
+      3    O * O O O   O               8 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     19 discs
+      8                       
+
+8 moves generated: c5 e1 c1 c2 g1 d1 a1 b1 
+-->   5  -19.81         16354  e1 g3 c1 c5        0.0 s  
+PV: e1 g3 c1 c5
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O * O O   O               9 discs
+      4      * * O O O O      
+      5    *   O O O   O      White    
+      6        O O O          
+      7                        (O)     18 discs
+      8                       
+
+8 moves generated: e1 c5 c1 c2 g1 d1 b4 a6 
+-->   5  -28.33         17677  e1 g3 c2 h6        0.0 s  
+PV: e1 g3 c2 h6
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O * O   O               9 discs
+      4      O * O * O O      
+      5        O O O * O      White    
+      6        O O O          
+      7                        (O)     18 discs
+      8                       
+
+5 moves generated: e1 g3 c2 d1 g6 
+-->   5  -27.88         18736  g3 f7 e7 c2        0.0 s  
+PV: g3 f7 e7 c2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O * O   O               11 discs
+      4      O * * O O O      
+      5        O * O   O      White    
+      6        O * O          
+      7          *             (O)     16 discs
+      8                       
+
+8 moves generated: e1 c1 c2 d1 d7 f7 d8 f8 
+-->   5  -26.96         22534  c1 b4 c5 h6        0.0 s  
+PV: c1 b4 c5 h6
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * *      
+      3    O O O O O   *               11 discs
+      4      O * O O O *      
+      5        O O O   *      White    
+      6        O O O   *      
+      7                        (O)     16 discs
+      8                       
+
+5 moves generated: e1 c1 c5 g1 d1 
+-->   5  -24.98         23914  c5 e7 e1 c1        0.0 s  
+PV: c5 e7 e1 c1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O * O O O   O               9 discs
+      4    * * * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     18 discs
+      8                       
+
+9 moves generated: c5 e1 c1 b5 c2 g1 d1 b2 a4 
+-->   5  -23.83         25531  e1 g5 d1 h6        0.0 s  
+PV: e1 g5 d1 h6
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O O O   O               9 discs
+      4      O * O O O O      
+      5        * O O   O      White    
+      6        * O O          
+      7        *               (O)     18 discs
+      8                       
+
+10 moves generated: e1 c5 c1 c2 g1 d1 c6 c7 d8 c8 
+-->   5  -22.84         27859  e1 h6 c6 b4        0.0 s  
+PV: e1 h6 c6 b4
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2    *   * * * * O      
+      3    O * O O O   O               8 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     19 discs
+      8                       
+
+8 moves generated: e1 c5 c1 c2 g1 d1 a1 b1 
+-->   5  -19.81         29117  e1 g3 c1 c5        0.0 s  
+PV: e1 g3 c1 c5
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O O *   O               10 discs
+      4      O * * O O O      
+      5        * O O   O      White    
+      6      * O O O          
+      7                        (O)     17 discs
+      8                       
+
+8 moves generated: e1 c5 c1 g3 c2 g1 d1 b6 
+-->   5  -19.57         30388  c5 h6 c1 b4        0.0 s  
+PV: c5 h6 c1 b4
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O O O   O               9 discs
+      4      O * O O O O      
+      5        O * O   O      White    
+      6        O O *          
+      7              *         (O)     18 discs
+      8                       
+
+9 moves generated: c5 e1 c1 c2 g1 d1 g6 f7 h8 
+-->   5  -14.55         32074  c5 g3 g5 e7        0.0 s  
+PV: c5 g3 g5 e7
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2        * * * * O      
+      3    O O O O *   O               11 discs
+      4      O * O * O O      
+      5        O O *   O      White    
+      6        O O *          
+      7            *           (O)     16 discs
+      8                       
+
+12 moves generated: c5 e1 c1 g3 c2 g1 g5 d1 g6 f8 g8 g7 
+-->   5  -9.02          34772  g5 e7 g3 c2        0.0 s  
+PV: g5 e7 g3 c2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2    *   * * * * O      
+      3    O * O O O   O       (*)     7 discs
+      4      O O O O O O      
+      5      O O O O   O      White    
+      6        O O O          
+      7                                21 discs
+      8                       
+
+12 moves generated: h6 e7 g3 b4 g5 c6 d7 b5 f7 b6 a3 g7 
+-->   5  +28.66          3492  g3 c1 g5 h6        0.0 s  
+PV: g3 c1 g5 h6
+
+         a b c d e f g h
+
+      1          O O   *      Black    
+      2    *   * O * * O      
+      3    O * O O O   O       (*)     7 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                21 discs
+      8                       
+
+10 moves generated: g3 h6 b4 c5 g5 c6 d7 f7 a3 g7 
+-->   5  +26.03          5508  g3 d1 h6 c2        0.0 s  
+PV: g3 d1 h6 c2
+
+         a b c d e f g h
+
+      1      O     O   *      Black    
+      2    *   O * * * O      
+      3    O * O O O   O       (*)     7 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                21 discs
+      8                       
+
+14 moves generated: g3 h6 e7 c2 e1 b4 c5 d1 c6 d7 b5 f7 a3 g7 
+-->   5  +34.26          9669  g3 b4 g5 a1        0.0 s  
+PV: g3 b4 g5 a1
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2    * O O O O O O      
+      3    O O O O O   O       (*)     3 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                25 discs
+      8                       
+
+7 moves generated: h6 b4 d1 c6 g1 d7 g7 
+-->   5  +54.21         11188  g1 a1 h6 g3        0.0 s  
+PV: g1 a1 h6 -- g3
+
+         a b c d e f g h
+
+      1            O O *      Black    
+      2    *   * * O * O      
+      3    O * O O O   O       (*)     7 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                21 discs
+      8                       
+
+12 moves generated: g3 h6 e7 e1 b4 c5 g5 c6 d7 b5 a3 g7 
+-->   5  +43.13         13872  e1 c5 g3 c2        0.0 s  
+PV: e1 c5 g3 c2
+
+         a b c d e f g h
+
+      1        O   O   *      Black    
+      2    *   O O * * O      
+      3    O * O O O   O       (*)     6 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                22 discs
+      8                       
+
+11 moves generated: e1 g3 h6 c2 b4 c5 c6 d7 f7 a3 g7 
+-->   5  +30.05         16807  c5 a1 g5 b6        0.0 s  
+PV: c5 a1 g5 b6
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O O O O   O       (*)     5 discs
+      4      O O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                23 discs
+      8                       
+
+9 moves generated: h6 c5 e7 b4 g5 c6 d7 b5 f7 
+-->   5  +24.33         19192  h6 c1 e7 d1        0.0 s  
+PV: h6 c1 e7 d1
+
+         a b c d e f g h
+
+      1    O       O   *      Black    
+      2    O   * * * * O      
+      3    O * O O O   O       (*)     7 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                21 discs
+      8                       
+
+13 moves generated: h6 g3 c5 e7 b4 g5 c6 d7 b5 f7 a1 a3 g7 
+-->   5  +48.96         22250  g3 c1 d1 c5        0.0 s  
+PV: g3 c1 d1 c5
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O O O O   O       (*)     5 discs
+      4      O O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                23 discs
+      8                       
+
+9 moves generated: h6 c5 e7 b4 g5 c6 d7 b5 f7 
+-->   5  +24.33         24552  h6 c1 e7 d1        0.0 s  
+PV: h6 c1 e7 d1
+
+         a b c d e f g h
+
+      1          O O   *      Black    
+      2    *   * O * * O      
+      3    O * O O O   O       (*)     7 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                21 discs
+      8                       
+
+10 moves generated: h6 g3 c5 b4 g5 c6 d7 f7 a3 g7 
+-->   5  +26.03         26942  g3 d1 h6 c2        0.0 s  
+PV: g3 d1 h6 c2
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2    *   * * * * O      
+      3    O * O O O   O       (*)     7 discs
+      4      O O O O O O      
+      5      O O O O   O      White    
+      6        O O O          
+      7                                21 discs
+      8                       
+
+12 moves generated: g3 h6 e7 b4 g5 c6 d7 b5 f7 b6 a3 g7 
+-->   5  +28.66         30649  g3 c1 g5 h6        0.0 s  
+PV: g3 c1 g5 h6
+
+         a b c d e f g h
+
+      1        O   O   *      Black    
+      2    *   O O * * O      
+      3    O * O O O   O       (*)     6 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                22 discs
+      8                       
+
+11 moves generated: g3 h6 e1 c5 c2 b4 c6 d7 f7 a3 g7 
+-->   5  +30.05         33697  c5 a1 g5 b6        0.0 s  
+PV: c5 a1 g5 b6
+
+         a b c d e f g h
+
+      1      O     O   *      Black    
+      2    *   O * * * O      
+      3    O * O O O   O       (*)     7 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                21 discs
+      8                       
+
+14 moves generated: c5 g3 h6 e1 e7 c2 b4 d1 c6 d7 b5 f7 a3 g7 
+-->   5  +34.26         37730  g3 b4 g5 a1        0.0 s  
+PV: g3 b4 g5 a1
+
+         a b c d e f g h
+
+      1            O O *      Black    
+      2    *   * * O * O      
+      3    O * O O O   O       (*)     7 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                21 discs
+      8                       
+
+12 moves generated: g3 c5 h6 e1 e7 b4 g5 c6 d7 b5 a3 g7 
+-->   5  +43.13         40451  e1 c5 g3 c2        0.0 s  
+PV: e1 c5 g3 c2
+
+         a b c d e f g h
+
+      1    O       O   *      Black    
+      2    O   * * * * O      
+      3    O * O O O   O       (*)     7 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                21 discs
+      8                       
+
+13 moves generated: g3 c5 h6 e7 b4 g5 c6 d7 b5 f7 a1 a3 g7 
+-->   5  +48.96         43914  g3 c1 d1 c5        0.0 s  
+PV: g3 c1 d1 c5
+
+         a b c d e f g h
+
+      1            O   *      Black    
+      2    * O O O O O O      
+      3    O O O O O   O       (*)     3 discs
+      4      O * O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                                25 discs
+      8                       
+
+7 moves generated: h6 b4 g1 d1 c6 d7 g7 
+-->   5  +54.21         45425  g1 a1 h6 g3        0.0 s  
+PV: g1 a1 h6 -- g3
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O O * O   O               8 discs
+      4      O * O O O O      
+      5      * O O O   O      White    
+      6        O O O          
+      7                        (O)     21 discs
+      8                       
+
+7 moves generated: e1 c1 d1 c2 b4 c6 b5 
+-->   5  -25.83           986  c1 h6 e1 c6        0.0 s  
+PV: c1 h6 e1 c6
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * *      
+      3    O O O O O   *               10 discs
+      4      O O O O O *      
+      5        O O O   *      White    
+      6        O O O   *      
+      7                        (O)     19 discs
+      8                       
+
+4 moves generated: c1 e1 d1 g1 
+-->   5  -25.83          1527  c1 c5 e1 c6        0.0 s  
+PV: c1 c5 e1 c6
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O O * O   O               10 discs
+      4      O O * O O O      
+      5        O * O   O      White    
+      6        O * O          
+      7          *             (O)     19 discs
+      8                       
+
+9 moves generated: c1 e1 d1 c2 g1 d7 f7 f8 d8 
+-->   5  -20.03          5059  e1 c7 g1 g3        0.0 s  
+PV: e1 c7 g1 g3
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O * O O O   O               7 discs
+      4    * O O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     22 discs
+      8                       
+
+7 moves generated: e1 c1 d1 c2 g1 b5 a4 
+-->   5  -18.86          6333  e1 h6 d1 c5        0.0 s  
+PV: e1 h6 d1 c5
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O O * O   O               8 discs
+      4      O O O * O O      
+      5        O O O * O      White    
+      6        O O O          
+      7                        (O)     21 discs
+      8                       
+
+6 moves generated: e1 d1 g3 c2 g1 g6 
+-->   5  -18.45          7227  g3 f7 g1 h6        0.0 s  
+PV: g3 f7 g1 h6
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O O O *   O               9 discs
+      4      O O * O O O      
+      5        * O O   O      White    
+      6      * O O O          
+      7                        (O)     20 discs
+      8                       
+
+8 moves generated: g3 e1 c1 c5 d1 c2 g1 b6 
+-->   5  -7.59           8462  c5 h6 c1 b4        0.0 s  
+PV: c5 h6 c1 b4
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O * O O   O               10 discs
+      4      O * O O O O      
+      5        * O O   O      White    
+      6        * O O          
+      7        *               (O)     19 discs
+      8                       
+
+9 moves generated: c5 e1 c1 d1 c2 g1 c6 c7 c8 
+-->   5  -8.66          12391  d1 g3 c2 e1        0.0 s  
+PV: d1 g3 c2 e1
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O * O O   O               8 discs
+      4      * O O O O O      
+      5    *   O O O   O      White    
+      6        O O O          
+      7                        (O)     21 discs
+      8                       
+
+8 moves generated: c5 c1 e1 d1 c2 g1 b4 a6 
+-->   5  -23.27         13834  e1 c5 c6 h6        0.0 s  
+PV: e1 c5 c6 h6
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O O O *   O               10 discs
+      4      O O O * O O      
+      5        O O *   O      White    
+      6        O O *          
+      7            *           (O)     19 discs
+      8                       
+
+11 moves generated: e1 c1 d1 g3 c2 g1 g5 g6 f8 g7 g8 
+-->   5  -3.73          16381  g5 e7 g3 c2        0.0 s  
+PV: g5 e7 g3 c2
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O O * O   O               8 discs
+      4      O * O O O O      
+      5      * O O O   O      White    
+      6        O O O          
+      7                        (O)     21 discs
+      8                       
+
+7 moves generated: e1 c1 d1 c2 b4 c6 b5 
+-->   5  -25.83         17659  c1 h6 e1 c6        0.0 s  
+PV: c1 h6 e1 c6
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * *      
+      3    O O O O O   *               10 discs
+      4      O O O O O *      
+      5        O O O   *      White    
+      6        O O O   *      
+      7                        (O)     19 discs
+      8                       
+
+4 moves generated: c1 e1 d1 g1 
+-->   5  -25.83         18751  c1 c5 e1 c6        0.0 s  
+PV: c1 c5 e1 c6
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O * O O   O               8 discs
+      4      * O O O O O      
+      5    *   O O O   O      White    
+      6        O O O          
+      7                        (O)     21 discs
+      8                       
+
+8 moves generated: c1 e1 c5 d1 c2 g1 b4 a6 
+-->   5  -23.27         20354  e1 c5 c6 h6        0.0 s  
+PV: e1 c5 c6 h6
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O O * O   O               10 discs
+      4      O O * O O O      
+      5        O * O   O      White    
+      6        O * O          
+      7          *             (O)     19 discs
+      8                       
+
+9 moves generated: e1 c1 d1 c2 g1 d7 f7 f8 d8 
+-->   5  -20.03         23714  e1 c7 g1 g3        0.0 s  
+PV: e1 c7 g1 g3
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O * O O O   O               7 discs
+      4    * O O O O O O      
+      5        O O O   O      White    
+      6        O O O          
+      7                        (O)     22 discs
+      8                       
+
+7 moves generated: e1 c1 d1 c2 g1 b5 a4 
+-->   5  -18.86         25033  e1 h6 d1 c5        0.0 s  
+PV: e1 h6 d1 c5
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O O * O   O               8 discs
+      4      O O O * O O      
+      5        O O O * O      White    
+      6        O O O          
+      7                        (O)     21 discs
+      8                       
+
+6 moves generated: e1 d1 g3 c2 g1 g6 
+-->   5  -18.45         25975  g3 f7 g1 h6        0.0 s  
+PV: g3 f7 g1 h6
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O * O O   O               10 discs
+      4      O * O O O O      
+      5        * O O   O      White    
+      6        * O O          
+      7        *               (O)     19 discs
+      8                       
+
+9 moves generated: e1 c1 c5 d1 c2 g1 c6 c7 c8 
+-->   5  -8.66          29544  d1 g3 c2 e1        0.0 s  
+PV: d1 g3 c2 e1
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O O O *   O               9 discs
+      4      O O * O O O      
+      5        * O O   O      White    
+      6      * O O O          
+      7                        (O)     20 discs
+      8                       
+
+8 moves generated: c1 e1 g3 d1 c5 c2 g1 b6 
+-->   5  -7.59          30715  c5 h6 c1 b4        0.0 s  
+PV: c5 h6 c1 b4
+
+         a b c d e f g h
+
+      1  O         O   *      Black    
+      2    O   * * * * O      
+      3    O O O O *   O               10 discs
+      4      O O O * O O      
+      5        O O *   O      White    
+      6        O O *          
+      7            *           (O)     19 discs
+      8                       
+
+11 moves generated: c1 e1 g3 d1 g5 c2 g1 g6 f8 g7 g8 
+-->   5  -3.73          33083  g5 e7 g3 c2        0.0 s  
+PV: g5 e7 g3 c2
