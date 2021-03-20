@@ -16,7 +16,7 @@ use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::thordb::init_thor_database;
 use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
 use libc_wrapper::{FileHandle, strlen, strstr, time, fclose, fopen, fprintf, printf, sscanf,
-                   fgets, fputs, puts, feof, strtol, exit, strcasecmp, stdout};
+                   fgets, fputs, puts, feof, exit, strcasecmp, stdout, atoi};
 use std::io::Write;
 
 pub type __off_t = i64;
@@ -41,12 +41,6 @@ pub type Board = [i32; 128];
    Contents:      The interface to common search routines and variables.
 */
 
-
-#[inline]
-unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
-    return strtol(__nptr, 0 as *mut ::std::ffi::c_void as *mut *mut i8,
-                  10 as i32) as i32;
-}
 /*
    File:           zebra.c
 
