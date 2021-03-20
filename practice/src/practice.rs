@@ -10,22 +10,11 @@ use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
 use legacy_zebra::src::zebra::{ LibcTimeSource};
-use libc_wrapper::{_IO_FILE, stdout, fflush};
+use libc_wrapper::{_IO_FILE, stdout, fflush, puts, printf, atoi, strcmp, scanf, strdup, exit};
 use std::ffi::CStr;
 use engine::src::zebra::FullState;
 use std::io::Write;
 
-extern "C" {
-    fn printf(_: *const i8, _: ...) -> i32;
-    fn scanf(_: *const i8, _: ...) -> i32;
-    fn puts(__s: *const i8) -> i32;
-    fn strtol(__nptr: *const i8, __endptr: *mut *mut i8,
-              __base: i32) -> i64;
-    fn free(__ptr: *mut ::std::ffi::c_void);
-    fn exit(_: i32) -> !;
-    fn strcmp(_: *const i8, _: *const i8) -> i32;
-    fn strdup(_: *const i8) -> *mut i8;
-}
 pub type size_t = u64;
 pub type __off_t = i64;
 pub type __off64_t = i64;
@@ -34,12 +23,6 @@ pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 pub type Board = [i32; 128];
 
-
-#[inline]
-unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
-    return strtol(__nptr, 0 as *mut ::std::ffi::c_void as *mut *mut i8,
-                  10 as i32) as i32;
-}
 /*
    File:         practice.c
 
