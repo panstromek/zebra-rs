@@ -15,29 +15,10 @@ use legacy_zebra::src::game::{compute_move, game_init, global_setup, toggle_stat
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::thordb::init_thor_database;
 use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
-use libc_wrapper::{FileHandle, strlen, strstr, time};
+use libc_wrapper::{FileHandle, strlen, strstr, time, fclose, fopen, fprintf, printf, sscanf,
+                   fgets, fputs, puts, feof, strtol, exit, strcasecmp, stdout};
 use std::io::Write;
 
-extern "C" {
-    static mut stdout: FileHandle;
-    fn fclose(__stream: FileHandle) -> i32;
-    fn fopen(__filename: *const i8, __modes: *const i8)
-             -> FileHandle;
-    fn fprintf(_: FileHandle, _: *const i8, _: ...) -> i32;
-    fn printf(_: *const i8, _: ...) -> i32;
-    fn sscanf(_: *const i8, _: *const i8, _: ...)
-              -> i32;
-    fn fgets(__s: *mut i8, __n: i32, __stream: FileHandle)
-             -> *mut i8;
-    fn fputs(__s: *const i8, __stream: FileHandle) -> i32;
-    fn puts(__s: *const i8) -> i32;
-    fn feof(__stream: FileHandle) -> i32;
-    fn strtol(__nptr: *const i8, __endptr: *mut *mut i8,
-              __base: i32) -> i64;
-    fn exit(_: i32) -> !;
-    fn strcasecmp(_: *const i8, _: *const i8)
-                  -> i32;
-}
 pub type __off_t = i64;
 pub type __off64_t = i64;
 pub type __time_t = i64;

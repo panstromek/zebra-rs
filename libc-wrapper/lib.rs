@@ -134,6 +134,7 @@ mod inner  {
     }
 }
 extern "C" {
+    pub fn strtol(__nptr: *const i8, __endptr: *mut *mut i8, __base: i32) -> i64;
     pub fn fscanf(_: *mut inner::FILE, _: *const i8, _: ...) -> i32;
     pub fn malloc(_: u64) -> *mut c_void;
     pub fn realloc(_: *mut c_void, _: u64) -> *mut c_void;
