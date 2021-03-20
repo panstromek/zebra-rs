@@ -4,75 +4,15 @@
 #![allow(non_upper_case_globals)]
 #![allow(unused_assignments)]
 #![allow(unused_mut)]
-#![feature(const_raw_ptr_to_usize_cast)]
-#![feature(extern_types)]
+#![allow(unused_must_use)]
 
-extern "C" {
-    pub type _IO_wide_data;
-    pub type _IO_codecvt;
-    pub type _IO_marker;
-    fn sqrt(_: f64) -> f64;
-    fn fabs(_: f64) -> f64;
-    static mut stdout: *mut FILE;
-    fn fclose(__stream: *mut FILE) -> i32;
-    fn fflush(__stream: *mut FILE) -> i32;
-    fn fopen(__filename: *const i8, __modes: *const i8) -> *mut FILE;
-    fn fprintf(_: *mut FILE, _: *const i8, _: ...) -> i32;
-    fn printf(_: *const i8, _: ...) -> i32;
-    fn sprintf(_: *mut i8, _: *const i8, _: ...) -> i32;
-    fn fscanf(_: *mut FILE, _: *const i8, _: ...) -> i32;
-    fn sscanf(_: *const i8, _: *const i8, _: ...) -> i32;
-    fn fgets(__s: *mut i8, __n: i32, __stream: *mut FILE) -> *mut i8;
-    fn puts(__s: *const i8) -> i32;
-    fn fread(__ptr: *mut ::std::ffi::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
-    fn fwrite(__ptr: *const ::std::ffi::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
-    fn feof(__stream: *mut FILE) -> i32;
-    fn strtol(__nptr: *const i8, __endptr: *mut *mut i8, __base: i32) -> i64;
-    fn malloc(_: u64) -> *mut ::std::ffi::c_void;
-    fn free(__ptr: *mut ::std::ffi::c_void);
-    fn exit(_: i32) -> !;
-    fn abs(_: i32) -> i32;
-    fn time(__timer: *mut time_t) -> time_t;
-}
+use libc_wrapper::{printf, fflush, time, puts, fclose, fscanf, fopen, FileHandle, sprintf, free,
+                   fread, malloc, fprintf, fwrite, feof, fgets, sscanf, atoi, stdout, exit};
+use std::io::Write;
 pub type __off_t = i64;
 pub type __off64_t = i64;
 pub type __time_t = i64;
 pub type size_t = u64;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-    pub _flags: i32,
-    pub _IO_read_ptr: *mut i8,
-    pub _IO_read_end: *mut i8,
-    pub _IO_read_base: *mut i8,
-    pub _IO_write_base: *mut i8,
-    pub _IO_write_ptr: *mut i8,
-    pub _IO_write_end: *mut i8,
-    pub _IO_buf_base: *mut i8,
-    pub _IO_buf_end: *mut i8,
-    pub _IO_save_base: *mut i8,
-    pub _IO_backup_base: *mut i8,
-    pub _IO_save_end: *mut i8,
-    pub _markers: *mut _IO_marker,
-    pub _chain: *mut _IO_FILE,
-    pub _fileno: i32,
-    pub _flags2: i32,
-    pub _old_offset: __off_t,
-    pub _cur_column: u16,
-    pub _vtable_offset: i8,
-    pub _shortbuf: [i8; 1],
-    pub _lock: *mut ::std::ffi::c_void,
-    pub _offset: __off64_t,
-    pub _codecvt: *mut _IO_codecvt,
-    pub _wide_data: *mut _IO_wide_data,
-    pub _freeres_list: *mut _IO_FILE,
-    pub _freeres_buf: *mut ::std::ffi::c_void,
-    pub __pad5: size_t,
-    pub _mode: i32,
-    pub _unused2: [i8; 20],
-}
-pub type _IO_lock_t = ();
-pub type FILE = _IO_FILE;
 pub type time_t = __time_t;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -91,11 +31,6 @@ pub struct CompactPosition {
     pub side_to_move: i16,
     pub score: i16,
     pub stage: i16,
-}
-#[inline]
-unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
-    return strtol(__nptr, 0 as *mut ::std::ffi::c_void as *mut *mut i8,
-                  10 as i32) as i32;
 }
 
 pub static mut objective: f64 = 0.;
@@ -355,7 +290,7 @@ pub unsafe  fn pack_position(mut buffer: *mut i8,
     sscanf(buffer.offset(34),
            b"%d %d\x00" as *const u8 as *const i8,
            &mut stage_0 as *mut i32, &mut score as *mut i32);
-    if abs(score) > max_diff { return 0 as i32 }
+    if i32::abs(score) > max_diff { return 0 as i32 }
     i = 0;
     while i < 8 as i32 {
         sscanf(buffer.offset((4 as i32 * i) as isize),
@@ -480,7 +415,7 @@ pub unsafe  fn display_board(mut index: i32) {
 
 pub unsafe  fn read_position_file(mut file_name:
                                             *mut i8) {
-    let mut stream: *mut FILE = 0 as *mut FILE;
+    let mut stream: FileHandle = FileHandle::null();
     let mut buffer: [i8; 100] = [0; 100];
     position_list =
         malloc((max_positions as
@@ -1371,7 +1306,7 @@ pub unsafe  fn perform_evaluation(mut index: i32) {
     }
     error *= curr_weight;
     objective += error * error;
-    abs_error_sum += fabs(error);
+    abs_error_sum += f64::abs(error);
     grad_contrib = 2.0f64 * curr_weight * error;
     constant.gradient += grad_contrib;
     parity.gradient += grad_contrib * global_parity as f64;
@@ -2087,7 +2022,7 @@ pub unsafe  fn save(mut base: *const i8,
     let mut vals: [f32; 59049] = [0.; 59049];
     let mut i: i32 = 0;
     let mut freq: [i32; 59049] = [0; 59049];
-    let mut stream: *mut FILE = 0 as *mut FILE;
+    let mut stream: FileHandle = FileHandle::null();
     sprintf(file_name.as_mut_ptr(),
             b"%s%s\x00" as *const u8 as *const i8, base, suffix);
     stream =
@@ -2121,7 +2056,7 @@ pub unsafe  fn save(mut base: *const i8,
 pub unsafe  fn store_patterns() {
     let mut suffix: [i8; 8] = [0; 8];
     let mut file_name: [i8; 16] = [0; 16];
-    let mut stream: *mut FILE = 0 as *mut FILE;
+    let mut stream: FileHandle = FileHandle::null();
     write!(stdout, "Saving patterns...");
     fflush(stdout);
     sprintf(suffix.as_mut_ptr(),
@@ -2186,7 +2121,7 @@ pub unsafe  fn store_patterns() {
 
 pub unsafe  fn write_log(mut iteration: i32) {
     let mut file_name: [i8; 32] = [0; 32];
-    let mut stream: *mut FILE = 0 as *mut FILE;
+    let mut stream: FileHandle = FileHandle::null();
     sprintf(file_name.as_mut_ptr(),
             b"log.s%d\x00" as *const u8 as *const i8,
             analysis_stage);
@@ -2221,7 +2156,7 @@ pub unsafe  fn initialize_solution(mut base: *const i8,
     let mut vals: *mut f32 = 0 as *mut f32;
     let mut i: i32 = 0;
     let mut freq: *mut i32 = 0 as *mut i32;
-    let mut stream: *mut FILE = 0 as *mut FILE;
+    let mut stream: FileHandle = FileHandle::null();
     sprintf(file_name.as_mut_ptr(),
             b"%s.b%d\x00" as *const u8 as *const i8, base,
             analysis_stage);
@@ -2302,7 +2237,7 @@ pub unsafe  fn find_most_common(mut item: *mut InfoItem,
 pub unsafe  fn initialize_non_patterns(mut base:
                                                  *const i8) {
     let mut file_name: [i8; 32] = [0; 32];
-    let mut stream: *mut FILE = 0 as *mut FILE;
+    let mut stream: FileHandle = FileHandle::null();
     sprintf(file_name.as_mut_ptr(),
             b"%s.s%d\x00" as *const u8 as *const i8, base,
             analysis_stage);
@@ -2313,9 +2248,9 @@ pub unsafe  fn initialize_non_patterns(mut base:
         parity.solution = 0.0f64;
         constant.solution = 0.0f64
     } else {
-        fscanf(stream, b"%lf\x00" as *const u8 as *const i8,
+        fscanf(stream.file(), b"%lf\x00" as *const u8 as *const i8,
                &mut constant.solution as *mut f64);
-        fscanf(stream, b"%lf\x00" as *const u8 as *const i8,
+        fscanf(stream.file(), b"%lf\x00" as *const u8 as *const i8,
                &mut parity.solution as *mut f64);
         fclose(stream);
     };
@@ -2352,7 +2287,7 @@ pub unsafe  fn update_solution(mut item: *mut InfoItem,
         if (*item.offset(i as isize)).frequency > 0 as i32 &&
             (*item.offset(i as isize)).most_common == 0 {
             change = scale * (*item.offset(i as isize)).direction;
-            abs_change = fabs(change);
+            abs_change = f64::abs(change);
             if abs_change > max_delta { max_delta = abs_change }
             delta_sum += abs_change;
             if change > 0.50f64 {
@@ -2400,7 +2335,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let mut max_iterations: i32 = 0;
     let mut start_time: time_t = 0;
     let mut curr_time: time_t = 0;
-    let mut option_stream: *mut FILE = 0 as *mut FILE;
+    let mut option_stream: FileHandle = FileHandle::null();
     time(&mut start_time);
     if argc < 4 as i32 || argc > 7 as i32 {
         puts(b"Usage:\x00" as *const u8 as *const i8);
@@ -2439,13 +2374,13 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                    *const i8, option_file);
         exit(1 as i32);
     }
-    fscanf(option_stream, b"%s\x00" as *const u8 as *const i8,
+    fscanf(option_stream.file(), b"%s\x00" as *const u8 as *const i8,
            prefix.as_mut_ptr());
-    fscanf(option_stream, b"%d\x00" as *const u8 as *const i8,
+    fscanf(option_stream.file(), b"%d\x00" as *const u8 as *const i8,
            &mut stage_count as *mut i32);
     i = 0;
     while i < stage_count {
-        fscanf(option_stream, b"%d\x00" as *const u8 as *const i8,
+        fscanf(option_stream.file(), b"%d\x00" as *const u8 as *const i8,
                &mut *stage.as_mut_ptr().offset(i as isize) as
                    *mut i32);
         i += 1
@@ -2463,7 +2398,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         while i <= stage[analysis_stage as usize] {
             active[i as usize] = 1;
             weight[i as usize] =
-                sqrt(1.0f64 *
+                f64::sqrt(1.0f64 *
                     (i -
                         stage[(analysis_stage - 1 as i32) as
                             usize]) as f64 /
@@ -2478,7 +2413,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         while i < stage[(analysis_stage + 1 as i32) as usize] {
             active[i as usize] = 1;
             weight[i as usize] =
-                sqrt(1.0f64 *
+                f64::sqrt(1.0f64 *
                     (stage[(analysis_stage + 1 as i32) as usize]
                         - i) as f64 /
                     (stage[(analysis_stage + 1 as i32) as usize]
