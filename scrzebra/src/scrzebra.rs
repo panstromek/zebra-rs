@@ -82,19 +82,20 @@ unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
 /* Local variables */
 /* ------------------- Function prototypes ---------------------- */
 /* Administrative routines */
-unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
-                                        mut out_file_name:
-                                        *const i8,
-                                        mut display_line: i32, g_state: &mut FullState) {
-    let mut script_nodes: CounterType = CounterType{hi: 0, lo: 0,};
-    let mut eval_info: EvaluationType =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
-    let mut comment: *mut i8 = 0 as *mut i8;
+unsafe fn run_endgame_script(mut in_file_name: *const i8,
+                             mut out_file_name: *const i8,
+                             mut display_line: i32,
+                             g_state: &mut FullState) {
+    let mut script_nodes = CounterType { hi: 0, lo: 0 };
+    let mut eval_info = EvaluationType {
+        type_0: MIDGAME_EVAL,
+        res: WON_POSITION,
+        score: 0,
+        confidence: 0.,
+        search_depth: 0,
+        is_book: 0,
+    };
+    let mut comment = 0 as *mut i8;
     let mut buffer: [i8; 256] = [0; 256];
     let mut board_string: [i8; 256] = [0; 256];
     let mut stm_string: [i8; 256] = [0; 256];
@@ -121,8 +122,13 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     let mut scanned: i32 = 0;
     let mut token: i32 = 0;
     let mut position_count: i32 = 0;
-    let mut script_stream: FileHandle = FileHandle::null();
-    let mut output_stream: FileHandle = FileHandle::null();
+    let mut script_stream = FileHandle::null();
+    let mut output_stream = FileHandle::null();
+    /* If the played move is the best, output the already calculated
+               score for the best move - that way we avoid a subtle problem:
+               Suppose (N-1)-ply move is X but N-ply move is Y, where Y is
+               the best move. Then averaging the corresponding scores won't
+               coincide with the N-ply averaged score for Y. */
     /* Open the files and get the number of positions */
     script_stream =
         fopen(in_file_name, b"r\x00" as *const u8 as *const i8);
@@ -166,7 +172,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     /* Scan through the script file */
     i = 0;
     loop  {
-        let mut pass_count: i32 = 0;
+        let mut pass_count = 0;
         /* Check if the line is a comment or an end marker */
         fgets(buffer.as_mut_ptr(), 256 as i32, script_stream);
         if feof(script_stream) != 0 { break ; }
@@ -190,9 +196,7 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
             }
         } else {
             if feof(script_stream) != 0 {
-                printf(b"\nEOF encountered when reading position #%d - aborting\n\n\x00"
-                           as *const u8 as *const i8,
-                       i + 1 as i32);
+                write!(stdout, "\nEOF encountered when reading position #{} - aborting\n\n", i + 1 as i32);
                 exit(1 as i32);
             }
             /* Parse the script line containing board and side to move */
@@ -208,32 +212,24 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                        b"%s %s\x00" as *const u8 as *const i8,
                        board_string.as_mut_ptr(), stm_string.as_mut_ptr());
             if scanned != 2 as i32 {
-                printf(b"\nError parsing line %d - aborting\n\n\x00" as
-                           *const u8 as *const i8,
-                       i + 1 as i32);
+                write!(stdout, "\nError parsing line {} - aborting\n\n", i + 1);
                 exit(1 as i32);
             }
             if   strlen(stm_string.as_mut_ptr()) !=
                 1 as i32 as u64 {
-                printf(b"\nAmbiguous side to move on line %d - aborting\n\n\x00"
-                           as *const u8 as *const i8,
-                       i + 1 as i32);
+                write!(stdout, "\nAmbiguous side to move on line {} - aborting\n\n", i + 1);
                 exit(1 as i32);
             }
             match stm_string[0] as i32 {
                 79 | 48 => { side_to_move = 2 as i32 }
                 42 | 88 => { side_to_move = 0 as i32 }
                 _ => {
-                    printf(b"\nBad side-to-move indicator on line %d - aborting\n\n\x00"
-                               as *const u8 as *const i8,
-                           i + 1 as i32);
+                    write!(stdout, "\nBad side-to-move indicator on line {} - aborting\n\n", i + 1);
                 }
             }
             if   strlen(board_string.as_mut_ptr()) !=
                 64 as i32 as u64 {
-                printf(b"\nBoard on line %d doesn\'t contain 64 positions - aborting\n\n\x00"
-                           as *const u8 as *const i8,
-                       i + 1 as i32);
+                write!(stdout, "\nBoard on line {} doesn\'t contain 64 positions - aborting\n\n", i + 1);
                 exit(1 as i32);
             }
             token = 0;
@@ -251,10 +247,8 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                         }
                         45 | 46 => { g_state.board_state.board[pos as usize] = 1 as i32 }
                         _ => {
-                            printf(b"\nBad character \'%c\' in board on line %d - aborting\n\n\x00"
-                                       as *const u8 as *const i8,
-                                   board_string[token as usize] as
-                                       i32, i + 1 as i32);
+                            write!(stdout, "\nBad character \'{}\' in board on line {} - aborting\n\n",
+                                   char::from(board_string[token as usize] as u8), i + 1);
                         }
                     }
                     token += 1;
@@ -276,8 +270,8 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                               &g_state.board_state.black_moves, &g_state.board_state.white_moves);
             }
             search_start =  g_state.g_timer.get_real_timer();
-             g_state.g_timer.start_move(my_time as f64, my_incr as f64,
-                                        g_state.moves_state.disks_played + 4 as i32);
+            g_state.g_timer.start_move(my_time as f64, my_incr as f64,
+                                       g_state.moves_state.disks_played + 4 as i32);
             g_state.g_timer.determine_move_time(my_time as f64,
                                                 my_incr as f64,
                                                 g_state.moves_state.disks_played + 4 as i32);
@@ -296,8 +290,8 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
                                  1 as i32, &mut eval_info, g_state);
                 if move_0 == -(1 as i32) {
                     /* Both pass, game over. */
-                    let mut my_discs: i32 = disc_count(side_to_move, &g_state.board_state.board);
-                    let mut opp_discs: i32 =
+                    let mut my_discs = disc_count(side_to_move, &g_state.board_state.board);
+                    let mut opp_discs =
                         disc_count(0 as i32 + 2 as i32 - side_to_move, &g_state.board_state.board);
                     if my_discs > opp_discs {
                         my_discs = 64 as i32 - opp_discs
@@ -396,22 +390,15 @@ unsafe extern "C" fn run_endgame_script(mut in_file_name: *const i8,
     }
     /* Clean up and terminate */
     fclose(script_stream);
-    stop_time =  g_state.g_timer.get_real_timer();
-    printf(b"Total positions solved:   %d\n\x00" as *const u8 as
-               *const i8, position_count);
-    printf(b"Total time:               %.1f s\n\x00" as *const u8 as
-               *const i8, stop_time - start_time);
-    printf(b"Total nodes:              %.0f\n\x00" as *const u8 as
-               *const i8, counter_value(&mut script_nodes));
+    stop_time =  (&mut g_state.g_timer).get_real_timer();
+    write!(stdout, "Total positions solved:   {}\n", position_count);
+    write!(stdout, "Total time:               {:.1} s\n", stop_time - start_time);
+    write!(stdout, "Total nodes:              {:.0}\n", counter_value(&mut script_nodes));
     write!(stdout, "\n");
-    printf(b"Average time for solve:   %.1f s\n\x00" as *const u8 as
-               *const i8,
-           (stop_time - start_time) / position_count as f64);
-    printf(b"Maximum time for solve:   %.1f s\n\x00" as *const u8 as
-               *const i8, max_search);
+    write!(stdout, "Average time for solve:   {:.1} s\n", (stop_time - start_time) / position_count as f64);
+    write!(stdout, "Maximum time for solve:   {:.1} s\n", max_search);
     write!(stdout, "\n");
-    printf(b"Average speed:            %.0f nps\n\x00" as *const u8 as
-               *const i8,
+    write!(stdout, "Average speed:            {:.0} nps\n",
            counter_value(&mut script_nodes) / (stop_time - start_time));
     write!(stdout, "\n");
 }

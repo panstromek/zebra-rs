@@ -86,7 +86,6 @@ unsafe fn main_0()
     let mut hash_bits = 18;
     let mut game_file_name = "";
     let mut log_file_name = "";
-    let run_script = 0;
     let script_out_file = "";
     let script_in_file = "";
     set_default_engine_globals((&mut g_state.g_config));
@@ -522,7 +521,7 @@ Flags:
     } else {
         let x = 1 as i32;
         (g_state.random_instance).my_srandom(x); }
-    if (g_state.g_config).tournament == 0 && run_script == 0 {
+    if (g_state.g_config).tournament == 0 {
         while (g_state.g_config).skill[0] < 0 as i32 {
             write!(stdout, "Black parameters: ");
             scanf(b"%d\x00" as *const u8 as *const i8,
@@ -553,10 +552,7 @@ Flags:
     if (g_state.g_config).one_position_only != 0 {
         toggle_smart_buffer_management(0 as i32);
     }
-    if run_script != 0 {
-        run_endgame_script(script_in_file, script_out_file,
-                           script_optimal_line, &mut g_state);
-    } else if (g_state.g_config).tournament != 0 {
+    if (g_state.g_config).tournament != 0 {
         play_tournament(move_sequence, log_file_name, g_state);
     } else if (g_state.g_config).only_analyze != 0 {
         analyze_game(move_sequence, &mut g_state);
@@ -1547,7 +1543,7 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
     reset_counter(&mut script_nodes);
     position_count = 0;
     max_search = -0.0f64;
-    start_time =  (&mut g_state.g_timer).get_real_timer();
+    start_time =  g_state.g_timer.get_real_timer();
     /* Scan through the script file */
     i = 0;
     loop  {
@@ -1592,11 +1588,11 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
                                                                       &mut (&mut g_state.g_book),
                                                                       &mut (&mut g_state.stable_state),
                                                                       &mut (&mut g_state.game_state));
-            (&mut g_state.g_book).set_slack(0.0f64 as i32);
-            (&mut g_state.game_state).toggle_human_openings(0 as i32);
-            reset_book_search(&mut (&mut g_state.g_book));
-            set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut (&mut g_state.g_book));
-            setup_hash(1 as i32, &mut (&mut g_state.hash_state), &mut (&mut g_state.random_instance));
+            g_state.g_book.set_slack(0.0f64 as i32);
+            g_state.game_state.toggle_human_openings(0 as i32);
+            reset_book_search(&mut g_state.g_book);
+            set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_state.g_book);
+            setup_hash(1 as i32, &mut g_state.hash_state, &mut g_state.random_instance);
             position_count += 1;
             scanned =
                 sscanf(buffer.as_mut_ptr(),
@@ -1631,12 +1627,12 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
                     pos = 10 as i32 * row + col;
                     match board_string[token as usize] as i32 {
                         42 | 88 | 120 => {
-                            (g_state.board_state).board[pos as usize] = 0 as i32
+                            g_state.board_state.board[pos as usize] = 0 as i32
                         }
                         79 | 48 | 111 => {
-                            (g_state.board_state).board[pos as usize] = 2 as i32
+                            g_state.board_state.board[pos as usize] = 2 as i32
                         }
-                        45 | 46 => { (g_state.board_state).board[pos as usize] = 1 as i32 }
+                        45 | 46 => { g_state.board_state.board[pos as usize] = 1 as i32 }
                         _ => {
                             write!(stdout, "\nBad character \'{}\' in board on line {} - aborting\n\n",
                                    char::from(board_string[token as usize] as u8), i + 1);
@@ -1647,25 +1643,25 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
                 }
                 row += 1
             }
-            (g_state.moves_state).disks_played =
-                disc_count(0 as i32, &(g_state.board_state).board) + disc_count(2 as i32, &(g_state.board_state).board) -
+            g_state.moves_state.disks_played =
+                disc_count(0 as i32, &g_state.board_state.board) + disc_count(2 as i32, &g_state.board_state.board) -
                     4 as i32;
             /* Search the position */
-            if (&mut g_state.g_config).echo != 0 {
-                set_move_list((g_state.board_state).score_sheet_row);
-                display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
+            if g_state.g_config.echo != 0 {
+                set_move_list(g_state.board_state.score_sheet_row);
+                display_board(&mut stdout, &g_state.board_state.board, side_to_move,
                               1 as i32, 0 as i32,
                               1 as i32, display_state.current_row,
                               display_state.black_player, display_state.black_time, display_state.black_eval,
                               display_state.white_player, display_state.white_time, display_state.white_eval,
-                              &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
+                              &g_state.board_state.black_moves, &g_state.board_state.white_moves);
             }
-            search_start =  (&mut g_state.g_timer).get_real_timer();
-             (&mut g_state.g_timer).start_move(my_time as f64, my_incr as f64,
-                                                     (g_state.moves_state).disks_played + 4 as i32);
-            (&mut g_state.g_timer).determine_move_time(my_time as f64,
+            search_start =  g_state.g_timer.get_real_timer();
+             g_state.g_timer.start_move(my_time as f64, my_incr as f64,
+                                                     g_state.moves_state.disks_played + 4 as i32);
+            g_state.g_timer.determine_move_time(my_time as f64,
                                                        my_incr as f64,
-                                                       (g_state.moves_state).disks_played + 4 as i32);
+                                                       g_state.moves_state.disks_played + 4 as i32);
             pass_count = 0;
             move_0 =
                 compute_move(side_to_move, 1 as i32, my_time, my_incr,
@@ -1681,10 +1677,10 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
                                  1 as i32, &mut eval_info, g_state);
                 if move_0 == -(1 as i32) {
                     /* Both pass, game over. */
-                    let mut my_discs = disc_count(side_to_move, &(g_state.board_state).board);
+                    let mut my_discs = disc_count(side_to_move, &g_state.board_state.board);
                     let mut opp_discs =
                         disc_count(0 as i32 + 2 as i32 -
-                                       side_to_move, &(g_state.board_state).board);
+                                       side_to_move, &g_state.board_state.board);
                     if my_discs > opp_discs {
                         my_discs = 64 as i32 - opp_discs
                     } else if opp_discs > my_discs {
@@ -1699,11 +1695,11 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
                 }
             }
             score = eval_info.score / 128 as i32;
-            search_stop =  (&mut g_state.g_timer).get_real_timer();
+            search_stop =  g_state.g_timer.get_real_timer();
             if search_stop - search_start > max_search {
                 max_search = search_stop - search_start
             }
-            add_counter(&mut script_nodes, &mut (&mut g_state.search_state).nodes);
+            add_counter(&mut script_nodes, &mut g_state.search_state.nodes);
             output_stream =
                 fopen(out_file_name,
                       b"a\x00" as *const u8 as *const i8);
@@ -1713,7 +1709,7 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
                        out_file_name);
                 exit(1 as i32);
             }
-            if (&mut g_state.g_config).wld_only != 0 {
+            if g_state.g_config.wld_only != 0 {
                 if side_to_move == 0 as i32 {
                     if score > 0 as i32 {
                         fputs(b"Black win\x00" as *const u8 as
@@ -1754,10 +1750,10 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
                           output_stream);
                 }
                 j = 0;
-                while j < (&mut g_state.search_state).full_pv_depth {
+                while j < g_state.search_state.full_pv_depth {
                     fputs(b" \x00" as *const u8 as *const i8,
                           output_stream);
-                    display_move(&mut output_stream, (&mut g_state.search_state).full_pv[j as usize]);
+                    display_move(&mut output_stream, g_state.search_state.full_pv[j as usize]);
                     j += 1
                 }
             }
@@ -1774,7 +1770,7 @@ unsafe fn run_endgame_script(mut in_file_name: &str, mut out_file_name: &str, mu
                       output_stream);
             }
             fclose(output_stream);
-            if (&mut g_state.g_config).echo != 0 {
+            if g_state.g_config.echo != 0 {
                 puts(b"\n\n\n\x00" as *const u8 as *const i8);
             }
         }
