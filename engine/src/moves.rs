@@ -191,6 +191,9 @@ pub fn make_move(side_to_move: i32, move_0: i32, update_hash: i32,
 */
 
 pub fn unmake_move(side_to_move: i32, move_0: i32, board: &mut [i32; 128], moves_state_: &mut MovesState, hash_state_: &mut HashState, flip_stack: &mut FlipStack) {
+    if moves_state_.disks_played < 1  || moves_state_.disks_played > hash_state_.hash_stored1.len() as i32 {
+        return;
+    }
     board[move_0 as usize] = 1;
     moves_state_.disks_played -= 1;
     hash_state_.hash1 = hash_state_.hash_stored1[moves_state_.disks_played as usize];
