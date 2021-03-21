@@ -3,7 +3,7 @@ use std::ffi::{c_void, CStr};
 use engine::src::search::disc_count;
 use engine::src::stubs::{abs, ceil, floor};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{exit, FileHandle, fprintf, fputc, fputs, getc, size_t, sprintf, stdin, strcpy, strdup, strlen, free};
+use libc_wrapper::{exit, FileHandle, fprintf, fputc, fputs, getc, size_t, sprintf, stdin, strcpy, strlen, free};
 
 use crate::src::error::FE;
 use crate::src::zebra::FullState;
@@ -12,10 +12,9 @@ use std::io::Write;
 use std::convert::TryInto;
 
 pub struct DisplayState {
-    stored_status_buffer: [i8; 256],
     pub black_player: &'static str,
     pub white_player: &'static str,
-    pub status_buffer: [i8; 256],
+    pub status_buffer: [u8; 256],
     pub sweep_buffer: [i8; 256],
     pub black_eval: f64,
     pub white_eval: f64,
@@ -33,7 +32,6 @@ pub struct DisplayState {
 }
 
 pub static mut display_state: DisplayState = DisplayState {
-    stored_status_buffer: [0; 256],
     black_player: "",
     white_player: "",
     status_buffer: [0; 256],
@@ -366,7 +364,7 @@ unsafe impl CFormat for u64 {}
 impl DisplayState {
     pub unsafe fn status(&mut self, mut writer: impl FnMut(*mut i8) -> i32) {
         let cursor = self.status_buffer.as_mut_ptr().offset(self.status_pos as isize);
-        let written = writer(cursor);
+        let written = writer(cursor as *mut i8);
         self.status_pos += written;
         self.status_modified = 1;
     }
@@ -458,14 +456,17 @@ pub unsafe fn send_status_pv(pv: &[i32; 64], max_depth: i32, pv_depth_zero: i32)
   Output and clear the stored status information.
 */
 
-pub unsafe fn display_status(stream: FileHandle,
-                             allow_repeat: i32) {
-    if (display_state.status_pos != 0 as i32 || allow_repeat != 0) &&
-             strlen(display_state.status_buffer.as_mut_ptr()) >
-               0 as i32 as u64 {
-        fprintf(stream, b"%s\n\x00" as *const u8 as *const i8,
-                display_state.status_buffer.as_mut_ptr());
-        strcpy(display_state.stored_status_buffer.as_mut_ptr(), display_state.status_buffer.as_mut_ptr());
+pub unsafe fn display_status(mut stream: FileHandle, allow_repeat: i32) {
+    let len = display_state.status_buffer.iter()
+        .enumerate()
+        .find(|&(i, &b)| b == 0)
+        .map_or(0, |(i, _)| i);
+
+    if (display_state.status_pos != 0 as i32 || allow_repeat != 0) && len > 0 {
+        display_state.status_buffer[len] = b'\n';
+        display_state.status_buffer[len + 1] = 0;
+        stream.write(&display_state.status_buffer[0..len+1]);
+        display_state.status_buffer[len] = 0;
     }
     display_state.status_pos = 0;
 }
