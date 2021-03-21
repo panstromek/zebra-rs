@@ -3,7 +3,7 @@ use std::ffi::{c_void, CStr};
 use engine::src::search::disc_count;
 use engine::src::stubs::{abs, ceil, floor};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{exit, FileHandle, fprintf, fputc, fputs, getc, size_t, sprintf, stdin, strcpy, strlen, free};
+use libc_wrapper::{exit, FileHandle, getc, sprintf, stdin};
 
 use crate::src::error::FE;
 use crate::src::zebra::FullState;
@@ -15,7 +15,7 @@ pub struct DisplayState {
     pub black_player: &'static str,
     pub white_player: &'static str,
     pub status_buffer: [u8; 256],
-    pub sweep_buffer: [i8; 256],
+    pub sweep_buffer: [u8; 256],
     pub black_eval: f64,
     pub white_eval: f64,
     pub last_output: f64,
@@ -370,7 +370,7 @@ impl DisplayState {
     }
     pub unsafe fn sweep(&mut self, mut writer: impl FnMut(*mut i8) -> i32) {
         let cursor = self.sweep_buffer.as_mut_ptr().offset(self.sweep_pos as isize);
-        let written = writer(cursor);
+        let written = writer(cursor as *mut i8);
         self.sweep_pos += written;
         self.sweep_modified = 1;
     }
@@ -496,10 +496,9 @@ pub unsafe fn send_sweep_0(format: *const i8) {
   Display and clear the current search information.
 */
 
-pub unsafe fn display_sweep(stream: FileHandle) {
+pub unsafe fn display_sweep(mut stream: FileHandle) {
     if display_state.sweep_pos != 0 as i32 {
-        fprintf(stream, b"%s\n\x00" as *const u8 as *const i8,
-                display_state.sweep_buffer.as_mut_ptr());
+        write_buffer(&mut stream, &mut display_state.sweep_buffer);
     }
     display_state.sweep_modified = 0;
 }
