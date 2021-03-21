@@ -74,6 +74,11 @@ mod tests {
                 snap_test!($binary, basic, "-basic", $id, $args, false, false);
             }
         };
+        ($binary:literal, $id:ident, $args:literal, $has_err:literal) => {
+            mod $id {
+                snap_test!($binary, basic, "-basic", $id, $args, $has_err, false);
+            }
+        };
 
         ($id:ident, $args:literal, $has_err:expr, with_adjust: false) => {
             mod $id {
@@ -205,6 +210,7 @@ mod tests {
     //  what if they conflict??
 
     snap_test!("practice", practice, "./../../../../book.bin", false, interactive: Practice);
+    snap_test!("practice", practice_help, "./../../../../book.bin dd dd", true);
 
     pub enum Interactive {
         Dumb,
@@ -368,6 +374,7 @@ mod tests {
                 || line.starts_with("Log file created")
                 || line.starts_with("Engine compiled")
                 || line.starts_with("Zebra (c) 1997-2005 Gunnar Andersson, compile date")
+                || line.starts_with("Gunnar Andersson")
                 || line.starts_with("Total time:")
                 || line.starts_with("[-inf,inf]:")
                 || line.starts_with("Reading binary opening database... done (took ")

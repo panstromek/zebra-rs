@@ -1,7 +1,5 @@
 #![allow(dead_code,  non_camel_case_types, non_snake_case,
 non_upper_case_globals, unused_assignments, unused_mut, unused_must_use)]
-#![register_tool(c2rust)]
-#![feature(const_raw_ptr_to_usize_cast, extern_types, main, register_tool)]
 
 use engine::src::moves::{generate_all, make_move, unmake_move, valid_move};
 use engine::src::osfbook::{find_opening_name, get_hash};
@@ -10,7 +8,7 @@ use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
 use legacy_zebra::src::zebra::{ LibcTimeSource};
-use libc_wrapper::{_IO_FILE, stdout, fflush, puts, printf, atoi, strcmp, scanf, strdup, exit};
+use libc_wrapper::{_IO_FILE, stdout, fflush, atoi, strcmp, scanf, strdup};
 use std::ffi::CStr;
 use engine::src::zebra::FullState;
 use std::io::Write;
@@ -55,24 +53,16 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     if argc == 2 as i32 {
         book_name = *argv.offset(1)
     } else if argc == 1 as i32 {
-        book_name =
-            strdup(b"book.bin\x00" as *const u8 as *const i8)
+        book_name = strdup(b"book.bin\x00" as *const u8 as *const i8)
     } else {
-        puts(b"Usage:\n  [practice <book file>]\x00" as *const u8 as
-            *const i8);
-        puts(b"\nDefault book file is book.bin\n\x00" as *const u8 as
-            *const i8);
-        puts(b"Commands: When prompted for a move, a legal move may\x00" as
-            *const u8 as *const i8);
-        puts(b"          a number of moves to take back must be entered.\x00"
-            as *const u8 as *const i8);
-        puts(b"To exit the program, type \'quit\'.\x00" as *const u8 as
-            *const i8);
+        writeln!(stdout, "Usage:\n  [practice <book file>]");
+        writeln!(stdout, "\nDefault book file is book.bin\n");
+        writeln!(stdout, "Commands: When prompted for a move, a legal move may");
+        writeln!(stdout, "          a number of moves to take back must be entered.");
+        writeln!(stdout, "To exit the program, type \'quit\'.");
         write!(stdout, "\n");
-        printf(b"Gunnar Andersson, %s\n\x00" as *const u8 as
-                   *const i8,
-               b"Aug  9 2020\x00" as *const u8 as *const i8);
-        exit(1 as i32);
+        write!(stdout, "Gunnar Andersson, {}\n", "Aug  9 2020");
+        std::process::exit(1 as i32);
     }
     init_osf(1 as i32, g_state);
     read_binary_database(book_name, &mut g_state.g_book);
@@ -87,8 +77,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         set_move_list((g_state.board_state).score_sheet_row);
         let opening_name = find_opening_name(&mut (g_state.g_book), &(g_state.board_state).board);
         if let Some(opening_name) = opening_name {
-            printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8,
-                   CStr::from_bytes_with_nul(opening_name).unwrap().as_ptr());
+            write!(stdout, "\nOpening: {}\n",
+                   CStr::from_bytes_with_nul(opening_name).unwrap().to_str().unwrap());
         }
         let val0___ = &mut val0;
         let val1___ = &mut val1;
@@ -101,39 +91,32 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                       display_state.white_player, display_state.white_time, display_state.white_eval,
                       &(g_state.board_state).black_moves, &(g_state.board_state).white_moves
         );
-        printf(b"Book hash: %d %d (%d)\n\n\x00" as *const u8 as
-                   *const i8, val0, val1, orientation);
+        write!(stdout, "Book hash: {} {} ({})\n\n", val0, val1, orientation);
         extended_compute_move::<LibcFatalError>(side_to_move, 0 as i32,
                                                 1 as i32, 6 as i32,
                                                 16 as i32, 18 as i32, (g_state.g_config).echo, g_state);
-        printf(b"Scores for the %d moves:\n\x00" as *const u8 as
-                   *const i8, get_evaluated_count());
+        write!(stdout, "Scores for the {} moves:\n", get_evaluated_count());
         i = 0;
         while i < get_evaluated_count() {
             let mut eval_str_ = produce_eval_text(&get_evaluated(i).eval, 0 as i32);
-            let buffer = eval_str_.as_mut_ptr();
-            printf(b"   %c%c   %s\n\x00" as *const u8 as *const i8,
-                   'a' as i32 + get_evaluated(i).move_0 % 10 as i32 -
-                       1 as i32,
-                   '0' as i32 + get_evaluated(i).move_0 / 10 as i32,
-                   buffer);
+            write!(stdout, "   {}{}   {}\n",
+                   char::from('a' as u8 + (get_evaluated(i).move_0 % 10) as u8 - 1) ,
+                   char::from('0' as u8 + (get_evaluated(i).move_0 / 10) as u8),
+                CStr::from_ptr(eval_str_.as_ptr()).to_str().unwrap());
+
             i += 1
         }
         write!(stdout, "\n");
         loop  {
             repeat = 0;
             if side_to_move == 0 as i32 {
-                printf(b"Black move: \x00" as *const u8 as
-                    *const i8);
+                write!(stdout, "Black move: ");
             } else {
-                printf(b"White move: \x00" as *const u8 as
-                    *const i8);
+                write!(stdout, "White move: ");
             }
             fflush(stdout);
-            scanf(b"%s\x00" as *const u8 as *const i8,
-                  move_string.as_mut_ptr());
-            if strcmp(move_string.as_mut_ptr(),
-                      b"quit\x00" as *const u8 as *const i8) == 0 {
+            scanf(b"%s\x00" as *const u8 as *const i8, move_string.as_mut_ptr());
+            if strcmp(move_string.as_mut_ptr(), b"quit\x00" as *const u8 as *const i8) == 0 {
                 quit = 1 as i32
             } else {
                 command = atoi(move_string.as_mut_ptr());
@@ -153,8 +136,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     side_to_move = old_stm[(g_state.moves_state).disks_played as usize];
                     (g_state.board_state).score_sheet_row = row[(g_state.moves_state).disks_played as usize]
                 } else if command != 0 as i32 {
-                    printf(b"Can\'t back up %d moves\n\n\x00" as *const u8 as
-                               *const i8, command);
+                    write!(stdout, "Can\'t back up {} moves\n\n", command);
                     repeat = 1 as i32
                 } else {
                     generate_all(side_to_move, &mut (g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board);
@@ -186,8 +168,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         side_to_move =
                             0 as i32 + 2 as i32 - side_to_move
                     } else {
-                        puts(b"Move infeasible\n\x00" as *const u8 as
-                            *const i8);
+                        write!(stdout, "Move infeasible\n\n");
                         repeat = 1 as i32
                     }
                 }
