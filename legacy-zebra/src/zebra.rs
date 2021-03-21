@@ -32,7 +32,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 use flip::unflip::FlipStack;
-use libc_wrapper::{atoi, ctime, fclose, feof, fgets, fopen, fprintf, fputc, fputs, printf, puts, scanf, sprintf, sscanf, stdout, strcasecmp, strchr, strlen, strstr, time, fflush, tolower};
+use libc_wrapper::{atoi, ctime, fclose, fopen, fprintf, fputs, printf, puts, scanf, stdout, time};
 use libc_wrapper::{FileHandle, time_t};
 
 use crate::src::display::{display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state};
@@ -1161,12 +1161,8 @@ unsafe fn analyze_game(mut move_string: &str,
         i = 0;
         let move_string = move_string.as_bytes();
         while i < provided_move_count {
-            col =
-               tolower(*move_string.offset((2 as i32 * i) as isize)
-                            as i32) - 'a' as i32 + 1 as i32;
-            row =
-                *move_string.offset((2 as i32 * i + 1 as i32)
-                                        as isize) as i32 - '0' as i32;
+            col = (*move_string.offset((2 as i32 * i) as isize) as char).to_ascii_lowercase() as i32 - 'a' as i32 + 1 as i32;
+            row = *move_string.offset((2 as i32 * i + 1 as i32) as isize) as i32 - '0' as i32;
             if col < 1 as i32 || col > 8 as i32 ||
                    row < 1 as i32 || row > 8 as i32 {
                 FE::unexpected_character_in_a_move_string();
