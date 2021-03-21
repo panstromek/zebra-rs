@@ -104,7 +104,6 @@ mod inner  {
 
     extern "C" {
         pub fn atoi(__nptr: *const i8) -> i32;
-        pub fn atof(__nptr: *const i8) -> f64;
         pub fn strcasecmp(_: *const i8, _: *const i8) -> i32;
 
         pub static mut stdin: *mut FILE;
