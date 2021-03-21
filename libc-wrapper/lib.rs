@@ -144,7 +144,6 @@ extern "C" {
     pub fn strlen(_: *const i8) -> u64;
     pub fn tolower(num: i32) -> i32;
     pub fn toupper(_: i32) -> i32;
-    pub fn strdup(_: *const i8) -> *mut i8;
     pub fn strchr(_: *const i8, _: i32) -> *mut i8;
 
 
