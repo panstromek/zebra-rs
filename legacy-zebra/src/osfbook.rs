@@ -15,7 +15,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvaluationType;
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
-use libc_wrapper::{fclose, fflush, FileHandle, fopen, fprintf, fread, fscanf, fwrite, printf, puts, stdout, time};
+use libc_wrapper::{fclose, fflush, FileHandle, fopen, fprintf, fscanf, fwrite, printf, stdout, time};
 use std::io::Write;
 
 use crate::{
