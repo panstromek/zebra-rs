@@ -7,7 +7,7 @@ use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
 use legacy_zebra::src::zebra::{ LibcTimeSource};
-use libc_wrapper::{stdout, atoi, strcmp, scanf};
+use libc_wrapper::{stdout, atoi, scanf};
 use std::ffi::{CStr, CString};
 use engine::src::zebra::FullState;
 use std::io::Write;
@@ -26,7 +26,6 @@ use std::io::Write;
 */
 unsafe fn main_0(args: Vec<String>) -> i32 {
     let book_name: &str;
-    let mut move_string: [i8; 10] = [0; 10];
     let mut i;
     let mut side_to_move: i32 = 0;
     let mut quit;
@@ -106,11 +105,12 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
                 write!(stdout, "White move: ");
             }
             stdout.flush();
+            let mut move_string: [u8; 10] = [0; 10];
             scanf(b"%s\x00" as *const u8 as *const i8, move_string.as_mut_ptr());
-            if strcmp(move_string.as_mut_ptr(), b"quit\x00" as *const u8 as *const i8) == 0 {
+            if move_string.split(|&byte| byte == b'\x00').next().map_or(false, |s| s == b"quit") {
                 quit = 1
             } else {
-                command = atoi(move_string.as_mut_ptr());
+                command = atoi(move_string.as_mut_ptr() as *mut i8);
                 if command >= 1 && command <= g_state.moves_state.disks_played {
                     i = 1;
                     while i <= command {
