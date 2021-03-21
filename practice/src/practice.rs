@@ -8,8 +8,8 @@ use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
 use legacy_zebra::src::zebra::{ LibcTimeSource};
-use libc_wrapper::{_IO_FILE, stdout, atoi, strcmp, scanf, strdup};
-use std::ffi::CStr;
+use libc_wrapper::{_IO_FILE, stdout, atoi, strcmp, scanf};
+use std::ffi::{CStr, CString};
 use engine::src::zebra::FullState;
 use std::io::Write;
 
@@ -33,9 +33,8 @@ pub type Board = [i32; 128];
    Contents:     A small utility which enables the user to browse
                  an opening book file.
 */
-unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
-                 -> i32 {
-    let mut book_name: *mut i8 = 0 as *mut i8;
+unsafe fn main_0(args: Vec<String>) -> i32 {
+    let mut book_name: &str;
     let mut move_string: [i8; 10] = [0; 10];
     let mut i: i32 = 0;
     let mut side_to_move: i32 = 0;
@@ -49,11 +48,11 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     static src: LibcTimeSource = LibcTimeSource {};
     let mut full_state = FullState::new(&src);
     let g_state: &mut FullState = &mut full_state;
-
+    let argc = args.len();
     if argc == 2 {
-        book_name = *argv.offset(1)
-    } else if argc == 1 as i32 {
-        book_name = strdup(b"book.bin\x00" as *const u8 as *const i8)
+        book_name = &args[1]
+    } else if argc == 1 {
+        book_name = "book.bin";
     } else {
         writeln!(stdout, "Usage:\n  [practice <book file>]");
         writeln!(stdout, "\nDefault book file is book.bin\n");
@@ -65,7 +64,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         std::process::exit(1 as i32);
     }
     init_osf(1 as i32, g_state);
-    read_binary_database(book_name, &mut g_state.g_book);
+    let book_name = CString::new(book_name).unwrap();
+    read_binary_database(book_name.as_ptr(), &mut g_state.g_book);
     game_init(0 as *const i8, &mut side_to_move, g_state);
     (g_state.game_state).toggle_human_openings(0 as i32);
     set_names("", "");
@@ -171,14 +171,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
 }
 
 pub fn main() {
-    let mut args: Vec<*mut i8> = Vec::new();
-    for arg in ::std::env::args() {
-        args.push(::std::ffi::CString::new(arg).expect("Failed to convert argument into CString.").into_raw());
-    };
-    args.push(::std::ptr::null_mut());
     unsafe {
-        ::std::process::exit(main_0((args.len() - 1) as i32,
-                                    args.as_mut_ptr() as
-                                        *mut *mut i8) as i32)
+        ::std::process::exit(main_0(::std::env::args().collect()) as i32)
     }
 }
