@@ -8,7 +8,7 @@ use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
 use legacy_zebra::src::zebra::{ LibcTimeSource};
-use libc_wrapper::{_IO_FILE, stdout, fflush, atoi, strcmp, scanf, strdup};
+use libc_wrapper::{_IO_FILE, stdout, atoi, strcmp, scanf, strdup};
 use std::ffi::CStr;
 use engine::src::zebra::FullState;
 use std::io::Write;
@@ -50,7 +50,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let mut full_state = FullState::new(&src);
     let g_state: &mut FullState = &mut full_state;
 
-    if argc == 2 as i32 {
+    if argc == 2 {
         book_name = *argv.offset(1)
     } else if argc == 1 as i32 {
         book_name = strdup(b"book.bin\x00" as *const u8 as *const i8)
@@ -114,20 +114,17 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             } else {
                 write!(stdout, "White move: ");
             }
-            fflush(stdout);
+            stdout.flush();
             scanf(b"%s\x00" as *const u8 as *const i8, move_string.as_mut_ptr());
             if strcmp(move_string.as_mut_ptr(), b"quit\x00" as *const u8 as *const i8) == 0 {
-                quit = 1 as i32
+                quit = 1
             } else {
                 command = atoi(move_string.as_mut_ptr());
-                if command >= 1 as i32 && command <= (g_state.moves_state).disks_played {
+                if command >= 1 && command <= g_state.moves_state.disks_played {
                     i = 1;
                     while i <= command {
-                        let side_to_move = old_stm[((g_state.moves_state).disks_played - 1 as i32)
-                            as usize];
-                        let move_0 = move_list[((g_state.moves_state).disks_played -
-                            1 as i32) as
-                            usize];
+                        let side_to_move = old_stm[(g_state.moves_state.disks_played - 1) as usize];
+                        let move_0 = move_list[(g_state.moves_state.disks_played - 1) as usize];
                         {
                             unmake_move(side_to_move, move_0, &mut (g_state.board_state).board, &mut (g_state.moves_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
                         };
@@ -135,48 +132,42 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     }
                     side_to_move = old_stm[(g_state.moves_state).disks_played as usize];
                     (g_state.board_state).score_sheet_row = row[(g_state.moves_state).disks_played as usize]
-                } else if command != 0 as i32 {
+                } else if command != 0 {
                     write!(stdout, "Can\'t back up {} moves\n\n", command);
                     repeat = 1 as i32
                 } else {
                     generate_all(side_to_move, &mut (g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board);
-                    move_0 =
-                        move_string[0] as i32
-                            - 'a' as i32 + 1 as i32 +
-                            10 as i32 *
-                                (move_string[1] as
-                                    i32 - '0' as i32);
-                    if move_string[0] as i32
-                        >= 'a' as i32 &&
-                        move_string[0] as
-                            i32 <= 'h' as i32 &&
-                        move_string[1] as
-                            i32 >= '1' as i32 &&
-                        move_string[1] as
-                            i32 <= '8' as i32 &&
-                        valid_move(move_0, side_to_move, &(g_state.board_state).board) != 0 {
-                        old_stm[(g_state.moves_state).disks_played as usize] = side_to_move;
-                        row[(g_state.moves_state).disks_played as usize] = (g_state.board_state).score_sheet_row;
-                        move_list[(g_state.moves_state).disks_played as usize] = move_0;
-                        make_move(side_to_move, move_0, 1 as i32, &mut (g_state.moves_state), &mut (g_state.board_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
-                        if side_to_move == 0 as i32 {
-                            (g_state.board_state).score_sheet_row += 1;
-                            (g_state.board_state).black_moves[(g_state.board_state).score_sheet_row as usize] = move_0
+                    move_0 = move_string[0] as i32 - 'a' as i32 + 1 + 10 * (move_string[1] as i32 - '0' as i32);
+                    if move_string[0] as i32 >= 'a' as i32 &&
+                        move_string[0] as i32 <= 'h' as i32 &&
+                        move_string[1] as i32 >= '1' as i32 &&
+                        move_string[1] as i32 <= '8' as i32 &&
+                        valid_move(move_0, side_to_move, &g_state.board_state.board) != 0 {
+                        old_stm[g_state.moves_state.disks_played as usize] = side_to_move;
+                        row[g_state.moves_state.disks_played as usize] = g_state.board_state.score_sheet_row;
+                        move_list[g_state.moves_state.disks_played as usize] = move_0;
+                        make_move(side_to_move, move_0, 1 as i32,
+                                  &mut g_state.moves_state,
+                                  &mut g_state.board_state,
+                                  &mut g_state.hash_state,
+                                  &mut g_state.flip_stack_);
+                        if side_to_move == 0 {
+                            g_state.board_state.score_sheet_row += 1;
+                            g_state.board_state.black_moves[g_state.board_state.score_sheet_row as usize] = move_0
                         } else {
-                            (g_state.board_state).white_moves[(g_state.board_state).score_sheet_row as usize] = move_0
+                            g_state.board_state.white_moves[g_state.board_state.score_sheet_row as usize] = move_0
                         }
-                        side_to_move =
-                            0 as i32 + 2 as i32 - side_to_move
+                        side_to_move = 2 - side_to_move
                     } else {
                         write!(stdout, "Move infeasible\n\n");
-                        repeat = 1 as i32
+                        repeat = 1
                     }
                 }
             }
-            if !(repeat != 0) { break ; }
+            if !(repeat != 0) { break; }
         }
     }
-    return 0 as i32;
+    return 0;
 }
 
 pub fn main() {
