@@ -264,9 +264,9 @@ mod tests {
     fn snapshot_test(binary: &str, arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool, interactive: Interactive) {
         let binary_folder =
             // "./../../../../../zebra-1/"
-               // "./../../../../../bisection/target/release/"
             "./../../../../target/release/"
-            ;
+        // "./../../../../../bisection/target/release/"
+        ;
         let snapshot_test_dir = Path::new(snapshot_test_dir);
         if !snapshot_test_dir.exists() {
             std::fs::create_dir_all(snapshot_test_dir).unwrap();
@@ -399,8 +399,8 @@ mod tests {
         let mut first = snapshot.lines().filter(variable_lines);
         let mut second = output.lines().filter(variable_lines);
 
-        while let (Some(expected), Some(actual)) = (first.next(), second.next()) {
-            assert_eq!(expected, actual)
+        while let Some(expected) = first.next() {
+            assert_eq!(expected, second.next().unwrap())
         }
         assert!(first.next().is_none());
         assert!(second.next().is_none());
