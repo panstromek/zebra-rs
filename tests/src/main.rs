@@ -258,6 +258,7 @@ mod tests {
     fn snapshot_test(binary: &str, arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool, interactive: Interactive) {
         let binary_folder =
             // "./../../../../../zebra-1/"
+               // "./../../../../../bisection/target/release/"
             "./../../../../target/release/"
             ;
         let snapshot_test_dir = Path::new(snapshot_test_dir);
