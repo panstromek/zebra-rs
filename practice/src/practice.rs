@@ -1,5 +1,4 @@
-#![allow(dead_code,  non_camel_case_types, non_snake_case,
-non_upper_case_globals, unused_assignments, unused_mut, unused_must_use)]
+#![allow(unused_must_use)]
 
 use engine::src::moves::{generate_all, make_move, unmake_move, valid_move};
 use engine::src::osfbook::{find_opening_name, get_hash};
@@ -8,18 +7,10 @@ use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
 use legacy_zebra::src::zebra::{ LibcTimeSource};
-use libc_wrapper::{_IO_FILE, stdout, atoi, strcmp, scanf};
+use libc_wrapper::{stdout, atoi, strcmp, scanf};
 use std::ffi::{CStr, CString};
 use engine::src::zebra::FullState;
 use std::io::Write;
-
-pub type size_t = u64;
-pub type __off_t = i64;
-pub type __off64_t = i64;
-
-pub type _IO_lock_t = ();
-pub type FILE = _IO_FILE;
-pub type Board = [i32; 128];
 
 /*
    File:         practice.c
@@ -34,19 +25,19 @@ pub type Board = [i32; 128];
                  an opening book file.
 */
 unsafe fn main_0(args: Vec<String>) -> i32 {
-    let mut book_name: &str;
+    let book_name: &str;
     let mut move_string: [i8; 10] = [0; 10];
-    let mut i: i32 = 0;
+    let mut i;
     let mut side_to_move: i32 = 0;
-    let mut quit: i32 = 0;
-    let mut repeat: i32 = 0;
-    let mut command: i32 = 0;
-    let mut move_0: i32 = 0;
+    let mut quit;
+    let mut repeat;
+    let mut command;
+    let mut move_0;
     let mut old_stm: [i32; 61] = [0; 61];
     let mut move_list: [i32; 61] = [0; 61];
     let mut row: [i32; 61] = [0; 61];
-    static src: LibcTimeSource = LibcTimeSource {};
-    let mut full_state = FullState::new(&src);
+    static SRC: LibcTimeSource = LibcTimeSource {};
+    let mut full_state = FullState::new(&SRC);
     let g_state: &mut FullState = &mut full_state;
     let argc = args.len();
     if argc == 2 {
@@ -98,7 +89,7 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
         write!(stdout, "Scores for the {} moves:\n", get_evaluated_count());
         i = 0;
         while i < get_evaluated_count() {
-            let mut eval_str_ = produce_eval_text(&get_evaluated(i).eval, 0 as i32);
+            let eval_str_ = produce_eval_text(&get_evaluated(i).eval, 0 as i32);
             write!(stdout, "   {}{}   {}\n",
                    char::from('a' as u8 + (get_evaluated(i).move_0 % 10) as u8 - 1) ,
                    char::from('0' as u8 + (get_evaluated(i).move_0 / 10) as u8),
