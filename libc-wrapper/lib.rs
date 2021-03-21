@@ -205,6 +205,9 @@ impl FileHandle {
 }
 impl Write for FileHandle {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        if self.is_null() {
+            return Ok(0)
+        }
         let written = unsafe {
             inner::fwrite(
                 buf.as_ptr() as *const std::ffi::c_void,
@@ -218,7 +221,9 @@ impl Write for FileHandle {
     }
 
     fn flush(&mut self) -> std::io::Result<()> {
-        let _success = unsafe { inner::fflush(self.file()) } ;
+        if !self.is_null() {
+            let _success = unsafe { inner::fflush(self.file()) };
+        }
         return Ok(()) // todo return error based on success
     }
 }
