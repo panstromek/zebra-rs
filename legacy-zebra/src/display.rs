@@ -457,18 +457,23 @@ pub unsafe fn send_status_pv(pv: &[i32; 64], max_depth: i32, pv_depth_zero: i32)
 */
 
 pub unsafe fn display_status(mut stream: FileHandle, allow_repeat: i32) {
-    let len = display_state.status_buffer.iter()
+    if display_state.status_pos != 0 as i32 || allow_repeat != 0 {
+        write_buffer(&mut stream, &mut display_state.status_buffer)
+    }
+    display_state.status_pos = 0;
+}
+
+fn write_buffer(stream: &mut FileHandle, buf: &mut [u8; 256]) {
+    let len = buf.iter()
         .enumerate()
         .find(|&(i, &b)| b == 0)
         .map_or(0, |(i, _)| i);
-
-    if (display_state.status_pos != 0 as i32 || allow_repeat != 0) && len > 0 {
-        display_state.status_buffer[len] = b'\n';
-        display_state.status_buffer[len + 1] = 0;
-        stream.write(&display_state.status_buffer[0..len+1]);
-        display_state.status_buffer[len] = 0;
+    if len > 0 {
+        buf[len] = b'\n';
+        buf[len + 1] = 0;
+        stream.write(&buf[0..len + 1]);
+        buf[len] = 0;
     }
-    display_state.status_pos = 0;
 }
 /*
   SEND_SWEEP
