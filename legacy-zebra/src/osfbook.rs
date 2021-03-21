@@ -632,53 +632,27 @@ pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book)
     time(&mut start_time);
     write!(stdout, "Writing binary database... ");
     fflush(stdout);
-    let stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
+    let mut stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
     if stream.is_null() {
         fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
                     b"Could not create database file\x00" as *const u8 as
                         *const i8, file_name);
     }
     let mut magic = 2718 as i32 as i16;
-    fwrite(&mut magic as *mut i16 as *const std::ffi::c_void,
-           ::std::mem::size_of::<i16>() as u64,
-           1 as i32 as size_t, stream);
+    stream.write(&magic.to_le_bytes());
     let mut magic = 2818 as i32 as i16;
-    fwrite(&mut magic as *mut i16 as *const std::ffi::c_void,
-           ::std::mem::size_of::<i16>() as u64,
-           1 as i32 as size_t, stream);
-    fwrite(&mut g_book.book_node_count as *mut i32 as *const std::ffi::c_void,
-           ::std::mem::size_of::<i32>() as u64,
-           1 as i32 as size_t, stream);
+    stream.write(&magic.to_le_bytes());
+    stream.write(&g_book.book_node_count.to_le_bytes());
     let mut i = 0;
     while i < g_book.book_node_count {
-        fwrite(&mut (*g_book.node.offset(i as isize)).hash_val1 as *mut i32
-                   as *const std::ffi::c_void,
-               ::std::mem::size_of::<i32>() as u64,
-               1 as i32 as size_t, stream);
-        fwrite(&mut (*g_book.node.offset(i as isize)).hash_val2 as *mut i32
-                   as *const std::ffi::c_void,
-               ::std::mem::size_of::<i32>() as u64,
-               1 as i32 as size_t, stream);
-        fwrite(&mut (*g_book.node.offset(i as isize)).black_minimax_score as
-                   *mut i16 as *const std::ffi::c_void,
-               ::std::mem::size_of::<i16>() as u64,
-               1 as i32 as size_t, stream);
-        fwrite(&mut (*g_book.node.offset(i as isize)).white_minimax_score as
-                   *mut i16 as *const std::ffi::c_void,
-               ::std::mem::size_of::<i16>() as u64,
-               1 as i32 as size_t, stream);
-        fwrite(&mut (*g_book.node.offset(i as isize)).best_alternative_move as
-                   *mut i16 as *const std::ffi::c_void,
-               ::std::mem::size_of::<i16>() as u64,
-               1 as i32 as size_t, stream);
-        fwrite(&mut (*g_book.node.offset(i as isize)).alternative_score as
-                   *mut i16 as *const std::ffi::c_void,
-               ::std::mem::size_of::<i16>() as u64,
-               1 as i32 as size_t, stream);
-        fwrite(&mut (*g_book.node.offset(i as isize)).flags as *mut u16 as
-                   *const std::ffi::c_void,
-               ::std::mem::size_of::<u16>() as u64,
-               1 as i32 as size_t, stream);
+        let node = &g_book.node[i as usize];
+        stream.write(&node.hash_val1.to_le_bytes());
+        stream.write(&node.hash_val2.to_le_bytes());
+        stream.write(&node.black_minimax_score.to_le_bytes());
+        stream.write(&node.white_minimax_score.to_le_bytes());
+        stream.write(&node.best_alternative_move.to_le_bytes());
+        stream.write(&node.alternative_score.to_le_bytes());
+        stream.write(&node.flags.to_le_bytes());
         i += 1
     }
     fclose(stream);
