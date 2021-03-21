@@ -93,10 +93,6 @@ pub unsafe fn atoi<T: AsConstPtr<i8>>(__nptr: T) -> i32 {
     inner::atoi(__nptr.as_const_ptr())
 }
 
-pub unsafe fn atof<T: AsConstPtr<i8>>(__nptr: T) -> f64 {
-    inner::atof(__nptr.as_const_ptr())
-}
-
 pub unsafe fn strcasecmp<T: AsConstPtr<i8>, U: AsConstPtr<i8>>(a: T, b: U) -> i32
 {
     inner::strcasecmp(a.as_const_ptr(), b.as_const_ptr())
