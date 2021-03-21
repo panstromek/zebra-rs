@@ -28,6 +28,7 @@ use crate::src::error::{LibcFatalError, fatal_error_2};
 use crate::src::zebra::FullState;
 use std::sync::mpsc::TrySendError::Full;
 use engine::src::globals::BoardState;
+use std::ffi::CStr;
 
 pub type FE = LibcFatalError;
 
@@ -502,78 +503,81 @@ pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
    Reads a binary database file.
 */
 
-pub unsafe fn read_binary_database(file_name: *const i8, g_book: &mut Book) {
-    let mut i: i32 = 0;
+pub unsafe fn read_binary_database(file_name_: *const i8, g_book: &mut Book) -> Option<()> {
+    let file_name = CStr::from_ptr(file_name_).to_str().unwrap();
+
     let mut new_book_node_count: i32 = 0;
     let mut magic1: i16 = 0;
     let mut magic2: i16 = 0;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
-    let mut stream = FileHandle::null();
     time(&mut start_time);
     printf(b"Reading binary opening database... \x00" as *const u8 as
                *const i8);
     fflush(stdout);
-    stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
-    if stream.is_null() {
+
+    let stream = std::fs::read(file_name);
+    if let Err(_) = stream {
         fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
                     b"Could not open database file\x00" as *const u8 as
-                        *const i8, file_name);
+                        *const i8, file_name_);
     }
-    fread(&mut magic1 as *mut i16 as *mut std::ffi::c_void,
-          ::std::mem::size_of::<i16>() as u64,
-          1 as i32 as size_t, stream);
-    fread(&mut magic2 as *mut i16 as *mut std::ffi::c_void,
-          ::std::mem::size_of::<i16>() as u64,
-          1 as i32 as size_t, stream);
+    struct Reader<T> {
+        inner: T
+    }
+    let mut stream = Reader {
+        inner: stream.unwrap().into_iter()
+    };
+    trait Parse<T>{
+        fn parse(&mut self) -> Option<T>;
+    }
+    impl<T: Iterator<Item=u8>> Parse<i32> for Reader<T> {
+        fn parse(&mut self) -> Option<i32> {
+            Some(i32::from_le_bytes([self.inner.next()?, self.inner.next()?, self.inner.next()?, self.inner.next()?]))
+        }
+    }
+    impl<T: Iterator<Item=u8>> Parse<i16> for Reader<T> {
+        fn parse(&mut self) -> Option<i16> {
+            Some(i16::from_le_bytes([self.inner.next()?, self.inner.next()?]))
+        }
+    }
+    impl<T: Iterator<Item=u8>> Parse<u16> for Reader<T> {
+        fn parse(&mut self) -> Option<u16> {
+            Some(u16::from_le_bytes([self.inner.next()?, self.inner.next()?]))
+        }
+    }
+
+    magic1 = stream.parse().unwrap_or(0);
+    magic2 = stream.parse().unwrap_or(0);
+
     if magic1 as i32 != 2718 as i32 ||
            magic2 as i32 != 2818 as i32 {
         fatal_error_2(b"%s: %s\x00" as *const u8 as *const i8,
                     b"Wrong checksum, might be an old version\x00" as
-                        *const u8 as *const i8, file_name);
+                        *const u8 as *const i8, file_name_);
     }
-    fread(&mut new_book_node_count as *mut i32 as *mut std::ffi::c_void,
-          ::std::mem::size_of::<i32>() as u64,
-          1 as i32 as size_t, stream);
+
+    new_book_node_count = stream.parse()?;
     set_allocation(new_book_node_count + 1000 as i32, g_book);
-    i = 0;
-    while i < new_book_node_count {
-        fread(&mut (*g_book.node.offset(i as isize)).hash_val1 as *mut i32 as
-                  *mut std::ffi::c_void,
-              ::std::mem::size_of::<i32>() as u64,
-              1 as i32 as size_t, stream);
-        fread(&mut (*g_book.node.offset(i as isize)).hash_val2 as *mut i32 as
-                  *mut std::ffi::c_void,
-              ::std::mem::size_of::<i32>() as u64,
-              1 as i32 as size_t, stream);
-        fread(&mut (*g_book.node.offset(i as isize)).black_minimax_score as
-                  *mut i16 as *mut std::ffi::c_void,
-              ::std::mem::size_of::<i16>() as u64,
-              1 as i32 as size_t, stream);
-        fread(&mut (*g_book.node.offset(i as isize)).white_minimax_score as
-                  *mut i16 as *mut std::ffi::c_void,
-              ::std::mem::size_of::<i16>() as u64,
-              1 as i32 as size_t, stream);
-        fread(&mut (*g_book.node.offset(i as isize)).best_alternative_move as
-                  *mut i16 as *mut std::ffi::c_void,
-              ::std::mem::size_of::<i16>() as u64,
-              1 as i32 as size_t, stream);
-        fread(&mut (*g_book.node.offset(i as isize)).alternative_score as
-                  *mut i16 as *mut std::ffi::c_void,
-              ::std::mem::size_of::<i16>() as u64,
-              1 as i32 as size_t, stream);
-        fread(&mut (*g_book.node.offset(i as isize)).flags as *mut u16 as
-                  *mut std::ffi::c_void,
-              ::std::mem::size_of::<u16>() as u64,
-              1 as i32 as size_t, stream);
+    let mut i = 0;
+    while i < new_book_node_count as usize {
+        let node = &mut g_book.node[i];
+        node.hash_val1 = stream.parse()?;
+        node.hash_val2 = stream.parse()?;
+        node.black_minimax_score = stream.parse()?;
+        node.white_minimax_score = stream.parse()?;
+        node.best_alternative_move = stream.parse()?;
+        node.alternative_score = stream.parse()?;
+        node.flags = stream.parse()?;
         i += 1
     }
-    fclose(stream);
+
     g_book.book_node_count = new_book_node_count;
     create_hash_reference(g_book);
     time(&mut stop_time);
     printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
            (stop_time - start_time) as i32);
+    Some(())
 }
 
 /*
