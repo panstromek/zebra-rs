@@ -1298,10 +1298,7 @@ unsafe fn analyze_game(mut move_string: &str,
                                  1 as i32,
                              (&mut g_state.g_config).wld_skill[opponent as usize] - 1 as i32,
                              1 as i32, &mut played_info2, g_state);
-            let move_0 = curr_move;
-            {
-                unmake_move(side_to_move, move_0, &mut (g_state.board_state).board, (&mut g_state.moves_state), &mut (&mut g_state.hash_state), &mut (&mut g_state.flip_stack_));
-            };
+            unmake_move(side_to_move, curr_move, &mut (g_state.board_state).board, (&mut g_state.moves_state), &mut (&mut g_state.hash_state), &mut (&mut g_state.flip_stack_));
             /* Determine the 'best' move and its score. For midgame moves,
             search twice to dampen oscillations. Unless we're in the endgame
              region, a private hash transform is used - see above. */
