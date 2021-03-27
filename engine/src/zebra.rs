@@ -190,7 +190,7 @@ pub struct PlayGame<Source: InitialMoveSource> {
     provided_move: [i32; 61],
     pub move_vec: [i8; 121],
     line_buffer: [u8; 1001],
-    state: PlayGameState
+    pub state: PlayGameState
 }
 pub struct MoveAttempt(pub i32, pub i32);
 

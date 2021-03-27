@@ -32,7 +32,7 @@ use engine::src::osfbook::Book;
 use engine::src::myrandom::MyRandom;
 use engine::src::globals::BoardState;
 use engine::src::stable::StableState;
-use engine::src::moves::MovesState;
+use engine::src::moves::{MovesState, unmake_move, generate_all};
 use engine::src::timer::{Timer, TimeSource};
 use engine::src::getcoeff::CoeffState;
 use engine::src::end::End;
@@ -135,6 +135,134 @@ impl ZebraGame {
     #[wasm_bindgen]
     pub fn side_to_move(&self) -> i32 {
         self.game.side_to_move
+    }
+
+    #[wasm_bindgen]
+    pub fn undo(&mut self) -> Option<i32> {
+        // let end = self.game.move_vec.iter()
+        //     .position(|m| m == &0)?;
+        // if end < 2 {
+        //     return None;
+        // }
+        // let first = *self.game.move_vec.get(end - 2)?;
+        // let second = *self.game.move_vec.get(end - 1)?;
+        //
+        // let move_0 = first as i32 - 'a' as i32 + 1 + 10 * (second as i32 - '0' as i32);
+        //
+        // let side_to_move = *self.game.g_state.board_state.board.get(move_0 as usize)?;
+        //
+        // unmake_move(side_to_move, move_0,
+        //             &mut self.game.g_state.board_state.board,
+        //             &mut self.game.g_state.moves_state,
+        //             &mut self.game.g_state.hash_state,
+        //             &mut self.game.g_state.flip_stack_);
+        //
+        // self.game.move_vec[end - 2] = 0;
+        // self.game.move_vec[end - 1] = 0;
+        // if self.game.g_state.board_state.score_sheet_row > 0 {
+        //     self.game.g_state.board_state.score_sheet_row -= 1;
+        //     let score_sheet_row = self.game.g_state.board_state.score_sheet_row;
+        //     if side_to_move == 2 {
+        //         self.game.g_state.board_state.white_moves[score_sheet_row as usize] = -1;
+        //     } else {
+        //         self.game.g_state.board_state.black_moves[score_sheet_row as usize] = -1;
+        //     }
+        // }
+        // self.game.side_to_move = side_to_move;
+        // display_board(&self.game.g_state.board_state.board);
+
+        // Ported from from droidzebra/reversatile C code
+        let mut human_can_move = false;
+        let mut curr_move;
+        const BLACKSQ: i32 = 0;
+        const WHITESQ: i32 = 2;
+        const PASS: i32 = -1;
+        #[allow(non_snake_case)]
+        fn OPP(color: i32) -> i32 {
+            ((BLACKSQ + WHITESQ) - (color))
+        }
+        let side_to_move = &mut self.game.side_to_move;
+        let score_sheet_row = &mut self.game.g_state.board_state.score_sheet_row;
+
+        if *score_sheet_row == 0 && *side_to_move == BLACKSQ {
+            generate_all(*side_to_move,
+                         &mut self.game.g_state.moves_state,
+                         &mut self.game.g_state.search_state,
+                         &mut self.game.g_state.board_state.board);
+            display_board(&self.game.g_state.board_state.board);
+
+            return None;
+        }
+        // TODO setting
+        let auto_make_forced_moves = false;
+
+        // _droidzebra_undo_stack_push(disks_played);
+        let mut white_moves = &mut self.game.g_state.board_state.white_moves;
+        let mut black_moves = &mut self.game.g_state.board_state.black_moves;
+        loop {
+            *side_to_move = OPP(*side_to_move);
+
+            if *side_to_move == WHITESQ {
+                *score_sheet_row -= 1;
+            }
+            let score_sheet_row = *score_sheet_row;
+            human_can_move =
+                self.game.g_state.g_config.skill[(*side_to_move) as usize] == 0 &&
+                    !(
+                        (auto_make_forced_moves && self.game.g_state.moves_state.move_count[self.game.g_state.moves_state.disks_played as usize - 1] == 1)
+                            || (*side_to_move==WHITESQ && white_moves[score_sheet_row as usize]==PASS)
+                            || (*side_to_move==BLACKSQ && black_moves[score_sheet_row as usize]==PASS)
+                    );
+
+            if *side_to_move == WHITESQ {
+                curr_move = white_moves[score_sheet_row as usize];
+                if white_moves[score_sheet_row as usize]!=PASS {
+                    unmake_move(WHITESQ,
+                                white_moves[score_sheet_row as usize],
+                                &mut self.game.g_state.board_state.board,
+                                &mut self.game.g_state.moves_state,
+                                &mut self.game.g_state.hash_state,
+                                &mut self.game.g_state.flip_stack_
+                    );
+
+                }
+                white_moves[score_sheet_row as usize] = PASS;
+            } else {
+                curr_move = black_moves[score_sheet_row as usize];
+                if black_moves[score_sheet_row as usize] != PASS {
+                    unmake_move(BLACKSQ, black_moves[score_sheet_row as usize],
+                                &mut self.game.g_state.board_state.board,
+                                &mut self.game.g_state.moves_state,
+                                &mut self.game.g_state.hash_state,
+                                &mut self.game.g_state.flip_stack_);
+                }
+                black_moves[score_sheet_row as usize] = PASS;
+            }
+            if !(!(score_sheet_row == 0 && *side_to_move == BLACKSQ) && !human_can_move) {
+                break;
+            }
+        }
+        match self.game.state {
+            PlayGameState::GettingMove { provided_move_count, move_start, .. } => {
+                self.game.state = PlayGameState::GettingMove {
+                    provided_move_count, move_start, side_to_move: *side_to_move
+                }
+            }
+            _ => {}
+        }
+
+        generate_all(*side_to_move,
+                     &mut self.game.g_state.moves_state,
+                     &mut self.game.g_state.search_state,
+                     &mut self.game.g_state.board_state.board);
+        // set_move_list?
+        // TODO find and display opening name?
+        display_board(&self.game.g_state.board_state.board);
+
+        // Where does this fn + field come from?
+        // It wasn't in the original C code but it's in the Android C code
+        // clear_endgame_performed();
+        Some(1)
     }
 
     #[wasm_bindgen]
