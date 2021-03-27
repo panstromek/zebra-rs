@@ -27,6 +27,10 @@ self.addEventListener("message", ev => {
         skills = messageData
         if (game)
             game.set_skills(...messageData)
+    } else if (messageType === Message.Undo) {
+        if (game) {
+            game.undo()
+        }
     } else {
         console.log('Unknown message')
     }

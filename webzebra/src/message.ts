@@ -5,4 +5,5 @@ export const enum Message {
     DisplayBoard,
     NewGame,
     SetSkill,
+    Undo,
 }

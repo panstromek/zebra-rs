@@ -55,6 +55,7 @@
         Black: {{ score.black }} <br>
         White: {{ score.white }}
       </div>
+      <button @click="undo">Undo</button>
     </div>
   </div>
 </template>
@@ -114,6 +115,9 @@ export default defineComponent({
     this.worker.removeEventListener('message', this.workerListener)
   },
   methods: {
+    undo() {
+      this.worker.postMessage([Message.Undo])
+    },
     setSkills() {
       let numbers = [
         Number(this.black_skill),
@@ -128,7 +132,6 @@ export default defineComponent({
         return
       }
       this.worker.postMessage([Message.SetSkill, numbers])
-
     },
     newGame() {
       this.worker.postMessage([Message.NewGame])
@@ -146,7 +149,6 @@ export default defineComponent({
         let j = Math.floor(x / fieldSize) + 1
         let i = Math.floor(y / fieldSize) + 1
         let move = (10 * i + j)
-        console.log(x, y, i, j)
         this.worker.postMessage([Message.GetMove, move])
         this.waitingForMove = false
       }
