@@ -25,22 +25,13 @@ pub static square_mask: [BitBoard; 100] = create_square_mask();
 */
 
 pub fn non_iterative_popcount(mut n1: u32, mut n2: u32) -> u32 {
-    n1 = n1.wrapping_sub(n1 >> 1 as i32 & 0x55555555 as u32);
-    n2 = n2.wrapping_sub(n2 >> 1 as i32 & 0x55555555 as u32);
-    n1 =
-        (n1 &
-             0x33333333 as
-                 u32).wrapping_add(n1 >> 2 as i32 &
-                                                0x33333333 as u32);
-    n2 =
-        (n2 &
-             0x33333333 as
-                 u32).wrapping_add(n2 >> 2 as i32 &
-                                                0x33333333 as u32);
-    n1 = n1.wrapping_add(n1 >> 4 as i32) & 0xf0f0f0f as u32;
-    n2 = n2.wrapping_add(n2 >> 4 as i32) & 0xf0f0f0f as u32;
-    return n1.wrapping_add(n2).wrapping_mul(0x1010101 as u32) >>
-               24 as i32;
+    n1 = n1.wrapping_sub(n1 >> 1 & 0x55555555);
+    n2 = n2.wrapping_sub(n2 >> 1 & 0x55555555);
+    n1 = (n1 & 0x33333333).wrapping_add(n1 >> 2 & 0x33333333);
+    n2 = (n2 & 0x33333333).wrapping_add(n2 >> 2 & 0x33333333);
+    n1 = n1.wrapping_add(n1 >> 4) & 0xf0f0f0f;
+    n2 = n2.wrapping_add(n2 >> 4) & 0xf0f0f0f;
+    return n1.wrapping_add(n2).wrapping_mul(0x1010101) >> 24;
 }
 /*
   ITERATIVE_POPCOUNT
