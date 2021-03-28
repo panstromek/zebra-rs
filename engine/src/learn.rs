@@ -80,6 +80,14 @@ impl LearnState {
                 move_count_0 >= 60 as i32 - self.cutoff_empty)) as
             i32;
     }
+
+    pub fn get_stored_move(&self, index: i32) -> i16 {
+        if index > 60 {
+            const ILLEGAL: i16 = -1;
+            return ILLEGAL;
+        }
+        return self.game_move[index as usize];
+    }
 }
 
 pub trait Learner {
