@@ -31,21 +31,10 @@ impl CoeffSource for Flate2Source {
     }
 
     fn try_next_word(&mut self) -> Option<i16> {
-        #[derive(Copy, Clone)]
-        #[repr(C)]
-        pub union C2RustUnnamed {
-            pub signed_val: i16,
-            pub unsigned_val: u16,
-        }
-
-        let mut val = C2RustUnnamed { signed_val: 0 };
-
-        let hi = *self.data.get(self.index)? as i32;
+        let hi = *self.data.get(self.index)? as i16;
         self.index += 1;
-        let lo = *self.data.get(self.index)? as i32;
+        let lo = *self.data.get(self.index)? as i16;
         self.index += 1;
-
-        val.unsigned_val = ((hi << 8 as i32) + lo) as u16;
-        return Some(unsafe { val.signed_val });
+        return Some(hi.wrapping_shl(8) + lo);
     }
 }
