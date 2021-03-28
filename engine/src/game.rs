@@ -83,6 +83,10 @@ impl GameState {
 static play_thor_match_openings: i32 = 1;
 
 impl GameState {
+    pub fn clear_endgame_performed(&mut self) {
+        self.endgame_performed[0] = 0;
+        self.endgame_performed[2] = 0;
+    }
     /*
       SET_KOMI
       Set the endgame komi value.
