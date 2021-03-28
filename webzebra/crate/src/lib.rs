@@ -32,11 +32,12 @@ use engine::src::osfbook::Book;
 use engine::src::myrandom::MyRandom;
 use engine::src::globals::BoardState;
 use engine::src::stable::StableState;
-use engine::src::moves::{MovesState, unmake_move, generate_all};
+use engine::src::moves::{MovesState, unmake_move, generate_all, valid_move, make_move};
 use engine::src::timer::{Timer, TimeSource};
 use engine::src::getcoeff::CoeffState;
 use engine::src::end::End;
 use engine::src::midgame::MidgameState;
+use std::fmt::Formatter;
 
 #[wasm_bindgen]
 extern "C" {
@@ -53,7 +54,20 @@ macro_rules! c_log {
 }
 static COEFFS: &[u8; 1336662] = include_bytes!("./../../../coeffs2.bin");
 
+pub struct Square (u8, u8);
+impl std::fmt::Display for Square {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}{}", char::from(self.0), char::from(self.1))
+    }
+}
 
+#[allow(non_snake_case)]
+pub fn TO_SQUARE(move_: i32) -> Square {
+    Square(
+        ('a' as u8 + (move_ % 10) as u8 - 1),
+        ('0' as u8 + (move_ / 10) as u8),
+    )
+}
 #[wasm_bindgen]
 pub fn initialize() {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -71,9 +85,18 @@ impl TimeSource for JsTimeSource {
 
 static time_source: JsTimeSource = JsTimeSource {};
 
+const BLACKSQ: i32 = 0;
+const WHITESQ: i32 = 2;
+const PASS: i32 = -1;
+#[allow(non_snake_case)]
+fn OPP(color: i32) -> i32 {
+    ((BLACKSQ + WHITESQ) - (color))
+}
+
 #[wasm_bindgen]
 pub struct ZebraGame {
-    game: Box<PlayGame<WasmInitialMoveSource>>
+    game: Box<PlayGame<WasmInitialMoveSource>>,
+    undo_stack: Vec<i32>
 }
 
 #[wasm_bindgen]
@@ -84,7 +107,8 @@ impl ZebraGame {
         //
         let mut zebra = ZebraGame {
             game: Box::new(PlayGame::new(None, Vec::new(), 1, None,
-                                         (FullState::new(&JsTimeSource))))
+                                         (FullState::new(&JsTimeSource)))),
+            undo_stack: vec![]
         };
 
         let state = &mut zebra.game.g_state;
@@ -174,13 +198,7 @@ impl ZebraGame {
         // Ported from from droidzebra/reversatile C code
         let mut human_can_move = false;
         let mut curr_move;
-        const BLACKSQ: i32 = 0;
-        const WHITESQ: i32 = 2;
-        const PASS: i32 = -1;
-        #[allow(non_snake_case)]
-        fn OPP(color: i32) -> i32 {
-            ((BLACKSQ + WHITESQ) - (color))
-        }
+
         let side_to_move = &mut self.game.side_to_move;
         let score_sheet_row = &mut self.game.g_state.board_state.score_sheet_row;
 
@@ -196,7 +214,7 @@ impl ZebraGame {
         // TODO setting
         let auto_make_forced_moves = false;
 
-        // _droidzebra_undo_stack_push(disks_played);
+        self.undo_stack.push(self.game.g_state.moves_state.disks_played);
         let mut white_moves = &mut self.game.g_state.board_state.white_moves;
         let mut black_moves = &mut self.game.g_state.board_state.black_moves;
         loop {
@@ -261,8 +279,58 @@ impl ZebraGame {
 
         // Where does this fn + field come from?
         // It wasn't in the original C code but it's in the Android C code
-        // clear_endgame_performed();
+        self.game.g_state.game_state.clear_endgame_performed();
         Some(1)
+    }
+    #[wasm_bindgen]
+    pub fn redo(&mut self) -> Option<i32> {
+        let mut target_disks_played = 0;
+        let mut curr_move;
+
+        target_disks_played = self.undo_stack.pop()?;
+
+        let side_to_move = &mut self.game.side_to_move;
+        const ILLEGAL: i32 = -1;
+
+        let disks_played = self.game.g_state.moves_state.disks_played;
+
+        while disks_played < target_disks_played {
+            generate_all(*side_to_move,
+                         &mut self.game.g_state.moves_state,
+                         &mut self.game.g_state.search_state,
+                         &mut self.game.g_state.board_state.board);
+
+            if self.game.g_state.moves_state.move_count[disks_played as usize] > 0 {
+                curr_move = self.game.g_state.learn_state.get_stored_move(disks_played) as i32;
+                if curr_move == ILLEGAL ||
+                    valid_move(curr_move, *side_to_move, &self.game.g_state.board_state.board) == 0 {
+                    // TODO print the move
+                    c_log!("Invalid move in redo sequence {}", TO_SQUARE( curr_move ));
+                    return None;
+                }
+                make_move(*side_to_move, curr_move, 1,
+                          &mut self.game.g_state.moves_state,
+                          &mut self.game.g_state.board_state,
+                          &mut self.game.g_state.hash_state,
+                          &mut self.game.g_state.flip_stack_,
+                );
+            } else {
+                curr_move = PASS;
+            }
+
+            if *side_to_move == BLACKSQ {
+                self.game.g_state.board_state.white_moves[self.game.g_state.board_state.score_sheet_row as usize] = curr_move;
+            } else {
+                self.game.g_state.board_state.black_moves[self.game.g_state.board_state.score_sheet_row as usize] = curr_move;
+            }
+
+            *side_to_move = OPP(*side_to_move);
+
+            if *side_to_move == BLACKSQ {
+                self.game.g_state.board_state.score_sheet_row += 1;
+            }
+        }
+        None
     }
 
     #[wasm_bindgen]

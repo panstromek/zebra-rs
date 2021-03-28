@@ -55,7 +55,8 @@
         Black: {{ score.black }} <br>
         White: {{ score.white }}
       </div>
-      <button @click="undo">Undo</button>
+      <button @click="undo" class="border-2 m-1.5">Undo</button>
+      <button @click="redo" class="border-2 m-1.5">Redo</button>
     </div>
   </div>
 </template>
@@ -117,6 +118,9 @@ export default defineComponent({
   methods: {
     undo() {
       this.worker.postMessage([Message.Undo])
+    },
+    redo() {
+      this.worker.postMessage([Message.Redo])
     },
     setSkills() {
       let numbers = [

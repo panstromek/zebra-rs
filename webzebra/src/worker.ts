@@ -31,6 +31,10 @@ self.addEventListener("message", ev => {
         if (game) {
             game.undo()
         }
+    } else if (messageType === Message.Redo) {
+        if (game) {
+            game.redo()
+        }
     } else {
         console.log('Unknown message')
     }
