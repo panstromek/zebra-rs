@@ -222,6 +222,17 @@ impl Write for FileHandle {
     }
 }
 
+#[no_mangle]
+pub unsafe extern "C" fn __wrap_time(__timer: *mut time_t) -> time_t {
+    static mut time: time_t = 100;
+    time += 1;
+    let result = time / 100;
+    if __timer != null_mut() {
+        *__timer = result;
+    }
+    return result;
+}
+
 pub unsafe fn getc(__stream: FileHandle) -> i32 {
     return inner::getc((__stream).file())
 }

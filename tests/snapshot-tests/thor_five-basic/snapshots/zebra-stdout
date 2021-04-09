@@ -299,7 +299,7 @@ Slack left is 0.25. Book score is +0.00.
    e7   -0.24   (deviation)
 -->   Book      +0.00        g5
 PV: g5 g6 e7 d7 h5 f3 h4 h6 c6 e8 c7 b8 f7 f8 g7 e2 g8 h8 h7 c2 d2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (1.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -319,7 +319,7 @@ Slack left is 0.25. Book score is +0.00.
    f3   -6.38   (deviation)
 -->   Book      +0.00        g6
 PV: g6 e7 d7 h5 f3 h4 h6 c6 e8 c7 b8 f7 f8 g7 e2 g8 h8 h7 c2 d2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -341,7 +341,7 @@ Slack left is 0.25. Book score is +0.00.
    h6   -3.10   (deviation)
 -->   Book      -0.07        c7
 PV: c7 c6 c5 b6 d7 b5 f7 f3 b4 f2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -361,7 +361,7 @@ Slack left is 0.25. Book score is +0.07.
    f3   -4.35   (deviation)
 -->   Book      +0.07        c6
 PV: c6 c5 b6 d7 b5 f7 f3 b4 f2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -381,7 +381,7 @@ Slack left is 0.18. Book score is -0.07.
    h6   -0.78   (deviation)
 -->   Book      -0.07        c5
 PV: c5 b6 d7 b5 f7 f3 b4 f2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -400,7 +400,7 @@ Slack left is 0.25. Book score is +0.07.
    f3   -2.39   (deviation)
 -->   Book      +0.07        b6
 PV: b6 d7 b5 f7 f3 b4 f2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -420,7 +420,7 @@ Slack left is 0.18. Book score is -0.07. Private node.
    a5   -3.44   (deviation)
 -->   Book      -0.07        d7
 PV: d7 b5 f7 f3 b4 f2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -438,7 +438,7 @@ Slack left is 0.25. Book score is +0.07. Private node.
    e8   -2.11   (deviation)
 -->   Book      +0.07        b5
 PV: b5 f7 f3 b4 f2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -458,7 +458,7 @@ Slack left is 0.18. Book score is -0.07. Private node.
    h4   -3.34   (deviation)
 -->   Book      -0.07        f7
 PV: f7 f3 b4 f2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -476,7 +476,7 @@ Slack left is 0.25. Book score is +0.07. Private node.
    e7   -2.20   (deviation)
 -->   Book      +0.07        f3
 PV: f3 b4 f2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -494,7 +494,7 @@ Slack left is 0.18. Book score is -0.07. Private node.
    f2   -1.10   (deviation)
 -->   Book      -0.07        b4
 PV: b4 f2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -512,7 +512,7 @@ Slack left is 0.25. Book score is +0.07. Private node.
    f8   +0.03 
 -->   Book      +0.03        f8
 PV: f8 h4 h5 f2 e8 e7 f1
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -530,7 +530,7 @@ Slack left is 0.18. Book score is -0.03. Private node.
    g7   -1.27   (deviation)
 -->   Book      -0.03        h4
 PV: h4 h5 f2 e8 e7 f1
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -548,7 +548,7 @@ Slack left is 0.21. Book score is +0.03. Private node.
    f2   -0.85   (deviation)
 -->   Book      +0.03        h5
 PV: h5 f2 e8 e7 f1
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -566,7 +566,7 @@ Slack left is 0.18. Book score is -0.03. Private node.
    g7   -2.68   (deviation)
 -->   Book      -0.03        f2
 PV: f2 e8 e7 f1
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -584,7 +584,7 @@ Slack left is 0.21. Book score is +0.03. Private node.
    f1   -0.02   (deviation)
 -->   Book      -0.02        f1
 PV: f1
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -597,9 +597,9 @@ PV: f1
       7      * *   O          -0.02    20 discs     13. h4  h5
       8            O                                14. f2  f1
 
--->   2  -2.06             80  g7 e7     0.0 s  
+-->   2  -2.06             80  g7        0.0 s  
 PV: g7
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -612,9 +612,9 @@ PV: g7
       7      * *   O *         (O)     18 discs     14. f2  f1
       8            O                                15. g7  
 
--->   2  +0.92             61  e7 e8     0.0 s  
+-->   2  +0.92             61  e7        0.0 s  
 PV: e7
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -627,9 +627,9 @@ PV: e7
       7      * * O O *        0.92     20 discs     14. f2  f1
       8            O                                15. g7  e7
 
--->   2  -2.55             78  h6 e8     0.0 s  
+-->   2  -2.55             78  h6        0.0 s  
 PV: h6
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -642,9 +642,9 @@ PV: h6
       7      * * O O *         (O)     16 discs     15. g7  e7
       8            O                                16. h6  
 
--->   2  +3.98             68  e8 g8     0.0 s  
+-->   2  +3.98             68  e8        0.0 s  
 PV: e8
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -657,9 +657,9 @@ PV: e8
       7      * O O O *        +3.98    18 discs     15. g7  e7
       8          O O                                16. h6  e8
 
--->   2  -4.88             67  c8 d8     0.0 s  
+-->   2  -4.88             67  c8        0.0 s  
 PV: c8
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -672,9 +672,9 @@ PV: c8
       7      * * O O *         (O)     17 discs     16. h6  e8
       8      *   O O                                17. c8  
 
--->   2  +2.99             99  d2 d8     0.0 s  
+-->   2  +2.99             99  d2        0.0 s  
 PV: d2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -687,9 +687,9 @@ PV: d2
       7      * * O O *        +2.99    20 discs     16. h6  e8
       8      *   O O                                17. c8  d2
 
--->   2  -1.69             60  d8 h8     0.0 s  
+-->   2  -1.69             60  d8        0.0 s  
 PV: d8
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -702,9 +702,9 @@ PV: d8
       7      * * * O *         (O)     19 discs     17. c8  d2
       8      * * O O                                18. d8  
 
--->   2  +4.25             59  h8 h7     0.0 s  
+-->   2  +4.25             59  h8        0.0 s  
 PV: h8
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -717,9 +717,9 @@ PV: h8
       7      * * * O O        +4.25    23 discs     17. c8  d2
       8      * * O O   O                            18. d8  h8
 
--->   2  -4.22             99  c2 a3     0.0 s  
+-->   2  -4.22             99  c2        0.0 s  
 PV: c2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -732,9 +732,9 @@ PV: c2
       7      * * * O O         (O)     22 discs     18. d8  h8
       8      * * O O   O                            19. c2  
 
--->   2  +4.37             56  a3 d1     0.0 s  
+-->   2  +4.37             56  a3        0.0 s  
 PV: a3
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -747,9 +747,9 @@ PV: a3
       7      * * O O O        +4.37    27 discs     18. d8  h8
       8      * * O O   O                            19. c2  a3
 
--->   2  -4.57             76  e2 b3     0.0 s  
+-->   2  -4.57             76  e2        0.0 s  
 PV: e2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -762,9 +762,9 @@ PV: e2
       7      * * O O O         (O)     26 discs     19. c2  a3
       8      * * O O   O                            20. e2  
 
--->   2  +5.00             46  b3 b7     0.0 s  
+-->   2  +5.00             46  b3        0.0 s  
 PV: b3
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -777,9 +777,9 @@ PV: b3
       7      * * O O O        +5.00    31 discs     19. c2  a3
       8      * * O O   O                            20. e2  b3
 
--->   2  -5.83             58  h2 h7     0.0 s  
+-->   2  -5.83             58  h2        0.0 s  
 PV: h2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -792,9 +792,9 @@ PV: h2
       7      * * O O O         (O)     27 discs     20. e2  b3
       8      * * O O   O                            21. h2  
 
--->   2  +4.53             59  e1 a6     0.0 s  
+-->   2  +4.53             59  e1        0.0 s  
 PV: e1
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -807,9 +807,9 @@ PV: e1
       7      * * O O O        +4.53    30 discs     20. e2  b3
       8      * * O O   O                            21. h2  e1
 
--->   2  -2.84             54  c1 h7     0.0 s  
+-->   2  -2.84             54  c1        0.0 s  
 PV: c1
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -822,9 +822,9 @@ PV: c1
       7      * * O O O         (O)     28 discs     21. h2  e1
       8      * * O O   O                            22. c1  
 
--->   2  +1.91             54  d1 g1     0.0 s  
+-->   2  +1.91             54  d1        0.0 s  
 PV: d1
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -837,9 +837,9 @@ PV: d1
       7      * * O O O        +1.91    31 discs     21. h2  e1
       8      * * O O   O                            22. c1  d1
 
--->   2  -0.48             37  g1 h7     0.0 s  
+-->   2  -0.48             37  g1        0.0 s  
 PV: g1
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -852,9 +852,9 @@ PV: g1
       7      * * O O O         (O)     27 discs     22. c1  d1
       8      * * O O   O                            23. g1  
 
--->   2  +0.06             23  h7 b1     0.0 s  
+-->   2  +0.06             23  h7        0.0 s  
 PV: h7
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -867,9 +867,9 @@ PV: h7
       7      * * O O O O      0.06     29 discs     22. c1  d1
       8      * * O O   O                            23. g1  h7
 
--->   2  -1.01             42  g2 h1     0.0 s  
+-->   2  -1.01             42  g2        0.0 s  
 PV: g2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -882,9 +882,9 @@ PV: g2
       7      * * O O O O       (O)     28 discs     23. g1  h7
       8      * * O O   O                            24. g2  
 
--->   2  +4.10             17  h1 a7     0.0 s  
+-->   2  +4.10             17  h1        0.0 s  
 PV: h1
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -897,9 +897,9 @@ PV: h1
       7      * * O O O O      +4.10    37 discs     23. g1  h7
       8      * * O O   O                            24. g2  h1
 
--->   2  -7.01             40  b2 a2     0.0 s  
+-->   2  -7.01             40  b2        0.0 s  
 PV: b2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -912,9 +912,9 @@ PV: b2
       7      * * O O O O       (O)     34 discs     24. g2  h1
       8      * * O O   O                            25. b2  
 
--->   2  +8.05             23  a2 a5     0.0 s  
+-->   2  +8.05             23  a2        0.0 s  
 PV: a2
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -927,9 +927,9 @@ PV: a2
       7      * * O O O O      +8.05    40 discs     24. g2  h1
       8      * * O O   O                            25. b2  a2
 
--->   2  -8.54             33  a4 a5     0.0 s  
+-->   2  -8.54             33  a4        0.0 s  
 PV: a4
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -942,9 +942,9 @@ PV: a4
       7      * * O O O O       (O)     32 discs     25. b2  a2
       8      * * O O   O                            26. a4  
 
--->   2  +8.77             34  a6 a5     0.0 s  
+-->   2  +8.77             34  a6        0.0 s  
 PV: a6
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -957,9 +957,9 @@ PV: a6
       7      * * O O O O      +8.77    35 discs     25. b2  a2
       8      * * O O   O                            26. a4  a6
 
--->   2  -9.07             22  a5 a7     0.0 s  
+-->   2  -9.07             22  a5        0.0 s  
 PV: a5
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -972,9 +972,9 @@ PV: a5
       7      * * O O O O       (O)     29 discs     26. a4  a6
       8      * * O O   O                            27. a5  
 
--->   2  +9.09             23  b1 a1     0.0 s  
+-->   2  +9.09             23  b1        0.0 s  
 PV: b1
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -987,9 +987,9 @@ PV: b1
       7      * * O O O O      +9.09    36 discs     26. a4  a6
       8      * * O O   O                            27. a5  b1
 
--->   2  -9.31             12  a1 a7     0.0 s  
+-->   2  -9.31             12  a1        0.0 s  
 PV: a1
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -1002,9 +1002,9 @@ PV: a1
       7      * * O O O O       (O)     32 discs     27. a5  b1
       8      * * O O   O                            28. a1  
 
--->   2  +12.20            18  b7 a7     0.0 s  
+-->   2  +12.20            18  b7        0.0 s  
 PV: b7
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -1017,9 +1017,9 @@ PV: b7
       7    O O O O O O O      +12.20   43 discs     27. a5  b1
       8      * * O O   O                            28. a1  b7
 
--->   2  -14.89            10  a7 b8     0.0 s  
+-->   2  -14.89            10  a7        0.0 s  
 PV: a7
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -1032,9 +1032,9 @@ PV: a7
       7  * O O O O O O O       (O)     41 discs     28. a1  b7
       8      * * O O   O                            29. a7  
 
--->   2  +17.18             4  b8 g8     0.0 s  
+-->   2  +17.18             4  b8        0.0 s  
 PV: b8
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -1047,10 +1047,10 @@ PV: b8
       7  * O O O O O O O      +17.18   44 discs     28. a1  b7
       8    O O O O O   O                            29. a7  b8
 
--->   2  -8                 5  g8 a8     0.0 s  
+-->   2  -8                 5  g8        0.0 s  
 -->   2  -8                30  g8        0.0 s  
 PV: g8 -- a8
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -1065,7 +1065,7 @@ PV: g8 -- a8
 
 -->   1  -8                15  a8     0.0 s  
 PV: a8
-0 matching games  (0.000 s search time, 0.000 s total)
+0 matching games  (0.000 s search time, 1.000 s total)
 
          a b c d e f g h
 
@@ -1082,4 +1082,4 @@ PV: a8
 Black: 28   White: 36
 Nodes searched:        1468      
 Positions evaluated:   1114      
-Total time: 0.0 s
+Total time: 2.0 s

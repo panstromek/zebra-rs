@@ -1,4 +1,4 @@
-Log file created Wed Sep  2 23:14:23 2020
+Log file created Thu Jan  1 01:00:01 1970
 
 Engine compiled Jul  2 2020 19:33:59
 
@@ -472,7 +472,7 @@ PV: e2 b3 e7 a4 c8
       8            O          
 
 13 moves generated: h6 a6 a4 e1 a5 h2 d2 b3 g1 g7 a7 g8 b7 
--->   6  +2.68           6407  b3 e7 a4 a5 h2     0.0 s  
+-->   6  +2.68           6407  b3 e7 a4 a5 h2     1.0 s    6401 nps
 PV: b3 e7 a4 a5 h2
 
          a b c d e f g h

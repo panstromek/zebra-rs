@@ -44,7 +44,7 @@ PV: d3 c5 c4 d6
 PV: c4 d6 e7 c3 f5
 -->   6  -6.48           1154  f4 d3 c4 c3 c2     0.0 s  
 PV: f4 d3 c4 c3 c2
--->   7  +7.87           2511  f6 c4 d6 e7 c3     0.0 s  
+-->   7  +7.87           2511  f6 c4 d6 e7 c3     1.0 s    2508 nps
 PV: f6 c4 d6 e7 c3 f5
 
 Opening: Diagonal Opening
@@ -88,7 +88,7 @@ PV: f3 d6 e7 f8
 PV: f3 d6 f7 g4 c6
 -->   6  -4.73           2265  f4 f3 d6 e7 f8     0.0 s  
 PV: f4 f3 d6 e7 f8
--->   7  +12.78          3134  f4 f3 d6 f7 g4     0.0 s  
+-->   7  +12.78          3134  f4 f3 d6 f7 g4     1.0 s    3131 nps
 PV: f4 f3 d6 f7 g4 c6
 
          a b c d e f g h
@@ -131,9 +131,9 @@ Thor database:        c5: 73.9%    d6: 18.8%    d3:  6.1%    d7:  1.2%
 PV: c6 c5 e7 f3
 -->   6  -16.27          3661  c6 c4 g6 f7 d3     0.0 s  
 PV: c6 c4 g6 f7 d3
--->   6  -0.53           3089  d6 c6 c5 e7 f3     0.0 s  
+-->   6  -0.53           3089  d6 c6 c5 e7 f3     1.0 s    3086 nps
 PV: d6 c6 c5 e7 f3
--->   7  +16.27          7748  d6 c6 c4 g6 f7     0.0 s  
+-->   7  +16.27          7748  d6 c6 c4 g6 f7     1.0 s    7740 nps
 PV: d6 c6 c4 g6 f7 d3
 
 Opening: Chimney
@@ -174,11 +174,11 @@ PV: c6 c5 g6 f7 g3 h6
 Thor database:        d3: 100.0%    
 -->   5  +1.83           3219  f7 h3 c4 f3        0.0 s  
 PV: f7 h3 c4 f3
--->   6  -19.73         10501  c3 h3 f7 g6 e7     0.0 s  
+-->   6  -19.73         10501  c3 h3 f7 g6 e7     0.0 s   10491 nps
 PV: c3 h3 f7 g6 e7
--->   6  +1.71           5049  h4 e7 f3 h3 h2     0.0 s  
+-->   6  +1.71           5049  h4 e7 f3 h3 h2     1.0 s    5044 nps
 PV: h4 e7 f3 h3 h2
--->   7  +22.73         13800  h4 c5 b5 e7 c3     0.0 s  
+-->   7  +22.73         13800  h4 c5 b5 e7 c3     1.0 s   13786 nps
 PV: h4 c5 b5 e7 c3 h3
 
          a b c d e f g h
@@ -214,13 +214,13 @@ PV: c3 h4 e7 f8 h3 h2
       8                                             
 
 Thor database:        h3: 66.8%    g3: 19.3%    d2: 13.9%    
--->   5  +4.22            288  f7 g6 e7 f3        0.0 s  
+-->   5  +4.22            288  f7 g6 e7 f3        1.0 s     288 nps
 PV: f7 g6 e7 f3
--->   6  -19.16          5925  f7 g6 e7 f8 c4     0.0 s  
+-->   6  -19.16          5925  f7 g6 e7 f8 c4     1.0 s    5919 nps
 PV: f7 g6 e7 f8 c4
--->   6  -1.41             93  h4 e7 f8 h3 h2     0.0 s  
+-->   6  -1.41             93  h4 e7 f8 h3 h2     1.0 s      93 nps
 PV: h4 e7 f8 h3 h2
--->   7  +20.64         21781  h4 g6 f3 c6 g5     0.0 s  
+-->   7  +20.64         21781  h4 g6 f3 c6 g5     1.0 s   21759 nps
 PV: h4 g6 f3 c6 g5 g3
 
          a b c d e f g h
@@ -241,7 +241,7 @@ PV: f3 e7 b2 g5
 PV: f3 d7 b3 g3 c6
 -->   6  -19.16          6248  f7 g6 e7 f8 c4     0.0 s  
 PV: f7 g6 e7 f8 c4
--->   7  +4.83          21034  f7 g3 g5 h5 g6     0.0 s  
+-->   7  +4.83          21034  f7 g3 g5 h5 g6     1.0 s   21013 nps
 PV: f7 g3 g5 h5 g6 d2
 
          a b c d e f g h
@@ -281,9 +281,9 @@ Thor database:        g5: 76.4%    c6: 23.6%
 PV: h4 h6 f3 e7
 -->   6  -1.82           4827  h4 h6 f3 e7 f7     0.0 s  
 PV: h4 h6 f3 e7 f7
--->   6  -19.10         22376  g6 h6 c5 d2 c6     0.0 s  
+-->   6  -19.10         22376  g6 h6 c5 d2 c6     1.0 s   22354 nps
 PV: g6 h6 c5 d2 c6
--->   7  +5.36          38909  f7 d2 f3 b3 c1     0.0 s  
+-->   7  +5.36          38909  f7 d2 f3 b3 c1     1.0 s   38870 nps
 PV: f7 d2 f3 b3 c1 f8
 
          a b c d e f g h
@@ -321,7 +321,7 @@ PV: h4 h6 b4 d7 c6 e7
 Thor database:        c7: 50.0%    e7: 50.0%    
 -->   5  +18.25           217  c6 d7 b4 c5        0.0 s  
 PV: c6 d7 b4 c5
--->   6  -9.63           9400  c6 h5 f3 d7 b4     1.0 s    9391 nps
+-->   6  -9.63           9400  c6 h5 f3 d7 b4     0.0 s    9391 nps
 PV: c6 h5 f3 d7 b4
 -->   6  -18.25         16430  c7 c6 d7 b4 c5     1.0 s   16414 nps
 PV: c7 c6 d7 b4 c5
@@ -361,13 +361,13 @@ PV: c6 h6 b4 b6 f7 c5
       8                                              8. c7  c6
 
 Thor database:        h5: 100.0%    
--->   5  +18.46          4995  b4 h6 f3 b6        0.0 s  
+-->   5  +18.46          4995  b4 h6 f3 b6        1.0 s    4990 nps
 PV: b4 h6 f3 b6
--->   6  -11.35         23118  b6 a5 c8 h5 f3     0.0 s  
+-->   6  -11.35         23118  b6 a5 c8 h5 f3     1.0 s   23095 nps
 PV: b6 a5 c8 h5 f3
--->   6  -17.18           483  h6 b4 b6 f7 c5     0.0 s  
+-->   6  -17.18           483  h6 b4 b6 f7 c5     1.0 s     483 nps
 PV: h6 b4 b6 f7 c5
--->   7  +13.63         47426  h5 c8 f7 d2 c1     0.0 s  
+-->   7  +13.63         47426  h5 c8 f7 d2 c1     1.0 s   47379 nps
 PV: h5 c8 f7 d2 c1 h7
 
          a b c d e f g h
@@ -387,7 +387,7 @@ PV: a5 c8 h5 f3
 PV: a5 c2 b5 f3 h5
 -->   6  -11.35         28988  b6 a5 c8 h5 f3     0.0 s  
 PV: b6 a5 c8 h5 f3
--->   7  +17.37         70241  b5 a4 c8 h5 f3     0.0 s  
+-->   7  +17.37         70241  b5 a4 c8 h5 f3     1.0 s   70171 nps
 PV: b5 a4 c8 h5 f3 h4
 
          a b c d e f g h
@@ -425,9 +425,9 @@ PV: a5 c8 h5 b4 h6 f7
 PV: h6 h5 g2 e2
 -->   6  -17.20         22506  a4 d8 h5 c2 e8     0.0 s  
 PV: a4 d8 h5 c2 e8
--->   6  -10.51         13316  e8 h5 c2 h6 g7     0.0 s  
+-->   6  -10.51         13316  e8 h5 c2 h6 g7     1.0 s   13303 nps
 PV: e8 h5 c2 h6 g7
--->   7  +18.28         81465  f2 h6 e8 d2 h5     0.0 s  
+-->   7  +18.28         81465  f2 h6 e8 d2 h5     1.0 s   81384 nps
 PV: f2 h6 e8 d2 h5 a6
 
          a b c d e f g h
@@ -463,11 +463,11 @@ PV: h6 h5 a4 f2 b4 b3
 
 -->   5  +14.27          5037  a5 c8 e8 c2        0.0 s  
 PV: a5 c8 e8 c2
--->   6  -14.45          9384  a5 f8 h6 h5 h7     0.0 s  
+-->   6  -14.45          9384  a5 f8 h6 h5 h7     0.0 s    9375 nps
 PV: a5 f8 h6 h5 h7
--->   6  -10.81         24970  f2 f3 e2 e1 f8     0.0 s  
+-->   6  -10.81         24970  f2 f3 e2 e1 f8     1.0 s   24945 nps
 PV: f2 f3 e2 e1 f8
--->   7  +20.18         69231  f2 a5 c2 b4 a4     0.0 s  
+-->   7  +20.18         69231  f2 a5 c2 b4 a4     1.0 s   69162 nps
 PV: f2 a5 c2 b4 a4 a3
 
          a b c d e f g h
@@ -501,13 +501,13 @@ PV: a5 f8 h5 b4 h6 d8
       7      * *   *           (O)     12 discs     11. f7  f3
       8                                             12. b4  
 
--->   5  +7.05           5079  h5 b3 h6 g7        0.0 s  
+-->   5  +7.05           5079  h5 b3 h6 g7        1.0 s    5074 nps
 PV: h5 b3 h6 g7
--->   6  -23.36         14256  h5 c8 h6 a4 a3     0.0 s  
+-->   6  -23.36         14256  h5 c8 h6 a4 a3     1.0 s   14242 nps
 PV: h5 c8 h6 a4 a3
--->   6  -6.56          31045  a4 a6 b7 f2 b3     0.0 s  
+-->   6  -6.56          31045  a4 a6 b7 f2 b3     1.0 s   31014 nps
 PV: a4 a6 b7 f2 b3
--->   7  +27.04         57573  a4 a6 b7 f2 g2     0.0 s  
+-->   7  +27.04         57573  a4 a6 b7 f2 g2     1.0 s   57515 nps
 PV: a4 a6 b7 f2 g2 a7
 
          a b c d e f g h
@@ -527,7 +527,7 @@ PV: h5 a4 f2 g7
 PV: h5 a4 b3 c2 a3
 -->   6  -23.36         13865  h5 c8 h6 a4 a3     0.0 s  
 PV: h5 c8 h6 a4 a3
--->   7  +9.90          48919  h5 c8 h6 b3 c2     0.0 s  
+-->   7  +9.90          48919  h5 c8 h6 b3 c2     1.0 s   48870 nps
 PV: h5 c8 h6 b3 c2 c1
 
          a b c d e f g h
@@ -565,9 +565,9 @@ PV: h5 a4 d8 c8 b8 h7
 PV: a4 a3 d8 a5
 -->   6  +22.09         18081  a4 h7 b3 d2 c8     0.0 s  
 PV: a4 h7 b3 d2 c8
--->   6  -41.10           143  a4 d8 c8 b8 h7     0.0 s  
+-->   6  -41.10           143  a4 d8 c8 b8 h7     1.0 s     143 nps
 PV: a4 d8 c8 b8 h7
--->   7  -7.40          48072  a4 c8 a5 c2 e7     0.0 s  
+-->   7  -7.40          48072  a4 c8 a5 c2 e7     1.0 s   48024 nps
 PV: a4 c8 a5 c2 e7 d2
 
          a b c d e f g h
@@ -603,11 +603,11 @@ PV: a4 a6 b3 e2 c8 h6
 
 -->   5  +76.18          3902  h1 a4 b2 b3        0.0 s  
 PV: h1 a4 b2 b3
--->   6  +39.18          4932  h1 a4 b2 b3 a3     0.0 s  
+-->   6  +39.18          4932  h1 a4 b2 b3 a3     0.0 s    4927 nps
 PV: h1 a4 b2 b3 a3
--->   6  -54.89         12061  a4 b3 c2 a3 h2     0.0 s  
+-->   6  -54.89         12061  a4 b3 c2 a3 h2     1.0 s   12049 nps
 PV: a4 b3 c2 a3 h2
--->   7  -16.73         61448  g7 a4 h6 h8 h2     0.0 s  
+-->   7  -16.73         61448  g7 a4 h6 h8 h2     1.0 s   61387 nps
 PV: g7 a4 h6 h8 h2 h7
 
          a b c d e f g h

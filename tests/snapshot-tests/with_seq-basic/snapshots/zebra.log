@@ -1,4 +1,4 @@
-Log file created Fri Jan  8 15:43:08 2021
+Log file created Thu Jan  1 01:00:01 1970
 
 Engine compiled Jul  2 2020 19:33:59
 
@@ -866,5 +866,5 @@ PV: c8 b8
       8  *   * O O O O O      
 
 1 moves generated: b8 
--->   1  +12               21  b8     0.0 s  
+-->   1  +12               21  b8     1.0 s      21 nps  
 PV: b8

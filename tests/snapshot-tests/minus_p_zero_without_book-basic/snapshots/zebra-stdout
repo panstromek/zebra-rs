@@ -768,7 +768,7 @@ Thor database:        c4: 100.0%
       7  * * O O O O O O               30 discs     28. a2  b2
       8  * * * * * * * O                            29. a1  - 
 
--->   3  +20               59  g1           0.0 s  
+-->   3  +20               59  g1           1.0 s      59 nps  
 
          a b c d e f g h
 
@@ -811,4 +811,4 @@ Thor database:        c4: 100.0%
 Black: 42   White: 22
 Nodes searched:        225056    
 Positions evaluated:   148773    
-Total time: 0.0 s
+Total time: 14.0 s

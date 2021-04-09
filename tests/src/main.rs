@@ -1,6 +1,138 @@
-fn main() {}
+use std::fs::File;
+use crate::tests::{snapshot_test_with_folder, Interactive};
+use rand::Rng;
+use std::fmt::Write;
+use rand::rngs::ThreadRng;
 
-#[cfg(test)]
+fn main() {
+    let mut rng = rand::thread_rng();
+
+    loop {
+        std::fs::remove_dir_all("fuzzer");
+        let binary_folder = "../../../zebra-1/";
+        let binary = "zebra";
+        let mut args = String::new();
+        let interactive = match rng.gen_range::<i32, _>(0..6) {
+            1 => Interactive::Dumb,
+            _ => Interactive::None,
+        };
+        match interactive {
+            Interactive::Dumb => {
+                args.push_str("-r 0 -l 0 0");
+            }
+            _ => {
+                write!(args, "-r 0 -l {} {} {} {} {} {}",
+                       // FIXME setting skills to 16 will start failing
+                       //  There's some non-determinism, that we didn't catch yet
+                       rng.gen_range::<i32, _>(0..13),
+                       rng.gen_range::<i32, _>(0..20),
+                       rng.gen_range::<i32, _>(0..20),
+                       rng.gen_range::<i32, _>(0..13),
+                       rng.gen_range::<i32, _>(0..20),
+                       rng.gen_range::<i32, _>(0..20),
+                );
+            }
+        }
+
+
+        let flags: &[(u32, &dyn Fn(&mut String, &mut ThreadRng))] = &[
+            (8, &(|s, rng| { write!(s, "-public"); })),
+            (8, &(|s, rng| { write!(s, "-private"); })),
+            (8, &(|s, rng| { write!(s, "-keepdraw"); })),
+            (8, &(|s, rng| { write!(s, "-draw2black"); })),
+            (8, &(|s, rng| { write!(s, "-draw2white"); })),
+            (8, &(|s, rng| { write!(s, "-draw2none"); })),
+            (8, &(|s, rng| { write!(s, "-test"); })),
+            (8, &(|s, rng| { write!(s, "-analyze"); })),
+            (8, &(|s, rng| { write!(s, "-repeat {}", rng.gen_range::<i32, _>(0..5)); })),
+            (6, &(|s, rng| { write!(s, "-slack {}", rng.gen_range::<f32, _>(0.0..10.0)); })),
+            (6, &(|s, rng| { write!(s, "-randmove {}", rng.gen_range::<i32, _>(0..10)); })),
+            (2, &(|s, rng| { write!(s, "-p {}", rng.gen_range::<i32, _>(0..2)); })),
+            (2, &(|s, rng| { write!(s, "-e {}", rng.gen_range::<i32, _>(0..2)); })),
+            (2, &(|s, rng| { write!(s, "-b {}", rng.gen_range::<i32, _>(0..2)); })),
+            (4, &(|s, rng| { write!(s, "-w {}", rng.gen_range::<i32, _>(0..2)); })),
+            (4, &(|s, rng| { write!(s, "-thor {}", rng.gen_range::<i32, _>(0..20)); })),
+            (4, &(|s, rng| { write!(s, "-wld {}", rng.gen_range::<i32, _>(0..2)); })),
+            (4, &(|s, rng| { write!(s, "-h {}", rng.gen_range::<i32, _>(0..22)); })),
+            (8, &(|s, rng| {
+                write!(s, "-dev {} {} {}",
+                       rng.gen_range::<i32, _>(0..100),
+                       rng.gen_range::<i32, _>(0..100),
+                       rng.gen_range::<f32, _>(0.0..220.0),
+                );
+            })),
+            // NOTE: -t is mutually exclusive with -l
+            //  (it doesn't matter too much now, because -t will just override it)
+            //   (later args override previous ones)
+            (8, &(|s, rng| {
+                let number_of_levels = rng.gen_range::<i32, _>(0..4);
+                write!(s, "-t {}", number_of_levels);
+                for _ in 0..number_of_levels {
+                    write!(s, " {} {} {}",
+                            // TODO allow human player too (by specifying zero here)
+                           rng.gen_range::<i32, _>(1..12),
+                           rng.gen_range::<i32, _>(0..22),
+                           rng.gen_range::<i32, _>(0..22),
+                    );
+                }
+            })),
+            // todo
+            //  -g <game file>
+            //  -time <black time> <black increment> <white time> <white increment>
+            //     Tournament mode; the format for the players is as above.
+            //  -learn <depth> <cutoff>
+            //     Learn the game with <depth> deviations up to <cutoff> empty.
+            //  -log <file name>
+            //     Append all game results to the specified file.
+            //  -seq <move sequence>
+            //     Forces the game to start with a predefined move sequence;
+            //     e.g. f4d6c3.
+            //  -seqfile <filename
+            //     Specifies a file from which move sequences are read.
+        ];
+
+        for (denominator, flag) in flags {
+            if rng.gen_ratio(1, *denominator)  {
+                args.push(' ');
+                flag(&mut args, &mut rng);
+            }
+        }
+        let arguments = args.as_str();
+        if rng.gen_ratio(1, 4) {
+            use std::io::Write;
+
+            std::fs::create_dir_all("fuzzer/run_dir/");
+            File::create("fuzzer/run_dir/adjust.txt")
+                .unwrap()
+                .write(format!("{} {} {} {}\n",
+                               rng.gen_range::<f32, _>(0.0..20.0),
+                               rng.gen_range::<f32, _>(0.0..20.0),
+                               rng.gen_range::<f32, _>(0.0..20.0),
+                               rng.gen_range::<f32, _>(0.0..20.0),
+                ).as_ref())
+                .unwrap();
+            println!("creating adjust.txt");
+        }
+        let with_adjust = false;
+        let has_error = false; // TODO
+
+        println!("testing args '{}'", arguments);
+        let coeffs_path_from_run_dir = "./../../coeffs2.bin";
+        let book_path_from_run_dir = "./../../book.bin";
+        snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
+                                  with_adjust, has_error, false, interactive,
+                                  coeffs_path_from_run_dir,
+                                  book_path_from_run_dir);
+
+        let binary_folder = "../../target/release/";
+
+        snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
+                                  with_adjust, has_error, false, interactive,
+                                  coeffs_path_from_run_dir, book_path_from_run_dir);
+    }
+
+}
+
 mod tests {
     use flate2_coeff_source::Flate2Source;
     use std::ffi::CStr;
@@ -212,6 +344,7 @@ mod tests {
     snap_test!("practice", practice, "./../../../../book.bin", false, interactive: Practice);
     snap_test!("practice", practice_help, "./../../../../book.bin dd dd", true);
 
+    #[derive(Copy, Clone)]
     pub enum Interactive {
         Dumb,
         Practice,
@@ -265,8 +398,26 @@ mod tests {
         let binary_folder =
             // "./../../../../../zebra-1/"
             "./../../../../target/release/"
-        // "./../../../../../bisection/target/release/"
-        ;
+            // "./../../../../../bisection/target/release/"
+            ;
+        let coeffs_path_from_run_dir = "./../../../../coeffs2.bin" ;
+        let book_path_from_run_dir = "./../../../../book.bin" ;
+        snapshot_test_with_folder(binary_folder, binary, arguments, snapshot_test_dir, with_adjust, has_error,
+                                  true,
+                                  interactive, coeffs_path_from_run_dir, book_path_from_run_dir);
+    }
+
+    pub fn snapshot_test_with_folder(binary_folder: &str,
+                                     binary: &str,
+                                     arguments: &str,
+                                     snapshot_test_dir: &str,
+                                     with_adjust: bool,
+                                     has_error: bool,
+                                     check_exit_status: bool,
+                                     interactive: Interactive,
+                                     coeffs_path_from_run_dir: &str,
+                                     book_path_from_run_dir: &str) {
+
         let snapshot_test_dir = Path::new(snapshot_test_dir);
         if !snapshot_test_dir.exists() {
             std::fs::create_dir_all(snapshot_test_dir).unwrap();
@@ -289,8 +440,8 @@ mod tests {
             .canonicalize()
             .unwrap();
 
-        let coeffs_path = run_directory.join("./../../../../coeffs2.bin").canonicalize().unwrap();
-        let mut book_path = run_directory.join("./../../../../book.bin").canonicalize().unwrap();
+        let coeffs_path = run_directory.join(coeffs_path_from_run_dir).canonicalize().unwrap();
+        let mut book_path = run_directory.join(book_path_from_run_dir).canonicalize().unwrap();
         let canon_run_dir = run_directory.canonicalize().unwrap();
 
         let compare_books = arguments.contains("-learn");
@@ -308,6 +459,7 @@ mod tests {
             // we probably don't need this when -learn parameter is set, because we copy the
             // investigate that
             .env("BOOK_PATH", book_path.to_str().unwrap())
+            .env("MOCK_TIME", "true")
             .stdin(Stdio::piped())
             .stderr(Stdio::from(File::create(canon_run_dir.join("zebra-stderr")).unwrap()))
             .stdout(Stdio::from(File::create(canon_run_dir.join("zebra-stdout")).unwrap()))
@@ -330,7 +482,10 @@ mod tests {
             .unwrap();
         // TODO make this flag part of some metadata snapshot file
         //  so that we don't need to guess its value when writing new test
-        assert_eq!(exit_status.success(), !has_error);
+        if check_exit_status {
+            assert_eq!(exit_status.success(), !has_error);
+        }
+
         if compare_books {
             assert_snapshot(&*snapshots_dir.join("book.bin"), &*book_path, true);
         }
@@ -369,30 +524,11 @@ mod tests {
         }
 
         fn variable_lines(line: &&str) -> bool {
-            !(
-                line.starts_with("-->")
-                || line.starts_with("Log file created")
-                || line.starts_with("Engine compiled")
+            !(line.starts_with("Engine compiled")
                 || line.starts_with("Zebra (c) 1997-2005 Gunnar Andersson, compile date")
-                || line.starts_with("Gunnar Andersson")
-                || line.starts_with("Total time:")
-                || line.starts_with("[-inf,inf]:")
-                || line.starts_with("Reading binary opening database... done (took ")
-                || (line.starts_with("#") && matches_ctime(&line[1..]).unwrap_or(false) )
-            )
+                || line.starts_with("Gunnar Andersson"))
         }
-        fn matches_ctime(line :&str) -> Option<bool> {
-            // Www Mmm dd hh:mm:ss yyyy
-            let mut split = line.trim().split_whitespace();
-            // Just rougly matches ctime by lenghts - there's very low chance that some
-            // other text will match this too
-            Some(split.next()?.len() == 3 &&
-                split.next()?.len() == 3 &&
-                split.next()?.len() < 3 &&
-                split.next()?.len() == 8 &&
-                split.next()?.len() == 4 &&
-                split.next().is_none())
-        }
+
         let snapshot = std::fs::read_to_string(snapshot_path).unwrap();
         let output = std::fs::read_to_string(result_path).unwrap();
 
@@ -407,4 +543,61 @@ mod tests {
     }
 
     snap_test!(help, "?", true);
+
+    // These are failing cases found by fuzzer. Some of them are caused by
+    // UB sanitizer logs in the original zebra
+
+//     testing args '-r 0 -l 1 3 8 8 1 7 -repeat 4 -h 1'
+// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
+// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+    //testing args '-r 0 -l 9 4 4 7 4 8 -public -draw2none -repeat 4 -slack 0.33416033'
+    // thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
+    // note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+//     testing args '-r 0 -l 9 3 7 5 2 6 -e 1'
+// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
+// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+//     testing args '-r 0 -l 7 5 0 8 8 7 -repeat 3 -e 1'
+// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
+// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+//     testing args '-r 0 -l 5 7 6 5 1 2 -slack 8.41116'
+// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
+// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+//     testing args '-r 0 -l 8 9 1 1 4 2 -draw2black -draw2none -repeat 3 -e 1'
+// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
+// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+//     testing args '-r 0 -l 2 4 7 9 9 6 -public -private -draw2black -draw2white -repeat 4 -slack 4.9125338'
+// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
+// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+    // testing args '-r 0 -l 5 6 6 6 6 4 -private -slack 0.28241396 -e 0 -h 7'
+    // thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
+    // note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+// thread 'main' panicked at 'assertion failed: `(left == right)`
+//   left: `"      1        O   O   O      Black    Zebra"`,
+//  right: `"      1      O     O   O      Black    Zebra"`', tests/src/main.rs:486:13
+// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+//     testing args '-r 0 -l 9 1 9 12 4 9 -keepdraw -test -slack 8.871107 -p 0 -b 0 -thor 2'
+// thread 'main' panicked at 'assertion failed: `(left == right)`
+//   left: `"Loaded 0 games in 1.000 s."`,
+//  right: `"Loaded 0 games in 0.000 s."`', tests/src/main.rs:505:13
+
+//     testing args '-r 0 -l 9 16 11 8 18 6 -draw2none -p 0 -w 0 -thor 9 -h 4'
+// thread 'main' panicked at 'assertion failed: `(left == right)`
+//   left: `"b2=4"`,
+//  right: `"0 matching games  (0.000 s search time, 0.000 s total)"`', tests/src/main.rs:551:13
+// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+//     testing args '-r 0 -l 15 19 7 9 2 19 -keepdraw -draw2black -draw2white -randmove 1 -p 0 -thor 4'
+// thread 'main' panicked at 'assertion failed: `(left == right)`
+//   left: `"-->  15  -7.34         346445  f3 d2 c5 c6 c1    77.0 s    4385 nps"`,
+//  right: `"-->  15  -7.34         337693  f3 d2 c5 c6 c1    77.0 s    4275 nps"`', tests/src/main.rs:552:13
+// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 }
