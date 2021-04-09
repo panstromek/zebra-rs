@@ -14,7 +14,7 @@ use engine::src::hash::{HashEntry, HashState};
 use engine::src::search::{hash_expand_pv, SearchState};
 
 use engine::src::zebra::{EvaluationType, Config};
-use libc_wrapper::{ctime, exit, fflush, fopen, fprintf, free, malloc, printf, putc, puts, realloc, sprintf, stderr, stdout, strlen, time, time_t, tolower, FileHandle};
+use libc_wrapper::{ctime, fflush, fopen, fprintf, free, malloc, printf, putc, puts, realloc, sprintf, stderr, stdout, strlen, time, time_t, tolower, FileHandle};
 use thordb_types::C2RustUnnamed;
 
 use crate::{
@@ -599,21 +599,20 @@ impl FrontEnd for LibcFatalError {
 impl LibcFatalError {
     pub fn thordb_report_flipped_0_first() {
         unsafe {
-            puts(b"This COULD happen (1) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
+            write!(stdout, "This COULD happen (1) in BUILD_THOR_OPENING_TREE");
         }
     }
     pub fn thordb_report_flipped_0_second() {
         unsafe {
-            puts(b"This COULD happen (2) in BUILD_THOR_OPENING_TREE\x00" as *const u8 as *const i8);
+            write!(stdout, "This COULD happen (2) in BUILD_THOR_OPENING_TREE");
         }
     }
 
     pub fn report_do_evaluate(evaluation_stage_: i32) {
         unsafe {
-            putc('|' as i32, stdout);
-            if evaluation_stage_ % 5 as i32 == 0 as i32 {
-                printf(b" %d%% \x00" as *const u8 as *const i8,
-                       4 as i32 * evaluation_stage_);
+            write!(stdout, "|");
+            if evaluation_stage_ % 5 == 0 {
+                write!(stdout, " {}% ", 4 * evaluation_stage_);
             }
             fflush(stdout);
         }

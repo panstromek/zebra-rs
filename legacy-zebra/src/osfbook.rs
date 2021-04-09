@@ -494,8 +494,7 @@ pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
     create_hash_reference(g_book);
     fclose(stream);
     time(&mut stop_time);
-    printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
-           (stop_time - start_time) as i32);
+    write!(stdout, "done (took {} s)\n", (stop_time - start_time) as i32);
     write!(stdout, "\n");
 }
 /*
@@ -512,8 +511,7 @@ pub unsafe fn read_binary_database(file_name_: *const i8, g_book: &mut Book) -> 
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     time(&mut start_time);
-    printf(b"Reading binary opening database... \x00" as *const u8 as
-               *const i8);
+    write!(stdout, "Reading binary opening database... ");
     fflush(stdout);
 
     let stream = std::fs::read(file_name);
@@ -575,8 +573,7 @@ pub unsafe fn read_binary_database(file_name_: *const i8, g_book: &mut Book) -> 
     g_book.book_node_count = new_book_node_count;
     create_hash_reference(g_book);
     time(&mut stop_time);
-    printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
-           (stop_time - start_time) as i32);
+    write!(stdout, "done (took {} s)\n", (stop_time - start_time) as i32);
     Some(())
 }
 
