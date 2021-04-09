@@ -1,4 +1,4 @@
-Log file created Sun Oct 11 11:38:49 2020
+Log file created Thu Jan  1 01:00:01 1970
 
 Engine compiled Jul  2 2020 19:33:59
 
@@ -472,7 +472,7 @@ PV: d8 c8 b8 h6 h7
       8        O   O          
 
 12 moves generated: h6 a6 c8 e8 e7 g7 g2 h7 g1 a7 g8 b7 
--->   6  -38.07         11326  e8 c2 b3 a3 a2     0.0 s  
+-->   6  -38.07         11326  e8 c2 b3 a3        1.0 s   11315 nps
 PV: e8 c2 b3 a3
 
          a b c d e f g h
@@ -607,7 +607,7 @@ PV: c1 b3 c8 b8 g7
       8        O * O          
 
 9 moves generated: g1 e2 d2 h2 a3 a7 b3 b1 b2 
--->   6  +43.52          3670  b3 c8 b8 g7 h2     0.0 s  
+-->   6  +43.52          3670  b3 c8 b8 g7        0.0 s  
 PV: b3 c8 b8 g7
 
          a b c d e f g h
@@ -652,7 +652,7 @@ PV: b8 a2 a3 b7 g1
       8    O O O O O          
 
 11 moves generated: g7 g8 e1 e2 b7 a3 a2 g1 a7 b2 d2 
--->   6  -58.27         10694  a3 h1 g7 g8 h8     0.0 s  
+-->   6  -58.27         10694  a3 h1 g7 g8        0.0 s  
 PV: a3 h1 g7 g8
 
          a b c d e f g h
@@ -667,7 +667,7 @@ PV: a3 h1 g7 g8
       8    O O O O O          
 
 10 moves generated: h2 g1 h1 b7 e2 a7 d2 a2 b2 b1 
--->   6  +61.62          5343  b2 g7 g8 a1 g1     0.0 s  
+-->   6  +61.62          5343  b2 g7 g8           0.0 s  
 PV: b2 g7 g8
 
          a b c d e f g h
@@ -682,7 +682,7 @@ PV: b2 g7 g8
       8    O O O O O          
 
 8 moves generated: g7 e1 a2 e2 b7 g8 g1 a7 
--->   6  -66.11          3779  g7 g8 a1 b1 d1     0.0 s  
+-->   6  -66.11          3779  g7 g8              0.0 s  
 PV: g7 g8
 
          a b c d e f g h

@@ -594,7 +594,7 @@ PV: e2 b3 e7 a4 c8
       7      * *   O          -2.06    25 discs     14. f2  f1
       8            O                                15. g2  e2
 
--->   6  +2.68           6407  b3 e7 a4 a5 h2     0.0 s  
+-->   6  +2.68           6407  b3 e7 a4 a5 h2     1.0 s    6401 nps
 PV: b3 e7 a4 a5 h2
 
          a b c d e f g h
@@ -930,7 +930,7 @@ PV: h8 a8 b1 g7 -- g8
       7  O   O O O O   O      -0.73    38 discs     26. h7  h6
       8      O O O O   O                            27. a2  h8
 
--->   2  -2.26             16  g7 b1     0.0 s  
+-->   2  -2.26             16  g7        0.0 s  
 -->   6  +0               122  a8                 0.0 s  
 PV: a8 b1 g7 -- g8
 
@@ -1020,7 +1020,7 @@ PV: b7
 Black: 32   White: 32
 Nodes searched:        102551    
 Positions evaluated:   67313     
-Total time: 0.0 s
+Total time: 1.0 s
 Book randomness: 0.25 disks
 
          a b c d e f g h
@@ -1627,7 +1627,7 @@ PV: a4 a6 f6 h6 h3
       7        O   O           (O)     14 discs     15. a3  d7
       8                                             16. a4  
 
--->   6  -1.05           5117  a6 f6 h6 f8 a2     0.0 s  
+-->   6  -1.05           5117  a6 f6 h6 f8 a2     1.0 s    5112 nps
 PV: a6 f6 h6 f8 a2
 
          a b c d e f g h
@@ -1683,7 +1683,7 @@ PV: f6 g6 h7 g1 e8
       7        O   O           (O)     19 discs     17. h4  a2
       8                                             18. f6  
 
--->   6  -3.22           3831  g6 h7 g1 e8 g2     0.0 s  
+-->   6  -3.22           3831  g6 h7 g1 e8 g2     1.0 s    3827 nps
 PV: g6 h7 g1 e8 g2
 
          a b c d e f g h
@@ -1965,7 +1965,7 @@ PV: g7 h3 h2 h8 g2 h1
       8  O O O O O O O                              28. g7  
 
 -->   2  +28.41            18  h8 h3     0.0 s  
--->   5  +30              210  h3                 0.0 s  
+-->   5  +30              210  h3                 1.0 s     210 nps  
 PV: h3 h2 h8 g2 h1
 
          a b c d e f g h
@@ -2039,4 +2039,4 @@ PV: h1
 Black: 17   White: 47
 Nodes searched:        85734     
 Positions evaluated:   55475     
-Total time: 0.0 s
+Total time: 7.0 s

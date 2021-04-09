@@ -594,7 +594,7 @@ PV: d8 c8 b8 h6 h7
       7      O O   O          +36.68   22 discs     14. f2  f1
       8        O   O                                15. a4  d8
 
--->   6  -38.07         10781  e8 c2 b3 a3 a2     0.0 s  
+-->   6  -38.07         10781  e8 c2 b3 a3 a2     1.0 s   10770 nps
 PV: e8 c2 b3 a3 a2
 
          a b c d e f g h
@@ -945,7 +945,7 @@ PV: d2 h8 -- d1
       7  O O O * * O * O       (O)     36 discs     27. e1  b1
       8  O O O O O O O                              28. d2  
 
--->   2  +138.89           32  d1 h1     0.0 s  
+-->   2  +138.89           32  d1        0.0 s  
 -->   5  +54              453  h8                 0.0 s  
 PV: h8 -- d1
 
@@ -1020,7 +1020,7 @@ PV: h1
 Black: 5   White: 59
 Nodes searched:        183584    
 Positions evaluated:   125637    
-Total time: 0.0 s
+Total time: 1.0 s
 Book randomness: 0.25 disks
 
          a b c d e f g h
@@ -1658,7 +1658,7 @@ PV: a4 a5 e1 h7 g2
       7      * * * *           (O)     15 discs     15. f8  a3
       8      * * * *                                16. a4  
 
--->   6  -14.23          5016  a5 e1 h7 a6 a7     0.0 s  
+-->   6  -14.23          5016  a5 e1 h7 a6 a7     1.0 s    5011 nps
 PV: a5 e1 h7 a6 a7
 
          a b c d e f g h
@@ -1996,7 +1996,7 @@ PV: h4 b2 b1 -- h2 h3 g4
       8  O * * * * * * *                            28. h4  
 
 -->   2  -18.57             6  b2 b1     0.0 s  
--->   5  -22              146  b2                 0.0 s  
+-->   5  -22              146  b2                 1.0 s     146 nps  
 PV: b2 b1 -- h2 h3 g4
 
          a b c d e f g h
@@ -2070,4 +2070,4 @@ PV: g4
 Black: 43   White: 21
 Nodes searched:        143525    
 Positions evaluated:   95771     
-Total time: 0.0 s
+Total time: 2.0 s

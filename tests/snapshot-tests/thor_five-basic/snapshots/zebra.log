@@ -1,4 +1,4 @@
-Log file created Sat Jan  9 18:10:39 2021
+Log file created Thu Jan  1 01:00:01 1970
 
 Engine compiled Jul  2 2020 19:33:59
 
@@ -442,7 +442,7 @@ PV: f1
       8            O          
 
 12 moves generated: a6 h6 a4 a5 g1 h2 a7 h7 g8 g2 b7 g7 
--->   2  -2.06             80  g7 e7     0.0 s  
+-->   2  -2.06             80  g7        0.0 s  
 PV: g7
 
          a b c d e f g h
@@ -457,7 +457,7 @@ PV: g7
       8            O          
 
 13 moves generated: c8 h6 a4 e8 d8 d2 e2 e7 c2 b3 h7 b8 g8 
--->   2  +0.92             61  e7 e8     0.0 s  
+-->   2  +0.92             61  e7        0.0 s  
 PV: e7
 
          a b c d e f g h
@@ -472,7 +472,7 @@ PV: e7
       8            O          
 
 12 moves generated: a6 h6 a4 a5 e8 g1 h2 a7 h7 g8 g2 b7 
--->   2  -2.55             78  h6 e8     0.0 s  
+-->   2  -2.55             78  h6        0.0 s  
 PV: h6
 
          a b c d e f g h
@@ -487,7 +487,7 @@ PV: h6
       8            O          
 
 13 moves generated: a3 c8 a4 e8 d8 d2 e2 c2 b3 h7 b8 g8 b7 
--->   2  +3.98             68  e8 g8     0.0 s  
+-->   2  +3.98             68  e8        0.0 s  
 PV: e8
 
          a b c d e f g h
@@ -502,7 +502,7 @@ PV: e8
       8          O O          
 
 10 moves generated: a6 c8 d8 a5 g1 h2 a7 g8 g2 b7 
--->   2  -4.88             67  c8 d8     0.0 s  
+-->   2  -4.88             67  c8        0.0 s  
 PV: c8
 
          a b c d e f g h
@@ -517,7 +517,7 @@ PV: c8
       8      *   O O          
 
 11 moves generated: a3 a4 d8 d2 e2 c2 b3 h7 b8 g8 b7 
--->   2  +2.99             99  d2 d8     0.0 s  
+-->   2  +2.99             99  d2        0.0 s  
 PV: d2
 
          a b c d e f g h
@@ -532,7 +532,7 @@ PV: d2
       8      *   O O          
 
 15 moves generated: a6 c1 d8 d1 a4 e1 a5 e2 c2 g1 h2 a7 g8 g2 b7 
--->   2  -1.69             60  d8 h8     0.0 s  
+-->   2  -1.69             60  d8        0.0 s  
 PV: d8
 
          a b c d e f g h
@@ -547,7 +547,7 @@ PV: d8
       8      * * O O          
 
 12 moves generated: h8 a3 a4 a5 e2 c2 b3 h7 b8 g8 b2 b7 
--->   2  +4.25             59  h8 h7     0.0 s  
+-->   2  +4.25             59  h8        0.0 s  
 PV: h8
 
          a b c d e f g h
@@ -562,7 +562,7 @@ PV: h8
       8      * * O O   O      
 
 15 moves generated: a6 c1 d1 a4 e1 a5 e2 c2 g1 h2 a7 h7 g8 g2 b7 
--->   2  -4.22             99  c2 a3     0.0 s  
+-->   2  -4.22             99  c2        0.0 s  
 PV: c2
 
          a b c d e f g h
@@ -577,7 +577,7 @@ PV: c2
       8      * * O O   O      
 
 11 moves generated: a3 c1 a4 a5 e2 b3 b1 h7 b8 b2 b7 
--->   2  +4.37             56  a3 d1     0.0 s  
+-->   2  +4.37             56  a3        0.0 s  
 PV: a3
 
          a b c d e f g h
@@ -592,7 +592,7 @@ PV: a3
       8      * * O O   O      
 
 14 moves generated: a6 c1 d1 a4 e1 a5 e2 g1 h2 a7 h7 g8 g2 b7 
--->   2  -4.57             76  e2 b3     0.0 s  
+-->   2  -4.57             76  e2        0.0 s  
 PV: e2
 
          a b c d e f g h
@@ -607,7 +607,7 @@ PV: e2
       8      * * O O   O      
 
 9 moves generated: c1 e1 d1 b3 b1 h7 b8 b2 b7 
--->   2  +5.00             46  b3 b7     0.0 s  
+-->   2  +5.00             46  b3        0.0 s  
 PV: b3
 
          a b c d e f g h
@@ -622,7 +622,7 @@ PV: b3
       8      * * O O   O      
 
 9 moves generated: a6 a4 a5 a2 h2 h7 g8 b7 g2 
--->   2  -5.83             58  h2 h7     0.0 s  
+-->   2  -5.83             58  h2        0.0 s  
 PV: h2
 
          a b c d e f g h
@@ -637,7 +637,7 @@ PV: h2
       8      * * O O   O      
 
 9 moves generated: c1 e1 d1 b1 h7 b8 b2 g2 b7 
--->   2  +4.53             59  e1 a6     0.0 s  
+-->   2  +4.53             59  e1        0.0 s  
 PV: e1
 
          a b c d e f g h
@@ -652,7 +652,7 @@ PV: e1
       8      * * O O   O      
 
 10 moves generated: a6 c1 d1 a4 a5 a2 h7 g8 g2 b7 
--->   2  -2.84             54  c1 h7     0.0 s  
+-->   2  -2.84             54  c1        0.0 s  
 PV: c1
 
          a b c d e f g h
@@ -667,7 +667,7 @@ PV: c1
       8      * * O O   O      
 
 7 moves generated: d1 b1 h7 b8 b2 g2 b7 
--->   2  +1.91             54  d1 g1     0.0 s  
+-->   2  +1.91             54  d1        0.0 s  
 PV: d1
 
          a b c d e f g h
@@ -682,7 +682,7 @@ PV: d1
       8      * * O O   O      
 
 11 moves generated: a6 a4 a5 g1 b1 a2 a7 h7 g8 g2 b7 
--->   2  -0.48             37  g1 h7     0.0 s  
+-->   2  -0.48             37  g1        0.0 s  
 PV: g1
 
          a b c d e f g h
@@ -697,7 +697,7 @@ PV: g1
       8      * * O O   O      
 
 4 moves generated: h7 b8 g2 b7 
--->   2  +0.06             23  h7 b1     0.0 s  
+-->   2  +0.06             23  h7        0.0 s  
 PV: h7
 
          a b c d e f g h
@@ -712,7 +712,7 @@ PV: h7
       8      * * O O   O      
 
 10 moves generated: a6 a4 a5 b1 a2 a7 g8 b2 g2 b7 
--->   2  -1.01             42  g2 h1     0.0 s  
+-->   2  -1.01             42  g2        0.0 s  
 PV: g2
 
          a b c d e f g h
@@ -727,7 +727,7 @@ PV: g2
       8      * * O O   O      
 
 3 moves generated: h1 b8 b7 
--->   2  +4.10             17  h1 a7     0.0 s  
+-->   2  +4.10             17  h1        0.0 s  
 PV: h1
 
          a b c d e f g h
@@ -742,7 +742,7 @@ PV: h1
       8      * * O O   O      
 
 7 moves generated: a6 a4 a5 a2 a7 g8 b2 
--->   2  -7.01             40  b2 a2     0.0 s  
+-->   2  -7.01             40  b2        0.0 s  
 PV: b2
 
          a b c d e f g h
@@ -757,7 +757,7 @@ PV: b2
       8      * * O O   O      
 
 5 moves generated: a1 b1 a2 b8 b7 
--->   2  +8.05             23  a2 a5     0.0 s  
+-->   2  +8.05             23  a2        0.0 s  
 PV: a2
 
          a b c d e f g h
@@ -772,7 +772,7 @@ PV: a2
       8      * * O O   O      
 
 5 moves generated: a6 a5 a4 a7 g8 
--->   2  -8.54             33  a4 a5     0.0 s  
+-->   2  -8.54             33  a4        0.0 s  
 PV: a4
 
          a b c d e f g h
@@ -787,7 +787,7 @@ PV: a4
       8      * * O O   O      
 
 5 moves generated: a6 a5 b1 b8 b7 
--->   2  +8.77             34  a6 a5     0.0 s  
+-->   2  +8.77             34  a6        0.0 s  
 PV: a6
 
          a b c d e f g h
@@ -802,7 +802,7 @@ PV: a6
       8      * * O O   O      
 
 6 moves generated: a1 a5 b1 a7 g8 b7 
--->   2  -9.07             22  a5 a7     0.0 s  
+-->   2  -9.07             22  a5        0.0 s  
 PV: a5
 
          a b c d e f g h
@@ -817,7 +817,7 @@ PV: a5
       8      * * O O   O      
 
 4 moves generated: b1 a7 b8 b7 
--->   2  +9.09             23  b1 a1     0.0 s  
+-->   2  +9.09             23  b1        0.0 s  
 PV: b1
 
          a b c d e f g h
@@ -832,7 +832,7 @@ PV: b1
       8      * * O O   O      
 
 3 moves generated: a1 a7 g8 
--->   2  -9.31             12  a1 a7     0.0 s  
+-->   2  -9.31             12  a1        0.0 s  
 PV: a1
 
          a b c d e f g h
@@ -847,7 +847,7 @@ PV: a1
       8      * * O O   O      
 
 3 moves generated: a7 b8 b7 
--->   2  +12.20            18  b7 a7     0.0 s  
+-->   2  +12.20            18  b7        0.0 s  
 PV: b7
 
          a b c d e f g h
@@ -862,7 +862,7 @@ PV: b7
       8      * * O O   O      
 
 3 moves generated: a7 g8 b8 
--->   2  -14.89            10  a7 b8     0.0 s  
+-->   2  -14.89            10  a7        0.0 s  
 PV: a7
 
          a b c d e f g h
@@ -877,7 +877,7 @@ PV: a7
       8      * * O O   O      
 
 1 moves generated: b8 
--->   2  +17.18             4  b8 g8     0.0 s  
+-->   2  +17.18             4  b8        0.0 s  
 PV: b8
 
          a b c d e f g h

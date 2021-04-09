@@ -103,7 +103,7 @@ White move: White move: White move: White move: White move:
       8                                             
 
 Thor database:        d6: 52.7%    c2: 37.8%    e2:  9.5%    
--->   6  +0.27           3728  d6 c6 e6 a3 b5     0.0 s  
+-->   6  +0.27           3728  d6 c6 e6 a3 b5     1.0 s    3724 nps
 PV: d6 c6 e6 a3 b5
 
          a b c d e f g h
@@ -212,7 +212,7 @@ White move: White move: White move: White move: White move: White move:
       7        O                       11 discs      7. f3  g3
       8                                             
 
--->   6  +18.48         12526  e7 a4 b3 a3 g4     0.0 s  
+-->   6  +18.48         12526  e7 a4 b3 a3 g4     1.0 s   12513 nps
 PV: e7 a4 b3 a3 g4
 
          a b c d e f g h
@@ -401,7 +401,7 @@ White move: White move: White move: White move: White move: White move: White mo
       7      O O O O O                 29 discs     13. g4  f7
       8                                             14. g6  g7
 
--->   6  +89.41         29214  h4 h5 h3 h2 e6     0.0 s  
+-->   6  +89.41         29214  h4 h5 h3 h2 e6     1.0 s   29185 nps
 PV: h4 h5 h3 h2 e6
 
          a b c d e f g h
@@ -497,7 +497,7 @@ White move: White move: White move: White move: White move: White move: White mo
       7      O O O O O                 32 discs     17. e6  - 
       8      O *                                    18. d8  c8
 
--->   6  +78.36         15112  h6 h7 h8 e8 h1     0.0 s  
+-->   6  +78.36         15112  h6 h7 h8 e8 h1     1.0 s   15097 nps
 PV: h6 h7 h8 e8 h1
 
          a b c d e f g h
@@ -638,7 +638,7 @@ You must pass - please press Enter
       7    O O O * * * *               17 discs     24. h1  - 
       8    * * * * * * *                            25. g2  - 
 
--->   6  +66.51          3608  f2 g1 e1 f1 e2     0.0 s  
+-->   6  +66.51          3608  f2 g1 e1 f1 e2     0.0 s    3604 nps
 PV: f2 g1 e1 -- f1 -- e2
 
          a b c d e f g h
@@ -710,7 +710,7 @@ You must pass - please press Enter
       7    O O O * * * *               17 discs     28. f1  - 
       8    * * * * * * *                            29. e2  - 
 
--->   6  +65.90          1927  d1 b1 a1 a2 a3     0.0 s  
+-->   6  +65.90          1927  d1 b1 a1 a2 a3     1.0 s    1925 nps
 PV: d1 -- b1 -- a1 -- a2 -- a3
 You must pass - please press Enter
 
@@ -858,7 +858,7 @@ PV: b6
 Black: 63   White: 1
 Nodes searched:        297145    
 Positions evaluated:   195946    
-Total time: 0.0 s
+Total time: 8.0 s
 
          a b c d e f g h
 
@@ -931,7 +931,7 @@ White move: White move:
 
 Thor database:        b4: 38.7%    d6: 34.1%    b3: 11.1%    f6: 11.1%    e6:  1.6%    
 c6:  1.5%    b6:  1.0%    b2:  0.5%    b5:  0.4%    
--->   6  -0.03           6074  b4 d2 d6 c6 e6     0.0 s  
+-->   6  -0.03           6074  b4 d2 d6 c6 e6     1.0 s    6068 nps
 PV: b4 d2 d6 c6 e6
 
          a b c d e f g h
@@ -1124,7 +1124,7 @@ White move: White move: White move: White move: White move: White move:
       7        O *                     16 discs      8. e7  a4
       8                                              9. b3  b2
 
--->   6  +39.04         10380  c2 e6 d1 b5 b6     0.0 s  
+-->   6  +39.04         10380  c2 e6 d1 b5 b6     1.0 s   10370 nps
 PV: c2 e6 d1 b5 b6
 
          a b c d e f g h
@@ -1232,7 +1232,7 @@ White move: White move: White move: White move: White move: White move: White mo
       7      O O O O                   26 discs     12. g5  c7
       8                                             13. g4  f7
 
--->   6  +67.62         11700  g6 h7 e6 h3 h4     0.0 s  
+-->   6  +67.62         11700  g6 h7 e6 h3 h4     1.0 s   11688 nps
 PV: g6 h7 e6 h3 h4
 
          a b c d e f g h
@@ -1313,7 +1313,7 @@ White move: White move: White move: White move: White move: White move: White mo
       7      O O O O O                 31 discs     15. h4  h5
       8                                             16. h3  h2
 
--->   6  +84.59         22318  e6 h6 h7 h8 g8     0.0 s  
+-->   6  +84.59         22318  e6 h6 h7 h8 g8     1.0 s   22296 nps
 PV: e6 -- h6 h7 h8 g8
 You must pass - please press Enter
 
@@ -1409,7 +1409,7 @@ White move: White move: White move: White move: White move: White move: White mo
       7      O O O O O                 33 discs     19. h6  e8
       8      O O O   O *                            20. h8  g8
 
--->   6  +74.12         15432  h7 f8 a1 b1 d1     0.0 s  
+-->   6  +74.12         15432  h7 f8 a1 b1 d1     1.0 s   15417 nps
 PV: h7 -- f8 -- a1 b1 d1
 You must pass - please press Enter
 
@@ -1481,7 +1481,7 @@ You must pass - please press Enter
       7    O O O * * * *               21 discs     23. b8  b7
       8    * * * * * * *                            24. h1  - 
 
--->   6  +66.94          5338  g2 f2 g1 e1 f1     0.0 s  
+-->   6  +66.94          5338  g2 f2 g1 e1 f1     1.0 s    5333 nps
 PV: g2 -- f2 g1 e1 -- f1
 You must pass - please press Enter
 
@@ -1716,4 +1716,4 @@ PV: b6
 Black: 63   White: 1
 Nodes searched:        297145    
 Positions evaluated:   195946    
-Total time: 0.0 s
+Total time: 7.0 s

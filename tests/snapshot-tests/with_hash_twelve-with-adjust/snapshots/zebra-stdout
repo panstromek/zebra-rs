@@ -594,7 +594,7 @@ PV: d8 c8 b8 h6 h7
       7      O O   O          +36.68   22 discs     14. f2  f1
       8        O   O                                15. a4  d8
 
--->   6  -38.07         11326  e8 c2 b3 a3 a2     0.0 s  
+-->   6  -38.07         11326  e8 c2 b3 a3        1.0 s   11315 nps
 PV: e8 c2 b3 a3
 
          a b c d e f g h
@@ -636,7 +636,7 @@ PV: a6 b7 b8 a8 c8
       7      O *   O           (O)     25 discs     16. e8  c2
       8        O * O                                17. a6  
 
--->   6  +38.59         16850  a5 a3 b3 h6 e7     1.0 s   16833 nps
+-->   6  +38.59         16850  a5 a3 b3 h6 e7     0.0 s  
 PV: a5 a3 b3 h6 e7
 
          a b c d e f g h
@@ -720,7 +720,7 @@ PV: c1 b3 c8 b8 g7
       7      O O O O   O       (O)     25 discs     19. g2  e7
       8        O * O                                20. c1  
 
--->   6  +43.52          3670  b3 c8 b8 g7 h2     0.0 s  
+-->   6  +43.52          3670  b3 c8 b8 g7        0.0 s  
 PV: b3 c8 b8 g7
 
          a b c d e f g h
@@ -762,7 +762,7 @@ PV: b8 a2 a3 b7 g1
       7      O * O O   O      +52.17   29 discs     20. c1  b3
       8    O O O O O                                21. c8  b8
 
--->   6  -58.27         10694  a3 h1 g7 g8 h8     0.0 s  
+-->   6  -58.27         10694  a3 h1 g7 g8        0.0 s  
 PV: a3 h1 g7 g8
 
          a b c d e f g h
@@ -776,7 +776,7 @@ PV: a3 h1 g7 g8
       7      O * O O   O       (O)     25 discs     21. c8  b8
       8    O O O O O                                22. a3  
 
--->   6  +61.62          5343  b2 g7 g8 a1 g1     0.0 s  
+-->   6  +61.62          5343  b2 g7 g8           0.0 s  
 PV: b2 g7 g8
 
          a b c d e f g h
@@ -790,7 +790,7 @@ PV: b2 g7 g8
       7      O * O O   O      +61.62   30 discs     21. c8  b8
       8    O O O O O                                22. a3  b2
 
--->   6  -66.11          3779  g7 g8 a1 b1 d1     0.0 s  
+-->   6  -66.11          3779  g7 g8              0.0 s  
 PV: g7 g8
 
          a b c d e f g h
@@ -945,7 +945,7 @@ PV: d2 h8 -- d1
       7  O O O * * O * O       (O)     36 discs     27. e1  b1
       8  O O O O O O O                              28. d2  
 
--->   2  +138.89           32  d1 h1     0.0 s  
+-->   2  +138.89           32  d1        0.0 s  
 -->   5  +54              453  h8                 0.0 s  
 PV: h8 -- d1
 

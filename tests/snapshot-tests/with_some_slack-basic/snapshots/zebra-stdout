@@ -190,7 +190,7 @@ PV: f4 f5 b4 e3 g4
       7                        (O)     6 discs      
       8                                             
 
--->   6  +4.68           4723  f5 b4 e3 d6 b5     0.0 s  
+-->   6  +4.68           4723  f5 b4 e3 d6 b5     1.0 s    4718 nps
 PV: f5 b4 e3 d6 b5
 
          a b c d e f g h
@@ -246,7 +246,7 @@ PV: e6 d6 f6 e7 d7
       7                        (O)     9 discs       7. e6  
       8                                             
 
--->   6  +4.63           4250  d6 f6 e7 d7 f7     0.0 s  
+-->   6  +4.63           4250  d6 f6 e7 d7 f7     1.0 s    4246 nps
 PV: d6 f6 e7 d7 f7
 
          a b c d e f g h
@@ -302,7 +302,7 @@ PV: d7 a6 g5 g4 g6
       7        * O             (O)     10 discs      8. f6  e7
       8                                              9. d7  
 
--->   6  +4.73           9420  a6 d8 c7 b5 a4     0.0 s  
+-->   6  +4.73           9420  a6 d8 c7 b5 a4     1.0 s    9411 nps
 PV: a6 d8 c7 b5 a4
 
          a b c d e f g h
@@ -835,7 +835,7 @@ PV: a8 a7 h2 h1 -- a3 a2
       7    * O O * * O O       (O)     36 discs     27. h3  g1
       8  * * * * * * O O                            28. a8  
 
--->   2  +17.70            18  a3 h2     0.0 s  
+-->   2  +17.70            18  a3        0.0 s  
 -->   5  +16              168  a7                 0.0 s  
 PV: a7 h2 h1 -- a3 a2
 
@@ -892,7 +892,7 @@ PV: a3 a2
       7  O O O O * * O O      +16.00   47 discs     29. h2  h1
       8  * * * * * * O O                            30. -   a3
 
--->   1  -16               27  a2     0.0 s  
+-->   1  -16               27  a2     1.0 s      27 nps  
 PV: a2
 
          a b c d e f g h
@@ -910,4 +910,4 @@ PV: a2
 Black: 24   White: 40
 Nodes searched:        298222    
 Positions evaluated:   201102    
-Total time: 0.0 s
+Total time: 13.0 s

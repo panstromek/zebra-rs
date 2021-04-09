@@ -1,7 +1,7 @@
 
 Zebra (c) 1997-2005 Gunnar Andersson, compile date Jul  2 2020 at 19:33:54
 
-Reading binary opening database... done (took 1 s)
+Reading binary opening database... done (took 0 s)
 Book randomness: 0.25 disks
 
          a b c d e f g h
@@ -608,7 +608,7 @@ PV: g2
       7      * *   O           (O)     18 discs     15. h2  h1
       8            O                                16. g2  
 
--->   8  +27.45         66628  g1 g7 d2 d1 c2     0.0 s  
+-->   8  +27.45         66628  g1 g7 d2 d1 c2     1.0 s   66561 nps
 PV: g1 g7 d2 d1 c2 e7 e1
 
          a b c d e f g h
@@ -664,7 +664,7 @@ PV: e8
       7      * * * O *         (O)     21 discs     17. g7  e7
       8          * O                                18. e8  
 
--->   8  +35.89         58853  h8 h6 h7 g8 e2     0.0 s  
+-->   8  +35.89         58853  h8 h6 h7 g8 e2     1.0 s   58794 nps
 PV: h8 h6 h7 g8 e2 c2 d2
 
          a b c d e f g h
@@ -720,7 +720,7 @@ PV: h6 h7 a7 a6 b7 b8
       7      * * * O O         (O)     21 discs     19. a4  a5
       8          * O   O                            20. h6  
 
--->   8  +40.13         34344  h7 a6 e2 g8 d8     0.0 s  
+-->   8  +40.13         34344  h7 a6 e2 g8 d8     1.0 s   34310 nps
 PV: h7 a6 e2 g8 d8 c8 b8
 
          a b c d e f g h
@@ -860,7 +860,7 @@ PV: g8 b8 b7 a8 a7 a3
       7      * * O * O O       (O)     31 discs     24. d1  e1
       8      * * * * * O                            25. g8  
 
--->   8  +50.18          4882  b8 b7 c2 b2 a1     0.0 s  
+-->   8  +50.18          4882  b8 b7 c2 b2 a1     1.0 s    4877 nps
 PV: b8 b7 c2 b2 a1 b3 a2
 
          a b c d e f g h
@@ -916,7 +916,7 @@ PV: b3
       7    * * * O * O O       (O)     41 discs     26. b7  c2
       8    O O O O O O O                            27. b3  
 
--->   2  +51.46            15  a2 b2     0.0 s  
+-->   2  +51.46            15  a2        0.0 s  
 -->   7  +54              935  a2                 0.0 s  
 PV: a2 b2 a1 b1 a3 -- a7 a8
 
@@ -1001,7 +1001,7 @@ PV: a7 a8
       7  O O O O O O O O      +54.00   60 discs     29. b1  a3
       8    O O O O O O O                            30. -   a7
 
--->   2  -54                4  a8 a3     0.0 s  
+-->   2  -54                4  a8        0.0 s  
 -->   1  -54               88  a8     0.0 s  
 PV: a8
 
@@ -1020,4 +1020,4 @@ PV: a8
 Black: 5   White: 59
 Nodes searched:        440709    
 Positions evaluated:   276781    
-Total time: 0.0 s
+Total time: 5.0 s

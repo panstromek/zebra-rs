@@ -1,4 +1,4 @@
-Log file created Sat Jan  9 17:37:08 2021
+Log file created Thu Jan  1 01:00:01 1970
 
 Engine compiled Jul  2 2020 19:33:59
 
@@ -59,7 +59,7 @@ PV: f3 g3 b3 c6 e6
       8                       
 
 10 moves generated: c3 d3 f1 f5 e6 b4 g4 e2 b3 g1 
--->   6  +17.57          6075  c3 d6 c6 b5 d3     0.0 s  
+-->   6  +17.57          6075  c3 d6 c6 b5 d3     1.0 s    6069 nps
 PV: c3 d6 c6 b5 d3
 
          a b c d e f g h
@@ -119,7 +119,7 @@ PV: b5 e6 c6 c2 f5
       8                       
 
 14 moves generated: e2 a1 f5 e6 a3 c6 g4 h3 a6 a4 a5 a2 g2 g7 
--->   6  +53.03         12920  c6 e6 d6 c2 f5     0.0 s  
+-->   6  +53.03         12920  c6 e6 d6 c2 f5     1.0 s   12907 nps
 PV: c6 e6 d6 c2 f5
 
          a b c d e f g h
@@ -164,7 +164,7 @@ PV: d2 e1 d1 c1 a1
       8                       
 
 18 moves generated: a1 f5 a6 g4 a3 a4 a8 a5 d7 a2 h3 g5 b1 a7 f7 g2 g1 g7 
--->   6  +71.52         21530  a1 e1 a3 a2 a4     0.0 s  
+-->   6  +71.52         21530  a1 e1 a3 a2 a4     1.0 s   21508 nps
 PV: a1 e1 a3 a2 a4
 
          a b c d e f g h
@@ -224,7 +224,7 @@ PV: g1 g2 c1 -- h4 h3
       8                       
 
 17 moves generated: a4 f5 a5 a3 g4 a6 c1 a8 h3 d7 a7 h1 h4 e7 g5 f7 g7 
--->   6  +78.10         23094  c1 a6 a5 b1 a7     0.0 s  
+-->   6  +78.10         23094  c1 a6 a5 b1 a7     1.0 s   23071 nps
 PV: c1 -- a6 a5 b1 a7
 
          a b c d e f g h
@@ -284,7 +284,7 @@ PV: a3 -- h1 h2 h4 g4
       8                       
 
 18 moves generated: c7 h4 f5 h1 g4 d7 a8 e7 a5 h3 h2 g6 a7 g5 c8 f7 b8 g7 
--->   6  +93.52         18539  h1 h2 h4 g4 a5     0.0 s  
+-->   6  +93.52         18539  h1 h2 h4 g4 a5     1.0 s   18520 nps
 PV: h1 h2 h4 g4 a5
 
          a b c d e f g h
@@ -329,7 +329,7 @@ PV: a5 -- h3 -- f5 -- g6 -- b8
       8                       
 
 14 moves generated: c7 a8 a7 g5 e7 f5 d7 h3 c8 b8 f7 h5 g6 g7 
--->   6  +64            13156  h3 f5 g6 b8 c7     0.0 s  
+-->   6  +64            13156  h3 f5 g6 b8        0.0 s   13143 nps
 PV: h3 -- f5 -- g6 -- b8
 
          a b c d e f g h

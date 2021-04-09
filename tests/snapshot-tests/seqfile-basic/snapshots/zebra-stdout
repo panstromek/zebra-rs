@@ -487,7 +487,7 @@ PV: e8
       7        O              -1.45    14 discs     15. f1  b2
       8        * O                                  16. d8  e8
 
--->   2  -2.09             96  c7 c8     0.0 s  
+-->   2  -2.09             96  c7        0.0 s  
 PV: c7
 
          a b c d e f g h
@@ -501,7 +501,7 @@ PV: c7
       7      * O               (O)     12 discs     16. d8  e8
       8        * O                                  17. c7  
 
--->   2  +1.25             44  c8 f6     0.0 s  
+-->   2  +1.25             44  c8        0.0 s  
 PV: c8
 
          a b c d e f g h
@@ -515,7 +515,7 @@ PV: c8
       7      O O              +1.25    18 discs     16. d8  e8
       8      O O O                                  17. c7  c8
 
--->   2  +0.41             41  f6 h3     0.0 s  
+-->   2  +0.41             41  f6        0.0 s  
 PV: f6
 
          a b c d e f g h
@@ -529,7 +529,7 @@ PV: f6
       7      O O               (O)     17 discs     17. c7  c8
       8      O O O                                  18. f6  
 
--->   2  -2.59             63  f5 g4     0.0 s  
+-->   2  -2.59             63  f5        0.0 s  
 PV: f5
 
          a b c d e f g h
@@ -543,7 +543,7 @@ PV: f5
       7      O O              -2.59    21 discs     17. c7  c8
       8      O O O                                  18. f6  f5
 
--->   2  +1.90             47  g4 e7     0.0 s  
+-->   2  +1.90             47  g4        0.0 s  
 PV: g4
 
          a b c d e f g h
@@ -557,7 +557,7 @@ PV: g4
       7      O O               (O)     19 discs     18. f6  f5
       8      O O O                                  19. g4  
 
--->   2  -0.37             63  g5 h4     0.0 s  
+-->   2  -0.37             63  g5        0.0 s  
 PV: g5
 
          a b c d e f g h
@@ -571,7 +571,7 @@ PV: g5
       7      O O              -0.37    21 discs     18. f6  f5
       8      O O O                                  19. g4  g5
 
--->   2  -1.22            115  e7 h4     0.0 s  
+-->   2  -1.22            115  e7        0.0 s  
 PV: e7
 
          a b c d e f g h
@@ -585,7 +585,7 @@ PV: e7
       7      O O *             (O)     19 discs     19. g4  g5
       8      O O O                                  20. e7  
 
--->   2  +3.55             45  h4 h3     0.0 s  
+-->   2  +3.55             45  h4        0.0 s  
 PV: h4
 
          a b c d e f g h
@@ -599,7 +599,7 @@ PV: h4
       7      O O *            +3.55    21 discs     19. g4  g5
       8      O O O                                  20. e7  h4
 
--->   2  -3.30             36  h3 f8     0.0 s  
+-->   2  -3.30             36  h3        0.0 s  
 PV: h3
 
          a b c d e f g h
@@ -613,7 +613,7 @@ PV: h3
       7      O O *             (O)     19 discs     20. e7  h4
       8      O O O                                  21. h3  
 
--->   2  +3.26             37  f8 h6     0.0 s  
+-->   2  +3.26             37  f8        0.0 s  
 PV: f8
 
          a b c d e f g h
@@ -627,7 +627,7 @@ PV: f8
       7      O O O            +3.26    22 discs     20. e7  h4
       8      O O O O                                21. h3  f8
 
--->   2  -3.90             50  h5 g1     0.0 s  
+-->   2  -3.90             50  h5        0.0 s  
 PV: h5
 
          a b c d e f g h
@@ -641,7 +641,7 @@ PV: h5
       7      O O O             (O)     20 discs     21. h3  f8
       8      O O O O                                22. h5  
 
--->   2  +3.28             53  h6 h7     0.0 s  
+-->   2  +3.28             53  h6        0.0 s  
 PV: h6
 
          a b c d e f g h
@@ -655,7 +655,7 @@ PV: h6
       7      O O O            +3.28    22 discs     21. h3  f8
       8      O O O O                                22. h5  h6
 
--->   2  -2.67             29  h7 g6     0.0 s  
+-->   2  -2.67             29  h7        0.0 s  
 PV: h7
 
          a b c d e f g h
@@ -669,7 +669,7 @@ PV: h7
       7      O O O     *       (O)     21 discs     22. h5  h6
       8      O O O O                                23. h7  
 
--->   2  +2.02             44  g1 h1     0.0 s  
+-->   2  +2.02             44  g1        0.0 s  
 PV: g1
 
          a b c d e f g h
@@ -683,7 +683,7 @@ PV: g1
       7      O O O     *      +2.02    23 discs     22. h5  h6
       8      O O O O                                23. h7  g1
 
--->   2  -2.24             29  h1 h2     0.0 s  
+-->   2  -2.24             29  h1        0.0 s  
 PV: h1
 
          a b c d e f g h
@@ -697,7 +697,7 @@ PV: h1
       7      O O O     *       (O)     22 discs     23. h7  g1
       8      O O O O                                24. h1  
 
--->   2  +0.92             41  g6 b7     0.0 s  
+-->   2  +0.92             41  g6        0.0 s  
 PV: g6
 
          a b c d e f g h
@@ -711,7 +711,7 @@ PV: g6
       7      O O O     *      0.92     28 discs     23. h7  g1
       8      O O O O                                24. h1  g6
 
--->   2  +0.70             25  b7 h2     0.0 s  
+-->   2  +0.70             25  b7        0.0 s  
 PV: b7
 
          a b c d e f g h
@@ -725,7 +725,7 @@ PV: b7
       7    * O O O     *       (O)     25 discs     24. h1  g6
       8      O O O O                                25. b7  
 
--->   2  -0.92             18  h2 b8     0.0 s  
+-->   2  -0.92             18  h2        0.0 s  
 PV: h2
 
          a b c d e f g h
@@ -739,7 +739,7 @@ PV: h2
       7    * O O O     *      -0.92    27 discs     24. h1  g6
       8      O O O O                                25. b7  h2
 
--->   2  +3.01             28  g2 b8     0.0 s  
+-->   2  +3.01             28  g2        0.0 s  
 PV: g2
 
          a b c d e f g h
@@ -753,7 +753,7 @@ PV: g2
       7    * O O O     *       (O)     25 discs     25. b7  h2
       8      O O O O                                26. g2  
 
--->   2  -4.21             25  h8 b8     0.0 s  
+-->   2  -4.21             25  h8        0.0 s  
 PV: h8
 
          a b c d e f g h
@@ -767,7 +767,7 @@ PV: h8
       7    * O O O     O      -4.21    31 discs     25. b7  h2
       8      O O O O   O                            26. g2  h8
 
--->   2  +2.98             24  g7 b8     0.0 s  
+-->   2  +2.98             24  g7        0.0 s  
 PV: g7
 
          a b c d e f g h
@@ -781,7 +781,7 @@ PV: g7
       7    * O O O   * O       (O)     28 discs     26. g2  h8
       8      O O O O   O                            27. g7  
 
--->   2  -4.20             32  f7 b8     0.0 s  
+-->   2  -4.20             32  f7        0.0 s  
 PV: f7
 
          a b c d e f g h
@@ -795,7 +795,7 @@ PV: f7
       7    * O O O O O O      -4.20    32 discs     26. g2  h8
       8      O O O O   O                            27. g7  f7
 
--->   2  +7.76             18  g8 a7     0.0 s  
+-->   2  +7.76             18  g8        0.0 s  
 PV: g8
 
          a b c d e f g h
@@ -809,7 +809,7 @@ PV: g8
       7    * O O O * * O       (O)     28 discs     27. g7  f7
       8      O O O O * O                            28. g8  
 
--->   2  -8.30             18  b8 a2     0.0 s  
+-->   2  -8.30             18  b8        0.0 s  
 PV: b8
 
          a b c d e f g h
@@ -823,7 +823,7 @@ PV: b8
       7    O O O O * * O      -8.30    32 discs     27. g7  f7
       8    O O O O O * O                            28. g8  b8
 
--->   2  +15.96            19  a7 a8     0.0 s  
+-->   2  +15.96            19  a7        0.0 s  
 PV: a7
 
          a b c d e f g h
@@ -837,7 +837,7 @@ PV: a7
       7  * * * * * * * O               26 discs     28. g8  b8
       8    O O O O O * O                            29. a7  - 
 
--->   2  +27.54            12  a8 a2     0.0 s  
+-->   2  +27.54            12  a8        0.0 s  
 PV: a8
 
          a b c d e f g h
@@ -851,7 +851,7 @@ PV: a8
       7  * * * * * * * O               21 discs     29. a7  - 
       8  * * * * * * * O                            30. a8  - 
 
--->   2  +28                7  a2 a1     0.0 s  
+-->   2  +28                7  a2        0.0 s  
 -->   2  +28               79  a2        0.0 s  
 PV: a2 a1
 
@@ -866,7 +866,7 @@ PV: a2 a1
       7  * * * * * * * O       (O)     16 discs     30. a8  - 
       8  * * * * * * * O                            31. a2  
 
--->   2  -28                4  a1 a2     0.0 s  
+-->   2  -28                4  a1        0.0 s  
 -->   1  -28               49  a1     0.0 s  
 PV: a1
 
@@ -885,4 +885,4 @@ PV: a1
 Black: 46   White: 18
 Nodes searched:        1193      
 Positions evaluated:   828       
-Total time: 0.0 s
+Total time: 2.0 s

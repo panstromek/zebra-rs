@@ -556,7 +556,7 @@ Slack left is 0.21. Book score is +0.03. Private node.
       7      * *   O          -2.06    25 discs     14. f2  f1
       8            O                                15. g2  e2
 
--->   6  +2.68           6407  b3 e7 a4 a5 h2     0.0 s  
+-->   6  +2.68           6407  b3 e7 a4 a5 h2     1.0 s    6401 nps
 
          a b c d e f g h
 
@@ -868,7 +868,7 @@ Slack left is 0.21. Book score is +0.03. Private node.
       7  O   O O O O   O      -0.73    38 discs     26. h7  h6
       8      O O O O   O                            27. a2  h8
 
--->   2  -2.26             16  g7 b1     0.0 s  
+-->   2  -2.26             16  g7        0.0 s  
 -->   6  +0               122  a8                 0.0 s  
 
          a b c d e f g h
@@ -952,4 +952,4 @@ Slack left is 0.21. Book score is +0.03. Private node.
 Black: 32   White: 32
 Nodes searched:        102551    
 Positions evaluated:   67313     
-Total time: 0.0 s
+Total time: 1.0 s

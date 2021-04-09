@@ -122,7 +122,7 @@ PV: d2 c5 c6 c3 d6
       7                       +7.27    4 discs      
       8                                             
 
--->   6  -8.16           2005  c5 c6 c3 e2 b4     0.0 s  
+-->   6  -8.16           2005  c5 c6 c3 e2 b4     1.0 s    2003 nps
 PV: c5 c6 c3 e2 b4
 
          a b c d e f g h
@@ -809,7 +809,7 @@ PV: h1 a6 h2 b2 a1 -- a2
       7  O O O O O * * O       (O)     27 discs     27. g8  b8
       8  O O * * * * * *                            28. h1  
 
--->   2  -8.71              8  a6 h2     0.0 s  
+-->   2  -8.71              8  a6        0.0 s  
 -->   5  -20              111  a6                 0.0 s  
 PV: a6 h2 b2 a1 -- a2
 
@@ -884,4 +884,4 @@ PV: a2
 Black: 42   White: 22
 Nodes searched:        220887    
 Positions evaluated:   145864    
-Total time: 0.0 s
+Total time: 1.0 s

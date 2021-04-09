@@ -594,7 +594,7 @@ PV: d8 c8 b8 h6 h7
       7      O O   O          +36.68   22 discs     14. f2  f1
       8        O   O                                15. a4  d8
 
--->   6  -38.07         10781  e8 c2 b3 a3 a2     0.0 s  
+-->   6  -38.07         10781  e8 c2 b3 a3 a2     1.0 s   10770 nps
 PV: e8 c2 b3 a3 a2
 
          a b c d e f g h
@@ -958,7 +958,7 @@ PV: h8 -- d1 -- h2 -- e2 -- h1
       7  O O O * * O O O       (O)     42 discs     28. d2  h8
       8  O O O O O O O O                            29. -   
 
--->   5  +54               48  d1 h2              0.0 s  
+-->   5  +54               48  d1 h2 e2 h1        0.0 s  
 PV: d1 -- h2 -- e2 -- h1
 
          a b c d e f g h
@@ -972,7 +972,7 @@ PV: d1 -- h2 -- e2 -- h1
       7  O O O * * O O O       (O)     46 discs     29. -   d1
       8  O O O O O O O O                            30. -   
 
--->   4  +54               29  h2 e2           0.0 s  
+-->   4  +54               29  h2 e2 h1        0.0 s  
 PV: h2 -- e2 -- h1
 
          a b c d e f g h
@@ -1000,7 +1000,7 @@ PV: e2 -- h1
       7  O O O * * O O O       (O)     55 discs     31. -   e2
       8  O O O O O O O O                            32. -   
 
--->   2  +54                3  h1 e2     0.0 s  
+-->   2  +54                3  h1        0.0 s  
 PV: h1
 
          a b c d e f g h
@@ -1018,7 +1018,7 @@ PV: h1
 Black: 5   White: 59
 Nodes searched:        181611    
 Positions evaluated:   125830    
-Total time: 0.0 s
+Total time: 1.0 s
 Book randomness: 0.25 disks
 
          a b c d e f g h
@@ -2006,7 +2006,7 @@ PV: b2 b1 -- h2 h3 g4
       7  O * * * * * * *      -22.00   30 discs     27. a2  a1
       8  O * * * * * * *                            28. h4  b2
 
--->   5  +22               48  b1 h2              0.0 s  
+-->   5  +22               48  b1 h2 h3 g4        0.0 s  
 PV: b1 -- h2 h3 g4
 
          a b c d e f g h
@@ -2020,7 +2020,7 @@ PV: b1 -- h2 h3 g4
       7  O * * * * * * *               26 discs     28. h4  b2
       8  O * * * * * * *                            29. b1  - 
 
--->   4  +22               34  h2 h3           0.0 s  
+-->   4  +22               34  h2 h3 g4        0.0 s  
 PV: h2 h3 g4
 
          a b c d e f g h
@@ -2048,7 +2048,7 @@ PV: h3 g4
       7  O * * * * * * *      -22.00   23 discs     29. b1  - 
       8  O * * * * * * *                            30. h2  h3
 
--->   2  +22                3  g4 h3     0.0 s  
+-->   2  +22                3  g4        0.0 s  
 PV: g4
 
          a b c d e f g h

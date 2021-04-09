@@ -1,0 +1,10 @@
+Usage:
+  [practice <book file>]
+
+Default book file is book.bin
+
+Commands: When prompted for a move, a legal move may
+          a number of moves to take back must be entered.
+To exit the program, type 'quit'.
+
+Gunnar Andersson, Aug  9 2020

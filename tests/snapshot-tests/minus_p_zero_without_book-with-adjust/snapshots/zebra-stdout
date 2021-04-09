@@ -656,7 +656,7 @@ Thor database:        e3: 89.4%    e7:  7.6%    d7:  3.0%
       7    * O O O O * *       (O)     25 discs     24. b1  b3
       8  * * * *   *   *                            25. f2  
 
--->   6  -101.66         1906  h6 a7 g2 h5        0.0 s  
+-->   6  -101.66         1906  h6 a7 g2 h5 g5     0.0 s  
 
          a b c d e f g h
 
@@ -721,7 +721,7 @@ Thor database:        e3: 89.4%    e7:  7.6%    d7:  3.0%
       7    * O * * O O *      -53.34   25 discs     26. a6  g8
       8  * * * * * * O *                            27. e8  g2
 
--->   2  +106.89           19  a2 a7     0.0 s  
+-->   2  +106.89           19  a2        0.0 s  
 -->   6  +40              306  a2                 0.0 s  
 
          a b c d e f g h
@@ -735,7 +735,7 @@ Thor database:        e3: 89.4%    e7:  7.6%    d7:  3.0%
       7    * O * * O O *       (O)     21 discs     27. e8  g2
       8  * * * * * * O *                            28. a2  
 
--->   2  -92.05             9  a7 g5     0.0 s  
+-->   2  -92.05             9  a7        0.0 s  
 -->   5  -40              208  a7                 0.0 s  
 
          a b c d e f g h
@@ -762,7 +762,7 @@ Thor database:        e3: 89.4%    e7:  7.6%    d7:  3.0%
       7  O O O * * O O *       (O)     20 discs     28. a2  a7
       8  * * * * * * O *                            29. h1  
 
--->   3  -40              130  g5           0.0 s  
+-->   3  -40              130  g5           1.0 s     130 nps  
 
          a b c d e f g h
 
@@ -805,4 +805,4 @@ Thor database:        e3: 89.4%    e7:  7.6%    d7:  3.0%
 Black: 52   White: 12
 Nodes searched:        406461    
 Positions evaluated:   290326    
-Total time: 0.0 s
+Total time: 14.0 s
