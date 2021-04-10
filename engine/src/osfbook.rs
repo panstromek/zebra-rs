@@ -918,9 +918,11 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
             }
             child_feasible = 1 as i32
         } else { child_feasible = 0; score = 0 as i32 }
+        const EMPTY_HASH_SLOT: i32 = -1;
         if child_feasible != 0 && score == 0 as i32 &&
             (*book.node.offset(index as isize)).flags as i32 &
                 4 as i32 == 0 &&
+            (*book.book_hash_table.offset(slot as isize) != EMPTY_HASH_SLOT) &&
             (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                 isize)).flags as i32 &
                 4 as i32 != 0 {
