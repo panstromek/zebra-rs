@@ -22,12 +22,10 @@ fn main() {
             }
             _ => {
                 write!(args, "-r 0 -l {} {} {} {} {} {}",
-                       // FIXME setting skills to 16 will start failing
-                       //  There's some non-determinism, that we didn't catch yet
-                       rng.gen_range::<i32, _>(0..13),
+                       rng.gen_range::<i32, _>(0..18),
                        rng.gen_range::<i32, _>(0..20),
                        rng.gen_range::<i32, _>(0..20),
-                       rng.gen_range::<i32, _>(0..13),
+                       rng.gen_range::<i32, _>(0..18),
                        rng.gen_range::<i32, _>(0..20),
                        rng.gen_range::<i32, _>(0..20),
                 );
