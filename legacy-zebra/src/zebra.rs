@@ -246,16 +246,16 @@ unsafe fn main_0()
             } else {
                 arg_index += 1;
                 (g_state.g_config).player_time[0] =
-                    (argv[arg_index as usize]).parse().unwrap_or(0) as f64;
+                    (argv[arg_index as usize]).parse().unwrap_or(0i32) as f64;
                 arg_index += 1;
                 (g_state.g_config).player_increment[0] =
-                    (argv[arg_index as usize]).parse().unwrap_or(0) as f64;
+                    (argv[arg_index as usize]).parse().unwrap_or(0i32) as f64;
                 arg_index += 1;
                 (g_state.g_config).player_time[2] =
-                    (argv[arg_index as usize]).parse().unwrap_or(0) as f64;
+                    (argv[arg_index as usize]).parse().unwrap_or(0i32) as f64;
                 arg_index += 1;
                 (g_state.g_config).player_increment[2] =
-                    (argv[arg_index as usize]).parse().unwrap_or(0) as f64;
+                    (argv[arg_index as usize]).parse().unwrap_or(0i32) as f64;
                 (g_state.g_config).use_timer = 1;
                 current_block_107 = 10485226111480991281;
             }
