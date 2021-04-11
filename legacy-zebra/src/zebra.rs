@@ -920,7 +920,7 @@ impl LibcFrontend {
     fn print_out_thor_matches(thor_max_games_: i32) {
         unsafe { print_thor_matches(stdout, thor_max_games_); }
     }
-    fn log_game_ending(log_file_name_: &CStr, move_vec: &[i8; 121],
+    fn log_game_ending(log_file_name_: &CStr, move_vec: &[i8; 122],
                        first_side_to_move: i32, second_side_to_move: i32) {
         let log_file_name_ = log_file_name_.as_ptr();
         unsafe {
