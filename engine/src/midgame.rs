@@ -1708,7 +1708,7 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
             full_length_line = 1 as i32
         }
         /* Update the stored scores */
-        if (midgame_state.stage_reached[(base_stage + depth) as usize] == 0 ||
+        if (*midgame_state.stage_reached.get((base_stage + depth) as usize).unwrap_or(&0) == 0 ||
             full_length_line != 0) && update_evals != 0 {
             midgame_state.stage_reached[(base_stage + depth) as usize] = 1;
             if side_to_move == 0 as i32 {
@@ -1717,7 +1717,7 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
         }
         /* Adjust the eval for oscillations odd/even by simply averaging the
            last two stages (if they are available). */
-        if midgame_state.stage_reached[(base_stage + depth) as usize] != 0 &&
+        if *midgame_state.stage_reached.get((base_stage + depth) as usize).unwrap_or(&0) != 0 &&
             midgame_state.stage_reached[(base_stage + depth - 1 as i32) as usize]
                 != 0 && update_evals != 0 {
             if side_to_move == 0 as i32 {
