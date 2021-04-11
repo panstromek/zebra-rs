@@ -470,23 +470,21 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
                         } else {
                             /* Use information learned from the failed cut test to decide
                            if a one or a two-sided test is to be performed next. */
-                            let mid =
-                                (alpha_bound + beta_bound) / 2 as i32;
-                            let low_threshold =
-                                (2 as i32 * mid + alpha_bound) /
-                                    3 as i32;
-                            let high_threshold =
-                                (2 as i32 * mid + beta_bound) /
-                                    3 as i32;
-                            if shallow_val <= low_threshold {
-                                beta_test = 0 as i32
+
+                            // TODO(Matyas) In the original code, there's a series of
+                            //  #ifs in this block. It's not clear if some of the other
+                            //  ones are better than this one. This one was enabled by default
+                            //  For a long time, we had a different version than the c version
+                            //  we tested  against, because someone accidentally removed this one
+                            //  together with the other dead branch from the version
+                            //  I used for transpilation to rust. This caused some deeper tests
+                            //  and to fail (if midgame skill is higher than 14).
+                            let mid = (alpha_bound + beta_bound) / 2 as i32;
+                            if shallow_val < mid {
+                                beta_test = 0;
                             } else {
-                                if !(shallow_val >= high_threshold) {
-                                    break ;
-                                }
-                                alpha_test = 0 as i32
+                                alpha_test = 0;
                             }
-                            /* Unlikely that there is any selective cutoff. */
                         }
                     } else if beta_test != 0 {
                         /* Fail-high with high probability? */

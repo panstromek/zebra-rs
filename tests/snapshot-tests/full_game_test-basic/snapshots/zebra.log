@@ -442,7 +442,7 @@ PV: f1
       8            O          
 
 12 moves generated: a6 h6 a4 a5 g1 h2 a7 h7 g8 g2 b7 g7 
--->  16  -0.82        1930032  g2 e8 e7 a3 h2     1.0 s  1928104 nps
+-->  16  -0.82        2133123  g2 e8 e7 a3 h2     1.0 s  2130992 nps
 PV: g2 e8 e7 a3 h2 h1 h6 d8 c8 b8 g7 b7 a4 h7 a8
 
          a b c d e f g h
@@ -457,7 +457,7 @@ PV: g2 e8 e7 a3 h2 h1 h6 d8 c8 b8 g7 b7 a4 h7 a8
       8            O          
 
 14 moves generated: e8 h1 e7 c8 a4 d8 e2 d2 c2 b3 g1 h2 b8 b2 
--->  16  +0.97         181900  e8 e7 a3 h2 h1     1.0 s  181718 nps
+-->  16  +0.97         207124  e8 e7 a3 h2 h1     1.0 s  206917 nps
 PV: e8 e7 a3 h2 h1 h6 d8 c8 c2 d2 b8 g7 b7 g1 d1
 
          a b c d e f g h
@@ -472,7 +472,7 @@ PV: e8 e7 a3 h2 h1 h6 d8 c8 c2 d2 b8 g7 b7 g1 d1
       8          O O          
 
 14 moves generated: e7 h6 d8 c8 a5 h7 a6 g7 h2 g1 e2 g8 a7 b7 
--->  16  -1.54         200955  e7 a3 h2 h1 h6     0.0 s  
+-->  16  -1.54         217098  e7 a3 h2 h1 h6     1.0 s  216881 nps
 PV: e7 a3 h2 h1 h6 d8 a5 d2 e2 d1 a6 b7 c1 b1 g1
 
          a b c d e f g h
@@ -486,8 +486,8 @@ PV: e7 a3 h2 h1 h6 d8 a5 d2 e2 d1 a6 b7 c1 b1 g1
       7      * * * O           (O)     20 discs
       8          O O          
 
-14 moves generated: h1 b8 a3 d2 a4 d8 c8 c2 e2 b3 b2 h2 g1 b7 
--->  16  +1.75         476138  a3 h2 h1 h6 d8     0.0 s  
+14 moves generated: h1 d8 a3 b8 d2 a4 e2 c2 c8 b3 h2 b2 g1 b7 
+-->  16  +1.75         486983  a3 h2 h1 h6 d8     0.0 s  
 PV: a3 h2 h1 h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 a7 g8
 
          a b c d e f g h
@@ -501,8 +501,8 @@ PV: a3 h2 h1 h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 a7 g8
       7      * * O O                   25 discs
       8          O O          
 
-12 moves generated: h6 g1 h2 b7 a4 a5 g7 e2 h7 g8 a6 a7 
--->  16  -1.39         212772  h2 h1 h6 d8 a5     1.0 s  212559 nps
+12 moves generated: h6 g1 a5 h2 a4 b7 e2 g7 h7 g8 a7 a6 
+-->  16  -1.39         211293  h2 h1 h6 d8 a5     1.0 s  211082 nps
 PV: h2 h1 h6 d8 a5 d2 e2 d1 c1 b1 g1 e1 a1 h7 g7
 
          a b c d e f g h
@@ -516,8 +516,8 @@ PV: h2 h1 h6 d8 a5 d2 e2 d1 c1 b1 g1 e1 a1 h7 g7
       7      * * O O           (O)     21 discs
       8          O O          
 
-10 moves generated: d8 h1 e2 d2 c8 c2 g1 b2 b3 b7 
--->  16  +1.18         134038  h1 h6 d8 c8 b8     1.0 s  133904 nps
+10 moves generated: h1 d8 e2 d2 c8 c2 g1 b7 b2 b3 
+-->  16  +1.18         124826  h1 h6 d8 c8 b8     1.0 s  124701 nps
 PV: h1 h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 a7 g8 h7 e2
 
          a b c d e f g h
@@ -531,8 +531,8 @@ PV: h1 h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 a7 g8 h7 e2
       7      * * O O                   26 discs
       8          O O          
 
-10 moves generated: a6 a4 g1 h7 h6 e1 g8 g7 a5 a7 
--->  16  -1.16          64862  h6 d8 c8 b8 g7     0.0 s  
+10 moves generated: a6 h6 a4 h7 g1 e1 g7 g8 a5 a7 
+-->  16  -1.16          77731  h6 d8 c8 b8 g7     0.0 s   77653 nps
 PV: h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 g8 a7 c2 h7 d1
 
          a b c d e f g h
@@ -546,8 +546,8 @@ PV: h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 g8 a7 c2 h7 d1
       7      * * O O           (O)     23 discs
       8          O O          
 
-10 moves generated: e2 d2 d8 b8 c2 b3 h7 c8 g7 b7 
--->  16  +1.58          77774  d8 a5 d2 e2 d1     1.0 s   77696 nps
+10 moves generated: e2 d2 d8 b8 c2 c8 h7 b3 b7 g7 
+-->  16  +1.58          84998  d8 a5 d2 e2 d1     0.0 s  
 PV: d8 a5 d2 e2 d1 c1 a6 c2 a4 b3 h7 b8 a2 b7 e1
 
          a b c d e f g h
@@ -561,9 +561,9 @@ PV: d8 a5 d2 e2 d1 c1 a6 c2 a4 b3 h7 b8 a2 b7 e1
       7      O O O O                   27 discs
       8        O O O          
 
-9 moves generated: c8 a4 a5 a6 g8 g1 e1 a7 b8 
--->  16  -1.38         318070  c8 b8 g7 b7 a4     1.0 s  317752 nps
-PV: c8 b8 g7 b7 a4 g8 a8 a7 h8 h7
+9 moves generated: c8 a5 a4 a6 g8 e1 g1 a7 b8 
+-->  16  -1.61         442084  c8 b8 g7 b7 a4     1.0 s  441642 nps
+PV: c8 b8 g7 b7 a4 d2 e2 h8 g8 h7 a7 b2 a2 d1 b3
 
          a b c d e f g h
 
@@ -576,8 +576,8 @@ PV: c8 b8 g7 b7 a4 g8 a8 a7 h8 h7
       7      * * O O           (O)     23 discs
       8      * O O O          
 
-8 moves generated: h7 d2 g7 c2 b8 e2 b3 b7 
--->  16  +0.80          95107  b8 g7 b7 a4 g8     1.0 s   95012 nps
+8 moves generated: h7 d2 b8 c2 e2 b3 g7 b7 
+-->  16  +1.03         108889  b8 g7 b7 a4 g8     1.0 s  108780 nps
 PV: b8 g7 b7 a4 g8 a8 a7 a2 e2 d2 h7 h8 c1 a6 b3
 
          a b c d e f g h
@@ -591,8 +591,8 @@ PV: b8 g7 b7 a4 g8 a8 a7 a2 e2 d2 h7 h8 c1 a6 b3
       7      O * O O                   26 discs
       8    O O O O O          
 
-9 moves generated: g8 g7 a4 e1 g1 a5 a7 a6 b7 
--->  16  -1.33          52209  g7 b7 a4 g8 a8     0.0 s  
+9 moves generated: g8 g7 g1 a4 a6 a7 a5 e1 b7 
+-->  16  -1.33          54587  g7 b7 a4 g8 a8     0.0 s  
 PV: g7 b7 a4 g8 a8 a7 a2 e2 d2 d1 c1 h7 h8 b1 g1
 
          a b c d e f g h
@@ -606,8 +606,8 @@ PV: g7 b7 a4 g8 a8 a7 a2 e2 d2 d1 c1 h7 h8 b1 g1
       7      O * * * *         (O)     24 discs
       8    O O O O O          
 
-7 moves generated: h7 c2 b7 b3 e2 d2 g8 
--->  16  +1.53          41540  b7 a4 g8 a8 a7     1.0 s   41499 nps
+7 moves generated: h7 b7 e2 d2 c2 b3 g8 
+-->  16  +1.53          44257  b7 a4 g8 a8 a7     1.0 s   44213 nps
 PV: b7 a4 g8 a8 a7 a2 e2 d2 d1 h8 h7 c1 b3 c2 e1
 
          a b c d e f g h
@@ -621,8 +621,8 @@ PV: b7 a4 g8 a8 a7 a2 e2 d2 d1 h8 h7 c1 b3 c2 e1
       7    O O * * * *                 26 discs
       8    O O O O O          
 
-6 moves generated: a4 a5 a6 g1 e1 a7 
--->  16  -1.32          66784  a4 g8 a8 a7 a2     1.0 s   66717 nps
+6 moves generated: a5 a4 a7 g1 a6 e1 
+-->  16  -1.32          45748  a4 g8 a8 a7 a2     1.0 s   45702 nps
 PV: a4 g8 a8 a7 a2 e2 d2 d1 c1 a5 a6 h7 h8 b1 g1
 
          a b c d e f g h
@@ -636,8 +636,8 @@ PV: a4 g8 a8 a7 a2 e2 d2 d1 c1 a5 a6 h7 h8 b1 g1
       7    O O * * * *         (O)     23 discs
       8    O O O O O          
 
-7 moves generated: h7 d2 e2 g8 b3 a5 c2 
--->  16  +1.36          54782  g8 a6 e2 d2 a5     0.0 s  
+7 moves generated: e2 d2 h7 a5 g8 b3 c2 
+-->  16  +1.36          66111  g8 a6 e2 d2 a5     0.0 s  
 PV: g8 a6 e2 d2 a5 a8 a7 a2 c1 d1 e1 h8 h7 g1 b3
 
          a b c d e f g h
@@ -651,8 +651,8 @@ PV: g8 a6 e2 d2 a5 a8 a7 a2 c1 d1 e1 h8 h7 g1 b3
       7    O O * * O O                 29 discs
       8    O O O O O O        
 
-8 moves generated: a8 h8 a2 a6 e1 g1 a7 h7 
--->  16  -1.13          36007  a8 a7 h8 h7 a5     0.0 s  
+8 moves generated: a8 a6 h8 e1 a7 g1 a2 h7 
+-->  16  -1.13          38635  a8 a7 h8 h7 a5     0.0 s  
 PV: a8 a7 h8 h7 a5 a6 a2 e2 d2 c1 d1 e1 g1 b3 b2
 
          a b c d e f g h
@@ -666,8 +666,8 @@ PV: a8 a7 h8 h7 a5 a6 a2 e2 d2 c1 d1 e1 g1 b3 b2
       7    * O * * O O         (O)     28 discs
       8  * O O O O O O        
 
-9 moves generated: e2 h7 a5 a7 a6 d2 b2 c2 b3 
--->  16  -0.48          25122  a7 h8 h7 a5 a6     1.0 s   25097 nps
+9 moves generated: a5 e2 h7 a7 b2 b3 d2 c2 a6 
+-->  16  -0.48          36429  a7 h8 h7 a5 a6     1.0 s   36393 nps
 PV: a7 h8 h7 a5 a6 a2 e2 d2 b2 b3 c1 b1 a1 g1 e1
 
          a b c d e f g h
@@ -681,8 +681,8 @@ PV: a7 h8 h7 a5 a6 a2 e2 d2 b2 b3 c1 b1 a1 g1 e1
       7  O O O * * O O                 30 discs
       8  * O O O O O O        
 
-6 moves generated: h8 a2 a6 e1 g1 h7 
--->  16  -2            145839  h8                 0.0 s  
+6 moves generated: h8 a2 a6 g1 h7 e1 
+-->  16  -2            145842  h8                 0.0 s  
 PV: h8 h7 g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
 
          a b c d e f g h
@@ -696,8 +696,8 @@ PV: h8 h7 g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
       7  O O O * * O *         (O)     23 discs
       8  * * * * * * * *      
 
-6 moves generated: h7 e2 a5 c2 d2 b3 
--->  15  +2               114  h7 g1 e1 e2 d1     0.0 s  
+6 moves generated: h7 e2 d2 a5 c2 b3 
+-->  15  +2               122  h7 g1 e1 e2 d1     0.0 s  
 PV: h7 g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
 
          a b c d e f g h
@@ -711,8 +711,8 @@ PV: h7 g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
       7  O O O * * O O O               26 discs
       8  * * * * * * * *      
 
-5 moves generated: a5 g1 a2 a6 e1 
--->  14  -2                60  g1 e1 e2 d1 a5     0.0 s  
+5 moves generated: a5 a2 a6 g1 e1 
+-->  14  -2                61  g1 e1 e2 d1 a5     0.0 s  
 PV: g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
 
          a b c d e f g h
@@ -726,7 +726,7 @@ PV: g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
       7  O O O * * O O O       (O)     24 discs
       8  * * * * * * * *      
 
-7 moves generated: a5 e1 e2 b3 c2 d2 b2 
+7 moves generated: b2 b3 e2 e1 a5 c2 d2 
 -->  13  +2                 2  e1 e2 d1 a5 c2     1.0 s       2 nps  
 PV: e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
 
@@ -741,7 +741,7 @@ PV: e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
       7  O O O * * O O O               27 discs
       8  * * * * * * * *      
 
-5 moves generated: a2 a6 d1 e2 a5 
+5 moves generated: a2 a6 a5 d1 e2 
 -->  12  -2                 2  e2 d1 a5 c2 d2     0.0 s  
 PV: e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
 
@@ -756,7 +756,7 @@ PV: e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
       7  O O O * * O O O       (O)     26 discs
       8  * * * * * * * *      
 
-7 moves generated: a5 d2 a6 d1 b3 c2 b2 
+7 moves generated: a5 a6 d2 d1 b3 b2 c2 
 -->  11  +2                 2  d1 a5 c2 d2 a6     0.0 s  
 PV: d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
 
@@ -771,7 +771,7 @@ PV: d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
       7  O O O * * O O O               28 discs
       8  * * * * * * * *      
 
-5 moves generated: a2 a5 a6 d2 c1 
+5 moves generated: a5 a2 a6 c1 d2 
 -->  10  -2                 2  a5 c2 d2 a6        0.0 s  
 PV: a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
 
@@ -786,7 +786,7 @@ PV: a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
       7  O O * * * O O O       (O)     26 discs
       8  * * * * * * * *      
 
-5 moves generated: b2 b3 a6 d2 c2 
+5 moves generated: b3 b2 a6 d2 c2 
 -->   9  +2                 2  c2 d2 a6           0.0 s  
 PV: c2 d2 a6 b3 c1 a2 b2 a1 b1
 
@@ -801,7 +801,7 @@ PV: c2 d2 a6 b3 c1 a2 b2 a1 b1
       7  O O * * * O O O               28 discs
       8  * * * * * * * *      
 
-4 moves generated: a6 c1 d2 a2 
+4 moves generated: a6 a2 c1 d2 
 -->   8  -2               294  d2 a6              0.0 s  
 PV: d2 a6 b3 c1 a2 b2 a1 b1
 
@@ -816,7 +816,7 @@ PV: d2 a6 b3 c1 a2 b2 a1 b1
       7  O O * * * O O O       (O)     26 discs
       8  * * * * * * * *      
 
-4 moves generated: c1 b2 a6 b3 
+4 moves generated: c1 b3 a6 b2 
 -->   7  +2               168  a6                 0.0 s  
 PV: a6 b3 c1 a2 b2 a1 b1
 
@@ -831,7 +831,7 @@ PV: a6 b3 c1 a2 b2 a1 b1
       7  O O * * * O O O               35 discs
       8  * * * * * * * *      
 
-4 moves generated: c1 b3 a2 b2 
+4 moves generated: b2 c1 a2 b3 
 -->   6  -2                76  b3                 0.0 s  
 PV: b3 c1 a2 b2 a1 b1
 
@@ -847,7 +847,7 @@ PV: b3 c1 a2 b2 a1 b1
       8  * * * * * * * *      
 
 2 moves generated: b2 c1 
--->   5  +2                37  c1                 0.0 s  
+-->   5  +2                37  c1                 1.0 s      37 nps  
 PV: c1 a2 b2 a1 b1
 
          a b c d e f g h
@@ -891,7 +891,7 @@ PV: b2 a1 b1
       7  * O * * * * O O               37 discs
       8  * * * * * * * *      
 
-2 moves generated: a1 b1 
+2 moves generated: b1 a1 
 -->   2  -2                11  a1        0.0 s  
 PV: a1 b1
 
