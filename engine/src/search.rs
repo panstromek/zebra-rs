@@ -143,10 +143,9 @@ fn init_move_lists(sorted_move_order_: &mut [[i32; 64]; 64]) {
 pub fn inherit_move_lists(stage: i32, sorted_move_order_: &mut [[i32; 64]; 64], list_inherited_: &mut [i32; 62]) {
     let mut i: i32 = 0;
     let mut last: i32 = 0;
-
-    // FIXME
-    //  Index out of bounds here - reproducer:
-    //  cargo run  -- -l 20 10 0 20 10 0 -r 0
+    if stage >= 61 {
+        return;
+    }
     if list_inherited_[stage as usize] != 0 { return }
     list_inherited_[stage as usize] = 1;
     if stage == 0 as i32 { return }

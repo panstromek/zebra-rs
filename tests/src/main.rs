@@ -257,19 +257,6 @@ mod tests {
 
     snap_test!(no_wld, "-l 6 6 0 6 6 0 -r 0 -repeat 2");
 
-    // FIXME this test is failing against old zebra, investigate that
-    //  it's because there's UB - index out of bounds when accessing
-    //  stage_reached and stage_score in midgame.c and  list_inherited in search.c
-    //  I "fixed" it just by making these arrays bigger, but it's not clear if that's
-    //  actually the correct fix WRT program logic, maybe it should instead be smaller -
-    //  it's unclear what was the original intent with it.
-    //  Making these arrays a bit longer in the original program will change the output of this
-    //  test to match the snapshot. But changing just the array length of stage_reached from
-    //  62 back to 61 will change the output back. Because array length in C is not stored and
-    //  and here it is defined with a literal, it means that this number can't possibly affect
-    //  any logic - but it changes the behaviour of the program nevertheless, so there's
-    //  probably some UB at play here. Also I know for a fact that this array is accessed out of
-    //  bounds, because the initial translated Rust program would panic on these places.
     /*
     run this to verify
      cargo test --release --package tests "tests::no_exact_no_wld::no_exact_no_wld" -- --test-threads 1 --nocapture
