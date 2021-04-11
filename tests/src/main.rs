@@ -22,10 +22,11 @@ fn main() {
             }
             _ => {
                 write!(args, "-r 0 -l {} {} {} {} {} {}",
-                       rng.gen_range::<i32, _>(0..18),
+                    // TODO make smaller numbers more likely
+                       rng.gen_range::<i32, _>(0..10),
                        rng.gen_range::<i32, _>(0..20),
                        rng.gen_range::<i32, _>(0..20),
-                       rng.gen_range::<i32, _>(0..18),
+                       rng.gen_range::<i32, _>(0..10),
                        rng.gen_range::<i32, _>(0..20),
                        rng.gen_range::<i32, _>(0..20),
                 );
@@ -42,6 +43,7 @@ fn main() {
             (8, &(|s, rng| { write!(s, "-draw2none"); })),
             (8, &(|s, rng| { write!(s, "-test"); })),
             (8, &(|s, rng| { write!(s, "-analyze"); })),
+            //todo make small number of repeats more likely
             (8, &(|s, rng| { write!(s, "-repeat {}", rng.gen_range::<i32, _>(0..5)); })),
             (6, &(|s, rng| { write!(s, "-slack {}", rng.gen_range::<f32, _>(0.0..10.0)); })),
             (6, &(|s, rng| { write!(s, "-randmove {}", rng.gen_range::<i32, _>(0..10)); })),
@@ -67,7 +69,8 @@ fn main() {
                 write!(s, "-t {}", number_of_levels);
                 for _ in 0..number_of_levels {
                     write!(s, " {} {} {}",
-                            // TODO allow human player too (by specifying zero here)
+                           //todo make small numbers more likely
+                           // TODO allow human player too (by specifying zero here)
                            rng.gen_range::<i32, _>(1..12),
                            rng.gen_range::<i32, _>(0..22),
                            rng.gen_range::<i32, _>(0..22),
@@ -77,7 +80,11 @@ fn main() {
             // TODO test randomly generated boards
             (8, &(|s, rng| { write!(s, "-g ../../tests/resources/board.txt"); })),
             // TODO test more randomly generated games
-            (4, &(|s, rng| { write!(s, "-seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1"); })),
+            (4, &(|s, rng| {
+                let arg = "-seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1";
+                let slice_to = rng.gen_range(5..arg.len());
+                s.push_str( &arg[0..slice_to] );
+            })),
 
             // todo
             //  -time <black time> <black increment> <white time> <white increment>
