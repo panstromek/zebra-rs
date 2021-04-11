@@ -188,7 +188,7 @@ pub struct PlayGame<Source: InitialMoveSource> {
     curr_move: i32,
     rand_color: i32,
     provided_move: [i32; 61],
-    pub move_vec: [i8; 121],
+    pub move_vec: [i8; 122],
     line_buffer: [u8; 1001],
     pub state: PlayGameState
 }
@@ -477,7 +477,7 @@ impl<Src: InitialMoveSource> PlayGame<Src> {
         let mut curr_move = 0;
         let mut rand_color = 0;
         let mut provided_move = [0; 61];
-        let mut move_vec = [0; 121];
+        let mut move_vec = [0; 122];
         let mut line_buffer = [0u8; 1001];
         let mut state = PlayGameState::Initial;
         let mut play_state = PlayGame {
@@ -537,7 +537,7 @@ fn parse_provided_moves(provided_move: &mut [i32; 61], move_string: &[u8]) -> Re
     Ok(provided_move_count)
 }
 
-fn push_move(move_vec: &mut [i8; 121], curr_move: i32, disks_played_: i32) {
+fn push_move(move_vec: &mut [i8; 122], curr_move: i32, disks_played_: i32) {
     move_vec[(2 as i32 * disks_played_) as usize] = 'a' as i8 + (curr_move % 10) as i8 - 1;
     move_vec[(2 as i32 * disks_played_) as usize + 1] = '0' as i8 + (curr_move / 10) as i8;
 }
