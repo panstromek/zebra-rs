@@ -74,17 +74,18 @@ fn main() {
                     );
                 }
             })),
+            // TODO test randomly generated boards
+            (8, &(|s, rng| { write!(s, "-g ../../tests/resources/board.txt"); })),
+            // TODO test more randomly generated games
+            (4, &(|s, rng| { write!(s, "-seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1"); })),
+
             // todo
-            //  -g <game file>
             //  -time <black time> <black increment> <white time> <white increment>
             //     Tournament mode; the format for the players is as above.
             //  -learn <depth> <cutoff>
             //     Learn the game with <depth> deviations up to <cutoff> empty.
             //  -log <file name>
             //     Append all game results to the specified file.
-            //  -seq <move sequence>
-            //     Forces the game to start with a predefined move sequence;
-            //     e.g. f4d6c3.
             //  -seqfile <filename
             //     Specifies a file from which move sequences are read.
         ];
@@ -581,5 +582,9 @@ mod tests {
 // thread 'main' panicked at 'assertion failed: `(left == right)`
 //   left: `"-->  15  -7.34         346445  f3 d2 c5 c6 c1    77.0 s    4385 nps"`,
 //  right: `"-->  15  -7.34         337693  f3 d2 c5 c6 c1    77.0 s    4275 nps"`', tests/src/main.rs:552:13
+// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+//     testing args '-r 0 -l 0 0 -public -analyze -p 0 -g ../../tests/resources/board.txt -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1'
+// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:522:48
 // note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 }
