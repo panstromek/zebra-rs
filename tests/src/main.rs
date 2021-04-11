@@ -267,9 +267,6 @@ mod tests {
 
     snap_test!(small_game_test_without_book, "-l 6 6 6 6 6 6 -r 0 -b 0", false, with_adjust: false);
 
-    // FIXME this test suddenly started to fail against old zebra, investigate that.
-    //  It's not clear if it's caused by changes in C or in Rust version though
-    //  (my bet would be Rust, because I was restructuring some core coeff algorithms)
     snap_test!(full_game_test, "-l 16 16 16 16 16 16 -r 0", false, with_adjust: false);
 
     snap_test!(small_game_test, "-l 6 6 6 6 6 6 -r 0", false, with_adjust: false);

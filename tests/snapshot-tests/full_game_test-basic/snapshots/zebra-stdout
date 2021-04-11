@@ -571,8 +571,8 @@ PV: f1
 [-inf,inf]:    g7
 [-inf,inf]:    g7=-0.21 g2=0.48 
 [-inf,inf]:    g2=-3.10 g7=-2.19 
-[-inf,inf]:    g7=-0.45 g2=0.27 
--->  16  -0.82        1930032  g2 e8 e7 a3 h2     1.0 s  1928104 nps
+[-inf,inf]:    g7=-1.20 g2=0.27 
+-->  16  -0.82        2133123  g2 e8 e7 a3 h2     1.0 s  2130992 nps
 PV: g2 e8 e7 a3 h2 h1 h6 d8 c8 b8 g7 b7 a4 h7 a8
 
          a b c d e f g h
@@ -586,9 +586,9 @@ PV: g2 e8 e7 a3 h2 h1 h6 d8 c8 b8 g7 b7 a4 h7 a8
       7      * *   O           (O)     19 discs     14. f2  f1
       8            O                                15. g2  
 
--->  15  +1.91          16258  e8 e7 a3 h2 h1     1.0 s   16242 nps
+-->  15  +1.91          18475  e8 e7 a3 h2 h1     1.0 s   18457 nps
 [-inf,inf]:    e8
--->  16  +0.97         181900  e8 e7 a3 h2 h1     1.0 s  181718 nps
+-->  16  +0.97         207124  e8 e7 a3 h2 h1     1.0 s  206917 nps
 PV: e8 e7 a3 h2 h1 h6 d8 c8 c2 d2 b8 g7 b7 g1 d1
 
          a b c d e f g h
@@ -602,7 +602,9 @@ PV: e8 e7 a3 h2 h1 h6 d8 c8 c2 d2 b8 g7 b7 g1 d1
       7      * O   O          0.97     21 discs     14. f2  f1
       8          O O                                15. g2  e8
 
--->  16  -1.54         200955  e7 a3 h2 h1 h6     0.0 s  
+-->  15  -0.03          46005  e7 a3 h2 h1 h6     0.0 s  
+[-inf,inf]:    e7
+-->  16  -1.54         217098  e7 a3 h2 h1 h6     1.0 s  216881 nps
 PV: e7 a3 h2 h1 h6 d8 a5 d2 e2 d1 a6 b7 c1 b1 g1
 
          a b c d e f g h
@@ -616,7 +618,7 @@ PV: e7 a3 h2 h1 h6 d8 a5 d2 e2 d1 a6 b7 c1 b1 g1
       7      * * * O           (O)     20 discs     15. g2  e8
       8          O O                                16. e7  
 
--->  16  +1.75         476138  a3 h2 h1 h6 d8     0.0 s  
+-->  16  +1.75         486983  a3 h2 h1 h6 d8     0.0 s  
 PV: a3 h2 h1 h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 a7 g8
 
          a b c d e f g h
@@ -630,9 +632,9 @@ PV: a3 h2 h1 h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 a7 g8
       7      * * O O          +1.75    25 discs     15. g2  e8
       8          O O                                16. e7  a3
 
--->  15  -0.45          60754  h2 h1 h6 d8 c8     1.0 s   60693 nps
+-->  15  -0.45          56534  h2 h1 h6 d8 c8     1.0 s   56478 nps
 [-inf,inf]:    h2
--->  16  -1.39         212772  h2 h1 h6 d8 a5     1.0 s  212559 nps
+-->  16  -1.39         211293  h2 h1 h6 d8 a5     1.0 s  211082 nps
 PV: h2 h1 h6 d8 a5 d2 e2 d1 c1 b1 g1 e1 a1 h7 g7
 
          a b c d e f g h
@@ -646,9 +648,9 @@ PV: h2 h1 h6 d8 a5 d2 e2 d1 c1 b1 g1 e1 a1 h7 g7
       7      * * O O           (O)     21 discs     16. e7  a3
       8          O O                                17. h2  
 
--->  15  +2.33          35770  h1 h6 d8 a5 d2     1.0 s   35734 nps
+-->  15  +2.33          29557  h1 h6 d8 a5 d2     1.0 s   29527 nps
 [-inf,inf]:    h1
--->  16  +1.18         134038  h1 h6 d8 c8 b8     1.0 s  133904 nps
+-->  16  +1.18         124826  h1 h6 d8 c8 b8     1.0 s  124701 nps
 PV: h1 h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 a7 g8 h7 e2
 
          a b c d e f g h
@@ -662,7 +664,7 @@ PV: h1 h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 a7 g8 h7 e2
       7      * * O O          +1.18    26 discs     16. e7  a3
       8          O O                                17. h2  h1
 
--->  16  -1.16          64862  h6 d8 c8 b8 g7     0.0 s  
+-->  16  -1.16          77731  h6 d8 c8 b8 g7     0.0 s   77653 nps
 PV: h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 g8 a7 c2 h7 d1
 
          a b c d e f g h
@@ -676,7 +678,7 @@ PV: h6 d8 c8 b8 g7 b7 a4 d2 a8 h8 g8 a7 c2 h7 d1
       7      * * O O           (O)     23 discs     17. h2  h1
       8          O O                                18. h6  
 
--->  16  +1.58          77774  d8 a5 d2 e2 d1     1.0 s   77696 nps
+-->  16  +1.58          84998  d8 a5 d2 e2 d1     0.0 s  
 PV: d8 a5 d2 e2 d1 c1 a6 c2 a4 b3 h7 b8 a2 b7 e1
 
          a b c d e f g h
@@ -690,24 +692,26 @@ PV: d8 a5 d2 e2 d1 c1 a6 c2 a4 b3 h7 b8 a2 b7 e1
       7      O O O O          +1.58    27 discs     17. h2  h1
       8        O O O                                18. h6  d8
 
--->  15  -0.88          22083  a5 d2 e2 d1 c1     1.0 s   22061 nps
+-->  15  -0.88          21467  a5 d2 e2 d1 c1     1.0 s   21446 nps
 [-inf,inf]:    a5=-4.03 c8
-[-inf,inf]:    a5=-4.03 c8=-1.88 
--->  16  -1.38         318070  c8 b8 g7 b7 a4     1.0 s  317752 nps
-PV: c8 b8 g7 b7 a4 g8 a8 a7 h8 h7
+[-inf,inf]:    a5=-4.03 c8=-2.34 
+-->  16  -1.61         442084  c8 b8 g7 b7 a4     1.0 s  441642 nps
+PV: c8 b8 g7 b7 a4 d2 e2 h8 g8 h7 a7 b2 a2 d1 b3
 
          a b c d e f g h
 
       1            O   O      Black    Zebra        12. b4  f8
       2            O O O                            13. h4  h5
-      3  O   * * * O * O      -1.38    18 discs     14. f2  f1
+      3  O   * * * O * O      -1.61    18 discs     14. f2  f1
       4    O * * O * O O                            15. g2  e8
       5    O * O * O * O      White    Zebra        16. e7  a3
       6    O * O * * * *                            17. h2  h1
       7      * * O O           (O)     23 discs     18. h6  d8
       8      * O O O                                19. c8  
 
--->  16  +0.80          95107  b8 g7 b7 a4 g8     1.0 s   95012 nps
+-->  15  +2.34          21892  b8 g7 b7 a4 d2     1.0 s   21870 nps
+[-inf,inf]:    b8=-0.28 c2 d2
+-->  16  +1.03         108889  b8 g7 b7 a4 g8     1.0 s  108780 nps
 PV: b8 g7 b7 a4 g8 a8 a7 a2 e2 d2 h7 h8 c1 a6 b3
 
          a b c d e f g h
@@ -718,10 +722,10 @@ PV: b8 g7 b7 a4 g8 a8 a7 a2 e2 d2 h7 h8 c1 a6 b3
       4    O * * O * O O                            15. g2  e8
       5    O * O * O * O      White    Zebra        16. e7  a3
       6    O * O * * * *                            17. h2  h1
-      7      O * O O          0.80     26 discs     18. h6  d8
+      7      O * O O          +1.03    26 discs     18. h6  d8
       8    O O O O O                                19. c8  b8
 
--->  16  -1.33          52209  g7 b7 a4 g8 a8     0.0 s  
+-->  16  -1.33          54587  g7 b7 a4 g8 a8     0.0 s  
 PV: g7 b7 a4 g8 a8 a7 a2 e2 d2 d1 c1 h7 h8 b1 g1
 
          a b c d e f g h
@@ -735,7 +739,7 @@ PV: g7 b7 a4 g8 a8 a7 a2 e2 d2 d1 c1 h7 h8 b1 g1
       7      O * * * *         (O)     24 discs     19. c8  b8
       8    O O O O O                                20. g7  
 
--->  16  +1.53          41540  b7 a4 g8 a8 a7     1.0 s   41499 nps
+-->  16  +1.53          44257  b7 a4 g8 a8 a7     1.0 s   44213 nps
 PV: b7 a4 g8 a8 a7 a2 e2 d2 d1 h8 h7 c1 b3 c2 e1
 
          a b c d e f g h
@@ -749,7 +753,7 @@ PV: b7 a4 g8 a8 a7 a2 e2 d2 d1 h8 h7 c1 b3 c2 e1
       7    O O * * * *        +1.53    26 discs     19. c8  b8
       8    O O O O O                                20. g7  b7
 
--->  16  -1.32          66784  a4 g8 a8 a7 a2     1.0 s   66717 nps
+-->  16  -1.32          45748  a4 g8 a8 a7 a2     1.0 s   45702 nps
 PV: a4 g8 a8 a7 a2 e2 d2 d1 c1 a5 a6 h7 h8 b1 g1
 
          a b c d e f g h
@@ -763,7 +767,7 @@ PV: a4 g8 a8 a7 a2 e2 d2 d1 c1 a5 a6 h7 h8 b1 g1
       7    O O * * * *         (O)     23 discs     20. g7  b7
       8    O O O O O                                21. a4  
 
--->  16  +1.36          54782  g8 a6 e2 d2 a5     0.0 s  
+-->  16  +1.36          66111  g8 a6 e2 d2 a5     0.0 s  
 PV: g8 a6 e2 d2 a5 a8 a7 a2 c1 d1 e1 h8 h7 g1 b3
 
          a b c d e f g h
@@ -778,7 +782,7 @@ PV: g8 a6 e2 d2 a5 a8 a7 a2 c1 d1 e1 h8 h7 g1 b3
       8    O O O O O O                              21. a4  g8
 
 [-inf,inf]:    a6=-3.65 a8=-2.05 
--->  16  -1.13          36007  a8 a7 h8 h7 a5     0.0 s  
+-->  16  -1.13          38635  a8 a7 h8 h7 a5     0.0 s  
 PV: a8 a7 h8 h7 a5 a6 a2 e2 d2 c1 d1 e1 g1 b3 b2
 
          a b c d e f g h
@@ -792,7 +796,7 @@ PV: a8 a7 h8 h7 a5 a6 a2 e2 d2 c1 d1 e1 g1 b3 b2
       7    * O * * O O         (O)     28 discs     21. a4  g8
       8  * O O O O O O                              22. a8  
 
--->  16  -0.48          25122  a7 h8 h7 a5 a6     1.0 s   25097 nps
+-->  16  -0.48          36429  a7 h8 h7 a5 a6     1.0 s   36393 nps
 PV: a7 h8 h7 a5 a6 a2 e2 d2 b2 b3 c1 b1 a1 g1 e1
 
          a b c d e f g h
@@ -806,8 +810,8 @@ PV: a7 h8 h7 a5 a6 a2 e2 d2 b2 b3 c1 b1 a1 g1 e1
       7  O O O * * O O        -0.48    30 discs     21. a4  g8
       8  * O O O O O O                              22. a8  a7
 
--->   4  -1.38            295  h8 h7 a5 a6     0.0 s  
--->  16  -2            145839  h8                 0.0 s  
+-->   4  -1.61            304  h8 h7 a5 a6     0.0 s  
+-->  16  -2            145842  h8                 0.0 s  
 PV: h8 h7 g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
 
          a b c d e f g h
@@ -821,8 +825,8 @@ PV: h8 h7 g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
       7  O O O * * O *         (O)     23 discs     22. a8  a7
       8  * * * * * * * *                            23. h8  
 
--->   3  +1.38             88  h7 a5 a6     0.0 s  
--->  15  +2               114  h7 g1 e1 e2 d1     0.0 s  
+-->   3  +1.61            104  h7 a5 a6     0.0 s  
+-->  15  +2               122  h7 g1 e1 e2 d1     0.0 s  
 PV: h7 g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
 
          a b c d e f g h
@@ -836,7 +840,7 @@ PV: h7 g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
       7  O O O * * O O O      +2.00    26 discs     22. a8  a7
       8  * * * * * * * *                            23. h8  h7
 
--->  14  -2                60  g1 e1 e2 d1 a5     0.0 s  
+-->  14  -2                61  g1 e1 e2 d1 a5     0.0 s  
 PV: g1 e1 e2 d1 a5 c2 d2 a6 b3 c1 a2 b2 a1 b1
 
          a b c d e f g h
@@ -962,7 +966,7 @@ PV: b3 c1 a2 b2 a1 b1
       7  O O * * * * O O       (O)     31 discs     27. d2  a6
       8  * * * * * * * *                            28. b3  
 
--->   5  +2                37  c1                 0.0 s  
+-->   5  +2                37  c1                 1.0 s      37 nps  
 PV: c1 a2 b2 a1 b1
 
          a b c d e f g h
@@ -1034,6 +1038,6 @@ PV: b1
 
 
 Black: 31   White: 33
-Nodes searched:        4196548   
-Positions evaluated:   2756433   
-Total time: 12.0 s
+Nodes searched:        4608430   
+Positions evaluated:   3047098   
+Total time: 14.0 s
