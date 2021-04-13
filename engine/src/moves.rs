@@ -138,6 +138,17 @@ impl MovesState {
 
 pub fn make_move(side_to_move: i32, move_0: i32, update_hash: i32,
                 moves_state_: &mut MovesState, board_state_: &mut BoardState, hash_state_: &mut HashState, flip_stack: &mut FlipStack) -> i32 {
+    if board_state_.board[move_0 as usize] == 0 || board_state_.board[move_0 as usize] == 2 {
+        // This should be unreachable, but fuzzer found an instance where it happens:
+        // -r 0 -l 9 6 3 5 19 0 -repeat 4 -p 1 -b 1 -w 0 -h 19 -dev 17 75 94.33498 -g tests/resources/board.txt -time 40 48 6 24
+        // continuing here can lead to index out of bounds somewhere else, so we return 0 here.
+        // that only causes fatal error in PV completion later
+        return 0;
+    }
+    // we could replace the above if with these asserts, too
+    // assert_ne!(board_state_.board[move_0 as usize], 0);
+    // assert_ne!(board_state_.board[move_0 as usize], 2);
+
     let mut flipped: i32 = 0;
     let mut diff1: u32 = 0;
     let mut diff2: u32 = 0;
