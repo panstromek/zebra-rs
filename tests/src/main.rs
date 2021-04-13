@@ -647,4 +647,15 @@ mod tests {
 //   left: `"-->   2  +8.97             22  f4        1.0 s      22 nps"`,
 //  right: `"-->   2  +8.97             22  f4        0.0 s  "`', tests/src/main.rs:534:13
 // note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+    // Note(matyas): I have no idea what's wrong with this one
+    //  It's buffer overflow in original and panic out of bounds in rust,
+    //   because disks_played is 61 roughly after midgame. Very weird bug.
+    //   There's probably some place in the code where unmake_move call is missing or smth like that?
+// testing args '-r 0 -l 9 6 3 5 19 0 -repeat 4 -p 1 -b 1 -w 0 -h 19 -dev 17 75 94.33498 -g ../../tests/resources/board.txt -time 40 48 6 24'
+// thread 'main' panicked at 'assertion failed: second.next().is_none()', tests/src/main.rs:537:9
+
+//similar:     testing args '-r 0 -l 7 0 14 9 4 18 -repeat 0 -randmove 5 -p 1 -e 1 -h 9 -g ../../tests/resources/board.txt -time 13 47 5 16'
+//     testing args '-r 0 -l 3 6 0 4 13 12 -repeat 4 -e 0 -b 0 -g ../../tests/resources/board.txt -time 12 23 5 24'
+// testing args '-r 0 -l 9 8 7 8 19 14 -randmove 4 -p 1 -e 0 -h 5 -dev 8 8 123.677826 -t 3 4 17 10 7 3 7 8 1 10 -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1 -time 4 24 24 22'
 }
