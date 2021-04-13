@@ -782,8 +782,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
                                  0 as i32, 0 as i32);
             let info = &*eval_info;
             let counter_value = counter_value(&mut search_state.nodes);
-            let elapsed_time =  g_timer.get_elapsed_time();
-            Out::send_move_type_0_status(interrupted_depth, info, counter_value, elapsed_time, board_state);
+            Out::send_move_type_0_status(interrupted_depth, info, counter_value, g_timer, board_state);
         }
         1 => { *eval_info = book_eval_info }
         2 => { *eval_info = mid_eval_info }
@@ -874,7 +873,7 @@ pub fn compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, 
 
 pub trait ComputeMoveOutput {
     fn display_out_optimal_line(search_state: &SearchState);
-    fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64, board_state: &BoardState);
+    fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, timer: &mut Timer, board_state: &BoardState);
     fn display_status_out();
     fn echo_ponder_move_4(curr_move: i32, ponder_move: i32);
     fn echo_ponder_move_2(curr_move: i32, ponder_move: i32);

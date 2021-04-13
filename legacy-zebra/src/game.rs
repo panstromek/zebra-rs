@@ -24,6 +24,7 @@ use engine::src::globals::BoardState;
 use std::fs::{File, read, OpenOptions};
 use std::io::{Read, BufReader, BufRead, Write};
 use std::iter::FromIterator;
+use engine::src::timer::Timer;
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
 pub static mut prefix_move: i32 = 0;
@@ -1371,7 +1372,7 @@ fn display_out_optimal_line(search_state: &SearchState) {
     unsafe { display_optimal_line(&mut stdout, search_state.full_pv_depth, &search_state.full_pv) }
 }
 
-fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64, board_state: &BoardState) {
+fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, timer: &mut Timer, board_state: &BoardState) {
     unsafe {
         clear_status();
         send_status_1(b"--> *%2d\x00" as *const u8 as *const i8,
@@ -1382,12 +1383,12 @@ fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counte
                     eval_str);
         send_status_nodes(counter_value);
         send_status_pv(&board_state.pv[0], interrupted_depth, board_state.pv_depth[0]);
-        send_status_time(elapsed_time);
-        if elapsed_time != 0.0f64 {
+        send_status_time(timer.get_elapsed_time());
+        if timer.get_elapsed_time() != 0.0f64 {
             send_status_2(b"%6.0f %s\x00" as *const u8 as
                             *const i8,
                         counter_value /
-                            (elapsed_time + 0.001f64),
+                            (timer.get_elapsed_time() + 0.001f64),
                         b"nps\x00" as *const u8 as *const i8);
         }
     }
