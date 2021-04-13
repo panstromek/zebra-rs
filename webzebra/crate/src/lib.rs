@@ -391,7 +391,7 @@ impl ComputeMoveOutput for WasmFrontend {
         // c_log!("Display out optimal line")
     }
 
-    fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, elapsed_time: f64, board_state: &BoardState) {
+    fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, timer: &mut Timer, board_state: &BoardState) {
 
     }
 
