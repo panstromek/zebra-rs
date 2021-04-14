@@ -201,6 +201,8 @@ mod tests {
     use std::path::Path;
     use std::fs::File;
     use std::io::{Write};
+    use std::iter::FromIterator;
+    use std::convert::TryFrom;
 
     #[test]
     fn coeff_source_test() {
@@ -526,21 +528,20 @@ mod tests {
         );
         assert_snapshot(
             snapshots_dir.join("__snapshot_test_exit_status").as_ref(),
-            run_directory.join("__snapshot_test_exit_status").as_ref(),
-            false);
+            run_directory.join("__snapshot_test_exit_status").as_ref());
         if compare_books {
-            assert_snapshot(&*snapshots_dir.join("book.bin"), &*book_path, true);
+            assert_snapshot(&*snapshots_dir.join("book.bin"), &*book_path);
         }
         // TODO detect other files that may be created or not created durinng run and report them
-        assert_snapshot(snapshots_dir.join("zebra.log").as_ref(), run_directory.join("zebra.log").as_ref() , false);
-        assert_snapshot(snapshots_dir.join("zebra-stderr").as_ref(), run_directory.join("zebra-stderr").as_ref() , false);
-        assert_snapshot(snapshots_dir.join("zebra-stdout").as_ref(), run_directory.join("zebra-stdout").as_ref() , false);
-        assert_snapshot(snapshots_dir.join("current.gam").as_ref(), run_directory.join("current.gam").as_ref() , false);
-        assert_snapshot(snapshots_dir.join("current.mov").as_ref(), run_directory.join("current.mov").as_ref(), false);
-        assert_snapshot(snapshots_dir.join("analysis.log").as_ref(), run_directory.join("analysis.log").as_ref(), false);
+        assert_snapshot(snapshots_dir.join("zebra.log").as_ref(), run_directory.join("zebra.log").as_ref());
+        assert_snapshot(snapshots_dir.join("zebra-stderr").as_ref(), run_directory.join("zebra-stderr").as_ref());
+        assert_snapshot(snapshots_dir.join("zebra-stdout").as_ref(), run_directory.join("zebra-stdout").as_ref());
+        assert_snapshot(snapshots_dir.join("current.gam").as_ref(), run_directory.join("current.gam").as_ref());
+        assert_snapshot(snapshots_dir.join("current.mov").as_ref(), run_directory.join("current.mov").as_ref());
+        assert_snapshot(snapshots_dir.join("analysis.log").as_ref(), run_directory.join("analysis.log").as_ref());
     }
 
-    fn assert_snapshot(snapshot_path: &Path, result_path: &Path, binary: bool) {
+    fn assert_snapshot(snapshot_path: &Path, result_path: &Path) {
 
         if result_path.exists() {
             if !snapshot_path.exists() {
@@ -558,12 +559,15 @@ mod tests {
                 return // this means that this run doesn't have output any snapshot
             }
         }
-        if binary {
-            let actual = std::fs::read(snapshot_path).unwrap() ;
-            let expected = std::fs::read(result_path).unwrap();
-            assert_eq!(expected, actual);
+        // If the file is not valid text, compare binary content
+        let snapshot = std::fs::read(snapshot_path).unwrap();
+        let snapshot_str = std::str::from_utf8(snapshot.as_ref());
+        if snapshot_str.is_err() {
+            let result = std::fs::read(result_path).unwrap();
+            assert_eq!(result, snapshot);
             return;
         }
+
 
         fn variable_lines(line: &&str) -> bool {
             !(line.starts_with("Engine compiled")
@@ -571,7 +575,7 @@ mod tests {
                 || line.starts_with("Gunnar Andersson"))
         }
 
-        let snapshot = std::fs::read_to_string(snapshot_path).unwrap();
+        let snapshot = snapshot_str.unwrap();
         let output = std::fs::read_to_string(result_path).unwrap();
 
         let mut first = snapshot.lines().filter(variable_lines);
