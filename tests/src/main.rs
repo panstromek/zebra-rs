@@ -524,7 +524,7 @@ mod tests {
 
         std::fs::write(
             run_directory.join("__snapshot_test_exit_status"),
-            format!("{}", exit_status)
+            format!("exit status: {}", exit_status.code().unwrap())
         );
         let mut file_set = std::fs::read_dir(&snapshots_dir)
             .unwrap()
@@ -537,6 +537,9 @@ mod tests {
         file_set.sort();
         file_set.dedup();
         for file in file_set {
+            if file == "default.profraw" {
+                continue; // ignore coverage data
+            }
             assert_snapshot(
                 snapshots_dir.join(&file).as_ref(),
                 run_directory.join(&file).as_ref());
