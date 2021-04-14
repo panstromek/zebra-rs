@@ -109,36 +109,32 @@ fn main() {
             }
         }
         let arguments = args.as_str();
-        if rng.gen_ratio(1, 4) {
-            use std::io::Write;
-//FIXME this has no effect because snapshot test fn will wipe this folder
-            std::fs::create_dir_all("fuzzer/run_dir/");
-            File::create("fuzzer/run_dir/adjust.txt")
-                .unwrap()
-                .write(format!("{} {} {} {}\n",
-                               rng.gen_range::<f32, _>(0.0..20.0),
-                               rng.gen_range::<f32, _>(0.0..20.0),
-                               rng.gen_range::<f32, _>(0.0..20.0),
-                               rng.gen_range::<f32, _>(0.0..20.0),
-                ).as_ref())
-                .unwrap();
+        let adjust = if rng.gen_ratio(1, 4) {
             println!("creating adjust.txt");
-        }
-        let with_adjust = false;
+            Some(format!("{} {} {} {}\n",
+                         rng.gen_range::<f32, _>(0.0..20.0),
+                         rng.gen_range::<f32, _>(0.0..20.0),
+                         rng.gen_range::<f32, _>(0.0..20.0),
+                         rng.gen_range::<f32, _>(0.0..20.0),
+            ))
+        } else {
+            None
+        };
+
         let has_error = false; // TODO
 
         println!("testing args '{}'", arguments);
         let coeffs_path_from_run_dir = "./../../coeffs2.bin";
         let book_path_from_run_dir = "./../../book.bin";
         snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
-                                  with_adjust, has_error, false, interactive,
+                                  adjust.as_ref().map(AsRef::as_ref), has_error, false, interactive,
                                   coeffs_path_from_run_dir,
                                   book_path_from_run_dir);
 
         let binary_folder = "../../target/release/";
 
         snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
-                                  with_adjust, has_error, false, interactive,
+                                  adjust.as_ref().map(AsRef::as_ref), has_error, false, interactive,
                                   coeffs_path_from_run_dir, book_path_from_run_dir);
     }
 
@@ -168,12 +164,6 @@ mod tests {
         }
 
         assert!(flate2_source.try_next_word().is_none());
-    }
-    fn create_adjust_file<P: AsRef<Path>>(path: P) {
-        File::create(path)
-            .unwrap()
-            .write("3.5 2.8 5.1 12.3\n".as_ref())
-            .unwrap();
     }
 
     macro_rules! snap_test {
@@ -397,6 +387,11 @@ mod tests {
             ;
         let coeffs_path_from_run_dir = "./../../../../coeffs2.bin" ;
         let book_path_from_run_dir = "./../../../../book.bin" ;
+        let with_adjust = if with_adjust {
+            Some("3.5 2.8 5.1 12.3\n".as_ref())
+        } else {
+            None
+        };
         snapshot_test_with_folder(binary_folder, binary, arguments, snapshot_test_dir, with_adjust, has_error,
                                   true,
                                   interactive, coeffs_path_from_run_dir, book_path_from_run_dir);
@@ -406,7 +401,7 @@ mod tests {
                                      binary: &str,
                                      arguments: &str,
                                      snapshot_test_dir: &str,
-                                     with_adjust: bool,
+                                     adjust: Option<&str>,
                                      has_error: bool,
                                      check_exit_status: bool,
                                      interactive: Interactive,
@@ -426,8 +421,12 @@ mod tests {
         let _ = std::fs::remove_dir_all(&run_directory);
         std::fs::create_dir_all(&run_directory).unwrap();
 
-        if with_adjust {
-            create_adjust_file(run_directory.join("adjust.txt"));
+        if let Some(s) = adjust {
+            let path = run_directory.join("adjust.txt");
+            File::create(path)
+                .unwrap()
+                .write(s.as_bytes())
+                .unwrap();
         }
         let binpath = run_directory
             .join(binary_folder)
