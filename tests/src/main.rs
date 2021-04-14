@@ -527,12 +527,15 @@ mod tests {
         let exit_status = child
             .wait()
             .unwrap();
-        // TODO make this flag part of some metadata snapshot file
-        //  so that we don't need to guess its value when writing new test
-        if check_exit_status {
-            assert_eq!(exit_status.success(), !has_error);
-        }
 
+        std::fs::write(
+            run_directory.join("__snapshot_test_exit_status"),
+            format!("{}", exit_status)
+        );
+        assert_snapshot(
+            snapshots_dir.join("__snapshot_test_exit_status").as_ref(),
+            run_directory.join("__snapshot_test_exit_status").as_ref(),
+            false);
         if compare_books {
             assert_snapshot(&*snapshots_dir.join("book.bin"), &*book_path, true);
         }
