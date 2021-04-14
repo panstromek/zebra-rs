@@ -199,7 +199,7 @@ mod tests {
     use zlib_coeff_source::{ZLibSource};
     use std::process::{Command, Stdio, ChildStdin};
     use std::path::Path;
-    use std::fs::File;
+    use std::fs::{File, DirEntry};
     use std::io::{Write};
     use std::iter::FromIterator;
     use std::convert::TryFrom;
@@ -526,19 +526,21 @@ mod tests {
             run_directory.join("__snapshot_test_exit_status"),
             format!("{}", exit_status)
         );
-        assert_snapshot(
-            snapshots_dir.join("__snapshot_test_exit_status").as_ref(),
-            run_directory.join("__snapshot_test_exit_status").as_ref());
-        if compare_books {
-            assert_snapshot(&*snapshots_dir.join("book.bin"), &*book_path);
+        let mut file_set = std::fs::read_dir(&snapshots_dir)
+            .unwrap()
+            .into_iter()
+            .chain(std::fs::read_dir(&run_directory)
+                .unwrap()
+                .into_iter())
+            .map(|dir| dir.unwrap().file_name().into_string().unwrap())
+            .collect::<Vec<_>>();
+        file_set.sort();
+        file_set.dedup();
+        for file in file_set {
+            assert_snapshot(
+                snapshots_dir.join(&file).as_ref(),
+                run_directory.join(&file).as_ref());
         }
-        // TODO detect other files that may be created or not created durinng run and report them
-        assert_snapshot(snapshots_dir.join("zebra.log").as_ref(), run_directory.join("zebra.log").as_ref());
-        assert_snapshot(snapshots_dir.join("zebra-stderr").as_ref(), run_directory.join("zebra-stderr").as_ref());
-        assert_snapshot(snapshots_dir.join("zebra-stdout").as_ref(), run_directory.join("zebra-stdout").as_ref());
-        assert_snapshot(snapshots_dir.join("current.gam").as_ref(), run_directory.join("current.gam").as_ref());
-        assert_snapshot(snapshots_dir.join("current.mov").as_ref(), run_directory.join("current.mov").as_ref());
-        assert_snapshot(snapshots_dir.join("analysis.log").as_ref(), run_directory.join("analysis.log").as_ref());
     }
 
     fn assert_snapshot(snapshot_path: &Path, result_path: &Path) {
