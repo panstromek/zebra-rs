@@ -169,14 +169,14 @@ fn main() {
         let coeffs_path_from_run_dir = "./../../coeffs2.bin";
         let book_path_from_run_dir = "./../../book.bin";
         snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
-                                  adjust.as_ref().map(AsRef::as_ref), has_error, false, interactive,
+                                  adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir,
                                   book_path_from_run_dir);
 
         let binary_folder = "../../target/release/";
 
         snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
-                                  adjust.as_ref().map(AsRef::as_ref), has_error, false, interactive,
+                                  adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir, book_path_from_run_dir);
     }
 
@@ -221,14 +221,14 @@ mod tests {
 
     macro_rules! snap_test {
         ($id:ident, $args:literal) => {
-            snap_test!($id, $args, false, with_adjust: true);
+            snap_test!($id, $args, with_adjust: true);
         };
 
-        ($binary:literal, $func:ident, $suffix:literal, $id:ident, $args:literal, $has_err:expr, $has_adjust:expr) => {
-            snap_test!($binary, $func, $suffix, $id, $args, $has_err,  $has_adjust, interactive: None);
+        ($binary:literal, $func:ident, $suffix:literal, $id:ident, $args:literal, $has_adjust:expr) => {
+            snap_test!($binary, $func, $suffix, $id, $args,  $has_adjust, interactive: None);
         };
 
-        ($binary:literal, $func:ident, $suffix:literal, $id:ident, $args:literal, $has_err:expr, $has_adjust:expr, interactive: $interactive:ident) => {
+        ($binary:literal, $func:ident, $suffix:literal, $id:ident, $args:literal, $has_adjust:expr, interactive: $interactive:ident) => {
                 #[test]
                 fn $func() {
                     use crate::tests::*;
@@ -237,54 +237,53 @@ mod tests {
                         $args,
                         &("./snapshot-tests/".to_owned() + stringify!($id) + $suffix),
                         $has_adjust,
-                        $has_err,
                         Interactive::$interactive
                     );
                 }
         };
 
-        ($id:ident, $args:literal, $has_err:expr, with_adjust: true) => {
+        ($id:ident, $args:literal, with_adjust: true) => {
             mod $id {
-                snap_test!("zebra", basic, "-basic", $id, $args, $has_err, false);
-                snap_test!("zebra", with_adjust, "-with-adjust", $id, $args, $has_err, true);
+                snap_test!("zebra", basic, "-basic", $id, $args, false);
+                snap_test!("zebra", with_adjust, "-with-adjust", $id, $args, true);
             }
         };
-        ($binary:literal, $id:ident, $args:literal, $has_err:expr, with_adjust: false) => {
+        ($binary:literal, $id:ident, $args:literal, with_adjust: false) => {
             mod $id {
-                snap_test!($binary, basic, "-basic", $id, $args, $has_err, false);
+                snap_test!($binary, basic, "-basic", $id, $args, false);
             }
         };
 
         ($binary:literal, $id:ident, $args:literal) => {
             mod $id {
-                snap_test!($binary, basic, "-basic", $id, $args, false, false);
+                snap_test!($binary, basic, "-basic", $id, $args,  false);
             }
         };
         ($binary:literal, $id:ident, $args:literal, $has_err:literal) => {
             mod $id {
-                snap_test!($binary, basic, "-basic", $id, $args, $has_err, false);
+                snap_test!($binary, basic, "-basic", $id, $args, false);
             }
         };
 
-        ($id:ident, $args:literal, $has_err:expr, with_adjust: false) => {
+        ($id:ident, $args:literal, with_adjust: false) => {
             mod $id {
-                snap_test!("zebra", basic, "-basic", $id, $args, $has_err, false);
+                snap_test!("zebra", basic, "-basic", $id, $args, false);
             }
         };
 
-        ($id:ident, $args:literal, $has_err:expr, interactive: Dumb) => {
+        ($id:ident, $args:literal, interactive: Dumb) => {
             mod $id {
-                snap_test!("zebra", basic, "-basic", $id, $args, $has_err, false, interactive: Dumb);
+                snap_test!("zebra", basic, "-basic", $id, $args, false, interactive: Dumb);
             }
         };
-        ($binary:literal, $id:ident, $args:literal, $has_err:expr, interactive: $interactive:ident) => {
+        ($binary:literal, $id:ident, $args:literal, interactive: $interactive:ident) => {
             mod $id {
-                snap_test!($binary, basic, "-basic", $id, $args, $has_err, false, interactive: $interactive);
+                snap_test!($binary, basic, "-basic", $id, $args, false, interactive: $interactive);
             }
         };
 
-        ($id:ident, $args:literal, $has_err:expr) => {
-            snap_test!($id, $args, $has_err, with_adjust: true);
+        ($id:ident, $args:literal) => {
+            snap_test!($id, $args, with_adjust: true);
         };
     }
 
@@ -295,9 +294,9 @@ mod tests {
     snap_test!(analyze_basic, "-analyze -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1 -l 7 7 7 7 7 7 -r 0");
 
     // TODO this is broken against original zebra (panic vs invalid move err)
-    snap_test!(analyze_invalid, "-analyze -seq f1h2h1 -l 7 7 7 7 7 7 -r 0", true, with_adjust: false);
+    snap_test!(analyze_invalid, "-analyze -seq f1h2h1 -l 7 7 7 7 7 7 -r 0", with_adjust: false);
 
-    snap_test!(with_seq_invalid, "-seq f5d6h1 -l 6 6 6 6 6 6 -r 0", true);
+    snap_test!(with_seq_invalid, "-seq f5d6h1 -l 6 6 6 6 6 6 -r 0");
 
     snap_test!(with_no_echo, "-l 6 6 6 6 6 6 -r 0 -e 0");
 
@@ -319,68 +318,64 @@ mod tests {
 
     snap_test!(minus_p_zero_without_book, "-l 6 6 6 6 6 6 -r 0 -p 0 -b 0");
 
-    snap_test!(small_game_test_without_book, "-l 6 6 6 6 6 6 -r 0 -b 0", false, with_adjust: false);
+    snap_test!(small_game_test_without_book, "-l 6 6 6 6 6 6 -r 0 -b 0", with_adjust: false);
 
-    snap_test!(full_game_test, "-l 16 16 16 16 16 16 -r 0", false, with_adjust: false);
+    snap_test!(full_game_test, "-l 16 16 16 16 16 16 -r 0", with_adjust: false);
 
-    snap_test!(small_game_test, "-l 6 6 6 6 6 6 -r 0", false, with_adjust: false);
+    snap_test!(small_game_test, "-l 6 6 6 6 6 6 -r 0", with_adjust: false);
 
-    snap_test!(micro_game, "-l 1 1 1 1 1 1 -r 0", false, with_adjust: false);
+    snap_test!(micro_game, "-l 1 1 1 1 1 1 -r 0", with_adjust: false);
 
     // TODO find some thor files to verify - this doesn't really do anything at the moment
-    snap_test!(thor_five, "-l 2 2 2 2 2 2 -r 0 -thor 5", false, with_adjust: false);
+    snap_test!(thor_five, "-l 2 2 2 2 2 2 -r 0 -thor 5", with_adjust: false);
 
-    snap_test!(uneven, "-l 1 1 1 8 8 8 -r 0", false, with_adjust: false);
+    snap_test!(uneven, "-l 1 1 1 8 8 8 -r 0", with_adjust: false);
 
-    snap_test!(rand_move, "-l 6 6 6 6 6 6 -r 0 -randmove 3", false, with_adjust: false);
+    snap_test!(rand_move, "-l 6 6 6 6 6 6 -r 0 -randmove 3", with_adjust: false);
 
-    snap_test!(rand_move_without_book, "-l 6 6 6 6 6 6 -r 0 -randmove 3 -b 0", false, with_adjust: false);
+    snap_test!(rand_move_without_book, "-l 6 6 6 6 6 6 -r 0 -randmove 3 -b 0", with_adjust: false);
 
-    snap_test!(rand_move_one, "-l 6 6 6 6 6 6 -r 0 -randmove 1", false, with_adjust: false);
+    snap_test!(rand_move_one, "-l 6 6 6 6 6 6 -r 0 -randmove 1", with_adjust: false);
 
-    snap_test!(basic_interactive, "-l 6 6 6 0 -r 0 -b 0 -repeat 2", false, interactive: Dumb);
+    snap_test!(basic_interactive, "-l 6 6 6 0 -r 0 -b 0 -repeat 2", interactive: Dumb);
 
-    snap_test!(basic_interactive_flipped, "-l 0 6 6 6 -r 0 -b 0 -repeat 1", false, interactive: Dumb);
+    snap_test!(basic_interactive_flipped, "-l 0 6 6 6 -r 0 -b 0 -repeat 1", interactive: Dumb);
 
-    snap_test!(two_players, "-l 0 0 -r 0 -b 0 -repeat 2", false, interactive: Dumb);
+    snap_test!(two_players, "-l 0 0 -r 0 -b 0 -repeat 2", interactive: Dumb);
 
-    snap_test!(two_players_with_log, "-l 0 0 -r 0 -b 0 -repeat 2  -log zebra.log", false, interactive: Dumb);
+    snap_test!(two_players_with_log, "-l 0 0 -r 0 -b 0 -repeat 2  -log zebra.log", interactive: Dumb);
 
-    snap_test!(learn, "-l 2 2 2 2 2 2 -r 0 -learn 3 5", false, with_adjust: false);
+    snap_test!(learn, "-l 2 2 2 2 2 2 -r 0 -learn 3 5", with_adjust: false);
 
     snap_test!(
         seqfile,
          "-l 2 2 2 2 2 2 -r 0 -seqfile ../../../resources/seq-file.txt -log zebra.log",
-        false,
         with_adjust: false
     );
 
     snap_test!(
         seqfile_too_long,
          "-l 2 2 2 2 2 2 -r 0 -seqfile ../../../resources/seq-file-too-long.txt -log zebra.log",
-        true,
         with_adjust: false
     );
 
     snap_test!(
         seqfile_invalid,
          "-l 2 2 2 2 2 2 -r 0 -seqfile ../../../resources/seq-file-invalid.txt -log zebra.log",
-        true,
         with_adjust: false
     );
 
     snap_test!(
         board_source,
          "-l 2 2 2 2 2 2 -r 0 -g ../../../resources/board.txt -log zebra.log",
-        false,
         with_adjust: false
     );
 
     // TODO test all these parameters at once: -g, -seq and -seqfile, how they interact??
     //  what if they conflict??
 
-    snap_test!("practice", practice, "./../../../../book.bin", false, interactive: Practice);
-    snap_test!("practice", practice_help, "./../../../../book.bin dd dd", true);
+    snap_test!("practice", practice, "./../../../../book.bin", interactive: Practice);
+    snap_test!("practice", practice_help, "./../../../../book.bin dd dd");
 
     #[derive(Copy, Clone)]
     pub enum Interactive {
@@ -432,7 +427,7 @@ mod tests {
         }
     }
 
-    fn snapshot_test(binary: &str, arguments: &str, snapshot_test_dir: &str, with_adjust: bool, has_error: bool, interactive: Interactive) {
+    fn snapshot_test(binary: &str, arguments: &str, snapshot_test_dir: &str, with_adjust: bool, interactive: Interactive) {
         let binary_folder =
             // "./../../../../../zebra-1/"
             "./../../../../target/release/"
@@ -445,8 +440,7 @@ mod tests {
         } else {
             None
         };
-        snapshot_test_with_folder(binary_folder, binary, arguments, snapshot_test_dir, with_adjust, has_error,
-                                  true,
+        snapshot_test_with_folder(binary_folder, binary, arguments, snapshot_test_dir, with_adjust,
                                   interactive, coeffs_path_from_run_dir, book_path_from_run_dir);
     }
 
@@ -455,8 +449,6 @@ mod tests {
                                      arguments: &str,
                                      snapshot_test_dir: &str,
                                      adjust: Option<&str>,
-                                     has_error: bool,
-                                     check_exit_status: bool,
                                      interactive: Interactive,
                                      coeffs_path_from_run_dir: &str,
                                      book_path_from_run_dir: &str) {
@@ -592,7 +584,7 @@ mod tests {
         assert!(second.next().is_none());
     }
 
-    snap_test!(help, "?", true);
+    snap_test!(help, "?");
 
     // These are failing cases found by fuzzer. Some of them are caused by
     // UB sanitizer logs in the original zebra
