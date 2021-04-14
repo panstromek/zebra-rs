@@ -116,15 +116,10 @@ fn main() {
                 }
             })),
             // TODO test more randomly generated games
-            (4, &(|s, rng| {
-                let arg = if sequences.is_empty() {
-                    "e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1"
-                } else {
-                    &sequences[rng.gen_range(0..sequences.len())]
-                };
-                let slice_to = if arg.len() == 0 { 0 } else { rng.gen_range(0..arg.len()) };
+            (6, &(|s, rng| {
+                let seq = new_seq(&sequences, rng);
                 s.push_str("-seq ");
-                s.push_str(&arg[0..slice_to]);
+                s.push_str(seq);
             })),
             (8, &(|s, rng| {
                 write!(s, "-time {} {} {} {}",
@@ -134,13 +129,18 @@ fn main() {
                        rng.gen_range(0..50i32),
                 );
             })),
+            (6, &(|s, rng| {
+                let seq = new_seq(&sequences, rng);
+                std::fs::create_dir_all("fuzzer-data").unwrap();
+                std::fs::write("fuzzer-data/seqfile-fuzzer-1", seq).unwrap();
+                write!(s, "-seqfile ../../fuzzer-data/board-fuzzer-1");
+            })),
+
             // todo
             //  -learn <depth> <cutoff>
             //     Learn the game with <depth> deviations up to <cutoff> empty.
             //  -log <file name>
             //     Append all game results to the specified file.
-            //  -seqfile <filename
-            //     Specifies a file from which move sequences are read.
         ];
         flags.shuffle(&mut rng);
 
@@ -180,6 +180,17 @@ fn main() {
                                   coeffs_path_from_run_dir, book_path_from_run_dir);
     }
 
+}
+
+fn new_seq<'a>(sequences: &'a VecDeque<String>, rng: &mut ThreadRng) -> &'a str {
+    let arg = if sequences.is_empty() {
+        "e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1"
+    } else {
+        &sequences[rng.gen_range(0..sequences.len())]
+    };
+    let slice_to = if arg.len() == 0 { 0 } else { rng.gen_range(0..arg.len()) };
+    let seq = &arg[0..slice_to];
+    seq
 }
 
 mod tests {
