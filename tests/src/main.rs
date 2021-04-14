@@ -8,6 +8,7 @@ use std::collections::vec_deque::VecDeque;
 fn main() {
     let mut rng = rand::thread_rng();
     let mut boards = VecDeque::new();
+    let mut sequences = VecDeque::new();
     loop {
         if let Ok(file) = std::fs::read_to_string("fuzzer/run_dir/current.gam") {
             boards.push_back(file);
@@ -15,6 +16,24 @@ fn main() {
                 boards.pop_front();
             }
         }
+        if let Ok(file) = std::fs::read_to_string("fuzzer/run_dir/current.mov") {
+            let file = file.split_whitespace().filter_map(|item| {
+                let first = *item.as_bytes().get(0)?;
+                let second = *item.as_bytes().get(1)?;
+                match (item.len(), first, second) {
+                    (2, b'a'..=b'h', b'1'..=b'8') => {
+                        Some(item)
+                    }
+                    _ => None
+                }
+
+            }).collect::<String>();
+            sequences.push_back(file);
+            if sequences.len() > 10 {
+                sequences.pop_front();
+            }
+        }
+
         std::fs::remove_dir_all("fuzzer");
         let binary_folder = "../../../zebra-1/";
         let binary = "zebra";
@@ -97,9 +116,14 @@ fn main() {
             })),
             // TODO test more randomly generated games
             (4, &(|s, rng| {
-                let arg = "-seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1";
-                let slice_to = rng.gen_range(5..arg.len());
-                s.push_str( &arg[0..slice_to] );
+                let arg = if sequences.is_empty() {
+                    "e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1"
+                } else {
+                    &sequences[rng.gen_range(0..sequences.len())]
+                };
+                let slice_to = if arg.len() == 0 { 0 } else { rng.gen_range(0..arg.len()) };
+                s.push_str("-seq ");
+                s.push_str(&arg[0..slice_to]);
             })),
             (8, &(|s, rng| {
                 write!(s, "-time {} {} {} {}",
