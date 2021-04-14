@@ -3,11 +3,18 @@ use crate::tests::{snapshot_test_with_folder, Interactive};
 use rand::Rng;
 use std::fmt::Write;
 use rand::rngs::ThreadRng;
+use std::collections::vec_deque::VecDeque;
 
 fn main() {
     let mut rng = rand::thread_rng();
-
+    let mut boards = VecDeque::new();
     loop {
+        if let Ok(file) = std::fs::read_to_string("fuzzer/run_dir/current.gam") {
+            boards.push_back(file);
+            if boards.len() > 10 {
+                boards.pop_front();
+            }
+        }
         std::fs::remove_dir_all("fuzzer");
         let binary_folder = "../../../zebra-1/";
         let binary = "zebra";
@@ -78,7 +85,16 @@ fn main() {
                 }
             })),
             // TODO test randomly generated boards
-            (8, &(|s, rng| { write!(s, "-g ../../tests/resources/board.txt"); })),
+            (8, &(|s, rng| {
+                if boards.is_empty() {
+                    write!(s, "-g ../../tests/resources/board.txt");
+                } else {
+                    std::fs::create_dir_all("fuzzer-data").unwrap();
+                    let string = &boards[rng.gen_range(0..boards.len())];
+                    std::fs::write("fuzzer-data/board-fuzzer-1",string ).unwrap();
+                    write!(s, "-g ../../fuzzer-data/board-fuzzer-1");
+                }
+            })),
             // TODO test more randomly generated games
             (4, &(|s, rng| {
                 let arg = "-seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1";
