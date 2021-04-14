@@ -4,6 +4,7 @@ use rand::Rng;
 use std::fmt::Write;
 use rand::rngs::ThreadRng;
 use std::collections::vec_deque::VecDeque;
+use rand::seq::SliceRandom;
 
 fn main() {
     let mut rng = rand::thread_rng();
@@ -60,7 +61,7 @@ fn main() {
         }
 
 
-        let flags: &[(u32, &dyn Fn(&mut String, &mut ThreadRng))] = &[
+        let flags: &mut [(u32, &dyn Fn(&mut String, &mut ThreadRng))] = &mut [
             (12, &(|s, rng| { write!(s, "-public"); })),
             (12, &(|s, rng| { write!(s, "-private"); })),
             (12, &(|s, rng| { write!(s, "-keepdraw"); })),
@@ -141,6 +142,7 @@ fn main() {
             //  -seqfile <filename
             //     Specifies a file from which move sequences are read.
         ];
+        flags.shuffle(&mut rng);
 
         for (denominator, flag) in flags {
             if rng.gen_ratio(1, *denominator)  {
