@@ -188,6 +188,7 @@ impl BoardSource for BasicBoardFileSource {
 */
 
 pub unsafe fn game_init(file_name: *const i8, side_to_move: &mut i32, g_state: &mut FullState) {
+    //todo remove file_name argument
     let file_name = (!file_name.is_null()).then(|| CStr::from_ptr(file_name));
     let FullState {
         ref mut g_config,
