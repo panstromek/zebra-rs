@@ -5,11 +5,15 @@ use std::fmt::Write;
 use rand::rngs::ThreadRng;
 use std::collections::vec_deque::VecDeque;
 use rand::seq::SliceRandom;
+use std::process::{Command, Stdio};
 
 fn main() {
     let mut rng = rand::thread_rng();
     let mut boards = VecDeque::new();
     let mut sequences = VecDeque::new();
+    std::fs::remove_dir_all("./fuzzer-data/cov/");
+    std::fs::create_dir_all("./fuzzer-data/cov/");
+    let mut i = 0usize;
     loop {
         if let Ok(file) = std::fs::read_to_string("fuzzer/run_dir/current.gam") {
             boards.push_back(file);
@@ -48,6 +52,8 @@ fn main() {
                 args.push_str("-r 0 -l 0 0");
             }
             _ => {
+                // TODO also test getting these args from command line with scanf
+                // TODO time is now deterministic, we can test -r 1
                 write!(args, "-r 0 -l {} {} {} {} {} {}",
                     // TODO make smaller numbers more likely
                        rng.gen_range::<i32, _>(0..10),
@@ -60,7 +66,49 @@ fn main() {
             }
         }
 
+        //TODO generate also invalid arguments for these (there's bunch of jumps that are not executed in the main loop)
+        // CountFlips_bitboard_d3, CountFlips_bitboard_d4, TestFlips_bitboard_d4,...
+        // were not hit in 2000 random tests, what to do about that?
+        //  generate -l with giant end solve numbers? Those are all starting positions though
+        //  I think we can only test them with random boards
 
+        // todo adjust_counter loop is also never tested
+        //  VERBOSE is not tested
+        //  get_book_move() = -1 is not covered, too
+        //  is_panic_abort + force_return ifs are also not often executed
+        //  it also seems that there's not enough draws tested
+        //  invalid boards and move sequences are also undertested it seems (and missing files too)
+        //  forced opening is undertested (and also probably just dead)
+        //  mirror_symmetry error is not reached
+        //  resize hash is also not tested
+        //  sort_moves, float_move not tested
+        //  game_learnable,get_stored_move,set_perturbation, count_all_wrapper, count_all,
+        //   check_forced_opening, ponder_move,set_ponder_move, clear_ponder_move,get_current_eval
+        //  stability_search, get_stable, complete_stability_search, add_ponder_time,get_search_statistics
+        //  get_pv, report_move_evals, report_hash_move, perform_extended_solve,
+        //  full_learn_public_game =  not reached / dead code
+        //  =================================
+        //  consequently, loop in calculate_perturbation is dead
+        //  set_max_batch_size,set_black_force, set_white_force, set_eval_span, set_negamax_span is only used in booktool
+        //  extended_compute_move is only used in enddev and practice
+        //  force_return == 0 always so every code behind it is not tested
+        //  produce_compact_eval doesn't have all return branches tested
+        //  FullState::new is not covered - even though it's there. Is it because inline(always)?
+        //  dumpch is not tested
+        //  fatal_error_3, fatal_error_1 is not tested
+        //  log_best_move is not tested
+        //  some errors are not well tested  (missing file)
+        //  add_new_game is undertested
+        //  read_text_database and write_text_database are not tested
+
+        //TODO this seqence seems very fishy, why (empties > 60)? it is never executed in tests and fuzzing,
+        //   is this even reachable. should it be  empties < 60 instead?
+        // /* If there is only one move available:
+        //   453|       |       Don't waste any time, unless told so or very close to the end,
+        //   454|       |       searching the position. */
+        //   455|  60.7k|    if empties > 60 as i32 &&
+        //   456|      0|        moves_state.move_count[moves_state.disks_played as usize] == 1 as i32 &&
+        //   457|      0|        search_forced == 0 {
         let flags: &mut [(u32, &dyn Fn(&mut String, &mut ThreadRng))] = &mut [
             (12, &(|s, rng| { write!(s, "-public"); })),
             (12, &(|s, rng| { write!(s, "-private"); })),
@@ -178,6 +226,31 @@ fn main() {
         snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir, book_path_from_run_dir);
+
+        i+=1;
+
+        std::fs::copy("fuzzer/run_dir/default.profraw", &format!("./fuzzer-data/cov/{}.profraw", i));
+        std::fs::remove_file("all-tests-with-fuzz.profdata");
+
+        Command::new("bash") //
+            .arg("-c")
+            .arg("cargo-profdata -- merge -sparse ./tests/snapshot-tests/*/*/default.profraw ./fuzzer-data/cov/*.profraw  -o all-tests-with-fuzz.profdata")
+            .output().unwrap();
+        let coverage = Command::new("cargo")
+            .args("cov -- report target/release/zebra -instr-profile all-tests-with-fuzz.profdata -ignore-filename-regex /home/matyas/.cargo/".split_whitespace())
+            .output().unwrap().stdout;
+        std::str::from_utf8(&coverage)
+            .unwrap()
+            .lines()
+            .for_each(|line| {
+                // println!("{}", line);
+
+                if line.starts_with("TOTAL") {
+                    println!("{}", line);
+                }
+
+            })
+
     }
 
 }

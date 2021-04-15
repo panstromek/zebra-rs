@@ -41,7 +41,7 @@ pub fn non_iterative_popcount(mut n1: u32, mut n2: u32) -> u32 {
   hence this function is fast when the number of bits
   set is low.
 */
-
+//TODO this is dead code, remove
 pub fn iterative_popcount(mut n1: u32,
                                             mut n2: u32)
  -> u32 {
