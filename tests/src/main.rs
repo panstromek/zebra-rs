@@ -15,8 +15,18 @@ fn main() {
     let mut sequences = VecDeque::new();
     std::fs::remove_dir_all("./fuzzer-data/cov/");
     std::fs::create_dir_all("./fuzzer-data/cov/");
+    std::fs::create_dir_all("./fuzzer-data/books/");
     let mut i = 0usize;
+    let mut book_i = 0usize;
     let mut used_filenames: Vec<String> = Vec::new();
+    let mut books: Vec<_> = std::fs::read_dir("./fuzzer-data/books/")
+        .unwrap()
+        .into_iter()
+        .map(|item| item.unwrap().file_name().to_str().unwrap().to_owned())
+        .chain(std::iter::once(String::from("tests/resources/book-tmp.bin")))
+        .chain(std::iter::once(String::from("book.bin")))
+        .collect();
+    book_i = books.len();
     loop {
         if let Ok(file) = std::fs::read_to_string("fuzzer/run_dir/current.gam") {
             boards.push_back(file);
@@ -156,12 +166,14 @@ fn main() {
                 }
             })),
             // TODO test randomly generated boards
+            //   and invalid board files
             (8, &(|s, rng| {
                 if boards.is_empty() {
                     write!(s, "-g ../../tests/resources/board.txt");
                 } else {
                     std::fs::create_dir_all("fuzzer-data").unwrap();
                     let string = &boards[rng.gen_range(0..boards.len())];
+                    // TODO don't override so I have a reproducer
                     std::fs::write("fuzzer-data/board-fuzzer-1",string ).unwrap();
                     write!(s, "-g ../../fuzzer-data/board-fuzzer-1");
                 }
@@ -183,6 +195,7 @@ fn main() {
             (6, &(|s, rng| {
                 let seq = new_seq(&sequences, rng);
                 std::fs::create_dir_all("fuzzer-data").unwrap();
+                // TODO don't override so I have a reproducer
                 std::fs::write("fuzzer-data/seqfile-fuzzer-1", seq).unwrap();
                 write!(s, "-seqfile ../../fuzzer-data/board-fuzzer-1");
             })),
@@ -196,10 +209,12 @@ fn main() {
                         .map(char::from))
                 };
             })),
-
-            // todo
-            //  -learn <depth> <cutoff>
-            //     Learn the game with <depth> deviations up to <cutoff> empty.
+            (5, &(|s, rng| {
+                write!(s, "-learn {} {} ",
+                       rng.gen_range(0..7i32),
+                       rng.gen_range(0..7i32)
+                );
+            })),
         ];
         flags.shuffle(&mut rng);
 
@@ -210,6 +225,8 @@ fn main() {
             }
         }
         let arguments = args.as_str();
+
+        let book_path = books[rng.gen_range(0..books.len())].as_str();
         let adjust = if rng.gen_ratio(1, 4) {
             println!("creating adjust.txt");
             Some(format!("{} {} {} {}\n",
@@ -222,21 +239,29 @@ fn main() {
             None
         };
 
-        println!("testing args '{}'", arguments);
         let coeffs_path_from_run_dir = "./../../coeffs2.bin";
-        let book_path_from_run_dir = "./../../book.bin";
+        let book_path_from_run_dir = format!("./../../{}", book_path);
+        // TODO somehow capture input so I have an easy reproducer?
+        println!("BOOK_PATH={} COEFFS_PATH={} ../../target/release/zebra {}", book_path_from_run_dir, coeffs_path_from_run_dir, arguments);
         snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir,
-                                  book_path_from_run_dir);
+                                  book_path_from_run_dir.as_ref(),
+                                  book_path);
 
         let binary_folder = "../../target/release/";
 
         snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
-                                  coeffs_path_from_run_dir, book_path_from_run_dir);
+                                  coeffs_path_from_run_dir, book_path_from_run_dir.as_ref(), book_path);
         std::fs::read_dir("fuzzer/run_dir").unwrap().for_each(|dir| {
             let name = dir.unwrap().file_name().to_str().unwrap().into();
+            if name == "book.bin" {
+                book_i += 1;
+                let new_path = format!("./fuzzer-data/books/book-{}.bin", book_i);
+                std::fs::copy("fuzzer/run_dir/book.bin", &new_path).unwrap();
+                books.push(new_path);
+            }
             if name == "default.profraw" {
                 return;
             }
@@ -534,7 +559,8 @@ mod tests {
             None
         };
         snapshot_test_with_folder(binary_folder, binary, arguments, snapshot_test_dir, with_adjust,
-                                  interactive, coeffs_path_from_run_dir, book_path_from_run_dir);
+                                  interactive, coeffs_path_from_run_dir, book_path_from_run_dir,
+                                  "resources/book-tmp.bin");
     }
 
     pub fn snapshot_test_with_folder(binary_folder: &str,
@@ -544,7 +570,9 @@ mod tests {
                                      adjust: Option<&str>,
                                      interactive: Interactive,
                                      coeffs_path_from_run_dir: &str,
-                                     book_path_from_run_dir: &str) {
+                                     book_path_from_run_dir: &str,
+                                     swap_book_path: &str
+    ) {
 
         let snapshot_test_dir = Path::new(snapshot_test_dir);
         if !snapshot_test_dir.exists() {
@@ -579,19 +607,19 @@ mod tests {
         let compare_books = arguments.contains("-learn");
         if compare_books {
             let buf = canon_run_dir.join("book.bin");
-            std::fs::copy("resources/book-tmp.bin", &buf).unwrap();
+            std::fs::copy(swap_book_path, &buf).unwrap();
             book_path = buf;
         }
 
         let mut child = Command::new(binpath)
             .current_dir(&canon_run_dir)
             .args(arguments.split_whitespace())
+            .env("RUST_BACKTRACE", "1")
             .env("COEFFS_PATH", coeffs_path.to_str().unwrap())
 
             // we probably don't need this when -learn parameter is set, because we copy the
             // investigate that
             .env("BOOK_PATH", book_path.to_str().unwrap())
-            .env("MOCK_TIME", "true")
             .stdin(Stdio::piped())
             .stderr(Stdio::from(File::create(canon_run_dir.join("zebra-stderr")).unwrap()))
             .stdout(Stdio::from(File::create(canon_run_dir.join("zebra-stdout")).unwrap()))
@@ -805,4 +833,7 @@ mod tests {
 //similar:     testing args '-r 0 -l 7 0 14 9 4 18 -repeat 0 -randmove 5 -p 1 -e 1 -h 9 -g ../../tests/resources/board.txt -time 13 47 5 16'
 //     testing args '-r 0 -l 3 6 0 4 13 12 -repeat 4 -e 0 -b 0 -g ../../tests/resources/board.txt -time 12 23 5 24'
 // testing args '-r 0 -l 9 8 7 8 19 14 -randmove 4 -p 1 -e 0 -h 5 -dev 8 8 123.677826 -t 3 4 17 10 7 3 7 8 1 10 -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1 -time 4 24 24 22'
+
+    //  index out of bounds
+//      ./target/release/zebra -r 0 -l 0 0 -thor 16 -b 1 -h 20 -learn 1 3  -g fuzzer-data/seqfile-fuzzer-1 -e 1 -p 1
 }
