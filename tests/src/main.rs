@@ -211,8 +211,6 @@ fn main() {
             None
         };
 
-        let has_error = false; // TODO
-
         println!("testing args '{}'", arguments);
         let coeffs_path_from_run_dir = "./../../coeffs2.bin";
         let book_path_from_run_dir = "./../../book.bin";
