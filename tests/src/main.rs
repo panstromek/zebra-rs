@@ -6,6 +6,8 @@ use rand::rngs::ThreadRng;
 use std::collections::vec_deque::VecDeque;
 use rand::seq::SliceRandom;
 use std::process::{Command, Stdio};
+use rand::distributions::Alphanumeric;
+use std::convert::TryInto;
 
 fn main() {
     let mut rng = rand::thread_rng();
@@ -14,6 +16,7 @@ fn main() {
     std::fs::remove_dir_all("./fuzzer-data/cov/");
     std::fs::create_dir_all("./fuzzer-data/cov/");
     let mut i = 0usize;
+    let mut used_filenames: Vec<String> = Vec::new();
     loop {
         if let Ok(file) = std::fs::read_to_string("fuzzer/run_dir/current.gam") {
             boards.push_back(file);
@@ -183,12 +186,20 @@ fn main() {
                 std::fs::write("fuzzer-data/seqfile-fuzzer-1", seq).unwrap();
                 write!(s, "-seqfile ../../fuzzer-data/board-fuzzer-1");
             })),
+            (8, &(|s, rng| {
+                s.push_str("-log ");
+                if rng.gen_ratio(1, 4) {
+                    s.push_str(&used_filenames[rng.gen_range(0..used_filenames.len())])
+                } else {
+                    s.extend(rng.sample_iter(&Alphanumeric)
+                        .take(10)
+                        .map(char::from))
+                };
+            })),
 
             // todo
             //  -learn <depth> <cutoff>
             //     Learn the game with <depth> deviations up to <cutoff> empty.
-            //  -log <file name>
-            //     Append all game results to the specified file.
         ];
         flags.shuffle(&mut rng);
 
@@ -224,6 +235,15 @@ fn main() {
         snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir, book_path_from_run_dir);
+        std::fs::read_dir("fuzzer/run_dir").unwrap().for_each(|dir| {
+            let name = dir.unwrap().file_name().to_str().unwrap().into();
+            if name == "default.profraw" {
+                return;
+            }
+            used_filenames.push(name);
+        });
+        used_filenames.sort();
+        used_filenames.dedup();
 
         i+=1;
 
