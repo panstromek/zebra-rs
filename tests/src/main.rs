@@ -489,6 +489,12 @@ mod tests {
         with_adjust: false
     );
 
+    snap_test!(
+        learn_board_source_segv,
+         "-r 0 -l 0 0 -thor 16 -b 1 -h 20 -learn 1 3  -g ../../../resources/board-fuzzer-1 -e 1 -p 1",
+        interactive: Dumb
+    );
+
     // TODO test all these parameters at once: -g, -seq and -seqfile, how they interact??
     //  what if they conflict??
 
