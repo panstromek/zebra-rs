@@ -1,0 +1,39 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Jul  2 2020 at 19:33:54
+
+Reading binary opening database... done (took 0 s)
+Book randomness: 0.25 disks
+Loaded 0 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1  * * * * * * * *      Black    Player        1. -   
+      2  * * * * * * O *                            
+      3  * * * O * O O *               43 discs     
+      4  * * O * O * * *                            
+      5  * * O O * * * *      White    Player       
+      6  * * * O O O * *                            
+      7  * * * O O O O         (O)     20 discs     
+      8  * * * O O O O O                            
+
+
+White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: 0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1  * * * * * * * *      Black    Player        1. -   h7
+      2  * * * * * * O *                            
+      3  * * * O * O O *       (*)     41 discs     
+      4  * * O * O * * *                            
+      5  * * O O * O * *      White    Player       
+      6  * * * O O O O *                            
+      7  * * * O O O O O               23 discs     
+      8  * * * O O O O O                            
+
+
+Black: 41   White: 23
+Nodes searched:        0         
+Positions evaluated:   0         
+Total time: 0.0 s

@@ -3,7 +3,7 @@ use engine::src::learn::Learner;
 use engine::src::moves::{generate_all, make_move};
 use libc_wrapper::{fclose, fopen, fprintf, fputs, strcpy};
 
-use crate::src::error::LibcFatalError;
+use crate::src::error::{LibcFatalError, fatal_error_1};
 use crate::src::game::{game_init, BasicBoardFileSource};
 use crate::src::osfbook::{add_new_game, init_osf, read_binary_database, read_text_database, write_binary_database, write_text_database};
 use crate::src::zebra::FullState;
@@ -68,6 +68,9 @@ pub unsafe fn learn_game(game_length: i32,
         if (g_state.moves_state).move_count[(g_state.moves_state).disks_played as usize] == 0 as i32 {
             side_to_move = 0 as i32 + 2 as i32 - side_to_move;
             generate_all(side_to_move, &mut (g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board);
+        }
+        if (g_state.learn_state).game_move[i as usize] as i32 == -1 {
+            fatal_error_1(b"Cannot learn game. Missing move no. %d\x00".as_ptr() as *const i8, i);
         }
         make_move(side_to_move, (g_state.learn_state).game_move[i as usize] as i32,
                   1 as i32, &mut (g_state.moves_state), &mut (g_state.board_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
