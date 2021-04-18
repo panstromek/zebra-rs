@@ -26,7 +26,6 @@ fn main() {
         .into_iter()
         .map(|item| format!("fuzzer-data/books/{}", item.unwrap().file_name().to_str().unwrap()))
         .chain(std::iter::once(String::from("tests/resources/book-tmp.bin")))
-        .chain(std::iter::once(String::from("book.bin")))
         .collect();
     book_i = books.len();
     let mut timeout = 1i32;
@@ -258,12 +257,12 @@ fn main() {
         }
         let arguments = args.as_str();
 
-        let mut book_path = books[rng.gen_range(0..books.len())].as_str();
-        if arguments.contains("-learn") {
-            while book_path == "book.bin" {
-                 book_path = books[rng.gen_range(0..books.len())].as_str();
-            }
-        }
+        let book_path = if rng.gen_ratio(1, 2) && !arguments.contains("-learn") {
+            "book.bin"
+        } else {
+            books[rng.gen_range(0..books.len())].as_str()
+        };
+
         let adjust = if rng.gen_ratio(1, 4) {
             println!("creating adjust.txt");
             Some(format!("{} {} {} {}\n",
