@@ -457,7 +457,6 @@ mod tests {
 
     snap_test!(analyze_basic, "-analyze -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1 -l 7 7 7 7 7 7 -r 0");
 
-    // TODO this is broken against original zebra (panic vs invalid move err)
     snap_test!(analyze_invalid, "-analyze -seq f1h2h1 -l 7 7 7 7 7 7 -r 0", with_adjust: false);
 
     snap_test!(with_seq_invalid, "-seq f5d6h1 -l 6 6 6 6 6 6 -r 0");
@@ -490,7 +489,6 @@ mod tests {
 
     snap_test!(micro_game, "-l 1 1 1 1 1 1 -r 0", with_adjust: false);
 
-    // TODO find some thor files to verify - this doesn't really do anything at the moment
     snap_test!(thor_five, "-l 2 2 2 2 2 2 -r 0 -thor 5", with_adjust: false);
 
     snap_test!(uneven, "-l 1 1 1 8 8 8 -r 0", with_adjust: false);
