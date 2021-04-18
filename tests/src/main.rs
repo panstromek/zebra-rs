@@ -909,6 +909,10 @@ mod tests {
 
     //  index out of bounds
 //      ./target/release/zebra -r 0 -l 0 0 -thor 16 -b 1 -h 20 -learn 1 3  -g fuzzer-data/seqfile-fuzzer-1 -e 1 -p 1
+
     // index out of bounds on weird board
     // RUST_BACKTRACE=1 BOOK_PATH=./../../fuzzer-data/books/book-343.bin COEFFS_PATH=./../../coeffs2.bin ../../target/release/zebra -l 4 3 1 3 4 1 -g ../../fuzzer-data/board-fuzzer-1 -r 1 -w 0 -b 1
+//     OXOXOO--OXXOO-OOOXXXX-OXO-----O-XO-X--XXOOX-O---XXXXOXXO-OXO-XO-
+// White to move
+// This file was automatically generated
 }
