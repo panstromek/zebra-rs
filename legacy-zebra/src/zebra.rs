@@ -1043,54 +1043,30 @@ impl ZebraFrontend for LibcFrontend {
     fn load_thor_files(g_timer: &mut Timer) { unsafe {
         /* No error checking done as it's only for testing purposes */
         let database_start =  g_timer.get_real_timer();
-        read_player_database(b"thor\\wthor.jou\x00" as *const u8 as
-            *const i8);
-        read_tournament_database(b"thor\\wthor.trn\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_2001.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_2000.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1999.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1998.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1997.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1996.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1995.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1994.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1993.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1992.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1991.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1990.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1989.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1988.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1987.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1986.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1985.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1984.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1983.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1982.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1981.wtb\x00" as *const u8 as
-            *const i8);
-        read_game_database(b"thor\\wth_1980.wtb\x00" as *const u8 as
-            *const i8);
+        read_player_database(b"thor/wthor.jou\x00" as *const u8 as *const i8);
+        read_tournament_database(b"thor/wthor.trn\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_2001.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_2000.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1999.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1998.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1997.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1996.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1995.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1994.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1993.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1992.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1991.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1990.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1989.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1988.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1987.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1986.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1985.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1984.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1983.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1982.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1981.wtb\x00" as *const u8 as *const i8);
+        read_game_database(b"thor/wth_1980.wtb\x00" as *const u8 as *const i8);
         let database_stop =  g_timer.get_real_timer();
         write!(stdout, "Loaded {} games in {:.3} s.\n",
                get_total_game_count(), database_stop - database_start);
