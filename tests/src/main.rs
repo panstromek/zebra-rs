@@ -131,14 +131,6 @@ fn main() {
         //  add_new_game is undertested
         //  read_text_database and write_text_database are not tested
 
-        //TODO this seqence seems very fishy, why (empties > 60)? it is never executed in tests and fuzzing,
-        //   is this even reachable. should it be  empties < 60 instead?
-        // /* If there is only one move available:
-        //   453|       |       Don't waste any time, unless told so or very close to the end,
-        //   454|       |       searching the position. */
-        //   455|  60.7k|    if empties > 60 as i32 &&
-        //   456|      0|        moves_state.move_count[moves_state.disks_played as usize] == 1 as i32 &&
-        //   457|      0|        search_forced == 0 {
         let flags: &mut [(u32, &dyn Fn(&mut String, &mut ThreadRng))] = &mut [
             (12, &(|s, rng| { write!(s, "-public"); })),
             (12, &(|s, rng| { write!(s, "-private"); })),
@@ -148,8 +140,7 @@ fn main() {
             (12, &(|s, rng| { write!(s, "-draw2none"); })),
             (8, &(|s, rng| { write!(s, "-test"); })),
             (8, &(|s, rng| { write!(s, "-analyze"); })),
-            //todo make small number of repeats more likely
-            (8, &(|s, rng| { write!(s, "-repeat {}", rng.gen_range::<i32, _>(0..(timeout / 8) + 2)); })),
+            (8, &(|s, rng| { write!(s, "-repeat {}", rng.gen_range::<i32, _>(0..(timeout/4) + 2)); })),
             (2, &(|s, rng| { write!(s, "-r {}", rng.gen_range::<i32, _>(0..2)); })),
             (6, &(|s, rng| { write!(s, "-slack {}", rng.gen_range::<f32, _>(0.0..100.0)); })),
             (6, &(|s, rng| { write!(s, "-randmove {}", rng.gen_range::<i32, _>(0..10)); })),
@@ -175,7 +166,6 @@ fn main() {
                 write!(s, "-t {}", number_of_levels);
                 for _ in 0..number_of_levels {
                     write!(s, " {} {} {}",
-                           //todo make small numbers more likely
                            // TODO allow human player too (by specifying zero here)
                            rng.gen_range::<i32, _>(1..timeout + 2),
                            rng.gen_range::<i32, _>(0..timeout + 1),
