@@ -12,3 +12,4 @@ flate2-coeff-source = { path = "./../flate2-coeff-source" }
 engine-traits = { path = "./../engine/engine-traits" }
 zlib-coeff-source = { path = "./../legacy-zebra/zlib-coeff-source" }
 rand = "0.8.3"
+wait-timeout = "0.2.0"

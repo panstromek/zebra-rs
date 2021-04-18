@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::fs::File;
 use crate::tests::{snapshot_test_with_folder, Interactive};
 use rand::Rng;
@@ -22,11 +24,14 @@ fn main() {
     let mut books: Vec<_> = std::fs::read_dir("./fuzzer-data/books/")
         .unwrap()
         .into_iter()
-        .map(|item| item.unwrap().file_name().to_str().unwrap().to_owned())
+        .map(|item| format!("fuzzer-data/books/{}", item.unwrap().file_name().to_str().unwrap()))
         .chain(std::iter::once(String::from("tests/resources/book-tmp.bin")))
         .chain(std::iter::once(String::from("book.bin")))
         .collect();
     book_i = books.len();
+    let mut timeout = 1;
+    let mut last_coverage_line = String::from("");
+    let mut last_coverage_not_changed = 0u64;
     loop {
         if let Ok(file) = std::fs::read_to_string("fuzzer/run_dir/current.gam") {
             boards.push_back(file);
@@ -62,19 +67,19 @@ fn main() {
         };
         match interactive {
             Interactive::Dumb => {
-                args.push_str("-r 0 -l 0 0");
+                args.push_str("-l 0 0");
             }
             _ => {
                 // TODO also test getting these args from command line with scanf
-                // TODO time is now deterministic, we can test -r 1
-                write!(args, "-r 0 -l {} {} {} {} {} {}",
+                write!(args, "-l {} {} {} {} {} {}",
                     // TODO make smaller numbers more likely
-                       rng.gen_range::<i32, _>(0..10),
-                       rng.gen_range::<i32, _>(0..20),
-                       rng.gen_range::<i32, _>(0..20),
-                       rng.gen_range::<i32, _>(0..10),
-                       rng.gen_range::<i32, _>(0..20),
-                       rng.gen_range::<i32, _>(0..20),
+                    // TODO test more even games
+                       rng.gen_range::<i32, _>(0..timeout + 1),
+                       rng.gen_range::<i32, _>(0..timeout + 1),
+                       rng.gen_range::<i32, _>(0..timeout + 1),
+                       rng.gen_range::<i32, _>(0..timeout + 1),
+                       rng.gen_range::<i32, _>(0..timeout + 1),
+                       rng.gen_range::<i32, _>(0..timeout + 1),
                 );
             }
         }
@@ -132,8 +137,9 @@ fn main() {
             (8, &(|s, rng| { write!(s, "-test"); })),
             (8, &(|s, rng| { write!(s, "-analyze"); })),
             //todo make small number of repeats more likely
-            (8, &(|s, rng| { write!(s, "-repeat {}", rng.gen_range::<i32, _>(0..5)); })),
-            (6, &(|s, rng| { write!(s, "-slack {}", rng.gen_range::<f32, _>(0.0..10.0)); })),
+            (8, &(|s, rng| { write!(s, "-repeat {}", rng.gen_range::<i32, _>(0..timeout)); })),
+            (2, &(|s, rng| { write!(s, "-r {}", rng.gen_range::<i32, _>(0..2)); })),
+            (6, &(|s, rng| { write!(s, "-slack {}", rng.gen_range::<f32, _>(0.0..100.0)); })),
             (6, &(|s, rng| { write!(s, "-randmove {}", rng.gen_range::<i32, _>(0..10)); })),
             (2, &(|s, rng| { write!(s, "-p {}", rng.gen_range::<i32, _>(0..2)); })),
             (2, &(|s, rng| { write!(s, "-e {}", rng.gen_range::<i32, _>(0..2)); })),
@@ -159,19 +165,32 @@ fn main() {
                     write!(s, " {} {} {}",
                            //todo make small numbers more likely
                            // TODO allow human player too (by specifying zero here)
-                           rng.gen_range::<i32, _>(1..10),
-                           rng.gen_range::<i32, _>(0..18),
-                           rng.gen_range::<i32, _>(0..18),
+                           rng.gen_range::<i32, _>(1..timeout + 2),
+                           rng.gen_range::<i32, _>(0..timeout + 1),
+                           rng.gen_range::<i32, _>(0..timeout + 1),
                     );
                 }
             })),
-            // TODO test randomly generated boards
-            //   and invalid board files
+            // TODO test invalid board files
             (8, &(|s, rng| {
-                if boards.is_empty() {
+                if rng.gen_ratio(1, 4) {
+                    static CHARSET: &[u8] = b"X-O";
+                    let mut board_file = String::new();
+                    board_file.extend((0..64).map(|_| CHARSET[rng.gen_range(0..CHARSET.len())] as char));
+                    board_file.push_str("\n");
+                    if rng.gen_ratio(1, 2) {
+                        board_file.push_str("White to move");
+                    } else {
+                        board_file.push_str("Black to move");
+                    }
+                    board_file.push_str("\nThis file was automatically generated\n");
+
+                    // TODO don't override so I have a reproducer
+                    std::fs::write("fuzzer-data/board-fuzzer-1",board_file ).unwrap();
+                    write!(s, "-g ../../fuzzer-data/board-fuzzer-1");
+                } else if boards.is_empty() {
                     write!(s, "-g ../../tests/resources/board.txt");
                 } else {
-                    std::fs::create_dir_all("fuzzer-data").unwrap();
                     let string = &boards[rng.gen_range(0..boards.len())];
                     // TODO don't override so I have a reproducer
                     std::fs::write("fuzzer-data/board-fuzzer-1",string ).unwrap();
@@ -186,10 +205,10 @@ fn main() {
             })),
             (8, &(|s, rng| {
                 write!(s, "-time {} {} {} {}",
-                       rng.gen_range(0..50i32),
-                       rng.gen_range(0..50i32),
-                       rng.gen_range(0..50i32),
-                       rng.gen_range(0..50i32),
+                       rng.gen_range(0..500i32),
+                       rng.gen_range(0..500i32),
+                       rng.gen_range(0..500i32),
+                       rng.gen_range(0..500i32),
                 );
             })),
             (6, &(|s, rng| {
@@ -209,10 +228,10 @@ fn main() {
                         .map(char::from))
                 };
             })),
-            (5, &(|s, rng| {
+            (8, &(|s, rng| {
                 write!(s, "-learn {} {} ",
-                       rng.gen_range(0..7i32),
-                       rng.gen_range(0..7i32)
+                       rng.gen_range(0..timeout + 1),
+                       rng.gen_range(0..60 - timeout)
                 );
             })),
         ];
@@ -226,7 +245,12 @@ fn main() {
         }
         let arguments = args.as_str();
 
-        let book_path = books[rng.gen_range(0..books.len())].as_str();
+        let mut book_path = books[rng.gen_range(0..books.len())].as_str();
+        if arguments.contains("-learn") {
+            while book_path == "book.bin" {
+                 book_path = books[rng.gen_range(0..books.len())].as_str();
+            }
+        }
         let adjust = if rng.gen_ratio(1, 4) {
             println!("creating adjust.txt");
             Some(format!("{} {} {} {}\n",
@@ -242,18 +266,24 @@ fn main() {
         let coeffs_path_from_run_dir = "./../../coeffs2.bin";
         let book_path_from_run_dir = format!("./../../{}", book_path);
         // TODO somehow capture input so I have an easy reproducer?
-        println!("BOOK_PATH={} COEFFS_PATH={} ../../target/release/zebra {}", book_path_from_run_dir, coeffs_path_from_run_dir, arguments);
-        snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
+        println!("RUST_BACKTRACE=1  BOOK_PATH={} COEFFS_PATH={} ../../target/release/zebra {}", book_path_from_run_dir, coeffs_path_from_run_dir, arguments);
+        let success = snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir,
                                   book_path_from_run_dir.as_ref(),
-                                  book_path);
-
+                                  book_path, timeout as _);
+        if !success {
+            continue;
+        }
         let binary_folder = "../../target/release/";
 
-        snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
+        let success = snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
-                                  coeffs_path_from_run_dir, book_path_from_run_dir.as_ref(), book_path);
+                                  coeffs_path_from_run_dir, book_path_from_run_dir.as_ref(),
+                                                book_path, timeout as _);
+        if !success {
+            continue;
+        }
         std::fs::read_dir("fuzzer/run_dir").unwrap().for_each(|dir| {
             let name = dir.unwrap().file_name().to_str().unwrap().into();
             if name == "book.bin" {
@@ -286,9 +316,19 @@ fn main() {
             .unwrap()
             .lines()
             .for_each(|line| {
-                // println!("{}", line);
-
                 if line.starts_with("TOTAL") {
+                    if last_coverage_line == line {
+                        last_coverage_not_changed += 1;
+                        if last_coverage_not_changed > 20 {
+                            last_coverage_not_changed = 0;
+                            timeout *= 2;
+                            println!("Coverage didn't change in 30 iterations. Increasing timeout.")
+                        }
+                    } else {
+                        last_coverage_not_changed = 0;
+                        last_coverage_line = line.to_owned();
+                    }
+
                     println!("{}", line);
                 }
 
@@ -313,12 +353,16 @@ mod tests {
     use flate2_coeff_source::Flate2Source;
     use std::ffi::CStr;
     use zlib_coeff_source::{ZLibSource};
-    use std::process::{Command, Stdio, ChildStdin};
+    use std::process::{Command, Stdio, ChildStdin, ExitStatus, Child};
     use std::path::Path;
     use std::fs::{File, DirEntry};
     use std::io::{Write};
     use std::iter::FromIterator;
     use std::convert::TryFrom;
+    use wait_timeout::ChildExt;
+    use std::time::{Duration, SystemTime};
+    use std::ops::{Add, Deref};
+    use std::sync::{Arc, Mutex};
 
     #[test]
     fn coeff_source_test() {
@@ -517,13 +561,16 @@ mod tests {
             let _ = input.flush();
         });
     }
-    fn interact_basically(input: &mut ChildStdin) {
+    fn interact_basically(until: SystemTime, input: &mut ChildStdin) {
         let mut move_buf = String::with_capacity(3);
         loop {
             let mut written = 0;
             // TODO this is very dumb, we should prerecord some games and test them directly
             for char in 'a'..='h' {
                 for num in '1'..='8' {
+                    if std::time::SystemTime::now() > until {
+                        return
+                    }
                     move_buf.truncate(0);
                     move_buf.push(char);
                     move_buf.push(num);
@@ -566,7 +613,7 @@ mod tests {
         };
         snapshot_test_with_folder(binary_folder, binary, arguments, snapshot_test_dir, with_adjust,
                                   interactive, coeffs_path_from_run_dir, book_path_from_run_dir,
-                                  "resources/book-tmp.bin");
+                                  "resources/book-tmp.bin", 30);
     }
 
     pub fn snapshot_test_with_folder(binary_folder: &str,
@@ -577,8 +624,9 @@ mod tests {
                                      interactive: Interactive,
                                      coeffs_path_from_run_dir: &str,
                                      book_path_from_run_dir: &str,
-                                     swap_book_path: &str
-    ) {
+                                     swap_book_path: &str,
+                                     timeout: u64
+    ) -> bool {
 
         let snapshot_test_dir = Path::new(snapshot_test_dir);
         if !snapshot_test_dir.exists() {
@@ -631,22 +679,40 @@ mod tests {
             .stdout(Stdio::from(File::create(canon_run_dir.join("zebra-stdout")).unwrap()))
             .spawn()
             .unwrap();
-
+        let start = std::time::SystemTime::now();
+        let end = start.add(Duration::from_secs(timeout));
         match interactive {
             Interactive::Dumb => {
-                let input = child.stdin.as_mut().unwrap();
-                interact_basically(input);
+                let mut input = child.stdin.take().unwrap();
+
+                std::thread::spawn(move || {
+                    interact_basically(end, &mut input);
+                });
             },
             Interactive::Practice => {
-                let input = child.stdin.as_mut().unwrap();
-                interact_practice(input);
+                let mut input = child.stdin.take().unwrap();
+                interact_practice(&mut input);
             }
             _ => {}
         }
-        let exit_status = child
-            .wait()
-            .unwrap();
+        let remaining = Duration::from_secs(timeout)
+            .checked_sub(std::time::SystemTime::now().duration_since(start).unwrap_or(Duration::from_secs(0)))
+            .unwrap_or(Duration::from_secs(0));
 
+
+        let exit_status = match child
+            .wait_timeout(remaining)
+            .unwrap() {
+            Some(exit_status) => exit_status,
+            None => {
+                println!("{}s timeout expired, killing child process.", timeout);
+                child.kill().unwrap();
+                println!("Kill sent");
+                child.wait().unwrap();
+                println!("Killed");
+                return false;
+            }
+        };
         std::fs::write(
             run_directory.join("__snapshot_test_exit_status"),
             format!("exit status: {}", exit_status.code().unwrap())
@@ -669,6 +735,7 @@ mod tests {
                 snapshots_dir.join(&file).as_ref(),
                 run_directory.join(&file).as_ref());
         }
+        true
     }
 
     fn assert_snapshot(snapshot_path: &Path, result_path: &Path) {
@@ -842,4 +909,6 @@ mod tests {
 
     //  index out of bounds
 //      ./target/release/zebra -r 0 -l 0 0 -thor 16 -b 1 -h 20 -learn 1 3  -g fuzzer-data/seqfile-fuzzer-1 -e 1 -p 1
+    // index out of bounds on weird board
+    // RUST_BACKTRACE=1 BOOK_PATH=./../../fuzzer-data/books/book-343.bin COEFFS_PATH=./../../coeffs2.bin ../../target/release/zebra -l 4 3 1 3 4 1 -g ../../fuzzer-data/board-fuzzer-1 -r 1 -w 0 -b 1
 }
