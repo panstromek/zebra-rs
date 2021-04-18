@@ -29,7 +29,7 @@ fn main() {
         .chain(std::iter::once(String::from("book.bin")))
         .collect();
     book_i = books.len();
-    let mut timeout = 1;
+    let mut timeout = 1i32;
     let mut last_coverage_line = String::from("");
     let mut last_coverage_not_changed = 0u64;
     loop {
@@ -71,16 +71,29 @@ fn main() {
             }
             _ => {
                 // TODO also test getting these args from command line with scanf
-                write!(args, "-l {} {} {} {} {} {}",
-                    // TODO make smaller numbers more likely
-                    // TODO test more even games
-                       rng.gen_range::<i32, _>(0..timeout + 1),
-                       rng.gen_range::<i32, _>(0..timeout + 1),
-                       rng.gen_range::<i32, _>(0..timeout + 1),
-                       rng.gen_range::<i32, _>(0..timeout + 1),
-                       rng.gen_range::<i32, _>(0..timeout + 1),
-                       rng.gen_range::<i32, _>(0..timeout + 1),
-                );
+                let uneven_game = rng.gen_ratio(1, 4);
+                if uneven_game {
+                    write!(args, "-l {} {} {} {} {} {}",
+                           rng.gen_range::<i32, _>(0..timeout + 1),
+                           rng.gen_range::<i32, _>(0..timeout + 1),
+                           rng.gen_range::<i32, _>(0..timeout + 1),
+                           rng.gen_range::<i32, _>(0..timeout + 1),
+                           rng.gen_range::<i32, _>(0..timeout + 1),
+                           rng.gen_range::<i32, _>(0..timeout + 1),
+                    );
+                } else {
+                    let base_depth = rng.gen_range(0..timeout);
+                    let base_exact = rng.gen_range(0..timeout);
+                    let base_wld = rng.gen_range(0..timeout);
+                    write!(args, "-l {} {} {} {} {} {}",
+                           base_depth + rng.gen_range(0..3),
+                           base_exact + rng.gen_range(0..3),
+                           base_wld + rng.gen_range(0..3),
+                           base_depth + rng.gen_range(0..3),
+                           base_exact + rng.gen_range(0..3),
+                           base_wld + rng.gen_range(0..3),
+                    );
+                }
             }
         }
 
@@ -137,7 +150,7 @@ fn main() {
             (8, &(|s, rng| { write!(s, "-test"); })),
             (8, &(|s, rng| { write!(s, "-analyze"); })),
             //todo make small number of repeats more likely
-            (8, &(|s, rng| { write!(s, "-repeat {}", rng.gen_range::<i32, _>(0..timeout)); })),
+            (8, &(|s, rng| { write!(s, "-repeat {}", rng.gen_range::<i32, _>(0..(timeout / 8) + 2)); })),
             (2, &(|s, rng| { write!(s, "-r {}", rng.gen_range::<i32, _>(0..2)); })),
             (6, &(|s, rng| { write!(s, "-slack {}", rng.gen_range::<f32, _>(0.0..100.0)); })),
             (6, &(|s, rng| { write!(s, "-randmove {}", rng.gen_range::<i32, _>(0..10)); })),
