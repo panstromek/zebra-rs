@@ -72,19 +72,20 @@ fn main() {
             _ => {
                 // TODO also test getting these args from command line with scanf
                 let uneven_game = rng.gen_ratio(1, 4);
+                let max_depth = timeout.min(20);
                 if uneven_game {
                     write!(args, "-l {} {} {} {} {} {}",
-                           rng.gen_range::<i32, _>(0..timeout + 1),
-                           rng.gen_range::<i32, _>(0..timeout + 1),
-                           rng.gen_range::<i32, _>(0..timeout + 1),
-                           rng.gen_range::<i32, _>(0..timeout + 1),
-                           rng.gen_range::<i32, _>(0..timeout + 1),
-                           rng.gen_range::<i32, _>(0..timeout + 1),
+                           rng.gen_range::<i32, _>(0..max_depth + 2),
+                           rng.gen_range::<i32, _>(0..max_depth + 5),
+                           rng.gen_range::<i32, _>(0..max_depth + 5),
+                           rng.gen_range::<i32, _>(0..max_depth + 2),
+                           rng.gen_range::<i32, _>(0..max_depth + 5),
+                           rng.gen_range::<i32, _>(0..max_depth + 5),
                     );
                 } else {
-                    let base_depth = rng.gen_range(0..timeout);
-                    let base_exact = rng.gen_range(0..timeout);
-                    let base_wld = rng.gen_range(0..timeout);
+                    let base_depth = rng.gen_range(0..max_depth + 2);
+                    let base_exact = rng.gen_range(0..max_depth + 5);
+                    let base_wld = rng.gen_range(0..max_depth + 5);
                     write!(args, "-l {} {} {} {} {} {}",
                            base_depth + rng.gen_range(0..3),
                            base_exact + rng.gen_range(0..3),
