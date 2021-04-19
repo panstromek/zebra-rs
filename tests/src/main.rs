@@ -289,7 +289,7 @@ fn main() {
         let coeffs_path_from_run_dir = "./../../coeffs2.bin";
         let book_path_from_run_dir = format!("./../../{}", book_path);
         // TODO somehow capture input so I have an easy reproducer?
-        println!("RUST_BACKTRACE=1  BOOK_PATH={} COEFFS_PATH={} ../../target/release/zebra {}", book_path_from_run_dir, coeffs_path_from_run_dir, arguments);
+        println!("RUST_BACKTRACE=1  BOOK_PATH={} COEFFS_PATH={} ../../test-target/release/zebra {}", book_path_from_run_dir, coeffs_path_from_run_dir, arguments);
         let success = snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir,
@@ -298,7 +298,7 @@ fn main() {
         if !success {
             continue;
         }
-        let binary_folder = "../../target/release/";
+        let binary_folder = "../../test-target/release/";
 
         let success = snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
@@ -333,7 +333,7 @@ fn main() {
             .arg("cargo-profdata -- merge -sparse ./tests/snapshot-tests/*/*/default.profraw ./fuzzer-data/cov/*.profraw  -o all-tests-with-fuzz.profdata")
             .output().unwrap();
         let coverage = Command::new("cargo")
-            .args("cov -- report target/release/zebra -instr-profile all-tests-with-fuzz.profdata -ignore-filename-regex /home/matyas/.cargo/".split_whitespace())
+            .args("cov -- report test-target/release/zebra -instr-profile all-tests-with-fuzz.profdata -ignore-filename-regex /home/matyas/.cargo/".split_whitespace())
             .output().unwrap().stdout;
         std::str::from_utf8(&coverage)
             .unwrap()
@@ -622,7 +622,7 @@ mod tests {
     fn snapshot_test(binary: &str, arguments: &str, snapshot_test_dir: &str, with_adjust: bool, interactive: Interactive) {
         let binary_folder =
             // "./../../../../../zebra-1/"
-            "./../../../../target/release/"
+            "./../../../../test-target/release/"
             // "./../../../../../bisection/target/release/"
             ;
         let coeffs_path_from_run_dir = "./../../../../coeffs2.bin" ;
