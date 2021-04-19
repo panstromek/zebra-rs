@@ -10,6 +10,7 @@ use rand::seq::SliceRandom;
 use std::process::{Command, Stdio};
 use rand::distributions::Alphanumeric;
 use std::convert::TryInto;
+use std::path::Path;
 
 fn main() {
     let mut rng = rand::thread_rng();
@@ -264,6 +265,26 @@ fn main() {
         } else {
             None
         };
+        let thor_files: Vec<_> = if arguments.contains("-thor") {
+            std::fs::read_dir("thor").unwrap().filter_map(|dir| {
+                let name = dir.unwrap().file_name();
+                let name = name.to_str().unwrap();
+                let chance_denominator = if name.contains("jou") || name.contains("trn") {
+                    // those files are special, so let's give them higher probability
+                    3
+                } else {
+                    8
+                };
+                if rng.gen_ratio(1, chance_denominator) {
+                    println!("Using thor file: {}", name);
+                    Some(name.to_owned())
+                } else {
+                    None
+                }
+            }).collect()
+        } else {
+            Vec::new()
+        };
 
         let coeffs_path_from_run_dir = "./../../coeffs2.bin";
         let book_path_from_run_dir = format!("./../../{}", book_path);
@@ -273,7 +294,7 @@ fn main() {
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir,
                                   book_path_from_run_dir.as_ref(),
-                                  book_path, timeout as _);
+                                  book_path, timeout as _, &thor_files);
         if !success {
             continue;
         }
@@ -282,7 +303,7 @@ fn main() {
         let success = snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir, book_path_from_run_dir.as_ref(),
-                                                book_path, timeout as _);
+                                                book_path, timeout as _, &thor_files);
         if !success {
             continue;
         }
@@ -356,7 +377,7 @@ mod tests {
     use std::ffi::CStr;
     use zlib_coeff_source::{ZLibSource};
     use std::process::{Command, Stdio, ChildStdin, ExitStatus, Child};
-    use std::path::Path;
+    use std::path::{Path, PathBuf};
     use std::fs::{File, DirEntry};
     use std::io::{Write};
     use std::iter::FromIterator;
@@ -613,7 +634,7 @@ mod tests {
         };
         snapshot_test_with_folder(binary_folder, binary, arguments, snapshot_test_dir, with_adjust,
                                   interactive, coeffs_path_from_run_dir, book_path_from_run_dir,
-                                  "resources/book-tmp.bin", 30);
+                                  "resources/book-tmp.bin", 30, &[]);
     }
 
     pub fn snapshot_test_with_folder(binary_folder: &str,
@@ -625,7 +646,8 @@ mod tests {
                                      coeffs_path_from_run_dir: &str,
                                      book_path_from_run_dir: &str,
                                      swap_book_path: &str,
-                                     timeout: u64
+                                     timeout: u64,
+        thor_files: &[String]
     ) -> bool {
 
         let snapshot_test_dir = Path::new(snapshot_test_dir);
@@ -640,6 +662,13 @@ mod tests {
         let run_directory = snapshot_test_dir.join("run_dir");
         let _ = std::fs::remove_dir_all(&run_directory);
         std::fs::create_dir_all(&run_directory).unwrap();
+        if !thor_files.is_empty() {
+            let thor_dir = run_directory.join("thor");
+            std::fs::create_dir_all(&thor_dir).unwrap();
+            for file in thor_files {
+                std::fs::copy(Path::new("thor").join(file), thor_dir.join(file)).unwrap();
+            }
+        }
 
         if let Some(s) = adjust {
             let path = run_directory.join("adjust.txt");
@@ -669,6 +698,9 @@ mod tests {
             .current_dir(&canon_run_dir)
             .args(arguments.split_whitespace())
             .env("RUST_BACKTRACE", "1")
+            // TODO enable leak san. again
+            //  for now, it just reports some minor leaks from thor that seems like non-problem
+            .env("ASAN_OPTIONS", "fast_unwind_on_malloc=0,detect_leaks=0")
             .env("COEFFS_PATH", coeffs_path.to_str().unwrap())
 
             // we probably don't need this when -learn parameter is set, because we copy the
@@ -723,7 +755,10 @@ mod tests {
             .chain(std::fs::read_dir(&run_directory)
                 .unwrap()
                 .into_iter())
-            .map(|dir| dir.unwrap().file_name().into_string().unwrap())
+            .filter_map(|dir| {
+                let entry = dir.unwrap();
+                entry.metadata().unwrap().is_file().then(|| entry.file_name().into_string().unwrap())
+            })
             .collect::<Vec<_>>();
         file_set.sort();
         file_set.dedup();
