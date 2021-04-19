@@ -1,6 +1,9 @@
 ./zebra.log
 .idea
 target
+test-target
+fuzzer
+fuzzer-data
 ./current.gam
 ./current.mov
 /booktool/zebra.err
