@@ -582,21 +582,17 @@ mod tests {
             let _ = input.flush();
         });
     }
-    fn interact_basically(until: SystemTime, input: &mut ChildStdin) {
-        let mut move_buf = String::with_capacity(3);
+    fn interact_basically(until: SystemTime, input: &mut ChildStdin, mut record_file: File) {
         loop {
             let mut written = 0;
-            // TODO this is very dumb, we should prerecord some games and test them directly
-            for char in 'a'..='h' {
-                for num in '1'..='8' {
+            for char in b'a'..=b'h' {
+                for num in b'1'..=b'8' {
                     if std::time::SystemTime::now() > until {
-                        return
+                        return;
                     }
-                    move_buf.truncate(0);
-                    move_buf.push(char);
-                    move_buf.push(num);
-                    move_buf.push('\n');
-                    written = input.write(move_buf.as_ref()).unwrap_or(0);
+                    let move_ = &[char, num, b'\n'];
+                    written = input.write(move_).unwrap_or(0);
+                    record_file.write(move_).unwrap_or(0);
                     let _ = input.flush();
                     if written == 0 {
                         break;
@@ -609,9 +605,8 @@ mod tests {
             if written == 0 {
                 break;
             }
-            move_buf.truncate(0);
-            move_buf.push('\n'); // try pass
-            written = input.write(move_buf.as_ref()).unwrap_or(0);
+            written = input.write(&[b'\n']).unwrap_or(0);
+            record_file.write(&[b'\n']).unwrap_or(0);
             let _ = input.flush();
             if written == 0 {
                 break;
@@ -713,20 +708,21 @@ mod tests {
             .unwrap();
         let start = std::time::SystemTime::now();
         let end = start.add(Duration::from_secs(timeout));
-        match interactive {
+        let t = match interactive {
             Interactive::Dumb => {
                 let mut input = child.stdin.take().unwrap();
-
-                std::thread::spawn(move || {
-                    interact_basically(end, &mut input);
-                });
-            },
+                let stdin = File::create(canon_run_dir.join("zebra-stdin")).unwrap();
+                Some(std::thread::spawn(move || {
+                    interact_basically(end, &mut input, stdin);
+                }))
+            }
             Interactive::Practice => {
                 let mut input = child.stdin.take().unwrap();
                 interact_practice(&mut input);
+                None
             }
-            _ => {}
-        }
+            _ => None,
+        };
         let remaining = Duration::from_secs(timeout)
             .checked_sub(std::time::SystemTime::now().duration_since(start).unwrap_or(Duration::from_secs(0)))
             .unwrap_or(Duration::from_secs(0));
@@ -741,7 +737,9 @@ mod tests {
                 child.kill().unwrap();
                 println!("Kill sent");
                 child.wait().unwrap();
-                println!("Killed");
+                println!("Killed, waiting for input thread to end");
+                t.map(|t| t.join().unwrap());
+                println!("Thread ended");
                 return false;
             }
         };
@@ -763,13 +761,14 @@ mod tests {
         file_set.sort();
         file_set.dedup();
         for file in file_set {
-            if file == "default.profraw" {
-                continue; // ignore coverage data
+            if file == "default.profraw" || file == "zebra-stdin" {
+                continue; // ignore coverage data and stdin snapshot
             }
             assert_snapshot(
                 snapshots_dir.join(&file).as_ref(),
                 run_directory.join(&file).as_ref());
         }
+        t.map(|t| t.join().unwrap());
         true
     }
 
