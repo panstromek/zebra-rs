@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use std::fs::File;
+use std::fs::{File, ReadDir};
 use crate::tests::{snapshot_test_with_folder, Interactive};
 use rand::Rng;
 use std::fmt::Write;
@@ -11,15 +11,13 @@ use std::process::{Command, Stdio};
 use rand::distributions::Alphanumeric;
 use std::convert::TryInto;
 use std::path::Path;
+use std::fs;
 
 fn main() {
+    let fuzz_dir = Path::new("fuzzer");
+    let mut case = fs::read_dir(fuzz_dir).map(ReadDir::count).unwrap_or(0);
     let mut rng = rand::thread_rng();
-    let mut boards = VecDeque::new();
-    let mut sequences = VecDeque::new();
-    std::fs::remove_dir_all("./fuzzer-data/cov/");
-    std::fs::create_dir_all("./fuzzer-data/cov/");
     std::fs::create_dir_all("./fuzzer-data/books/");
-    let mut i = 0usize;
     let mut book_i = 0usize;
     let mut used_filenames: Vec<String> = Vec::new();
     let mut books: Vec<_> = std::fs::read_dir("./fuzzer-data/books/")
@@ -28,37 +26,16 @@ fn main() {
         .map(|item| format!("fuzzer-data/books/{}", item.unwrap().file_name().to_str().unwrap()))
         .chain(std::iter::once(String::from("tests/resources/book-tmp.bin")))
         .collect();
-    book_i = books.len();
     let mut timeout = 1i32;
     let mut last_coverage_line = String::from("");
     let mut last_coverage_not_changed = 0u64;
     loop {
-        if let Ok(file) = std::fs::read_to_string("fuzzer/run_dir/current.gam") {
-            boards.push_back(file);
-            if boards.len() > 10 {
-                boards.pop_front();
-            }
-        }
-        if let Ok(file) = std::fs::read_to_string("fuzzer/run_dir/current.mov") {
-            let file = file.split_whitespace().filter_map(|item| {
-                let first = *item.as_bytes().get(0)?;
-                let second = *item.as_bytes().get(1)?;
-                match (item.len(), first, second) {
-                    (2, b'a'..=b'h', b'1'..=b'8') => {
-                        Some(item)
-                    }
-                    _ => None
-                }
+        let case_dir = fuzz_dir.join(case.to_string());
+        std::fs::remove_dir_all(&case_dir);
+        let run_dir = case_dir.join("run_dir");
 
-            }).collect::<String>();
-            sequences.push_back(file);
-            if sequences.len() > 10 {
-                sequences.pop_front();
-            }
-        }
-
-        std::fs::remove_dir_all("fuzzer");
-        let binary_folder = "../../../zebra-1/";
+        fs::create_dir_all(&case_dir);
+        let binary_folder = "../../../../zebra-1/";
         let binary = "zebra";
         let mut args = String::new();
         let interactive = match rng.gen_range::<i32, _>(0..6) {
@@ -188,24 +165,29 @@ fn main() {
                         board_file.push_str("Black to move");
                     }
                     board_file.push_str("\nThis file was automatically generated\n");
-
-                    // TODO don't override so I have a reproducer
-                    std::fs::write("fuzzer-data/board-fuzzer-1",board_file ).unwrap();
-                    write!(s, "-g ../../fuzzer-data/board-fuzzer-1");
-                } else if boards.is_empty() {
-                    write!(s, "-g ../../tests/resources/board.txt");
+                    std::fs::write(case_dir.join("board.txt"),board_file ).unwrap();
+                    write!(s, "-g ../board.txt");
                 } else {
-                    let string = &boards[rng.gen_range(0..boards.len())];
-                    // TODO don't override so I have a reproducer
-                    std::fs::write("fuzzer-data/board-fuzzer-1",string ).unwrap();
-                    write!(s, "-g ../../fuzzer-data/board-fuzzer-1");
+                    loop {
+                        let case_board_to_steal = rng.gen_range(0..case + 1);
+                        if case_board_to_steal == case {
+                            write!(s, "-g ../../../tests/resources/board.txt");
+                            break;
+                        }
+                        let mut origin_board_path = fuzz_dir.join(case_board_to_steal.to_string());
+                        origin_board_path.push("run_dir/current.gam");
+                        if let Ok(_) = fs::copy(origin_board_path, case_dir.join("board.txt")) {
+                            write!(s, "-g ../board.txt");
+                            break;
+                        };
+                    }
                 }
             })),
             // TODO test more randomly generated games
             (6, &(|s, rng| {
-                let seq = new_seq(&sequences, rng);
+                let seq = new_seq( rng,fuzz_dir, case);
                 s.push_str("-seq ");
-                s.push_str(seq);
+                s.push_str(&seq);
             })),
             (8, &(|s, rng| {
                 write!(s, "-time {} {} {} {}",
@@ -216,11 +198,9 @@ fn main() {
                 );
             })),
             (6, &(|s, rng| {
-                let seq = new_seq(&sequences, rng);
-                std::fs::create_dir_all("fuzzer-data").unwrap();
-                // TODO don't override so I have a reproducer
-                std::fs::write("fuzzer-data/seqfile-fuzzer-1", seq).unwrap();
-                write!(s, "-seqfile ../../fuzzer-data/board-fuzzer-1");
+                let seq = new_seq(rng, fuzz_dir, case);
+                std::fs::write(case_dir.join("seq.txt"), seq).unwrap();
+                write!(s, "-seqfile ../seq.txt");
             })),
             (8, &(|s, rng| {
                 s.push_str("-log ");
@@ -287,33 +267,41 @@ fn main() {
             Vec::new()
         };
 
-        let coeffs_path_from_run_dir = "./../../coeffs2.bin";
-        let book_path_from_run_dir = format!("./../../{}", book_path);
-        // TODO somehow capture input so I have an easy reproducer?
-        println!("RUST_BACKTRACE=1  BOOK_PATH={} COEFFS_PATH={} ../../test-target/release/zebra {}", book_path_from_run_dir, coeffs_path_from_run_dir, arguments);
-        let success = snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
+        let coeffs_path_from_run_dir = "./../../../coeffs2.bin";
+        let book_path_from_run_dir = format!("./../../../{}", book_path);
+
+        let command = format!("RUST_BACKTRACE=1  BOOK_PATH={} COEFFS_PATH={} ../../../test-target/release/zebra {}", book_path_from_run_dir, coeffs_path_from_run_dir, arguments);
+        std::fs::write(case_dir.join("command.txt"), &command);
+        println!("{}", &command);
+
+        std::fs::write(case_dir.join("failing"), "");
+        let success = snapshot_test_with_folder(binary_folder, binary, arguments, &case_dir,
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir,
                                   book_path_from_run_dir.as_ref(),
                                   book_path, timeout as _, &thor_files);
         if !success {
+            std::fs::remove_file(case_dir.join("failing"));
+            std::fs::write(case_dir.join("timeout"), "");
             continue;
         }
-        let binary_folder = "../../test-target/release/";
+        let binary_folder = "../../../test-target/release/";
 
-        let success = snapshot_test_with_folder(binary_folder, binary, arguments, "fuzzer",
+        let success = snapshot_test_with_folder(binary_folder, binary, arguments, &case_dir,
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir, book_path_from_run_dir.as_ref(),
                                                 book_path, timeout as _, &thor_files);
+        std::fs::remove_file(case_dir.join("failing"));
         if !success {
+            std::fs::write(case_dir.join("timeout"), "");
             continue;
         }
-        std::fs::read_dir("fuzzer/run_dir").unwrap().for_each(|dir| {
+        std::fs::read_dir(&run_dir).unwrap().for_each(|dir| {
             let name = dir.unwrap().file_name().to_str().unwrap().into();
             if name == "book.bin" {
                 book_i += 1;
                 let new_path = format!("./fuzzer-data/books/book-{}.bin", book_i);
-                std::fs::copy("fuzzer/run_dir/book.bin", &new_path).unwrap();
+                std::fs::copy(run_dir.join("book.bin"), &new_path).unwrap();
                 books.push(new_path);
             }
             if name == "default.profraw" {
@@ -324,14 +312,11 @@ fn main() {
         used_filenames.sort();
         used_filenames.dedup();
 
-        i+=1;
-
-        std::fs::copy("fuzzer/run_dir/default.profraw", &format!("./fuzzer-data/cov/{}.profraw", i));
         std::fs::remove_file("all-tests-with-fuzz.profdata");
 
         Command::new("bash") //
             .arg("-c")
-            .arg("cargo-profdata -- merge -sparse ./tests/snapshot-tests/*/*/default.profraw ./fuzzer-data/cov/*.profraw  -o all-tests-with-fuzz.profdata")
+            .arg("cargo-profdata -- merge -sparse ./tests/snapshot-tests/*/*/default.profraw ./fuzzer/*/run_dir/*.profraw  -o all-tests-with-fuzz.profdata")
             .output().unwrap();
         let coverage = Command::new("cargo")
             .args("cov -- report test-target/release/zebra -instr-profile all-tests-with-fuzz.profdata -ignore-filename-regex /home/matyas/.cargo/".split_whitespace())
@@ -356,21 +341,37 @@ fn main() {
                     println!("{}", line);
                 }
 
-            })
-
+            });
+        case += 1;
     }
 
 }
 
-fn new_seq<'a>(sequences: &'a VecDeque<String>, rng: &mut ThreadRng) -> &'a str {
-    let arg = if sequences.is_empty() {
-        "e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1"
-    } else {
-        &sequences[rng.gen_range(0..sequences.len())]
+fn new_seq(rng: &mut ThreadRng, fuzz_dir: &Path, case: usize) -> String {
+    let mut arg = loop {
+        let seq_to_steal = rng.gen_range(0..case + 1);
+        if seq_to_steal == case {
+            break String::from("e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1");
+        }
+        let mut move_path = fuzz_dir.join(seq_to_steal.to_string());
+        move_path.push("run_dir/current.mov");
+        if let Ok(file) = fs::read_to_string(move_path) {
+            let file = file.split_whitespace().filter_map(|item| {
+                let first = *item.as_bytes().get(0)?;
+                let second = *item.as_bytes().get(1)?;
+                match (item.len(), first, second) {
+                    (2, b'a'..=b'h', b'1'..=b'8') => {
+                        Some(item)
+                    }
+                    _ => None
+                }
+            }).collect::<String>();
+            break file;
+        };
     };
     let slice_to = if arg.len() == 0 { 0 } else { rng.gen_range(0..arg.len()) };
-    let seq = &arg[0..slice_to];
-    seq
+    arg.truncate(slice_to);
+    arg
 }
 
 mod tests {
@@ -628,7 +629,7 @@ mod tests {
         } else {
             None
         };
-        snapshot_test_with_folder(binary_folder, binary, arguments, snapshot_test_dir, with_adjust,
+        snapshot_test_with_folder(binary_folder, binary, arguments, Path::new(snapshot_test_dir), with_adjust,
                                   interactive, coeffs_path_from_run_dir, book_path_from_run_dir,
                                   "resources/book-tmp.bin", 30, &[]);
     }
@@ -636,7 +637,7 @@ mod tests {
     pub fn snapshot_test_with_folder(binary_folder: &str,
                                      binary: &str,
                                      arguments: &str,
-                                     snapshot_test_dir: &str,
+                                     snapshot_test_dir: &Path,
                                      adjust: Option<&str>,
                                      interactive: Interactive,
                                      coeffs_path_from_run_dir: &str,
