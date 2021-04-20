@@ -11,8 +11,39 @@ use std::process::{Command, Stdio};
 use rand::distributions::Alphanumeric;
 use std::convert::TryInto;
 use std::path::Path;
+use std::thread;
+use std::any::Any;
+use std::time::SystemTime;
 
 fn main() {
+    let num_threads = 8;
+    (0..num_threads)
+        .map(|num| thread::spawn(move || {
+            let mut num = num;
+            loop {
+                let name = format!("thread_{}", num);
+                match thread::Builder::new()
+                    .name(name)
+                    .spawn(move || {
+                        fuzz_thread(&thread::current().name().unwrap())
+                    })
+                    .unwrap()
+                    .join() {
+                    Ok(_) => { println!("thread {} exited.", num) }
+                    Err(e) => { println!("thread {} join failed", num) }
+                };
+                // increment number to leave the folder in reproduced state an go on
+                num += num_threads;
+            }
+        }))
+        .collect::<Vec<_>>()
+        .into_iter()
+        .for_each(|thread| { thread.join().unwrap(); });
+}
+fn fuzz_thread(name: &str) {
+    let dir = Path::new(name);
+    std::fs::create_dir_all(dir).unwrap();
+
     let mut rng = rand::thread_rng();
     let mut boards = VecDeque::new();
     let mut sequences = VecDeque::new();
@@ -33,6 +64,7 @@ fn main() {
     let mut last_coverage_line = String::from("");
     let mut last_coverage_not_changed = 0u64;
     loop {
+        // Cleanup previous case and save data from it
         if let Ok(file) = std::fs::read_to_string("fuzzer/run_dir/current.gam") {
             boards.push_back(file);
             if boards.len() > 10 {
@@ -323,8 +355,6 @@ fn main() {
         });
         used_filenames.sort();
         used_filenames.dedup();
-
-        i+=1;
 
         std::fs::copy("fuzzer/run_dir/default.profraw", &format!("./fuzzer-data/cov/{}.profraw", i));
         std::fs::remove_file("all-tests-with-fuzz.profdata");
