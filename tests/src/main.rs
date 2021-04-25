@@ -367,24 +367,25 @@ fn test_case_coverage() {
         profile: &'a str,
         covered_regions: i32
     }
-    fn case_coverage<'a>(case: &'a str, dir: &str, report: &mut dyn Write) -> Case<'a> {
-        let arg = format!("cargo-profdata -- merge -sparse -num-threads=1 {}  -o {dir}case.profdata && \
-        cargo cov -- report test-target/release/zebra -instr-profile {dir}case.profdata -ignore-filename-regex /home/matyas/.cargo/", case, dir = dir);
-
-        let coverage_file_name = "case-coverage.txt";
-        let coverage_file_path = Path::new(dir).join(coverage_file_name);
+    fn case_coverage<'a>(case: &'a str, dir: &str, report: &mut dyn Write, use_cache: bool) -> Case<'a> {
+        let coverage_file_path = Path::new(dir).join("case-coverage.txt");
 
         use std::fmt::Write;
-        let case_coverage = if let Ok(file) = fs::read_to_string(&coverage_file_path) {
+        let case_coverage = if let Some(file) = use_cache.then(|| fs::read_to_string(&coverage_file_path).ok()).flatten()  {
             writeln!(report, "loading already computed coverage for case: {}" ,case);
             file
         } else {
             writeln!(report, "Computing new coverage for case: {}" ,case);
+            let arg = format!("cargo-profdata -- merge -sparse -num-threads=1 {}  -o {dir}case.profdata && \
+        cargo cov -- report test-target/release/zebra -instr-profile {dir}case.profdata -ignore-filename-regex /home/matyas/.cargo/", case, dir = dir);
+
             let cov = String::from_utf8(            Command::new("bash")
                 .arg("-c")
                 .arg(arg)
                 .output().unwrap().stdout).unwrap();
-            std::fs::write(&coverage_file_path, &cov).unwrap();
+            if use_cache {
+                std::fs::write(&coverage_file_path, &cov).unwrap();
+            }
             cov
         };
 
@@ -394,7 +395,8 @@ fn test_case_coverage() {
             .find_map(|line| {
                 if line.starts_with("TOTAL") {
                     write!(report, "{}\n", line);
-                    let mut split = line.split_whitespace().skip(1);
+                    let mut split = line.split_whitespace();
+                    let filename = split.next().unwrap();
                     let total_regions: i32 = split.next().unwrap().parse().unwrap();
                     let missing_regions: i32 = split.next().unwrap().parse().unwrap();
                     let covered_regions = total_regions - missing_regions;
@@ -415,7 +417,7 @@ fn test_case_coverage() {
         .map(|case| {
             let dir = case.strip_suffix("run_dir/default.profraw").unwrap();
             let mut out = String::new();
-            let coverage = case_coverage(case, dir, &mut out);
+            let coverage = case_coverage(case, dir, &mut out, true);
             println!("{}", out);
             coverage
         })
@@ -430,7 +432,7 @@ fn test_case_coverage() {
 
     let mut report = String::new();
     let all_cases_coverage = case_coverage("./tests/snapshot-tests/*/run_dir/default.profraw ./fuzzer/*/run_dir/*.profraw",
-                                           base_test_case_dir, &mut report);
+                                           base_test_case_dir, &mut report, false);
     println!("{}", report);
     let mut winners = vec![&cases[0]];
     let mut winners_coverage = winners[0].covered_regions;
@@ -444,7 +446,8 @@ fn test_case_coverage() {
             case_coverage(
                 &format!("{} {}", considered[0].profile, considered[0].profile),
                 "test-case-finder/current/_0/",
-                &mut rep
+                &mut rep,
+                    false
             ).covered_regions
         ));
         println!("{}", rep);
@@ -470,14 +473,14 @@ fn test_case_coverage() {
             }
             // TODO don't do this in every iteration (we can just concat winners once and than add)
             let combined_case = winners.iter()
-                .map(|c| c.profile)
-                .chain(std::iter::once(case.profile))
+                .chain(std::iter::once(&case))
+                .map(|c| c.profile.replace("run_dir/default.profraw", "case.profdata"))
                 .collect::<Vec<_>>()
                 .join(" ")
                 ;
             let dir = format!("test-case-finder/current/{}/", i);
             std::fs::create_dir_all(&dir);
-            let current_case = case_coverage(&combined_case, &dir, &mut report.0);
+            let current_case = case_coverage(&combined_case, &dir, &mut report.0, false);
 
             // let's first check the value of coverage_with_candidate
             // we have read at the begining of the loop
