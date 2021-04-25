@@ -12,8 +12,16 @@ use rand::distributions::Alphanumeric;
 use std::convert::TryInto;
 use std::path::Path;
 use std::fs;
+use std::env::args;
+use std::ops::{Deref, DerefMut};
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 fn main() {
+    if args().any(|arg| arg == "--cov") {
+        println!("Computing test case coverage");
+        test_case_coverage();
+        return;
+    }
     let fuzz_dir = Path::new("fuzzer");
     let mut case = fs::read_dir(fuzz_dir).map(ReadDir::count).unwrap_or(0);
     let mut rng = rand::thread_rng();
@@ -346,6 +354,199 @@ fn main() {
     }
 
 }
+fn test_case_coverage() {
+    let cases = Command::new("bash")
+        .arg("-c")
+        .arg("echo ./tests/snapshot-tests/*/run_dir/default.profraw ./fuzzer/*/run_dir/*.profraw")
+        .output()
+        .unwrap()
+        .stdout
+        ;
+    #[derive(Debug, Copy, Clone)]
+    struct Case<'a> {
+        profile: &'a str,
+        covered_regions: i32
+    }
+    fn case_coverage<'a>(case: &'a str, dir: &str) -> Case<'a> {
+        let arg = format!("cargo-profdata -- merge -sparse -num-threads=1 {}  -o {dir}case.profdata && \
+        cargo cov -- report test-target/release/zebra -instr-profile {dir}case.profdata -ignore-filename-regex /home/matyas/.cargo/", case, dir = dir);
+
+        let coverage_file_name = "case-coverage.txt";
+        let coverage_file_path = Path::new(dir).join(coverage_file_name);
+        let case_coverage = if let Ok(file) = fs::read_to_string(&coverage_file_path) {
+            println!("loading already computed coverage for case: {}" ,case);
+            file
+        } else {
+            println!("Computing new coverage for case: {}" ,case);
+            let cov = String::from_utf8(            Command::new("bash")
+                .arg("-c")
+                .arg(arg)
+                .output().unwrap().stdout).unwrap();
+            std::fs::write(&coverage_file_path, &cov).unwrap();
+            cov
+        };
+
+
+        return case_coverage
+            .lines()
+            .find_map(|line| {
+                if line.starts_with("TOTAL") {
+                    println!("{}\n", line);
+                    let mut split = line.split_whitespace().skip(1);
+                    let total_regions: i32 = split.next().unwrap().parse().unwrap();
+                    let missing_regions: i32 = split.next().unwrap().parse().unwrap();
+                    let covered_regions = total_regions - missing_regions;
+                    // TOTAL                                        7590              4357    42.60%         729               393    46.09%       29060             19824    31.78%           0                 0         -
+                    return Some(Case {
+                        profile: case,
+                        covered_regions
+                    })
+                }
+                None
+            }).unwrap();
+    }
+    use rayon::prelude::*;
+    let all_cases = String::from_utf8(cases).unwrap();
+    let mut cases = all_cases
+        .split_whitespace()
+        .par_bridge()
+        .map(|case| {
+            let dir = case.strip_suffix("run_dir/default.profraw").unwrap();
+            case_coverage(case, dir)
+        })
+        .collect::<Vec<Case>>();
+    cases.sort_unstable_by_key(|case| -case.covered_regions);
+
+    println!("{:?}", cases);
+
+    let base_test_case_dir = "test-case-finder/base/";
+    std::fs::create_dir_all(base_test_case_dir);
+    std::fs::create_dir_all("test-case-finder/current/");
+
+    let all_cases_coverage = case_coverage("./tests/snapshot-tests/*/run_dir/default.profraw ./fuzzer/*/run_dir/*.profraw", base_test_case_dir);
+    let mut winners = vec![&cases[0]];
+    let mut winners_coverage = winners[0].covered_regions;
+
+    let mut considered :Vec<_>= cases.iter().skip(1).collect();
+    loop {
+        std::fs::create_dir("test-case-finder/current/_0/");
+        let candidate = std::sync::RwLock::new((
+            considered[0],
+            case_coverage(
+                &format!("{} {}", considered[0].profile, considered[0].profile),
+                "test-case-finder/current/_0/",
+            ).covered_regions
+        ));
+        std::fs::remove_dir_all("test-case-finder/current/");
+
+        let it: rayon::vec::IntoIter<_> = considered.into_par_iter();
+        considered = it.enumerate().filter_map(|(i, case)| {
+            let guard = candidate.read().unwrap();
+            let coverage_with_candidate = guard.1;
+            drop(guard);
+            // TODO track increment in last round instead
+            //  also return early if we get the same increment as the biggest or second biggest
+            //  last time - that will prevent long tail problem when we all tests just add
+            //  a single region
+            if winners_coverage + case.covered_regions <= coverage_with_candidate {
+                // We can do more elaborate checking if we parse all fields of the coverage
+                // and skip computing the coverage in all cases
+                println!("skipping case for current iteration because it can't add more regions than candidate.");
+                return Some(case);
+            }
+            // TODO don't do this in every iteration (we can just concat winners once and than add)
+            let combined_case = winners.iter()
+                .map(|c| c.profile)
+                .chain(std::iter::once(case.profile))
+                .collect::<Vec<_>>()
+                .join(" ")
+                ;
+            let dir = format!("test-case-finder/current/{}/", i);
+            std::fs::create_dir_all(&dir);
+            let current_case = case_coverage(&combined_case, &dir);
+
+            // let's first check the value of coverage_with_candidate
+            // we have read at the begining of the loop
+            // it might have changed in the meantime, but it can only increase,
+            // so if this if fails, we know it will fail for the new value too and
+            // we don't need to lock to read the new value
+            if current_case.covered_regions > coverage_with_candidate {
+                let mut guard = candidate.write().unwrap();
+                let (previous_candidate, coverage_with_candidate) = guard.deref_mut();
+                if current_case.covered_regions > *coverage_with_candidate {
+                    *previous_candidate = &case;
+                    *coverage_with_candidate = current_case.covered_regions;
+                    return Some(case);
+                }
+                drop(guard);
+            }
+
+            if current_case.covered_regions <= winners_coverage {
+                return None;
+            }
+            return Some(case);
+        }).collect();
+        let (previous_candidate, coverage_with_candidate) = candidate.into_inner().unwrap();
+        winners.push(previous_candidate);
+        winners_coverage = coverage_with_candidate;
+        if considered.is_empty() {
+            //TODO at the end, this is not hit and we just keep cycling - what's the deal with that?
+            break;
+        };
+    }
+    println!("winners {:?}", winners)
+}
+//
+//./fuzzer/1638/run_dir/default.profraw
+//./fuzzer/2934/run_dir/default.profraw
+//./fuzzer/515/run_dir/default.profraw
+//./fuzzer/2796/run_dir/default.profraw
+//./fuzzer/1364/run_dir/default.profraw
+//./fuzzer/2230/run_dir/default.profraw
+//./fuzzer/770/run_dir/default.profraw
+//./fuzzer/1692/run_dir/default.profraw
+//./fuzzer/738/run_dir/default.profraw
+//./fuzzer/733/run_dir/default.profraw
+//./fuzzer/1936/run_dir/default.profraw
+//./fuzzer/1980/run_dir/default.profraw
+//./tests/snapshot-tests/practice-basic/run_dir/default.profraw
+//./fuzzer/76/run_dir/default.profraw
+//./fuzzer/1571/run_dir/default.profraw
+//./fuzzer/517/run_dir/default.profraw
+//./fuzzer/2575/run_dir/default.profraw
+//./fuzzer/2565/run_dir/default.profraw
+//./fuzzer/2773/run_dir/default.profraw
+//./fuzzer/1307/run_dir/default.profraw
+//./fuzzer/585/run_dir/default.profraw
+//./fuzzer/2668/run_dir/default.profraw
+//./fuzzer/2588/run_dir/default.profraw
+//./tests/snapshot-tests/seqfile_invalid-basic/run_dir/default.profraw
+//./fuzzer/988/run_dir/default.profraw
+//./fuzzer/2022/run_dir/default.profraw
+//./fuzzer/2317/run_dir/default.profraw
+//./fuzzer/2535/run_dir/default.profraw
+//./fuzzer/718/run_dir/default.profraw
+//./fuzzer/2778/run_dir/default.profraw
+//./fuzzer/1896/run_dir/default.profraw
+//./fuzzer/1371/run_dir/default.profraw
+//./fuzzer/251/run_dir/default.profraw
+//./fuzzer/1382/run_dir/default.profraw
+//./fuzzer/1455/run_dir/default.profraw
+//./tests/snapshot-tests/analyze_invalid-basic/run_dir/default.profraw
+//./fuzzer/3133/run_dir/default.profraw
+//./fuzzer/1963/run_dir/default.profraw
+//./fuzzer/15/run_dir/default.profraw
+//./fuzzer/545/run_dir/default.profraw
+//./fuzzer/2749/run_dir/default.profraw
+//./fuzzer/2118/run_dir/default.profraw
+//./fuzzer/1399/run_dir/default.profraw
+//./fuzzer/1168/run_dir/default.profraw
+//./fuzzer/1847/run_dir/default.profraw
+//./fuzzer/312/run_dir/default.profraw
+//./fuzzer/1160/run_dir/default.profraw
+//./fuzzer/981/run_dir/default.profraw
+//./tests/snapshot-tests/help-with-adjust/run_dir/default.profraw
+//./fuzzer/1989/run_dir/default.profraw
 
 fn new_seq(rng: &mut ThreadRng, fuzz_dir: &Path, case: usize) -> String {
     let mut arg = loop {
