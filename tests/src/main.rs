@@ -367,17 +367,19 @@ fn test_case_coverage() {
         profile: &'a str,
         covered_regions: i32
     }
-    fn case_coverage<'a>(case: &'a str, dir: &str) -> Case<'a> {
+    fn case_coverage<'a>(case: &'a str, dir: &str, report: &mut dyn Write) -> Case<'a> {
         let arg = format!("cargo-profdata -- merge -sparse -num-threads=1 {}  -o {dir}case.profdata && \
         cargo cov -- report test-target/release/zebra -instr-profile {dir}case.profdata -ignore-filename-regex /home/matyas/.cargo/", case, dir = dir);
 
         let coverage_file_name = "case-coverage.txt";
         let coverage_file_path = Path::new(dir).join(coverage_file_name);
+
+        use std::fmt::Write;
         let case_coverage = if let Ok(file) = fs::read_to_string(&coverage_file_path) {
-            println!("loading already computed coverage for case: {}" ,case);
+            writeln!(report, "loading already computed coverage for case: {}" ,case);
             file
         } else {
-            println!("Computing new coverage for case: {}" ,case);
+            writeln!(report, "Computing new coverage for case: {}" ,case);
             let cov = String::from_utf8(            Command::new("bash")
                 .arg("-c")
                 .arg(arg)
@@ -391,7 +393,7 @@ fn test_case_coverage() {
             .lines()
             .find_map(|line| {
                 if line.starts_with("TOTAL") {
-                    println!("{}\n", line);
+                    write!(report, "{}\n", line);
                     let mut split = line.split_whitespace().skip(1);
                     let total_regions: i32 = split.next().unwrap().parse().unwrap();
                     let missing_regions: i32 = split.next().unwrap().parse().unwrap();
@@ -412,7 +414,10 @@ fn test_case_coverage() {
         .par_bridge()
         .map(|case| {
             let dir = case.strip_suffix("run_dir/default.profraw").unwrap();
-            case_coverage(case, dir)
+            let mut out = String::new();
+            let coverage = case_coverage(case, dir, &mut out);
+            println!("{}", out);
+            coverage
         })
         .collect::<Vec<Case>>();
     cases.sort_unstable_by_key(|case| -case.covered_regions);
@@ -423,27 +428,36 @@ fn test_case_coverage() {
     std::fs::create_dir_all(base_test_case_dir);
     std::fs::create_dir_all("test-case-finder/current/");
 
-    let all_cases_coverage = case_coverage("./tests/snapshot-tests/*/run_dir/default.profraw ./fuzzer/*/run_dir/*.profraw", base_test_case_dir);
+    let mut report = String::new();
+    let all_cases_coverage = case_coverage("./tests/snapshot-tests/*/run_dir/default.profraw ./fuzzer/*/run_dir/*.profraw",
+                                           base_test_case_dir, &mut report);
+    println!("{}", report);
     let mut winners = vec![&cases[0]];
     let mut winners_coverage = winners[0].covered_regions;
 
     let mut considered :Vec<_>= cases.iter().skip(1).collect();
     loop {
         std::fs::create_dir("test-case-finder/current/_0/");
+        let mut rep = String::new();
         let candidate = std::sync::RwLock::new((
             considered[0],
             case_coverage(
                 &format!("{} {}", considered[0].profile, considered[0].profile),
                 "test-case-finder/current/_0/",
+                &mut rep
             ).covered_regions
         ));
+        println!("{}", rep);
         std::fs::remove_dir_all("test-case-finder/current/");
-
+        let considered_size = considered.len();
         let it: rayon::vec::IntoIter<_> = considered.into_par_iter();
         considered = it.enumerate().filter_map(|(i, case)| {
-            let guard = candidate.read().unwrap();
-            let coverage_with_candidate = guard.1;
-            drop(guard);
+            struct Report(String);
+            impl Drop for Report { fn drop(&mut self) { println!("{}", self.0) } }
+
+            let mut report = Report (format!("Testing {}/{}\n", i, considered_size));
+
+            let coverage_with_candidate = candidate.read().unwrap().1;
             // TODO track increment in last round instead
             //  also return early if we get the same increment as the biggest or second biggest
             //  last time - that will prevent long tail problem when we all tests just add
@@ -451,7 +465,7 @@ fn test_case_coverage() {
             if winners_coverage + case.covered_regions <= coverage_with_candidate {
                 // We can do more elaborate checking if we parse all fields of the coverage
                 // and skip computing the coverage in all cases
-                println!("skipping case for current iteration because it can't add more regions than candidate.");
+                report.0.push_str("Skipping case for current iteration because it can't add more regions than candidate.\n");
                 return Some(case);
             }
             // TODO don't do this in every iteration (we can just concat winners once and than add)
@@ -463,7 +477,7 @@ fn test_case_coverage() {
                 ;
             let dir = format!("test-case-finder/current/{}/", i);
             std::fs::create_dir_all(&dir);
-            let current_case = case_coverage(&combined_case, &dir);
+            let current_case = case_coverage(&combined_case, &dir, &mut report.0);
 
             // let's first check the value of coverage_with_candidate
             // we have read at the begining of the loop
@@ -478,10 +492,11 @@ fn test_case_coverage() {
                     *coverage_with_candidate = current_case.covered_regions;
                     return Some(case);
                 }
-                drop(guard);
             }
 
             if current_case.covered_regions <= winners_coverage {
+                use std::fmt::Write;
+                write!(report.0, "Excluding {}", i );
                 return None;
             }
             return Some(case);
