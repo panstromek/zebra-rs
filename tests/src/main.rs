@@ -15,6 +15,8 @@ use std::fs;
 use std::env::args;
 use std::ops::{Deref, DerefMut};
 use std::sync::atomic::{AtomicUsize, Ordering};
+use std::collections::HashMap;
+use std::sync::RwLock;
 
 fn main() {
     if args().any(|arg| arg == "--cov") {
@@ -362,12 +364,20 @@ fn test_case_coverage() {
         .unwrap()
         .stdout
         ;
-    #[derive(Debug, Copy, Clone)]
-    struct Case<'a> {
-        profile: &'a str,
+    #[derive(Debug, Clone)]
+    struct CoverageLine {
+        file_id: usize,
+        regions:i32,
         covered_regions: i32
     }
-    fn case_coverage<'a>(case: &'a str, dir: &str, report: &mut dyn Write, use_cache: bool) -> Case<'a> {
+    #[derive(Debug, Clone)]
+    struct Case {
+        profile: String,
+        total_covered_regions: i32,
+        coverage: Vec<CoverageLine>
+    }
+    let mut id_map = RwLock::new(HashMap::<String, usize>::new());
+    fn case_coverage(case: &str, dir: &str, report: &mut dyn Write, use_cache: bool, id_map: &RwLock<HashMap<String, usize>>) -> Case {
         let coverage_file_path = Path::new(dir).join("case-coverage.txt");
 
         use std::fmt::Write;
@@ -376,10 +386,11 @@ fn test_case_coverage() {
             file
         } else {
             writeln!(report, "Computing new coverage for case: {}" ,case);
+            // TODO --Xdemangler=rustfilt ?
             let arg = format!("cargo-profdata -- merge -sparse -num-threads=1 {}  -o {dir}case.profdata && \
         cargo cov -- report test-target/release/zebra -instr-profile {dir}case.profdata -ignore-filename-regex /home/matyas/.cargo/", case, dir = dir);
 
-            let cov = String::from_utf8(            Command::new("bash")
+            let cov = String::from_utf8(Command::new("bash")
                 .arg("-c")
                 .arg(arg)
                 .output().unwrap().stdout).unwrap();
@@ -389,25 +400,50 @@ fn test_case_coverage() {
             cov
         };
 
+        let mut total_covered_regions = 0;
 
-        return case_coverage
+        let mut coverage: Vec<_> = case_coverage
             .lines()
-            .find_map(|line| {
-                if line.starts_with("TOTAL") {
-                    write!(report, "{}\n", line);
-                    let mut split = line.split_whitespace();
-                    let filename = split.next().unwrap();
-                    let total_regions: i32 = split.next().unwrap().parse().unwrap();
-                    let missing_regions: i32 = split.next().unwrap().parse().unwrap();
-                    let covered_regions = total_regions - missing_regions;
-                    // TOTAL                                        7590              4357    42.60%         729               393    46.09%       29060             19824    31.78%           0                 0         -
-                    return Some(Case {
-                        profile: case,
-                        covered_regions
-                    })
+            .filter_map(|line| {
+                if line.starts_with("---") || line.starts_with("Filename") {
+                    return None;
                 }
-                None
-            }).unwrap();
+                let mut split = line.split_whitespace();
+                let filename = split.next().unwrap();
+                let total_regions: i32 = split.next().unwrap().parse().unwrap();
+                let missing_regions: i32 = split.next().unwrap().parse().unwrap();
+                let covered_regions = total_regions - missing_regions;
+                // TOTAL                                        7590              4357    42.60%         729               393    46.09%       29060             19824    31.78%           0                 0         -
+                if filename == "TOTAL" {
+                    write!(report, "{}\n", line);
+                    total_covered_regions = covered_regions;
+                    return None;
+                }
+                let option = id_map.read().unwrap().get(filename).cloned();
+                return Some(CoverageLine {
+                    file_id: option.unwrap_or_else(|| {
+                        let mut id_map = id_map.write().unwrap();
+                        // We need to check again, because someone else could add the value in
+                        // the meantime, because we only held read lock
+                        if let Some(v) = id_map.get(filename) {
+                            return *v;
+                        }
+                        let val = (id_map.len());
+                        id_map.insert(filename.to_owned(), val);
+                        val
+                    }),
+                    regions: total_regions,
+                    covered_regions,
+                })
+            }).collect();
+        coverage.sort_by_key(|c| c.file_id);
+        let computed_covered_regions = coverage.iter().map(|x| x.covered_regions).sum();
+        assert_eq!(total_covered_regions, computed_covered_regions);
+        Case {
+            profile: case.to_string(),
+            total_covered_regions,
+            coverage
+        }
     }
     use rayon::prelude::*;
     let all_cases = String::from_utf8(cases).unwrap();
@@ -417,14 +453,14 @@ fn test_case_coverage() {
         .map(|case| {
             let dir = case.strip_suffix("run_dir/default.profraw").unwrap();
             let mut out = String::new();
-            let coverage = case_coverage(case, dir, &mut out, true);
+            let coverage = case_coverage(case, dir, &mut out, true, &id_map);
             println!("{}", out);
             coverage
         })
         .collect::<Vec<Case>>();
-    cases.sort_unstable_by_key(|case| -case.covered_regions);
+    cases.sort_unstable_by_key(|case| -case.total_covered_regions);
 
-    println!("{:?}", cases);
+    // println!("{:?}", cases);
 
     let base_test_case_dir = "test-case-finder/base/";
     std::fs::create_dir_all(base_test_case_dir);
@@ -432,10 +468,10 @@ fn test_case_coverage() {
 
     let mut report = String::new();
     let all_cases_coverage = case_coverage("./tests/snapshot-tests/*/run_dir/default.profraw ./fuzzer/*/run_dir/*.profraw",
-                                           base_test_case_dir, &mut report, false);
+                                           base_test_case_dir, &mut report, false, &mut id_map);
     println!("{}", report);
     let mut winners = vec![&cases[0]];
-    let mut winners_coverage = winners[0].covered_regions;
+    let mut winners_coverage = winners[0].clone();
 
     let mut considered :Vec<_>= cases.iter().skip(1).collect();
     loop {
@@ -443,34 +479,51 @@ fn test_case_coverage() {
         let mut rep = String::new();
         let candidate = std::sync::RwLock::new((
             considered[0],
-            case_coverage(
-                &format!("{} {}", considered[0].profile, considered[0].profile),
-                "test-case-finder/current/_0/",
-                &mut rep,
-                    false
-            ).covered_regions
+            // FIXME this is incorrect, but this will be recalculated so it doesn't matter
+            considered[0].clone()
         ));
         println!("{}", rep);
         std::fs::remove_dir_all("test-case-finder/current/");
         let considered_size = considered.len();
-        let it: rayon::vec::IntoIter<_> = considered.into_par_iter();
-        considered = it.enumerate().filter_map(|(i, case)| {
+        considered = considered.into_iter().enumerate().par_bridge().filter_map(|(i, case)| {
             struct Report(String);
             impl Drop for Report { fn drop(&mut self) { println!("{}", self.0) } }
+            let mut report = Report (format!("Testing {}/{}: ", i, considered_size));
 
-            let mut report = Report (format!("Testing {}/{}\n", i, considered_size));
-
-            let coverage_with_candidate = candidate.read().unwrap().1;
+            let read_guard = candidate.read().unwrap();
+            let coverage_with_candidate = &read_guard.1;
             // TODO track increment in last round instead
             //  also return early if we get the same increment as the biggest or second biggest
             //  last time - that will prevent long tail problem when we all tests just add
             //  a single region
-            if winners_coverage + case.covered_regions <= coverage_with_candidate {
-                // We can do more elaborate checking if we parse all fields of the coverage
-                // and skip computing the coverage in all cases
-                report.0.push_str("Skipping case for current iteration because it can't add more regions than candidate.\n");
+            fn potential(winners: &Case, candidate: &Case, all_cases_coverage: &Case) -> i32 {
+                assert_eq!(winners.coverage.len(), candidate.coverage.len());
+                winners.coverage.iter()
+                    .zip(candidate.coverage.iter())
+                    .zip(all_cases_coverage.coverage.iter())
+                    .map(|((win, cand), all)| {
+                        assert_eq!(win.file_id, cand.file_id);
+                        assert_eq!(win.file_id, all.file_id);
+                        assert!(all.regions >= cand.regions);
+                        assert!(all.regions >= win.regions);
+
+                        let remaining_regions_to_cover = all.regions - win.covered_regions;
+                        let potential_addition = (remaining_regions_to_cover).min(cand.covered_regions);
+                        potential_addition
+                    }).sum()
+            }
+
+            if winners_coverage.total_covered_regions + case.total_covered_regions <= coverage_with_candidate.total_covered_regions
+                || winners_coverage.total_covered_regions + potential(&winners_coverage, &case, &all_cases_coverage) <= coverage_with_candidate.total_covered_regions
+            {
+                report.0.push_str("Skipping case for current iteration because it can't add more regions than candidate.");
                 return Some(case);
             }
+
+
+            report.0.push_str("\n");
+            let coverage_with_candidate = read_guard.1.total_covered_regions; // TODO use the computed potential
+            drop(read_guard);
             // TODO don't do this in every iteration (we can just concat winners once and than add)
             let combined_case = winners.iter()
                 .chain(std::iter::once(&case))
@@ -480,39 +533,44 @@ fn test_case_coverage() {
                 ;
             let dir = format!("test-case-finder/current/{}/", i);
             std::fs::create_dir_all(&dir);
-            let current_case = case_coverage(&combined_case, &dir, &mut report.0, false);
+            let current_case = case_coverage(&combined_case, &dir, &mut report.0, false, &id_map);
 
             // let's first check the value of coverage_with_candidate
             // we have read at the begining of the loop
             // it might have changed in the meantime, but it can only increase,
             // so if this if fails, we know it will fail for the new value too and
             // we don't need to lock to read the new value
-            if current_case.covered_regions > coverage_with_candidate {
+            if current_case.total_covered_regions > coverage_with_candidate {
                 let mut guard = candidate.write().unwrap();
-                let (previous_candidate, coverage_with_candidate) = guard.deref_mut();
-                if current_case.covered_regions > *coverage_with_candidate {
-                    *previous_candidate = &case;
-                    *coverage_with_candidate = current_case.covered_regions;
+                let (candidate_case, coverage_with_candidate) = guard.deref_mut();
+                if current_case.total_covered_regions > coverage_with_candidate.total_covered_regions {
+                    *candidate_case = &case;
+                    *coverage_with_candidate = current_case;
                     return Some(case);
                 }
             }
 
-            if current_case.covered_regions <= winners_coverage {
+            if current_case.total_covered_regions <= winners_coverage.total_covered_regions {
+                // TODO exclude based on potential
                 use std::fmt::Write;
                 write!(report.0, "Excluding {}", i );
                 return None;
             }
             return Some(case);
         }).collect();
-        let (previous_candidate, coverage_with_candidate) = candidate.into_inner().unwrap();
-        winners.push(previous_candidate);
+        let (candidate_case, coverage_with_candidate) = candidate.into_inner().unwrap();
+        if coverage_with_candidate.total_covered_regions == winners_coverage.total_covered_regions {
+            println!("Total coverage didn't change in a single cycle. Ending");
+            break;
+        }
+        winners.push(candidate_case);
         winners_coverage = coverage_with_candidate;
         if considered.is_empty() {
             //TODO at the end, this is not hit and we just keep cycling - what's the deal with that?
             break;
         };
     }
-    println!("winners {:?}", winners)
+    println!("winners {:?}", winners.iter().map(|win| &win.profile).collect::<Vec<_>>())
 }
 //
 //./fuzzer/1638/run_dir/default.profraw
