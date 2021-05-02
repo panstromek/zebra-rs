@@ -473,51 +473,67 @@ fn test_case_coverage() {
     let mut winners = vec![&cases[0]];
     let mut winners_coverage = winners[0].clone();
 
-    let mut considered :Vec<_>= cases.iter().skip(1).collect();
+    #[derive(Clone)]
+    struct ConsideredCase<'a> {
+        case: &'a Case,
+        potential: i32,
+    }
+    fn potential(winners: &Case, candidate: &Case, all_cases_coverage: &Case) -> i32 {
+        assert_eq!(winners.coverage.len(), candidate.coverage.len());
+        winners.coverage.iter()
+            .zip(candidate.coverage.iter())
+            .zip(all_cases_coverage.coverage.iter())
+            .map(|((win, cand), all)| {
+                assert_eq!(win.file_id, cand.file_id);
+                assert_eq!(win.file_id, all.file_id);
+                assert!(all.regions >= cand.regions);
+                assert!(all.regions >= win.regions);
+
+                let remaining_regions_to_cover = all.regions - win.covered_regions;
+                let potential_addition = (remaining_regions_to_cover).min(cand.covered_regions);
+                potential_addition
+            }).sum()
+    }
+    let mut considered: Vec<_> = cases.iter()
+        .skip(1)
+        .map(|case| ConsideredCase { case, potential: potential(&winners_coverage, case, &all_cases_coverage) })
+        .collect();
     loop {
         std::fs::create_dir("test-case-finder/current/_0/");
         let mut rep = String::new();
         let candidate = std::sync::RwLock::new((
-            considered[0],
+            considered[0].case,
             // FIXME this is incorrect, but this will be recalculated so it doesn't matter
-            considered[0].clone()
+            considered[0].case.clone()
         ));
         println!("{}", rep);
         std::fs::remove_dir_all("test-case-finder/current/");
         let considered_size = considered.len();
-        considered = considered.into_iter().enumerate().par_bridge().filter_map(|(i, case)| {
+        let maximum_potential = considered.iter().map(|c|c.potential).max().unwrap();
+        let max_possible_covered_regions_in_this_cycle = winners_coverage.total_covered_regions + maximum_potential;
+        considered = considered.into_iter().enumerate().par_bridge().filter_map(|(i, mut considered_case)| {
+            let case = considered_case.case;
+
             struct Report(String);
             impl Drop for Report { fn drop(&mut self) { println!("{}", self.0) } }
             let mut report = Report (format!("Testing {}/{}: ", i, considered_size));
 
             let read_guard = candidate.read().unwrap();
             let coverage_with_candidate = &read_guard.1;
-            // TODO track increment in last round instead
-            //  also return early if we get the same increment as the biggest or second biggest
-            //  last time - that will prevent long tail problem when we all tests just add
-            //  a single region
-            fn potential(winners: &Case, candidate: &Case, all_cases_coverage: &Case) -> i32 {
-                assert_eq!(winners.coverage.len(), candidate.coverage.len());
-                winners.coverage.iter()
-                    .zip(candidate.coverage.iter())
-                    .zip(all_cases_coverage.coverage.iter())
-                    .map(|((win, cand), all)| {
-                        assert_eq!(win.file_id, cand.file_id);
-                        assert_eq!(win.file_id, all.file_id);
-                        assert!(all.regions >= cand.regions);
-                        assert!(all.regions >= win.regions);
 
-                        let remaining_regions_to_cover = all.regions - win.covered_regions;
-                        let potential_addition = (remaining_regions_to_cover).min(cand.covered_regions);
-                        potential_addition
-                    }).sum()
+            assert!(coverage_with_candidate.total_covered_regions <= max_possible_covered_regions_in_this_cycle);
+            // FIXME this is still sub optimal because we don't filter the previous best case from the data
+            //  we need to keep track of not only max potential, but also second max potential. That's probably also why we never hit it
+
+            if coverage_with_candidate.total_covered_regions == max_possible_covered_regions_in_this_cycle {
+                report.0.push_str("Skipping case because we already reached maximum potential in this cycle.");
+                return Some(considered_case);
             }
-
             if winners_coverage.total_covered_regions + case.total_covered_regions <= coverage_with_candidate.total_covered_regions
-                || winners_coverage.total_covered_regions + potential(&winners_coverage, &case, &all_cases_coverage) <= coverage_with_candidate.total_covered_regions
+                || winners_coverage.total_covered_regions + considered_case.potential <= coverage_with_candidate.total_covered_regions
             {
                 report.0.push_str("Skipping case for current iteration because it can't add more regions than candidate.");
-                return Some(case);
+                return Some(considered_case);
             }
 
 
@@ -535,6 +551,12 @@ fn test_case_coverage() {
             std::fs::create_dir_all(&dir);
             let current_case = case_coverage(&combined_case, &dir, &mut report.0, false, &id_map);
 
+            // let's update the potential - this one will be lower than the initial one, so we
+            //  can filter out more cases in the future
+            considered_case.potential = (winners_coverage.coverage.iter()
+                .zip(current_case.coverage.iter())
+                .map(|(winner, current)| current.covered_regions - winner.covered_regions)
+                .sum());
             // let's first check the value of coverage_with_candidate
             // we have read at the begining of the loop
             // it might have changed in the meantime, but it can only increase,
@@ -546,17 +568,17 @@ fn test_case_coverage() {
                 if current_case.total_covered_regions > coverage_with_candidate.total_covered_regions {
                     *candidate_case = &case;
                     *coverage_with_candidate = current_case;
-                    return Some(case);
+                    return Some(considered_case);
                 }
             }
 
             if current_case.total_covered_regions <= winners_coverage.total_covered_regions {
-                // TODO exclude based on potential
+                // TODO or when current  max_potential with potential of this case is still lower than winners coverage??
                 use std::fmt::Write;
                 write!(report.0, "Excluding {}", i );
                 return None;
             }
-            return Some(case);
+            return Some(considered_case);
         }).collect();
         let (candidate_case, coverage_with_candidate) = candidate.into_inner().unwrap();
         if coverage_with_candidate.total_covered_regions == winners_coverage.total_covered_regions {
