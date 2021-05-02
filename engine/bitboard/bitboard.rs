@@ -34,30 +34,6 @@ pub fn non_iterative_popcount(mut n1: u32, mut n2: u32) -> u32 {
     return n1.wrapping_add(n2).wrapping_mul(0x1010101) >> 24;
 }
 /*
-  ITERATIVE_POPCOUNT
-  Counts the number of bits set in a 64-bit integer.
-  This is done using an iterative procedure which loops
-  a number of times equal to the number of bits set,
-  hence this function is fast when the number of bits
-  set is low.
-*/
-//TODO this is dead code, remove
-pub fn iterative_popcount(mut n1: u32,
-                                            mut n2: u32)
- -> u32 {
-    let mut n: u32 = 0;
-    n = 0;
-    while n1 != 0 as i32 as u32 {
-        n = n.wrapping_add(1);
-        n1 &= n1.wrapping_sub(1 as i32 as u32)
-    }
-    while n2 != 0 as i32 as u32 {
-        n = n.wrapping_add(1);
-        n2 &= n2.wrapping_sub(1 as i32 as u32)
-    }
-    return n;
-}
-/*
   BIT_REVERSE_32
   Returns the bit-reverse of a 32-bit integer.
 */

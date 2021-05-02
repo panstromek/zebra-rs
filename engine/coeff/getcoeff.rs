@@ -26,7 +26,6 @@ impl CoeffSet {
     }
 }
 
-#[derive(Clone)]
 #[repr(C)]
 pub struct AllocationBlock {
     pub afile2x_block: [i16; 59049],
