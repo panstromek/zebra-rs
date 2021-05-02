@@ -1,0 +1,1 @@
+RUST_BACKTRACE=1  BOOK_PATH=./../../../fuzzer-data/books/book-72.bin COEFFS_PATH=./../../../coeffs2.bin ../../../test-target/release/zebra -l 1 2 2 2 2 2 -learn 1 15  -log Mp9JapERVJ -b 0 -p 0

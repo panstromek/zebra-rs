@@ -1,0 +1,101 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+Usage:
+  zebra [-b -e -g -h -l -p -t -time -w -learn -slack -dev -log
+         -keepdraw -draw2black -draw2white -draw2none
+         -private -public -test -seq -thor -script -analyze ?
+         -repeat -seqfile]
+
+Flags:
+  ? 
+    Displays this text.
+
+  -b <use book?>
+    Toggles usage of opening book on/off (default 1).
+
+  -e <echo?>
+    Toggles screen output on/off (default 1).
+
+  -g <game file>
+
+  -h <bits in hash key>
+    Size of hash table is 2^{this value} (default 18).
+
+  -l <black depth> [<black exact depth> <black WLD depth>]
+     <white depth> [<white exact depth> <white WLD depth>]
+    Sets the search depth. If <black depth> or <white depth> are set to 0, a
+    human player is assumed. In this case the other parameters must be omitted.
+    <* exact depth> specify the number of moves before the (at move 60) when
+    the exact game-theoretical value is calculated. <* WLD depth> are used
+    analogously for the calculation of Win/Loss/Draw.
+
+  -p <display principal variation?>
+    Toggles output of principal variation on/off (default 1).
+
+  -r <use randomization?>
+    Toggles randomization on/off (default 1)
+
+  -t <number of levels> <(first) depth> ... <(last) wld depth>
+
+  -time <black time> <black increment> <white time> <white increment>
+    Tournament mode; the format for the players is as above.
+
+  -w <wait?>
+    Toggles wait between moves on/off (default 0).
+
+  -learn <depth> <cutoff>
+    Learn the game with <depth> deviations up to <cutoff> empty.
+
+  -slack <disks>
+    Zebra's opening randomness is <disks> disks (default 0.250000).
+
+  -dev <low> <high> <bonus>
+    Give deviations before move <high> a <bonus> disk bonus but
+    don't give any extra bonus for deviations before move <low>.
+
+  -log <file name>
+    Append all game results to the specified file.
+
+  -private
+    Treats all draws as losses for both sides.
+
+  -public
+    No tweaking of draw scores.
+
+  -keepdraw
+    Book draws are counted as draws.
+
+  -draw2black
+    Book draws scored as 32-31 for black.
+
+  -draw2white
+    Book draws scored as 32-31 for white.
+
+  -draw2none
+    Book draws scored as 32-31 for the opponent.
+
+  -test
+    Only evaluate one position, then exit.
+
+  -seq <move sequence>
+    Forces the game to start with a predefined move sequence;
+    e.g. f4d6c3.
+
+  -seqfile <filename
+    Specifies a file from which move sequences are read.
+
+  -thor <game count>
+    Look for each position in the Thor database; list the first <game count>.
+
+  -script <script file> <output file>
+    Solves all positions in script file for exact score.
+
+  -wld <only solve WLD?>
+    Toggles WLD only solve on/off (default 0).
+
+  -analyze
+    Used in conjunction with -seq; all positions are analyzed.
+  -repeat <#iterations>
+    Repeats the operation the specified number of times. 
+

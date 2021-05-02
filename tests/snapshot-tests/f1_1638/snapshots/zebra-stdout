@@ -1,0 +1,977 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+Reading binary opening database... done (took 0 s)
+Book randomness: 0.25 disks
+Loaded 160 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra        
+      2                                             
+      3                        (*)     2 discs      
+      4        O *                                  
+      5        * O            White    Zebra        
+      6                                             
+      7                                2 discs      
+      8                                             
+
+Thor database:        f5: 100.0%    
+Slack left is 0.25. Book score is +0.20. Private node.
+   d3   +0.20 
+   c4   +0.20 
+   f5   +0.20 
+   e6   +0.20 
+-->   Book      +0.20        e6
+PV: e6 f6 f5 f4 g5 e7 f7 h6
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  
+      2                                             
+      3                       0.20     4 discs      
+      4        O *                                  
+      5        * *            White    Zebra        
+      6          *                                  
+      7                        (O)     1 discs      
+      8                                             
+
+Thor database:        f4: 66.3%    f6: 32.3%    d6:  1.4%    
+Slack left is 0.25. Book score is -0.20. Private node.
+   f6   -0.20 
+   f4   -0.99 
+   d6   -5.20 
+-->   Book      -0.20        f6
+PV: f6 f5 f4 g5 e7 f7 h6
+
+Opening: Diagonal Opening
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                             
+      3                        (*)     3 discs      
+      4        O *                                  
+      5        * O            White    Zebra        
+      6          * O                                
+      7                       -0.20    3 discs      
+      8                                             
+
+Thor database:        f5: 97.9%    d3:  1.0%    c4:  0.7%    g6:  0.5%    
+Slack left is 0.25. Book score is +0.20. Private node.
+   f5   +0.20 
+   d3   -7.22   (deviation)
+-->   Book      +0.20        f5
+PV: f5 f4 g5 e7 f7 h6
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  
+      3                       0.20     5 discs      
+      4        O *                                  
+      5        * * *          White    Zebra        
+      6          * O                                
+      7                        (O)     2 discs      
+      8                                             
+
+Thor database:        f4: 100.0%    
+Slack left is 0.25. Book score is -0.20. Private node.
+   f4   -0.20 
+   d6   -0.20 
+-->   Book      -0.20        d6
+PV: d6 e7 g5 g6 f8
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                        (*)     3 discs      
+      4        O *                                  
+      5        O * *          White    Zebra        
+      6        O O O                                
+      7                       -0.20    5 discs      
+      8                                             
+
+Thor database:        e7: 38.7%    c5: 34.1%    f7: 11.1%    c3: 11.1%    c4:  1.6%    
+c6:  1.5%    c7:  1.0%    g7:  0.5%    d7:  0.4%    
+Slack left is 0.25. Book score is +0.20. Private node.
+   e7   +0.20 
+   c5   -0.36   (deviation)
+-->   Book      +0.20        e7
+PV: e7 g5 g6 f8
+
+Opening: Heath / Tobidashi
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                       0.20     5 discs       3. e7  
+      4        O *                                  
+      5        O * *          White    Zebra        
+      6        O * O                                
+      7          *             (O)     4 discs      
+      8                                             
+
+Thor database:        g5: 69.9%    f4: 19.2%    f7:  7.0%    f3:  1.9%    d8:  1.1%    
+f8:  0.9%    
+Slack left is 0.25. Book score is -0.20. Private node.
+   g5   -0.20 
+   f7   -1.10   (deviation)
+-->   Book      -0.20        g5
+PV: g5 g6 f8
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                        (*)     3 discs       3. e7  g5
+      4        O *                                  
+      5        O O O O        White    Zebra        
+      6        O * O                                
+      7          *            -0.20    7 discs      
+      8                                             
+
+Thor database:        c5: 52.7%    g6: 37.8%    g4:  9.5%    
+Slack left is 0.25. Book score is +0.20. Private node.
+   g6   +0.20 
+   g4   -0.59 
+   c5   -0.66 
+   c6   -4.86   (deviation)
+-->   Book      +0.20        g6
+PV: g6 f8
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                       0.20     6 discs       3. e7  g5
+      4        O *                                   4. g6  
+      5        O O * O        White    Zebra        
+      6        O * * *                              
+      7          *             (O)     5 discs      
+      8                                             
+
+Thor database:        e8: 61.5%    f7: 17.7%    e3: 14.4%    f4:  6.4%    
+Slack left is 0.25. Book score is -0.20. Private node.
+   f8   -0.20   (deviation)
+   f7   -0.38 
+-->   Book      -0.38        f7
+PV: f7 e8
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                        (*)     5 discs       3. e7  g5
+      4        O *                                   4. g6  f7
+      5        O O * O        White    Zebra        
+      6        O O * *                              
+      7          * O          -0.38    7 discs      
+      8                                             
+
+Thor database:        e8: 53.6%    d7: 23.5%    f8: 23.0%    
+Slack left is 0.25. Book score is +0.38. Private node.
+   e8   +0.38   (deviation)
+   d7   -1.26 
+-->   Book      +0.38        e8
+PV: e8
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                       0.38     7 discs       3. e7  g5
+      4        O *                                   4. g6  f7
+      5        O O * O        White    Zebra         5. e8  
+      6        O O * *                              
+      7          * *           (O)     6 discs      
+      8          *                                  
+
+-->   3  +0.30            381  e3 d7        0.0 s  
+PV: e3 d7
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3          O             (*)     6 discs       3. e7  g5
+      4        O O                                   4. g6  f7
+      5        O O * O        White    Zebra         5. e8  e3
+      6        O O * *                              
+      7          * *          0.30     8 discs      
+      8          *                                  
+
+-->   2  -0.30             37  d7        0.0 s  
+PV: d7
+0 matching games  (1.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3          O            -0.30    8 discs       3. e7  g5
+      4        O O                                   4. g6  f7
+      5        O O * O        White    Zebra         5. e8  e3
+      6        O * * *                               6. d7  
+      7        * * *           (O)     7 discs      
+      8          *                                  
+
+-->   3  +0.32            122  h6 h4        0.0 s  
+PV: h6 h4
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3          O             (*)     5 discs       3. e7  g5
+      4        O O                                   4. g6  f7
+      5        O O * O        White    Zebra         5. e8  e3
+      6        O O O O O                             6. d7  h6
+      7        * * *          0.32     11 discs     
+      8          *                                  
+
+-->   2  -0.32             36  h4        0.0 s  
+PV: h4
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3          O            -0.32    8 discs       3. e7  g5
+      4        O O     *                             4. g6  f7
+      5        O O * *        White    Zebra         5. e8  e3
+      6        O O * O O                             6. d7  h6
+      7        * * *           (O)     9 discs       7. h4  
+      8          *                                  
+
+-->   3  +0.27            221  c8 c7        0.0 s  
+PV: c8 c7
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3          O             (*)     7 discs       3. e7  g5
+      4        O O     *                             4. g6  f7
+      5        O O * *        White    Zebra         5. e8  e3
+      6        O O * O O                             6. d7  h6
+      7        O * *          0.27     11 discs      7. h4  c8
+      8      O   *                                  
+
+-->   2  -0.27             41  c7        0.0 s  
+PV: c7
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3          O            -0.27    9 discs       3. e7  g5
+      4        O O     *                             4. g6  f7
+      5        O O * *        White    Zebra         5. e8  e3
+      6        O O * O O                             6. d7  h6
+      7      * * * *           (O)     10 discs      7. h4  c8
+      8      O   *                                   8. c7  
+
+-->   3  +0.50            236  c6 c5        0.0 s  
+PV: c6 c5
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3          O             (*)     8 discs       3. e7  g5
+      4        O O     *                             4. g6  f7
+      5        O O * *        White    Zebra         5. e8  e3
+      6      O O O * O O                             6. d7  h6
+      7      O * * *          0.50     12 discs      7. h4  c8
+      8      O   *                                   8. c7  c6
+
+-->   2  -0.50             42  c5        0.0 s  
+PV: c5
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         2. f5  d6
+      2                                              3. e7  g5
+      3          O            -0.50    12 discs      4. g6  f7
+      4        O O     *                             5. e8  e3
+      5      * * * * *        White    Zebra         6. d7  h6
+      6      O * O * O O                             7. h4  c8
+      7      O * * *           (O)     9 discs       8. c7  c6
+      8      O   *                                   9. c5  
+
+-->   3  +2.59            202  d8 h5        0.0 s  
+PV: d8 h5
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         2. f5  d6
+      2                                              3. e7  g5
+      3          O             (*)     9 discs       4. g6  f7
+      4        O O     *                             5. e8  e3
+      5      * O * * *        White    Zebra         6. d7  h6
+      6      O O O * O O                             7. h4  c8
+      7      O O * *          +2.59    13 discs      8. c7  c6
+      8      O O *                                   9. c5  d8
+
+-->   2  -2.59             49  h5        0.0 s  
+PV: h5
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         3. e7  g5
+      2                                              4. g6  f7
+      3          O            -2.59    11 discs      5. e8  e3
+      4        O O     *                             6. d7  h6
+      5      * O * * * *      White    Zebra         7. h4  c8
+      6      O O O * * O                             8. c7  c6
+      7      O O * *           (O)     12 discs      9. c5  d8
+      8      O O *                                  10. h5  
+
+-->   3  +5.79            229  h3 c4        0.0 s  
+PV: h3 c4
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         3. e7  g5
+      2                                              4. g6  f7
+      3          O     O       (*)     9 discs       5. e8  e3
+      4        O O     O                             6. d7  h6
+      5      * O * * * O      White    Zebra         7. h4  c8
+      6      O O O * * O                             8. c7  c6
+      7      O O * *          +5.79    15 discs      9. c5  d8
+      8      O O *                                  10. h5  h3
+
+-->   2  -5.79             35  c4        0.0 s  
+PV: c4
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         4. g6  f7
+      2                                              5. e8  e3
+      3          O     O      -5.79    12 discs      6. d7  h6
+      4      * O O     O                             7. h4  c8
+      5      * * * * * O      White    Zebra         8. c7  c6
+      6      O O * * * O                             9. c5  d8
+      7      O O * *           (O)     13 discs     10. h5  h3
+      8      O O *                                  11. c4  
+
+-->   3  +12.41           258  f4 c3        0.0 s  
+PV: f4 c3
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         4. g6  f7
+      2                                              5. e8  e3
+      3          O     O       (*)     10 discs      6. d7  h6
+      4      * O O O   O                             7. h4  c8
+      5      * * O * O O      White    Zebra         8. c7  c6
+      6      O O * * * O                             9. c5  d8
+      7      O O * *          +12.41   16 discs     10. h5  h3
+      8      O O *                                  11. c4  f4
+
+-->   2  -12.41            44  c3        0.0 s  
+PV: c3
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         5. e8  e3
+      2                                              6. d7  h6
+      3      *   O     O      -12.41   13 discs      7. h4  c8
+      4      * * O O   O                             8. c7  c6
+      5      * * * * O O      White    Zebra         9. c5  d8
+      6      O O * * * O                            10. h5  h3
+      7      O O * *           (O)     14 discs     11. c4  f4
+      8      O O *                                  12. c3  
+
+-->   3  +15.95           328  d3 g3        0.0 s  
+PV: d3 g3
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         5. e8  e3
+      2                                              6. d7  h6
+      3      * O O     O       (*)     11 discs      7. h4  c8
+      4      * O O O   O                             8. c7  c6
+      5      * O * * O O      White    Zebra         9. c5  d8
+      6      O O * * * O                            10. h5  h3
+      7      O O * *          +15.95   17 discs     11. c4  f4
+      8      O O *                                  12. c3  d3
+
+-->   2  -15.95            44  g3        0.0 s  
+PV: g3
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         6. d7  h6
+      2                                              7. h4  c8
+      3      * O O   * O      -15.95   13 discs      8. c7  c6
+      4      * O O *   O                             9. c5  d8
+      5      * O * * O O      White    Zebra        10. h5  h3
+      6      O O * * * O                            11. c4  f4
+      7      O O * *           (O)     16 discs     12. c3  d3
+      8      O O *                                  13. g3  
+
+-->   3  +15.41           378  g4 b6        0.0 s  
+PV: g4 b6
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         6. d7  h6
+      2                                              7. h4  c8
+      3      * O O   * O       (*)     10 discs      8. c7  c6
+      4      * O O O O O                             9. c5  d8
+      5      * O * O O O      White    Zebra        10. h5  h3
+      6      O O O * * O                            11. c4  f4
+      7      O O * *          +15.41   20 discs     12. c3  d3
+      8      O O *                                  13. g3  g4
+
+-->   2  -15.41            40  b6        1.0 s      40 nps
+PV: b6
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         7. h4  c8
+      2                                              8. c7  c6
+      3      * O O   * O      -15.41   14 discs      9. c5  d8
+      4      * O O O O O                            10. h5  h3
+      5      * O * O O O      White    Zebra        11. c4  f4
+      6    * * * * * * O                            12. c3  d3
+      7      O O * *           (O)     17 discs     13. g3  g4
+      8      O O *                                  14. b6  
+
+-->   3  +15.41           470  h7 d2        0.0 s  
+PV: h7 d2
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         7. h4  c8
+      2                                              8. c7  c6
+      3      * O O   * O       (*)     13 discs      9. c5  d8
+      4      * O O O O O                            10. h5  h3
+      5      * O * O O O      White    Zebra        11. c4  f4
+      6    * * * * * O O                            12. c3  d3
+      7      O O * *   O      +15.41   19 discs     13. g3  g4
+      8      O O *                                  14. b6  h7
+
+-->   2  -15.41            38  d2        0.0 s  
+PV: d2
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         8. c7  c6
+      2        *                                     9. c5  d8
+      3      * * O   * O      -15.41   17 discs     10. h5  h3
+      4      * * O O O O                            11. c4  f4
+      5      * * * O O O      White    Zebra        12. c3  d3
+      6    * * * * * O O                            13. g3  g4
+      7      O O * *   O       (O)     16 discs     14. b6  h7
+      8      O O *                                  15. d2  
+
+-->   3  +21.96           391  h2 f2        0.0 s  
+PV: h2 f2
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         8. c7  c6
+      2        *       O                             9. c5  d8
+      3      * * O   O O       (*)     16 discs     10. h5  h3
+      4      * * O O O O                            11. c4  f4
+      5      * * * O O O      White    Zebra        12. c3  d3
+      6    * * * * * O O                            13. g3  g4
+      7      O O * *   O      +21.96   18 discs     14. b6  h7
+      8      O O *                                  15. d2  h2
+
+-->   2  -21.96            32  f2        0.0 s  
+PV: f2
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         9. c5  d8
+      2        *   *   O                            10. h5  h3
+      3      * * *   O O      -21.96   18 discs     11. c4  f4
+      4      * * O O O O                            12. c3  d3
+      5      * * * O O O      White    Zebra        13. g3  g4
+      6    * * * * * O O                            14. b6  h7
+      7      O O * *   O       (O)     17 discs     15. d2  h2
+      8      O O *                                  16. f2  
+
+-->   3  +21.20           296  b5 f3        0.0 s  
+PV: b5 f3
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra         9. c5  d8
+      2        *   *   O                            10. h5  h3
+      3      * * *   O O       (*)     14 discs     11. c4  f4
+      4      * * O O O O                            12. c3  d3
+      5    O O O O O O O      White    Zebra        13. g3  g4
+      6    * O * * * O O                            14. b6  h7
+      7      O O * *   O      +21.20   22 discs     15. d2  h2
+      8      O O *                                  16. f2  b5
+
+-->   2  -21.20            36  f3        0.0 s  
+PV: f3
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra        10. h5  h3
+      2        *   *   O                            11. c4  f4
+      3      * * * * O O      -21.20   17 discs     12. c3  d3
+      4      * * O * O O                            13. g3  g4
+      5    O O O O * O O      White    Zebra        14. b6  h7
+      6    * O * * * O O                            15. d2  h2
+      7      O O * *   O       (O)     20 discs     16. f2  b5
+      8      O O *                                  17. f3  
+
+-->   3  +23.08           408  f8 a5        0.0 s  
+PV: f8 a5
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra        10. h5  h3
+      2        *   *   O                            11. c4  f4
+      3      * * * * O O       (*)     14 discs     12. c3  d3
+      4      * * O * O O                            13. g3  g4
+      5    O O O O * O O      White    Zebra        14. b6  h7
+      6    * O O * * O O                            15. d2  h2
+      7      O O O *   O      +23.08   24 discs     16. f2  b5
+      8      O O O O                                17. f3  f8
+
+-->   2  -23.08            38  a5        0.0 s  
+PV: a5
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra        11. c4  f4
+      2        *   *   O                            12. c3  d3
+      3      * * * * O O      -23.08   19 discs     13. g3  g4
+      4      * * O * O O                            14. b6  h7
+      5  * * * * * * O O      White    Zebra        15. d2  h2
+      6    * O O * * O O                            16. f2  b5
+      7      O O O *   O       (O)     20 discs     17. f3  f8
+      8      O O O O                                18. a5  
+
+-->   3  +24.43           288  a6 a7        0.0 s  
+PV: a6 a7
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra        11. c4  f4
+      2        *   *   O                            12. c3  d3
+      3      * * * * O O       (*)     18 discs     13. g3  g4
+      4      * * O * O O                            14. b6  h7
+      5  * * * * * * O O      White    Zebra        15. d2  h2
+      6  O O O O * * O O                            16. f2  b5
+      7      O O O *   O      +24.43   22 discs     17. f3  f8
+      8      O O O O                                18. a5  a6
+
+-->   2  -24.43            19  a7        0.0 s  
+PV: a7
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1                       Black    Zebra        12. c3  d3
+      2        *   *   O                            13. g3  g4
+      3      * * * * O O      -24.43   21 discs     14. b6  h7
+      4      * * O * O O                            15. d2  h2
+      5  * * * * * * O O      White    Zebra        16. f2  b5
+      6  * * O O * * O O                            17. f3  f8
+      7  *   O O O *   O       (O)     20 discs     18. a5  a6
+      8      O O O O                                19. a7  
+
+-->   3  +23.64           213  e1 f1        0.0 s  
+PV: e1 f1
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1          O            Black    Zebra        12. c3  d3
+      2        *   O   O                            13. g3  g4
+      3      * * * * O O       (*)     20 discs     14. b6  h7
+      4      * * O * O O                            15. d2  h2
+      5  * * * * * * O O      White    Zebra        16. f2  b5
+      6  * * O O * * O O                            17. f3  f8
+      7  *   O O O *   O      +23.64   22 discs     18. a5  a6
+      8      O O O O                                19. a7  e1
+
+-->   2  -23.64            23  f1        0.0 s  
+PV: f1
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1          O *          Black    Zebra        13. g3  g4
+      2        *   *   O                            14. b6  h7
+      3      * * * * O O      -23.64   22 discs     15. d2  h2
+      4      * * O * O O                            16. f2  b5
+      5  * * * * * * O O      White    Zebra        17. f3  f8
+      6  * * O O * * O O                            18. a5  a6
+      7  *   O O O *   O       (O)     21 discs     19. a7  e1
+      8      O O O O                                20. f1  
+
+-->   3  +26.08           154  g1 b8        0.0 s  
+PV: g1 b8
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1          O O O        Black    Zebra        13. g3  g4
+      2        *   *   O                            14. b6  h7
+      3      * * * * O O       (*)     21 discs     15. d2  h2
+      4      * * O * O O                            16. f2  b5
+      5  * * * * * * O O      White    Zebra        17. f3  f8
+      6  * * O O * * O O                            18. a5  a6
+      7  *   O O O *   O      +26.08   23 discs     19. a7  e1
+      8      O O O O                                20. f1  g1
+
+-->   2  -26.08            18  b8        0.0 s  
+PV: b8
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1          O O O        Black    Zebra        14. b6  h7
+      2        *   *   O                            15. d2  h2
+      3      * * * * O O      -26.08   24 discs     16. f2  b5
+      4      * * O * O O                            17. f3  f8
+      5  * * * * * * O O      White    Zebra        18. a5  a6
+      6  * * O * * * O O                            19. a7  e1
+      7  *   * O O *   O       (O)     21 discs     20. f1  g1
+      8    * O O O O                                21. b8  
+
+-->   3  +29.86           174  a8 b7        0.0 s  
+PV: a8 b7
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1          O O O        Black    Zebra        14. b6  h7
+      2        *   *   O                            15. d2  h2
+      3      * * * * O O       (*)     23 discs     16. f2  b5
+      4      * * O * O O                            17. f3  f8
+      5  * * * * * * O O      White    Zebra        18. a5  a6
+      6  * * O * * * O O                            19. a7  e1
+      7  *   * O O *   O      +29.86   23 discs     20. f1  g1
+      8  O O O O O O                                21. b8  a8
+
+-->   2  -29.86            11  b7        0.0 s  
+PV: b7
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1          O O O        Black    Zebra        15. d2  h2
+      2        *   *   O                            16. f2  b5
+      3      * * * * O O      -29.86   25 discs     17. f3  f8
+      4      * * O * O O                            18. a5  a6
+      5  * * * * * * O O      White    Zebra        19. a7  e1
+      6  * * * * * * O O                            20. f1  g1
+      7  * * * O O *   O       (O)     22 discs     21. b8  a8
+      8  O O O O O O                                22. b7  
+
+-->   3  +46.62           127  e2 g2        0.0 s  
+PV: e2 g2
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1          O O O        Black    Zebra        15. d2  h2
+      2        * O *   O                            16. f2  b5
+      3      * * O O O O       (*)     23 discs     17. f3  f8
+      4      * * O * O O                            18. a5  a6
+      5  * * * * * * O O      White    Zebra        19. a7  e1
+      6  * * * * * * O O                            20. f1  g1
+      7  * * * O O *   O      +46.62   25 discs     21. b8  a8
+      8  O O O O O O                                22. b7  e2
+
+-->   2  -46.62            10  g2        0.0 s  
+PV: g2
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1          O O O        Black    Zebra        16. f2  b5
+      2        * O * * O                            17. f3  f8
+      3      * * O * O O      -46.62   26 discs     18. a5  a6
+      4      * * * * O O                            19. a7  e1
+      5  * * * * * * O O      White    Zebra        20. f1  g1
+      6  * * * * * * O O                            21. b8  a8
+      7  * * * O O *   O       (O)     23 discs     22. b7  e2
+      8  O O O O O O                                23. g2  
+
+-->   3  +45.15           149  g7 h8        0.0 s  
+PV: g7 h8
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1          O O O        Black    Zebra        16. f2  b5
+      2        * O * * O                            17. f3  f8
+      3      * * O * O O       (*)     25 discs     18. a5  a6
+      4      * * * * O O                            19. a7  e1
+      5  * * * * * * O O      White    Zebra        20. f1  g1
+      6  * * * * * * O O                            21. b8  a8
+      7  * * * O O O O O      +45.15   25 discs     22. b7  e2
+      8  O O O O O O                                23. g2  g7
+
+-->   2  -45.15            16  h8        0.0 s  
+PV: h8
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1          O O O        Black    Zebra        17. f3  f8
+      2        * O * * O                            18. a5  a6
+      3      * * O * O O      -45.15   27 discs     19. a7  e1
+      4      * * * * O O                            20. f1  g1
+      5  * * * * * * O O      White    Zebra        21. b8  a8
+      6  * * * * * * O O                            22. b7  e2
+      7  * * * O O O * O       (O)     24 discs     23. g2  g7
+      8  O O O O O O   *                            24. h8  
+
+-->   3  +40.67            91  h1 g8        0.0 s  
+PV: h1 g8
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1          O O O O      Black    Zebra        17. f3  f8
+      2        * O * O O                            18. a5  a6
+      3      * * O O O O       (*)     21 discs     19. a7  e1
+      4      * * O * O O                            20. f1  g1
+      5  * * * O * * O O      White    Zebra        21. b8  a8
+      6  * * O * * * O O                            22. b7  e2
+      7  * O * O O O * O      +40.67   31 discs     23. g2  g7
+      8  O O O O O O   *                            24. h8  h1
+
+-->   2  -40.67             8  g8        0.0 s  
+PV: g8
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1          O O O O      Black    Zebra        18. a5  a6
+      2        * O * O O                            19. a7  e1
+      3      * * O O O O      -40.67   23 discs     20. f1  g1
+      4      * * O * O O                            21. b8  a8
+      5  * * * O * * O O      White    Zebra        22. b7  e2
+      6  * * O * * * O O                            23. g2  g7
+      7  * O * O O * * O       (O)     30 discs     24. h8  h1
+      8  O O O O O O * *                            25. g8  
+
+-->   3  +37.41            81  d1 c2        1.0 s      81 nps
+PV: d1 c2
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1        O O O O O      Black    Zebra        18. a5  a6
+      2        O O * O O                            19. a7  e1
+      3      * O O O O O       (*)     20 discs     20. f1  g1
+      4      * O O * O O                            21. b8  a8
+      5  * * * O * * O O      White    Zebra        22. b7  e2
+      6  * * O * * * O O                            23. g2  g7
+      7  * O * O O * * O      +37.41   34 discs     24. h8  h1
+      8  O O O O O O * *                            25. g8  d1
+
+-->   2  -37.41            11  c2        0.0 s  
+PV: c2
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1        O O O O O      Black    Zebra        19. a7  e1
+      2      * * * * O O                            20. f1  g1
+      3      * * O O O O      -37.41   25 discs     21. b8  a8
+      4      * O * * O O                            22. b7  e2
+      5  * * * O * * O O      White    Zebra        23. g2  g7
+      6  * * O * * * O O                            24. h8  h1
+      7  * O * O O * * O       (O)     30 discs     25. g8  d1
+      8  O O O O O O * *                            26. c2  
+
+-->   3  +35.04            76  b1 c1        0.0 s  
+PV: b1 c1
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1    O   O O O O O      Black    Zebra        19. a7  e1
+      2      O * * * O O                            20. f1  g1
+      3      * O O O O O       (*)     21 discs     21. b8  a8
+      4      * O O * O O                            22. b7  e2
+      5  * * * O * O O O      White    Zebra        23. g2  g7
+      6  * * O * * * O O                            24. h8  h1
+      7  * O * O O * * O      +35.04   35 discs     25. g8  d1
+      8  O O O O O O * *                            26. c2  b1
+
+-->   2  -35.04             9  c1        0.0 s  
+PV: c1
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1    O * O O O O O      Black    Zebra        20. f1  g1
+      2      * * * * O O                            21. b8  a8
+      3      * O O O O O      -35.04   23 discs     22. b7  e2
+      4      * O O * O O                            23. g2  g7
+      5  * * * O * O O O      White    Zebra        24. h8  h1
+      6  * * O * * * O O                            25. g8  d1
+      7  * O * O O * * O       (O)     34 discs     26. c2  b1
+      8  O O O O O O * *                            27. c1  
+
+-->   2  +34.05            14  b2        0.0 s  
+-->   7  +32              555  a4                 0.0 s  
+PV: a4 a1 b2 b3 b4 -- a2 a3
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1    O * O O O O O      Black    Zebra        20. f1  g1
+      2      * * * * O O                            21. b8  a8
+      3      * O O O O O       (*)     19 discs     22. b7  e2
+      4  O   * O O * O O                            23. g2  g7
+      5  O O * O * O O O      White    Zebra        24. h8  h1
+      6  O * O * * * O O                            25. g8  d1
+      7  O O * O O * * O      +32.00   39 discs     26. c2  b1
+      8  O O O O O O * *                            27. c1  a4
+
+-->   2  -31.64            11  b4        0.0 s  
+-->   6  Loss              31  a1                 0.0 s  
+PV: a1
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1  * * * O O O O O      Black    Zebra        21. b8  a8
+      2      * * * * O O                            22. b7  e2
+      3      * O O O O O      -19.99   21 discs     23. g2  g7
+      4  O   * O O * O O                            24. h8  h1
+      5  O O * O * O O O      White    Zebra        25. g8  d1
+      6  O * O * * * O O                            26. c2  b1
+      7  O O * O O * * O       (O)     38 discs     27. c1  a4
+      8  O O O O O O * *                            28. a1  
+
+-->   5  +32              258  b2                 0.0 s  
+PV: b2 b3 b4 -- a2 a3
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1  * * * O O O O O      Black    Zebra        21. b8  a8
+      2    O O O O O O O                            22. b7  e2
+      3      O O O O O O       (*)     16 discs     23. g2  g7
+      4  O   * O O * O O                            24. h8  h1
+      5  O O * O * O O O      White    Zebra        25. g8  d1
+      6  O * O * * * O O                            26. c2  b1
+      7  O O * O O * * O      +32.00   44 discs     27. c1  a4
+      8  O O O O O O * *                            28. a1  b2
+
+-->   4  -32              370  b3              1.0 s     370 nps  
+PV: b3 b4 -- a2 a3
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1  * * * O O O O O      Black    Zebra        22. b7  e2
+      2    * O O O O O O                            23. g2  g7
+      3    * O O O O O O      -32.00   18 discs     24. h8  h1
+      4  O   * O O * O O                            25. g8  d1
+      5  O O * O * O O O      White    Zebra        26. c2  b1
+      6  O * O * * * O O                            27. c1  a4
+      7  O O * O O * * O       (O)     43 discs     28. a1  b2
+      8  O O O O O O * *                            29. b3  
+
+-->   3  +32              153  b4           0.0 s  
+PV: b4 -- a2 a3
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1  * * * O O O O O      Black    Zebra        23. g2  g7
+      2    * O O O O O O                            24. h8  h1
+      3    * O O O O O O               15 discs     25. g8  d1
+      4  O O O O O * O O                            26. c2  b1
+      5  O O O O * O O O      White    Zebra        27. c1  a4
+      6  O * O O * * O O                            28. a1  b2
+      7  O O * O O * * O       (O)     47 discs     29. b3  b4
+      8  O O O O O O * *                            30. -   
+
+-->   2  +32               77  a2        0.0 s  
+PV: a2 a3
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1  * * * O O O O O      Black    Zebra        23. g2  g7
+      2  O O O O O O O O                            24. h8  h1
+      3    O O O O O O O       (*)     13 discs     25. g8  d1
+      4  O O O O O * O O                            26. c2  b1
+      5  O O O O * O O O      White    Zebra        27. c1  a4
+      6  O * O O * * O O                            28. a1  b2
+      7  O O * O O * * O      +32.00   50 discs     29. b3  b4
+      8  O O O O O O * *                            30. -   a2
+
+-->   1  -32               51  a3     0.0 s  
+PV: a3
+0 matching games  (0.000 s search time, 1.000 s total)
+
+         a b c d e f g h
+
+      1  * * * O O O O O      Black    Zebra        24. h8  h1
+      2  * * O O O O O O                            25. g8  d1
+      3  * O O O O O O O      -32.00   16 discs     26. c2  b1
+      4  O O O O O * O O                            27. c1  a4
+      5  O O O O * O O O      White    Zebra        28. a1  b2
+      6  O * O O * * O O                            29. b3  b4
+      7  O O * O O * * O       (O)     48 discs     30. -   a2
+      8  O O O O O O * *                            31. a3  
+
+
+Black: 16   White: 48
+Nodes searched:        7913      
+Positions evaluated:   4685      
+Total time: 5.0 s
+Evaluating: |||||||||||||||||||||||||||||||-|-||||||||
+Writing binary database... done (took 0 s)
+

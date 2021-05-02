@@ -1,0 +1,112 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+Reading binary opening database... done (took 0 s)
+Loaded 153 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+
+Black level: 2
+White level: 2
+
+Black: 28   White: 36
+Nodes searched:        1439      
+Positions evaluated:   1116      
+Total time: 1.0 s
+Loaded 306 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+
+Black level: 2
+White level: 1
+
+Black: 42   White: 22
+Nodes searched:        713       
+Positions evaluated:   558       
+Total time: 2.0 s
+Loaded 459 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+
+Black level: 2
+White level: 2
+
+Black: 40   White: 24
+Nodes searched:        599       
+Positions evaluated:   425       
+Total time: 2.0 s
+Loaded 612 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+
+Black level: 1
+White level: 2
+
+Black: 8   White: 56
+Nodes searched:        3090      
+Positions evaluated:   2669      
+Total time: 2.0 s
+Loaded 765 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+
+Black level: 1
+White level: 1
+
+Black: 44   White: 20
+Nodes searched:        1936      
+Positions evaluated:   1710      
+Total time: 2.0 s
+Loaded 918 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+
+Black level: 1
+White level: 2
+
+Black: 20   White: 44
+Nodes searched:        761       
+Positions evaluated:   598       
+Total time: 0.0 s
+Loaded 1071 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+
+Black level: 2
+White level: 2
+
+Black: 19   White: 44
+Nodes searched:        774       
+Positions evaluated:   582       
+Total time: 3.0 s
+Loaded 1224 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+
+Black level: 2
+White level: 1
+
+Black: 38   White: 25
+Nodes searched:        2904      
+Positions evaluated:   2574      
+Total time: 0.0 s
+Loaded 1377 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+
+Black level: 2
+White level: 2
+
+Black: 51   White: 11
+Nodes searched:        453       
+Positions evaluated:   322       
+Total time: 2.0 s
+
+
+Time:  14.0 s
+Nodes: 12669
+
+Competitors:
+  Player  1: 2-1-0
+  Player  2: 1-1-1
+  Player  3: 2-1-0
+
+         1      2      3      Score
+   1   28-36  42-22  40-24     5.0
+   2    8-56  44-20  20-44     1.0
+   3   19-44  38-25  51-11     3.0
+
+Black score: 5.0
+White score: 4.0
+

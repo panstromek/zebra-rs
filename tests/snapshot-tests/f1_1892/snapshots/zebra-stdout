@@ -1,0 +1,17 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+Reading binary opening database... done (took 0 s)
+Book randomness: 0.25 disks
+
+         a b c d e f g h
+
+      1  * O *   O   O *      Black    Zebra        
+      2  O * O * *   O                              
+      3      O   * O O O       (*)     21 discs     
+      4  O * * O O * O O                            
+      5    O * * O * O        White    Zebra        
+      6  *     * O   O O                            
+      7  * O * *   O * O               27 discs     
+      8  *   *     O O O                            
+

@@ -1,0 +1,34 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+
+         a b c d e f g h
+
+      1  * * * * * * * O      Black    Zebra        
+      2  O O O * * * * *               04:58        
+      3    O * O * O * *       (*)     42 discs     
+      4  * O * O O * * *                            
+      5  * O * O O O * *      White    Zebra        
+      6  * O * O O O * *               01:34        
+      7  * O * * * O O *               21 discs     
+      8  * * * * * * * *                            
+
+-->   2  +30                4  a3        0.0 s  
+-->   1  +30               52  a3     0.0 s  
+
+         a b c d e f g h
+
+      1  * * * * * * * O      Black    Zebra         1. a3  
+      2  * * O * * * * *               04:58        
+      3  * * * O * O * *      +30.00   47 discs     
+      4  * * * O O * * *                            
+      5  * O * O O O * *      White    Zebra        
+      6  * O * O O O * *               01:34        
+      7  * O * * * O O *       (O)     17 discs     
+      8  * * * * * * * *                            
+
+
+Black: 47   White: 17
+Nodes searched:        55        
+Positions evaluated:   2         
+Total time: 0.0 s

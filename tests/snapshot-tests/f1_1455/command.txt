@@ -1,0 +1,1 @@
+RUST_BACKTRACE=1  BOOK_PATH=./../../../book.bin COEFFS_PATH=./../../../coeffs2.bin ../../../test-target/release/zebra -l 1 0 0 2 1 2 -t 2 1 1 0 2 0 0 -dev 35 12 146.69566 -p 1 -e 1 -r 0 -b 0
