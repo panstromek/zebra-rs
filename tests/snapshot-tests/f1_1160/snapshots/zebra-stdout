@@ -1,0 +1,64 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+Reading binary opening database... done (took 0 s)
+
+Black level: 4
+White level: 4
+
+Black: 32   White: 32
+Nodes searched:        24164     
+Positions evaluated:   16551     
+Total time: 9.0 s
+Evaluating: ||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Writing binary database... done (took 0 s)
+
+
+Black level: 4
+White level: 5
+
+Black: 19   White: 45
+Nodes searched:        72658     
+Positions evaluated:   55247     
+Total time: 11.0 s
+Evaluating: ||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Writing binary database... done (took 0 s)
+
+
+Black level: 5
+White level: 4
+
+Black: 35   White: 29
+Nodes searched:        41425     
+Positions evaluated:   31265     
+Total time: 8.0 s
+Evaluating: |||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Writing binary database... done (took 0 s)
+
+
+Black level: 5
+White level: 5
+
+Black: 27   White: 37
+Nodes searched:        64548     
+Positions evaluated:   48050     
+Total time: 7.0 s
+Evaluating: |||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Writing binary database... done (took 0 s)
+
+
+
+Time:  0.0 s
+Nodes: 0
+
+Competitors:
+  Player  1: 4-4-2
+  Player  2: 5-2-1
+
+         1      2      Score
+   1    2- 2   2- 2     2.0
+   2    2- 2   2- 2     2.0
+
+Black score: 2.0
+White score: 2.0
+

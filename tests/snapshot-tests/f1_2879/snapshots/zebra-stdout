@@ -1,0 +1,983 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+Reading binary opening database... done (took 0 s)
+Book randomness: 0.25 disks
+
+         a b c d e f g h
+
+      1                       Black    Player       
+      2                                             
+      3                        (*)     2 discs      
+      4        O *                                  
+      5        * O            White    Player       
+      6                                             
+      7                                2 discs      
+      8                                             
+
+Thor database:        f5: 100.0%    
+Book score is +0.20.
+   d3   +0.20 
+   c4   +0.20 
+   f5   +0.20 
+   e6   +0.20 
+
+Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  
+      2                                             
+      3                                4 discs      
+      4      * * *                                  
+      5        * O            White    Player       
+      6                                             
+      7                        (O)     1 discs      
+      8                                             
+
+Thor database:        e3: 66.3%    c3: 32.3%    c5:  1.4%    
+Book score is -0.20.
+   c3   -0.20 
+   e3   -0.99 
+   c5   -5.20 
+
+White move: 
+Opening: Parallel Opening
+
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2                                             
+      3                        (*)     3 discs      
+      4      * * *                                  
+      5      O O O            White    Player       
+      6                                             
+      7                                3 discs      
+      8                                             
+
+Thor database:        d6: 100.0%    
+Book score is +5.20.
+   d6   +5.20 
+   c6   -2.34 
+   f6   -8.29   (deviation)
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2                                              2. c6  
+      3                                6 discs      
+      4      * * *                                  
+      5      * * O            White    Player       
+      6      *                                      
+      7                        (O)     1 discs      
+      8                                             
+
+Book score is +2.34.
+   e3   +2.34 
+   c3   -2.50   (deviation)
+
+White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2                                              2. c6  e3
+      3          O             (*)     5 discs      
+      4      * * O                                  
+      5      * * O            White    Player       
+      6      *                                      
+      7                                3 discs      
+      8                                             
+
+Book score is -2.34.
+   f6   -2.34   (deviation)
+   f2   -8.20 
+
+Black move: Black move: Black move: Black move: Black move: Black move: Black move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2            *                                 2. c6  e3
+      3          *                     7 discs       3. f2  
+      4      * * O                                  
+      5      * * O            White    Player       
+      6      *                                      
+      7                        (O)     2 discs      
+      8                                             
+
+Book score is +8.20.
+   c3   +8.20   (deviation)
+   b4   +7.15 
+
+White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2            *                                 2. c6  e3
+      3          *             (*)     5 discs       3. f2  b4
+      4    O O O O                                  
+      5      * * O            White    Player       
+      6      *                                      
+      7                                5 discs      
+      8                                             
+
+Book score is -7.15.
+   d3   -7.15   (deviation)
+   c3   -7.17 
+
+Black move: Black move: Black move: Black move: Black move: Black move: Black move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2            *                                 2. c6  e3
+      3      *   *                     7 discs       3. f2  b4
+      4    O * O O                                   4. c3  
+      5      * * O            White    Player       
+      6      *                                      
+      7                        (O)     4 discs      
+      8                                             
+
+Book score is +7.17.
+   b5   +7.17   (deviation)
+   d2   -1.08 
+
+White move: White move: White move: White move: White move: White move: White move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2        O   *                                 2. c6  e3
+      3      O   *             (*)     6 discs       3. f2  b4
+      4    O * O O                                   4. c3  d2
+      5      * * O            White    Player       
+      6      *                                      
+      7                                6 discs      
+      8                                             
+
+Book score is +1.08.
+   d3   +1.08 
+   c2   -3.03   (deviation)
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2        O   *                                 2. c6  e3
+      3      O * *                     8 discs       3. f2  b4
+      4    O * * O                                   4. c3  d2
+      5      * * O            White    Player        5. d3  
+      6      *                                      
+      7                        (O)     5 discs      
+      8                                             
+
+Book score is -1.08.
+   f4   -1.08   (deviation)
+   d6   -1.55 
+
+White move: White move: White move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2        O   *                                 2. c6  e3
+      3      O O *             (*)     4 discs       3. f2  b4
+      4    O * O O                                   4. c3  d2
+      5      O O O            White    Player        5. d3  d6
+      6      * O                                    
+      7                                10 discs     
+      8                                             
+
+Book score is +1.55.
+   b6   +1.55   (deviation)
+   e2   -1.93 
+
+Black move: Black move: Black move: Black move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2        O * *                                 2. c6  e3
+      3      O * *                     6 discs       3. f2  b4
+      4    O * O O                                   4. c3  d2
+      5      O O O            White    Player        5. d3  d6
+      6      * O                                     6. e2  
+      7                        (O)     9 discs      
+      8                                             
+
+Book score is +1.93.
+   f3   +1.93 
+   c2   -4.83   (deviation)
+
+White move: White move: White move: White move: White move: White move: White move: White move: White move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2        O * *                                 2. c6  e3
+      3      O O O O           (*)     4 discs       3. f2  b4
+      4    O * O O                                   4. c3  d2
+      5      O O O            White    Player        5. d3  d6
+      6      * O                                     6. e2  f3
+      7                                12 discs     
+      8                                             
+
+Book score is -1.93.
+   g4   -1.93   (deviation)
+   f4   -2.61 
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2        O * *                                 2. c6  e3
+      3      O O O *                   8 discs       3. f2  b4
+      4    O * * * *                                 4. c3  d2
+      5      O O O            White    Player        5. d3  d6
+      6      * O                                     6. e2  f3
+      7                        (O)     9 discs       7. f4  
+      8                                             
+
+Book score is +2.61.
+   f5   +2.61 
+   b5   +0.80   (deviation)
+
+White move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2        O * *                                 2. c6  e3
+      3      O O O *           (*)     7 discs       3. f2  b4
+      4    O * * O *                                 4. c3  d2
+      5      O O O O          White    Player        5. d3  d6
+      6      * O                                     6. e2  f3
+      7                                11 discs      7. f4  f5
+      8                                             
+
+Book score is -2.61.
+   b3   -2.61   (deviation)
+   f6   -10.81
+
+Black move: 
+         a b c d e f g h
+
+      1                       Black    Player        1. c4  c5
+      2        O * *                                 2. c6  e3
+      3      O O O *                   10 discs      3. f2  b4
+      4    O * * O *                                 4. c3  d2
+      5      O O * *          White    Player        5. d3  d6
+      6      * O   *                                 6. e2  f3
+      7                        (O)     9 discs       7. f4  f5
+      8                                              8. f6  
+
+Book score is +10.81.
+   e6   +10.81  (deviation)
+   g1   -6.16 
+
+White move: White move: White move: 
+         a b c d e f g h
+
+      1              O        Black    Player        1. c4  c5
+      2        O * O                                 2. c6  e3
+      3      O O O *           (*)     9 discs       3. f2  b4
+      4    O * * O *                                 4. c3  d2
+      5      O O * *          White    Player        5. d3  d6
+      6      * O   *                                 6. e2  f3
+      7                                11 discs      7. f4  f5
+      8                                              8. f6  g1
+
+Book score is +6.16.
+   c1   +6.16   (deviation)
+   g2   -30.10
+
+Black move: 
+         a b c d e f g h
+
+      1              O        Black    Player        2. c6  e3
+      2        O * * *                               3. f2  b4
+      3      O O O *                   11 discs      4. c3  d2
+      4    O * * O *                                 5. d3  d6
+      5      O O * *          White    Player        6. e2  f3
+      6      * O   *                                 7. f4  f5
+      7                        (O)     10 discs      8. f6  g1
+      8                                              9. g2  
+
+Book score is +30.10.
+   e6   +30.10  (deviation)
+   g3   -30.23
+
+White move: 
+         a b c d e f g h
+
+      1              O        Black    Player        2. c6  e3
+      2        O * * O                               3. f2  b4
+      3      O O O O O         (*)     7 discs       4. c3  d2
+      4    O * * O O                                 5. d3  d6
+      5      O O O *          White    Player        6. e2  f3
+      6      * O   *                                 7. f4  f5
+      7                                15 discs      8. f6  g1
+      8                                              9. g2  g3
+
+Book score is +30.23.
+   g4   +30.23
+   h1   +28.64  (deviation)
+
+Black move: 
+         a b c d e f g h
+
+      1              O        Black    Player        3. f2  b4
+      2        O * * O                               4. c3  d2
+      3      O O O * O                 11 discs      5. d3  d6
+      4    O * * * * *                               6. e2  f3
+      5      O O O *          White    Player        7. f4  f5
+      6      * O   *                                 8. f6  g1
+      7                        (O)     12 discs      9. g2  g3
+      8                                             10. g4  
+
+Book score is -30.23.
+   b3   -30.23  (deviation)
+   g5   -37.49
+
+White move: 
+         a b c d e f g h
+
+      1              O        Black    Player        3. f2  b4
+      2        O * * O                               4. c3  d2
+      3      O O O * O         (*)     8 discs       5. d3  d6
+      4    O * * * O O                               6. e2  f3
+      5      O O O O O        White    Player        7. f4  f5
+      6      * O   *                                 8. f6  g1
+      7                                16 discs      9. g2  g3
+      8                                             10. g4  g5
+
+Book score is +37.49.
+   h1   +37.49  (deviation)
+   g6   +30.94
+
+Black move: 
+         a b c d e f g h
+
+      1              O        Black    Player        4. c3  d2
+      2        O * * O                               5. d3  d6
+      3      O O O * O                 10 discs      6. e2  f3
+      4    O * * * O O                               7. f4  f5
+      5      O O O * O        White    Player        8. f6  g1
+      6      * O   * *                               9. g2  g3
+      7                        (O)     15 discs     10. g4  g5
+      8                                             11. g6  
+
+Book score is -30.94.
+   e6   -30.94  (deviation)
+   g7   -50.84
+
+White move: 
+         a b c d e f g h
+
+      1              O        Black    Player        4. c3  d2
+      2        O * * O                               5. d3  d6
+      3      O O O * O         (*)     8 discs       6. e2  f3
+      4    O * * * O O                               7. f4  f5
+      5      O O O * O        White    Player        8. f6  g1
+      6      * O   O O                               9. g2  g3
+      7              O                 18 discs     10. g4  g5
+      8                                             11. g6  g7
+
+Book score is +50.84.
+   h1   +50.84
+   e6   +49.13  (deviation)
+
+Black move: Black move: 
+         a b c d e f g h
+
+      1              O *      Black    Player        5. d3  d6
+      2        O * * *                               6. e2  f3
+      3      O O O * O                 10 discs      7. f4  f5
+      4    O * * * O O                               8. f6  g1
+      5      O O O * O        White    Player        9. g2  g3
+      6      * O   O O                              10. g4  g5
+      7              O         (O)     17 discs     11. g6  g7
+      8                                             12. h1  
+
+Book score is -50.84.
+   e6   -50.84  (deviation)
+   h2   -68.18
+
+White move: 
+         a b c d e f g h
+
+      1              O *      Black    Player        5. d3  d6
+      2        O O O O O                             6. e2  f3
+      3      O O O * O         (*)     7 discs       7. f4  f5
+      4    O * * * O O                               8. f6  g1
+      5      O O O * O        White    Player        9. g2  g3
+      6      * O   O O                              10. g4  g5
+      7              O                 21 discs     11. g6  g7
+      8                                             12. h1  h2
+
+Book score is +68.18.
+   h4   +68.18  (deviation)
+   h3   +59.54
+
+Black move: 
+         a b c d e f g h
+
+      1              O *      Black    Player        6. e2  f3
+      2        O O O O *                             7. f4  f5
+      3      O O O * * *               11 discs      8. f6  g1
+      4    O * * * O *                               9. g2  g3
+      5      O O O * O        White    Player       10. g4  g5
+      6      * O   O O                              11. g6  g7
+      7              O         (O)     18 discs     12. h1  h2
+      8                                             13. h3  
+
+Book score is -59.54.
+   h4   -59.54
+   b3   -62.80  (deviation)
+
+White move: 
+         a b c d e f g h
+
+      1              O *      Black    Player        6. e2  f3
+      2        O O O O *                             7. f4  f5
+      3      O O O * O *       (*)     9 discs       8. f6  g1
+      4    O * * * O O O                             9. g2  g3
+      5      O O O * O        White    Player       10. g4  g5
+      6      * O   O O                              11. g6  g7
+      7              O                 21 discs     12. h1  h2
+      8                                             13. h3  h4
+
+Book score is +59.54.
+   e6   +59.54  (deviation)
+   h5   +53.14
+
+Black move: 
+         a b c d e f g h
+
+      1              O *      Black    Player        7. f4  f5
+      2        O O O O *                             8. f6  g1
+      3      O O O * O *               13 discs      9. g2  g3
+      4    O * * * O * *                            10. g4  g5
+      5      O O O * * *      White    Player       11. g6  g7
+      6      * O   O O                              12. h1  h2
+      7              O         (O)     18 discs     13. h3  h4
+      8                                             14. h5  
+
+Book score is -53.14.
+   h6   -53.14
+   b3   -54.23  (deviation)
+
+White move: 
+         a b c d e f g h
+
+      1              O *      Black    Player        7. f4  f5
+      2        O O O O *                             8. f6  g1
+      3      O O O * O *       (*)     12 discs      9. g2  g3
+      4    O * * * O * *                            10. g4  g5
+      5      O O O * O *      White    Player       11. g6  g7
+      6      * O   O O O                            12. h1  h2
+      7              O                 20 discs     13. h3  h4
+      8                                             14. h5  h6
+
+Book score is +53.14.
+   d7   +53.14  (deviation)
+   h7   +53.00
+
+Black move: 
+         a b c d e f g h
+
+      1              O *      Black    Player        8. f6  g1
+      2        O O O O *                             9. g2  g3
+      3      O O O * O *               15 discs     10. g4  g5
+      4    O * * * O * *                            11. g6  g7
+      5      O O O * O *      White    Player       12. h1  h2
+      6      * O   O * *                            13. h3  h4
+      7              O *       (O)     18 discs     14. h5  h6
+      8                                             15. h7  
+
+Book score is -53.00.
+   b3   -53.00
+   b5   -59.24  (deviation)
+
+White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: 
+         a b c d e f g h
+
+      1              O *      Black    Player        8. f6  g1
+      2        O O O O *                             9. g2  g3
+      3    O O O O * O *       (*)     14 discs     10. g4  g5
+      4    O O * * O * *                            11. g6  g7
+      5      O O O * O *      White    Player       12. h1  h2
+      6      * O   O * *                            13. h3  h4
+      7              O *               20 discs     14. h5  h6
+      8                                             15. h7  b3
+
+Book score is +53.00.
+   c1   +53.00  (deviation)
+   b5   +43.89
+
+Black move: Black move: 
+         a b c d e f g h
+
+      1              O *      Black    Player        9. g2  g3
+      2        O O O O *                            10. g4  g5
+      3    O O O O * O *               18 discs     11. g6  g7
+      4    O O * * O * *                            12. h1  h2
+      5    * * * * * O *      White    Player       13. h3  h4
+      6      * O   O * *                            14. h5  h6
+      7              O *       (O)     17 discs     15. h7  b3
+      8                                             16. b5  
+
+Book score is -43.89.
+   e6   -43.89  (deviation)
+   b6   -58.91
+
+White move: 
+         a b c d e f g h
+
+      1              O *      Black    Player        9. g2  g3
+      2        O O O O *                            10. g4  g5
+      3    O O O O * O *       (*)     14 discs     11. g6  g7
+      4    O O O * O * *                            12. h1  h2
+      5    O O * * * O *      White    Player       13. h3  h4
+      6    O O O   O * *                            14. h5  h6
+      7              O *               22 discs     15. h7  b3
+      8                                             16. b5  b6
+
+Book score is +58.91.
+   e6   +58.91  (deviation)
+   b7   +37.23
+
+Black move: 
+         a b c d e f g h
+
+      1              O *      Black    Player       10. g4  g5
+      2        O O O O *                            11. g6  g7
+      3    O O O O * O *               16 discs     12. h1  h2
+      4    O O O * O * *                            13. h3  h4
+      5    O O * * * O *      White    Player       14. h5  h6
+      6    O * O   O * *                            15. h7  b3
+      7    *         O *       (O)     21 discs     16. b5  b6
+      8                                             17. b7  
+
+Book score is -37.23.
+   e6   -37.23  (deviation)
+   b8   -60.19
+
+White move: 
+         a b c d e f g h
+
+      1              O *      Black    Player       10. g4  g5
+      2        O O O O *                            11. g6  g7
+      3    O O O O * O *       (*)     15 discs     12. h1  h2
+      4    O O O * O * *                            13. h3  h4
+      5    O O * * * O *      White    Player       14. h5  h6
+      6    O * O   O * *                            15. h7  b3
+      7    O         O *               23 discs     16. b5  b6
+      8    O                                        17. b7  b8
+
+Book score is +60.19.
+   f1   +60.19  (deviation)
+   c1   +54.08
+
+Black move: 
+         a b c d e f g h
+
+      1      *       O *      Black    Player       11. g6  g7
+      2        * O O O *                            12. h1  h2
+      3    O O O * * O *               20 discs     13. h3  h4
+      4    O O O * * * *                            14. h5  h6
+      5    O O * * * * *      White    Player       15. h7  b3
+      6    O * O   O * *                            16. b5  b6
+      7    O         O *       (O)     19 discs     17. b7  b8
+      8    O                                        18. c1  
+
+Book score is -54.08.
+   d1   -54.08  (deviation)
+   c2   -59.76
+
+White move: 
+         a b c d e f g h
+
+      1      *       O *      Black    Player       11. g6  g7
+      2      O O O O O *                            12. h1  h2
+      3    O O O * * O *       (*)     19 discs     13. h3  h4
+      4    O O O * * * *                            14. h5  h6
+      5    O O * * * * *      White    Player       15. h7  b3
+      6    O * O   O * *                            16. b5  b6
+      7    O         O *               21 discs     17. b7  b8
+      8    O                                        18. c1  c2
+
+Book score is +59.76.
+   f1   +59.76  (deviation)
+   c7   +51.81
+
+Black move: Black move: Black move: Black move: Black move: 
+         a b c d e f g h
+
+      1      *       O *      Black    Player       12. h1  h2
+      2      O O O O O *                            13. h3  h4
+      3    O O O * * O *               21 discs     14. h5  h6
+      4    O O O * * * *                            15. h7  b3
+      5    O O * * * * *      White    Player       16. b5  b6
+      6    O * *   O * *                            17. b7  b8
+      7    O *       O *       (O)     20 discs     18. c1  c2
+      8    O                                        19. c7  
+
+Book score is -51.81.
+   e6   -51.81  (deviation)
+   c8   -57.09
+
+White move: 
+         a b c d e f g h
+
+      1      *       O *      Black    Player       12. h1  h2
+      2      O O O O O *                            13. h3  h4
+      3    O O O * * O *       (*)     19 discs     14. h5  h6
+      4    O O O * * * *                            15. h7  b3
+      5    O O * * * * *      White    Player       16. b5  b6
+      6    O O *   O * *                            17. b7  b8
+      7    O O       O *               23 discs     18. c1  c2
+      8    O O                                      19. c7  c8
+
+Book score is +57.09.
+   e6   +57.09  (deviation)
+   d1   +49.21
+
+Black move: 
+         a b c d e f g h
+
+      1      * *     O *      Black    Player       13. h3  h4
+      2      O * * O O *                            14. h5  h6
+      3    O O * * * O *               24 discs     15. h7  b3
+      4    O O * * * * *                            16. b5  b6
+      5    O O * * * * *      White    Player       17. b7  b8
+      6    O O *   O * *                            18. c1  c2
+      7    O O       O *       (O)     19 discs     19. c7  c8
+      8    O O                                      20. d1  
+
+Book score is -49.21.
+   e6   -49.21  (deviation)
+   e1   -55.78
+
+White move: White move: White move: White move: White move: White move: White move: White move: 
+         a b c d e f g h
+
+      1      * * O   O *      Black    Player       13. h3  h4
+      2      O O * O O *                            14. h5  h6
+      3    O O * * * O *       (*)     23 discs     15. h7  b3
+      4    O O * * * * *                            16. b5  b6
+      5    O O * * * * *      White    Player       17. b7  b8
+      6    O O *   O * *                            18. c1  c2
+      7    O O       O *               21 discs     19. c7  c8
+      8    O O                                      20. d1  e1
+
+Book score is +55.78.
+   f1   +55.78  (deviation)
+   e6   +28.80
+
+Black move: Black move: Black move: Black move: Black move: 
+         a b c d e f g h
+
+      1      * * O   O *      Black    Player       14. h5  h6
+      2      O O * O O *                            15. h7  b3
+      3    O O * * * O *               25 discs     16. b5  b6
+      4    O O * * * * *                            17. b7  b8
+      5    O O * * * * *      White    Player       18. c1  c2
+      6    O O * * * * *                            19. c7  c8
+      7    O O       O *       (O)     20 discs     20. d1  e1
+      8    O O                                      21. e6  
+
+Book score is -28.80.
+   f1   -28.80  (deviation)
+   e7   -51.80
+
+White move: 
+         a b c d e f g h
+
+      1      * * O   O *      Black    Player       14. h5  h6
+      2      O O O O O *                            15. h7  b3
+      3    O O * O * O *       (*)     19 discs     16. b5  b6
+      4    O O * O * * *                            17. b7  b8
+      5    O O * O * * *      White    Player       18. c1  c2
+      6    O O O O * * *                            19. c7  c8
+      7    O O   O   O *               27 discs     20. d1  e1
+      8    O O                                      21. e6  e7
+
+Book score is +51.80.
+   d7   +51.80  (deviation)
+   f1   +51.24
+
+Black move: Black move: You must pass - please press Enter
+
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       15. h7  b3
+      2      O O * * * *                            16. b5  b6
+      3    O O * O * O *       (*)     25 discs     17. b7  b8
+      4    O O * O * * *                            18. c1  c2
+      5    O O * O * * *      White    Player       19. c7  c8
+      6    O O O O * * *                            20. d1  e1
+      7    O O   O   O *               22 discs     21. e6  e7
+      8    O O                                      22. f1  - 
+
+Book score is +51.24.
+   d7   +51.24  (deviation)
+   f7   +40.83
+
+Black move: Black move: Black move: Black move: Black move: Black move: 
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       16. b5  b6
+      2      O O * * * *                            17. b7  b8
+      3    O O * O * O *               28 discs     18. c1  c2
+      4    O O * O * * *                            19. c7  c8
+      5    O O * O * * *      White    Player       20. d1  e1
+      6    O O O * * * *                            21. e6  e7
+      7    O O   O * * *       (O)     20 discs     22. f1  - 
+      8    O O                                      23. f7  
+
+Book score is -40.83.
+   h8   -40.83  (deviation)
+   g8   -48.75
+
+White move: White move: White move: White move: White move: White move: White move: White move: White move: 
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       16. b5  b6
+      2      O O * * * *                            17. b7  b8
+      3    O O * O * O *       (*)     21 discs     18. c1  c2
+      4    O O * O * O *                            19. c7  c8
+      5    O O O O * O *      White    Player       20. d1  e1
+      6    O O O O * O *                            21. e6  e7
+      7    O O   O O O *               28 discs     22. f1  - 
+      8    O O       O                              23. f7  g8
+
+Book score is +48.75.
+   b1   +48.75  (deviation)
+   h8   +44.40
+
+Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: You must pass - please press Enter
+
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       17. b7  b8
+      2      O O * * * *                            18. c1  c2
+      3    O O * O * O *       (*)     23 discs     19. c7  c8
+      4    O O * O * O *                            20. d1  e1
+      5    O O O O * O *      White    Player       21. e6  e7
+      6    O O O O * O *                            22. f1  - 
+      7    O O   O O * *               27 discs     23. f7  g8
+      8    O O       O *                            24. h8  - 
+
+Book score is +44.40.
+   a3   +44.40
+   f8   +43.49  (deviation)
+
+Black move: Black move: Black move: 
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       18. c1  c2
+      2      O O * * * *                            19. c7  c8
+      3  * * * * O * O *               26 discs     20. d1  e1
+      4    O O * O * O *                            21. e6  e7
+      5    O O O O * O *      White    Player       22. f1  - 
+      6    O O O O * O *                            23. f7  g8
+      7    O O   O O * *       (O)     25 discs     24. h8  - 
+      8    O O       O *                            25. a3  
+
+Book score is -44.40.
+   b2   -44.40  (deviation)
+   a4   -44     (W/L/D solved)
+
+White move: 
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       18. c1  c2
+      2      O O * * * *                            19. c7  c8
+      3  * O * * O * O *       (*)     25 discs     20. d1  e1
+      4  O O O * O * O *                            21. e6  e7
+      5    O O O O * O *      White    Player       22. f1  - 
+      6    O O O O * O *                            23. f7  g8
+      7    O O   O O * *               27 discs     24. h8  - 
+      8    O O       O *                            25. a3  a4
+
+Book score is +44 (W/L/D solved).
+   a5   +44     (W/L/D solved)
+   b1   +33.48  (deviation)
+
+Black move: 
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       19. c7  c8
+      2      O O * * * *                            20. d1  e1
+      3  * O * * O * O *               32 discs     21. e6  e7
+      4  * * O * O * O *                            22. f1  - 
+      5  * * * * * * O *      White    Player       23. f7  g8
+      6    O O O O * O *                            24. h8  - 
+      7    O O   O O * *       (O)     21 discs     25. a3  a4
+      8    O O       O *                            26. a5  
+
+Book score is -44 (W/L/D solved).
+   a6   -44     (W/L/D solved)
+
+White move: 
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       19. c7  c8
+      2      O O * * * *                            20. d1  e1
+      3  * O * * O * O *       (*)     31 discs     21. e6  e7
+      4  * * O * O * O *                            22. f1  - 
+      5  * O * * * * O *      White    Player       23. f7  g8
+      6  O O O O O * O *                            24. h8  - 
+      7    O O   O O * *               23 discs     25. a3  a4
+      8    O O       O *                            26. a5  a6
+
+Book score is +44 (W/L/D solved).
+   a7   +44     (W/L/D solved)
+   b1   +29.11  (deviation)
+
+Black move: You must pass - please press Enter
+
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       20. d1  e1
+      2      O O * * * *                            21. e6  e7
+      3  * O * * O * O *       (*)     34 discs     22. f1  - 
+      4  * * O * O * O *                            23. f7  g8
+      5  * O * * * * O *      White    Player       24. h8  - 
+      6  * * O O O * O *                            25. a3  a4
+      7  * O O   O O * *               21 discs     26. a5  a6
+      8    O O       O *                            27. a7  - 
+
+Book score is +44 (W/L/D solved).
+   a8   +44     (W/L/D solved)
+   b1   +79.21  (deviation)
+
+Black move: 
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       21. e6  e7
+      2      O O * * * *                            22. f1  - 
+      3  * O * * O * O *               37 discs     23. f7  g8
+      4  * * O * O * O *                            24. h8  - 
+      5  * O * * * * O *      White    Player       25. a3  a4
+      6  * * * O O * O *                            26. a5  a6
+      7  * * O   O O * *       (O)     19 discs     27. a7  - 
+      8  * O O       O *                            28. a8  
+
+Book score is -44 (W/L/D solved).
+   d7   -44     (W/L/D solved)
+
+White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: White move: 
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       21. e6  e7
+      2      O O * * * *                            22. f1  - 
+      3  * O * * O * O *       (*)     36 discs     23. f7  g8
+      4  * * O * O * O *                            24. h8  - 
+      5  * O * * * * O *      White    Player       25. a3  a4
+      6  * * O O O * O *                            26. a5  a6
+      7  * * O O O O * *               21 discs     27. a7  - 
+      8  * O O       O *                            28. a8  d7
+
+Book score is +44 (W/L/D solved).
+   d8   +44     (W/L/D solved)
+   f8   +38.08  (deviation)
+
+Black move: 
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       22. f1  - 
+      2      O O * * * *                            23. f7  g8
+      3  * O * * O * O *               43 discs     24. h8  - 
+      4  * * O * O * O *                            25. a3  a4
+      5  * O * * * * O *      White    Player       26. a5  a6
+      6  * * O * O * O *                            27. a7  - 
+      7  * * * * * O * *       (O)     15 discs     28. a8  d7
+      8  * * * *     O *                            29. d8  
+
+Book score is -44 (W/L/D solved).
+   e8   -44     (W/L/D solved)
+
+White move: White move: White move: White move: White move: White move: White move: White move: 
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       22. f1  - 
+      2      O O * * * *                            23. f7  g8
+      3  * O * * O * O *       (*)     41 discs     24. h8  - 
+      4  * * O * O * O *                            25. a3  a4
+      5  * O * * * * O *      White    Player       26. a5  a6
+      6  * * O * O * O *                            27. a7  - 
+      7  * * * O O O * *               18 discs     28. a8  d7
+      8  * * * * O   O *                            29. d8  e8
+
+Book score is +44 (W/L/D solved).
+   f8   +44     (W/L/D solved)
+   b1   +39.77  (deviation)
+
+Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: You must pass - please press Enter
+
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       23. f7  g8
+      2      O O * * * *                            24. h8  - 
+      3  * O * * O * O *       (*)     46 discs     25. a3  a4
+      4  * * O * O * O *                            26. a5  a6
+      5  * O * * * * O *      White    Player       27. a7  - 
+      6  * * O * O * O *                            28. a8  d7
+      7  * * * O * * * *               14 discs     29. d8  e8
+      8  * * * * * * * *                            30. f8  - 
+
+Book score is +44 (W/L/D solved).
+   a2   +44     (exact score)
+   b1   +134.95  (deviation)
+
+Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: 
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       24. h8  - 
+      2  *   O O * * * *                            25. a3  a4
+      3  * * * * O * O *               49 discs     26. a5  a6
+      4  * * * * O * O *                            27. a7  - 
+      5  * O * * * * O *      White    Player       28. a8  d7
+      6  * * O * O * O *                            29. d8  e8
+      7  * * * O * * * *       (O)     12 discs     30. f8  - 
+      8  * * * * * * * *                            31. a2  
+
+
+White move: White move: White move: White move: White move: White move: White move: White move: 
+         a b c d e f g h
+
+      1      * * * * * *      Black    Player       24. h8  - 
+      2  * O O O * * * *                            25. a3  a4
+      3  * O * * O * O *       (*)     47 discs     26. a5  a6
+      4  * O * * O * O *                            27. a7  - 
+      5  * O * * * * O *      White    Player       28. a8  d7
+      6  * * O * O * O *                            29. d8  e8
+      7  * * * O * * * *               15 discs     30. f8  - 
+      8  * * * * * * * *                            31. a2  b2
+
+
+Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: Black move: 
+         a b c d e f g h
+
+      1  *   * * * * * *      Black    Player       25. a3  a4
+      2  * * O O * * * *                            26. a5  a6
+      3  * O * * O * O *               49 discs     27. a7  - 
+      4  * O * * O * O *                            28. a8  d7
+      5  * O * * * * O *      White    Player       29. d8  e8
+      6  * * O * O * O *                            30. f8  - 
+      7  * * * O * * * *       (O)     14 discs     31. a2  b2
+      8  * * * * * * * *                            32. a1  
+
+
+White move: White move: White move: White move: White move: White move: White move: White move: 
+         a b c d e f g h
+
+      1  * O * * * * * *      Black    Player       25. a3  a4
+      2  * O O O * * * *                            26. a5  a6
+      3  * O * * O * O *       (*)     48 discs     27. a7  - 
+      4  * O * * O * O *                            28. a8  d7
+      5  * O * * * * O *      White    Player       29. d8  e8
+      6  * * O * O * O *                            30. f8  - 
+      7  * * * O * * * *               16 discs     31. a2  b2
+      8  * * * * * * * *                            32. a1  b1
+
+
+Black: 48   White: 16
+Nodes searched:        0         
+Positions evaluated:   0         
+Total time: 0.0 s

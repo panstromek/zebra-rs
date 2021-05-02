@@ -289,7 +289,7 @@ fn main() {
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir,
                                   book_path_from_run_dir.as_ref(),
-                                  book_path, timeout as _, &thor_files);
+                                  book_path, timeout as _, &thor_files, "thor");
         if !success {
             std::fs::remove_file(case_dir.join("failing"));
             std::fs::write(case_dir.join("timeout"), "");
@@ -300,7 +300,7 @@ fn main() {
         let success = snapshot_test_with_folder(binary_folder, binary, arguments, &case_dir,
                                   adjust.as_ref().map(AsRef::as_ref), interactive,
                                   coeffs_path_from_run_dir, book_path_from_run_dir.as_ref(),
-                                                book_path, timeout as _, &thor_files);
+                                                book_path, timeout as _, &thor_files, "thor");
         std::fs::remove_file(case_dir.join("failing"));
         if !success {
             std::fs::write(case_dir.join("timeout"), "");
@@ -679,7 +679,7 @@ mod tests {
     use zlib_coeff_source::{ZLibSource};
     use std::process::{Command, Stdio, ChildStdin, ExitStatus, Child};
     use std::path::{Path, PathBuf};
-    use std::fs::{File, DirEntry};
+    use std::fs::{File, DirEntry, read_dir};
     use std::io::{Write};
     use std::iter::FromIterator;
     use std::convert::TryFrom;
@@ -914,13 +914,102 @@ mod tests {
             }
         }
     }
+    const BINARY_FOLDER :&str =
+    // "./../../../../../zebra-1/"
+        "./../../../../test-target/release/"
+    // "./../../../../../bisection/target/release/"
+    ;
+    macro_rules! from_fuzz {
+        ($($id:ident, $args:literal, $book_path:literal, $thor_files:expr);+) => {
+            $(
+                #[test]
+                fn $id() {
+                    snapshot_test_from_fuzzer(
+                        $args,
+                        &("./snapshot-tests/".to_owned() + stringify!($id)),
+                        $book_path,
+                        $thor_files
+                    );
+                }
+            )+
+        };
+    }
+
+    from_fuzz!(
+f1_1160 , "-l 6 7 5 6 7 7 -r 1 -e 0 -seqfile ../seq.txt -draw2black -t 2 4 4 2 5 2 1 -p 1 -learn 2 3 " , "../../../resources/books/book-34.bin", &[];
+f1_1307 , "-l 11 24 1 15 23 10 -b 1 -randmove 1 -thor 7 -p 0 -r 1" , "book.bin", &["wth_1980.wtb","wth_1990.wtb"];
+f1_1331 , "-l 15 11 18 17 9 18 -test -p 0 -keepdraw -b 0" ,  "../../../resources/books/book-633.bin", &[];
+f1_1354 , "-l 5 19 23 4 19 24 -b 1 -r 0 -p 0 -randmove 7" ,  "book.bin", &[];
+f1_1364 , "-l 2 3 1 2 4 1 -slack 88.27771 -r 0 -learn 1 26 -seq c4c5c6e3f2b4c3d2d3d6e2f3f4f5f6g1g2g3g4g5g6g7h1h2h3h4h5h6h7b3b5b6b7b8c1c2c7c8d1e1e6e7f1f7g8h8 -b 1 -analyze -h 6" ,  "../../../resources/books/book-140.bin", &[];
+f1_1371 , "-l 1 5 5 1 6 7 -dev 83 41 97.18826 -p 0 -e 1 -t 2 1 1 0 2 1 1" ,  "book.bin", &[];
+f1_1382 , "-l 2 0 4 2 1 4 -w 0 -b 1 -g ../board.txt" ,  "book.bin", &[];
+f1_1399 , "-l 1 4 5 1 5 2 -time 435 31 352 340 -thor 19 -dev 69 57 209.51326 -h 8 -slack 7.4069858 -p 0" ,  "book.bin", &[];
+f1_1455 , "-l 1 0 0 2 1 2 -t 2 1 1 0 2 0 0 -dev 35 12 146.69566 -p 1 -e 1 -r 0 -b 0" ,  "book.bin",&[];
+f1_1571 , "-l 1 2 2 2 2 2 -learn 1 15 -log Mp9JapERVJ -b 0 -p 0" ,  "../../../resources/books/book-72.bin", &[];
+f1_1638 , "-l 2 5 6 3 7 4 -thor 11 -h 10 -w 1 -p 1 -learn 0 21 " ,  "../../../resources/books/book-37.bin", &["wth_1980.wtb", "wthor.trn"];
+f1_1692 , "-l 1 6 5 1 6 6 -seq c4c5c6e3f2b4c3d2d3d6e2f3f4f5f6g1g2g3g4f1h1e1b6b3h2b5e6c7a5a4c2d1c1a6a2g5h6h5g6d7d8h7c8f7g8e7e8f8g7h8a7a8a3b8b7b1a1b2h -seqfile ../seq.txt -e 0 -log f08O5Xd1kZ -dev 93 34 74.776405" , "book.bin", &[];
+f1_1794 , "-l 0 0 -time 304 286 149 221 -p 1 -log ItB5HG1vdJ -thor 17 -w 0 -test -draw2black -b 0" ,  "book.bin", &["wthor.jou","wthor.trn"];
+f1_1887 , "-l 0 0 -e 0 -r 1 -b 1 -t 1 3 1 2 -seqfile ../seq.txt -draw2black -randmove 2 -thor 17 -dev 56 15 166.48924" , "../../../resources/books/book-673.bin", &["wth_1981.wtb","wthor.jou","wthor.trn",];
+f1_1892 , "-l 4 8 6 5 6 6 -g ../board.txt -r 1 -seq c4c5c6e3f2b4 -p 1 -seqfile ../seq.txt" , "../../../resources/books/book-555.bin", &[];
+f1_1896 , "-l 2 2 5 1 4 6 -b 1 -analyze -e 0 -randmove 9 -seq c4c5c6e3f2b4c3d2d3d6e2f3f4f5f6g1g2g3g4g5g6g7h1h2h3h4h5h6h7b3b5b6b7b8c1c2c7 -draw2none" ,  "../../../resources/books/book-32.bin", &[];
+f1_1936 , "-l 0 0 -learn 4 11 -e 1 -public -dev 55 17 32.211823 -g ../board.txt -thor 1" , "../../../resources/books/book-197.bin", &[];
+f1_1980 , "-l 4 17 2 14 20 4" , "../../../resources/books/book-695.bin", &[];
+f1_1989 , "-l 15 3 12 14 1 13 -b 1 -p 1 -keepdraw -seqfile ../seq.txt -seq d3e3f4c3f5g4f3f6e6g5c4g6g3f2h3h5h4h2f7d7e7c6d6c7c5b4b6b5c8a5b3d8e8a2e2f1d2c1h7h6h1c" ,  "book.bin",&[];
+f1_2054 , "-l 0 0 -time 81 467 105 320 -analyze -draw2black -p 0 -dev 71 70 85.1679 -e 0 -b 1" ,  "book.bin", &[];
+f1_2179 , "-l 5 5 8 5 3 8 -b 1 -h 0 -learn 2 0 -r 1" ,  "../../../resources/books/book-219.bin", &[];
+f1_2230 , "-l 14 15 13 17 17 2 -r 0 -g ../board.txt -log current.mov" , "book.bin", &[];
+f1_2446 , "-l 0 0 -r 0 -e 0 -g ../board.txt" ,  "book.bin",&[];
+f1_247 , "-l 4 3 0 4 2 2 -r 0 -thor 6 -repeat 0 -log 7jVcoP348A -seqfile ../seq.txt" ,  "../../../resources/books/book-511.bin", &["wth_1980.wtb",];
+f1_2535 , "-l 3 1 3 3 1 2 -learn 1 13 -dev 4 93 61.99677 -w 1 -r 0 -thor 4" ,  "../../../resources/books/book-414.bin", &["wthor.jou","wthor.trn",];
+f1_2575 , "-l 0 0 -e 0 -t 2 2 1 3 4 4 4 -b 1 -repeat 1 -r 1 -thor 4" ,  "book.bin", &["wth_1990.wtb","wthor.jou","wthor.trn",];
+f1_2588 , "-l 2 4 6 3 4 6 -log DQFDCEKN9c -e 1 -draw2white -dev 94 46 160.96391" ,  "../../../resources/books/book-531.bin", &[];
+f1_2749 , "-l 3 6 1 3 7 1 -randmove 6 -repeat 0 -p 0 -h 3 -learn 1 16 -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1g7e7h7e8d8 -keepdraw -b 1" ,  "../../../resources/books/book-73.bin", &[];
+f1_2773 , "-l 4 7 9 4 6 9 -learn 4 5 -r 1 -draw2none -dev 59 44 11.6894455" ,  "../../../resources/books/book-652.bin", &[];
+f1_2788 , "-l 1 2 6 2 1 7 -b 0 -g ../board.txt -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1a6a4h6h7a3a2h2h1g2b8g7d8g1h8e7b2e8c2 -p 0 -learn 0 1 -time 298 327 94 27 -e 1 -h 15" , "../../../resources/books/book-463.bin", &[];
+f1_2796 , "-l 0 0 -randmove 1 -thor 16 -h 17 -learn 1 11 -t 2 2 0 1 2 1 1 -r 0 -dev 79 62 160.49995 -p 0 -e 1" , "../../../resources/books/book-113.bin", &[];
+f1_2879 , "-l 0 0 -public -p 1 -private" ,  "../../../resources/books/book-649.bin", &[];
+f1_2926 , "-l 1 3 4 2 4 3 -e 1 -keepdraw -w 1 -dev 38 38 124.93513 -p 0 -time 320 403 188 492 -seq " ,  "book.bin", &[];
+f1_2934 , "-l 11 5 7 10 5 6 -log CybGtA8mUF -thor 3 -b 1 -e 1" ,  "book.bin", &["wth_1990.wtb","wthor.jou","wthor.trn",];
+f1_2944 , "-l 3 2 1 4 1 1 -h 20 -public -draw2none -t 2 2 1 1 2 1 1 -r 0 -p 1" ,  "book.bin",&[];
+f1_344 , "-l 0 0 -e 0 -b 1 -wld 0 -r 1" ,  "book.bin",&[];
+f1_363 , "-l 2 5 6 3 4 5 -t 3 2 1 0 1 1 1 2 1 0 -repeat 0 -e 0 -b 1 -r 0 -thor 13 -keepdraw" ,  "book.bin", &["wth_1981.wtb","wthor.trn",];
+f1_427 , "-l 1 3 3 1 4 1 -time 475 68 380 304 -thor 7 -r 1 -p 1 -seq f5f6d3g5e6d7f7d6e7f4c6e8f8d8c8c7c5e3b8c -e 1 -g ../board.txt -analyze" ,  "../../../resources/books/book-255.bin", &[];
+f1_515 , "-l 7 4 3 1 17 9 -draw2white -repeat 5 -thor 12 -p 1 -r 1" ,  "../../../resources/books/book-447.bin", &[];
+f1_517 , "-l 5 1 6 5 0 6 -r 1 -learn 4 12 -slack 46.394203 -h 6 -b 1" ,  "../../../resources/books/book-10.bin", &[];
+f1_545 , "-l 11 22 9 11 24 9 -time 107 472 369 392 -seqfile ../seq.txt -e 1 -p 0 -r 0 -dev 40 36 101.57625" ,  "../../../resources/books/book-331.bin", &[];
+f1_577 , "-l 0 0 -draw2none -r 0 -log adjust.txt -slack 77.36907 -private -p 1 -thor 9" ,  "../../../resources/books/book-636.bin", &["wthor.trn",];
+f1_585 , "-l 4 1 4 2 1 5 -t 3 1 2 1 2 1 2 2 2 0 -e 1 -w 1 -draw2none -seqfile ../seq.txt -keepdraw -p 0 -repeat 1 -public -learn 2 3 " ,  "../../../resources/books/book-711.bin", &[];
+f1_60 , "-l 2 6 3 1 6 3 -p 1 -t 2 1 0 0 2 0 1 -g ../board.txt -draw2white -b 1 -r 1"  , "book.bin",&[];
+f1_733 , "-l 7 12 7 9 12 7 -e 1 -learn 8 1 -slack 0.9908676 -dev 83 22 203.86996 -r 1" ,  "../../../resources/books/book-764.bin", &[];
+f1_738 , "-l 4 6 2 8 11 8 -repeat 3 -b 1 -h 13 -seq d3c3e6e3d2f6f4g4f5d6d7c6e7d8 -time 424 200 3 341 -keepdraw -p 1" , "../../../resources/books/book-375.bin", &[];
+f1_76 , "-l 2 7 6 3 6 5 -p 1 -keepdraw -test -e 1 -g ../board.txt -draw2none -learn 1 56 " , "../../../resources/books/book-456.bin", &[];
+f1_770 , "-l 6 3 20 7 3 22 -thor 19 -r 1 -h 20 -p 0 -b 1 -repeat 3" , "book.bin", &["wth_1980.wtb", ]
+
+    );
+
+    fn snapshot_test_from_fuzzer(arguments: &str, snapshot_test_dir: &str, book_path: &str, thor_files:&[&str]) {
+        let adjust = std::fs::read_to_string(Path::new(snapshot_test_dir).join("snapshots/adjust.txt")).ok();
+        let thor_files: Vec<_> = thor_files.iter().map(Deref::deref).map(String::from).collect();
+        let coeffs_path_from_run_dir = "./../../../../coeffs2.bin" ;
+        let book_path_from_run_dir = if book_path == "book.bin" {
+            "./../../../../book.bin"
+        }  else {
+            book_path
+        };
+        let interactive = if arguments.contains("-l 0 0") { Interactive::Dumb } else { Interactive::None };
+        snapshot_test_with_folder(BINARY_FOLDER, "zebra", arguments, Path::new(snapshot_test_dir), adjust.as_ref().map(String::as_str),
+                                  interactive, coeffs_path_from_run_dir, book_path_from_run_dir,
+                                  if book_path == "book.bin" {
+                                      "resources/book-tmp.bin"
+                                  } else {
+
+                                      book_path.strip_prefix("../../../").unwrap()
+                                  },
+                                  30, thor_files.as_slice(), "../thor");
+    }
 
     fn snapshot_test(binary: &str, arguments: &str, snapshot_test_dir: &str, with_adjust: bool, interactive: Interactive) {
-        let binary_folder =
-            // "./../../../../../zebra-1/"
-            "./../../../../test-target/release/"
-            // "./../../../../../bisection/target/release/"
-            ;
+
         let coeffs_path_from_run_dir = "./../../../../coeffs2.bin" ;
         let book_path_from_run_dir = "./../../../../book.bin" ;
         let with_adjust = if with_adjust {
@@ -928,9 +1017,9 @@ mod tests {
         } else {
             None
         };
-        snapshot_test_with_folder(binary_folder, binary, arguments, Path::new(snapshot_test_dir), with_adjust,
+        snapshot_test_with_folder(BINARY_FOLDER, binary, arguments, Path::new(snapshot_test_dir), with_adjust,
                                   interactive, coeffs_path_from_run_dir, book_path_from_run_dir,
-                                  "resources/book-tmp.bin", 30, &[]);
+                                  "resources/book-tmp.bin", 30, &[], "../thor");
     }
 
     pub fn snapshot_test_with_folder(binary_folder: &str,
@@ -943,7 +1032,7 @@ mod tests {
                                      book_path_from_run_dir: &str,
                                      swap_book_path: &str,
                                      timeout: u64,
-        thor_files: &[String]
+                                     thor_files: &[String], thor_base: &str
     ) -> bool {
 
         let snapshot_test_dir = Path::new(snapshot_test_dir);
@@ -962,7 +1051,7 @@ mod tests {
             let thor_dir = run_directory.join("thor");
             std::fs::create_dir_all(&thor_dir).unwrap();
             for file in thor_files {
-                std::fs::copy(Path::new("thor").join(file), thor_dir.join(file)).unwrap();
+                std::fs::copy(Path::new(thor_base).join(file), thor_dir.join(file)).unwrap();
             }
         }
 
@@ -1096,7 +1185,7 @@ mod tests {
         let snapshot_str = std::str::from_utf8(snapshot.as_ref());
         if snapshot_str.is_err() {
             let result = std::fs::read(result_path).unwrap();
-            assert_eq!(result, snapshot);
+            assert!(result == snapshot, "{} == {}" , snapshot_path.to_str().unwrap(), result_path.to_str().unwrap());
             return;
         }
 
@@ -1108,7 +1197,7 @@ mod tests {
         }
 
         let snapshot = snapshot_str.unwrap();
-        let output = std::fs::read_to_string(result_path).unwrap();
+        let output = std::fs::read_to_string(result_path).expect(result_path.as_os_str().to_str().unwrap());
 
         let mut first = snapshot.lines().filter(variable_lines);
         let mut second = output.lines().filter(variable_lines);

@@ -1,0 +1,24 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+
+         a b c d e f g h
+
+      1                       Black    Zebra        
+      2                                             
+      3                        (*)     2 discs      
+      4        O *                                  
+      5        * O            White    Zebra        
+      6                                             
+      7                                2 discs      
+      8                                             
+
+Thor database:        f5: 100.0%    
+-->  13  +0.09          56948  d3 c5 d6 e3 f4     0.0 s  
+-->  14  +0.05         109014  d3 c3 c4 e3 d2     0.0 s  
+-->  15  -0.23         200289  d3 c5 f6 f5 e6     0.0 s  
+
+Black: 4   White: 1
+Nodes searched:        200289    
+Positions evaluated:   148081    
+Total time: 0.0 s

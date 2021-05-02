@@ -1,0 +1,32 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+Reading binary opening database... done (took 0 s)
+Loaded 153 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+Engine override: Random move selected.
+Engine override: Random move selected.
+Engine override: Random move selected.
+Engine override: Random move selected.
+
+Black level: 3
+White level: 3
+
+Black: 40   White: 24
+Nodes searched:        10159     
+Positions evaluated:   7809      
+Total time: 6.0 s
+
+
+Time:  6.0 s
+Nodes: 10159
+
+Competitors:
+  Player  1: 3-1-2
+
+         1      Score
+   1   40-24     1.0
+
+Black score: 1.0
+White score: 0.0
+

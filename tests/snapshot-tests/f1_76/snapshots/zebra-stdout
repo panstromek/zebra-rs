@@ -1,0 +1,27 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+Reading binary opening database... done (took 0 s)
+Book randomness: 0.25 disks
+
+         a b c d e f g h
+
+      1  *   * * * * * *      Black    Zebra         1. -   
+      2  * * O O * * * *                            
+      3  * O * * O * O *               49 discs     
+      4  * O * * O * O *                            
+      5  * O * * * * O *      White    Zebra        
+      6  * * O * O * O *                            
+      7  * * * O * * * *       (O)     14 discs     
+      8  * * * * * * * *                            
+
+-->   2  -32                4  b1        0.0 s  
+Slack left is 0.00. Book score is -32 (W/L/D solved).
+   b1   -32     (exact score)
+-->   1  -32               55  b1     0.0 s  
+PV: b1
+
+Black: 48   White: 16
+Nodes searched:        58        
+Positions evaluated:   2         
+Total time: 0.0 s

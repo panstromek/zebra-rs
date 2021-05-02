@@ -1,0 +1,1049 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+Reading binary opening database... done (took 0 s)
+Book randomness: 0.25 disks
+
+         a b c d e f g h
+
+      1                       Black    Zebra        
+      2                                             
+      3                        (*)     2 discs      
+      4        O *                                  
+      5        * O            White    Zebra        
+      6                                             
+      7                                2 discs      
+      8                                             
+
+Thor database:        f5: 100.0%    
+Slack left is 0.25. Book score is +0.20.
+   d3   +0.20 
+   c4   +0.20 
+   f5   +0.20 
+   e6   +0.20 
+-->   Book      +0.20        e6
+PV: e6 f6 d3
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  
+      2                                             
+      3                       0.20     4 discs      
+      4        O *                                  
+      5        * *            White    Zebra        
+      6          *                                  
+      7                        (O)     1 discs      
+      8                                             
+
+Thor database:        f4: 66.3%    f6: 32.3%    d6:  1.4%    
+Slack left is 0.25. Book score is -0.20.
+   f6   -0.20 
+   f4   -0.99 
+   d6   -5.20 
+-->   Book      -0.20        f6
+PV: f6 d3
+
+Opening: Diagonal Opening
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                             
+      3                        (*)     3 discs      
+      4        O *                                  
+      5        * O            White    Zebra        
+      6          * O                                
+      7                       -0.20    3 discs      
+      8                                             
+
+Thor database:        f5: 97.9%    d3:  1.0%    c4:  0.7%    g6:  0.5%    
+Slack left is 0.25. Book score is +0.20. Private node.
+   f5   +0.20 
+   d3   -7499.12  (deviation)
+-->   Book      +0.20        f5
+PV: f5 f4 e3
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  
+      3                       0.20     5 discs      
+      4        O *                                  
+      5        * * *          White    Zebra        
+      6          * O                                
+      7                        (O)     2 discs      
+      8                                             
+
+Thor database:        f4: 100.0%    
+Slack left is 0.25. Book score is -0.20. Private node.
+   f4   -0.20 
+   d6   -0.20 
+-->   Book      -0.20        d6
+PV: d6 c5
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                        (*)     3 discs      
+      4        O *                                  
+      5        O * *          White    Zebra        
+      6        O O O                                
+      7                       -0.20    5 discs      
+      8                                             
+
+Thor database:        e7: 38.7%    c5: 34.1%    f7: 11.1%    c3: 11.1%    c4:  1.6%    
+c6:  1.5%    c7:  1.0%    g7:  0.5%    d7:  0.4%    
+Slack left is 0.25. Book score is +0.20. Private node.
+   e7   +0.20 
+   c5   -7492.26  (deviation)
+-->   Book      +0.20        e7
+PV: e7 f7
+
+Opening: Heath / Tobidashi
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                       0.20     5 discs       3. e7  
+      4        O *                                  
+      5        O * *          White    Zebra        
+      6        O * O                                
+      7          *             (O)     4 discs      
+      8                                             
+
+Thor database:        g5: 69.9%    f4: 19.2%    f7:  7.0%    f3:  1.9%    d8:  1.1%    
+f8:  0.9%    
+Slack left is 0.25. Book score is -0.20. Private node.
+   g5   -0.20 
+   f7   -7493.00  (deviation)
+-->   Book      -0.20        g5
+PV: g5 c6
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                        (*)     3 discs       3. e7  g5
+      4        O *                                  
+      5        O O O O        White    Zebra        
+      6        O * O                                
+      7          *            -0.20    7 discs      
+      8                                             
+
+Thor database:        c5: 52.7%    g6: 37.8%    g4:  9.5%    
+Slack left is 0.25. Book score is +0.20. Private node.
+   g6   +0.20 
+   g4   -0.59 
+   c5   -0.66 
+   c6   -7496.76  (deviation)
+-->   Book      +0.20        g6
+PV: g6 f8
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                       0.20     6 discs       3. e7  g5
+      4        O *                                   4. g6  
+      5        O O * O        White    Zebra        
+      6        O * * *                              
+      7          *             (O)     5 discs      
+      8                                             
+
+Thor database:        e8: 61.5%    f7: 17.7%    e3: 14.4%    f4:  6.4%    
+Slack left is 0.25. Book score is -0.20. Private node.
+   f7   -7.09 
+   f8   -7492.10  (deviation)
+-->   Book      -7.09        f7
+PV: f7 f8
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                        (*)     5 discs       3. e7  g5
+      4        O *                                   4. g6  f7
+      5        O O * O        White    Zebra        
+      6        O O * *                              
+      7          * O          -7.09    7 discs      
+      8                                             
+
+Thor database:        e8: 53.6%    d7: 23.5%    f8: 23.0%    
+Slack left is 0.25. Book score is +7.09. Private node.
+   e8   +3.59 
+   d7   -1.26 
+   f8   -7484.81  (deviation)
+-->   Book      +3.59        e8
+PV: e8 g4
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                       +3.59    7 discs       3. e7  g5
+      4        O *                                   4. g6  f7
+      5        O O * O        White    Zebra         5. e8  
+      6        O O * *                              
+      7          * *           (O)     6 discs      
+      8          *                                  
+
+Slack left is 0.25. Book score is -3.59. Private node.
+   h6   -3.59 
+   g4   -7507.78  (deviation)
+-->   Book      -3.59        h6
+PV: h6 c5
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                        (*)     5 discs       3. e7  g5
+      4        O *                                   4. g6  f7
+      5        O O * O        White    Zebra         5. e8  h6
+      6        O O O O O                            
+      7          * *          -3.59    9 discs      
+      8          *                                  
+
+Slack left is 0.25. Book score is +3.59. Private node.
+   h4   +3.59 
+   c5   -7490.87  (deviation)
+-->   Book      +3.59        h4
+PV: h4 f3
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                       +3.59    8 discs       3. e7  g5
+      4        O *     *                             4. g6  f7
+      5        O O * *        White    Zebra         5. e8  h6
+      6        O O * O O                             6. h4  
+      7          * *           (O)     7 discs      
+      8          *                                  
+
+Slack left is 0.25. Book score is -3.59. Private node.
+   g8   -3.59 
+   f3   -7509.77  (deviation)
+-->   Book      -3.59        g8
+PV: g8 d7
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                        (*)     7 discs       3. e7  g5
+      4        O *     *                             4. g6  f7
+      5        O O * *        White    Zebra         5. e8  h6
+      6        O O * O O                             6. h4  g8
+      7          * O          -3.59    9 discs      
+      8          *   O                              
+
+Slack left is 0.25. Book score is +3.59. Private node.
+   c5   -1.81 
+   d7   -7488.30  (deviation)
+-->   Book      -1.81        c5
+PV: c5 f4
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3                       -1.81    11 discs      3. e7  g5
+      4        O *     *                             4. g6  f7
+      5      * * * * *        White    Zebra         5. e8  h6
+      6        * O * O O                             6. h4  g8
+      7          * O           (O)     6 discs       7. c5  
+      8          *   O                              
+
+Slack left is 0.25. Book score is +1.81. Private node.
+   e3   -2.77 
+   f4   -7490.09  (deviation)
+-->   Book      -2.77        e3
+PV: e3 d3
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2                                              2. f5  d6
+      3          O             (*)     9 discs       3. e7  g5
+      4        O O     *                             4. g6  f7
+      5      * * O * *        White    Zebra         5. e8  h6
+      6        * O * O O                             6. h4  g8
+      7          * O          -2.77    9 discs       7. c5  e3
+      8          *   O                              
+
+Slack left is 0.25. Book score is +2.77. Private node.
+   e2   -8.06 
+   d3   -7489.12  (deviation)
+-->   Book      -8.06        e2
+PV: e2 f4
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2          *                                   2. f5  d6
+      3          *            -8.06    14 discs      3. e7  g5
+      4        O *     *                             4. g6  f7
+      5      * * * * *        White    Zebra         5. e8  h6
+      6        * * * O O                             6. h4  g8
+      7          * O           (O)     5 discs       7. c5  e3
+      8          *   O                               8. e2  
+
+Slack left is 0.25. Book score is +8.06. Private node.
+   c6   +8.06 
+   f4   -7489.35  (deviation)
+-->   Book      +8.06        c6
+PV: c6 d7
+
+         a b c d e f g h
+
+      1                       Black    Zebra         1. e6  f6
+      2          *                                   2. f5  d6
+      3          *             (*)     11 discs      3. e7  g5
+      4        O *     *                             4. g6  f7
+      5      * * * * *        White    Zebra         5. e8  h6
+      6      O O O O O O                             6. h4  g8
+      7          * O          +8.06    9 discs       7. c5  e3
+      8          *   O                               8. e2  c6
+
+Slack left is 0.25. Book score is -8.06. Private node.
+   c7   -28.36
+   d7   -7499.96  (deviation)
+-->   Book     -28.36        c7
+PV: c7 c4
+
+         a b c d e f g h
+
+      1                       Black    Zebra         2. f5  d6
+      2          *                                   3. e7  g5
+      3          *            -28.36   14 discs      4. g6  f7
+      4        O *     *                             5. e8  h6
+      5      * * * * *        White    Zebra         6. h4  g8
+      6      * * O O O O                             7. c5  e3
+      7      *   * O           (O)     7 discs       8. e2  c6
+      8          *   O                               9. c7  
+
+Slack left is 0.25. Book score is +28.36. Private node.
+   e1   +28.36
+   c4   -7478.57  (deviation)
+-->   Book     +28.36        e1
+PV: e1 f2
+
+         a b c d e f g h
+
+      1          O            Black    Zebra         2. f5  d6
+      2          O                                   3. e7  g5
+      3          O             (*)     10 discs      4. g6  f7
+      4        O O     *                             5. e8  h6
+      5      * * O * *        White    Zebra         6. h4  g8
+      6      * * O O O O                             7. c5  e3
+      7      *   * O          +28.36   12 discs      8. e2  c6
+      8          *   O                               9. c7  e1
+
+Slack left is 0.25. Book score is -28.36. Private node.
+   f4   -31.93
+   f2   -7520.26  (deviation)
+-->   Book     -31.93        f4
+PV: f4 c4
+
+         a b c d e f g h
+
+      1          O            Black    Zebra         3. e7  g5
+      2          O                                   4. g6  f7
+      3          O            -31.93   12 discs      5. e8  h6
+      4        O O *   *                             6. h4  g8
+      5      * * * * *        White    Zebra         7. c5  e3
+      6      * * O O O O                             8. e2  c6
+      7      *   * O           (O)     11 discs      9. c7  e1
+      8          *   O                              10. f4  
+
+Slack left is 0.25. Book score is +31.93. Private node.
+   f3   +31.93
+   c4   -7464.19  (deviation)
+-->   Book     +31.93        f3
+PV: f3 g3
+
+         a b c d e f g h
+
+      1          O            Black    Zebra         3. e7  g5
+      2          O                                   4. g6  f7
+      3          O O           (*)     10 discs      5. e8  h6
+      4        O O O   *                             6. h4  g8
+      5      * * * O *        White    Zebra         7. c5  e3
+      6      * * O O O O                             8. e2  c6
+      7      *   * O          +31.93   14 discs      9. c7  e1
+      8          *   O                              10. f4  f3
+
+Slack left is 0.25. Book score is -31.93. Private node.
+   d2   -38.77
+   g3   -7523.83  (deviation)
+-->   Book     -38.77        d2
+PV: d2 c4
+
+         a b c d e f g h
+
+      1          O            Black    Zebra         4. g6  f7
+      2        * O                                   5. e8  h6
+      3          * O          -38.77   13 discs      6. h4  g8
+      4        O O *   *                             7. c5  e3
+      5      * * * O *        White    Zebra         8. e2  c6
+      6      * * O O O O                             9. c7  e1
+      7      *   * O           (O)     12 discs     10. f4  f3
+      8          *   O                              11. d2  
+
+Slack left is 0.25. Book score is +38.77. Private node.
+   c1   +38.77
+   c4   -7457.82  (deviation)
+-->   Book     +38.77        c1
+PV: c1 d3
+
+         a b c d e f g h
+
+      1      O   O            Black    Zebra         4. g6  f7
+      2        O O                                   5. e8  h6
+      3          O O           (*)     9 discs       6. h4  g8
+      4        O O O   *                             7. c5  e3
+      5      * * * O O        White    Zebra         8. e2  c6
+      6      * * O O O O                             9. c7  e1
+      7      *   * O          +38.77   17 discs     10. f4  f3
+      8          *   O                              11. d2  c1
+
+Slack left is 0.25. Book score is -38.77. Private node.
+   f2   -49.75
+   d3   -7530.66  (deviation)
+-->   Book     -49.75        f2
+PV: f2 c4
+
+         a b c d e f g h
+
+      1      O   O            Black    Zebra         5. e8  h6
+      2        O O *                                 6. h4  g8
+      3          * O          -49.75   12 discs      7. c5  e3
+      4        * O O   *                             8. e2  c6
+      5      * * * O O        White    Zebra         9. c7  e1
+      6      * * O O O O                            10. f4  f3
+      7      *   * O           (O)     15 discs     11. d2  c1
+      8          *   O                              12. f2  
+
+Slack left is 0.25. Book score is +49.75. Private node.
+   f1   +33.02
+   c4   -7442.15  (deviation)
+-->   Book     +33.02        f1
+PV: f1 g2
+
+         a b c d e f g h
+
+      1      O   O O          Black    Zebra         5. e8  h6
+      2        O O O                                 6. h4  g8
+      3          * O           (*)     11 discs      7. c5  e3
+      4        * O O   *                             8. e2  c6
+      5      * * * O O        White    Zebra         9. c7  e1
+      6      * * O O O O                            10. f4  f3
+      7      *   * O          +33.02   17 discs     11. d2  c1
+      8          *   O                              12. f2  f1
+
+Slack left is 0.25. Book score is -33.02. Private node.
+   g4   -33.02
+   g2   -7550.47  (deviation)
+-->   Book     -33.02        g4
+PV: g4 c4
+
+         a b c d e f g h
+
+      1      O   O O          Black    Zebra         6. h4  g8
+      2        O O O                                 7. c5  e3
+      3          * O          -33.02   14 discs      8. e2  c6
+      4        * * * * *                             9. c7  e1
+      5      * * * O O        White    Zebra        10. f4  f3
+      6      * * O O O O                            11. d2  c1
+      7      *   * O           (O)     15 discs     12. f2  f1
+      8          *   O                              13. g4  
+
+Slack left is 0.25. Book score is +33.02. Private node.
+   b6   +33.02
+   c4   -7466.96  (deviation)
+-->   Book     +33.02        b6
+PV: b6 d1
+
+         a b c d e f g h
+
+      1      O   O O          Black    Zebra         6. h4  g8
+      2        O O O                                 7. c5  e3
+      3          O O           (*)     9 discs       8. e2  c6
+      4        O * * * *                             9. c7  e1
+      5      O * * O O        White    Zebra        10. f4  f3
+      6    O O O O O O O                            11. d2  c1
+      7      *   * O          +33.02   21 discs     12. f2  f1
+      8          *   O                              13. g4  b6
+
+Slack left is 0.25. Book score is -33.02. Private node.
+   a5   -40.48
+   d1   -7524.92  (deviation)
+-->   Book     -40.48        a5
+PV: a5 a7
+
+         a b c d e f g h
+
+      1      O   O O          Black    Zebra         7. c5  e3
+      2        O O O                                 8. e2  c6
+      3          O O          -40.48   11 discs      9. c7  e1
+      4        O * * * *                            10. f4  f3
+      5  *   O * * O O        White    Zebra        11. d2  c1
+      6    * O O O O O O                            12. f2  f1
+      7      *   * O           (O)     20 discs     13. g4  b6
+      8          *   O                              14. a5  
+
+Slack left is 0.25. Book score is +40.48. Private node.
+   c8   +40.48
+   a7   -7464.80  (deviation)
+-->   Book     +40.48        c8
+PV: c8 b8
+
+         a b c d e f g h
+
+      1      O   O O          Black    Zebra         7. c5  e3
+      2        O O O                                 8. e2  c6
+      3          O O           (*)     10 discs      9. c7  e1
+      4        O * * * *                            10. f4  f3
+      5  *   O * * O O        White    Zebra        11. d2  c1
+      6    * O O O O O O                            12. f2  f1
+      7      O   * O          +40.48   22 discs     13. g4  b6
+      8      O   *   O                              14. a5  c8
+
+Slack left is 0.25. Book score is -40.48. Private node.
+   d1   -40.48
+   b8   -7581.45  (deviation)
+-->   Book     -40.48        d1
+PV: d1 a7
+
+         a b c d e f g h
+
+      1      O * O O          Black    Zebra         8. e2  c6
+      2        O * O                                 9. c7  e1
+      3          O *          -40.48   13 discs     10. f4  f3
+      4        O * * * *                            11. d2  c1
+      5  *   O * * O O        White    Zebra        12. f2  f1
+      6    * O O O O O O                            13. g4  b6
+      7      O   * O           (O)     20 discs     14. a5  c8
+      8      O   *   O                              15. d1  
+
+Slack left is 0.25. Book score is +40.48. Private node.
+   a6   -3.67 
+   a7   -7451.41  (deviation)
+-->   Book      -3.67        a6
+PV: a6 h7
+
+         a b c d e f g h
+
+      1      O * O O          Black    Zebra         8. e2  c6
+      2        O * O                                 9. c7  e1
+      3          O *           (*)     12 discs     10. f4  f3
+      4        O * * * *                            11. d2  c1
+      5  *   O * * O O        White    Zebra        12. f2  f1
+      6  O O O O O O O O                            13. g4  b6
+      7      O   * O          -3.67    22 discs     14. a5  c8
+      8      O   *   O                              15. d1  a6
+
+Slack left is 0.25. Book score is +3.67. Private node.
+   a7   +3.67 
+   h7   -7558.78  (deviation)
+-->   Book      +3.67        a7
+PV: a7 g3
+
+         a b c d e f g h
+
+      1      O * O O          Black    Zebra         9. c7  e1
+      2        O * O                                10. f4  f3
+      3          O *          +3.67    14 discs     11. d2  c1
+      4        O * * * *                            12. f2  f1
+      5  *   O * * O O        White    Zebra        13. g4  b6
+      6  * O O O O O O O                            14. a5  c8
+      7  *   O   * O           (O)     21 discs     15. d1  a6
+      8      O   *   O                              16. a7  
+
+Slack left is 0.25. Book score is -3.67. Private node.
+   h3   -46.05
+   g3   -7495.57  (deviation)
+-->   Book     -46.05        h3
+PV: h3 h5
+
+         a b c d e f g h
+
+      1      O * O O          Black    Zebra         9. c7  e1
+      2        O * O                                10. f4  f3
+      3          O *   O       (*)     13 discs     11. d2  c1
+      4        O * * O *                            12. f2  f1
+      5  *   O * * O O        White    Zebra        13. g4  b6
+      6  * O O O O O O O                            14. a5  c8
+      7  *   O   * O          -46.05   23 discs     15. d1  a6
+      8      O   *   O                              16. a7  h3
+
+Slack left is 0.25. Book score is +46.05. Private node.
+   h2   +46.05
+   h5   -7459.12  (deviation)
+-->   Book     +46.05        h2
+PV: h2 g3
+
+         a b c d e f g h
+
+      1      O * O O          Black    Zebra        10. f4  f3
+      2        O * O   *                            11. d2  c1
+      3          O *   *      +46.05   15 discs     12. f2  f1
+      4        O * * O *                            13. g4  b6
+      5  *   O * * O O        White    Zebra        14. a5  c8
+      6  * O O O O O O O                            15. d1  a6
+      7  *   O   * O           (O)     22 discs     16. a7  h3
+      8      O   *   O                              17. h2  
+
+Slack left is 0.25. Book score is -46.05. Private node.
+   f8   -179.54
+   g3   -7537.95  (deviation)
+-->   Book     -179.54        f8
+PV: f8 d8
+
+         a b c d e f g h
+
+      1      O * O O          Black    Zebra        10. f4  f3
+      2        O * O   *                            11. d2  c1
+      3          O *   *       (*)     14 discs     12. f2  f1
+      4        O * * O *                            13. g4  b6
+      5  *   O * * O O        White    Zebra        14. a5  c8
+      6  * O O O O O O O                            15. d1  a6
+      7  *   O   O O          -179.54   24 discs    16. a7  h3
+      8      O   * O O                              17. h2  f8
+
+Slack left is 0.25. Book score is +179.54. Private node.
+   h8   +179.54
+   d8   -7346.10  (deviation)
+-->   Book     +179.54        h8
+PV: h8 d3
+
+         a b c d e f g h
+
+      1      O * O O          Black    Zebra        11. d2  c1
+      2        O * O   *                            12. f2  f1
+      3          O *   *      +179.54   17 discs    13. g4  b6
+      4        O * * O *                            14. a5  c8
+      5  *   O * * O O        White    Zebra        15. d1  a6
+      6  * O O O O O O O                            16. a7  h3
+      7  *   O   O O           (O)     22 discs     17. h2  f8
+      8      O   * * * *                            18. h8  
+
+Slack left is 0.25. Book score is -179.54. Private node.
+   g3   -185.27
+   d3   -7671.44  (deviation)
+-->   Book     -185.27        g3
+PV: g3 d3
+
+         a b c d e f g h
+
+      1      O * O O          Black    Zebra        11. d2  c1
+      2        O * O   *                            12. f2  f1
+      3          O O O *       (*)     14 discs     13. g4  b6
+      4        O * O O *                            14. a5  c8
+      5  *   O * O O O        White    Zebra        15. d1  a6
+      6  * O O O O O O O                            16. a7  h3
+      7  *   O   O O          -185.27   26 discs    17. h2  f8
+      8      O   * * * *                            18. h8  g3
+
+Slack left is 0.25. Book score is +185.27. Private node.
+   d8   +185.27
+   d3   -7315.52  (deviation)
+-->   Book     +185.27        d8
+PV: d8 g7
+
+         a b c d e f g h
+
+      1      O * O O          Black    Zebra        12. f2  f1
+      2        O * O   *                            13. g4  b6
+      3          O O O *      +185.27   20 discs    14. a5  c8
+      4        O * O O *                            15. d1  a6
+      5  *   O * O O *        White    Zebra        16. a7  h3
+      6  * * O O O * O O                            17. h2  f8
+      7  *   *   * O           (O)     21 discs     18. h8  g3
+      8      O * * * * *                            19. d8  
+
+Slack left is 0.25. Book score is -185.27. Private node.
+   c4   -202.67
+   g7   -7677.16  (deviation)
+-->   Book     -202.67        c4
+PV: c4 g7
+
+         a b c d e f g h
+
+      1      O * O O          Black    Zebra        12. f2  f1
+      2        O * O   *                            13. g4  b6
+      3          O O O *       (*)     19 discs     14. a5  c8
+      4      O O * O O *                            15. d1  a6
+      5  *   O O O O *        White    Zebra        16. a7  h3
+      6  * * O O O * O O                            17. h2  f8
+      7  *   *   * O          -202.67   23 discs    18. h8  g3
+      8      O * * * * *                            19. d8  c4
+
+Slack left is 0.25. Book score is +202.67. Private node.
+   b8   +202.67
+   g7   -7304.65  (deviation)
+-->   Book     +202.67        b8
+PV: b8 d3
+
+         a b c d e f g h
+
+      1      O * O O          Black    Zebra        13. g4  b6
+      2        O * O   *                            14. a5  c8
+      3          O O O *      +202.67   21 discs    15. d1  a6
+      4      O O * O O *                            16. a7  h3
+      5  *   O O O O *        White    Zebra        17. h2  f8
+      6  * * O O O * O O                            18. h8  g3
+      7  *   *   * O           (O)     22 discs     19. d8  c4
+      8    * * * * * * *                            20. b8  
+
+Slack left is 0.25. Book score is -202.67. Private node.
+   h5   -203.12
+   d3   -7694.57  (deviation)
+-->   Book     -203.12        h5
+PV: h5 g7
+
+         a b c d e f g h
+
+      1      O * O O          Black    Zebra        13. g4  b6
+      2        O * O   *                            14. a5  c8
+      3          O O O *       (*)     20 discs     15. d1  a6
+      4      O O * O O *                            16. a7  h3
+      5  *   O O O O O O      White    Zebra        17. h2  f8
+      6  * * O O O * O O                            18. h8  g3
+      7  *   *   * O          -203.12   24 discs    19. d8  c4
+      8    * * * * * * *                            20. b8  h5
+
+Slack left is 0.25. Book score is +203.12. Private node.
+   b1   -30.39
+   g7   -7288.77  (deviation)
+-->   Book     -30.39        b1
+PV: b1 h1
+
+         a b c d e f g h
+
+      1    * * * O O          Black    Zebra        14. a5  c8
+      2        O * O   *                            15. d1  a6
+      3          O O O *      -30.39   22 discs     16. a7  h3
+      4      O O * O O *                            17. h2  f8
+      5  *   O O O O O O      White    Zebra        18. h8  g3
+      6  * * O O O * O O                            19. d8  c4
+      7  *   *   * O           (O)     23 discs     20. b8  h5
+      8    * * * * * * *                            21. b1  
+
+Slack left is 0.25. Book score is +30.39. Private node.
+   a1   -228.77
+   h1   -7461.51  (deviation)
+-->   Book     -228.77        a1
+PV: a1 g7
+
+         a b c d e f g h
+
+      1  O O O O O O          Black    Zebra        14. a5  c8
+      2        O * O   *                            15. d1  a6
+      3          O O O *       (*)     19 discs     16. a7  h3
+      4      O O * O O *                            17. h2  f8
+      5  *   O O O O O O      White    Zebra        18. h8  g3
+      6  * * O O O * O O                            19. d8  c4
+      7  *   *   * O          -228.77   27 discs    20. b8  h5
+      8    * * * * * * *                            21. b1  a1
+
+Slack left is 0.25. Book score is +228.77. Private node.
+   h7   +228.77
+   g7   -7475.56  (deviation)
+-->   Book     +228.77        h7
+PV: h7 d7
+
+         a b c d e f g h
+
+      1  O O O O O O          Black    Zebra        15. d1  a6
+      2        O * O   *                            16. a7  h3
+      3          O O O *      +228.77   24 discs    17. h2  f8
+      4      O O * O O *                            18. h8  g3
+      5  *   O O O * O *      White    Zebra        19. d8  c4
+      6  * * O O O * * *                            20. b8  h5
+      7  *   *   * O   *       (O)     23 discs     21. b1  a1
+      8    * * * * * * *                            22. h7  
+
+Slack left is 0.25. Book score is -228.77. Private node.
+   g7   -228.77
+   d7   -7732.27  (deviation)
+-->   Book     -228.77        g7
+PV: g7 d7
+
+         a b c d e f g h
+
+      1  O O O O O O          Black    Zebra        15. d1  a6
+      2        O * O   *                            16. a7  h3
+      3          O O O *       (*)     22 discs     17. h2  f8
+      4      O O * O O *                            18. h8  g3
+      5  *   O O O * O *      White    Zebra        19. d8  c4
+      6  * * O O O O O *                            20. b8  h5
+      7  *   *   * O O *      -228.77   26 discs    21. b1  a1
+      8    * * * * * * *                            22. h7  g7
+
+Slack left is 0.25. Book score is +228.77. Private node.
+   g2   +225.95
+   d7   -7263.12  (deviation)
+-->   Book     +225.95        g2
+PV: g2 g1
+
+         a b c d e f g h
+
+      1  O O O O O O          Black    Zebra        16. a7  h3
+      2        O * * * *                            17. h2  f8
+      3          O * * *      +225.95   30 discs    18. h8  g3
+      4      O O * O * *                            19. d8  c4
+      5  *   O O O * * *      White    Zebra        20. b8  h5
+      6  * * O O O O * *                            21. b1  a1
+      7  *   *   * O * *       (O)     19 discs     22. h7  g7
+      8    * * * * * * *                            23. g2  
+
+Slack left is 0.25. Book score is -225.95. Private node.
+   h1   -10     (W/L/D solved)
+   g1   -7717.84  (deviation)
+-->   Book     -10 (WLD)     h1
+PV: h1 d7
+
+         a b c d e f g h
+
+      1  O O O O O O   O      Black    Zebra        16. a7  h3
+      2        O * * O *                            17. h2  f8
+      3          O O * *       (*)     27 discs     18. h8  g3
+      4      O O O O * *                            19. d8  c4
+      5  *   O O O * * *      White    Zebra        20. b8  h5
+      6  * * O O O O * *                            21. b1  a1
+      7  *   *   * O * *      -10.00   23 discs     22. h7  g7
+      8    * * * * * * *                            23. g2  h1
+
+Slack left is 0.25. Book score is +10 (W/L/D solved). Private node.
+   g1   +10     (exact score)
+   d7   -7258.16  (deviation)
+-->   Book     +10 (exact)   g1
+PV: g1 d7 b3 c3 b4 d3 b7 a4 b2 c2 a3 a2
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        17. h2  f8
+      2        O * * * *                            18. h8  g3
+      3          O O * *      +9.99    29 discs     19. d8  c4
+      4      O O O O * *                            20. b8  h5
+      5  *   O O O * * *      White    Zebra        21. b1  a1
+      6  * * O O O O * *                            22. h7  g7
+      7  *   *   * O * *       (O)     22 discs     23. g2  h1
+      8    * * * * * * *                            24. g1  
+
+Slack left is 0.25. Book score is -10 (exact score). Private node.
+   d7   -10     (exact score)
+-->   3  -16.05            60  d7 d3        0.0 s  
+PV: d7 d3
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        17. h2  f8
+      2        O * * * *                            18. h8  g3
+      3          O O * *       (*)     28 discs     19. d8  c4
+      4      O O O O * *                            20. b8  h5
+      5  *   O O O * * *      White    Zebra        21. b1  a1
+      6  * * O O O O * *                            22. h7  g7
+      7  *   * O O O * *      -16.05   24 discs     23. g2  h1
+      8    * * * * * * *                            24. g1  d7
+
+Slack left is 0.25. Book score is +10 (exact score). Private node.
+   b3   +10     (exact score)
+-->   Book     +10 (exact)   b3
+PV: b3 c3 b4 d3 b7 a4 b2 c2 a3 a2
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        18. h8  g3
+      2        O * * * *                            19. d8  c4
+      3    *     O O * *      +10.00   33 discs     20. b8  h5
+      4      * O O O * *                            21. b1  a1
+      5  *   O * O * * *      White    Zebra        22. h7  g7
+      6  * * O O * O * *                            23. g2  h1
+      7  *   * O O * * *       (O)     20 discs     24. g1  d7
+      8    * * * * * * *                            25. b3  
+
+Slack left is 0.25. Book score is -10 (exact score). Private node.
+   c3   -10     (exact score)
+-->   3  -12.30            83  c3 d3        0.0 s  
+PV: c3 d3
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        18. h8  g3
+      2        O * * * *                            19. d8  c4
+      3    * O   O O * *       (*)     32 discs     20. b8  h5
+      4      O O O O * *                            21. b1  a1
+      5  *   O * O * * *      White    Zebra        22. h7  g7
+      6  * * O O * O * *                            23. g2  h1
+      7  *   * O O * * *      -12.30   22 discs     24. g1  d7
+      8    * * * * * * *                            25. b3  c3
+
+Slack left is 0.25. Book score is +10 (exact score). Private node.
+   b4   +10     (exact score)
+-->   Book     +10 (exact)   b4
+PV: b4 d3 b7 a4 b2 c2 a3 a2
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        19. d8  c4
+      2        O * * * *                            20. b8  h5
+      3    * O   O O * *      +10.00   40 discs     21. b1  a1
+      4    * * * * * * *                            22. h7  g7
+      5  *   * * O * * *      White    Zebra        23. g2  h1
+      6  * * O * * O * *                            24. g1  d7
+      7  *   * O * * * *       (O)     15 discs     25. b3  c3
+      8    * * * * * * *                            26. b4  
+
+Slack left is 0.25. Book score is -10 (exact score). Private node.
+   d3   -10     (exact score)
+-->   3  -11.20            70  d3 b7        0.0 s  
+PV: d3 b7
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        19. d8  c4
+      2        O O * * *                            20. b8  h5
+      3    * O O O O * *       (*)     36 discs     21. b1  a1
+      4    * * O * * * *                            22. h7  g7
+      5  *   * O O * * *      White    Zebra        23. g2  h1
+      6  * * O O * O * *                            24. g1  d7
+      7  *   * O * * * *      -11.20   20 discs     25. b3  c3
+      8    * * * * * * *                            26. b4  d3
+
+Slack left is 0.25. Book score is +10 (exact score). Private node.
+   b7   +10     (exact score)
+-->   Book     +10 (exact)   b7
+PV: b7 a4 b2 c2 a3 a2
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        20. b8  h5
+      2        O O * * *                            21. b1  a1
+      3    * O O O O * *      +10.00   39 discs     22. h7  g7
+      4    * * O * * * *                            23. g2  h1
+      5  *   * * O * * *      White    Zebra        24. g1  d7
+      6  * * * O * O * *                            25. b3  c3
+      7  * * * O * * * *       (O)     18 discs     26. b4  d3
+      8    * * * * * * *                            27. b7  
+
+Slack left is 0.25. Book score is -10 (exact score). Private node.
+   a4   -10     (exact score)
+-->   3  -9.98             89  a4 b2        1.0 s      89 nps
+PV: a4 b2
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        20. b8  h5
+      2        O O * * *                            21. b1  a1
+      3    * O O O O * *       (*)     37 discs     22. h7  g7
+      4  O O O O * * * *                            23. g2  h1
+      5  *   * * O * * *      White    Zebra        24. g1  d7
+      6  * * * O * O * *                            25. b3  c3
+      7  * * * O * * * *      -9.98    21 discs     26. b4  d3
+      8    * * * * * * *                            27. b7  a4
+
+Slack left is 0.25. Book score is +10 (exact score). Private node.
+   b2   +10     (exact score)
+-->   Book     +10 (exact)   b2
+Slack left is 0.00. Book score is +10 (exact score). Private node.
+   b2   +10     (exact score)
+PV: b2
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        21. b1  a1
+      2    *   O O * * *                            22. h7  g7
+      3    * * O O O * *      +10.00   42 discs     23. g2  h1
+      4  O O O * * * * *                            24. g1  d7
+      5  *   * * * * * *      White    Zebra        25. b3  c3
+      6  * * * O * * * *                            26. b4  d3
+      7  * * * O * * * *       (O)     17 discs     27. b7  a4
+      8    * * * * * * *                            28. b2  
+
+Slack left is 0.25. Book score is -10 (exact score). Private node.
+   c2   -10     (exact score)
+-->   2  -12.72            31  a8        0.0 s  
+Slack left is 0.00. Book score is -10 (exact score). Private node.
+   c2   -10     (exact score)
+Slack left is 0.00. Book score is -10 (exact score). Private node.
+   c2   -10     (exact score)
+-->   5  Loss              74  a2                 0.0 s  
+PV: a2
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        21. b1  a1
+      2  O *   O O * * *                            22. h7  g7
+      3    O * O O O * *       (*)     41 discs     23. g2  h1
+      4  O O O * * * * *                            24. g1  d7
+      5  *   * * * * * *      White    Zebra        25. b3  c3
+      6  * * * O * * * *                            26. b4  d3
+      7  * * * O * * * *      -3.99    19 discs     27. b7  a4
+      8    * * * * * * *                            28. b2  a2
+
+-->   4  +12              194  c2              0.0 s  
+PV: c2 a8 b5 a3
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        22. h7  g7
+      2  O * * * * * * *                            23. g2  h1
+      3    O * * O O * *      +12.00   45 discs     24. g1  d7
+      4  O O O * * * * *                            25. b3  c3
+      5  *   * * * * * *      White    Zebra        26. b4  d3
+      6  * * * O * * * *                            27. b7  a4
+      7  * * * O * * * *       (O)     16 discs     28. b2  a2
+      8    * * * * * * *                            29. c2  
+
+-->   3  -12               96  a8           0.0 s  
+PV: a8 b5 a3
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        22. h7  g7
+      2  O * * * * * * *                            23. g2  h1
+      3    O * * O O * *       (*)     38 discs     24. g1  d7
+      4  O O O * O * * *                            25. b3  c3
+      5  O   * O * * * *      White    Zebra        26. b4  d3
+      6  O * O O * * * *                            27. b7  a4
+      7  O O * O * * * *      -12.00   24 discs     28. b2  a2
+      8  O * * * * * * *                            29. c2  a8
+
+-->   2  +12               37  b5        0.0 s  
+PV: b5 a3
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        23. g2  h1
+      2  O * * * * * * *                            24. g1  d7
+      3    * * * O O * *      +12.00   44 discs     25. b3  c3
+      4  O * * * O * * *                            26. b4  d3
+      5  O * * O * * * *      White    Zebra        27. b7  a4
+      6  O * * O * * * *                            28. b2  a2
+      7  O O * * * * * *       (O)     19 discs     29. c2  a8
+      8  O * * * * * * *                            30. b5  
+
+-->   1  -12               21  a3     0.0 s  
+PV: a3
+
+         a b c d e f g h
+
+      1  O O O O O O * O      Black    Zebra        23. g2  h1
+      2  O O * * * * * *                            24. g1  d7
+      3  O O O O O O * *       (*)     38 discs     25. b3  c3
+      4  O O * * O * * *                            26. b4  d3
+      5  O * O O * * * *      White    Zebra        27. b7  a4
+      6  O * * O * * * *                            28. b2  a2
+      7  O O * * * * * *      -12.00   26 discs     29. c2  a8
+      8  O * * * * * * *                            30. b5  a3
+
+
+Black: 38   White: 26
+Nodes searched:        837       
+Positions evaluated:   237       
+Total time: 3.0 s
