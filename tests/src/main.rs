@@ -1175,115 +1175,32 @@ f1_770 , "-l 6 3 20 7 3 22 -thor 19 -r 1 -h 20 -p 0 -b 1 -repeat 3" , "book.bin"
     }
 
     snap_test!(help, "?");
+    from_fuzz!(
+        d1 , "-r 0 -l 1 3 8 8 1 7 -repeat 4 -h 1" , "book.bin", &[];
+        d2 , "-r 0 -l 1 3 8 8 1 7 -repeat 4 -h 1" , "book.bin", &[];
+        d3 , "-r 0 -l 9 4 4 7 4 8 -public -draw2none -repeat 4 -slack 0.33416033" , "book.bin", &[];
+        d4, "-r 0 -l 9 3 7 5 2 6 -e 1" , "book.bin", &[];
+        d5, "-r 0 -l 7 5 0 8 8 7 -repeat 3 -e 1" , "book.bin", &[];
+        d6, "-r 0 -l 5 7 6 5 1 2 -slack 8.41116" , "book.bin", &[];
+        d7, "-r 0 -l 8 9 1 1 4 2 -draw2black -draw2none -repeat 3 -e 1" , "book.bin", &[];
+        d8, "-r 0 -l 2 4 7 9 9 6 -public -private -draw2black -draw2white -repeat 4 -slack 4.9125338" , "book.bin", &[];
+        d9, "-r 0 -l 5 6 6 6 6 4 -private -slack 0.28241396 -e 0 -h 7" , "book.bin", &[];
+        d10, "-r 0 -l 9 1 9 12 4 9 -keepdraw -test -slack 8.871107 -p 0 -b 0 -thor 2" , "book.bin", &[];
+        d11, "-r 0 -l 9 16 11 8 18 6 -draw2none -p 0 -w 0 -thor 9 -h 4" , "book.bin", &[];
+        d12, "-r 0 -l 15 19 7 9 2 19 -keepdraw -draw2black -draw2white -randmove 1 -p 0 -thor 4" , "book.bin", &[];
+        d13, "-r 0 -l 0 0 -public -analyze -p 0 -g ../../tests/resources/board.txt -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1" , "book.bin", &[];
 
-    // These are failing cases found by fuzzer. Some of them are caused by
-    // UB sanitizer logs in the original zebra
-
-//     testing args '-r 0 -l 1 3 8 8 1 7 -repeat 4 -h 1'
-// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-    //testing args '-r 0 -l 9 4 4 7 4 8 -public -draw2none -repeat 4 -slack 0.33416033'
-    // thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
-    // note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-//     testing args '-r 0 -l 9 3 7 5 2 6 -e 1'
-// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-//     testing args '-r 0 -l 7 5 0 8 8 7 -repeat 3 -e 1'
-// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-//     testing args '-r 0 -l 5 7 6 5 1 2 -slack 8.41116'
-// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-//     testing args '-r 0 -l 8 9 1 1 4 2 -draw2black -draw2none -repeat 3 -e 1'
-// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-//     testing args '-r 0 -l 2 4 7 9 9 6 -public -private -draw2black -draw2white -repeat 4 -slack 4.9125338'
-// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-    // testing args '-r 0 -l 5 6 6 6 6 4 -private -slack 0.28241396 -e 0 -h 7'
-    // thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:480:48
-    // note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-// thread 'main' panicked at 'assertion failed: `(left == right)`
-//   left: `"      1        O   O   O      Black    Zebra"`,
-//  right: `"      1      O     O   O      Black    Zebra"`', tests/src/main.rs:486:13
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-//     testing args '-r 0 -l 9 1 9 12 4 9 -keepdraw -test -slack 8.871107 -p 0 -b 0 -thor 2'
-// thread 'main' panicked at 'assertion failed: `(left == right)`
-//   left: `"Loaded 0 games in 1.000 s."`,
-//  right: `"Loaded 0 games in 0.000 s."`', tests/src/main.rs:505:13
-
-//     testing args '-r 0 -l 9 16 11 8 18 6 -draw2none -p 0 -w 0 -thor 9 -h 4'
-// thread 'main' panicked at 'assertion failed: `(left == right)`
-//   left: `"b2=4"`,
-//  right: `"0 matching games  (0.000 s search time, 0.000 s total)"`', tests/src/main.rs:551:13
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-//     testing args '-r 0 -l 15 19 7 9 2 19 -keepdraw -draw2black -draw2white -randmove 1 -p 0 -thor 4'
-// thread 'main' panicked at 'assertion failed: `(left == right)`
-//   left: `"-->  15  -7.34         346445  f3 d2 c5 c6 c1    77.0 s    4385 nps"`,
-//  right: `"-->  15  -7.34         337693  f3 d2 c5 c6 c1    77.0 s    4275 nps"`', tests/src/main.rs:552:13
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-//     testing args '-r 0 -l 0 0 -public -analyze -p 0 -g ../../tests/resources/board.txt -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1'
-// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:522:48
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-    //testing args '-r 0 -l 0 0 -draw2black -repeat 0 -p 1 -b 1 -time 1.6256914422442514 4.570592846993699 2.5283251123785977 3.7189676525522044'
-    // thread 'main' panicked at 'assertion failed: `(left == right)`
-    //   left: `"      2                                00:01        "`,
-    //  right: `"      2                                00:00        "`', tests/src/main.rs:534:13
-    // note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-//     testing args '-r 0 -l 8 7 2 8 3 7 -b 0 -w 1 -time 4.529340827768474 4.712636376864859 4.990958221355872 4.91143980476709'
-// thread 'main' panicked at 'assertion failed: `(left == right)`
-//   left: `"-->   2  +5.48             39  e7 f6     0.0 s  "`,
-//  right: `"-->   8  +4.53          37988  e7 f6 a7 g2 f7     0.0 s  "`', tests/src/main.rs:534:13
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+        // TODO following two tests are failing. not sure why but seems related to float precision
+        d14, "-r 0 -l 0 0 -draw2black -repeat 0 -p 1 -b 1 -time 1.6256914422442514 4.570592846993699 2.5283251123785977 3.7189676525522044" , "book.bin", &[];
+        d15, "-r 0 -l 8 7 2 8 3 7 -b 0 -w 1 -time 4.529340827768474 4.712636376864859 4.990958221355872 4.91143980476709" , "book.bin", &[];
+        d16, "-r 0 -l 4 17 1 7 14 17 -p 0 -e 0 -time 2 0 0 2" , "book.bin", &[];
+        d17, "-r 0 -l 3 4 14 9 8 19 -repeat 0 -slack 5.739609 -p 1 -e 0 -b 0 -w 0 -h 3 -time 4 3 2 1" , "book.bin", &[];
+        d18, "-r 0 -l 6 10 4 8 6 4 -randmove 5 -p 0 -e 0 -h 17 -time 1 0 2 3" , "book.bin", &[];
+        d19, "-r 0 -l 5 10 3 3 19 8 -private -p 0 -b 1 -dev 89 93 211.67601 -t 2 4 9 5 8 9 1 -time 2 4 5 40" , "book.bin", &[]
+    );
 
 //     creating adjust.txt
 // testing args '-r 0 -l 5 17 9 1 3 11 -draw2none -time 2 0 1 3'
-// thread 'main' panicked at 'assertion failed: `(left == right)`
-//   left: `"================================================================="`,
-//  right: `"thread \'main\' panicked at \'index out of bounds: the len is 121 but the index is 121\', engine/src/zebra.rs:542:5"`', tests/src/main.rs:534:13
-
-//     testing args '-r 0 -l 4 17 1 7 14 17 -p 0 -e 0 -time 2 0 0 2'
-// thread 'main' panicked at 'assertion failed: `(left == right)`
-//   left: `"-->  10  +4                 3  b3 a2 b7 a7        0.0 s       3 nps  "`,
-//  right: `"-->  10  +4                 3  b3 a2 b7 a7        0.0 s  "`', tests/src/main.rs:534:13
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-// matyas@DESKTOP-LCL64AA:~/zebra-fresh$ bash run-tests.sh
-// warning: profiles for the non root package will be ignored, specify profiles at the workspace root
-
-//     testing args '-r 0 -l 3 4 14 9 8 19 -repeat 0 -slack 5.739609 -p 1 -e 0 -b 0 -w 0 -h 3 -time 4 3 2 1'
-// thread 'main' panicked at 'assertion failed: `(left == right)`
-//   left: `"-->   5  -12              249  b8                 1.0 s     249 nps  "`,
-//  right: `"-->   5  -12              249  b8                 0.0 s     249 nps  "`', tests/src/main.rs:534:13
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-//     testing args '-r 0 -l 6 10 4 8 6 4 -randmove 5 -p 0 -e 0 -h 17 -time 1 0 2 3'
-// thread 'main' panicked at 'called `Option::unwrap()` on a `None` value', tests/src/main.rs:534:48
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-//     testing args '-r 0 -l 5 2 16 8 15 0 -analyze -repeat 3 -p 0 -b 0 -t 2 3 4 5 6 4 2 -time 2 0 1 0'
-// thread 'main' panicked at 'assertion failed: `(left == right)`
-
-//   left: `"-->   2  -3.12             36  f5        0.0 s      36 nps"`,
-//  right: `"-->   2  -3.12             36  f5        0.0 s  "`', tests/src/main.rs:534:13
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-//     testing args '-r 0 -l 5 10 3 3 19 8 -private -p 0 -b 1 -dev 89 93 211.67601 -t 2 4 9 5 8 9 1 -time 2 4 5 40'
-// thread 'main' panicked at 'assertion failed: `(left == right)`
-//   left: `"-->   2  +8.97             22  f4        1.0 s      22 nps"`,
-//  right: `"-->   2  +8.97             22  f4        0.0 s  "`', tests/src/main.rs:534:13
-// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 
     // Note(matyas): I have no idea what's wrong with this one
     //  It's buffer overflow in original and panic out of bounds in rust,
