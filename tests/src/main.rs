@@ -1189,6 +1189,7 @@ f1_770 , "-l 6 3 20 7 3 22 -thor 19 -r 1 -h 20 -p 0 -b 1 -repeat 3" , "book.bin"
         d11, "-r 0 -l 9 16 11 8 18 6 -draw2none -p 0 -w 0 -thor 9 -h 4" , "book.bin", &[];
         d12, "-r 0 -l 15 19 7 9 2 19 -keepdraw -draw2black -draw2white -randmove 1 -p 0 -thor 4" , "book.bin", &[];
         d13, "-r 0 -l 0 0 -public -analyze -p 0 -g ../../tests/resources/board.txt -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1" , "book.bin", &[];
+        d13_correct_path, "-r 0 -l 0 0 -public -analyze -p 0 -g ../../../resources/board.txt -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1" , "book.bin", &[];
 
         // TODO following two tests are failing. not sure why but seems related to float precision
         d14, "-r 0 -l 0 0 -draw2black -repeat 0 -p 1 -b 1 -time 1.6256914422442514 4.570592846993699 2.5283251123785977 3.7189676525522044" , "book.bin", &[];
@@ -1201,9 +1202,13 @@ f1_770 , "-l 6 3 20 7 3 22 -thor 19 -r 1 -h 20 -p 0 -b 1 -repeat 3" , "book.bin"
 
 
         d21, "r 0 -l 9 6 3 5 19 0 -repeat 4 -p 1 -b 1 -w 0 -h 19 -dev 17 75 94.33498 -g ../../tests/resources/board.txt -time 40 48 6 24", "book.bin", &[];
+        d21_correct_path, "r 0 -l 9 6 3 5 19 0 -repeat 4 -p 1 -b 1 -w 0 -h 19 -dev 17 75 94.33498 -g ../../../resources/board.txt -time 40 48 6 24", "book.bin", &[];
 
         d22, "-r 0 -l 7 0 14 9 4 18 -repeat 0 -randmove 5 -p 1 -e 1 -h 9 -g ../../tests/resources/board.txt -time 13 47 5 16", "book.bin", &[]; //failing atm
         d23, "-r 0 -l 3 6 0 4 13 12 -repeat 4 -e 0 -b 0 -g ../../tests/resources/board.txt -time 12 23 5 24", "book.bin", &[]; //failing atm
+
+        d22_correct_path, "-r 0 -l 7 0 14 9 4 18 -repeat 0 -randmove 5 -p 1 -e 1 -h 9 -g ../../../resources/board.txt -time 13 47 5 16", "book.bin", &[];
+        d23_correct_path, "-r 0 -l 3 6 0 4 13 12 -repeat 4 -e 0 -b 0 -g ../../../resources/board.txt -time 12 23 5 24", "book.bin", &[]; //failing atm
 
         d24, "-r 0 -l 9 8 7 8 19 14 -randmove 4 -p 1 -e 0 -h 5 -dev 8 8 123.677826 -t 3 4 17 10 7 3 7 8 1 10 -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1 -time 4 24 24 22", "book.bin", &[];
 
