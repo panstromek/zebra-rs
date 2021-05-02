@@ -1213,8 +1213,8 @@ f1_770 , "-l 6 3 20 7 3 22 -thor 19 -r 1 -h 20 -p 0 -b 1 -repeat 3" , "book.bin"
         d24, "-r 0 -l 9 8 7 8 19 14 -randmove 4 -p 1 -e 0 -h 5 -dev 8 8 123.677826 -t 3 4 17 10 7 3 7 8 1 10 -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1 -time 4 24 24 22", "book.bin", &[];
 
         // Failing
-        d25, "-r 0 -l 0 0 -thor 16 -b 1 -h 20 -learn 1 3  -g fuzzer-data/seqfile-fuzzer-1 -e 1 -p 1", "book.bin", &[]
-
+        d25, "-r 0 -l 0 0 -thor 16 -b 1 -h 20 -learn 1 3  -g fuzzer-data/seqfile-fuzzer-1 -e 1 -p 1", "book.bin", &[];
+        d25_correct_path, "-r 0 -l 0 0 -thor 16 -b 1 -h 20 -learn 1 3  -g ../../../resources/seqfile-fuzzer-1 -e 1 -p 1", "book.bin", &[]
     );
 
     // index out of bounds on weird board
