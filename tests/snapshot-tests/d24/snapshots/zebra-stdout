@@ -1,0 +1,15 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+Reading binary opening database... done (took 0 s)
+
+Black level: 4
+White level: 4
+
+Black: 30   White: 34
+Nodes searched:        1754807   
+Positions evaluated:   17224     
+Total time: 4.0 s
+pv_depth[0] = 1
+a4 
+i=0

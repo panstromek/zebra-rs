@@ -881,7 +881,7 @@ mod tests {
     }
     const BINARY_FOLDER :&str =
     // "./../../../../../zebra-1/"
-        "./../../../../test-target/release/"
+         "./../../../../test-target/release/"
     // "./../../../../../bisection/target/release/"
     ;
     macro_rules! from_fuzz {
@@ -1196,25 +1196,21 @@ f1_770 , "-l 6 3 20 7 3 22 -thor 19 -r 1 -h 20 -p 0 -b 1 -repeat 3" , "book.bin"
         d16, "-r 0 -l 4 17 1 7 14 17 -p 0 -e 0 -time 2 0 0 2" , "book.bin", &[];
         d17, "-r 0 -l 3 4 14 9 8 19 -repeat 0 -slack 5.739609 -p 1 -e 0 -b 0 -w 0 -h 3 -time 4 3 2 1" , "book.bin", &[];
         d18, "-r 0 -l 6 10 4 8 6 4 -randmove 5 -p 0 -e 0 -h 17 -time 1 0 2 3" , "book.bin", &[];
-        d19, "-r 0 -l 5 10 3 3 19 8 -private -p 0 -b 1 -dev 89 93 211.67601 -t 2 4 9 5 8 9 1 -time 2 4 5 40" , "book.bin", &[]
+        d19, "-r 0 -l 5 10 3 3 19 8 -private -p 0 -b 1 -dev 89 93 211.67601 -t 2 4 9 5 8 9 1 -time 2 4 5 40" , "book.bin", &[];
+        d20, "-r 0 -l 5 17 9 1 3 11 -draw2none -time 2 0 1 3", "book.bin", &[];
+
+
+        d21, "r 0 -l 9 6 3 5 19 0 -repeat 4 -p 1 -b 1 -w 0 -h 19 -dev 17 75 94.33498 -g ../../tests/resources/board.txt -time 40 48 6 24", "book.bin", &[];
+
+        d22, "-r 0 -l 7 0 14 9 4 18 -repeat 0 -randmove 5 -p 1 -e 1 -h 9 -g ../../tests/resources/board.txt -time 13 47 5 16", "book.bin", &[]; //failing atm
+        d23, "-r 0 -l 3 6 0 4 13 12 -repeat 4 -e 0 -b 0 -g ../../tests/resources/board.txt -time 12 23 5 24", "book.bin", &[]; //failing atm
+
+        d24, "-r 0 -l 9 8 7 8 19 14 -randmove 4 -p 1 -e 0 -h 5 -dev 8 8 123.677826 -t 3 4 17 10 7 3 7 8 1 10 -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1 -time 4 24 24 22", "book.bin", &[];
+
+        // Failing
+        d25, "-r 0 -l 0 0 -thor 16 -b 1 -h 20 -learn 1 3  -g fuzzer-data/seqfile-fuzzer-1 -e 1 -p 1", "book.bin", &[]
+
     );
-
-//     creating adjust.txt
-// testing args '-r 0 -l 5 17 9 1 3 11 -draw2none -time 2 0 1 3'
-
-    // Note(matyas): I have no idea what's wrong with this one
-    //  It's buffer overflow in original and panic out of bounds in rust,
-    //   because disks_played is 61 roughly after midgame. Very weird bug.
-    //   There's probably some place in the code where unmake_move call is missing or smth like that?
-// testing args '-r 0 -l 9 6 3 5 19 0 -repeat 4 -p 1 -b 1 -w 0 -h 19 -dev 17 75 94.33498 -g ../../tests/resources/board.txt -time 40 48 6 24'
-// thread 'main' panicked at 'assertion failed: second.next().is_none()', tests/src/main.rs:537:9
-
-//similar:     testing args '-r 0 -l 7 0 14 9 4 18 -repeat 0 -randmove 5 -p 1 -e 1 -h 9 -g ../../tests/resources/board.txt -time 13 47 5 16'
-//     testing args '-r 0 -l 3 6 0 4 13 12 -repeat 4 -e 0 -b 0 -g ../../tests/resources/board.txt -time 12 23 5 24'
-// testing args '-r 0 -l 9 8 7 8 19 14 -randmove 4 -p 1 -e 0 -h 5 -dev 8 8 123.677826 -t 3 4 17 10 7 3 7 8 1 10 -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1 -time 4 24 24 22'
-
-    //  index out of bounds
-//      ./target/release/zebra -r 0 -l 0 0 -thor 16 -b 1 -h 20 -learn 1 3  -g fuzzer-data/seqfile-fuzzer-1 -e 1 -p 1
 
     // index out of bounds on weird board
     // RUST_BACKTRACE=1 BOOK_PATH=./../../fuzzer-data/books/book-343.bin COEFFS_PATH=./../../coeffs2.bin ../../target/release/zebra -l 4 3 1 3 4 1 -g ../../fuzzer-data/board-fuzzer-1 -r 1 -w 0 -b 1
