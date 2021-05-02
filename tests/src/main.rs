@@ -595,56 +595,21 @@ fn test_case_coverage() {
     println!("winners {:?}", winners.iter().map(|win| &win.profile).collect::<Vec<_>>())
 }
 //
-//./fuzzer/1638/run_dir/default.profraw
-//./fuzzer/2934/run_dir/default.profraw
-//./fuzzer/515/run_dir/default.profraw
-//./fuzzer/2796/run_dir/default.profraw
-//./fuzzer/1364/run_dir/default.profraw
-//./fuzzer/2230/run_dir/default.profraw
-//./fuzzer/770/run_dir/default.profraw
-//./fuzzer/1692/run_dir/default.profraw
-//./fuzzer/738/run_dir/default.profraw
-//./fuzzer/733/run_dir/default.profraw
-//./fuzzer/1936/run_dir/default.profraw
-//./fuzzer/1980/run_dir/default.profraw
-//./tests/snapshot-tests/practice-basic/run_dir/default.profraw
-//./fuzzer/76/run_dir/default.profraw
-//./fuzzer/1571/run_dir/default.profraw
-//./fuzzer/517/run_dir/default.profraw
-//./fuzzer/2575/run_dir/default.profraw
 //./fuzzer/2565/run_dir/default.profraw
-//./fuzzer/2773/run_dir/default.profraw
-//./fuzzer/1307/run_dir/default.profraw
-//./fuzzer/585/run_dir/default.profraw
 //./fuzzer/2668/run_dir/default.profraw
-//./fuzzer/2588/run_dir/default.profraw
-//./tests/snapshot-tests/seqfile_invalid-basic/run_dir/default.profraw
 //./fuzzer/988/run_dir/default.profraw
 //./fuzzer/2022/run_dir/default.profraw
 //./fuzzer/2317/run_dir/default.profraw
-//./fuzzer/2535/run_dir/default.profraw
 //./fuzzer/718/run_dir/default.profraw
 //./fuzzer/2778/run_dir/default.profraw
-//./fuzzer/1896/run_dir/default.profraw
-//./fuzzer/1371/run_dir/default.profraw
 //./fuzzer/251/run_dir/default.profraw
-//./fuzzer/1382/run_dir/default.profraw
-//./fuzzer/1455/run_dir/default.profraw
-//./tests/snapshot-tests/analyze_invalid-basic/run_dir/default.profraw
 //./fuzzer/3133/run_dir/default.profraw
 //./fuzzer/1963/run_dir/default.profraw
-//./fuzzer/15/run_dir/default.profraw
-//./fuzzer/545/run_dir/default.profraw
-//./fuzzer/2749/run_dir/default.profraw
 //./fuzzer/2118/run_dir/default.profraw
-//./fuzzer/1399/run_dir/default.profraw
 //./fuzzer/1168/run_dir/default.profraw
 //./fuzzer/1847/run_dir/default.profraw
 //./fuzzer/312/run_dir/default.profraw
-//./fuzzer/1160/run_dir/default.profraw
 //./fuzzer/981/run_dir/default.profraw
-//./tests/snapshot-tests/help-with-adjust/run_dir/default.profraw
-//./fuzzer/1989/run_dir/default.profraw
 
 fn new_seq(rng: &mut ThreadRng, fuzz_dir: &Path, case: usize) -> String {
     let mut arg = loop {
