@@ -6,7 +6,7 @@ use legacy_zebra::src::display::{display_board, produce_eval_text, set_move_list
 use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
-use legacy_zebra::src::zebra::{ LibcTimeSource};
+use legacy_zebra::src::zebra::{LibcTimeSource, Atoi};
 use libc_wrapper::{stdout, scanf};
 use std::ffi::{CStr, CString};
 use engine::src::zebra::FullState;
@@ -110,12 +110,7 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
             if move_string.split(|&byte| byte == b'\x00').next().map_or(false, |s| s == b"quit") {
                 quit = 1
             } else {
-                command = move_string
-                    .iter()
-                    .map(|&byte| byte)
-                    .skip_while(u8::is_ascii_whitespace)
-                    .take_while(u8::is_ascii_digit)
-                    .fold(0i32, |acc, val| acc + (val - b'0') as i32);
+                command = move_string.atoi();
 
                 if command >= 1 && command <= g_state.moves_state.disks_played {
                     i = 1;

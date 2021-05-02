@@ -51,6 +51,36 @@ impl TimeSource for LibcTimeSource {
         unsafe { time(__timer) }
     }
 }
+// This function mimics the behaviour of atoi function (except for the UB)
+/// ie. parses an integer, skips leading whitespace and stop at first non-numeric character
+pub trait Atoi {
+    fn atoi(&self) -> i32;
+}
+impl<T> Atoi for T where T: AsRef<[u8]> {
+    fn atoi(&self) -> i32 {
+        fn atoi(s: &[u8]) -> i32 {
+            let mut sign = None;
+            s.iter()
+                .map(|&byte| byte)
+                .skip_while(u8::is_ascii_whitespace)
+                .skip_while(|ch| if sign.is_some() {
+                    false
+                } else if *ch == b'-' {
+                    sign = Some(-1);
+                    true
+                } else if *ch == b'+' {
+                    sign = Some(1);
+                    true
+                } else {
+                    false
+                })
+                .take_while(u8::is_ascii_digit)
+                .fold(0i32, |acc, val| acc * 10 + (val - b'0') as i32)
+                .mul(sign.unwrap_or(1))
+        }
+        atoi(self.as_ref())
+    }
+}
 /* ------------------- Function prototypes ---------------------- */
 /* Administrative routines */
 /* ---------------------- Functions ------------------------ */
@@ -246,16 +276,16 @@ unsafe fn main_0()
             } else {
                 arg_index += 1;
                 (g_state.g_config).player_time[0] =
-                    (argv[arg_index as usize]).parse().unwrap_or(0i32) as f64;
+                    (argv[arg_index as usize]).atoi() as f64;
                 arg_index += 1;
                 (g_state.g_config).player_increment[0] =
-                    (argv[arg_index as usize]).parse().unwrap_or(0i32) as f64;
+                    (argv[arg_index as usize]).atoi() as f64;
                 arg_index += 1;
                 (g_state.g_config).player_time[2] =
-                    (argv[arg_index as usize]).parse().unwrap_or(0i32) as f64;
+                    (argv[arg_index as usize]).atoi() as f64;
                 arg_index += 1;
                 (g_state.g_config).player_increment[2] =
-                    (argv[arg_index as usize]).parse().unwrap_or(0i32) as f64;
+                    (argv[arg_index as usize]).atoi() as f64;
                 (g_state.g_config).use_timer = 1;
                 current_block_107 = 10485226111480991281;
             }
@@ -1511,3 +1541,4 @@ pub fn main() {
 pub use engine::src::zebra::FullState;
 use engine::src::thordb::ThorDatabase;
 use engine_traits::Offset;
+use std::ops::Mul;

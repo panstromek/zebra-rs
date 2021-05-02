@@ -1191,7 +1191,6 @@ f1_770 , "-l 6 3 20 7 3 22 -thor 19 -r 1 -h 20 -p 0 -b 1 -repeat 3" , "book.bin"
         d13, "-r 0 -l 0 0 -public -analyze -p 0 -g ../../tests/resources/board.txt -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1" , "book.bin", &[];
         d13_correct_path, "-r 0 -l 0 0 -public -analyze -p 0 -g ../../../resources/board.txt -seq e6f6f5f4e3d6g4d3c3h3c4g3g5g6c7c6c5b6d7b5f7f3b4f8h4h5f2f1h2h1" , "book.bin", &[];
 
-        // TODO following two tests are failing. not sure why but seems related to float precision
         d14, "-r 0 -l 0 0 -draw2black -repeat 0 -p 1 -b 1 -time 1.6256914422442514 4.570592846993699 2.5283251123785977 3.7189676525522044" , "book.bin", &[];
         d15, "-r 0 -l 8 7 2 8 3 7 -b 0 -w 1 -time 4.529340827768474 4.712636376864859 4.990958221355872 4.91143980476709" , "book.bin", &[];
         d16, "-r 0 -l 4 17 1 7 14 17 -p 0 -e 0 -time 2 0 0 2" , "book.bin", &[];
