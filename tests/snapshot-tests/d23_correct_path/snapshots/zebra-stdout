@@ -1,0 +1,14 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+
+Black level: 3
+White level: 4
+
+Black: 27   White: 37
+Nodes searched:        33179     
+Positions evaluated:   4889      
+Total time: 3.0 s
+pv_depth[0] = 2
+h7 g7 
+i=0
