@@ -268,14 +268,18 @@ pub fn process_board_source<S: BoardSource>(side_to_move: &mut i32, mut file_sou
         let mut j = 1;
         while j <= 8 as i32 {
             let pos = 10 as i32 * i + j;
-            match buffer.as_bytes()[token as usize] {
-                b'*' | b'X' => { board_state_.board[pos as usize] = 0 }
-                b'O' | b'0' => { board_state_.board[pos as usize] = 2 }
-                b'-' | b'.' => {}
-                _ => {
-                    let unrecognized = buffer.as_bytes()[pos as usize];
+            match buffer.as_bytes().get(token as usize) {
+                Some(b'*' | b'X') => { board_state_.board[pos as usize] = 0 }
+                Some(b'O' | b'0') => { board_state_.board[pos as usize] = 2 }
+                Some(b'-' | b'.') => {},
+                Some(c) => {
+                    let unrecognized = *c;
                     S::report_unrecognized_character(unrecognized as _);
-                }
+                },
+                None => {
+                    j += 1;
+                    continue;
+                },
             }
             token += 1;
             j += 1
