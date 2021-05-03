@@ -640,7 +640,7 @@ impl FatalError for LibcFatalError {
 }
 
 fn cannot_open_game_file(file_name: &str) -> ! {
-    let file_name: *const i8 = CString::new(file_name).unwrap().as_c_str().as_ptr();
+    let file_name: *const i8 = file_name.as_ptr() as _;
     unsafe {
         fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as
                         *const i8,
