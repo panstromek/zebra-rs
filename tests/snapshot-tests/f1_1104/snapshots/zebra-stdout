@@ -1,4 +1,14 @@
 
-Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+Zebra (c) 1997-2005 Gunnar Andersson, compile date May  3 2021 at 22:37:39
 
 Reading binary opening database... done (took 0 s)
+Loaded 0 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+
+Black level: 2
+White level: 4
+
+Black: 38   White: 26
+Nodes searched:        23248     
+Positions evaluated:   17191     
+Total time: 5.0 s

@@ -1,4 +1,37 @@
 
-Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+Zebra (c) 1997-2005 Gunnar Andersson, compile date May  3 2021 at 22:37:39
 
 Reading binary opening database... done (took 0 s)
+Book randomness: 0.25 disks
+
+         a b c d e f g h
+
+      1  O * * O O O * O      Black    Zebra         1. -   
+      2  O * * O O O * O               03:16        
+      3  O * O * * * O O               31 discs     
+      4  O * O O * * O O                            
+      5  O O * * * * O O      White    Zebra        
+      6  O O * * O * *                 01:23        
+      7  O O O O O O * *       (O)     32 discs     
+      8  * * * * * * * *                            
+
+-->   2  +6                 4  h6        0.0 s  
+-->   1  +6                16  h6     0.0 s  
+PV: h6
+
+         a b c d e f g h
+
+      1  O * * O O O * O      Black    Zebra         1. -   h6
+      2  O * * O O O * O               03:16        
+      3  O * O * * * O O       (*)     29 discs     
+      4  O * O O * * O O                            
+      5  O O * * * * O O      White    Zebra        
+      6  O O * * O O O O               01:23        
+      7  O O O O O O * *      +6.00    35 discs     
+      8  * * * * * * * *                            
+
+
+Black: 29   White: 35
+Nodes searched:        19        
+Positions evaluated:   2         
+Total time: 0.0 s
