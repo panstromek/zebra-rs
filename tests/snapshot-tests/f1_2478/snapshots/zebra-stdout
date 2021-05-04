@@ -1,0 +1,117 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+Reading binary opening database... done (took 0 s)
+Book randomness: 0.25 disks
+Loaded 0 games in 0.000 s.
+Each Thor game occupies 176 bytes.
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1  * * * * * * * *      Black    Zebra         1. -   
+      2  *   O O O O * O                            
+      3    * * O O O * *               24 discs     
+      4  O O * O O O * *                            
+      5  O O O *   O          White    Zebra        
+      6  O O O * * O * *                            
+      7  O     O O O O *       (O)     33 discs     
+      8  O O O O O O O *                            
+
+-->   2  +2.28             16  g5        0.0 s  
+PV: g5
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1  * * * * * * * *      Black    Zebra         1. -   g5
+      2  *   O O O O * O                            
+      3    * * O O O * *       (*)     23 discs     
+      4  O O * O O O * *                            
+      5  O O O *   O O        White    Zebra        
+      6  O O O * * O O *                            
+      7  O     O O O O *      +2.28    35 discs     
+      8  O O O O O O O *                            
+
+-->   2  -2.71             18  c7        0.0 s  
+-->   6  Win               59  c7                 0.0 s  
+PV: c7
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1  * * * * * * * *      Black    Zebra         1. -   g5
+      2  *   O O O O * O                             2. c7  
+      3    * * O O O * *      +1.99    30 discs     
+      4  O O * O O O * *                            
+      5  O O * *   O O        White    Zebra        
+      6  O O * * * O O *                            
+      7  O   * * * * * *       (O)     29 discs     
+      8  O O O O O O O *                            
+
+-->   2  +2.24             21  h5        0.0 s  
+-->   5  Loss              42  h5                 0.0 s  
+PV: h5
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1  * * * * * * * *      Black    Zebra         1. -   g5
+      2  *   O O O O * O                             2. c7  h5
+      3    * * O O O * O       (*)     27 discs     
+      4  O O * O O O O O                            
+      5  O O * *   O O O      White    Zebra        
+      6  O O * * * O O *                            
+      7  O   * * * * * *      -1.99    33 discs     
+      8  O O O O O O O *                            
+
+-->   4  +2                27  b7              0.0 s  
+PV: b7 a3 b2
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1  * * * * * * * *      Black    Zebra         1. -   g5
+      2  *   O O O O * O                             2. c7  h5
+      3    * * O O O * O      +2.00    31 discs      3. b7  
+      4  O * * O O O O O                            
+      5  O * * *   O O O      White    Zebra        
+      6  O * * * * O O *                            
+      7  O * * * * * * *       (O)     30 discs     
+      8  O O O O O O O *                            
+
+-->   3  -2                11  a3           0.0 s  
+PV: a3 b2
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1  * * * * * * * *      Black    Zebra         1. -   g5
+      2  *   O O O O * O                             2. c7  h5
+      3  O O O O O O * O       (*)     25 discs      3. b7  a3
+      4  O O * O O O O O                            
+      5  O * O *   O O O      White    Zebra        
+      6  O * * O * O O *                            
+      7  O * * * O * * *      -2.00    37 discs     
+      8  O O O O O O O *                            
+
+-->   2  +2                 6  b2        0.0 s  
+PV: b2
+0 matching games  (0.000 s search time, 0.000 s total)
+
+         a b c d e f g h
+
+      1  * * * * * * * *      Black    Zebra         1. -   g5
+      2  * * * * * * * O                             2. c7  h5
+      3  O * O O O O * O      +2.00    32 discs      3. b7  a3
+      4  O * * O O O O O                             4. b2  
+      5  O * O *   O O O      White    Zebra        
+      6  O * * O * O O *                            
+      7  O * * * O * * *       (O)     31 discs     
+      8  O O O O O O O *                            
+
+
+Black: 32   White: 31
+Nodes searched:        203       
+Positions evaluated:   39        
+Total time: 0.0 s

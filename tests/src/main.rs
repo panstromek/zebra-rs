@@ -949,7 +949,69 @@ f1_60 , "-l 2 6 3 1 6 3 -p 1 -t 2 1 0 0 2 0 1 -g ../board.txt -draw2white -b 1 -
 f1_733 , "-l 7 12 7 9 12 7 -e 1 -learn 8 1 -slack 0.9908676 -dev 83 22 203.86996 -r 1" ,  "../../../resources/books/book-764.bin", &[];
 f1_738 , "-l 4 6 2 8 11 8 -repeat 3 -b 1 -h 13 -seq d3c3e6e3d2f6f4g4f5d6d7c6e7d8 -time 424 200 3 341 -keepdraw -p 1" , "../../../resources/books/book-375.bin", &[];
 f1_76 , "-l 2 7 6 3 6 5 -p 1 -keepdraw -test -e 1 -g ../board.txt -draw2none -learn 1 56 " , "../../../resources/books/book-456.bin", &[];
-f1_770 , "-l 6 3 20 7 3 22 -thor 19 -r 1 -h 20 -p 0 -b 1 -repeat 3" , "book.bin", &["wth_1980.wtb", ]
+f1_770 , "-l 6 3 20 7 3 22 -thor 19 -r 1 -h 20 -p 0 -b 1 -repeat 3" , "book.bin", &["wth_1980.wtb", ];
+
+        // THose are all failing at the moment
+f1_1055, " -l 0 0 -draw2black -seqfile ../seq.txt -repeat 2 -thor 14 -dev 54 90 15.934027 -b 1", "../../../resources/books/book-14.bin", &[] ;
+f1_1091, " -l 1 6 1 2 4 1 -b 0 -slack 72.88057 -e 1 -seq d3c5d6e3f4c6f5c3c4b5f2e6e7f7d2f6d7g4h3c2f3d1b4b3b6e2g6g1a5e8a4a3c7d8c8g7f8a7a6h6g5g8a8b8b7h4h8g3h7h2h5g2f1b2a -seqfile ../seq.txt -p 1 -r 0", "../../../resources/books/book-97.bin", &[] ;
+f1_1104, " -l 2 0 0 4 1 0 -seqfile ../seq.txt -thor 14 -e 0 -public -p 1", "../../../resources/books/book-410.bin", &[] ;
+f1_1181, " -l 5 7 3 6 8 3 -seqfile ../seq.txt -repeat 0 -keepdraw", "book.bin", &[] ;
+f1_1358, " -l 2 6 5 3 7 5 -r 1 -slack 90.97185 -log Ot686tnSxi -repeat 0 -e 0 -seqfile ../seq.txt", "book.bin", &[] ;
+f1_1380, " -l 4 4 6 3 3 4 -r 0 -g ../board.txt -b 0 -p 1", "../../../resources/books/book-469.bin", &[] ;
+f1_1412, " -l 1 5 4 1 0 2 -draw2white -seq c4c5c6e3f2b4c3d2d3d6e2f3f4f5f6g1g2g3g4g5g6g7h1h2h3h4h5h6 -g ../board.txt -private", "../../../resources/books/book-372.bin", &[] ;
+f1_143, " -l 4 6 2 3 6 2 -w 1 -p 0 -thor 11 -h 19 -b 1 -r 0 -seqfile ../seq.txt -draw2black", "../../../resources/books/book-147.bin", &[] ;
+f1_1448, " -l 2 2 3 4 0 2 -repeat 0 -log current.mov -slack 17.404985 -seqfile ../seq.txt -e 1 -private -public -r 1", "../../../resources/books/book-597.bin", &[] ;
+f1_1459, " -l 1 4 5 1 3 1 -p 0 -repeat 1 -keepdraw -seqfile ../seq.txt -e 1 -b 0", "book.bin", &[] ;
+f1_1486, " -l 3 4 6 2 2 1 -dev 67 49 11.881998 -e 0 -g ../board.txt", "book.bin", &[] ;
+f1_1494, " -l 1 4 4 2 5 4 -p 0 -public -dev 51 10 154.60968 -r 0 -seqfile ../seq.txt -h 11 -seq g -b 1 -w 0", "book.bin", &[] ;
+f1_1559, " -l 2 6 0 2 7 2 -b 0 -seqfile ../seq.txt -private -draw2black -p 0 -r 0 -public", "book.bin", &[] ;
+f1_1580, " -l 2 7 5 3 5 6 -seqfile ../seq.txt -private", "book.bin", &[] ;
+f1_1584, " -l 2 5 3 1 5 2 -b 0 -draw2black -p 0 -seqfile ../seq.txt -draw2none", "book.bin", &[] ;
+f1_1615, " -l 4 2 3 4 3 2 -seqfile ../seq.txt -e 0 -b 1 -test -g ../board.txt -thor 19", "book.bin", &[] ;
+f1_1628, " -l 3 0 3 2 2 4 -e 1 -private -seqfile ../seq.txt -h 7 -r 1", "book.bin", &[] ;
+f1_1695, " -l 1 2 4 3 2 6 -p 0 -log IWlAJyC3KM -seqfile ../seq.txt -repeat 0 -h 12", "../../../resources/books/book-98.bin", &[] ;
+f1_1708, " -l 0 0 -seqfile ../seq.txt -g ../board.txt -w 1 -e 1 -draw2black -repeat 1", "../../../resources/books/book-62.bin", &[] ;
+f1_1734, " -l 2 5 3 4 6 1 -g ../board.txt -log zebra.err -seqfile ../seq.txt -learn 1 38  -p 1 -e 0 -dev 67 88 202.39026", "../../../resources/books/book-417.bin", &[] ;
+f1_1854, " -l 5 20 4 7 19 3 -g ../board.txt -r 1 -b 1 -w 1 -log bW7NDLm3dZ", "book.bin", &[] ;
+f1_2000, " -l 10 5 14 10 6 14 -w 0 -draw2white -g ../board.txt -keepdraw -e 1 -slack 9.459627", "../../../resources/books/book-18.bin", &[] ;
+f1_2235, " -l 7 7 17 7 7 16 -p 1 -g ../board.txt -seqfile ../seq.txt -w 0 -time 196 59 83 160 -randmove 4", "book.bin", &[] ;
+f1_2344, " -l 16 9 5 16 10 5 -e 0 -b 0 -seqfile ../seq.txt -w 1 -seq c4c5c6e3f2b4c3d2d3d6e2f3f4f5f6g1g2g3g4g5g6g7h1h2h3h4h5h6h7b3b5b6b7b8c1c2c7c8d", "book.bin", &[] ;
+f1_235, " -l 4 4 3 3 6 3 -g ../board.txt -h 13 -log Mdv2imkb2a -w 1 -thor 11 -p 1 -r 1", "book.bin", &["wthor.trn"] ;
+f1_2435, " -l 11 21 18 11 20 20 -randmove 4 -dev 70 32 133.45624 -seqfile ../seq.txt", "book.bin", &[] ;
+f1_2478, " -l 3 4 6 2 4 5 -randmove 3 -w 0 -b 1 -e 1 -g ../board.txt -thor 14", "../../../resources/books/book-349.bin", &["wthor.trn"] ;
+f1_2516, " -l 0 0 -draw2white -test -private -b 1 -seqfile ../seq.txt -public -learn 1 33  -r 0", "../../../resources/books/book-526.bin", &[] ;
+f1_2589, " -l 7 5 5 7 6 5 -learn 2 42  -g ../board.txt -e 0 -draw2black -draw2none -public", "../../../resources/books/book-98.bin", &[] ;
+f1_2590, " -l 1 6 2 1 4 3 -p 0 -h 10 -g ../board.txt -repeat 0", "../../../resources/books/book-260.bin", &[] ;
+f1_2627, " -l 2 4 5 2 4 3 -e 1 -b 1 -g ../board.txt -log ssMySZyEAN -public", "../../../resources/books/book-334.bin", &[] ;
+f1_2726, " -l 11 11 19 11 12 19 -b 0 -e 0 -p 1 -r 1 -thor 9 -w 0 -g ../board.txt -learn 5 10  -draw2white -time 360 122 326 313", "../../../resources/books/book-67.bin", &[] ;
+f1_2774, " -l 2 5 1 3 5 2 -randmove 3 -seqfile ../seq.txt -e 1 -p 0 -r 0", "../../../resources/books/book-660.bin", &[] ;
+f1_2845, " -l 0 0 -seqfile ../seq.txt -e 0 -keepdraw", "book.bin", &[] ;
+f1_2857, " -l 3 1 2 4 3 2 -time 374 494 104 70 -g ../board.txt -p 0 -thor 2 -seqfile ../seq.txt", "book.bin", &["wthor.trn"] ;
+f1_2863, " -l 4 2 1 4 2 2 -private -b 1 -r 1 -h 8 -e 1 -seqfile ../seq.txt", "book.bin", &[] ;
+f1_2950, " -l 3 3 2 1 3 2 -w 1 -seqfile ../seq.txt -r 1", "book.bin", &[] ;
+f1_296, " -l 1 1 7 2 1 6 -r 0 -time 89 110 139 308 -g ../board.txt -w 0 -p 1 -thor 12", "book.bin", &[] ;
+f1_2960, " -l 2 2 3 4 1 5 -b 0 -r 0 -p 0 -thor 3 -e 0 -log XQKjQrmuZ7 -g ../board.txt", "../../../resources/books/book-299.bin", &["wth_1981.wtb", "wthor.jou", "wthor.trn"] ;
+f1_3006, " -l 5 6 6 7 6 6 -seqfile ../seq.txt -r 1 -b 0 -thor 1", "book.bin", &["wthor.trn"] ;
+f1_3030, " -l 0 0 -seqfile ../seq.txt -slack 51.61009 -p 1 -thor 9 -r 1", "../../../resources/books/book-442.bin", &["wthor.trn"] ;
+f1_309, " -l 1 2 4 3 1 5 -e 0 -dev 4 24 130.85461 -repeat 0 -p 1 -seqfile ../seq.txt", "book.bin", &[] ;
+f1_3100, " -l 8 13 9 10 13 9 -seqfile ../seq.txt -seq e6f6f5d6e7g5g6f7e8f8g8e3g4g7h6h7h8g3h5c3c4 -time 293 495 498 75 -r 1", "../../../resources/books/book-573.bin", &[] ;
+f1_3114, " -l 2 5 7 2 5 6 -thor 15 -draw2none -repeat 1 -p 1 -b 1 -g ../board.txt", "book.bin", &[] ;
+f1_3186, " -l 2 10 4 2 10 3 -r 0 -thor 10 -seqfile ../seq.txt -time 145 477 404 400 -b 1", "book.bin", &["wthor.jou", "wthor.trn"] ;
+f1_3252, " -l 4 2 13 4 2 12 -w 0 -seqfile ../seq.txt -randmove 7 -b 0 -seq c4c5c6e3f2b4c3d2d3d6e2f3f4f5f6g", "../../../resources/books/book-414.bin", &[] ;
+f1_3253, " -l 2 6 6 2 6 7 -b 1 -p 1 -g ../board.txt -w 0", "book.bin", &[] ;
+f1_3290, " -l 2 5 6 2 6 7 -g ../board.txt -p 0 -r 0", "../../../resources/books/book-538.bin", &[] ;
+f1_3346, " -l 2 7 4 1 5 6 -w 1 -r 1 -h 18 -g ../board.txt -b 1", ".../../../resources/books/book-5.bin", &[] ;
+f1_361, " -l 5 8 4 4 7 6 -thor 2 -p 0 -private -r 0 -b 1 -learn 0 9  -g ../board.txt", "../../../resources/books/book-109.bin", &[] ;
+f1_616, " -l 0 0 -e 0 -seqfile ../seq.txt -r 1 -h 17 -slack 13.980651 -p 1 -w 1", "../../../resources/books/book-286.bin", &[] ;
+f1_621, " -l 1 5 1 2 4 3 -seqfile ../seq.txt -slack 1.0585904 -e 0 -h 10", "../../../resources/books/book-69.bin", &[] ;
+f1_629, " -l 3 7 5 3 7 6 -g ../board.txt -e 0 -p 0 -public -dev 11 70 11.791019 -w 0", "../../../resources/books/book-752.bin", &[] ;
+f1_772, " -l 4 14 12 4 14 13 -seqfile ../seq.txt -test -repeat 4 -learn 16 0  -b 1", "../../../resources/books/book-37.bin", &[] ;
+f1_805, " -l 2 7 7 1 6 8 -seqfile ../seq.txt -e 0 -g ../board.txt", "../../../resources/books/book-18.bin", &[] ;
+f1_865, " -l 2 8 5 1 8 5 -p 1 -r 0 -seqfile ../seq.txt -b 1", "book.bin", &[] ;
+f1_894, " -l 5 5 5 3 5 4 -seqfile ../seq.txt -b 1 -r 1 -keepdraw -h 6 -thor 16", "../../../resources/books/book-434.bin", &["wthor.trn"] ;
+f1_897, " -l 3 1 3 3 2 3 -seqfile ../seq.txt -r 0 -draw2white -e 0", "../../../resources/books/book-633.bin", &[] ;
+f1_902, " -l 2 3 4 3 5 5 -keepdraw -g ../board.txt -slack 48.74948 -seqfile ../seq.txt -dev 91 95 192.36258 -thor 9 -b 1 -private", "book.bin", &["wth_1980.wtb", "wthor.trn"] ;
+f1_940, " -l 3 8 3 4 6 2 -seqfile ../seq.txt -randmove 3 -g ../board.txt -log zebra-stdin -seq e6f6f5d6e7g5g4 -private -b 0 -r 0 -p 0", "book.bin", &[]
 
     );
 

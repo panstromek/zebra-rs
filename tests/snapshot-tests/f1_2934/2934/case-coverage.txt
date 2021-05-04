@@ -1,0 +1,44 @@
+Filename                                  Regions    Missed Regions     Cover   Functions  Missed Functions  Executed       Lines      Missed Lines     Cover    Branches   Missed Branches     Cover
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+engine/bitbcnt/bitbcnt.rs                      65                61     6.15%          65                61     6.15%        3103              2959     4.64%           0                 0         -
+engine/bitboard/bitbmob.rs                      3                 3     0.00%           3                 3     0.00%         158               158     0.00%           0                 0         -
+engine/bitboard/bitboard.rs                    43                17    60.47%           6                 3    50.00%         114                39    65.79%           0                 0         -
+engine/bitboard/bitbtest.rs                   905               830     8.29%          65                59     9.23%        8722              8065     7.53%           0                 0         -
+engine/coeff/getcoeff.rs                      181                 2    98.90%          31                 2    93.55%         333                13    96.10%           0                 0         -
+engine/engine-traits/lib.rs                     4                 0   100.00%           4                 0   100.00%          13                 0   100.00%           0                 0         -
+engine/flip/doflip.rs                          96                 4    95.83%           6                 0   100.00%         296                19    93.58%           0                 0         -
+engine/flip/unflip.rs                           9                 7    22.22%           3                 1    66.67%          24                15    37.50%           0                 0         -
+engine/my-random/myrandom.rs                   14                 0   100.00%           3                 0   100.00%          38                 0   100.00%           0                 0         -
+engine/patterns/patterns.rs                    38                26    31.58%           4                 2    50.00%          81                56    30.86%           0                 0         -
+engine/src/cntflip.rs                          24                 0   100.00%           1                 0   100.00%          39                 0   100.00%           0                 0         -
+engine/src/counter.rs                           8                 2    75.00%           5                 1    80.00%          20                 3    85.00%           0                 0         -
+engine/src/end.rs                             913               595    34.83%          19                 6    68.42%        2515              1549    38.41%           0                 0         -
+engine/src/eval.rs                             13                 0   100.00%           1                 0   100.00%          15                 0   100.00%           0                 0         -
+engine/src/game.rs                            314               147    53.18%          18                 9    50.00%         720               282    60.83%           0                 0         -
+engine/src/getcoeff.rs                        269                72    73.23%          15                 1    93.33%         574               194    66.20%           0                 0         -
+engine/src/globals.rs                           3                 0   100.00%           3                 0   100.00%          22                 0   100.00%           0                 0         -
+engine/src/hash.rs                            123                13    89.43%          15                 4    73.33%         411                23    94.40%           0                 0         -
+engine/src/learn.rs                            23                16    30.43%           6                 3    50.00%          41                24    41.46%           0                 0         -
+engine/src/midgame.rs                         582                81    86.08%          20                 5    75.00%        1496               207    86.16%           0                 0         -
+engine/src/moves.rs                           111                32    71.17%          14                 3    78.57%         240                48    80.00%           0                 0         -
+engine/src/osfbook.rs                         343               281    18.08%          27                17    37.04%         927               609    34.30%           0                 0         -
+engine/src/probcut.rs                          16                 2    87.50%           5                 0   100.00%          84                 2    97.62%           0                 0         -
+engine/src/search.rs                          183                63    65.57%          21                 8    61.90%         363               120    66.94%           0                 0         -
+engine/src/stable.rs                          231               109    52.81%          12                 4    66.67%         697               238    65.85%           0                 0         -
+engine/src/stubs.rs                             4                 0   100.00%           4                 0   100.00%          12                 0   100.00%           0                 0         -
+engine/src/timer.rs                            53                 8    84.91%          19                 2    89.47%         124                11    91.13%           0                 0         -
+engine/src/zebra.rs                           134                64    52.24%          16                10    37.50%         342               122    64.33%           0                 0         -
+legacy-zebra/src/display.rs                   235                67    71.49%          36                 2    94.44%         416               111    73.32%           0                 0         -
+legacy-zebra/src/error.rs                     179               114    36.31%          50                38    24.00%         538               367    31.78%           0                 0         -
+legacy-zebra/src/game.rs                      370               334     9.73%          38                24    36.84%        1299              1158    10.85%           0                 0         -
+legacy-zebra/src/getcoeff.rs                   25                17    32.00%           2                 0   100.00%          20                13    35.00%           0                 0         -
+legacy-zebra/src/learn.rs                      47                43     8.51%           4                 3    25.00%         119               111     6.72%           0                 0         -
+legacy-zebra/src/main.rs                        1                 0   100.00%           1                 0   100.00%           3                 0   100.00%           0                 0         -
+legacy-zebra/src/osfbook.rs                   484               394    18.60%          24                11    54.17%        1344              1137    15.40%           0                 0         -
+legacy-zebra/src/safemem.rs                     8                 2    75.00%           2                 0   100.00%          18                 6    66.67%           0                 0         -
+legacy-zebra/src/thordb.rs                   1001               173    82.72%          87                18    79.31%        2287               338    85.22%           0                 0         -
+legacy-zebra/src/zebra.rs                     456               276    39.47%          40                17    57.50%        1329               880    33.78%           0                 0         -
+legacy-zebra/zlib-coeff-source/lib.rs          35                10    71.43%           8                 3    62.50%          61                11    81.97%           0                 0         -
+libc-wrapper/lib.rs                            44                21    52.27%          26                15    42.31%         102                46    54.90%           0                 0         -
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                        7590              3886    48.80%         729               335    54.05%       29060             18934    34.85%           0                 0         -

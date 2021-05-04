@@ -1,0 +1,248 @@
+
+Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+
+Reading binary opening database... done (took 0 s)
+Book randomness: 0.25 disks
+
+         a b c d e f g h
+
+      1  * * O * O   * O      Black    Zebra        
+      2  * O   * O O                                
+      3    * O O *             (*)     24 discs     
+      4  *   * O * * O                              
+      5  O *     O * O O      White    Zebra        
+      6    * * O   O O *                            
+      7  * *   * * * O *               23 discs     
+      8  O O O   *   O O                            
+
+-->   1  +8.23            158  b4     0.0 s  
+PV: b4
+
+         a b c d e f g h
+
+      1  * * O * O   * O      Black    Zebra         1. b4  
+      2  * O   * O O                                
+      3    * * O *            +8.23    26 discs     
+      4  * * * O * * O                              
+      5  O *     O * O O      White    Zebra        
+      6    * * O   O O *                            
+      7  * *   * * * O *       (O)     22 discs     
+      8  O O O   *   O O                            
+
+-->   1  -1.07            132  a3     0.0 s  
+PV: a3
+
+         a b c d e f g h
+
+      1  * * O * O   * O      Black    Zebra         1. b4  a3
+      2  * O   * O O                                
+      3  O O O O *             (*)     23 discs     
+      4  O * * O * * O                              
+      5  O *     O * O O      White    Zebra        
+      6    * * O   O O *                            
+      7  * *   * * * O *      -1.07    26 discs     
+      8  O O O   *   O O                            
+
+-->   1  +10.87           123  a6     0.0 s  
+PV: a6
+
+         a b c d e f g h
+
+      1  * * O * O   * O      Black    Zebra         1. b4  a3
+      2  * O   * O O                                 2. a6  
+      3  * O O O *            +10.87   27 discs     
+      4  * * * O * * O                              
+      5  * *     O * O O      White    Zebra        
+      6  * * * O   O O *                            
+      7  * *   * * * O *       (O)     23 discs     
+      8  O O O   *   O O                            
+
+-->   1  -17.15            99  c2     0.0 s  
+PV: c2
+
+         a b c d e f g h
+
+      1  * * O * O   * O      Black    Zebra         1. b4  a3
+      2  * O O O O O                                 2. a6  c2
+      3  * O O O *             (*)     26 discs     
+      4  * * * O * * O                              
+      5  * *     O * O O      White    Zebra        
+      6  * * * O   O O *                            
+      7  * *   * * * O *      -17.15   25 discs     
+      8  O O O   *   O O                            
+
+-->   1  +11.73            83  c5     0.0 s  
+PV: c5
+
+         a b c d e f g h
+
+      1  * * O * O   * O      Black    Zebra         1. b4  a3
+      2  * O O O O O                                 2. a6  c2
+      3  * O O O *            +11.73   29 discs      3. c5  
+      4  * * * * * * O                              
+      5  * * *   O * O O      White    Zebra        
+      6  * * * *   O O *                            
+      7  * *   * * * O *       (O)     23 discs     
+      8  O O O   *   O O                            
+
+-->   1  -11.46            62  f8     0.0 s  
+PV: f8
+
+         a b c d e f g h
+
+      1  * * O * O   * O      Black    Zebra         1. b4  a3
+      2  * O O O O O                                 2. a6  c2
+      3  * O O O *             (*)     28 discs      3. c5  f8
+      4  * * * * * * O                              
+      5  * * *   O * O O      White    Zebra        
+      6  * * * *   O O *                            
+      7  * *   * * O O *      -11.46   25 discs     
+      8  O O O   * O O O                            
+
+-->   1  +11.32            45  e6     0.0 s  
+PV: e6
+
+         a b c d e f g h
+
+      1  * * O * O   * O      Black    Zebra         1. b4  a3
+      2  * O O O O O                                 2. a6  c2
+      3  * O O O *            +11.32   32 discs      3. c5  f8
+      4  * * * * * * O                               4. e6  
+      5  * * *   * * O O      White    Zebra        
+      6  * * * * * * * *                            
+      7  * *   * * O O *       (O)     22 discs     
+      8  O O O   * O O O                            
+
+-->   1  -11.40            31  d8     0.0 s  
+PV: d8
+
+         a b c d e f g h
+
+      1  * * O * O   * O      Black    Zebra         1. b4  a3
+      2  * O O O O O                                 2. a6  c2
+      3  * O O O *             (*)     29 discs      3. c5  f8
+      4  * * * * * * O                               4. e6  d8
+      5  * * *   * * O O      White    Zebra        
+      6  * * * * * O * *                            
+      7  * *   * O O O *      -11.40   26 discs     
+      8  O O O O O O O O                            
+
+-->   1  +10.48            36  f1     0.0 s  
+PV: f1
+
+         a b c d e f g h
+
+      1  * * O * * * * O      Black    Zebra         1. b4  a3
+      2  * O O O * O                                 2. a6  c2
+      3  * O O * *            +10.48   33 discs      3. c5  f8
+      4  * * * * * * O                               4. e6  d8
+      5  * * *   * * O O      White    Zebra         5. f1  
+      6  * * * * * O * *                            
+      7  * *   * O O O *       (O)     23 discs     
+      8  O O O O O O O O                            
+
+-->   1  -7.54             13  c7     0.0 s  
+PV: c7
+
+         a b c d e f g h
+
+      1  * * O * * * * O      Black    Zebra         1. b4  a3
+      2  * O O O * O                                 2. a6  c2
+      3  * O O * *             (*)     29 discs      3. c5  f8
+      4  * * O * * * O                               4. e6  d8
+      5  * * O   * * O O      White    Zebra         5. f1  c7
+      6  * * O * * O * *                            
+      7  * * O O O O O *      -7.54    28 discs     
+      8  O O O O O O O O                            
+
+-->   1  +5.37             26  f3     1.0 s      26 nps
+PV: f3
+
+         a b c d e f g h
+
+      1  * * O * * * * O      Black    Zebra         1. b4  a3
+      2  * O O O * *                                 2. a6  c2
+      3  * O O * * *          +5.37    31 discs      3. c5  f8
+      4  * * O * * * O                               4. e6  d8
+      5  * * O   * * O O      White    Zebra         5. f1  c7
+      6  * * O * * O * *                             6. f3  
+      7  * * O O O O O *       (O)     27 discs     
+      8  O O O O O O O O                            
+
+-->   1  -5.95             11  g3     0.0 s  
+PV: g3
+
+         a b c d e f g h
+
+      1  * * O * * * * O      Black    Zebra         1. b4  a3
+      2  * O O O * *                                 2. a6  c2
+      3  * O O O O O O         (*)     25 discs      3. c5  f8
+      4  * * O * * O O                               4. e6  d8
+      5  * * O   O * O O      White    Zebra         5. f1  c7
+      6  * * O O * O * *                             6. f3  g3
+      7  * * O O O O O *      -5.95    34 discs     
+      8  O O O O O O O O                            
+
+-->   2  +1.71             12  h3        0.0 s  
+-->   5  +4                88  h3                 0.0 s  
+PV: h3 h2 g2 h4
+
+         a b c d e f g h
+
+      1  * * O * * * * O      Black    Zebra         1. b4  a3
+      2  * O O O * *                                 2. a6  c2
+      3  * * * * * * * *      +4.00    33 discs      3. c5  f8
+      4  * * O * * O *                               4. e6  d8
+      5  * * O   O * O O      White    Zebra         5. f1  c7
+      6  * * O O * O * *                             6. f3  g3
+      7  * * O O O O O *       (O)     27 discs      7. h3  
+      8  O O O O O O O O                            
+
+-->   1  -1.71             10  g2     0.0 s  
+PV: g2
+
+         a b c d e f g h
+
+      1  * * O * * * * O      Black    Zebra         1. b4  a3
+      2  * O O O O O O                               2. a6  c2
+      3  * * * * * * O *       (*)     29 discs      3. c5  f8
+      4  * * O * * O O                               4. e6  d8
+      5  * * O   O * O O      White    Zebra         5. f1  c7
+      6  * * O O * O * *                             6. f3  g3
+      7  * * O O O O O *      -1.71    32 discs      7. h3  g2
+      8  O O O O O O O O                            
+
+-->   3  +6                28  h2           0.0 s  
+PV: h2 h4
+
+         a b c d e f g h
+
+      1  * * O * * * * O      Black    Zebra         1. b4  a3
+      2  * * * * * * * *                             2. a6  c2
+      3  * * * * * * O *      +6.00    36 discs      3. c5  f8
+      4  * * O * * O O                               4. e6  d8
+      5  * * O   O * O O      White    Zebra         5. f1  c7
+      6  * * O O * O * *                             6. f3  g3
+      7  * * O O O O O *       (O)     26 discs      7. h3  g2
+      8  O O O O O O O O                             8. h2  
+
+-->   2  -6                 4  h4        0.0 s  
+-->   2  Loss               7  h4        0.0 s  
+PV: h4
+
+         a b c d e f g h
+
+      1  * * O * * * * O      Black    Zebra         1. b4  a3
+      2  * * * * * * * O                             2. a6  c2
+      3  * * * * * * O O       (*)     34 discs      3. c5  f8
+      4  * * O * * O O O                             4. e6  d8
+      5  * * O   O * O O      White    Zebra         5. f1  c7
+      6  * * O O * O * *                             6. f3  g3
+      7  * * O O O O O *      -5.99    29 discs      7. h3  g2
+      8  O O O O O O O O                             8. h2  h4
+
+
+Black: 34   White: 29
+Nodes searched:        1029      
+Positions evaluated:   753       
+Total time: 1.0 s
