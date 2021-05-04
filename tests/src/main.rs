@@ -652,6 +652,7 @@ mod tests {
     use std::time::{Duration, SystemTime};
     use std::ops::{Add, Deref};
     use std::sync::{Arc, Mutex};
+    use std::str::Lines;
 
     #[test]
     fn coeff_source_test() {
@@ -1150,7 +1151,27 @@ f1_770 , "-l 6 3 20 7 3 22 -thor 19 -r 1 -h 20 -p 0 -b 1 -repeat 3" , "book.bin"
         let snapshot_str = std::str::from_utf8(snapshot.as_ref());
         if snapshot_str.is_err() {
             let result = std::fs::read(result_path).unwrap();
-            assert!(result == snapshot, "{} == {}" , snapshot_path.to_str().unwrap(), result_path.to_str().unwrap());
+
+            if snapshot_path.as_os_str().to_str().unwrap().contains("zebra-stdout") {
+                // This file is sometimes not valid UTF-8 so we compare the lossy version
+                let cow = String::from_utf8_lossy(snapshot.as_ref());
+                let res = String::from_utf8_lossy(result.as_ref());
+
+
+                let mut snapshot_lines = cow.as_ref().lines().filter(variable_lines);
+                let mut res_lines = res.as_ref().lines().filter(variable_lines);
+                loop {
+                    match (snapshot_lines.next(), res_lines.next()){
+                        (None, None) => { break ;}
+                        (snap, res) => {
+                            assert_eq!(snap, res);
+                        }
+                    }
+                }
+            }else {
+                // todo maybe byte by byte comparison would be more helpful
+                assert!(result == snapshot, "{} == {}" , snapshot_path.to_str().unwrap(), result_path.to_str().unwrap());
+            }
             return;
         }
 
