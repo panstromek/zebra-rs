@@ -951,7 +951,7 @@ f1_738 , "-l 4 6 2 8 11 8 -repeat 3 -b 1 -h 13 -seq d3c3e6e3d2f6f4g4f5d6d7c6e7d8
 f1_76 , "-l 2 7 6 3 6 5 -p 1 -keepdraw -test -e 1 -g ../board.txt -draw2none -learn 1 56 " , "../../../resources/books/book-456.bin", &[];
 f1_770 , "-l 6 3 20 7 3 22 -thor 19 -r 1 -h 20 -p 0 -b 1 -repeat 3" , "book.bin", &["wth_1980.wtb", ];
 
-        // THose are all failing at the moment
+        // Those are all failing at the moment
 f1_1055, " -l 0 0 -draw2black -seqfile ../seq.txt -repeat 2 -thor 14 -dev 54 90 15.934027 -b 1", "../../../resources/books/book-14.bin", &[] ;
 f1_1091, " -l 1 6 1 2 4 1 -b 0 -slack 72.88057 -e 1 -seq d3c5d6e3f4c6f5c3c4b5f2e6e7f7d2f6d7g4h3c2f3d1b4b3b6e2g6g1a5e8a4a3c7d8c8g7f8a7a6h6g5g8a8b8b7h4h8g3h7h2h5g2f1b2a -seqfile ../seq.txt -p 1 -r 0", "../../../resources/books/book-97.bin", &[] ;
 f1_1104, " -l 2 0 0 4 1 0 -seqfile ../seq.txt -thor 14 -e 0 -public -p 1", "../../../resources/books/book-410.bin", &[] ;

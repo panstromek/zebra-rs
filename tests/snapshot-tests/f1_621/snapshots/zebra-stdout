@@ -1,4 +1,12 @@
 
-Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+Zebra (c) 1997-2005 Gunnar Andersson, compile date May  3 2021 at 22:37:39
 
 Reading binary opening database... done (took 0 s)
+
+Black level: 1
+White level: 2
+
+Black: 20   White: 44
+Nodes searched:        3800      
+Positions evaluated:   2840      
+Total time: 4.0 s

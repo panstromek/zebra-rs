@@ -1,3 +1,18 @@
 Log file created Thu Jan  1 01:00:01 1970
 
-Engine compiled Apr 20 2021 23:21:49
+Engine compiled May  3 2021 22:37:24
+
+         a b c d e f g h
+
+      1  O O O O O O O O      Black    Zebra
+      2  O O O O O O O O      
+      3  O O * O O O O O               16 discs
+      4  O O * O O O O O      
+      5  O O O O O * O O      White    Zebra
+      6  O O O O * O O O      
+      7  O O * * * * * *       (O)     47 discs
+      8  O   * * * * * *      
+
+1 moves generated: b8 
+-->   1  +34               58  b8     0.0 s  
+PV: b8

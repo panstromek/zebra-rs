@@ -1,3 +1,11 @@
 
-Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+Zebra (c) 1997-2005 Gunnar Andersson, compile date May  3 2021 at 22:37:39
 
+
+Black level: 16
+White level: 16
+
+Black: 42   White: 22
+Nodes searched:        15416506  
+Positions evaluated:   10894586  
+Total time: 36.0 s

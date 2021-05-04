@@ -1,4 +1,108 @@
 
-Zebra (c) 1997-2005 Gunnar Andersson, compile date Apr 20 2021 at 23:21:59
+Zebra (c) 1997-2005 Gunnar Andersson, compile date May  3 2021 at 22:37:39
 
 Reading binary opening database... done (took 0 s)
+Book randomness: 0.25 disks
+
+         a b c d e f g h
+
+      1                       Black    Zebra        
+      2                                             
+      3                        (*)     2 discs      
+      4        O *                                  
+      5        * O            White    Zebra        
+      6                                             
+      7                                2 discs      
+      8                                             
+
+Thor database:        f5: 100.0%    
+Slack left is 0.25. Book score is +0.20. Private node.
+   d3   +0.20 
+   c4   +0.20 
+   f5   +0.20 
+   e6   +0.20 
+-->   Book      +0.20        e6
+PV: e6 f6 f5 f4 g5 e7 f7 h6
+
+Black: 4   White: 1
+Nodes searched:        0         
+Positions evaluated:   0         
+Total time: 0.0 s
+Book randomness: 0.25 disks
+
+         a b c d e f g h
+
+      1                       Black    Zebra        
+      2                                             
+      3                        (*)     2 discs      
+      4        O *                                  
+      5        * O            White    Zebra        
+      6                                             
+      7                                2 discs      
+      8                                             
+
+Thor database:        d3: 100.0%    
+Slack left is 0.25. Book score is +0.20. Private node.
+   d3   +0.20 
+   c4   +0.20 
+   f5   +0.20 
+   e6   +0.20 
+-->   Book      +0.20        e6
+PV: e6 f6 f5 f4 g5 e7 f7 h6
+
+Black: 4   White: 1
+Nodes searched:        0         
+Positions evaluated:   0         
+Total time: 0.0 s
+Book randomness: 0.25 disks
+
+         a b c d e f g h
+
+      1                       Black    Zebra        
+      2                                             
+      3                        (*)     2 discs      
+      4        O *                                  
+      5        * O            White    Zebra        
+      6                                             
+      7                                2 discs      
+      8                                             
+
+Thor database:        f5: 100.0%    
+Slack left is 0.25. Book score is +0.20. Private node.
+   d3   +0.20 
+   c4   +0.20 
+   f5   +0.20 
+   e6   +0.20 
+-->   Book      +0.20        e6
+PV: e6 f6 f5 f4 g5 e7 f7 h6
+
+Black: 4   White: 1
+Nodes searched:        0         
+Positions evaluated:   0         
+Total time: 0.0 s
+Book randomness: 0.25 disks
+
+         a b c d e f g h
+
+      1                       Black    Zebra        
+      2                                             
+      3                        (*)     2 discs      
+      4        O *                                  
+      5        * O            White    Zebra        
+      6                                             
+      7                                2 discs      
+      8                                             
+
+Thor database:        f5: 100.0%    
+Slack left is 0.25. Book score is +0.20. Private node.
+   d3   +0.20 
+   c4   +0.20 
+   f5   +0.20 
+   e6   +0.20 
+-->   Book      +0.20        d3
+PV: d3 c3 c4 e3 d2 b4 b3 c1
+
+Black: 4   White: 1
+Nodes searched:        0         
+Positions evaluated:   0         
+Total time: 0.0 s
