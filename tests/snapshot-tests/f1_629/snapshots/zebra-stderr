@@ -1,0 +1,15 @@
+end.c:346:36: runtime error: index 88 out of bounds for type '<unknown> *[78]'
+end.c:346:36: runtime error: load of address 0x5617bada2760 with insufficient space for an object of type '<unknown> *'
+0x5617bada2760: note: pointer points here
+ 17 56 00 00  a0 7d b0 ba 17 56 00 00  a0 61 b0 ba 17 56 00 00  30 5e b1 ba 17 56 00 00  00 5a b1 ba
+              ^ 
+end.c:357:35: runtime error: index 88 out of bounds for type '<unknown> *[78]'
+end.c:357:35: runtime error: load of address 0x5617bada2760 with insufficient space for an object of type '<unknown> *'
+0x5617bada2760: note: pointer points here
+ 17 56 00 00  a0 7d b0 ba 17 56 00 00  a0 61 b0 ba 17 56 00 00  30 5e b1 ba 17 56 00 00  00 5a b1 ba
+              ^ 
+end.c:353:35: runtime error: index 88 out of bounds for type '<unknown> *[78]'
+end.c:353:35: runtime error: load of address 0x5617bada2760 with insufficient space for an object of type '<unknown> *'
+0x5617bada2760: note: pointer points here
+ 17 56 00 00  a0 7d b0 ba 17 56 00 00  a0 61 b0 ba 17 56 00 00  30 5e b1 ba 17 56 00 00  00 5a b1 ba
+              ^ 

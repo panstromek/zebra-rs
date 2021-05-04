@@ -1,0 +1,17 @@
+end.c:346:36: runtime error: index 88 out of bounds for type '<unknown> *[78]'
+end.c:346:36: runtime error: load of address 0x55a7ab956760 with insufficient space for an object of type '<unknown> *'
+0x55a7ab956760: note: pointer points here
+ a7 55 00 00  a0 bd 6b ab a7 55 00 00  a0 a1 6b ab a7 55 00 00  30 9e 6c ab a7 55 00 00  00 9a 6c ab
+              ^ 
+end.c:357:35: runtime error: index 88 out of bounds for type '<unknown> *[78]'
+end.c:357:35: runtime error: load of address 0x55a7ab956760 with insufficient space for an object of type '<unknown> *'
+0x55a7ab956760: note: pointer points here
+ a7 55 00 00  a0 bd 6b ab a7 55 00 00  a0 a1 6b ab a7 55 00 00  30 9e 6c ab a7 55 00 00  00 9a 6c ab
+              ^ 
+end.c:353:35: runtime error: index 88 out of bounds for type '<unknown> *[78]'
+end.c:353:35: runtime error: load of address 0x55a7ab956760 with insufficient space for an object of type '<unknown> *'
+0x55a7ab956760: note: pointer points here
+ a7 55 00 00  a0 bd 6b ab a7 55 00 00  a0 a1 6b ab a7 55 00 00  30 9e 6c ab a7 55 00 00  00 9a 6c ab
+              ^ 
+
+Fatal error: Cannot learn game. Missing move no. 0

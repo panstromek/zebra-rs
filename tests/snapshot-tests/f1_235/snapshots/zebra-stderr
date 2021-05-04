@@ -1,0 +1,5 @@
+end.c:346:36: runtime error: index 88 out of bounds for type '<unknown> *[78]'
+end.c:346:36: runtime error: load of address 0x564375c84760 with insufficient space for an object of type '<unknown> *'
+0x564375c84760: note: pointer points here
+ 43 56 00 00  a0 9d 9e 75 43 56 00 00  a0 81 9e 75 43 56 00 00  30 7e 9f 75 43 56 00 00  00 7a 9f 75
+              ^ 

@@ -1,0 +1,1 @@
+RUST_BACKTRACE=1  BOOK_PATH=./../../../fuzzer-data/books/book-97.bin COEFFS_PATH=./../../../coeffs2.bin ../../../test-target/release/zebra -l 1 6 1 2 4 1 -b 0 -slack 72.88057 -e 1 -seq d3c5d6e3f4c6f5c3c4b5f2e6e7f7d2f6d7g4h3c2f3d1b4b3b6e2g6g1a5e8a4a3c7d8c8g7f8a7a6h6g5g8a8b8b7h4h8g3h7h2h5g2f1b2a -seqfile ../seq.txt -p 1 -r 0
