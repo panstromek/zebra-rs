@@ -1,15 +1,2 @@
-end.c:346:36: runtime error: index 88 out of bounds for type '<unknown> *[78]'
-end.c:346:36: runtime error: load of address 0x5640be4a0760 with insufficient space for an object of type '<unknown> *'
-0x5640be4a0760: note: pointer points here
- 40 56 00 00  a0 5d 20 be 40 56 00 00  a0 41 20 be 40 56 00 00  30 3e 21 be 40 56 00 00  00 3a 21 be
-              ^ 
-end.c:357:35: runtime error: index 88 out of bounds for type '<unknown> *[78]'
-end.c:357:35: runtime error: load of address 0x5640be4a0760 with insufficient space for an object of type '<unknown> *'
-0x5640be4a0760: note: pointer points here
- 40 56 00 00  a0 5d 20 be 40 56 00 00  a0 41 20 be 40 56 00 00  30 3e 21 be 40 56 00 00  00 3a 21 be
-              ^ 
-end.c:353:35: runtime error: index 88 out of bounds for type '<unknown> *[78]'
-end.c:353:35: runtime error: load of address 0x5640be4a0760 with insufficient space for an object of type '<unknown> *'
-0x5640be4a0760: note: pointer points here
- 40 56 00 00  a0 5d 20 be 40 56 00 00  a0 41 20 be 40 56 00 00  30 3e 21 be 40 56 00 00  00 3a 21 be
-              ^ 
+
+Fatal error: Initial squares (d4, e4, d5, e5) from the board file should not be empty.

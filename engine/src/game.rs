@@ -257,7 +257,8 @@ pub trait BoardSource {
 }
 
 pub enum BoardSourceError {
-    UnrecognizedCharacter(u8)
+    UnrecognizedCharacter(u8),
+    InitialSquaresAreEmpty
 }
 pub fn process_board_source<S: BoardSource>(side_to_move: &mut i32, mut file_source: S, board_state_: &mut BoardState) -> Result<(), BoardSourceError> {
     let mut buffer = String::with_capacity(70);
@@ -296,6 +297,13 @@ pub fn process_board_source<S: BoardSource>(side_to_move: &mut i32, mut file_sou
         let unrecognized = buffer[0];
         return Err(UnrecognizedCharacter(unrecognized));
     }
+    const EMPTY: i32 = 1;
+    if board_state_.board[45] == EMPTY || board_state_.board[54] == EMPTY || board_state_.board[44] == EMPTY || board_state_.board[55] == EMPTY {
+        // various pieces of the program are not ready for this, even though we have end solve routines for it
+        // TODO enable this use case (it requires changes to the endgame solver,
+        //   various helper structure only initialize for 60 moves and leave out the initial 4)
+        return Err(BoardSourceError::InitialSquaresAreEmpty);
+    }
     return Ok(())
 }
 
@@ -326,6 +334,9 @@ pub fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: Optio
                 match process_board_source(side_to_move, file_source, board_state) {
                     Ok(_) => {}
                     Err(BoardSourceError::UnrecognizedCharacter(unrecognized)) => FE::unrecognized_character(unrecognized as _),
+                    Err(BoardSourceError::InitialSquaresAreEmpty) => {
+                        FE::initial_squares_are_empty()
+                    }
                 }
             },
             None => {

@@ -679,4 +679,9 @@ fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
         fatal_error_0(b"Invalid move string provided\x00" as *const u8 as *const i8);
     }
 }
+ fn initial_squares_are_empty() -> ! {
+    unsafe {
+        fatal_error_0( b"Initial squares (d4, e4, d5, e5) from the board file should not be empty.\n\x00" as *const u8 as *const i8);
+    }
+}
 }
