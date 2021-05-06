@@ -1,2 +1,2 @@
 
-Fatal error: Cannot learn game. Missing move no. 0
+Fatal error: Initial squares (d4, e4, d5, e5) from the board file should not be empty.
