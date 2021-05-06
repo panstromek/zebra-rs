@@ -673,6 +673,8 @@ impl FatalError for WasmFrontend {
     fn invalid_move_string_provided() -> ! {
         unimplemented!()
     }
+
+    fn initial_squares_are_empty() -> ! { unimplemented!() }
 }
 
 struct WasmBoardSource;

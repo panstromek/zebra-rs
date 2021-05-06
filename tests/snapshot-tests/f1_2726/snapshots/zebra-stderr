@@ -1,22 +1,2 @@
-midgame.c:704:46: runtime error: index 64 out of bounds for type 'int [64]'
-midgame.c:704:46: runtime error: load of address 0x56435e829260 with insufficient space for an object of type 'int'
-0x56435e829260: note: pointer points here
- 00 00 00 00  00 00 00 00 00 00 00 00  00 00 00 00 c7 09 00 00  00 00 00 00 00 00 00 00  00 00 00 00
-              ^ 
-AddressSanitizer:DEADLYSIGNAL
-=================================================================
-==5578==ERROR: AddressSanitizer: SEGV on unknown address 0x56435e82e000 (pc 0x56435d9aaca9 bp 0x7ffd5af2a0b0 sp 0x7ffd5af29e10 T0)
-==5578==The signal is caused by a READ memory access.
-    #0 0x56435d9aaca8 in tree_search /home/matyas/zebra-1/midgame.c:705
-    #1 0x56435d9ad233 in tree_search /home/matyas/zebra-1/midgame.c:810
-    #2 0x56435d9b665f in root_tree_search /home/matyas/zebra-1/midgame.c:1088
-    #3 0x56435d9c6469 in middle_game /home/matyas/zebra-1/midgame.c:1326
-    #4 0x56435d9333c0 in compute_move /home/matyas/zebra-1/game.c:1380
-    #5 0x56435daec8d0 in play_game /home/matyas/zebra-1/zebra.c:1016
-    #6 0x56435d788ae4 in main /home/matyas/zebra-1/zebra.c:658
-    #7 0x7f94a03420b2 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x270b2)
-    #8 0x56435d78a83d in _start (/home/matyas/zebra-1/zebra+0x2cc83d)
 
-AddressSanitizer can not provide additional info.
-SUMMARY: AddressSanitizer: SEGV /home/matyas/zebra-1/midgame.c:705 in tree_search
-==5578==ABORTING
+Fatal error: Initial squares (d4, e4, d5, e5) from the board file should not be empty.

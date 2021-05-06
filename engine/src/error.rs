@@ -60,4 +60,5 @@ pub trait FatalError {
     fn internal_error_in_book_code() -> !;
     fn unexpected_character_in_a_move_string() -> !;
     fn invalid_move_string_provided() -> !;
+    fn initial_squares_are_empty() -> !;
 }
