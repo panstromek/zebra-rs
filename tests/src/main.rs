@@ -1000,7 +1000,7 @@ f1_3186, " -l 2 10 4 2 10 3 -r 0 -thor 10 -seqfile ../seq.txt -time 145 477 404 
 f1_3252, " -l 4 2 13 4 2 12 -w 0 -seqfile ../seq.txt -randmove 7 -b 0 -seq c4c5c6e3f2b4c3d2d3d6e2f3f4f5f6g", "../../../resources/books/book-414.bin", &[] ;
 f1_3253, " -l 2 6 6 2 6 7 -b 1 -p 1 -g ../board.txt -w 0", "book.bin", &[] ;
 f1_3290, " -l 2 5 6 2 6 7 -g ../board.txt -p 0 -r 0", "../../../resources/books/book-538.bin", &[] ;
-f1_3346, " -l 2 7 4 1 5 6 -w 1 -r 1 -h 18 -g ../board.txt -b 1", ".../../../resources/books/book-5.bin", &[] ;
+f1_3346, " -l 2 7 4 1 5 6 -w 1 -r 1 -h 18 -g ../board.txt -b 1", "../../../resources/books/book-5.bin", &[] ;
 f1_361, " -l 5 8 4 4 7 6 -thor 2 -p 0 -private -r 0 -b 1 -learn 0 9  -g ../board.txt", "../../../resources/books/book-109.bin", &[] ;
 f1_616, " -l 0 0 -e 0 -seqfile ../seq.txt -r 1 -h 17 -slack 13.980651 -p 1 -w 1", "../../../resources/books/book-286.bin", &[] ;
 f1_621, " -l 1 5 1 2 4 3 -seqfile ../seq.txt -slack 1.0585904 -e 0 -h 10", "../../../resources/books/book-69.bin", &[] ;
