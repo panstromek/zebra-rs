@@ -1,4 +1,4 @@
-use libc_wrapper::{fputs, free, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FileHandle, size_t, strlen};
+use libc_wrapper::{free, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FileHandle, size_t, strlen};
 use crate::src::error::LibcFatalError;
 use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
@@ -20,7 +20,7 @@ use engine::src::thordb::ThorDatabase;
 use crate::src::zebra::{FullState};
 use engine::src::myrandom::MyRandom;
 use engine::src::getcoeff::odometer_principle;
-use std::io::{Read};
+use std::io::{Read, Write};
 use engine::src::game::to_lower;
 
 /* Local variables */
@@ -617,7 +617,7 @@ pub unsafe fn game_database_already_loaded(file_name:
   The flag DISPLAY_MOVES specifies if the moves of the
   game are to be output or not.
 */
-unsafe fn print_game(stream: FileHandle,
+unsafe fn print_game(mut stream: FileHandle,
                      game: *mut GameType,
                      display_moves: i32) {
     let mut i: i32 = 0;
@@ -642,12 +642,12 @@ unsafe fn print_game(stream: FileHandle,
             fprintf(stream, b" %d\x00" as *const u8 as *const i8,
                     abs((*game).moves[i as usize] as i32));
             if i % 20 as i32 == 19 as i32 {
-                fputs(b"\n\x00" as *const u8 as *const i8, stream);
+                stream.write(b"\n");
             }
             i += 1
         }
     }
-    fputs(b"\n\x00" as *const u8 as *const i8, stream);
+    stream.write(b"\n");
 }
 // This is a wrapper around thor_compare that has C linkage,
 // because we don't want any C linkage in the engine
@@ -682,7 +682,7 @@ pub unsafe fn sort_thor_games(count: i32) {
   database search to STREAM.
 */
 
-pub unsafe fn print_thor_matches(stream: FileHandle,
+pub unsafe fn print_thor_matches(mut stream: FileHandle,
                                  max_games: i32) {
     let mut i: i32 = 0;
     i = 0;
@@ -691,7 +691,7 @@ pub unsafe fn print_thor_matches(stream: FileHandle,
                    thor_search.match_count
                } else { max_games }) {
         if i == 0 as i32 {
-            fputs(b"\n\x00" as *const u8 as *const i8, stream);
+            stream.write(b"\n");
         }
         print_game(stream, *thor_search.match_list.offset(i as isize),
                    0 as i32);
