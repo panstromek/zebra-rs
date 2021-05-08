@@ -10,7 +10,7 @@ do
 done
 
 CARGO_TARGET_DIR=test-target RUSTFLAGS="-Zinstrument-coverage -C link-arg=-Wl,--wrap=time" cargo build --release \
-&& cargo test --release --package tests "$whichtests" -- --test-threads 8 --nocapture
+&& cargo test --release --package tests "$whichtests" -- --test-threads 8 --nocapture && fullcoverage=10000
 
 if test "$fullcoverage"; then
   num_lines=100000
