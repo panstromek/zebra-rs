@@ -106,13 +106,17 @@ pub type Int32 = i32;
 pub type Int16 = i16;
 pub type Int8 = i8;
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 #[repr(C)]
 pub struct TournamentDatabaseType {
     pub prolog: PrologType,
     pub name_buffer: *mut i8,
-    pub count: i32,
-    pub tournament_list: *mut TournamentType,
+    pub tournament_list: Vec<TournamentType>,
+}
+impl TournamentDatabaseType {
+    pub fn count(&self) -> i32 {
+        return self.tournament_list.len() as i32;
+    }
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
