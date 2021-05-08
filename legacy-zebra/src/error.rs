@@ -16,14 +16,18 @@ use engine::src::search::{hash_expand_pv, SearchState};
 use engine::src::zebra::{EvaluationType, Config};
 use libc_wrapper::{ctime, fflush, fopen, fprintf, free, malloc, printf, putc, puts, realloc, sprintf, stderr, stdout, strlen, time, time_t, tolower, FileHandle};
 use thordb_types::C2RustUnnamed;
+#[macro_use]
+use crate::send_status;
+#[macro_use]
+use crate::send_sweep;
 
 use crate::{
     src::{
         display::{display_status, display_sweep, produce_eval_text,
-                  send_status_nodes, send_status_pv, send_status_time, send_sweep_1},
+                  send_status_nodes, send_status_pv, send_status_time},
     }
 };
-use crate::src::display::{clear_status, clear_sweep, reset_buffer_display, display_state, send_status_1, send_status_2, send_status_0, send_sweep_0, send_sweep_2, CFormat};
+use crate::src::display::{clear_status, clear_sweep, reset_buffer_display, display_state, CFormat, TO_SQUARE};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::sort_thor_games;
 use crate::src::zebra::FullState;
@@ -33,7 +37,7 @@ use engine::src::globals::BoardState;
 use engine::src::moves::MovesState;
 use flip::unflip::FlipStack;
 
-static mut buffer: [i8; 16] = [0; 16];
+static mut buffer: String = String::new();
 
 /*
    File:       error.h
@@ -207,7 +211,7 @@ impl FrontEnd for LibcFatalError {
             if update_pv != 0 {
                 Self::end_tree_search_some_pv_stats_report(alpha, beta, curr_val)
             }
-            send_sweep_0(b" \x00" as *const u8 as *const i8);
+            send_sweep!(display_state, " ");
             if update_pv != 0 && move_index > 0 as i32 && echo != 0 {
                 display_sweep(stdout);
             }
@@ -217,14 +221,11 @@ impl FrontEnd for LibcFatalError {
     fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32) {
         unsafe {
             if curr_val <= alpha {
-                send_sweep_1(b"<%d\x00" as *const u8 as *const i8,
-                             curr_val + 1 as i32);
+                send_sweep!(display_state, "<{}", curr_val + 1);
             } else if curr_val >= beta {
-                send_sweep_1(b">%d\x00" as *const u8 as *const i8,
-                             curr_val - 1 as i32);
+                send_sweep!(display_state, ">{}", curr_val - 1);
             } else {
-                send_sweep_1(b"=%d\x00" as *const u8 as *const i8,
-                             curr_val);
+                send_sweep!(display_state, "={}", curr_val);
             }
         }
     }
@@ -232,39 +233,26 @@ impl FrontEnd for LibcFatalError {
     fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32) {
         unsafe {
             if first != 0 {
-                send_sweep_1(b"%-10s \x00" as *const u8 as *const i8,
-                             buffer.as_mut_ptr());
+                send_sweep!(display_state, "{:<10} ", buffer);
             }
-            send_sweep_2(b"%c%c\x00" as *const u8 as *const i8,
-                         'a' as i32 + move_0 % 10 as i32 -
-                           1 as i32,
-                         '0' as i32 + move_0 / 10 as i32);
+            send_sweep!(display_state, "{}", TO_SQUARE(move_0));
         }
     }
 
     fn end_tree_search_output_some_stats(entry: &HashEntry) {
         /* Output some stats */
         unsafe {
-            send_sweep_2(b"%c%c\x00" as *const u8 as *const i8,
-                         'a' as i32 +
-                           entry.move_0[0] %
-                               10 as i32 - 1 as i32,
-                         '0' as i32 +
-                           entry.move_0[0] /
-                               10 as i32);
+            send_sweep!(display_state, "{}", TO_SQUARE(entry.move_0[0]));
             if entry.flags as i32 & 16 as i32 != 0 &&
                 entry.flags as i32 & 4 as i32 != 0 {
-                send_sweep_1(b"=%d\x00" as *const u8 as *const i8,
-                             entry.eval);
+                send_sweep!(display_state, "={}", entry.eval);
             } else if entry.flags as i32 & 16 as i32 != 0
                 &&
                 entry.flags as i32 & 1 as i32 !=
                     0 {
-                send_sweep_1(b">%d\x00" as *const u8 as *const i8,
-                             entry.eval - 1 as i32);
+                send_sweep!(display_state, ">{}", entry.eval - 1);
             } else {
-                send_sweep_1(b"<%d\x00" as *const u8 as *const i8,
-                             entry.eval + 1 as i32);
+                send_sweep!(display_state, "<{}", entry.eval + 1);
             }
             fflush(stdout);
         }
@@ -272,28 +260,23 @@ impl FrontEnd for LibcFatalError {
 
      fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32, best_move_: i32) {
          unsafe {
-             send_sweep_1(b"%-10s \x00" as *const u8 as *const i8,
-                          buffer.as_mut_ptr());
-             send_sweep_2(b"%c%c\x00" as *const u8 as *const i8,
-                          'a' as i32 + best_move_ % 10 as i32 -
-                            1 as i32,
-                          '0' as i32 + best_move_ / 10 as i32);
+             send_sweep!(display_state, "{:<10} ", buffer);
+             send_sweep!(display_state, "{}", TO_SQUARE(best_move_));
              if result <= alpha {
-                 send_sweep_1(b"<%d\x00" as *const u8 as *const i8,
-                              result + 1 as i32);
+                 send_sweep!(display_state, "<{}", result + 1 );
              } else if result >= beta {
-                 send_sweep_1(b">%d\x00" as *const u8 as *const i8,
-                              result - 1 as i32);
+                 send_sweep!(display_state, ">{}", result - 1);
              } else {
-                 send_sweep_1(b"=%d\x00" as *const u8 as *const i8,
-                              result);
+                 send_sweep!(display_state, "={}", result);
              }
          }
     }
 
     fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
         unsafe {
-            sprintf(buffer.as_mut_ptr(), b"[%d,%d]:\x00" as *const u8 as *const i8, alpha, beta);
+            use std::fmt::Write;
+            buffer.clear();
+            write!(buffer, "[{},{}]:", alpha, beta);
             clear_sweep();
         }
     }
@@ -310,25 +293,21 @@ impl FrontEnd for LibcFatalError {
             let eval = *eval_info;
             search_state.set_current_eval(eval);
             clear_status();
-            send_status_1(b"-->  %2d  \x00" as *const u8 as *const i8, empties);
-            let mut eval_str_ = produce_eval_text(&*eval_info, 1 as i32);
-            let eval_str = eval_str_.as_mut_ptr();
-            send_status_1(b"%-10s  \x00" as *const u8 as *const i8, eval_str);
+            send_status!(display_state, "-->  {:2}  ", empties);
+            let mut eval_str = produce_eval_text(&*eval_info, 1 as i32);
+            send_status!(display_state, "{:<10}  ", eval_str);
             let nodes_counter: &mut CounterType = &mut search_state.nodes;
             let node_val = counter_value(nodes_counter);
             send_status_nodes(node_val);
             if search_state.get_ponder_move() != 0 {
-                send_status_2(b"{%c%c} \x00" as *const u8 as *const i8,
-                            'a' as i32 + search_state.get_ponder_move() % 10 as i32 -
-                                1 as i32,
-                            '0' as i32 + search_state.get_ponder_move() / 10 as i32);
+                send_status!(display_state, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
             }
             send_status_pv(pv_zero, empties, pv_depth_zero);
             send_status_time( g_timer.get_elapsed_time());
             if  g_timer.get_elapsed_time() > 0.0001f64 {
-                send_status_2(b"%6.0f %s  \x00" as *const u8 as *const i8,
+                send_status!(display_state, "{:6.0} {}  ",
                             node_val / ( g_timer.get_elapsed_time() + 0.0001f64),
-                            b"nps\x00" as *const u8 as *const i8);
+                            "nps");
             };
         }
     }
@@ -432,70 +411,54 @@ impl FrontEnd for LibcFatalError {
     }
     fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, candidate_list_: &[CandidateMove; 60], search_state: & SearchState) {
         unsafe {
-            send_status_0(b"-->   Book     \x00" as *const u8 as
-                *const i8);
+            send_status!(display_state, "-->   Book     ");
             if flags & 16 as i32 != 0 {
-                send_status_1(b"%+3d (exact)   \x00" as *const u8 as
-                                *const i8,
+                send_status!(display_state, "{:+3} (exact)   ",
                             chosen_score / 128 as i32);
             } else if flags & 4 as i32 != 0 {
-                send_status_1(b"%+3d (WLD)     \x00" as *const u8 as
-                                *const i8,
+                send_status!(display_state, "{:+3} (WLD)     ",
                             chosen_score / 128 as i32);
             } else {
-                send_status_1(b"%+6.2f        \x00" as *const u8 as
-                                *const i8,
+                send_status!(display_state, "{:+6.2}        ",
                             chosen_score as f64 / 128.0f64);
             }
             if search_state.get_ponder_move() != 0 {
-                send_status_2(b"{%c%c} \x00" as *const u8 as *const i8,
-                            'a' as i32 + search_state.get_ponder_move() % 10 as i32 -
-                                1 as i32,
-                            '0' as i32 + search_state.get_ponder_move() / 10 as i32);
+                send_status!(display_state, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
             }
-            send_status_2(b"%c%c\x00" as *const u8 as *const i8,
-                        'a' as i32 +
-                            candidate_list_[chosen_index as usize].move_0 %
-                                10 as i32 - 1 as i32,
-                        '0' as i32 +
-                            candidate_list_[chosen_index as usize].move_0 /
-                                10 as i32);
+            send_status!(display_state, "{}", TO_SQUARE(candidate_list_[chosen_index as usize].move_0));
         }
     }
     fn midgame_display_simple_ponder_move(move_0: i32) {
         unsafe {
-            send_sweep_2(b"%c%c\x00" as *const u8 as *const i8,
-                         'a' as i32 + move_0 % 10 as i32 -
-                           1 as i32,
-                         '0' as i32 + move_0 / 10 as i32);
+            send_sweep!(display_state, "{}", TO_SQUARE(move_0));
         }
     }
 
     fn midgame_display_initial_ponder_move(alpha: i32, beta: i32) {
-        let buffer_: &mut [i8; 32] = &mut [0; 32];
+        use std::fmt::Write;
+        let mut buffer_ = String::with_capacity(32);
         unsafe {
             if alpha <= -(29000 as i32) && beta >= 29000 as i32 {
-                sprintf(buffer_.as_mut_ptr(),
-                        b"[-inf,inf]:\x00" as *const u8 as *const i8);
+                write!(buffer_,
+                        "[-inf,inf]:");
             } else if alpha <= -(29000 as i32) &&
                 beta < 29000 as i32 {
-                sprintf(buffer_.as_mut_ptr(),
-                        b"[-inf,%.1f]:\x00" as *const u8 as *const i8,
+                write!(buffer_,
+                        "[-inf,{:.1}]:",
                         beta as f64 / 128.0f64);
             } else if alpha > -(29000 as i32) &&
                 beta >= 29000 as i32 {
-                sprintf(buffer_.as_mut_ptr(),
-                        b"[%.1f,inf]:\x00" as *const u8 as *const i8,
+                write!(buffer_,
+                        "[{:.1},inf]:",
                         alpha as f64 / 128.0f64);
             } else {
-                sprintf(buffer_.as_mut_ptr(),
-                        b"[%.1f,%.1f]:\x00" as *const u8 as *const i8,
+                write!(buffer_,
+                        "[{:.1},{:.1}]:",
                         alpha as f64 / 128.0f64,
                         beta as f64 / 128.0f64);
             }
             clear_sweep();
-            send_sweep_1(b"%-14s \x00" as *const u8 as *const i8,
-                         buffer_.as_mut_ptr());
+            send_sweep!(display_state, "{:<14} ", buffer_);
         }
     }
 
@@ -505,22 +468,19 @@ impl FrontEnd for LibcFatalError {
 
             if update_pv != 0 {
                 if curr_val <= alpha {
-                    send_sweep_1(b"<%.2f\x00" as *const u8 as
-                                   *const i8,
+                    send_sweep!(display_state, "<{:.2}",
                                  (curr_val + 1 as i32) as f64
                                    / 128.0f64);
                 } else if curr_val >= beta {
-                    send_sweep_1(b">%.2f\x00" as *const u8 as
-                                   *const i8,
+                    send_sweep!(display_state, ">{:.2}",
                                  (curr_val - 1 as i32) as f64
                                    / 128.0f64);
                 } else {
-                    send_sweep_1(b"=%.2f\x00" as *const u8 as
-                                   *const i8,
+                    send_sweep!(display_state, "={:.2}",
                                  curr_val as f64 / 128.0f64);
                 }
             }
-            send_sweep_0(b" \x00" as *const u8 as *const i8);
+            send_sweep!(display_state, " ");
             if update_pv != 0 && searched > 0 as i32 && echo != 0 &&
                 max_depth >= 10 as i32 {
                 display_sweep(stdout);
@@ -544,27 +504,21 @@ impl FrontEnd for LibcFatalError {
 
          unsafe {
              clear_status();
-             send_status_0(b"--> \x00" as *const u8 as *const i8);
+             send_status!(display_state, "--> ");
              if g_timer.is_panic_abort() != 0 || force_return_ {
-                 send_status_0(b"*\x00" as *const u8 as *const i8);
+                 send_status!(display_state, "*");
              } else {
-                 send_status_0(b" \x00" as *const u8 as *const i8);
+                 send_status!(display_state, " ");
              }
-             send_status_1(b"%2d  \x00" as *const u8 as *const i8,
+             send_status!(display_state, "{:2}  ",
                          depth);
-             let mut eval_str_ = produce_eval_text(eval_info, 1 as i32);
-             let eval_str = eval_str_.as_mut_ptr();
-             send_status_1(b"%-10s  \x00" as *const u8 as *const i8,
+             let mut eval_str = produce_eval_text(eval_info, 1 as i32);
+             send_status!(display_state, "{:<10}  ",
                          eval_str);
              let node_val = counter_value(nodes_counter);
              send_status_nodes(node_val);
              if search_state.get_ponder_move() != 0 {
-                 send_status_2(b"{%c%c} \x00" as *const u8 as
-                                 *const i8,
-                             'a' as i32 + search_state.get_ponder_move() % 10 as i32
-                                 - 1 as i32,
-                             '0' as i32 +
-                                 search_state.get_ponder_move() / 10 as i32);
+                 send_status!(display_state, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
              }
              hash_expand_pv(side_to_move, 0 as i32, 4 as i32, 12345678 as i32, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
              let mut pv_zero: &mut [i32; 64] = &mut board_state.pv[0];
@@ -573,10 +527,9 @@ impl FrontEnd for LibcFatalError {
              send_status_pv(pv_zero, max_depth, pv_depth_zero);
              send_status_time( g_timer.get_elapsed_time());
              if  g_timer.get_elapsed_time() != 0.0f64 {
-                 send_status_2(b"%6.0f %s\x00" as *const u8 as
-                                 *const i8,
+                 send_status!(display_state, "{:6.0} {}",
                              node_val / ( g_timer.get_elapsed_time() + 0.001f64),
-                             b"nps\x00" as *const u8 as *const i8);
+                             "nps");
              }
 
          }
