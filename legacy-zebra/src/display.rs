@@ -1,15 +1,15 @@
-use std::ffi::{c_void, CStr};
+use std::ffi::{CStr};
 
 use engine::src::search::disc_count;
 use engine::src::stubs::{abs, ceil, floor};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{exit, FileHandle, getc, sprintf, stdin};
+use libc_wrapper::{FileHandle, getc, stdin};
 
-use crate::src::error::FE;
-use crate::src::zebra::FullState;
+
+
 use engine::src::timer::Timer;
 use std::io::Write;
-use std::convert::TryInto;
+
 use std::fmt::{Formatter};
 
 pub struct DisplayState {
@@ -177,7 +177,7 @@ pub unsafe fn reset_buffer_display(g_timer:&mut Timer) {
 
 pub unsafe fn dumpch() {
     let ch = getc(stdin) as i8;
-    if ch as i32 == ' ' as i32 { exit(1 as i32); };
+    if ch as i32 == ' ' as i32 { std::process::exit(1 as i32); };
 }
 /*
    DISPLAY_BOARD
