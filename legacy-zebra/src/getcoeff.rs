@@ -6,6 +6,7 @@ use std::ffi::CStr;
 use zlib_coeff_source::{ZLibSource, LoadError};
 use std::fs::File;
 use std::io::Error;
+use std::str::{SplitWhitespace, FromStr};
 
 pub fn new_z_lib_source(file_name: &CStr) -> ZLibSource {
     match ZLibSource::try_new(file_name) {
@@ -26,11 +27,14 @@ pub fn new_z_lib_source(file_name: &CStr) -> ZLibSource {
 
 pub fn load_coeff_adjustments() -> Option<CoeffAdjustments> {
     let adjust_stream = std::fs::read_to_string("adjust.txt").ok()?;
-    let mut split = adjust_stream.split_whitespace();
+    let mut split = adjust_stream.split_whitespace()
+        .map(f64::from_str)
+        .filter_map(Result::ok);
+
     Some(CoeffAdjustments {
-        disc_adjust: split.next()?.parse().ok()?,
-        edge_adjust: split.next()?.parse().ok()?,
-        corner_adjust: split.next()?.parse().ok()?,
-        x_adjust: split.next()?.parse().ok()?,
+        disc_adjust: split.next()?,
+        edge_adjust: split.next()?,
+        corner_adjust: split.next()?,
+        x_adjust: split.next()?,
     })
 }
