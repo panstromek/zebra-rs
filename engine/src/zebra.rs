@@ -185,14 +185,14 @@ pub struct PlayGame<Source: InitialMoveSource> {
     pub g_state: FullState,
     eval_info: EvaluationType,
     pub side_to_move: i32,
-    curr_move: i32,
+    curr_move: i8,
     rand_color: i32,
-    provided_move: [i32; 61],
+    provided_move: [i8; 61],
     pub move_vec: [i8; 122],
     line_buffer: [u8; 1001],
     pub state: PlayGameState
 }
-pub struct MoveAttempt(pub i32, pub i32);
+pub struct MoveAttempt(pub i8, pub i8);
 
 pub fn next_state<
     ZF: ZebraFrontend,
@@ -518,7 +518,7 @@ enum MoveStringError {
     InvalidMoveString,
     UnexpectedCharacter
 }
-fn parse_provided_moves(provided_move: &mut [i32; 61], move_string: &[u8]) -> Result<i32, MoveStringError> {
+fn parse_provided_moves(provided_move: &mut [i8; 61], move_string: &[u8]) -> Result<i32, MoveStringError> {
     let provided_move_count = move_string.len().wrapping_div(2) as i32;
     if provided_move_count > 60 ||
         move_string.len().wrapping_rem(2) == 1 {
@@ -526,20 +526,20 @@ fn parse_provided_moves(provided_move: &mut [i32; 61], move_string: &[u8]) -> Re
     }
     let mut i = 0;
     while i < provided_move_count {
-        let col = (*move_string.offset((2 * i) as _) as char).to_ascii_lowercase() as i32 - 'a' as i32 + 1;
-        let row = *move_string.offset((2 * i + 1) as _) as i32 - '0' as i32;
+        let col = (*move_string.offset((2 * i) as _) as char).to_ascii_lowercase() as u8 - b'a' + 1;
+        let row = *move_string.offset((2 * i + 1) as _) as u8 - b'0';
         if col < 1 || col > 8 || row < 1 || row > 8 {
             return Err(UnexpectedCharacter)
         }
-        provided_move[i as usize] = 10 * row + col;
+        provided_move[i as usize] = (10 * row + col) as i8;
         i += 1
     }
     Ok(provided_move_count)
 }
 
-fn push_move(move_vec: &mut [i8; 122], curr_move: i32, disks_played_: i32) {
-    move_vec[(2 as i32 * disks_played_) as usize] = 'a' as i8 + (curr_move % 10) as i8 - 1;
-    move_vec[(2 as i32 * disks_played_) as usize + 1] = '0' as i8 + (curr_move / 10) as i8;
+fn push_move(move_vec: &mut [i8; 122], curr_move: i8, disks_played_: i32) {
+    move_vec[(2 as i32 * disks_played_) as usize] = 'a' as i8 + (curr_move % 10) - 1;
+    move_vec[(2 as i32 * disks_played_) as usize + 1] = '0' as i8 + (curr_move / 10);
 }
 
 fn clear_moves(state: &mut BoardState) {

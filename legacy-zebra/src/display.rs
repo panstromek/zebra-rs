@@ -62,11 +62,15 @@ impl std::fmt::Display for Square {
 }
 
 #[allow(non_snake_case)]
-pub fn TO_SQUARE(move_: i32) -> Square {
-    Square(
-        b'a' + (move_ % 10) as u8 - 1,
-        b'0' + (move_ / 10) as u8,
-    )
+#[inline]
+pub fn TO_SQUARE(move_: impl core::convert::Into<i32>) -> Square {
+    fn sq(move_: i32) -> Square {
+        Square(
+            b'a' + (move_ % 10) as u8 - 1,
+            b'0' + (move_ / 10) as u8,
+        )
+    }
+    sq(move_.into())
 }
 /*
   SET_NAMES
@@ -193,7 +197,7 @@ pub fn display_board(mut stream: &mut dyn std::io::Write, board: &[i32; 128],
                             give_time: i32, give_evals: i32, current_row_: i32,
                             black_player_: &'static str, black_time_: i32, black_eval_: f64,
                             white_player_: &'static str, white_time_: i32, white_eval_: f64,
-                            black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
+                            black_moves_: &[i8; 60], white_moves_: &[i8; 60]) {
     use std::fmt::Write;
     let mut buffer: [u8; 16] = [0; 16];
     let mut j;
@@ -335,9 +339,8 @@ pub fn display_board(mut stream: &mut dyn std::io::Write, board: &[i32; 128],
   Outputs a move or a pass to STREAM.
 */
 
-pub fn display_move(stream: &mut dyn Write,
-                                      move_0: i32) {
-    if move_0 == -(1 as i32) {
+pub fn display_move(stream: &mut dyn Write, move_0: i8) {
+    if move_0 == -1 {
         write!(stream, "--");
     } else {
         write!(stream, "{}", TO_SQUARE(move_0));
@@ -348,7 +351,7 @@ pub fn display_move(stream: &mut dyn Write,
    Displays the principal variation found during the tree search.
 */
 
-pub fn display_optimal_line(stream: &mut dyn Write, full_pv_depth_: i32, full_pv_: &[i32; 120]) {
+pub fn display_optimal_line(stream: &mut dyn Write, full_pv_depth_: i32, full_pv_: &[i8; 120]) {
     let mut i: i32 = 0;
     if full_pv_depth_ == 0 as i32 { return }
     write!(stream, "PV: ");
@@ -454,7 +457,7 @@ pub unsafe fn send_status_nodes(node_count: f64) {
   Pipes the principal variation to SEND_STATUS.
 */
 
-pub unsafe fn send_status_pv(pv: &[i32; 64], max_depth: i32, pv_depth_zero: i32) {
+pub unsafe fn send_status_pv(pv: &[i8; 64], max_depth: i32, pv_depth_zero: i32) {
     let mut i = 0;
     while i <
               (if max_depth < 5 as i32 {

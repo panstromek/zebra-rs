@@ -10,8 +10,8 @@ use crate::src::getcoeff::odometer_principle;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct MoveLink {
-    pub pred: i32,
-    pub succ: i32,
+    pub pred: i8,
+    pub succ: i8,
 }
 /* When this flag is set, the DynP tables are calculated and
    output and then the program is terminated. */
@@ -398,8 +398,8 @@ fn stability_search(end: &mut End, my_bits: BitBoard,
                            max_depth: i32,
                            last_was_pass: i32,
                            stability_nodes: &mut i32, state: &mut StableState) {
-    let mut sq: i32 = 0;
-    let mut old_sq: i32 = 0;
+    let mut sq = 0;
+    let mut old_sq = 0;
     let mut mobility: i32 = 0;
     let mut black_bits = BitBoard{high: 0, low: 0,};
     let mut white_bits = BitBoard{high: 0, low: 0,};
@@ -438,8 +438,8 @@ fn stability_search(end: &mut End, my_bits: BitBoard,
     mobility = 0;
     old_sq = 0;
     sq = state.stab_move_list[old_sq as usize].succ;
-    while sq != 99 as i32 {
-        let flip_test_result = TestFlips_bitboard[(sq - 11 as i32) as
+    while sq != 99 {
+        let flip_test_result = TestFlips_bitboard[(sq - 11) as
             usize](my_bits.high,
                    my_bits.low,
                    opp_bits.high,

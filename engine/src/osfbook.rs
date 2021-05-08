@@ -685,11 +685,11 @@ pub fn fill_endgame_hash(cutoff: i32, level: i32
     let mut i: i32 = 0;
     let mut this_index: i32 = 0;
     let mut child_index: i32 = 0;
-    let mut matching_move: i32 = 0;
+    let mut matching_move = 0;
     let mut signed_score: i32 = 0;
     let mut bound: i32 = 0;
     let mut side_to_move: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     let mut is_full: i32 = 0;
     let mut is_wld: i32 = 0;
     let mut slot: i32 = 0;
@@ -721,7 +721,7 @@ pub fn fill_endgame_hash(cutoff: i32, level: i32
         as i32 & 1 as i32 != 0 {
         side_to_move = 0 as i32
     } else { side_to_move = 2 as i32 }
-    matching_move = -(1 as i32);
+    matching_move = -1;
     generate_all(side_to_move, moves_state_, search_state_, &board_state_.board);
     i = 0;
     while i < moves_state_.move_count[moves_state_.disks_played as usize] {
@@ -786,7 +786,7 @@ pub fn fill_endgame_hash(cutoff: i32, level: i32
         };
         i += 1
     }
-    if matching_move != -(1 as i32) {
+    if matching_move != -(1) {
         /* Store the information */
         signed_score =
             (*book.node.offset(this_index as isize)).black_minimax_score as
@@ -839,8 +839,8 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
-    let mut this_move: i32 = 0;
-    let mut alternative_move: i32 = 0;
+    let mut this_move = 0;
+    let mut alternative_move = 0;
     let mut score: i32 = 0;
     let mut alternative_score: i32 = 0;
     let mut child_feasible: i32 = 0;
@@ -864,9 +864,8 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
     if side_to_move == 0 as i32 {
         sign = 1 as i32
     } else { sign = -(1 as i32) }
-    alternative_move =
-        (*book.node.offset(index as isize)).best_alternative_move as i32;
-    if alternative_move > 0 as i32 {
+    alternative_move = (*book.node.offset(index as isize)).best_alternative_move;
+    if alternative_move > 0 {
         alternative_move =
             *book.inv_symmetry_map[orientation as
                 usize].offset(alternative_move as isize) as _;
@@ -894,7 +893,7 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
         deviation = 0;
         if slot == -(1 as i32) ||
             *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
-            if this_move == alternative_move && flags == 0 {
+            if i16::from(this_move) == alternative_move && flags == 0 {
                 score = alternative_score;
                 child_feasible = 1;
                 deviation = 1 as i32
@@ -940,14 +939,14 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                         WHITE_WINS as i32 as u32 ||
                         book.draw_mode as u32 ==
                             OPPONENT_WINS as i32 as u32 {
-                        FE::report_unwanted_book_draw(this_move);
+                        FE::report_unwanted_book_draw(this_move.into());
                         child_feasible = 0 as i32
                     }
                 } else if book.draw_mode as u32 ==
                     BLACK_WINS as i32 as u32 ||
                     book.draw_mode as u32 ==
                         OPPONENT_WINS as i32 as u32 {
-                    FE::report_unwanted_book_draw(this_move);
+                    FE::report_unwanted_book_draw(this_move.into());
                     child_feasible = 0 as i32
                 }
             }
@@ -1009,7 +1008,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                                           hash_state_: &mut HashState,
                                           random: &mut MyRandom,
                                           flip_stack: &mut FlipStack)
-                                          -> i32 {
+                                          -> i8 {
 
     let mut i: i32 = 0;
     let mut original_side_to_move: i32 = 0;
@@ -1029,16 +1028,16 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     let mut is_feasible: i32 = 0;
     let mut acc_weight: i32 = 0;
     let mut total_weight: i32 = 0;
-    let mut best_move: i32 = 0;
-    let mut this_move: i32 = 0;
-    let mut alternative_move: i32 = 0;
+    let mut best_move = 0;
+    let mut this_move = 0;
+    let mut alternative_move = 0;
     let mut sign: i32 = 0;
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
     let mut slot: i32 = 0;
     let mut weight: [i32; 60] = [0; 60];
-    let mut temp_move: [i32; 60] = [0; 60];
+    let mut temp_move: [i8; 60] = [0; 60];
     let mut temp_stm: [i32; 60] = [0; 60];
     /* Disable opening book randomness unless the move is going to
        be played on the board by Zebra */
@@ -1054,7 +1053,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         FE::report_in_get_book_move_1(side_to_move, remaining_slack, board_state_, book);
     }
     /* No book move found? */
-    if book.candidate_count == 0 as i32 { return -(1 as i32) }
+    if book.candidate_count == 0 as i32 { return -(1) }
     /* Find the book flags of the original position. */
     let val0___ = &mut val1;
     let val1___ = &mut val2;
@@ -1076,7 +1075,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         if book.candidate_list[0].score <
             (*book.node.offset(index as isize)).black_minimax_score as
                 i32 {
-            return -(1 as i32)
+            return -(1)
         }
     } else if (*book.node.offset(index as isize)).flags as i32 &
         4 as i32 != 0 {
@@ -1084,7 +1083,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
             0 as i32 &&
             book.candidate_list[0].score <=
                 0 as i32 {
-            return -(1 as i32)
+            return -(1)
         }
     }
     /* Don't randomize among solved moves */
@@ -1189,8 +1188,8 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
             alternative_move =
                 (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                     isize)).best_alternative_move as
-                    i32;
-            if alternative_move > 0 as i32 {
+                    i8;
+            if alternative_move > 0 {
                 alternative_move =
                     *book.inv_symmetry_map[orientation as
                         usize].offset(alternative_move as
@@ -1213,7 +1212,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
             }
             generate_all(side_to_move, moves_state_, search_state_, &board_state_.board);
             best_score = -(12345678 as i32);
-            best_move = -(1 as i32);
+            best_move = -1;
             i = 0;
             while i < moves_state_.move_count[moves_state_.disks_played as usize] {
                 this_move = moves_state_.move_list[moves_state_.disks_played as usize][i as usize];
@@ -1259,7 +1258,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                 }
                 i += 1
             }
-            if best_move == -(1 as i32) {
+            if best_move == -(1) {
                 continuation = 0 as i32
             } else { temp_move[level as usize] = best_move }
         }

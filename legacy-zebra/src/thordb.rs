@@ -856,7 +856,7 @@ unsafe fn count_flips(sqnum: i32,
     }
     if mask & 2 as i32 != 0 {
         count +=
-            directional_flip_count(sqnum, -(1 as i32), color, oppcol)
+            directional_flip_count(sqnum, -1, color, oppcol)
     }
     if mask & 1 as i32 != 0 {
         count +=
@@ -898,7 +898,7 @@ unsafe fn any_flips(sqnum: i32, color: i32,
     }
     if mask & 2 as i32 != 0 {
         count |=
-            directional_flip_any(sqnum, -(1 as i32), color, oppcol)
+            directional_flip_any(sqnum, -1, color, oppcol)
     }
     if mask & 1 as i32 != 0 {
         count |= directional_flip_any(sqnum, 1 as i32, color, oppcol)
@@ -1656,7 +1656,7 @@ unsafe fn get_thor_game_move_count(index: i32)
                                    -> i32 {
     if index < 0 as i32 || index >= thor_search.match_count {
         /* Bad index */
-        return -(1 as i32)
+        return -1
     } else {
         return (**thor_search.match_list.offset(index as isize)).move_count as
             i32
@@ -2019,7 +2019,7 @@ pub unsafe fn prepare_game(mut game: *mut GameType) {
     i = moves_played + 1 as i32;
     while i <= 60 as i32 {
         (*game).black_disc_count[i as usize] =
-            -(1 as i32) as i8;
+            -1 as i8;
         i += 1
     }
     /* Find the longest opening which coincides with the game */
@@ -2405,12 +2405,12 @@ pub unsafe fn get_thor_game_move(index: i32,
                                  move_number: i32)
                                  -> i32 {
     if index < 0 as i32 || index >= thor_search.match_count {
-        return -(1 as i32)
+        return -1
     } else {
         let game = *thor_search.match_list.offset(index as isize);
         if move_number < 0 as i32 ||
             move_number >= (*game).move_count as i32 {
-            return -(1 as i32)
+            return -1
         } else {
             return *symmetry_map[(*game).matching_symmetry as
                 usize].offset(abs((*game).moves[move_number
@@ -2685,11 +2685,11 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
        as they don't contain any passes. */
     if side_to_move == 0 as i32 &&
         disc_count % 2 as i32 == 1 as i32 {
-        return -(1 as i32)
+        return -1
     }
     if side_to_move == 2 as i32 &&
         disc_count % 2 as i32 == 0 as i32 {
-        return -(1 as i32)
+        return -1
     }
     /* Create a random permutation of the symmetries to avoid the same
        symmetry always being chosen in e.g. the initial position */
@@ -2730,7 +2730,7 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
            randomly select one of them. Probability for each move is
            proportional to the frequency of that move being played here. */
         random_value = abs(random_instance.my_random() as i32) % freq_sum;
-        random_move = -(1 as i32);
+        random_move = -1;
         acc_freq_sum = 0;
         match_count = 0;
         i = 1;
@@ -2777,7 +2777,7 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
         }
         return random_move
     }
-    return -(1 as i32);
+    return -1;
 }
 
 /*

@@ -6,12 +6,12 @@
    Last modified:   December 25, 1999
 */
 pub fn AnyFlips_compact(board: & crate::src::globals::Board, mut inc : &[i8],
-                               sqnum: i32, color: i32, oppcol: i32) -> i32 {
+                               sqnum: i8, color: i32, oppcol: i32) -> i32 {
 
     let sq = sqnum;
     loop  {
         let any_drctnl_flips = {
-            let inc: i32 = inc[0] as i32;
+            let inc = inc[0];
             let mut pt = sq + (inc);
             if board[pt as usize] == oppcol {
                 pt = pt + (inc);

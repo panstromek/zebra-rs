@@ -36,8 +36,8 @@ use crate::src::probcut::ProbCut;
 #[derive(Copy, Clone)]
 #[repr(C)]
 struct MoveLink {
-    pub pred: i32,
-    pub succ: i32,
+    pub pred: i8,
+    pub succ: i8,
 }
 // probably this:   enum { WIN, LOSS, DRAW, UNKNOWN } solve_status;
 const DRAW: u32 = 2;
@@ -62,8 +62,8 @@ pub struct End {
     /* The parities of the regions are in the region_parity bit vector. */
     region_parity: u32,
     end_move_list: [MoveLink; 100],
-    best_move: i32,
-    best_end_root_move: i32,
+    best_move: i8,
+    best_end_root_move: i8,
     full_output_mode: i32,
     earliest_wld_solve: i32,
     earliest_full_solve: i32,
@@ -120,7 +120,7 @@ static stability_threshold: [i32; 19] =
   (1) verifying that there exists a neighboring opponent disc,
   (2) verifying that the move flips some disc.
 */
-fn TestFlips_wrapper(end: &mut End, sq: i32, my_bits: BitBoard, opp_bits: BitBoard) -> i32 {
+fn TestFlips_wrapper(end: &mut End, sq: i8, my_bits: BitBoard, opp_bits: BitBoard) -> i32 {
     if end.neighborhood_mask[sq as usize].high & opp_bits.high |
         end.neighborhood_mask[sq as usize].low & opp_bits.low != 0 {
 
@@ -139,7 +139,7 @@ fn TestFlips_wrapper(end: &mut End, sq: i32, my_bits: BitBoard, opp_bits: BitBoa
 fn prepare_to_solve(board_0: &Board, end:&mut End) {
     /* fixed square ordering: */
     /* jcw's order, which is the best of 4 tried (according to Warren Smith) */
-    static worst2best: [u8; 64] = [
+    static worst2best: [i8; 64] = [
         /*B2*/      22 , 27 , 72 , 77 ,
         /*B1*/      12 , 17 , 21 , 28 , 71 , 78 , 82,  87 ,
         /*C2*/      23 , 26 , 32 , 37 , 62 , 67 , 73 , 76 ,
@@ -157,8 +157,8 @@ fn prepare_to_solve(board_0: &Board, end:&mut End) {
     loop {
         let sq = worst2best[i];
         if board_0[sq as usize] == 1 {
-            end. end_move_list[last_sq as usize].succ = sq as i32;
-            end. end_move_list[sq as usize].pred = last_sq as i32;
+            end. end_move_list[last_sq as usize].succ = sq;
+            end. end_move_list[sq as usize].pred = last_sq;
            end.region_parity ^= quadrant_mask[sq as usize] as u32;
             last_sq = sq
         }
@@ -191,8 +191,8 @@ fn prepare_to_solve(board_0: &Board, end:&mut End) {
 */
 fn solve_two_empty(end: &mut End, my_bits: BitBoard,
                           opp_bits: BitBoard,
-                          sq1: i32,
-                          sq2: i32,
+                          sq1: i8,
+                          sq2: i8,
                           mut alpha: i32,
                           beta: i32,
                           disc_diff: i32,
@@ -215,7 +215,7 @@ fn solve_two_empty(end: &mut End, my_bits: BitBoard,
         search_state_.nodes.lo = search_state_.nodes.lo.wrapping_add(1);
         ev = disc_diff + 2 as i32 * flipped;
         flipped =
-            CountFlips_bitboard[(sq2 - 11 as i32) as
+            CountFlips_bitboard[(sq2 - 11) as
                 usize](opp_bits.high
                            &
                            !end.bb_flips.high,
@@ -232,14 +232,14 @@ fn solve_two_empty(end: &mut End, my_bits: BitBoard,
                 /* Only bother if not certain fail-high */
                 ev +=
                     2 as i32 *
-                        CountFlips_bitboard[(sq2 - 11 as i32) as
+                        CountFlips_bitboard[(sq2 - 11) as
                             usize](end.bb_flips.high,
                                    end.bb_flips.low)
             }
         } else if ev < beta {
             /* Only bother if not fail-high already */
             flipped =
-                CountFlips_bitboard[(sq2 - 11 as i32) as
+                CountFlips_bitboard[(sq2 - 11) as
                     usize](end.bb_flips.high,
                            end.bb_flips.low);
             if flipped != 0 as i32 {
@@ -259,7 +259,7 @@ fn solve_two_empty(end: &mut End, my_bits: BitBoard,
         search_state_.nodes.lo = search_state_.nodes.lo.wrapping_add(1);
         ev = disc_diff + 2 as i32 * flipped;
         flipped =
-            CountFlips_bitboard[(sq1 - 11 as i32) as
+            CountFlips_bitboard[(sq1 - 11) as
                 usize](opp_bits.high
                            &
                            !end.bb_flips.high,
@@ -277,14 +277,14 @@ fn solve_two_empty(end: &mut End, my_bits: BitBoard,
                 /* Only bother if not certain fail-high */
                 ev +=
                     2 as i32 *
-                        CountFlips_bitboard[(sq1 - 11 as i32) as
+                        CountFlips_bitboard[(sq1 - 11) as
                             usize](end.bb_flips.high,
                                    end.bb_flips.low)
             }
         } else if ev < beta {
             /* Only bother if not fail-high already */
             flipped =
-                CountFlips_bitboard[(sq1 - 11 as i32) as
+                CountFlips_bitboard[(sq1 - 11) as
                     usize](end.bb_flips.high,
                            end.bb_flips.low);
             if flipped != 0 as i32 {
@@ -317,9 +317,9 @@ fn solve_two_empty(end: &mut End, my_bits: BitBoard,
 }
 fn solve_three_empty(end: &mut End, my_bits: BitBoard,
                             opp_bits: BitBoard,
-                            sq1: i32,
-                            sq2: i32,
-                            sq3: i32,
+                            sq1: i8,
+                            sq2: i8,
+                            sq3: i8,
                             mut alpha: i32,
                             beta: i32,
                             disc_diff: i32,
@@ -390,10 +390,10 @@ fn solve_three_empty(end: &mut End, my_bits: BitBoard,
 }
 fn solve_four_empty(end: &mut End, my_bits: BitBoard,
                            opp_bits: BitBoard,
-                           sq1: i32,
-                           sq2: i32,
-                           sq3: i32,
-                           sq4: i32,
+                           sq1: i8,
+                           sq2: i8,
+                           sq3: i8,
+                           sq4: i8,
                            mut alpha: i32,
                            beta: i32,
                            disc_diff: i32,
@@ -533,8 +533,8 @@ fn solve_parity(end:&mut End, my_bits: BitBoard,
     let mut ev: i32 = 0;
     let mut flipped: i32 = 0;
     let mut new_disc_diff: i32 = 0;
-    let mut sq: i32 = 0;
-    let mut old_sq: i32 = 0;
+    let mut sq = 0;
+    let mut old_sq = 0;
     let mut best_sq = 0;
     let mut parity_mask: u32 = 0;
     search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
@@ -560,7 +560,7 @@ fn solve_parity(end:&mut End, my_bits: BitBoard,
         /* Is there any region with odd parity? */
         old_sq = 0;
         sq = end. end_move_list[old_sq as usize].succ;
-        while sq != 99 as i32 {
+        while sq != 99 {
             let holepar = quadrant_mask[sq as usize] as u32;
             if holepar & parity_mask != 0 {
                 flipped = TestFlips_wrapper(end,sq, my_bits, opp_bits, );
@@ -610,7 +610,7 @@ fn solve_parity(end:&mut End, my_bits: BitBoard,
     parity_mask = !parity_mask;
     old_sq = 0;
     sq = end. end_move_list[old_sq as usize].succ;
-    while sq != 99 as i32 {
+    while sq != 99 {
         let holepar_0 = quadrant_mask[sq as usize] as u32;
         if holepar_0 & parity_mask != 0 {
             flipped = TestFlips_wrapper(end,sq, my_bits, opp_bits, );
@@ -810,8 +810,8 @@ fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
     let mut ev: i32 = 0;
     let mut flipped: i32 = 0;
     let mut new_disc_diff: i32 = 0;
-    let mut sq: i32 = 0;
-    let mut old_sq: i32 = 0;
+    let mut sq = 0;
+    let mut old_sq = 0;
     let mut best_sq = 0;
     let mut parity_mask: u32 = 0;
     let mut entry =
@@ -833,7 +833,7 @@ fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
                 entry.eval >= beta ||
             entry.flags as i32 & 2 as i32 != 0 &&
                 entry.eval <= alpha) {
-        end.  best_move = entry.move_0[0];
+        end.  best_move = entry.move_0[0] as i8;
         return entry.eval
     }
     /* Check for stability cutoff */
@@ -858,7 +858,7 @@ fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
         /* Is there any region with odd parity? */
         old_sq = 0;
         sq = end. end_move_list[old_sq as usize].succ;
-        while sq != 99 as i32 {
+        while sq != 99 {
             let holepar = quadrant_mask[sq as usize] as u32;
             if holepar & parity_mask != 0 {
                 flipped = TestFlips_wrapper(end,sq, my_bits, opp_bits, );
@@ -901,7 +901,7 @@ fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
     parity_mask = !parity_mask;
     old_sq = 0;
     sq = end. end_move_list[old_sq as usize].succ;
-    while sq != 99 as i32 {
+    while sq != 99 {
         let holepar_0 = quadrant_mask[sq as usize] as u32;
         if holepar_0 & parity_mask != 0 {
             flipped = TestFlips_wrapper(end,sq, my_bits, opp_bits, );
@@ -925,7 +925,7 @@ fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
                     if ev > alpha {
                         if ev >= beta {
                             end.  best_move = sq;
-                            add_hash(&mut hash_state,1 as i32, score, end.  best_move,
+                            add_hash(&mut hash_state,1 as i32, score, end.best_move,
                                      16 as i32 | 1 as i32,
                                      empties, 0 as i32);
                             return score
@@ -1256,17 +1256,17 @@ fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
     let mut best_flipped: i32 = 0;
     let mut new_disc_diff: i32 = 0;
     let mut ev: i32 = 0;
-    let mut hash_move: i32 = 0;
+    let mut hash_move = 0;
     let mut moves: i32 = 0;
     let mut parity: i32 = 0;
     let mut best_value: i32 = 0;
     let mut best_index: i32 = 0;
-    let mut pred: i32 = 0;
-    let mut succ: i32 = 0;
-    let mut sq: i32 = 0;
-    let mut old_sq: i32 = 0;
+    let mut pred = 0;
+    let mut succ = 0;
+    let mut sq = 0;
+    let mut old_sq = 0;
     let mut best_sq = 0;
-    let mut move_order: [i32; 64] = [0; 64];
+    let mut move_order: [i8; 64] = [0; 64];
     let mut goodness: [i32; 64] = [0; 64];
     let mut diff1: u32 = 0;
     let mut diff2: u32 = 0;
@@ -1279,7 +1279,7 @@ fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
             selectivity: 0,
             flags: 0,};
     search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
-    hash_move = -(1 as i32);
+    hash_move = -1;
     find_hash(&mut entry, 1 as i32, &mut hash_state);
     if entry.draft as i32 == empties {
         if entry.selectivity as i32 == 0 as i32 &&
@@ -1318,7 +1318,7 @@ fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
     best_flipped = 0;
     old_sq = 0;
     sq = end. end_move_list[old_sq as usize].succ;
-    while sq != 99 as i32 {
+    while sq != 99 {
         flipped = TestFlips_wrapper(end,sq, my_bits, opp_bits, );
         if flipped != 0 as i32 {
             search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
@@ -1553,8 +1553,8 @@ fn end_solve(end:&mut End, my_bits: BitBoard, opp_bits: BitBoard,
 /*
   UPDATE_BEST_LIST
 */
-pub fn update_best_list<FE: FrontEnd>(best_list: &mut [i32; 4],
-                           move_0: i32,
+pub fn update_best_list<FE: FrontEnd>(best_list: &mut [i8; 4],
+                           move_0: i8,
                            best_list_index: i32,
                            best_list_length: &mut i32,
                            mut verbose: i32) {
@@ -1621,7 +1621,7 @@ fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
     let mut result: i32 = 0;
     let mut curr_val: i32 = 0;
     let mut best: i32 = 0;
-    let mut move_0: i32 = 0;
+    let mut move_0 = 0;
     let mut hash_hit: i32 = 0;
     let mut move_index: i32 = 0;
     let mut remains: i32 = 0;
@@ -1638,7 +1638,7 @@ fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
     let mut threshold: i32 = 0;
     let mut best_list_index: i32 = 0;
     let mut best_list_length: i32 = 0;
-    let mut best_list: [i32; 4] = [0; 4];
+    let mut best_list = [0; 4];
     let mut entry =
         HashEntry{key1: 0,
             key2: 0,
@@ -1708,9 +1708,9 @@ fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                       ,hash_state
                       ,stable_state);
         board_state.pv_depth[level as usize] = level + 1 as i32;
-        board_state.pv[level as usize][level as usize] = end.  best_move;
+        board_state.pv[level as usize][level as usize] = end.best_move;
         if level == 0 as i32 && search_state.get_ponder_move() == 0 {
-            FE::end_tree_search_level_0_ponder_0_report(alpha, beta, result, end.  best_move)
+            FE::end_tree_search_level_0_ponder_0_report(alpha, beta, result, end.best_move as i32)
         }
         return result
     }
@@ -1794,8 +1794,8 @@ fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                                   &mut prob_cut, &mut g_timer, &mut midgame_state);
             if shallow_val >= beta_bound {
                 if use_hash != 0 {
-                    add_hash(&mut hash_state,1 as i32, alpha,
-                             board_state.pv[level as usize][level as usize],
+                    add_hash(&mut hash_state, 1 as i32, alpha,
+                             board_state.pv[level as usize][level as usize] as i8,
                              16 as i32 | 1 as i32, remains,
                              selectivity);
                 }
@@ -1804,8 +1804,8 @@ fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
             }
             if shallow_val <= alpha_bound {
                 if use_hash != 0 {
-                    add_hash(&mut hash_state,1 as i32, beta,
-                             board_state.pv[level as usize][level as usize],
+                    add_hash(&mut hash_state, 1 as i32, beta,
+                             board_state.pv[level as usize][level as usize] as i8,
                              16 as i32 | 2 as i32, remains,
                              selectivity);
                 }
@@ -1928,7 +1928,7 @@ fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
                     let mut already_checked: i32 = 0;
                     move_0 =
                         search_state.sorted_move_order[moves_state.disks_played as
-                            usize][shallow_index as usize];
+                            usize][shallow_index as usize] as i8;
                     already_checked = 0;
                     j = 0;
                     while j < best_list_length {
@@ -2347,12 +2347,12 @@ fn full_expand_pv<FE: FrontEnd>(end: &mut End, mut side_to_move: i32,
     let mut i: i32 = 0;
     let mut pass_count: i32 = 0;
     let mut new_pv_depth: i32 = 0;
-    let mut new_pv: [i32; 61] = [0; 61];
+    let mut new_pv: [i8; 61] = [0; 61];
     let mut new_side_to_move: [i32; 61] = [0; 61];
     new_pv_depth = 0;
     pass_count = 0;
-    while pass_count < 2 as i32 {
-        let mut move_0: i32 = 0;
+    while pass_count < 2 {
+        let mut move_0 = 0;
         generate_all(side_to_move, &mut moves_state, search_state, &board_state.board);
         if moves_state.move_count[moves_state.disks_played as usize] > 0 as i32 {
             let empties =
@@ -2427,10 +2427,10 @@ pub fn end_game<FE: FrontEnd>(side_to_move: i32,
                               mut g_book: &mut Book,
                               mut stable_state: &mut StableState,
                               mut prob_cut: &mut ProbCut)
-                              -> i32 {
+                              -> i8 {
     let mut current_confidence: f64 = 0.;
     let mut solve_status = WIN;
-    let mut book_move: i32 = 0;
+    let mut book_move = 0;
     let mut empties: i32 = 0;
     let mut selectivity: i32 = 0;
     let mut alpha: i32 = 0;
@@ -2442,7 +2442,7 @@ pub fn end_game<FE: FrontEnd>(side_to_move: i32,
     let mut old_depth: i32 = 0;
     let mut old_eval: i32 = 0;
     let mut last_window_center: i32 = 0;
-    let mut old_pv: [i32; 64] = [0; 64];
+    let mut old_pv: [i8; 64] = [0; 64];
     let mut book_eval_info = EvaluationType {
         type_0: MIDGAME_EVAL,
         res: WON_POSITION,
@@ -2478,7 +2478,7 @@ pub fn end_game<FE: FrontEnd>(side_to_move: i32,
                                         &mut random_instance,
                                         &mut flip_stack_
         );
-        if book_move != -(1 as i32) {
+        if book_move != -(1) {
             search_state.root_eval = (*eval_info).score / 128;
             hash_expand_pv(side_to_move, 1, 4, 0, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
             FE::send_solve_status(empties, side_to_move, eval_info, &mut board_state.pv[0], board_state.pv_depth[0], g_timer, search_state);

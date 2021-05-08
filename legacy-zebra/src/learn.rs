@@ -74,7 +74,7 @@ pub unsafe fn learn_game(game_length: i32,
         if (g_state.learn_state).game_move[i as usize] as i32 == -1 {
             fatal_error!("Cannot learn game. Missing move no. {}", i);
         }
-        make_move(side_to_move, (g_state.learn_state).game_move[i as usize] as i32,
+        make_move(side_to_move, (g_state.learn_state).game_move[i as usize] as i8,
                   1 as i32, &mut (g_state.moves_state), &mut (g_state.board_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
         if side_to_move == 2 as i32 {
             (g_state.learn_state).game_move[i as usize] =
@@ -143,7 +143,7 @@ pub unsafe fn full_learn_public_game(length: i32,
             side_to_move = 0 as i32 + 2 as i32 - side_to_move;
             generate_all(side_to_move, &mut ( g_state.moves_state), &( g_state.search_state), &( g_state.board_state).board);
         }
-        make_move(side_to_move, ( g_state.learn_state).game_move[i as usize] as i32,
+        make_move(side_to_move, ( g_state.learn_state).game_move[i as usize] as i8,
                   1 as i32, &mut ( g_state.moves_state), &mut ( g_state.board_state), &mut ( g_state.hash_state), &mut ( g_state.flip_stack_));
         if side_to_move == 2 as i32 {
             ( g_state.learn_state).game_move[i as usize] =

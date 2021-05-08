@@ -30,9 +30,9 @@ use crate::src::game::BoardSourceError::UnrecognizedCharacter;
 pub struct EvaluatedMove {
     pub eval: EvaluationType,
     pub side_to_move: i32,
-    pub move_0: i32,
+    pub move_0: i8,
     pub pv_depth: i32,
-    pub pv: [i32; 60],
+    pub pv: [i8; 60],
 }
 pub const BOOK_MOVE: C2RustUnnamed = 1;
 pub type C2RustUnnamed = u32;
@@ -43,7 +43,7 @@ pub const INTERRUPTED_MOVE: C2RustUnnamed = 0;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct CandidateMove {
-    pub move_0: i32,
+    pub move_0: i8,
     pub score: i32,
     pub flags: i32,
     pub parent_flags: i32,
@@ -197,7 +197,7 @@ pub fn setup_game_finalize(side_to_move:  &mut i32,
     if *side_to_move == 0 as i32 {
         board_state.score_sheet_row = -(1 as i32)
     } else {
-        board_state.black_moves[0] = -(1 as i32);
+        board_state.black_moves[0] = -(1);
         board_state.score_sheet_row = 0 as i32
     };
 }
@@ -382,7 +382,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
                                                                                                                    mut game_state: &mut GameState,
                                                                                                                    mut prob_cut: &mut ProbCut,
 )
-                                                                                               -> i32 {
+                                                                                               -> i8 {
     let mut book_eval_info =
         EvaluationType{type_0: MIDGAME_EVAL,
             res: WON_POSITION,
@@ -462,7 +462,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
         }
         game_state.last_time_used = 0.0f64;
         board_state.clear_pv();
-        return -(1 as i32)
+        return -(1)
     }
     /* If there is only one move available:
        Don't waste any time, unless told so or very close to the end,
@@ -496,7 +496,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
     let mut curr_move = moves_state.move_list[moves_state.disks_played as usize][0];
     /* Check the opening book for midgame moves */
     let mut book_move_found = 0;
-    let mut midgame_move = -(1 as i32);
+    let mut midgame_move = -1;
     if let Some(forced_opening) = game_state.forced_opening.as_ref() {
         /* Check if the position fits the currently forced opening */
         curr_move = check_forced_opening::<FE>(
@@ -505,8 +505,8 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
             &board_state.board,
             moves_state.disks_played,
             &g_book,
-            &mut random_instance);
-        if curr_move != -(1 as i32) {
+            &mut random_instance) as i8;
+        if curr_move != -1 {
             book_eval_info =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
                                  0 as i32, 0.0f64, 0 as i32,
@@ -532,7 +532,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
             let game_index =
                 ((random_instance.my_random() >> 8 as i32) %
                     Thor::get_match_count() as i64) as i32;
-            curr_move = Thor::get_thor_game_move(game_index, moves_state.disks_played);
+            curr_move = Thor::get_thor_game_move(game_index, moves_state.disks_played) as i8;
             if valid_move(curr_move, side_to_move, &board_state.board) != 0 {
                 book_eval_info =
                     create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
@@ -558,8 +558,8 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
         /* Check Thor statistics for a move */
         curr_move =
             Thor::choose_thor_opening_move(&board_state.board, side_to_move,
-                                           0 as i32, random_instance);
-        if curr_move != -(1 as i32) {
+                                           0 as i32, random_instance) as i8;
+        if curr_move != -(1) {
             book_eval_info =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
                                  0 as i32, 0.0f64, 0 as i32,
@@ -600,7 +600,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
                                  &mut hash_state,
                                  &mut random_instance,
                                  &mut flip_stack_);
-        if curr_move != -(1 as i32) {
+        if curr_move != -(1) {
             let eval = book_eval_info;
             search_state.set_current_eval(eval);
             midgame_move = curr_move;
@@ -865,7 +865,7 @@ pub fn compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, 
     mut stable_state: &mut StableState,
     mut game_state: &mut GameState,
     mut prob_cut: &mut ProbCut,)
-    -> i32 {
+    -> i8 {
     return generic_compute_move::<L, Out, FE, Thor>(
         side_to_move, update_all, my_time,
         my_incr, timed_depth,
@@ -890,17 +890,17 @@ pub trait ComputeMoveOutput {
     fn display_out_optimal_line(search_state: &SearchState);
     fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, timer: &mut Timer, board_state: &BoardState);
     fn display_status_out();
-    fn echo_ponder_move_4(curr_move: i32, ponder_move: i32);
-    fn echo_ponder_move_2(curr_move: i32, ponder_move: i32);
-    fn echo_ponder_move(curr_move: i32, ponder_move: i32);
-    fn echo_compute_move_2(info: &EvaluationType, disk: i32);
+    fn echo_ponder_move_4(curr_move: i8, ponder_move: i8);
+    fn echo_ponder_move_2(curr_move: i8, ponder_move: i8);
+    fn echo_ponder_move(curr_move: i8, ponder_move: i8);
+    fn echo_compute_move_2(info: &EvaluationType, disk: i8);
     fn echo_compute_move_1(info: &EvaluationType);
 }
 pub trait ComputeMoveLogger {
-    fn log_moves_generated(logger: &mut Self, moves_generated: i32, move_list_for_disks_played: &[i32; 64]);
+    fn log_moves_generated(logger: &mut Self, moves_generated: i32, move_list_for_disks_played: &[i8; 64]);
     fn log_best_move_pass(logger: &mut Self);
-    fn log_best_move(logger: &mut Self, best_move: i32);
-    fn log_chosen_move(logger: &mut Self, curr_move: i32, info: &EvaluationType);
+    fn log_best_move(logger: &mut Self, best_move: i8);
+    fn log_chosen_move(logger: &mut Self, curr_move: i8, info: &EvaluationType);
     fn log_status(logger: &mut Self);
     fn log_optimal_line(logger: &mut Self, search_state: &SearchState);
     fn close_logger(logger: &mut Self);

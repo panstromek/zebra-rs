@@ -10,7 +10,7 @@ pub struct HashEntry {
     pub key1: u32,
     pub key2: u32,
     pub eval: i32,
-    pub move_0: [i32; 4],
+    pub move_0: [i8; 4],
     pub draft: i16,
     pub selectivity: i16,
     pub flags: i16,
@@ -149,10 +149,10 @@ pub fn find_hash(entry: &mut HashEntry, reverse_mode: i32, hash_state_: &mut Has
 fn compact_to_wide(compact_entry: &CompactHashEntry, entry: &mut HashEntry) {
     entry.key2 = compact_entry.key2;
     entry.eval = compact_entry.eval;
-    entry.move_0[0] = (compact_entry.moves & 255) as i32;
-    entry.move_0[1] = (compact_entry.moves >> 8 & 255) as i32;
-    entry.move_0[2] = (compact_entry.moves >> 16 & 255) as i32;
-    entry.move_0[3] = (compact_entry.moves >> 24 & 255) as i32;
+    entry.move_0[0] = (compact_entry.moves & 255) as i8;
+    entry.move_0[1] = (compact_entry.moves >> 8 & 255) as i8;
+    entry.move_0[2] = (compact_entry.moves >> 16 & 255) as i8;
+    entry.move_0[3] = (compact_entry.moves >> 24 & 255) as i8;
     entry.key1 = compact_entry.key1_selectivity_flags_draft & 0xff000000 as u32;
     entry.selectivity = ((compact_entry.key1_selectivity_flags_draft & 0xffffff) >> 16) as i16;
     entry.flags = ((compact_entry.key1_selectivity_flags_draft & 0xffff) >> 8) as i16;
@@ -168,13 +168,11 @@ pub fn wide_to_compact(entry: &HashEntry, compact_entry: &mut CompactHashEntry) 
     (*compact_entry).key2 = (*entry).key2;
     (*compact_entry).eval = (*entry).eval;
     (*compact_entry).moves =
-        ((*entry).move_0[0] +
-            ((*entry).move_0[1] << 8 as i32)
-            +
-            ((*entry).move_0[2] << 16 as i32)
-            +
-            ((*entry).move_0[3] <<
-                24 as i32)) as u32;
+        ((*entry).move_0[0]  as u32
+            + ((entry.move_0[1] as u32) << 8)
+            + ((entry.move_0[2] as u32) << 16)
+            + ((entry.move_0[3] as u32) <<
+                24));
     (*compact_entry).key1_selectivity_flags_draft =
         ((*entry).key1 &
             0xff000000 as
@@ -371,7 +369,7 @@ pub fn setup_hash(clear: i32, hash_state_: &mut HashState, random: &mut MyRandom
 
 pub fn add_hash(state: &mut HashState, reverse_mode: i32,
                        score: i32,
-                       best: i32,
+                       best: i8,
                        flags: i32,
                        draft: i32,
                        selectivity: i32) {
@@ -502,7 +500,7 @@ impl HashState {
 
     pub fn add_hash_extended(&mut self, reverse_mode: i32,
                              score: i32,
-                             best: &[i32; 4],
+                             best: &[i8; 4],
                              flags: i32,
                              draft: i32,
                              selectivity: i32) {

@@ -135,7 +135,7 @@ impl Timer {
       Increases the timer keeping track of the ponder time for
       a certain move.
     */
-    pub fn add_ponder_time(&mut self, move_0: i32, time_0: f64) {
+    pub fn add_ponder_time(&mut self, move_0: i8, time_0: f64) {
         self.ponder_time[move_0 as usize] += time_0;
     }
     /*

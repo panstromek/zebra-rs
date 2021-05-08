@@ -91,7 +91,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     let mut my_time: i32 = 0;
     let mut my_incr: i32 = 0;
     let mut side_to_move: i32 = 0;
-    let mut move_0: i32 = 0;
+    let mut move_0 = 0;
     let mut score: i32 = 0;
     let mut timed_search: i32 = 0;
     let mut scanned: i32 = 0;
@@ -126,8 +126,8 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     set_evals(0.0f64, 0.0f64);
     i = 0;
     while i < 60 as i32 {
-        g_state.board_state.black_moves[i as usize] = -(1 as i32);
-        g_state.board_state.white_moves[i as usize] = -(1 as i32);
+        g_state.board_state.black_moves[i as usize] = -1;
+        g_state.board_state.white_moves[i as usize] = -1;
         i += 1
     }
     my_time = 100000000;
@@ -255,7 +255,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 compute_move(side_to_move, 1 as i32, my_time, my_incr,
                              timed_search, book, mid, exact, wld,
                              1 as i32, &mut eval_info, g_state);
-            if move_0 == -(1 as i32) {
+            if move_0 == -(1) {
                 pass_count += 1;
                 side_to_move =
                     0 as i32 + 2 as i32 - side_to_move;
@@ -263,7 +263,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                     compute_move(side_to_move, 1 as i32, my_time,
                                  my_incr, timed_search, book, mid, exact, wld,
                                  1 as i32, &mut eval_info, g_state);
-                if move_0 == -(1 as i32) {
+                if move_0 == -(1) {
                     /* Both pass, game over. */
                     let mut my_discs = disc_count(side_to_move, &g_state.board_state.board);
                     let mut opp_discs =
