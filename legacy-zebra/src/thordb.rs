@@ -1,4 +1,4 @@
-use libc_wrapper::{free, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FileHandle, size_t, strlen};
+use libc_wrapper::{free, qsort, fclose, fopen, fread, strchr, strcmp, FileHandle, size_t, strlen};
 use crate::src::error::LibcFatalError;
 use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
@@ -8,7 +8,7 @@ use thordb_types::{Int8, Int16, Int32};
 use engine::src::bitboard::bit_reverse_32;
 
 use engine::src::moves::dir_mask;
-use std::ffi::c_void;
+use std::ffi::{c_void, CStr};
 use thordb_types::{GameType, DatabaseType, C2RustUnnamed, EITHER_SELECTED_FILTER,
                        TournamentType, PlayerType, ThorOpeningNode, ThorOpeningNode_,
                        GameInfoType, PlayerFilterType, DatabaseInfoType, FilterType,
@@ -22,6 +22,7 @@ use engine::src::myrandom::MyRandom;
 use engine::src::getcoeff::odometer_principle;
 use std::io::{Read, Write};
 use engine::src::game::to_lower;
+use std::borrow::Cow;
 
 /* Local variables */
 pub static mut thor_game_count: i32 = 0;
@@ -611,6 +612,10 @@ pub unsafe fn game_database_already_loaded(file_name:
     }
     return 0 as i32;
 }
+
+pub unsafe fn to_str<'a>(ptr: *const i8) -> Cow<'a, str> {
+    CStr::from_ptr(ptr).to_string_lossy()
+}
 /*
   PRINT_GAME
   Outputs the information about the game GAME to STREAM.
@@ -621,25 +626,24 @@ unsafe fn print_game(mut stream: FileHandle,
                      game: *mut GameType,
                      display_moves: i32) {
     let mut i: i32 = 0;
-    fprintf(stream, b"%s  %d\n\x00" as *const u8 as *const i8,
-            tournament_name((*game).tournament_no as i32),
+    write!(stream, "{}  {}\n",
+            to_str(tournament_name((*game).tournament_no as i32)),
             (*(*game).database).prolog.origin_year);
-    fprintf(stream, b"%s %s %s\n\x00" as *const u8 as *const i8,
-            get_player_name((*game).black_no as i32),
-            b"vs\x00" as *const u8 as *const i8,
-            get_player_name((*game).white_no as i32));
-    fprintf(stream, b"%d - %d   \x00" as *const u8 as *const i8,
+    write!(stream, "{} {} {}\n",
+            to_str(get_player_name((*game).black_no as i32)),
+            "vs",
+            to_str(get_player_name((*game).white_no as i32)));
+    write!(stream, "{} - {}   ",
             (*game).actual_black_score as i32,
             64 as i32 - (*game).actual_black_score as i32);
-    fprintf(stream,
-            b"[ %d - %d %s ]\n\x00" as *const u8 as *const i8,
+    write!(stream, "[ {} - {} {} ]\n",
             (*game).perfect_black_score as i32,
-            64 as i32 - (*game).perfect_black_score as i32,
-            b"perfect\x00" as *const u8 as *const i8);
+            64 - (*game).perfect_black_score,
+            "perfect");
     if display_moves != 0 {
         i = 0;
         while i < 60 as i32 {
-            fprintf(stream, b" %d\x00" as *const u8 as *const i8,
+            write!(stream, " {}",
                     abs((*game).moves[i as usize] as i32));
             if i % 20 as i32 == 19 as i32 {
                 stream.write(b"\n");
