@@ -1464,7 +1464,7 @@ impl LibcDumpHandler {
         let mut j: i32 = 0;
         // let mut stream = 0 as *mut FILE;
         let mut stream = File::create("current.gam").unwrap_or_else(|_| {
-            unsafe { fatal_error!("File creation error when writing CURRENT.GAM\n"); }
+            { fatal_error!("File creation error when writing CURRENT.GAM\n"); }
         });
 
         i = 1;
@@ -1501,7 +1501,7 @@ impl LibcDumpHandler {
         let mut i: i32 = 0;
 
         let mut stream = File::create("current.mov").unwrap_or_else(|_| {
-            unsafe { fatal_error!("File creation error when writing CURRENT.MOV\n"); }
+            fatal_error!("File creation error when writing CURRENT.MOV\n");
         });
 
         i = 0;

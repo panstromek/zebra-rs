@@ -12,10 +12,10 @@ use crate::fatal_error;
 pub fn new_z_lib_source(file_name: &CStr) -> ZLibSource {
     match ZLibSource::try_new(file_name) {
         Ok(f) => f,
-        Err(LoadError::UnableToOpenCoefficientFile) => unsafe {
+        Err(LoadError::UnableToOpenCoefficientFile) => {
             fatal_error!("{} '{}'\n", "Unable to open coefficient file", &file_name.to_str().unwrap());
         },
-        Err(LoadError::WrongChecksum) => unsafe {
+        Err(LoadError::WrongChecksum) => {
             fatal_error!("{}: {}", &file_name.to_str().unwrap(), "Wrong checksum in , might be an old version");
         }
     }
