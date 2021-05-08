@@ -206,8 +206,8 @@ fn get_int_32(mut stream: FileHandle, value: &mut Int32) -> i32 {
   values which aren't used are read.
   Returns TRUE upon success, otherwise FALSE.
 */
-unsafe fn read_prolog(stream: FileHandle,
-                      mut prolog: *mut PrologType) -> i32 {
+fn read_prolog(stream: FileHandle,
+                      mut prolog: &mut PrologType) -> i32 {
     let mut success: i32 = 0;
     let mut byte_val: Int8 = 0;
     let mut word_val: Int16 = 0;
