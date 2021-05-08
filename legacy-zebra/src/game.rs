@@ -13,7 +13,7 @@ use engine::src::thordb::ThorDatabase;
 use engine::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL, WLD_EVAL};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{ctime, fclose, FileHandle, fopen, fprintf, printf, puts, stdout, strcpy, time, time_t};
+use libc_wrapper::{ctime, fclose, FileHandle, fopen, fprintf, printf, puts, stdout, strcpy, time, time_t, c_time};
 
 use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, TO_SQUARE};
 use crate::src::error::{FE, LibcFatalError};
@@ -132,22 +132,18 @@ unsafe fn setup_log_file() {
     strcpy(log_file_path.as_mut_ptr(),
            b"zebra.log\x00" as *const u8 as *const i8);
     if use_log_file != 0 {
-        let log_file =
+        let mut log_file =
             fopen(log_file_path.as_mut_ptr(),
                   b"w\x00" as *const u8 as *const i8);
         if !log_file.is_null() {
             let mut timer_: time_t = 0;
             time(&mut timer_);
-            fprintf(log_file,
-                    b"%s %s\n\x00" as *const u8 as *const i8,
-                    b"Log file created\x00" as *const u8 as
-                        *const i8, ctime(&mut timer_));
-            fprintf(log_file,
-                    b"%s %s %s\n\x00" as *const u8 as *const i8,
-                    b"Engine compiled\x00" as *const u8 as
-                        *const i8,
-                    b"Jul  2 2020\x00" as *const u8 as *const i8,
-                    b"19:33:59\x00" as *const u8 as *const i8);
+            write!(log_file, "{} {}\n", "Log file created", c_time(timer_));
+            write!(log_file,
+                    "{} {} {}\n",
+                    "Engine compiled",
+                    "Jul  2 2020" ,
+                    "19:33:59");
             fclose(log_file);
         }
     }
