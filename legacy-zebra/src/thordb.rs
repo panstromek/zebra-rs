@@ -92,10 +92,7 @@ pub static mut tournaments: TournamentDatabaseType =
         reserved: 0,},
         name_buffer:
         0 as *const i8 as *mut i8,
-        count: 0,
-        tournament_list:
-        0 as *const TournamentType as
-            *mut TournamentType,};
+        tournament_list: Vec::new()};
 pub static mut root_node: *mut ThorOpeningNode =
     0 as *const ThorOpeningNode as *mut ThorOpeningNode;
 pub static default_sort_order: [i32; 5] = [2 as i32, 3 as i32, 1 as i32, 5 as i32, 4 as i32];
@@ -266,26 +263,26 @@ unsafe extern "C" fn sort_tournament_database() {
     let mut tournament_buffer = 0 as *mut *mut TournamentType;
     let mut i: i32 = 0;
     tournament_buffer =
-        safe_malloc((tournaments.count as
+        safe_malloc((tournaments.count() as
                          u64).wrapping_mul(::std::mem::size_of::<*mut TournamentType>()
                                                          as u64)) as
             *mut *mut TournamentType;
     i = 0;
-    while i < tournaments.count {
+    while i < tournaments.count() {
         let ref mut fresh0 = *tournament_buffer.offset(i as isize);
         *fresh0 =
             &mut *tournaments.tournament_list.offset(i as isize) as
                 *mut TournamentType;
         i += 1
     }
-    qsort(tournament_buffer as *mut std::ffi::c_void, tournaments.count as size_t,
+    qsort(tournament_buffer as *mut std::ffi::c_void, tournaments.count() as size_t,
           ::std::mem::size_of::<*mut TournamentType>() as u64,
           Some(thor_compare_tournaments as
                    unsafe extern "C" fn(_: *const std::ffi::c_void,
                                         _: *const std::ffi::c_void)
                        -> i32));
     i = 0;
-    while i < tournaments.count {
+    while i < tournaments.count() {
         (**tournament_buffer.offset(i as isize)).lex_order = i;
         i += 1
     }
@@ -311,7 +308,7 @@ pub unsafe fn read_tournament_database(file_name:
         fclose(stream);
         return 0 as i32
     }
-    tournaments.count = tournaments.prolog.item_count;
+    let tournaments_count = tournaments.prolog.item_count;
     buffer_size = 26 as i32 * tournaments.prolog.item_count;
     tournaments.name_buffer =
         safe_realloc(tournaments.name_buffer as *mut std::ffi::c_void,
@@ -323,19 +320,14 @@ pub unsafe fn read_tournament_database(file_name:
     success = (actually_read == buffer_size) as i32;
     fclose(stream);
     if success != 0 {
-        tournaments.tournament_list =
-            safe_realloc(tournaments.tournament_list as *mut std::ffi::c_void,
-                         (tournaments.count as
-                              u64).wrapping_mul(::std::mem::size_of::<TournamentType>()
-                                                              as
-                                                              u64))
-                as *mut TournamentType;
+        tournaments.tournament_list.reserve(tournaments_count as usize);
         i = 0;
-        while i < tournaments.count {
-            let ref mut fresh1 =
-                (*tournaments.tournament_list.offset(i as isize)).name;
-            *fresh1 = tournament_name(i);
-            (*tournaments.tournament_list.offset(i as isize)).selected = 1;
+        while i < tournaments_count {
+            tournaments.tournament_list.push(TournamentType {
+                lex_order: 0,
+                selected: 1,
+                name: tournament_name(i)
+            });
             i += 1
         }
         sort_tournament_database();
@@ -623,7 +615,7 @@ pub unsafe fn to_str<'a>(ptr: *const i8) -> Cow<'a, str> {
   game are to be output or not.
 */
 unsafe fn print_game(mut stream: FileHandle,
-                     game: *mut GameType,
+                     game: &GameType,
                      display_moves: i32) {
     let mut i: i32 = 0;
     write!(stream, "{}  {}\n",
@@ -697,7 +689,7 @@ pub unsafe fn print_thor_matches(mut stream: FileHandle,
         if i == 0 as i32 {
             stream.write(b"\n");
         }
-        print_game(stream, *thor_search.match_list.offset(i as isize),
+        print_game(stream, &**thor_search.match_list.offset(i as isize),
                    0 as i32);
         i += 1
     };
@@ -1034,7 +1026,7 @@ unsafe fn get_corner_mask(disc_a1: i32,
 */
 pub unsafe fn tournament_name(index: i32)
                               -> *const i8 {
-    if index < 0 as i32 || index >= tournaments.count {
+    if index < 0 as i32 || index >= tournaments.count() {
         return b"<Not available>\x00" as *const u8 as *const i8
     } else {
         return tournaments.name_buffer.offset((26 as i32 * index) as
@@ -1082,7 +1074,7 @@ unsafe fn player_lex_order(index: i32) -> i32 {
 
 unsafe fn get_tournament_name(index: i32)
                               -> *const i8 {
-    if index < 0 as i32 || index >= tournaments.count {
+    if index < 0 as i32 || index >= tournaments.count() {
         return b"< Not available >\x00" as *const u8 as *const i8
     } else {
         return tournaments.name_buffer.offset((26 as i32 * index) as
@@ -1095,7 +1087,7 @@ unsafe fn get_tournament_name(index: i32)
 */
 
 unsafe fn get_tournament_count() -> i32 {
-    return tournaments.count;
+    return tournaments.count();
 }
 
 /*
@@ -1438,7 +1430,7 @@ unsafe fn set_player_filter_type(player_filter:
 unsafe fn set_tournament_filter(selected: &mut [i32]) {
     let mut i: i32 = 0;
     i = 0;
-    while i < tournaments.count {
+    while i < tournaments.count() {
         (*tournaments.tournament_list.offset(i as isize)).selected =
             *selected.offset(i as isize);
         i += 1
@@ -2342,8 +2334,7 @@ pub unsafe fn init_thor_database<FE: FrontEnd>(g_state: &mut FullState) {
     players.player_list = 0 as *mut PlayerType;
     players.count = 0;
     tournaments.name_buffer = 0 as *mut i8;
-    tournaments.tournament_list = 0 as *mut TournamentType;
-    tournaments.count = 0;
+    tournaments.tournament_list.clear();
     thor_games_sorted = 0;
     thor_games_filtered = 0;
     init_move_masks();
@@ -2576,8 +2567,8 @@ unsafe fn position_match(mut game: &mut GameType,
 */
 unsafe fn tournament_lex_order(index: i32)
                                -> i32 {
-    if index < 0 as i32 || index >= tournaments.count {
-        return tournaments.count
+    if index < 0 as i32 || index >= tournaments.count() {
+        return tournaments.count()
     } else {
         return (*tournaments.tournament_list.offset(index as isize)).lex_order
     };
@@ -2817,7 +2808,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     let mut game;
     /* We need a player and a tournament database. */
     if players.count == 0 as i32 ||
-        tournaments.count == 0 as i32 {
+        tournaments.count() == 0 as i32 {
         thor_search.match_count = 0;
         return
     }
