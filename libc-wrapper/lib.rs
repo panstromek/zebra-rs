@@ -5,7 +5,7 @@
 #![allow(non_upper_case_globals)]
 
 use std::ffi::{c_void, CStr};
-use std::io::Write;
+use std::io::{Write, ErrorKind};
 use std::ptr::null_mut;
 
 extern crate libc;
@@ -197,6 +197,23 @@ impl FileHandle {
         Self::File(null_mut())
     }
 }
+impl std::io::Read for FileHandle {
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        if self.file().is_null() {
+            return Ok(0);
+        }
+
+        let count  = unsafe {
+            inner::fread(buf.as_ptr() as *mut std::ffi::c_void, 1, buf.len() as size_t, self.file())
+        };
+        if count <= buf.len() as u64 {
+            Ok(count as usize)
+        } else {
+            Err(std::io::Error::new(ErrorKind::Other, "Bytes read is out of bounds"))
+        }
+    }
+}
+
 impl Write for FileHandle {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         if self.is_null() {

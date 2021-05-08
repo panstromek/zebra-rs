@@ -20,6 +20,7 @@ use engine::src::thordb::ThorDatabase;
 use crate::src::zebra::{FullState};
 use engine::src::myrandom::MyRandom;
 use engine::src::getcoeff::odometer_principle;
+use std::io::{Read};
 
 /* Local variables */
 pub static mut thor_game_count: i32 = 0;
@@ -157,42 +158,46 @@ pub type FE = LibcFatalError;
   Reads an 8-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe fn get_int_8(stream: FileHandle, value: *mut Int8)
-                    -> i32 {
-    let mut actually_read: i32 = 0;
-    actually_read =
-        fread(value as *mut std::ffi::c_void,
-              ::std::mem::size_of::<Int8>() as u64,
-              1 as i32 as size_t, stream) as i32;
-    return (actually_read == 1 as i32) as i32;
+fn get_int_8(mut stream: FileHandle, value: &mut Int8) -> i32 {
+    let mut buf = [0_u8;1];
+    match stream.read_exact(&mut buf) {
+        Ok(_) => {
+            *value = buf[0] as i8;
+            1
+        },
+        Err(_) => 0,
+    }
 }
 /*
   GET_INT_16
   Reads a 16-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe fn get_int_16(stream: FileHandle, value: *mut Int16)
+fn get_int_16(mut stream: FileHandle, value: &mut Int16)
                      -> i32 {
-    let mut actually_read: i32 = 0;
-    actually_read =
-        fread(value as *mut std::ffi::c_void,
-              ::std::mem::size_of::<Int16>() as u64,
-              1 as i32 as size_t, stream) as i32;
-    return (actually_read == 1 as i32) as i32;
+    let mut buf = [0_u8;2];
+    match stream.read_exact(&mut buf) {
+        Ok(_) => {
+            *value = Int16::from_le_bytes(buf);
+            1
+        },
+        Err(_) => 0,
+    }
 }
 /*
   GET_INT_32
   Reads a 32-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-unsafe fn get_int_32(stream: FileHandle, value: *mut Int32)
-                     -> i32 {
-    let mut actually_read: i32 = 0;
-    actually_read =
-        fread(value as *mut std::ffi::c_void,
-              ::std::mem::size_of::<Int32>() as u64,
-              1 as i32 as size_t, stream) as i32;
-    return (actually_read == 1 as i32) as i32;
+fn get_int_32(mut stream: FileHandle, value: &mut Int32) -> i32 {
+    let mut buf = [0_u8; 4];
+    match stream.read_exact(&mut buf) {
+        Ok(_) => {
+            *value = Int32::from_le_bytes(buf);
+            1
+        }
+        Err(_) => 0,
+    }
 }
 /*
   READ_PROLOG
@@ -1797,7 +1802,7 @@ unsafe fn calculate_opening_frequency(mut node:
   Returns the amount of memory which each game in the database takes.
 */
 
-pub unsafe fn get_thor_game_size() -> i32 {
+pub fn get_thor_game_size() -> i32 {
     return ::core::mem::size_of::<GameType>() as u64 as i32;
 }
 /*
