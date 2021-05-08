@@ -35,12 +35,15 @@ use flip::unflip::FlipStack;
 use libc_wrapper::{atoi, ctime, fclose, fopen, fprintf, fputs, printf, puts, scanf, stdout, time};
 use libc_wrapper::{FileHandle, time_t};
 
-use crate::src::display::{display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state};
-use crate::src::error::{FE, LibcFatalError, fatal_error_0, fatal_error_2};
+use crate::src::display::{display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
+use crate::src::error::{FE, LibcFatalError};
 use crate::src::game::{compute_move, global_setup, BasicBoardFileSource, LibcZebraOutput, LogFileHandler, toggle_status_log};
 use crate::src::learn::{init_learn, LibcLearner};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_size, get_total_game_count, init_thor_database, LegacyThor, print_thor_matches, read_game_database, read_player_database, read_tournament_database};
+
+#[macro_use]
+use crate::fatal_error;
 
 pub struct LibcTimeSource;
 
@@ -1182,8 +1185,7 @@ unsafe fn analyze_game(mut move_string: &str,
         fopen(b"analysis.log\x00" as *const u8 as *const i8,
               b"w\x00" as *const u8 as *const i8);
     if output_stream.is_null() {
-        fatal_error_0(b"Can\'t create log file analysis.log - aborting\x00" as
-                        *const u8 as *const i8);
+        fatal_error!("Can\'t create log file analysis.log - aborting");
     }
     /* Set up the position and the search engine */
     if (&mut g_state.g_config).echo != 0 {
@@ -1406,11 +1408,7 @@ unsafe fn analyze_game(mut move_string: &str,
             fputs(b"\n\x00" as *const u8 as *const i8,
                   output_stream);
             if valid_move(curr_move, side_to_move, &(g_state.board_state).board) == 0 {
-                fatal_error_2(b"Invalid move %c%c in move sequence\x00" as
-                                *const u8 as *const i8,
-                            'a' as i32 + curr_move % 10 as i32 -
-                                1 as i32,
-                            '0' as i32 + curr_move / 10 as i32);
+                fatal_error!("Invalid move {} in move sequence", TO_SQUARE(curr_move));
             }
             move_stop =  (&mut g_state.g_timer).get_real_timer();
             if (&mut g_state.g_config).player_time[side_to_move as usize] != 10000000.0f64 {
@@ -1466,7 +1464,7 @@ impl LibcDumpHandler {
         let mut j: i32 = 0;
         // let mut stream = 0 as *mut FILE;
         let mut stream = File::create("current.gam").unwrap_or_else(|_| {
-            unsafe { fatal_error_0(b"File creation error when writing CURRENT.GAM\n\x00" as *const u8 as *const i8); }
+            unsafe { fatal_error!("File creation error when writing CURRENT.GAM\n"); }
         });
 
         i = 1;
@@ -1503,7 +1501,7 @@ impl LibcDumpHandler {
         let mut i: i32 = 0;
 
         let mut stream = File::create("current.mov").unwrap_or_else(|_| {
-            unsafe { fatal_error_0(b"File creation error when writing CURRENT.MOV\n\x00" as *const u8 as *const i8); }
+            unsafe { fatal_error!("File creation error when writing CURRENT.MOV\n"); }
         });
 
         i = 0;
