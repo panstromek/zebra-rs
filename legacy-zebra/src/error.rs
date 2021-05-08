@@ -62,43 +62,28 @@ static mut buffer: String = String::new();
    Contents:   The text-based error handler.
 */
 
-pub unsafe fn fatal_error_3<T: CFormat, U: CFormat, V: CFormat>(format: *const i8, arg: T, arg2: U, arg3: V) -> ! {
-    fatal_error(|stream| {
-        fprintf(stream, format, arg, arg2, arg3);
-    })
+#[macro_export]
+macro_rules! fatal_error {
+    ($($t:tt)*) => {
+        $crate::src::error::fatal_error_(format_args!($($t)*))
+    };
 }
 
-pub unsafe fn fatal_error_2<T: CFormat, U: CFormat>(format: *const i8, arg: T, arg2: U) -> ! {
-    fatal_error(|stream| {
-        fprintf(stream, format, arg, arg2);
-    })
-}
-
-pub unsafe fn fatal_error_1<T: CFormat>(format: *const i8, arg: T) -> ! {
-    fatal_error(|stream| {
-        fprintf(stream, format, arg);
-    })
-}
-
-pub unsafe fn fatal_error_0(format: *const i8) -> ! {
-    fatal_error(|stream| {
-        fprintf(stream, format);
-    })
-}
 use std::io::Write;
-unsafe fn fatal_error(mut variadic_printer: impl FnMut(FileHandle)) -> ! {
+pub fn fatal_error_(args: std::fmt::Arguments<'_>) -> ! {
     let mut timer: time_t = 0;
     eprint!("\nFatal error: ");
-
-    variadic_printer(stderr);
-    let mut stream =
-        fopen(b"zebra.err\x00" as *const u8 as *const i8,
-              b"a\x00" as *const u8 as *const i8);
-    if !stream.is_null() {
-        time(&mut timer);
-        let ctime1 = CStr::from_ptr(ctime(&mut timer)).to_str().unwrap();
-        write!(stream, "{} @ {}\n  ", "Fatal error", ctime1);
-        variadic_printer(stream);
+    unsafe {
+        stderr.write_fmt(args);
+        let mut stream =
+            fopen(b"zebra.err\x00" as *const u8 as *const i8,
+                  b"a\x00" as *const u8 as *const i8);
+        if !stream.is_null() {
+            time(&mut timer);
+            let ctime1 = CStr::from_ptr(ctime(&mut timer)).to_str().unwrap();
+            write!(stream, "{} @ {}\n  ", "Fatal error", ctime1);
+            stream.write_fmt(args);
+        }
     }
     std::process::exit(1);
 }
@@ -132,24 +117,19 @@ impl LibcFatalError {
     }
     pub fn memory_allocation_failure(block_count_: i32) -> ! {
         unsafe {
-            fatal_error_2(b"%s @ #%d\n\x00" as *const u8 as *const i8,
-                        b"Memory allocation failure\x00" as *const u8 as
-                            *const i8, block_count_);
+            fatal_error!("{} @ #{}\n", "Memory allocation failure", block_count_);
         }
     }
 
     pub fn error_in_map(i: i32, pos: i32, symmetry_map_item: i32) -> ! {
         unsafe {
-            fatal_error_3(b"Error in map %d: inv(map(%d))=%d\n\x00" as
-                            *const u8 as *const i8, i, pos, symmetry_map_item);
+            fatal_error!("Error in map {}: inv(map({}))={}\n", i, pos, symmetry_map_item);
         }
     }
 
     pub fn error_in_map_thor(i: i32, pos: i32, to_report: i32) -> ! {
         unsafe {
-            fatal_error_3(b"Error in map %d: inv(map(%d))=%d\n\x00" as
-                            *const u8 as *const i8, i, pos,
-                        to_report);
+            fatal_error!("Error in map {}: inv(map({}))={}\n", i, pos, to_report);
         }
     }
 
@@ -390,8 +370,7 @@ impl FrontEnd for LibcFatalError {
             }
             write!(stdout, "\n");
             printf(b"i=%d\n\x00" as *const u8 as *const i8, i);
-            fatal_error_0(b"Error in PV completion\x00" as *const u8 as
-                *const i8);
+            fatal_error!("Error in PV completion");
         }
     }
 
@@ -575,66 +554,47 @@ impl LibcFatalError {
 impl FatalError for LibcFatalError {
   fn invalid_move(curr_move: i32) -> ! {
     unsafe {
-        fatal_error_1(b"Thor book move %d is invalid!\x00" as *const u8
-                      as *const i8, curr_move);
+        fatal_error!("Thor book move {} is invalid!", curr_move);
     }
   }
 
  fn unrecognized_character(unrecognized: i8) -> ! {
   unsafe {
-      fatal_error_3(b"%s \'%c\' %s\n\x00" as *const u8 as
-                    *const i8,
-                b"Unrecognized character\x00" as *const u8 as
-                    *const i8,
-                unrecognized as i32,
-                b"in game file\x00" as *const u8 as
-                    *const i8);
+      fatal_error!("{} '{}' {}\n", "Unrecognized character", char::from(unrecognized as u8), "in game file");
   }
 }
 
 fn cannot_open_game_file(file_name: &str) -> ! {
-    let file_name: *const i8 = file_name.as_ptr() as _;
     unsafe {
-        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as
-                        *const i8,
-                    b"Cannot open game file\x00" as *const u8 as
-                        *const i8, file_name);
+        fatal_error!("{} '{}'\n", "Cannot open game file" , file_name);
     }
 }
 
 
 fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
   unsafe {
-    fatal_error_2(b"Invalid move %c%c in move sequence\x00"
-                    as *const u8 as *const i8,
-                'a' as i32 + curr_move % 10 as i32
-                    - 1 as i32,
-                '0' as i32 +
-                    curr_move / 10 as i32);
+    fatal_error!("Invalid move {} in move sequence", TO_SQUARE(curr_move));
   }
 }
 
  fn internal_error_in_book_code() -> ! {
     unsafe {
-        fatal_error_0(b"Internal error in book code.\x00" as *const u8 as
-            *const i8);
+        fatal_error!("Internal error in book code.");
     }
 }
 
  fn unexpected_character_in_a_move_string() -> ! {
     unsafe {
-        fatal_error_0(b"Unexpected character in move string\x00" as *const u8 as *const i8);
+        fatal_error!("Unexpected character in move string");
     }
 }
 
  fn invalid_move_string_provided() -> ! {
     unsafe {
-        fatal_error_0(b"Invalid move string provided\x00" as *const u8 as *const i8);
+        fatal_error!("Invalid move string provided");
     }
 }
  fn initial_squares_are_empty() -> ! {
-    unsafe {
-        fatal_error_0( b"Initial squares (d4, e4, d5, e5) from the board file should not be empty.\n\x00" as *const u8 as *const i8);
-    }
+    fatal_error!("Initial squares (d4, e4, d5, e5) from the board file should not be empty.\n");
 }
 }

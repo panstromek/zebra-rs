@@ -5,7 +5,7 @@ use engine_traits::Offset;
 use engine::src::osfbook::{set_deviation_value, set_max_batch_size, size_t, BookNode, probe_hash_table, get_hash, fill_move_alternatives, clear_node_depth, get_node_depth, adjust_score, _ISgraph, _ISupper, _ISprint, _ISspace};
 use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WINS};
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
-use legacy_zebra::src::error::{LibcFatalError, fatal_error_2};
+use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
 
 use libc_wrapper::{time, fflush, stdout, fopen, fread, fclose, FileHandle, fprintf, fputc, free, sprintf, putc, fputs, stderr, sscanf, strlen, fgets, qsort, feof, strcmp, strstr, __ctype_b_loc, fwrite, malloc, toupper, ctime, strcpy, tolower};
@@ -30,6 +30,8 @@ use legacy_zebra::src::game::game_init;
 use std::io::Write;
 
 pub type FE = LibcFatalError;
+use legacy_zebra::fatal_error;
+use std::ffi::CStr;
 
 extern "C" {
     fn printf(_: *const i8, _: ...) -> i32;
@@ -644,9 +646,7 @@ pub unsafe fn merge_binary_database(file_name:
     let stream =
         fopen(file_name, b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
-                    b"Could not open database file\x00" as *const u8 as
-                        *const i8, file_name);
+        fatal_error!("{} '{}'\n", "Could not open database file", &CStr::from_ptr(file_name).to_str().unwrap());
     }
     let mut magic1: i16 = 0;
     let mut magic2: i16 = 0;
@@ -658,9 +658,7 @@ pub unsafe fn merge_binary_database(file_name:
           1 as i32 as size_t, stream);
     if magic1 as i32 != 2718 as i32 ||
            magic2 as i32 != 2818 as i32 {
-        fatal_error_2(b"%s: %s\x00" as *const u8 as *const i8,
-                    b"Wrong checksum, might be an old version\x00" as
-                        *const u8 as *const i8, file_name);
+        fatal_error!("{}: {}", "Wrong checksum, might be an old version", &CStr::from_ptr(file_name).to_str().unwrap());
     }
     let mut merge_book_node_count: i32 = 0;
     fread(&mut merge_book_node_count as *mut i32 as *mut std::ffi::c_void,
@@ -2419,9 +2417,7 @@ pub unsafe fn build_tree(file_name: *const i8,
     fflush(stdout);
     stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
-                    b"Could not open game file\x00" as *const u8 as
-                        *const i8, file_name);
+        fatal_error!("{} '{}'\n", "Could not open game file", &CStr::from_ptr(file_name).to_str().unwrap());
     }
     time(&mut start_time);
     games_parsed = 0;
@@ -2732,9 +2728,7 @@ pub unsafe fn write_compressed_database(file_name:
     fflush(stdout);
     let stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
-                    b"Could not create database file\x00" as *const u8 as
-                        *const i8, file_name);
+        fatal_error!("{} '{}'\n", "Could not create database file", &CStr::from_ptr(file_name).to_str().unwrap());
     }
     prepare_tree_traversal(g_state);
     let node_order =
@@ -2949,9 +2943,7 @@ pub unsafe fn unpack_compressed_database(in_name:
     /* Read the compressed database */
     stream = fopen(in_name, b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
-                    b"Could not open database file\x00" as *const u8 as
-                        *const i8, in_name);
+        fatal_error!("{} '{}'\n", "Could not open database file", &CStr::from_ptr(in_name).to_str().unwrap());
     }
     fread(&mut node_count as *mut i32 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i32>() as u64,
@@ -3025,9 +3017,7 @@ pub unsafe fn unpack_compressed_database(in_name:
     /* Traverse the tree described by the database and create the .bin file */
     stream = fopen(out_name, b"wb\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
-                    b"Could not create database file\x00" as *const u8 as
-                        *const i8, out_name);
+        fatal_error!("{} '{}'\n", "Could not create database file", &CStr::from_ptr(out_name).to_str().unwrap());
     }
     game_init(0 as *const i8, &mut dummy,g_state);
     g_state.midgame_state.toggle_midgame_hash_usage(1 as i32, 1 as i32);

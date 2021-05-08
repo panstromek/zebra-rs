@@ -17,6 +17,8 @@ use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
 use libc_wrapper::{fclose, fflush, FileHandle, fopen, fprintf, fscanf, printf, stdout, time};
 use std::io::Write;
+#[macro_use]
+use crate::fatal_error;
 
 use crate::{
     src::{
@@ -24,7 +26,7 @@ use crate::{
     }
 };
 
-use crate::src::error::{LibcFatalError, fatal_error_2};
+use crate::src::error::{LibcFatalError};
 use crate::src::zebra::FullState;
 use std::sync::mpsc::TrySendError::Full;
 use engine::src::globals::BoardState;
@@ -137,10 +139,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                            *game_move_list.offset(j as isize) as i32);
                     j += 1
                 }
-                fatal_error_2(b"%s: %d\n\x00" as *const u8 as
-                                *const i8,
-                            b"Invalid move generated\x00" as *const u8 as
-                                *const i8, this_move);
+                fatal_error!("{}: {}\n", "Invalid move generated", this_move);
             }
             make_move(side_to_move, this_move, 1 as i32, &mut (g_state.moves_state), &mut (g_state.board_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
         } else {
@@ -232,10 +231,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
             if generate_specific(this_move, side_to_move, &(g_state.board_state).board) == 0 {
-                fatal_error_2(b"%s: %d\n\x00" as *const u8 as
-                                *const i8,
-                            b"Invalid move generated\x00" as *const u8 as
-                                *const i8, this_move);
+                fatal_error!("{}: {}\n", "Invalid move generated", this_move);
             }
             make_move(side_to_move, this_move, 1 as i32, &mut (g_state.moves_state), &mut (g_state.board_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
             i += 1
@@ -456,18 +452,14 @@ pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
     fflush(stdout);
     stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
-                    b"Could not open database file\x00" as *const u8 as
-                        *const i8, file_name);
+        fatal_error!("{} '{}'\n","Could not open database file", &CStr::from_ptr(file_name).to_str().unwrap());
     }
     fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8,
            &mut magic1 as *mut i32);
     fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8,
            &mut magic2 as *mut i32);
     if magic1 != 2718 as i32 || magic2 != 2818 as i32 {
-        fatal_error_2(b"%s: %s\x00" as *const u8 as *const i8,
-                    b"Wrong checksum, might be an old version\x00" as
-                        *const u8 as *const i8, file_name);
+        fatal_error!("{}: {}", "Wrong checksum, might be an old version\x00" , &CStr::from_ptr(file_name).to_str().unwrap());
     }
     fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8,
            &mut new_book_node_count as *mut i32);
@@ -516,9 +508,7 @@ pub unsafe fn read_binary_database(file_name_: *const i8, g_book: &mut Book) -> 
 
     let stream = std::fs::read(file_name);
     if let Err(_) = stream {
-        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
-                    b"Could not open database file\x00" as *const u8 as
-                        *const i8, file_name_);
+        fatal_error!("{} '{}'\n", "Could not open database file", &CStr::from_ptr(file_name_).to_str().unwrap());
     }
     struct Reader<T> {
         inner: T
@@ -548,11 +538,8 @@ pub unsafe fn read_binary_database(file_name_: *const i8, g_book: &mut Book) -> 
     magic1 = stream.parse().unwrap_or(0);
     magic2 = stream.parse().unwrap_or(0);
 
-    if magic1 as i32 != 2718 as i32 ||
-           magic2 as i32 != 2818 as i32 {
-        fatal_error_2(b"%s: %s\x00" as *const u8 as *const i8,
-                    b"Wrong checksum, might be an old version\x00" as
-                        *const u8 as *const i8, file_name_);
+    if magic1 as i32 != 2718 as i32 || magic2 as i32 != 2818 as i32 {
+        fatal_error!("{}: {}", "Wrong checksum, might be an old version", CStr::from_ptr(file_name_).to_str().unwrap());
     }
 
     new_book_node_count = stream.parse()?;
@@ -590,9 +577,7 @@ pub unsafe fn write_text_database(file_name: *const i8, g_book: &mut Book) {
     fflush(stdout);
     let stream = fopen(file_name, b"w\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
-                    b"Could not create database file\x00" as *const u8 as
-                        *const i8, file_name);
+        fatal_error!("{} '{}'\n", "Could not create database file", CStr::from_ptr(file_name).to_str().unwrap());
     }
     fprintf(stream, b"%d\n%d\n\x00" as *const u8 as *const i8,
             2718 as i32, 2818 as i32);
@@ -631,9 +616,7 @@ pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book)
     fflush(stdout);
     let mut stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error_2(b"%s \'%s\'\n\x00" as *const u8 as *const i8,
-                    b"Could not create database file\x00" as *const u8 as
-                        *const i8, file_name);
+        fatal_error!("{} '{}'\n", "Could not create database file", CStr::from_ptr(file_name).to_str().unwrap());
     }
     let mut magic = 2718 as i32 as i16;
     stream.write(&magic.to_le_bytes());
