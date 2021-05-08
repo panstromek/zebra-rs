@@ -1,4 +1,4 @@
-use libc_wrapper::{fputs, free, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FileHandle, size_t, strlen, tolower};
+use libc_wrapper::{fputs, free, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FileHandle, size_t, strlen};
 use crate::src::error::LibcFatalError;
 use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
@@ -21,6 +21,7 @@ use crate::src::zebra::{FullState};
 use engine::src::myrandom::MyRandom;
 use engine::src::getcoeff::odometer_principle;
 use std::io::{Read};
+use engine::src::game::to_lower;
 
 /* Local variables */
 pub static mut thor_game_count: i32 = 0;
@@ -359,7 +360,7 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
     i = 0;
     loop  {
         ch = *(*player1).name.offset(i as isize);
-        buffer1[i as usize] = tolower(ch as i32) as i8;
+        buffer1[i as usize] = to_lower(ch as i32) as i8;
         i += 1;
         if !(ch as i32 != 0 as i32) { break ; }
     }
@@ -370,7 +371,7 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
     i = 0;
     loop  {
         ch = *(*player2).name.offset(i as isize);
-        buffer2[i as usize] = tolower(ch as i32) as i8;
+        buffer2[i as usize] = to_lower(ch as i32) as i8;
         i += 1;
         if !(ch as i32 != 0 as i32) { break ; }
     }
