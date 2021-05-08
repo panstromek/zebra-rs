@@ -2,7 +2,7 @@
 
 use engine::src::moves::{generate_all, make_move, unmake_move, valid_move};
 use engine::src::osfbook::{find_opening_name, get_hash};
-use legacy_zebra::src::display::{display_board, produce_eval_text, set_move_list, set_names, display_state};
+use legacy_zebra::src::display::{display_board, produce_eval_text, set_move_list, set_names, display_state, TO_SQUARE};
 use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
@@ -89,10 +89,7 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
         i = 0;
         while i < get_evaluated_count() {
             let eval_str_ = produce_eval_text(&get_evaluated(i).eval, 0 as i32);
-            write!(stdout, "   {}{}   {}\n",
-                   char::from('a' as u8 + (get_evaluated(i).move_0 % 10) as u8 - 1) ,
-                   char::from('0' as u8 + (get_evaluated(i).move_0 / 10) as u8),
-                CStr::from_ptr(eval_str_.as_ptr()).to_str().unwrap());
+            write!(stdout, "   {}   {}\n", TO_SQUARE(get_evaluated(i).move_0), eval_str_);
 
             i += 1
         }

@@ -10,12 +10,13 @@ use crate::src::zebra::FullState;
 use engine::src::timer::Timer;
 use std::io::Write;
 use std::convert::TryInto;
+use std::fmt::{Formatter};
 
 pub struct DisplayState {
     pub black_player: &'static str,
     pub white_player: &'static str,
-    pub status_buffer: [u8; 256],
-    pub sweep_buffer: [u8; 256],
+    pub status_buffer: Vec<u8>,
+    pub sweep_buffer: Vec<u8>,
     pub black_eval: f64,
     pub white_eval: f64,
     pub last_output: f64,
@@ -34,8 +35,8 @@ pub struct DisplayState {
 pub static mut display_state: DisplayState = DisplayState {
     black_player: "",
     white_player: "",
-    status_buffer: [0; 256],
-    sweep_buffer: [0; 256],
+    status_buffer: Vec::new(), //TODO I want with capacity here - original also had just array. we should weight some perf implications of both approaches I guess
+    sweep_buffer: Vec::new(), //TODO I want with capacity here - original also had just array. we should weight some perf implications of both approaches I guess
     black_eval: 0.0f64,
     white_eval: 0.0f64,
     last_output: 0.0f64,
@@ -51,6 +52,22 @@ pub static mut display_state: DisplayState = DisplayState {
     sweep_pos: 0,
 };
 
+pub struct Square (u8, u8);
+impl std::fmt::Display for Square {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        use std::fmt::Write;
+        f.write_char(char::from(self.0))?;
+        f.write_char(char::from(self.1))
+    }
+}
+
+#[allow(non_snake_case)]
+pub fn TO_SQUARE(move_: i32) -> Square {
+    Square(
+        b'a' + (move_ % 10) as u8 - 1,
+        b'0' + (move_ / 10) as u8,
+    )
+}
 /*
   SET_NAMES
   SET_TIMES
@@ -86,7 +103,7 @@ pub unsafe fn set_move_list(row: i32) {
 
 pub unsafe fn clear_status() {
     display_state.status_pos = 0;
-    display_state.status_buffer[0] = 0;
+    display_state.status_buffer.clear();
     display_state.status_modified = 1;
 }
 
@@ -97,7 +114,7 @@ pub unsafe fn clear_status() {
 
 pub unsafe fn clear_sweep() {
     display_state.sweep_pos = 0;
-    display_state.sweep_buffer[0] = 0;
+    display_state.sweep_buffer.clear();
     display_state.sweep_modified = 1;
 }
 
@@ -323,9 +340,7 @@ pub fn display_move(stream: &mut dyn Write,
     if move_0 == -(1 as i32) {
         write!(stream, "--");
     } else {
-        write!(stream, "{}{}",
-                char::from('a' as u8 + (move_0 % 10) as u8 - 1 as u8),
-                char::from('0' as u8 + (move_0 / 10) as u8));
+        write!(stream, "{}", TO_SQUARE(move_0));
     };
 }
 /*
@@ -349,10 +364,6 @@ pub fn display_optimal_line(stream: &mut dyn Write, full_pv_depth_: i32, full_pv
     }
     write!(stream, "\n");
 }
-/*
-  SEND_STATUS
-  Store information about the last completed search.
-*/
 
 pub unsafe trait CFormat: Copy {}
 unsafe impl CFormat for i32 {}
@@ -362,31 +373,49 @@ unsafe impl CFormat for *const i8 {}
 unsafe impl CFormat for u64 {}
 
 impl DisplayState {
-    pub unsafe fn status(&mut self, mut writer: impl FnMut(*mut i8) -> i32) {
-        let cursor = self.status_buffer.as_mut_ptr().offset(self.status_pos as isize);
-        let written = writer(cursor as *mut i8);
-        self.status_pos += written;
+    pub fn write_status_fmt(&mut self, args: std::fmt::Arguments<'_>) {
+        let len_before = self.status_buffer.len();
+        self.status_buffer.write_fmt(args);
+        let len_after = self.status_buffer.len();
+        let written = len_after - len_before;
+        self.status_pos += written as i32;
         self.status_modified = 1;
     }
-    pub unsafe fn sweep(&mut self, mut writer: impl FnMut(*mut i8) -> i32) {
-        let cursor = self.sweep_buffer.as_mut_ptr().offset(self.sweep_pos as isize);
-        let written = writer(cursor as *mut i8);
-        self.sweep_pos += written;
+    pub fn write_sweep_fmt(&mut self, args: std::fmt::Arguments<'_>) {
+        let len_before = self.sweep_buffer.len();
+        self.sweep_buffer.write_fmt(args);
+        let len_after = self.sweep_buffer.len();
+        let written = len_after - len_before;
+        self.sweep_pos += written as i32;
         self.sweep_modified = 1;
     }
 }
 
-pub unsafe fn send_status_2<T: CFormat, U: CFormat>(format: *const i8, arg: T, arg2: U) {
-    display_state.status(|cursor| sprintf(cursor, format, arg, arg2));
+/*
+  SEND_STATUS
+  Store information about the last completed search.
+*/
+
+#[macro_export]
+macro_rules! send_status {
+    ($display_state:ident, $($t:tt)*) => {
+        $display_state.write_status_fmt(format_args!($($t)*));
+    };
 }
 
-pub unsafe fn send_status_1<T: CFormat>(format: *const i8, arg: T) {
-    display_state.status(|cursor| sprintf(cursor, format, arg));
+
+/*
+  SEND_SWEEP
+  Store information about the current search.
+*/
+
+#[macro_export]
+macro_rules! send_sweep {
+    ($display_state:ident, $($t:tt)*) => {
+        $display_state.write_sweep_fmt(format_args!($($t)*));
+    };
 }
 
-pub unsafe fn send_status_0(format: *const i8) {
-    display_state.status(|cursor| sprintf(cursor, format));
-}
 /*
   SEND_STATUS_TIME
   Sends the amount of time elapsed to SEND_STATUS.
@@ -396,13 +425,11 @@ pub unsafe fn send_status_0(format: *const i8) {
 
 pub unsafe fn send_status_time(elapsed_time: f64) {
     if elapsed_time < 10000.0f64 {
-        send_status_2(b"%6.1f %c\x00" as *const u8 as *const i8,
-                    elapsed_time, 's' as i32);
+        send_status!(display_state, "{:6.1} {}", elapsed_time, 's' );
     } else {
-        send_status_2(b"%6d %c\x00" as *const u8 as *const i8,
-                    ceil(elapsed_time) as i32, 's' as i32);
+        send_status!(display_state, "{:6} {}", ceil(elapsed_time), 's');
     }
-    send_status_0(b"  \x00" as *const u8 as *const i8);
+    send_status!(display_state, "  ");
 }
 /*
   SEND_STATUS_NODES
@@ -413,17 +440,13 @@ pub unsafe fn send_status_time(elapsed_time: f64) {
 
 pub unsafe fn send_status_nodes(node_count: f64) {
     if node_count < 1.0e8f64 {
-        send_status_1(b"%8.0f  \x00" as *const u8 as *const i8,
-                    node_count);
+        send_status!(display_state, "{:8.0}  ", node_count);
     } else if node_count < 1.0e10f64 {
-        send_status_2(b"%7.0f%c  \x00" as *const u8 as *const i8,
-                    node_count / 1000.0f64, 'k' as i32);
+        send_status!(display_state, "{:7.0}{}  ", node_count / 1000.0f64, 'k');
     } else if node_count < 1.0e13f64 {
-        send_status_2(b"%7.0f%c  \x00" as *const u8 as *const i8,
-                    node_count / 1000000.0f64, 'M' as i32);
+        send_status!(display_state, "{:7.0}{}  ", node_count / 1000000.0f64, 'M');
     } else {
-        send_status_2(b"%7.0f%c  \x00" as *const u8 as *const i8,
-                    node_count / 1000000000.0f64, 'G' as i32);
+        send_status!(display_state, "{:7.0}{}  ", node_count / 1000000000.0f64, 'G');
     };
 }
 /*
@@ -438,18 +461,13 @@ pub unsafe fn send_status_pv(pv: &[i32; 64], max_depth: i32, pv_depth_zero: i32)
                    max_depth
                } else { 5 as i32 }) {
         if i < pv_depth_zero {
-            send_status_2(b"%c%c \x00" as *const u8 as *const i8,
-                        'a' as i32 +
-                            pv[i as usize] % 10 as i32 -
-                            1 as i32,
-                        '0' as i32 +
-                            pv[i as usize] / 10 as i32);
+            send_status!(display_state, "{} ", TO_SQUARE(pv[i as usize]));
         } else {
-            send_status_0(b"   \x00" as *const u8 as *const i8);
+            send_status!(display_state, "   ");
         }
         i += 1
     }
-    send_status_0(b" \x00" as *const u8 as *const i8);
+    send_status!(display_state, " ");
 }
 /*
   DISPLAY_STATUS
@@ -457,39 +475,18 @@ pub unsafe fn send_status_pv(pv: &[i32; 64], max_depth: i32, pv_depth_zero: i32)
 */
 
 pub unsafe fn display_status(mut stream: FileHandle, allow_repeat: i32) {
-    if display_state.status_pos != 0 as i32 || allow_repeat != 0 {
-        write_buffer(&mut stream, &mut display_state.status_buffer)
+    if !display_state.status_buffer.is_empty() || allow_repeat != 0 {
+        write_buffer(&mut stream, display_state.status_buffer.as_mut())
     }
     display_state.status_pos = 0;
 }
 
-fn write_buffer(stream: &mut FileHandle, buf: &mut [u8; 256]) {
-    let len = buf.iter()
-        .enumerate()
-        .find(|&(i, &b)| b == 0)
-        .map_or(0, |(i, _)| i);
-    if len > 0 {
-        buf[len] = b'\n';
-        buf[len + 1] = 0;
-        stream.write(&buf[0..len + 1]);
-        buf[len] = 0;
+fn write_buffer(stream: &mut FileHandle, buf: &mut Vec<u8>) {
+    if buf.len() > 0 {
+        buf.push(b'\n');
+        stream.write(buf);
+        buf.pop();
     }
-}
-/*
-  SEND_SWEEP
-  Store information about the current search.
-*/
-
-pub unsafe fn send_sweep_1<T: CFormat>(format: *const i8, arg: T) {
-    display_state.sweep(|cursor| sprintf(cursor, format, arg));
-}
-
-pub unsafe fn send_sweep_2<T: CFormat, U: CFormat>(format: *const i8, arg: T, arg2: U) {
-    display_state.sweep(|cursor| sprintf(cursor, format, arg, arg2));
-}
-
-pub unsafe fn send_sweep_0(format: *const i8) {
-    display_state.sweep(|cursor| sprintf(cursor, format));
 }
 /*
   DISPLAY_SWEEP
@@ -497,8 +494,8 @@ pub unsafe fn send_sweep_0(format: *const i8) {
 */
 
 pub unsafe fn display_sweep(mut stream: FileHandle) {
-    if display_state.sweep_pos != 0 as i32 {
-        write_buffer(&mut stream, &mut display_state.sweep_buffer);
+    if !display_state.sweep_buffer.is_empty() {
+        write_buffer(&mut stream,  display_state.sweep_buffer.as_mut());
     }
     display_state.sweep_modified = 0;
 }
@@ -509,12 +506,12 @@ pub unsafe fn display_sweep(mut stream: FileHandle) {
 
 pub fn produce_eval_text(eval_info: &EvaluationType,
                                            short_output: i32)
- -> [i8; 32] {
+ -> String {
 
     use std::fmt::Write;
-    let mut buf = Vec::<u8>::with_capacity(32);
-    let buffer =  &mut buf;
-    let mut len = 0;
+    // assert!(buffer.len < 19); // this is true in all tests now, so we allocate just 18 bytes.
+    //  TODO allocate on stack for perf?
+    let mut buffer =  String::with_capacity(18);
     let disk_diff: f64;
     let int_confidence: i32;
     match eval_info.type_0 as u32 {
@@ -628,12 +625,5 @@ pub fn produce_eval_text(eval_info: &EvaluationType,
     if eval_info.is_book != 0 {
         write!(buffer, " ({})", "book");
     }
-    // assert!(buffer.len < 19); // TODO this is true in all tests now, we could optimize that
-    // todo remove this ugliness
-    buf.resize(32, 0);
-    buf.into_iter()
-        .map(|byte| byte as i8)
-        .collect::<Vec<_>>()
-        .try_into()
-        .unwrap()
+    return buffer
 }

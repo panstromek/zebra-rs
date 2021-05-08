@@ -15,7 +15,7 @@ use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINE
 use engine::src::zebra::EvaluationType;
 use libc_wrapper::{ctime, fclose, FileHandle, fopen, fprintf, printf, puts, stdout, strcpy, time, time_t};
 
-use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, send_status_1, send_status_2, send_status_0};
+use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, TO_SQUARE};
 use crate::src::error::{FE, LibcFatalError};
 use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
 use crate::src::thordb::LegacyThor;
@@ -25,6 +25,12 @@ use std::fs::{File, read, OpenOptions};
 use std::io::{Read, BufReader, BufRead, Write};
 use std::iter::FromIterator;
 use engine::src::timer::Timer;
+
+#[macro_use]
+use crate::send_status;
+
+#[macro_use]
+use crate::send_sweep;
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
 pub static mut prefix_move: i32 = 0;
@@ -1376,21 +1382,18 @@ fn display_out_optimal_line(search_state: &SearchState) {
 fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, timer: &mut Timer, board_state: &BoardState) {
     unsafe {
         clear_status();
-        send_status_1(b"--> *%2d\x00" as *const u8 as *const i8,
+        send_status!(display_state, "--> *{:2}",
                     interrupted_depth);
-        let mut eval_str_ = produce_eval_text(info, 1 as i32);
-        let eval_str = eval_str_.as_mut_ptr();
-        send_status_1(b"%10s  \x00" as *const u8 as *const i8,
-                    eval_str);
+        let mut eval_str = produce_eval_text(info, 1 as i32);
+        send_status!(display_state, "{:>10}  ", eval_str);
         send_status_nodes(counter_value);
         send_status_pv(&board_state.pv[0], interrupted_depth, board_state.pv_depth[0]);
         send_status_time(timer.get_elapsed_time());
         if timer.get_elapsed_time() != 0.0f64 {
-            send_status_2(b"%6.0f %s\x00" as *const u8 as
-                            *const i8,
+            send_status!(display_state, "{:6.0} {}",
                         counter_value /
                             (timer.get_elapsed_time() + 0.001f64),
-                        b"nps\x00" as *const u8 as *const i8);
+                        "nps" );
         }
     }
 }
@@ -1401,100 +1404,54 @@ fn display_status_out() {
 
 fn echo_ponder_move_4(curr_move: i32, ponder_move: i32) {
     unsafe {
-        send_status_1(b"-->   %s        \x00" as *const u8 as
-                        *const i8,
-                    b"Thor database\x00" as *const u8 as
-                        *const i8);
+        send_status!(display_state, "-->   {}        ",
+                    "Thor database");
         if ponder_move != 0 {
-            send_status_2(b"{%c%c} \x00" as *const u8 as
-                            *const i8,
-                        'a' as i32 +
-                            ponder_move % 10 as i32 -
-                            1 as i32,
-                        '0' as i32 +
-                            ponder_move / 10 as i32);
+            send_status!(display_state, "{{{}}} ",TO_SQUARE(ponder_move));
         }
-        send_status_2(b"%c%c\x00" as *const u8 as *const i8,
-                    'a' as i32 + curr_move % 10 as i32 -
-                        1 as i32,
-                    '0' as i32 + curr_move / 10 as i32);
+        send_status!(display_state, "{}",TO_SQUARE(curr_move)         );
         display_status(stdout, 0 as i32);
     }
 }
 
 fn echo_ponder_move_2(curr_move: i32, ponder_move: i32) {
     unsafe {
-        send_status_1(b"-->   %s        \x00" as *const u8 as
-                        *const i8,
-                    b"Thor database\x00" as *const u8 as
-                        *const i8);
+        send_status!(display_state, "-->   {}        ",
+                    "Thor database");
         if ponder_move != 0 {
-            send_status_2(b"{%c%c} \x00" as *const u8 as
-                            *const i8,
-                        'a' as i32 +
-                            ponder_move % 10 as i32
-                            - 1 as i32,
-                        '0' as i32 +
-                            ponder_move /
-                                10 as i32);
+            send_status!(display_state, "{{{}}} ", TO_SQUARE(ponder_move));
         }
-        send_status_2(b"%c%c\x00" as *const u8 as
-                        *const i8,
-                    'a' as i32 + curr_move % 10 as i32 -
-                        1 as i32,
-                    '0' as i32 + curr_move / 10 as i32);
+        send_status!(display_state, "{}", TO_SQUARE(curr_move));
         display_status(stdout, 0 as i32);
     }
 }
 
 fn echo_ponder_move(curr_move: i32, ponder_move: i32) {
     unsafe {
-        send_status_0(b"-->   Forced opening move        \x00" as
-            *const u8 as *const i8);
+        send_status!(display_state, "-->   Forced opening move        ");
         if ponder_move != 0 {
-            send_status_2(b"{%c%c} \x00" as *const u8 as
-                            *const i8,
-                        'a' as i32 +
-                            ponder_move % 10 as i32 -
-                            1 as i32,
-                        '0' as i32 +
-                            ponder_move / 10 as i32);
+            send_status!(display_state, "{} ",TO_SQUARE(ponder_move));
         }
-        send_status_2(b"%c%c\x00" as *const u8 as *const i8,
-                    'a' as i32 + curr_move % 10 as i32 -
-                        1 as i32,
-                    '0' as i32 + curr_move / 10 as i32);
+        send_status!(display_state, "{}",TO_SQUARE(curr_move));
         display_status(stdout, 0 as i32);
     }
 }
 
 fn echo_compute_move_2(info: &EvaluationType, disk: i32) {
     unsafe {
-        let mut eval_str_ = produce_eval_text(info, 0 as i32);
-        let eval_str = eval_str_.as_mut_ptr();
-        send_status_0(b"-->         \x00" as *const u8 as
-            *const i8);
-        send_status_1(b"%-8s  \x00" as *const u8 as *const i8,
-                    eval_str);
-        send_status_2(b"%c%c \x00" as *const u8 as *const i8,
-                    'a' as i32 +
-                        disk %
-                            10 as i32 - 1 as i32,
-                    '0' as i32 +
-                        disk /
-                            10 as i32);
+        let mut eval_str = produce_eval_text(info, 0 as i32);
+        send_status!(display_state, "-->         ");
+        send_status!(display_state, "{:<8}  ",             eval_str);
+        send_status!(display_state, "{} ", TO_SQUARE(disk));
         display_status(stdout, 0 as i32);
     }
 }
 
 fn echo_compute_move_1(info: &EvaluationType) {
     unsafe {
-        let mut eval_str_ = produce_eval_text(info, 0 as i32);
-        let eval_str = eval_str_.as_mut_ptr();
-        send_status_0(b"-->         \x00" as *const u8 as
-            *const i8);
-        send_status_1(b"%-8s  \x00" as *const u8 as *const i8,
-                    eval_str);
+        let mut eval_str = produce_eval_text(info, 0 as i32);
+        send_status!(display_state, "-->         ");
+        send_status!(display_state, "{:<8}  ",             eval_str);
         display_status(stdout, 0 as i32);
     }
 }
@@ -1560,14 +1517,12 @@ fn log_best_move(logger: &mut LogFileHandler, best_move: i32) {
 
 fn log_chosen_move(logger: &mut LogFileHandler, curr_move: i32, info: &EvaluationType) {
     unsafe {
-        let mut eval_str_ = produce_eval_text(info, 0 as i32);
-        let eval_str = eval_str_.as_mut_ptr();
-        fprintf(logger.log_file,
-                b"%s: %c%c  %s\n\x00" as *const u8 as *const i8,
-                b"Move chosen\x00" as *const u8 as *const i8,
-                'a' as i32 + curr_move % 10 as i32 -
-                    1 as i32,
-                '0' as i32 + curr_move / 10 as i32, eval_str);
+        let mut eval_str = produce_eval_text(info, 0 as i32);
+        write!(logger.log_file,
+                "{}: {}  {}\n",
+                "Move chosen",
+                TO_SQUARE(curr_move),
+                eval_str);
     }
 }
 
