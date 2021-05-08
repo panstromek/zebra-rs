@@ -118,7 +118,7 @@ fn DrctnlFlips_four(sq: usize, inc: isize, color: i32, oppcol: i32, board: &mut 
     return t_flip_stack
 }
 
-pub fn DoFlips_no_hash(sqnum: i32, color: i32,
+pub fn DoFlips_no_hash(sqnum: i8, color: i32,
                               board: &mut [i32; 128], flip_stack__: &mut FlipStack)
                               -> i32 {
     let opp_color = 2 - color;
@@ -292,7 +292,7 @@ fn DrctnlFlipsHash_six( sq: usize, inc: isize, color: i32, oppcol: i32, board: &
    Last modified:   October 25, 2005
 */
 
-pub fn DoFlips_hash(sqnum: i32, color: i32, board: &mut [i32; 128],
+pub fn DoFlips_hash(sqnum: i8, color: i32, board: &mut [i32; 128],
                            hash_flip1: &mut [u32; 128], hash_flip2: &mut [u32; 128], stack: &mut FlipStack) -> (i32, u32, u32) {
     let opp_color = 2 - color;
 

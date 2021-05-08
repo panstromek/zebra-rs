@@ -44,7 +44,7 @@ impl LearnState {
        had been played.
     */
 
-    pub fn store_move(&mut self, disks_played_0: i32, move_0: i32) {
+    pub fn store_move(&mut self, disks_played_0: i32, move_0: i8) {
         self.game_move[disks_played_0 as usize] = move_0 as i16;
     }
     /*

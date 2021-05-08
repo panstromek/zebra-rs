@@ -122,7 +122,7 @@ impl ZebraGame {
     #[wasm_bindgen]
     pub fn play_until_next_interaction(&mut self, move_attempt: Option<i32>) -> InteractionRequest {
         let mut move_attempt = move_attempt
-            .map(|num| MoveAttempt(num, num));
+            .map(|num| MoveAttempt(num as i8, num as i8));
 
         loop {
             match self.next_state(move_attempt.take()) {
@@ -176,7 +176,7 @@ impl ZebraGame {
         let mut curr_move;
         const BLACKSQ: i32 = 0;
         const WHITESQ: i32 = 2;
-        const PASS: i32 = -1;
+        const PASS: i8 = -1;
         #[allow(non_snake_case)]
         fn OPP(color: i32) -> i32 {
             ((BLACKSQ + WHITESQ) - (color))
@@ -399,19 +399,19 @@ impl ComputeMoveOutput for WasmFrontend {
         // c_log!("todo display_status_out")
     }
 
-    fn echo_ponder_move_4(curr_move: i32, ponder_move: i32) {
+    fn echo_ponder_move_4(curr_move: i8, ponder_move: i8) {
 
     }
 
-    fn echo_ponder_move_2(curr_move: i32, ponder_move: i32) {
+    fn echo_ponder_move_2(curr_move: i8, ponder_move: i8) {
 
     }
 
-    fn echo_ponder_move(curr_move: i32, ponder_move: i32) {
+    fn echo_ponder_move(curr_move: i8, ponder_move: i8) {
 
     }
 
-    fn echo_compute_move_2(info: &EvaluationType, disk: i32) {
+    fn echo_compute_move_2(info: &EvaluationType, disk: i8) {
 
     }
 
@@ -423,7 +423,7 @@ impl ComputeMoveOutput for WasmFrontend {
 struct WasmComputeMoveLogger;
 
 impl ComputeMoveLogger for WasmComputeMoveLogger {
-    fn log_moves_generated(logger: &mut Self, moves_generated: i32, move_list_for_disks_played: &[i32; 64]) {
+    fn log_moves_generated(logger: &mut Self, moves_generated: i32, move_list_for_disks_played: &[i8; 64]) {
         //
     }
 
@@ -431,11 +431,11 @@ impl ComputeMoveLogger for WasmComputeMoveLogger {
         //
     }
 
-    fn log_best_move(logger: &mut Self, best_move: i32) {
+    fn log_best_move(logger: &mut Self, best_move: i8) {
         //
     }
 
-    fn log_chosen_move(logger: &mut Self, curr_move: i32, info: &EvaluationType) {
+    fn log_chosen_move(logger: &mut Self, curr_move: i8, info: &EvaluationType) {
         //
     }
 
@@ -555,9 +555,9 @@ impl FrontEnd for WasmFrontend {
         // TODO?
     }
 
-    fn after_update_best_list_verbose(best_list: &mut [i32; 4]) {}
+    fn after_update_best_list_verbose(best_list: &mut [i8; 4]) {}
 
-    fn before_update_best_list_verbose(best_list: &mut [i32; 4], move_0: i32, best_list_index: i32, best_list_length: &mut i32) {}
+    fn before_update_best_list_verbose(best_list: &mut [i8; 4], move_0: i8, best_list_index: i32, best_list_length: &mut i32) {}
 
     fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32, echo: i32) {}
 
@@ -565,7 +565,7 @@ impl FrontEnd for WasmFrontend {
     fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32) {
     }
 
-    fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32) {}
+    fn end_tree_search_level_0_ponder_0_short_report(move_0: i8, first: i32) {}
 
     fn end_tree_search_output_some_stats(entry: &HashEntry) {}
 
@@ -573,7 +573,7 @@ impl FrontEnd for WasmFrontend {
 
     fn end_tree_search_level_0_report(alpha: i32, beta: i32) {}
 
-    fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType, pv_zero: &mut [i32; 64], pv_depth_zero: i32, g_timer: &mut Timer, search_state: &mut SearchState) {
+    fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType, pv_zero: &mut [i8; 64], pv_depth_zero: i32, g_timer: &mut Timer, search_state: &mut SearchState) {
         // c_log!("Solve status TODO")
     }
 
@@ -601,7 +601,7 @@ impl FrontEnd for WasmFrontend {
         // c_log!("end_display_zero_status")
     }
 
-    fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i32; 64]) {
+    fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i8; 64]) {
         panic!("FATAL PV ERROR");
     }
 
@@ -618,7 +618,7 @@ impl FrontEnd for WasmFrontend {
     }
 
 
-    fn midgame_display_simple_ponder_move(move_0: i32) {
+    fn midgame_display_simple_ponder_move(move_0: i8) {
         // Maybe I'm gonna need this??
         if LOG_PONDER_MOVE {
             c_log!("{}{}", ('a' as u8 + move_0 as u8 % 10 - 1) as char,
@@ -646,7 +646,7 @@ impl FrontEnd for WasmFrontend {
 }
 
 impl FatalError for WasmFrontend {
-    fn invalid_move(curr_move: i32) -> ! {
+    fn invalid_move(curr_move: i8) -> ! {
         unimplemented!()
     }
 
@@ -658,7 +658,7 @@ impl FatalError for WasmFrontend {
         unimplemented!()
     }
 
-    fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
+    fn invalid_move_in_move_sequence(curr_move: i8) -> ! {
         unimplemented!()
     }
 

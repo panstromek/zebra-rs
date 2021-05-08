@@ -156,26 +156,26 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-    fn after_update_best_list_verbose(best_list: &mut [i32; 4]) {
+    fn after_update_best_list_verbose(best_list: &mut [i8; 4]) {
         unsafe {
             // let best_list = best_list.as_mut_ptr();
             write!(stdout, "      After:  ");
             let mut i = 0;
             while i < 4 {
-                printf(b"%2d \x00" as *const u8 as *const i8, best_list[i]);
+                printf(b"%2d \x00" as *const u8 as *const i8, best_list[i] as i32);
                 i += 1
             }
             write!(stdout, "\n");
         }
     }
-    fn before_update_best_list_verbose(best_list: &mut [i32; 4], move_0: i32, best_list_index: i32, best_list_length: &mut i32) {
+    fn before_update_best_list_verbose(best_list: &mut [i8; 4], move_0: i8, best_list_index: i32, best_list_length: &mut i32) {
         unsafe {
             printf(b"move=%2d  index=%d  length=%d      \x00" as *const u8 as
-                       *const i8, move_0, best_list_index, *best_list_length);
+                       *const i8, move_0 as i32, best_list_index, *best_list_length);
             write!(stdout, "Before:  ");
             let mut i = 0;
             while i < 4 {
-                printf(b"%2d \x00" as *const u8 as *const i8, best_list[i]);
+                printf(b"%2d \x00" as *const u8 as *const i8, best_list[i] as i32);
                 i += 1
             }
         }
@@ -205,7 +205,7 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-    fn end_tree_search_level_0_ponder_0_short_report(move_0: i32, first: i32) {
+    fn end_tree_search_level_0_ponder_0_short_report(move_0: i8, first: i32) {
         unsafe {
             if first != 0 {
                 send_sweep!(display_state, "{:<10} ", buffer);
@@ -260,7 +260,7 @@ impl FrontEnd for LibcFatalError {
       Displays endgame results - partial or full.
     */
     fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType,
-                          pv_zero: &mut [i32; 64],
+                          pv_zero: &mut [i8; 64],
                          pv_depth_zero: i32,
                          mut g_timer: &mut Timer,
                          mut search_state: &mut SearchState) {
@@ -347,7 +347,7 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-    fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i32; 64]) {
+    fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i8; 64]) {
         unsafe {
             printf(b"pv_depth[0] = %d\n\x00" as *const u8 as
                        *const i8,
@@ -356,10 +356,10 @@ impl FrontEnd for LibcFatalError {
             while j < pv_0_depth {
                 printf(b"%c%c \x00" as *const u8 as *const i8,
                        'a' as i32 +
-                           pv_0[j as usize] %
+                           pv_0[j as usize] as i32 %
                                10 as i32 - 1 as i32,
                        '0' as i32 +
-                           pv_0[j as usize] /
+                           pv_0[j as usize] as i32 /
                                10 as i32);
                 j += 1
             }
@@ -402,7 +402,7 @@ impl FrontEnd for LibcFatalError {
             send_status!(display_state, "{}", TO_SQUARE(candidate_list_[chosen_index as usize].move_0));
         }
     }
-    fn midgame_display_simple_ponder_move(move_0: i32) {
+    fn midgame_display_simple_ponder_move(move_0: i8) {
         unsafe {
             send_sweep!(display_state, "{}", TO_SQUARE(move_0));
         }
@@ -495,7 +495,7 @@ impl FrontEnd for LibcFatalError {
                  send_status!(display_state, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
              }
              hash_expand_pv(side_to_move, 0 as i32, 4 as i32, 12345678 as i32, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
-             let mut pv_zero: &mut [i32; 64] = &mut board_state.pv[0];
+             let mut pv_zero: &mut [i8; 64] = &mut board_state.pv[0];
              let mut pv_depth_zero: i32 = board_state.pv_depth[0];
 
              send_status_pv(pv_zero, max_depth, pv_depth_zero);
@@ -547,7 +547,7 @@ impl LibcFatalError {
 }
 
 impl FatalError for LibcFatalError {
-  fn invalid_move(curr_move: i32) -> ! {
+  fn invalid_move(curr_move: i8) -> ! {
     {
         fatal_error!("Thor book move {} is invalid!", curr_move);
     }
@@ -565,7 +565,7 @@ fn cannot_open_game_file(file_name: &str) -> ! {
 }
 
 
-fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
+fn invalid_move_in_move_sequence(curr_move: i8) -> ! {
     fatal_error!("Invalid move {} in move sequence", TO_SQUARE(curr_move));
 }
 

@@ -778,7 +778,7 @@ unsafe fn play_game(mut file_name: &str,
             }
             PlayGameState::GettingMove { provided_move_count, move_start, side_to_move } => {
                 let res = ZF::prompt_get_move(side_to_move);
-                move_attempt = Some(MoveAttempt(res.0, res.1))
+                move_attempt = Some(MoveAttempt(res.0 as i8, res.1 as i8))
             }
             PlayGameState::NeedsDump {..} => {
                 if play_state.g_state.g_config.echo != 0 {
@@ -936,7 +936,7 @@ impl LibcFrontend {
         }
     }
     fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
-                                black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
+                                black_moves_: &[i8; 60], white_moves_: &[i8; 60]) {
         unsafe {
             display_board(&mut stdout, board_,
                           side_to_move, 1,
@@ -1146,17 +1146,17 @@ unsafe fn analyze_game(mut move_string: &str,
     let mut i: i32 = 0;
     let mut side_to_move: i32 = 0;
     let mut opponent: i32 = 0;
-    let mut curr_move: i32 = 0;
-    let mut resp_move: i32 = 0;
+    let mut curr_move = 0;
+    let mut resp_move = 0;
     let mut timed_search: i32 = 0;
-    let mut provided_move_count: i32 = 0;
-    let mut col: i32 = 0;
-    let mut row: i32 = 0;
+    let mut provided_move_count = 0;
+    let mut col = 0;
+    let mut row = 0;
     let mut empties: i32 = 0;
-    let mut provided_move: [i32; 61] = [0; 61];
+    let mut provided_move: [i8; 61] = [0; 61];
     /* Decode the predefined move sequence */
     if move_string.is_empty() {
-        provided_move_count = 0 as i32
+        provided_move_count = 0
     } else {
         provided_move_count = (move_string.len()).wrapping_div(2) as i32;
         if provided_move_count > 60 || (move_string.len()).wrapping_rem(2) == 1 {
@@ -1165,13 +1165,12 @@ unsafe fn analyze_game(mut move_string: &str,
         i = 0;
         let move_string = move_string.as_bytes();
         while i < provided_move_count {
-            col = (*move_string.offset((2 as i32 * i) as isize) as char).to_ascii_lowercase() as i32 - 'a' as i32 + 1 as i32;
-            row = *move_string.offset((2 as i32 * i + 1 as i32) as isize) as i32 - '0' as i32;
-            if col < 1 as i32 || col > 8 as i32 ||
-                   row < 1 as i32 || row > 8 as i32 {
+            col = (*move_string.offset((2 as i32 * i) as isize) as char).to_ascii_lowercase() as u8 - b'a' + 1;
+            row = *move_string.offset((2 as i32 * i + 1 as i32) as isize) - b'0';
+            if col < 1 || col > 8 || row < 1 || row > 8 {
                 FE::unexpected_character_in_a_move_string();
             }
-            provided_move[i as usize] = 10 as i32 * row + col;
+            provided_move[i as usize] = (10 * row + col) as i8;
             i += 1
         }
     }
@@ -1213,8 +1212,8 @@ unsafe fn analyze_game(mut move_string: &str,
     set_evals(0.0f64, 0.0f64);
     let mut i = 0;
     while i < 60 as i32 {
-        (g_state.board_state).black_moves[i as usize] = -(1 as i32);
-        (g_state.board_state).white_moves[i as usize] = -(1 as i32);
+        (g_state.board_state).black_moves[i as usize] = -1;
+        (g_state.board_state).white_moves[i as usize] = -1;
         i += 1
     }
     let _black_hash1 = (g_state.random_instance).my_random() as i32;
@@ -1333,9 +1332,8 @@ unsafe fn analyze_game(mut move_string: &str,
             /* Output the two score-move pairs */
             fprintf(output_stream,
                     b"%c%c \x00" as *const u8 as *const i8,
-                    'a' as i32 + curr_move % 10 as i32 -
-                        1 as i32,
-                    '0' as i32 + curr_move / 10 as i32);
+                    'a' as i32 + (curr_move % 10) as i32 - 1 as i32,
+                    '0' as i32 + (curr_move / 10) as i32);
             if empties <= (&mut g_state.g_config).exact_skill[side_to_move as usize] {
                 fprintf(output_stream,
                         b"%+6d\x00" as *const u8 as *const i8,
@@ -1354,7 +1352,7 @@ unsafe fn analyze_game(mut move_string: &str,
                           output_stream);
                 }
             } else if curr_move == provided_move[(g_state.moves_state).disks_played as usize] &&
-                          resp_move != -(1 as i32) {
+                          resp_move != -1 {
                 fprintf(output_stream,
                         b"%6.2f\x00" as *const u8 as *const i8,
                         -(played_info1.score + played_info2.score) as
@@ -1370,10 +1368,9 @@ unsafe fn analyze_game(mut move_string: &str,
             curr_move = provided_move[(g_state.moves_state).disks_played as usize];
             fprintf(output_stream,
                     b"       %c%c \x00" as *const u8 as *const i8,
-                    'a' as i32 + curr_move % 10 as i32 -
-                        1 as i32,
-                    '0' as i32 + curr_move / 10 as i32);
-            if resp_move == -(1 as i32) {
+                    'a' as i32 + (curr_move % 10) as i32 - 1 as i32,
+                    '0' as i32 + (curr_move / 10) as i32);
+            if resp_move == -1 {
                 fprintf(output_stream,
                         b"     ?\x00" as *const u8 as *const i8);
             } else if empties <= (&mut g_state.g_config).exact_skill[side_to_move as usize] {
@@ -1415,14 +1412,14 @@ unsafe fn analyze_game(mut move_string: &str,
                 (g_state.board_state).black_moves[(g_state.board_state).score_sheet_row as usize] = curr_move
             } else {
                 if (g_state.board_state).white_moves[(g_state.board_state).score_sheet_row as usize] !=
-                       -(1 as i32) {
+                       -1 {
                     (g_state.board_state).score_sheet_row += 1
                 }
                 (g_state.board_state).white_moves[(g_state.board_state).score_sheet_row as usize] = curr_move
             }
         } else if side_to_move == 0 as i32 {
-            (g_state.board_state).black_moves[(g_state.board_state).score_sheet_row as usize] = -(1 as i32)
-        } else { (g_state.board_state).white_moves[(g_state.board_state).score_sheet_row as usize] = -(1 as i32) }
+            (g_state.board_state).black_moves[(g_state.board_state).score_sheet_row as usize] = -1
+        } else { (g_state.board_state).white_moves[(g_state.board_state).score_sheet_row as usize] = -1 }
         side_to_move = 0 as i32 + 2 as i32 - side_to_move
     }
     if (g_state.g_config).echo == 0 {
@@ -1492,7 +1489,7 @@ impl LibcDumpHandler {
       Writes the current game score to disk.
     */
     fn dump_game_score(side_to_move: i32, score_sheet_row_: i32,
-                       black_moves_: &[i32; 60], white_moves_: &[i32; 60]) {
+                       black_moves_: &[i8; 60], white_moves_: &[i8; 60]) {
         let mut i: i32 = 0;
 
         let mut stream = File::create("current.mov").unwrap_or_else(|_| {
@@ -1502,7 +1499,7 @@ impl LibcDumpHandler {
         i = 0;
         while i <= score_sheet_row_ {
             write!(stream, "   {: >2}.    ", i + 1);
-            if black_moves_[i as usize] == -(1 as i32) {
+            if black_moves_[i as usize] == -1 {
                 write!(stream, "- " );
             } else {
                 write!(stream, "{}{}",
@@ -1512,7 +1509,7 @@ impl LibcDumpHandler {
             write!(stream, "  ");
             if i < score_sheet_row_ ||
                 i == score_sheet_row_ && side_to_move == 0 as i32 {
-                if white_moves_[i as usize] == -(1 as i32) {
+                if white_moves_[i as usize] == -1 {
                     write!(stream, "- ");
                 } else {
                     write!(stream, "{}{}",

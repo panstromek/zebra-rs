@@ -39,8 +39,8 @@ pub struct DepthInfo {
 pub struct MidgameState {
     pub allow_midgame_hash_probe: i32,
     pub allow_midgame_hash_update: i32,
-    pub best_mid_move: i32,
-    pub best_mid_root_move: i32,
+    pub best_mid_move: i8,
+    pub best_mid_root_move: i8,
     pub midgame_abort: i32,
     pub do_check_midgame_abort: i32,
     pub counter_phase: i32,
@@ -132,8 +132,8 @@ impl MidgameState {
   not already first in the list.
 */
 pub fn advance_move(index: i32, search: &mut SearchState, moves: &mut MovesState) {
-    let mut temp_move: i32 = 0;
-    if index > 0 as i32 {
+    let mut temp_move = 0;
+    if index > 0 {
         temp_move = search.sorted_move_order[moves.disks_played as usize][index as usize];
         search.sorted_move_order[moves.disks_played as usize][index as usize] =
             search.sorted_move_order[moves.disks_played as
@@ -146,7 +146,7 @@ pub fn advance_move(index: i32, search: &mut SearchState, moves: &mut MovesState
 /*
   midgame_c__update_best_list
 */
-pub fn midgame_c__update_best_list(best_list: &mut [i32; 4], move_0: i32, best_list_index: i32, best_list_length: i32) {
+pub fn midgame_c__update_best_list(best_list: &mut [i8; 4], move_0: i8, best_list_index: i32, best_list_length: i32) {
     let mut i: i32 = 0;
     if best_list_index < best_list_length {
         i = best_list_index;
@@ -228,13 +228,13 @@ pub fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32,
 )
                                                      -> i32 {
     let mut i: i32 = 0;
-    let mut move_0: i32 = 0;
+    let mut move_0 = 0;
     let mut depth_one_score: i32 = 0;
     let mut depth_two_score: i32 = 0;
     let mut best_score_restricted: i32 = 0;
     let mut best_score_unrestricted: i32 = 0;
-    let mut best_move_restricted: i32 = 0;
-    let mut best_move_unrestricted: i32 = 0;
+    let mut best_move_restricted = 0;
+    let mut best_move_unrestricted= 0;
     generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
     best_score_restricted = -(12345678 as i32);
     best_score_unrestricted = -(12345678 as i32);
@@ -321,8 +321,8 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
     let mut best: i32 = 0;
     let mut pre_best: i32 = 0;
     let mut searched: i32 = 0;
-    let mut move_0: i32 = 0;
-    let mut hash_move: i32 = 0;
+    let mut move_0 = 0;
+    let mut hash_move = 0;
     let mut move_index: i32 = 0;
     let mut best_move_index: i32 = 0;
     let mut empties_remaining: i32 = 0;
@@ -340,7 +340,7 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
     let mut best_list_length: i32 = 0;
     let mut selectivity: i32 = 0;
     let mut cut: i32 = 0;
-    let mut best_list: [i32; 4] = [0; 4];
+    let mut best_list: [i8; 4] = [0; 4];
     let mut entry =
         HashEntry{key1: 0,
             key2: 0,
@@ -397,7 +397,7 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
         (use_hash != 0 && midgame_state.allow_midgame_hash_probe != 0) as i32;
     if hash_hit != 0 {
         hash_move = entry.move_0[0]
-    } else { hash_move = 44 as i32 }
+    } else { hash_move = 44 }
     pre_search_done = 0;
     /* Use multi-prob-cut to selectively prune the tree */
     if 1 as i32 != 0 && allow_mpc != 0 && remains <= 22 as i32
@@ -736,7 +736,7 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
                     usize];
             j = i + 1 as i32;
             while j < moves_state.move_count[moves_state.disks_played as usize] {
-                let mut cand_move: i32 = 0;
+                let mut cand_move = 0;
                 cand_move =
                     search_state.sorted_move_order[moves_state.disks_played as
                         usize][midgame_state.feas_index_list[moves_state.disks_played
@@ -932,9 +932,9 @@ fn fast_tree_search(level: i32,
     let mut curr_val: i32 = 0;
     let mut best: i32 = 0;
     let mut move_index: i32 = 0;
-    let mut move_0: i32 = 0;
+    let mut move_0 = 0_i8;
     let mut best_move_index: i32 = 0;
-    let mut best_move: i32 = 0;
+    let mut best_move = 0_i8;
     let mut first: i32 = 0;
     let mut remains: i32 = 0;
     let mut use_hash: i32 = 0;
@@ -980,10 +980,10 @@ fn fast_tree_search(level: i32,
     }
     /* Search */
     first = 1;
-    best_move = -(1 as i32);
-    best_move_index = -(1 as i32);
-    best = -(12345678 as i32);
-    if remains == 1 as i32 {
+    best_move = -1;
+    best_move_index = -1;
+    best = -(12345678);
+    if remains == 1 {
         /* Plain alpha-beta last ply */
         empties_remaining = 60 as i32 - moves_state.disks_played;
         move_index = 0;
@@ -1200,10 +1200,10 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut curr_val: i32 = 0;
-    let mut best: i32 = 0;
+    let mut best = 0;
     let mut pre_best: i32 = 0;
     let mut searched: i32 = 0;
-    let mut move_0: i32 = 0;
+    let mut move_0 = 0;
     let mut move_index: i32 = 0;
     let mut best_move_index: i32 = 0;
     let mut hash_hit: i32 = 0;
@@ -1219,7 +1219,7 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
     let mut best_list_length: i32 = 0;
     let mut selectivity: i32 = 0;
     let mut offset: i32 = 0;
-    let mut best_list: [i32; 4] = [0; 4];
+    let mut best_list: [i8; 4] = [0; 4];
     let mut entry =
         HashEntry{key1: 0,
             key2: 0,
@@ -1360,15 +1360,8 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
                     usize];
             j = i + 1 as i32;
             while j < moves_state.move_count[moves_state.disks_played as usize] {
-                let mut cand_move: i32 = 0;
-                cand_move =
-                    search_state.sorted_move_order[moves_state.disks_played as
-                        usize][midgame_state.feas_index_list[moves_state.disks_played
-                        as
-                        usize][j
-                        as
-                        usize]
-                        as usize];
+                let mut cand_move = 0;
+                cand_move = search_state.sorted_move_order[moves_state.disks_played as usize][midgame_state.feas_index_list[moves_state.disks_played as usize][j as usize] as usize];
                 if search_state.evals[moves_state.disks_played as usize][cand_move as usize] >
                     best_score {
                     best_score =
@@ -1382,8 +1375,7 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
             midgame_state.feas_index_list[moves_state.disks_played as usize][best_index as usize] =
                 midgame_state.feas_index_list[moves_state.disks_played as usize][i as usize]
         }
-        move_0 =
-            search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
+        move_0 = search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
         if search_state.get_ponder_move() == 0 {
             FE::midgame_display_simple_ponder_move(move_0);
         }
@@ -1565,7 +1557,7 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                   mut g_timer: &mut Timer,
                                   mut midgame_state: &mut MidgameState,
 )
-                                         -> i32 {
+                                         -> i8 {
     let mut adjusted_val: i32;
     let mut alpha: i32;
     let mut beta: i32;

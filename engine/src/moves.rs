@@ -26,7 +26,7 @@ use crate::src::zebra::ZebraFrontend;
 pub struct MovesState {
     pub disks_played: i32,
     pub move_count: [i32; 64],
-    pub move_list: [[i32; 64]; 64],
+    pub move_list: [[i8; 64]; 64],
     flip_count: [i32; 65],
     sweep_status: [i32; 64],
 }
@@ -136,7 +136,7 @@ impl MovesState {
     }
 }
 
-pub fn make_move(side_to_move: i32, move_0: i32, update_hash: i32,
+pub fn make_move(side_to_move: i32, move_0: i8, update_hash: i32,
                 moves_state_: &mut MovesState, board_state_: &mut BoardState, hash_state_: &mut HashState, flip_stack: &mut FlipStack) -> i32 {
     if board_state_.board[move_0 as usize] == 0 || board_state_.board[move_0 as usize] == 2 {
         // This should be unreachable, but fuzzer found an instance where it happens:
@@ -201,7 +201,7 @@ pub fn make_move(side_to_move: i32, move_0: i32, update_hash: i32,
   Takes back a move.
 */
 
-pub fn unmake_move(side_to_move: i32, move_0: i32, board: &mut [i32; 128], moves_state_: &mut MovesState, hash_state_: &mut HashState, flip_stack: &mut FlipStack) {
+pub fn unmake_move(side_to_move: i32, move_0: i8, board: &mut [i32; 128], moves_state_: &mut MovesState, hash_state_: &mut HashState, flip_stack: &mut FlipStack) {
     if moves_state_.disks_played < 1  || moves_state_.disks_played > hash_state_.hash_stored1.len() as i32 {
         return;
     }
@@ -231,7 +231,7 @@ pub fn unmake_move(side_to_move: i32, move_0: i32, board: &mut [i32; 128], moves
    GENERATE_SPECIFIC
 */
 
-pub fn generate_specific(curr_move: i32, side_to_move: i32, board: &[i32; 128]) -> i32 {
+pub fn generate_specific(curr_move: i8, side_to_move: i32, board: &[i32; 128]) -> i32 {
     let inc = &flip_direction[curr_move as usize]; //first_flip_direction[curr_move as usize];
     return AnyFlips_compact(board, inc, curr_move, side_to_move,
                             0 as i32 + 2 as i32 - side_to_move);
@@ -246,13 +246,12 @@ pub fn generate_specific(curr_move: i32, side_to_move: i32, board: &[i32; 128]) 
 
 pub fn generate_move(side_to_move: i32, board: &Board,
                             moves_state_: &mut MovesState, search_state_: &SearchState)
-                            -> i32 {
-    let mut move_0: i32 = 0;
+                            -> i8 {
+    let mut move_0 = 0;
     let mut move_index = 0;
     move_index = moves_state_.sweep_status[moves_state_.disks_played as usize];
     while move_index < 60 as i32 {
-        move_0 =
-            search_state_.sorted_move_order[moves_state_.disks_played as usize][move_index as usize];
+        move_0 = search_state_.sorted_move_order[moves_state_.disks_played as usize][move_index as usize];
         if board[move_0 as usize] == 1 as i32 &&
             generate_specific(move_0, side_to_move, board) != 0 {
             moves_state_.sweep_status[moves_state_.disks_played as usize] =
@@ -261,7 +260,7 @@ pub fn generate_move(side_to_move: i32, board: &Board,
         } else { move_index += 1 }
     }
     moves_state_.sweep_status[moves_state_.disks_played as usize] = move_index;
-    return -(1 as i32);
+    return -(1);
 }
 /*
    GENERATE_ALL
@@ -272,12 +271,12 @@ pub fn generate_all(side_to_move: i32, moves_state_: &mut MovesState, search_sta
     moves_state_.reset_generation(side_to_move);
     let mut count = 0;
     let mut curr_move = generate_move(side_to_move, board, moves_state_, search_state_);
-    while curr_move != -(1 as i32) {
+    while curr_move != -1 {
         moves_state_.move_list[moves_state_.disks_played as usize][count as usize] = curr_move;
         count += 1;
         curr_move = generate_move(side_to_move, board, moves_state_, search_state_)
     }
-    moves_state_.move_list[moves_state_.disks_played as usize][count as usize] = -(1 as i32);
+    moves_state_.move_list[moves_state_.disks_played as usize][count as usize] = -1;
     moves_state_.move_count[moves_state_.disks_played as usize] = count;
 }
 /*
@@ -290,9 +289,9 @@ fn count_all_wrapper(side_to_move: i32, empty: i32, board: &Board, moves_state_:
     count_all(side_to_move, empty, board, current_move_order)
 }
 
-pub fn count_all(side_to_move: i32, empty: i32, board: &Board, current_move_order_sorted: &[i32; 64]) -> i32 {
-    let mut move_0: i32 = 0;
-    let mut move_index: i32 = 0;
+pub fn count_all(side_to_move: i32, empty: i32, board: &Board, current_move_order_sorted: &[i8; 64]) -> i32 {
+    let mut move_0 = 0;
+    let mut move_index = 0;
     let mut mobility: i32 = 0;
     let mut found_empty: i32 = 0;
     mobility = 0;
@@ -335,7 +334,7 @@ pub fn game_in_progress(moves_state_: &mut MovesState, search_state_: &SearchSta
    is not updated - the move has to be unmade using UNMAKE_MOVE_NO_HASH().
 */
 
-pub fn make_move_no_hash(side_to_move: i32, move_0: i32, board_state_: &mut BoardState, moves_state_: &mut MovesState, flip_stack: &mut FlipStack)
+pub fn make_move_no_hash(side_to_move: i32, move_0: i8, board_state_: &mut BoardState, moves_state_: &mut MovesState, flip_stack: &mut FlipStack)
                                 -> i32 {
     let flipped = DoFlips_no_hash(move_0, side_to_move, &mut board_state_.board, flip_stack);
     if flipped == 0 as i32 { return 0 as i32 }
@@ -367,7 +366,7 @@ pub fn make_move_no_hash(side_to_move: i32, move_0: i32, board_state_: &mut Boar
   updating hash table, preferrable through MAKE_MOVE_NO_HASH().
 */
 
-pub fn unmake_move_no_hash(side_to_move: i32, move_0: i32, board: &mut [i32; 128], moves_state_: &mut MovesState, flip_stack: &mut FlipStack) {
+pub fn unmake_move_no_hash(side_to_move: i32, move_0: i8, board: &mut [i32; 128], moves_state_: &mut MovesState, flip_stack: &mut FlipStack) {
     board[move_0 as usize] = 1;
     moves_state_.disks_played -= 1;
     let mut UndoFlips__flip_count = moves_state_.flip_count[moves_state_.disks_played as usize];
@@ -390,22 +389,22 @@ pub fn unmake_move_no_hash(side_to_move: i32, move_0: i32, board: &mut [i32; 128
    Determines if a move is legal.
 */
 
-pub fn valid_move(move_0: i32, side_to_move: i32, board: &[i32; 128]) -> i32{
-    let mut i: i32 = 0;
-    let mut pos: i32 = 0;
-    let mut count: i32 = 0;
-    if move_0 < 11 as i32 || move_0 > 88 as i32 ||
-        board[move_0 as usize] != 1 as i32 {
+pub fn valid_move(move_0: i8, side_to_move: i32, board: &[i32; 128]) -> i32{
+    let mut i = 0;
+    let mut pos = 0;
+    let mut count = 0;
+    if move_0 < 11 || move_0 > 88 ||
+        board[move_0 as usize] != 1 {
         return 0 as i32
     }
     i = 0;
     while i < 8 as i32 {
         if dir_mask[move_0 as usize] & (1 as i32) << i != 0 {
-            pos = move_0 + move_offset[i as usize] as i32;
+            pos = move_0 + move_offset[i as usize];
             count = 0;
             while board[pos as usize] ==
                 0 as i32 + 2 as i32 - side_to_move {
-                pos += move_offset[i as usize] as i32;
+                pos += move_offset[i as usize];
                 count += 1
             }
             if board[pos as usize] == side_to_move {

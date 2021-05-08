@@ -31,9 +31,9 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
     let mut quit;
     let mut repeat;
     let mut command;
-    let mut move_0;
+    let mut move_0: i8;
     let mut old_stm: [i32; 61] = [0; 61];
-    let mut move_list: [i32; 61] = [0; 61];
+    let mut move_list: [i8; 61] = [0; 61];
     let mut row: [i32; 61] = [0; 61];
     static SRC: LibcTimeSource = LibcTimeSource {};
     let mut full_state = FullState::new(&SRC);
@@ -126,7 +126,7 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
                     repeat = 1 as i32
                 } else {
                     generate_all(side_to_move, &mut (g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board);
-                    move_0 = move_string[0] as i32 - 'a' as i32 + 1 + 10 * (move_string[1] as i32 - '0' as i32);
+                    move_0 = (move_string[0] as i32 - 'a' as i32 + 1 + 10 * (move_string[1] as i32 - '0' as i32)) as i8;
                     if move_string[0] as i32 >= 'a' as i32 &&
                         move_string[0] as i32 <= 'h' as i32 &&
                         move_string[1] as i32 >= '1' as i32 &&

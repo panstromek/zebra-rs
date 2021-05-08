@@ -26,16 +26,16 @@ pub struct SearchState {
     pub total_time: f64,
     pub root_eval: i32,
     pub full_pv_depth: i32,
-    pub full_pv: [i32; 120],
+    pub full_pv: [i8; 120],
     pub list_inherited: [i32; 62],
-    pub sorted_move_order: [[i32; 64]; 64],
+    pub sorted_move_order: [[i8; 64]; 64],
     /* 61*60 used */
     pub evals: [Board; 61],
     pub nodes: CounterType,
     pub total_nodes: CounterType,
     pub evaluations: CounterType,
     pub total_evaluations: CounterType,
-    pub pondered_move: i32,
+    pub pondered_move: i8,
     pub negate_eval: i32,
     pub last_eval: EvaluationType,
 }
@@ -66,46 +66,27 @@ pub static force_return: i32 = 0;
 /* When no other information is available, JCW's endgame
    priority order is used also in the midgame. */
 
-pub static position_list: [i32; 100] =
-    [11 as i32, 18 as i32, 81 as i32,
-        88 as i32, 13 as i32, 16 as i32,
-        31 as i32, 38 as i32, 61 as i32,
-        68 as i32, 83 as i32, 86 as i32,
-        33 as i32, 36 as i32, 63 as i32,
-        66 as i32, 14 as i32, 15 as i32,
-        41 as i32, 48 as i32, 51 as i32,
-        58 as i32, 84 as i32, 85 as i32,
-        34 as i32, 35 as i32, 43 as i32,
-        46 as i32, 53 as i32, 56 as i32,
-        64 as i32, 65 as i32, 24 as i32,
-        25 as i32, 42 as i32, 47 as i32,
-        52 as i32, 57 as i32, 74 as i32,
-        75 as i32, 23 as i32, 26 as i32,
-        32 as i32, 37 as i32, 62 as i32,
-        67 as i32, 73 as i32, 76 as i32,
-        12 as i32, 17 as i32, 21 as i32,
-        28 as i32, 71 as i32, 78 as i32,
-        82 as i32, 87 as i32, 22 as i32,
-        27 as i32, 72 as i32, 77 as i32,
-        44 as i32, 45 as i32, 54 as i32,
-        45 as i32, 0 as i32, 1 as i32, 2 as i32,
-        3 as i32, 4 as i32, 5 as i32, 6 as i32,
-        7 as i32, 8 as i32, 9 as i32, 19 as i32,
-        29 as i32, 39 as i32, 49 as i32,
-        59 as i32, 69 as i32, 79 as i32,
-        89 as i32, 10 as i32, 20 as i32,
-        30 as i32, 40 as i32, 50 as i32,
-        60 as i32, 70 as i32, 80 as i32,
-        90 as i32, 91 as i32, 92 as i32,
-        93 as i32, 94 as i32, 95 as i32,
-        96 as i32, 97 as i32, 98 as i32,
-        99 as i32];
+pub static position_list: [i8; 100] =
+    [11, 18, 81, 88, 13, 16, 31, 38, 61,
+        68, 83, 86, 33, 36, 63,
+        66, 14, 15, 41, 48, 51,
+        58, 84, 85, 34, 35, 43,
+        46, 53, 56, 64, 65, 24,
+        25, 42, 47, 52, 57, 74,
+        75, 23, 26, 32, 37, 62, 67, 73,
+        76, 12, 17, 21, 28, 71, 78, 82,
+        87, 22, 27, 72, 77, 44, 45, 54, 45, 0, 1, 2,
+        3, 4, 5, 6, 7, 8, 9, 19,
+        29, 39, 49, 59, 69, 79,
+        89, 10, 20, 30, 40, 50, 60, 70, 80,
+        90, 91, 92, 93, 94, 95,
+        96, 97, 98, 99];
 
 /*
   INIT_MOVE_LISTS
   Initalize the self-organizing move lists.
 */
-fn init_move_lists(sorted_move_order_: &mut [[i32; 64]; 64]) {
+fn init_move_lists(sorted_move_order_: &mut [[i8; 64]; 64]) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     i = 0;
@@ -140,7 +121,7 @@ fn init_move_lists(sorted_move_order_: &mut [[i32; 64]; 64]) {
   corresponding to the same parity (i.e., in practice side to move).
 */
 
-pub fn inherit_move_lists(stage: i32, sorted_move_order_: &mut [[i32; 64]; 64], list_inherited_: &mut [i32; 62]) {
+pub fn inherit_move_lists(stage: i32, sorted_move_order_: &mut [[i8; 64]; 64], list_inherited_: &mut [i32; 62]) {
     let mut i: i32 = 0;
     let mut last: i32 = 0;
     if stage >= 61 || stage < 0 {
@@ -168,14 +149,14 @@ pub fn inherit_move_lists(stage: i32, sorted_move_order_: &mut [[i32; 64]; 64], 
   in many variations in the tree.
 */
 
-pub fn reorder_move_list(board_: & crate::src::globals::Board, stage_sorted_move_order: &mut [i32; 64]) {
+pub fn reorder_move_list(board_: & crate::src::globals::Board, stage_sorted_move_order: &mut [i8; 64]) {
     let dont_touch = 24;
     let mut i: i32 = 0;
-    let mut move_0: i32 = 0;
+    let mut move_0= 0;
     let mut empty_pos: i32 = 0;
     let mut nonempty_pos: i32 = 0;
-    let mut empty_buffer: [i32; 60] = [0; 60];
-    let mut nonempty_buffer: [i32; 60] = [0; 60];
+    let mut empty_buffer: [i8; 60] = [0; 60];
+    let mut nonempty_buffer: [i8; 60] = [0; 60];
     empty_pos = 0;
     i = 0;
     while i < 60 as i32 {
@@ -268,10 +249,10 @@ pub fn sort_moves(list_size: i32, moves: &mut MovesState, search: &SearchState) 
   Moves this move to the front of the sub-list.
 */
 
-pub fn select_move(first: i32, list_size: i32, search_state_: &mut SearchState, moves_state_: &mut MovesState) -> i32 {
+pub fn select_move(first: i32, list_size: i32, search_state_: &mut SearchState, moves_state_: &mut MovesState) -> i8 {
     let mut i: i32 = 0;
-    let mut temp_move: i32 = 0;
-    let mut best: i32 = 0;
+    let mut temp_move = 0;
+    let mut best = 0;
     let mut best_eval: i32 = 0;
     best = first;
     best_eval =
@@ -306,7 +287,7 @@ pub fn select_move(first: i32, list_size: i32, search_state_: &mut SearchState, 
   Return 1 if the move was found, 0 otherwise.
 */
 
-pub fn float_move(move_0: i32, list_size: i32, state: &mut MovesState) -> i32 {
+pub fn float_move(move_0: i8, list_size: i32, state: &mut MovesState) -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     i = 0;
@@ -332,7 +313,7 @@ pub fn float_move(move_0: i32, list_size: i32, state: &mut MovesState) -> i32 {
    Saves the principal variation (the first row of the PV matrix).
 */
 
-pub fn store_pv(pv_buffer: &mut [i32], depth_buffer: &mut i32, state: &BoardState) {
+pub fn store_pv(pv_buffer: &mut [i8], depth_buffer: &mut i32, state: &BoardState) {
     let mut i = 0;
     while i < state.pv_depth[0] {
         pv_buffer[(i as usize)] = state.pv[0][i as usize];
@@ -345,7 +326,7 @@ pub fn store_pv(pv_buffer: &mut [i32], depth_buffer: &mut i32, state: &BoardStat
    Put the stored principal variation back into the PV matrix.
 */
 
-pub fn restore_pv(pv_buffer: &[i32], depth_buffer: i32, state: &mut BoardState) {
+pub fn restore_pv(pv_buffer: &[i8], depth_buffer: i32, state: &mut BoardState) {
     let mut i: i32 = 0;
     i = 0;
     while i < depth_buffer {
@@ -363,7 +344,7 @@ pub fn restore_pv(pv_buffer: &[i32], depth_buffer: i32, state: &mut BoardState) 
   been made.
 */
 impl SearchState {
-    pub fn set_ponder_move(&mut self, move_0: i32) {
+    pub fn set_ponder_move(&mut self, move_0: i8) {
         self.pondered_move = move_0;
     }
 
@@ -371,7 +352,7 @@ impl SearchState {
         self.pondered_move = 0;
     }
 
-    pub fn get_ponder_move(&self) -> i32 {
+    pub fn get_ponder_move(&self) -> i8 {
         return self.pondered_move;
     }
 }
@@ -551,9 +532,8 @@ pub fn hash_expand_pv(mut side_to_move: i32, mode: i32, flags: i32, max_selectiv
                 entry.flags as i32 & flags != 0 &&
                 entry.selectivity as i32 <= max_selectivity &&
                 board_state_.board[entry.move_0[0] as usize] == 1 &&
-                make_move(side_to_move, entry.move_0[0], 1, moves_state_, board_state_, hash_state_, flip_stack) != 0 {
-                new_pv[new_pv_depth] =
-                    entry.move_0[0];
+                make_move(side_to_move, entry.move_0[0] , 1, moves_state_, board_state_, hash_state_, flip_stack) != 0 {
+                new_pv[new_pv_depth] = entry.move_0[0];
                 new_pv_depth += 1;
                 pass_count = 0
             } else {
@@ -607,7 +587,7 @@ pub fn complete_pv<FE: FrontEnd>(mut side_to_move: i32, search_state_: &mut Sear
                 search_state_.full_pv_depth += 1
             } else {
                 let pv_0_depth: i32 = board_state_.pv_depth[0];
-                let pv_0: &[i32; 64] = &board_state_.pv[0];
+                let pv_0: &[i8; 64] = &board_state_.pv[0];
                 FE::handle_fatal_pv_error(i, pv_0_depth, pv_0);
             }
         }

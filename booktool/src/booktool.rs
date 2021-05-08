@@ -807,7 +807,7 @@ unsafe fn do_restricted_minimax(index: i32,
     let mut child: i32 = 0;
     let mut corrected_score: i32 = 0;
     let mut side_to_move: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     let mut child_count: i32 = 0;
     let mut slot: i32 = 0;
     let mut val1: i32 = 0;
@@ -950,7 +950,7 @@ unsafe fn do_midgame_statistics(index: i32,
     let mut depth: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     let mut slot: i32 = 0;
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
@@ -1119,7 +1119,7 @@ pub unsafe fn generate_midgame_statistics(max_depth:
 */
 unsafe fn endgame_correlation(mut side_to_move: i32,
                               best_score: i32,
-                              best_move: i32,
+                              best_move: i8,
                               min_disks: i32,
                               max_disks: i32,
                               spec: StatisticsSpec, echo:i32, g_state: &mut FullState) {
@@ -1250,7 +1250,7 @@ unsafe fn do_endgame_statistics(index: i32,
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     let mut slot: i32 = 0;
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
@@ -1387,7 +1387,7 @@ unsafe fn do_clear(index: i32, low: i32,
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     let mut slot: i32 = 0;
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
@@ -1502,7 +1502,7 @@ unsafe fn do_correct(index: i32,
     let mut pos: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     let mut outcome: i32 = 0;
     let mut really_evaluate: i32 = 0;
     let mut slot: i32 = 0;
@@ -1510,7 +1510,7 @@ unsafe fn do_correct(index: i32,
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
     let mut child_count: i32 = 0;
-    let mut child_move: [i32; 64] = [0; 64];
+    let mut child_move: [i8; 64] = [0; 64];
     let mut child_node: [i32; 64] = [0; 64];
     if g_state.g_book.evaluated_count >= g_state.g_book.max_eval_count { return }
     if (*g_state.g_book.node.offset(index as isize)).flags as i32 & 8 as i32
@@ -1571,11 +1571,11 @@ unsafe fn do_correct(index: i32,
                 sprintf(move_hist.offset((2 as i32 * g_state.moves_state.disks_played) as
                     isize),
                         b"%c%c\x00" as *const u8 as *const i8,
-                        'a' as i32 + this_move % 10 as i32 -
+                        'a' as i32 + this_move as i32 % 10 as i32 -
                             1 as i32,
-                        '0' as i32 + this_move / 10 as i32);
+                        '0' as i32 + this_move as i32 / 10 as i32);
                 make_move(side_to_move, this_move, 1 as i32 , &mut g_state.moves_state, &mut g_state.board_state, &mut g_state.hash_state, &mut g_state.flip_stack_ );
-                do_correct(child_node[i as usize], max_empty, full_solve,
+                do_correct(child_node[i as usize] as i32, max_empty, full_solve,
                            target_name, move_hist, echo, g_state);
                 let move_0 = this_move;
                 {
@@ -1871,9 +1871,9 @@ unsafe fn do_export(index: i32, stream: FileHandle,
         let mut val1: i32 = 0;
         let mut val2: i32 = 0;
         let mut orientation: i32 = 0;
-        let this_move: i32 =
+        let this_move =
             g_state.moves_state.move_list[g_state.moves_state.disks_played as usize][i as usize];
-        *(move_vec.as_mut_ptr()).offset(g_state.moves_state.disks_played as isize) = this_move;
+        *(move_vec.as_mut_ptr()).offset(g_state.moves_state.disks_played as isize) = this_move as i32;
         make_move(side_to_move, this_move, 1 as i32 , &mut g_state.moves_state, &mut g_state.board_state, &mut g_state.hash_state, &mut g_state.flip_stack_ );
         let val0___ = &mut val1;
         let val1___ = &mut val2;
@@ -2284,7 +2284,7 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
     let mut base_orientation: i32 = 0;
     let mut child_orientation: i32 = 0;
     let mut side_to_move: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     let mut current: i32 = 0;
     let mut child: i32 = 0;
     let mut next: i32 = 0;
@@ -2317,7 +2317,7 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
         } else { side_to_move = 2 as i32 }
         generate_all(side_to_move, &mut g_state.moves_state, &g_state.search_state, &g_state.board_state.board);
         next = -(1 as i32);
-        this_move = -(1 as i32);
+        this_move = -1;
         i = 0;
         while i < g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] {
             let val0___ = &mut val1;
@@ -2361,7 +2361,7 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
             } else {
                 this_move =
                     (*g_state.g_book.node.offset(current as isize)).best_alternative_move as
-                        i32;
+                        i8;
                 this_move =
                     *g_state.g_book.inv_symmetry_map[base_orientation as
                         usize].offset(this_move as isize) as _
@@ -2374,9 +2374,9 @@ pub unsafe fn display_doubly_optimal_line(original_side_to_move:
                        line);
             }
             printf(b"%c%c  \x00" as *const u8 as *const i8,
-                   'a' as i32 + this_move % 10 as i32 -
+                   'a' as i32 + this_move as i32 % 10 as i32 -
                        1 as i32,
-                   '0' as i32 + this_move / 10 as i32);
+                   '0' as i32 + this_move as i32 / 10 as i32);
             if side_to_move == 2 as i32 {
                 write!(stdout, "\n");
             }
@@ -2522,7 +2522,7 @@ pub unsafe fn convert_opening_list(base_file:
     let mut hash_val1: i32 = 0;
     let mut hash_val2: i32 = 0;
     let mut orientation: i32 = 0;
-    let mut op_move: [i32; 60] = [0; 60];
+    let mut op_move: [i8; 60] = [0; 60];
     let mut side_to_move: [i32; 60] = [0; 60];
     let mut timer: time_t = 0;
     in_stream =
@@ -2650,7 +2650,7 @@ pub unsafe fn convert_opening_list(base_file:
             move_ptr = move_ptr.offset(1);
             row = *move_ptr as i32 - '0' as i32;
             move_ptr = move_ptr.offset(1);
-            op_move[j as usize] = 10 as i32 * row + col;
+            op_move[j as usize] = (10 * row + col) as i8;
             j += 1
         }
         /* Check out how the relation between this openings and the ones
@@ -2842,7 +2842,7 @@ unsafe fn do_uncompress(depth: i32,
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     if *flags.offset(*node_index as isize) as i32 & 1 as i32
         != 0 {
         side_to_move = 0 as i32
@@ -2887,15 +2887,14 @@ unsafe fn do_uncompress(depth: i32,
     i = 0;
     while i < saved_child_count {
         let mut flipped: i32 = 0;
-        this_move =
-            *child.offset((saved_child_index + i) as isize) as i32;
+        this_move = *child.offset((saved_child_index + i) as isize) as i8;
         flipped = make_move_no_hash(side_to_move, this_move, &mut g_state.board_state, &mut g_state.moves_state, &mut g_state.flip_stack_ );
         if flipped == 0 as i32 {
             printf(b"%c%c flips %d discs for %d\n\x00" as *const u8 as
                        *const i8,
-                   'a' as i32 + this_move % 10 as i32 -
+                   'a' as i32 + this_move as i32 % 10 as i32 -
                        1 as i32,
-                   '0' as i32 + this_move / 10 as i32, flipped,
+                   '0' as i32 + this_move as i32 / 10 as i32, flipped,
                    side_to_move);
         }
         do_uncompress(depth + 1 as i32, stream, node_index,
@@ -3074,7 +3073,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
     let mut col: i32 = 0;
     let mut line: i32 = 0;
     let mut score: i32 = 0;
-    let mut move_0: i32 = 0;
+    let mut move_0 = 0;
     let mut wld_only: i32 = 0;
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
@@ -3328,17 +3327,12 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
              created. */
             if moves_read > 0 as i32 {
                 /* Make sure the optimal move leads to a position in the hash table */
-                let mut row: i32 = 0;
-                let mut col_0: i32 = 0;
-                row =
-                    move_buffer[1] as i32 -
-                        '0' as i32;
-                col_0 =
-                    tolower(move_buffer[0] as
-                        i32) - 'a' as i32 + 1 as i32;
-                move_0 = 10 as i32 * row + col_0;
-                if row >= 1 as i32 && row <= 8 as i32 &&
-                    col_0 >= 1 as i32 && col_0 <= 8 as i32
+
+                let row = move_buffer[1] - b'0' as i8;
+                let col_0 = (tolower(move_buffer[0] as i32) as i8 - b'a' as i8 + 1) as i8;
+                move_0 = 10 * row + col_0;
+                if row >= 1 && row <= 8 &&
+                    col_0 >= 1 && col_0 <= 8
                     && make_move_no_hash(side_to_move, move_0, &mut g_state.board_state, &mut g_state.moves_state, &mut g_state.flip_stack_ ) != 0 {
                     let mut new_side_to_move =
                         0 as i32 + 2 as i32 - side_to_move;
@@ -3577,7 +3571,7 @@ pub unsafe fn do_validate(index: i32, echo:i32, g_state: &mut FullState) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     let mut slot: i32 = 0;
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
@@ -3631,7 +3625,7 @@ pub unsafe fn do_evaluate(index: i32, echo:i32, g_state: &mut FullState) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     let mut slot: i32 = 0;
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
@@ -3765,13 +3759,13 @@ pub unsafe fn do_examine(index: i32,  g_state: &mut FullState) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     let mut slot: i32 = 0;
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
     let mut child_count: i32 = 0;
-    let mut child_move: [i32; 64] = [0; 64];
+    let mut child_move: [i8; 64] = [0; 64];
     let mut child_node: [i32; 64] = [0; 64];
     if (*g_state.g_book.node.offset(index as isize)).flags as i32 & 8 as i32
         == 0 {
@@ -3888,8 +3882,8 @@ pub unsafe fn do_compress(index: i32,
     let mut orientation: i32 = 0;
     let mut found: i32 = 0;
     let mut local_child_list: [i32; 64] = [0; 64];
-    let mut this_move: i16 = 0;
-    let mut local_child_move: [i16; 64] = [0; 64];
+    let mut this_move = 0;
+    let mut local_child_move: [i8; 64] = [0; 64];
     if (*g_state.g_book.node.offset(index as isize)).flags as i32 & 8 as i32
         == 0 {
         return
@@ -3903,9 +3897,8 @@ pub unsafe fn do_compress(index: i32,
     generate_all(side_to_move, &mut g_state.moves_state, &g_state.search_state, &g_state.board_state.board);
     i = 0;
     while i < g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] {
-        this_move =
-            g_state.moves_state.move_list[g_state.moves_state.disks_played as usize][i as usize] as i16;
-        make_move(side_to_move, this_move as i32, 1 as i32 , &mut g_state.moves_state, &mut g_state.board_state, &mut g_state.hash_state, &mut g_state.flip_stack_ );
+        this_move = g_state.moves_state.move_list[g_state.moves_state.disks_played as usize][i as usize];
+        make_move(side_to_move, this_move, 1 as i32 , &mut g_state.moves_state, &mut g_state.board_state, &mut g_state.hash_state, &mut g_state.flip_stack_ );
         get_hash(&mut val1, &mut val2, &mut orientation, &mut g_state.g_book, &g_state.board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_state.g_book);
         child = *g_state.g_book.book_hash_table.offset(slot as isize);
@@ -3924,11 +3917,11 @@ pub unsafe fn do_compress(index: i32,
                 local_child_list[valid_child_count as usize] = child;
                 local_child_move[valid_child_count as usize] = this_move;
                 valid_child_count += 1;
-                *child_list.offset(*child_index as isize) = this_move;
+                *child_list.offset(*child_index as isize) = this_move as i16;
                 *child_index += 1
             }
         }
-        let move_0 = this_move as i32;
+        let move_0 = this_move;
         {
             unmake_move(side_to_move, move_0, &mut g_state.board_state.board, &mut g_state.moves_state, &mut g_state.hash_state, &mut g_state.flip_stack_);
         };
@@ -3940,10 +3933,10 @@ pub unsafe fn do_compress(index: i32,
     i = 0;
     while i < valid_child_count {
         this_move = local_child_move[i as usize];
-        make_move(side_to_move, this_move as i32, 1 as i32 , &mut g_state.moves_state, &mut g_state.board_state, &mut g_state.hash_state, &mut g_state.flip_stack_ );
+        make_move(side_to_move, this_move, 1 as i32 , &mut g_state.moves_state, &mut g_state.board_state, &mut g_state.hash_state, &mut g_state.flip_stack_ );
         do_compress(local_child_list[i as usize], node_order, child_count,
                     node_index, child_list, child_index, g_state);
-        let move_0 = this_move as i32;
+        let move_0 = this_move;
         {
             unmake_move(side_to_move, move_0, &mut g_state.board_state.board, &mut g_state.moves_state, &mut g_state.hash_state, &mut g_state.flip_stack_);
         };

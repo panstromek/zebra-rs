@@ -299,7 +299,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                  0 as i32, 0 as i32,
                                  8 as i32, 60 as i32,
                                  60 as i32, 1 as i32,
-                                 &mut ev_info, g_state)
+                                 &mut ev_info, g_state) as i32
             } else {
                 move_0 = game_moves[g_state.moves_state.disks_played as usize];
                 if g_state.moves_state.disks_played >= first_allowed_dev &&
@@ -340,7 +340,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     i_0 = 0;
                     while i_0 < get_evaluated_count() {
                         let mut ev_info_0: EvaluatedMove = get_evaluated(i_0);
-                        choices[i_0 as usize].move_0 = ev_info_0.move_0;
+                        choices[i_0 as usize].move_0 = ev_info_0.move_0 as i32;
                         choices[i_0 as usize].score =
                             ev_info_0.eval.score / 128 as i32;
                         best_score =
@@ -433,7 +433,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     }
                 }
             }
-            if valid_move(move_0, side_to_move, &g_state.board_state.board) == 0 {
+            if valid_move(move_0 as i8, side_to_move, &g_state.board_state.board) == 0 {
                 fprintf(stderr,
                         b"Game #%d contains illegal move %d @ #%d.\n\x00" as
                             *const u8 as *const i8, games_read,
@@ -447,7 +447,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 exit(1 as i32);
             }
             game_moves[g_state.moves_state.disks_played as usize] = move_0;
-            if make_move(side_to_move, move_0, 1 as i32, &mut g_state.moves_state, &mut g_state.board_state, &mut g_state.hash_state, &mut &mut g_state.flip_stack_) ==
+            if make_move(side_to_move, move_0 as i8, 1 as i32, &mut g_state.moves_state, &mut g_state.board_state, &mut g_state.hash_state, &mut &mut g_state.flip_stack_) ==
                 0 as i32 {
                 fprintf(stderr,
                         b"Internal error: \'Legal\' move flips no discs.\n\x00"

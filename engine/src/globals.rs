@@ -27,12 +27,12 @@ pub type Board = [i32; 128];
 */
 
 pub struct BoardState {
-    pub pv: [[i32; 64]; 64],
+    pub pv: [[i8; 64]; 64],
     pub pv_depth: [i32; 64],
     pub score_sheet_row: i32,
     pub piece_count: [[i32; 64]; 3],
-    pub black_moves: [i32; 60],
-    pub white_moves: [i32; 60],
+    pub black_moves: [i8; 60],
+    pub white_moves: [i8; 60],
     pub board: Board,
 }
 

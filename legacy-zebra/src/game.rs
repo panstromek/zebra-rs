@@ -31,7 +31,7 @@ use crate::send_status;
 
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
-pub static mut prefix_move: i32 = 0;
+pub static mut prefix_move: i8 = 0;
 pub static mut evaluated_list: [EvaluatedMove; 60] = [EvaluatedMove {
     eval: EvaluationType {
         type_0: MIDGAME_EVAL,
@@ -232,10 +232,10 @@ pub unsafe fn game_init(file_name: *const i8, side_to_move: &mut i32, g_state: &
 
 pub struct LibcPonderMoveReport;
 impl LibcFatalError {
-    fn report_move_evals(expect_count: i32, move_list_item: &[i32; 64], evals_item: &[i32; 128]) {
+    fn report_move_evals(expect_count: i32, move_list_item: &[i8; 64], evals_item: &[i32; 128]) {
         let mut i = 0;
         while i < expect_count {
-            let move__ = move_list_item[i as usize];
+            let move__ = move_list_item[i as usize] as i32;
             let move_eval = evals_item[move__ as usize];
             unsafe {
                 printf(b"%c%c %-6.2f  \x00" as *const u8 as *const i8,
@@ -249,10 +249,10 @@ impl LibcFatalError {
         }
     }
 
-    fn report_hash_move(hash_move: i32) {
+    fn report_hash_move(hash_move: i8) {
         unsafe {
             printf(b"%s=%d\n\x00" as *const u8 as *const i8,
-                   b"hash move\x00" as *const u8 as *const i8, hash_move);
+                   b"hash move\x00" as *const u8 as *const i8, hash_move as i32);
         }
     }
 }
@@ -304,10 +304,10 @@ pub unsafe fn ponder_move<
     let mut move_stop_time: f64 = 0.;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     let mut expect_count: i32 = 0;
-    let mut expect_list: [i32; 64] = [0; 64];
-    let mut best_pv: [i32; 61] = [0; 61];
+    let mut expect_list: [i8; 64] = [0; 64];
+    let mut best_pv: [i8; 61] = [0; 61];
     /* Disable all time control mechanisms as it's the opponent's
        time we're using */
     g_timer.toggle_abort_check(0 as i32);
@@ -469,7 +469,7 @@ pub unsafe fn get_search_statistics(max_depth: &mut i32, node_count: &mut f64, g
   Returns the principal variation.
 */
 
-pub unsafe fn get_pv(destin: &mut [i32], g_state: &mut FullState) -> i32 {
+pub unsafe fn get_pv(destin: &mut [i8], g_state: &mut FullState) -> i32 {
     let FullState {
        ref  mut g_config,
        ref  mut learn_state,
@@ -519,16 +519,16 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                                                   mut mid: i32,
                                                   mut exact: i32,
                                                   mut wld: i32, mut echo: i32, g_state: &mut FullState)
-                                                  -> i32 {
+                                                  -> i8 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut index: i32 = 0;
     let mut changed: i32 = 0;
-    let mut this_move: i32 = 0;
+    let mut this_move = 0;
     let mut disc_diff: i32 = 0;
     let mut corrected_diff: i32 = 0;
-    let mut best_move: i32 = 0;
-    let mut temp_move: i32 = 0;
+    let mut best_move = 0;
+    let mut temp_move = 0;
     let mut best_score: i32 = 0;
     let mut best_pv_depth: i32 = 0;
     let mut stored_echo: i32 = 0;
@@ -540,8 +540,8 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
     let mut first_iteration: i32 = 0;
     let mut unsearched: i32 = 0;
     let mut unsearched_count: i32 = 0;
-    let mut unsearched_move: [i32; 61] = [0; 61];
-    let mut best_pv: [i32; 60] = [0; 60];
+    let mut unsearched_move: [i8; 61] = [0; 61];
+    let mut best_pv: [i8; 60] = [0; 60];
     let mut transform1: [u32; 60] = [0; 60];
     let mut transform2: [u32; 60] = [0; 60];
     let mut book_move =
@@ -651,7 +651,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
             (g_state.search_state).set_current_eval(eval);
         } else {
             (g_state.board_state).pv_depth[0] = 0;
-            best_move = -(1 as i32);
+            best_move = -1;
             book_eval_info =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
                                  0 as i32, 0.0f64, 0 as i32,
@@ -1136,7 +1136,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
 */
 
 pub unsafe fn perform_extended_solve(side_to_move: i32,
-                                                actual_move: i32,
+                                                actual_move: i8,
                                                 book: i32,
                                                 exact_solve:
                                                     i32, g_state: &mut FullState) {
@@ -1144,7 +1144,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     let mut mid: i32 = 0;
     let mut wld: i32 = 0;
     let mut exact: i32 = 0;
-    let mut best_move: i32 = 0;
+    let mut best_move = 0;
     let mut disc_diff: i32 = 0;
     let mut corrected_diff: i32 = 0;
     let mut temp =
@@ -1329,7 +1329,7 @@ pub unsafe fn compute_move(side_to_move: i32,
                            wld: i32,
                            search_forced: i32,
                            eval_info: &mut EvaluationType, g_state: &mut FullState)
-                           -> i32 {
+                           -> i8 {
     let mut g_config = (&mut g_state.g_config);
     let mut learn_state = (&mut g_state.learn_state);
     let mut midgame_state = (&mut g_state.midgame_state);
@@ -1396,7 +1396,7 @@ fn display_status_out() {
     unsafe { display_status(stdout, 0 as i32); }
 }
 
-fn echo_ponder_move_4(curr_move: i32, ponder_move: i32) {
+fn echo_ponder_move_4(curr_move: i8, ponder_move: i8) {
     unsafe {
         send_status!(display_state, "-->   {}        ",
                     "Thor database");
@@ -1408,7 +1408,7 @@ fn echo_ponder_move_4(curr_move: i32, ponder_move: i32) {
     }
 }
 
-fn echo_ponder_move_2(curr_move: i32, ponder_move: i32) {
+fn echo_ponder_move_2(curr_move: i8, ponder_move: i8) {
     unsafe {
         send_status!(display_state, "-->   {}        ",
                     "Thor database");
@@ -1420,7 +1420,7 @@ fn echo_ponder_move_2(curr_move: i32, ponder_move: i32) {
     }
 }
 
-fn echo_ponder_move(curr_move: i32, ponder_move: i32) {
+fn echo_ponder_move(curr_move: i8, ponder_move: i8) {
     unsafe {
         send_status!(display_state, "-->   Forced opening move        ");
         if ponder_move != 0 {
@@ -1431,7 +1431,7 @@ fn echo_ponder_move(curr_move: i32, ponder_move: i32) {
     }
 }
 
-fn echo_compute_move_2(info: &EvaluationType, disk: i32) {
+fn echo_compute_move_2(info: &EvaluationType, disk: i8) {
     unsafe {
         let mut eval_str = produce_eval_text(info, 0 as i32);
         send_status!(display_state, "-->         ");
@@ -1477,7 +1477,7 @@ fn create_log_file_if_needed() -> Option<Self> {
     }
 }
 
-fn log_moves_generated(logger: &mut LogFileHandler, moves_generated: i32, move_list_for_disks_played: &[i32; 64]) {
+fn log_moves_generated(logger: &mut LogFileHandler, moves_generated: i32, move_list_for_disks_played: &[i8; 64]) {
     write!(&mut logger.log_file, "{} {}: ", moves_generated, "moves generated");
     let mut i = 0;
     while i < moves_generated {
@@ -1498,7 +1498,7 @@ fn log_best_move_pass(logger: &mut LogFileHandler) {
     }
 }
 
-fn log_best_move(logger: &mut LogFileHandler, best_move: i32) {
+fn log_best_move(logger: &mut LogFileHandler, best_move: i8) {
     write!(&mut logger.log_file, "{}: {}{}  ({})\n",
            "Best move",
            char::from('a' as u8 + (best_move % 10) as u8 - 1),
@@ -1509,7 +1509,7 @@ fn log_best_move(logger: &mut LogFileHandler, best_move: i32) {
     }
 }
 
-fn log_chosen_move(logger: &mut LogFileHandler, curr_move: i32, info: &EvaluationType) {
+fn log_chosen_move(logger: &mut LogFileHandler, curr_move: i8, info: &EvaluationType) {
         let mut eval_str = produce_eval_text(info, 0 as i32);
         write!(logger.log_file,
                 "{}: {}  {}\n",
