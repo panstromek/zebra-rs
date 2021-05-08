@@ -3,6 +3,7 @@
 #![allow(non_upper_case_globals)]
 #![allow(clippy::missing_safety_doc)]
 #![allow(unused)]
+#![deny(unused_unsafe)]
 
 pub mod src {
     pub mod display;

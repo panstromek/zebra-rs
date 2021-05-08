@@ -1516,14 +1516,12 @@ fn log_best_move(logger: &mut LogFileHandler, best_move: i32) {
 }
 
 fn log_chosen_move(logger: &mut LogFileHandler, curr_move: i32, info: &EvaluationType) {
-    unsafe {
         let mut eval_str = produce_eval_text(info, 0 as i32);
         write!(logger.log_file,
                 "{}: {}  {}\n",
                 "Move chosen",
                 TO_SQUARE(curr_move),
                 eval_str);
-    }
 }
 
 fn log_status(logger: &mut LogFileHandler) {
@@ -1531,7 +1529,7 @@ fn log_status(logger: &mut LogFileHandler) {
 }
 
 fn log_optimal_line(logger: &mut LogFileHandler, search_state: &SearchState) {
-    unsafe { display_optimal_line(&mut logger.log_file, search_state.full_pv_depth, &search_state.full_pv); }
+    display_optimal_line(&mut logger.log_file, search_state.full_pv_depth, &search_state.full_pv);
 }
 
 fn close_logger(logger: &mut LogFileHandler) {

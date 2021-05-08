@@ -116,19 +116,19 @@ impl LibcFatalError {
         unsafe { sort_thor_games(count) }
     }
     pub fn memory_allocation_failure(block_count_: i32) -> ! {
-        unsafe {
+        {
             fatal_error!("{} @ #{}\n", "Memory allocation failure", block_count_);
         }
     }
 
     pub fn error_in_map(i: i32, pos: i32, symmetry_map_item: i32) -> ! {
-        unsafe {
+        {
             fatal_error!("Error in map {}: inv(map({}))={}\n", i, pos, symmetry_map_item);
         }
     }
 
     pub fn error_in_map_thor(i: i32, pos: i32, to_report: i32) -> ! {
-        unsafe {
+        {
             fatal_error!("Error in map {}: inv(map({}))={}\n", i, pos, to_report);
         }
     }
@@ -553,46 +553,37 @@ impl LibcFatalError {
 
 impl FatalError for LibcFatalError {
   fn invalid_move(curr_move: i32) -> ! {
-    unsafe {
+    {
         fatal_error!("Thor book move {} is invalid!", curr_move);
     }
   }
 
  fn unrecognized_character(unrecognized: i8) -> ! {
-  unsafe {
+
       fatal_error!("{} '{}' {}\n", "Unrecognized character", char::from(unrecognized as u8), "in game file");
-  }
+
 }
 
 fn cannot_open_game_file(file_name: &str) -> ! {
-    unsafe {
         fatal_error!("{} '{}'\n", "Cannot open game file" , file_name);
-    }
+
 }
 
 
 fn invalid_move_in_move_sequence(curr_move: i32) -> ! {
-  unsafe {
     fatal_error!("Invalid move {} in move sequence", TO_SQUARE(curr_move));
-  }
 }
 
  fn internal_error_in_book_code() -> ! {
-    unsafe {
         fatal_error!("Internal error in book code.");
-    }
 }
 
  fn unexpected_character_in_a_move_string() -> ! {
-    unsafe {
         fatal_error!("Unexpected character in move string");
-    }
 }
 
  fn invalid_move_string_provided() -> ! {
-    unsafe {
         fatal_error!("Invalid move string provided");
-    }
 }
  fn initial_squares_are_empty() -> ! {
     fatal_error!("Initial squares (d4, e4, d5, e5) from the board file should not be empty.\n");
