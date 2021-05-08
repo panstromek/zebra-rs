@@ -4,6 +4,7 @@
 #![allow(clippy::missing_safety_doc)]
 #![allow(unused)]
 #![deny(unused_unsafe)]
+#![deny(unused_imports)]
 
 pub mod src {
     pub mod display;

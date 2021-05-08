@@ -3,9 +3,7 @@ use engine::src::getcoeff::{CoeffAdjustments};
 
 use std::ffi::CStr;
 use zlib_coeff_source::{ZLibSource, LoadError};
-use std::fs::File;
-use std::io::Error;
-use std::str::{SplitWhitespace, FromStr};
+use std::str::{FromStr};
 #[macro_use]
 use crate::fatal_error;
 

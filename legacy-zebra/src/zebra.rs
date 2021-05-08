@@ -5,39 +5,35 @@ use std::ffi::{CStr, CString};
 use std::fs::File;
 use std::io::{Read, Write};
 use std::process::exit;
-use std::ptr::null_mut;
 
 use engine::src::counter::{add_counter, adjust_counter, counter_value, CounterType, reset_counter};
-use engine::src::end::End;
-use engine::src::error::{FatalError, FrontEnd};
-use engine::src::game::{GameState, generic_game_init, ComputeMoveOutput, ComputeMoveLogger, FileBoardSource};
-use engine::src::getcoeff::{CoeffState, remove_coeffs};
+use engine::src::error::{FatalError,  };
+use engine::src::game::{generic_game_init,  };
+use engine::src::getcoeff::{ remove_coeffs};
 use engine::src::globals::BoardState;
-use engine::src::hash::{HashState, setup_hash};
-use engine::src::learn::{LearnState, Learner};
-use engine::src::midgame::MidgameState;
-use engine::src::moves::{game_in_progress, generate_all, make_move, MovesState, unmake_move, valid_move};
+use engine::src::hash::{  setup_hash};
+use engine::src::learn::{  Learner};
+use engine::src::moves::{game_in_progress, generate_all, make_move,  unmake_move, valid_move};
 
-use engine::src::myrandom::MyRandom;
-use engine::src::osfbook::{Book, find_opening_name, reset_book_search, set_deviation_value};
-use engine::src::probcut::ProbCut;
-use engine::src::search::{disc_count, produce_compact_eval, SearchState};
-use engine::src::stable::StableState;
+use engine::src::osfbook::{Book, find_opening_name, reset_book_search,  };
+
+use engine::src::search::{disc_count, produce_compact_eval,  };
+
 use engine::src::stubs::floor;
 use engine::src::timer::{Timer, TimeSource};
-use engine::src::zebra::{Config, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend, next_state, PlayGameState, MoveAttempt, PlayGame};
+use engine::src::zebra::{Config, EvaluationType, InitialMoveSource, set_default_engine_globals, ZebraFrontend, next_state, PlayGameState, MoveAttempt, PlayGame};
 use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WINS};
 use engine::src::zebra::EvalResult::{LOST_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
-use flip::unflip::FlipStack;
-use libc_wrapper::{atoi, ctime, fclose, fopen, fprintf, fputs, printf, puts, scanf, stdout, time};
-use libc_wrapper::{FileHandle, time_t};
 
-use crate::src::display::{display_board, display_move, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
+use libc_wrapper::{atoi, ctime, fclose, fopen, fprintf, fputs, printf, puts, scanf, stdout, time};
+use libc_wrapper::{time_t};
+
+use crate::src::display::{display_board, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
 use crate::src::error::{FE, LibcFatalError};
-use crate::src::game::{compute_move, global_setup, BasicBoardFileSource, LibcZebraOutput, LogFileHandler, toggle_status_log};
+use crate::src::game::{compute_move, global_setup, BasicBoardFileSource, LibcZebraOutput, LogFileHandler};
 use crate::src::learn::{init_learn, LibcLearner};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_size, get_total_game_count, init_thor_database, LegacyThor, print_thor_matches, read_game_database, read_player_database, read_tournament_database};
@@ -93,7 +89,6 @@ Interprets the command-line parameters and starts the game.
 */
 unsafe fn main_0()
  -> i32 {
-    use engine_traits::Offset;
     let mut argv = Vec::new();
     let args1 = ::std::env::args().collect::<Vec<_>>();
     for arg in args1.iter() {

@@ -1,7 +1,3 @@
-
-
-use std::ffi::{c_void, CString, CStr};
-
 use engine::{
     src:: {
         counter::counter_value,
@@ -13,8 +9,8 @@ use engine::src::game::CandidateMove;
 use engine::src::hash::{HashEntry, HashState};
 use engine::src::search::{hash_expand_pv, SearchState};
 
-use engine::src::zebra::{EvaluationType, Config};
-use libc_wrapper::{ctime, fflush, fopen, fprintf, free, malloc, printf, putc, puts, realloc, sprintf, stderr, stdout, strlen, time, time_t, tolower, FileHandle};
+use engine::src::zebra::{EvaluationType};
+use libc_wrapper::{fflush, fopen, printf, stderr, stdout, time, time_t, c_time};
 use thordb_types::C2RustUnnamed;
 #[macro_use]
 use crate::send_status;
@@ -27,10 +23,10 @@ use crate::{
                   send_status_nodes, send_status_pv, send_status_time},
     }
 };
-use crate::src::display::{clear_status, clear_sweep, reset_buffer_display, display_state, CFormat, TO_SQUARE};
+use crate::src::display::{clear_status, clear_sweep, reset_buffer_display, display_state, TO_SQUARE};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::sort_thor_games;
-use crate::src::zebra::FullState;
+
 use engine::src::timer::Timer;
 use engine::src::osfbook::Book;
 use engine::src::globals::BoardState;
@@ -80,8 +76,7 @@ pub fn fatal_error_(args: std::fmt::Arguments<'_>) -> ! {
                   b"a\x00" as *const u8 as *const i8);
         if !stream.is_null() {
             time(&mut timer);
-            let ctime1 = CStr::from_ptr(ctime(&mut timer)).to_str().unwrap();
-            write!(stream, "{} @ {}\n  ", "Fatal error", ctime1);
+            write!(stream, "{} @ {}\n  ", "Fatal error", c_time(timer));
             stream.write_fmt(args);
         }
     }
@@ -234,7 +229,7 @@ impl FrontEnd for LibcFatalError {
             } else {
                 send_sweep!(display_state, "<{}", entry.eval + 1);
             }
-            fflush(stdout);
+            stdout.flush();
         }
     }
 

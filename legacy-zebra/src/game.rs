@@ -13,24 +13,22 @@ use engine::src::thordb::ThorDatabase;
 use engine::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL, WLD_EVAL};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{ctime, fclose, FileHandle, fopen, fprintf, printf, puts, stdout, strcpy, time, time_t, c_time};
+use libc_wrapper::{fclose, FileHandle, fopen, printf, stdout, strcpy, time, time_t, c_time};
 
 use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, TO_SQUARE};
-use crate::src::error::{FE, LibcFatalError};
+use crate::src::error::{LibcFatalError};
 use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
 use crate::src::thordb::LegacyThor;
 use crate::src::zebra::FullState;
 use engine::src::globals::BoardState;
-use std::fs::{File, read, OpenOptions};
+use std::fs::{File};
 use std::io::{Read, BufReader, BufRead, Write};
-use std::iter::FromIterator;
+
 use engine::src::timer::Timer;
 
 #[macro_use]
 use crate::send_status;
 
-#[macro_use]
-use crate::send_sweep;
 
 pub static mut log_file_path: [i8; 2048] = [0; 2048];
 pub static mut prefix_move: i32 = 0;

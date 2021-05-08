@@ -1,4 +1,4 @@
-use libc_wrapper::{puts, fputs, free, printf, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FileHandle, size_t, strlen, tolower};
+use libc_wrapper::{fputs, free, qsort, fprintf, fclose, fopen, fread, strchr, strcmp, FileHandle, size_t, strlen, tolower};
 use crate::src::error::LibcFatalError;
 use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
@@ -911,7 +911,6 @@ unsafe fn any_flips(sqnum: i32, color: i32,
 
 */
 unsafe fn compute_thor_patterns(in_board: &[i32]) {
-    use engine_traits::Offset;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -1400,7 +1399,6 @@ unsafe fn filter_all_databases() {
 */
 
 unsafe fn set_player_filter(selected: &mut [i32]) {
-    use engine_traits::Offset;
     let mut i: i32 = 0;
     i = 0;
     while i < players.count {
@@ -1428,7 +1426,6 @@ unsafe fn set_player_filter_type(player_filter:
 */
 
 unsafe fn set_tournament_filter(selected: &mut [i32]) {
-    use engine_traits::Offset;
     let mut i: i32 = 0;
     i = 0;
     while i < tournaments.count {
@@ -2651,7 +2648,6 @@ pub unsafe fn thor_compare(g1: *const c_void,
 
 pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32,
                                        random_instance: &mut MyRandom) -> i32 {
-    use engine_traits::Offset;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut temp_symm: i32 = 0;
@@ -2791,7 +2787,6 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
 */
 
 pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
-    use engine_traits::Offset;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut index: i32 = 0;
