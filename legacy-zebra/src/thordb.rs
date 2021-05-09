@@ -52,7 +52,7 @@ pub static mut move_mask_hi: [u32; 100] = [0; 100];
 pub static mut move_mask_lo: [u32; 100] = [0; 100];
 pub static mut unmove_mask_hi: [u32; 100] = [0; 100];
 pub static mut unmove_mask_lo: [u32; 100] = [0; 100];
-pub static mut database_head: Option<Box<DatabaseType>> = None;
+pub static mut database_head: Option<&'static DatabaseType> = None;
 pub static mut players: PlayerDatabaseType =
     PlayerDatabaseType{prolog:
     PrologType{creation_century: 0,
@@ -454,42 +454,48 @@ pub unsafe fn read_game_database(file_name:
         reserved: 0
     };
 
-    database_head = Some(Box::new(DatabaseType {
+    let mut db_head = DatabaseType {
         prolog: prolog_type,
         games: null_mut(),
         count: 0,
         next: old_database_head
-    }));
+    };
 
-    let db_head = database_head.as_mut().unwrap();
     if read_prolog(stream, &mut db_head.prolog) == 0 {
         fclose(stream);
+        // FIXME This is here to preserve consistency with the old version but seems wrong
+        //  why we would assign database head when we fail to parse the game??
+        database_head = Some(Box::leak(Box::new(db_head)));
         return 0 as i32
     }
     success = 1;
-    (*db_head).count = (*db_head).prolog.game_count;
-    (*db_head).games =
-        safe_malloc(((*db_head).count as
+    (db_head).count = (db_head).prolog.game_count;
+    (db_head).games =
+        safe_malloc(((db_head).count as
                          u64).wrapping_mul(::std::mem::size_of::<GameType>()
                                                          as u64)) as
             *mut GameType;
     i = 0;
-    while i < (*db_head).count {
+    let db_head = Box::leak(Box::new(db_head));
+
+    while i < (db_head).count {
         success =
             (success != 0 &&
                  read_game(stream,
-                           &mut *(*db_head).games.offset(i as isize)) !=
+                           &mut *(db_head).games.offset(i as isize)) !=
                      0) as i32;
         let ref mut fresh4 =
-            (*(*db_head).games.offset(i as isize)).database;
-        *fresh4 = &*db_head;
+            (*(db_head).games.offset(i as isize)).database;
+        *fresh4 = db_head;
         i += 1
     }
     thor_database_count += 1;
-    thor_game_count += (*db_head).count;
+    thor_game_count += (db_head).count;
     thor_games_sorted = 0;
     thor_games_filtered = 0;
+
     fclose(stream);
+    database_head = Some(db_head);
     return success;
 }
 /*
