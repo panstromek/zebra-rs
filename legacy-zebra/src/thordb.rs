@@ -9,7 +9,7 @@ use engine::src::bitboard::bit_reverse_32;
 use engine::src::moves::dir_mask;
 use std::ffi::{c_void};
 use thordb_types::{GameType, DatabaseType, C2RustUnnamed, EITHER_SELECTED_FILTER,
-                       TournamentType, PlayerType, ThorOpeningNode, ThorOpeningNode_,
+                       TournamentType, PlayerType, ThorOpeningNode,
                        GameInfoType, PlayerFilterType, DatabaseInfoType, FilterType,
                        PrologType, TournamentDatabaseType, SearchResultType, PlayerDatabaseType};
 use thor_opening_list::THOR_OPENING_LIST;
@@ -2004,8 +2004,8 @@ unsafe fn new_thor_opening_node(parent: *mut ThorOpeningNode)
             as *mut ThorOpeningNode;
     (*node).child_move = 0;
     (*node).sibling_move = 0;
-    (*node).child_node = 0 as *mut ThorOpeningNode_;
-    (*node).sibling_node = 0 as *mut ThorOpeningNode_;
+    (*node).child_node = 0 as *mut ThorOpeningNode;
+    (*node).sibling_node = 0 as *mut ThorOpeningNode;
     (*node).parent_node = parent;
     return node;
 }
