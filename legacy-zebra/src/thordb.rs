@@ -22,6 +22,7 @@ use engine::src::getcoeff::odometer_principle;
 use std::io::{Read, Write};
 use engine::src::game::to_lower;
 use std::cmp::Ordering;
+use std::ptr::null_mut;
 
 /* Local variables */
 pub static mut thor_game_count: i32 = 0;
@@ -51,7 +52,7 @@ pub static mut move_mask_hi: [u32; 100] = [0; 100];
 pub static mut move_mask_lo: [u32; 100] = [0; 100];
 pub static mut unmove_mask_hi: [u32; 100] = [0; 100];
 pub static mut unmove_mask_lo: [u32; 100] = [0; 100];
-pub static mut database_head: *mut DatabaseType = 0 as *const DatabaseType as *mut DatabaseType;
+pub static mut database_head: Option<Box<DatabaseType>> = None;
 pub static mut players: PlayerDatabaseType =
     PlayerDatabaseType{prolog:
     PrologType{creation_century: 0,
@@ -438,39 +439,54 @@ pub unsafe fn read_game_database(file_name:
     let mut stream = FileHandle::null();
     let mut i: i32 = 0;
     let mut success: i32 = 0;
-    let mut old_database_head = 0 as *mut DatabaseType;
+    let mut old_database_head = None;
     stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() { return 0 as i32 }
-    old_database_head = database_head;
-    database_head =
-        safe_malloc(::std::mem::size_of::<DatabaseType>() as u64) as
-            *mut DatabaseType;
-    (*database_head).next = old_database_head;
-    if read_prolog(stream, &mut (*database_head).prolog) == 0 {
+    old_database_head = database_head.take();
+    let prolog_type = PrologType {
+        creation_century: 0,
+        creation_year: 0,
+        creation_month: 0,
+        creation_day: 0,
+        game_count: 0,
+        item_count: 0,
+        origin_year: 0,
+        reserved: 0
+    };
+
+    database_head = Some(Box::new(DatabaseType {
+        prolog: prolog_type,
+        games: null_mut(),
+        count: 0,
+        next: old_database_head
+    }));
+
+    let db_head = database_head.as_mut().unwrap();
+    if read_prolog(stream, &mut db_head.prolog) == 0 {
         fclose(stream);
         return 0 as i32
     }
     success = 1;
-    (*database_head).count = (*database_head).prolog.game_count;
-    (*database_head).games =
-        safe_malloc(((*database_head).count as
+    (*db_head).count = (*db_head).prolog.game_count;
+    (*db_head).games =
+        safe_malloc(((*db_head).count as
                          u64).wrapping_mul(::std::mem::size_of::<GameType>()
                                                          as u64)) as
             *mut GameType;
     i = 0;
-    while i < (*database_head).count {
+    while i < (*db_head).count {
         success =
             (success != 0 &&
                  read_game(stream,
-                           &mut *(*database_head).games.offset(i as isize)) !=
+                           &mut *(*db_head).games.offset(i as isize)) !=
                      0) as i32;
         let ref mut fresh4 =
-            (*(*database_head).games.offset(i as isize)).database;
-        *fresh4 = database_head;
+            (*(*db_head).games.offset(i as isize)).database;
+        *fresh4 = &*db_head;
         i += 1
     }
     thor_database_count += 1;
-    thor_game_count += (*database_head).count;
+    thor_game_count += (*db_head).count;
     thor_games_sorted = 0;
     thor_games_filtered = 0;
     fclose(stream);
@@ -487,7 +503,6 @@ pub unsafe fn game_database_already_loaded(file_name:
                                                           *const i8)
  -> i32 {
     let mut stream = FileHandle::null();
-    let mut current_db = 0 as *mut DatabaseType;
     let mut new_prolog =
         PrologType{creation_century: 0,
                    creation_year: 0,
@@ -504,8 +519,8 @@ pub unsafe fn game_database_already_loaded(file_name:
         return 0 as i32
     }
     fclose(stream);
-    current_db = database_head;
-    while !current_db.is_null() {
+    let mut current_db_ = &database_head;
+    while let Some(current_db) = current_db_ {
         if (*current_db).prolog.creation_century ==
                new_prolog.creation_century &&
                (*current_db).prolog.creation_year == new_prolog.creation_year
@@ -519,7 +534,7 @@ pub unsafe fn game_database_already_loaded(file_name:
                    (*current_db).prolog.origin_year {
             return 1 as i32
         }
-        current_db = (*current_db).next
+        current_db_ = &(*current_db).next
     }
     return 0 as i32;
 }
@@ -983,13 +998,13 @@ unsafe fn get_database_info(info: *mut DatabaseInfoType) {
     let mut i: i32 = 0;
     let mut change: i32 = 0;
     let mut temp = DatabaseInfoType{year: 0, count: 0,};
-    let mut current_db = 0 as *mut DatabaseType;
-    current_db = database_head;
+    let mut current_db_ = &database_head;
     i = 0;
     while i < thor_database_count {
+        let current_db = current_db_.as_ref().unwrap();
         (*info.offset(i as isize)).year = (*current_db).prolog.origin_year;
         (*info.offset(i as isize)).count = (*current_db).count;
-        current_db = (*current_db).next;
+        current_db_ = &(*current_db).next;
         i += 1
     }
     loop
@@ -1169,7 +1184,7 @@ unsafe fn secondary_hash_lookup(target_hash: u32)
   FILTER_DATABASE
   Applies the current filter rules to the database DB.
 */
-unsafe fn filter_database(db: *mut DatabaseType) {
+unsafe fn filter_database(db: &DatabaseType) {
     let mut i: i32 = 0;
     let mut category: i32 = 0;
     let mut passes_filter: i32 = 0;
@@ -1257,11 +1272,10 @@ unsafe fn filter_database(db: *mut DatabaseType) {
   Applies the current filter rules to all databases.
 */
 unsafe fn filter_all_databases() {
-    let mut current_db = 0 as *mut DatabaseType;
-    current_db = database_head;
-    while !current_db.is_null() {
+    let mut current_db_ = &database_head;
+    while let Some(current_db) = current_db_ {
         filter_database(current_db);
-        current_db = (*current_db).next
+        current_db_ = &(*current_db).next
     };
 }
 
@@ -2194,7 +2208,7 @@ pub unsafe fn init_thor_database(g_state: &mut FullState) {
         thor_sort_order[i as usize] = default_sort_order[i as usize];
         i += 1
     }
-    database_head = 0 as *mut DatabaseType;
+    database_head = None;
     players.name_buffer = b"";
     players.player_list = Vec::new();
     tournaments.tournament_list.clear();
@@ -2668,7 +2682,6 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     let mut corner_mask: u32 = 0;
     let mut shape_lo: [u32; 8] = [0; 8];
     let mut shape_hi: [u32; 8] = [0; 8];
-    let mut current_db = 0 as *mut DatabaseType;
     let mut game;
     /* We need a player and a tournament database. */
     if players.count() == 0 as i32 ||
@@ -2703,9 +2716,9 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     }
     /* If necessary, sort all games in the database */
     if thor_games_sorted == 0 {
-        current_db = database_head;
+        let mut current_db_ = &database_head;
         i = 0;
-        while !current_db.is_null() {
+        while let Some(current_db) = current_db_ {
             j = 0;
             while j < (*current_db).count {
                 let ref mut fresh5 =
@@ -2716,7 +2729,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
                 i += 1;
                 j += 1
             }
-            current_db = (*current_db).next
+            current_db_ = &(*current_db).next
         }
         LibcFatalError::sort_thor_games(thor_game_count);
         j = 0;
@@ -2879,8 +2892,8 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         thor_search.next_move_score[i as usize] = 0.0f64;
         i += 1
     }
-    current_db = database_head;
-    while !current_db.is_null() {
+    let mut current_db_ = &database_head;
+    while let Some(current_db) = current_db_ {
         i = 0;
         while i < (*current_db).count {
             game = &mut *(*current_db).games.offset(i as isize);
@@ -2933,7 +2946,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
             }
             i += 1
         }
-        current_db = (*current_db).next
+        current_db_ = &(*current_db).next
     }
     /* Remove the NULLs from the list of matching games if there are any.
        This gives a sorted list. */
