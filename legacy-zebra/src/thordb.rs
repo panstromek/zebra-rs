@@ -252,8 +252,8 @@ fn thor_compare_tournaments(tournament1: &TournamentType, tournament2: &Tourname
   SORT_TOURNAMENT_DATABASE
   Computes the lexicographic order of all tournaments in the database.
 */
-unsafe fn sort_tournament_database() {
-    let mut tournament_buffer = tournaments.tournament_list.iter_mut().collect::<Vec<_>>();
+fn sort_tournament_database(db: &mut [TournamentType]) {
+    let mut tournament_buffer = db.iter_mut().collect::<Vec<_>>();
     tournament_buffer.sort_by(|t1, t2| thor_compare_tournaments(t1, t2));
     tournament_buffer.into_iter().enumerate().for_each(|(i, tournament) | tournament.lex_order = i as i32);
 }
@@ -301,7 +301,7 @@ pub unsafe fn read_tournament_database(file_name:
             });
             i += 1
         }
-        sort_tournament_database();
+        sort_tournament_database(&mut tournaments.tournament_list);
         thor_games_sorted = 0;
         thor_games_filtered = 0 as i32
     }
@@ -345,9 +345,8 @@ fn thor_compare_players(player1: &PlayerType, player2: &PlayerType) -> Ordering 
   SORT_PLAYER_DATABASE
   Computes the lexicographic order of all players in the database.
 */
-unsafe fn sort_player_database() {
-
-    let mut player_buffer = players.player_list.iter_mut().collect::<Vec<_>>();
+fn sort_player_database(db: &mut [PlayerType]) {
+    let mut player_buffer = db.iter_mut().collect::<Vec<_>>();
     player_buffer.sort_by(|p1, p2| thor_compare_players(p1, p2));
     player_buffer.into_iter().enumerate().for_each(|(i, p)| p.lex_order = i as i32);
 }
@@ -395,7 +394,7 @@ pub unsafe fn read_player_database(file_name:
             });
             i += 1
         }
-        sort_player_database();
+        sort_player_database(&mut players.player_list);
         thor_games_sorted = 0;
         thor_games_filtered = 0 as i32
     }
