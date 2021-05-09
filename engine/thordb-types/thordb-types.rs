@@ -62,14 +62,13 @@ pub struct PrologType {
     pub origin_year: i32,
     pub reserved: i32,
 }
-pub type DatabaseType = DatabaseType_;
 #[derive(Copy, Clone)]
 #[repr(C)]
-pub struct DatabaseType_ {
+pub struct DatabaseType {
     pub prolog: PrologType,
     pub games: *mut GameType,
     pub count: i32,
-    pub next: *mut DatabaseType_,
+    pub next: *mut DatabaseType,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -83,7 +82,7 @@ pub struct GameType {
     pub move_count: i16,
     pub black_disc_count: [i8; 61],
     pub opening: *mut ThorOpeningNode,
-    pub database: *mut DatabaseType_,
+    pub database: *mut DatabaseType,
     pub shape_hi: u32,
     pub shape_lo: u32,
     pub shape_state_hi: i16,
@@ -93,10 +92,10 @@ pub struct GameType {
     pub matching_symmetry: i16,
     pub passes_filter: i16,
 }
-pub type ThorOpeningNode = ThorOpeningNode_;
+
 #[derive(Copy, Clone)]
 #[repr(C)]
-pub struct ThorOpeningNode_ {
+pub struct ThorOpeningNode {
     pub hash1: u32,
     pub hash2: u32,
     pub current_match: i32,
@@ -104,9 +103,9 @@ pub struct ThorOpeningNode_ {
     pub matching_symmetry: i32,
     pub child_move: i8,
     pub sibling_move: i8,
-    pub child_node: *mut ThorOpeningNode_,
-    pub sibling_node: *mut ThorOpeningNode_,
-    pub parent_node: *mut ThorOpeningNode_,
+    pub child_node: *mut ThorOpeningNode,
+    pub sibling_node: *mut ThorOpeningNode,
+    pub parent_node: *mut ThorOpeningNode,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
