@@ -1,6 +1,5 @@
 use libc_wrapper::{free, qsort, fclose, fopen, FileHandle, size_t};
 use crate::src::error::LibcFatalError;
-use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
 use crate::src::safemem::{safe_malloc};
 use thordb_types::{Int8, Int16, Int32};
@@ -1682,7 +1681,7 @@ pub fn get_thor_game_size() -> i32 {
         in which they are calculated in COMPUTE_FULL_PRIMARY_HASH()
     and COMPUTE_FULL_SECONDARY_HASH().
 */
-unsafe fn init_symmetry_maps<FE: FrontEnd>() {
+unsafe fn init_symmetry_maps() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -1997,7 +1996,7 @@ unsafe fn init_thor_hash(g_state: &mut FullState) {
   NEW_THOR_OPENING_NODE
   Creates and initializes a new node for use in the opening tree.
 */
-unsafe fn new_thor_opening_node<FE: FrontEnd>(parent: *mut ThorOpeningNode)
+unsafe fn new_thor_opening_node(parent: *mut ThorOpeningNode)
                                               -> *mut ThorOpeningNode {
     let mut node = 0 as *mut ThorOpeningNode;
     node =
@@ -2033,7 +2032,7 @@ unsafe fn build_thor_opening_tree() {
     let mut node_list: [*mut ThorOpeningNode; 61] =
         [0 as *mut ThorOpeningNode; 61];
     /* Create the root node and compute its hash value */
-    root_node = new_thor_opening_node::<FE>(0 as *mut ThorOpeningNode);
+    root_node = new_thor_opening_node(0 as *mut ThorOpeningNode);
     clear_thor_board();
     compute_thor_patterns(&thor_board);
     compute_partial_hash(&mut hash1, &mut hash2);
@@ -2105,7 +2104,7 @@ unsafe fn build_thor_opening_tree() {
         }
         /* Create the branch from the previous node */
         parent = node_list[branch_depth as usize];
-        new_child = new_thor_opening_node::<FE>(parent);
+        new_child = new_thor_opening_node(parent);
         compute_thor_patterns(&thor_board);
         compute_partial_hash(&mut hash1, &mut hash2);
         (*new_child).hash1 = hash1;
@@ -2152,7 +2151,7 @@ unsafe fn build_thor_opening_tree() {
                 }
             }
             parent = new_child;
-            new_child = new_thor_opening_node::<FE>(parent);
+            new_child = new_thor_opening_node(parent);
             compute_thor_patterns(&thor_board);
             compute_partial_hash(&mut hash1, &mut hash2);
             (*new_child).hash1 = hash1;
@@ -2177,7 +2176,7 @@ unsafe fn build_thor_opening_tree() {
   must be called.
 */
 
-pub unsafe fn init_thor_database<FE: FrontEnd>(g_state: &mut FullState) {
+pub unsafe fn init_thor_database(g_state: &mut FullState) {
     let mut i: i32 = 0; /* "infinity" */
     thor_game_count = 0;
     thor_database_count = 0;
@@ -2203,7 +2202,7 @@ pub unsafe fn init_thor_database<FE: FrontEnd>(g_state: &mut FullState) {
     thor_games_sorted = 0;
     thor_games_filtered = 0;
     init_move_masks();
-    init_symmetry_maps::<FE>();
+    init_symmetry_maps();
     init_thor_hash(g_state);
     prepare_thor_board();
     build_thor_opening_tree();
