@@ -1,4 +1,4 @@
-use libc_wrapper::{free, qsort, fclose, fopen, fread, strcmp, FileHandle, size_t, strlen};
+use libc_wrapper::{free, qsort, fclose, fopen, fread, FileHandle, size_t, strlen};
 use crate::src::error::LibcFatalError;
 use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
@@ -8,7 +8,7 @@ use thordb_types::{Int8, Int16, Int32};
 use engine::src::bitboard::bit_reverse_32;
 
 use engine::src::moves::dir_mask;
-use std::ffi::{c_void, CStr};
+use std::ffi::{c_void};
 use thordb_types::{GameType, DatabaseType, C2RustUnnamed, EITHER_SELECTED_FILTER,
                        TournamentType, PlayerType, ThorOpeningNode, ThorOpeningNode_,
                        GameInfoType, PlayerFilterType, DatabaseInfoType, FilterType,
@@ -22,6 +22,7 @@ use engine::src::myrandom::MyRandom;
 use engine::src::getcoeff::odometer_principle;
 use std::io::{Read, Write};
 use engine::src::game::to_lower;
+use std::cmp::Ordering;
 
 /* Local variables */
 pub static mut thor_game_count: i32 = 0;
@@ -247,11 +248,9 @@ fn read_prolog(stream: FileHandle,
 unsafe extern "C" fn thor_compare_tournaments(t1: *const std::ffi::c_void,
                                               t2: *const std::ffi::c_void)
  -> i32 {
-    let tournament1 = *(t1 as *mut *mut TournamentType);
-    let tournament2 = *(t2 as *mut *mut TournamentType);
-    let name1 = CStr::from_ptr((*tournament1).name.as_ptr() as _);
-    let name2 = CStr::from_ptr((*tournament2).name.as_ptr() as _);
-    return strcmp(name1.as_ptr(), name2.as_ptr());
+    let tournament1 = *(t1 as *mut &TournamentType);
+    let tournament2 = *(t2 as *mut &TournamentType);
+    return tournament1.name.cmp(tournament2.name) as i32;
 }
 /*
   SORT_TOURNAMENT_DATABASE
@@ -355,9 +354,12 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
         /* Put unknown players LAST */
         buffer2[0] = b'~'
     }
-    assert_eq!(buffer1[19], 0);
-    assert_eq!(buffer2[19], 0);
-    return strcmp(buffer1.as_mut_ptr() as _, buffer2.as_mut_ptr() as _);
+
+    return return match buffer1.cmp(&buffer2) {
+        Ordering::Less => -1,
+        Ordering::Equal => 0,
+        Ordering::Greater => 1,
+    };
 }
 /*
   SORT_PLAYER_DATABASE
