@@ -361,32 +361,14 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
   Computes the lexicographic order of all players in the database.
 */
 unsafe fn sort_player_database() {
-    let mut player_buffer = 0 as *mut *mut PlayerType;
-    let mut i: i32 = 0;
-    player_buffer =
-        safe_malloc((players.count() as
-                         u64).wrapping_mul(::std::mem::size_of::<*mut PlayerType>()
-                                                         as u64)) as
-            *mut *mut PlayerType;
-    i = 0;
-    while i < players.count() {
-        let ref mut fresh2 = *player_buffer.offset(i as isize);
-        *fresh2 =
-            &mut *players.player_list.offset(i as isize) as *mut PlayerType;
-        i += 1
-    }
-    qsort(player_buffer as *mut std::ffi::c_void, players.count() as size_t,
-          ::std::mem::size_of::<*mut PlayerType>() as u64,
+
+    let mut player_buffer = players.player_list.iter_mut().collect::<Vec<_>>();
+
+    qsort(player_buffer.as_ptr() as *mut std::ffi::c_void, players.count() as size_t,
+          ::std::mem::size_of::<&mut PlayerType>() as u64,
           Some(thor_compare_players as
-                   unsafe extern "C" fn(_: *const std::ffi::c_void,
-                                        _: *const std::ffi::c_void)
-                       -> i32));
-    i = 0;
-    while i < players.count() {
-        (**player_buffer.offset(i as isize)).lex_order = i;
-        i += 1
-    }
-    free(player_buffer as *mut std::ffi::c_void);
+                   unsafe extern "C" fn(_: *const std::ffi::c_void, _: *const std::ffi::c_void) -> i32));
+    player_buffer.into_iter().enumerate().for_each(|(i, p)| p.lex_order = i as i32);
 }
 /*
   READ_PLAYER_DATABASE
