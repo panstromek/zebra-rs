@@ -1,4 +1,4 @@
-use libc_wrapper::{free, qsort, fclose, fopen, fread, FileHandle, size_t};
+use libc_wrapper::{free, qsort, fclose, fopen, FileHandle, size_t};
 use crate::src::error::LibcFatalError;
 use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
@@ -444,37 +444,27 @@ pub unsafe fn read_player_database(file_name:
   for database questions. Returns TRUE upon success,
   otherwise FALSE.
 */
-unsafe fn read_game(stream: FileHandle, mut game: *mut GameType)
-                    -> i32 {
+unsafe fn read_game(mut stream: FileHandle, mut game: *mut GameType) -> i32 {
     let mut success: i32 = 0;
-    let mut actually_read: i32 = 0;
     let mut byte_val: Int8 = 0;
     let mut word_val: Int16 = 0;
     success = get_int_16(stream, &mut word_val);
     (*game).tournament_no = word_val;
-    success =
-        (success != 0 && get_int_16(stream, &mut word_val) != 0) as
-            i32;
+    success = (success != 0 && get_int_16(stream, &mut word_val) != 0) as i32;
     (*game).black_no = word_val;
-    success =
-        (success != 0 && get_int_16(stream, &mut word_val) != 0) as
-            i32;
+    success = (success != 0 && get_int_16(stream, &mut word_val) != 0) as i32;
     (*game).white_no = word_val;
-    success =
-        (success != 0 && get_int_8(stream, &mut byte_val) != 0) as
-            i32;
+    success = (success != 0 && get_int_8(stream, &mut byte_val) != 0) as i32;
     (*game).actual_black_score = byte_val as i16;
-    success =
-        (success != 0 && get_int_8(stream, &mut byte_val) != 0) as
-            i32;
+    success = (success != 0 && get_int_8(stream, &mut byte_val) != 0) as i32;
     (*game).perfect_black_score = byte_val as i16;
-    actually_read =
-        fread(&mut (*game).moves as *mut [i8; 60] as
-                  *mut std::ffi::c_void, 1 as i32 as size_t,
-              60 as i32 as size_t, stream) as i32;
+    let mut bytes = [0; 60];
+    let actually_read = stream.read(&mut bytes).unwrap_or(0);
+    (*game).moves.iter_mut().zip(bytes.iter().take(actually_read)).for_each(|(g, b)| {
+        *g = *b as i8
+    });
     prepare_game(game);
-    return (success != 0 && actually_read == 60 as i32) as
-               i32;
+    return (success != 0 && actually_read == 60) as i32;
 }
 /*
   READ_GAME_DATABASE
