@@ -1,4 +1,4 @@
-use libc_wrapper::{free, qsort, fclose, fopen, FileHandle, size_t};
+use libc_wrapper::{free, fclose, fopen, FileHandle};
 use crate::src::error::LibcFatalError;
 use engine::src::stubs::abs;
 use crate::src::safemem::{safe_malloc};
@@ -581,13 +581,6 @@ unsafe fn print_game(mut stream: FileHandle,
     }
     stream.write(b"\n");
 }
-// This is a wrapper around thor_compare that has C linkage,
-// because we don't want any C linkage in the engine
-pub unsafe extern "C" fn extern_thor_compare(g1: *const std::ffi::c_void,
-                                             g2: *const std::ffi::c_void)
-                                             -> i32 {
-    thor_compare(g1, g2)
-}
 
 /*
   SORT_THOR_GAMES
@@ -600,12 +593,14 @@ pub unsafe fn sort_thor_games(count: i32) {
         /* No need to sort 0 or 1 games. */
         return
     }
-    qsort(thor_search.match_list as *mut std::ffi::c_void, count as size_t,
-          ::std::mem::size_of::<*mut GameType>() as u64,
-          Some(extern_thor_compare as
-                   unsafe extern "C" fn(_: *const std::ffi::c_void,
-                                        _: *const std::ffi::c_void)
-                       -> i32));
+    let slice = std::slice::from_raw_parts_mut(thor_search.match_list, count as usize);
+    slice.sort_by(|g1, g2| {
+        match unsafe { thor_compare(&**g1, &**g2) } {
+            i32::MIN..=-1_i32 => Ordering::Less,
+            0 => Ordering::Equal,
+            1_i32..=i32::MAX => Ordering::Greater,
+        }
+    });
 }
 
 /*
@@ -2466,13 +2461,9 @@ unsafe fn tournament_lex_order(index: i32)
   performed using the priority order from THOR_SORT_ORDER.
 */
 
-pub unsafe fn thor_compare(g1: *const c_void,
-                           g2: *const c_void)
-                           -> i32 {
+pub unsafe fn thor_compare(game1: &GameType, game2: &GameType) -> i32 {
     let mut i: i32 = 0;
     let mut result: i32 = 0;
-    let game1 = *(g1 as *mut *mut GameType);
-    let game2 = *(g2 as *mut *mut GameType);
     i = 0;
     while i < thor_sort_criteria_count {
         match thor_sort_order[i as usize] {
