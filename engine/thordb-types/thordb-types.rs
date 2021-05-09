@@ -99,7 +99,7 @@ pub struct ThorOpeningNode_ {
 pub struct TournamentType {
     pub lex_order: i32,
     pub selected: i32,
-    pub name: *const i8,
+    pub name: &'static [u8],
 }
 
 pub type Int32 = i32;
@@ -110,7 +110,7 @@ pub type Int8 = i8;
 #[repr(C)]
 pub struct TournamentDatabaseType {
     pub prolog: PrologType,
-    pub name_buffer: *mut i8,
+    pub name_buffer: &'static [u8],
     pub tournament_list: Vec<TournamentType>,
 }
 impl TournamentDatabaseType {
