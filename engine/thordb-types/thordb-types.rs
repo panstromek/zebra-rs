@@ -2,9 +2,9 @@
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct GameInfoType {
-    pub black_name: *const i8,
-    pub white_name: *const i8,
-    pub tournament: *const i8,
+    pub black_name: &'static [u8],
+    pub white_name: &'static [u8],
+    pub tournament: &'static [u8],
     pub year: i32,
     pub black_actual_score: i32,
     pub black_corrected_score: i32,
@@ -26,15 +26,29 @@ pub struct PlayerType {
     pub lex_order: i32,
     pub is_program: i32,
     pub selected: i32,
-    pub name: *const i8,
+    pub name: &'static [u8],
 }
-#[derive(Copy, Clone)]
+impl Default for PlayerType {
+    fn default() -> Self {
+        PlayerType {
+            lex_order: 0,
+            is_program: 0,
+            selected: 0,
+            name: &[]
+        }
+    }
+}
+#[derive(Clone)]
 #[repr(C)]
 pub struct PlayerDatabaseType {
     pub prolog: PrologType,
-    pub name_buffer: *mut i8,
-    pub count: i32,
-    pub player_list: *mut PlayerType,
+    pub name_buffer: &'static [u8],
+    pub player_list: Vec<PlayerType>,
+}
+impl PlayerDatabaseType {
+    pub fn count(&self) -> i32 {
+        return self.player_list.len() as i32;
+    }
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
