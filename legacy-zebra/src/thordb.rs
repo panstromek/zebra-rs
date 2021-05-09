@@ -90,8 +90,7 @@ pub static mut tournaments: TournamentDatabaseType =
         item_count: 0,
         origin_year: 0,
         reserved: 0,},
-        name_buffer:
-        0 as *const i8 as *mut i8,
+        name_buffer: b"",
         tournament_list: Vec::new()};
 pub static mut root_node: *mut ThorOpeningNode =
     0 as *const ThorOpeningNode as *mut ThorOpeningNode;
@@ -253,7 +252,9 @@ unsafe extern "C" fn thor_compare_tournaments(t1: *const std::ffi::c_void,
  -> i32 {
     let tournament1 = *(t1 as *mut *mut TournamentType);
     let tournament2 = *(t2 as *mut *mut TournamentType);
-    return strcmp((*tournament1).name, (*tournament2).name);
+    let name1 = CStr::from_ptr((*tournament1).name.as_ptr() as _);
+    let name2 = CStr::from_ptr((*tournament2).name.as_ptr() as _);
+    return strcmp(name1.as_ptr(), name2.as_ptr());
 }
 /*
   SORT_TOURNAMENT_DATABASE
@@ -310,13 +311,11 @@ pub unsafe fn read_tournament_database(file_name:
     }
     let tournaments_count = tournaments.prolog.item_count;
     buffer_size = 26 as i32 * tournaments.prolog.item_count;
-    tournaments.name_buffer =
-        safe_realloc(tournaments.name_buffer as *mut std::ffi::c_void,
-                     buffer_size as size_t) as *mut i8;
-    actually_read =
-        fread(tournaments.name_buffer as *mut std::ffi::c_void,
-              1 as i32 as size_t, buffer_size as size_t, stream) as
-            i32;
+    let mut name_buffer = Vec::new();
+    name_buffer.resize(buffer_size as usize, 0);
+
+    actually_read = stream.read(&mut name_buffer).unwrap_or(0) as i32;
+    tournaments.name_buffer = Vec::leak(name_buffer);
     success = (actually_read == buffer_size) as i32;
     fclose(stream);
     if success != 0 {
@@ -619,7 +618,7 @@ unsafe fn print_game(mut stream: FileHandle,
                      display_moves: i32) {
     let mut i: i32 = 0;
     write!(stream, "{}  {}\n",
-            to_str(tournament_name((*game).tournament_no as i32)),
+            to_str(tournament_name((*game).tournament_no as i32).as_ptr() as _),
             (*(*game).database).prolog.origin_year);
     write!(stream, "{} {} {}\n",
             to_str(get_player_name((*game).black_no as i32)),
@@ -1024,13 +1023,11 @@ unsafe fn get_corner_mask(disc_a1: i32,
   TOURNAMENT_NAME
   Returns the name of the INDEXth tournament if available.
 */
-pub unsafe fn tournament_name(index: i32)
-                              -> *const i8 {
+pub unsafe fn tournament_name(index: i32) -> &'static [u8] {
     if index < 0 as i32 || index >= tournaments.count() {
-        return b"<Not available>\x00" as *const u8 as *const i8
+        return b"<Not available>"
     } else {
-        return tournaments.name_buffer.offset((26 as i32 * index) as
-            isize)
+        return tournaments.name_buffer[(26 * index as usize)..].split(|&c| c == 0).next().unwrap()
     };
 }
 
@@ -1065,21 +1062,6 @@ unsafe fn player_lex_order(index: i32) -> i32 {
     if index < 0 as i32 || index >= players.count {
         return players.count
     } else { return (*players.player_list.offset(index as isize)).lex_order };
-}
-
-/*
-  GET_TOURNAMENT_NAME
-  Returns the name of the INDEXth tournament if available.
-*/
-
-unsafe fn get_tournament_name(index: i32)
-                              -> *const i8 {
-    if index < 0 as i32 || index >= tournaments.count() {
-        return b"< Not available >\x00" as *const u8 as *const i8
-    } else {
-        return tournaments.name_buffer.offset((26 as i32 * index) as
-            isize)
-    };
 }
 /*
   GET_TOURNAMENT_COUNT
@@ -1638,8 +1620,7 @@ unsafe fn get_thor_game(index: i32)
         game = *thor_search.match_list.offset(index as isize);
         info.black_name = get_player_name((*game).black_no as i32);
         info.white_name = get_player_name((*game).white_no as i32);
-        info.tournament =
-            tournament_name((*game).tournament_no as i32);
+        info.tournament = tournament_name((*game).tournament_no as i32).as_ptr() as *const i8;
         info.year = (*(*game).database).prolog.origin_year;
         info.black_actual_score = (*game).actual_black_score as i32;
         info.black_corrected_score =
@@ -2333,8 +2314,8 @@ pub unsafe fn init_thor_database<FE: FrontEnd>(g_state: &mut FullState) {
     players.name_buffer = 0 as *mut i8;
     players.player_list = 0 as *mut PlayerType;
     players.count = 0;
-    tournaments.name_buffer = 0 as *mut i8;
     tournaments.tournament_list.clear();
+    tournaments.name_buffer = b"";
     thor_games_sorted = 0;
     thor_games_filtered = 0;
     init_move_masks();
