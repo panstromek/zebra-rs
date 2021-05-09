@@ -10,7 +10,6 @@ use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvaluationType;
 use legacy_zebra::src::display::{display_board, display_move, set_evals, set_move_list, set_names, display_state};
-use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{compute_move, game_init, global_setup, toggle_status_log};
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::thordb::init_thor_database;
@@ -563,7 +562,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         exit(1 as i32);
     }
     global_setup(use_random, hash_bits, g_state);
-    init_thor_database::<LibcFatalError>(g_state);
+    init_thor_database(g_state);
     if use_book != 0 {
         init_learn(b"book.bin\x00" as *const u8 as *const i8,
                    1 as i32, g_state);
