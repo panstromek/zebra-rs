@@ -22,6 +22,7 @@ use engine::src::myrandom::MyRandom;
 use engine::src::getcoeff::odometer_principle;
 use std::io::{Read, Write};
 use engine::src::game::to_lower;
+use std::cmp::Ordering;
 
 /* Local variables */
 pub static mut thor_game_count: i32 = 0;
@@ -323,13 +324,9 @@ pub unsafe fn read_tournament_database(file_name:
   Lexicographically compares the names of two players
   represented by pointers.
 */
-unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
-                                          p2: *const std::ffi::c_void)
- -> i32 {
+fn thor_compare_players(player1: &PlayerType, player2: &PlayerType) -> Ordering {
     let mut buffer1: [u8; 20] = [0; 20];
     let mut buffer2: [u8; 20] = [0; 20];
-    let player1 = *(p1 as *mut &PlayerType);
-    let player2 = *(p2 as *mut &PlayerType);
     let mut i = 0;
     let first_len = buffer1.len().min(player1.name.len());
     while i < first_len {
@@ -354,7 +351,7 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
         buffer2[0] = b'~'
     }
 
-    return buffer1.cmp(&buffer2) as i32
+    return buffer1.cmp(&buffer2)
 }
 /*
   SORT_PLAYER_DATABASE
@@ -363,11 +360,7 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
 unsafe fn sort_player_database() {
 
     let mut player_buffer = players.player_list.iter_mut().collect::<Vec<_>>();
-
-    qsort(player_buffer.as_ptr() as *mut std::ffi::c_void, players.count() as size_t,
-          ::std::mem::size_of::<&mut PlayerType>() as u64,
-          Some(thor_compare_players as
-                   unsafe extern "C" fn(_: *const std::ffi::c_void, _: *const std::ffi::c_void) -> i32));
+    player_buffer.sort_by(|p1, p2| thor_compare_players(p1, p2));
     player_buffer.into_iter().enumerate().for_each(|(i, p)| p.lex_order = i as i32);
 }
 /*
