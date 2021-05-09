@@ -165,5 +165,5 @@ pub struct SearchResultType {
 pub struct ThorOpening {
     pub first_unique: i32,
     pub frequency: i32,
-    pub move_str: *const i8,
+    pub move_str: &'static [u8],
 }

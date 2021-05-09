@@ -1,4 +1,4 @@
-use libc_wrapper::{free, qsort, fclose, fopen, fread, FileHandle, size_t, strlen};
+use libc_wrapper::{free, qsort, fclose, fopen, fread, FileHandle, size_t};
 use crate::src::error::LibcFatalError;
 use engine::src::error::FrontEnd;
 use engine::src::stubs::abs;
@@ -2093,14 +2093,8 @@ unsafe fn build_thor_opening_tree() {
     while i < 741 as i32 {
         branch_depth = THOR_OPENING_LIST[i as usize].first_unique;
         end_depth =
-            (branch_depth as
-                u64).wrapping_add(strlen(THOR_OPENING_LIST[i as
-                usize].move_str).wrapping_div(2
-                as
-                i32
-                as
-                u64))
-                as i32;
+            (branch_depth as u64).wrapping_add(
+                (THOR_OPENING_LIST[i as usize].move_str.len() as u64).wrapping_div(2)) as i32;
         j = 0;
         while j < end_depth - branch_depth {
             thor_move_list[(branch_depth + j) as usize] =
