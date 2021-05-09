@@ -22,7 +22,6 @@ use engine::src::myrandom::MyRandom;
 use engine::src::getcoeff::odometer_principle;
 use std::io::{Read, Write};
 use engine::src::game::to_lower;
-use std::cmp::Ordering;
 
 /* Local variables */
 pub static mut thor_game_count: i32 = 0;
@@ -355,11 +354,7 @@ unsafe extern "C" fn thor_compare_players(p1: *const std::ffi::c_void,
         buffer2[0] = b'~'
     }
 
-    return return match buffer1.cmp(&buffer2) {
-        Ordering::Less => -1,
-        Ordering::Equal => 0,
-        Ordering::Greater => 1,
-    };
+    return buffer1.cmp(&buffer2) as i32
 }
 /*
   SORT_PLAYER_DATABASE
