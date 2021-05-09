@@ -261,33 +261,17 @@ unsafe extern "C" fn thor_compare_tournaments(t1: *const std::ffi::c_void,
   Computes the lexicographic order of all tournaments in the database.
 */
 unsafe extern "C" fn sort_tournament_database() {
-    let mut tournament_buffer = 0 as *mut *mut TournamentType;
-    let mut i: i32 = 0;
-    tournament_buffer =
-        safe_malloc((tournaments.count() as
-                         u64).wrapping_mul(::std::mem::size_of::<*mut TournamentType>()
-                                                         as u64)) as
-            *mut *mut TournamentType;
-    i = 0;
-    while i < tournaments.count() {
-        let ref mut fresh0 = *tournament_buffer.offset(i as isize);
-        *fresh0 =
-            &mut *tournaments.tournament_list.offset(i as isize) as
-                *mut TournamentType;
-        i += 1
-    }
-    qsort(tournament_buffer as *mut std::ffi::c_void, tournaments.count() as size_t,
+    let tournament_buffer = tournaments.tournament_list.iter_mut().collect::<Vec<_>>();
+
+    qsort(tournament_buffer.as_ptr() as *mut std::ffi::c_void, tournaments.count() as size_t,
           ::std::mem::size_of::<*mut TournamentType>() as u64,
           Some(thor_compare_tournaments as
                    unsafe extern "C" fn(_: *const std::ffi::c_void,
                                         _: *const std::ffi::c_void)
                        -> i32));
-    i = 0;
-    while i < tournaments.count() {
-        (**tournament_buffer.offset(i as isize)).lex_order = i;
-        i += 1
-    }
-    free(tournament_buffer as *mut std::ffi::c_void);
+    tournament_buffer.into_iter().enumerate().for_each(|(i, tournament) | {
+        tournament.lex_order = i as i32;
+    });
 }
 /*
   READ_TOURNAMENT_DATABASE
