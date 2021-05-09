@@ -245,29 +245,17 @@ fn read_prolog(stream: FileHandle,
   Lexicographically compares the names of two tournaments
   represented by pointers.
 */
-unsafe extern "C" fn thor_compare_tournaments(t1: *const std::ffi::c_void,
-                                              t2: *const std::ffi::c_void)
- -> i32 {
-    let tournament1 = *(t1 as *mut &TournamentType);
-    let tournament2 = *(t2 as *mut &TournamentType);
-    return tournament1.name.cmp(tournament2.name) as i32;
+fn thor_compare_tournaments(tournament1: &TournamentType, tournament2: &TournamentType) -> Ordering {
+    return tournament1.name.cmp(tournament2.name);
 }
 /*
   SORT_TOURNAMENT_DATABASE
   Computes the lexicographic order of all tournaments in the database.
 */
-unsafe extern "C" fn sort_tournament_database() {
-    let tournament_buffer = tournaments.tournament_list.iter_mut().collect::<Vec<_>>();
-
-    qsort(tournament_buffer.as_ptr() as *mut std::ffi::c_void, tournaments.count() as size_t,
-          ::std::mem::size_of::<*mut TournamentType>() as u64,
-          Some(thor_compare_tournaments as
-                   unsafe extern "C" fn(_: *const std::ffi::c_void,
-                                        _: *const std::ffi::c_void)
-                       -> i32));
-    tournament_buffer.into_iter().enumerate().for_each(|(i, tournament) | {
-        tournament.lex_order = i as i32;
-    });
+unsafe fn sort_tournament_database() {
+    let mut tournament_buffer = tournaments.tournament_list.iter_mut().collect::<Vec<_>>();
+    tournament_buffer.sort_by(|t1, t2| thor_compare_tournaments(t1, t2));
+    tournament_buffer.into_iter().enumerate().for_each(|(i, tournament) | tournament.lex_order = i as i32);
 }
 /*
   READ_TOURNAMENT_DATABASE
