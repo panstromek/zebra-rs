@@ -62,13 +62,13 @@ pub struct PrologType {
     pub origin_year: i32,
     pub reserved: i32,
 }
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 #[repr(C)]
 pub struct DatabaseType {
     pub prolog: PrologType,
     pub games: *mut GameType,
     pub count: i32,
-    pub next: *mut DatabaseType,
+    pub next: Option<Box<DatabaseType>>,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -82,7 +82,7 @@ pub struct GameType {
     pub move_count: i16,
     pub black_disc_count: [i8; 61],
     pub opening: *mut ThorOpeningNode,
-    pub database: *mut DatabaseType,
+    pub database: &'static DatabaseType,
     pub shape_hi: u32,
     pub shape_lo: u32,
     pub shape_state_hi: i16,
