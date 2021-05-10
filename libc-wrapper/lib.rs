@@ -3,6 +3,7 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
+#![allow(clippy::missing_safety_doc)]
 
 use std::ffi::{c_void, CStr};
 use std::io::{Write, ErrorKind};
@@ -296,6 +297,6 @@ pub unsafe fn fread(__ptr: *mut std::ffi::c_void, __size: size_t, __n: size_t, _
 pub unsafe fn fwrite(__ptr: *const std::ffi::c_void, __size: size_t, __n: size_t, __s: FileHandle) -> size_t {
     inner::fwrite(__ptr, __size, __n, (__s).file())
 }
-pub fn c_time(timer: i64) -> &'static str{
-    &unsafe { CStr::from_ptr(ctime(&timer)) }.to_str().unwrap()
+pub unsafe fn c_time(timer: i64) -> &'static str{
+    &CStr::from_ptr(ctime(&timer)).to_str().unwrap()
 }
