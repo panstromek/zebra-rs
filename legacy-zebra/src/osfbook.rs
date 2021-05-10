@@ -15,7 +15,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvaluationType;
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
-use libc_wrapper::{fclose, fflush, FileHandle, fopen, fprintf, fscanf, printf, stdout, time};
+use libc_wrapper::{fclose, fflush, FileHandle, fopen, fprintf, fscanf, stdout, time};
 use std::io::Write;
 #[macro_use]
 use crate::fatal_error;
@@ -31,6 +31,7 @@ use crate::src::zebra::FullState;
 
 use engine::src::globals::BoardState;
 use std::ffi::CStr;
+use crate::src::display::TO_SQUARE;
 
 pub type FE = LibcFatalError;
 
@@ -126,16 +127,13 @@ pub unsafe fn add_new_game(move_count_0: i32,
             } else { side_to_move = 2 as i32 }
             if generate_specific(this_move, side_to_move, &(g_state.board_state).board) == 0 {
                 write!(stdout, "\n");
-                printf(b"i=%d, side_to_move=%d, this_move=%d\n\x00" as
-                           *const u8 as *const i8, i, side_to_move,
+                write!(stdout, "i={}, side_to_move={}, this_move={}\n", i, side_to_move,
                        this_move as i32);
-                printf(b"last_move_number=%d, move_count=%d\n\x00" as
-                           *const u8 as *const i8, last_move_number,
+                write!(stdout, "last_move_number={}, move_count={}\n", last_move_number,
                        move_count_0);
                 j = 0;
                 while j < move_count_0 {
-                    printf(b"%3d \x00" as *const u8 as *const i8,
-                           *game_move_list.offset(j as isize) as i32);
+                    write!(stdout, "{:3} ", *game_move_list.offset(j as isize) as i32);
                     j += 1
                 }
                 fatal_error!("{}: {}\n", "Invalid move generated", this_move);
@@ -164,12 +162,10 @@ pub unsafe fn add_new_game(move_count_0: i32,
         if echo != 0 {
             write!(stdout, "\n");
             if side_to_move == 0 as i32 {
-                printf(b"Full solving with %d empty (black)\n\x00" as
-                           *const u8 as *const i8,
+                write!(stdout, "Full solving with {} empty (black)\n",
                        60 as i32 - (g_state.moves_state).disks_played);
             } else {
-                printf(b"Full solving with %d empty (white)\n\x00" as
-                           *const u8 as *const i8,
+                write!(stdout, "Full solving with {} empty (white)\n",
                        60 as i32 - (g_state.moves_state).disks_played);
             }
         }
@@ -396,8 +392,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                             abs(*game_move_list.offset(i as isize) as
                                 i32)) as i32;
                 if midgame_eval_done == 0 {
-                    printf(b"Evaluating: \x00" as *const u8 as
-                        *const i8);
+                    write!(stdout, "Evaluating: ");
                     fflush(stdout);
                 }
                 midgame_eval_done = 1;
@@ -446,8 +441,7 @@ pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
     let mut stop_time: time_t = 0;
     let mut stream = FileHandle::null();
     time(&mut start_time);
-    printf(b"Reading text opening database... \x00" as *const u8 as
-               *const i8);
+    write!(stdout, "Reading text opening database... ");
     fflush(stdout);
     stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
     if stream.is_null() {
@@ -598,7 +592,7 @@ pub unsafe fn write_text_database(file_name: *const i8, g_book: &mut Book) {
     }
     fclose(stream);
     time(&mut stop_time);
-    printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
+    write!(stdout, "done (took {} s)\n",
            (stop_time - start_time) as i32);
     write!(stdout, "\n");
 }
@@ -636,7 +630,7 @@ pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book)
     }
     fclose(stream);
     time(&mut stop_time);
-    printf(b"done (took %d s)\n\x00" as *const u8 as *const i8,
+    write!(stdout, "done (took {} s)\n",
            (stop_time - start_time) as i32);
     write!(stdout, "\n");
 }
@@ -693,15 +687,13 @@ pub unsafe fn print_move_alternatives(side_to_move: i32, mut board_state: &mut B
         if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
                              isize)).flags as i32 & 16 as i32
                != 0 {
-            printf(b"%+d (exact score).\x00" as *const u8 as
-                       *const i8, sign * score);
+            write!(stdout, "{:+} (exact score).", sign * score);
         } else if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
                                     isize)).flags as i32 &
                       4 as i32 != 0 {
-            printf(b"%+d (W/L/D solved).\x00" as *const u8 as
-                       *const i8, sign * score);
+            write!(stdout, "{:+} (W/L/D solved).", sign * score);
         } else {
-            printf(b"%+.2f.\x00" as *const u8 as *const i8,
+            write!(stdout, "{:+.2}.",
                    (sign * score) as f64 / 128.0f64);
         }
         if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
@@ -712,12 +704,7 @@ pub unsafe fn print_move_alternatives(side_to_move: i32, mut board_state: &mut B
         write!(stdout, "\n");
         i = 0;
         while i < g_book.candidate_count {
-            printf(b"   %c%c   \x00" as *const u8 as *const i8,
-                   'a' as i32 +
-                       g_book.candidate_list[i as usize].move_0 as i32 % 10 as i32 -
-                       1 as i32,
-                   '0' as i32 +
-                       g_book.candidate_list[i as usize].move_0 as i32 / 10 as i32);
+            write!(stdout, "   {}   ", TO_SQUARE(g_book.candidate_list[i as usize].move_0));
             output_score = g_book.candidate_list[i as usize].score;
             if output_score >= 30000 as i32 {
                 output_score -= 30000 as i32
@@ -725,18 +712,14 @@ pub unsafe fn print_move_alternatives(side_to_move: i32, mut board_state: &mut B
                 output_score += 30000 as i32
             }
             if g_book.candidate_list[i as usize].flags & 16 as i32 != 0 {
-                printf(b"%+-6d  (exact score)\x00" as *const u8 as
-                           *const i8, output_score);
+                write!(stdout, "{:<+6}  (exact score)", output_score);
             } else if g_book.candidate_list[i as usize].flags & 4 as i32 != 0
              {
-                printf(b"%+-6d  (W/L/D solved)\x00" as *const u8 as
-                           *const i8, output_score);
+                write!(stdout, "{:<+6}  (W/L/D solved)", output_score);
             } else {
-                printf(b"%+-6.2f\x00" as *const u8 as *const i8,
-                       output_score as f64 / 128.0f64);
+                write!(stdout, "{:<+6.2}", output_score as f64 / 128.0f64);
                 if g_book.candidate_list[i as usize].flags & 64 as i32 != 0 {
-                    printf(b"  (deviation)\x00" as *const u8 as
-                               *const i8);
+                    write!(stdout, "  (deviation)");
                 }
             }
             write!(stdout, "\n");

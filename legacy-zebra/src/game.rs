@@ -13,7 +13,7 @@ use engine::src::thordb::ThorDatabase;
 use engine::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL, WLD_EVAL};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{fclose, FileHandle, fopen, printf, stdout, strcpy, time, time_t, c_time};
+use libc_wrapper::{fclose, FileHandle, fopen, stdout, strcpy, time, time_t, c_time};
 
 use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, TO_SQUARE};
 use crate::src::error::{LibcFatalError};
@@ -170,13 +170,10 @@ impl BoardSource for BasicBoardFileSource {
 
     fn report_unrecognized_character(unrecognized: i8) {
         unsafe {
-            printf(b"%s \'%c\' %s\n\x00" as *const u8 as
-                       *const i8,
-                   b"Unrecognized character\x00" as *const u8 as
-                       *const i8,
-                   unrecognized as i32,
-                   b"in game file\x00" as *const u8 as
-                       *const i8);
+            write!(stdout, "{} '{}' {}\n",
+                   "Unrecognized character",
+                   unrecognized as u8 as char,
+                   "in game file");
         }
     }
 }
@@ -238,9 +235,7 @@ impl LibcFatalError {
             let move__ = move_list_item[i as usize] as i32;
             let move_eval = evals_item[move__ as usize];
             unsafe {
-                printf(b"%c%c %-6.2f  \x00" as *const u8 as *const i8,
-                       'a' as i32 + move__ % 10 as i32 - 1 as i32,
-                       '0' as i32 + move__ / 10 as i32, move_eval as f64 / 128.0f64);
+                write!(stdout, "{} {:<6.2}  ", TO_SQUARE(move__), move_eval as f64 / 128.0f64);
             }
             if i % 7 as i32 == 6 as i32 || i == expect_count - 1 as i32 {
                 unsafe { write!(stdout, "\n"); }
@@ -251,8 +246,8 @@ impl LibcFatalError {
 
     fn report_hash_move(hash_move: i8) {
         unsafe {
-            printf(b"%s=%d\n\x00" as *const u8 as *const i8,
-                   b"hash move\x00" as *const u8 as *const i8, hash_move as i32);
+            write!(stdout, "{}={}\n",
+                   "hash move", hash_move as i32);
         }
     }
 }

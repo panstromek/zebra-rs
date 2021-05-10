@@ -28,7 +28,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 
-use libc_wrapper::{atoi, ctime, fclose, fopen, fprintf, fputs, printf, puts, scanf, stdout, time};
+use libc_wrapper::{atoi, ctime, fclose, fopen, fprintf, fputs, puts, scanf, stdout, time};
 use libc_wrapper::{time_t};
 
 use crate::src::display::{display_board, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
@@ -651,14 +651,12 @@ unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state
     let tournament_skill_ = &&mut (g_state.g_config).tournament_skill;
     let tourney_counter_value = counter_value(&mut tourney_nodes);
 
-    printf(b"\n\nTime:  %.1f s\nNodes: %.0f\n\x00" as *const u8 as
-               *const i8, tourney_time,
+    write!(stdout, "\n\nTime:  {:.1} s\nNodes: {:.0}\n", tourney_time,
            tourney_counter_value);
     puts(b"\nCompetitors:\x00" as *const u8 as *const i8);
     let mut i = 0;
     while i < tournament_levels_ {
-        printf(b"  Player %2d: %d-%d-%d\n\x00" as *const u8 as
-                   *const i8, i + 1 as i32,
+        write!(stdout, "  Player {:2}: {}-{}-{}\n", i + 1 as i32,
                tournament_skill_[i as usize][0],
                tournament_skill_[i as usize][1],
                tournament_skill_[i as usize][2]);
@@ -667,7 +665,7 @@ unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state
     write!(stdout, "\n       ");
     let mut i = 0;
     while i < tournament_levels_ {
-        printf(b" %2d    \x00" as *const u8 as *const i8,
+        write!(stdout, " {:2}    ",
                i + 1 as i32);
         i += 1
     }
@@ -675,23 +673,22 @@ unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state
     let mut i = 0;
     let mut j = 0;
     while i < tournament_levels_ {
-        printf(b"  %2d   \x00" as *const u8 as *const i8,
+        write!(stdout, "  {:2}   ",
                i + 1 as i32);
         j = 0;
         while j < tournament_levels_ {
-            printf(b"%2d-%2d  \x00" as *const u8 as *const i8,
+            write!(stdout, "{:2}-{:2}  ",
                    result[i as usize][j as usize][0],
                    result[i as usize][j as usize][2]);
             j += 1
         }
-        printf(b"  %4.1f\n\x00" as *const u8 as *const i8,
-               score[i as usize]);
+        write!(stdout, "  {:4.1}\n", score[i as usize]);
         i += 1
     }
     write!(stdout, "\n");
-    printf(b"Black score: %.1f\n\x00" as *const u8 as *const i8,
+    write!(stdout, "Black score: {:.1}\n",
            color_score[0]);
-    printf(b"White score: %.1f\n\x00" as *const u8 as *const i8,
+    write!(stdout, "White score: {:.1}\n",
            color_score[2]);
     write!(stdout, "\n");
 }
@@ -915,22 +912,18 @@ impl LibcFrontend {
 
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
         unsafe {
-            printf(b"%d black wins,  %d draws,  %d white wins\n\x00"
-                       as *const u8 as *const i8,
+            write!(stdout, "{} black wins,  {} draws,  {} white wins\n",
                    black_win_count, draw_count,
                    white_win_count);
-            printf(b"Median score %d-%d\n\x00" as *const u8 as
-                       *const i8, black_median_score,
+            write!(stdout, "Median score {}-{}\n", black_median_score,
                    64 as i32 - black_median_score);
-            printf(b", average score %.2f-%.2f\n\x00" as *const u8 as
-                       *const i8, black_average_score,
+            write!(stdout, ", average score {:.2}-{:.2}\n", black_average_score,
                    64.0f64 - black_average_score);
         }
     }
     fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64) {
         unsafe {
-            printf(b"%d matching games  (%.3f s search time, %.3f s total)\n\x00"
-                       as *const u8 as *const i8,
+            write!(stdout, "{} matching games  ({:.3} s search time, {:.3} s total)\n",
                    thor_position_count, db_search_time,
                    total_search_time);
         }
@@ -1023,7 +1016,7 @@ impl LibcFrontend {
         }
     }
     fn report_opening_name(opening_name: &CStr) {
-        unsafe { printf(b"\nOpening: %s\n\x00" as *const u8 as *const i8, opening_name.as_ptr()); }
+        unsafe { write!(stdout, "\nOpening: {}\n", opening_name.to_str().unwrap()); }
     }
 
     fn dumpch() {
@@ -1239,8 +1232,7 @@ unsafe fn analyze_game(mut move_string: &str,
                               i32);
                 let opening_name = find_opening_name(&mut (&mut g_state.g_book), &(g_state.board_state).board);
                 if let Some(opening_name) = opening_name {
-                    printf(b"\nOpening: %s\n\x00" as *const u8 as
-                               *const i8, CStr::from_bytes_with_nul(opening_name).unwrap().as_ptr());
+                    write!(stdout, "\nOpening: {}\n", CStr::from_bytes_with_nul(opening_name).map(CStr::to_str).unwrap().unwrap());
                 }
                 display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
                               1, (&mut g_state.g_config).use_timer, 1,
