@@ -28,7 +28,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 
-use libc_wrapper::{atoi, ctime, fclose, fopen, fprintf, fputs, puts, scanf, stdout, time};
+use libc_wrapper::{atoi, ctime, fclose, fopen, fprintf, fputs, scanf, stdout, time};
 use libc_wrapper::{time_t};
 
 use crate::src::display::{display_board, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
@@ -653,7 +653,7 @@ unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state
 
     write!(stdout, "\n\nTime:  {:.1} s\nNodes: {:.0}\n", tourney_time,
            tourney_counter_value);
-    puts(b"\nCompetitors:\x00" as *const u8 as *const i8);
+    write!(stdout, "\nCompetitors:\n");
     let mut i = 0;
     while i < tournament_levels_ {
         write!(stdout, "  Player {:2}: {}-{}-{}\n", i + 1 as i32,
@@ -669,7 +669,7 @@ unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state
                i + 1 as i32);
         i += 1
     }
-    puts(b"  Score\x00" as *const u8 as *const i8);
+    write!(stdout, "  Score\n");
     let mut i = 0;
     let mut j = 0;
     while i < tournament_levels_ {
