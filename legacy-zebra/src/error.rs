@@ -10,7 +10,7 @@ use engine::src::hash::{HashEntry, HashState};
 use engine::src::search::{hash_expand_pv, SearchState};
 
 use engine::src::zebra::{EvaluationType};
-use libc_wrapper::{fflush, fopen, printf, stderr, stdout, time, time_t, c_time};
+use libc_wrapper::{fflush, fopen, stderr, stdout, time, time_t, c_time};
 use thordb_types::C2RustUnnamed;
 #[macro_use]
 use crate::send_status;
@@ -162,7 +162,7 @@ impl FrontEnd for LibcFatalError {
             write!(stdout, "      After:  ");
             let mut i = 0;
             while i < 4 {
-                printf(b"%2d \x00" as *const u8 as *const i8, best_list[i] as i32);
+                write!(stdout, "{:2} ", best_list[i] as i32);
                 i += 1
             }
             write!(stdout, "\n");
@@ -170,12 +170,11 @@ impl FrontEnd for LibcFatalError {
     }
     fn before_update_best_list_verbose(best_list: &mut [i8; 4], move_0: i8, best_list_index: i32, best_list_length: &mut i32) {
         unsafe {
-            printf(b"move=%2d  index=%d  length=%d      \x00" as *const u8 as
-                       *const i8, move_0 as i32, best_list_index, *best_list_length);
+            write!(stdout, "move={:2}  index={}  length={}      ", move_0 as i32, best_list_index, *best_list_length);
             write!(stdout, "Before:  ");
             let mut i = 0;
             while i < 4 {
-                printf(b"%2d \x00" as *const u8 as *const i8, best_list[i] as i32);
+                write!(stdout, "{:2} ", best_list[i] as i32);
                 i += 1
             }
         }
@@ -289,55 +288,42 @@ impl FrontEnd for LibcFatalError {
 
     fn end_report_panic_abort_2(elapsed_time: f64) {
         unsafe {
-            printf(b"%s %.1f %c %s\n\x00" as *const u8 as *const i8,
-                   b"Panic abort after\x00" as *const u8 as *const i8, elapsed_time, 's' as i32,
-                   b"in selective search\x00" as *const u8 as *const i8);
+            write!(stdout, "{} {:.1} {} {}\n",
+                   "Panic abort after", elapsed_time, 's', "in selective search");
         }
     }
 
      fn end_report_semi_panic_abort_3(elapsed_time: f64) {
          unsafe {
-             printf(b"%s %.1f %c %s\n\x00" as *const u8 as
-                        *const i8,
-                    b"Semi-panic abort after\x00" as *const u8 as
-                        *const i8, elapsed_time,
-                    's' as i32,
-                    b"in WLD search\x00" as *const u8 as
-                        *const i8);
+             write!(stdout, "{} {:.1} {} {}\n",
+                    "Semi-panic abort after", elapsed_time,
+                    's', "in WLD search");
          }
     }
 
     fn end_report_semi_panic_abort_2(elapsed_time: f64) {
         unsafe {
-            printf(b"%s %.1f %c %s\n\x00" as *const u8 as *const i8,
-                   b"Semi-panic abort after\x00" as *const u8 as
-                       *const i8, elapsed_time, 's' as i32,
-                   b"in exact search\x00" as *const u8 as
-                       *const i8);
+            write!(stdout, "{} {:.1} {} {}\n",
+                   "Semi-panic abort after" , elapsed_time, 's',
+                   "in exact search" );
         }
     }
 
     fn end_report_panic_abort(elapsed_time: f64) {
         unsafe {
-            printf(b"%s %.1f %c %s\n\x00" as *const u8 as
-                       *const i8,
-                   b"Panic abort after\x00" as *const u8 as
-                       *const i8, elapsed_time,
-                   's' as i32,
-                   b"in WLD search\x00" as *const u8 as
-                       *const i8);
+            write!(stdout, "{} {:.1} {} {}\n",
+                   "Panic abort after", elapsed_time,
+                   's',
+                   "in WLD search");
         }
     }
 
     fn end_report_semi_panic_abort(elapsed_time: f64) {
         unsafe {
-            printf(b"%s %.1f %c %s\n\x00" as *const u8 as
-                       *const i8,
-                   b"Semi-panic abort after\x00" as *const u8 as
-                       *const i8, elapsed_time,
-                   's' as i32,
-                   b"in selective search\x00" as *const u8 as
-                       *const i8);
+            write!(stdout, "{} {:.1} {} {}\n",
+                   "Semi-panic abort after", elapsed_time,
+                   's',
+                   "in selective search");
         }
     }
 
@@ -349,37 +335,28 @@ impl FrontEnd for LibcFatalError {
 
     fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i8; 64]) {
         unsafe {
-            printf(b"pv_depth[0] = %d\n\x00" as *const u8 as
-                       *const i8,
+            write!(stdout, "pv_depth[0] = {}\n",
                    pv_0_depth);
             let mut j = 0;
             while j < pv_0_depth {
-                printf(b"%c%c \x00" as *const u8 as *const i8,
-                       'a' as i32 +
-                           pv_0[j as usize] as i32 %
-                               10 as i32 - 1 as i32,
-                       '0' as i32 +
-                           pv_0[j as usize] as i32 /
-                               10 as i32);
+                write!(stdout, "{} ",TO_SQUARE(pv_0[j as usize]));
                 j += 1
             }
             write!(stdout, "\n");
-            printf(b"i=%d\n\x00" as *const u8 as *const i8, i);
+            write!(stdout, "i={}\n", i);
             fatal_error!("Error in PV completion");
         }
     }
 
     fn report_unwanted_book_draw(this_move: i32) {
         unsafe {
-            printf(b"%c%c leads to an unwanted book draw\n\x00" as *const u8 as *const i8, 'a' as i32 + this_move % 10 as i32 - 1 as i32, '0' as i32 + this_move / 10 as i32);
+            write!(stdout, "{} leads to an unwanted book draw\n", TO_SQUARE(this_move));
         }
     }
 
     fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32, board_state: &mut BoardState, g_book: &mut Book) {
         unsafe {
-            printf(b"Slack left is %.2f. \x00" as *const u8 as
-                       *const i8,
-                   remaining_slack as f64 / 128.0f64);
+            write!(stdout, "Slack left is {:.2}. ", remaining_slack as f64 / 128.0f64);
             print_move_alternatives(side_to_move,board_state, g_book );
         }
     }
@@ -511,13 +488,10 @@ impl FrontEnd for LibcFatalError {
 
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
         unsafe {
-            printf(b"%s @ %d <--> %d of %d\n\x00" as *const u8 as
-                       *const i8,
-                   b"Mirror symmetry error\x00" as *const u8 as
-                       *const i8, i, first_mirror_offset,
+            write!(stdout, "{} @ {} <--> {} of {}\n",
+                   "Mirror symmetry error", i, first_mirror_offset,
                    count);
-            printf(b"%d <--> %d\n\x00" as *const u8 as
-                       *const i8,
+            write!(stdout, "{} <--> {}\n",
                    first_item,
                    second_item);
         }
