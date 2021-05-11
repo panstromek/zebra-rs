@@ -3,7 +3,7 @@
 
 use std::ffi::{CStr, CString};
 use std::fs::File;
-use std::io::{Read, Write};
+use std::io::{Read, Write, BufRead, StdinLock};
 use std::process::exit;
 
 use engine::src::counter::{add_counter, adjust_counter, counter_value, CounterType, reset_counter};
@@ -28,7 +28,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 
-use libc_wrapper::{atoi, ctime, fclose, fopen, fprintf, fputs, scanf, stdout, time};
+use libc_wrapper::{ctime, fclose, fopen, fprintf, fputs, scanf, stdout, time};
 use libc_wrapper::{time_t};
 
 use crate::src::display::{display_board, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
@@ -758,6 +758,9 @@ unsafe fn play_game(mut file_name: &str,
     let mut play_state: PlayGame<Source> = PlayGame::new(file_name, move_string, repeat, move_file, g_state);
     let mut move_attempt = None;
     let mut total_search_time: f64 = 0.;
+
+    let stdin = std::io::stdin();
+    let mut stdin_lock = stdin.lock();
     loop {
         let state = next_state::<
             ZF, Source, BoardSrc, ComputeMoveLog, ComputeMoveOut, FE, Thor
@@ -768,13 +771,13 @@ unsafe fn play_game(mut file_name: &str,
                 return play_state.g_state;
             }
             PlayGameState::Dumpch { provided_move_count, move_start } => {
-                ZF::dumpch();
+                ZF::dumpch(&mut stdin_lock);
             }
             PlayGameState::GetPass { provided_move_count } => {
-                ZF::get_pass();
+                ZF::get_pass(&mut stdin_lock);
             }
             PlayGameState::GettingMove { provided_move_count, move_start, side_to_move } => {
-                let res = ZF::prompt_get_move(side_to_move);
+                let res = ZF::prompt_get_move(side_to_move, &mut stdin_lock);
                 move_attempt = Some(MoveAttempt(res.0 as i8, res.1 as i8))
             }
             PlayGameState::NeedsDump {..} => {
@@ -963,27 +966,46 @@ impl LibcFrontend {
         }
     }
 
-    fn get_pass() {
+    fn get_pass(stdin_lock : &mut StdinLock) {
         unsafe {
             write!(stdout, "You must pass - please press Enter\n");
-            dumpch();
+            dumpch(stdin_lock);
         }
     }
 
-    fn prompt_get_move(side_to_move: i32) -> (i32, i32) {
-        let mut buffer: [i8; 4] = [0; 4];
+    fn prompt_get_move(side_to_move: i32, stdin_lock : &mut StdinLock) -> (i32, i32) {
+        let mut buffer1 = [0; 4];
+        let mut buffer = &mut buffer1[0..3];
         unsafe {
             if side_to_move == 0 {
                 write!(stdout, "{}: ", "Black move");
             } else {
                 write!(stdout, "{}: ", "White move");
             }
-            scanf(b"%3s\x00" as *const u8 as *const i8, buffer.as_mut_ptr());
-            let curr_move = atoi(buffer.as_mut_ptr());
-            let curr_move_2 =
-                buffer[0] as i32 - 'a' as i32 + 1 + 10 * (buffer[1] as i32 - '0' as i32);
-            (curr_move, curr_move_2)
         }
+        loop {
+            match stdin_lock.fill_buf() {
+                Ok(&[next, ..])  if next.is_ascii_whitespace() => {
+                    stdin_lock.consume(1);
+                }
+                _ => break
+            }
+        }
+        for current in buffer.chunks_exact_mut(1) {
+            match stdin_lock.fill_buf() {
+                Ok(&[next, ..])  if !next.is_ascii_whitespace() => {
+                    current[0] = next;
+                    stdin_lock.consume(1);
+                }
+                _ => break
+            }
+        }
+
+        let curr_move = buffer1.atoi();
+        let curr_move_2 =
+            buffer1[0] as i32 - 'a' as i32 + 1 + 10 * (buffer1[1] as i32 - '0' as i32);
+        (curr_move, curr_move_2)
+
     }
     fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {
         unsafe {
@@ -1019,8 +1041,8 @@ impl LibcFrontend {
         unsafe { write!(stdout, "\nOpening: {}\n", opening_name.to_str().unwrap()); }
     }
 
-    fn dumpch() {
-        unsafe { dumpch() }
+    fn dumpch(stdin_lock : &mut StdinLock) {
+        dumpch(stdin_lock)
     }
 }
 impl ZebraFrontend for LibcFrontend {
@@ -1217,6 +1239,8 @@ unsafe fn analyze_game(mut move_string: &str,
     let best_trans2 = (g_state.random_instance).my_random() as u32;
     let played_trans1 = (g_state.random_instance).my_random() as u32;
     let played_trans2 = (g_state.random_instance).my_random() as u32;
+    let stdin = std::io::stdin();
+    let mut stdin_lock = stdin.lock();
     while game_in_progress((&mut g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board) != 0 && (g_state.moves_state).disks_played < provided_move_count {
         remove_coeffs((g_state.moves_state).disks_played, &mut ( g_state.coeff_state));
         generate_all(side_to_move, (&mut g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board);
@@ -1243,7 +1267,9 @@ unsafe fn analyze_game(mut move_string: &str,
             }
             /* Check what the Thor opening statistics has to say */
             choose_thor_opening_move(&(g_state.board_state).board, side_to_move, (&mut g_state.g_config).echo, &mut (&mut g_state.random_instance));
-            if (&mut g_state.g_config).echo != 0 && (&mut g_state.g_config).wait != 0 { dumpch(); }
+            if (&mut g_state.g_config).echo != 0 && (&mut g_state.g_config).wait != 0 {
+                dumpch(&mut stdin_lock);
+            }
              (&mut g_state.g_timer).start_move((&mut g_state.g_config).player_time[side_to_move as usize],
                                                      (&mut g_state.g_config).player_increment[side_to_move as usize],
                                                      (g_state.moves_state).disks_played + 4 as i32);

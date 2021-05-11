@@ -3,12 +3,12 @@ use std::ffi::{CStr};
 use engine::src::search::disc_count;
 use engine::src::stubs::{abs, ceil, floor};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{FileHandle, getc, stdin};
+use libc_wrapper::{FileHandle};
 
 
 
 use engine::src::timer::Timer;
-use std::io::Write;
+use std::io::{Write, Read, StdinLock};
 
 use std::fmt::{Formatter};
 
@@ -179,9 +179,10 @@ pub unsafe fn reset_buffer_display(g_timer:&mut Timer) {
    if the character typed is ' '.
 */
 
-pub unsafe fn dumpch() {
-    let ch = getc(stdin) as i8;
-    if ch as i32 == ' ' as i32 { std::process::exit(1 as i32); };
+pub fn dumpch(stdin_lock : &mut StdinLock) {
+    let mut ch = [0_u8];
+    stdin_lock.read(&mut ch);
+    if ch[0] == b' ' { std::process::exit(1 as i32); };
 }
 /*
    DISPLAY_BOARD
