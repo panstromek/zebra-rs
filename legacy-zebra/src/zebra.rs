@@ -28,7 +28,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 
-use libc_wrapper::{ctime, fclose, fopen, fprintf, fputs, scanf, stdout, time};
+use libc_wrapper::{fclose, fopen, fprintf, fputs, scanf, stdout, time, c_time};
 use libc_wrapper::{time_t};
 
 use crate::src::display::{display_board, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
@@ -948,19 +948,19 @@ impl LibcFrontend {
                        first_side_to_move: i32, second_side_to_move: i32) {
         let log_file_name_ = log_file_name_.as_ptr();
         unsafe {
-            let log_file = fopen(log_file_name_,
-                                 b"a\x00" as *const u8 as *const i8);
+            let mut log_file = fopen(log_file_name_,
+                                     b"a\x00" as *const u8 as *const i8);
 
             if !log_file.is_null() {
                 let mut timer = time(0 as *mut time_t);
-                fprintf(log_file,
-                        b"# %s#     %2d - %2d\n\x00" as *const u8 as
-                            *const i8, ctime(&mut timer),
+                write!(log_file,
+                        "# {}#     {:2} - {:2}\n" , c_time(timer),
                         first_side_to_move,
                         second_side_to_move);
-                fprintf(log_file,
-                        b"%s\n\x00" as *const u8 as *const i8,
-                        move_vec.as_ptr() as *mut i8);
+                for &c in move_vec.into_iter().take_while(|&&c| c != 0) {
+                    log_file.write(&[c as _]);
+                }
+                log_file.write(b"\n");
                 fclose(log_file);
             }
         }
