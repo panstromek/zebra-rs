@@ -47,7 +47,7 @@ static board_region: [i8; 100] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 ];
 
-fn DrctnlFlips_six(sq: usize, inc: isize, color: i32, oppcol: i32, board: &mut [i32; 128],  global_flip_stack: &mut [usize; 2048] , mut t_flip_stack: usize) -> usize {
+fn DrctnlFlips_six(sq: usize, inc: isize, color: i32, oppcol: i32, board: &mut [i32; 128],  global_flip_stack: &mut [u8; 2048] , mut t_flip_stack: usize) -> usize {
     let mut pt:isize = sq as isize + inc;
 
 
@@ -87,7 +87,7 @@ fn DrctnlFlips_six(sq: usize, inc: isize, color: i32, oppcol: i32, board: &mut [
 
 
 
-fn DrctnlFlips_four(sq: usize, inc: isize, color: i32, oppcol: i32, board: &mut [i32; 128], global_flip_stack: &mut [usize; 2048], mut t_flip_stack: usize) -> usize {
+fn DrctnlFlips_four(sq: usize, inc: isize, color: i32, oppcol: i32, board: &mut [i32; 128], global_flip_stack: &mut [u8; 2048], mut t_flip_stack: usize) -> usize {
     let mut pt: isize = sq as isize + inc;
 
 
@@ -196,7 +196,7 @@ pub fn DoFlips_no_hash(sqnum: i8, color: i32,
 
 
 fn DrctnlFlipsHash_four( sq: usize, inc: isize, color: i32, oppcol: i32, board: &mut [i32; 128],
-                         global_flip_stack: &mut [usize; 2048] , mut t_flip_stack: usize ,
+                         global_flip_stack: &mut [u8; 2048] , mut t_flip_stack: usize ,
                          t_hash_update2: &mut i32,  t_hash_update1: &mut i32,
                          hash_flip1: &mut [u32; 128], hash_flip2: &mut [u32; 128]) -> usize {
     let mut pt: isize = sq as isize + inc;
@@ -238,7 +238,7 @@ fn DrctnlFlipsHash_four( sq: usize, inc: isize, color: i32, oppcol: i32, board: 
 
 
 fn DrctnlFlipsHash_six( sq: usize, inc: isize, color: i32, oppcol: i32, board: &mut [i32; 128],
-                        global_flip_stack: &mut [usize; 2048] , mut t_flip_stack: usize,
+                        global_flip_stack: &mut [u8; 2048] , mut t_flip_stack: usize,
                         t_hash_update2: &mut i32,  t_hash_update1: &mut i32,
                         hash_flip1: &mut [u32; 128], hash_flip2: &mut [u32; 128],
 ) -> usize {

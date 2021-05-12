@@ -215,14 +215,14 @@ pub fn unmake_move(side_to_move: i32, move_0: i8, board: &mut [i32; 128], moves_
     if UndoFlips__flip_count & 1 as i32 != 0 {
         UndoFlips__flip_count -= 1;
         flip_stack.flip_stack = flip_stack.flip_stack.offset(-1);
-        board[flip_stack.global_flip_stack[flip_stack.flip_stack]] = UndoFlips__oppcol
+        board[flip_stack.global_flip_stack[flip_stack.flip_stack] as usize] = UndoFlips__oppcol
     }
     while UndoFlips__flip_count != 0 {
         UndoFlips__flip_count -= 2 as i32;
         flip_stack.flip_stack = flip_stack.flip_stack.offset(-1);
-        board[flip_stack.global_flip_stack[flip_stack.flip_stack]] = UndoFlips__oppcol;
+        board[flip_stack.global_flip_stack[flip_stack.flip_stack] as usize] = UndoFlips__oppcol;
         flip_stack.flip_stack = flip_stack.flip_stack.offset(-1);
-        board[flip_stack.global_flip_stack[flip_stack.flip_stack]] = UndoFlips__oppcol
+        board[flip_stack.global_flip_stack[flip_stack.flip_stack] as usize] = UndoFlips__oppcol
     };
 }
 
@@ -374,14 +374,14 @@ pub fn unmake_move_no_hash(side_to_move: i32, move_0: i8, board: &mut [i32; 128]
     if UndoFlips__flip_count & 1 as i32 != 0 {
         UndoFlips__flip_count -= 1;
         flip_stack.flip_stack = flip_stack.flip_stack - 1;
-        board[flip_stack.global_flip_stack[flip_stack.flip_stack]] = UndoFlips__oppcol
+        board[flip_stack.global_flip_stack[flip_stack.flip_stack] as usize ] = UndoFlips__oppcol
     }
     while UndoFlips__flip_count != 0 {
         UndoFlips__flip_count -= 2 as i32;
         flip_stack.flip_stack = flip_stack.flip_stack - 1;
-        board[flip_stack.global_flip_stack[flip_stack.flip_stack]] = UndoFlips__oppcol;
+        board[flip_stack.global_flip_stack[flip_stack.flip_stack] as usize ] = UndoFlips__oppcol;
         flip_stack.flip_stack = flip_stack.flip_stack - 1;
-        board[flip_stack.global_flip_stack[flip_stack.flip_stack]] = UndoFlips__oppcol
+        board[flip_stack.global_flip_stack[flip_stack.flip_stack] as usize] = UndoFlips__oppcol
     };
 }
 /*

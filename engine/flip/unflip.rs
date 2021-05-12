@@ -27,7 +27,7 @@
 use engine_traits::Offset;
 
 pub struct FlipStack {
-    pub global_flip_stack: [usize; 2048],
+    pub global_flip_stack: [u8; 2048],
     pub flip_stack: usize,
 }
 impl FlipStack {
@@ -52,14 +52,14 @@ impl FlipStack {
         if UndoFlips__flip_count & 1 as i32 != 0 {
             UndoFlips__flip_count -= 1;
             self.flip_stack = self.flip_stack -1;
-            board[self.global_flip_stack[self.flip_stack]] = UndoFlips__oppcol
+            board[self.global_flip_stack[self.flip_stack] as usize] = UndoFlips__oppcol
         }
         while UndoFlips__flip_count != 0 {
             UndoFlips__flip_count -= 2 as i32;
             self.flip_stack = self.flip_stack - 1;
-            board[self.global_flip_stack[self.flip_stack]] = UndoFlips__oppcol;
+            board[self.global_flip_stack[self.flip_stack] as usize] = UndoFlips__oppcol;
             self.flip_stack = self.flip_stack - 1;
-            board[self.global_flip_stack[self.flip_stack]] = UndoFlips__oppcol
+            board[self.global_flip_stack[self.flip_stack] as usize] = UndoFlips__oppcol
         };
     }
     pub const fn new() -> Self {
