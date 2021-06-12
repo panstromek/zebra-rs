@@ -80,7 +80,7 @@ pub unsafe fn toggle_status_log(write_log: i32) {
 
 pub unsafe fn global_setup(use_random: i32,
                                       hash_bits: i32, mut g_state: &mut FullState) {
-    LogFileHandler::on_global_setup();
+    setup_log_file();
     let coeff_adjustments = load_coeff_adjustments();
 
     let file_name = match std::env::var("COEFFS_PATH") {
@@ -118,11 +118,7 @@ pub unsafe fn global_setup(use_random: i32,
 pub struct LogFileHandler {
     log_file: FileHandle,
 }
-impl LogFileHandler {
-    fn on_global_setup() {
-        unsafe { setup_log_file() }
-    }
-}
+
 unsafe fn setup_log_file() {
     /* Clear the log file. No error handling done. */
     if use_log_file != 0 {
