@@ -66,8 +66,6 @@ mod inner  {
         pub static mut stdin: *mut FILE;
         pub static mut stdout: *mut FILE;
         pub static mut stderr: *mut FILE;
-        pub fn getc(__stream: *mut FILE) -> i32;
-        pub fn putc(__c: i32, __stream: *mut FILE) -> i32;
         pub fn vfprintf(_: *mut FILE, _: *const i8, _: ::std::ffi::VaList) -> i32;
     }
 }
@@ -185,9 +183,6 @@ pub unsafe extern "C" fn __wrap_time(__timer: *mut time_t) -> time_t {
     return result;
 }
 
-pub unsafe fn getc(__stream: FileHandle) -> i32 {
-    return inner::getc((__stream).file())
-}
 
 pub unsafe fn fclose(__stream: FileHandle) -> i32 {
     inner::fclose(__stream.file())
@@ -221,7 +216,7 @@ pub unsafe fn fflush(__stream: FileHandle) -> i32 {
 }
 
 pub unsafe fn putc(__c: i32, __stream: FileHandle) -> i32 {
-    inner::putc(__c, (__stream).file())
+    fputc(__c, __stream)
 }
 
 pub unsafe fn fread(__ptr: *mut std::ffi::c_void, __size: size_t, __n: size_t, __stream: FileHandle) -> size_t {
