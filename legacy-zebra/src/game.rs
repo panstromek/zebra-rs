@@ -13,7 +13,7 @@ use engine::src::thordb::ThorDatabase;
 use engine::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL, WLD_EVAL};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{fclose, FileHandle, fopen, stdout, strcpy, time, time_t, c_time};
+use libc_wrapper::{fclose, FileHandle, fopen, stdout, time, time_t, c_time};
 
 use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, TO_SQUARE};
 use crate::src::error::{LibcFatalError};
@@ -21,7 +21,7 @@ use crate::src::getcoeff::{load_coeff_adjustments, new_coeff_source};
 use crate::src::thordb::LegacyThor;
 use crate::src::zebra::FullState;
 use engine::src::globals::BoardState;
-use std::fs::{File};
+use std::fs::{File, OpenOptions};
 use std::io::{Read, BufReader, BufRead, Write};
 
 use engine::src::timer::Timer;
@@ -30,7 +30,6 @@ use engine::src::timer::Timer;
 use crate::send_status;
 
 
-pub static mut log_file_path: [i8; 2048] = [0; 2048];
 pub static mut prefix_move: i8 = 0;
 pub static mut evaluated_list: [EvaluatedMove; 60] = [EvaluatedMove {
     eval: EvaluationType {
@@ -126,13 +125,8 @@ impl LogFileHandler {
 }
 unsafe fn setup_log_file() {
     /* Clear the log file. No error handling done. */
-    strcpy(log_file_path.as_mut_ptr(),
-           b"zebra.log\x00" as *const u8 as *const i8);
     if use_log_file != 0 {
-        let mut log_file =
-            fopen(log_file_path.as_mut_ptr(),
-                  b"w\x00" as *const u8 as *const i8);
-        if !log_file.is_null() {
+        if let Ok(mut log_file) = OpenOptions::new().write(true).truncate(true).create(true).open("zebra.log") {
             let mut timer_: time_t = 0;
             time(&mut timer_);
             write!(log_file, "{} {}\n", "Log file created", c_time(timer_));
@@ -141,7 +135,7 @@ unsafe fn setup_log_file() {
                     "Engine compiled",
                     "Jul  2 2020" ,
                     "19:33:59");
-            fclose(log_file);
+            log_file.flush();
         }
     }
 }
@@ -1445,9 +1439,9 @@ fn echo_compute_move_1(info: &EvaluationType) {
 }
 }
 impl LogFileHandler {
-    fn create(log_file_path_: &mut [i8]) -> Option<Self> {
+    fn create() -> Option<Self> {
         let log_file = unsafe {
-            fopen(log_file_path_.as_mut_ptr(),
+            fopen(b"zebra.log\x00".as_ptr() as *const i8,
                   b"a\x00" as *const u8 as *const i8)
         };
         if !log_file.is_null() {
@@ -1463,8 +1457,7 @@ impl ComputeMoveLogger for LogFileHandler {
 fn create_log_file_if_needed() -> Option<Self> {
     unsafe {
         if use_log_file != 0 {
-            let log_file_path_ = &mut log_file_path as &mut [i8];
-            Self::create(log_file_path_)
+            Self::create()
         } else {
             None
         }
