@@ -1,6 +1,5 @@
 #![allow(dead_code,  non_camel_case_types, non_snake_case,
 non_upper_case_globals, unused_assignments, unused_mut, unused_must_use)]
-#![feature(const_raw_ptr_to_usize_cast, extern_types)]
 
 use engine::src::counter::{add_counter, counter_value, CounterType, reset_counter};
 use engine::src::hash::setup_hash;
