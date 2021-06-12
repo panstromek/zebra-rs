@@ -110,6 +110,8 @@ extern "C" {
     pub fn gzgetc(file: gzFile) -> i32;
     pub fn gzclose(file: gzFile) -> i32;
     pub fn gzopen(_: *const i8, _: *const i8) -> gzFile;
+    pub fn exp(_: f64) -> f64;
+    pub fn __ctype_tolower_loc() -> *mut *const i32;
 }
 pub static mut stdin: FileHandle = FileHandle::StdIn;
 pub static mut stdout: FileHandle = FileHandle::StdOut;
