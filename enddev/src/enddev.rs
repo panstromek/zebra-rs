@@ -13,44 +13,12 @@ use legacy_zebra::src::display::{display_board, display_state};
 use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{compute_move, extended_compute_move, game_init, get_evaluated, get_evaluated_count, global_setup};
 use legacy_zebra::src::learn::init_learn;
-use libc_wrapper::{_IO_FILE, stdout};
+use libc_wrapper::{_IO_FILE, stdout, fprintf, fputs, exp, printf, feof, fopen, sscanf, tolower, strlen, __ctype_b_loc, fgets, stderr, FileHandle, exit, __ctype_tolower_loc};
 use legacy_zebra::src::zebra::LibcTimeSource;
 use std::io::Write;
 
-extern "C" {
-    fn __ctype_b_loc() -> *mut *const u16;
-    fn __ctype_tolower_loc() -> *mut *const __int32_t;
-    fn exp(_: f64) -> f64;
-    static mut stderr: *mut FILE;
-    fn fopen(__filename: *const i8, __modes: *const i8) -> *mut FILE;
-    fn fprintf(_: *mut FILE, _: *const i8, _: ...) -> i32;
-    fn printf(_: *const i8, _: ...) -> i32;
-    fn sscanf(_: *const i8, _: *const i8, _: ...) -> i32;
-    fn fgets(__s: *mut i8, __n: i32, __stream: *mut FILE) -> *mut i8;
-    fn fputs(__s: *const i8, __stream: *mut FILE) -> i32;
-    fn puts(__s: *const i8) -> i32;
-    fn feof(__stream: *mut FILE) -> i32;
-    fn exit(_: i32) -> !;
-    fn strlen(_: *const i8) -> u64;
-}
-pub type __int32_t = i32;
-pub type __off_t = i64;
-pub type __off64_t = i64;
 pub type C2RustUnnamed = u32;
 pub const _ISalnum: C2RustUnnamed = 8;
-pub const _ISpunct: C2RustUnnamed = 4;
-pub const _IScntrl: C2RustUnnamed = 2;
-pub const _ISblank: C2RustUnnamed = 1;
-pub const _ISgraph: C2RustUnnamed = 32768;
-pub const _ISprint: C2RustUnnamed = 16384;
-pub const _ISspace: C2RustUnnamed = 8192;
-pub const _ISxdigit: C2RustUnnamed = 4096;
-pub const _ISdigit: C2RustUnnamed = 2048;
-pub const _ISalpha: C2RustUnnamed = 1024;
-pub const _ISlower: C2RustUnnamed = 512;
-pub const _ISupper: C2RustUnnamed = 256;
-pub type size_t = u64;
-pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 /*
    File:           globals.h
@@ -75,12 +43,6 @@ pub struct C2RustUnnamed_0 {
     pub score: i32,
     pub prob: i32,
 }
-#[inline]
-unsafe extern "C" fn tolower(mut __c: i32) -> i32 {
-    return if __c >= -(128 as i32) && __c < 256 as i32 {
-        *(*__ctype_tolower_loc()).offset(__c as isize)
-    } else { __c };
-}
 /*
    File:         enddev.c
 
@@ -93,7 +55,7 @@ unsafe extern "C" fn tolower(mut __c: i32) -> i32 {
    Contents:
 */
 static mut VERBOSE: i32 = 1;
-unsafe extern "C" fn read_game(mut stream: *mut FILE,
+unsafe extern "C" fn read_game(mut stream: FileHandle,
                                mut game_moves: *mut i32,
                                mut game_length: *mut i32) {
     let mut buffer: [i8; 1000] = [0; 1000];
@@ -111,14 +73,8 @@ unsafe extern "C" fn read_game(mut stream: *mut FILE,
             ch = ch.offset(1)
         }
         *ch = 0;
-        *game_length =
-              strlen(buffer.as_mut_ptr()).wrapping_div(2 as i32 as
-                u64) as
-                i32;
-        if *game_length > 60 as i32 ||
-              strlen(buffer.as_mut_ptr()).wrapping_rem(2 as i32 as
-                u64) ==
-                1 as i32 as u64 {
+        *game_length = strlen(buffer.as_mut_ptr()).wrapping_div(2) as i32;
+        if *game_length > 60 as i32 || strlen(buffer.as_mut_ptr()).wrapping_rem(2) == 1 {
             fprintf(stderr,
                     b"Bad move string %s.\n\x00" as *const u8 as
                         *const i8, buffer.as_mut_ptr());
@@ -189,7 +145,6 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let mut games_read: i32 = 0;
     let mut game_length: i32 = 0;
     let mut game_moves: [i32; 60] = [0; 60];
-    let mut stream: *mut FILE = 0 as *mut FILE;
     if argc != 3 as i32 ||
         sscanf(*argv.offset(2),
                b"%lf\x00" as *const u8 as *const i8,
@@ -198,7 +153,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                   *const u8 as *const i8, stderr);
         exit(1 as i32);
     }
-    stream =
+    let stream =
         fopen(*argv.offset(1),
               b"r\x00" as *const u8 as *const i8);
     if stream.is_null() {
