@@ -1,21 +1,20 @@
 use engine::src::getcoeff::{CoeffAdjustments};
 
 
-use std::ffi::CStr;
 use std::str::{FromStr};
 #[macro_use]
 use crate::fatal_error;
 use flate2_coeff_source::{Flate2Source, Flate2SourceError};
 
-pub fn new_z_lib_source(file_name: &CStr) -> Flate2Source {
-    match std::fs::read(file_name.to_str().unwrap()) {
+pub fn new_coeff_source(file_name: &str) -> Flate2Source {
+    match std::fs::read(file_name) {
         Ok(data) => match Flate2Source::try_from_data(&data) {
             Ok(src) => src,
             Err(e) => match e {
-                Flate2SourceError::IncorrectMagicWords => fatal_error!("{}: {}", &file_name.to_str().unwrap(), "Wrong checksum in , might be an old version")
+                Flate2SourceError::IncorrectMagicWords => fatal_error!("{}: {}", file_name, "Wrong checksum in , might be an old version")
             },
         },
-        Err(e) => fatal_error!("{} '{}'\n", "Unable to open coefficient file", &file_name.to_str().unwrap()),
+        Err(e) => fatal_error!("{} '{}'\n", "Unable to open coefficient file", file_name),
     }
 }
 

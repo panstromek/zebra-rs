@@ -1,4 +1,4 @@
-use std::ffi::{CStr, CString};
+use std::ffi::{CStr};
 
 use engine::src::counter::{adjust_counter, counter_value, reset_counter};
 use engine::src::error::FrontEnd;
@@ -17,7 +17,7 @@ use libc_wrapper::{fclose, FileHandle, fopen, stdout, strcpy, time, time_t, c_ti
 
 use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, TO_SQUARE};
 use crate::src::error::{LibcFatalError};
-use crate::src::getcoeff::{load_coeff_adjustments, new_z_lib_source};
+use crate::src::getcoeff::{load_coeff_adjustments, new_coeff_source};
 use crate::src::thordb::LegacyThor;
 use crate::src::zebra::FullState;
 use engine::src::globals::BoardState;
@@ -84,10 +84,9 @@ pub unsafe fn global_setup(use_random: i32,
     LogFileHandler::on_global_setup();
     let coeff_adjustments = load_coeff_adjustments();
 
-    let file_name = if let Ok(var) = std::env::var("COEFFS_PATH") {
-        CString::new(var).unwrap()
-    } else {
-        CString::new("./coeffs2.bin").unwrap()
+    let file_name = match std::env::var("COEFFS_PATH") {
+        Ok(var) => var,
+        Err(_) => "./coeffs2.bin".to_owned(),
     };
     let FullState {
         ref mut g_config,
@@ -107,7 +106,7 @@ pub unsafe fn global_setup(use_random: i32,
         ref mut search_state,
         ref mut flip_stack_,
     } : &mut FullState = g_state;
-    engine_global_setup::<_,LibcFatalError>(use_random, hash_bits, coeff_adjustments, new_z_lib_source(file_name.as_ref()),
+    engine_global_setup::<_,LibcFatalError>(use_random, hash_bits, coeff_adjustments, new_coeff_source(file_name.as_ref()),
                                             search_state
                                             , hash_state
                                             , g_timer
