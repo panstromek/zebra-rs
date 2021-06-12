@@ -417,11 +417,8 @@ pub unsafe  fn read_position_file(mut file_name:
                                             *mut i8) {
     let mut stream: FileHandle = FileHandle::null();
     let mut buffer: [i8; 100] = [0; 100];
-    position_list =
-        malloc((max_positions as
-            u64).wrapping_mul(::std::mem::size_of::<CompactPosition>()
-            as u64)) as
-            *mut CompactPosition;
+    position_list = malloc((max_positions as usize).wrapping_mul(::std::mem::size_of::<CompactPosition>()))
+        as *mut CompactPosition;
     if position_list.is_null() {
         printf(b"Couldn\'t allocate space for %d positions\n\x00" as *const u8
                    as *const i8, max_positions);
@@ -2170,15 +2167,10 @@ pub unsafe  fn initialize_solution(mut base: *const i8,
             i += 1
         }
     } else {
-        vals =
-            malloc((count as
-                u64).wrapping_mul(::std::mem::size_of::<f32>()
-                as u64)) as
+        vals = malloc((count as
+                usize).wrapping_mul(::std::mem::size_of::<f32>())) as
                 *mut f32;
-        freq =
-            malloc((count as
-                u64).wrapping_mul(::std::mem::size_of::<i32>()
-                as u64)) as
+        freq = malloc((count as usize).wrapping_mul(::std::mem::size_of::<i32>())) as
                 *mut i32;
         fread(vals as *mut ::std::ffi::c_void,
               ::std::mem::size_of::<f32>() as u64,

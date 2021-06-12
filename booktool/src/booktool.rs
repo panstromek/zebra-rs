@@ -2119,14 +2119,14 @@ pub unsafe fn book_statistics(full_statistics: i32, g_state: &mut FullState) {
         }
         i += 1
     }
-    qsort(evals as *mut std::ffi::c_void, eval_count as size_t,
-          ::std::mem::size_of::<i32>() as u64,
+    qsort(evals as *mut std::ffi::c_void, eval_count as _,
+          ::std::mem::size_of::<i32>() as _,
           Some(int_compare as
               unsafe extern "C" fn(_: *const std::ffi::c_void,
                                    _: *const std::ffi::c_void)
                                    -> i32));
-    qsort(negamax as *mut std::ffi::c_void, negamax_count as size_t,
-          ::std::mem::size_of::<i32>() as u64,
+    qsort(negamax as *mut std::ffi::c_void, negamax_count as _,
+          ::std::mem::size_of::<i32>() as _,
           Some(int_compare as
               unsafe extern "C" fn(_: *const std::ffi::c_void,
                                    _: *const std::ffi::c_void)
@@ -2427,14 +2427,7 @@ pub unsafe fn build_tree(file_name: *const i8,
         sscanf(line_buffer.as_mut_ptr(),
                b"%s %d\x00" as *const u8 as *const i8,
                move_string.as_mut_ptr(), &mut diff as *mut i32);
-        move_count_0 =
-            strlen(move_string.as_mut_ptr()).wrapping_sub(1 as i32 as
-                u64).wrapping_div(3
-                as
-                i32
-                as
-                u64)
-                as i32;
+        move_count_0 = strlen(move_string.as_mut_ptr()).wrapping_sub(1).wrapping_div(3) as i32;
         games_parsed += 1;
         i = 0;
         while i < move_count_0 {
@@ -2484,11 +2477,8 @@ pub unsafe fn build_tree(file_name: *const i8,
   DUPSTR
   A strdup clone.
 */
-unsafe fn dupstr(str: *const i8)
-                 -> *mut i8 {
-    let new_str =
-        malloc(strlen(str).wrapping_add(1 as i32 as u64)) as
-            *mut i8;
+unsafe fn dupstr(str: *const i8) -> *mut i8 {
+    let new_str = malloc(strlen(str).wrapping_add(1)) as *mut i8;
     strcpy(new_str, str);
     return new_str;
 }
@@ -2631,10 +2621,7 @@ pub unsafe fn convert_opening_list(base_file:
             scan_ptr = scan_ptr.offset(1)
         }
         *scan_ptr = 0;
-        op_move_count =
-            strlen(move_seq.as_mut_ptr()).wrapping_div(2 as i32 as
-                u64) as
-                i32;
+        op_move_count = strlen(move_seq.as_mut_ptr()).wrapping_div(2) as i32;
         j = 0;
         move_ptr = buffer.as_mut_ptr();
         while j < op_move_count {
@@ -2742,9 +2729,7 @@ pub unsafe fn write_compressed_database(file_name:
             as u64)) as
             *mut i16;
     let child =
-        malloc((g_state.g_book.book_node_count as
-            u64).wrapping_mul(::std::mem::size_of::<i16>()
-            as u64)) as
+        malloc((g_state.g_book.book_node_count as usize).wrapping_mul(::std::mem::size_of::<i16>())) as
             *mut i16;
     let mut i = 0;
     while i < g_state.g_book.book_node_count {

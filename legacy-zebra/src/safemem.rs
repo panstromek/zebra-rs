@@ -27,7 +27,7 @@ use libc_wrapper::malloc;
 use crate::fatal_error;
 
 pub unsafe fn safe_malloc(size: u64) -> *mut c_void {
-    let block = malloc(size);
+    let block = malloc(size as usize);
     if block.is_null() {
         fatal_error!("{} {}\n", "Memory allocation failure when allocating", size);
     }
