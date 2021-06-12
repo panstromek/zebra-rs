@@ -641,7 +641,6 @@ fn new_seq(rng: &mut ThreadRng, fuzz_dir: &Path, case: usize) -> String {
 mod tests {
     use flate2_coeff_source::Flate2Source;
     use std::ffi::CStr;
-    use zlib_coeff_source::{ZLibSource};
     use std::process::{Command, Stdio, ChildStdin, ExitStatus, Child};
     use std::path::{Path, PathBuf};
     use std::fs::{File, DirEntry, read_dir};
@@ -653,23 +652,6 @@ mod tests {
     use std::ops::{Add, Deref};
     use std::sync::{Arc, Mutex};
     use std::str::Lines;
-
-    #[test]
-    fn coeff_source_test() {
-        use engine_traits::CoeffSource;
-        let file_name: &CStr = CStr::from_bytes_with_nul(b"./../coeffs2.bin\x00").unwrap();
-
-        let mut z_lib_source = ZLibSource::try_new(file_name).unwrap();
-
-        let mut flate2_source = Flate2Source::new_from_data(&std::fs::read("./../coeffs2.bin").unwrap());
-
-        while let Some(word) = z_lib_source.try_next_word() {
-            let flate_word = flate2_source.try_next_word().unwrap();
-            assert_eq!(word, flate_word)
-        }
-
-        assert!(flate2_source.try_next_word().is_none());
-    }
 
     macro_rules! snap_test {
         ($id:ident, $args:literal) => {

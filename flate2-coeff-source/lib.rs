@@ -4,8 +4,17 @@ use std::io::Read;
 
 pub struct Flate2Source { data: Vec<u8>, index: usize }
 
+#[derive(Debug)]
+pub enum Flate2SourceError {
+    IncorrectMagicWords
+}
+
 impl Flate2Source {
     pub fn new_from_data(data: &[u8]) -> Flate2Source {
+        Self::try_from_data(data).expect("Magic words are incorrect in coeff source file.")
+    }
+
+    pub fn try_from_data(data: &[u8]) -> Result<Flate2Source, Flate2SourceError> {
         let mut decoder = GzDecoder::new(data);
         let mut decoded = Vec::new();
         decoder.read_to_end(&mut decoded).unwrap();
@@ -19,9 +28,9 @@ impl Flate2Source {
         let word2 = source.next_word();
 
         if word1 != 5358 || word2 != 9793 {
-            panic!("Magic words are incorrect in coeff source file.");
+            return Err(Flate2SourceError::IncorrectMagicWords);
         }
-        source
+        Ok(source)
     }
 }
 

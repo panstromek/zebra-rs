@@ -19,7 +19,6 @@ members = [
     "flate2-coeff-source",
     "legacy-zebra",
     "tests",
-    "legacy-zebra/zlib-coeff-source",
     "engine/flip",
     "engine/coeff",
     "script",

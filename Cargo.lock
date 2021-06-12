@@ -246,11 +246,11 @@ version = "0.1.0"
 dependencies = [
  "engine",
  "engine-traits",
+ "flate2-coeff-source",
  "flip",
  "libc-wrapper",
  "thor-opening-list",
  "thordb-types",
- "zlib-coeff-source",
 ]
 
 [[package]]
@@ -518,7 +518,6 @@ dependencies = [
  "rand",
  "rayon",
  "wait-timeout",
- "zlib-coeff-source",
 ]
 
 [[package]]
@@ -708,11 +707,3 @@ name = "winapi-x86_64-pc-windows-gnu"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
-
-[[package]]
-name = "zlib-coeff-source"
-version = "0.1.0"
-dependencies = [
- "engine-traits",
- "libc-wrapper",
-]
