@@ -18,9 +18,6 @@ use legacy_zebra::src::zebra::LibcTimeSource;
 use std::io::Write;
 
 extern "C" {
-    fn __assert_fail(__assertion: *const i8,
-                     __file: *const i8, __line: u32,
-                     __function: *const i8) -> !;
     fn __ctype_b_loc() -> *mut *const u16;
     fn __ctype_tolower_loc() -> *mut *const __int32_t;
     fn exp(_: f64) -> f64;
@@ -243,16 +240,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             restart = 0;
             in_branch = 0 as i32
         }
-        if disc_count(0 as i32, &g_state.board_state.board) + disc_count(2 as i32, &g_state.board_state.board) ==
-            g_state.moves_state.disks_played + 4 as i32 {
-        } else {
-            __assert_fail(b"disc_count( BLACKSQ ) + disc_count( WHITESQ ) == disks_played + 4\x00"
-                              as *const u8 as *const i8,
-                          b"enddev.c\x00" as *const u8 as *const i8,
-                          134 as i32 as u32,
-                          (*::std::mem::transmute::<&[u8; 23],
-                              &[i8; 23]>(b"int main(int, char **)\x00")).as_ptr());
-        }
+        assert_eq!(disc_count(0 as i32, &g_state.board_state.board) + disc_count(2 as i32, &g_state.board_state.board), g_state.moves_state.disks_played + 4 as i32);
         determine_hash_values(side_to_move, &g_state.board_state.board, &mut g_state.hash_state);
         generate_all(side_to_move, &mut g_state.moves_state, &g_state.search_state, &g_state.board_state.board);
         if g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] == 0 as i32 {
@@ -325,17 +313,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                                             0 as i32, 8 as i32,
                                                             60 as i32,
                                                             60 as i32, g_state.g_config.echo, g_state);
-                    if get_evaluated_count() ==
-                        g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] {
-                    } else {
-                        __assert_fail(b"get_evaluated_count() == move_count[disks_played]\x00"
-                                          as *const u8 as *const i8,
-                                      b"enddev.c\x00" as *const u8 as
-                                          *const i8,
-                                      186 as i32 as u32,
-                                      (*::std::mem::transmute::<&[u8; 23],
-                                          &[i8; 23]>(b"int main(int, char **)\x00")).as_ptr());
-                    }
+                    assert_eq!(get_evaluated_count(), g_state.moves_state.move_count[g_state.moves_state.disks_played as usize]);
                     best_score = -(12345678 as i32);
                     i_0 = 0;
                     while i_0 < get_evaluated_count() {
@@ -398,16 +376,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         if !(accum_prob < rand_val) { break ; }
                         i_0 += 1
                     }
-                    if i_0 < g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] {
-                    } else {
-                        __assert_fail(b"i < move_count[disks_played]\x00" as
-                                          *const u8 as *const i8,
-                                      b"enddev.c\x00" as *const u8 as
-                                          *const i8,
-                                      218 as i32 as u32,
-                                      (*::std::mem::transmute::<&[u8; 23],
-                                          &[i8; 23]>(b"int main(int, char **)\x00")).as_ptr());
-                    }
+                    assert!(i_0 < g_state.moves_state.move_count[g_state.moves_state.disks_played as usize]);
                     move_0 = choices[i_0 as usize].move_0;
                     if VERBOSE != 0 {
                         fprintf(stderr,
