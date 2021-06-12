@@ -82,6 +82,7 @@ mod inner  {
     }
 }
 pub use libc::{
+    atof,
     fscanf,
     malloc,
     realloc,
