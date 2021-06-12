@@ -8,7 +8,7 @@ use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
 
-use libc_wrapper::{time, fflush, stdout, fopen, fread, fclose, FileHandle, fprintf, fputc, free, sprintf, putc, fputs, stderr, sscanf, strlen, fgets, qsort, feof, strcmp, strstr, __ctype_b_loc, fwrite, malloc, toupper, ctime, strcpy, tolower};
+use libc_wrapper::{time, atof, fflush, stdout, fopen, fread, fclose, FileHandle, fprintf, fputc, free, sprintf, putc, fputs, stderr, sscanf, strlen, fgets, qsort, feof, strcmp, strstr, __ctype_b_loc, fwrite, malloc, toupper, ctime, strcpy, tolower, printf, puts, strcasecmp, atoi, exit};
 use legacy_zebra::src::osfbook;
 use engine::src::moves::{generate_all, make_move, unmake_move, unmake_move_no_hash, make_move_no_hash, generate_specific};
 use engine::src::search::disc_count;
@@ -33,30 +33,9 @@ pub type FE = LibcFatalError;
 use legacy_zebra::fatal_error;
 use std::ffi::CStr;
 
-extern "C" {
-    fn printf(_: *const i8, _: ...) -> i32;
-    fn puts(__s: *const i8) -> i32;
-    fn strtod(__nptr: *const i8, __endptr: *mut *mut i8)
-              -> f64;
-    fn strtol(__nptr: *const i8, __endptr: *mut *mut i8,
-              __base: i32) -> i64;
-    fn exit(_: i32) -> !;
-    fn strcasecmp(_: *const i8, _: *const i8)
-                  -> i32;
-}
-
 pub const MIDGAME_STATISTICS: C2RustUnnamed = 0;
 pub type C2RustUnnamed = u32;
 pub const ENDGAME_STATISTICS: C2RustUnnamed = 1;
-#[inline]
-unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
-    return strtod(__nptr, 0 as *mut ::std::ffi::c_void as *mut *mut i8);
-}
-#[inline]
-unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
-    return strtol(__nptr, 0 as *mut ::std::ffi::c_void as *mut *mut i8,
-                  10 as i32) as i32;
-}
 unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                  -> i32 {
     let mut import_file_name: *mut i8 = 0 as *mut i8;
