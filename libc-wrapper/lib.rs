@@ -25,16 +25,6 @@ pub type _IO_FILE = libc::FILE;
 pub type time_t = __time_t;
 pub type off_t = __off_t;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct gzFile_s {
-    pub have: u32,
-    pub next: *mut u8,
-    pub pos: off_t,
-}
-pub type gzFile = *mut gzFile_s;
-pub type _IO_lock_t = ();
-
 pub type __compar_fn_t =  Option<unsafe extern "C" fn(_: *const c_void, _: *const c_void) -> i32>;
 
 /// #SAFETY implementor must ensure that this pointer is valid
@@ -107,9 +97,6 @@ pub use libc::{
 extern "C" {
     pub fn ctime(__timer: *const time_t) -> *mut i8;
     pub fn __ctype_b_loc() -> *mut *const u16;
-    pub fn gzgetc(file: gzFile) -> i32;
-    pub fn gzclose(file: gzFile) -> i32;
-    pub fn gzopen(_: *const i8, _: *const i8) -> gzFile;
     pub fn exp(_: f64) -> f64;
     pub fn __ctype_tolower_loc() -> *mut *const i32;
 }

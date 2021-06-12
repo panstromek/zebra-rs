@@ -22,5 +22,5 @@ thordb-types = { path = "./../engine/thordb-types" }
 flip = { path = "./../engine/flip" }
 libc-wrapper = { path = "./../libc-wrapper" }
 engine-traits = { path = "./../engine/engine-traits" }
-zlib-coeff-source = { path = "./zlib-coeff-source" }
 thor-opening-list = { path = "./../thor-opening-list" }
+flate2-coeff-source = { path = "./../flate2-coeff-source"}

@@ -56,6 +56,10 @@
         White: {{ score.white }}
       </div>
       <button @click="undo">Undo</button>
+      <div>
+        <input type="checkbox" id="practice_mode_checkbox" class="mr-2" v-model="practiceMode">
+        <label for="practice_mode_checkbox">Practice mode</label>
+      </div>
     </div>
   </div>
 </template>
@@ -88,6 +92,7 @@ export default defineComponent({
       white_skill: 6,
       white_exact_skill: 6,
       white_wld_skill: 6,
+      practiceMode: false,
     }
   },
   created() {
