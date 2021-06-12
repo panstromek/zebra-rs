@@ -21,39 +21,7 @@ pub type __off_t = i64;
 pub type __off64_t = i64;
 pub type __time_t = i64;
 pub type size_t = u64;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct _IO_FILE {
-    pub _flags: i32,
-    pub _IO_read_ptr: *mut i8,
-    pub _IO_read_end: *mut i8,
-    pub _IO_read_base: *mut i8,
-    pub _IO_write_base: *mut i8,
-    pub _IO_write_ptr: *mut i8,
-    pub _IO_write_end: *mut i8,
-    pub _IO_buf_base: *mut i8,
-    pub _IO_buf_end: *mut i8,
-    pub _IO_save_base: *mut i8,
-    pub _IO_backup_base: *mut i8,
-    pub _IO_save_end: *mut i8,
-    pub _markers: *mut _IO_marker,
-    pub _chain: *mut _IO_FILE,
-    pub _fileno: i32,
-    pub _flags2: i32,
-    pub _old_offset: __off_t,
-    pub _cur_column: u16,
-    pub _vtable_offset: i8,
-    pub _shortbuf: [i8; 1],
-    pub _lock: *mut std::ffi::c_void,
-    pub _offset: __off64_t,
-    pub _codecvt: *mut _IO_codecvt,
-    pub _wide_data: *mut _IO_wide_data,
-    pub _freeres_list: *mut _IO_FILE,
-    pub _freeres_buf: *mut std::ffi::c_void,
-    pub __pad5: size_t,
-    pub _mode: i32,
-    pub _unused2: [i8; 20],
-}
+pub type _IO_FILE = libc::FILE;
 pub type time_t = __time_t;
 pub type off_t = __off_t;
 
@@ -100,68 +68,44 @@ pub unsafe fn strcasecmp<T: AsConstPtr<i8>, U: AsConstPtr<i8>>(a: T, b: U) -> i3
 }
 
 mod inner  {
-    use crate::{_IO_FILE, size_t};
+    use crate::{_IO_FILE};
     pub type FILE = _IO_FILE;
 
+    pub use libc::{atoi, strcasecmp, fclose, fopen, fprintf, fputc, fgets, fputs, feof, fflush, fread, fwrite};
     extern "C" {
-        pub fn atoi(__nptr: *const i8) -> i32;
-        pub fn strcasecmp(_: *const i8, _: *const i8) -> i32;
-
         pub static mut stdin: *mut FILE;
-        pub fn getc(__stream: *mut FILE) -> i32;
         pub static mut stdout: *mut FILE;
-        pub fn fclose(__stream: *mut FILE) -> i32;
-        pub fn fopen(__filename: *const i8, __modes: *const i8) -> *mut FILE;
-        pub fn fprintf(_: *mut FILE, _: *const i8, _: ...) -> i32;
-        pub fn fputc(__c: i32, __stream: *mut FILE) -> i32;
-        pub fn fgets(__s: *mut i8, __n: i32, __stream: *mut FILE) -> *mut i8;
-        pub fn fputs(__s: *const i8, __stream: *mut FILE) -> i32;
-        pub fn feof(__stream: *mut FILE) -> i32;
         pub static mut stderr: *mut FILE;
-        pub fn fflush(__stream: *mut FILE) -> i32;
+        pub fn getc(__stream: *mut FILE) -> i32;
         pub fn putc(__c: i32, __stream: *mut FILE) -> i32;
-        pub fn fread(__ptr: *mut std::ffi::c_void, __size: size_t, __n: size_t,
-                     __stream: *mut FILE) -> size_t;
-        pub fn fwrite(__ptr: *const std::ffi::c_void, __size: size_t, __n: size_t,
-                      __s: *mut FILE) -> size_t;
-
-        pub fn vfprintf(_: *mut FILE, _: *const i8, _: ::std::ffi::VaList)
-                        -> i32;
+        pub fn vfprintf(_: *mut FILE, _: *const i8, _: ::std::ffi::VaList) -> i32;
     }
 }
+pub use libc::{
+    fscanf,
+    malloc,
+    realloc,
+    free,
+    time,
+    strlen,
+    tolower,
+    toupper,
+    strchr,
+    printf,
+    sprintf,
+    scanf,
+    sscanf,
+    puts,
+    exit,
+    strstr,
+    qsort,
+    strcpy,
+    strcmp,
+};
+
 extern "C" {
-    pub fn fscanf(_: *mut inner::FILE, _: *const i8, _: ...) -> i32;
-    pub fn malloc(_: u64) -> *mut c_void;
-    pub fn realloc(_: *mut c_void, _: u64) -> *mut c_void;
-
-    pub fn free(__ptr: *mut c_void);
-    pub fn time(__timer: *mut time_t) -> time_t;
-    pub fn strlen(_: *const i8) -> u64;
-    pub fn tolower(num: i32) -> i32;
-    pub fn toupper(_: i32) -> i32;
-    pub fn strchr(_: *const i8, _: i32) -> *mut i8;
-
-
-    pub fn printf(_: *const i8, _: ...) -> i32;
-    pub fn sprintf(_: *mut i8, _: *const i8, _: ...)
-                   -> i32;
-    pub fn scanf(_: *const i8, _: ...) -> i32;
-    pub fn sscanf(_: *const i8, _: *const i8, _: ...)
-                  -> i32;
-    pub fn puts(__s: *const i8) -> i32;
-
-
-    pub fn exit(_: i32) -> !;
-    pub fn strstr(_: *const i8, _: *const i8)
-                  -> *mut i8;
     pub fn ctime(__timer: *const time_t) -> *mut i8;
     pub fn __ctype_b_loc() -> *mut *const u16;
-
-    pub fn qsort(__base: *mut std::ffi::c_void, __nmemb: size_t, __size: size_t,
-                 __compar: __compar_fn_t);
-    pub fn strcpy(_: *mut i8, _: *const i8)
-                  -> *mut i8;
-    pub fn strcmp(_: *const i8, _: *const i8) -> i32;
     pub fn gzgetc(file: gzFile) -> i32;
     pub fn gzclose(file: gzFile) -> i32;
     pub fn gzopen(_: *const i8, _: *const i8) -> gzFile;
@@ -205,9 +149,9 @@ impl std::io::Read for FileHandle {
         }
 
         let count  = unsafe {
-            inner::fread(buf.as_ptr() as *mut std::ffi::c_void, 1, buf.len() as size_t, self.file())
+            inner::fread(buf.as_ptr() as *mut std::ffi::c_void, 1, buf.len(), self.file())
         };
-        if count <= buf.len() as u64 {
+        if count <= buf.len() {
             Ok(count as usize)
         } else {
             Err(std::io::Error::new(ErrorKind::Other, "Bytes read is out of bounds"))
@@ -224,7 +168,7 @@ impl Write for FileHandle {
             inner::fwrite(
                 buf.as_ptr() as *const std::ffi::c_void,
                 1,
-                buf.len() as u64,
+                buf.len(),
                 self.file(),
             )
         };
@@ -291,11 +235,11 @@ pub unsafe fn putc(__c: i32, __stream: FileHandle) -> i32 {
 }
 
 pub unsafe fn fread(__ptr: *mut std::ffi::c_void, __size: size_t, __n: size_t, __stream: FileHandle) -> size_t {
-    inner::fread(__ptr, __size, __n, (__stream).file())
+    inner::fread(__ptr, __size as _, __n as _, (__stream).file()) as _
 }
 
 pub unsafe fn fwrite(__ptr: *const std::ffi::c_void, __size: size_t, __n: size_t, __s: FileHandle) -> size_t {
-    inner::fwrite(__ptr, __size, __n, (__s).file())
+    inner::fwrite(__ptr, __size as _, __n as _, (__s).file()) as _
 }
 pub unsafe fn c_time(timer: i64) -> &'static str{
     &CStr::from_ptr(ctime(&timer)).to_str().unwrap()

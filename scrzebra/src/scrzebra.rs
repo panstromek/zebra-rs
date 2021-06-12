@@ -189,8 +189,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 write!(stdout, "\nError parsing line {} - aborting\n\n", i + 1);
                 exit(1 as i32);
             }
-            if   strlen(stm_string.as_mut_ptr()) !=
-                1 as i32 as u64 {
+            if   strlen(stm_string.as_mut_ptr()) != 1 {
                 write!(stdout, "\nAmbiguous side to move on line {} - aborting\n\n", i + 1);
                 exit(1 as i32);
             }
@@ -201,8 +200,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                     write!(stdout, "\nBad side-to-move indicator on line {} - aborting\n\n", i + 1);
                 }
             }
-            if   strlen(board_string.as_mut_ptr()) !=
-                64 as i32 as u64 {
+            if   strlen(board_string.as_mut_ptr()) != 64 {
                 write!(stdout, "\nBoard on line {} doesn\'t contain 64 positions - aborting\n\n", i + 1);
                 exit(1 as i32);
             }
