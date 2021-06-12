@@ -13,7 +13,7 @@ use legacy_zebra::src::display::{display_board, display_state};
 use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{compute_move, extended_compute_move, game_init, get_evaluated, get_evaluated_count, global_setup};
 use legacy_zebra::src::learn::init_learn;
-use libc_wrapper::{_IO_FILE, stdout, fprintf, fputs, exp, printf, feof, fopen, sscanf, tolower, strlen, __ctype_b_loc, fgets, stderr, FileHandle, exit, __ctype_tolower_loc};
+use libc_wrapper::{_IO_FILE, stdout, fprintf, fputs, printf, feof, fopen, sscanf, tolower, strlen, __ctype_b_loc, fgets, stderr, FileHandle, exit, __ctype_tolower_loc};
 use legacy_zebra::src::zebra::LibcTimeSource;
 use std::io::Write;
 
@@ -286,12 +286,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     i_0 = 0;
                     while i_0 < get_evaluated_count() {
                         choices[i_0 as usize].prob =
-                            (100000 as i32 as f64 *
-                                exp((choices[i_0 as usize].score -
-                                    best_score) as f64 *
-                                    0.2f64) +
-                                1 as i32 as f64) as
-                                i32;
+                            (100000 as i32 as f64 * ((choices[i_0 as usize].score - best_score) as f64 * 0.2f64).exp() + 1_f64) as i32;
                         if choices[i_0 as usize].move_0 == move_0 {
                             /* Encourage deviations. */
                             choices[i_0 as usize].prob =
