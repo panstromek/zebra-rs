@@ -441,7 +441,7 @@ pub unsafe fn get_search_statistics(max_depth: &mut i32, node_count: &mut f64, g
   Returns the principal variation.
 */
 
-pub unsafe fn get_pv(destin: &mut [i8], g_state: &mut FullState) -> i32 {
+pub fn get_pv(destin: &mut [i8], g_state: &mut FullState) -> i32 {
     let FullState {
        ref  mut g_config,
        ref  mut learn_state,
