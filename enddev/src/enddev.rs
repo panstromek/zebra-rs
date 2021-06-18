@@ -11,7 +11,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::{EvaluationType, FullState};
 use legacy_zebra::src::display::{display_board, display_state};
 use legacy_zebra::src::error::{LibcFatalError};
-use legacy_zebra::src::game::{compute_move, extended_compute_move, game_init, get_evaluated, get_evaluated_count, global_setup};
+use legacy_zebra::src::game::{compute_move, extended_compute_move, game_init, global_setup};
 use legacy_zebra::src::learn::init_learn;
 use libc_wrapper::{_IO_FILE, stdout, fprintf, fputs, printf, feof, fopen, sscanf, tolower, strlen, __ctype_b_loc, fgets, stderr, FileHandle, exit, __ctype_tolower_loc};
 use legacy_zebra::src::zebra::LibcTimeSource;
@@ -264,15 +264,15 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                     as *const u8 as *const i8,
                                 games_read, g_state.moves_state.disks_played);
                     }
-                    extended_compute_move::<LibcFatalError>(side_to_move, 0 as i32,
+                    let evaluated_list = extended_compute_move::<LibcFatalError>(side_to_move, 0 as i32,
                                                             0 as i32, 8 as i32,
                                                             60 as i32,
                                                             60 as i32, g_state.g_config.echo, g_state);
-                    assert_eq!(get_evaluated_count(), g_state.moves_state.move_count[g_state.moves_state.disks_played as usize]);
+                    assert_eq!(evaluated_list.get_evaluated_count(), g_state.moves_state.move_count[g_state.moves_state.disks_played as usize]);
                     best_score = -(12345678 as i32);
                     i_0 = 0;
-                    while i_0 < get_evaluated_count() {
-                        let mut ev_info_0: EvaluatedMove = get_evaluated(i_0);
+                    while i_0 < evaluated_list.get_evaluated_count() {
+                        let mut ev_info_0: EvaluatedMove = evaluated_list.get_evaluated(i_0);
                         choices[i_0 as usize].move_0 = ev_info_0.move_0 as i32;
                         choices[i_0 as usize].score =
                             ev_info_0.eval.score / 128 as i32;
@@ -284,7 +284,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     }
                     total_prob = 0;
                     i_0 = 0;
-                    while i_0 < get_evaluated_count() {
+                    while i_0 < evaluated_list.get_evaluated_count() {
                         choices[i_0 as usize].prob =
                             (100000 as i32 as f64 * ((choices[i_0 as usize].score - best_score) as f64 * 0.2f64).exp() + 1_f64) as i32;
                         if choices[i_0 as usize].move_0 == move_0 {
@@ -297,7 +297,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     }
                     if VERBOSE != 0 {
                         i_0 = 0;
-                        while i_0 < get_evaluated_count() {
+                        while i_0 < evaluated_list.get_evaluated_count() {
                             fprintf(stderr,
                                     b"  %c%c  %+3d    p=%.03f\n\x00" as
                                         *const u8 as *const i8,
