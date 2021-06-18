@@ -704,22 +704,22 @@ pub fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                                        confidence: 0.,
                                        search_depth: 0,
                                        is_book: 0,};
-                    compute_move(0 as i32 + 2 as i32 -
+                    legacy_compute_move(0 as i32 + 2 as i32 -
                                      side_to_move, 0 as i32,
-                                 0 as i32, 0 as i32,
-                                 0 as i32, book,
-                                 shallow_depth - 1 as i32,
-                                 0 as i32, 0 as i32,
-                                 1 as i32, &mut shallow_info, g_state);
+                                        0 as i32, 0 as i32,
+                                        0 as i32, book,
+                                        shallow_depth - 1 as i32,
+                                        0 as i32, 0 as i32,
+                                        1 as i32, &mut shallow_info, g_state);
                     if shallow_info.type_0 as u32 ==
                            PASS_EVAL as i32 as u32 {
                         /* Don't allow pass */
-                        compute_move(side_to_move, 0 as i32,
-                                     0 as i32, 0 as i32,
-                                     0 as i32, book,
-                                     shallow_depth - 1 as i32,
-                                     0 as i32, 0 as i32,
-                                     1 as i32, &mut shallow_info, g_state);
+                        legacy_compute_move(side_to_move, 0 as i32,
+                                            0 as i32, 0 as i32,
+                                            0 as i32, book,
+                                            shallow_depth - 1 as i32,
+                                            0 as i32, 0 as i32,
+                                            1 as i32, &mut shallow_info, g_state);
                         if shallow_info.type_0 as u32 ==
                                PASS_EVAL as i32 as u32 {
                             /* Game over */
@@ -899,14 +899,14 @@ pub fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                                          shallow_eval, 0.0f64,
                                          0 as i32, 0 as i32)
                 } else {
-                    compute_move(0 as i32 + 2 as i32 -
+                    legacy_compute_move(0 as i32 + 2 as i32 -
                                      side_to_move, 0 as i32,
-                                 0 as i32, 0 as i32,
-                                 0 as i32, book,
-                                 current_mid - 1 as i32,
-                                 current_exact - 1 as i32,
-                                 current_wld - 1 as i32,
-                                 1 as i32, &mut this_eval, g_state);
+                                        0 as i32, 0 as i32,
+                                        0 as i32, book,
+                                        current_mid - 1 as i32,
+                                        current_exact - 1 as i32,
+                                        current_wld - 1 as i32,
+                                        1 as i32, &mut this_eval, g_state);
                 }
                 if force_return != 0 {
                     /* Clear eval and exit search immediately */
@@ -934,13 +934,13 @@ pub fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                                                  0 as i32,
                                                  0 as i32)
                         } else {
-                            compute_move(side_to_move, 0 as i32,
-                                         0 as i32, 0 as i32,
-                                         0 as i32, book,
-                                         current_mid - 1 as i32,
-                                         current_exact - 1 as i32,
-                                         current_wld - 1 as i32,
-                                         1 as i32, &mut this_eval, g_state);
+                            legacy_compute_move(side_to_move, 0 as i32,
+                                                0 as i32, 0 as i32,
+                                                0 as i32, book,
+                                                current_mid - 1 as i32,
+                                                current_exact - 1 as i32,
+                                                current_wld - 1 as i32,
+                                                1 as i32, &mut this_eval, g_state);
                         }
                         if this_eval.type_0 as u32 ==
                                PASS_EVAL as i32 as u32 {
@@ -1196,20 +1196,20 @@ pub fn perform_extended_solve(side_to_move: i32,
     let negate = 1 as i32;
     ( g_state.search_state).negate_current_eval(negate);
     make_move(side_to_move, actual_move, 1 as i32, &mut ( g_state.moves_state), &mut ( g_state.board_state), &mut ( g_state.hash_state), &mut ( g_state.flip_stack_));
-    compute_move(0 as i32 + 2 as i32 - side_to_move,
-                 0 as i32, 0 as i32, 0 as i32,
-                 0 as i32, book, mid - 1 as i32,
-                 exact - 1 as i32, wld - 1 as i32,
-                 1 as i32,
-                 &mut evaluated_list[0].eval, g_state);
+    legacy_compute_move(0 as i32 + 2 as i32 - side_to_move,
+                        0 as i32, 0 as i32, 0 as i32,
+                        0 as i32, book, mid - 1 as i32,
+                        exact - 1 as i32, wld - 1 as i32,
+                        1 as i32,
+                        &mut evaluated_list[0].eval, g_state);
     if evaluated_list[0].eval.type_0 as u32
            == PASS_EVAL as i32 as u32 {
         /* Don't allow pass */
-        compute_move(side_to_move, 0 as i32, 0 as i32,
-                     0 as i32, 0 as i32, book,
-                     mid - 1 as i32, exact - 1 as i32,
-                     wld - 1 as i32, 1 as i32,
-                     &mut evaluated_list[0].eval, g_state);
+        legacy_compute_move(side_to_move, 0 as i32, 0 as i32,
+                            0 as i32, 0 as i32, book,
+                            mid - 1 as i32, exact - 1 as i32,
+                            wld - 1 as i32, 1 as i32,
+                            &mut evaluated_list[0].eval, g_state);
         if evaluated_list[0].eval.type_0 as
                u32 == PASS_EVAL as i32 as u32 {
             /* Game has ended */
@@ -1279,10 +1279,10 @@ pub fn perform_extended_solve(side_to_move: i32,
     /* Compute the score for the best move and store it in the move list
        if it isn't ACTUAL_MOVE */
     best_move =
-        compute_move(side_to_move, 0 as i32, 0 as i32,
-                     0 as i32, 0 as i32, book, mid, exact,
-                     wld, 1 as i32,
-                     &mut evaluated_list[1].eval, g_state);
+        legacy_compute_move(side_to_move, 0 as i32, 0 as i32,
+                            0 as i32, 0 as i32, book, mid, exact,
+                            wld, 1 as i32,
+                            &mut evaluated_list[1].eval, g_state);
     if force_return == 0 && best_move != actual_move {
         /* Move list will contain best move first and then the actual move */
         game_evaluated_count = 2;
@@ -1323,7 +1323,7 @@ pub fn perform_extended_solve(side_to_move: i32,
    COMPUTE_MOVE
    Returns the best move in a position given search parameters.
 */
-pub fn compute_move(side_to_move: i32,
+pub fn legacy_compute_move(side_to_move: i32,
                            update_all: i32,
                            my_time: i32,
                            my_incr: i32,

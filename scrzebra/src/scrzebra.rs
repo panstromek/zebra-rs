@@ -9,7 +9,7 @@ use engine::src::zebra::EvalResult::WON_POSITION;
 use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvaluationType;
 use legacy_zebra::src::display::{display_board, display_move, set_evals, set_move_list, set_names, display_state};
-use legacy_zebra::src::game::{compute_move, game_init, global_setup, toggle_status_log};
+use legacy_zebra::src::game::{legacy_compute_move, game_init, global_setup, toggle_status_log};
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::thordb::init_thor_database;
 use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
@@ -248,17 +248,17 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                                                 g_state.moves_state.disks_played + 4 as i32);
             pass_count = 0;
             move_0 =
-                compute_move(side_to_move, 1 as i32, my_time, my_incr,
-                             timed_search, book, mid, exact, wld,
-                             1 as i32, &mut eval_info, g_state);
+                legacy_compute_move(side_to_move, 1 as i32, my_time, my_incr,
+                                    timed_search, book, mid, exact, wld,
+                                    1 as i32, &mut eval_info, g_state);
             if move_0 == -(1) {
                 pass_count += 1;
                 side_to_move =
                     0 as i32 + 2 as i32 - side_to_move;
                 move_0 =
-                    compute_move(side_to_move, 1 as i32, my_time,
-                                 my_incr, timed_search, book, mid, exact, wld,
-                                 1 as i32, &mut eval_info, g_state);
+                    legacy_compute_move(side_to_move, 1 as i32, my_time,
+                                        my_incr, timed_search, book, mid, exact, wld,
+                                        1 as i32, &mut eval_info, g_state);
                 if move_0 == -(1) {
                     /* Both pass, game over. */
                     let mut my_discs = disc_count(side_to_move, &g_state.board_state.board);
