@@ -35,8 +35,6 @@ pub struct EvaluatedList {
     pub best_move: i8,
 }
 
-pub static mut prefix_move: i8 = 0;
-
 impl EvaluatedList {
     pub fn get_evaluated(&self, index: i32) -> EvaluatedMove {
         return self.evaluated_list[index as usize];
@@ -351,7 +349,7 @@ pub unsafe fn ponder_move<
         let move_0 = expect_list[i as usize];
         search_state.set_ponder_move(move_0);
         this_move = expect_list[i as usize];
-        prefix_move = this_move;
+        game_state.prefix_move = this_move;
         make_move(side_to_move, this_move, 1 as i32 , moves_state,  board_state,  hash_state,  flip_stack_ );
         engine::src::game::compute_move::<L, Out, FE, Thor>(0 as i32 + 2 as i32 - side_to_move,
                                          0 as i32, 0 as i32, 0 as i32,
@@ -399,7 +397,7 @@ pub unsafe fn ponder_move<
        clearing it altogether or, preferrably, using the stored PV for
        the first move if it is available. */
     game_state.max_depth_reached += 1;
-    prefix_move = 0;
+    game_state.prefix_move = 0;
     if best_pv_depth == 0 as i32 {
         board_state.pv_depth[0] = 0 as i32
     } else {
@@ -430,7 +428,7 @@ pub unsafe fn get_search_statistics(max_depth: &mut i32, node_count: &mut f64, g
         ..
     } : &mut FullState = g_state;
     *max_depth = game_state.max_depth_reached;
-    if prefix_move != 0 {
+    if game_state.prefix_move != 0 {
         *max_depth += 1
     }
     adjust_counter(&mut search_state.nodes);
@@ -463,7 +461,7 @@ pub unsafe fn get_pv(destin: &mut [i8], g_state: &mut FullState) -> i32 {
        ref  mut flip_stack_,
     } : &mut FullState = g_state;
     let mut i = 0;
-    return if prefix_move == 0 {
+    return if game_state.prefix_move == 0 {
         i = 0;
         while i < board_state.pv_depth[0] {
             destin[i as usize] = board_state.pv[0][i as usize];
@@ -471,7 +469,7 @@ pub unsafe fn get_pv(destin: &mut [i8], g_state: &mut FullState) -> i32 {
         }
         board_state.pv_depth[0]
     } else {
-        destin[0] = prefix_move;
+        destin[0] = game_state.prefix_move;
         i = 0;
         while i < board_state.pv_depth[0] {
             destin[(i + 1 as i32) as usize] = board_state.pv[0][i as usize];
@@ -887,7 +885,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                 (g_state.hash_state).set_hash_transformation(transform1[i as usize],
                                                              transform2[i as usize]);
                 /* Determine the score for the ith move */
-                prefix_move = this_move;
+                g_state.game_state.prefix_move = this_move;
                 make_move(side_to_move, this_move, 1 as i32, (&mut g_state.moves_state), (&mut g_state.board_state), (&mut g_state.hash_state), (&mut g_state.flip_stack_));
                 if current_mid == 1 as i32 {
                     /* compute_move doesn't like 0-ply searches */
@@ -1115,7 +1113,7 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
     (g_state.midgame_state).toggle_midgame_abort_check(1 as i32);
     (g_state.midgame_state).toggle_perturbation_usage(1 as i32);
     (g_state.game_state).max_depth_reached += 1;
-    prefix_move = 0;
+    g_state.game_state.prefix_move = 0;
     return EvaluatedList {
         evaluated_list,
         game_evaluated_count,
@@ -1194,7 +1192,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     evaluated_list[0].pv_depth = 1;
     evaluated_list[0].pv[0] =
         actual_move;
-    prefix_move = actual_move;
+    g_state.game_state.prefix_move = actual_move;
     let negate = 1 as i32;
     ( g_state.search_state).negate_current_eval(negate);
     make_move(side_to_move, actual_move, 1 as i32, &mut ( g_state.moves_state), &mut ( g_state.board_state), &mut ( g_state.hash_state), &mut ( g_state.flip_stack_));
@@ -1274,7 +1272,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     {
         unmake_move(side_to_move, move_0, &mut ( g_state.board_state).board, &mut ( g_state.moves_state), &mut ( g_state.hash_state), &mut ( g_state.flip_stack_));
     };
-    prefix_move = 0;
+    g_state.game_state.prefix_move = 0;
     let negate = 0 as i32;
     ( g_state.search_state).negate_current_eval(negate);
     ( g_state.game_state).max_depth_reached += 1;
