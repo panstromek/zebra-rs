@@ -421,7 +421,7 @@ pub unsafe fn ponder_move<
   Returns some statistics about the last search made.
 */
 
-pub unsafe fn get_search_statistics(max_depth: &mut i32, node_count: &mut f64, g_state: &mut FullState) {
+pub fn get_search_statistics(max_depth: &mut i32, node_count: &mut f64, g_state: &mut FullState) {
     let FullState {
         ref mut game_state,
         ref mut search_state,
@@ -1126,7 +1126,7 @@ pub fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
   well as for the best move in the position (if it is any other move).
 */
 
-pub unsafe fn perform_extended_solve(side_to_move: i32,
+pub fn perform_extended_solve(side_to_move: i32,
                                                 actual_move: i8,
                                                 book: i32,
                                                 exact_solve:
@@ -1201,7 +1201,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
                  0 as i32, book, mid - 1 as i32,
                  exact - 1 as i32, wld - 1 as i32,
                  1 as i32,
-                 &mut (*evaluated_list.as_mut_ptr()).eval, g_state);
+                 &mut evaluated_list[0].eval, g_state);
     if evaluated_list[0].eval.type_0 as u32
            == PASS_EVAL as i32 as u32 {
         /* Don't allow pass */
@@ -1209,7 +1209,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
                      0 as i32, 0 as i32, book,
                      mid - 1 as i32, exact - 1 as i32,
                      wld - 1 as i32, 1 as i32,
-                     &mut (*evaluated_list.as_mut_ptr()).eval, g_state);
+                     &mut evaluated_list[0].eval, g_state);
         if evaluated_list[0].eval.type_0 as
                u32 == PASS_EVAL as i32 as u32 {
             /* Game has ended */
@@ -1282,7 +1282,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
         compute_move(side_to_move, 0 as i32, 0 as i32,
                      0 as i32, 0 as i32, book, mid, exact,
                      wld, 1 as i32,
-                     &mut (*evaluated_list.as_mut_ptr().offset(1)).eval, g_state);
+                     &mut evaluated_list[1].eval, g_state);
     if force_return == 0 && best_move != actual_move {
         /* Move list will contain best move first and then the actual move */
         game_evaluated_count = 2;
