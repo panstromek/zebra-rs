@@ -33,7 +33,7 @@ use libc_wrapper::{time_t};
 
 use crate::src::display::{display_board, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
 use crate::src::error::{FE, LibcFatalError};
-use crate::src::game::{compute_move, global_setup, BasicBoardFileSource, LibcZebraOutput, LogFileHandler};
+use crate::src::game::{legacy_compute_move, global_setup, BasicBoardFileSource, LibcZebraOutput, LogFileHandler};
 use crate::src::learn::{init_learn, LibcLearner};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::{choose_thor_opening_move, get_thor_game_size, get_total_game_count, init_thor_database, LegacyThor, print_thor_matches, read_game_database, read_player_database, read_tournament_database};
@@ -1291,29 +1291,29 @@ unsafe fn analyze_game(mut move_string: &str,
             if empties > (&mut g_state.g_config).wld_skill[side_to_move as usize] {
                 reset_counter(&mut (&mut g_state.search_state).nodes);
                 resp_move =
-                    compute_move(opponent, 0 as i32,
-                                 (&mut g_state.g_config).player_time[opponent as usize] as
+                    legacy_compute_move(opponent, 0 as i32,
+                                        (&mut g_state.g_config).player_time[opponent as usize] as
                                      i32,
-                                 (&mut g_state.g_config).player_increment[opponent as usize] as
+                                        (&mut g_state.g_config).player_increment[opponent as usize] as
                                      i32, timed_search, (&mut g_state.g_config).use_book,
-                                 (&mut g_state.g_config).skill[opponent as usize] - 2 as i32,
-                                 (&mut g_state.g_config).exact_skill[opponent as usize] -
+                                        (&mut g_state.g_config).skill[opponent as usize] - 2 as i32,
+                                        (&mut g_state.g_config).exact_skill[opponent as usize] -
                                      1 as i32,
-                                 (&mut g_state.g_config).wld_skill[opponent as usize] -
+                                        (&mut g_state.g_config).wld_skill[opponent as usize] -
                                      1 as i32, 1 as i32,
-                                 &mut played_info1, g_state)
+                                        &mut played_info1, g_state)
             }
             reset_counter(&mut (&mut g_state.search_state).nodes);
             resp_move =
-                compute_move(opponent, 0 as i32,
-                             (&mut g_state.g_config).player_time[opponent as usize] as i32,
-                             (&mut g_state.g_config).player_increment[opponent as usize] as
+                legacy_compute_move(opponent, 0 as i32,
+                                    (&mut g_state.g_config).player_time[opponent as usize] as i32,
+                                    (&mut g_state.g_config).player_increment[opponent as usize] as
                                  i32, timed_search, (&mut g_state.g_config).use_book,
-                             (&mut g_state.g_config).skill[opponent as usize] - 1 as i32,
-                             (&mut g_state.g_config).exact_skill[opponent as usize] -
+                                    (&mut g_state.g_config).skill[opponent as usize] - 1 as i32,
+                                    (&mut g_state.g_config).exact_skill[opponent as usize] -
                                  1 as i32,
-                             (&mut g_state.g_config).wld_skill[opponent as usize] - 1 as i32,
-                             1 as i32, &mut played_info2, g_state);
+                                    (&mut g_state.g_config).wld_skill[opponent as usize] - 1 as i32,
+                                    1 as i32, &mut played_info2, g_state);
             unmake_move(side_to_move, curr_move, &mut (g_state.board_state).board, (&mut g_state.moves_state), &mut (&mut g_state.hash_state), &mut (&mut g_state.flip_stack_));
             /* Determine the 'best' move and its score. For midgame moves,
             search twice to dampen oscillations. Unless we're in the endgame
@@ -1322,28 +1322,28 @@ unsafe fn analyze_game(mut move_string: &str,
                 (&mut g_state.hash_state).set_hash_transformation(best_trans1, best_trans2);
                 reset_counter(&mut (&mut g_state.search_state).nodes);
                 curr_move =
-                    compute_move(side_to_move, 0 as i32,
-                                 (&mut g_state.g_config).player_time[side_to_move as usize] as
+                    legacy_compute_move(side_to_move, 0 as i32,
+                                        (&mut g_state.g_config).player_time[side_to_move as usize] as
                                      i32,
-                                 (&mut g_state.g_config).player_increment[side_to_move as usize] as
+                                        (&mut g_state.g_config).player_increment[side_to_move as usize] as
                                      i32, timed_search, (&mut g_state.g_config).use_book,
-                                 (&mut g_state.g_config).skill[side_to_move as usize] -
+                                        (&mut g_state.g_config).skill[side_to_move as usize] -
                                      1 as i32,
-                                 (&mut g_state.g_config).exact_skill[side_to_move as usize],
-                                 (&mut g_state.g_config).wld_skill[side_to_move as usize],
-                                 1 as i32, &mut best_info1, g_state)
+                                        (&mut g_state.g_config).exact_skill[side_to_move as usize],
+                                        (&mut g_state.g_config).wld_skill[side_to_move as usize],
+                                        1 as i32, &mut best_info1, g_state)
             }
             reset_counter(&mut (&mut g_state.search_state).nodes);
             curr_move =
-                compute_move(side_to_move, 0 as i32,
-                             (&mut g_state.g_config).player_time[side_to_move as usize] as
+                legacy_compute_move(side_to_move, 0 as i32,
+                                    (&mut g_state.g_config).player_time[side_to_move as usize] as
                                  i32,
-                             (&mut g_state.g_config).player_increment[side_to_move as usize] as
+                                    (&mut g_state.g_config).player_increment[side_to_move as usize] as
                                  i32, timed_search, (&mut g_state.g_config).use_book,
-                             (&mut g_state.g_config).skill[side_to_move as usize],
-                             (&mut g_state.g_config).exact_skill[side_to_move as usize],
-                             (&mut g_state.g_config).wld_skill[side_to_move as usize],
-                             1 as i32, &mut best_info2, g_state);
+                                    (&mut g_state.g_config).skill[side_to_move as usize],
+                                    (&mut g_state.g_config).exact_skill[side_to_move as usize],
+                                    (&mut g_state.g_config).wld_skill[side_to_move as usize],
+                                    1 as i32, &mut best_info2, g_state);
             if side_to_move == 0 as i32 {
                 set_evals(produce_compact_eval(best_info2), 0.0f64);
             } else { set_evals(0.0f64, produce_compact_eval(best_info2)); }

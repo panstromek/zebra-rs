@@ -11,7 +11,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::{EvaluationType, FullState};
 use legacy_zebra::src::display::{display_board, display_state};
 use legacy_zebra::src::error::{LibcFatalError};
-use legacy_zebra::src::game::{compute_move, extended_compute_move, game_init, global_setup};
+use legacy_zebra::src::game::{legacy_compute_move, extended_compute_move, game_init, global_setup};
 use legacy_zebra::src::learn::init_learn;
 use libc_wrapper::{_IO_FILE, stdout, fprintf, fputs, printf, feof, fopen, sscanf, tolower, strlen, __ctype_b_loc, fgets, stderr, FileHandle, exit, __ctype_tolower_loc};
 use legacy_zebra::src::zebra::LibcTimeSource;
@@ -237,12 +237,12 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         search_depth: 0,
                         is_book: 0,};
                 move_0 =
-                    compute_move(side_to_move, 0 as i32,
-                                 100000 as i32, 0 as i32,
-                                 0 as i32, 0 as i32,
-                                 8 as i32, 60 as i32,
-                                 60 as i32, 1 as i32,
-                                 &mut ev_info, g_state) as i32
+                    legacy_compute_move(side_to_move, 0 as i32,
+                                        100000 as i32, 0 as i32,
+                                        0 as i32, 0 as i32,
+                                        8 as i32, 60 as i32,
+                                        60 as i32, 1 as i32,
+                                        &mut ev_info, g_state) as i32
             } else {
                 move_0 = game_moves[g_state.moves_state.disks_played as usize];
                 if g_state.moves_state.disks_played >= first_allowed_dev &&
