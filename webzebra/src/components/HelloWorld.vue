@@ -4,6 +4,14 @@
       <svg width="600" height="600" viewBox="0 0 800 800" style="background-color: green"
            @click="clickBoard">
         <g>
+          <template v-if="practiceMode">
+            <text v-for="eval_ in svg_data.evals"
+                  :x="eval_.x"
+                  :y="eval_.y"
+                  :style="{'fill': eval_.color, 'font-size' : '50px'}">
+              {{eval_.text}}
+            </text>
+          </template>
           <circle
               v-for="circle in circles"
               :r="circle.r"
@@ -92,7 +100,8 @@ export default defineComponent({
       white_skill: 6,
       white_exact_skill: 6,
       white_wld_skill: 6,
-      practiceMode: false,
+      practiceMode: true,
+      evals: []
     }
   },
   created() {
@@ -112,6 +121,10 @@ export default defineComponent({
         case Message.GetPass : {
           this.waitingForPass = true
           break
+        }
+        case Message.Evals: {
+          this.evals = JSON.parse(data).evals
+          break;
         }
       }
     })
@@ -168,13 +181,19 @@ export default defineComponent({
       }
     },
     circles() {
+      return this.svg_data.circles
+    },
+    svg_data() {
       let board = this.board;
-
+      let evals = []
+      const fieldSize = 100
       const arr = []
       for (let i = 1; i <= 8; i++) {
         for (let j = 1; j <= 8; j++) {
           let color;
-          switch (board[(10 * i + j)]) {
+          let move = 10 * i + j;
+
+          switch (board[move]) {
             case 0  :
               color = 'black'
               break;
@@ -184,11 +203,28 @@ export default defineComponent({
               break;
 
             default :
-              continue
+            {
+              const eval_ = this.evals.find(eval_ => eval_.move === move)
+              if (!eval_) {
+                continue
+              }
 
+              if (eval_.best) {
+                color = 'cyan'
+              } else {
+                color = 'yellow'
+              }
+              const text = eval_.eval_s
+              evals.push({
+                x: (j - 1) * fieldSize + 0.2 * fieldSize,
+                y: (i - 1) * fieldSize + 0.65 * fieldSize,
+                color,
+                text
+              })
+              continue
+            }
           }
 
-          const fieldSize = 100
           const pieceSize = 80
           arr.push({
             cx: (j - 1) * fieldSize + 0.5 * fieldSize,
@@ -198,7 +234,10 @@ export default defineComponent({
           })
         }
       }
-      return arr
+      return {
+        circles: arr,
+        evals
+      }
     }
   }
 })

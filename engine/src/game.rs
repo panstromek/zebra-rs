@@ -58,7 +58,7 @@ pub struct GameState {
     forced_opening: Option<CString>,
     last_time_used: f64,
     pub max_depth_reached: i32,
-    play_human_openings: i32,
+    pub play_human_openings: i32,
     komi: i32,
     endgame_performed: [i32; 3],
     pub  prefix_move: i8

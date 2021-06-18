@@ -6,4 +6,5 @@ export const enum Message {
     NewGame,
     SetSkill,
     Undo,
+    Evals,
 }
