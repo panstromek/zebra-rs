@@ -1335,40 +1335,28 @@ pub fn compute_move(side_to_move: i32,
                            search_forced: i32,
                            eval_info: &mut EvaluationType, g_state: &mut FullState)
                            -> i8 {
-    let mut g_config = (&mut g_state.g_config);
-    let mut learn_state = (&mut g_state.learn_state);
-    let mut midgame_state = (&mut g_state.midgame_state);
-    let mut game_state = (&mut g_state.game_state);
-    let mut end_g = (&mut g_state.end_g);
-    let mut coeff_state = (&mut g_state.coeff_state);
-    let mut g_timer = (&mut g_state.g_timer);
-    let mut moves_state = (&mut g_state.moves_state);
-    let mut stable_state = (&mut g_state.stable_state);
-    let mut board_state = (&mut g_state.board_state);
-    let mut hash_state = (&mut g_state.hash_state);
-    let mut random_instance = (&mut g_state.random_instance);
-    let mut g_book = (&mut g_state.g_book);
-    let mut prob_cut = (&mut g_state.prob_cut);
-    let mut search_state = (&mut g_state.search_state);
-    let mut flip_stack_ = (&mut g_state.flip_stack_);
-
     return generic_compute_move::<LogFileHandler, LibcZebraOutput, LibcFatalError, LegacyThor>(side_to_move, update_all, my_time,
-                                my_incr, timed_depth,
-                                book, mid,
-                                exact, wld,
-                                search_forced, eval_info, &mut LogFileHandler::create_log_file_if_needed(), g_config.display_pv, g_config.echo,   &mut flip_stack_,
-                                                                                               &mut search_state,
-                                                                                               &mut board_state,
-                                                                                               &mut hash_state,
-                                                                                               &mut g_timer,
-                                                                                               &mut end_g,
-                                                                                               &mut midgame_state,
-                                                                                               &mut coeff_state,
-                                                                                               &mut moves_state,
-                                                                                               &mut random_instance,
-                                                                                               &mut g_book,
-                                                                                               &mut stable_state,
-                                                                                               &mut game_state, &mut prob_cut);
+                                                                                               my_incr, timed_depth,
+                                                                                               book, mid,
+                                                                                               exact, wld,
+                                                                                               search_forced, eval_info,
+                                                                                               &mut LogFileHandler::create_log_file_if_needed(),
+                                                                                               g_state.g_config.display_pv,
+                                                                                               g_state.g_config.echo,
+                                                                                               &mut g_state.flip_stack_,
+                                                                                               &mut g_state.search_state,
+                                                                                               &mut g_state.board_state,
+                                                                                               &mut g_state.hash_state,
+                                                                                               &mut g_state.g_timer,
+                                                                                               &mut g_state.end_g,
+                                                                                               &mut g_state.midgame_state,
+                                                                                               &mut g_state.coeff_state,
+                                                                                               &mut g_state.moves_state,
+                                                                                               &mut g_state.random_instance,
+                                                                                               &mut g_state.g_book,
+                                                                                               &mut g_state.stable_state,
+                                                                                               &mut g_state.game_state,
+                                                                                               &mut g_state.prob_cut);
 }
 
 pub struct LibcZebraOutput;
