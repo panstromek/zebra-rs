@@ -485,7 +485,7 @@ pub unsafe fn get_pv(destin: &mut [i8], g_state: &mut FullState) -> i32 {
   except for the best.
 */
 
-pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
+pub fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                                                   book_only: i32,
                                                   mut book: i32,
                                                   mut mid: i32,
