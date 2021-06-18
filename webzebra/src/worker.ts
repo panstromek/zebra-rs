@@ -63,7 +63,11 @@ self.zebra = {
         self.postMessage([Message.DisplayBoard, [...arr]])
     }
 }
-
+self.send_evals  = function(evals: string) {
+    console.log((evals))
+    console.log(JSON.parse(evals))
+    self.postMessage([Message.Evals, evals])
+}
 
 // FIXME is it possible to get rid of this nonsense cascade?
 // I'm fighting some transpile process or something with this

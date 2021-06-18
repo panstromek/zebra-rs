@@ -15,12 +15,12 @@ use wasm_bindgen::prelude::*;
 
 use engine::src::counter::CounterType;
 use engine::src::error::{FatalError, FrontEnd};
-use engine::src::game::{BoardSource, CandidateMove, ComputeMoveLogger, ComputeMoveOutput, engine_global_setup, FileBoardSource, GameState};
+use engine::src::game::{BoardSource, CandidateMove, ComputeMoveLogger, ComputeMoveOutput, engine_global_setup, FileBoardSource, GameState, extended_compute_move, EvaluatedList, compare_eval};
 use engine::src::hash::{HashEntry, HashState};
 use engine::src::learn::{Learner, LearnState};
 use engine::src::myrandom;
 use engine::src::thordb::ThorDatabase;
-use engine::src::zebra::{Config, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend, FullState, PlayGame, next_state, PlayGameState, MoveAttempt};
+use engine::src::zebra::{Config, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend, FullState, PlayGame, next_state, PlayGameState, MoveAttempt, EvalType};
 use engine_traits::CoeffSource;
 use flate2_coeff_source::Flate2Source;
 use flip::unflip;
@@ -37,6 +37,8 @@ use engine::src::timer::{Timer, TimeSource};
 use engine::src::getcoeff::CoeffState;
 use engine::src::end::End;
 use engine::src::midgame::MidgameState;
+use engine::src::zebra::EvalType::UNINITIALIZED_EVAL;
+use std::fmt::Write;
 
 #[wasm_bindgen]
 extern "C" {
@@ -44,6 +46,7 @@ extern "C" {
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
     fn js_time() -> f64;
+    fn send_evals(s: String);
     #[wasm_bindgen(js_namespace = zebra)]
     fn display_board(board: &[i32]);
 }
@@ -304,7 +307,8 @@ impl ZebraGame {
             }
             PlayGameState::GettingMove { provided_move_count, move_start, side_to_move } => {
                 display_board(&play_state.g_state.board_state.board);
-
+                c_log!("Computing evals");
+                droidzebra_msg_candidate_evals(self.compute_evals(side_to_move));
                 // TODO signal that we need move
                 // move_attempt =  Some(MoveAttempt(res.0, res.1))
                 return Some(InteractionRequest::Move);
@@ -330,6 +334,121 @@ impl ZebraGame {
         };
         None
     }
+    // ported from droidzebra (_droidzebra_compute_evals) - todo richer attribution
+    pub fn compute_evals(&mut self, side_to_move: i32) -> EvaluatedList {
+        let stored_slack = self.game.g_state.g_book.max_slack;
+        let stored_perturbation = self.game.g_state.midgame_state.perturbation_amplitude;
+        let stored_human_opening = self.game.g_state.game_state.play_human_openings;
+
+        self.game.g_state.g_book.set_slack(0);
+        self.game.g_state.midgame_state.set_perturbation(0);
+        self.game.g_state.game_state.toggle_human_openings(0);
+        // set_forced_opening( NULL );// TODO??
+        let stored_pv = self.game.g_state.search_state.full_pv;
+        let stored_pv_depth = self.game.g_state.search_state.full_pv_depth;
+
+        let evals = extended_compute_move::<WasmComputeMoveLogger,WasmFrontend , WasmFrontend, WasmThor>(side_to_move, 0, 1,
+                                          //fixme which ones should these be?
+                                          6 /*self.game.g_state.g_config.skill[0]*/,
+                                          8 /*self.game.g_state.g_config.exact_skill[0]*/,
+                                          8 /*self.game.g_state.g_config.wld_skill[0]*/,
+                                          1, &mut self.game.g_state,
+        );
+        self.game.g_state.search_state.full_pv = stored_pv;
+        self.game.g_state.search_state.full_pv_depth = stored_pv_depth;
+        self.game.g_state.g_book.set_slack(stored_slack);
+        self.game.g_state.midgame_state.set_perturbation(stored_perturbation);
+        self.game.g_state.game_state.toggle_human_openings(stored_human_opening);
+        // set_forced_opening( s_forced_opening_seq );
+        display_board(&self.game.g_state.board_state.board);
+        return evals;
+        // display_status(stdout, FALSE);
+    }
+}
+
+// PORTED from droidzebra
+/*
+  PRODUCE_EVAL_TEXT
+  Convert a result descriptor into a string intended for output.
+ */
+fn candidate_eval_text( eval_info: EvaluationType) -> String {
+	let mut buffer = String::with_capacity( 32 );
+
+    use EvalType::*;
+    const MIDGAME_WIN: i32 = 29000;
+    const  WIN_TEXT              :&str = "Win";
+    const  LOSS_TEXT             :&str = "Loss";
+    const  DRAW_TEXT             :&str = "Draw";
+
+    let xx :std::fmt::Result = match eval_info.type_0 {
+        MIDGAME_EVAL =>
+            if eval_info.score >= MIDGAME_WIN {
+                write!(buffer, "{}", WIN_TEXT)
+            } else if eval_info.score <= -MIDGAME_WIN {
+                write!(buffer, "{}", LOSS_TEXT)
+            } else {
+                let disk_diff = f64::round(eval_info.score as f64 / 128.0) as i32;
+                write!(buffer, "{:+}", disk_diff)
+            },
+
+        SELECTIVE_EVAL | EXACT_EVAL => write!(buffer, "{:+}", eval_info.score >> 7),
+        WLD_EVAL => match eval_info.res {
+                WON_POSITION => write!(buffer, "{}", WIN_TEXT),
+                DRAWN_POSITION => write!(buffer, "{}", DRAW_TEXT),
+                LOST_POSITION => write!(buffer, "{}", LOSS_TEXT),
+                UNSOLVED_POSITION => write!(buffer, "???"),
+            },
+        FORCED_EVAL | PASS_EVAL => write!(buffer, "-"),
+
+        INTERRUPTED_EVAL => {
+            const INCOMPLETE_TEXT: &str = "incompl";
+            buffer.write_str(INCOMPLETE_TEXT)
+        }
+        UNDEFINED_EVAL => buffer.write_str(""),
+        UNINITIALIZED_EVAL => write!(buffer, "--")
+    };
+	return buffer;
+}
+
+// PORTED from droidzebra
+fn droidzebra_msg_candidate_evals(evals: EvaluatedList)
+{
+	let mut buffer  =  "{\"evals\":[ ".to_string();
+
+	let evaluated_count = evals.get_evaluated_count();
+	if evaluated_count==0 {return }
+    let mut best = evals.get_evaluated(0).eval;
+
+	for i in 0..evaluated_count {
+		let emove = evals.get_evaluated(i);
+		if i==0 {
+			// evaluated moves are sorted best to worst
+			best = emove.eval;
+		}
+
+		if emove.eval.type_0 == EvalType::INTERRUPTED_EVAL
+			|| emove.eval.type_0 == EvalType::UNDEFINED_EVAL
+			|| emove.eval.type_0 == EvalType::UNINITIALIZED_EVAL {
+			continue;
+		}
+
+		let eval_s = candidate_eval_text(emove.eval);
+		let eval_l = candidate_eval_text(emove.eval);
+
+		write!(buffer,
+				"{{\"move\":{},\"best\":{},\"eval_s\":\"{}\",\"eval_l\":\"{}\"}},",
+				emove.move_0,
+				compare_eval(best, emove.eval)==0,
+				eval_s,
+				eval_l
+		);
+	}
+
+	buffer.pop(); // erase last comma
+    write!(buffer, "] }}" );
+
+	//TODO droidzebra_message(MSG_CANDIDATE_EVALS, buffer);
+    send_evals(buffer)
 }
 
 #[wasm_bindgen]
