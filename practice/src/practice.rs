@@ -4,7 +4,7 @@ use engine::src::moves::{generate_all, make_move, unmake_move, valid_move};
 use engine::src::osfbook::{find_opening_name, get_hash};
 use legacy_zebra::src::display::{display_board, produce_eval_text, set_move_list, set_names, display_state, TO_SQUARE};
 use legacy_zebra::src::error::{LibcFatalError};
-use legacy_zebra::src::game::{extended_compute_move, game_init, get_evaluated, get_evaluated_count};
+use legacy_zebra::src::game::{extended_compute_move, game_init};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
 use legacy_zebra::src::zebra::{LibcTimeSource, Atoi};
 use libc_wrapper::{stdout, scanf};
@@ -82,14 +82,14 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
                       &(g_state.board_state).black_moves, &(g_state.board_state).white_moves
         );
         write!(stdout, "Book hash: {} {} ({})\n\n", val0, val1, orientation);
-        extended_compute_move::<LibcFatalError>(side_to_move, 0 as i32,
+        let evaluated_list = extended_compute_move::<LibcFatalError>(side_to_move, 0 as i32,
                                                 1 as i32, 6 as i32,
                                                 16 as i32, 18 as i32, (g_state.g_config).echo, g_state);
-        write!(stdout, "Scores for the {} moves:\n", get_evaluated_count());
+        write!(stdout, "Scores for the {} moves:\n", evaluated_list.get_evaluated_count());
         i = 0;
-        while i < get_evaluated_count() {
-            let eval_str_ = produce_eval_text(&get_evaluated(i).eval, 0 as i32);
-            write!(stdout, "   {}   {}\n", TO_SQUARE(get_evaluated(i).move_0), eval_str_);
+        while i < evaluated_list.get_evaluated_count() {
+            let eval_str_ = produce_eval_text(&evaluated_list.get_evaluated(i).eval, 0 as i32);
+            write!(stdout, "   {}   {}\n", TO_SQUARE(evaluated_list.get_evaluated(i).move_0), eval_str_);
 
             i += 1
         }

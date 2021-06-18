@@ -29,37 +29,27 @@ use engine::src::timer::Timer;
 #[macro_use]
 use crate::send_status;
 
+pub struct EvaluatedList {
+    evaluated_list: [EvaluatedMove; 60],
+    game_evaluated_count: i32,
+    pub best_move: i8,
+}
 
 pub static mut prefix_move: i8 = 0;
-pub static mut evaluated_list: [EvaluatedMove; 60] = [EvaluatedMove {
-    eval: EvaluationType {
-        type_0: MIDGAME_EVAL,
-        res: WON_POSITION,
-        score: 0,
-        confidence: 0.,
-        search_depth: 0,
-        is_book: 0,
-    },
-    side_to_move: 0,
-    move_0: 0,
-    pv_depth: 0,
-    pv: [0; 60],
-}; 60];
 
-pub unsafe fn get_evaluated(index: i32)
-                            -> EvaluatedMove {
-    return evaluated_list[index as usize];
-}
-pub static mut game_evaluated_count: i32 = 0;
+impl EvaluatedList {
+    pub fn get_evaluated(&self, index: i32) -> EvaluatedMove {
+        return self.evaluated_list[index as usize];
+    }
 
-/*
-  GET_EVALUATED_COUNT
-  GET_EVALUATED
-  Accessor functions for the data structure filled by extended_compute_move().
-*/
-
-pub unsafe fn get_evaluated_count() -> i32 {
-    return game_evaluated_count;
+    /*
+      GET_EVALUATED_COUNT
+      GET_EVALUATED
+      Accessor functions for the data structure filled by extended_compute_move().
+    */
+    pub fn get_evaluated_count(&self) -> i32 {
+        return self.game_evaluated_count;
+    }
 }
 
 pub static mut use_log_file: i32 = 1;
@@ -503,7 +493,22 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
                                                   mut mid: i32,
                                                   mut exact: i32,
                                                   mut wld: i32, mut echo: i32, g_state: &mut FullState)
-                                                  -> i8 {
+                                                  -> EvaluatedList {
+    let mut evaluated_list: [EvaluatedMove; 60] = [EvaluatedMove {
+        eval: EvaluationType {
+            type_0: MIDGAME_EVAL,
+            res: WON_POSITION,
+            score: 0,
+            confidence: 0.,
+            search_depth: 0,
+            is_book: 0,
+        },
+        side_to_move: 0,
+        move_0: 0,
+        pv_depth: 0,
+        pv: [0; 60],
+    }; 60];
+    let mut game_evaluated_count: i32 = 0;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut index: i32 = 0;
@@ -1111,7 +1116,11 @@ pub unsafe fn extended_compute_move<FE: FrontEnd>(side_to_move: i32,
     (g_state.midgame_state).toggle_perturbation_usage(1 as i32);
     (g_state.game_state).max_depth_reached += 1;
     prefix_move = 0;
-    return best_move;
+    return EvaluatedList {
+        evaluated_list,
+        game_evaluated_count,
+        best_move
+    };
 }
 /*
   PERFORM_EXTENDED_SOLVE
@@ -1161,7 +1170,21 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
     if exact_solve != 0 {
         exact = 60 as i32
     } else { exact = 0 as i32 }
-    game_evaluated_count = 1;
+    let mut game_evaluated_count = 1;
+    let mut evaluated_list: [EvaluatedMove; 60] = [EvaluatedMove {
+        eval: EvaluationType {
+            type_0: MIDGAME_EVAL,
+            res: WON_POSITION,
+            score: 0,
+            confidence: 0.,
+            search_depth: 0,
+            is_book: 0,
+        },
+        side_to_move: 0,
+        move_0: 0,
+        pv_depth: 0,
+        pv: [0; 60],
+    }; 60];
     /* Calculate the score for the preferred move */
     evaluated_list[0].side_to_move = side_to_move;
     evaluated_list[0].move_0 = actual_move;
@@ -1302,7 +1325,7 @@ pub unsafe fn perform_extended_solve(side_to_move: i32,
    COMPUTE_MOVE
    Returns the best move in a position given search parameters.
 */
-pub unsafe fn compute_move(side_to_move: i32,
+pub fn compute_move(side_to_move: i32,
                            update_all: i32,
                            my_time: i32,
                            my_incr: i32,
