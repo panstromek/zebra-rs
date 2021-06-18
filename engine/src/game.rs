@@ -61,6 +61,7 @@ pub struct GameState {
     play_human_openings: i32,
     komi: i32,
     endgame_performed: [i32; 3],
+    pub  prefix_move: i8
 }
 
 impl GameState {
@@ -72,6 +73,7 @@ impl GameState {
             play_human_openings: 1,
             komi: 0,
             endgame_performed: [0; 3],
+            prefix_move: 0
         }
     }
 }
