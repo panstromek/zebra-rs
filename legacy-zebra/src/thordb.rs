@@ -661,28 +661,30 @@ fn prepare_thor_board(thor_board_: &mut [i32; 100]) {
   Count the number of discs flipped in the direction given by INC
   when SQ is played by COLOR and flip those discs.
 */
-unsafe fn directional_flip_count(sq: i32,
-                                 inc: i32,
-                                 color: i32,
-                                 oppcol: i32)
-                                 -> i32 {
+fn directional_flip_count(
+    sq: i32,
+    inc: i32,
+    color: i32,
+    oppcol: i32,
+    thor_board_: &mut [i32; 100],
+) -> i32 {
     let mut count = 1;
     let mut pt = sq + inc;
-    if thor_board[pt as usize] == oppcol {
+    if thor_board_[pt as usize] == oppcol {
         pt += inc;
-        if thor_board[pt as usize] == oppcol {
+        if thor_board_[pt as usize] == oppcol {
             count += 1;
             pt += inc;
-            if thor_board[pt as usize] == oppcol {
+            if thor_board_[pt as usize] == oppcol {
                 count += 1;
                 pt += inc;
-                if thor_board[pt as usize] == oppcol {
+                if thor_board_[pt as usize] == oppcol {
                     count += 1;
                     pt += inc;
-                    if thor_board[pt as usize] == oppcol {
+                    if thor_board_[pt as usize] == oppcol {
                         count += 1;
                         pt += inc;
-                        if thor_board[pt as usize] == oppcol {
+                        if thor_board_[pt as usize] == oppcol {
                             count += 1;
                             pt += inc
                         }
@@ -690,18 +692,18 @@ unsafe fn directional_flip_count(sq: i32,
                 }
             }
         }
-        if thor_board[pt as usize] == color {
+        if thor_board_[pt as usize] == color {
             let mut g = count;
             loop  {
                 pt -= inc;
-                thor_board[pt as usize] = color;
+                thor_board_[pt as usize] = color;
                 g -= 1;
                 if !(g != 0) { break ; }
             }
             return count
         }
     }
-    return 0 as i32;
+    0
 }
 /*
   DIRECTIONAL_FLIP_ANY
@@ -755,35 +757,35 @@ unsafe fn count_flips(sqnum: i32,
     mask = dir_mask[sqnum as usize];
     if mask & 128 as i32 != 0 {
         count +=
-            directional_flip_count(sqnum, -(11 as i32), color, oppcol)
+            directional_flip_count(sqnum, -(11 as i32), color, oppcol, &mut thor_board)
     }
     if mask & 64 as i32 != 0 {
         count +=
-            directional_flip_count(sqnum, 11 as i32, color, oppcol)
+            directional_flip_count(sqnum, 11 as i32, color, oppcol, &mut thor_board)
     }
     if mask & 32 as i32 != 0 {
         count +=
-            directional_flip_count(sqnum, -(10 as i32), color, oppcol)
+            directional_flip_count(sqnum, -(10 as i32), color, oppcol, &mut thor_board)
     }
     if mask & 16 as i32 != 0 {
         count +=
-            directional_flip_count(sqnum, 10 as i32, color, oppcol)
+            directional_flip_count(sqnum, 10 as i32, color, oppcol, &mut thor_board)
     }
     if mask & 8 as i32 != 0 {
         count +=
-            directional_flip_count(sqnum, -(9 as i32), color, oppcol)
+            directional_flip_count(sqnum, -(9 as i32), color, oppcol, &mut thor_board)
     }
     if mask & 4 as i32 != 0 {
         count +=
-            directional_flip_count(sqnum, 9 as i32, color, oppcol)
+            directional_flip_count(sqnum, 9 as i32, color, oppcol, &mut thor_board)
     }
     if mask & 2 as i32 != 0 {
         count +=
-            directional_flip_count(sqnum, -1, color, oppcol)
+            directional_flip_count(sqnum, -1, color, oppcol, &mut thor_board)
     }
     if mask & 1 as i32 != 0 {
         count +=
-            directional_flip_count(sqnum, 1 as i32, color, oppcol)
+            directional_flip_count(sqnum, 1 as i32, color, oppcol, &mut thor_board)
     }
     return count;
 }
