@@ -89,9 +89,7 @@ impl LibcFatalError {
             write!(stdout, "{}:        ", "Thor database");
             let mut i = 0;
             while i < match_count {
-                write!(stdout, "{}{}: {:4.1}%    " ,
-                       char::from('a' as u8 + (move_list[i as usize].move_0 % 10) as u8 - 1) ,
-                       char::from('0' as u8 + (move_list[i as usize].move_0 / 10) as u8),
+                write!(stdout, "{}: {:4.1}%    " , TO_SQUARE(move_list[i as usize].move_0),
                        100.0f64 * move_list[i as usize].frequency as f64 / freq_sum as f64);
                 if i % 6 as i32 == 4 as i32 {
                     write!(stdout, "\n");
