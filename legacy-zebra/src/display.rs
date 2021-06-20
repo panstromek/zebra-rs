@@ -313,18 +313,14 @@ pub fn display_board(mut stream: &mut dyn std::io::Write, board: &[i32; 128],
                 if black_moves_[row as usize] == -1 {
                     write!(stream, "- ");
                 } else {
-                    write!(stream, "{}{}",
-                            char::from('a' as u8 + (black_moves_[row as usize] % 10) as u8  - 1),
-                            char::from('0' as u8 + (black_moves_[row as usize] / 10) as u8));
+                    write!(stream, "{}", TO_SQUARE(black_moves_[row as usize]));
                 }
                 write!(stream, "  ");
                 if row < current_row_ || row == current_row_ && side_to_move == 0 {
                     if white_moves_[row as usize] == -1 {
                         write!(stream, "- ");
                     } else {
-                        write!(stream, "{}{}",
-                                char::from('a' as u8 + (white_moves_[row as usize] % 10) as u8  - 1) ,
-                                char::from('0' as u8 + (white_moves_[row as usize] / 10) as u8 ));
+                        write!(stream, "{}", TO_SQUARE(white_moves_[row as usize]));
                     }
                 }
             }
