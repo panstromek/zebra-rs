@@ -625,19 +625,17 @@ pub unsafe fn print_thor_matches(mut stream: FileHandle,
 /*
   CLEAR_THOR_BOARD
 */
-unsafe fn clear_thor_board() {
+fn clear_thor_board(thor_board_: &mut [i32; 100]) {
     let mut pos: i32 = 0;
     pos = 11;
     while pos <= 88 as i32 {
-        thor_board[pos as usize] = 1;
+        thor_board_[pos as usize] = 1;
         pos += 1
     }
-    thor_board[54] = 0;
-    thor_board[45] =
-        thor_board[54];
-    thor_board[55] = 2;
-    thor_board[44] =
-        thor_board[55];
+    thor_board_[54] = 0;
+    thor_board_[45] = thor_board_[54];
+    thor_board_[55] = 2;
+    thor_board_[44] = thor_board_[55];
 }
 /*
   PREPARE_THOR_BOARD
@@ -1729,7 +1727,7 @@ unsafe fn play_through_game(game: *mut GameType,
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
     let mut flipped: i32 = 0;
-    clear_thor_board();
+    clear_thor_board(&mut thor_board);
     thor_side_to_move = 0;
     i = 0;
     while i < max_moves {
@@ -1779,7 +1777,7 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
     let mut child = 0 as *mut ThorOpeningNode;
     /* Play through the game and count the number of black discs
        at each stage. */
-    clear_thor_board();
+    clear_thor_board(&mut thor_board);
     disc_count[2] = 2;
     disc_count[0] =
         disc_count[2];
@@ -1993,7 +1991,7 @@ unsafe fn build_thor_opening_tree() {
         [0 as *mut ThorOpeningNode; 61];
     /* Create the root node and compute its hash value */
     root_node = new_thor_opening_node(0 as *mut ThorOpeningNode);
-    clear_thor_board();
+    clear_thor_board(&mut thor_board);
     compute_thor_patterns(&thor_board);
     compute_partial_hash(&mut hash1, &mut hash2);
     (*root_node).hash1 = hash1;
@@ -2031,7 +2029,7 @@ unsafe fn build_thor_opening_tree() {
         }
         /* Play through the moves common with the previous line
            and the first deviation */
-        clear_thor_board();
+        clear_thor_board(&mut thor_board);
         thor_side_to_move = 0;
         j = 0;
         while j <= branch_depth {
