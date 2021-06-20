@@ -117,27 +117,27 @@ impl ThorDatabase for LegacyThor {
     }
 
     fn get_match_count() -> i32 {
-        unsafe { get_match_count() }
+        unsafe { thor_search.get_match_count() }
     }
 
     fn get_black_win_count() -> i32 {
-        unsafe { get_black_win_count() }
+        unsafe { thor_search.get_black_win_count() }
     }
 
     fn get_draw_count() -> i32 {
-        unsafe { get_draw_count() }
+        unsafe { thor_search.get_draw_count() }
     }
 
     fn get_white_win_count() -> i32 {
-        unsafe { get_white_win_count() }
+        unsafe { thor_search.get_white_win_count() }
     }
 
     fn get_black_median_score() -> i32 {
-        unsafe { get_black_median_score() }
+        unsafe { thor_search.get_black_median_score() }
     }
 
     fn get_black_average_score() -> f64 {
-        unsafe { get_black_average_score() }
+        unsafe { thor_search.get_black_average_score() }
     }
 
     fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32, random: &mut MyRandom) -> i32 {
@@ -1549,60 +1549,10 @@ unsafe fn get_thor_game_move_count(index: i32)
 
 /*
   GET_TOTAL_GAME_COUNT
-  GET_MATCH_COUNT
-  GET_BLACK_WIN_COUNT
-  GET_DRAW_COUNT
-  GET_WHITE_WIN_COUNT
-  GET_BLACK_MEDIAN_SCORE
-  GET_AVERAGE_BLACK_SCORE
-  GET_MOVE_FREQUENCY
-  GET_MOVE_WIN_RATE
-  Accessor functions which return statistics from the last
-  query to DATABASE_SEARCH.
 */
 
 pub unsafe fn get_total_game_count() -> i32 {
     return thor_game_count;
-}
-
-pub unsafe fn get_match_count() -> i32 {
-    return thor_search.match_count;
-}
-
-pub unsafe fn get_black_win_count() -> i32 {
-    return thor_search.black_wins;
-}
-
-pub unsafe fn get_draw_count() -> i32 {
-    return thor_search.draws;
-}
-
-pub unsafe fn get_white_win_count() -> i32 {
-    return thor_search.white_wins;
-}
-
-pub unsafe fn get_black_median_score() -> i32 {
-    return thor_search.median_black_score;
-}
-
-pub unsafe fn get_black_average_score() -> f64 {
-    return thor_search.average_black_score;
-}
-
-unsafe fn get_move_frequency(move_0: i32)
-                             -> i32 {
-    return thor_search.next_move_frequency[move_0 as usize];
-}
-
-unsafe fn get_move_win_rate(move_0: i32)
-                            -> f64 {
-    if thor_search.next_move_frequency[move_0 as usize] == 0 as i32 {
-        return 0.0f64
-    } else {
-        return thor_search.next_move_score[move_0 as usize] /
-            thor_search.next_move_frequency[move_0 as usize] as
-                f64
-    };
 }
 
 /*

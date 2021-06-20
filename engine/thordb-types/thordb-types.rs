@@ -166,3 +166,54 @@ pub struct ThorOpening {
     pub frequency: i32,
     pub move_str: &'static [u8],
 }
+
+impl SearchResultType {
+    /*
+      GET_MATCH_COUNT
+      GET_BLACK_WIN_COUNT
+      GET_DRAW_COUNT
+      GET_WHITE_WIN_COUNT
+      GET_BLACK_MEDIAN_SCORE
+      GET_AVERAGE_BLACK_SCORE
+      GET_MOVE_FREQUENCY
+      GET_MOVE_WIN_RATE
+      Accessor functions which return statistics from the last
+      query to DATABASE_SEARCH.
+    */
+
+    pub fn get_match_count(&self) -> i32 {
+        return self.match_count;
+    }
+
+    pub fn get_black_win_count(&self) -> i32 {
+        return self.black_wins;
+    }
+
+    pub fn get_draw_count(&self) -> i32 {
+        return self.draws;
+    }
+
+    pub fn get_white_win_count(&self) -> i32 {
+        return self.white_wins;
+    }
+
+    pub fn get_black_median_score(&self) -> i32 {
+        return self.median_black_score;
+    }
+
+    pub fn get_black_average_score(&self) -> f64 {
+        return self.average_black_score;
+    }
+
+    pub fn get_move_frequency(&self, move_0: i32) -> i32 {
+        return self.next_move_frequency[move_0 as usize];
+    }
+
+    pub fn get_move_win_rate(&self, move_0: i32) -> f64 {
+        return if self.next_move_frequency[move_0 as usize] == 0 {
+            0.0f64
+        } else {
+            self.next_move_score[move_0 as usize] / self.next_move_frequency[move_0 as usize] as f64
+        };
+    }
+}
