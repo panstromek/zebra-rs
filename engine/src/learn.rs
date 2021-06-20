@@ -4,6 +4,8 @@ pub struct LearnState {
     pub learn_depth: i32,
     pub cutoff_empty: i32,
     pub game_move: [i16; 61],
+    pub binary_database: i32,
+    pub database_name: [i8; 256],
 }
 
 /*
@@ -24,6 +26,8 @@ impl LearnState {
             learn_depth: 0,
             cutoff_empty: 0,
             game_move: [0; 61],
+            binary_database:  0,
+            database_name: [0; 256]
         }
     }
     /*
