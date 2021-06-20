@@ -369,13 +369,6 @@ pub fn display_optimal_line(stream: &mut dyn Write, full_pv_depth_: i32, full_pv
     write!(stream, "\n");
 }
 
-pub unsafe trait CFormat: Copy {}
-unsafe impl CFormat for i32 {}
-unsafe impl CFormat for f64 {}
-unsafe impl CFormat for *mut i8 {}
-unsafe impl CFormat for *const i8 {}
-unsafe impl CFormat for u64 {}
-
 impl DisplayState {
     pub fn write_status_fmt(&mut self, args: std::fmt::Arguments<'_>) {
         let len_before = self.status_buffer.len();
