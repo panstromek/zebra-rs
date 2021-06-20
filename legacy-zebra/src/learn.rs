@@ -12,9 +12,6 @@ use crate::fatal_error;
 use std::ffi::CStr;
 use crate::src::display::TO_SQUARE;
 
-pub static mut binary_database: i32 = 0;
-pub static mut database_name: [i8; 256] = [0; 256];
-
 /*
    INIT_LEARN
    Initialize the learning module.
@@ -30,10 +27,10 @@ pub unsafe fn init_learn(file_name: *const i8, is_binary: i32, g_state: &mut Ful
     CStr::from_ptr(file_name)
         .to_bytes_with_nul()
         .iter()
-        .take(database_name.len() - 1)
-        .zip(database_name.iter_mut())
+        .take(g_state.learn_state.database_name.len() - 1)
+        .zip(g_state.learn_state.database_name.iter_mut())
         .for_each(|(from, to) | *to = *from as _);
-    binary_database = is_binary;
+    g_state.learn_state.binary_database = is_binary;
 }
 
 pub struct LibcLearner;
@@ -96,9 +93,9 @@ pub unsafe fn learn_game(game_length: i32,
     add_new_game(game_length, None, (g_state.learn_state).cutoff_empty,
                  full_solve, wld_solve, 1 as i32, private_game, echo, g_state);
     if save_database != 0 {
-        if binary_database != 0 {
-            write_binary_database(database_name.as_mut_ptr(), &mut g_state.g_book);
-        } else { write_text_database(database_name.as_mut_ptr(), &mut g_state.g_book); }
+        if g_state.learn_state.binary_database != 0 {
+            write_binary_database(g_state.learn_state.database_name.as_mut_ptr(), &mut g_state.g_book);
+        } else { write_text_database(g_state.learn_state.database_name.as_mut_ptr(), &mut g_state.g_book); }
     }
     (g_state.g_timer).toggle_abort_check(1 as i32);
 }
@@ -164,8 +161,8 @@ pub unsafe fn full_learn_public_game(moves: &[i32],
    ( g_state.g_book).set_search_depth(deviation_depth);
     add_new_game(length as _, None, cutoff, exact, wld,
                  1 as i32, 0 as i32, echo, g_state);
-    if binary_database != 0 {
-        write_binary_database(database_name.as_mut_ptr(), &mut g_state.g_book);
-    } else { write_text_database(database_name.as_mut_ptr(), &mut g_state.g_book); }
+    if g_state.learn_state.binary_database != 0 {
+        write_binary_database(g_state.learn_state.database_name.as_mut_ptr(), &mut g_state.g_book);
+    } else { write_text_database(g_state.learn_state.database_name.as_mut_ptr(), &mut g_state.g_book); }
     ( g_state.g_timer).toggle_abort_check(1 as i32);
 }
