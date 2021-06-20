@@ -93,7 +93,7 @@ pub unsafe fn learn_game(game_length: i32,
         i += 1
     }
    (g_state.g_book).set_search_depth((g_state.learn_state).learn_depth);
-    add_new_game(game_length, (g_state.learn_state).game_move.as_mut_ptr(), (g_state.learn_state).cutoff_empty,
+    add_new_game(game_length, None, (g_state.learn_state).cutoff_empty,
                  full_solve, wld_solve, 1 as i32, private_game, echo, g_state);
     if save_database != 0 {
         if binary_database != 0 {
@@ -162,7 +162,7 @@ pub unsafe fn full_learn_public_game(moves: &[i32],
     /* Let the learning sub-routine in osfbook update the opening
        book and the dump it to file. */
    ( g_state.g_book).set_search_depth(deviation_depth);
-    add_new_game(length as _, ( g_state.learn_state).game_move.as_mut_ptr(), cutoff, exact, wld,
+    add_new_game(length as _, None, cutoff, exact, wld,
                  1 as i32, 0 as i32, echo, g_state);
     if binary_database != 0 {
         write_binary_database(database_name.as_mut_ptr(), &mut g_state.g_book);

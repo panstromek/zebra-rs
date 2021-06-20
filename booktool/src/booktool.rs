@@ -2428,7 +2428,7 @@ pub unsafe fn build_tree(file_name: *const i8,
             i += 1
         }
         if abs(diff) <= max_diff {
-            add_new_game(move_count_0, game_move_list.as_mut_ptr(),
+            add_new_game(move_count_0, Some(&game_move_list),
                          min_empties, 0 as i32, 0 as i32,
                          0 as i32, 0 as i32, echo, g_state);
             write!(stdout, "|");
