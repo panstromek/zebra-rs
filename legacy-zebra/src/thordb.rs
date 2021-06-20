@@ -641,18 +641,14 @@ fn clear_thor_board(thor_board_: &mut [i32; 100]) {
   PREPARE_THOR_BOARD
   Mark the positions outside the board as OUTSIDE.
 */
-unsafe fn prepare_thor_board() {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut pos: i32 = 0;
-    i = 0;
-    while i < 10 as i32 {
-        j = 0;
-        pos = 10 as i32 * i;
+fn prepare_thor_board(thor_board_: &mut [i32; 100]) {
+    let mut i = 0;
+    while i < 10 {
+        let mut j = 0;
+        let mut pos = 10 * i;
         while j < 10 as i32 {
-            if i == 0 as i32 || i == 9 as i32 ||
-                j == 0 as i32 || j == 9 as i32 {
-                thor_board[pos as usize] = 3 as i32
+            if i == 0 || i == 9 || j == 0 || j == 9 {
+                thor_board_[pos as usize] = 3
             }
             j += 1;
             pos += 1
@@ -2162,7 +2158,7 @@ pub unsafe fn init_thor_database(g_state: &mut FullState) {
     init_move_masks();
     init_symmetry_maps();
     init_thor_hash(g_state);
-    prepare_thor_board();
+    prepare_thor_board(&mut thor_board);
     build_thor_opening_tree();
     filter.game_categories =
         1 as i32 | 2 as i32 | 4 as i32;
