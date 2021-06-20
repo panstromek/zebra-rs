@@ -10,7 +10,7 @@ use engine::src::hash::{HashEntry, HashState};
 use engine::src::search::{hash_expand_pv, SearchState};
 
 use engine::src::zebra::{EvaluationType};
-use libc_wrapper::{fflush, fopen, stderr, stdout, time, time_t, c_time};
+use libc_wrapper::{fopen, stderr, stdout, time, time_t, c_time};
 use thordb_types::C2RustUnnamed;
 #[macro_use]
 use crate::send_status;
@@ -515,7 +515,7 @@ impl LibcFatalError {
             if evaluation_stage_ % 5 == 0 {
                 write!(stdout, " {}% ", 4 * evaluation_stage_);
             }
-            fflush(stdout);
+            stdout.flush();
         }
     }
 }

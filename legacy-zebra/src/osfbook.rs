@@ -15,7 +15,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvaluationType;
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
-use libc_wrapper::{fclose, fflush, FileHandle, fopen, fscanf, stdout, time};
+use libc_wrapper::{fclose, FileHandle, fopen, fscanf, stdout, time};
 use std::io::Write;
 #[macro_use]
 use crate::fatal_error;
@@ -231,7 +231,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
             make_move(side_to_move, this_move, 1 as i32, &mut (g_state.moves_state), &mut (g_state.board_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
             i += 1
         }
-        if echo != 0 { fflush(stdout); }
+        if echo != 0 { stdout.flush(); }
         midgame_eval_done = 0;
         i = last_move_number - 1 as i32;
         while i >= 0 as i32 {
@@ -393,13 +393,13 @@ pub unsafe fn add_new_game(move_count_0: i32,
                                 i32)) as i32;
                 if midgame_eval_done == 0 {
                     write!(stdout, "Evaluating: ");
-                    fflush(stdout);
+                    stdout.flush();
                 }
                 midgame_eval_done = 1;
                 if force_eval != 0 { clear_node_depth(this_node, &mut (g_state.g_book)); }
                 evaluate_node(this_node, echo, g_state);
                 write!(stdout, "|");
-                fflush(stdout);
+                stdout.flush();
             }
             let ref mut fresh43 = (*(g_state.g_book).node.offset(this_node as isize)).flags;
             *fresh43 =
