@@ -20,7 +20,7 @@ use engine::src::hash::{HashEntry, HashState};
 use engine::src::learn::{Learner, LearnState};
 use engine::src::myrandom;
 use engine::src::thordb::ThorDatabase;
-use engine::src::zebra::{Config, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend, FullState, PlayGame, next_state, PlayGameState, MoveAttempt, EvalType};
+use engine::src::zebra::{Config, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend, FullState, PlayGame, next_state, PlayGameState, MoveAttempt, EvalType, EvalResult};
 use engine_traits::CoeffSource;
 use flate2_coeff_source::Flate2Source;
 use flip::unflip;
@@ -393,11 +393,11 @@ fn candidate_eval_text( eval_info: EvaluationType) -> String {
 
         SELECTIVE_EVAL | EXACT_EVAL => write!(buffer, "{:+}", eval_info.score >> 7),
         WLD_EVAL => match eval_info.res {
-                WON_POSITION => write!(buffer, "{}", WIN_TEXT),
-                DRAWN_POSITION => write!(buffer, "{}", DRAW_TEXT),
-                LOST_POSITION => write!(buffer, "{}", LOSS_TEXT),
-                UNSOLVED_POSITION => write!(buffer, "???"),
-            },
+            EvalResult::WON_POSITION => write!(buffer, "{}", WIN_TEXT),
+            EvalResult::DRAWN_POSITION => write!(buffer, "{}", DRAW_TEXT),
+            EvalResult::LOST_POSITION => write!(buffer, "{}", LOSS_TEXT),
+            EvalResult::UNSOLVED_POSITION => write!(buffer, "???"),
+        },
         FORCED_EVAL | PASS_EVAL => write!(buffer, "-"),
 
         INTERRUPTED_EVAL => {
