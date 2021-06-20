@@ -154,7 +154,7 @@ pub type FE = LibcFatalError;
   Reads an 8-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-fn get_int_8(mut stream: FileHandle, value: &mut Int8) -> i32 {
+fn get_int_8(mut stream: impl Read, value: &mut Int8) -> i32 {
     let mut buf = [0_u8;1];
     match stream.read_exact(&mut buf) {
         Ok(_) => {
@@ -266,12 +266,11 @@ fn sort_tournament_database(db: &mut [TournamentType]) {
 pub unsafe fn read_tournament_database(file_name:
                                                       *const i8)
  -> i32 {
-    let mut stream = FileHandle::null();
     let mut i: i32 = 0;
     let mut success: i32 = 0;
     let mut actually_read: i32 = 0;
     let mut buffer_size: i32 = 0;
-    stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
+    let mut stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() { return 0 as i32 }
     if read_prolog(stream, &mut tournaments.prolog) == 0 {
         fclose(stream);
@@ -359,11 +358,10 @@ fn sort_player_database(db: &mut [PlayerType]) {
 pub unsafe fn read_player_database(file_name:
                                                   *const i8)
  -> i32 {
-    let mut stream = FileHandle::null();
     let mut success: i32 = 0;
     let mut actually_read: i32 = 0;
     let mut buffer_size: i32 = 0;
-    stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
+    let mut stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() { return 0 as i32 }
     if read_prolog(stream, &mut players.prolog) == 0 {
         fclose(stream);
@@ -406,7 +404,7 @@ pub unsafe fn read_player_database(file_name:
   for database questions. Returns TRUE upon success,
   otherwise FALSE.
 */
-unsafe fn read_game(mut stream: FileHandle, mut game: *mut GameType) -> i32 {
+unsafe fn read_game(mut stream: FileHandle, mut game: &mut GameType) -> i32 {
     let mut success: i32 = 0;
     let mut byte_val: Int8 = 0;
     let mut word_val: Int16 = 0;
@@ -436,11 +434,10 @@ unsafe fn read_game(mut stream: FileHandle, mut game: *mut GameType) -> i32 {
 pub unsafe fn read_game_database(file_name:
                                                 *const i8)
  -> i32 {
-    let mut stream = FileHandle::null();
     let mut i: i32 = 0;
     let mut success: i32 = 0;
     let mut old_database_head = None;
-    stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
+    let mut stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() { return 0 as i32 }
     old_database_head = database_head.take();
     let prolog_type = PrologType {
@@ -508,7 +505,6 @@ pub unsafe fn read_game_database(file_name:
 pub unsafe fn game_database_already_loaded(file_name:
                                                           *const i8)
  -> i32 {
-    let mut stream = FileHandle::null();
     let mut new_prolog =
         PrologType{creation_century: 0,
                    creation_year: 0,
@@ -518,7 +514,7 @@ pub unsafe fn game_database_already_loaded(file_name:
                    item_count: 0,
                    origin_year: 0,
                    reserved: 0,};
-    stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
+    let mut stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() { return 0 as i32 }
     if read_prolog(stream, &mut new_prolog) == 0 {
         fclose(stream);
@@ -1821,7 +1817,7 @@ unsafe fn play_through_game(game: *mut GameType,
   The main result is that the number of black discs on the board after
   each of the moves is stored.
 */
-pub unsafe fn prepare_game(mut game: *mut GameType) {
+pub unsafe fn prepare_game(mut game: &mut GameType) {
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
     let mut done: i32 = 0;
