@@ -1,7 +1,7 @@
 use engine::src::game::generic_game_init;
 use engine::src::learn::Learner;
 use engine::src::moves::{generate_all, make_move};
-use libc_wrapper::{fclose, fopen, fprintf, fputs};
+use libc_wrapper::{fclose, fopen};
 
 use crate::src::error::{LibcFatalError};
 use crate::src::game::{game_init, BasicBoardFileSource};
@@ -10,6 +10,7 @@ use crate::src::zebra::FullState;
 #[macro_use]
 use crate::fatal_error;
 use std::ffi::CStr;
+use crate::src::display::TO_SQUARE;
 
 pub static mut binary_database: i32 = 0;
 pub static mut database_name: [i8; 256] = [0; 256];
@@ -115,21 +116,19 @@ pub unsafe fn full_learn_public_game(length: i32,
                                                     i32,
                                                 exact: i32,
                                                 wld: i32, echo:i32, g_state: &mut FullState) {
-    let stream =
+    use std::io::Write;
+    let mut stream =
         fopen(b"learn.log\x00" as *const u8 as *const i8,
               b"a\x00" as *const u8 as *const i8);
     if !stream.is_null() {
         /* Write the game learned to a log file. */
         let mut i = 0;
         while i < length {
-            fprintf(stream, b"%c%c\x00" as *const u8 as *const i8,
-                    'a' as i32 + *moves.offset(i as isize) % 10 as i32
-                        - 1 as i32,
-                    '0' as i32 +
-                        *moves.offset(i as isize) / 10 as i32);
+            let move_ = *moves.offset(i as isize);
+            write!(stream, "{}", TO_SQUARE(move_));
             i += 1
         }
-        fputs(b"\n\x00" as *const u8 as *const i8, stream);
+        write!(stream, "\n");
         fclose(stream);
     }
     ( g_state.g_timer).clear_panic_abort();
