@@ -34,20 +34,22 @@ pub static mut thor_games_filtered: i32 = 0;
 pub static mut thor_row_pattern: [i32; 8] = [0; 8];
 pub static mut thor_col_pattern: [i32; 8] = [0; 8];
 pub static mut thor_board: [i32; 100] = [0; 100];
-pub static mut b1_b1_map: [i32; 100] = [0; 100];
-pub static mut g1_b1_map: [i32; 100] = [0; 100];
-pub static mut g8_b1_map: [i32; 100] = [0; 100];
-pub static mut b8_b1_map: [i32; 100] = [0; 100];
-pub static mut a2_b1_map: [i32; 100] = [0; 100];
-pub static mut a7_b1_map: [i32; 100] = [0; 100];
-pub static mut h7_b1_map: [i32; 100] = [0; 100];
-pub static mut h2_b1_map: [i32; 100] = [0; 100];
+struct SymmetryMaps {
+    b1_b1_map: [i32; 100],
+    g1_b1_map: [i32; 100],
+    g8_b1_map: [i32; 100],
+    b8_b1_map: [i32; 100],
+    a2_b1_map: [i32; 100],
+    a7_b1_map: [i32; 100],
+    h7_b1_map: [i32; 100],
+    h2_b1_map: [i32; 100],
+}
+static SYMMENTRY_MAPS: SymmetryMaps = create_symetry_maps();
+
 pub static mut primary_hash: [[u32; 6561]; 8] = [[0; 6561]; 8];
 pub static mut secondary_hash: [[u32; 6561]; 8] = [[0; 6561]; 8];
-pub static mut symmetry_map: [*mut i32; 8] =
-    [0 as *const i32 as *mut i32; 8];
-pub static mut inv_symmetry_map: [*mut i32; 8] =
-    [0 as *const i32 as *mut i32; 8];
+pub static mut symmetry_map: [*const i32; 8] = [0 as *const i32; 8];
+pub static mut inv_symmetry_map: [*const i32; 8] = [0 as *const i32; 8];
 pub static move_mask_hi: [u32; 100] = init_move_masks()[0];
 pub static move_mask_lo: [u32; 100] = init_move_masks()[1];
 pub static unmove_mask_hi: [u32; 100] = init_move_masks()[2];
@@ -1633,6 +1635,40 @@ unsafe fn calculate_opening_frequency(mut node:
 pub fn get_thor_game_size() -> i32 {
     return ::core::mem::size_of::<GameType>() as u64 as i32;
 }
+
+const fn create_symetry_maps() -> SymmetryMaps {
+    let mut res = SymmetryMaps {
+        b1_b1_map: [0; 100],
+        g1_b1_map: [0; 100],
+        g8_b1_map: [0; 100],
+        b8_b1_map: [0; 100],
+        a2_b1_map: [0; 100],
+        a7_b1_map: [0; 100],
+        h7_b1_map: [0; 100],
+        h2_b1_map: [0; 100]
+    };
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut pos: i32 = 0;
+    i = 1;
+    while i <= 8 as i32 {
+        j = 1;
+        while j <= 8 as i32 {
+            pos = 10 as i32 * i + j;
+            res.b1_b1_map[pos as usize] = pos;
+            res.g1_b1_map[pos as usize] = 10 as i32 * i + (9 as i32 - j);
+            res.g8_b1_map[pos as usize] = 10 as i32 * (9 as i32 - i) +                 (9 as i32 - j);
+            res.b8_b1_map[pos as usize] = 10 as i32 * (9 as i32 - i) + j;
+            res.a2_b1_map[pos as usize] = 10 as i32 * j + i;
+            res.a7_b1_map[pos as usize] = 10 as i32 * j + (9 as i32 - i);
+            res.h7_b1_map[pos as usize] = 10 as i32 * (9 as i32 - j) +                 (9 as i32 - i);
+            res.h2_b1_map[pos as usize] = 10 as i32 * (9 as i32 - j) + i;
+            j += 1
+        }
+        i += 1
+    }
+    res
+}
 /*
   INIT_SYMMETRY_MAPS
   Initializes the mappings which the 8 elements in the board
@@ -1642,72 +1678,31 @@ pub fn get_thor_game_size() -> i32 {
     and COMPUTE_FULL_SECONDARY_HASH().
 */
 unsafe fn init_symmetry_maps() {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut k: i32 = 0;
-    let mut pos: i32 = 0;
-    i = 1;
-    while i <= 8 as i32 {
-        j = 1;
-        while j <= 8 as i32 {
-            pos = 10 as i32 * i + j;
-            b1_b1_map[pos as usize] = pos;
-            g1_b1_map[pos as usize] =
-                10 as i32 * i + (9 as i32 - j);
-            g8_b1_map[pos as usize] =
-                10 as i32 * (9 as i32 - i) +
-                    (9 as i32 - j);
-            b8_b1_map[pos as usize] =
-                10 as i32 * (9 as i32 - i) + j;
-            a2_b1_map[pos as usize] = 10 as i32 * j + i;
-            a7_b1_map[pos as usize] =
-                10 as i32 * j + (9 as i32 - i);
-            h7_b1_map[pos as usize] =
-                10 as i32 * (9 as i32 - j) +
-                    (9 as i32 - i);
-            h2_b1_map[pos as usize] =
-                10 as i32 * (9 as i32 - j) + i;
-            j += 1
-        }
-        i += 1
-    }
-    symmetry_map[0] = b1_b1_map.as_mut_ptr();
-    inv_symmetry_map[0] = b1_b1_map.as_mut_ptr();
-    symmetry_map[1] = b8_b1_map.as_mut_ptr();
-    inv_symmetry_map[1] = b8_b1_map.as_mut_ptr();
-    symmetry_map[2] = a2_b1_map.as_mut_ptr();
-    inv_symmetry_map[2] = a2_b1_map.as_mut_ptr();
-    symmetry_map[3] = h2_b1_map.as_mut_ptr();
-    inv_symmetry_map[3] = a7_b1_map.as_mut_ptr();
-    symmetry_map[4] = g1_b1_map.as_mut_ptr();
-    inv_symmetry_map[4] = g1_b1_map.as_mut_ptr();
-    symmetry_map[5] = g8_b1_map.as_mut_ptr();
-    inv_symmetry_map[5] = g8_b1_map.as_mut_ptr();
-    symmetry_map[6] = a7_b1_map.as_mut_ptr();
-    inv_symmetry_map[6] = h2_b1_map.as_mut_ptr();
-    symmetry_map[7] = h7_b1_map.as_mut_ptr();
-    inv_symmetry_map[7] = h7_b1_map.as_mut_ptr();
-    i = 0;
+    symmetry_map[0] = SYMMENTRY_MAPS.b1_b1_map.as_ptr();
+    inv_symmetry_map[0] = SYMMENTRY_MAPS.b1_b1_map.as_ptr();
+    symmetry_map[1] = SYMMENTRY_MAPS.b8_b1_map.as_ptr();
+    inv_symmetry_map[1] = SYMMENTRY_MAPS.b8_b1_map.as_ptr();
+    symmetry_map[2] = SYMMENTRY_MAPS.a2_b1_map.as_ptr();
+    inv_symmetry_map[2] = SYMMENTRY_MAPS.a2_b1_map.as_ptr();
+    symmetry_map[3] = SYMMENTRY_MAPS.h2_b1_map.as_ptr();
+    inv_symmetry_map[3] = SYMMENTRY_MAPS.a7_b1_map.as_ptr();
+    symmetry_map[4] = SYMMENTRY_MAPS.g1_b1_map.as_ptr();
+    inv_symmetry_map[4] = SYMMENTRY_MAPS.g1_b1_map.as_ptr();
+    symmetry_map[5] = SYMMENTRY_MAPS.g8_b1_map.as_ptr();
+    inv_symmetry_map[5] = SYMMENTRY_MAPS.g8_b1_map.as_ptr();
+    symmetry_map[6] = SYMMENTRY_MAPS.a7_b1_map.as_ptr();
+    inv_symmetry_map[6] = SYMMENTRY_MAPS.h2_b1_map.as_ptr();
+    symmetry_map[7] = SYMMENTRY_MAPS.h7_b1_map.as_ptr();
+    inv_symmetry_map[7] = SYMMENTRY_MAPS.h7_b1_map.as_ptr();
+    let mut i = 0;
     while i < 8 as i32 {
-        j = 1;
+        let mut j = 1;
         while j <= 8 as i32 {
-            k = 1;
+            let mut k = 1;
             while k <= 8 as i32 {
-                pos = 10 as i32 * j + k;
-                if *inv_symmetry_map[i as
-                    usize].offset(*symmetry_map[i as
-                    usize].offset(pos
-                    as
-                    isize)
-                    as isize) != pos {
-                    let to_report = *inv_symmetry_map[i as
-                        usize].offset(*symmetry_map[i
-                        as
-                        usize].offset(pos
-                        as
-                        isize)
-                        as
-                        isize);
+                let pos = 10 as i32 * j + k;
+                if *inv_symmetry_map[i as usize].offset(*symmetry_map[i as usize].offset(pos as isize) as isize) != pos {
+                    let to_report = *inv_symmetry_map[i as usize].offset(*symmetry_map[i as usize].offset(pos as isize) as isize);
                     LibcFatalError::error_in_map_thor(i, pos, to_report);
                 }
                 k += 1
