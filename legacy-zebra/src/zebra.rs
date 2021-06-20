@@ -28,8 +28,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 
-use libc_wrapper::{fclose, fopen, scanf, stdout, time, c_time};
-use libc_wrapper::{time_t};
+use libc_wrapper::{fclose, fopen, scanf, stdout, time, c_time, time_t};
 
 use crate::src::display::{display_board, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
 use crate::src::error::{FE, LibcFatalError};
