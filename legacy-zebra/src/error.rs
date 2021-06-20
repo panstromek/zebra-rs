@@ -10,7 +10,7 @@ use engine::src::hash::{HashEntry, HashState};
 use engine::src::search::{hash_expand_pv, SearchState};
 
 use engine::src::zebra::{EvaluationType};
-use libc_wrapper::{fopen, stderr, stdout, time, time_t, c_time};
+use libc_wrapper::{stderr, stdout, time, time_t, c_time};
 use thordb_types::C2RustUnnamed;
 #[macro_use]
 use crate::send_status;
@@ -71,10 +71,7 @@ pub fn fatal_error_(args: std::fmt::Arguments<'_>) -> ! {
     eprint!("\nFatal error: ");
     unsafe {
         stderr.write_fmt(args);
-        let mut stream =
-            fopen(b"zebra.err\x00" as *const u8 as *const i8,
-                  b"a\x00" as *const u8 as *const i8);
-        if !stream.is_null() {
+        if let Ok(mut stream) = std::fs::OpenOptions::new().append(true).write(true).create(true).open("zebra.err") {
             time(&mut timer);
             write!(stream, "{} @ {}\n  ", "Fatal error", c_time(timer));
             stream.write_fmt(args);
