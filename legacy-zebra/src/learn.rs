@@ -109,14 +109,14 @@ pub unsafe fn learn_game(game_length: i32,
   interpretation as in a call to set_learning_parameters().
 */
 
-pub unsafe fn full_learn_public_game(length: i32,
-                                                moves: *mut i32,
+pub unsafe fn full_learn_public_game(moves: &[i32],
                                                 cutoff: i32,
                                                 deviation_depth:
                                                     i32,
                                                 exact: i32,
                                                 wld: i32, echo:i32, g_state: &mut FullState) {
     use std::io::Write;
+    let length = moves.len();
     let mut stream =
         fopen(b"learn.log\x00" as *const u8 as *const i8,
               b"a\x00" as *const u8 as *const i8);
@@ -124,7 +124,7 @@ pub unsafe fn full_learn_public_game(length: i32,
         /* Write the game learned to a log file. */
         let mut i = 0;
         while i < length {
-            let move_ = *moves.offset(i as isize);
+            let move_ = moves[i];
             write!(stream, "{}", TO_SQUARE(move_));
             i += 1
         }
@@ -136,7 +136,7 @@ pub unsafe fn full_learn_public_game(length: i32,
     /* Copy the move list from the caller as it is modified below. */
     let mut i = 0;
     while i < length {
-        ( g_state.learn_state).game_move[i as usize] = *moves.offset(i as isize) as i16;
+        g_state.learn_state.game_move[i as usize] = moves[i] as i16;
         i += 1
     }
     let mut dummy: i32 = 0;
@@ -162,7 +162,7 @@ pub unsafe fn full_learn_public_game(length: i32,
     /* Let the learning sub-routine in osfbook update the opening
        book and the dump it to file. */
    ( g_state.g_book).set_search_depth(deviation_depth);
-    add_new_game(length, ( g_state.learn_state).game_move.as_mut_ptr(), cutoff, exact, wld,
+    add_new_game(length as _, ( g_state.learn_state).game_move.as_mut_ptr(), cutoff, exact, wld,
                  1 as i32, 0 as i32, echo, g_state);
     if binary_database != 0 {
         write_binary_database(database_name.as_mut_ptr(), &mut g_state.g_book);
