@@ -10,7 +10,7 @@ use engine::src::thordb::ThorDatabase;
 use engine::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{fclose, FileHandle, fopen, stdout, time, time_t, c_time};
+use libc_wrapper::{stdout, time, time_t, c_time};
 
 use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, TO_SQUARE};
 use crate::src::error::{LibcFatalError};
@@ -80,7 +80,7 @@ pub unsafe fn global_setup(use_random: i32,
 }
 
 pub struct LogFileHandler {
-    log_file: FileHandle,
+    log_file: File,
 }
 
 unsafe fn setup_log_file() {
@@ -786,13 +786,8 @@ fn echo_compute_move_1(info: &EvaluationType) {
 }
 impl LogFileHandler {
     fn create() -> Option<Self> {
-        let log_file = unsafe {
-            fopen(b"zebra.log\x00".as_ptr() as *const i8,
-                  b"a\x00" as *const u8 as *const i8)
-        };
-        if !log_file.is_null() {
-            let logger = LogFileHandler { log_file };
-            Some(logger)
+        if let Ok(log_file) = std::fs::OpenOptions::new().append(true).write(true).open("zebra.log")  {
+            Some(LogFileHandler { log_file })
         } else {
             None
         }
@@ -826,9 +821,6 @@ fn log_moves_generated(logger: &mut LogFileHandler, moves_generated: i32, move_l
 
 fn log_best_move_pass(logger: &mut LogFileHandler) {
     write!(&mut logger.log_file, "{}: {}\n", "Best move", "pass");
-    unsafe {
-        fclose(logger.log_file);
-    }
 }
 
 fn log_best_move(logger: &mut LogFileHandler, best_move: i8) {
@@ -837,9 +829,6 @@ fn log_best_move(logger: &mut LogFileHandler, best_move: i8) {
            char::from('a' as u8 + (best_move % 10) as u8 - 1),
            char::from('0' as u8 + (best_move / 10) as u8),
            "forced");
-    unsafe {
-        fclose(logger.log_file);
-    }
 }
 
 fn log_chosen_move(logger: &mut LogFileHandler, curr_move: i8, info: &EvaluationType) {
@@ -859,9 +848,7 @@ fn log_optimal_line(logger: &mut LogFileHandler, search_state: &SearchState) {
     display_optimal_line(&mut logger.log_file, search_state.full_pv_depth, &search_state.full_pv);
 }
 
-fn close_logger(logger: &mut LogFileHandler) {
-    if !logger.log_file.is_null() { unsafe { fclose(logger.log_file); } }
-}
+fn close_logger(logger: &mut LogFileHandler) {}
 
 fn log_board(logger: &mut LogFileHandler, board_state: &BoardState, side_to_move_: i32) {
     let board_ = &board_state.board;
