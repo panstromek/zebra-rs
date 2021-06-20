@@ -798,39 +798,39 @@ fn count_flips(
   Returns 1 if SQNUM flips any discs for COLOR, otherwise 0, and
   flips those discs.
 */
-unsafe fn any_flips(sqnum: i32, color: i32,
-                    oppcol: i32) -> i32 {
+fn any_flips(sqnum: i32, color: i32,
+                    oppcol: i32, thor_board_: &mut [i32; 100]) -> i32 {
     let mut count: i32 = 0;
     let mut mask: i32 = 0;
     count = 0;
     mask = dir_mask[sqnum as usize];
     if mask & 128 as i32 != 0 {
         count |=
-            directional_flip_any(sqnum, -(11 as i32), color, oppcol, &mut thor_board)
+            directional_flip_any(sqnum, -(11 as i32), color, oppcol, thor_board_)
     }
     if mask & 64 as i32 != 0 {
-        count |= directional_flip_any(sqnum, 11 as i32, color, oppcol, &mut thor_board)
+        count |= directional_flip_any(sqnum, 11 as i32, color, oppcol, thor_board_)
     }
     if mask & 32 as i32 != 0 {
         count |=
-            directional_flip_any(sqnum, -(10 as i32), color, oppcol, &mut thor_board)
+            directional_flip_any(sqnum, -(10 as i32), color, oppcol, thor_board_)
     }
     if mask & 16 as i32 != 0 {
-        count |= directional_flip_any(sqnum, 10 as i32, color, oppcol, &mut thor_board)
+        count |= directional_flip_any(sqnum, 10 as i32, color, oppcol, thor_board_)
     }
     if mask & 8 as i32 != 0 {
         count |=
-            directional_flip_any(sqnum, -(9 as i32), color, oppcol, &mut thor_board)
+            directional_flip_any(sqnum, -(9 as i32), color, oppcol, thor_board_)
     }
     if mask & 4 as i32 != 0 {
-        count |= directional_flip_any(sqnum, 9 as i32, color, oppcol, &mut thor_board)
+        count |= directional_flip_any(sqnum, 9 as i32, color, oppcol, thor_board_)
     }
     if mask & 2 as i32 != 0 {
         count |=
-            directional_flip_any(sqnum, -1, color, oppcol, &mut thor_board)
+            directional_flip_any(sqnum, -1, color, oppcol, thor_board_)
     }
     if mask & 1 as i32 != 0 {
-        count |= directional_flip_any(sqnum, 1 as i32, color, oppcol, &mut thor_board)
+        count |= directional_flip_any(sqnum, 1 as i32, color, oppcol, thor_board_)
     }
     return count;
 }
@@ -1737,7 +1737,7 @@ unsafe fn play_through_game(game: *mut GameType,
         flipped =
             any_flips(move_0, thor_side_to_move,
                       0 as i32 + 2 as i32 -
-                          thor_side_to_move);
+                          thor_side_to_move, &mut thor_board);
         if flipped != 0 {
             thor_board[move_0 as usize] = thor_side_to_move;
             thor_side_to_move =
@@ -1748,7 +1748,7 @@ unsafe fn play_through_game(game: *mut GameType,
             flipped =
                 any_flips(move_0, thor_side_to_move,
                           0 as i32 + 2 as i32 -
-                              thor_side_to_move);
+                              thor_side_to_move, &mut thor_board);
             if flipped != 0 {
                 thor_board[move_0 as usize] = thor_side_to_move;
                 thor_side_to_move =
@@ -2039,7 +2039,7 @@ unsafe fn build_thor_opening_tree() {
             flipped =
                 any_flips(move_0, thor_side_to_move,
                           0 as i32 + 2 as i32 -
-                              thor_side_to_move);
+                              thor_side_to_move, &mut thor_board);
             if flipped != 0 {
                 thor_board[move_0 as usize] = thor_side_to_move;
                 thor_side_to_move =
@@ -2050,7 +2050,7 @@ unsafe fn build_thor_opening_tree() {
                 flipped =
                     any_flips(move_0, thor_side_to_move,
                               0 as i32 + 2 as i32 -
-                                  thor_side_to_move);
+                                  thor_side_to_move, &mut thor_board);
                 if flipped != 0 {
                     thor_board[move_0 as usize] = thor_side_to_move;
                     thor_side_to_move =
@@ -2089,7 +2089,7 @@ unsafe fn build_thor_opening_tree() {
             flipped =
                 any_flips(move_0, thor_side_to_move,
                           0 as i32 + 2 as i32 -
-                              thor_side_to_move);
+                              thor_side_to_move, &mut thor_board);
             if flipped != 0 {
                 thor_board[move_0 as usize] = thor_side_to_move;
                 thor_side_to_move =
@@ -2100,7 +2100,7 @@ unsafe fn build_thor_opening_tree() {
                 flipped =
                     any_flips(move_0, thor_side_to_move,
                               0 as i32 + 2 as i32 -
-                                  thor_side_to_move);
+                                  thor_side_to_move, &mut thor_board);
                 if flipped != 0 {
                     thor_board[move_0 as usize] = thor_side_to_move;
                     thor_side_to_move =
