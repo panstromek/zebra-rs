@@ -727,7 +727,7 @@ fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counte
 }
 
 fn display_status_out() {
-    unsafe { display_status(stdout, 0 as i32); }
+    unsafe { display_status(&mut stdout, 0 as i32); }
 }
 
 fn echo_ponder_move_4(curr_move: i8, ponder_move: i8) {
@@ -738,7 +738,7 @@ fn echo_ponder_move_4(curr_move: i8, ponder_move: i8) {
             send_status!(display_state, "{{{}}} ",TO_SQUARE(ponder_move));
         }
         send_status!(display_state, "{}",TO_SQUARE(curr_move)         );
-        display_status(stdout, 0 as i32);
+        display_status(&mut stdout, 0 as i32);
     }
 }
 
@@ -750,7 +750,7 @@ fn echo_ponder_move_2(curr_move: i8, ponder_move: i8) {
             send_status!(display_state, "{{{}}} ", TO_SQUARE(ponder_move));
         }
         send_status!(display_state, "{}", TO_SQUARE(curr_move));
-        display_status(stdout, 0 as i32);
+        display_status(&mut stdout, 0 as i32);
     }
 }
 
@@ -761,7 +761,7 @@ fn echo_ponder_move(curr_move: i8, ponder_move: i8) {
             send_status!(display_state, "{} ",TO_SQUARE(ponder_move));
         }
         send_status!(display_state, "{}",TO_SQUARE(curr_move));
-        display_status(stdout, 0 as i32);
+        display_status(&mut stdout, 0 as i32);
     }
 }
 
@@ -771,7 +771,7 @@ fn echo_compute_move_2(info: &EvaluationType, disk: i8) {
         send_status!(display_state, "-->         ");
         send_status!(display_state, "{:<8}  ",             eval_str);
         send_status!(display_state, "{} ", TO_SQUARE(disk));
-        display_status(stdout, 0 as i32);
+        display_status(&mut stdout, 0 as i32);
     }
 }
 
@@ -780,7 +780,7 @@ fn echo_compute_move_1(info: &EvaluationType) {
         let mut eval_str = produce_eval_text(info, 0 as i32);
         send_status!(display_state, "-->         ");
         send_status!(display_state, "{:<8}  ",             eval_str);
-        display_status(stdout, 0 as i32);
+        display_status(&mut stdout, 0 as i32);
     }
 }
 }
@@ -852,7 +852,7 @@ fn log_chosen_move(logger: &mut LogFileHandler, curr_move: i8, info: &Evaluation
 }
 
 fn log_status(logger: &mut LogFileHandler) {
-    unsafe { display_status(logger.log_file, 1 as i32); }
+    unsafe { display_status(&mut logger.log_file, 1 as i32); }
 }
 
 fn log_optimal_line(logger: &mut LogFileHandler, search_state: &SearchState) {

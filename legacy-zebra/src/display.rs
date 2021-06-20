@@ -3,7 +3,6 @@ use std::ffi::{CStr};
 use engine::src::search::disc_count;
 use engine::src::stubs::{abs, ceil, floor};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{FileHandle};
 
 
 
@@ -471,14 +470,14 @@ pub unsafe fn send_status_pv(pv: &[i8; 64], max_depth: i32, pv_depth_zero: i32) 
   Output and clear the stored status information.
 */
 
-pub unsafe fn display_status(mut stream: FileHandle, allow_repeat: i32) {
+pub unsafe fn display_status(stream: &mut dyn Write, allow_repeat: i32) {
     if !display_state.status_buffer.is_empty() || allow_repeat != 0 {
-        write_buffer(&mut stream, display_state.status_buffer.as_mut())
+        write_buffer(stream, display_state.status_buffer.as_mut())
     }
     display_state.status_pos = 0;
 }
 
-fn write_buffer(stream: &mut FileHandle, buf: &mut Vec<u8>) {
+fn write_buffer(stream: &mut dyn Write, buf: &mut Vec<u8>) {
     if buf.len() > 0 {
         buf.push(b'\n');
         stream.write(buf);
@@ -490,9 +489,9 @@ fn write_buffer(stream: &mut FileHandle, buf: &mut Vec<u8>) {
   Display and clear the current search information.
 */
 
-pub unsafe fn display_sweep(mut stream: FileHandle) {
+pub unsafe fn display_sweep(stream: &mut dyn Write) {
     if !display_state.sweep_buffer.is_empty() {
-        write_buffer(&mut stream,  display_state.sweep_buffer.as_mut());
+        write_buffer(stream,  display_state.sweep_buffer.as_mut());
     }
     display_state.sweep_modified = 0;
 }
