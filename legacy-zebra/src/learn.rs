@@ -1,7 +1,7 @@
 use engine::src::game::generic_game_init;
 use engine::src::learn::Learner;
 use engine::src::moves::{generate_all, make_move};
-use libc_wrapper::{fclose, fopen, fprintf, fputs, strcpy};
+use libc_wrapper::{fclose, fopen, fprintf, fputs};
 
 use crate::src::error::{LibcFatalError};
 use crate::src::game::{game_init, BasicBoardFileSource};
@@ -9,6 +9,7 @@ use crate::src::osfbook::{add_new_game, init_osf, read_binary_database, read_tex
 use crate::src::zebra::FullState;
 #[macro_use]
 use crate::fatal_error;
+use std::ffi::CStr;
 
 pub static mut binary_database: i32 = 0;
 pub static mut database_name: [i8; 256] = [0; 256];
@@ -23,7 +24,14 @@ pub unsafe fn init_learn(file_name: *const i8, is_binary: i32, g_state: &mut Ful
     if is_binary != 0 {
         read_binary_database(file_name, &mut g_state.g_book);
     } else { read_text_database(file_name, &mut g_state.g_book); }
-    strcpy(database_name.as_mut_ptr(), file_name);
+
+    // strcpy replacement
+    CStr::from_ptr(file_name)
+        .to_bytes_with_nul()
+        .iter()
+        .take(database_name.len() - 1)
+        .zip(database_name.iter_mut())
+        .for_each(|(from, to) | *to = *from as _);
     binary_database = is_binary;
 }
 
