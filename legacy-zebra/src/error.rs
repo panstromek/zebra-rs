@@ -142,10 +142,10 @@ impl FrontEnd for LibcFatalError {
         unsafe {
             let timer =  g_timer.get_real_timer();
             if timer - display_state.last_output >= display_state.interval2 || display_state.timed_buffer_management == 0 {
-                display_status(stdout, 0 as i32);
+                display_status(&mut stdout, 0 as i32);
                 display_state.status_modified = 0;
                 if timer - display_state.last_output >= display_state.interval2 {
-                    if display_state.sweep_modified != 0 { display_sweep(stdout); }
+                    if display_state.sweep_modified != 0 { display_sweep(&mut stdout); }
                     display_state.last_output = timer;
                     /* Display the sweep at Fibonacci-spaced times */
                     let new_interval = display_state.interval1 + display_state.interval2;
@@ -187,7 +187,7 @@ impl FrontEnd for LibcFatalError {
             }
             send_sweep!(display_state, " ");
             if update_pv != 0 && move_index > 0 as i32 && echo != 0 {
-                display_sweep(stdout);
+                display_sweep(&mut stdout);
             }
         }
     }
@@ -329,7 +329,7 @@ impl FrontEnd for LibcFatalError {
 
     fn end_display_zero_status() {
         unsafe {
-            display_status(stdout, 0 as i32);
+            display_status(&mut stdout, 0 as i32);
         }
     }
 
@@ -434,7 +434,7 @@ impl FrontEnd for LibcFatalError {
             send_sweep!(display_state, " ");
             if update_pv != 0 && searched > 0 as i32 && echo != 0 &&
                 max_depth >= 10 as i32 {
-                display_sweep(stdout);
+                display_sweep(&mut stdout);
             }
         }
     }
