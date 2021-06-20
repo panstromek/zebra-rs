@@ -44,7 +44,7 @@ pub type time_t = __time_t;
 */
 
 pub unsafe fn add_new_game(move_count_0: i32,
-                           game_move_list: *mut i16,
+                           game_move_list: Option<&[i16]>,
                            min_empties: i32,
                            max_full_solve: i32,
                            max_wld_solve: i32,
@@ -83,7 +83,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
 
     i = 0;
     while i < move_count_0 {
-        if *game_move_list.offset(i as isize) as i32 >
+        if *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32 >
             0 as i32 {
             flags[i as usize] = 1 as i32 as u16
         } else { flags[i as usize] = 2 as i32 as u16 }
@@ -120,8 +120,8 @@ pub unsafe fn add_new_game(move_count_0: i32,
         visited_node[i as usize] = this_node;
         /* Make the moves of the game until the cutoff point */
         if i < last_move_number {
-            this_move = abs(*game_move_list.offset(i as isize) as i32) as i8;
-            if *game_move_list.offset(i as isize) as i32 >
+            this_move = abs(*game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32) as i8;
+            if *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32 >
                 0 as i32 {
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
@@ -133,7 +133,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                        move_count_0);
                 j = 0;
                 while j < move_count_0 {
-                    write!(stdout, "{:3} ", *game_move_list.offset(j as isize) as i32);
+                    write!(stdout, "{:3} ", *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(j as isize) as i32);
                     j += 1
                 }
                 fatal_error!("{}: {}\n", "Invalid move generated", this_move);
@@ -220,8 +220,8 @@ pub unsafe fn add_new_game(move_count_0: i32,
         i = 0;
         while i < last_move_number {
             this_move =
-                abs(*game_move_list.offset(i as isize) as i32) as i8;
-            if *game_move_list.offset(i as isize) as i32 >
+                abs(*game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32) as i8;
+            if *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32 >
                 0 as i32 {
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
@@ -236,8 +236,8 @@ pub unsafe fn add_new_game(move_count_0: i32,
         i = last_move_number - 1 as i32;
         while i >= 0 as i32 {
             this_move =
-                abs(*game_move_list.offset(i as isize) as i32) as i8;
-            if *game_move_list.offset(i as isize) as i32 >
+                abs(*game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32) as i8;
+            if *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32 >
                 0 as i32 {
                 side_to_move = 0 as i32
             } else { side_to_move = 2 as i32 }
@@ -389,7 +389,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                         (*(g_state.g_book).node.offset(this_node as
                             isize)).best_alternative_move as
                             i32 ==
-                            abs(*game_move_list.offset(i as isize) as
+                            abs(*game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as
                                 i32)) as i32;
                 if midgame_eval_done == 0 {
                     write!(stdout, "Evaluating: ");
