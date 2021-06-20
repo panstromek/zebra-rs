@@ -28,7 +28,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 
-use libc_wrapper::{fclose, fopen, fprintf, fputs, scanf, stdout, time, c_time};
+use libc_wrapper::{fclose, fopen, scanf, stdout, time, c_time};
 use libc_wrapper::{time_t};
 
 use crate::src::display::{display_board, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
@@ -726,7 +726,7 @@ impl FileMoveSource {
    PLAY_GAME
    Administrates the game between two players, humans or computers.
 */
-unsafe fn play_game(mut file_name: &str,
+fn play_game(mut file_name: &str,
                     mut move_string: &str,
                     mut move_file_name: &str,
                     mut repeat: i32,
@@ -1190,7 +1190,7 @@ unsafe fn analyze_game(mut move_string: &str,
         }
     }
     /* Open the output log file */
-    let output_stream =
+    let mut output_stream =
         fopen(b"analysis.log\x00" as *const u8 as *const i8,
               b"w\x00" as *const u8 as *const i8);
     if output_stream.is_null() {
@@ -1225,12 +1225,8 @@ unsafe fn analyze_game(mut move_string: &str,
     set_names(black_name, white_name);
     set_move_list((g_state.board_state).score_sheet_row);
     set_evals(0.0f64, 0.0f64);
-    let mut i = 0;
-    while i < 60 as i32 {
-        (g_state.board_state).black_moves[i as usize] = -1;
-        (g_state.board_state).white_moves[i as usize] = -1;
-        i += 1
-    }
+    g_state.board_state.black_moves = [-1; 60];
+    g_state.board_state.white_moves = [-1; 60];
     let _black_hash1 = (g_state.random_instance).my_random() as i32;
     let _black_hash2 = (g_state.random_instance).my_random() as i32;
     let _white_hash1 = (g_state.random_instance).my_random() as i32;
@@ -1348,75 +1344,53 @@ unsafe fn analyze_game(mut move_string: &str,
                 set_evals(produce_compact_eval(best_info2), 0.0f64);
             } else { set_evals(0.0f64, produce_compact_eval(best_info2)); }
             /* Output the two score-move pairs */
-            fprintf(output_stream,
-                    b"%c%c \x00" as *const u8 as *const i8,
-                    'a' as i32 + (curr_move % 10) as i32 - 1 as i32,
-                    '0' as i32 + (curr_move / 10) as i32);
+            write!(output_stream, "{} ", TO_SQUARE(curr_move));
             if empties <= (&mut g_state.g_config).exact_skill[side_to_move as usize] {
-                fprintf(output_stream,
-                        b"%+6d\x00" as *const u8 as *const i8,
-                        best_info2.score / 128 as i32);
+                write!(output_stream,
+                        "{:+6}",
+                        best_info2.score / 128);
             } else if empties <= (&mut g_state.g_config).wld_skill[side_to_move as usize] {
-                if best_info2.res as u32 ==
-                       WON_POSITION as i32 as u32 {
-                    fputs(b"    +1\x00" as *const u8 as *const i8,
-                          output_stream);
-                } else if best_info2.res as u32 ==
-                              LOST_POSITION as i32 as u32 {
-                    fputs(b"    -1\x00" as *const u8 as *const i8,
-                          output_stream);
+                if best_info2.res == WON_POSITION {
+                    write!(output_stream, "    +1");
+                } else if best_info2.res == LOST_POSITION {
+                    write!(output_stream, "    -1");
                 } else {
-                    fputs(b"     0\x00" as *const u8 as *const i8,
-                          output_stream);
+                    write!(output_stream, "     0");
                 }
             } else if curr_move == provided_move[(g_state.moves_state).disks_played as usize] &&
                           resp_move != -1 {
-                fprintf(output_stream,
-                        b"%6.2f\x00" as *const u8 as *const i8,
-                        -(played_info1.score + played_info2.score) as
-                            f64 /
-                            (2 as i32 as f64 * 128.0f64));
+                write!(output_stream,
+                        "{:6.2}",
+                        -(played_info1.score + played_info2.score) as f64 / (2. * 128.0f64));
             } else {
-                fprintf(output_stream,
-                        b"%6.2f\x00" as *const u8 as *const i8,
-                        (best_info1.score + best_info2.score) as
-                            f64 /
-                            (2 as i32 as f64 * 128.0f64));
+                write!(output_stream,
+                        "{:6.2}",
+                        (best_info1.score + best_info2.score) as f64 / (2. * 128.0f64));
             }
             curr_move = provided_move[(g_state.moves_state).disks_played as usize];
-            fprintf(output_stream,
-                    b"       %c%c \x00" as *const u8 as *const i8,
-                    'a' as i32 + (curr_move % 10) as i32 - 1 as i32,
-                    '0' as i32 + (curr_move / 10) as i32);
+            write!(output_stream, "       {} ", TO_SQUARE(curr_move));
             if resp_move == -1 {
-                fprintf(output_stream,
-                        b"     ?\x00" as *const u8 as *const i8);
+                write!(output_stream, "     ?");
             } else if empties <= (&mut g_state.g_config).exact_skill[side_to_move as usize] {
-                fprintf(output_stream,
-                        b"%+6d\x00" as *const u8 as *const i8,
-                        -played_info2.score / 128 as i32);
+                write!(output_stream,
+                        "{:+6}",
+                        -played_info2.score / 128);
             } else if empties <= (&mut g_state.g_config).wld_skill[side_to_move as usize] {
-                if played_info2.res as u32 ==
-                       WON_POSITION as i32 as u32 {
-                    fputs(b"    -1\x00" as *const u8 as *const i8,
-                          output_stream);
-                } else if played_info2.res as u32 ==
-                              LOST_POSITION as i32 as u32 {
-                    fputs(b"    +1\x00" as *const u8 as *const i8,
-                          output_stream);
+                if played_info2.res == WON_POSITION {
+                    write!(output_stream, "    -1");
+                } else if played_info2.res == LOST_POSITION {
+                    write!(output_stream, "    +1");
                 } else {
-                    fputs(b"     0\x00" as *const u8 as *const i8,
-                          output_stream);
+                    write!(output_stream, "     0");
                 }
             } else {
-                fprintf(output_stream,
-                        b"%6.2f\x00" as *const u8 as *const i8,
+                write!(output_stream,
+                        "{:6.2}",
                         -(played_info1.score + played_info2.score) as
                             f64 /
                             (2 as i32 as f64 * 128.0f64));
             }
-            fputs(b"\n\x00" as *const u8 as *const i8,
-                  output_stream);
+            write!(output_stream, "\n");
             if valid_move(curr_move, side_to_move, &(g_state.board_state).board) == 0 {
                 fatal_error!("Invalid move {} in move sequence", TO_SQUARE(curr_move));
             }
