@@ -15,7 +15,7 @@ use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvaluationType;
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
-use libc_wrapper::{fclose, fflush, FileHandle, fopen, fprintf, fscanf, stdout, time};
+use libc_wrapper::{fclose, fflush, FileHandle, fopen, fscanf, stdout, time};
 use std::io::Write;
 #[macro_use]
 use crate::fatal_error;
@@ -442,7 +442,7 @@ pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
     let mut stream = FileHandle::null();
     time(&mut start_time);
     write!(stdout, "Reading text opening database... ");
-    fflush(stdout);
+    stdout.flush();
     stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
     if stream.is_null() {
         fatal_error!("{} '{}'\n","Could not open database file", &CStr::from_ptr(file_name).to_str().unwrap());
@@ -497,7 +497,7 @@ pub unsafe fn read_binary_database(file_name_: *const i8, g_book: &mut Book) -> 
     let mut stop_time: time_t = 0;
     time(&mut start_time);
     write!(stdout, "Reading binary opening database... ");
-    fflush(stdout);
+    stdout.flush();
 
     let stream = std::fs::read(file_name);
     if let Err(_) = stream {
@@ -567,33 +567,29 @@ pub unsafe fn write_text_database(file_name: *const i8, g_book: &mut Book) {
     let mut stop_time: time_t = 0;
     time(&mut start_time);
     write!(stdout, "Writing text database... ");
-    fflush(stdout);
-    let stream = fopen(file_name, b"w\x00" as *const u8 as *const i8);
+    stdout.flush();
+    let mut stream = fopen(file_name, b"w\x00" as *const u8 as *const i8);
     if stream.is_null() {
         fatal_error!("{} '{}'\n", "Could not create database file", CStr::from_ptr(file_name).to_str().unwrap());
     }
-    fprintf(stream, b"%d\n%d\n\x00" as *const u8 as *const i8,
-            2718 as i32, 2818 as i32);
-    fprintf(stream, b"%d\n\x00" as *const u8 as *const i8,
-            g_book.book_node_count);
+    write!(stream, "{}\n{}\n", 2718 as i32, 2818 as i32);
+    write!(stream, "{}\n", g_book.book_node_count);
     let mut i = 0;
     while i < g_book.book_node_count {
-        fprintf(stream,
-                b"%d %d %d %d %d %d %d\n\x00" as *const u8 as
-                    *const i8, (*g_book.node.offset(i as isize)).hash_val1,
-                (*g_book.node.offset(i as isize)).hash_val2,
-                (*g_book.node.offset(i as isize)).black_minimax_score as i32,
-                (*g_book.node.offset(i as isize)).white_minimax_score as i32,
-                (*g_book.node.offset(i as isize)).best_alternative_move as
-                    i32,
-                (*g_book.node.offset(i as isize)).alternative_score as i32,
-                (*g_book.node.offset(i as isize)).flags as i32);
+        let node = &g_book.node[i as usize];
+        write!(stream,
+               "{} {} {} {} {} {} {}\n", node.hash_val1,
+               node.hash_val2,
+               node.black_minimax_score as i32,
+               node.white_minimax_score as i32,
+               node.best_alternative_move as i32,
+               node.alternative_score as i32,
+               node.flags as i32);
         i += 1
     }
     fclose(stream);
     time(&mut stop_time);
-    write!(stdout, "done (took {} s)\n",
-           (stop_time - start_time) as i32);
+    write!(stdout, "done (took {} s)\n", stop_time - start_time);
     write!(stdout, "\n");
 }
 /*
@@ -606,14 +602,14 @@ pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book)
     let mut stop_time: time_t = 0;
     time(&mut start_time);
     write!(stdout, "Writing binary database... ");
-    fflush(stdout);
+    stdout.flush();
     let mut stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
     if stream.is_null() {
         fatal_error!("{} '{}'\n", "Could not create database file", CStr::from_ptr(file_name).to_str().unwrap());
     }
-    let mut magic = 2718 as i32 as i16;
+    let mut magic = 2718_i16;
     stream.write(&magic.to_le_bytes());
-    let mut magic = 2818 as i32 as i16;
+    let mut magic = 2818_i16;
     stream.write(&magic.to_le_bytes());
     stream.write(&g_book.book_node_count.to_le_bytes());
     let mut i = 0;

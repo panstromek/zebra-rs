@@ -1494,9 +1494,7 @@ impl LibcDumpHandler {
             if black_moves_[i as usize] == -1 {
                 write!(stream, "- " );
             } else {
-                write!(stream, "{}{}",
-                       ('a' as u8 + (black_moves_[i as usize] % 10) as u8 - 1) as char,
-                       ('0' as u8 + (black_moves_[i as usize] / 10) as u8) as char);
+                write!(stream, "{}", TO_SQUARE(black_moves_[i as usize]));
             }
             write!(stream, "  ");
             if i < score_sheet_row_ ||
@@ -1504,9 +1502,7 @@ impl LibcDumpHandler {
                 if white_moves_[i as usize] == -1 {
                     write!(stream, "- ");
                 } else {
-                    write!(stream, "{}{}",
-                           ('a' as u8 + (white_moves_[i as usize] % 10) as u8  - 1 ) as char,
-                           ('0' as u8 + (white_moves_[i as usize] / 10) as u8 ) as char );
+                    write!(stream, "{}", TO_SQUARE(white_moves_[i as usize]));
                 }
             }
             write!(stream ,"\n");
