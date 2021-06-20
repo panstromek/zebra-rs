@@ -48,10 +48,10 @@ pub static mut symmetry_map: [*mut i32; 8] =
     [0 as *const i32 as *mut i32; 8];
 pub static mut inv_symmetry_map: [*mut i32; 8] =
     [0 as *const i32 as *mut i32; 8];
-pub static mut move_mask_hi: [u32; 100] = [0; 100];
-pub static mut move_mask_lo: [u32; 100] = [0; 100];
-pub static mut unmove_mask_hi: [u32; 100] = [0; 100];
-pub static mut unmove_mask_lo: [u32; 100] = [0; 100];
+pub static move_mask_hi: [u32; 100] = init_move_masks()[0];
+pub static move_mask_lo: [u32; 100] = init_move_masks()[1];
+pub static unmove_mask_hi: [u32; 100] = init_move_masks()[2];
+pub static unmove_mask_lo: [u32; 100] = init_move_masks()[3];
 pub static mut database_head: Option<&'static DatabaseType> = None;
 pub static mut players: PlayerDatabaseType =
     PlayerDatabaseType{prolog:
@@ -876,7 +876,7 @@ unsafe fn compute_thor_patterns(in_board: &[i32]) {
   one corner has been played (obvious generalization for one or two
   corners).
 */
-unsafe fn get_corner_mask(disc_a1: i32,
+fn get_corner_mask(disc_a1: i32,
                           disc_a8: i32,
                           disc_h1: i32,
                           disc_h8: i32)
@@ -1609,7 +1609,11 @@ unsafe fn get_move_win_rate(move_0: i32)
   INIT_MOVE_MASKS
   Initializes the shape bit masks for each of the possible moves.
 */
-unsafe fn init_move_masks() {
+const fn init_move_masks() -> [[u32; 100]; 4] {
+    let mut move_mask_hi_ = [0; 100];
+    let mut move_mask_lo_ = [0; 100];
+    let mut unmove_mask_hi_ = [0; 100];
+    let mut unmove_mask_lo_ = [0; 100];
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -1620,13 +1624,10 @@ unsafe fn init_move_masks() {
         pos = 10 as i32 * i + 11 as i32;
         while j < 8 as i32 {
             index = 8 as i32 * i + j;
-            move_mask_lo[pos as usize] =
-                ((1 as i32) << index) as u32;
-            move_mask_hi[pos as usize] = 0;
-            unmove_mask_lo[pos as usize] =
-                !((1 as i32) << index) as u32;
-            unmove_mask_hi[pos as usize] =
-                !(0 as i32) as u32;
+            move_mask_lo_[pos as usize] = ((1 as i32) << index) as u32;
+            move_mask_hi_[pos as usize] = 0;
+            unmove_mask_lo_[pos as usize] = !((1 as i32) << index) as u32;
+            unmove_mask_hi_[pos as usize] = !(0 as i32) as u32;
             j += 1;
             pos += 1
         }
@@ -1638,18 +1639,16 @@ unsafe fn init_move_masks() {
         pos = 10 as i32 * i + 51 as i32;
         while j < 8 as i32 {
             index = 8 as i32 * i + j;
-            move_mask_lo[pos as usize] = 0;
-            move_mask_hi[pos as usize] =
-                ((1 as i32) << index) as u32;
-            unmove_mask_lo[pos as usize] =
-                !(0 as i32) as u32;
-            unmove_mask_hi[pos as usize] =
-                !((1 as i32) << index) as u32;
+            move_mask_lo_[pos as usize] = 0;
+            move_mask_hi_[pos as usize] = ((1 as i32) << index) as u32;
+            unmove_mask_lo_[pos as usize] = !(0 as i32) as u32;
+            unmove_mask_hi_[pos as usize] = !((1 as i32) << index) as u32;
             j += 1;
             pos += 1
         }
         i += 1
     };
+    [move_mask_hi_, move_mask_lo_, unmove_mask_hi_, unmove_mask_lo_]
 }
 /*
   CALCULATE_OPENING_FREQUENCY
