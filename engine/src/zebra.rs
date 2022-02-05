@@ -40,6 +40,7 @@ pub enum EvalType {
     EXACT_EVAL = 1,
     MIDGAME_EVAL = 0,
 }
+
 #[derive(Copy, Clone, PartialEq)]
 pub enum EvalResult {
     UNSOLVED_POSITION = 3,
@@ -135,7 +136,7 @@ pub const INITIAL_CONFIG: Config = Config {
     echo: 0,
     display_pv: 0,
     use_thor: false,
-    use_learning: false
+    use_learning: false,
 };
 
 
@@ -164,7 +165,7 @@ pub trait ZebraFrontend {
     fn before_get_move();
     fn report_book_randomness(slack_: f64);
     fn load_thor_files(g_timer: &mut Timer);
-    fn print_move_alternatives(side_to_move: i32,  board_state: &mut BoardState, g_book: &mut Book);
+    fn print_move_alternatives(side_to_move: i32, board_state: &mut BoardState, g_book: &mut Book);
 }
 
 #[derive(Copy, Clone)]
@@ -175,15 +176,16 @@ pub enum PlayGameState {
     AfterGameReport { node_val: f64, eval_val: f64 },
     End,
     CanLearn,
-    SwitchingSides{ provided_move_count: i32 },
-    GetPass{ provided_move_count: i32 },
+    SwitchingSides { provided_move_count: i32 },
+    GetPass { provided_move_count: i32 },
     MoveStop { provided_move_count: i32, move_start: f64 },
-    StartGetMove { provided_move_count: i32 , move_start: f64 },
-    GettingMove { provided_move_count: i32 , move_start: f64, side_to_move: i32 },
-    AfterDumpch { provided_move_count:i32 , move_start: f64 },
-    Dumpch { provided_move_count:i32 , move_start: f64 },
-    NeedsDump { provided_move_count:i32 , move_start: f64 },
+    StartGetMove { provided_move_count: i32, move_start: f64 },
+    GettingMove { provided_move_count: i32, move_start: f64, side_to_move: i32 },
+    AfterDumpch { provided_move_count: i32, move_start: f64 },
+    Dumpch { provided_move_count: i32, move_start: f64 },
+    NeedsDump { provided_move_count: i32, move_start: f64 },
 }
+
 pub struct PlayGame<Source: InitialMoveSource> {
     file_name: Option<CString>,
     move_string: Vec<u8>,
@@ -197,19 +199,20 @@ pub struct PlayGame<Source: InitialMoveSource> {
     provided_move: [i8; 61],
     pub move_vec: [i8; 122],
     line_buffer: [u8; 1001],
-    pub state: PlayGameState
+    pub state: PlayGameState,
 }
+
 pub struct MoveAttempt(pub i8, pub i8);
 
 pub fn next_state<
     ZF: ZebraFrontend,
     Source: InitialMoveSource,
-    BoardSrc : FileBoardSource,
+    BoardSrc: FileBoardSource,
     ComputeMoveLog: ComputeMoveLogger,
     ComputeMoveOut: ComputeMoveOutput,
     FE: FrontEnd,
     Thor: ThorDatabase
->(play_state: &mut PlayGame<Source>, move_attempt : Option<MoveAttempt>) -> PlayGameState {
+>(play_state: &mut PlayGame<Source>, move_attempt: Option<MoveAttempt>) -> PlayGameState {
     play_state.state = match play_state.state {
         PlayGameState::Initial => {
             /* Decode the predefined move sequence */
@@ -293,14 +296,14 @@ pub fn next_state<
                 PlayGameState::AfterDumpch { provided_move_count, move_start }
             }
         }
-        PlayGameState::AfterGameReport {node_val,            eval_val } => {
+        PlayGameState::AfterGameReport { node_val, eval_val } => {
             play_state.repeat -= 1;
             PlayGameState::CanLearn
         }
         PlayGameState::AfterGame => {
             let node_val = counter_value(&mut play_state.g_state.search_state.total_nodes);
             let eval_val = counter_value(&mut play_state.g_state.search_state.total_evaluations);
-            PlayGameState::AfterGameReport {node_val,            eval_val }
+            PlayGameState::AfterGameReport { node_val, eval_val }
         }
         PlayGameState::CanLearn => {
             if !(play_state.repeat > 0) {
@@ -415,8 +418,8 @@ pub fn next_state<
         PlayGameState::StartGetMove { provided_move_count, move_start } => {
             ZF::before_get_move();
             let side_to_move: i32 = play_state.side_to_move;
-            PlayGameState::GettingMove  { provided_move_count, move_start, side_to_move }
-        },
+            PlayGameState::GettingMove { provided_move_count, move_start, side_to_move }
+        }
         PlayGameState::GettingMove { provided_move_count, move_start, side_to_move } => {
             if let Some(MoveAttempt(curr_move, curr_move_2)) = move_attempt {
                 let board = &play_state.g_state.board_state.board;
@@ -433,19 +436,20 @@ pub fn next_state<
                     play_state.curr_move = curr_move;
                     PlayGameState::MoveStop { provided_move_count, move_start }
                 }
-            }else {
+            } else {
                 PlayGameState::GettingMove { provided_move_count, move_start, side_to_move }
             }
-        },
+        }
     };
     return play_state.state;
 }
+
 impl<Src: InitialMoveSource> PlayGame<Src> {
     #[inline(always)]
     pub fn new(file_name: Option<CString>, move_string: Vec<u8>,
                mut repeat: i32,
                mut move_file: Option<Src>,
-               g_state: FullState
+               g_state: FullState,
     ) -> PlayGame<Src> {
         let mut eval_info = EvaluationType::new();
         let mut side_to_move = 0;
@@ -468,7 +472,7 @@ impl<Src: InitialMoveSource> PlayGame<Src> {
             provided_move,
             move_vec,
             line_buffer,
-            state
+            state,
         };
         play_state
     }
@@ -491,20 +495,21 @@ fn load_moves_from_source<'a, Source: InitialMoveSource>(mut move_file: &mut Opt
 
 enum MoveStringError {
     InvalidMoveString,
-    UnexpectedCharacter
+    UnexpectedCharacter,
 }
+
 fn parse_provided_moves(provided_move: &mut [i8; 61], move_string: &[u8]) -> Result<i32, MoveStringError> {
     let provided_move_count = move_string.len().wrapping_div(2) as i32;
     if provided_move_count > 60 ||
         move_string.len().wrapping_rem(2) == 1 {
-        return Err(InvalidMoveString)
+        return Err(InvalidMoveString);
     }
     let mut i = 0;
     while i < provided_move_count {
         let col = (*move_string.offset((2 * i) as _) as char).to_ascii_lowercase() as u8 - b'a' + 1;
         let row = *move_string.offset((2 * i + 1) as _) as u8 - b'0';
         if col < 1 || col > 8 || row < 1 || row > 8 {
-            return Err(UnexpectedCharacter)
+            return Err(UnexpectedCharacter);
         }
         provided_move[i as usize] = (10 * row + col) as i8;
         i += 1
@@ -544,40 +549,23 @@ pub struct FullState {
 impl FullState {
     #[inline(always)]
     pub fn new(time_source: &'static dyn TimeSource) -> Self {
-        let g_config: Config = INITIAL_CONFIG;
-        let learn_state: LearnState = LearnState::new();
-        let midgame_state: MidgameState = MidgameState::new();
-        let game_state: GameState = GameState::new();
-        let end_g: End = End::new();
-        let coeff_state: CoeffState = CoeffState::new();
-
-        let g_timer: Timer = Timer::new(time_source);
-        let moves_state: MovesState = MovesState::new();
-        let stable_state: StableState = StableState::new();
-        let board_state: BoardState = BoardState::new();
-        let hash_state: HashState = HashState::new();
-        let random_instance: MyRandom = MyRandom::new();
-        let g_book: Book = Book::new();
-        let prob_cut: ProbCut = ProbCut::new();
-        let search_state: SearchState = SearchState::new();
-        let flip_stack_: FlipStack = FlipStack::new();
-        return FullState {
-            g_config,
-            learn_state,
-            midgame_state,
-            game_state,
-            end_g,
-            coeff_state,
-            g_timer,
-            moves_state,
-            stable_state,
-            board_state,
-            hash_state,
-            random_instance,
-            g_book,
-            prob_cut,
-            search_state,
-            flip_stack_,
+        FullState {
+            g_config: INITIAL_CONFIG,
+            learn_state: LearnState::new(),
+            midgame_state: MidgameState::new(),
+            game_state: GameState::new(),
+            end_g: End::new(),
+            coeff_state: CoeffState::new(),
+            g_timer: Timer::new(time_source),
+            moves_state: MovesState::new(),
+            stable_state: StableState::new(),
+            board_state: BoardState::new(),
+            hash_state: HashState::new(),
+            random_instance: MyRandom::new(),
+            g_book: Book::new(),
+            prob_cut: ProbCut::new(),
+            search_state: SearchState::new(),
+            flip_stack_: FlipStack::new(),
         }
     }
 }
