@@ -1108,27 +1108,9 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
                                                                                                                    mut prob_cut: &mut ProbCut,
 )
                                                                                                -> i8 {
-    let mut book_eval_info =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
-    let mut mid_eval_info =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
-    let mut end_eval_info =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
+    let mut book_eval_info = EvaluationType::new();
+    let mut mid_eval_info = EvaluationType::new();
+    let mut end_eval_info = EvaluationType::new();
     let mut midgame_diff: f64 = 0.;
     let mut midgame_depth: i32 = 0;
     let mut max_depth: i32 = 0;
