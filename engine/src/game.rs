@@ -777,20 +777,7 @@ pub fn compare_eval(mut e1: EvaluationType, mut e2: EvaluationType) -> i32 {
 pub fn engine_game_init(g_state: &mut FullState) {
     setup_search(&mut g_state.search_state);
     setup_midgame(&mut g_state.midgame_state, &mut g_state.random_instance);
-    setup_end(
-     &mut g_state.flip_stack_
-    ,&mut g_state.search_state
-    ,&mut g_state.board_state
-    ,&mut g_state.hash_state
-    ,&mut g_state.g_timer
-    ,&mut g_state.end_g
-    ,&mut g_state.midgame_state
-    ,&mut g_state.coeff_state
-    ,&mut g_state.moves_state
-    ,&mut g_state.random_instance
-    ,&mut g_state.g_book
-    ,&mut g_state.stable_state
-    );
+    setup_end(&mut g_state.flip_stack_, &mut g_state.end_g);
     g_state.g_timer.clear_ponder_times();
     reset_counter(&mut g_state.search_state.total_nodes);
     reset_counter(&mut g_state.search_state.total_evaluations);
