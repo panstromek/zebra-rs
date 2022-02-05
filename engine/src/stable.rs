@@ -277,10 +277,8 @@ fn stability_search(end: &mut End, my_bits: BitBoard,
             all_stable_bits.high |= state.last_white_stable.high;
             all_stable_bits.low |= state.last_white_stable.low
         }
-        if (*candidate_bits).high & !all_stable_bits.high ==
-               0 as i32 as u32 &&
-               (*candidate_bits).low & !all_stable_bits.low ==
-                   0 as i32 as u32 {
+        if (*candidate_bits).high & !all_stable_bits.high == 0 &&
+               (*candidate_bits).low & !all_stable_bits.low == 0 {
             return
         }
     }
@@ -288,11 +286,8 @@ fn stability_search(end: &mut End, my_bits: BitBoard,
     old_sq = 0;
     sq = state.stab_move_list[old_sq as usize].succ;
     while sq != 99 {
-        let flip_test_result = TestFlips_bitboard[(sq - 11) as
-            usize](my_bits.high,
-                   my_bits.low,
-                   opp_bits.high,
-                   opp_bits.low);
+        let flip_test_result =
+            TestFlips_bitboard[(sq - 11) as usize](my_bits.high, my_bits.low, opp_bits.high, opp_bits.low);
         end.bb_flips.high = flip_test_result.1.high;
         end.bb_flips.low = flip_test_result.1.low;
         if flip_test_result.0 != 0 {
@@ -304,13 +299,9 @@ fn stability_search(end: &mut End, my_bits: BitBoard,
             if max_depth > 1 as i32 {
                 new_opp_bits.high = opp_bits.high & !end.bb_flips.high;
                 new_opp_bits.low = opp_bits.low & !end.bb_flips.low;
-                state.stab_move_list[old_sq as usize].succ =
-                    state.stab_move_list[sq as usize].succ;
-                stability_search(end, new_opp_bits, new_my_bits,
-                                 0 as i32 + 2 as i32 -
-                                     side_to_move, candidate_bits,
-                                 max_depth - 1 as i32,
-                                 0 as i32, stability_nodes, state);
+                state.stab_move_list[old_sq as usize].succ = state.stab_move_list[sq as usize].succ;
+                stability_search(end, new_opp_bits, new_my_bits, 0 + 2 - side_to_move, candidate_bits,
+                                 max_depth - 1, 0, stability_nodes, state);
                 state.stab_move_list[old_sq as usize].succ = sq
             }
             mobility += 1
@@ -425,60 +416,55 @@ pub fn get_stable(end:&mut End, board: &Board,
                          side_to_move: i32,
                          is_stable: &mut [i32], state: &mut StableState) {
     use engine_traits::Offset;
-    let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut mask: u32 = 0;
     let mut black_bits = BitBoard{high: 0, low: 0,};
     let mut white_bits = BitBoard{high: 0, low: 0,};
     let mut all_stable = BitBoard{high: 0, low: 0,};
     set_bitboards(board, 0 as i32, &mut black_bits, &mut white_bits);
-    i = 0;
+    let mut i = 0;
     while i < 100 as i32 {
         *is_stable.offset(i as isize) = 0;
         i += 1
     }
-    if black_bits.high | black_bits.low == 0 as i32 as u32 ||
-           white_bits.high | white_bits.low ==
-               0 as i32 as u32 {
+    if black_bits.high | black_bits.low == 0 || white_bits.high | white_bits.low == 0 {
         i = 1;
-        while i <= 8 as i32 {
+        while i <= 8 {
             j = 1;
-            while j <= 8 as i32 {
-                *is_stable.offset((10 as i32 * i + j) as isize) = 1;
+            while j <= 8 {
+                *is_stable.offset((10 * i + j) as isize) = 1;
                 j += 1
             }
             i += 1
         }
     } else {
         /* Nobody wiped out */
-        count_edge_stable(0 as i32, black_bits, white_bits, state);
-        count_stable(0 as i32, black_bits, white_bits, state);
-        count_stable(2 as i32, white_bits, black_bits, state);
+        count_edge_stable(0, black_bits, white_bits, state);
+        count_stable(0, black_bits, white_bits, state);
+        count_stable(2, white_bits, black_bits, state);
         all_stable.high = state.last_black_stable.high | state.last_white_stable.high;
         all_stable.low = state.last_black_stable.low | state.last_white_stable.low;
         complete_stability_search(end, board, side_to_move, &mut all_stable, state);
         i = 1;
         mask = 1;
-        while i <= 4 as i32 {
+        while i <= 4 {
             j = 1;
-            while j <= 8 as i32 {
+            while j <= 8 {
                 if all_stable.low & mask != 0 {
-                    *is_stable.offset((10 as i32 * i + j) as isize) =
-                        1 as i32
+                    *is_stable.offset((10 * i + j) as isize) = 1
                 }
                 j += 1;
-                mask <<= 1 as i32
+                mask <<= 1
             }
             i += 1
         }
         i = 5;
         mask = 1;
-        while i <= 8 as i32 {
+        while i <= 8 {
             j = 1;
-            while j <= 8 as i32 {
+            while j <= 8 {
                 if all_stable.high & mask != 0 {
-                    *is_stable.offset((10 as i32 * i + j) as isize) =
-                        1 as i32
+                    *is_stable.offset((10 * i + j) as isize) = 1
                 }
                 j += 1;
                 mask <<= 1 as i32
