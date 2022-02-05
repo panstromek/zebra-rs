@@ -59,10 +59,7 @@ impl StableState {
     }
 }
 
-fn and_line_shift_64(target: &mut BitBoard,
-                                       base: BitBoard,
-                                       shift: i32,
-                                       mut dir_ss: BitBoard) {
+fn and_line_shift_64(target: &mut BitBoard, base: BitBoard, shift: i32, mut dir_ss: BitBoard) {
     /* Shift to the left */
     dir_ss.high |= base.high << shift | base.low >> 32 as i32 - shift;
     dir_ss.low |= base.low << shift;
@@ -108,43 +105,25 @@ fn edge_zardoz_stable(ss: &mut BitBoard, dd: BitBoard, od: BitBoard) {
     t &= t >> 4 as i32;
     t &= t >> 2 as i32;
     t &= t >> 1 as i32;
-    lrf.high =
-        (t &
-             0x1010101 as i32 as
-                 u32).wrapping_mul(255 as i32 as
-                                                u32) |
-            0x81818181 as u32;
+    lrf.high = (t & 0x1010101 as i32 as u32).wrapping_mul(255 as i32 as u32) | 0x81818181 as u32;
     t = fb.low;
     t &= t >> 4 as i32;
     t &= t >> 2 as i32;
     t &= t >> 1 as i32;
-    lrf.low =
-        (t &
-             0x1010101 as i32 as
-                 u32).wrapping_mul(255 as i32 as
-                                                u32) |
-            0x81818181 as u32;
+    lrf.low = (t & 0x1010101 as i32 as u32).wrapping_mul(255 as i32 as u32) | 0x81818181 as u32;
     t = fb.high & fb.low;
-    t &= t >> 16 as i32 | t << 16 as i32;
-    t &= t >> 8 as i32 | t << 24 as i32;
+    t &= t >> 16 | t << 16;
+    t &= t >> 8 | t << 24;
     udf.high = t | 0xff000000 as u32;
     udf.low = t | 0xff as i32 as u32;
     daf.high = 0xff818181 as u32;
     daf.low = 0x818181ff as u32;
-    t =
-        ((fb.high << 4 as i32 |
-              0xf0f0f0f as i32 as u32) & fb.low |
-             0xe0c08000 as u32) &
-            0x1ffffffe as i32 as u32;
+    t = ((fb.high << 4 as i32 | 0xf0f0f0f as i32 as u32) & fb.low | 0xe0c08000 as u32) & 0x1ffffffe as i32 as u32;
     t &= t >> 14 as i32 | t << 14 as i32;
     t &= t >> 7 as i32 | t << 21 as i32;
     daf.low |= t & 0x1f3f7efc as i32 as u32;
-    daf.high |=
-        t >> 4 as i32 & 0x103070f as i32 as u32;
-    t =
-        ((fb.low >> 4 as i32 | 0xf0f0f0f0 as u32) & fb.high |
-             0x10307 as i32 as u32) &
-            0x7ffffff8 as i32 as u32;
+    daf.high |= t >> 4 as i32 & 0x103070f as i32 as u32;
+    t = ((fb.low >> 4 as i32 | 0xf0f0f0f0 as u32) & fb.high | 0x10307 as i32 as u32) & 0x7ffffff8 as i32 as u32;
     t &= t >> 14 as i32 | t << 14 as i32;
     t &= t >> 7 as i32 | t << 21 as i32;
     daf.high |= t & 0x3e7cf8f0 as i32 as u32;
@@ -153,44 +132,27 @@ fn edge_zardoz_stable(ss: &mut BitBoard, dd: BitBoard, od: BitBoard) {
     dbf.low = 0x818181ff as u32;
     t = (fb.high >> 4 as i32 | 0xf0f0f0f0 as u32) & fb.low;
     /* 17 16 15 14 13 12 11 10  9  8 NG  6  5  4  3  2  1  0 */
-    t &=
-        t >> 18 as i32 |
-            0x3c000 as i32 as
-                u32; /*  *  *  *  * 31 30 29 28 27 26 25 NG 23 22 21 20 19 18 */
-    t &=
-        t >> 9 as i32 |
-            t <<
-                9 as
-                    i32; /*  8 NG  6  5  4  3  2  1  0 17 16 15 14 13 12 11 10  9 */
-    t |=
-        t <<
-            18 as
-                i32; /* 26 25 NG 23 22 21 20 19 18  *  *  *  * 31 30 29 28 27 */
+    t &= t >> 18 as i32 | 0x3c000 as i32 as u32; /*  *  *  *  * 31 30 29 28 27 26 25 NG 23 22 21 20 19 18 */
+    t &= t >> 9 as i32 | t << 9 as i32; /*  8 NG  6  5  4  3  2  1  0 17 16 15 14 13 12 11 10  9 */
+    t |= t << 18 as i32; /* 26 25 NG 23 22 21 20 19 18  *  *  *  * 31 30 29 28 27 */
     dbf.low |= t & 0xf8fc7e3f as u32;
-    dbf.high |= t << 4 as i32 & 0x80c0e0f0 as u32;
-    t =
-        (fb.low << 4 as i32 |
-             0xf0f0f0f as i32 as u32) & fb.high;
-    t &= t >> 18 as i32 | 0x3c000 as i32 as u32;
-    t &= t >> 9 as i32 | t << 9 as i32;
-    t |= t << 18 as i32;
+    dbf.high |= t << 4 & 0x80c0e0f0 as u32;
+    t = (fb.low << 4 | 0xf0f0f0f as i32 as u32) & fb.high;
+    t &= t >> 18 | 0x3c000 as i32 as u32;
+    t &= t >> 9 | t << 9;
+    t |= t << 18;
     dbf.high |= t & 0x7c3e1f0f as i32 as u32;
-    dbf.low |=
-        t >> 4 as i32 & 0x7030100 as i32 as u32;
+    dbf.low |= t >> 4 & 0x7030100 as i32 as u32;
     (*ss).high |= lrf.high & udf.high & daf.high & dbf.high & dd.high;
     (*ss).low |= lrf.low & udf.low & daf.low & dbf.low & dd.low;
     if (*ss).high | (*ss).low == 0 as i32 as u32 { return }
     loop  {
         ost = *ss;
-        expand_ss.high =
-            lrf.high | ost.high << 1 as i32 |
-                ost.high >> 1 as i32;
-        expand_ss.low =
-            lrf.low | ost.low << 1 as i32 |
-                ost.low >> 1 as i32;
-        and_line_shift_64(&mut expand_ss, ost, 8 as i32, udf);
-        and_line_shift_64(&mut expand_ss, ost, 7 as i32, daf);
-        and_line_shift_64(&mut expand_ss, ost, 9 as i32, dbf);
+        expand_ss.high = lrf.high | ost.high << 1 | ost.high >> 1;
+        expand_ss.low = lrf.low | ost.low << 1 | ost.low >> 1;
+        and_line_shift_64(&mut expand_ss, ost, 8, udf);
+        and_line_shift_64(&mut expand_ss, ost, 7, daf);
+        and_line_shift_64(&mut expand_ss, ost, 9, dbf);
         (*ss).high = ost.high | expand_ss.high & dd.high;
         (*ss).low = ost.low | expand_ss.low & dd.low;
         if !(ost.high ^ (*ss).high | ost.low ^ (*ss).low != 0) { break ; }
@@ -206,126 +168,34 @@ fn edge_zardoz_stable(ss: &mut BitBoard, dd: BitBoard, od: BitBoard) {
   by COUNT_STABLE below.
 */
 
-pub fn count_edge_stable(color: i32, col_bits: BitBoard, opp_bits: BitBoard, state: &mut StableState)
-                                -> i32 {
-
-    let mut col_mask: u32 = 0;
-    let mut opp_mask: u32 = 0;
-    let mut ix_a1a8: u32 = 0;
-    let mut ix_h1h8: u32 = 0;
-    let mut ix_a1h1: u32 = 0;
-    let mut ix_a8h8: u32 = 0;
-    col_mask =
-        (col_bits.low &
-             0x1010101 as i32 as
-                 u32).wrapping_add((col_bits.high &
-                                                 0x1010101 as i32 as
-                                                     u32) <<
-                                                4 as
-                                                    i32).wrapping_mul(0x1020408
-                                                                                  as
-                                                                                  i32
-                                                                                  as
-                                                                                  u32)
-            >> 24 as i32;
-    opp_mask =
-        (opp_bits.low &
-             0x1010101 as i32 as
-                 u32).wrapping_add((opp_bits.high &
-                                                 0x1010101 as i32 as
-                                                     u32) <<
-                                                4 as
-                                                    i32).wrapping_mul(0x1020408
-                                                                                  as
-                                                                                  i32
-                                                                                  as
-                                                                                  u32)
-            >> 24 as i32;
-    ix_a1a8 =
-        (state.base_conversion[col_mask as usize] as i32 -
-             state.base_conversion[opp_mask as usize] as i32) as
-            u32;
-    col_mask =
-        ((col_bits.low & 0x80808080 as u32) >>
-             4 as
-                 i32).wrapping_add(col_bits.high &
-                                               0x80808080 as
-                                                   u32).wrapping_mul((0x1020408
-                                                                                   as
-                                                                                   i32
-                                                                                   /
-                                                                                   8
-                                                                                       as
-                                                                                       i32)
-                                                                                  as
-                                                                                  u32)
-            >> 24 as i32;
-    opp_mask =
-        ((opp_bits.low & 0x80808080 as u32) >>
-             4 as
-                 i32).wrapping_add(opp_bits.high &
-                                               0x80808080 as
-                                                   u32).wrapping_mul((0x1020408
-                                                                                   as
-                                                                                   i32
-                                                                                   /
-                                                                                   8
-                                                                                       as
-                                                                                       i32)
-                                                                                  as
-                                                                                  u32)
-            >> 24 as i32;
-    ix_h1h8 =
-        (state.base_conversion[col_mask as usize] as i32 -
-             state.base_conversion[opp_mask as usize] as i32) as
-            u32;
-    ix_a1h1 =
-        (state.base_conversion[(col_bits.low & 255 as i32 as u32)
-                             as usize] as i32 -
-             state.base_conversion[(opp_bits.low &
-                                  255 as i32 as u32) as
-                                 usize] as i32) as u32;
-    ix_a8h8 =
-        (state.base_conversion[(col_bits.high >> 24 as i32) as usize] as
-             i32 -
-             state.base_conversion[(opp_bits.high >> 24 as i32) as usize] as
-                 i32) as u32;
-    if color == 0 as i32 {
-        state.edge_a1h1 =
-            ((3280 as i32 * 1 as i32) as
-                 u32).wrapping_sub(ix_a1h1) as i32;
-        state.edge_a8h8 =
-            ((3280 as i32 * 1 as i32) as
-                 u32).wrapping_sub(ix_a8h8) as i32;
-        state.edge_a1a8 =
-            ((3280 as i32 * 1 as i32) as
-                 u32).wrapping_sub(ix_a1a8) as i32;
-        state.edge_h1h8 =
-            ((3280 as i32 * 1 as i32) as
-                 u32).wrapping_sub(ix_h1h8) as i32;
+pub fn count_edge_stable(color: i32, col_bits: BitBoard, opp_bits: BitBoard, state: &mut StableState) -> i32 {
+    let col_mask = (col_bits.low & 0x1010101 as u32).wrapping_add((col_bits.high & 0x1010101 as u32) << 4 as i32).wrapping_mul(0x1020408 as u32) >> 24;
+    let opp_mask = (opp_bits.low & 0x1010101 as u32).wrapping_add((opp_bits.high & 0x1010101 as u32) << 4 as i32).wrapping_mul(0x1020408 as u32) >> 24;
+    let ix_a1a8 = (state.base_conversion[col_mask as usize] as i32 - state.base_conversion[opp_mask as usize] as i32) as u32;
+    let col_mask = ((col_bits.low & 0x80808080 as u32) >> 4).wrapping_add(col_bits.high & 0x80808080 as u32).wrapping_mul((0x1020408 / 8) as u32) >> 24;
+    let opp_mask = ((opp_bits.low & 0x80808080 as u32) >> 4).wrapping_add(opp_bits.high & 0x80808080 as u32).wrapping_mul((0x1020408 / 8) as u32) >> 24;
+    let ix_h1h8 = (state.base_conversion[col_mask as usize] as i32 - state.base_conversion[opp_mask as usize] as i32) as u32;
+    let ix_a1h1 = (state.base_conversion[(col_bits.low & 255 as u32) as usize] as i32 - state.base_conversion[(opp_bits.low & 255 as u32) as usize] as i32) as u32;
+    let ix_a8h8 = (state.base_conversion[(col_bits.high >> 24) as usize] as i32 - state.base_conversion[(opp_bits.high >> 24) as usize] as i32) as u32;
+    if color == 0 {
+        state.edge_a1h1 = 3280_u32.wrapping_sub(ix_a1h1) as i32;
+        state.edge_a8h8 = 3280_u32.wrapping_sub(ix_a8h8) as i32;
+        state.edge_a1a8 = 3280_u32.wrapping_sub(ix_a1a8) as i32;
+        state.edge_h1h8 = 3280_u32.wrapping_sub(ix_h1h8) as i32;
         return (state.black_stable[state.edge_a1h1 as usize] as i32 +
                     state.black_stable[state.edge_a1a8 as usize] as i32 +
                     state.black_stable[state.edge_a8h8 as usize] as i32 +
-                    state.black_stable[state.edge_h1h8 as usize] as i32) as
-                   u8 as i32 / 2 as i32
+                    state.black_stable[state.edge_h1h8 as usize] as i32) as u8 as i32 / 2
     } else {
-        state.edge_a1h1 =
-            ((3280 as i32 * 1 as i32) as
-                 u32).wrapping_add(ix_a1h1) as i32;
-        state.edge_a8h8 =
-            ((3280 as i32 * 1 as i32) as
-                 u32).wrapping_add(ix_a8h8) as i32;
-        state.edge_a1a8 =
-            ((3280 as i32 * 1 as i32) as
-                 u32).wrapping_add(ix_a1a8) as i32;
-        state.edge_h1h8 =
-            ((3280 as i32 * 1 as i32) as
-                 u32).wrapping_add(ix_h1h8) as i32;
+        state.edge_a1h1 = 3280_u32.wrapping_add(ix_a1h1) as i32;
+        state.edge_a8h8 = 3280_u32.wrapping_add(ix_a8h8) as i32;
+        state.edge_a1a8 = 3280_u32.wrapping_add(ix_a1a8) as i32;
+        state.edge_h1h8 = 3280_u32.wrapping_add(ix_h1h8) as i32;
         return (state.white_stable[state.edge_a1h1 as usize] as i32 +
                     state.white_stable[state.edge_a1a8 as usize] as i32 +
                     state.white_stable[state.edge_a8h8 as usize] as i32 +
                     state.white_stable[state.edge_h1h8 as usize] as i32) as
-                   u8 as i32 / 2 as i32
+                   u8 as i32 / 2
     };
 }
 /*
