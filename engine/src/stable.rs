@@ -206,54 +206,33 @@ pub fn count_edge_stable(color: i32, col_bits: BitBoard, opp_bits: BitBoard, sta
         before this function is called *or you lose big*.
 */
 
-pub fn count_stable(color: i32,
-                           col_bits: BitBoard,
-                           opp_bits: BitBoard, state: &mut StableState) -> i32 {
-    let mut t: u32 = 0;
+pub fn count_stable(color: i32, col_bits: BitBoard, opp_bits: BitBoard, state: &mut StableState) -> i32 {
     let mut col_stable = BitBoard{high: 0, low: 0,};
     let mut common_stable = BitBoard{high: 0, low: 0,};
     /* Stable edge discs */
     common_stable.low = state.edge_stable[state.edge_a1h1 as usize] as u32;
-    common_stable.high =
-        ((state.edge_stable[state.edge_a8h8 as usize] as i32) <<
-             24 as i32) as u32;
-    t = state.edge_stable[state.edge_a1a8 as usize] as u32;
-    common_stable.low |=
-        (t &
-             0xf as i32 as
-                 u32).wrapping_mul(0x204081 as i32 as
-                                                u32) &
-            0x1010101 as i32 as u32;
-    common_stable.high |=
-        (t >>
-             4 as
-                 i32).wrapping_mul(0x204081 as i32 as
-                                               u32) &
-            0x1010101 as i32 as u32;
-    t = state.edge_stable[state.edge_h1h8 as usize] as u32;
-    common_stable.low |=
-        (t &
-             0xf as i32 as
-                 u32).wrapping_mul(0x10204080 as i32 as
-                                                u32) &
-            0x80808080 as u32;
-    common_stable.high |=
-        (t >>
-             4 as
-                 i32).wrapping_mul(0x10204080 as i32 as
-                                               u32) &
-            0x80808080 as u32;
+    common_stable.high = ((state.edge_stable[state.edge_a8h8 as usize] as i32) << 24) as u32;
+    let t = state.edge_stable[state.edge_a1a8 as usize] as u32;
+    common_stable.low |= (t & 0xf as i32 as u32).wrapping_mul(0x204081 as i32 as u32) & 0x1010101 as i32 as u32;
+    common_stable.high |= (t >> 4 as i32).wrapping_mul(0x204081 as i32 as u32) & 0x1010101 as i32 as u32;
+    let t = state.edge_stable[state.edge_h1h8 as usize] as u32;
+    common_stable.low |= (t & 0xf as i32 as u32).wrapping_mul(0x10204080 as i32 as u32) & 0x80808080 as u32;
+    common_stable.high |= (t >> 4 as i32).wrapping_mul(0x10204080 as i32 as u32) & 0x80808080 as u32;
     /* Expand the stable edge discs into a full set of stable discs */
     col_stable.high = col_bits.high & common_stable.high;
     col_stable.low = col_bits.low & common_stable.low;
     edge_zardoz_stable(&mut col_stable, col_bits, opp_bits);
-    if color == 0 as i32 {
+    if color == 0 {
         state.last_black_stable = col_stable
-    } else { state.last_white_stable = col_stable }
-    if col_stable.high | col_stable.low != 0 {
-        return non_iterative_popcount(col_stable.high, col_stable.low) as
-                   i32
-    } else { return 0 as i32 };
+    } else {
+        state.last_white_stable = col_stable
+    }
+
+    return if col_stable.high | col_stable.low != 0 {
+        non_iterative_popcount(col_stable.high, col_stable.low) as i32
+    } else {
+        0
+    };
 }
 /*
   STABILITY_SEARCH
