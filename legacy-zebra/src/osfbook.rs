@@ -1320,47 +1320,32 @@ pub unsafe fn do_minimax(index: i32,
        draw avoidance behavior */
     if (*(g_state.g_book).node.offset(index as isize)).flags as i32 &
         (16 as i32 | 4 as i32) != 0 {
-        *black_score =
-            (*(g_state.g_book).node.offset(index as isize)).black_minimax_score as i32;
-        *white_score =
-            (*(g_state.g_book).node.offset(index as isize)).white_minimax_score as i32;
-        if (*(g_state.g_book).node.offset(index as isize)).black_minimax_score as i32
-            == 0 as i32 &&
-            (*(g_state.g_book).node.offset(index as isize)).white_minimax_score as
-                i32 == 0 as i32 {
-            /* Is it a position in which a draw should be avoided? */
-            if (g_state.g_book).game_mode as u32 ==
-                PRIVATE_GAME as i32 as u32 ||
-                (*(g_state.g_book).node.offset(index as isize)).flags as i32 &
-                    32 as i32 == 0 {
+        *black_score = (*(g_state.g_book).node.offset(index as isize)).black_minimax_score as i32;
+        *white_score = (*(g_state.g_book).node.offset(index as isize)).white_minimax_score as i32;
+        if (*(g_state.g_book).node.offset(index as isize)).black_minimax_score as i32 == 0 as i32 && (*(g_state.g_book).node.offset(index as isize)).white_minimax_score as i32 == 0 as i32 {
+            /* Is it a position in which a draw should be avoided? */if (g_state.g_book).game_mode as u32 == PRIVATE_GAME as i32 as u32 || (*(g_state.g_book).node.offset(index as isize)).flags as i32 & 32 as i32 == 0 {
                 match (g_state.g_book).draw_mode as u32 {
                     1 => {
-                        *black_score =
-                            30000 as i32 - 1 as i32;
-                        *white_score = 30000 as i32 - 1 as i32
+                        *black_score = 30000 - 1;
+                        *white_score = 30000 - 1
                     }
                     2 => {
-                        *black_score =
-                            -(30000 as i32 - 1 as i32);
-                        *white_score =
-                            -(30000 as i32 - 1 as i32)
+                        *black_score = -(30000 - 1);
+                        *white_score = -(30000 - 1)
                     }
                     3 => {
-                        *black_score =
-                            -(30000 as i32 - 1 as i32);
-                        *white_score = 30000 as i32 - 1 as i32
+                        *black_score = -(30000 - 1);
+                        *white_score = 30000 - 1
                     }
-                    0 | _ => { }
+                    0 | _ => {}
                 }
             }
         }
     } else {
-        let ref mut fresh12 =
-            (*(g_state.g_book).node.offset(index as isize)).black_minimax_score;
+        let ref mut fresh12 = (*(g_state.g_book).node.offset(index as isize)).black_minimax_score;
         *fresh12 = best_black_score;
         *black_score = *fresh12 as i32;
-        let ref mut fresh13 =
-            (*(g_state.g_book).node.offset(index as isize)).white_minimax_score;
+        let ref mut fresh13 = (*(g_state.g_book).node.offset(index as isize)).white_minimax_score;
         *fresh13 = best_white_score;
         *white_score = *fresh13 as i32
     }
