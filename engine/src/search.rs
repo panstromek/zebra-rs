@@ -370,13 +370,7 @@ pub fn create_eval_info(in_type: EvalType,
                                in_depth: i32,
                                in_book: i32)
                                -> EvaluationType {
-    let mut out =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
+    let mut out =EvaluationType::new();
     out.type_0 = in_type;
     out.res = in_res;
     out.score = in_score;

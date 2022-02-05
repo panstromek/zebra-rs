@@ -184,24 +184,12 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
     let mut book_move =
         CandidateMove{move_0: 0, score: 0, flags: 0, parent_flags: 0,};
     let mut temp =
-        EvaluatedMove{eval:
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,},
+        EvaluatedMove{eval:EvaluationType::new(),
             side_to_move: 0,
             move_0: 0,
             pv_depth: 0,
             pv: [0; 60],};
-    let mut book_eval_info =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
+    let mut book_eval_info =EvaluationType::new();
     let mut res = WON_POSITION;
     /* Disable all time control mechanisms and randomization */
     (g_state.g_timer).toggle_abort_check(0 as i32);

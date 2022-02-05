@@ -918,13 +918,7 @@ pub unsafe fn restricted_minimax_tree(low: i32,
 */
 unsafe fn do_midgame_statistics(index: i32,
                                 spec: StatisticsSpec, echo:i32, g_state: &mut FullState) {
-    let mut dummy_info: EvaluationType =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
+    let mut dummy_info: EvaluationType = EvaluationType::new();
     let mut i: i32 = 0;
     let mut depth: i32 = 0;
     let mut child: i32 = 0;
@@ -1102,13 +1096,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                               min_disks: i32,
                               max_disks: i32,
                               spec: StatisticsSpec, echo:i32, g_state: &mut FullState) {
-    let mut dummy_info: EvaluationType =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
+    let mut dummy_info: EvaluationType =EvaluationType::new();
     let mut out_file: FileHandle = FileHandle::null();
     let mut i: i32 = 0;
     let mut depth: i32 = 0;
@@ -1219,13 +1207,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
 */
 unsafe fn do_endgame_statistics(index: i32,
                                 spec: StatisticsSpec, echo:i32 , g_state: &mut FullState) {
-    let mut dummy_info: EvaluationType =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
+    let mut dummy_info: EvaluationType =EvaluationType::new();
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut side_to_move: i32 = 0;
@@ -1469,13 +1451,7 @@ unsafe fn do_correct(index: i32,
                      full_solve: i32,
                      target_name: *const i8,
                      move_hist: *mut i8, echo:i32, g_state: &mut FullState) {
-    let mut dummy_info: EvaluationType =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
+    let mut dummy_info: EvaluationType =EvaluationType::new();
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;

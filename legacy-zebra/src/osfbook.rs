@@ -10,8 +10,6 @@ use engine::src::myrandom::MyRandom;
 use engine::src::osfbook::{__time_t, adjust_score, Book, BOOK_MAPS, BookNode, clear_node_depth, get_hash, get_node_depth, probe_hash_table, reset_book_search, set_node_depth};
 use engine::src::search::disc_count;
 use engine::src::stubs::{abs};
-use engine::src::zebra::EvalResult::WON_POSITION;
-use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvaluationType;
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
@@ -50,13 +48,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                            max_wld_solve: i32,
                            update_path: i32,
                            private_game: i32, mut echo:i32, g_state: &mut FullState) {
-    let mut dummy_info =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
+    let mut dummy_info =EvaluationType::new();
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut stored_echo: i32 = 0;
