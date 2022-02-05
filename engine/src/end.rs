@@ -503,14 +503,9 @@ fn solve_parity(end:&mut End, my_bits: BitBoard,
     /* Check for stability cutoff */
     if alpha >= stability_threshold[empties as usize] {
         let mut stability_bound: i32 = 0;
-        stability_bound =
-            64 as i32 -
-                2 as i32 *
-                    count_edge_stable(oppcol, opp_bits, my_bits, &mut stable_state);
+        stability_bound = 64 - 2 * count_edge_stable(oppcol, opp_bits, my_bits, &mut stable_state);
         if stability_bound <= alpha { return alpha }
-        stability_bound =
-            64 as i32 -
-                2 as i32 * count_stable(oppcol, opp_bits, my_bits, &mut stable_state);
+        stability_bound = 64 - 2 * count_stable(oppcol, opp_bits, my_bits, &mut stable_state);
         if stability_bound < beta {
             beta = stability_bound + 1 as i32
         }
@@ -529,31 +524,25 @@ fn solve_parity(end:&mut End, my_bits: BitBoard,
                 if flipped != 0 as i32 {
                     new_opp_bits.high = opp_bits.high & !end.bb_flips.high;
                     new_opp_bits.low = opp_bits.low & !end.bb_flips.low;
-                    end. end_move_list[old_sq as usize].succ =
-                        end. end_move_list[sq as usize].succ;
-                    new_disc_diff =
-                        -disc_diff - 2 as i32 * flipped -
-                            1 as i32;
+                    end.end_move_list[old_sq as usize].succ = end.end_move_list[sq as usize].succ;
+                    new_disc_diff = -disc_diff - 2 * flipped - 1;
                     if empties == 5 as i32 {
-                        let sq1 =
-                            end. end_move_list[0].succ;
-                        let sq2 = end. end_move_list[sq1 as usize].succ;
-                        let sq3 = end. end_move_list[sq2 as usize].succ;
-                        let sq4 = end. end_move_list[sq3 as usize].succ;
-                        ev =
-                            -solve_four_empty(end, new_opp_bits, end.bb_flips, sq1,
+                        let sq1 = end.end_move_list[0].succ;
+                        let sq2 = end.end_move_list[sq1 as usize].succ;
+                        let sq3 = end.end_move_list[sq2 as usize].succ;
+                        let sq4 = end.end_move_list[sq3 as usize].succ;
+                        ev = -solve_four_empty(end, new_opp_bits, end.bb_flips, sq1,
                                               sq2, sq3, sq4, -beta, -alpha,
                                               new_disc_diff, 1 as i32, &mut search_state)
                     } else {
                         end.region_parity ^= holepar;
-                        ev =
-                            -solve_parity(end, new_opp_bits, end.bb_flips, -beta,
+                        ev = -solve_parity(end, new_opp_bits, end.bb_flips, -beta,
                                           -alpha, oppcol,
                                           empties - 1 as i32,
                                           new_disc_diff, 1 as i32, &mut search_state, &mut stable_state);
                         end.region_parity ^= holepar
                     }
-                    end. end_move_list[old_sq as usize].succ = sq;
+                    end.end_move_list[old_sq as usize].succ = sq;
                     if ev > score {
                         if ev > alpha {
                             if ev >= beta { end.  best_move = sq; return ev }
@@ -579,25 +568,19 @@ fn solve_parity(end:&mut End, my_bits: BitBoard,
             if flipped != 0 as i32 {
                 new_opp_bits.high = opp_bits.high & !end.bb_flips.high;
                 new_opp_bits.low = opp_bits.low & !end.bb_flips.low;
-                end. end_move_list[old_sq as usize].succ =
-                    end. end_move_list[sq as usize].succ;
-                new_disc_diff =
-                    -disc_diff - 2 as i32 * flipped -
-                        1 as i32;
-                if empties == 5 as i32 {
-                    let sq1_0 =
-                        end. end_move_list[0].succ;
-                    let sq2_0 = end. end_move_list[sq1_0 as usize].succ;
-                    let sq3_0 = end. end_move_list[sq2_0 as usize].succ;
-                    let sq4_0 = end. end_move_list[sq3_0 as usize].succ;
-                    ev =
-                        -solve_four_empty(end, new_opp_bits, end.bb_flips, sq1_0,
+                end. end_move_list[old_sq as usize].succ = end. end_move_list[sq as usize].succ;
+                new_disc_diff = -disc_diff - 2 * flipped - 1;
+                if empties == 5 {
+                    let sq1_0 = end.end_move_list[0].succ;
+                    let sq2_0 = end.end_move_list[sq1_0 as usize].succ;
+                    let sq3_0 = end.end_move_list[sq2_0 as usize].succ;
+                    let sq4_0 = end.end_move_list[sq3_0 as usize].succ;
+                    ev = -solve_four_empty(end, new_opp_bits, end.bb_flips, sq1_0,
                                           sq2_0, sq3_0, sq4_0, -beta, -alpha,
                                           new_disc_diff, 1 as i32,  &mut search_state)
                 } else {
                     end.region_parity ^= holepar_0;
-                    ev =
-                        -solve_parity(end, new_opp_bits, end.bb_flips, -beta, -alpha,
+                    ev = -solve_parity(end, new_opp_bits, end.bb_flips, -beta, -alpha,
                                       oppcol, empties - 1 as i32,
                                       new_disc_diff, 1 as i32,  &mut search_state, &mut stable_state);
                     end.region_parity ^= holepar_0
@@ -616,17 +599,17 @@ fn solve_parity(end:&mut End, my_bits: BitBoard,
         old_sq = sq;
         sq = end. end_move_list[sq as usize].succ
     }
-    if score == -(12345678 as i32) {
+    if score == -12345678 {
         if pass_legal == 0 {
-            if disc_diff > 0 as i32 { return disc_diff + empties }
-            if disc_diff < 0 as i32 { return disc_diff - empties }
+            if disc_diff > 0 { return disc_diff + empties }
+            if disc_diff < 0 { return disc_diff - empties }
             return 0 as i32
         } else {
             return -solve_parity(end, opp_bits, my_bits, -beta, -alpha, oppcol,
                                  empties, -disc_diff, 0 as i32,  &mut search_state, &mut stable_state)
         }
     }
-    end.  best_move = best_sq;
+    end.best_move = best_sq;
     return score;
 }
 /*
