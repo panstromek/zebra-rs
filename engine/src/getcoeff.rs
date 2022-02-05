@@ -68,10 +68,7 @@ fn generate_batch(target: &mut [i16], source1: &[i16], weight1: i32, source2: &[
 */
 /* Adjust the coefficients so as to reflect the encouragement for
        having lots of discs */
-pub fn eval_adjustment(disc_adjust: f64,
-                              edge_adjust: f64,
-                              corner_adjust: f64,
-                              x_adjust: f64, state: &mut CoeffState) {
+pub fn eval_adjustment(disc_adjust: f64, edge_adjust: f64, corner_adjust: f64, x_adjust: f64, state: &mut CoeffState) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -86,106 +83,52 @@ pub fn eval_adjustment(disc_adjust: f64,
         let stage_set = set.0[stage_i].data.as_mut().unwrap();
         let sixty_set = set.1[0].data.as_mut().unwrap();
         while j < 59049 as i32 {
-            let ref mut fresh2 =
-                *(stage_set.afile2x_mut()as &mut[i16]).offset(j as isize);
-            *fresh2 =
-                (*fresh2 as f64 +
-                    *sixty_set.afile2x_mut().offset(j as isize) as i32
-                        as f64 * disc_adjust) as i16;
-            let ref mut fresh3 =
-                *(stage_set.corner52_mut()as &mut[i16]).offset(j as isize);
-            *fresh3 =
-                (*fresh3 as f64 +
-                    *sixty_set.corner52_mut().offset(j as isize) as
-                        i32 as f64 * disc_adjust) as
-                    i16;
+            let ref mut fresh2 = *(stage_set.afile2x_mut() as &mut [i16]).offset(j as isize);
+            *fresh2 = (*fresh2 as f64 + *sixty_set.afile2x_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
+            let ref mut fresh3 = *(stage_set.corner52_mut() as &mut [i16]).offset(j as isize);
+            *fresh3 = (*fresh3 as f64 + *sixty_set.corner52_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             j += 1
         }
         j = 0;
         while j < 19683 as i32 {
-            let ref mut fresh4 =
-                *(stage_set.corner33_mut()as &mut [i16]).offset(j as isize);
-            *fresh4 =
-                (*fresh4 as f64 +
-                    *sixty_set.corner33_mut().offset(j as isize) as
-                        i32 as f64 * disc_adjust) as
-                    i16;
+            let ref mut fresh4 = *(stage_set.corner33_mut() as &mut [i16]).offset(j as isize);
+            *fresh4 = (*fresh4 as f64 + *sixty_set.corner33_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             j += 1
         }
         j = 0;
         while j < 6561 as i32 {
-            let ref mut fresh5 =
-                *(stage_set.bfile_mut()as &mut[i16]).offset(j as isize);
-            *fresh5 =
-                (*fresh5 as f64 +
-                    *sixty_set.bfile_mut().offset(j as isize)
-                        as i32 as f64 * disc_adjust) as
-                    i16;
-            let ref mut fresh6 =
-                *(stage_set.cfile_mut()as &mut[i16]).offset(j as isize);
-            *fresh6 =
-                (*fresh6 as f64 +
-                    *sixty_set.cfile_mut().offset(j as isize)
-                        as i32 as f64 * disc_adjust) as
-                    i16;
-            let ref mut fresh7 =
-                *(stage_set.dfile_mut()as &mut[i16]).offset(j as isize);
-            *fresh7 =
-                (*fresh7 as f64 +
-                    *sixty_set.dfile_mut().offset(j as isize)
-                        as i32 as f64 * disc_adjust) as
-                    i16;
-            let ref mut fresh8 =
-                *(stage_set.diag8_mut()as &mut[i16]).offset(j as isize);
-            *fresh8 =
-                (*fresh8 as f64 +
-                    *sixty_set.diag8_mut().offset(j as isize)
-                        as i32 as f64 * disc_adjust) as
-                    i16;
+            let ref mut fresh5 = *(stage_set.bfile_mut() as &mut [i16]).offset(j as isize);
+            *fresh5 = (*fresh5 as f64 + *sixty_set.bfile_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
+            let ref mut fresh6 = *(stage_set.cfile_mut() as &mut [i16]).offset(j as isize);
+            *fresh6 = (*fresh6 as f64 + *sixty_set.cfile_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
+            let ref mut fresh7 = *(stage_set.dfile_mut() as &mut [i16]).offset(j as isize);
+            *fresh7 = (*fresh7 as f64 + *sixty_set.dfile_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
+            let ref mut fresh8 = *(stage_set.diag8_mut() as &mut [i16]).offset(j as isize);
+            *fresh8 = (*fresh8 as f64 + *sixty_set.diag8_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             j += 1
         }
         j = 0;
         while j < 2187 as i32 {
-            let ref mut fresh9 =
-                *(stage_set.diag7_mut()as &mut[i16]).offset(j as isize);
-            *fresh9 =
-                (*fresh9 as f64 +
-                    *sixty_set.diag7_mut().offset(j as isize)
-                        as i32 as f64 * disc_adjust) as
-                    i16;
+            let ref mut fresh9 = *(stage_set.diag7_mut() as &mut [i16]).offset(j as isize);
+            *fresh9 = (*fresh9 as f64 + *sixty_set.diag7_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             j += 1
         }
         j = 0;
         while j < 729 as i32 {
-            let ref mut fresh10 =
-                *(stage_set.diag6_mut()as &mut[i16]).offset(j as isize);
-            *fresh10 =
-                (*fresh10 as f64 +
-                    *sixty_set.diag6_mut().offset(j as isize)
-                        as i32 as f64 * disc_adjust) as
-                    i16;
+            let ref mut fresh10 = *(stage_set.diag6_mut() as &mut [i16]).offset(j as isize);
+            *fresh10 = (*fresh10 as f64 + *sixty_set.diag6_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             j += 1
         }
         j = 0;
         while j < 243 as i32 {
-            let ref mut fresh11 =
-                *(stage_set.diag5_mut()as &mut[i16]).offset(j as isize);
-            *fresh11 =
-                (*fresh11 as f64 +
-                    *sixty_set.diag5_mut().offset(j as isize)
-                        as i32 as f64 * disc_adjust) as
-                    i16;
+            let ref mut fresh11 = *(stage_set.diag5_mut() as &mut [i16]).offset(j as isize);
+            *fresh11 = (*fresh11 as f64 + *sixty_set.diag5_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             j += 1
         }
         j = 0;
         while j < 81 as i32 {
-            let ref mut fresh12 =
-                *(stage_set.diag4_mut()as &mut[i16]).offset(j as isize);
-            *fresh12 =
-                (*fresh12 as f64 +
-                    *sixty_set.diag4_mut().offset(j as isize)
-                        as i32 as f64 * disc_adjust) as
-                    i16;
+            let ref mut fresh12 = *(stage_set.diag4_mut() as &mut [i16]).offset(j as isize);
+            *fresh12 = (*fresh12 as f64 + *sixty_set.diag4_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             j += 1
         }
         j = 0;
