@@ -12,7 +12,6 @@ use engine::src::game::{generic_game_init,  };
 use engine::src::getcoeff::{ remove_coeffs};
 use engine::src::globals::BoardState;
 use engine::src::hash::{  setup_hash};
-use engine::src::learn::{  Learner};
 use engine::src::moves::{game_in_progress, generate_all, make_move,  unmake_move, valid_move};
 
 use engine::src::osfbook::{Book, find_opening_name, reset_book_search,  };

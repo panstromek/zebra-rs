@@ -1,5 +1,4 @@
 use engine::src::game::generic_game_init;
-use engine::src::learn::Learner;
 use engine::src::moves::{generate_all, make_move};
 use libc_wrapper::{fclose, fopen};
 
@@ -34,8 +33,8 @@ pub unsafe fn init_learn(file_name: *const i8, is_binary: i32, g_state: &mut Ful
 }
 
 pub struct LibcLearner;
-impl Learner for LibcLearner {
-    fn learn_game(game_length: i32, private_game: i32, save_database: i32, g_state: &mut FullState) {
+impl LibcLearner {
+    pub fn learn_game(game_length: i32, private_game: i32, save_database: i32, g_state: &mut FullState) {
         unsafe {
             learn_game(game_length, private_game, save_database, g_state.g_config.echo , g_state)
         }

@@ -17,7 +17,7 @@ use engine::src::counter::CounterType;
 use engine::src::error::{FatalError, FrontEnd};
 use engine::src::game::{BoardSource, CandidateMove, ComputeMoveLogger, ComputeMoveOutput, engine_global_setup, FileBoardSource, GameState, extended_compute_move, EvaluatedList, compare_eval};
 use engine::src::hash::{HashEntry, HashState};
-use engine::src::learn::{Learner, LearnState};
+use engine::src::learn::{LearnState};
 use engine::src::myrandom;
 use engine::src::thordb::ThorDatabase;
 use engine::src::zebra::{Config, EvaluationType, INITIAL_CONFIG, InitialMoveSource, set_default_engine_globals, ZebraFrontend, FullState, PlayGame, next_state, PlayGameState, MoveAttempt, EvalType, EvalResult};

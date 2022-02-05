@@ -93,7 +93,3 @@ impl LearnState {
         return self.game_move[index as usize];
     }
 }
-
-pub trait Learner {
-    fn learn_game(game_length: i32, private_game: i32, save_database: i32, state: &mut FullState);
-}
