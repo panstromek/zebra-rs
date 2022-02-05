@@ -1186,10 +1186,8 @@ pub unsafe fn do_minimax(index: i32,
     child_count = 0;
     i = 0;
     while i < ( g_state.moves_state).move_count[( g_state.moves_state).disks_played as usize] {
-        ( g_state.board_state).piece_count[0][( g_state.moves_state).disks_played as usize] =
-            disc_count(0 as i32, &( g_state.board_state).board);
-        ( g_state.board_state).piece_count[2][( g_state.moves_state).disks_played as usize] =
-            disc_count(2 as i32, &( g_state.board_state).board);
+        ( g_state.board_state).piece_count[0][( g_state.moves_state).disks_played as usize] = disc_count(0 as i32, &( g_state.board_state).board);
+        ( g_state.board_state).piece_count[2][( g_state.moves_state).disks_played as usize] = disc_count(2 as i32, &( g_state.board_state).board);
         this_move = ( g_state.moves_state).move_list[( g_state.moves_state).disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32, &mut ( g_state.moves_state), &mut ( g_state.board_state), &mut (g_state.hash_state), &mut ( g_state.flip_stack_));
         get_hash(&mut val1, &mut val2, &mut orientation, &mut (g_state.g_book), &( g_state.board_state).board);
@@ -1197,48 +1195,19 @@ pub unsafe fn do_minimax(index: i32,
         child = *(g_state.g_book).book_hash_table.offset(slot as isize);
         if child != -1 {
             do_minimax(child, &mut child_black_score, &mut child_white_score, g_state);
-            best_black_child_val =
-                if best_black_child_val > child_black_score {
-                    best_black_child_val
-                } else { child_black_score };
-            best_white_child_val =
-                if best_white_child_val > child_white_score {
-                    best_white_child_val
-                } else { child_white_score };
-            worst_black_child_val =
-                if worst_black_child_val < child_black_score {
-                    worst_black_child_val
-                } else { child_black_score };
-            worst_white_child_val =
-                if worst_white_child_val < child_white_score {
-                    worst_white_child_val
-                } else { child_white_score };
+            best_black_child_val = if best_black_child_val > child_black_score { best_black_child_val } else { child_black_score };
+            best_white_child_val = if best_white_child_val > child_white_score { best_white_child_val } else { child_white_score };
+            worst_black_child_val = if worst_black_child_val < child_black_score { worst_black_child_val } else { child_black_score };
+            worst_white_child_val = if worst_white_child_val < child_white_score { worst_white_child_val } else { child_white_score };
             if side_to_move == 0 as i32 {
-                best_black_score =
-                    if child_black_score > best_black_score as i32 {
-                        child_black_score
-                    } else { best_black_score as i32 } as
-                        i16;
-                best_white_score =
-                    if child_white_score > best_white_score as i32 {
-                        child_white_score
-                    } else { best_white_score as i32 } as
-                        i16
+                best_black_score = if child_black_score > best_black_score as i32 { child_black_score } else { best_black_score as i32 } as i16;
+                best_white_score = if child_white_score > best_white_score as i32 { child_white_score } else { best_white_score as i32 } as i16
             } else {
-                best_black_score =
-                    if child_black_score < best_black_score as i32 {
-                        child_black_score
-                    } else { best_black_score as i32 } as
-                        i16;
-                best_white_score =
-                    if child_white_score < best_white_score as i32 {
-                        child_white_score
-                    } else { best_white_score as i32 } as
-                        i16
+                best_black_score = if child_black_score < best_black_score as i32 { child_black_score } else { best_black_score as i32 } as i16;
+                best_white_score = if child_white_score < best_white_score as i32 { child_white_score } else { best_white_score as i32 } as i16
             }
             child_count += 1
-        } else if alternative_move_found == 0 && this_move == alternative_move
-        {
+        } else if alternative_move_found == 0 && this_move == alternative_move {
             alternative_move_found = 1 as i32
         }
         let move_0 = this_move;
