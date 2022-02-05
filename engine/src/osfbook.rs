@@ -929,60 +929,44 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                where the current position is not solved but the child position
                is solved for a draw, and the draw mode dictates this draw to
                be a bad one. */
-            if book.game_mode as u32 ==
-                PRIVATE_GAME as i32 as u32 ||
-                (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
-                    isize)).flags as i32 &
-                    32 as i32 == 0 {
-                if side_to_move == 0 as i32 {
-                    if book.draw_mode as u32 ==
-                        WHITE_WINS as i32 as u32 ||
-                        book.draw_mode as u32 ==
-                            OPPONENT_WINS as i32 as u32 {
+            if book.game_mode == PRIVATE_GAME ||
+                (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags & 32 == 0 {
+                if side_to_move == 0 {
+                    if book.draw_mode == WHITE_WINS || book.draw_mode == OPPONENT_WINS {
                         FE::report_unwanted_book_draw(this_move.into());
-                        child_feasible = 0 as i32
+                        child_feasible = 0
                     }
-                } else if book.draw_mode as u32 ==
-                    BLACK_WINS as i32 as u32 ||
-                    book.draw_mode as u32 ==
-                        OPPONENT_WINS as i32 as u32 {
+                } else if book.draw_mode == BLACK_WINS || book.draw_mode == OPPONENT_WINS {
                     FE::report_unwanted_book_draw(this_move.into());
-                    child_feasible = 0 as i32
+                    child_feasible = 0
                 }
             }
         }
         if child_feasible != 0 {
-            book.candidate_list[book.candidate_count as usize].move_0 =
-                moves_state_.move_list[moves_state_.disks_played as usize][i as usize];
+            book.candidate_list[book.candidate_count as usize].move_0 = moves_state_.move_list[moves_state_.disks_played as usize][i as usize];
             book.candidate_list[book.candidate_count as usize].score = sign * score;
             if deviation != 0 {
-                book.candidate_list[book.candidate_count as usize].flags =
-                    64 as i32
+                book.candidate_list[book.candidate_count as usize].flags = 64
             } else {
-                book.candidate_list[book.candidate_count as usize].flags =
-                    (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
-                        isize)).flags as i32
+                book.candidate_list[book.candidate_count as usize].flags = (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags as _
             }
-            book.candidate_list[book.candidate_count as usize].parent_flags =
-                root_flags;
+            book.candidate_list[book.candidate_count as usize].parent_flags = root_flags;
             book.candidate_count += 1
         }
         i += 1
     }
-    if book.candidate_count > 0 as i32 {
+    if book.candidate_count > 0 {
         loop
         /* Sort the book moves using bubble sort */
         {
             changed = 0;
             i = 0;
             while i < book.candidate_count - 1 as i32 {
-                if book.candidate_list[i as usize].score <
-                    book.candidate_list[(i + 1 as i32) as usize].score {
+                if book.candidate_list[i as usize].score < book.candidate_list[(i + 1) as usize].score {
                     changed = 1;
                     temp = book.candidate_list[i as usize];
-                    book.candidate_list[i as usize] =
-                        book.candidate_list[(i + 1 as i32) as usize];
-                    book.candidate_list[(i + 1 as i32) as usize] = temp
+                    book.candidate_list[i as usize] = book.candidate_list[(i + 1 as i32) as usize];
+                    book.candidate_list[(i + 1) as usize] = temp
                 }
                 i += 1
             }
@@ -1042,12 +1026,12 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     /* Disable opening book randomness unless the move is going to
        be played on the board by Zebra */
     if update_slack != 0 {
-        remaining_slack =
-            if book.max_slack - book.used_slack[side_to_move as usize] >
-                0 as i32 {
-                (book.max_slack) - book.used_slack[side_to_move as usize]
-            } else { 0 as i32 }
-    } else { remaining_slack = 0 as i32 }
+        remaining_slack = if book.max_slack - book.used_slack[side_to_move as usize] > 0 {
+            book.max_slack - book.used_slack[side_to_move as usize]
+        } else {
+            0
+        }
+    } else { remaining_slack = 0 }
     if echo != 0 && book.candidate_count > 0 as i32 &&
         search_state_.get_ponder_move() == 0 {
         FE::report_in_get_book_move_1(side_to_move, remaining_slack, board_state_, book);
@@ -1064,25 +1048,16 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
         FE::internal_error_in_book_code();
     }
-    base_flags =
-        (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags
-            as i32;
+    base_flags = (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags as i32;
     /* If we have an endgame score for the position, we only want to
        consult the book if there is at least one move realizing that score. */
     index = *book.book_hash_table.offset(slot as isize);
-    if (*book.node.offset(index as isize)).flags as i32 & 16 as i32
-        != 0 {
-        if book.candidate_list[0].score <
-            (*book.node.offset(index as isize)).black_minimax_score as
-                i32 {
+    if (*book.node.offset(index as isize)).flags as i32 & 16 as i32 != 0 {
+        if book.candidate_list[0].score < (*book.node.offset(index as isize)).black_minimax_score as i32 {
             return -(1)
         }
-    } else if (*book.node.offset(index as isize)).flags as i32 &
-        4 as i32 != 0 {
-        if (*book.node.offset(index as isize)).black_minimax_score as i32 >
-            0 as i32 &&
-            book.candidate_list[0].score <=
-                0 as i32 {
+    } else if (*book.node.offset(index as isize)).flags & 4 != 0 {
+        if (*book.node.offset(index as isize)).black_minimax_score  > 0 && book.candidate_list[0].score <= 0 {
             return -(1)
         }
     }
@@ -1091,12 +1066,8 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     if score >= 30000 as i32 { remaining_slack = 0 as i32 }
     feasible_count = 0;
     total_weight = 0;
-    while feasible_count < book.candidate_count &&
-        book.candidate_list[feasible_count as usize].score >=
-            score - remaining_slack {
-        weight[feasible_count as usize] =
-            2 as i32 * remaining_slack + 1 as i32 -
-                (score - book.candidate_list[feasible_count as usize].score);
+    while feasible_count < book.candidate_count && book.candidate_list[feasible_count as usize].score >= score - remaining_slack {
+        weight[feasible_count as usize] = 2 * remaining_slack + 1 - (score - book.candidate_list[feasible_count as usize].score);
         total_weight += weight[feasible_count as usize];
         feasible_count += 1
     }
@@ -1107,9 +1078,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     if feasible_count == 1 as i32 {
         chosen_index = 0 as i32
     } else {
-        random_point =
-            ((random.my_random() >> 10 as i32) %
-                total_weight as i64) as i32;
+        random_point = ((random.my_random() >> 10) % total_weight as i64) as i32;
         chosen_index = 0;
         acc_weight = weight[chosen_index as usize];
         while random_point > acc_weight {
@@ -1123,38 +1092,37 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     }
     /* Convert the book score to the normal form.
        Note that this should work also for old-style book values. */
-    if chosen_score >= 30000 as i32 {
-        chosen_score -= 30000 as i32;
-        if chosen_score <= 64 as i32 {
-            chosen_score *= 128 as i32
+    if chosen_score >= 30000 {
+        chosen_score -= 30000;
+        if chosen_score <= 64 {
+            chosen_score *= 128
         }
     }
-    if chosen_score <= -(30000 as i32) {
-        chosen_score += 30000 as i32;
-        if chosen_score >= -(64 as i32) {
-            chosen_score *= 128 as i32
+    if chosen_score <= -(30000) {
+        chosen_score += 30000;
+        if chosen_score >= -(64) {
+            chosen_score *= 128
         }
     }
     /* Return the score via the EvaluationType structure */
     flags = book.candidate_list[chosen_index as usize].flags;
-    *eval_info =
-        create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION, chosen_score,
-                         0.0f64, 0 as i32, 1 as i32);
-    if base_flags & (16 as i32 | 4 as i32) != 0 &&
-        flags & (16 as i32 | 4 as i32) != 0 {
+    *eval_info = create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION, chosen_score, 0.0, 0, 1);
+    if base_flags & (16 | 4) != 0 && flags & (16 | 4) != 0 {
         /* Both the base position and the position after the book move
            are solved. */
-        if base_flags & 16 as i32 != 0 &&
-            flags & 16 as i32 != 0 {
+        if base_flags & 16 != 0 && flags & 16 != 0 {
             (*eval_info).type_0 = EXACT_EVAL
-        } else { (*eval_info).type_0 = WLD_EVAL }
-        if chosen_score > 0 as i32 {
+        } else {
+            (*eval_info).type_0 = WLD_EVAL
+        }
+        if chosen_score > 0 {
             (*eval_info).res = WON_POSITION
-        } else if chosen_score == 0 as i32 {
+        } else if chosen_score == 0 {
             (*eval_info).res = DRAWN_POSITION
-        } else { (*eval_info).res = LOST_POSITION }
-    } else if flags & 4 as i32 != 0 && chosen_score > 0 as i32
-    {
+        } else {
+            (*eval_info).res = LOST_POSITION
+        }
+    } else if flags & 4 != 0 && chosen_score > 0 {
         /* The base position is unknown but the move played leads
            to a won position. */
         (*eval_info).type_0 = WLD_EVAL;
@@ -1181,37 +1149,29 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         get_hash(val0___, val1___, orientation___, book, &board_state_.board);
         slot = probe_hash_table(val1, val2, book);
         continuation = 1;
-        if slot == -(1 as i32) ||
-            *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
-            continuation = 0 as i32
+        if slot == -1 || *book.book_hash_table.offset(slot as isize) == -1 {
+            continuation = 0
         } else {
-            alternative_move =
-                (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
-                    isize)).best_alternative_move as
-                    i8;
+            alternative_move = (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).best_alternative_move as i8;
             if alternative_move > 0 {
-                alternative_move =
-                    *book.inv_symmetry_map[orientation as
-                        usize].offset(alternative_move as
-                        isize) as _;
-                alternative_score =
-                    adjust_score((*book.node.offset(*book.book_hash_table.offset(slot as
-                        isize)
-                        as
-                        isize)).alternative_score
-                                     as i32, side_to_move, book, moves_state_.disks_played)
-            } else { alternative_score = -(12345678 as i32) }
-            if (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
-                isize)).flags as i32 &
-                1 as i32 != 0 {
+                alternative_move = *book.inv_symmetry_map[orientation as usize].offset(alternative_move as isize) as _;
+                alternative_score = adjust_score(
+                    (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).alternative_score as i32,
+                    side_to_move, book,
+                    moves_state_.disks_played,
+                )
+            } else {
+                alternative_score = -12345678
+            }
+            if (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags & 1 != 0 {
                 side_to_move = 0;
-                sign = 1 as i32
+                sign = 1
             } else {
                 side_to_move = 2;
-                sign = -(1 as i32)
+                sign = -1
             }
             generate_all(side_to_move, moves_state_, search_state_, &board_state_.board);
-            best_score = -(12345678 as i32);
+            best_score = -12345678;
             best_move = -1;
             i = 0;
             while i < moves_state_.move_count[moves_state_.disks_played as usize] {
@@ -1226,28 +1186,20 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                 {
                     unmake_move(side_to_move, move_0, &mut board_state_.board, moves_state_, hash_state_, flip_stack);
                 };
-                if slot == -(1 as i32) ||
-                    *book.book_hash_table.offset(slot as isize) ==
-                        -(1 as i32) {
+                if slot == -1 || *book.book_hash_table.offset(slot as isize) == -1 {
                     if this_move == alternative_move {
                         score = alternative_score;
-                        is_feasible = 1 as i32
-                    } else { is_feasible = 0 as i32 }
-                } else {
-                    if original_side_to_move == 0 as i32 {
-                        score =
-                            (*book.node.offset(*book.book_hash_table.offset(slot as
-                                isize)
-                                as isize)).black_minimax_score
-                                as i32
+                        is_feasible = 1
                     } else {
-                        score =
-                            (*book.node.offset(*book.book_hash_table.offset(slot as
-                                isize)
-                                as isize)).white_minimax_score
-                                as i32
+                        is_feasible = 0
                     }
-                    is_feasible = 1 as i32
+                } else {
+                    if original_side_to_move == 0 {
+                        score = (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).black_minimax_score as i32
+                    } else {
+                        score = (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).white_minimax_score as i32
+                    }
+                    is_feasible = 1
                 }
                 if is_feasible != 0 {
                     score *= sign;
@@ -1258,9 +1210,11 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
                 }
                 i += 1
             }
-            if best_move == -(1) {
-                continuation = 0 as i32
-            } else { temp_move[level as usize] = best_move }
+            if best_move == -1 {
+                continuation = 0
+            } else {
+                temp_move[level as usize] = best_move
+            }
         }
         if !(continuation != 0) { break ; }
     }
