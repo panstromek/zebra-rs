@@ -180,31 +180,18 @@ fn compact_to_wide(compact_entry: &CompactHashEntry, entry: &mut HashEntry) {
    compact one actually stored in the hash table.
 */
 pub fn wide_to_compact(entry: &HashEntry, compact_entry: &mut CompactHashEntry) {
-    (*compact_entry).key2 = (*entry).key2;
-    (*compact_entry).eval = (*entry).eval;
-    (*compact_entry).moves =
-        ((*entry).move_0[0]  as u32
-            + ((entry.move_0[1] as u32) << 8)
-            + ((entry.move_0[2] as u32) << 16)
-            + ((entry.move_0[3] as u32) <<
-                24));
-    (*compact_entry).key1_selectivity_flags_draft =
-        ((*entry).key1 &
-            0xff000000 as
-                u32).wrapping_add((((*entry).selectivity as
-            i32) <<
-            16 as i32) as
-            u32).wrapping_add((((*entry).flags
-            as
-            i32)
-            <<
-            8
-                as
-                i32)
-            as
-            u32).wrapping_add((*entry).draft
-            as
-            u32);
+    compact_entry.key2 = (*entry).key2;
+    compact_entry.eval = (*entry).eval;
+    compact_entry.moves = (
+        (*entry).move_0[0] as u32 +
+        ((entry.move_0[1] as u32) << 8) +
+        ((entry.move_0[2] as u32) << 16) +
+        ((entry.move_0[3] as u32) << 24)
+    );
+    compact_entry.key1_selectivity_flags_draft = entry.key1 & 0xff000000 as u32
+        .wrapping_add(((entry.selectivity as i32) << 16 as i32) as u32)
+        .wrapping_add(((entry.flags as i32) << 8 as i32) as u32)
+        .wrapping_add(entry.draft as u32);
 }
 
 /*
