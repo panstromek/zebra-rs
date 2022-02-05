@@ -838,46 +838,32 @@ pub fn compare_eval(mut e1: EvaluationType, mut e2: EvaluationType) -> i32 {
     e1.score - e2.score
 }
 
-pub fn engine_game_init(
-    mut flip_stack_: &mut FlipStack,
-    mut search_state: &mut SearchState,
-    mut board_state: &mut BoardState,
-    mut hash_state: &mut HashState,
-    mut g_timer: &mut Timer,
-    mut end_g: &mut End,
-    mut midgame_state: &mut MidgameState,
-    mut coeff_state: &mut CoeffState,
-    mut moves_state: &mut MovesState,
-    mut random_instance: &mut MyRandom,
-    mut g_book: &mut Book,
-    mut stable_state: &mut StableState,
-    mut game_state: &mut GameState
-) {
-    setup_search(&mut search_state);
-    setup_midgame(&mut midgame_state, &mut random_instance);
+pub fn engine_game_init(g_state: &mut FullState) {
+    setup_search(&mut g_state.search_state);
+    setup_midgame(&mut g_state.midgame_state, &mut g_state.random_instance);
     setup_end(
-     &mut flip_stack_
-    ,&mut search_state
-    ,&mut board_state
-    ,&mut hash_state
-    ,&mut g_timer
-    ,&mut end_g
-    ,&mut midgame_state
-    ,&mut coeff_state
-    ,&mut moves_state
-    ,&mut random_instance
-    ,&mut g_book
-    ,&mut stable_state
+     &mut g_state.flip_stack_
+    ,&mut g_state.search_state
+    ,&mut g_state.board_state
+    ,&mut g_state.hash_state
+    ,&mut g_state.g_timer
+    ,&mut g_state.end_g
+    ,&mut g_state.midgame_state
+    ,&mut g_state.coeff_state
+    ,&mut g_state.moves_state
+    ,&mut g_state.random_instance
+    ,&mut g_state.g_book
+    ,&mut g_state.stable_state
     );
-    g_timer.clear_ponder_times();
-    reset_counter(&mut search_state.total_nodes);
-    reset_counter(&mut search_state.total_evaluations);
-    flip_stack_.init_flip_stack();
-    search_state.total_time = 0.0f64;
-    game_state.max_depth_reached = 0;
-    game_state.last_time_used = 0.0f64;
-    game_state.endgame_performed[2] = 0;
-    game_state.endgame_performed[0] = game_state.endgame_performed[2];
+    g_state.g_timer.clear_ponder_times();
+    reset_counter(&mut g_state.search_state.total_nodes);
+    reset_counter(&mut g_state.search_state.total_evaluations);
+    g_state.flip_stack_.init_flip_stack();
+    g_state.search_state.total_time = 0.0f64;
+    g_state.game_state.max_depth_reached = 0;
+    g_state.game_state.last_time_used = 0.0f64;
+    g_state.game_state.endgame_performed[2] = 0;
+    g_state.game_state.endgame_performed[0] = g_state.game_state.endgame_performed[2];
 }
 
 pub const fn create_fresh_board() -> Board {
@@ -1025,26 +1011,12 @@ pub trait FileBoardSource : BoardSource {
     fn open(file_name: &CStr) -> Option<Self> where Self: Sized;
 }
 
-pub fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: Option<&CStr>, side_to_move: &mut i32,
-                                                                       flip_stack_: &mut FlipStack,
-                                                                       search_state: &mut SearchState,
-                                                                       board_state: &mut BoardState,
-                                                                       hash_state: &mut HashState,
-                                                                       g_timer: &mut Timer,
-                                                                       end_g: &mut End,
-                                                                       midgame_state: &mut MidgameState,
-                                                                       coeff_state: &mut CoeffState,
-                                                                       moves_state: &mut MovesState,
-                                                                       random_instance: &mut MyRandom,
-                                                                       g_book: &mut Book,
-                                                                       stable_state: &mut StableState,
-                                                                       game_state: &mut GameState
-) {
+pub fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: Option<&CStr>, side_to_move: &mut i32, g_state: &mut FullState) {
     if let Some(file_name) = file_name {
-        board_state.board = create_fresh_board();
+        g_state.board_state.board = create_fresh_board();
         match Source::open((file_name)) {
             Some(file_source) => {
-                match process_board_source(side_to_move, file_source, board_state) {
+                match process_board_source(side_to_move, file_source, &mut g_state.board_state) {
                     Ok(_) => {}
                     Err(BoardSourceError::UnrecognizedCharacter(unrecognized)) => FE::unrecognized_character(unrecognized as _),
                     Err(BoardSourceError::InitialSquaresAreEmpty) => {
@@ -1056,14 +1028,11 @@ pub fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: Optio
                 FE::cannot_open_game_file((file_name).to_str().unwrap());
             },
         };
-        setup_game_finalize(side_to_move, board_state, hash_state, moves_state);
+        setup_game_finalize(side_to_move, &mut g_state.board_state, &mut g_state.hash_state, &mut g_state.moves_state);
     } else {
-        setup_non_file_based_game(side_to_move,  board_state, hash_state, moves_state);
+        setup_non_file_based_game(side_to_move,  &mut g_state.board_state, &mut g_state.hash_state, &mut g_state.moves_state);
     }
-    engine_game_init(
-        flip_stack_, search_state, board_state, hash_state, g_timer,
-        end_g, midgame_state, coeff_state, moves_state, random_instance, g_book, stable_state, game_state,
-    );
+    engine_game_init(g_state);
 }
 
 pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, Thor: ThorDatabase>(side_to_move: i32,

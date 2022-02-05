@@ -233,21 +233,7 @@ pub fn next_state<
                 },
             };
             /* Set up the position and the search engine */
-            generic_game_init::<BoardSrc, FE>(play_state.file_name.as_ref().map(CString::as_ref), &mut play_state.side_to_move,
-                                              &mut play_state.g_state.flip_stack_,
-                                              &mut play_state.g_state.search_state,
-                                              &mut play_state.g_state.board_state,
-                                              &mut play_state.g_state.hash_state,
-                                              &mut play_state.g_state.g_timer,
-                                              &mut play_state.g_state.end_g,
-                                              &mut play_state.g_state.midgame_state,
-                                              &mut play_state.g_state.coeff_state,
-                                              &mut play_state.g_state.moves_state,
-                                              &mut play_state.g_state.random_instance,
-                                              &mut play_state.g_state.g_book,
-                                              &mut play_state.g_state.stable_state,
-                                              &mut play_state.g_state.game_state,
-            );
+            generic_game_init::<BoardSrc, FE>(play_state.file_name.as_ref().map(CString::as_ref), &mut play_state.side_to_move, &mut play_state.g_state);
             setup_hash(1, &mut play_state.g_state.hash_state, &mut play_state.g_state.random_instance);
             play_state.g_state.learn_state.clear_stored_game();
             if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.use_book != 0 {

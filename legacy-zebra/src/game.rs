@@ -140,38 +140,7 @@ impl BoardSource for BasicBoardFileSource {
 pub unsafe fn game_init(file_name: *const i8, side_to_move: &mut i32, g_state: &mut FullState) {
     //todo remove file_name argument
     let file_name = (!file_name.is_null()).then(|| CStr::from_ptr(file_name));
-    let FullState {
-        ref mut g_config,
-        ref mut learn_state,
-        ref mut midgame_state,
-        ref mut game_state,
-        ref mut end_g,
-        ref mut coeff_state,
-        ref mut g_timer,
-        ref mut moves_state,
-        ref mut stable_state,
-        ref mut board_state,
-        ref mut hash_state,
-        ref mut random_instance,
-        ref mut g_book,
-        ref mut prob_cut,
-        ref mut search_state,
-        ref mut flip_stack_,
-    } : &mut FullState = g_state;
-    generic_game_init::<BasicBoardFileSource, LibcFatalError>(file_name, side_to_move,
-                                                              flip_stack_,
-                                                              search_state,
-                                                              board_state,
-                                                              hash_state,
-                                                              g_timer,
-                                                              end_g,
-                                                              midgame_state,
-                                                              coeff_state,
-                                                              moves_state,
-                                                              random_instance,
-                                                              g_book,
-                                                              stable_state,
-                                                              game_state);
+    generic_game_init::<BasicBoardFileSource, LibcFatalError>(file_name, side_to_move, g_state);
 }
 /*
   PONDER_MOVE
