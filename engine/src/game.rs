@@ -350,20 +350,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                         0 as i32, 0 as i32,
                                         1 as i32, &mut shallow_info, g_state.g_config.display_pv,
                                  g_state.g_config.echo,
-                                 &mut g_state.flip_stack_,
-                                 &mut g_state.search_state,
-                                 &mut g_state.board_state,
-                                 &mut g_state.hash_state,
-                                 &mut g_state.g_timer,
-                                 &mut g_state.end_g,
-                                 &mut g_state.midgame_state,
-                                 &mut g_state.coeff_state,
-                                 &mut g_state.moves_state,
-                                 &mut g_state.random_instance,
-                                 &mut g_state.g_book,
-                                 &mut g_state.stable_state,
-                                 &mut g_state.game_state,
-                                 &mut g_state.prob_cut);
+                                 g_state);
                     if shallow_info.type_0 as u32 ==
                         PASS_EVAL as i32 as u32 {
                         /* Don't allow pass */
@@ -374,20 +361,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                             0 as i32, 0 as i32,
                                             1 as i32, &mut shallow_info, g_state.g_config.display_pv,
                                      g_state.g_config.echo,
-                                     &mut g_state.flip_stack_,
-                                     &mut g_state.search_state,
-                                     &mut g_state.board_state,
-                                     &mut g_state.hash_state,
-                                     &mut g_state.g_timer,
-                                     &mut g_state.end_g,
-                                     &mut g_state.midgame_state,
-                                     &mut g_state.coeff_state,
-                                     &mut g_state.moves_state,
-                                     &mut g_state.random_instance,
-                                     &mut g_state.g_book,
-                                     &mut g_state.stable_state,
-                                     &mut g_state.game_state,
-                                     &mut g_state.prob_cut);
+                                     g_state);
                         if shallow_info.type_0 as u32 ==
                             PASS_EVAL as i32 as u32 {
                             /* Game over */
@@ -577,20 +551,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                         1 as i32, &mut this_eval,
                                  g_state.g_config.display_pv,
                                  g_state.g_config.echo,
-                                 &mut g_state.flip_stack_,
-                                 &mut g_state.search_state,
-                                 &mut g_state.board_state,
-                                 &mut g_state.hash_state,
-                                 &mut g_state.g_timer,
-                                 &mut g_state.end_g,
-                                 &mut g_state.midgame_state,
-                                 &mut g_state.coeff_state,
-                                 &mut g_state.moves_state,
-                                 &mut g_state.random_instance,
-                                 &mut g_state.g_book,
-                                 &mut g_state.stable_state,
-                                 &mut g_state.game_state,
-                                 &mut g_state.prob_cut);
+                                 g_state);
                 }
                 if force_return != 0 {
                     /* Clear eval and exit search immediately */
@@ -626,20 +587,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                                 current_wld - 1 as i32,
                                                 1 as i32, &mut this_eval, g_state.g_config.display_pv,
                                          g_state.g_config.echo,
-                                         &mut g_state.flip_stack_,
-                                         &mut g_state.search_state,
-                                         &mut g_state.board_state,
-                                         &mut g_state.hash_state,
-                                         &mut g_state.g_timer,
-                                         &mut g_state.end_g,
-                                         &mut g_state.midgame_state,
-                                         &mut g_state.coeff_state,
-                                         &mut g_state.moves_state,
-                                         &mut g_state.random_instance,
-                                         &mut g_state.g_book,
-                                         &mut g_state.stable_state,
-                                         &mut g_state.game_state,
-                                         &mut g_state.prob_cut);
+                                         g_state);
                         }
                         if this_eval.type_0 as u32 ==
                             PASS_EVAL as i32 as u32 {
@@ -1048,23 +996,24 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
                                                                                                eval_info: &mut EvaluationType,
                                                                                                logger: &mut Option<L>,
                                                                                                display_pv:i32,
-                                                                                               echo:i32,
-                                                                                                                   mut flip_stack_: &mut FlipStack,
-                                                                                                                   mut search_state: &mut SearchState,
-                                                                                                                   mut board_state: &mut BoardState,
-                                                                                                                   mut hash_state: &mut HashState,
-                                                                                                                   mut g_timer: &mut Timer,
-                                                                                                                   mut end_g: &mut End,
-                                                                                                                   mut midgame_state: &mut MidgameState,
-                                                                                                                   mut coeff_state: &mut CoeffState,
-                                                                                                                   mut moves_state: &mut MovesState,
-                                                                                                                   mut random_instance: &mut MyRandom,
-                                                                                                                   mut g_book: &mut Book,
-                                                                                                                   mut stable_state: &mut StableState,
-                                                                                                                   mut game_state: &mut GameState,
-                                                                                                                   mut prob_cut: &mut ProbCut,
+                                                                                               echo:i32, g_state: &mut FullState
 )
                                                                                                -> i8 {
+    let mut flip_stack_: &mut FlipStack = &mut g_state.flip_stack_;
+    let mut search_state: &mut SearchState = &mut g_state.search_state;
+    let mut board_state: &mut BoardState = &mut g_state.board_state;
+    let mut hash_state: &mut HashState = &mut g_state.hash_state;
+    let mut g_timer: &mut Timer = &mut g_state.g_timer;
+    let mut end_g: &mut End = &mut g_state.end_g;
+    let mut midgame_state: &mut MidgameState = &mut g_state.midgame_state;
+    let mut coeff_state: &mut CoeffState = &mut g_state.coeff_state;
+    let mut moves_state: &mut MovesState = &mut g_state.moves_state;
+    let mut random_instance: &mut MyRandom = &mut g_state.random_instance;
+    let mut g_book: &mut Book = &mut g_state.g_book;
+    let mut stable_state: &mut StableState = &mut g_state.stable_state;
+    let mut game_state: &mut GameState = &mut g_state.game_state;
+    let mut prob_cut: &mut ProbCut = &mut g_state.prob_cut;
+
     let mut book_eval_info = EvaluationType::new();
     let mut mid_eval_info = EvaluationType::new();
     let mut end_eval_info = EvaluationType::new();
@@ -1515,39 +1464,16 @@ pub fn compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, 
     wld: i32,
     search_forced: i32,
     eval_info: &mut EvaluationType, display_pv:i32, echo:i32,
-    mut flip_stack_: &mut FlipStack,
-    mut search_state: &mut SearchState,
-    mut board_state: &mut BoardState,
-    mut hash_state: &mut HashState,
-    mut g_timer: &mut Timer,
-    mut end_g: &mut End,
-    mut midgame_state: &mut MidgameState,
-    mut coeff_state: &mut CoeffState,
-    mut moves_state: &mut MovesState,
-    mut random_instance: &mut MyRandom,
-    mut g_book: &mut Book,
-    mut stable_state: &mut StableState,
-    mut game_state: &mut GameState,
-    mut prob_cut: &mut ProbCut,)
+    g_state: &mut FullState)
     -> i8 {
     return generic_compute_move::<L, Out, FE, Thor>(
         side_to_move, update_all, my_time,
         my_incr, timed_depth,
         book, mid,
         exact, wld,
-        search_forced, eval_info, &mut L::create_log_file_if_needed(), display_pv, echo,   &mut flip_stack_,
-        &mut search_state,
-        &mut board_state,
-        &mut hash_state,
-        &mut g_timer,
-        &mut end_g,
-        &mut midgame_state,
-        &mut coeff_state,
-        &mut moves_state,
-        &mut random_instance,
-        &mut g_book,
-        &mut stable_state,
-        &mut game_state, &mut prob_cut);
+        search_forced, eval_info, &mut L::create_log_file_if_needed(), display_pv, echo,
+        g_state
+    );
 }
 
 pub trait ComputeMoveOutput {

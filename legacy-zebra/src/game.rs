@@ -184,24 +184,7 @@ pub unsafe fn ponder_move<
                            exact: i32,
                            wld: i32, display_pv: i32, mut echo:i32, g_state: &mut FullState) {
     type Rep = LibcFatalError;
-    let FullState {
-        ref mut g_config,
-        ref mut learn_state,
-        ref mut midgame_state,
-        ref mut game_state,
-        ref mut end_g,
-        ref mut coeff_state,
-        ref mut g_timer,
-        ref mut moves_state,
-        ref mut stable_state,
-        ref mut board_state,
-        ref mut hash_state,
-        ref mut random_instance,
-        ref mut g_book,
-        ref mut prob_cut,
-        ref mut search_state,
-        ref mut flip_stack_,
-    } : &mut FullState = g_state;
+
     let mut eval_info =EvaluationType::new();
     let mut entry =
         HashEntry{key1: 0,
@@ -221,21 +204,21 @@ pub unsafe fn ponder_move<
     let mut best_pv: [i8; 61] = [0; 61];
     /* Disable all time control mechanisms as it's the opponent's
        time we're using */
-    g_timer.toggle_abort_check(0 as i32);
-    midgame_state.toggle_midgame_abort_check(0 as i32);
-     g_timer.start_move(0 as i32 as f64,
-                     0 as i32 as f64,
-                     disc_count(0 as i32, &board_state.board) + disc_count(2 as i32, &board_state.board));
-     g_timer.clear_ponder_times();
-    determine_hash_values(side_to_move, &board_state.board,  hash_state);
-    reset_counter(&mut search_state.nodes);
+    &mut g_state.g_timer.toggle_abort_check(0 as i32);
+    &mut g_state.midgame_state.toggle_midgame_abort_check(0 as i32);
+     &mut g_state.g_timer.start_move(0 as i32 as f64,
+                                     0 as i32 as f64,
+                                     disc_count(0 as i32, &&mut g_state.board_state.board) + disc_count(2 as i32, &&mut g_state.board_state.board));
+     &mut g_state.g_timer.clear_ponder_times();
+    determine_hash_values(side_to_move, &&mut g_state.board_state.board, &mut g_state.hash_state);
+    reset_counter(&mut &mut g_state.search_state.nodes);
     /* Find the scores for the moves available to the opponent. */
     let mut hash_move = 0;
-    find_hash(&mut entry, 1 as i32, hash_state);
+    find_hash(&mut entry, 1 as i32, &mut g_state.hash_state);
     if entry.draft as i32 != 0 as i32 {
         hash_move = entry.move_0[0]
     } else {
-        find_hash(&mut entry, 0 as i32, hash_state);
+        find_hash(&mut entry, 0 as i32, &mut g_state.hash_state);
         if entry.draft as i32 != 0 as i32 {
             hash_move = entry.move_0[0]
         }
@@ -247,86 +230,60 @@ pub unsafe fn ponder_move<
                                      if (8 as i32) < mid {
                                          8 as i32
                                      } else { mid }, 0 as i32, 0 as i32,
-                                     0 as i32, &mut eval_info, display_pv, echo,   flip_stack_,
-                                                         search_state,
-                                                         board_state,
-                                                         hash_state,
-                                                         g_timer,
-                                                         end_g,
-                                                         midgame_state,
-                                                         coeff_state,
-                                                         moves_state,
-                                                         random_instance,
-                                                         g_book,
-                                                         stable_state,
-                                                         game_state, prob_cut);
+                                     0 as i32, &mut eval_info, display_pv, echo, g_state);
     echo = stored_echo;
     /* Sort the opponents on the score and push the table move (if any)
        to the front of the list */
     if force_return != 0 {
         expect_count = 0 as i32
     } else {
-        sort_moves(moves_state.move_count[moves_state.disks_played as usize],  moves_state, &search_state);
-        float_move(hash_move, moves_state.move_count[moves_state.disks_played as usize], moves_state);
-        expect_count = moves_state.move_count[moves_state.disks_played as usize];
+        sort_moves(g_state.moves_state.move_count[g_state.moves_state.disks_played as usize], &mut g_state.moves_state, &&mut g_state.search_state);
+        float_move(hash_move, g_state.moves_state.move_count[g_state.moves_state.disks_played as usize], &mut g_state.moves_state);
+        expect_count = g_state.moves_state.move_count[g_state.moves_state.disks_played as usize];
         i = 0;
         while i < expect_count {
-            expect_list[i as usize] =
-                moves_state.move_list[moves_state.disks_played as usize][i as usize];
+            expect_list[i as usize] = g_state.moves_state.move_list[ g_state.moves_state.disks_played as usize][i as usize];
             i += 1
         }
         Rep::report_hash_move(hash_move);
-        let move_list_item = &moves_state.move_list[moves_state.disks_played as usize];
-        let evals_item = &search_state.evals[moves_state.disks_played as usize];
+        let move_list_item = &&mut g_state.moves_state.move_list[g_state.moves_state.disks_played as usize];
+        let evals_item = &&mut g_state.search_state.evals[g_state.moves_state.disks_played as usize];
         Rep::report_move_evals(expect_count, move_list_item, evals_item);
     }
     /* Go through the expected moves in order and prepare responses. */
     let mut best_pv_depth = 0;
     let mut i = 0;
     while force_return == 0 && i < expect_count {
-        move_start_time =  g_timer.get_real_timer();
+        move_start_time = g_state.g_timer.get_real_timer();
         let move_0 = expect_list[i as usize];
-        search_state.set_ponder_move(move_0);
+        g_state.search_state.set_ponder_move(move_0);
         this_move = expect_list[i as usize];
-        game_state.prefix_move = this_move;
-        make_move(side_to_move, this_move, 1 as i32 , moves_state,  board_state,  hash_state,  flip_stack_ );
+        g_state.game_state.prefix_move = this_move;
+        make_move(side_to_move, this_move, 1 as i32, &mut g_state.moves_state, &mut g_state.board_state, &mut g_state.hash_state, &mut g_state.flip_stack_);
         engine::src::game::compute_move::<L, Out, FE, Thor>(0 as i32 + 2 as i32 - side_to_move,
                                          0 as i32, 0 as i32, 0 as i32,
                                          1 as i32, 0 as i32, mid, exact, wld,
-                                         0 as i32, &mut eval_info, display_pv, echo,    flip_stack_,
-                                                             search_state,
-                                                             board_state,
-                                                             hash_state,
-                                                             g_timer,
-                                                             end_g,
-                                                             midgame_state,
-                                                             coeff_state,
-                                                             moves_state,
-                                                             random_instance,
-                                                             g_book,
-                                                             stable_state,
-                                                             game_state,  prob_cut);
+                                         0 as i32, &mut eval_info, display_pv, echo, g_state);
         let move_0 = this_move;
         {
-            unmake_move(side_to_move, move_0, &mut board_state.board,  moves_state,  hash_state,  flip_stack_);
+            unmake_move(side_to_move, move_0, &mut g_state.board_state.board, &mut g_state.moves_state, &mut g_state.hash_state, &mut g_state.flip_stack_);
         };
-        search_state.clear_ponder_move();
-        move_stop_time =  g_timer.get_real_timer();
+        g_state.search_state.clear_ponder_move();
+        move_stop_time =  g_state.g_timer.get_real_timer();
         let move_0 = expect_list[i as usize];
         let time_0 = move_stop_time - move_start_time;
-        g_timer.add_ponder_time(move_0, time_0);
-        g_timer.ponder_depth[expect_list[i as usize] as usize] =
-            if g_timer.ponder_depth[expect_list[i as usize] as usize] >
-                game_state.max_depth_reached - 1 as i32 {
-                g_timer.ponder_depth[expect_list[i as usize] as usize]
-            } else { (game_state.max_depth_reached) - 1 as i32 };
+        g_state.g_timer.add_ponder_time(move_0, time_0);
+        g_state.g_timer.ponder_depth[expect_list[i as usize] as usize] = if g_state.g_timer.ponder_depth[expect_list[i as usize] as usize] > g_state.game_state.max_depth_reached - 1 as i32 {
+            g_state.g_timer.ponder_depth[expect_list[i as usize] as usize]
+        } else {
+            (g_state.game_state.max_depth_reached) - 1 as i32
+        };
         if i == 0 as i32 && force_return == 0 {
             /* Store the PV for the first move */
-            best_pv_depth = board_state.pv_depth[0];
+            best_pv_depth = g_state.board_state.pv_depth[0];
             j = 0;
-            while j < board_state.pv_depth[0] {
-                best_pv[j as usize] =
-                    board_state.pv[0][j as usize];
+            while j < g_state.board_state.pv_depth[0] {
+                best_pv[j as usize] = g_state.board_state.pv[0][j as usize];
                 j += 1
             }
         }
@@ -335,25 +292,22 @@ pub unsafe fn ponder_move<
     /* Make sure the PV looks reasonable when leaving - either by
        clearing it altogether or, preferrably, using the stored PV for
        the first move if it is available. */
-    game_state.max_depth_reached += 1;
-    game_state.prefix_move = 0;
+    g_state.game_state.max_depth_reached += 1;
+    g_state.game_state.prefix_move = 0;
     if best_pv_depth == 0 as i32 {
-        board_state.pv_depth[0] = 0 as i32
+        g_state.board_state.pv_depth[0] = 0 as i32
     } else {
-        board_state.pv_depth[0] =
-            best_pv_depth + 1 as i32;
-        board_state.pv[0][0] =
-            expect_list[0];
+        g_state.board_state.pv_depth[0] = best_pv_depth + 1 as i32;
+        g_state.board_state.pv[0][0] = expect_list[0];
         i = 0;
         while i < best_pv_depth {
-            board_state.pv[0][(i + 1 as i32) as usize] =
-                best_pv[i as usize];
+            g_state.board_state.pv[0][(i + 1 as i32) as usize] = best_pv[i as usize];
             i += 1
         }
     }
     /* Don't forget to enable the time control mechanisms when leaving */
-    g_timer.toggle_abort_check(1 as i32);
-    midgame_state.toggle_midgame_abort_check(1 as i32);
+    &mut g_state.g_timer.toggle_abort_check(1 as i32);
+    &mut g_state.midgame_state.toggle_midgame_abort_check(1 as i32);
 }
 /*
   GET_SEARCH_STATISTICS
@@ -647,20 +601,7 @@ pub fn legacy_compute_move(side_to_move: i32,
                                                                                                &mut LogFileHandler::create_log_file_if_needed(),
                                                                                                g_state.g_config.display_pv,
                                                                                                g_state.g_config.echo,
-                                                                                               &mut g_state.flip_stack_,
-                                                                                               &mut g_state.search_state,
-                                                                                               &mut g_state.board_state,
-                                                                                               &mut g_state.hash_state,
-                                                                                               &mut g_state.g_timer,
-                                                                                               &mut g_state.end_g,
-                                                                                               &mut g_state.midgame_state,
-                                                                                               &mut g_state.coeff_state,
-                                                                                               &mut g_state.moves_state,
-                                                                                               &mut g_state.random_instance,
-                                                                                               &mut g_state.g_book,
-                                                                                               &mut g_state.stable_state,
-                                                                                               &mut g_state.game_state,
-                                                                                               &mut g_state.prob_cut);
+                                                                                               g_state);
 }
 
 pub struct LibcZebraOutput;
