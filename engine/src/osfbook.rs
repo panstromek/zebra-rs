@@ -240,13 +240,9 @@ pub fn probe_hash_table(val1: i32, val2: i32, book: &mut Book) -> i32 {
 */
 pub fn clear_node_depth(index: i32, book: &mut Book) {
     let mut depth: i32 = 0;
-    depth =
-        (*book.node.offset(index as isize)).flags as i32 >>
-            10 as i32;
+    depth = (*book.node.offset(index as isize)).flags as i32 >> 10 as i32;
     let ref mut fresh0 = (*book.node.offset(index as isize)).flags;
-    *fresh0 =
-        (*fresh0 as i32 ^ depth << 10 as i32) as
-            u16;
+    *fresh0 = (*fresh0 as i32 ^ depth << 10 as i32) as u16;
 }
 /*
    GET_NODE_DEPTH
@@ -385,89 +381,29 @@ pub fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32, book: & B
     i = 0;
     while i < 8 as i32 {
         /* b1 -> b1 */
-        out[0][0] ^=
-            book.line_hash[0][i as
-                usize][row_pattern[i as usize] as usize];
-        out[0][1] ^=
-            book.line_hash[1][i as
-                usize][row_pattern[i as usize] as usize];
+        out[0][0] ^= book.line_hash[0][i as usize][row_pattern[i as usize] as usize];
+        out[0][1] ^= book.line_hash[1][i as usize][row_pattern[i as usize] as usize];
         /* g1 -> b1 */
-        out[1][0] ^=
-            book.line_hash[0][i as
-                usize][flip8[row_pattern[i as usize] as
-                usize] as usize];
-        out[1][1] ^=
-            book.line_hash[1][i as
-                usize][flip8[row_pattern[i as usize] as
-                usize] as usize];
+        out[1][0] ^= book.line_hash[0][i as usize][flip8[row_pattern[i as usize] as usize] as usize];
+        out[1][1] ^= book.line_hash[1][i as usize][flip8[row_pattern[i as usize] as usize] as usize];
         /* g8 -> b1 */
-        out[2][0] ^=
-            book.line_hash[0][i as
-                usize][flip8[row_pattern[(7 as
-                i32
-                - i) as
-                usize] as
-                usize] as usize];
-        out[2][1] ^=
-            book.line_hash[1][i as
-                usize][flip8[row_pattern[(7 as
-                i32
-                - i) as
-                usize] as
-                usize] as usize];
+        out[2][0] ^= book.line_hash[0][i as usize][flip8[row_pattern[(7 as i32 - i) as usize] as usize] as usize];
+        out[2][1] ^= book.line_hash[1][i as usize][flip8[row_pattern[(7 as i32 - i) as usize] as usize] as usize];
         /* b8 -> b1 */
-        out[3][0] ^=
-            book.line_hash[0][i as
-                usize][row_pattern[(7 as i32 - i)
-                as usize] as
-                usize];
-        out[3][1] ^=
-            book.line_hash[1][i as
-                usize][row_pattern[(7 as i32 - i)
-                as usize] as
-                usize];
+        out[3][0] ^= book.line_hash[0][i as usize][row_pattern[(7 as i32 - i) as usize] as usize];
+        out[3][1] ^= book.line_hash[1][i as usize][row_pattern[(7 as i32 - i) as usize] as usize];
         /* a2 -> b1 */
-        out[4][0] ^=
-            book.line_hash[0][i as
-                usize][col_pattern[i as usize] as usize];
-        out[4][1] ^=
-            book.line_hash[1][i as
-                usize][col_pattern[i as usize] as usize];
+        out[4][0] ^= book.line_hash[0][i as usize][col_pattern[i as usize] as usize];
+        out[4][1] ^= book.line_hash[1][i as usize][col_pattern[i as usize] as usize];
         /* a7 -> b1 */
-        out[5][0] ^=
-            book.line_hash[0][i as
-                usize][flip8[col_pattern[i as usize] as
-                usize] as usize];
-        out[5][1] ^=
-            book.line_hash[1][i as
-                usize][flip8[col_pattern[i as usize] as
-                usize] as usize];
+        out[5][0] ^= book.line_hash[0][i as usize][flip8[col_pattern[i as usize] as usize] as usize];
+        out[5][1] ^= book.line_hash[1][i as usize][flip8[col_pattern[i as usize] as usize] as usize];
         /* h7 -> b1 */
-        out[6][0] ^=
-            book.line_hash[0][i as
-                usize][flip8[col_pattern[(7 as
-                i32
-                - i) as
-                usize] as
-                usize] as usize];
-        out[6][1] ^=
-            book.line_hash[1][i as
-                usize][flip8[col_pattern[(7 as
-                i32
-                - i) as
-                usize] as
-                usize] as usize];
+        out[6][0] ^= book.line_hash[0][i as usize][flip8[col_pattern[(7 as i32 - i) as usize] as usize] as usize];
+        out[6][1] ^= book.line_hash[1][i as usize][flip8[col_pattern[(7 as i32 - i) as usize] as usize] as usize];
         /* h2 -> b1 */
-        out[7][0] ^=
-            book.line_hash[0][i as
-                usize][col_pattern[(7 as i32 - i)
-                as usize] as
-                usize];
-        out[7][1] ^=
-            book.line_hash[1][i as
-                usize][col_pattern[(7 as i32 - i)
-                as usize] as
-                usize];
+        out[7][0] ^= book.line_hash[0][i as usize][col_pattern[(7 as i32 - i) as usize] as usize];
+        out[7][1] ^= book.line_hash[1][i as usize][col_pattern[(7 as i32 - i) as usize] as usize];
         i += 1
     }
     /* Find the rotation minimizing the hash index.
@@ -506,8 +442,7 @@ pub fn set_search_depth(&mut self, depth: i32) {
   Specify the evaluation value interval where nodes are re-evaluated.
 */
 
-pub fn set_eval_span(&mut self, min_span: f64,
-                            max_span: f64) {
+pub fn set_eval_span(&mut self, min_span: f64, max_span: f64) {
     self.min_eval_span = ceil(min_span * 128.0f64) as i32;
     self.max_eval_span = ceil(max_span * 128.0f64) as i32;
 }
@@ -529,16 +464,16 @@ pub fn adjust_score(score: i32, side_to_move: i32, book: &mut Book, disks_played
     let mut adjustment: i32 = 0;
     let mut adjust_steps: i32 = 0;
     adjust_steps = book.high_deviation_threshold - disks_played_;
-    if adjust_steps < 0 as i32 {
-        adjustment = 0 as i32
+    if adjust_steps < 0 {
+        adjustment = 0
     } else {
         if disks_played_ < book.low_deviation_threshold {
             adjust_steps = book.high_deviation_threshold - book.low_deviation_threshold
         }
-        adjustment =
-            floor(adjust_steps as f64 * book.deviation_bonus * 128.0f64)
-                as i32;
-        if side_to_move == 2 as i32 { adjustment = -adjustment }
+        adjustment = floor(adjust_steps as f64 * book.deviation_bonus * 128.0f64) as i32;
+        if side_to_move == 2 {
+            adjustment = -adjustment
+        }
     }
     return score + adjustment;
 }
@@ -558,8 +493,7 @@ pub fn find_opening_name(book: &Book, board: &Board) -> Option<&'static [u8]> {
     get_hash(&mut val1, &mut val2, &mut orientation, book, board);
     let mut i = 0;
     while i < opening_list.len() {
-        if val1 == opening_list[i].hash_val1 &&
-            val2 == opening_list[i].hash_val2 {
+        if val1 == opening_list[i].hash_val1 && val2 == opening_list[i].hash_val2 {
             return Some(opening_list[i].name)
         }
         i += 1
@@ -595,16 +529,14 @@ pub fn check_forced_opening<FE: FrontEnd>(side_to_move: i32, opening: ForcedOpen
     /* Play through the given opening line until the number of discs
        matches that on the actual board. */
     let mut pos = 11;
-    while pos <= 88 as i32 {
+    while pos <= 88 {
         local_board[pos as usize] = 1;
         pos += 1
     }
     local_board[54] = 0;
-    local_board[45] =
-        local_board[54];
+    local_board[45] = local_board[54];
     local_board[55] = 2;
-    local_board[44] =
-        local_board[55];
+    local_board[44] = local_board[55];
     local_side_to_move = 0;
     let mut i = 0;
     while i < disks_played {
@@ -612,8 +544,7 @@ pub fn check_forced_opening<FE: FrontEnd>(side_to_move: i32, opening: ForcedOpen
         while j < 8 as i32 {
             pos = move_0[i as usize] + move_offset[j as usize];
             count = 0;
-            while local_board[pos as usize] ==
-                0 as i32 + 2 as i32 - local_side_to_move
+            while local_board[pos as usize] == 0 + 2 - local_side_to_move
             {
                 pos += move_offset[j as usize];
                 count += 1
@@ -628,11 +559,10 @@ pub fn check_forced_opening<FE: FrontEnd>(side_to_move: i32, opening: ForcedOpen
             j += 1
         }
         local_board[move_0[i as usize] as usize] = local_side_to_move;
-        local_side_to_move =
-            0 as i32 + 2 as i32 - local_side_to_move;
+        local_side_to_move = 0 + 2 - local_side_to_move;
         i += 1
     }
-    if local_side_to_move != side_to_move { return -(1 as i32) }
+    if local_side_to_move != side_to_move { return -1 }
     /* Check if any of the 8 symmetries make the board after the opening
        line match the current board. The initial symmetry is chosen
        randomly to avoid the same symmetry being chosen all the time.
@@ -644,28 +574,22 @@ pub fn check_forced_opening<FE: FrontEnd>(side_to_move: i32, opening: ForcedOpen
         i = 1;
         while i <= 8 as i32 && same_position != 0 {
             j = 1;
-            while j <= 8 as i32 {
-                pos = 10 as i32 * i + j;
-                if board[pos as usize] !=
-                    local_board[*book.symmetry_map[symmetry as
-                        usize].offset(pos as
-                        isize)
-                        as usize] {
-                    same_position = 0 as i32
+            while j <= 8 {
+                pos = 10 * i + j;
+                if board[pos as usize] != local_board[*book.symmetry_map[symmetry as usize].offset(pos as isize) as usize] {
+                    same_position = 0
                 }
                 j += 1
             }
             i += 1
         }
         if same_position != 0 {
-            return *book.inv_symmetry_map[symmetry as
-                usize].offset(move_0[disks_played as
-                usize] as isize) as _
+            return *book.inv_symmetry_map[symmetry as usize].offset(move_0[disks_played as usize] as isize) as _
         }
         symm_index += 1;
-        symmetry = (symmetry + 1 as i32) % 8 as i32
+        symmetry = (symmetry + 1) % 8
     }
-    return -(1 as i32);
+    return -1;
 }
 
 /*
@@ -696,7 +620,7 @@ pub fn fill_endgame_hash(cutoff: i32, level: i32
     let mut val1: i32 = 0;
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
-    if level >= 5 as i32 { return }
+    if level >= 5 { return }
     let val0___ = &mut val1;
     let val1___ = &mut val2;
     let orientation___ = &mut orientation;
@@ -704,23 +628,19 @@ pub fn fill_endgame_hash(cutoff: i32, level: i32
     slot = probe_hash_table(val1, val2, book);
     this_index = *book.book_hash_table.offset(slot as isize);
     /* If the position wasn't found in the hash table, return. */
-    if slot == -(1 as i32) ||
-        *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
+    if slot == -1 || *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
         return
     }
     /* Check the status of the g_book.node */
-    is_full =
-        (*book.node.offset(this_index as isize)).flags as i32 &
-            16 as i32;
-    is_wld =
-        (*book.node.offset(this_index as isize)).flags as i32 &
-            4 as i32;
+    is_full = (*book.node.offset(this_index as isize)).flags as i32 & 16;
+    is_wld = (*book.node.offset(this_index as isize)).flags as i32 & 4;
     /* Match the status of the node with those of the children and
        recursively treat the entire subtree of the node */
-    if (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags
-        as i32 & 1 as i32 != 0 {
-        side_to_move = 0 as i32
-    } else { side_to_move = 2 as i32 }
+    if (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags & 1 != 0 {
+        side_to_move = 0
+    } else {
+        side_to_move = 2
+    }
     matching_move = -1;
     generate_all(side_to_move, moves_state_, search_state_, &board_state_.board);
     i = 0;
@@ -733,48 +653,27 @@ pub fn fill_endgame_hash(cutoff: i32, level: i32
         get_hash(val0___, val1___, orientation___, book, &board_state_.board);
         slot = probe_hash_table(val1, val2, book);
         child_index = *book.book_hash_table.offset(slot as isize);
-        if child_index != -(1 as i32) {
-            if moves_state_.disks_played < 60 as i32 - cutoff {
-                fill_endgame_hash(cutoff, level + 1 as i32,
-                book
-                ,board_state_
-                ,moves_state_
-                ,search_state_
-                ,hash_state_
-                ,flip_stack
-                );
+        if child_index != -1 {
+            if moves_state_.disks_played < 60 - cutoff {
+                fill_endgame_hash(cutoff, level + 1, book, board_state_, moves_state_, search_state_, hash_state_, flip_stack);
             }
             if is_full != 0 {
                 /* Any child with matching exact score? */
-                if (*book.node.offset(child_index as isize)).flags as i32 &
-                    16 as i32 != 0 &&
-                    (*book.node.offset(child_index as
-                        isize)).black_minimax_score as
-                        i32 ==
-                        (*book.node.offset(this_index as
-                            isize)).black_minimax_score as
-                            i32 {
+                if (*book.node.offset(child_index as isize)).flags as i32 & 16 != 0 &&
+                    (*book.node.offset(child_index as isize)).black_minimax_score as i32 ==
+                        (*book.node.offset(this_index as isize)).black_minimax_score as i32 {
                     matching_move = this_move
                 }
             } else if is_wld != 0 {
                 /* Any child with matching WLD results? */
-                if (*book.node.offset(child_index as isize)).flags as i32 &
-                    (16 as i32 | 4 as i32) != 0 {
-                    if side_to_move == 0 as i32 {
-                        if (*book.node.offset(child_index as
-                            isize)).black_minimax_score as
-                            i32 >=
-                            (*book.node.offset(this_index as
-                                isize)).black_minimax_score
-                                as i32 {
+                if (*book.node.offset(child_index as isize)).flags as i32 & (16 | 4) != 0 {
+                    if side_to_move == 0 {
+                        if (*book.node.offset(child_index as isize)).black_minimax_score as i32 >=
+                            (*book.node.offset(this_index as isize)).black_minimax_score as i32 {
                             matching_move = this_move
                         }
-                    } else if (*book.node.offset(child_index as
-                        isize)).black_minimax_score as
-                        i32 <=
-                        (*book.node.offset(this_index as
-                            isize)).black_minimax_score
-                            as i32 {
+                    } else if (*book.node.offset(child_index as isize)).black_minimax_score as i32 <=
+                        (*book.node.offset(this_index as isize)).black_minimax_score as i32 {
                         matching_move = this_move
                     }
                 }
@@ -788,26 +687,24 @@ pub fn fill_endgame_hash(cutoff: i32, level: i32
     }
     if matching_move != -(1) {
         /* Store the information */
-        signed_score =
-            (*book.node.offset(this_index as isize)).black_minimax_score as
-                i32;
+        signed_score = (*book.node.offset(this_index as isize)).black_minimax_score as i32;
         if side_to_move == 2 as i32 { signed_score = -signed_score }
         if signed_score > 30000 as i32 {
             signed_score -= 30000 as i32
         } else if signed_score < -(30000 as i32) {
             signed_score += 30000 as i32
-        } else if abs(signed_score) == 30000 as i32 - 1 as i32
-        {
-            signed_score = 0 as i32
+        } else if abs(signed_score) == 30000 - 1 {
+            signed_score = 0
         }
         if is_full != 0 {
-            bound = 4 as i32
-        } else if signed_score >= 0 as i32 {
-            bound = 1 as i32
-        } else { bound = 2 as i32 }
-        add_hash(hash_state_, 1 as i32, signed_score, matching_move,
-                 16 as i32 | bound, 60 as i32 - moves_state_.disks_played,
-                 0 as i32);
+            bound = 4
+        } else if signed_score >= 0 {
+            bound = 1
+        } else {
+            bound = 2
+        }
+        add_hash(hash_state_, 1, signed_score, matching_move,
+                 16 | bound, 60 - moves_state_.disks_played, 0);
     };
 }
 
