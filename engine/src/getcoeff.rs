@@ -393,7 +393,7 @@ pub fn post_init_coeffs(state: &mut CoeffState) {
    Reads feature values for one specific pattern
 */
 pub fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: &mut [i16],
-                                                           mirror: Option<&[i32]>,
+                                                           mirror: Option<&[u16]>,
                                                            next_word: &mut S) {
     let count = item.len();
     let mut buffer = &mut vec![0; count as usize];
@@ -402,7 +402,7 @@ pub fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: &mut [i16],
        so that 512 units corresponds to one disk. */
     let mut i = 0;
     while i < count {
-        if mirror.is_none() || *mirror.unwrap().offset(i as isize) == i as i32 {
+        if mirror.is_none() || *mirror.unwrap().offset(i as isize) == i as u16 {
             let i1 = next_word();
             *buffer.offset(i as isize) =
                 (i1 as i32 / 4 as i32) as
@@ -428,7 +428,7 @@ pub fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: &mut [i16],
                 let first_item = *item.offset(i as isize) as i32;
                 let second_item = *item.offset(first_mirror_offset as isize) as i32;
 
-                FE::report_mirror_symetry_error(count as i32, i as i32, first_mirror_offset, first_item, second_item);
+                FE::report_mirror_symetry_error(count as i32, i as i32, first_mirror_offset as i32, first_item, second_item);
                 exit(1 as i32);
             }
             i += 1
@@ -449,7 +449,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
 
     /* Allocate the memory needed for the temporary mirror maps from the
        heap rather than the stack to reduce memory requirements. */
-    let mut base = vec![0; 27 + 81 + 243 + 729 + 2187 + 6561 + 19683 + 59049];
+    let mut base = vec![0u16; 27 + 81 + 243 + 729 + 2187 + 6561 + 19683 + 59049];
 
     let (map_mirror3, rem) = base.split_at_mut(27);
     let (map_mirror4, rem) = rem.split_at_mut(81);
@@ -471,7 +471,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
         }
         /* Create the symmetry map */
         *map_mirror8.offset(i as isize) =
-            if i < mirror_pattern { i } else { mirror_pattern };
+            if i < mirror_pattern { i } else { mirror_pattern } as u16;
         /* Next configuration */
         odometer_principle(&mut row, 8);
         i += 1
@@ -489,7 +489,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
             j += 1
         }
         *map_mirror7.offset(i as isize) =
-            if i < mirror_pattern { i } else { mirror_pattern };
+            if i >= mirror_pattern { mirror_pattern } else { i } as u16;
         /* Next configuration */
         odometer_principle(&mut row, 7);
         i += 1
@@ -507,7 +507,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
             j += 1
         }
         *map_mirror6.offset(i as isize) =
-            if i < mirror_pattern { i } else { mirror_pattern };
+            if i < mirror_pattern { i } else { mirror_pattern } as u16;
         /* Next configuration */
         odometer_principle(&mut row, 6);
         i += 1
@@ -525,7 +525,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
             j += 1
         }
         *map_mirror5.offset(i as isize) =
-            if mirror_pattern < i { mirror_pattern } else { i };
+            if mirror_pattern >= i { i } else { mirror_pattern } as u16;
         /* Next configuration */
         odometer_principle(&mut row, 5);
         i += 1
@@ -543,7 +543,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
             j += 1
         }
         *map_mirror4.offset(i as isize) =
-            if i < mirror_pattern { i } else { mirror_pattern };
+            if i < mirror_pattern { i } else { mirror_pattern } as u16;
         /* Next configuration */
         odometer_principle(&mut row, 4);
         i += 1
@@ -561,7 +561,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
             j += 1
         }
         *map_mirror3.offset(i as isize) =
-            if i < mirror_pattern { i } else { mirror_pattern };
+            if i < mirror_pattern { i } else { mirror_pattern } as u16;
         /* Next configuration */
         j = 0;
         odometer_principle(&mut row, 3);
@@ -579,7 +579,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
                 *map_mirror8x2.offset((i + 6561 as i32 * j +
                     19683 as i32 * k) as isize)
                     =
-                    if flip8[i as usize]  as i32 + 6561 as i32 * k +
+                    if flip8[i as usize] as i32 + 6561 as i32 * k +
                         19683 as i32 * j <
                         i + 6561 as i32 * j +
                             19683 as i32 * k {
@@ -588,7 +588,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
                     } else {
                         (i + 6561 as i32 * j) +
                             19683 as i32 * k
-                    };
+                    } as u16;
                 k += 1
             }
             j += 1
@@ -611,7 +611,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
                 2187 as i32 * row[5] +
                 6561 as i32 * row[8];
         *map_mirror33.offset(i as isize) =
-            if i < mirror_pattern { i } else { mirror_pattern };
+            if i < mirror_pattern { i } else { mirror_pattern } as u16;
         /* Next configuration */
         j = 0;
         odometer_principle(&mut row, 9);
