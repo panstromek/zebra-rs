@@ -129,16 +129,15 @@ pub fn inherit_move_lists(stage: i32, sorted_move_order_: &mut [[i8; 64]; 64], l
     }
     if list_inherited_[stage as usize] != 0 { return }
     list_inherited_[stage as usize] = 1;
-    if stage == 0 as i32 { return }
+    if stage == 0 { return }
     last = stage - 2 as i32;
     while last >= 0 as i32 && list_inherited_[last as usize] == 0 {
         last -= 2 as i32
     }
-    if last < 0 as i32 { return }
+    if last < 0 { return }
     i = 0;
-    while i < 60 as i32 {
-        sorted_move_order_[stage as usize][i as usize] =
-            sorted_move_order_[last as usize][i as usize];
+    while i < 60 {
+        sorted_move_order_[stage as usize][i as usize] = sorted_move_order_[last as usize][i as usize];
         i += 1
     };
 }
@@ -159,9 +158,9 @@ pub fn reorder_move_list(board_: & crate::src::globals::Board, stage_sorted_move
     let mut nonempty_buffer: [i8; 60] = [0; 60];
     empty_pos = 0;
     i = 0;
-    while i < 60 as i32 {
+    while i < 60 {
         move_0 = stage_sorted_move_order[i as usize];
-        if board_[move_0 as usize] == 1 as i32 || i < dont_touch {
+        if board_[move_0 as usize] == 1 || i < dont_touch {
             empty_buffer[empty_pos as usize] = move_0;
             empty_pos += 1
         }
@@ -250,7 +249,6 @@ pub fn sort_moves(list_size: i32, moves: &mut MovesState, search: &SearchState) 
 */
 
 pub fn select_move(first: i32, list_size: i32, search_state_: &mut SearchState, moves_state_: &mut MovesState) -> i8 {
-    let mut i: i32 = 0;
     let mut temp_move = 0;
     let mut best = 0;
     let mut best_eval: i32 = 0;
@@ -259,23 +257,17 @@ pub fn select_move(first: i32, list_size: i32, search_state_: &mut SearchState, 
         search_state_.evals[moves_state_.disks_played as
             usize][moves_state_.move_list[moves_state_.disks_played as usize][first as usize] as
             usize];
-    i = first + 1 as i32;
+    let mut i = first + 1;
     while i < list_size {
-        if search_state_.evals[moves_state_.disks_played as
-            usize][moves_state_.move_list[moves_state_.disks_played as usize][i as usize] as
-            usize] > best_eval {
+        if search_state_.evals[moves_state_.disks_played as usize][moves_state_.move_list[moves_state_.disks_played as usize][i as usize] as usize] > best_eval {
             best = i;
-            best_eval =
-                search_state_.evals[moves_state_.disks_played as
-                    usize][moves_state_.move_list[moves_state_.disks_played as usize][i as usize]
-                    as usize]
+            best_eval = search_state_.evals[moves_state_.disks_played as usize][moves_state_.move_list[moves_state_.disks_played as usize][i as usize] as usize]
         }
         i += 1
     }
     if best != first {
         temp_move = moves_state_.move_list[moves_state_.disks_played as usize][first as usize];
-        moves_state_.move_list[moves_state_.disks_played as usize][first as usize] =
-            moves_state_.move_list[moves_state_.disks_played as usize][best as usize];
+        moves_state_.move_list[moves_state_.disks_played as usize][first as usize] = moves_state_.move_list[moves_state_.disks_played as usize][best as usize];
         moves_state_.move_list[moves_state_.disks_played as usize][best as usize] = temp_move
     }
     return moves_state_.move_list[moves_state_.disks_played as usize][first as usize];
@@ -295,18 +287,15 @@ pub fn float_move(move_0: i8, list_size: i32, state: &mut MovesState) -> i32 {
         if state.move_list[state.disks_played as usize][i as usize] == move_0 {
             j = i;
             while j >= 1 as i32 {
-                state.move_list[state.disks_played as usize][j as usize] =
-                    state.move_list[state.disks_played as
-                        usize][(j - 1 as i32) as usize];
+                state.move_list[state.disks_played as usize][j as usize] = state.move_list[state.disks_played as usize][(j - 1) as usize];
                 j -= 1
             }
-            state.move_list[state.disks_played as usize][0] =
-                move_0;
+            state.move_list[state.disks_played as usize][0] = move_0;
             return 1 as i32
         }
         i += 1
     }
-    return 0 as i32;
+    return 0;
 }
 /*
    STORE_PV
@@ -562,8 +551,7 @@ pub fn complete_pv<FE: FrontEnd>(mut side_to_move: i32, search_state_: &mut Sear
             side_to_move = 0 + 2 - side_to_move;
             if make_move(side_to_move, board_state_.pv[0][i as usize], 1, moves_state_, board_state_, hash_state_, flip_stack) != 0 {
                 actual_side_to_move[i as usize] = side_to_move;
-                search_state_.full_pv[search_state_.full_pv_depth as usize] =
-                    board_state_.pv[0][i as usize];
+                search_state_.full_pv[search_state_.full_pv_depth as usize] = board_state_.pv[0][i as usize];
                 search_state_.full_pv_depth += 1
             } else {
                 let pv_0_depth: i32 = board_state_.pv_depth[0];
