@@ -328,24 +328,7 @@ pub fn get_search_statistics(max_depth: &mut i32, node_count: &mut f64, g_state:
 */
 
 pub fn get_pv(destin: &mut [i8], g_state: &mut FullState) -> i32 {
-    let FullState {
-       ref  mut g_config,
-       ref  mut learn_state,
-       ref  mut midgame_state,
-       ref  mut game_state,
-       ref  mut end_g,
-       ref  mut coeff_state,
-       ref  mut g_timer,
-       ref  mut moves_state,
-       ref  mut stable_state,
-       ref  mut board_state,
-       ref  mut hash_state,
-       ref  mut random_instance,
-       ref  mut g_book,
-       ref  mut prob_cut,
-       ref  mut search_state,
-       ref  mut flip_stack_,
-    } : &mut FullState = g_state;
+    let FullState { ref mut game_state, ref mut board_state, .. } = g_state;
     let mut i = 0;
     return if game_state.prefix_move == 0 {
         i = 0;
