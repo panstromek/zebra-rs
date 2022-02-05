@@ -238,53 +238,25 @@ pub fn setup_hash(clear: i32, hash_state_: &mut HashState, random: &mut MyRandom
     if clear != 0 {
         i = 0;
         while i < has_table_ptr.len() as i32 {
-            (*has_table_ptr.offset(i as isize)).key1_selectivity_flags_draft &=
-                !(255 as i32) as u32;
+            (*has_table_ptr.offset(i as isize)).key1_selectivity_flags_draft &= !(255 as i32) as u32;
             (*has_table_ptr.offset(i as isize)).key2 = 0;
             i += 1
         }
     }
     rand_index = 0;
     while rand_index < 130 as i32 {
-        'c_2013:
-        loop  {
-            random_pair[rand_index as usize][0] =
-                ((random.my_random() << 3 as i32) +
-                    (random.my_random() >> 2 as i32)) as u32;
-            random_pair[rand_index as usize][1] =
-                ((random.my_random() << 3 as i32) +
-                    (random.my_random() >> 2 as i32)) as u32;
-            closeness =
-                get_closeness(random_pair[rand_index as
-                    usize][0],
-                              random_pair[rand_index as
-                                  usize][1],
-                              0 as i32 as u32,
-                              0 as i32 as u32);
-            if closeness > max_zero_closeness { continue ; }
+        'c_2013: loop {
+            random_pair[rand_index as usize][0] = ((random.my_random() << 3 as i32) + (random.my_random() >> 2 as i32)) as u32;
+            random_pair[rand_index as usize][1] = ((random.my_random() << 3 as i32) + (random.my_random() >> 2 as i32)) as u32;
+            closeness = get_closeness(random_pair[rand_index as usize][0], random_pair[rand_index as usize][1], 0 as i32 as u32, 0 as i32 as u32);
+            if closeness > max_zero_closeness { continue; }
             i = 0;
-            loop  {
-                if !(i < rand_index) { break 'c_2013 ; }
-                closeness =
-                    get_closeness(random_pair[rand_index as
-                        usize][0],
-                                  random_pair[rand_index as
-                                      usize][1],
-                                  random_pair[i as
-                                      usize][0],
-                                  random_pair[i as
-                                      usize][1]);
-                if closeness > max_pair_closeness { break ; }
-                closeness =
-                    get_closeness(random_pair[rand_index as
-                        usize][0],
-                                  random_pair[rand_index as
-                                      usize][1],
-                                  random_pair[i as
-                                      usize][1],
-                                  random_pair[i as
-                                      usize][0]);
-                if closeness > max_pair_closeness { break ; }
+            loop {
+                if !(i < rand_index) { break 'c_2013; }
+                closeness = get_closeness(random_pair[rand_index as usize][0], random_pair[rand_index as usize][1], random_pair[i as usize][0], random_pair[i as usize][1]);
+                if closeness > max_pair_closeness { break; }
+                closeness = get_closeness(random_pair[rand_index as usize][0], random_pair[rand_index as usize][1], random_pair[i as usize][1], random_pair[i as usize][0]);
+                if closeness > max_pair_closeness { break; }
                 i += 1
             }
         }
@@ -304,15 +276,11 @@ pub fn setup_hash(clear: i32, hash_state_: &mut HashState, random: &mut MyRandom
         j = 1;
         while j <= 8 as i32 {
             pos = 10 as i32 * i + j;
-            hash_state_.hash_value1[0][pos as usize] =
-                random_pair[rand_index as usize][0];
-            hash_state_.hash_value2[0][pos as usize] =
-                random_pair[rand_index as usize][1];
+            hash_state_.hash_value1[0][pos as usize] = random_pair[rand_index as usize][0];
+            hash_state_.hash_value2[0][pos as usize] = random_pair[rand_index as usize][1];
             rand_index += 1;
-            hash_state_.hash_value1[2][pos as usize] =
-                random_pair[rand_index as usize][0];
-            hash_state_.hash_value2[2][pos as usize] =
-                random_pair[rand_index as usize][1];
+            hash_state_.hash_value1[2][pos as usize] = random_pair[rand_index as usize][0];
+            hash_state_.hash_value2[2][pos as usize] = random_pair[rand_index as usize][1];
             rand_index += 1;
             j += 1
         }
@@ -320,44 +288,24 @@ pub fn setup_hash(clear: i32, hash_state_: &mut HashState, random: &mut MyRandom
     }
     i = 0;
     while i < 128 as i32 {
-        hash_state_.hash_flip1[i as usize] =
-            hash_state_.hash_value1[0][i as usize] ^
-                hash_state_.hash_value1[2][i as usize];
-        hash_state_.hash_flip2[i as usize] =
-            hash_state_.hash_value2[0][i as usize] ^
-                hash_state_.hash_value2[2][i as usize];
+        hash_state_.hash_flip1[i as usize] = hash_state_.hash_value1[0][i as usize] ^ hash_state_.hash_value1[2][i as usize];
+        hash_state_.hash_flip2[i as usize] = hash_state_.hash_value2[0][i as usize] ^ hash_state_.hash_value2[2][i as usize];
         i += 1
     }
-    hash_state_.hash_color1[0] =
-        random_pair[rand_index as usize][0];
-    hash_state_.hash_color2[0] =
-        random_pair[rand_index as usize][1];
+    hash_state_.hash_color1[0] = random_pair[rand_index as usize][0];
+    hash_state_.hash_color2[0] = random_pair[rand_index as usize][1];
     rand_index += 1;
-    hash_state_.hash_color1[2] =
-        random_pair[rand_index as usize][0];
-    hash_state_.hash_color2[2] =
-        random_pair[rand_index as usize][1];
+    hash_state_.hash_color1[2] = random_pair[rand_index as usize][0];
+    hash_state_.hash_color2[2] = random_pair[rand_index as usize][1];
     rand_index += 1;
-    hash_state_.hash_flip_color1 =
-        hash_state_.hash_color1[0] ^
-            hash_state_.hash_color1[2];
-    hash_state_.hash_flip_color2 =
-        hash_state_.hash_color2[0] ^
-            hash_state_.hash_color2[2];
+    hash_state_.hash_flip_color1 = hash_state_.hash_color1[0] ^ hash_state_.hash_color1[2];
+    hash_state_.hash_flip_color2 = hash_state_.hash_color2[0] ^ hash_state_.hash_color2[2];
     j = 0;
     while j < 128 as i32 {
-        hash_state_.hash_put_value1[0][j as usize] =
-            hash_state_.hash_value1[0][j as usize] ^
-                hash_state_.hash_flip_color1;
-        hash_state_.hash_put_value2[0][j as usize] =
-            hash_state_.hash_value2[0][j as usize] ^
-                hash_state_.hash_flip_color2;
-        hash_state_.hash_put_value1[2][j as usize] =
-            hash_state_.hash_value1[2][j as usize] ^
-                hash_state_.hash_flip_color1;
-        hash_state_.hash_put_value2[2][j as usize] =
-            hash_state_.hash_value2[2][j as usize] ^
-                hash_state_.hash_flip_color2;
+        hash_state_.hash_put_value1[0][j as usize] = hash_state_.hash_value1[0][j as usize] ^ hash_state_.hash_flip_color1;
+        hash_state_.hash_put_value2[0][j as usize] = hash_state_.hash_value2[0][j as usize] ^ hash_state_.hash_flip_color2;
+        hash_state_.hash_put_value1[2][j as usize] = hash_state_.hash_value1[2][j as usize] ^ hash_state_.hash_flip_color1;
+        hash_state_.hash_put_value2[2][j as usize] = hash_state_.hash_value2[2][j as usize] ^ hash_state_.hash_flip_color2;
         j += 1
     };
 }
