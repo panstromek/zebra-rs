@@ -387,19 +387,8 @@ pub fn next_state<
                             0 as i32, &mut play_state.eval_info,
                             &mut ComputeMoveLog::create_log_file_if_needed(),
                             play_state.g_state.g_config.display_pv,
-                            play_state.g_state.g_config.echo, &mut play_state.g_state.flip_stack_,
-                            &mut play_state.g_state.search_state,
-                            &mut play_state.g_state.board_state,
-                            &mut play_state.g_state.hash_state,
-                            &mut play_state.g_state.g_timer,
-                            &mut play_state.g_state.end_g,
-                            &mut play_state.g_state.midgame_state,
-                            &mut play_state.g_state.coeff_state,
-                            &mut play_state.g_state.moves_state,
-                            &mut play_state.g_state.random_instance,
-                            &mut play_state.g_state.g_book,
-                            &mut play_state.g_state.stable_state,
-                            &mut play_state.g_state.game_state, &mut play_state.g_state.prob_cut);
+                            play_state.g_state.g_config.echo,
+                            &mut play_state.g_state);
                     if play_state.side_to_move == 0 as i32 {
                         ZF::set_evals(produce_compact_eval(play_state.eval_info), 0.0f64);
                     } else {
