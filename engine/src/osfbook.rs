@@ -747,14 +747,13 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
     get_hash(&mut val1, &mut val2, &mut orientation, book, board1);
     slot = probe_hash_table(val1, val2, book);
     /* If the position wasn't found in the hash table, return. */
-    if slot == -(1 as i32) ||
-        *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
+    if slot == -1 || *book.book_hash_table.offset(slot as isize) == -1 {
         book.candidate_count = 0;
         return
     } else { index = *book.book_hash_table.offset(slot as isize) }
     /* If the position hasn't got the right flag bits set, return. */
     root_flags = (*book.node.offset(index as isize)).flags as i32;
-    if flags != 0 as i32 && root_flags & flags == 0 {
+    if flags != 0 && root_flags & flags == 0 {
         book.candidate_count = 0;
         return
     }
@@ -763,23 +762,18 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
     } else { sign = -(1 as i32) }
     alternative_move = (*book.node.offset(index as isize)).best_alternative_move;
     if alternative_move > 0 {
-        alternative_move =
-            *book.inv_symmetry_map[orientation as
-                usize].offset(alternative_move as isize) as _;
-        alternative_score =
-            adjust_score((*book.node.offset(index as isize)).alternative_score as
-                             i32, side_to_move, book, moves_state_.disks_played)
-    } else { alternative_score = -(12345678 as i32) }
+        alternative_move = *book.inv_symmetry_map[orientation as usize].offset(alternative_move as isize) as _;
+        alternative_score = adjust_score((*book.node.offset(index as isize)).alternative_score as i32, side_to_move, book, moves_state_.disks_played)
+    } else {
+        alternative_score = -12345678
+    }
     generate_all(side_to_move, moves_state_, search_state_, &board_state_.board);
     book.candidate_count = 0;
     i = 0;
     while i < moves_state_.move_count[moves_state_.disks_played as usize] {
         this_move = moves_state_.move_list[moves_state_.disks_played as usize][i as usize];
         make_move(side_to_move, this_move, 1 as i32, moves_state_, board_state_, hash_state_, flip_stack);
-        let val0___ = &mut val1;
-        let val1___ = &mut val2;
-        let orientation___ = &mut orientation;
-        get_hash(val0___, val1___, orientation___, book, &board_state_.board);
+        get_hash(&mut val1, &mut val2, &mut orientation, book, &board_state_.board);
         slot = probe_hash_table(val1, val2, book);
         let move_0 = this_move;
         {
@@ -788,8 +782,7 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
         /* Check if the move leads to a book position and, if it does,
            whether it has the solve status (WLD or FULL) specified by FLAGS. */
         deviation = 0;
-        if slot == -(1 as i32) ||
-            *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
+        if slot == -1 || *book.book_hash_table.offset(slot as isize) == -1 {
             if i16::from(this_move) == alternative_move && flags == 0 {
                 score = alternative_score;
                 child_feasible = 1;
@@ -798,30 +791,24 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                 child_feasible = 0;
                 score = 0 as i32
             }
-        } else if (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
-            isize)).flags as i32 & flags != 0
-            || flags == 0 {
+        } else if (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags as i32 & flags != 0 || flags == 0 {
             if side_to_move == 0 as i32 {
-                score =
-                    (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
-                        isize)).black_minimax_score as
-                        i32
+                score = (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).black_minimax_score as i32
             } else {
-                score =
-                    (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
-                        isize)).white_minimax_score as
-                        i32
+                score = (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).white_minimax_score as i32
             }
-            child_feasible = 1 as i32
-        } else { child_feasible = 0; score = 0 as i32 }
+            child_feasible = 1
+        } else {
+            child_feasible = 0;
+            score = 0
+        }
         const EMPTY_HASH_SLOT: i32 = -1;
-        if child_feasible != 0 && score == 0 as i32 &&
-            (*book.node.offset(index as isize)).flags as i32 &
-                4 as i32 == 0 &&
+        if child_feasible != 0 &&
+            score == 0 &&
+            (*book.node.offset(index as isize)).flags & 4 == 0 &&
             (*book.book_hash_table.offset(slot as isize) != EMPTY_HASH_SLOT) &&
-            (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
-                isize)).flags as i32 &
-                4 as i32 != 0 {
+            (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags & 4 != 0
+        {
             /* Check if this is a book draw that should be avoided, i.e., one
                where the current position is not solved but the child position
                is solved for a draw, and the draw mode dictates this draw to
@@ -853,12 +840,11 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
         i += 1
     }
     if book.candidate_count > 0 {
-        loop
         /* Sort the book moves using bubble sort */
-        {
+        loop {
             changed = 0;
             i = 0;
-            while i < book.candidate_count - 1 as i32 {
+            while i < book.candidate_count - 1 {
                 if book.candidate_list[i as usize].score < book.candidate_list[(i + 1) as usize].score {
                     changed = 1;
                     temp = book.candidate_list[i as usize];
@@ -934,7 +920,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         FE::report_in_get_book_move_1(side_to_move, remaining_slack, board_state_, book);
     }
     /* No book move found? */
-    if book.candidate_count == 0 as i32 { return -(1) }
+    if book.candidate_count == 0 { return -(1) }
     /* Find the book flags of the original position. */
     let val0___ = &mut val1;
     let val1___ = &mut val2;
