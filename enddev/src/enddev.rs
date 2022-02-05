@@ -6,8 +6,6 @@ use engine::src::game::EvaluatedMove;
 use engine::src::hash::{determine_hash_values, setup_hash};
 use engine::src::moves::{generate_all, make_move, valid_move};
 use engine::src::search::disc_count;
-use engine::src::zebra::EvalResult::WON_POSITION;
-use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::{EvaluationType, FullState};
 use legacy_zebra::src::display::{display_board, display_state};
 use legacy_zebra::src::error::{LibcFatalError};
@@ -229,13 +227,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                         0 as i32 as f64,
                                         g_state.moves_state.disks_played + 4 as i32);
             if in_branch != 0 {
-                let mut ev_info: EvaluationType =
-                    EvaluationType{type_0: MIDGAME_EVAL,
-                        res: WON_POSITION,
-                        score: 0,
-                        confidence: 0.,
-                        search_depth: 0,
-                        is_book: 0,};
+                let mut ev_info: EvaluationType =  EvaluationType::new();
                 move_0 =
                     legacy_compute_move(side_to_move, 0 as i32,
                                         100000 as i32, 0 as i32,

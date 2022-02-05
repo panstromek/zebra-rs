@@ -8,7 +8,7 @@ use engine::src::moves::{make_move, unmake_move};
 use engine::src::search::{create_eval_info, disc_count, float_move, force_return, sort_moves, SearchState};
 use engine::src::thordb::ThorDatabase;
 use engine::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
-use engine::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, PASS_EVAL, UNDEFINED_EVAL};
+use engine::src::zebra::EvalType::{EXACT_EVAL, PASS_EVAL, UNDEFINED_EVAL};
 use engine::src::zebra::EvaluationType;
 use libc_wrapper::{stdout, time, time_t, c_time};
 
@@ -374,12 +374,7 @@ pub fn perform_extended_solve(side_to_move: i32,
     let mut corrected_diff: i32 = 0;
     let mut temp =
         EvaluatedMove{eval:
-                          EvaluationType{type_0: MIDGAME_EVAL,
-                                         res: WON_POSITION,
-                                         score: 0,
-                                         confidence: 0.,
-                                         search_depth: 0,
-                                         is_book: 0,},
+         EvaluationType::new(),
                       side_to_move: 0,
                       move_0: 0,
                       pv_depth: 0,
@@ -404,14 +399,7 @@ pub fn perform_extended_solve(side_to_move: i32,
     } else { exact = 0 as i32 }
     let mut game_evaluated_count = 1;
     let mut evaluated_list: [EvaluatedMove; 60] = [EvaluatedMove {
-        eval: EvaluationType {
-            type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,
-        },
+        eval: EvaluationType::new(),
         side_to_move: 0,
         move_0: 0,
         pv_depth: 0,

@@ -5,8 +5,6 @@ use engine::src::counter::{add_counter, counter_value, CounterType, reset_counte
 use engine::src::hash::setup_hash;
 use engine::src::osfbook::{reset_book_search, set_deviation_value};
 use engine::src::search::disc_count;
-use engine::src::zebra::EvalResult::WON_POSITION;
-use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::EvaluationType;
 use legacy_zebra::src::display::{display_board, display_move, set_evals, set_move_list, set_names, display_state};
 use legacy_zebra::src::game::{legacy_compute_move, game_init, global_setup, toggle_status_log};
@@ -60,14 +58,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                              mut display_line: i32,
                              g_state: &mut FullState) {
     let mut script_nodes = CounterType { hi: 0, lo: 0 };
-    let mut eval_info = EvaluationType {
-        type_0: MIDGAME_EVAL,
-        res: WON_POSITION,
-        score: 0,
-        confidence: 0.,
-        search_depth: 0,
-        is_book: 0,
-    };
+    let mut eval_info =  EvaluationType::new();
     let mut comment = 0 as *mut i8;
     let mut buffer: [i8; 256] = [0; 256];
     let mut board_string: [i8; 256] = [0; 256];
