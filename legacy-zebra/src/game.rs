@@ -233,13 +233,7 @@ pub unsafe fn ponder_move<
         ref mut search_state,
         ref mut flip_stack_,
     } : &mut FullState = g_state;
-    let mut eval_info =
-        EvaluationType{type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,};
+    let mut eval_info =EvaluationType::new();
     let mut entry =
         HashEntry{key1: 0,
             key2: 0,
