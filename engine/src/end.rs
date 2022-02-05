@@ -100,20 +100,10 @@ impl End {
    These are taken from the normal distribution; to the percentile
    x corresponds the probability Pr(-x <= Y <= x) where Y is a N(0,1)
    variable. */
-static confidence: [f64; 10] =
-    [1.000f64, 0.99f64, 0.98f64, 0.954f64, 0.911f64, 0.838f64, 0.729f64,
-        0.576f64, 0.383f64, 0.197f64];
+static confidence: [f64; 10] = [1.000, 0.99, 0.98, 0.954, 0.911, 0.838, 0.729, 0.576, 0.383, 0.197];
 /* Percentiles used in the endgame MPC */
-static end_percentile: [f64; 10] =
-    [100.0f64, 4.0f64, 3.0f64, 2.0f64, 1.7f64, 1.4f64, 1.1f64, 0.8f64, 0.5f64,
-        0.25f64];
-static stability_threshold: [i32; 19] =
-    [65 as i32, 65 as i32, 65 as i32,
-        65 as i32, 65 as i32, 46 as i32,
-        38 as i32, 30 as i32, 24 as i32,
-        24 as i32, 24 as i32, 24 as i32,
-        0 as i32, 0 as i32, 0 as i32, 0 as i32,
-        0 as i32, 0 as i32, 0 as i32];
+static end_percentile: [f64; 10] = [100.0f64, 4.0f64, 3.0f64, 2.0f64, 1.7f64, 1.4f64, 1.1f64, 0.8f64, 0.5f64, 0.25f64];
+static stability_threshold: [i32; 19] = [65, 65, 65, 65, 65, 46, 38, 30, 24, 24, 24, 24, 0, 0, 0, 0, 0, 0, 0];
 /*
   TESTFLIPS_WRAPPER
   Checks if SQ is a valid move by
