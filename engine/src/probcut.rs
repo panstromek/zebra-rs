@@ -53,25 +53,17 @@ fn set_end_probcut(use_end_cut_: &mut [i32; 61], end_mpc_depth_: &mut [[i32; 4];
    estimated using searches to depth SHALLOW_DEPTH.
 */
 fn set_probcut(mpc_cut_: &mut [DepthInfo; 23], depth: i32, shallow: i32) {
-    let mut this_try = mpc_cut_[depth as usize].cut_tries;
-    mpc_cut_[depth as usize].cut_depth[this_try as usize] = shallow;
+    let depth = depth as usize;
+    let mut this_try = mpc_cut_[depth].cut_tries;
+    mpc_cut_[depth].cut_depth[this_try as usize] = shallow;
     let mut i = 0;
     while i <= 60 {
-        mpc_cut_[depth as usize].bias[this_try as usize][i] =
-            floor(128.0f64 *
-                (MID_CORR[i][shallow as usize].const_base +
-                    MID_CORR[i][shallow as usize].const_slope
-                        * shallow as f32) as f64)
-                as i32;
-        mpc_cut_[depth as usize].window[this_try as usize][i] =
-            floor(128.0f64 *
-                (MID_CORR[i][shallow as usize].sigma_base +
-                    MID_CORR[i][shallow as usize].sigma_slope
-                        * shallow as f32) as f64)
-                as i32;
+        let shallow_i = shallow as usize;
+        mpc_cut_[depth].bias[this_try as usize][i] = floor(128.0f64 * (MID_CORR[i][shallow_i].const_base + MID_CORR[i][shallow_i].const_slope * shallow as f32) as f64) as i32;
+        mpc_cut_[depth].window[this_try as usize][i] = floor(128.0f64 * (MID_CORR[i][shallow_i].sigma_base + MID_CORR[i][shallow_i].sigma_slope * shallow as f32) as f64) as i32;
         i += 1
     }
-    mpc_cut_[depth as usize].cut_tries += 1;
+    mpc_cut_[depth].cut_tries += 1;
 }
 /*
    INIT_PROBCUT
