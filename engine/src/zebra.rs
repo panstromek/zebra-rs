@@ -12,7 +12,7 @@ use crate::src::game::{ComputeMoveLogger, ComputeMoveOutput, FileBoardSource, Ga
 use crate::src::getcoeff::{CoeffState, remove_coeffs};
 use crate::src::globals::BoardState;
 use crate::src::hash::{HashState, setup_hash};
-use crate::src::learn::{Learner, LearnState};
+use crate::src::learn::{LearnState};
 use crate::src::midgame::MidgameState;
 use crate::src::moves::{game_in_progress, generate_all, make_move, MovesState, valid_move};
 use crate::src::myrandom::MyRandom;
