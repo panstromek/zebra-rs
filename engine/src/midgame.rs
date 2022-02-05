@@ -341,14 +341,7 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
     let mut selectivity: i32 = 0;
     let mut cut: i32 = 0;
     let mut best_list: [i8; 4] = [0; 4];
-    let mut entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
+    let mut entry = HashEntry::new();
     if level >= max_depth {
         search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
         return static_or_terminal_evaluation(side_to_move, &moves_state, &mut board_state, &mut search_state, &mut coeff_state)
@@ -941,14 +934,7 @@ fn fast_tree_search(level: i32,
     let mut new_use_hash: i32 = 0;
     let mut curr_alpha: i32 = 0;
     let mut empties_remaining: i32 = 0;
-    let mut entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
+    let mut entry = HashEntry::new();
     search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     if level >= max_depth {
         return static_or_terminal_evaluation(side_to_move, &moves_state, &mut board_state, &mut search_state, &mut coeff_state)
@@ -1220,14 +1206,7 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
     let mut selectivity: i32 = 0;
     let mut offset: i32 = 0;
     let mut best_list: [i8; 4] = [0; 4];
-    let mut entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
+    let mut entry = HashEntry::new();
     remains = max_depth - level;
     search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     use_hash =
@@ -1562,14 +1541,7 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
     let mut alpha: i32;
     let mut beta: i32;
     let mut full_length_line: i32;
-    let mut entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
+    let mut entry = HashEntry::new();
     g_timer.last_panic_check = 0.0f64;
     midgame_state.counter_phase = 0;
     board_state.piece_count[0][moves_state.disks_played as usize] =

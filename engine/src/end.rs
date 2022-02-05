@@ -814,14 +814,7 @@ fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
     let mut old_sq = 0;
     let mut best_sq = 0;
     let mut parity_mask: u32 = 0;
-    let mut entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
+    let mut entry = HashEntry::new();
     search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     find_hash(&mut entry, 1 as i32, &mut hash_state);
     if entry.draft as i32 == empties &&
@@ -1270,14 +1263,7 @@ fn solve_parity_hash_high(end: &mut End, my_bits: BitBoard,
     let mut goodness: [i32; 64] = [0; 64];
     let mut diff1: u32 = 0;
     let mut diff2: u32 = 0;
-    let mut entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
+    let mut entry = HashEntry::new();
     search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     hash_move = -1;
     find_hash(&mut entry, 1 as i32, &mut hash_state);
@@ -1639,22 +1625,8 @@ fn end_tree_search<FE: FrontEnd>(end: &mut End,level: i32,
     let mut best_list_index: i32 = 0;
     let mut best_list_length: i32 = 0;
     let mut best_list = [0; 4];
-    let mut entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
-    let mut mid_entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
+    let mut entry = HashEntry::new();
+    let mut mid_entry = HashEntry::new();
     let mut stability_bound: i32 = 0;
     if level == 0 as i32 {
         FE::end_tree_search_level_0_report(alpha, beta);
