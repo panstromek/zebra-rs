@@ -204,38 +204,24 @@ fn solve_two_empty(end: &mut End, my_bits: BitBoard,
         /* SQ1 feasible for me */
         search_state_.nodes.lo = search_state_.nodes.lo.wrapping_add(1);
         ev = disc_diff + 2 as i32 * flipped;
-        flipped =
-            CountFlips_bitboard[(sq2 - 11) as
-                usize](opp_bits.high
-                           &
-                           !end.bb_flips.high,
-                       opp_bits.low
-                           &
-                           !end.bb_flips.low);
-        if flipped != 0 as i32 {
-            ev -= 2 as i32 * flipped
+        flipped = CountFlips_bitboard[(sq2 - 11) as usize](opp_bits.high & !end.bb_flips.high, opp_bits.low & !end.bb_flips.low);
+        if flipped != 0 {
+            ev -= 2 * flipped
         } else if ev >= 0 as i32 {
             /* He passes, check if SQ2 is feasible for me */
             /* I'm ahead, so EV will increase by at least 2 */
-            ev += 2 as i32;
+            ev += 2;
             if ev < beta {
                 /* Only bother if not certain fail-high */
-                ev +=
-                    2 as i32 *
-                        CountFlips_bitboard[(sq2 - 11) as
-                            usize](end.bb_flips.high,
-                                   end.bb_flips.low)
+                ev += 2 as i32 * CountFlips_bitboard[(sq2 - 11) as usize](end.bb_flips.high, end.bb_flips.low)
             }
         } else if ev < beta {
             /* Only bother if not fail-high already */
-            flipped =
-                CountFlips_bitboard[(sq2 - 11) as
-                    usize](end.bb_flips.high,
-                           end.bb_flips.low);
-            if flipped != 0 as i32 {
+            flipped = CountFlips_bitboard[(sq2 - 11) as usize](end.bb_flips.high, end.bb_flips.low);
+            if flipped != 0 {
                 /* ELSE: SQ2 will end up empty, game over */
                 /* SQ2 feasible for me, game over */
-                ev += 2 as i32 * (flipped + 1 as i32)
+                ev += 2 * (flipped + 1)
             }
         }
         /* Being legal, the first move is the best so far */
@@ -244,18 +230,11 @@ fn solve_two_empty(end: &mut End, my_bits: BitBoard,
     }
     /* ...and then the second */
     flipped = TestFlips_wrapper(end,sq2, my_bits, opp_bits, );
-    if flipped != 0 as i32 {
+    if flipped != 0 {
         /* SQ2 feasible for me */
         search_state_.nodes.lo = search_state_.nodes.lo.wrapping_add(1);
         ev = disc_diff + 2 as i32 * flipped;
-        flipped =
-            CountFlips_bitboard[(sq1 - 11) as
-                usize](opp_bits.high
-                           &
-                           !end.bb_flips.high,
-                       opp_bits.low
-                           &
-                           !end.bb_flips.low);
+        flipped = CountFlips_bitboard[(sq1 - 11) as usize](opp_bits.high & !end.bb_flips.high, opp_bits.low & !end.bb_flips.low);
         if flipped != 0 as i32 {
             /* SQ1 feasible for him, game over */
             ev -= 2 as i32 * flipped
@@ -265,18 +244,11 @@ fn solve_two_empty(end: &mut End, my_bits: BitBoard,
             ev += 2 as i32;
             if ev < beta {
                 /* Only bother if not certain fail-high */
-                ev +=
-                    2 as i32 *
-                        CountFlips_bitboard[(sq1 - 11) as
-                            usize](end.bb_flips.high,
-                                   end.bb_flips.low)
+                ev += 2 as i32 * CountFlips_bitboard[(sq1 - 11) as usize](end.bb_flips.high, end.bb_flips.low)
             }
         } else if ev < beta {
             /* Only bother if not fail-high already */
-            flipped =
-                CountFlips_bitboard[(sq1 - 11) as
-                    usize](end.bb_flips.high,
-                           end.bb_flips.low);
+            flipped = CountFlips_bitboard[(sq1 - 11) as usize](end.bb_flips.high, end.bb_flips.low);
             if flipped != 0 as i32 {
                 /* ELSE: SQ1 will end up empty, game over */
                 /* SQ1 feasible for me, game over */
@@ -289,21 +261,21 @@ fn solve_two_empty(end: &mut End, my_bits: BitBoard,
     }
     /* If both SQ1 and SQ2 are illegal I have to pass,
        otherwise return the best score. */
-    if score == -(12345678 as i32) {
+    return if score == -12345678 {
         if pass_legal == 0 {
             /* Two empty squares */
-            if disc_diff > 0 as i32 {
-                return disc_diff + 2 as i32
+            if disc_diff > 0 {
+                disc_diff + 2
+            } else if disc_diff < 0 {
+                disc_diff - 2
+            } else {
+                0
             }
-            if disc_diff < 0 as i32 {
-                return disc_diff - 2 as i32
-            }
-            return 0 as i32
         } else {
-            return -solve_two_empty(end, opp_bits, my_bits, sq1, sq2, -beta,
-                                    -alpha, -disc_diff, 0 as i32, search_state_)
+            -solve_two_empty(end, opp_bits, my_bits, sq1, sq2, -beta,
+                             -alpha, -disc_diff, 0 as i32, search_state_)
         }
-    } else { return score };
+    } else { score };
 }
 fn solve_three_empty(end: &mut End, my_bits: BitBoard,
                             opp_bits: BitBoard,
