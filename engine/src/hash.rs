@@ -18,15 +18,7 @@ pub struct HashEntry {
 
 impl HashEntry {
     pub fn new() -> Self {
-        HashEntry {
-            key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,
-        }
+        HashEntry { key1: 0, key2: 0, eval: 0, move_0: [0; 4], draft: 0, selectivity: 0, flags: 0 }
     }
 }
 
@@ -455,14 +447,7 @@ impl HashState {
         let mut index2: u32 = 0;
         let mut code1: u32 = 0;
         let mut code2: u32 = 0;
-        let mut entry =
-            HashEntry{key1: 0,
-                key2: 0,
-                eval: 0,
-                move_0: [0; 4],
-                draft: 0,
-                selectivity: 0,
-                flags: 0,};
+        let mut entry = HashEntry::new();
         if reverse_mode != 0 {
             code1 = self.hash2 ^ self.hash_trans2;
             code2 = self.hash1 ^ self.hash_trans1
