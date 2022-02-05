@@ -553,19 +553,13 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                     };
                     break ;
                 } else {
-                    if this_eval.type_0 as u32 ==
-                        PASS_EVAL as i32 as u32 {
+                    if this_eval.type_0 == PASS_EVAL {
                         /* Don't allow pass */
                         if current_mid == 1 as i32 {
                             /* compute_move doesn't like 0-ply searches */
                             (g_state.search_state).evaluations.lo = (g_state.search_state).evaluations.lo.wrapping_add(1);
                             shallow_eval = pattern_evaluation(side_to_move, &mut (g_state.board_state), &(g_state.moves_state), &mut (g_state.coeff_state));
-                            this_eval =
-                                create_eval_info(MIDGAME_EVAL,
-                                                 UNSOLVED_POSITION,
-                                                 shallow_eval, 0.0f64,
-                                                 0 as i32,
-                                                 0 as i32)
+                            this_eval = create_eval_info(MIDGAME_EVAL, UNSOLVED_POSITION, shallow_eval, 0.0, 0, 0)
                         } else {
                             compute_move::<L, Out, FE, Thor>(side_to_move, 0 as i32,
                                                 0 as i32, 0 as i32,
@@ -577,74 +571,46 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                          g_state.g_config.echo,
                                          g_state);
                         }
-                        if this_eval.type_0 as u32 ==
-                            PASS_EVAL as i32 as u32 {
+                        if this_eval.type_0 == PASS_EVAL {
                             /* Game over */
-                            disc_diff =
-                                disc_count(side_to_move, &(g_state.board_state).board) -
-                                    disc_count(0 as i32 +
-                                                   2 as i32 -
-                                                   side_to_move, &(g_state.board_state).board);
+                            disc_diff = disc_count(side_to_move, &(g_state.board_state).board) - disc_count(0 as i32 + 2 as i32 - side_to_move, &(g_state.board_state).board);
                             if disc_diff > 0 as i32 {
-                                corrected_diff =
-                                    64 as i32 -
-                                        2 as i32 *
-                                            disc_count(0 as i32 +
-                                                           2 as i32 -
-                                                           side_to_move, &(g_state.board_state).board);
+                                corrected_diff = 64 as i32 - 2 as i32 * disc_count(0 as i32 + 2 as i32 - side_to_move, &(g_state.board_state).board);
                                 res = WON_POSITION
                             } else if disc_diff == 0 as i32 {
                                 corrected_diff = 0;
                                 res = DRAWN_POSITION
                             } else {
-                                corrected_diff =
-                                    2 as i32 *
-                                        disc_count(side_to_move, &(g_state.board_state).board) -
-                                        64 as i32;
+                                corrected_diff = 2 as i32 * disc_count(side_to_move, &(g_state.board_state).board) - 64 as i32;
                                 res = LOST_POSITION
                             }
-                            this_eval =
-                                create_eval_info(EXACT_EVAL, res,
-                                                 128 as i32 *
-                                                     corrected_diff, 0.0f64,
-                                                 60 as i32 -
-                                                     (g_state.moves_state).disks_played,
-                                                 0 as i32)
+                            this_eval = create_eval_info(EXACT_EVAL, res, 128 as i32 * corrected_diff, 0.0f64, 60 as i32 - (g_state.moves_state).disks_played, 0 as i32)
                         }
                     } else {
                         /* Sign-correct the score produced */
                         this_eval.score = -this_eval.score;
-                        if this_eval.res as u32 ==
-                            WON_POSITION as i32 as u32 {
+                        if this_eval.res == WON_POSITION {
                             this_eval.res = LOST_POSITION
-                        } else if this_eval.res as u32 ==
-                            LOST_POSITION as i32 as
-                                u32 {
+                        } else if this_eval.res == LOST_POSITION {
                             this_eval.res = WON_POSITION
                         }
                     }
-                    if force_return != 0 { break ; }
+                    if force_return != 0 {
+                        break;
+                    }
                     evaluated_list[index as usize].eval = this_eval;
                     /* Store the PV corresponding to the move */
-                    evaluated_list[index as usize].pv_depth =
-                        (g_state.board_state).pv_depth[0] +
-                            1 as i32;
-                    evaluated_list[index as
-                        usize].pv[0] =
-                        this_move;
+                    evaluated_list[index as usize].pv_depth = (g_state.board_state).pv_depth[0] + 1;
+                    evaluated_list[index as usize].pv[0] = this_move;
                     j = 0;
                     while j < (g_state.board_state).pv_depth[0] {
-                        evaluated_list[index as
-                            usize].pv[(j + 1 as i32) as
-                            usize] =
-                            (g_state.board_state).pv[0][j as usize];
+                        evaluated_list[index as usize].pv[(j + 1 as i32) as usize] = (g_state.board_state).pv[0][j as usize];
                         j += 1
                     }
                     /* Store the PV corresponding to the best move */
                     if evaluated_list[index as usize].eval.score > best_score
                     {
-                        best_score =
-                            evaluated_list[index as usize].eval.score;
+                        best_score = evaluated_list[index as usize].eval.score;
                         best_move = this_move;
                         best_pv_depth = (g_state.board_state).pv_depth[0];
                         j = 0;
@@ -664,23 +630,12 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                         loop  {
                             changed = 0;
                             j = 0;
-                            while j < game_evaluated_count - 1 as i32
-                            {
-                                if compare_eval(evaluated_list[j as
-                                    usize].eval,
-                                                evaluated_list[(j +
-                                                    1 as
-                                                        i32)
-                                                    as
-                                                    usize].eval)
-                                    < 0 as i32 {
+                            while j < game_evaluated_count - 1 {
+                                if compare_eval(evaluated_list[j as usize].eval, evaluated_list[(j + 1 as i32) as usize].eval) < 0 {
                                     changed = 1;
                                     temp = evaluated_list[j as usize];
-                                    evaluated_list[j as usize] =
-                                        evaluated_list[(j + 1 as i32)
-                                            as usize];
-                                    evaluated_list[(j + 1 as i32) as
-                                        usize] = temp
+                                    evaluated_list[j as usize] = evaluated_list[(j + 1 as i32) as usize];
+                                    evaluated_list[(j + 1 as i32) as usize] = temp
                                 }
                                 j += 1
                             }
@@ -696,18 +651,16 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
              with the best move.  This ensures that unsearched_move will be
              sorted w.r.t. the order in evaluated_list. */
             i = game_evaluated_count - 1 as i32;
-            while i >= 0 as i32 {
+            while i >= 0 {
                 let this_move_0 = evaluated_list[i as usize].move_0;
                 j = 0;
-                while j != unsearched_count &&
-                    unsearched_move[j as usize] != this_move_0 {
+                while j != unsearched_count && unsearched_move[j as usize] != this_move_0 {
                     j += 1
                 }
                 if !(j == unsearched_count) {
                     /* Move the move to the front of the list. */
-                    while j >= 1 as i32 {
-                        unsearched_move[j as usize] =
-                            unsearched_move[(j - 1 as i32) as usize];
+                    while j >= 1 {
+                        unsearched_move[j as usize] = unsearched_move[(j - 1 as i32) as usize];
                         j -= 1
                     }
                     unsearched_move[0] = this_move_0
@@ -715,22 +668,18 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                 /* Must be book move, skip */
                 i -= 1
             }
-            if !(force_return == 0 &&
-                (current_mid != mid || current_exact != exact ||
-                    current_wld != wld)) {
+            if !(force_return == 0 && (current_mid != mid || current_exact != exact || current_wld != wld)) {
                 break ;
             }
         }
         echo = stored_echo;
         game_evaluated_count = (g_state.moves_state).move_count[(g_state.moves_state).disks_played as usize];
         /* Make sure that the PV and the score correspond to the best move */
-        (g_state.board_state).pv_depth[0] =
-            best_pv_depth + 1 as i32;
+        (g_state.board_state).pv_depth[0] = best_pv_depth + 1;
         (g_state.board_state).pv[0][0] = best_move;
         i = 0;
         while i < best_pv_depth {
-            (g_state.board_state).pv[0][(i + 1 as i32) as usize] =
-                best_pv[i as usize];
+            (g_state.board_state).pv[0][(i + 1 as i32) as usize] = best_pv[i as usize];
             i += 1
         }
         let negate = 0 as i32;
@@ -741,8 +690,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
         }
     }
     /* Reset the hash transformation masks prior to leaving */
-    (g_state.hash_state).set_hash_transformation(0 as i32 as u32,
-                                                 0 as i32 as u32);
+    (g_state.hash_state).set_hash_transformation(0, 0);
     /* Don't forget to enable the time control mechanisms when leaving */
     (g_state.g_timer).toggle_abort_check(1 as i32);
     (g_state.midgame_state).toggle_midgame_abort_check(1 as i32);
