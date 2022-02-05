@@ -449,14 +449,15 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
 
     /* Allocate the memory needed for the temporary mirror maps from the
        heap rather than the stack to reduce memory requirements. */
-    let mut map_mirror3 = vec![0; 27];
-    let mut map_mirror4 = vec![0; 81];
-    let mut map_mirror5 = vec![0; 243];
-    let mut map_mirror6 = vec![0; 729];
-    let mut map_mirror7 = vec![0; 2187];
-    let mut map_mirror8 = vec![0; 6561];
-    let mut map_mirror33 = vec![0; 19683];
-    let mut map_mirror8x2 = vec![0; 59049];
+    let mut base = vec![0; 27 + 81 + 243 + 729 + 2187 + 6561 + 19683 + 59049];
+
+    let (map_mirror3, rem) = base.split_at_mut(27);
+    let (map_mirror4, rem) = rem.split_at_mut(81);
+    let (map_mirror5, rem) = rem.split_at_mut(243);
+    let (map_mirror6, rem) = rem.split_at_mut(729);
+    let (map_mirror7, rem) = rem.split_at_mut(2187);
+    let (map_mirror8, rem) = rem.split_at_mut(6561);
+    let (map_mirror33, map_mirror8x2) = rem.split_at_mut(19683);
 
     /* Build the pattern tables for 8*1-patterns */
     let mut i = 0;
