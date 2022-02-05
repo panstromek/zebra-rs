@@ -1199,19 +1199,7 @@ unsafe fn analyze_game(mut move_string: &str,
     if (&mut g_state.g_config).echo != 0 {
         write!(stdout, "Analyzing provided game...\n");
     }
-    generic_game_init::<BasicBoardFileSource, LibcFatalError>(None, &mut side_to_move, &mut (&mut g_state.flip_stack_),
-                                                              &mut (&mut g_state.search_state),
-                                                              &mut (&mut g_state.board_state),
-                                                              &mut (&mut g_state.hash_state),
-                                                              &mut (&mut g_state.g_timer),
-                                                              &mut (&mut g_state.end_g),
-                                                              &mut (&mut g_state.midgame_state),
-                                                              &mut (&mut g_state.coeff_state),
-                                                              (&mut g_state.moves_state),
-                                                              &mut (&mut g_state.random_instance),
-                                                              &mut (&mut g_state.g_book),
-                                                              &mut (&mut g_state.stable_state),
-                                                              &mut (&mut g_state.game_state));
+    generic_game_init::<BasicBoardFileSource, LibcFatalError>(None, &mut side_to_move, g_state);
     setup_hash(1 as i32, &mut (&mut g_state.hash_state), &mut (&mut g_state.random_instance));
     (&mut g_state.learn_state).clear_stored_game();
     if (&mut g_state.g_config).echo != 0 && (&mut g_state.g_config).use_book != 0 {

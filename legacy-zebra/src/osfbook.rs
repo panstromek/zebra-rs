@@ -1401,30 +1401,13 @@ pub unsafe fn engine_init_osf<FE: FrontEnd>(g_state :&mut FullState) {
    Prepares all relevant data structures for a tree search
    or traversal.
 */
-pub fn prepare_tree_traversal(mut g_state: &mut FullState) {
-    let mut midgame_state = (&mut g_state.midgame_state);
-    let mut game_state = (&mut g_state.game_state);
-    let mut end_g = (&mut g_state.end_g);
-    let mut coeff_state = (&mut g_state.coeff_state);
-    let mut g_timer = (&mut g_state.g_timer);
-    let mut moves_state = (&mut g_state.moves_state);
-    let mut stable_state = (&mut g_state.stable_state);
-    let mut board_state = (&mut g_state.board_state);
-    let mut hash_state = (&mut g_state.hash_state);
-    let mut random_instance = (&mut g_state.random_instance);
-    let mut g_book = (&mut g_state.g_book);
-    let mut search_state = (&mut g_state.search_state);
-    let mut flip_stack_ = (&mut g_state.flip_stack_);
-
+pub fn prepare_tree_traversal(g_state: &mut FullState) {
     let mut side_to_move: i32 = 0;
-    setup_non_file_based_game(&mut side_to_move,&mut board_state
-                              ,&mut hash_state
-                              ,&mut moves_state);
-    engine_game_init(&mut flip_stack_, &mut search_state, &mut board_state, &mut hash_state, &mut g_timer,
-                     &mut end_g, &mut midgame_state, &mut coeff_state, &mut moves_state, &mut random_instance, &mut g_book, &mut stable_state, &mut game_state);
-    midgame_state.toggle_midgame_hash_usage(1 as i32, 1 as i32);
-    g_timer.toggle_abort_check(0 as i32);
-    midgame_state.toggle_midgame_abort_check(0 as i32);
+    setup_non_file_based_game(&mut side_to_move, &mut g_state.board_state, &mut g_state.hash_state, &mut g_state.moves_state);
+    engine_game_init(g_state);
+    g_state.midgame_state.toggle_midgame_hash_usage(1 as i32, 1 as i32);
+    g_state.g_timer.toggle_abort_check(0 as i32);
+    g_state.midgame_state.toggle_midgame_abort_check(0 as i32);
 }
 
 
