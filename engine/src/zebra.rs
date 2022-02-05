@@ -66,7 +66,7 @@ impl EvaluationType {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum DrawMode {
     OPPONENT_WINS = 3,
     WHITE_WINS = 2,
@@ -74,7 +74,7 @@ pub enum DrawMode {
     NEUTRAL = 0,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum GameMode {
     PUBLIC_GAME = 1,
     PRIVATE_GAME = 0,
