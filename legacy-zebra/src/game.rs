@@ -186,14 +186,7 @@ pub unsafe fn ponder_move<
     type Rep = LibcFatalError;
 
     let mut eval_info =EvaluationType::new();
-    let mut entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
+    let mut entry = HashEntry::new();
     let mut move_start_time: f64 = 0.;
     let mut move_stop_time: f64 = 0.;
     let mut i: i32 = 0;

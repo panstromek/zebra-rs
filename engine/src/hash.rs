@@ -15,6 +15,21 @@ pub struct HashEntry {
     pub selectivity: i16,
     pub flags: i16,
 }
+
+impl HashEntry {
+    pub fn new() -> Self {
+        HashEntry {
+            key1: 0,
+            key2: 0,
+            eval: 0,
+            move_0: [0; 4],
+            draft: 0,
+            selectivity: 0,
+            flags: 0,
+        }
+    }
+}
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct CompactHashEntry {
@@ -380,14 +395,7 @@ pub fn add_hash(state: &mut HashState, reverse_mode: i32,
     let mut index2: u32 = 0;
     let mut code1: u32 = 0;
     let mut code2: u32 = 0;
-    let mut entry =
-        HashEntry{key1: 0,
-            key2: 0,
-            eval: 0,
-            move_0: [0; 4],
-            draft: 0,
-            selectivity: 0,
-            flags: 0,};
+    let mut entry = HashEntry::new();
     // TODO
     //  note for investigation. There was this assert in the original source
     //      assert( abs( score ) != SEARCH_ABORT );
