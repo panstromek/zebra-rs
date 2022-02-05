@@ -371,53 +371,53 @@ fn solve_four_empty(end: &mut End, my_bits: BitBoard,
     if flipped != 0 as i32 {
         new_opp_bits.high = opp_bits.high & !end.bb_flips.high;
         new_opp_bits.low = opp_bits.low & !end.bb_flips.low;
-        new_disc_diff =
-            -disc_diff - 2 as i32 * flipped - 1 as i32;
-        score =
-            -solve_three_empty(end, new_opp_bits, end.bb_flips, sq2, sq3, sq4, -beta,
+        new_disc_diff = -disc_diff - 2 as i32 * flipped - 1 as i32;
+        score = -solve_three_empty(end, new_opp_bits, end.bb_flips, sq2, sq3, sq4, -beta,
                                -alpha, new_disc_diff, 1 as i32,  search_state_);
         if score >= beta {
             return score
-        } else { if score > alpha { alpha = score } }
+        } else if score > alpha {
+            alpha = score
+        }
     }
     flipped = TestFlips_wrapper(end,sq2, my_bits, opp_bits, );
     if flipped != 0 as i32 {
         new_opp_bits.high = opp_bits.high & !end.bb_flips.high;
         new_opp_bits.low = opp_bits.low & !end.bb_flips.low;
-        new_disc_diff =
-            -disc_diff - 2 as i32 * flipped - 1 as i32;
-        ev =
-            -solve_three_empty(end, new_opp_bits, end.bb_flips, sq1, sq3, sq4, -beta,
-                               -alpha, new_disc_diff, 1 as i32, search_state_);
+        new_disc_diff = -disc_diff - 2 as i32 * flipped - 1 as i32;
+        ev = -solve_three_empty(end, new_opp_bits, end.bb_flips, sq1, sq3, sq4, -beta,
+                                -alpha, new_disc_diff, 1 as i32, search_state_);
         if ev >= beta {
             return ev
-        } else {
-            if ev > score { score = ev; if score > alpha { alpha = score } }
+        } else if ev > score {
+            score = ev;
+            if score > alpha {
+                alpha = score
+            }
         }
     }
     flipped = TestFlips_wrapper(end,sq3, my_bits, opp_bits, );
-    if flipped != 0 as i32 {
+    if flipped != 0 {
         new_opp_bits.high = opp_bits.high & !end.bb_flips.high;
         new_opp_bits.low = opp_bits.low & !end.bb_flips.low;
-        new_disc_diff =
-            -disc_diff - 2 as i32 * flipped - 1 as i32;
-        ev =
-            -solve_three_empty(end, new_opp_bits, end.bb_flips, sq1, sq2, sq4, -beta,
-                               -alpha, new_disc_diff, 1 as i32,  search_state_);
+        new_disc_diff = -disc_diff - 2 * flipped - 1;
+        ev = -solve_three_empty(end, new_opp_bits, end.bb_flips, sq1, sq2, sq4, -beta,
+                               -alpha, new_disc_diff, 1,  search_state_);
         if ev >= beta {
             return ev
-        } else {
-            if ev > score { score = ev; if score > alpha { alpha = score } }
+        } else if ev > score {
+            score = ev;
+            if score > alpha {
+                alpha = score
+            }
         }
     }
     flipped = TestFlips_wrapper(end,sq4, my_bits, opp_bits, );
     if flipped != 0 as i32 {
         new_opp_bits.high = opp_bits.high & !end.bb_flips.high;
         new_opp_bits.low = opp_bits.low & !end.bb_flips.low;
-        new_disc_diff =
-            -disc_diff - 2 as i32 * flipped - 1 as i32;
-        ev =
-            -solve_three_empty(end, new_opp_bits, end.bb_flips, sq1, sq2, sq3, -beta,
+        new_disc_diff = -disc_diff - 2 as i32 * flipped - 1 as i32;
+        ev = -solve_three_empty(end, new_opp_bits, end.bb_flips, sq1, sq2, sq3, -beta,
                                -alpha, new_disc_diff, 1 as i32, search_state_);
         if ev >= score { return ev }
     }
