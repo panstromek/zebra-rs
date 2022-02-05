@@ -56,7 +56,7 @@ impl SearchState {
             total_evaluations: CounterType { hi: 0, lo: 0 },
             pondered_move: 0,
             negate_eval: 0,
-            last_eval: EvaluationType { type_0: MIDGAME_EVAL, res: WON_POSITION, score: 0, confidence: 0., search_depth: 0, is_book: 0 },
+            last_eval:  EvaluationType::new(),
         }
     }
 }

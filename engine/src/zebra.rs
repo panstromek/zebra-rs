@@ -60,7 +60,7 @@ pub struct EvaluationType {
 }
 
 impl EvaluationType {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         EvaluationType { type_0: MIDGAME_EVAL, res: WON_POSITION, score: 0, confidence: 0., search_depth: 0, is_book: 0 }
     }
 }
@@ -447,14 +447,7 @@ impl<Src: InitialMoveSource> PlayGame<Src> {
                mut move_file: Option<Src>,
                g_state: FullState
     ) -> PlayGame<Src> {
-        let mut eval_info = EvaluationType {
-            type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,
-        };
+        let mut eval_info = EvaluationType::new();
         let mut side_to_move = 0;
         let mut curr_move = 0;
         let mut rand_color = 0;

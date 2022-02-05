@@ -335,13 +335,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                     shallow_eval =
                         -pattern_evaluation(side_to_move_argument, (&mut g_state.board_state), &(g_state.moves_state), (&mut g_state.coeff_state))
                 } else {
-                    let mut shallow_info =
-                        EvaluationType{type_0: MIDGAME_EVAL,
-                            res: WON_POSITION,
-                            score: 0,
-                            confidence: 0.,
-                            search_depth: 0,
-                            is_book: 0,};
+                    let mut shallow_info =  EvaluationType::new();
                     compute_move::<L, Out, FE, Thor>(0 as i32 + 2 as i32 -
                                             side_to_move, 0 as i32,
                                         0 as i32, 0 as i32,
@@ -506,13 +500,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
             } else { current_exact = exact }
             i = 0;
             while i < unsearched_count && force_return == 0 {
-                let mut this_eval =
-                    EvaluationType{type_0: MIDGAME_EVAL,
-                        res: WON_POSITION,
-                        score: 0,
-                        confidence: 0.,
-                        search_depth: 0,
-                        is_book: 0,};
+                let mut this_eval =  EvaluationType::new();
                 this_move = unsearched_move[i as usize];
                 /* Locate the current move in the list.  This has to be done
                    because the moves might have been reordered during the

@@ -14,8 +14,6 @@ use engine::src::moves::{generate_all, make_move, unmake_move, unmake_move_no_ha
 use engine::src::search::disc_count;
 use legacy_zebra::src::safemem::safe_malloc;
 use engine::src::zebra::EvaluationType;
-use engine::src::zebra::EvalType::MIDGAME_EVAL;
-use engine::src::zebra::EvalResult::{WON_POSITION};
 use engine::src::stubs::{abs, floor};
 use legacy_zebra::src::display::{display_board, display_state};
 use engine::src::hash::{setup_hash, determine_hash_values};

@@ -24,7 +24,6 @@ use engine::src::timer::{Timer, TimeSource};
 use engine::src::zebra::{Config, EvaluationType, InitialMoveSource, set_default_engine_globals, ZebraFrontend, next_state, PlayGameState, MoveAttempt, PlayGame};
 use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WINS};
 use engine::src::zebra::EvalResult::{LOST_POSITION, WON_POSITION};
-use engine::src::zebra::EvalType::MIDGAME_EVAL;
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 
@@ -1127,34 +1126,10 @@ impl ZebraFrontend for LibcFrontend {
 unsafe fn analyze_game(mut move_string: &str,
                        g_state : &mut FullState
 ) {
-    let mut best_info1 =
-        EvaluationType{type_0: MIDGAME_EVAL,
-                       res: WON_POSITION,
-                       score: 0,
-                       confidence: 0.,
-                       search_depth: 0,
-                       is_book: 0,};
-    let mut best_info2 =
-        EvaluationType{type_0: MIDGAME_EVAL,
-                       res: WON_POSITION,
-                       score: 0,
-                       confidence: 0.,
-                       search_depth: 0,
-                       is_book: 0,};
-    let mut played_info1 =
-        EvaluationType{type_0: MIDGAME_EVAL,
-                       res: WON_POSITION,
-                       score: 0,
-                       confidence: 0.,
-                       search_depth: 0,
-                       is_book: 0,};
-    let mut played_info2 =
-        EvaluationType{type_0: MIDGAME_EVAL,
-                       res: WON_POSITION,
-                       score: 0,
-                       confidence: 0.,
-                       search_depth: 0,
-                       is_book: 0,};
+    let mut best_info1 =  EvaluationType::new();
+    let mut best_info2 =  EvaluationType::new();
+    let mut played_info1 =  EvaluationType::new();
+    let mut played_info2 =  EvaluationType::new();
     let mut move_start: f64 = 0.;
     let mut move_stop: f64 = 0.;
     let mut i: i32 = 0;
