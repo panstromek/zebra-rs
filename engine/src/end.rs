@@ -617,18 +617,7 @@ fn solve_parity(end:&mut End, my_bits: BitBoard,
    Prepares the endgame solver for a new game.
    This means clearing a few status fields.
 */
-pub fn setup_end(flip_stack_: &mut FlipStack,
-                                               mut search_state: &mut SearchState,
-                                               mut board_state: &mut BoardState,
-                                               mut hash_state: &mut HashState,
-                                               mut g_timer: &mut Timer,
-                                               mut end_g: &mut End,
-                                               mut midgame_state: &mut MidgameState,
-                                               mut coeff_state: &mut CoeffState,
-                                               mut moves_state: &mut MovesState,
-                                               mut random_instance: &mut MyRandom,
-                                               mut g_book: &mut Book,
-                                               mut stable_state: &mut StableState,) {
+pub fn setup_end(flip_stack_: &mut FlipStack, end_g: &mut End) {
     let mut last_mean: f64 = 0.;
     let mut last_sigma: f64 = 0.;
     let mut ff_threshold: [f64; 61] = [0.; 61];
@@ -639,7 +628,7 @@ pub fn setup_end(flip_stack_: &mut FlipStack,
         [1 as i32, -(1 as i32), 7 as i32,
             -(7 as i32), 8 as i32, -(8 as i32),
             9 as i32, -(9 as i32)];
-    let end = &mut end_g;
+    let end = end_g;
     end.earliest_wld_solve = 0;
     end.earliest_full_solve = 0;
     end.full_output_mode = 1;
