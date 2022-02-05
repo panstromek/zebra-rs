@@ -364,14 +364,14 @@ impl SearchState {
 */
 
 pub fn create_eval_info(in_type: EvalType, in_res: EvalResult, in_score: i32, in_conf: f64, in_depth: i32, in_book: i32) -> EvaluationType {
-    let mut out = EvaluationType::new();
-    out.type_0 = in_type;
-    out.res = in_res;
-    out.score = in_score;
-    out.confidence = in_conf;
-    out.search_depth = in_depth;
-    out.is_book = in_book;
-    return out;
+    EvaluationType {
+        type_0: in_type,
+        res: in_res,
+        score: in_score,
+        confidence: in_conf,
+        search_depth: in_depth,
+        is_book: in_book,
+    }
 }
 /*
   PRODUCE_COMPACT_EVAL
