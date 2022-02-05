@@ -493,7 +493,7 @@ pub unsafe fn read_binary_database(file_name_: *const i8, g_book: &mut Book) -> 
 
     let stream = std::fs::read(file_name);
     if let Err(_) = stream {
-        fatal_error!("{} '{}'\n", "Could not open database file", &CStr::from_ptr(file_name_).to_str().unwrap());
+        fatal_error!("{} '{}'\n", "Could not open database file", file_name);
     }
     struct Reader<T> {
         inner: T
@@ -524,7 +524,7 @@ pub unsafe fn read_binary_database(file_name_: *const i8, g_book: &mut Book) -> 
     magic2 = stream.parse().unwrap_or(0);
 
     if magic1 as i32 != 2718 as i32 || magic2 as i32 != 2818 as i32 {
-        fatal_error!("{}: {}", "Wrong checksum, might be an old version", CStr::from_ptr(file_name_).to_str().unwrap());
+        fatal_error!("{}: {}", "Wrong checksum, might be an old version", file_name);
     }
 
     new_book_node_count = stream.parse()?;
