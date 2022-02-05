@@ -487,15 +487,7 @@ pub fn hash_expand_pv(mut side_to_move: i32, mode: i32, flags: i32, max_selectiv
     let mut new_pv_depth = 0;
     let mut new_pv = [0; 61];
     let mut new_side_to_move = [0; 61];
-    let mut entry = HashEntry {
-        key1: 0,
-        key2: 0,
-        eval: 0,
-        move_0: [0; 4],
-        draft: 0,
-        selectivity: 0,
-        flags: 0,
-    };
+    let mut entry = HashEntry::new();
     determine_hash_values(side_to_move, &board_state_.board, hash_state_);
     new_pv_depth = 0;
     pass_count = 0;
