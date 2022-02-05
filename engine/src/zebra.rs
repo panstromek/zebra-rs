@@ -61,14 +61,7 @@ pub struct EvaluationType {
 
 impl EvaluationType {
     pub fn new() -> Self {
-        EvaluationType {
-            type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,
-        }
+        EvaluationType { type_0: MIDGAME_EVAL, res: WON_POSITION, score: 0, confidence: 0., search_depth: 0, is_book: 0 }
     }
 }
 
