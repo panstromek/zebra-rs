@@ -28,7 +28,7 @@ use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 use libc_wrapper::{fclose, fopen, scanf, stdout, time, c_time, time_t};
 
-use crate::src::display::{dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
+use crate::src::display::{dumpch, display_state, TO_SQUARE};
 use crate::src::error::{FE, LibcFatalError};
 use crate::src::game::{legacy_compute_move, global_setup, BasicBoardFileSource, LibcZebraOutput, LogFileHandler};
 use crate::src::learn::{init_learn, LibcLearner};
@@ -575,7 +575,7 @@ Flags:
         }
     }
     if (g_state.g_config).one_position_only != 0 {
-        toggle_smart_buffer_management(0 as i32);
+        display_state.toggle_smart_buffer_management(0 as i32);
     }
     if (g_state.g_config).tournament != 0 {
         play_tournament(move_sequence, log_file_name, g_state);
@@ -907,7 +907,7 @@ pub struct LibcFrontend {} //TODO this could probably be merged with the FrontEn
 impl LibcFrontend {
 
     fn set_times(black: i32, white: i32) {
-        unsafe { set_times(black, white) }
+        unsafe { display_state.set_times(black, white) }
     }
 
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
@@ -1036,11 +1036,11 @@ impl LibcFrontend {
 }
 impl ZebraFrontend for LibcFrontend {
     fn set_evals(black: f64, white: f64) {
-        unsafe { set_evals(black, white); }
+        unsafe { display_state.set_evals(black, white); }
     }
 
     fn set_move_list(row: i32) {
-        unsafe { set_move_list(row) }
+        unsafe { display_state.set_move_list(row) }
     }
 
     fn set_names(white_is_player: bool, black_is_player: bool) {
@@ -1054,7 +1054,7 @@ impl ZebraFrontend for LibcFrontend {
         } else {
             "Zebra"
         };
-        unsafe { set_names(black_name, white_name) }
+        unsafe { display_state.set_names(black_name, white_name) }
     }
 
     fn report_engine_override() {
@@ -1171,9 +1171,9 @@ unsafe fn analyze_game(mut move_string: &str,
     reset_book_search(&mut (&mut g_state.g_book));
     let black_name = "Zebra";
     let white_name = "Zebra";
-    set_names(black_name, white_name);
-    set_move_list((g_state.board_state).score_sheet_row);
-    set_evals(0.0f64, 0.0f64);
+    display_state.set_names(black_name, white_name);
+    display_state.set_move_list((g_state.board_state).score_sheet_row);
+    display_state.set_evals(0.0f64, 0.0f64);
     g_state.board_state.black_moves = [-1; 60];
     g_state.board_state.white_moves = [-1; 60];
     let _black_hash1 = (g_state.random_instance).my_random() as i32;
@@ -1194,8 +1194,8 @@ unsafe fn analyze_game(mut move_string: &str,
             move_start =  (&mut g_state.g_timer).get_real_timer();
             (&mut g_state.g_timer).clear_panic_abort();
             if (&mut g_state.g_config).echo != 0 {
-                set_move_list((g_state.board_state).score_sheet_row);
-                set_times(floor((&mut g_state.g_config).player_time[0]) as
+                display_state.set_move_list((g_state.board_state).score_sheet_row);
+                display_state.set_times(floor((&mut g_state.g_config).player_time[0]) as
                               i32,
                           floor((&mut g_state.g_config).player_time[2]) as
                               i32);
@@ -1287,8 +1287,8 @@ unsafe fn analyze_game(mut move_string: &str,
                                     (&mut g_state.g_config).wld_skill[side_to_move as usize],
                                     1 as i32, &mut best_info2, g_state);
             if side_to_move == 0 as i32 {
-                set_evals(produce_compact_eval(best_info2), 0.0f64);
-            } else { set_evals(0.0f64, produce_compact_eval(best_info2)); }
+                display_state.set_evals(produce_compact_eval(best_info2), 0.0f64);
+            } else { display_state.set_evals(0.0f64, produce_compact_eval(best_info2)); }
             /* Output the two score-move pairs */
             write!(output_stream, "{} ", TO_SQUARE(curr_move));
             if empties <= (&mut g_state.g_config).exact_skill[side_to_move as usize] {
@@ -1368,8 +1368,8 @@ unsafe fn analyze_game(mut move_string: &str,
     if side_to_move == 0 as i32 { (g_state.board_state).score_sheet_row += 1 }
     LibcDumpHandler::dump_game_score(side_to_move, (g_state.board_state).score_sheet_row, &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
     if (g_state.g_config).echo != 0 && (&mut g_state.g_config).one_position_only == 0 {
-        set_move_list((g_state.board_state).score_sheet_row);
-        set_times(floor((&mut g_state.g_config).player_time[0]) as
+        display_state.set_move_list((g_state.board_state).score_sheet_row);
+        display_state.set_times(floor((&mut g_state.g_config).player_time[0]) as
                       i32,
                   floor((&mut g_state.g_config).player_time[2]) as
                       i32);

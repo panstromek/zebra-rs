@@ -2,7 +2,7 @@
 
 use engine::src::moves::{generate_all, make_move, unmake_move, valid_move};
 use engine::src::osfbook::{find_opening_name, get_hash};
-use legacy_zebra::src::display::{produce_eval_text, set_move_list, set_names, display_state, TO_SQUARE};
+use legacy_zebra::src::display::{produce_eval_text, display_state, TO_SQUARE};
 use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{extended_compute_move, game_init};
 use legacy_zebra::src::osfbook::{init_osf, read_binary_database};
@@ -58,13 +58,13 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
     read_binary_database(book_name.as_ptr(), &mut g_state.g_book);
     game_init(0 as *const i8, &mut side_to_move, g_state);
     (g_state.game_state).toggle_human_openings(0 as i32);
-    set_names("", "");
+    display_state.set_names("", "");
     quit = 0;
     while quit == 0 {
         let mut val0: i32 = 0;
         let mut val1: i32 = 0;
         let mut orientation: i32 = 0;
-        set_move_list((g_state.board_state).score_sheet_row);
+        display_state.set_move_list((g_state.board_state).score_sheet_row);
         let opening_name = find_opening_name(&mut (g_state.g_book), &(g_state.board_state).board);
         if let Some(opening_name) = opening_name {
             write!(stdout, "\nOpening: {}\n",
