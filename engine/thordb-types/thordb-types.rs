@@ -49,6 +49,30 @@ impl PlayerDatabaseType {
     pub fn count(&self) -> i32 {
         return self.player_list.len() as i32;
     }
+
+    /*
+      GET_PLAYER_NAME
+      Returns the name of the INDEXth player if available.
+    */
+    pub fn get_player_name(&self, index: i32) -> &'static [u8] {
+        if index < 0 as i32 || index >= self.count() {
+            return b"< Not available >"
+        } else {
+            return self.name_buffer[(20 * index as usize)..].split(|&c| c == 0).next().unwrap();
+        };
+    }
+    /*
+      PLAYER_LEX_ORDER
+      Returns the index into the lexicographical order of the
+      INDEXth player if available, otherwise the last index + 1.
+    */
+    pub fn player_lex_order(&self, index: i32) -> i32 {
+        if index < 0 as i32 || index >= self.count() {
+            return self.count()
+        } else {
+            return self.player_list[index as usize].lex_order
+        };
+    }
 }
 #[derive(Copy, Clone)]
 #[repr(C)]

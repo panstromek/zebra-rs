@@ -381,7 +381,7 @@ pub unsafe fn read_player_database(file_name:
         players.player_list = vec![PlayerType::default(); players_count as usize];
         let mut i = 0;
         while i < players_count {
-            let name = get_player_name(i);
+            let name = players.get_player_name(i);
             players.player_list[i as usize] = (PlayerType {
                 lex_order: 0,
                 /* By convention, names of computer programs always contain
@@ -554,9 +554,9 @@ unsafe fn print_game(mut stream: FileHandle,
     let mut i: i32 = 0;
     stream.write(tournaments.tournament_name((*game).tournament_no as i32));
     write!(stream, "  {}\n",            (*(*game).database).prolog.origin_year);
-    stream.write(get_player_name((*game).black_no as i32));
+    stream.write(players.get_player_name((*game).black_no as i32));
     stream.write(b" vs ");
-    stream.write(get_player_name((*game).white_no as i32));
+    stream.write(players.get_player_name((*game).white_no as i32));
     stream.write(b"\n");
     write!(stream, "{} - {}   ",
             (*game).actual_black_score as i32,
@@ -926,29 +926,6 @@ fn get_corner_mask(disc_a1: i32, disc_a8: i32, disc_h1: i32, disc_h8: i32) -> u3
         i += 1
     }
     return out_mask << 8 as i32 * (count - 1 as i32);
-}
-
-/*
-  GET_PLAYER_NAME
-  Returns the name of the INDEXth player if available.
-*/
-
-pub unsafe fn get_player_name(index: i32) -> &'static [u8] {
-    if index < 0 as i32 || index >= players.count() {
-        return b"< Not available >"
-    } else {
-        return players.name_buffer[(20 * index as usize)..].split(|&c| c == 0).next().unwrap();
-    };
-}
-/*
-  PLAYER_LEX_ORDER
-  Returns the index into the lexicographical order of the
-  INDEXth player if available, otherwise the last index + 1.
-*/
-unsafe fn player_lex_order(index: i32) -> i32 {
-    if index < 0 as i32 || index >= players.count() {
-        return players.count()
-    } else { return (*players.player_list.offset(index as isize)).lex_order };
 }
 
 /*
@@ -1488,8 +1465,8 @@ unsafe fn get_thor_game(index: i32)
     } else {
         /* Copy name fields etc */
         game = *thor_search.match_list.offset(index as isize);
-        info.black_name = get_player_name((*game).black_no as i32);
-        info.white_name = get_player_name((*game).white_no as i32);
+        info.black_name = players.get_player_name((*game).black_no as i32);
+        info.white_name = players.get_player_name((*game).white_no as i32);
         info.tournament = tournaments.tournament_name((*game).tournament_no as i32);
         info.year = (*(*game).database).prolog.origin_year;
         info.black_actual_score = (*game).actual_black_score as i32;
@@ -2381,13 +2358,13 @@ pub unsafe fn thor_compare(game1: &GameType, game2: &GameType) -> i32 {
             }
             2 => {
                 result =
-                    player_lex_order((*game1).black_no as i32) -
-                        player_lex_order((*game2).black_no as i32)
+                    players.player_lex_order((*game1).black_no as i32) -
+                        players.player_lex_order((*game2).black_no as i32)
             }
             3 => {
                 result =
-                    player_lex_order((*game1).white_no as i32) -
-                        player_lex_order((*game2).white_no as i32)
+                    players.player_lex_order((*game1).white_no as i32) -
+                        players.player_lex_order((*game2).white_no as i32)
             }
             4 => {
                 result =
