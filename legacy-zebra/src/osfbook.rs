@@ -1326,7 +1326,7 @@ pub unsafe fn do_minimax(index: i32,
 
 pub unsafe fn engine_init_osf<FE: FrontEnd>(g_state :&mut FullState) {
 
-    init_maps::<FE>(g_state); //FIXME why is this not called from zebra everytime in the engine?????
+    init_maps::<FE>(&mut g_state.g_book); //FIXME why is this not called from zebra everytime in the engine?????
     let mut hash_state = (&mut g_state.hash_state);
     let mut random_instance = (&mut g_state.random_instance);
     let mut g_book = (&mut g_state.g_book);
@@ -1372,10 +1372,7 @@ pub fn prepare_tree_traversal(g_state: &mut FullState) {
    Notice that the order of these MUST coincide with the returned
    orientation value from get_hash() OR YOU WILL LOSE BIG.
 */
-pub fn init_maps<FE: FrontEnd>(g_state: &mut FullState) {
-    let mut g_book = (&mut g_state.g_book);
-
-    let book = &mut g_book;
+pub fn init_maps<FE: FrontEnd>(book: &mut Book) {
     book.symmetry_map[0] = &BOOK_MAPS.b1_b1_map;
     book.inv_symmetry_map[0] = &BOOK_MAPS.b1_b1_map;
     book.symmetry_map[1] = &BOOK_MAPS.g1_b1_map;
@@ -1392,7 +1389,7 @@ pub fn init_maps<FE: FrontEnd>(g_state: &mut FullState) {
     book.inv_symmetry_map[6] = &BOOK_MAPS.h7_b1_map;
     book.symmetry_map[7] = &BOOK_MAPS.h2_b1_map;
     book.inv_symmetry_map[7] = &BOOK_MAPS.a7_b1_map;
-    let book = & g_book;
+    let book = &book;
     let mut i = 0;
     let mut k = 0;
     while i < 8 as i32 {
