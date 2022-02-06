@@ -1038,46 +1038,31 @@ unsafe fn compute_full_primary_hash(hash_val: &mut [u32]) {
         bit_reverse_32(*hash_val.offset(3));
 }
 unsafe fn compute_full_secondary_hash(hash_val: &mut [u32]) {
-    let mut i: i32 = 0;
-    i = 0;
+    let mut i = 0;
     while i < 4 as i32 {
         *hash_val.offset(i as isize) = 0;
         i += 1
     }
     i = 0;
-    while i < 8 as i32 {
+    while i < 8 {
         /* b1 -> b1 */
-        hash_val[0] ^=
-            secondary_hash[i as usize][thor_row_pattern[i as usize] as usize];
+        hash_val[0] ^= secondary_hash[i as usize][thor_row_pattern[i as usize] as usize];
         /* b8 -> b1 */
-        *hash_val.offset(1) ^=
-            secondary_hash[i as
-                usize][thor_row_pattern[(7 as i32 - i)
-                as usize] as
-                usize];
+        *hash_val.offset(1) ^= secondary_hash[i as usize][thor_row_pattern[(7 as i32 - i) as usize] as usize];
         /* a2 -> b1 */
-        *hash_val.offset(2) ^=
-            secondary_hash[i as usize][thor_col_pattern[i as usize] as usize];
+        *hash_val.offset(2) ^= secondary_hash[i as usize][thor_col_pattern[i as usize] as usize];
         /* h2 -> b1 */
-        *hash_val.offset(3) ^=
-            secondary_hash[i as
-                usize][thor_col_pattern[(7 as i32 - i)
-                as usize] as
-                usize];
+        *hash_val.offset(3) ^= secondary_hash[i as usize][thor_col_pattern[(7 as i32 - i) as usize] as usize];
         i += 1
     }
     /* g1 -> b1 */
-    *hash_val.offset(4) =
-        bit_reverse_32(hash_val[0]);
+    *hash_val.offset(4) = bit_reverse_32(hash_val[0]);
     /* g8 -> b1 */
-    *hash_val.offset(5) =
-        bit_reverse_32(*hash_val.offset(1));
+    *hash_val.offset(5) = bit_reverse_32(*hash_val.offset(1));
     /* a7 -> b1 */
-    *hash_val.offset(6) =
-        bit_reverse_32(*hash_val.offset(2));
+    *hash_val.offset(6) = bit_reverse_32(*hash_val.offset(2));
     /* h7 -> b1 */
-    *hash_val.offset(7) =
-        bit_reverse_32(*hash_val.offset(3));
+    *hash_val.offset(7) = bit_reverse_32(*hash_val.offset(3));
 }
 
 /*
