@@ -938,11 +938,10 @@ fn get_corner_mask(disc_a1: i32, disc_a8: i32, disc_h1: i32, disc_h8: i32) -> u3
 */
 
 unsafe fn get_database_info(info: *mut DatabaseInfoType) {
-    let mut i: i32 = 0;
     let mut change: i32 = 0;
     let mut temp = DatabaseInfoType{year: 0, count: 0,};
     let mut current_db_ = &database_head;
-    i = 0;
+    let mut i = 0;
     while i < thor_database_count {
         let current_db = current_db_.as_ref().unwrap();
         (*info.offset(i as isize)).year = (*current_db).prolog.origin_year;
@@ -956,12 +955,10 @@ unsafe fn get_database_info(info: *mut DatabaseInfoType) {
         change = 0;
         i = 0;
         while i < thor_database_count - 1 as i32 {
-            if (*info.offset(i as isize)).year >
-                (*info.offset((i + 1 as i32) as isize)).year {
+            if (*info.offset(i as isize)).year > (*info.offset((i + 1 as i32) as isize)).year {
                 change = 1;
                 temp = *info.offset(i as isize);
-                *info.offset(i as isize) =
-                    *info.offset((i + 1 as i32) as isize);
+                *info.offset(i as isize) = *info.offset((i + 1 as i32) as isize);
                 *info.offset((i + 1 as i32) as isize) = temp
             }
             i += 1
@@ -982,10 +979,8 @@ unsafe fn compute_partial_hash(hash_val1: &mut u32,
     *hash_val2 = 0;
     i = 0;
     while i < 8 as i32 {
-        *hash_val1 ^=
-            primary_hash[i as usize][thor_row_pattern[i as usize] as usize];
-        *hash_val2 ^=
-            secondary_hash[i as usize][thor_row_pattern[i as usize] as usize];
+        *hash_val1 ^= primary_hash[i as usize][thor_row_pattern[i as usize] as usize];
+        *hash_val2 ^= secondary_hash[i as usize][thor_row_pattern[i as usize] as usize];
         i += 1
     };
 }
@@ -998,44 +993,31 @@ unsafe fn compute_partial_hash(hash_val1: &mut u32,
         definitions in INIT_SYMMETRY_MAPS().
 */
 unsafe fn compute_full_primary_hash(hash_val: &mut [u32]) {
-    let mut i: i32 = 0;
-    i = 0;
-    while i < 4 as i32 {
+    let mut i = 0;
+    while i < 4 {
         *hash_val.offset(i as isize) = 0;
         i += 1
     }
     i = 0;
-    while i < 8 as i32 {
+    while i < 8 {
         /* b1 -> b1 */
-        hash_val[0] ^=
-            primary_hash[i as usize][thor_row_pattern[i as usize] as usize];
+        hash_val[0] ^= primary_hash[i as usize][thor_row_pattern[i as usize] as usize];
         /* b8 -> b1 */
-        *hash_val.offset(1) ^=
-            primary_hash[i as
-                usize][thor_row_pattern[(7 as i32 - i) as
-                usize] as usize];
+        *hash_val.offset(1) ^= primary_hash[i as usize][thor_row_pattern[(7 as i32 - i) as usize] as usize];
         /* a2 -> b1 */
-        *hash_val.offset(2) ^=
-            primary_hash[i as usize][thor_col_pattern[i as usize] as usize];
+        *hash_val.offset(2) ^= primary_hash[i as usize][thor_col_pattern[i as usize] as usize];
         /* h2 -> b1 */
-        *hash_val.offset(3) ^=
-            primary_hash[i as
-                usize][thor_col_pattern[(7 as i32 - i) as
-                usize] as usize];
+        *hash_val.offset(3) ^= primary_hash[i as usize][thor_col_pattern[(7 as i32 - i) as usize] as usize];
         i += 1
     }
     /* g1 -> b1 */
-    *hash_val.offset(4) =
-        bit_reverse_32(hash_val[0]);
+    *hash_val.offset(4) = bit_reverse_32(hash_val[0]);
     /* g8 -> b1 */
-    *hash_val.offset(5) =
-        bit_reverse_32(*hash_val.offset(1));
+    *hash_val.offset(5) = bit_reverse_32(*hash_val.offset(1));
     /* a7 -> b1 */
-    *hash_val.offset(6) =
-        bit_reverse_32(*hash_val.offset(2));
+    *hash_val.offset(6) = bit_reverse_32(*hash_val.offset(2));
     /* h7 -> b1 */
-    *hash_val.offset(7) =
-        bit_reverse_32(*hash_val.offset(3));
+    *hash_val.offset(7) = bit_reverse_32(*hash_val.offset(3));
 }
 unsafe fn compute_full_secondary_hash(hash_val: &mut [u32]) {
     let mut i = 0;
