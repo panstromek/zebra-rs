@@ -13,7 +13,7 @@ use engine::src::stubs::{abs};
 use engine::src::zebra::EvaluationType;
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
-use libc_wrapper::{fclose, FileHandle, fopen, fscanf, stdout, time};
+use libc_wrapper::{fclose, fopen, fscanf, stdout, time};
 use std::io::Write;
 #[macro_use]
 use crate::fatal_error;
@@ -351,45 +351,34 @@ pub unsafe fn add_new_game(move_count_0: i32,
 */
 
 pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
-    let mut i: i32 = 0;
     let mut magic1: i32 = 0;
     let mut magic2: i32 = 0;
     let mut new_book_node_count: i32 = 0;
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
-    let mut stream = FileHandle::null();
     time(&mut start_time);
     write!(stdout, "Reading text opening database... ");
     stdout.flush();
-    stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
+    let stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
     if stream.is_null() {
         fatal_error!("{} '{}'\n","Could not open database file", &CStr::from_ptr(file_name).to_str().unwrap());
     }
-    fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8,
-           &mut magic1 as *mut i32);
-    fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8,
-           &mut magic2 as *mut i32);
+    fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8, &mut magic1 as *mut i32);
+    fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8, &mut magic2 as *mut i32);
     if magic1 != 2718 as i32 || magic2 != 2818 as i32 {
         fatal_error!("{}: {}", "Wrong checksum, might be an old version\x00" , &CStr::from_ptr(file_name).to_str().unwrap());
     }
-    fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8,
-           &mut new_book_node_count as *mut i32);
+    fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8, &mut new_book_node_count as *mut i32);
     set_allocation(new_book_node_count + 1000 as i32, g_book);
-    i = 0;
+    let mut i = 0;
     while i < new_book_node_count {
-        fscanf(stream.file(),
-               b"%d %d %hd %hd %hd %hd %hd\n\x00" as *const u8 as
-                   *const i8,
+        fscanf(stream.file(), b"%d %d %hd %hd %hd %hd %hd\n\x00" as *const u8 as *const i8,
                &mut (*g_book.node.offset(i as isize)).hash_val1 as *mut i32,
                &mut (*g_book.node.offset(i as isize)).hash_val2 as *mut i32,
-               &mut (*g_book.node.offset(i as isize)).black_minimax_score as
-                   *mut i16,
-               &mut (*g_book.node.offset(i as isize)).white_minimax_score as
-                   *mut i16,
-               &mut (*g_book.node.offset(i as isize)).best_alternative_move as
-                   *mut i16,
-               &mut (*g_book.node.offset(i as isize)).alternative_score as
-                   *mut i16,
+               &mut (*g_book.node.offset(i as isize)).black_minimax_score as *mut i16,
+               &mut (*g_book.node.offset(i as isize)).white_minimax_score as *mut i16,
+               &mut (*g_book.node.offset(i as isize)).best_alternative_move as *mut i16,
+               &mut (*g_book.node.offset(i as isize)).alternative_score as *mut i16,
                &mut (*g_book.node.offset(i as isize)).flags as *mut u16);
         i += 1
     }
