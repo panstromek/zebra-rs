@@ -879,72 +879,50 @@ fn compute_thor_patterns(
   one corner has been played (obvious generalization for one or two
   corners).
 */
-fn get_corner_mask(disc_a1: i32,
-                          disc_a8: i32,
-                          disc_h1: i32,
-                          disc_h8: i32)
-                          -> u32 {
-    let mut i: i32 = 0;
-    let mut count: i32 = 0;
-    let mut mask_a1: i32 = 0;
-    let mut mask_a8: i32 = 0;
-    let mut mask_h1: i32 = 0;
-    let mut mask_h8: i32 = 0;
-    let mut out_mask: u32 = 0;
+fn get_corner_mask(disc_a1: i32, disc_a8: i32, disc_h1: i32, disc_h8: i32) -> u32 {
     let mut config: [u32; 8] = [0; 8];
-    mask_a1 = 0;
+    let mut mask_a1 = 0;
     if disc_a1 == 0 as i32 {
         mask_a1 = 1 as i32
-    } else if disc_a1 == 2 as i32 { mask_a1 = 2 as i32 }
-    mask_a8 = 0;
+    } else if disc_a1 == 2 as i32 {
+        mask_a1 = 2 as i32
+    }
+    let mut mask_a8 = 0;
     if disc_a8 == 0 as i32 {
         mask_a8 = 1 as i32
-    } else if disc_a8 == 2 as i32 { mask_a8 = 2 as i32 }
-    mask_h1 = 0;
+    } else if disc_a8 == 2 as i32 {
+        mask_a8 = 2 as i32
+    }
+    let mut mask_h1 = 0;
     if disc_h1 == 0 as i32 {
         mask_h1 = 1 as i32
-    } else if disc_h1 == 2 as i32 { mask_h1 = 2 as i32 }
-    mask_h8 = 0;
+    } else if disc_h1 == 2 as i32 {
+        mask_h1 = 2 as i32
+    }
+    let mut mask_h8 = 0;
     if disc_h8 == 0 as i32 {
         mask_h8 = 1 as i32
-    } else if disc_h8 == 2 as i32 { mask_h8 = 2 as i32 }
-    count = 0;
+    } else if disc_h8 == 2 as i32 {
+        mask_h8 = 2 as i32
+    }
+    let mut count = 0;
     if disc_a1 != 1 as i32 { count += 1 }
     if disc_a8 != 1 as i32 { count += 1 }
     if disc_h1 != 1 as i32 { count += 1 }
     if disc_h8 != 1 as i32 { count += 1 }
     if count == 0 as i32 { return 0 as i32 as u32 }
-    config[0] =
-        (mask_a1 + 4 as i32 * mask_a8 + 16 as i32 * mask_h1 +
-            64 as i32 * mask_h8) as u32;
-    config[1] =
-        (mask_a1 + 4 as i32 * mask_h1 + 16 as i32 * mask_a8 +
-            64 as i32 * mask_h8) as u32;
-    config[2] =
-        (mask_a8 + 4 as i32 * mask_a1 + 16 as i32 * mask_h8 +
-            64 as i32 * mask_h1) as u32;
-    config[3] =
-        (mask_a8 + 4 as i32 * mask_h8 + 16 as i32 * mask_a1 +
-            64 as i32 * mask_h1) as u32;
-    config[4] =
-        (mask_h1 + 4 as i32 * mask_h8 + 16 as i32 * mask_a1 +
-            64 as i32 * mask_a8) as u32;
-    config[5] =
-        (mask_h1 + 4 as i32 * mask_a1 + 16 as i32 * mask_h8 +
-            64 as i32 * mask_a8) as u32;
-    config[6] =
-        (mask_h8 + 4 as i32 * mask_h1 + 16 as i32 * mask_a8 +
-            64 as i32 * mask_a1) as u32;
-    config[7] =
-        (mask_h8 + 4 as i32 * mask_a8 + 16 as i32 * mask_h1 +
-            64 as i32 * mask_a1) as u32;
-    out_mask = config[0];
-    i = 1;
+    config[0] = (mask_a1 + 4 as i32 * mask_a8 + 16 as i32 * mask_h1 + 64 as i32 * mask_h8) as u32;
+    config[1] = (mask_a1 + 4 as i32 * mask_h1 + 16 as i32 * mask_a8 + 64 as i32 * mask_h8) as u32;
+    config[2] = (mask_a8 + 4 as i32 * mask_a1 + 16 as i32 * mask_h8 + 64 as i32 * mask_h1) as u32;
+    config[3] = (mask_a8 + 4 as i32 * mask_h8 + 16 as i32 * mask_a1 + 64 as i32 * mask_h1) as u32;
+    config[4] = (mask_h1 + 4 as i32 * mask_h8 + 16 as i32 * mask_a1 + 64 as i32 * mask_a8) as u32;
+    config[5] = (mask_h1 + 4 as i32 * mask_a1 + 16 as i32 * mask_h8 + 64 as i32 * mask_a8) as u32;
+    config[6] = (mask_h8 + 4 as i32 * mask_h1 + 16 as i32 * mask_a8 + 64 as i32 * mask_a1) as u32;
+    config[7] = (mask_h8 + 4 as i32 * mask_a8 + 16 as i32 * mask_h1 + 64 as i32 * mask_a1) as u32;
+    let mut out_mask = config[0];
+    let mut i = 1;
     while i < 8 as i32 {
-        out_mask =
-            if out_mask < config[i as usize] {
-                out_mask
-            } else { config[i as usize] };
+        out_mask = if out_mask < config[i as usize] { out_mask } else { config[i as usize] };
         i += 1
     }
     return out_mask << 8 as i32 * (count - 1 as i32);
