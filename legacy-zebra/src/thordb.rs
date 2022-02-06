@@ -840,14 +840,18 @@ fn any_flips(sqnum: i32, color: i32,
   Computes the row and column patterns.
 
 */
-unsafe fn compute_thor_patterns(in_board: &[i32]) {
+fn compute_thor_patterns(
+    row_pattern: &mut [i32; 8],
+    col_pattern: &mut [i32; 8],
+    in_board: &[i32],
+) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
     i = 0;
     while i < 8 as i32 {
-        thor_row_pattern[i as usize] = 0;
-        thor_col_pattern[i as usize] = 0;
+        row_pattern[i as usize] = 0;
+        col_pattern[i as usize] = 0;
         i += 1
     }
     i = 0;
@@ -855,10 +859,8 @@ unsafe fn compute_thor_patterns(in_board: &[i32]) {
         j = 0;
         pos = 10 as i32 * i + 11 as i32;
         while j < 8 as i32 {
-            thor_row_pattern[i as usize] +=
-                pow3(j as usize) * *in_board.offset(pos as isize);
-            thor_col_pattern[j as usize] +=
-                pow3(i as usize) * *in_board.offset(pos as isize);
+            row_pattern[i as usize] += pow3(j as usize) * *in_board.offset(pos as isize);
+            col_pattern[j as usize] += pow3(i as usize) * *in_board.offset(pos as isize);
             j += 1;
             pos += 1
         }
@@ -1988,7 +1990,7 @@ unsafe fn build_thor_opening_tree() {
     /* Create the root node and compute its hash value */
     root_node = new_thor_opening_node(0 as *mut ThorOpeningNode);
     clear_thor_board(&mut thor_board);
-    compute_thor_patterns(&thor_board);
+    compute_thor_patterns(&mut thor_row_pattern, &mut thor_col_pattern, &thor_board);
     compute_partial_hash(&mut hash1, &mut hash2);
     (*root_node).hash1 = hash1;
     (*root_node).hash2 = hash2;
@@ -2059,7 +2061,7 @@ unsafe fn build_thor_opening_tree() {
         /* Create the branch from the previous node */
         parent = node_list[branch_depth as usize];
         new_child = new_thor_opening_node(parent);
-        compute_thor_patterns(&thor_board);
+        compute_thor_patterns(&mut thor_row_pattern, &mut thor_col_pattern, &thor_board);
         compute_partial_hash(&mut hash1, &mut hash2);
         (*new_child).hash1 = hash1;
         (*new_child).hash2 = hash2;
@@ -2106,7 +2108,7 @@ unsafe fn build_thor_opening_tree() {
             }
             parent = new_child;
             new_child = new_thor_opening_node(parent);
-            compute_thor_patterns(&thor_board);
+            compute_thor_patterns(&mut thor_row_pattern, &mut thor_col_pattern, &thor_board);
             compute_partial_hash(&mut hash1, &mut hash2);
             (*new_child).hash1 = hash1;
             (*new_child).hash2 = hash2;
@@ -2357,7 +2359,7 @@ unsafe fn position_match(mut game: &mut GameType,
        functions match the given hash values for at least one
        rotation (common to the two hash functions). */
     if play_through_game(game, move_count) != 0 {
-        compute_thor_patterns(&thor_board);
+        compute_thor_patterns(&mut thor_row_pattern, &mut thor_col_pattern, &thor_board);
         primary_hit_mask = primary_hash_lookup(in_hash1);
         if primary_hit_mask != 0 {
             secondary_hit_mask = secondary_hash_lookup(in_hash2);
@@ -2519,7 +2521,7 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
         i += 1
     }
     /* Calculate frequencies for all moves */
-    compute_thor_patterns(&in_board);
+    compute_thor_patterns(&mut thor_row_pattern, &mut thor_col_pattern, &in_board);
     compute_full_primary_hash(&mut primary_hash_0);
     compute_full_secondary_hash(&mut secondary_hash_0);
     recursive_frequency_count(root_node, &mut freq_count,
@@ -2698,7 +2700,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     move_count =
         disc_count[0] +
             disc_count[2] - 4 as i32;
-    compute_thor_patterns(in_board);
+    compute_thor_patterns(&mut thor_row_pattern, &mut thor_col_pattern, in_board);
     compute_partial_hash(&mut target_hash1, &mut target_hash2);
     opening_scan(move_count);
     /* Determine the shape masks */
