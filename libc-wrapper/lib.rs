@@ -97,9 +97,10 @@ extern "C" {
     pub fn __ctype_b_loc() -> *mut *const u16;
     pub fn __ctype_tolower_loc() -> *mut *const i32;
 }
-pub static mut stdin: FileHandle = FileHandle::StdIn;
-pub static mut stdout: FileHandle = FileHandle::StdOut;
-pub static mut stderr: FileHandle = FileHandle::StdErr;
+
+pub use FileHandle::StdIn as stdin;
+pub use FileHandle::StdOut as stdout;
+pub use FileHandle::StdErr as stderr;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
