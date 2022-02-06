@@ -515,40 +515,34 @@ impl LibcFatalError {
 }
 
 impl FatalError for LibcFatalError {
-  fn invalid_move(curr_move: i8) -> ! {
-    {
+    fn invalid_move(curr_move: i8) -> ! {
         fatal_error!("Thor book move {} is invalid!", curr_move);
     }
-  }
 
- fn unrecognized_character(unrecognized: i8) -> ! {
+    fn unrecognized_character(unrecognized: i8) -> ! {
+        fatal_error!("{} '{}' {}\n", "Unrecognized character", char::from(unrecognized as u8), "in game file");
+    }
 
-      fatal_error!("{} '{}' {}\n", "Unrecognized character", char::from(unrecognized as u8), "in game file");
-
-}
-
-fn cannot_open_game_file(file_name: &str) -> ! {
+    fn cannot_open_game_file(file_name: &str) -> ! {
         fatal_error!("{} '{}'\n", "Cannot open game file" , file_name);
+    }
 
-}
+    fn invalid_move_in_move_sequence(curr_move: i8) -> ! {
+        fatal_error!("Invalid move {} in move sequence", TO_SQUARE(curr_move));
+    }
 
-
-fn invalid_move_in_move_sequence(curr_move: i8) -> ! {
-    fatal_error!("Invalid move {} in move sequence", TO_SQUARE(curr_move));
-}
-
- fn internal_error_in_book_code() -> ! {
+    fn internal_error_in_book_code() -> ! {
         fatal_error!("Internal error in book code.");
-}
+    }
 
- fn unexpected_character_in_a_move_string() -> ! {
+    fn unexpected_character_in_a_move_string() -> ! {
         fatal_error!("Unexpected character in move string");
-}
+    }
 
- fn invalid_move_string_provided() -> ! {
+    fn invalid_move_string_provided() -> ! {
         fatal_error!("Invalid move string provided");
-}
- fn initial_squares_are_empty() -> ! {
-    fatal_error!("Initial squares (d4, e4, d5, e5) from the board file should not be empty.\n");
-}
+    }
+    fn initial_squares_are_empty() -> ! {
+        fatal_error!("Initial squares (d4, e4, d5, e5) from the board file should not be empty.\n");
+    }
 }
