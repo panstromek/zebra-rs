@@ -6,7 +6,7 @@ use engine::src::hash::setup_hash;
 use engine::src::osfbook::{reset_book_search, set_deviation_value};
 use engine::src::search::disc_count;
 use engine::src::zebra::EvaluationType;
-use legacy_zebra::src::display::{display_board, display_move, set_evals, set_move_list, set_names, display_state};
+use legacy_zebra::src::display::{display_move, set_evals, set_move_list, set_names, display_state};
 use legacy_zebra::src::game::{legacy_compute_move, game_init, global_setup, toggle_status_log};
 use legacy_zebra::src::learn::init_learn;
 use legacy_zebra::src::thordb::init_thor_database;
@@ -224,11 +224,9 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             /* Search the position */
             if g_state.g_config.echo != 0 {
                 set_move_list(g_state.board_state.score_sheet_row);
-                display_board(&mut stdout, &g_state.board_state.board, side_to_move,
+                display_state.display_board(&mut stdout, &g_state.board_state.board, side_to_move,
                               1 as i32, 0 as i32,
-                              1 as i32, display_state.current_row,
-                              display_state.black_player, display_state.black_time, display_state.black_eval,
-                              display_state.white_player, display_state.white_time, display_state.white_eval,
+                              1 as i32,
                               &g_state.board_state.black_moves, &g_state.board_state.white_moves);
             }
             search_start =  g_state.g_timer.get_real_timer();
