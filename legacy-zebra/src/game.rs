@@ -122,7 +122,7 @@ impl BoardSource for BasicBoardFileSource {
     }
 
     fn report_unrecognized_character(unrecognized: i8) {
-        unsafe {
+         {
             write!(stdout, "{} '{}' {}\n",
                    "Unrecognized character",
                    unrecognized as u8 as char,
@@ -156,18 +156,18 @@ impl LibcFatalError {
         while i < expect_count {
             let move__ = move_list_item[i as usize] as i32;
             let move_eval = evals_item[move__ as usize];
-            unsafe {
+             {
                 write!(stdout, "{} {:<6.2}  ", TO_SQUARE(move__), move_eval as f64 / 128.0f64);
             }
             if i % 7 as i32 == 6 as i32 || i == expect_count - 1 as i32 {
-                unsafe { write!(stdout, "\n"); }
+                 { write!(stdout, "\n"); }
             }
             i += 1
         }
     }
 
     fn report_hash_move(hash_move: i8) {
-        unsafe {
+         {
             write!(stdout, "{}={}\n",
                    "hash move", hash_move as i32);
         }
@@ -572,7 +572,7 @@ pub struct LibcZebraOutput;
 impl ComputeMoveOutput for LibcZebraOutput {
 fn display_out_optimal_line(search_state: &SearchState) {
     //FIXME parametrize, this touches global state
-    unsafe { display_optimal_line(&mut stdout, search_state.full_pv_depth, &search_state.full_pv) }
+     { display_optimal_line(&mut stdout, search_state.full_pv_depth, &search_state.full_pv) }
 }
 
 fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, timer: &mut Timer, board_state: &BoardState) {
