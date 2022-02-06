@@ -2852,10 +2852,7 @@ unsafe fn do_uncompress(depth: i32,
   and unpacks it into an ordinary .bin file.
 */
 
-pub unsafe fn unpack_compressed_database(in_name:
-                                         *const i8,
-                                         out_name:
-                                         *const i8, g_state: &mut FullState) {
+pub unsafe fn unpack_compressed_database(in_name: *const i8, out_name: *const i8, g_state: &mut FullState) {
     let mut i: i32 = 0;
     let mut dummy: i32 = 0;
     let mut node_count: i32 = 0;
@@ -2888,68 +2885,24 @@ pub unsafe fn unpack_compressed_database(in_name:
     fread(&mut child_list_size as *mut i32 as *mut std::ffi::c_void,
           ::std::mem::size_of::<i32>() as u64,
           1 as i32 as size_t, stream);
-    child_count =
-        safe_malloc((node_count as
-            u64).wrapping_mul(::std::mem::size_of::<i16>()
-            as u64)) as
-            *mut i16;
-    child =
-        safe_malloc((child_list_size as
-            u64).wrapping_mul(::std::mem::size_of::<i16>()
-            as u64)) as
-            *mut i16;
-    fread(child_count as *mut std::ffi::c_void,
-          ::std::mem::size_of::<i16>() as u64,
-          node_count as size_t, stream);
-    fread(child as *mut std::ffi::c_void,
-          ::std::mem::size_of::<i16>() as u64,
-          child_list_size as size_t, stream);
-    black_score =
-        safe_malloc((node_count as
-            u64).wrapping_mul(::std::mem::size_of::<i16>()
-            as u64)) as
-            *mut i16;
-    white_score =
-        safe_malloc((node_count as
-            u64).wrapping_mul(::std::mem::size_of::<i16>()
-            as u64)) as
-            *mut i16;
-    alt_move =
-        safe_malloc((node_count as
-            u64).wrapping_mul(::std::mem::size_of::<i16>()
-            as u64)) as
-            *mut i16;
-    alt_score =
-        safe_malloc((node_count as
-            u64).wrapping_mul(::std::mem::size_of::<i16>()
-            as u64)) as
-            *mut i16;
-    flags =
-        safe_malloc((node_count as
-            u64).wrapping_mul(::std::mem::size_of::<u16>()
-            as u64)) as
-            *mut u16;
+    child_count = safe_malloc((node_count as u64).wrapping_mul(::std::mem::size_of::<i16>() as u64)) as *mut i16;
+    child = safe_malloc((child_list_size as u64).wrapping_mul(::std::mem::size_of::<i16>() as u64)) as *mut i16;
+    fread(child_count as *mut std::ffi::c_void, ::std::mem::size_of::<i16>() as u64, node_count as size_t, stream);
+    fread(child as *mut std::ffi::c_void, ::std::mem::size_of::<i16>() as u64, child_list_size as size_t, stream);
+    black_score = safe_malloc((node_count as u64).wrapping_mul(::std::mem::size_of::<i16>() as u64)) as *mut i16;
+    white_score = safe_malloc((node_count as u64).wrapping_mul(::std::mem::size_of::<i16>() as u64)) as *mut i16;
+    alt_move = safe_malloc((node_count as u64).wrapping_mul(::std::mem::size_of::<i16>() as u64)) as *mut i16;
+    alt_score = safe_malloc((node_count as u64).wrapping_mul(::std::mem::size_of::<i16>() as u64)) as *mut i16;
+    flags = safe_malloc((node_count as u64).wrapping_mul(::std::mem::size_of::<u16>() as u64)) as *mut u16;
     i = 0;
     while i < node_count {
-        fread(&mut *black_score.offset(i as isize) as *mut i16 as
-                  *mut std::ffi::c_void,
-              ::std::mem::size_of::<i16>() as u64,
-              1 as i32 as size_t, stream);
-        fread(&mut *white_score.offset(i as isize) as *mut i16 as
-                  *mut std::ffi::c_void,
-              ::std::mem::size_of::<i16>() as u64,
-              1 as i32 as size_t, stream);
+        fread(&mut *black_score.offset(i as isize) as *mut i16 as *mut std::ffi::c_void, ::std::mem::size_of::<i16>() as u64, 1 as i32 as size_t, stream);
+        fread(&mut *white_score.offset(i as isize) as *mut i16 as *mut std::ffi::c_void, ::std::mem::size_of::<i16>() as u64, 1 as i32 as size_t, stream);
         i += 1
     }
-    fread(alt_move as *mut std::ffi::c_void,
-          ::std::mem::size_of::<i16>() as u64,
-          node_count as size_t, stream);
-    fread(alt_score as *mut std::ffi::c_void,
-          ::std::mem::size_of::<i16>() as u64,
-          node_count as size_t, stream);
-    fread(flags as *mut std::ffi::c_void,
-          ::std::mem::size_of::<u16>() as u64,
-          node_count as size_t, stream);
+    fread(alt_move as *mut std::ffi::c_void, ::std::mem::size_of::<i16>() as u64, node_count as size_t, stream);
+    fread(alt_score as *mut std::ffi::c_void, ::std::mem::size_of::<i16>() as u64, node_count as size_t, stream);
+    fread(flags as *mut std::ffi::c_void, ::std::mem::size_of::<u16>() as u64, node_count as size_t, stream);
     fclose(stream);
     /* Traverse the tree described by the database and create the .bin file */
     stream = fopen(out_name, b"wb\x00" as *const u8 as *const i8);
@@ -2961,16 +2914,10 @@ pub unsafe fn unpack_compressed_database(in_name:
     g_state.g_timer.toggle_abort_check(0 as i32);
     g_state.midgame_state.toggle_midgame_abort_check(0 as i32);
     magic = 2718;
-    fwrite(&mut magic as *mut i16 as *const std::ffi::c_void,
-           ::std::mem::size_of::<i16>() as u64,
-           1 as i32 as size_t, stream);
+    fwrite(&mut magic as *mut i16 as *const std::ffi::c_void, ::std::mem::size_of::<i16>() as u64, 1 as i32 as size_t, stream);
     magic = 2818;
-    fwrite(&mut magic as *mut i16 as *const std::ffi::c_void,
-           ::std::mem::size_of::<i16>() as u64,
-           1 as i32 as size_t, stream);
-    fwrite(&mut node_count as *mut i32 as *const std::ffi::c_void,
-           ::std::mem::size_of::<i32>() as u64,
-           1 as i32 as size_t, stream);
+    fwrite(&mut magic as *mut i16 as *const std::ffi::c_void, ::std::mem::size_of::<i16>() as u64, 1 as i32 as size_t, stream);
+    fwrite(&mut node_count as *mut i32 as *const std::ffi::c_void, ::std::mem::size_of::<i32>() as u64, 1 as i32 as size_t, stream);
     node_index = 0;
     child_index = 0;
     do_uncompress(0 as i32, stream, &mut node_index, &mut child_index,
