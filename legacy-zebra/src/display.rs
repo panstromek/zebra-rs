@@ -484,14 +484,6 @@ pub unsafe fn display_status(stream: &mut dyn Write, allow_repeat: i32) {
     }
     display_state.status_pos = 0;
 }
-
-fn write_buffer(stream: &mut dyn Write, buf: &mut Vec<u8>) {
-    if buf.len() > 0 {
-        buf.push(b'\n');
-        stream.write(buf);
-        buf.pop();
-    }
-}
 /*
   DISPLAY_SWEEP
   Display and clear the current search information.
@@ -503,6 +495,15 @@ pub unsafe fn display_sweep(stream: &mut dyn Write) {
     }
     display_state.sweep_modified = 0;
 }
+
+fn write_buffer(stream: &mut dyn Write, buf: &mut Vec<u8>) {
+    if buf.len() > 0 {
+        buf.push(b'\n');
+        stream.write(buf);
+        buf.pop();
+    }
+}
+
 /*
   PRODUCE_EVAL_TEXT
   Convert a result descriptor into a string intended for output.
