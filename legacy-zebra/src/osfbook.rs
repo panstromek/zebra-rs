@@ -555,53 +555,43 @@ pub unsafe fn print_move_alternatives(side_to_move: i32, mut board_state: &mut B
     let mut orientation: i32 = 0;
     let mut score: i32 = 0;
     let mut output_score: i32 = 0;
-    if g_book.candidate_count > 0 as i32 {
-        if side_to_move == 0 as i32 {
-            sign = 1 as i32
-        } else { sign = -1 }
-        let val0___ = &mut val1;
-        let val1___ = &mut val2;
-        let orientation___ = &mut orientation;
-        get_hash(val0___, val1___, orientation___, &mut g_book, &board_state.board);
+    if g_book.candidate_count > 0 {
+        if side_to_move == 0 {
+            sign = 1
+        } else {
+            sign = -1
+        }
+        get_hash(&mut val1, &mut val2, &mut orientation, &mut g_book, &board_state.board);
         slot = probe_hash_table(val1, val2, &mut g_book);
         /* Check that the position is in the opening book after all */
-        if slot == -1 ||
-               *g_book.book_hash_table.offset(slot as isize) == -1 {
+        if slot == -1 || *g_book.book_hash_table.offset(slot as isize) == -1 {
             return
         }
         /* Pick the book score corresponding to the player to move and
            remove draw avoidance and the special scores for nodes WLD. */
-        if side_to_move == 0 as i32 {
-            score =
-                (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
-                                  isize)).black_minimax_score as i32
+        if side_to_move == 0 {
+            score = (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as isize)).black_minimax_score as i32
         } else {
-            score =
-                (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
-                                  isize)).white_minimax_score as i32
+            score = (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as isize)).white_minimax_score as i32
         }
-        if score == 30000 as i32 - 1 as i32 ||
-               score == -(30000 as i32 - 1 as i32) {
-            score = 0 as i32
+        if score == 30000 - 1 || score == -(30000 - 1) {
+            score = 0
         }
-        if score > 30000 as i32 { score -= 30000 as i32 }
-        if score < -(30000 as i32) { score += 30000 as i32 }
+        if score > 30000 {
+            score -= 30000
+        }
+        if score < -(30000) {
+            score += 30000
+        }
         write!(stdout, "Book score is ");
-        if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
-                             isize)).flags as i32 & 16 as i32
-               != 0 {
+        if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as isize)).flags & 16 != 0 {
             write!(stdout, "{:+} (exact score).", sign * score);
-        } else if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
-                                    isize)).flags as i32 &
-                      4 as i32 != 0 {
+        } else if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as isize)).flags  & 4 != 0 {
             write!(stdout, "{:+} (W/L/D solved).", sign * score);
         } else {
-            write!(stdout, "{:+.2}.",
-                   (sign * score) as f64 / 128.0f64);
+            write!(stdout, "{:+.2}.", (sign * score) as f64 / 128.0f64);
         }
-        if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as
-                             isize)).flags as i32 & 32 as i32
-               != 0 {
+        if (*g_book.node.offset(*g_book.book_hash_table.offset(slot as isize) as isize)).flags & 32 != 0 {
             write!(stdout, " Private node.");
         }
         write!(stdout, "\n");
@@ -609,19 +599,18 @@ pub unsafe fn print_move_alternatives(side_to_move: i32, mut board_state: &mut B
         while i < g_book.candidate_count {
             write!(stdout, "   {}   ", TO_SQUARE(g_book.candidate_list[i as usize].move_0));
             output_score = g_book.candidate_list[i as usize].score;
-            if output_score >= 30000 as i32 {
-                output_score -= 30000 as i32
-            } else if output_score <= -(30000 as i32) {
-                output_score += 30000 as i32
+            if output_score >= 30000 {
+                output_score -= 30000
+            } else if output_score <= -(30000) {
+                output_score += 30000
             }
-            if g_book.candidate_list[i as usize].flags & 16 as i32 != 0 {
+            if g_book.candidate_list[i as usize].flags & 16 != 0 {
                 write!(stdout, "{:<+6}  (exact score)", output_score);
-            } else if g_book.candidate_list[i as usize].flags & 4 as i32 != 0
-             {
+            } else if g_book.candidate_list[i as usize].flags & 4 != 0 {
                 write!(stdout, "{:<+6}  (W/L/D solved)", output_score);
             } else {
                 write!(stdout, "{:<+6.2}", output_score as f64 / 128.0f64);
-                if g_book.candidate_list[i as usize].flags & 64 as i32 != 0 {
+                if g_book.candidate_list[i as usize].flags & 64 != 0 {
                     write!(stdout, "  (deviation)");
                 }
             }
