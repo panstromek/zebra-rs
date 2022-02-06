@@ -365,6 +365,24 @@ pub fn display_optimal_line(stream: &mut dyn Write, full_pv_depth_: i32, full_pv
 }
 
 impl DisplayState {
+    pub fn display_board(
+        &self,
+        stream: &mut dyn std::io::Write,
+        board: &[i32; 128],
+        side_to_move: i32,
+        give_game_score: i32,
+        give_time: i32,
+        give_evals: i32,
+        black_moves: &[i8; 60],
+        white_moves: &[i8; 60],
+    ) {
+        display_board(stream, board, side_to_move, give_game_score, give_time, give_evals,
+                      self.current_row,
+                      self.black_player, self.black_time, self.black_eval,
+                      self.white_player, self.white_time, self.white_eval,
+                      black_moves, white_moves
+        )
+    }
     pub fn write_status_fmt(&mut self, args: std::fmt::Arguments<'_>) {
         let len_before = self.status_buffer.len();
         self.status_buffer.write_fmt(args);
