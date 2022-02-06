@@ -1324,7 +1324,7 @@ pub unsafe fn do_minimax(index: i32,
 
 
 
-pub unsafe fn engine_init_osf<FE: FrontEnd>(g_state :&mut FullState) {
+pub fn engine_init_osf<FE: FrontEnd>(g_state :&mut FullState) {
 
     init_maps::<FE>(&mut g_state.g_book); //FIXME why is this not called from zebra everytime in the engine?????
     let mut hash_state = (&mut g_state.hash_state);
