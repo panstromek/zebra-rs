@@ -12,7 +12,7 @@ use engine::src::zebra::EvalType::{EXACT_EVAL, PASS_EVAL, UNDEFINED_EVAL};
 use engine::src::zebra::EvaluationType;
 use libc_wrapper::{stdout, time, time_t, c_time};
 
-use crate::src::display::{display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, TO_SQUARE};
+use crate::src::display::{display_optimal_line, produce_eval_text, display_state, TO_SQUARE};
 use crate::src::error::{LibcFatalError};
 use crate::src::getcoeff::{load_coeff_adjustments, new_coeff_source};
 use crate::src::thordb::LegacyThor;
@@ -582,9 +582,9 @@ fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counte
                     interrupted_depth);
         let mut eval_str = produce_eval_text(info, 1 as i32);
         send_status!(display_state, "{:>10}  ", eval_str);
-        send_status_nodes(counter_value);
-        send_status_pv(&board_state.pv[0], interrupted_depth, board_state.pv_depth[0]);
-        send_status_time(timer.get_elapsed_time());
+        display_state.send_status_nodes(counter_value);
+        display_state.send_status_pv(&board_state.pv[0], interrupted_depth, board_state.pv_depth[0]);
+        display_state.send_status_time(timer.get_elapsed_time());
         if timer.get_elapsed_time() != 0.0f64 {
             send_status!(display_state, "{:6.0} {}",
                         counter_value /
@@ -595,7 +595,7 @@ fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counte
 }
 
 fn display_status_out() {
-    unsafe { display_status(&mut stdout, 0 as i32); }
+    unsafe { display_state.display_status(&mut stdout, 0 as i32); }
 }
 
 fn echo_ponder_move_4(curr_move: i8, ponder_move: i8) {
@@ -606,7 +606,7 @@ fn echo_ponder_move_4(curr_move: i8, ponder_move: i8) {
             send_status!(display_state, "{{{}}} ",TO_SQUARE(ponder_move));
         }
         send_status!(display_state, "{}",TO_SQUARE(curr_move)         );
-        display_status(&mut stdout, 0 as i32);
+        display_state.display_status(&mut stdout, 0 as i32);
     }
 }
 
@@ -618,7 +618,7 @@ fn echo_ponder_move_2(curr_move: i8, ponder_move: i8) {
             send_status!(display_state, "{{{}}} ", TO_SQUARE(ponder_move));
         }
         send_status!(display_state, "{}", TO_SQUARE(curr_move));
-        display_status(&mut stdout, 0 as i32);
+        display_state.display_status(&mut stdout, 0 as i32);
     }
 }
 
@@ -629,7 +629,7 @@ fn echo_ponder_move(curr_move: i8, ponder_move: i8) {
             send_status!(display_state, "{} ",TO_SQUARE(ponder_move));
         }
         send_status!(display_state, "{}",TO_SQUARE(curr_move));
-        display_status(&mut stdout, 0 as i32);
+        display_state.display_status(&mut stdout, 0 as i32);
     }
 }
 
@@ -639,7 +639,7 @@ fn echo_compute_move_2(info: &EvaluationType, disk: i8) {
         send_status!(display_state, "-->         ");
         send_status!(display_state, "{:<8}  ",             eval_str);
         send_status!(display_state, "{} ", TO_SQUARE(disk));
-        display_status(&mut stdout, 0 as i32);
+        display_state.display_status(&mut stdout, 0 as i32);
     }
 }
 
@@ -648,7 +648,7 @@ fn echo_compute_move_1(info: &EvaluationType) {
         let mut eval_str = produce_eval_text(info, 0 as i32);
         send_status!(display_state, "-->         ");
         send_status!(display_state, "{:<8}  ",             eval_str);
-        display_status(&mut stdout, 0 as i32);
+        display_state.display_status(&mut stdout, 0 as i32);
     }
 }
 }
@@ -709,7 +709,7 @@ fn log_chosen_move(logger: &mut LogFileHandler, curr_move: i8, info: &Evaluation
 }
 
 fn log_status(logger: &mut LogFileHandler) {
-    unsafe { display_status(&mut logger.log_file, 1 as i32); }
+    unsafe { display_state.display_status(&mut logger.log_file, 1 as i32); }
 }
 
 fn log_optimal_line(logger: &mut LogFileHandler, search_state: &SearchState) {
