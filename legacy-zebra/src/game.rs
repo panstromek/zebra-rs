@@ -12,7 +12,7 @@ use engine::src::zebra::EvalType::{EXACT_EVAL, PASS_EVAL, UNDEFINED_EVAL};
 use engine::src::zebra::EvaluationType;
 use libc_wrapper::{stdout, time, time_t, c_time};
 
-use crate::src::display::{clear_status, display_board, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, TO_SQUARE};
+use crate::src::display::{clear_status, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, TO_SQUARE};
 use crate::src::error::{LibcFatalError};
 use crate::src::getcoeff::{load_coeff_adjustments, new_coeff_source};
 use crate::src::thordb::LegacyThor;
@@ -719,14 +719,10 @@ fn log_optimal_line(logger: &mut LogFileHandler, search_state: &SearchState) {
 fn close_logger(logger: &mut LogFileHandler) {}
 
 fn log_board(logger: &mut LogFileHandler, board_state: &BoardState, side_to_move_: i32) {
-    let board_ = &board_state.board;
     unsafe {
-        display_board(&mut logger.log_file, board_, side_to_move_,
-                      0 as i32, 0 as i32, 0 as i32,
-                      display_state.current_row,
-                      display_state.black_player, display_state.black_time, display_state.black_eval,
-                      display_state.white_player, display_state.white_time, display_state.white_eval,
-                      &board_state.black_moves, &board_state.white_moves
+        display_state.display_board(&mut logger.log_file, &board_state.board, side_to_move_,
+                                    0, 0, 0,
+                                    &board_state.black_moves, &board_state.white_moves,
         );
     }
 }
