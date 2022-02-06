@@ -911,22 +911,18 @@ impl LibcFrontend {
     }
 
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
-        unsafe {
-            write!(stdout, "{} black wins,  {} draws,  {} white wins\n",
-                   black_win_count, draw_count,
-                   white_win_count);
-            write!(stdout, "Median score {}-{}\n", black_median_score,
-                   64 as i32 - black_median_score);
-            write!(stdout, ", average score {:.2}-{:.2}\n", black_average_score,
-                   64.0f64 - black_average_score);
-        }
+        write!(stdout, "{} black wins,  {} draws,  {} white wins\n",
+               black_win_count, draw_count,
+               white_win_count);
+        write!(stdout, "Median score {}-{}\n", black_median_score,
+               64 as i32 - black_median_score);
+        write!(stdout, ", average score {:.2}-{:.2}\n", black_average_score,
+               64.0f64 - black_average_score);
     }
     fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64) {
-        unsafe {
             write!(stdout, "{} matching games  ({:.3} s search time, {:.3} s total)\n",
                    thor_position_count, db_search_time,
                    total_search_time);
-        }
     }
     fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
                                 black_moves_: &[i8; 60], white_moves_: &[i8; 60]) {
@@ -964,16 +960,14 @@ impl LibcFrontend {
     }
 
     fn get_pass(stdin_lock : &mut StdinLock) {
-        unsafe {
             write!(stdout, "You must pass - please press Enter\n");
             dumpch(stdin_lock);
-        }
     }
 
     fn prompt_get_move(side_to_move: i32, stdin_lock : &mut StdinLock) -> (i32, i32) {
         let mut buffer1 = [0; 4];
         let mut buffer = &mut buffer1[0..3];
-        unsafe {
+        {
             if side_to_move == 0 {
                 write!(stdout, "{}: ", "Black move");
             } else {
@@ -1005,7 +999,7 @@ impl LibcFrontend {
 
     }
     fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {
-        unsafe {
+         {
             write!(stdout, "\nBlack: {}   White: {}\n", black_disc_count, white_disc_count);
             write!(stdout, "Nodes searched:        {:<-10.0}\n", node_val);
             write!(stdout, "Positions evaluated:   {:<-10.0}\n", eval_val);
@@ -1013,20 +1007,20 @@ impl LibcFrontend {
         }
     }
     fn report_skill_levels(black_level: i32, white_level: i32) {
-        unsafe {
+         {
             write!(stdout, "\n");
             write!(stdout, "Black level: {}\n", black_level);
             write!(stdout, "White level: {}\n", white_level);
         }
     }
     fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64) {
-        unsafe {
+         {
             write!(stdout, "{} matching games  ({:.3} s search time, {:.3} s total)\n",
                    thor_position_count, database_time, total_search_time);
         }
     }
     fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
-        unsafe {
+         {
             write!(stdout, "{} black wins, {} draws, {} white wins\n",
                    black_win_count, draw_count, white_win_count);
             write!(stdout, "Median score {}-{}", black_median_score, 64 - black_median_score);
@@ -1035,7 +1029,7 @@ impl LibcFrontend {
         }
     }
     fn report_opening_name(opening_name: &CStr) {
-        unsafe { write!(stdout, "\nOpening: {}\n", opening_name.to_str().unwrap()); }
+        write!(stdout, "\nOpening: {}\n", opening_name.to_str().unwrap());
     }
 
     fn dumpch(stdin_lock : &mut StdinLock) {
@@ -1066,19 +1060,15 @@ impl ZebraFrontend for LibcFrontend {
     }
 
     fn report_engine_override() {
-        unsafe {
-            write!(stdout, "Engine override: Random move selected.\n");
-        }
+        write!(stdout, "Engine override: Random move selected.\n");
     }
 
-    fn before_get_move()  {
-        unsafe {
-            write!(stdout, "\n");
-        }
+    fn before_get_move() {
+        write!(stdout, "\n");
     }
 
     fn report_book_randomness(slack_: f64) {
-        unsafe { write!(stdout, "Book randomness: {:.2} disks\n", slack_); }
+        write!(stdout, "Book randomness: {:.2} disks\n", slack_);
     }
     fn load_thor_files(g_timer: &mut Timer) { unsafe {
         /* No error checking done as it's only for testing purposes */
