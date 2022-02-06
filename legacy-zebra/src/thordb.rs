@@ -297,7 +297,7 @@ pub unsafe fn read_tournament_database(file_name:
             tournaments.tournament_list[i as usize] = (TournamentType {
                 lex_order: 0,
                 selected: 1,
-                name: tournament_name(i)
+                name: tournaments.tournament_name(i)
             });
             i += 1
         }
@@ -552,7 +552,7 @@ unsafe fn print_game(mut stream: FileHandle,
                      game: &GameType,
                      display_moves: i32) {
     let mut i: i32 = 0;
-    stream.write(tournament_name((*game).tournament_no as i32));
+    stream.write(tournaments.tournament_name((*game).tournament_no as i32));
     write!(stream, "  {}\n",            (*(*game).database).prolog.origin_year);
     stream.write(get_player_name((*game).black_no as i32));
     stream.write(b" vs ");
@@ -926,18 +926,6 @@ fn get_corner_mask(disc_a1: i32, disc_a8: i32, disc_h1: i32, disc_h8: i32) -> u3
         i += 1
     }
     return out_mask << 8 as i32 * (count - 1 as i32);
-}
-
-/*
-  TOURNAMENT_NAME
-  Returns the name of the INDEXth tournament if available.
-*/
-pub unsafe fn tournament_name(index: i32) -> &'static [u8] {
-    if index < 0 as i32 || index >= tournaments.count() {
-        return b"<Not available>"
-    } else {
-        return tournaments.name_buffer[(26 * index as usize)..].split(|&c| c == 0).next().unwrap()
-    };
 }
 
 /*
@@ -1502,7 +1490,7 @@ unsafe fn get_thor_game(index: i32)
         game = *thor_search.match_list.offset(index as isize);
         info.black_name = get_player_name((*game).black_no as i32);
         info.white_name = get_player_name((*game).white_no as i32);
-        info.tournament = tournament_name((*game).tournament_no as i32);
+        info.tournament = tournaments.tournament_name((*game).tournament_no as i32);
         info.year = (*(*game).database).prolog.origin_year;
         info.black_actual_score = (*game).actual_black_score as i32;
         info.black_corrected_score =
