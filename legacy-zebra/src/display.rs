@@ -466,10 +466,7 @@ pub unsafe fn send_status_nodes(node_count: f64) {
 
 pub unsafe fn send_status_pv(pv: &[i8; 64], max_depth: i32, pv_depth_zero: i32) {
     let mut i = 0;
-    while i <
-              (if max_depth < 5 as i32 {
-                   max_depth
-               } else { 5 as i32 }) {
+    while i < max_depth.min(5) {
         if i < pv_depth_zero {
             send_status!(display_state, "{} ", TO_SQUARE(pv[i as usize]));
         } else {
