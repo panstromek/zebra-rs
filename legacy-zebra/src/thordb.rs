@@ -25,15 +25,15 @@ use std::cmp::Ordering;
 use std::ptr::null_mut;
 
 /* Local variables */
-pub static mut thor_game_count: i32 = 0;
-pub static mut thor_database_count: i32 = 0;
-pub static mut thor_side_to_move: i32 = 0;
-pub static mut thor_sort_criteria_count: i32 = 0;
-pub static mut thor_games_sorted: i32 = 0;
-pub static mut thor_games_filtered: i32 = 0;
-pub static mut thor_row_pattern: [i32; 8] = [0; 8];
-pub static mut thor_col_pattern: [i32; 8] = [0; 8];
-pub static mut thor_board: [i32; 100] = [0; 100];
+static mut thor_game_count: i32 = 0;
+static mut thor_database_count: i32 = 0;
+static mut thor_side_to_move: i32 = 0;
+static mut thor_sort_criteria_count: i32 = 0;
+static mut thor_games_sorted: i32 = 0;
+static mut thor_games_filtered: i32 = 0;
+static mut thor_row_pattern: [i32; 8] = [0; 8];
+static mut thor_col_pattern: [i32; 8] = [0; 8];
+static mut thor_board: [i32; 100] = [0; 100];
 struct SymmetryMaps {
     b1_b1_map: [i32; 100],
     g1_b1_map: [i32; 100],
@@ -46,16 +46,16 @@ struct SymmetryMaps {
 }
 static SYMMENTRY_MAPS: SymmetryMaps = create_symetry_maps();
 
-pub static mut primary_hash: [[u32; 6561]; 8] = [[0; 6561]; 8];
-pub static mut secondary_hash: [[u32; 6561]; 8] = [[0; 6561]; 8];
-pub static mut symmetry_map: [*const i32; 8] = [0 as *const i32; 8];
-pub static mut inv_symmetry_map: [*const i32; 8] = [0 as *const i32; 8];
-pub static move_mask_hi: [u32; 100] = init_move_masks()[0];
-pub static move_mask_lo: [u32; 100] = init_move_masks()[1];
-pub static unmove_mask_hi: [u32; 100] = init_move_masks()[2];
-pub static unmove_mask_lo: [u32; 100] = init_move_masks()[3];
-pub static mut database_head: Option<&'static DatabaseType> = None;
-pub static mut players: PlayerDatabaseType =
+static mut primary_hash: [[u32; 6561]; 8] = [[0; 6561]; 8];
+static mut secondary_hash: [[u32; 6561]; 8] = [[0; 6561]; 8];
+static mut symmetry_map: [*const i32; 8] = [0 as *const i32; 8];
+static mut inv_symmetry_map: [*const i32; 8] = [0 as *const i32; 8];
+static move_mask_hi: [u32; 100] = init_move_masks()[0];
+static move_mask_lo: [u32; 100] = init_move_masks()[1];
+static unmove_mask_hi: [u32; 100] = init_move_masks()[2];
+static unmove_mask_lo: [u32; 100] = init_move_masks()[3];
+static mut database_head: Option<&'static DatabaseType> = None;
+static mut players: PlayerDatabaseType =
     PlayerDatabaseType{prolog:
     PrologType{creation_century: 0,
         creation_year: 0,
@@ -68,7 +68,7 @@ pub static mut players: PlayerDatabaseType =
         name_buffer:
         b"",
         player_list: Vec::new(),};
-pub static mut thor_search: SearchResultType =
+static mut thor_search: SearchResultType =
     SearchResultType{average_black_score: 0.,
         next_move_score: [0.; 100],
         match_count: 0,
@@ -80,7 +80,7 @@ pub static mut thor_search: SearchResultType =
         next_move_frequency: [0; 100],
         match_list:
         0 as *const *mut GameType as *mut *mut GameType,};
-pub static mut tournaments: TournamentDatabaseType =
+static mut tournaments: TournamentDatabaseType =
     TournamentDatabaseType{prolog:
     PrologType{creation_century: 0,
         creation_year: 0,
@@ -92,11 +92,10 @@ pub static mut tournaments: TournamentDatabaseType =
         reserved: 0,},
         name_buffer: b"",
         tournament_list: Vec::new()};
-pub static mut root_node: *mut ThorOpeningNode =
-    0 as *const ThorOpeningNode as *mut ThorOpeningNode;
-pub static default_sort_order: [i32; 5] = [2 as i32, 3 as i32, 1 as i32, 5 as i32, 4 as i32];
-pub static mut thor_sort_order: [i32; 10] = [0; 10];
-pub static mut filter: FilterType =
+static mut root_node: *mut ThorOpeningNode = 0 as *const ThorOpeningNode as *mut ThorOpeningNode;
+static default_sort_order: [i32; 5] = [2 as i32, 3 as i32, 1 as i32, 5 as i32, 4 as i32];
+static mut thor_sort_order: [i32; 10] = [0; 10];
+static mut filter: FilterType =
     FilterType{game_categories: 0,
         first_year: 0,
         last_year: 0,
