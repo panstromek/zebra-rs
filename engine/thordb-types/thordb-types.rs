@@ -130,6 +130,18 @@ impl TournamentDatabaseType {
     pub fn count(&self) -> i32 {
         return self.tournament_list.len() as i32;
     }
+
+    /*
+      TOURNAMENT_NAME
+      Returns the name of the INDEXth tournament if available.
+    */
+    pub fn tournament_name(&self, index: i32) -> &'static [u8] {
+        if index < 0 as i32 || index >= self.count() {
+            return b"<Not available>"
+        } else {
+            return self.name_buffer[(26 * index as usize)..].split(|&c| c == 0).next().unwrap()
+        };
+    }
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
