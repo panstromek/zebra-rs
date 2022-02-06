@@ -75,54 +75,48 @@ pub unsafe fn add_new_game(move_count_0: i32,
 
     i = 0;
     while i < move_count_0 {
-        if *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32 >
-            0 as i32 {
-            flags[i as usize] = 1 as i32 as u16
-        } else { flags[i as usize] = 2 as i32 as u16 }
+        if *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) > 0 {
+            flags[i as usize] = 1
+        } else {
+            flags[i as usize] = 2
+        }
         i += 1
     }
     flags[move_count_0 as usize] = 0;
     first_new_node = 61;
     this_node = 0;
     side_to_move = 0;
-    last_move_number =
-        if move_count_0 < 60 as i32 - min_empties {
-            move_count_0
-        } else { (60 as i32) - min_empties };
+    last_move_number = if move_count_0 < 60 - min_empties { move_count_0 } else { 60 - min_empties };
     i = 0;
     while i <= last_move_number {
         /* Look for the position in the hash table */
-        let val0___ = &mut val1;
-        let val1___ = &mut val2;
-        let orientation___ = &mut orientation;
-        get_hash(val0___, val1___, orientation___, &mut (g_state.g_book), &(g_state.board_state).board);
+        get_hash(&mut val1, &mut val2, &mut orientation, &mut (g_state.g_book), &(g_state.board_state).board);
         slot = probe_hash_table(val1, val2, &mut (g_state.g_book));
-        if slot == -1 ||
-            *(g_state.g_book).book_hash_table.offset(slot as isize) == -1 {
+        if slot == -1 || *(g_state.g_book).book_hash_table.offset(slot as isize) == -1 {
             this_node = create_BookNode(val1, val2, flags[i as usize], &mut (g_state.g_book));
             if private_game != 0 {
-                let ref mut fresh26 =
-                    (*(g_state.g_book).node.offset(this_node as isize)).flags;
-                *fresh26 =
-                    (*fresh26 as i32 | 32 as i32) as
-                        u16
+                let ref mut fresh26 = (*(g_state.g_book).node.offset(this_node as isize)).flags;
+                *fresh26 = (*fresh26 as i32 | 32) as u16
             }
-            if i < first_new_node { first_new_node = i }
-        } else { this_node = *(g_state.g_book).book_hash_table.offset(slot as isize) }
+            if i < first_new_node {
+                first_new_node = i
+            }
+        } else {
+            this_node = *(g_state.g_book).book_hash_table.offset(slot as isize)
+        }
         visited_node[i as usize] = this_node;
         /* Make the moves of the game until the cutoff point */
         if i < last_move_number {
             this_move = abs(*game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32) as i8;
-            if *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32 >
-                0 as i32 {
-                side_to_move = 0 as i32
-            } else { side_to_move = 2 as i32 }
+            if *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) > 0 {
+                side_to_move = 0
+            } else {
+                side_to_move = 2
+            }
             if generate_specific(this_move, side_to_move, &(g_state.board_state).board) == 0 {
                 write!(stdout, "\n");
-                write!(stdout, "i={}, side_to_move={}, this_move={}\n", i, side_to_move,
-                       this_move as i32);
-                write!(stdout, "last_move_number={}, move_count={}\n", last_move_number,
-                       move_count_0);
+                write!(stdout, "i={}, side_to_move={}, this_move={}\n", i, side_to_move, this_move);
+                write!(stdout, "last_move_number={}, move_count={}\n", last_move_number, move_count_0);
                 j = 0;
                 while j < move_count_0 {
                     write!(stdout, "{:3} ", *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(j as isize) as i32);
@@ -130,10 +124,10 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 }
                 fatal_error!("{}: {}\n", "Invalid move generated", this_move);
             }
-            make_move(side_to_move, this_move, 1 as i32, &mut (g_state.moves_state), &mut (g_state.board_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
+            make_move(side_to_move, this_move, 1, &mut (g_state.moves_state), &mut (g_state.board_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
         } else {
             /* No more move to make, only update the player to move */
-            side_to_move = 0 as i32 + 2 as i32 - side_to_move
+            side_to_move = 0 + 2 - side_to_move
         }
         i += 1
     }
@@ -141,28 +135,28 @@ pub unsafe fn add_new_game(move_count_0: i32,
         /* No cutoff applies */
         let mut black_count: i32 = 0;
         let mut white_count: i32 = 0;
-        black_count = disc_count(0 as i32, &(g_state.board_state).board);
-        white_count = disc_count(2 as i32, &(g_state.board_state).board);
+        black_count = disc_count(0, &(g_state.board_state).board);
+        white_count = disc_count(2, &(g_state.board_state).board);
         if black_count > white_count {
-            outcome = 64 as i32 - 2 as i32 * white_count
+            outcome = 64 - 2 * white_count
         } else if white_count > black_count {
-            outcome = 2 as i32 * black_count - 64 as i32
-        } else { outcome = 0 as i32 }
+            outcome = 2 * black_count - 64
+        } else {
+            outcome = 0
+        }
     } else {
         generate_all(side_to_move, &mut (g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board);
         determine_hash_values(side_to_move, &(g_state.board_state).board, &mut (g_state.hash_state));
         if echo != 0 {
             write!(stdout, "\n");
-            if side_to_move == 0 as i32 {
-                write!(stdout, "Full solving with {} empty (black)\n",
-                       60 as i32 - (g_state.moves_state).disks_played);
+            if side_to_move == 0 {
+                write!(stdout, "Full solving with {} empty (black)\n", 60 - (g_state.moves_state).disks_played);
             } else {
-                write!(stdout, "Full solving with {} empty (white)\n",
-                       60 as i32 - (g_state.moves_state).disks_played);
+                write!(stdout, "Full solving with {} empty (white)\n", 60 - (g_state.moves_state).disks_played);
             }
         }
-        end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
-                       1 as i32, 0 as i32, &mut dummy_info, echo , &mut (g_state.flip_stack_)
+        end_game::<FE>(side_to_move, 0, 0, 1, 0,
+                       &mut dummy_info, echo , &mut (g_state.flip_stack_)
                        , &mut (g_state.search_state)
                        , &mut (g_state.board_state)
                        , &mut (g_state.hash_state)
@@ -176,47 +170,38 @@ pub unsafe fn add_new_game(move_count_0: i32,
                        , &mut (g_state.stable_state)
                        , &mut (g_state.prob_cut));
         outcome = (g_state.search_state).root_eval;
-        if side_to_move == 2 as i32 { outcome = -outcome }
+        if side_to_move == 2 {
+            outcome = -outcome
+        }
     }
-    (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score =
-        outcome as i16;
-    (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score =
-        outcome as i16;
-    if outcome > 0 as i32 {
-        let ref mut fresh27 =
-            (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score;
-        *fresh27 =
-            (*fresh27 as i32 + 30000 as i32) as i16;
-        let ref mut fresh28 =
-            (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score;
-        *fresh28 =
-            (*fresh28 as i32 + 30000 as i32) as i16
+    (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score = outcome as i16;
+    (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score = outcome as i16;
+    if outcome > 0 {
+        let ref mut fresh27 = (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score;
+        *fresh27 = (*fresh27 as i32 + 30000) as i16;
+        let ref mut fresh28 = (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score;
+        *fresh28 = (*fresh28 as i32 + 30000) as i16
     }
-    if outcome < 0 as i32 {
-        let ref mut fresh29 =
-            (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score;
-        *fresh29 =
-            (*fresh29 as i32 - 30000 as i32) as i16;
-        let ref mut fresh30 =
-            (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score;
-        *fresh30 =
-            (*fresh30 as i32 - 30000 as i32) as i16
+    if outcome < 0 {
+        let ref mut fresh29 = (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score;
+        *fresh29 = (*fresh29 as i32 - 30000) as i16;
+        let ref mut fresh30 = (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score;
+        *fresh30 = (*fresh30 as i32 - 30000) as i16
     }
     let ref mut fresh31 = (*(g_state.g_book).node.offset(this_node as isize)).flags;
-    *fresh31 =
-        (*fresh31 as i32 | 16 as i32) as u16;
+    *fresh31 = (*fresh31 as i32 | 16) as u16;
     /* Take another pass through the midgame to update move
        alternatives and minimax information if requested. */
     if update_path != 0 {
         prepare_tree_traversal(g_state);
         i = 0;
         while i < last_move_number {
-            this_move =
-                abs(*game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32) as i8;
-            if *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32 >
-                0 as i32 {
-                side_to_move = 0 as i32
-            } else { side_to_move = 2 as i32 }
+            this_move = abs(*game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32) as i8;
+            if *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) > 0 {
+                side_to_move = 0
+            } else {
+                side_to_move = 2
+            }
             if generate_specific(this_move, side_to_move, &(g_state.board_state).board) == 0 {
                 fatal_error!("{}: {}\n", "Invalid move generated", this_move);
             }
@@ -225,43 +210,35 @@ pub unsafe fn add_new_game(move_count_0: i32,
         }
         if echo != 0 { stdout.flush(); }
         midgame_eval_done = 0;
-        i = last_move_number - 1 as i32;
-        while i >= 0 as i32 {
-            this_move =
-                abs(*game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32) as i8;
-            if *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32 >
-                0 as i32 {
-                side_to_move = 0 as i32
-            } else { side_to_move = 2 as i32 }
-            let move_0 = this_move;
-            {
-                unmake_move(side_to_move, move_0, &mut (g_state.board_state).board, &mut (g_state.moves_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
-            };
+        i = last_move_number - 1;
+        while i >= 0 {
+            this_move = abs(*game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32) as i8;
+            if *game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32 > 0 as i32 {
+                side_to_move = 0
+            } else {
+                side_to_move = 2
+            }
+            unmake_move(side_to_move, this_move, &mut (g_state.board_state).board, &mut (g_state.moves_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
+
             /* If the game was public, make sure that all nodes that
             previously marked as private nodes are marked as public. */
             this_node = visited_node[i as usize];
-            if private_game == 0 &&
-                (*(g_state.g_book).node.offset(this_node as isize)).flags as i32 &
-                    32 as i32 != 0 {
-                let ref mut fresh32 =
-                    (*(g_state.g_book).node.offset(this_node as isize)).flags;
-                *fresh32 =
-                    (*fresh32 as i32 ^ 32 as i32) as
-                        u16
+            if private_game == 0 && (*(g_state.g_book).node.offset(this_node as isize)).flags as i32 & 32 != 0 {
+                let ref mut fresh32 = (*(g_state.g_book).node.offset(this_node as isize)).flags;
+                *fresh32 = (*fresh32 as i32 ^ 32) as u16
             }
-            if (*(g_state.g_book).node.offset(this_node as isize)).flags as i32 &
-                1 as i32 != 0 {
-                side_to_move = 0 as i32
-            } else { side_to_move = 2 as i32 }
+            if (*(g_state.g_book).node.offset(this_node as isize)).flags as i32 & 1 != 0 {
+                side_to_move = 0
+            } else {
+                side_to_move = 2
+            }
             generate_all(side_to_move, &mut (g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board);
             determine_hash_values(side_to_move, &(g_state.board_state).board, &mut (g_state.hash_state));
-            if (g_state.moves_state).disks_played >= 60 as i32 - max_full_solve {
+            if (g_state.moves_state).disks_played >= 60 - max_full_solve {
                 /* Only solve the position if it hasn't been solved already */
-                if (*(g_state.g_book).node.offset(this_node as isize)).flags as i32 &
-                    16 as i32 == 0 {
-                    end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
-                                   1 as i32, 0 as i32,
-                                   &mut dummy_info, echo , &mut (g_state.flip_stack_)
+                if (*(g_state.g_book).node.offset(this_node as isize)).flags as i32 & 16 == 0 {
+                    end_game::<FE>(side_to_move, 0, 0, 1, 0,
+                                   &mut dummy_info, echo, &mut (g_state.flip_stack_)
                                    , &mut (g_state.search_state)
                                    , &mut (g_state.board_state)
                                    , &mut (g_state.hash_state)
@@ -274,53 +251,32 @@ pub unsafe fn add_new_game(move_count_0: i32,
                                    , &mut (g_state.g_book)
                                    , &mut (g_state.stable_state)
                                    , &mut (g_state.prob_cut));
-                    if side_to_move == 0 as i32 {
+                    if side_to_move == 0 {
                         outcome = (g_state.search_state).root_eval
-                    } else { outcome = -(g_state.search_state).root_eval }
-                    (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score =
-                        outcome as i16;
-                    (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score =
-                        outcome as i16;
-                    if outcome > 0 as i32 {
-                        let ref mut fresh33 =
-                            (*(g_state.g_book).node.offset(this_node as
-                                isize)).black_minimax_score;
-                        *fresh33 =
-                            (*fresh33 as i32 + 30000 as i32)
-                                as i16;
-                        let ref mut fresh34 =
-                            (*(g_state.g_book).node.offset(this_node as
-                                isize)).white_minimax_score;
-                        *fresh34 =
-                            (*fresh34 as i32 + 30000 as i32)
-                                as i16
+                    } else {
+                        outcome = -(g_state.search_state).root_eval
                     }
-                    if outcome < 0 as i32 {
-                        let ref mut fresh35 =
-                            (*(g_state.g_book).node.offset(this_node as
-                                isize)).black_minimax_score;
-                        *fresh35 =
-                            (*fresh35 as i32 - 30000 as i32)
-                                as i16;
-                        let ref mut fresh36 =
-                            (*(g_state.g_book).node.offset(this_node as
-                                isize)).white_minimax_score;
-                        *fresh36 =
-                            (*fresh36 as i32 - 30000 as i32)
-                                as i16
+                    (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score = outcome as i16;
+                    (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score = outcome as i16;
+                    if outcome > 0 {
+                        let ref mut fresh33 = (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score;
+                        *fresh33 = (*fresh33 as i32 + 30000) as i16;
+                        let ref mut fresh34 = (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score;
+                        *fresh34 = (*fresh34 as i32 + 30000 as i32) as i16
                     }
-                    let ref mut fresh37 =
-                        (*(g_state.g_book).node.offset(this_node as isize)).flags;
-                    *fresh37 =
-                        (*fresh37 as i32 | 16 as i32) as
-                            u16
+                    if outcome < 0 {
+                        let ref mut fresh35 = (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score;
+                        *fresh35 = (*fresh35 as i32 - 30000) as i16;
+                        let ref mut fresh36 = (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score;
+                        *fresh36 = (*fresh36 as i32 - 30000) as i16
+                    }
+                    let ref mut fresh37 = (*(g_state.g_book).node.offset(this_node as isize)).flags;
+                    *fresh37 = (*fresh37 as i32 | 16) as u16
                 }
-            } else if (g_state.moves_state).disks_played >= 60 as i32 - max_wld_solve {
+            } else if (g_state.moves_state).disks_played >= 60 - max_wld_solve {
                 /* Only solve the position if its WLD status is unknown */
-                if (*(g_state.g_book).node.offset(this_node as isize)).flags as i32 &
-                    4 as i32 == 0 {
-                    end_game::<FE>(side_to_move, 1 as i32, 0 as i32,
-                                   1 as i32, 0 as i32,
+                if (*(g_state.g_book).node.offset(this_node as isize)).flags as i32 & 4 == 0 {
+                    end_game::<FE>(side_to_move, 1, 0, 1, 0,
                                    &mut dummy_info, echo , &mut (g_state.flip_stack_)
                                    , &mut (g_state.search_state)
                                    , &mut (g_state.board_state)
@@ -334,55 +290,32 @@ pub unsafe fn add_new_game(move_count_0: i32,
                                    , &mut (g_state.g_book)
                                    , &mut (g_state.stable_state)
                                    , &mut (g_state.prob_cut));
-                    if side_to_move == 0 as i32 {
+                    if side_to_move == 0 {
                         outcome = (g_state.search_state).root_eval
-                    } else { outcome = -(g_state.search_state).root_eval }
-                    (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score =
-                        outcome as i16;
-                    (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score =
-                        outcome as i16;
-                    if outcome > 0 as i32 {
-                        let ref mut fresh38 =
-                            (*(g_state.g_book).node.offset(this_node as
-                                isize)).black_minimax_score;
-                        *fresh38 =
-                            (*fresh38 as i32 + 30000 as i32)
-                                as i16;
-                        let ref mut fresh39 =
-                            (*(g_state.g_book).node.offset(this_node as
-                                isize)).white_minimax_score;
-                        *fresh39 =
-                            (*fresh39 as i32 + 30000 as i32)
-                                as i16
+                    } else {
+                        outcome = -(g_state.search_state).root_eval
                     }
-                    if outcome < 0 as i32 {
-                        let ref mut fresh40 =
-                            (*(g_state.g_book).node.offset(this_node as
-                                isize)).black_minimax_score;
-                        *fresh40 =
-                            (*fresh40 as i32 - 30000 as i32)
-                                as i16;
-                        let ref mut fresh41 =
-                            (*(g_state.g_book).node.offset(this_node as
-                                isize)).white_minimax_score;
-                        *fresh41 =
-                            (*fresh41 as i32 - 30000 as i32)
-                                as i16
+                    (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score = outcome as i16;
+                    (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score = outcome as i16;
+                    if outcome > 0 {
+                        let ref mut fresh38 = (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score;
+                        *fresh38 = (*fresh38 as i32 + 30000) as i16;
+                        let ref mut fresh39 = (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score;
+                        *fresh39 = (*fresh39 as i32 + 30000) as i16
                     }
-                    let ref mut fresh42 =
-                        (*(g_state.g_book).node.offset(this_node as isize)).flags;
-                    *fresh42 =
-                        (*fresh42 as i32 | 4 as i32) as
-                            u16
+                    if outcome < 0 {
+                        let ref mut fresh40 = (*(g_state.g_book).node.offset(this_node as isize)).black_minimax_score;
+                        *fresh40 = (*fresh40 as i32 - 30000) as i16;
+                        let ref mut fresh41 = (*(g_state.g_book).node.offset(this_node as isize)).white_minimax_score;
+                        *fresh41 = (*fresh41 as i32 - 30000) as i16
+                    }
+                    let ref mut fresh42 = (*(g_state.g_book).node.offset(this_node as isize)).flags;
+                    *fresh42 = (*fresh42 as i32 | 4) as u16
                 }
             } else {
-                force_eval =
-                    (i >= first_new_node - 1 as i32 ||
-                        (*(g_state.g_book).node.offset(this_node as
-                            isize)).best_alternative_move as
-                            i32 ==
-                            abs(*game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as
-                                i32)) as i32;
+                force_eval = (i >= first_new_node - 1 as i32 ||
+                    (*(g_state.g_book).node.offset(this_node as isize)).best_alternative_move as i32
+                        == abs(*game_move_list.unwrap_or(&g_state.learn_state.game_move).offset(i as isize) as i32)) as i32;
                 if midgame_eval_done == 0 {
                     write!(stdout, "Evaluating: ");
                     stdout.flush();
@@ -394,23 +327,16 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 stdout.flush();
             }
             let ref mut fresh43 = (*(g_state.g_book).node.offset(this_node as isize)).flags;
-            *fresh43 =
-                (*fresh43 as i32 | 8 as i32) as
-                    u16;
-            do_minimax(this_node, &mut dummy_black_score,
-                       &mut dummy_white_score, g_state);
-            if (*(g_state.g_book).node.offset(this_node as isize)).flags as i32 &
-                4 as i32 == 0 &&
-                (*(g_state.g_book).node.offset(this_node as isize)).best_alternative_move as
-                    i32 == -1 &&
-                (*(g_state.g_book).node.offset(this_node as isize)).alternative_score as
-                    i32 == 9999 as i32 {
+            *fresh43 = (*fresh43 as i32 | 8) as u16;
+            do_minimax(this_node, &mut dummy_black_score, &mut dummy_white_score, g_state);
+            if (*(g_state.g_book).node.offset(this_node as isize)).flags & 4 == 0 &&
+                (*(g_state.g_book).node.offset(this_node as isize)).best_alternative_move == -1 &&
+                (*(g_state.g_book).node.offset(this_node as isize)).alternative_score == 9999 {
                 /* Minimax discovered that the g_book.node hasn't got a deviation any
                    longer because that move has been played. */
                 evaluate_node(this_node, echo, g_state);
                 write!(stdout, "-|-");
-                do_minimax(this_node, &mut dummy_black_score,
-                           &mut dummy_white_score, g_state);
+                do_minimax(this_node, &mut dummy_black_score, &mut dummy_white_score, g_state);
             }
             i -= 1
         }
