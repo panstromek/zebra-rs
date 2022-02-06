@@ -71,80 +71,77 @@ pub fn TO_SQUARE(move_: impl core::convert::Into<i32>) -> Square {
     }
     sq(move_.into())
 }
-/*
-  SET_NAMES
-  SET_TIMES
-  SET_EVALS
-  SET_MOVE_LIST
-  Specify some information to be output along with the
-  board by DISPLAY_BOARD.
-*/
 
-pub unsafe fn set_names(black_name: &'static str, white_name: &'static str) {
-    display_state.black_player = black_name;
-    display_state.white_player = white_name;
+impl DisplayState {
+    /*
+      SET_NAMES
+      SET_TIMES
+      SET_EVALS
+      SET_MOVE_LIST
+      Specify some information to be output along with the
+      board by DISPLAY_BOARD.
+    */
+    pub fn set_names(&mut self, black_name: &'static str, white_name: &'static str) {
+        self.black_player = black_name;
+        self.white_player = white_name;
+    }
+
+    pub fn set_times(&mut self, black: i32, white: i32) {
+        self.black_time = black;
+        self.white_time = white;
+    }
+
+    pub fn set_evals(&mut self, black: f64, white: f64) {
+        self.black_eval = black;
+        self.white_eval = white;
+    }
+
+    pub fn set_move_list(&mut self, row: i32) {
+        self.current_row = row;
+    }
+
+    /*
+      CLEAR_STATUS
+      Clear the current status information.
+    */
+    pub fn clear_status(&mut self) {
+        self.status_pos = 0;
+        self.status_buffer.clear();
+        self.status_modified = 1;
+    }
+
+    /*
+      CLEAR_SWEEP
+      Clear the search information.
+    */
+    pub fn clear_sweep(&mut self) {
+        self.sweep_pos = 0;
+        self.sweep_buffer.clear();
+        self.sweep_modified = 1;
+    }
+
+    /*
+      TOGGLE_SMART_BUFFER_MANAGEMENT
+      Allow the user between timed, "smart", buffer management
+      and the simple "you asked for it, you got it"-approach which
+      displays everything that is fed to the buffer.
+    */
+    pub fn toggle_smart_buffer_management(&mut self, use_smart: i32) {
+        self.timed_buffer_management = use_smart;
+    }
+    /*
+      RESET_BUFFER_DISPLAY
+      Clear all buffers and initialize time variables.
+    */
+    pub fn reset_buffer_display(&mut self, g_timer: &mut Timer) {
+        /* The first two Fibonacci numbers */
+        self.clear_status();
+        self.clear_sweep();
+        self.interval1 = 0.0f64;
+        self.interval2 = 1.0f64;
+        self.last_output = g_timer.get_real_timer();
+    }
 }
-
-pub unsafe fn set_times(black: i32, white: i32) {
-    display_state.black_time = black;
-    display_state.white_time = white;
-}
-
-pub unsafe fn set_evals(black: f64, white: f64) {
-    display_state.black_eval = black;
-    display_state.white_eval = white;
-}
-
-pub unsafe fn set_move_list(row: i32) {
-    display_state.current_row = row;
-}
-
-/*
-  CLEAR_STATUS
-  Clear the current status information.
-*/
-
-pub unsafe fn clear_status() {
-    display_state.status_pos = 0;
-    display_state.status_buffer.clear();
-    display_state.status_modified = 1;
-}
-
-/*
-  CLEAR_SWEEP
-  Clear the search information.
-*/
-
-pub unsafe fn clear_sweep() {
-    display_state.sweep_pos = 0;
-    display_state.sweep_buffer.clear();
-    display_state.sweep_modified = 1;
-}
-
-/*
-  TOGGLE_SMART_BUFFER_MANAGEMENT
-  Allow the user between timed, "smart", buffer management
-  and the simple "you asked for it, you got it"-approach which
-  displays everything that is fed to the buffer.
-*/
-
-pub unsafe fn toggle_smart_buffer_management(use_smart: i32) {
-    display_state.timed_buffer_management = use_smart;
-}
-/*
-  RESET_BUFFER_DISPLAY
-  Clear all buffers and initialize time variables.
-*/
-
-pub unsafe fn reset_buffer_display(g_timer:&mut Timer) {
-    /* The first two Fibonacci numbers */
-    clear_status();
-    clear_sweep();
-    display_state.interval1 = 0.0f64;
-    display_state.interval2 = 1.0f64;
-    display_state.last_output =  g_timer.get_real_timer();
-}
-
 /*
    File:           display.c
 

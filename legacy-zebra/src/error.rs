@@ -23,7 +23,7 @@ use crate::{
                   send_status_nodes, send_status_pv, send_status_time},
     }
 };
-use crate::src::display::{clear_status, clear_sweep, reset_buffer_display, display_state, TO_SQUARE};
+use crate::src::display::{display_state, TO_SQUARE};
 use crate::src::osfbook::print_move_alternatives;
 use crate::src::thordb::sort_thor_games;
 
@@ -126,7 +126,7 @@ impl LibcFatalError {
 }
 impl FrontEnd for LibcFatalError {
     fn reset_buffer_display(g_timer:&mut Timer) {
-        unsafe { reset_buffer_display(g_timer) }
+        unsafe { display_state.reset_buffer_display(g_timer) }
     }
     /*
       DISPLAY_BUFFERS
@@ -246,7 +246,7 @@ impl FrontEnd for LibcFatalError {
             use std::fmt::Write;
             buffer.clear();
             write!(buffer, "[{},{}]:", alpha, beta);
-            clear_sweep();
+            display_state.clear_sweep();
         }
     }
     /*
@@ -261,7 +261,7 @@ impl FrontEnd for LibcFatalError {
         unsafe {
             let eval = *eval_info;
             search_state.set_current_eval(eval);
-            clear_status();
+            display_state.clear_status();
             send_status!(display_state, "-->  {:2}  ", empties);
             let mut eval_str = produce_eval_text(&*eval_info, 1 as i32);
             send_status!(display_state, "{:<10}  ", eval_str);
@@ -403,7 +403,7 @@ impl FrontEnd for LibcFatalError {
                         alpha as f64 / 128.0f64,
                         beta as f64 / 128.0f64);
             }
-            clear_sweep();
+            display_state.clear_sweep();
             send_sweep!(display_state, "{:<14} ", buffer_);
         }
     }
@@ -449,7 +449,7 @@ impl FrontEnd for LibcFatalError {
 
 
          unsafe {
-             clear_status();
+             display_state.clear_status();
              send_status!(display_state, "--> ");
              if g_timer.is_panic_abort() != 0 || force_return_ {
                  send_status!(display_state, "*");

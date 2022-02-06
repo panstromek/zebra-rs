@@ -12,7 +12,7 @@ use engine::src::zebra::EvalType::{EXACT_EVAL, PASS_EVAL, UNDEFINED_EVAL};
 use engine::src::zebra::EvaluationType;
 use libc_wrapper::{stdout, time, time_t, c_time};
 
-use crate::src::display::{clear_status, display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, TO_SQUARE};
+use crate::src::display::{display_optimal_line, display_status, produce_eval_text, send_status_nodes, send_status_pv, send_status_time, display_state, TO_SQUARE};
 use crate::src::error::{LibcFatalError};
 use crate::src::getcoeff::{load_coeff_adjustments, new_coeff_source};
 use crate::src::thordb::LegacyThor;
@@ -577,7 +577,7 @@ fn display_out_optimal_line(search_state: &SearchState) {
 
 fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, timer: &mut Timer, board_state: &BoardState) {
     unsafe {
-        clear_status();
+        display_state.clear_status();
         send_status!(display_state, "--> *{:2}",
                     interrupted_depth);
         let mut eval_str = produce_eval_text(info, 1 as i32);
