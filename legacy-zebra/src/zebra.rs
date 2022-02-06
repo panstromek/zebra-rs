@@ -28,7 +28,7 @@ use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 
 use libc_wrapper::{fclose, fopen, scanf, stdout, time, c_time, time_t};
 
-use crate::src::display::{display_board, dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
+use crate::src::display::{dumpch, set_evals, set_move_list, set_names, set_times, toggle_smart_buffer_management, display_state, TO_SQUARE};
 use crate::src::error::{FE, LibcFatalError};
 use crate::src::game::{legacy_compute_move, global_setup, BasicBoardFileSource, LibcZebraOutput, LogFileHandler};
 use crate::src::learn::{init_learn, LibcLearner};
@@ -927,11 +927,9 @@ impl LibcFrontend {
     fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
                                 black_moves_: &[i8; 60], white_moves_: &[i8; 60]) {
         unsafe {
-            display_board(&mut stdout, board_,
-                          side_to_move, 1,
-                          give_time_, 1,
-                          display_state.current_row, display_state.black_player, display_state.black_time, display_state.black_eval,
-                          display_state.white_player, display_state.white_time, display_state.white_eval, black_moves_, white_moves_);
+            display_state.display_board(&mut stdout, board_,
+                          side_to_move, 1, give_time_, 1,
+                          black_moves_, white_moves_);
         }
     }
     fn print_out_thor_matches(thor_max_games_: i32) {
@@ -1205,11 +1203,8 @@ unsafe fn analyze_game(mut move_string: &str,
                 if let Some(opening_name) = opening_name {
                     write!(stdout, "\nOpening: {}\n", CStr::from_bytes_with_nul(opening_name).map(CStr::to_str).unwrap().unwrap());
                 }
-                display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
+                display_state.display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
                               1, (&mut g_state.g_config).use_timer, 1,
-                              display_state.current_row,
-                              display_state.black_player, display_state.black_time, display_state.black_eval,
-                              display_state.white_player, display_state.white_time, display_state.white_eval,
                               &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
             }
             /* Check what the Thor opening statistics has to say */
@@ -1378,11 +1373,8 @@ unsafe fn analyze_game(mut move_string: &str,
                       i32,
                   floor((&mut g_state.g_config).player_time[2]) as
                       i32);
-        display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
+        display_state.display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
                       1 as i32, (&mut g_state.g_config).use_timer, 1 as i32,
-                      display_state.current_row,
-                      display_state.black_player, display_state.black_time, display_state.black_eval,
-                      display_state.white_player, display_state.white_time, display_state.white_eval,
                       &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
     }
     fclose(output_stream);

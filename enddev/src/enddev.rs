@@ -7,7 +7,7 @@ use engine::src::hash::{determine_hash_values, setup_hash};
 use engine::src::moves::{generate_all, make_move, valid_move};
 use engine::src::search::disc_count;
 use engine::src::zebra::{EvaluationType, FullState};
-use legacy_zebra::src::display::{display_board, display_state};
+use legacy_zebra::src::display::{display_state};
 use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{legacy_compute_move, extended_compute_move, game_init, global_setup};
 use legacy_zebra::src::learn::init_learn;
@@ -349,11 +349,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         b"Game #%d contains illegal move %d @ #%d.\n\x00" as
                             *const u8 as *const i8, games_read,
                         move_0, g_state.moves_state.disks_played);
-                display_board(&mut libc_wrapper::stderr, &g_state.board_state.board, side_to_move,
-                              0 as i32, 0 as i32,
-                              0 as i32, display_state.current_row,
-                              display_state.black_player, display_state.black_time, display_state.black_eval,
-                              display_state.white_player, display_state.white_time, display_state.white_eval,
+                display_state.display_board(&mut libc_wrapper::stderr, &g_state.board_state.board, side_to_move,
+                              0 as i32, 0 as i32, 0 as i32,
                               &g_state.board_state.black_moves, &g_state.board_state.white_moves);
                 exit(1 as i32);
             }

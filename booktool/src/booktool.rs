@@ -15,7 +15,7 @@ use engine::src::search::disc_count;
 use legacy_zebra::src::safemem::safe_malloc;
 use engine::src::zebra::EvaluationType;
 use engine::src::stubs::{abs, floor};
-use legacy_zebra::src::display::{display_board, display_state};
+use legacy_zebra::src::display::{display_state};
 use engine::src::hash::{setup_hash, determine_hash_values};
 use engine::src::midgame::middle_game;
 use engine::src::end::end_game;
@@ -943,11 +943,8 @@ unsafe fn do_midgame_statistics(index: i32,
         < 1000.0f64 * spec.prob &&
         abs((*g_state.g_book.node.offset(index as isize)).black_minimax_score as
             i32) < spec.max_diff {
-        display_board(&mut stdout, &g_state.board_state.board, 0 as i32,
+        display_state.display_board(&mut stdout, &g_state.board_state.board, 0 as i32,
                       0 as i32, 0 as i32, 0 as i32,
-                      display_state.current_row,
-                      display_state.black_player, display_state.black_time, display_state.black_eval,
-                      display_state.white_player, display_state.white_time, display_state.white_eval,
                       &g_state.board_state.black_moves, &g_state.board_state.white_moves
         );
         setup_hash(0 as i32, &mut g_state.hash_state, &mut  g_state.random_instance);
@@ -1103,11 +1100,8 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
     let mut val2: i32 = 0;
     let mut orientation: i32 = 0;
     let mut eval_list: [i32; 64] = [0; 64];
-    display_board(&mut stdout, &g_state.board_state.board, 0 as i32,
+    display_state.display_board(&mut stdout, &g_state.board_state.board, 0 as i32,
                   0 as i32, 0 as i32, 0 as i32,
-                  display_state.current_row,
-                  display_state.black_player, display_state.black_time, display_state.black_eval,
-                  display_state.white_player, display_state.white_time, display_state.white_eval,
                   &g_state.board_state.black_moves, &g_state.board_state.white_moves
     );
     g_state.hash_state.set_hash_transformation(abs(g_state.random_instance.my_random() as i32) as u32,
