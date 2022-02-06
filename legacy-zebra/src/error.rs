@@ -491,26 +491,21 @@ impl FrontEnd for LibcFatalError {
         }
     }
 }
+
 impl LibcFatalError {
     pub fn thordb_report_flipped_0_first() {
-         {
-            write!(stdout, "This COULD happen (1) in BUILD_THOR_OPENING_TREE");
-        }
+        write!(stdout, "This COULD happen (1) in BUILD_THOR_OPENING_TREE");
     }
     pub fn thordb_report_flipped_0_second() {
-         {
-            write!(stdout, "This COULD happen (2) in BUILD_THOR_OPENING_TREE");
-        }
+        write!(stdout, "This COULD happen (2) in BUILD_THOR_OPENING_TREE");
     }
 
     pub fn report_do_evaluate(evaluation_stage_: i32) {
-         {
-            write!(stdout, "|");
-            if evaluation_stage_ % 5 == 0 {
-                write!(stdout, " {}% ", 4 * evaluation_stage_);
-            }
-            stdout.flush();
+        write!(stdout, "|");
+        if evaluation_stage_ % 5 == 0 {
+            write!(stdout, " {}% ", 4 * evaluation_stage_);
         }
+        stdout.flush();
     }
 }
 
