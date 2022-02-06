@@ -19,8 +19,7 @@ use crate::send_sweep;
 
 use crate::{
     src::{
-        display::{display_status, display_sweep, produce_eval_text,
-                  send_status_nodes, send_status_pv, send_status_time},
+        display::{produce_eval_text},
     }
 };
 use crate::src::display::{display_state, TO_SQUARE};
@@ -137,10 +136,10 @@ impl FrontEnd for LibcFatalError {
         unsafe {
             let timer =  g_timer.get_real_timer();
             if timer - display_state.last_output >= display_state.interval2 || display_state.timed_buffer_management == 0 {
-                display_status(&mut stdout, 0 as i32);
+                display_state.display_status(&mut stdout, 0 as i32);
                 display_state.status_modified = 0;
                 if timer - display_state.last_output >= display_state.interval2 {
-                    if display_state.sweep_modified != 0 { display_sweep(&mut stdout); }
+                    if display_state.sweep_modified != 0 { display_state.display_sweep(&mut stdout); }
                     display_state.last_output = timer;
                     /* Display the sweep at Fibonacci-spaced times */
                     let new_interval = display_state.interval1 + display_state.interval2;
@@ -182,7 +181,7 @@ impl FrontEnd for LibcFatalError {
             }
             send_sweep!(display_state, " ");
             if update_pv != 0 && move_index > 0 as i32 && echo != 0 {
-                display_sweep(&mut stdout);
+                display_state.display_sweep(&mut stdout);
             }
         }
     }
@@ -267,12 +266,12 @@ impl FrontEnd for LibcFatalError {
             send_status!(display_state, "{:<10}  ", eval_str);
             let nodes_counter: &mut CounterType = &mut search_state.nodes;
             let node_val = counter_value(nodes_counter);
-            send_status_nodes(node_val);
+            display_state.send_status_nodes(node_val);
             if search_state.get_ponder_move() != 0 {
                 send_status!(display_state, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
             }
-            send_status_pv(pv_zero, empties, pv_depth_zero);
-            send_status_time( g_timer.get_elapsed_time());
+            display_state.send_status_pv(pv_zero, empties, pv_depth_zero);
+            display_state.send_status_time( g_timer.get_elapsed_time());
             if  g_timer.get_elapsed_time() > 0.0001f64 {
                 send_status!(display_state, "{:6.0} {}  ",
                             node_val / ( g_timer.get_elapsed_time() + 0.0001f64),
@@ -324,7 +323,7 @@ impl FrontEnd for LibcFatalError {
 
     fn end_display_zero_status() {
         unsafe {
-            display_status(&mut stdout, 0 as i32);
+            display_state.display_status(&mut stdout, 0 as i32);
         }
     }
 
@@ -429,7 +428,7 @@ impl FrontEnd for LibcFatalError {
             send_sweep!(display_state, " ");
             if update_pv != 0 && searched > 0 as i32 && echo != 0 &&
                 max_depth >= 10 as i32 {
-                display_sweep(&mut stdout);
+                display_state.display_sweep(&mut stdout);
             }
         }
     }
@@ -462,7 +461,7 @@ impl FrontEnd for LibcFatalError {
              send_status!(display_state, "{:<10}  ",
                          eval_str);
              let node_val = counter_value(nodes_counter);
-             send_status_nodes(node_val);
+             display_state.send_status_nodes(node_val);
              if search_state.get_ponder_move() != 0 {
                  send_status!(display_state, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
              }
@@ -470,8 +469,8 @@ impl FrontEnd for LibcFatalError {
              let mut pv_zero: &mut [i8; 64] = &mut board_state.pv[0];
              let mut pv_depth_zero: i32 = board_state.pv_depth[0];
 
-             send_status_pv(pv_zero, max_depth, pv_depth_zero);
-             send_status_time( g_timer.get_elapsed_time());
+             display_state.send_status_pv(pv_zero, max_depth, pv_depth_zero);
+             display_state.send_status_time( g_timer.get_elapsed_time());
              if  g_timer.get_elapsed_time() != 0.0f64 {
                  send_status!(display_state, "{:6.0} {}",
                              node_val / ( g_timer.get_elapsed_time() + 0.001f64),

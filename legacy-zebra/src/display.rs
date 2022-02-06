@@ -423,77 +423,74 @@ macro_rules! send_sweep {
     };
 }
 
-/*
-  SEND_STATUS_TIME
-  Sends the amount of time elapsed to SEND_STATUS.
-  The purpose of this function is to unify the format for
-  the time string.
-*/
-
-pub unsafe fn send_status_time(elapsed_time: f64) {
-    if elapsed_time < 10000.0f64 {
-        send_status!(display_state, "{:6.1} {}", elapsed_time, 's' );
-    } else {
-        send_status!(display_state, "{:6} {}", ceil(elapsed_time), 's');
-    }
-    send_status!(display_state, "  ");
-}
-/*
-  SEND_STATUS_NODES
-  Pipes the number of nodes searched to SEND_STATUS.
-  The purpose of this function is to unify the format for
-  the number of nodes.
-*/
-
-pub unsafe fn send_status_nodes(node_count: f64) {
-    if node_count < 1.0e8f64 {
-        send_status!(display_state, "{:8.0}  ", node_count);
-    } else if node_count < 1.0e10f64 {
-        send_status!(display_state, "{:7.0}{}  ", node_count / 1000.0f64, 'k');
-    } else if node_count < 1.0e13f64 {
-        send_status!(display_state, "{:7.0}{}  ", node_count / 1000000.0f64, 'M');
-    } else {
-        send_status!(display_state, "{:7.0}{}  ", node_count / 1000000000.0f64, 'G');
-    };
-}
-/*
-  SEND_STATUS_PV
-  Pipes the principal variation to SEND_STATUS.
-*/
-
-pub unsafe fn send_status_pv(pv: &[i8; 64], max_depth: i32, pv_depth_zero: i32) {
-    let mut i = 0;
-    while i < max_depth.min(5) {
-        if i < pv_depth_zero {
-            send_status!(display_state, "{} ", TO_SQUARE(pv[i as usize]));
+impl DisplayState {
+    /*
+      SEND_STATUS_TIME
+      Sends the amount of time elapsed to SEND_STATUS.
+      The purpose of this function is to unify the format for
+      the time string.
+    */
+    pub fn send_status_time(&mut self, elapsed_time: f64) {
+        if elapsed_time < 10000.0f64 {
+            send_status!(self, "{:6.1} {}", elapsed_time, 's' );
         } else {
-            send_status!(display_state, "   ");
+            send_status!(self, "{:6} {}", ceil(elapsed_time), 's');
         }
-        i += 1
+        send_status!(self, "  ");
     }
-    send_status!(display_state, " ");
-}
-/*
-  DISPLAY_STATUS
-  Output and clear the stored status information.
-*/
-
-pub unsafe fn display_status(stream: &mut dyn Write, allow_repeat: i32) {
-    if !display_state.status_buffer.is_empty() || allow_repeat != 0 {
-        write_buffer(stream, display_state.status_buffer.as_mut())
+    /*
+      SEND_STATUS_NODES
+      Pipes the number of nodes searched to SEND_STATUS.
+      The purpose of this function is to unify the format for
+      the number of nodes.
+    */
+    pub fn send_status_nodes(&mut self, node_count: f64) {
+        if node_count < 1.0e8f64 {
+            send_status!(self, "{:8.0}  ", node_count);
+        } else if node_count < 1.0e10f64 {
+            send_status!(self, "{:7.0}{}  ", node_count / 1000.0f64, 'k');
+        } else if node_count < 1.0e13f64 {
+            send_status!(self, "{:7.0}{}  ", node_count / 1000000.0f64, 'M');
+        } else {
+            send_status!(self, "{:7.0}{}  ", node_count / 1000000000.0f64, 'G');
+        };
     }
-    display_state.status_pos = 0;
-}
-/*
-  DISPLAY_SWEEP
-  Display and clear the current search information.
-*/
-
-pub unsafe fn display_sweep(stream: &mut dyn Write) {
-    if !display_state.sweep_buffer.is_empty() {
-        write_buffer(stream,  display_state.sweep_buffer.as_mut());
+    /*
+      SEND_STATUS_PV
+      Pipes the principal variation to SEND_STATUS.
+    */
+    pub fn send_status_pv(&mut self, pv: &[i8; 64], max_depth: i32, pv_depth_zero: i32) {
+        let mut i = 0;
+        while i < max_depth.min(5) {
+            if i < pv_depth_zero {
+                send_status!(self, "{} ", TO_SQUARE(pv[i as usize]));
+            } else {
+                send_status!(self, "   ");
+            }
+            i += 1
+        }
+        send_status!(self, " ");
     }
-    display_state.sweep_modified = 0;
+    /*
+      DISPLAY_STATUS
+      Output and clear the stored status information.
+    */
+    pub fn display_status(&mut self, stream: &mut dyn Write, allow_repeat: i32) {
+        if !self.status_buffer.is_empty() || allow_repeat != 0 {
+            write_buffer(stream, self.status_buffer.as_mut())
+        }
+        self.status_pos = 0;
+    }
+    /*
+      DISPLAY_SWEEP
+      Display and clear the current search information.
+    */
+    pub fn display_sweep(&mut self, stream: &mut dyn Write) {
+        if !self.sweep_buffer.is_empty() {
+            write_buffer(stream, self.sweep_buffer.as_mut());
+        }
+        self.sweep_modified = 0;
+    }
 }
 
 fn write_buffer(stream: &mut dyn Write, buf: &mut Vec<u8>) {
