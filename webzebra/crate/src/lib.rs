@@ -107,7 +107,7 @@ impl ZebraGame {
 
         // // init_thor_database::<WasmFrontend>();
         //
-        let x = 1 as i32;
+        let x = 1;
         state.random_instance.my_srandom(x);
         if state.g_config.skill[0] < 0 {
             state.g_config.skill[0] = 6;
@@ -635,7 +635,7 @@ impl ZebraFrontend for WasmFrontend {
     //            white_win_count);
     //     c_log!("Median score {}-{}",
     //            black_median_score,
-    //            64 as i32 -                   black_median_score);
+    //            64 -                   black_median_score);
     //     c_log!(", average score {}-{}\n",
     //            black_average_score,
     //            64.0f64 - black_average_score);

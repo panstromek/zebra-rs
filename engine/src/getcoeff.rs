@@ -75,14 +75,14 @@ pub fn eval_adjustment(disc_adjust: f64, edge_adjust: f64, corner_adjust: f64, x
     let mut adjust: i32 = 0;
     let mut row: [i32; 10] = [0; 10];
     i = 0;
-    while i < state.stage_count - 1 as i32 {
+    while i < state.stage_count - 1 {
         /* Bonuses for having more discs */
         j = 0;
         let stage_i = state.stage[i as usize] as usize;
         let set = &mut state.set.split_at_mut(60);
         let stage_set = set.0[stage_i].data.as_mut().unwrap();
         let sixty_set = set.1[0].data.as_mut().unwrap();
-        while j < 59049 as i32 {
+        while j < 59049 {
             let ref mut fresh2 = *(stage_set.afile2x_mut() as &mut [i16]).offset(j as isize);
             *fresh2 = (*fresh2 as f64 + *sixty_set.afile2x_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             let ref mut fresh3 = *(stage_set.corner52_mut() as &mut [i16]).offset(j as isize);
@@ -90,13 +90,13 @@ pub fn eval_adjustment(disc_adjust: f64, edge_adjust: f64, corner_adjust: f64, x
             j += 1
         }
         j = 0;
-        while j < 19683 as i32 {
+        while j < 19683 {
             let ref mut fresh4 = *(stage_set.corner33_mut() as &mut [i16]).offset(j as isize);
             *fresh4 = (*fresh4 as f64 + *sixty_set.corner33_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             j += 1
         }
         j = 0;
-        while j < 6561 as i32 {
+        while j < 6561 {
             let ref mut fresh5 = *(stage_set.bfile_mut() as &mut [i16]).offset(j as isize);
             *fresh5 = (*fresh5 as f64 + *sixty_set.bfile_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             let ref mut fresh6 = *(stage_set.cfile_mut() as &mut [i16]).offset(j as isize);
@@ -108,45 +108,45 @@ pub fn eval_adjustment(disc_adjust: f64, edge_adjust: f64, corner_adjust: f64, x
             j += 1
         }
         j = 0;
-        while j < 2187 as i32 {
+        while j < 2187 {
             let ref mut fresh9 = *(stage_set.diag7_mut() as &mut [i16]).offset(j as isize);
             *fresh9 = (*fresh9 as f64 + *sixty_set.diag7_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             j += 1
         }
         j = 0;
-        while j < 729 as i32 {
+        while j < 729 {
             let ref mut fresh10 = *(stage_set.diag6_mut() as &mut [i16]).offset(j as isize);
             *fresh10 = (*fresh10 as f64 + *sixty_set.diag6_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             j += 1
         }
         j = 0;
-        while j < 243 as i32 {
+        while j < 243 {
             let ref mut fresh11 = *(stage_set.diag5_mut() as &mut [i16]).offset(j as isize);
             *fresh11 = (*fresh11 as f64 + *sixty_set.diag5_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             j += 1
         }
         j = 0;
-        while j < 81 as i32 {
+        while j < 81 {
             let ref mut fresh12 = *(stage_set.diag4_mut() as &mut [i16]).offset(j as isize);
             *fresh12 = (*fresh12 as f64 + *sixty_set.diag4_mut().offset(j as isize) as i32 as f64 * disc_adjust) as i16;
             j += 1
         }
         j = 0;
-        while j < 10 as i32 {
+        while j < 10 {
             row[j as usize] = 0;
             j += 1
         }
         j = 0;
-        while j < 59049 as i32 {
+        while j < 59049 {
             adjust = 0;
             /* Bonus for having edge discs */
             k = 1;
-            while k <= 6 as i32 {
-                if row[k as usize] == 0 as i32 {
+            while k <= 6 {
+                if row[k as usize] == 0 {
                     adjust =
                         (adjust as f64 + 128.0f64 * edge_adjust) as
                             i32
-                } else if row[k as usize] == 2 as i32 {
+                } else if row[k as usize] == 2 {
                     adjust =
                         (adjust as f64 - 128.0f64 * edge_adjust) as
                             i32
@@ -155,44 +155,44 @@ pub fn eval_adjustment(disc_adjust: f64, edge_adjust: f64, corner_adjust: f64, x
             }
             /* Bonus for having corners.  The "0.5 *" is because corners are part
             of two A-file+2X patterns. */
-            if row[0] == 0 as i32 {
+            if row[0] == 0 {
                 adjust =
                     (adjust as f64 +
                         0.5f64 * 128.0f64 * corner_adjust) as i32
-            } else if row[0] == 2 as i32 {
+            } else if row[0] == 2 {
                 adjust =
                     (adjust as f64 -
                         0.5f64 * 128.0f64 * corner_adjust) as i32
             }
-            if row[7] == 0 as i32 {
+            if row[7] == 0 {
                 adjust =
                     (adjust as f64 +
                         0.5f64 * 128.0f64 * corner_adjust) as i32
-            } else if row[7] == 2 as i32 {
+            } else if row[7] == 2 {
                 adjust =
                     (adjust as f64 -
                         0.5f64 * 128.0f64 * corner_adjust) as i32
             }
             /* Bonus for having X-squares when the adjacent corners are empty.
             Scaling by 0.5 applies here too. */
-            if row[8] == 0 as i32 &&
-                row[0] == 1 as i32 {
+            if row[8] == 0 &&
+                row[0] == 1 {
                 adjust =
                     (adjust as f64 + 0.5f64 * 128.0f64 * x_adjust)
                         as i32
-            } else if row[8] == 2 as i32 &&
-                row[0] == 1 as i32 {
+            } else if row[8] == 2 &&
+                row[0] == 1 {
                 adjust =
                     (adjust as f64 - 0.5f64 * 128.0f64 * x_adjust)
                         as i32
             }
-            if row[9] == 0 as i32 &&
-                row[7] == 1 as i32 {
+            if row[9] == 0 &&
+                row[7] == 1 {
                 adjust =
                     (adjust as f64 + 0.5f64 * 128.0f64 * x_adjust)
                         as i32
-            } else if row[9] == 2 as i32 &&
-                row[7] == 1 as i32 {
+            } else if row[9] == 2 &&
+                row[7] == 1 {
                 adjust =
                     (adjust as f64 - 0.5f64 * 128.0f64 * x_adjust)
                         as i32
@@ -334,16 +334,16 @@ pub fn pattern_evaluation(side_to_move: i32, board_state_: &mut BoardState, move
     /* Any player wiped out? Game over then... */
     let mut eval_phase: i32 = 0;
     if board_state_.piece_count[0][moves_state_.disks_played as usize] ==
-        0 as i32 {
-        if side_to_move == 0 as i32 {
-            return -(29000 as i32 + 64 as i32)
-        } else { return 29000 as i32 + 64 as i32 }
+        0 {
+        if side_to_move == 0 {
+            return -(29000 + 64)
+        } else { return 29000 + 64 }
     } else {
         if board_state_.piece_count[2][moves_state_.disks_played as usize] ==
-            0 as i32 {
-            if side_to_move == 0 as i32 {
-                return 29000 as i32 + 64 as i32
-            } else { return -(29000 as i32 + 64 as i32) }
+            0 {
+            if side_to_move == 0 {
+                return 29000 + 64
+            } else { return -(29000 + 64) }
         }
     }
     /* Load and/or initialize the pattern coefficients */
@@ -379,7 +379,7 @@ pub fn post_init_coeffs(state: &mut CoeffState) {
     while i >= state.stage[0] {
         if state.eval_map[i as usize] == i {
             subsequent_stage = i
-        } else if i == subsequent_stage - 2 as i32 {
+        } else if i == subsequent_stage - 2 {
             state.eval_map[i as usize] = i;
             subsequent_stage = i
         } else { state.eval_map[i as usize] = subsequent_stage }
@@ -405,7 +405,7 @@ pub fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: &mut [i16],
         if mirror.is_none() || *mirror.unwrap().offset(i as isize) == i as u16 {
             let i1 = next_word();
             *buffer.offset(i as isize) =
-                (i1 as i32 / 4 as i32) as
+                (i1 as i32 / 4) as
                     i16
         } else {
             *buffer.offset(i as isize) =
@@ -429,7 +429,7 @@ pub fn unpack_batch<FE: FrontEnd, S:FnMut() -> i16>(item: &mut [i16],
                 let second_item = *item.offset(first_mirror_offset as isize) as i32;
 
                 FE::report_mirror_symetry_error(count as i32, i as i32, first_mirror_offset as i32, first_item, second_item);
-                exit(1 as i32);
+                exit(1);
             }
             i += 1
         }
@@ -461,12 +461,12 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
 
     /* Build the pattern tables for 8*1-patterns */
     let mut i = 0;
-    while i < 6561 as i32 {
+    while i < 6561 {
         mirror_pattern = 0;
         j = 0;
-        while j < 8 as i32 {
+        while j < 8 {
             mirror_pattern +=
-                row[j as usize] * pow3((7 as i32 - j) as usize);
+                row[j as usize] * pow3((7 - j) as usize);
             j += 1
         }
         /* Create the symmetry map */
@@ -478,14 +478,14 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
     }
     /* Build the tables for 7*1-patterns */
     i = 0;
-    while i < 7 as i32 { row[i as usize] = 0; i += 1 }
+    while i < 7 { row[i as usize] = 0; i += 1 }
     i = 0;
-    while i < 2187 as i32 {
+    while i < 2187 {
         mirror_pattern = 0;
         j = 0;
-        while j < 7 as i32 {
+        while j < 7 {
             mirror_pattern +=
-                row[j as usize] * pow3((6 as i32 - j) as usize);
+                row[j as usize] * pow3((6 - j) as usize);
             j += 1
         }
         *map_mirror7.offset(i as isize) =
@@ -496,14 +496,14 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
     }
     /* Build the tables for 6*1-patterns */
     i = 0;
-    while i < 6 as i32 { row[i as usize] = 0; i += 1 }
+    while i < 6 { row[i as usize] = 0; i += 1 }
     i = 0;
-    while i < 729 as i32 {
+    while i < 729 {
         mirror_pattern = 0;
         j = 0;
-        while j < 6 as i32 {
+        while j < 6 {
             mirror_pattern +=
-                row[j as usize] * pow3((5 as i32 - j) as usize);
+                row[j as usize] * pow3((5 - j) as usize);
             j += 1
         }
         *map_mirror6.offset(i as isize) =
@@ -514,14 +514,14 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
     }
     /* Build the tables for 5*1-patterns */
     i = 0;
-    while i < 5 as i32 { row[i as usize] = 0; i += 1 }
+    while i < 5 { row[i as usize] = 0; i += 1 }
     i = 0;
-    while i < 243 as i32 {
+    while i < 243 {
         mirror_pattern = 0;
         j = 0;
-        while j < 5 as i32 {
+        while j < 5 {
             mirror_pattern +=
-                row[j as usize] * pow3((4 as i32 - j) as usize);
+                row[j as usize] * pow3((4 - j) as usize);
             j += 1
         }
         *map_mirror5.offset(i as isize) =
@@ -532,14 +532,14 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
     }
     /* Build the tables for 4*1-patterns */
     i = 0;
-    while i < 4 as i32 { row[i as usize] = 0; i += 1 }
+    while i < 4 { row[i as usize] = 0; i += 1 }
     i = 0;
-    while i < 81 as i32 {
+    while i < 81 {
         mirror_pattern = 0;
         j = 0;
-        while j < 4 as i32 {
+        while j < 4 {
             mirror_pattern +=
-                row[j as usize] * pow3((3 as i32 - j) as usize);
+                row[j as usize] * pow3((3 - j) as usize);
             j += 1
         }
         *map_mirror4.offset(i as isize) =
@@ -550,14 +550,14 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
     }
     /* Build the tables for 3*1-patterns */
     i = 0;
-    while i < 3 as i32 { row[i as usize] = 0; i += 1 }
+    while i < 3 { row[i as usize] = 0; i += 1 }
     i = 0;
-    while i < 27 as i32 {
+    while i < 27 {
         mirror_pattern = 0;
         j = 0;
-        while j < 3 as i32 {
+        while j < 3 {
             mirror_pattern +=
-                row[j as usize] * pow3((2 as i32 - j) as usize);
+                row[j as usize] * pow3((2 - j) as usize);
             j += 1
         }
         *map_mirror3.offset(i as isize) =
@@ -571,23 +571,23 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
     /* --- none needed --- */
     /* Build the tables for edge2X-patterns */
     i = 0;
-    while i < 6561 as i32 {
+    while i < 6561 {
         j = 0;
-        while j < 3 as i32 {
+        while j < 3 {
             k = 0;
-            while k < 3 as i32 {
-                *map_mirror8x2.offset((i + 6561 as i32 * j +
-                    19683 as i32 * k) as isize)
+            while k < 3 {
+                *map_mirror8x2.offset((i + 6561 * j +
+                    19683 * k) as isize)
                     =
-                    if flip8[i as usize] as i32 + 6561 as i32 * k +
-                        19683 as i32 * j <
-                        i + 6561 as i32 * j +
-                            19683 as i32 * k {
-                        (flip8[i as usize] as i32 + 6561 as i32 * k) +
-                            19683 as i32 * j
+                    if flip8[i as usize] as i32 + 6561 * k +
+                        19683 * j <
+                        i + 6561 * j +
+                            19683 * k {
+                        (flip8[i as usize] as i32 + 6561 * k) +
+                            19683 * j
                     } else {
-                        (i + 6561 as i32 * j) +
-                            19683 as i32 * k
+                        (i + 6561 * j) +
+                            19683 * k
                     } as u16;
                 k += 1
             }
@@ -597,19 +597,19 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
     }
     /* Build the tables for 3*3-patterns */
     i = 0;
-    while i < 9 as i32 { row[i as usize] = 0; i += 1 }
+    while i < 9 { row[i as usize] = 0; i += 1 }
     i = 0;
-    while i < 19683 as i32 {
+    while i < 19683 {
         mirror_pattern =
             row[0] +
-                3 as i32 * row[3] +
-                9 as i32 * row[6] +
-                27 as i32 * row[1] +
-                81 as i32 * row[4] +
-                243 as i32 * row[7] +
-                729 as i32 * row[2] +
-                2187 as i32 * row[5] +
-                6561 as i32 * row[8];
+                3 * row[3] +
+                9 * row[6] +
+                27 * row[1] +
+                81 * row[4] +
+                243 * row[7] +
+                729 * row[2] +
+                2187 * row[5] +
+                6561 * row[8];
         *map_mirror33.offset(i as isize) =
             if i < mirror_pattern { i } else { mirror_pattern } as u16;
         /* Next configuration */
@@ -619,7 +619,7 @@ pub fn unpack_coeffs<FE: FrontEnd, S: FnMut() -> i16 >(next_word: &mut S, state:
     }
     /* Read and unpack - using symmetries - the coefficient tables. */
     i = 0;
-    while i < state.stage_count - 1 as i32 {
+    while i < state.stage_count - 1 {
         let stage_set = &mut state.set[state.stage[i as usize] as usize];
         stage_set.constant = (next_word() / 4);
         stage_set.parity = (next_word() / 4);
@@ -669,10 +669,10 @@ pub fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mut coeff
                 j += 1
             }
         } else {
-            j = coeff_state_.stage[(i - 1 as i32) as usize];
+            j = coeff_state_.stage[(i - 1) as usize];
             while j < coeff_state_.stage[i as usize] {
                 let coeff_set = &mut coeff_state_.set[j as usize];
-                coeff_set.prev = coeff_state_.stage[(i - 1 as i32) as usize];
+                coeff_set.prev = coeff_state_.stage[(i - 1) as usize];
                 coeff_set.next = coeff_state_.stage[i as usize];
                 j += 1
             }
@@ -685,7 +685,7 @@ pub fn process_coeffs_from_fn_source<FE: FrontEnd, Source:CoeffSource>(mut coeff
     j = coeff_state_.stage[(coeff_state_.stage_count - 2) as usize];
     while j < 60 {
         let coeff_set = &mut coeff_state_.set[j as usize];
-        coeff_set.prev = coeff_state_.stage[(coeff_state_.stage_count - 2 as i32) as usize];
+        coeff_set.prev = coeff_state_.stage[(coeff_state_.stage_count - 2) as usize];
         coeff_set.next = 60;
         j += 1
     }

@@ -84,26 +84,26 @@ impl Timer {
         timer_.frozen_ponder_time = timer_.current_ponder_time;
         timer_.frozen_ponder_depth = timer_.current_ponder_depth;
         moves_left =
-            if (65 as i32 - discs) / 2 as i32 - 5 as i32 >
-                2 as i32 {
-                ((65 as i32 - discs) / 2 as i32) -
-                    5 as i32
-            } else { 2 as i32 };
+            if (65 - discs) / 2 - 5 >
+                2 {
+                ((65 - discs) / 2) -
+                    5
+            } else { 2 };
         time_available =
             time_left + timer_.frozen_ponder_time + moves_left as f64 * incr -
                 10.0f64;
         if time_available < 1.0f64 { time_available = 1.0f64 }
         timer_.time_per_move =
-            time_available / (moves_left + 1 as i32) as f64 *
+            time_available / (moves_left + 1) as f64 *
                 0.7f64;
-        if timer_.time_per_move > time_left / 4 as i32 as f64 {
-            timer_.time_per_move = time_left / 4 as i32 as f64
+        if timer_.time_per_move > time_left / 4 as f64 {
+            timer_.time_per_move = time_left / 4 as f64
         }
         if timer_.time_per_move > time_left + timer_.frozen_ponder_time {
-            timer_.time_per_move = time_left / 4 as i32 as f64
+            timer_.time_per_move = time_left / 4 as f64
         }
-        if timer_.time_per_move == 0 as i32 as f64 {
-            timer_.time_per_move = 1 as i32 as f64
+        if timer_.time_per_move == 0 as f64 {
+            timer_.time_per_move = 1 as f64
         }
         timer_.set_default_panic();
     }
@@ -169,7 +169,7 @@ impl Timer {
         let timer = self;
         let mut i: i32 = 0;
         i = 0;
-        while i < 100 as i32 {
+        while i < 100 {
             timer.ponder_time[i as usize] = 0.0f64;
             timer.ponder_depth[i as usize] = 0;
             i += 1
@@ -229,7 +229,7 @@ impl Timer {
         curr_time = self.get_elapsed_time();
         adjusted_total_time = self.total_move_time;
         if self.do_check_abort != 0 && curr_time >= self.panic_value * adjusted_total_time {
-            self.panic_abort = 1 as i32
+            self.panic_abort = 1
         };
     }
     /*

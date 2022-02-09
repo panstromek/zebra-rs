@@ -49,13 +49,13 @@ impl FlipStack {
     pub fn UndoFlips(&mut self, board: &mut [i32; 128], flip_count: i32, oppcol: i32) {
         let mut UndoFlips__flip_count = flip_count;
         let UndoFlips__oppcol = oppcol;
-        if UndoFlips__flip_count & 1 as i32 != 0 {
+        if UndoFlips__flip_count & 1 != 0 {
             UndoFlips__flip_count -= 1;
             self.flip_stack = self.flip_stack -1;
             board[self.global_flip_stack[self.flip_stack] as usize] = UndoFlips__oppcol
         }
         while UndoFlips__flip_count != 0 {
-            UndoFlips__flip_count -= 2 as i32;
+            UndoFlips__flip_count -= 2;
             self.flip_stack = self.flip_stack - 1;
             board[self.global_flip_stack[self.flip_stack] as usize] = UndoFlips__oppcol;
             self.flip_stack = self.flip_stack - 1;

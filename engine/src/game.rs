@@ -192,15 +192,15 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
     let mut book_eval_info =EvaluationType::new();
     let mut res = WON_POSITION;
     /* Disable all time control mechanisms and randomization */
-    (g_state.g_timer).toggle_abort_check(0 as i32);
-    (g_state.midgame_state).toggle_midgame_abort_check(0 as i32);
-    (g_state.midgame_state).toggle_perturbation_usage(0 as i32);
-    (g_state.g_timer).start_move(0 as i32 as f64,
-                                 0 as i32 as f64,
-                                 disc_count(0 as i32, &(g_state.board_state).board) + disc_count(2 as i32, &(g_state.board_state).board));
+    (g_state.g_timer).toggle_abort_check(0);
+    (g_state.midgame_state).toggle_midgame_abort_check(0);
+    (g_state.midgame_state).toggle_perturbation_usage(0);
+    (g_state.g_timer).start_move(0 as f64,
+                                 0 as f64,
+                                 disc_count(0, &(g_state.board_state).board) + disc_count(2, &(g_state.board_state).board));
     (g_state.g_timer).clear_ponder_times();
     determine_hash_values(side_to_move, &(g_state.board_state).board, (&mut g_state.hash_state));
-    empties = 60 as i32 - (g_state.moves_state).disks_played;
+    empties = 60 - (g_state.moves_state).disks_played;
     best_move = 0;
     game_evaluated_count = 0;
     reset_counter(&mut (g_state.search_state).nodes);
@@ -209,8 +209,8 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
         /* Evaluations for database moves */
         let mut flags = 0;
         if empties <= exact {
-            flags = 16 as i32
-        } else if empties <= wld { flags = 4 as i32 }
+            flags = 16
+        } else if empties <= wld { flags = 4 }
         fill_move_alternatives::<FE>(side_to_move, flags,
                                      (&mut g_state.g_book),
                                      &mut (g_state.board_state),
@@ -230,30 +230,30 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                 book_move.move_0;
             evaluated_list[i as usize].eval =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
-                                 book_move.score, 0.0f64, 0 as i32,
-                                 1 as i32);
+                                 book_move.score, 0.0f64, 0,
+                                 1);
             child_flags = book_move.flags & book_move.parent_flags;
-            if child_flags & (16 as i32 | 4 as i32) != 0 {
-                if child_flags & 16 as i32 != 0 {
+            if child_flags & (16 | 4) != 0 {
+                if child_flags & 16 != 0 {
                     evaluated_list[i as usize].eval.type_0 = EXACT_EVAL
                 } else { evaluated_list[i as usize].eval.type_0 = WLD_EVAL }
-                if book_move.score > 0 as i32 {
+                if book_move.score > 0 {
                     evaluated_list[i as usize].eval.res = WON_POSITION;
                     /* Normalize the scores so that e.g. 33-31 becomes +256 */
                     evaluated_list[i as usize].eval.score -=
-                        30000 as i32;
+                        30000;
                     evaluated_list[i as usize].eval.score *=
-                        128 as i32
-                } else if book_move.score == 0 as i32 {
+                        128
+                } else if book_move.score == 0 {
                     evaluated_list[i as usize].eval.res = DRAWN_POSITION
                 } else {
                     /* score < 0 */
                     evaluated_list[i as usize].eval.res = LOST_POSITION;
                     /* Normalize the scores so that e.g. 30-34 becomes -512 */
                     evaluated_list[i as usize].eval.score +=
-                        30000 as i32;
+                        30000;
                     evaluated_list[i as usize].eval.score *=
-                        128 as i32
+                        128
                 }
             } else { evaluated_list[i as usize].eval.type_0 = MIDGAME_EVAL }
             i += 1
@@ -262,7 +262,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
     if book_only != 0 {
         /* Only book moves are to be considered */
         if game_evaluated_count > 0 {
-            best_move = get_book_move::<FE>(side_to_move, 0 as i32,
+            best_move = get_book_move::<FE>(side_to_move, 0,
                                     &mut book_eval_info, echo,
                                     &mut (g_state.board_state),
                                     &mut (g_state.g_book),
@@ -331,20 +331,20 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                     let mut shallow_info =  EvaluationType::new();
                     compute_move::<L, Out, FE, Thor>(0 + 2 - side_to_move, 0,
                                         0, 0,
-                                        0 as i32, book,
-                                        shallow_depth - 1 as i32,
-                                        0 as i32, 0 as i32,
-                                        1 as i32, &mut shallow_info, g_state.g_config.display_pv,
+                                        0, book,
+                                        shallow_depth - 1,
+                                        0, 0,
+                                        1, &mut shallow_info, g_state.g_config.display_pv,
                                  g_state.g_config.echo,
                                  g_state);
                     if shallow_info.type_0 == PASS_EVAL {
                         /* Don't allow pass */
-                        compute_move::<L, Out, FE, Thor>(side_to_move, 0 as i32,
-                                            0 as i32, 0 as i32,
-                                            0 as i32, book,
-                                            shallow_depth - 1 as i32,
-                                            0 as i32, 0 as i32,
-                                            1 as i32, &mut shallow_info, g_state.g_config.display_pv,
+                        compute_move::<L, Out, FE, Thor>(side_to_move, 0,
+                                            0, 0,
+                                            0, book,
+                                            shallow_depth - 1,
+                                            0, 0,
+                                            1, &mut shallow_info, g_state.g_config.display_pv,
                                      g_state.g_config.echo,
                                      g_state);
                         if shallow_info.type_0 == PASS_EVAL {
@@ -401,7 +401,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                 transform2[i as usize] = abs((g_state.random_instance).my_random() as i32) as u32
             } else {
                 transform1[i as usize] = 0;
-                transform2[i as usize] = 0 as i32 as u32
+                transform2[i as usize] = 0 as u32
             }
             i += 1;
             index += 1
@@ -409,7 +409,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
         stored_echo = echo;
         echo = 0;
         best_pv_depth = 0;
-        if mid == 1 as i32 {
+        if mid == 1 {
             /* compute_move won't be called */
             (g_state.board_state).pv_depth[0] = 0;
             (g_state.board_state).piece_count[0][(g_state.moves_state).disks_played as usize] =
@@ -419,40 +419,40 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
         }
         /* Perform iterative deepening if the search depth is large enough */
         if exact > empties_0 { exact = empties_0 }
-        if exact < 12 as i32 || empties_0 > exact {
+        if exact < 12 || empties_0 > exact {
             current_exact = exact
         } else {
             current_exact = 8 + exact % 2 - 2
         }
         if wld > empties_0 { wld = empties_0 }
-        if wld < 14 as i32 || empties_0 > wld {
+        if wld < 14 || empties_0 > wld {
             current_wld = wld
         } else {
             current_wld = 10 + wld % 2 - 2
         }
         if (empties_0 == exact || empties_0 == wld) &&
-            empties_0 > 16 as i32 &&
-            mid < empties_0 - 12 as i32 {
-            mid = empties_0 - 12 as i32
+            empties_0 > 16 &&
+            mid < empties_0 - 12 {
+            mid = empties_0 - 12
         }
-        if mid < 10 as i32 {
+        if mid < 10 {
             current_mid = mid
         } else {
-            current_mid = 6 as i32 + mid % 2 as i32 - 2 as i32
+            current_mid = 6 + mid % 2 - 2
         }
         first_iteration = 1;
         loop  {
             if current_mid < mid {
-                current_mid += 2 as i32;
+                current_mid += 2;
                 /* Avoid performing deep midgame searches if the endgame
                    is reached anyway. */
                 if empties_0 <= wld &&
-                    current_mid + 7 as i32 >= empties_0 {
+                    current_mid + 7 >= empties_0 {
                     current_wld = wld;
                     current_mid = mid
                 }
                 if empties_0 <= exact &&
-                    current_mid + 7 as i32 >= empties_0 {
+                    current_mid + 7 >= empties_0 {
                     current_exact = exact;
                     current_mid = mid
                 }
@@ -477,24 +477,24 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                                              transform2[i as usize]);
                 /* Determine the score for the ith move */
                 g_state.game_state.prefix_move = this_move;
-                make_move(side_to_move, this_move, 1 as i32, (&mut g_state.moves_state), (&mut g_state.board_state), (&mut g_state.hash_state), (&mut g_state.flip_stack_));
-                if current_mid == 1 as i32 {
+                make_move(side_to_move, this_move, 1, (&mut g_state.moves_state), (&mut g_state.board_state), (&mut g_state.hash_state), (&mut g_state.flip_stack_));
+                if current_mid == 1 {
                     /* compute_move doesn't like 0-ply searches */
                     (g_state.search_state).evaluations.lo = (g_state.search_state).evaluations.lo.wrapping_add(1);
-                    let side_to_move_argument = 0 as i32 + 2 as i32 - side_to_move;
+                    let side_to_move_argument = 0 + 2 - side_to_move;
                     shallow_eval = pattern_evaluation(side_to_move_argument, (&mut g_state.board_state), &(g_state.moves_state), (&mut g_state.coeff_state));
                     this_eval = create_eval_info(MIDGAME_EVAL, UNSOLVED_POSITION,
                                          shallow_eval, 0.0f64,
-                                         0 as i32, 0 as i32)
+                                         0, 0)
                 } else {
-                    compute_move::<L, Out, FE, Thor>(0 as i32 + 2 as i32 -
-                                            side_to_move, 0 as i32,
-                                        0 as i32, 0 as i32,
-                                        0 as i32, book,
-                                        current_mid - 1 as i32,
-                                        current_exact - 1 as i32,
-                                        current_wld - 1 as i32,
-                                        1 as i32, &mut this_eval,
+                    compute_move::<L, Out, FE, Thor>(0 + 2 -
+                                            side_to_move, 0,
+                                        0, 0,
+                                        0, book,
+                                        current_mid - 1,
+                                        current_exact - 1,
+                                        current_wld - 1,
+                                        1, &mut this_eval,
                                  g_state.g_config.display_pv,
                                  g_state.g_config.echo,
                                  g_state);
@@ -502,8 +502,8 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                 if force_return != 0 {
                     /* Clear eval and exit search immediately */
                     this_eval = create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
-                                         0 as i32, 0.0f64,
-                                         0 as i32, 0 as i32);
+                                         0, 0.0f64,
+                                         0, 0);
                     unmake_move(side_to_move, this_move, &mut (g_state.board_state).board, &mut (g_state.moves_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
                     break ;
                 } else {
@@ -515,21 +515,21 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                             shallow_eval = pattern_evaluation(side_to_move, &mut (g_state.board_state), &(g_state.moves_state), &mut (g_state.coeff_state));
                             this_eval = create_eval_info(MIDGAME_EVAL, UNSOLVED_POSITION, shallow_eval, 0.0, 0, 0)
                         } else {
-                            compute_move::<L, Out, FE, Thor>(side_to_move, 0 as i32,
-                                                0 as i32, 0 as i32,
-                                                0 as i32, book,
-                                                current_mid - 1 as i32,
-                                                current_exact - 1 as i32,
-                                                current_wld - 1 as i32,
-                                                1 as i32, &mut this_eval, g_state.g_config.display_pv,
+                            compute_move::<L, Out, FE, Thor>(side_to_move, 0,
+                                                0, 0,
+                                                0, book,
+                                                current_mid - 1,
+                                                current_exact - 1,
+                                                current_wld - 1,
+                                                1, &mut this_eval, g_state.g_config.display_pv,
                                          g_state.g_config.echo,
                                          g_state);
                         }
                         if this_eval.type_0 == PASS_EVAL {
                             /* Game over */
-                            disc_diff = disc_count(side_to_move, &(g_state.board_state).board) - disc_count(0 as i32 + 2 as i32 - side_to_move, &(g_state.board_state).board);
+                            disc_diff = disc_count(side_to_move, &(g_state.board_state).board) - disc_count(0 + 2 - side_to_move, &(g_state.board_state).board);
                             if disc_diff > 0  {
-                                corrected_diff = 64 as i32 - 2 as i32 * disc_count(0 as i32 + 2 as i32 - side_to_move, &(g_state.board_state).board);
+                                corrected_diff = 64 - 2 * disc_count(0 + 2 - side_to_move, &(g_state.board_state).board);
                                 res = WON_POSITION
                             } else if disc_diff == 0 {
                                 corrected_diff = 0;
@@ -538,7 +538,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                 corrected_diff = 2  * disc_count(side_to_move, &(g_state.board_state).board) - 64;
                                 res = LOST_POSITION
                             }
-                            this_eval = create_eval_info(EXACT_EVAL, res, 128 * corrected_diff, 0.0f64, 60 as i32 - (g_state.moves_state).disks_played, 0 as i32)
+                            this_eval = create_eval_info(EXACT_EVAL, res, 128 * corrected_diff, 0.0f64, 60 - (g_state.moves_state).disks_played, 0)
                         }
                     } else {
                         /* Sign-correct the score produced */
@@ -558,7 +558,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                     evaluated_list[index as usize].pv[0] = this_move;
                     j = 0;
                     while j < (g_state.board_state).pv_depth[0] {
-                        evaluated_list[index as usize].pv[(j + 1 as i32) as usize] = (g_state.board_state).pv[0][j as usize];
+                        evaluated_list[index as usize].pv[(j + 1) as usize] = (g_state.board_state).pv[0][j as usize];
                         j += 1
                     }
                     /* Store the PV corresponding to the best move */
@@ -585,11 +585,11 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                             changed = 0;
                             j = 0;
                             while j < game_evaluated_count - 1 {
-                                if compare_eval(evaluated_list[j as usize].eval, evaluated_list[(j + 1 as i32) as usize].eval) < 0 {
+                                if compare_eval(evaluated_list[j as usize].eval, evaluated_list[(j + 1) as usize].eval) < 0 {
                                     changed = 1;
                                     temp = evaluated_list[j as usize];
-                                    evaluated_list[j as usize] = evaluated_list[(j + 1 as i32) as usize];
-                                    evaluated_list[(j + 1 as i32) as usize] = temp
+                                    evaluated_list[j as usize] = evaluated_list[(j + 1) as usize];
+                                    evaluated_list[(j + 1) as usize] = temp
                                 }
                                 j += 1
                             }
@@ -614,7 +614,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                 if !(j == unsearched_count) {
                     /* Move the move to the front of the list. */
                     while j >= 1 {
-                        unsearched_move[j as usize] = unsearched_move[(j - 1 as i32) as usize];
+                        unsearched_move[j as usize] = unsearched_move[(j - 1) as usize];
                         j -= 1
                     }
                     unsearched_move[0] = this_move_0
@@ -633,12 +633,12 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
         (g_state.board_state).pv[0][0] = best_move;
         i = 0;
         while i < best_pv_depth {
-            (g_state.board_state).pv[0][(i + 1 as i32) as usize] = best_pv[i as usize];
+            (g_state.board_state).pv[0][(i + 1) as usize] = best_pv[i as usize];
             i += 1
         }
-        let negate = 0 as i32;
+        let negate = 0;
         (g_state.search_state).negate_current_eval(negate);
-        if (g_state.moves_state).move_count[(g_state.moves_state).disks_played as usize] > 0 as i32 {
+        if (g_state.moves_state).move_count[(g_state.moves_state).disks_played as usize] > 0 {
             let eval_argument = evaluated_list[0].eval;
             (g_state.search_state).set_current_eval(eval_argument);
         }
@@ -646,9 +646,9 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
     /* Reset the hash transformation masks prior to leaving */
     (g_state.hash_state).set_hash_transformation(0, 0);
     /* Don't forget to enable the time control mechanisms when leaving */
-    (g_state.g_timer).toggle_abort_check(1 as i32);
-    (g_state.midgame_state).toggle_midgame_abort_check(1 as i32);
-    (g_state.midgame_state).toggle_perturbation_usage(1 as i32);
+    (g_state.g_timer).toggle_abort_check(1);
+    (g_state.midgame_state).toggle_midgame_abort_check(1);
+    (g_state.midgame_state).toggle_perturbation_usage(1);
     (g_state.game_state).max_depth_reached += 1;
     g_state.game_state.prefix_move = 0;
     return EvaluatedList {
@@ -718,11 +718,11 @@ pub fn setup_game_finalize(side_to_move:  &mut i32,
     moves_state.disks_played = disc_count(0, &board_state.board) + disc_count(2, &board_state.board) - 4;
     determine_hash_values(*side_to_move, &board_state.board, hash_state);
     /* Make the game score look right */
-    if *side_to_move == 0 as i32 {
-        board_state.score_sheet_row = -(1 as i32)
+    if *side_to_move == 0 {
+        board_state.score_sheet_row = -(1)
     } else {
         board_state.black_moves[0] = -(1);
-        board_state.score_sheet_row = 0 as i32
+        board_state.score_sheet_row = 0
     };
 }
 
@@ -756,7 +756,7 @@ pub fn engine_global_setup<S:CoeffSource, FE: FrontEnd>(
     if use_random != 0 {
         g_timer.time(&mut timer);
         random_instance.my_srandom(timer as i32);
-    } else { random_instance.my_srandom(1 as i32); }
+    } else { random_instance.my_srandom(1); }
     hash_state.init_hash(hash_bits);
 
     // inlined init_coeffs
@@ -789,10 +789,10 @@ pub fn process_board_source<S: BoardSource>(side_to_move: &mut i32, mut file_sou
     file_source.fill_board_buffer(&mut buffer);
     let mut token = 0;
     let mut i = 1;
-    while i <= 8 as i32 {
+    while i <= 8 {
         let mut j = 1;
-        while j <= 8 as i32 {
-            let pos = 10 as i32 * i + j;
+        while j <= 8 {
+            let pos = 10 * i + j;
             match buffer.as_bytes().get(token as usize) {
                 Some(b'*' | b'X') => { board_state_.board[pos as usize] = 0 }
                 Some(b'O' | b'0') => { board_state_.board[pos as usize] = 2 }
@@ -814,9 +814,9 @@ pub fn process_board_source<S: BoardSource>(side_to_move: &mut i32, mut file_sou
     let mut buffer = buffer.into_bytes();
     file_source.fill_buffer_with_side_to_move(&mut buffer);
     if buffer[0] == b'B' {
-        *side_to_move = 0 as i32
+        *side_to_move = 0
     } else if buffer[0] == b'W' {
-        *side_to_move = 2 as i32
+        *side_to_move = 2
     } else {
         let unrecognized = buffer[0];
         return Err(UnrecognizedCharacter(unrecognized));
@@ -892,9 +892,9 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
     }
     /* Initialize various components of the move system */
     g_state.board_state.piece_count[0][g_state.moves_state.disks_played as usize] =
-        disc_count(0 as i32, &g_state.board_state.board);
+        disc_count(0, &g_state.board_state.board);
     g_state.board_state.piece_count[2][g_state.moves_state.disks_played as usize] =
-        disc_count(2 as i32, &g_state.board_state.board);
+        disc_count(2, &g_state.board_state.board);
     generate_all(side_to_move, &mut g_state.moves_state, &g_state.search_state, &g_state.board_state.board);
     determine_hash_values(side_to_move, &g_state.board_state.board, &mut g_state.hash_state);
     calculate_perturbation(&mut g_state.midgame_state, &mut g_state.random_instance);
@@ -909,23 +909,23 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
         reset_counter(&mut g_state.search_state.nodes);
     }
     let mut i = 0;
-    while i < 100 as i32 {
+    while i < 100 {
         g_state.search_state.evals[g_state.moves_state.disks_played as usize][i as usize] = 0;
         i += 1
     }
     g_state.game_state.max_depth_reached = 1;
-    let empties = 60 as i32 - g_state.moves_state.disks_played;
+    let empties = 60 - g_state.moves_state.disks_played;
     FE::reset_buffer_display(&mut g_state.g_timer);
     g_state.g_timer.determine_move_time(my_time as f64, my_incr as f64,
-                                        g_state.moves_state.disks_played + 4 as i32);
+                                        g_state.moves_state.disks_played + 4);
     if g_state.search_state.get_ponder_move() == 0 {  g_state.g_timer.clear_ponder_times(); }
     remove_coeffs(g_state.moves_state.disks_played, &mut g_state.coeff_state);
     /* No feasible moves? */
-    if g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] == 0 as i32 {
+    if g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] == 0 {
         *eval_info =
             create_eval_info(PASS_EVAL, UNSOLVED_POSITION,
-                             0.0f64 as i32, 0.0f64, 0 as i32,
-                             0 as i32);
+                             0.0f64 as i32, 0.0f64, 0,
+                             0);
         let eval = *eval_info;
         g_state.search_state.set_current_eval(eval);
         if echo != 0 {
@@ -942,14 +942,14 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
     /* If there is only one move available:
        Don't waste any time, unless told so or very close to the end,
        searching the position. */
-    if empties > 60 as i32 &&
-        g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] == 1 as i32 &&
+    if empties > 60 &&
+        g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] == 1 &&
         search_forced == 0 {
         /* Forced move */
         *eval_info =
             create_eval_info(FORCED_EVAL, UNSOLVED_POSITION,
-                             0.0f64 as i32, 0.0f64, 0 as i32,
-                             0 as i32);
+                             0.0f64 as i32, 0.0f64, 0,
+                             0);
         let eval = *eval_info;
         g_state.search_state.set_current_eval(eval);
         if echo != 0 {
@@ -984,8 +984,8 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
         if curr_move != -1 {
             book_eval_info =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
-                                 0 as i32, 0.0f64, 0 as i32,
-                                 1 as i32);
+                                 0, 0.0f64, 0,
+                                 1);
             midgame_move = curr_move;
             book_move_found = 1;
             move_type = BOOK_MOVE;
@@ -1005,14 +1005,14 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
         Thor::database_search(&g_state.board_state.board, side_to_move);
         if Thor::get_match_count() >= threshold {
             let game_index =
-                ((g_state.random_instance.my_random() >> 8 as i32) %
+                ((g_state.random_instance.my_random() >> 8) %
                     Thor::get_match_count() as i64) as i32;
             curr_move = Thor::get_thor_game_move(game_index, g_state.moves_state.disks_played) as i8;
             if valid_move(curr_move, side_to_move, &g_state.board_state.board) != 0 {
                 book_eval_info =
                     create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
-                                     0 as i32, 0.0f64,
-                                     0 as i32, 1 as i32);
+                                     0, 0.0f64,
+                                     0, 1);
                 midgame_move = curr_move;
                 book_move_found = 1;
                 move_type = BOOK_MOVE;
@@ -1033,12 +1033,12 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
         /* Check Thor statistics for a move */
         curr_move =
             Thor::choose_thor_opening_move(&g_state.board_state.board, side_to_move,
-                                           0 as i32, &mut g_state.random_instance) as i8;
+                                           0, &mut g_state.random_instance) as i8;
         if curr_move != -(1) {
             book_eval_info =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
-                                 0 as i32, 0.0f64, 0 as i32,
-                                 1 as i32);
+                                 0, 0.0f64, 0,
+                                 1);
             midgame_move = curr_move;
             book_move_found = 1;
             move_type = BOOK_MOVE;
@@ -1055,9 +1055,9 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
     if book_move_found == 0 && book != 0 {
         /* Check ordinary opening book */
         let mut flags = 0;
-        if empties <= 30 as i32 {
-            if empties <= wld { flags = 4 as i32 }
-            if empties <= exact { flags = 16 as i32 }
+        if empties <= 30 {
+            if empties <= wld { flags = 4 }
+            if empties <= exact { flags = 16 }
         }
         fill_move_alternatives::<FE>(side_to_move, flags,
                                      &mut g_state.g_book,
@@ -1092,23 +1092,23 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
     if timed_depth == 0 && empties <= (if exact > wld { exact } else { wld })
     {
         mid =
-            if (if (if mid < empties - 7 as i32 {
+            if (if (if mid < empties - 7 {
                 mid
-            } else { (empties) - 7 as i32 }) <
-                28 as i32 {
-                if mid < empties - 7 as i32 {
+            } else { (empties) - 7 }) <
+                28 {
+                if mid < empties - 7 {
                     mid
-                } else { (empties) - 7 as i32 }
-            } else { 28 as i32 }) > 2 as i32 {
-                if (if mid < empties - 7 as i32 {
+                } else { (empties) - 7 }
+            } else { 28 }) > 2 {
+                if (if mid < empties - 7 {
                     mid
-                } else { (empties) - 7 as i32 }) <
-                    28 as i32 {
-                    if mid < empties - 7 as i32 {
+                } else { (empties) - 7 }) <
+                    28 {
+                    if mid < empties - 7 {
                         mid
-                    } else { (empties) - 7 as i32 }
-                } else { 28 as i32 }
-            } else { 2 as i32 }
+                    } else { (empties) - 7 }
+                } else { 28 }
+            } else { 2 }
     }
     endgame_reached =
         (timed_depth == 0 && g_state.game_state.endgame_performed[side_to_move as usize] != 0) as
@@ -1117,32 +1117,32 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
         g_state.g_timer.clear_panic_abort();
         g_state.midgame_state.clear_midgame_abort();
         g_state.midgame_state.toggle_midgame_abort_check(update_all);
-        g_state.midgame_state.toggle_midgame_hash_usage(1 as i32, 1 as i32);
+        g_state.midgame_state.toggle_midgame_hash_usage(1, 1);
         if timed_depth != 0 {
-            max_depth = 64 as i32
+            max_depth = 64
         } else if empties <= (if exact > wld { exact } else { wld }) {
             max_depth =
-                if (if (if mid < empties - 12 as i32 {
+                if (if (if mid < empties - 12 {
                     mid
-                } else { (empties) - 12 as i32 }) <
-                    18 as i32 {
-                    if mid < empties - 12 as i32 {
+                } else { (empties) - 12 }) <
+                    18 {
+                    if mid < empties - 12 {
                         mid
-                    } else { (empties) - 12 as i32 }
-                } else { 18 as i32 }) > 2 as i32 {
-                    if (if mid < empties - 12 as i32 {
+                    } else { (empties) - 12 }
+                } else { 18 }) > 2 {
+                    if (if mid < empties - 12 {
                         mid
-                    } else { (empties) - 12 as i32 }) <
-                        18 as i32 {
-                        if mid < empties - 12 as i32 {
+                    } else { (empties) - 12 }) <
+                        18 {
+                        if mid < empties - 12 {
                             mid
-                        } else { (empties) - 12 as i32 }
-                    } else { 18 as i32 }
-                } else { 2 as i32 }
+                        } else { (empties) - 12 }
+                    } else { 18 }
+                } else { 2 }
         } else { max_depth = mid }
         midgame_depth =
-            if (2 as i32) < max_depth {
-                2 as i32
+            if (2) < max_depth {
+                2
             } else { max_depth };
         loop  {
             g_state.game_state.max_depth_reached = midgame_depth;
@@ -1159,7 +1159,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
             g_state.search_state.set_current_eval(eval);
             midgame_diff =
                 1.3f64 * mid_eval_info.score as f64 / 128.0f64;
-            if side_to_move == 0 as i32 {
+            if side_to_move == 0 {
                 midgame_diff -= g_state.game_state.komi as f64
             } else { midgame_diff += g_state.game_state.komi as f64 }
             if timed_depth != 0 {
@@ -1169,26 +1169,26 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
                    to make Zebra solve earlier if the position is lopsided. */
                 if g_state.g_timer.is_panic_abort() != 0 { offset -= 1 }
                 if g_state.game_state.endgame_performed[side_to_move as usize] != 0 {
-                    offset += 2 as i32
+                    offset += 2
                 }
-                if midgame_depth + offset + 27 as i32 >=
-                    2 as i32 * empties ||
-                    midgame_depth + 7 as i32 >= empties {
-                    endgame_reached = 1 as i32
+                if midgame_depth + offset + 27 >=
+                    2 * empties ||
+                    midgame_depth + 7 >= empties {
+                    endgame_reached = 1
                 }
             }
             midgame_depth += 1;
             if !(g_state.g_timer.is_panic_abort() == 0 && g_state.midgame_state.is_midgame_abort() == 0 &&
                 force_return == 0 && midgame_depth <= max_depth &&
-                midgame_depth + g_state.moves_state.disks_played <= 61 as i32 &&
+                midgame_depth + g_state.moves_state.disks_played <= 61 &&
                 endgame_reached == 0) {
                 break ;
             }
         }
         if echo != 0 { Out::display_status_out(); }
-        if abs(mid_eval_info.score) == abs(-(27000 as i32)) {
+        if abs(mid_eval_info.score) == abs(-(27000)) {
             move_type = INTERRUPTED_MOVE;
-            interrupted_depth = midgame_depth - 1 as i32
+            interrupted_depth = midgame_depth - 1
             /* compensate for increment */
         } else { move_type = MIDGAME_MOVE }
     }
@@ -1197,7 +1197,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
     if force_return == 0 {
         if timed_depth != 0 && endgame_reached != 0 ||
             timed_depth != 0 && book_move_found != 0 &&
-                g_state.moves_state.disks_played >= 60 as i32 - 30 as i32 ||
+                g_state.moves_state.disks_played >= 60 - 30 ||
             timed_depth == 0 &&
                 empties <= (if exact > wld { exact } else { wld }) {
             g_state.game_state.max_depth_reached = empties;
@@ -1205,8 +1205,8 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
             if timed_depth != 0 {
                 curr_move =
                    end_game::<FE>(side_to_move,
-                                  (g_state.moves_state.disks_played < 60 as i32 - exact) as
-                                 i32, 0 as i32, book, g_state.game_state.komi,
+                                  (g_state.moves_state.disks_played < 60 - exact) as
+                                 i32, 0, book, g_state.game_state.komi,
                                   &mut end_eval_info, echo
                                   , &mut g_state.flip_stack_
                                   , &mut g_state.search_state
@@ -1223,7 +1223,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
                                   , &mut g_state.prob_cut)
             } else if empties <= exact {
                 curr_move =
-                   end_game::<FE>(side_to_move, 0 as i32, 0 as i32,
+                   end_game::<FE>(side_to_move, 0, 0,
                                   book, g_state.game_state.komi, &mut end_eval_info, echo, &mut g_state.flip_stack_
                                   , &mut g_state.search_state
                                   , &mut g_state.board_state
@@ -1239,7 +1239,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
                                   , &mut g_state.prob_cut)
             } else {
                 curr_move =
-                   end_game::<FE>(side_to_move, 1 as i32, 0 as i32,
+                   end_game::<FE>(side_to_move, 1, 0,
                                   book, g_state.game_state.komi, &mut end_eval_info, echo, &mut g_state.flip_stack_
                                   , &mut g_state.search_state
                                   , &mut g_state.board_state
@@ -1256,11 +1256,11 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
             }
             let eval = end_eval_info;
             g_state.search_state.set_current_eval(eval);
-            if abs(g_state.search_state.root_eval) == abs(-(27000 as i32)) {
+            if abs(g_state.search_state.root_eval) == abs(-(27000)) {
                 move_type = INTERRUPTED_MOVE
             } else { move_type = ENDGAME_MOVE }
             if update_all != 0 {
-                g_state.game_state.endgame_performed[side_to_move as usize] = 1 as i32
+                g_state.game_state.endgame_performed[side_to_move as usize] = 1
             }
         }
     }
@@ -1269,7 +1269,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
             *eval_info =
                 create_eval_info(INTERRUPTED_EVAL, UNSOLVED_POSITION,
                                  0.0f64 as i32, 0.0f64,
-                                 0 as i32, 0 as i32);
+                                 0, 0);
             let info = &*eval_info;
             let counter_value = counter_value(&mut g_state.search_state.nodes);
             Out::send_move_type_0_status(interrupted_depth, info, counter_value, &mut g_state.g_timer, &g_state.board_state);

@@ -150,7 +150,7 @@ pub const fn create_book_maps() -> BookMaps {
     // I don't really understand its original purpose, though
 
     // let mut i = 0;
-    // while i < 8 as i32 {
+    // while i < 8 {
     //     *book.symmetry_map[i as usize] = 0;
     //     i += 1
     // }
@@ -218,16 +218,16 @@ impl Book {
 */
 pub fn probe_hash_table(val1: i32, val2: i32, book: &mut Book) -> i32 {
     let book = book;
-    if (book).hash_table_size == 0 as i32 {
-        -(1 as i32)
+    if (book).hash_table_size == 0 {
+        -(1)
     } else {
         let mut slot = val1 % book.hash_table_size;
-        while *book.book_hash_table.offset(slot as isize) != -(1 as i32) &&
+        while *book.book_hash_table.offset(slot as isize) != -(1) &&
             ((*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                 isize)).hash_val2 != val2 ||
                 (*book.node.offset(*book.book_hash_table.offset(slot as isize) as
                     isize)).hash_val1 != val1) {
-            slot = (slot + 1 as i32) % book.hash_table_size
+            slot = (slot + 1) % book.hash_table_size
         }
         slot
     }
@@ -240,15 +240,15 @@ pub fn probe_hash_table(val1: i32, val2: i32, book: &mut Book) -> i32 {
 */
 pub fn clear_node_depth(index: i32, book: &mut Book) {
     let mut depth: i32 = 0;
-    depth = (*book.node.offset(index as isize)).flags as i32 >> 10 as i32;
+    depth = (*book.node.offset(index as isize)).flags as i32 >> 10;
     let ref mut fresh0 = (*book.node.offset(index as isize)).flags;
-    *fresh0 = (*fresh0 as i32 ^ depth << 10 as i32) as u16;
+    *fresh0 = (*fresh0 as i32 ^ depth << 10) as u16;
 }
 /*
    GET_NODE_DEPTH
 */
 pub fn get_node_depth(index: i32, book: &mut Book) -> i32 {
-    return (*book.node.offset(index as isize)).flags as i32 >> 10 as i32;
+    return (*book.node.offset(index as isize)).flags as i32 >> 10;
 }
 /*
    SET_NODE_DEPTH
@@ -256,7 +256,7 @@ pub fn get_node_depth(index: i32, book: &mut Book) -> i32 {
 */
 pub fn set_node_depth(index: i32, depth: i32, book: &mut Book) {
     let ref mut fresh1 = (*book.node.offset(index as isize)).flags;
-    *fresh1 = (*fresh1 as i32 | depth << 10 as i32) as u16;
+    *fresh1 = (*fresh1 as i32 | depth << 10) as u16;
 }
 
 /*
@@ -370,16 +370,16 @@ pub fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32, book: & B
     let mut col_pattern: [i32; 8] = [0; 8];
     compute_line_patterns(board1, &mut row_pattern, &mut col_pattern);
     i = 0;
-    while i < 8 as i32 {
+    while i < 8 {
         j = 0;
-        while j < 2 as i32 {
+        while j < 2 {
             out[i as usize][j as usize] = 0;
             j += 1
         }
         i += 1
     }
     i = 0;
-    while i < 8 as i32 {
+    while i < 8 {
         /* b1 -> b1 */
         out[0][0] ^= book.line_hash[0][i as usize][row_pattern[i as usize] as usize];
         out[0][1] ^= book.line_hash[1][i as usize][row_pattern[i as usize] as usize];
@@ -387,11 +387,11 @@ pub fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32, book: & B
         out[1][0] ^= book.line_hash[0][i as usize][flip8[row_pattern[i as usize] as usize] as usize];
         out[1][1] ^= book.line_hash[1][i as usize][flip8[row_pattern[i as usize] as usize] as usize];
         /* g8 -> b1 */
-        out[2][0] ^= book.line_hash[0][i as usize][flip8[row_pattern[(7 as i32 - i) as usize] as usize] as usize];
-        out[2][1] ^= book.line_hash[1][i as usize][flip8[row_pattern[(7 as i32 - i) as usize] as usize] as usize];
+        out[2][0] ^= book.line_hash[0][i as usize][flip8[row_pattern[(7 - i) as usize] as usize] as usize];
+        out[2][1] ^= book.line_hash[1][i as usize][flip8[row_pattern[(7 - i) as usize] as usize] as usize];
         /* b8 -> b1 */
-        out[3][0] ^= book.line_hash[0][i as usize][row_pattern[(7 as i32 - i) as usize] as usize];
-        out[3][1] ^= book.line_hash[1][i as usize][row_pattern[(7 as i32 - i) as usize] as usize];
+        out[3][0] ^= book.line_hash[0][i as usize][row_pattern[(7 - i) as usize] as usize];
+        out[3][1] ^= book.line_hash[1][i as usize][row_pattern[(7 - i) as usize] as usize];
         /* a2 -> b1 */
         out[4][0] ^= book.line_hash[0][i as usize][col_pattern[i as usize] as usize];
         out[4][1] ^= book.line_hash[1][i as usize][col_pattern[i as usize] as usize];
@@ -399,11 +399,11 @@ pub fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32, book: & B
         out[5][0] ^= book.line_hash[0][i as usize][flip8[col_pattern[i as usize] as usize] as usize];
         out[5][1] ^= book.line_hash[1][i as usize][flip8[col_pattern[i as usize] as usize] as usize];
         /* h7 -> b1 */
-        out[6][0] ^= book.line_hash[0][i as usize][flip8[col_pattern[(7 as i32 - i) as usize] as usize] as usize];
-        out[6][1] ^= book.line_hash[1][i as usize][flip8[col_pattern[(7 as i32 - i) as usize] as usize] as usize];
+        out[6][0] ^= book.line_hash[0][i as usize][flip8[col_pattern[(7 - i) as usize] as usize] as usize];
+        out[6][1] ^= book.line_hash[1][i as usize][flip8[col_pattern[(7 - i) as usize] as usize] as usize];
         /* h2 -> b1 */
-        out[7][0] ^= book.line_hash[0][i as usize][col_pattern[(7 as i32 - i) as usize] as usize];
-        out[7][1] ^= book.line_hash[1][i as usize][col_pattern[(7 as i32 - i) as usize] as usize];
+        out[7][0] ^= book.line_hash[0][i as usize][col_pattern[(7 - i) as usize] as usize];
+        out[7][1] ^= book.line_hash[1][i as usize][col_pattern[(7 - i) as usize] as usize];
         i += 1
     }
     /* Find the rotation minimizing the hash index.
@@ -413,7 +413,7 @@ pub fn get_hash(val0: &mut i32, val1: &mut i32, orientation: &mut i32, book: & B
     min_hash0 = out[0][0];
     min_hash1 = out[0][1];
     i = 1;
-    while i < 8 as i32 {
+    while i < 8 {
         if out[i as usize][0] < min_hash0 ||
             out[i as usize][0] == min_hash0 &&
                 out[i as usize][1] < min_hash1 {
@@ -511,14 +511,14 @@ pub fn find_opening_name(book: &Book, board: &Board) -> Option<&'static [u8]> {
 pub fn check_forced_opening<FE: FrontEnd>(side_to_move: i32, opening: ForcedOpening, board: &[i32; 128], disks_played: i32, book: &Book, random: &mut MyRandom) -> i32 {
 
     let move_count_0 = opening.move_count;
-    if move_count_0 <= disks_played { return -(1 as i32) }
+    if move_count_0 <= disks_played { return -(1) }
     let mut move_0 = &opening.moves;
 
     let mut local_board: [i32; 100] = [0; 100];
     let move_offset: [i32; 8] =
-        [1 as i32, -(1 as i32), 9 as i32,
-            -(9 as i32), 10 as i32, -(10 as i32),
-            11 as i32, -(11 as i32)];
+        [1, -(1), 9,
+            -(9), 10, -(10),
+            11, -(11)];
     let mut j: i32 = 0;
     let mut count: i32 = 0;
     let mut local_side_to_move: i32 = 0;
@@ -541,7 +541,7 @@ pub fn check_forced_opening<FE: FrontEnd>(side_to_move: i32, opening: ForcedOpen
     let mut i = 0;
     while i < disks_played {
         j = 0;
-        while j < 8 as i32 {
+        while j < 8 {
             pos = move_0[i as usize] + move_offset[j as usize];
             count = 0;
             while local_board[pos as usize] == 0 + 2 - local_side_to_move
@@ -567,12 +567,12 @@ pub fn check_forced_opening<FE: FrontEnd>(side_to_move: i32, opening: ForcedOpen
        line match the current board. The initial symmetry is chosen
        randomly to avoid the same symmetry being chosen all the time.
        This is not a perfect scheme but good enough. */
-    symmetry = abs(random.my_random() as i32) % 8 as i32;
+    symmetry = abs(random.my_random() as i32) % 8;
     symm_index = 0;
-    while symm_index < 8 as i32 {
+    while symm_index < 8 {
         same_position = 1;
         i = 1;
-        while i <= 8 as i32 && same_position != 0 {
+        while i <= 8 && same_position != 0 {
             j = 1;
             while j <= 8 {
                 pos = 10 * i + j;
@@ -628,7 +628,7 @@ pub fn fill_endgame_hash(cutoff: i32, level: i32
     slot = probe_hash_table(val1, val2, book);
     this_index = *book.book_hash_table.offset(slot as isize);
     /* If the position wasn't found in the hash table, return. */
-    if slot == -1 || *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
+    if slot == -1 || *book.book_hash_table.offset(slot as isize) == -(1) {
         return
     }
     /* Check the status of the g_book.node */
@@ -646,7 +646,7 @@ pub fn fill_endgame_hash(cutoff: i32, level: i32
     i = 0;
     while i < moves_state_.move_count[moves_state_.disks_played as usize] {
         this_move = moves_state_.move_list[moves_state_.disks_played as usize][i as usize];
-        make_move(side_to_move, this_move, 1 as i32, moves_state_, board_state_, hash_state_, flip_stack );
+        make_move(side_to_move, this_move, 1, moves_state_, board_state_, hash_state_, flip_stack );
         let val0___ = &mut val1;
         let val1___ = &mut val2;
         let orientation___ = &mut orientation;
@@ -688,11 +688,11 @@ pub fn fill_endgame_hash(cutoff: i32, level: i32
     if matching_move != -(1) {
         /* Store the information */
         signed_score = (*book.node.offset(this_index as isize)).black_minimax_score as i32;
-        if side_to_move == 2 as i32 { signed_score = -signed_score }
-        if signed_score > 30000 as i32 {
-            signed_score -= 30000 as i32
-        } else if signed_score < -(30000 as i32) {
-            signed_score += 30000 as i32
+        if side_to_move == 2 { signed_score = -signed_score }
+        if signed_score > 30000 {
+            signed_score -= 30000
+        } else if signed_score < -(30000) {
+            signed_score += 30000
         } else if abs(signed_score) == 30000 - 1 {
             signed_score = 0
         }
@@ -757,9 +757,9 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
         book.candidate_count = 0;
         return
     }
-    if side_to_move == 0 as i32 {
-        sign = 1 as i32
-    } else { sign = -(1 as i32) }
+    if side_to_move == 0 {
+        sign = 1
+    } else { sign = -(1) }
     alternative_move = (*book.node.offset(index as isize)).best_alternative_move;
     if alternative_move > 0 {
         alternative_move = *book.inv_symmetry_map[orientation as usize].offset(alternative_move as isize) as _;
@@ -772,7 +772,7 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
     i = 0;
     while i < moves_state_.move_count[moves_state_.disks_played as usize] {
         this_move = moves_state_.move_list[moves_state_.disks_played as usize][i as usize];
-        make_move(side_to_move, this_move, 1 as i32, moves_state_, board_state_, hash_state_, flip_stack);
+        make_move(side_to_move, this_move, 1, moves_state_, board_state_, hash_state_, flip_stack);
         get_hash(&mut val1, &mut val2, &mut orientation, book, &board_state_.board);
         slot = probe_hash_table(val1, val2, book);
         let move_0 = this_move;
@@ -786,13 +786,13 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
             if i16::from(this_move) == alternative_move && flags == 0 {
                 score = alternative_score;
                 child_feasible = 1;
-                deviation = 1 as i32
+                deviation = 1
             } else {
                 child_feasible = 0;
-                score = 0 as i32
+                score = 0
             }
         } else if (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags as i32 & flags != 0 || flags == 0 {
-            if side_to_move == 0 as i32 {
+            if side_to_move == 0 {
                 score = (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).black_minimax_score as i32
             } else {
                 score = (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).white_minimax_score as i32
@@ -848,7 +848,7 @@ pub fn fill_move_alternatives<FE: FrontEnd>(side_to_move: i32,
                 if book.candidate_list[i as usize].score < book.candidate_list[(i + 1) as usize].score {
                     changed = 1;
                     temp = book.candidate_list[i as usize];
-                    book.candidate_list[i as usize] = book.candidate_list[(i + 1 as i32) as usize];
+                    book.candidate_list[i as usize] = book.candidate_list[(i + 1) as usize];
                     book.candidate_list[(i + 1) as usize] = temp
                 }
                 i += 1
@@ -915,7 +915,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
             0
         }
     } else { remaining_slack = 0 }
-    if echo != 0 && book.candidate_count > 0 as i32 &&
+    if echo != 0 && book.candidate_count > 0 &&
         search_state_.get_ponder_move() == 0 {
         FE::report_in_get_book_move_1(side_to_move, remaining_slack, board_state_, book);
     }
@@ -927,15 +927,15 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     let orientation___ = &mut orientation;
     get_hash(val0___, val1___, orientation___, book, &board_state_.board);
     slot = probe_hash_table(val1, val2, book);
-    if slot == -(1 as i32) ||
-        *book.book_hash_table.offset(slot as isize) == -(1 as i32) {
+    if slot == -(1) ||
+        *book.book_hash_table.offset(slot as isize) == -(1) {
         FE::internal_error_in_book_code();
     }
     base_flags = (*book.node.offset(*book.book_hash_table.offset(slot as isize) as isize)).flags as i32;
     /* If we have an endgame score for the position, we only want to
        consult the book if there is at least one move realizing that score. */
     index = *book.book_hash_table.offset(slot as isize);
-    if (*book.node.offset(index as isize)).flags as i32 & 16 as i32 != 0 {
+    if (*book.node.offset(index as isize)).flags as i32 & 16 != 0 {
         if book.candidate_list[0].score < (*book.node.offset(index as isize)).black_minimax_score as i32 {
             return -(1)
         }
@@ -946,7 +946,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
     }
     /* Don't randomize among solved moves */
     score = book.candidate_list[0].score;
-    if score >= 30000 as i32 { remaining_slack = 0 as i32 }
+    if score >= 30000 { remaining_slack = 0 }
     feasible_count = 0;
     total_weight = 0;
     while feasible_count < book.candidate_count && book.candidate_list[feasible_count as usize].score >= score - remaining_slack {
@@ -958,8 +958,8 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
        the position by more than the allowed slack (and, optionally,
        update it). A simple weighting scheme makes the moves with
        scores close to the best move most likely to be chosen. */
-    if feasible_count == 1 as i32 {
-        chosen_index = 0 as i32
+    if feasible_count == 1 {
+        chosen_index = 0
     } else {
         random_point = ((random.my_random() >> 10) % total_weight as i64) as i32;
         chosen_index = 0;
@@ -1024,7 +1024,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         book.candidate_list[chosen_index as usize].move_0;
     loop  {
         temp_stm[level as usize] = side_to_move;
-        make_move(side_to_move, temp_move[level as usize], 1 as i32, moves_state_, board_state_, hash_state_, flip_stack);
+        make_move(side_to_move, temp_move[level as usize], 1, moves_state_, board_state_, hash_state_, flip_stack);
         level += 1;
         let val0___ = &mut val1;
         let val1___ = &mut val2;
@@ -1059,7 +1059,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
             i = 0;
             while i < moves_state_.move_count[moves_state_.disks_played as usize] {
                 this_move = moves_state_.move_list[moves_state_.disks_played as usize][i as usize];
-                make_move(side_to_move, this_move, 1 as i32, moves_state_, board_state_, hash_state_, flip_stack);
+                make_move(side_to_move, this_move, 1, moves_state_, board_state_, hash_state_, flip_stack);
                 let val0___ = &mut val1;
                 let val1___ = &mut val2;
                 let orientation___ = &mut orientation;
@@ -1114,7 +1114,7 @@ pub fn get_book_move<FE: FrontEnd>(mut side_to_move: i32,
         {
             unmake_move(side_to_move, move_0, &mut board_state_.board, moves_state_, hash_state_, flip_stack);
         };
-        if !(level > 0 as i32) { break ; }
+        if !(level > 0) { break ; }
     }
     return book.candidate_list[chosen_index as usize].move_0;
 }

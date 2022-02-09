@@ -90,9 +90,9 @@ fn init_move_lists(sorted_move_order_: &mut [[i8; 64]; 64]) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     i = 0;
-    while i <= 60 as i32 {
+    while i <= 60 {
         j = 0;
-        while j < 60 as i32 {
+        while j < 60 {
             sorted_move_order_[i as usize][j as usize] = position_list[j as usize];
             j += 1
         }
@@ -130,9 +130,9 @@ pub fn inherit_move_lists(stage: i32, sorted_move_order_: &mut [[i8; 64]; 64], l
     if list_inherited_[stage as usize] != 0 { return }
     list_inherited_[stage as usize] = 1;
     if stage == 0 { return }
-    last = stage - 2 as i32;
-    while last >= 0 as i32 && list_inherited_[last as usize] == 0 {
-        last -= 2 as i32
+    last = stage - 2;
+    while last >= 0 && list_inherited_[last as usize] == 0 {
+        last -= 2
     }
     if last < 0 { return }
     i = 0;
@@ -166,11 +166,11 @@ pub fn reorder_move_list(board_: & crate::src::globals::Board, stage_sorted_move
         }
         i += 1
     }
-    nonempty_pos = 60 as i32 - 1 as i32;
-    i = 60 as i32 - 1 as i32;
-    while i >= 0 as i32 {
+    nonempty_pos = 60 - 1;
+    i = 60 - 1;
+    while i >= 0 {
         move_0 = stage_sorted_move_order[i as usize];
-        if board_[move_0 as usize] != 1 as i32 && i >= dont_touch {
+        if board_[move_0 as usize] != 1 && i >= dont_touch {
             nonempty_buffer[nonempty_pos as usize] = move_0;
             nonempty_pos -= 1
         }
@@ -182,7 +182,7 @@ pub fn reorder_move_list(board_: & crate::src::globals::Board, stage_sorted_move
         i += 1
     }
     i = empty_pos;
-    while i < 60 as i32 {
+    while i < 60 {
         stage_sorted_move_order[i as usize] = nonempty_buffer[i as usize];
         i += 1
     };
@@ -195,8 +195,8 @@ pub fn reorder_move_list(board_: & crate::src::globals::Board, stage_sorted_move
 pub fn setup_search(state: &mut SearchState) {
     init_move_lists(&mut state.sorted_move_order);
     state.list_inherited = [0; 62];
-    create_eval_info(UNINITIALIZED_EVAL, UNSOLVED_POSITION, 0 as i32,
-                     0.0f64, 0 as i32, 0 as i32);
+    create_eval_info(UNINITIALIZED_EVAL, UNSOLVED_POSITION, 0,
+                     0.0f64, 0, 0);
     state.negate_eval = 0;
 }
 /*
@@ -234,8 +234,8 @@ pub fn sort_moves(list_size: i32, moves: &mut MovesState, search: &SearchState) 
                 search.evals[moves.disks_played as usize][moves.move_list[moves.disks_played as usize][(i + 1) as usize] as usize] {
                 modified = 1;
                 let temp_move = moves.move_list[moves.disks_played as usize][i as usize];
-                moves.move_list[moves.disks_played as usize][i as usize] = moves.move_list[moves.disks_played as usize][(i + 1 as i32) as usize];
-                moves.move_list[moves.disks_played as usize][(i + 1 as i32) as usize] = temp_move
+                moves.move_list[moves.disks_played as usize][i as usize] = moves.move_list[moves.disks_played as usize][(i + 1) as usize];
+                moves.move_list[moves.disks_played as usize][(i + 1) as usize] = temp_move
             }
             i += 1
         }
@@ -286,12 +286,12 @@ pub fn float_move(move_0: i8, list_size: i32, state: &mut MovesState) -> i32 {
     while i < list_size {
         if state.move_list[state.disks_played as usize][i as usize] == move_0 {
             j = i;
-            while j >= 1 as i32 {
+            while j >= 1 {
                 state.move_list[state.disks_played as usize][j as usize] = state.move_list[state.disks_played as usize][(j - 1) as usize];
                 j -= 1
             }
             state.move_list[state.disks_played as usize][0] = move_0;
-            return 1 as i32
+            return 1
         }
         i += 1
     }
@@ -386,7 +386,7 @@ pub fn produce_compact_eval(eval_info: EvaluationType) -> f64 {
                     match eval_info.res as u32 {
                         0 => {
                             if eval_info.score >
-                                2 as i32 * 128 as i32 {
+                                2 * 128 {
                                 /* Win by more than 2 */
                                 return eval_info.score as f64 /
                                     128.0f64 - 0.01f64
@@ -395,7 +395,7 @@ pub fn produce_compact_eval(eval_info: EvaluationType) -> f64 {
                         1 => { return 0.0f64 }
                         2 => {
                             if eval_info.score <
-                                -(2 as i32) * 128 as i32 {
+                                -(2) * 128 {
                                 /* Loss by more than 2 */
                                 return eval_info.score as f64 /
                                     128.0f64 + 0.01f64
@@ -497,7 +497,7 @@ pub fn hash_expand_pv(mut side_to_move: i32, mode: i32, flags: i32, max_selectiv
             }
         } else {
             find_hash(&mut entry, mode, hash_state_);
-            if entry.draft as i32 != 0 as i32 &&
+            if entry.draft as i32 != 0 &&
                 entry.flags as i32 & flags != 0 &&
                 entry.selectivity as i32 <= max_selectivity &&
                 board_state_.board[entry.move_0[0] as usize] == 1 &&
@@ -513,7 +513,7 @@ pub fn hash_expand_pv(mut side_to_move: i32, mode: i32, flags: i32, max_selectiv
         }
         side_to_move = 2 - side_to_move
     }
-    let mut i = new_pv_depth as i32 - 1 as i32;
+    let mut i = new_pv_depth as i32 - 1;
     while i >= 0 {
         let side_to_move = new_side_to_move[i as usize];
         let move_0 = new_pv[i as usize];
@@ -559,11 +559,11 @@ pub fn complete_pv<FE: FrontEnd>(mut side_to_move: i32, search_state_: &mut Sear
                 FE::handle_fatal_pv_error(i, pv_0_depth, pv_0);
             }
         }
-        side_to_move = 0 as i32 + 2 as i32 - side_to_move;
+        side_to_move = 0 + 2 - side_to_move;
         i += 1
     }
-    i = board_state_.pv_depth[0] - 1 as i32;
-    while i >= 0 as i32 {
+    i = board_state_.pv_depth[0] - 1;
+    while i >= 0 {
         let side_to_move = actual_side_to_move[i as usize];
         let move_0 = board_state_.pv[0][i as usize];
         {

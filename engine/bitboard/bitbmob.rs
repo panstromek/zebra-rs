@@ -22,102 +22,102 @@ fn generate_all_c(my_bits: BitBoard, opp_bits: BitBoard) -> BitBoard {
    let mut adjacent_opp_bits = BitBoard { high: 0, low: 0 }; // mm3
    opp_inner_bits.high = opp_bits.high & 0x7e7e7e7e as u32; /* 0 m7&o6 m6&o5 .. m2&o1 0 */
    opp_inner_bits.low = opp_bits.low & 0x7e7e7e7e as u32; /* 0 m7&o6 (m6&o5)|(m7&o6&o5) .. (m2&o1)|(m3&o2&o1) 0 */
-   flip_bits.high = my_bits.high >> 1 as i32 & opp_inner_bits.high; /* 0 o7&o6 o6&o5 o5&o4 o4&o3 o3&o2 o2&o1 0 */
-   flip_bits.low = my_bits.low >> 1 as i32 & opp_inner_bits.low; /* 0 m7&o6 (m6&o5)|(m7&o6&o5) ..|(m7&o6&o5&o4) ..|(m6&o5&o4&o3)|(m7&o6&o5&o4&o3) .. */
-   flip_bits.high |= flip_bits.high >> 1 as i32 & opp_inner_bits.high;
-   flip_bits.low |= flip_bits.low >> 1 as i32 & opp_inner_bits.low;
-   adjacent_opp_bits.high = opp_inner_bits.high & opp_inner_bits.high >> 1 as i32;
-   adjacent_opp_bits.low = opp_inner_bits.low & opp_inner_bits.low >> 1 as i32;
-   flip_bits.high |= flip_bits.high >> 2 as i32 & adjacent_opp_bits.high;
-   flip_bits.low |= flip_bits.low >> 2 as i32 & adjacent_opp_bits.low;
-   flip_bits.high |= flip_bits.high >> 2 as i32 & adjacent_opp_bits.high;
-   flip_bits.low |= flip_bits.low >> 2 as i32 & adjacent_opp_bits.low;
-   moves.high = flip_bits.high >> 1 as i32;
-   moves.low = flip_bits.low >> 1 as i32;
-   flip_bits.high = my_bits.high << 1 as i32 & opp_inner_bits.high;
-   flip_bits.low = my_bits.low << 1 as i32 & opp_inner_bits.low;
-   flip_bits.high |= flip_bits.high << 1 as i32 & opp_inner_bits.high;
-   flip_bits.low |= flip_bits.low << 1 as i32 & opp_inner_bits.low;
-   adjacent_opp_bits.high = opp_inner_bits.high & opp_inner_bits.high << 1 as i32;
-   adjacent_opp_bits.low = opp_inner_bits.low & opp_inner_bits.low << 1 as i32;
-   flip_bits.high |= flip_bits.high << 2 as i32 & adjacent_opp_bits.high;
-   flip_bits.low |= flip_bits.low << 2 as i32 & adjacent_opp_bits.low;
-   flip_bits.high |= flip_bits.high << 2 as i32 & adjacent_opp_bits.high;
-   flip_bits.low |= flip_bits.low << 2 as i32 & adjacent_opp_bits.low;
-   moves.high |= flip_bits.high << 1 as i32;
-   moves.low |= flip_bits.low << 1 as i32;
-   flip_bits.high = my_bits.high >> 8 as i32 & opp_bits.high;
-   flip_bits.low = (my_bits.low >> 8 as i32 | my_bits.high << 24 as i32) & opp_bits.low;
-   flip_bits.high |= flip_bits.high >> 8 as i32 & opp_bits.high;
-   flip_bits.low |= (flip_bits.low >> 8 as i32 | flip_bits.high << 24 as i32) & opp_bits.low;
-   adjacent_opp_bits.high = opp_bits.high & opp_bits.high >> 8 as i32;
-   adjacent_opp_bits.low = opp_bits.low & (opp_bits.low >> 8 as i32 | opp_bits.high << 24 as i32);
-   flip_bits.high |= flip_bits.high >> 16 as i32 & adjacent_opp_bits.high;
-   flip_bits.low |= (flip_bits.low >> 16 as i32 | flip_bits.high << 16 as i32) & adjacent_opp_bits.low;
-   flip_bits.high |= flip_bits.high >> 16 as i32 & adjacent_opp_bits.high;
-   flip_bits.low |= (flip_bits.low >> 16 as i32 | flip_bits.high << 16 as i32) & adjacent_opp_bits.low;
-   moves.high |= flip_bits.high >> 8 as i32;
-   moves.low |= flip_bits.low >> 8 as i32 | flip_bits.high << 24 as i32;
-   flip_bits.high = (my_bits.high << 8 as i32 | my_bits.low >> 24 as i32) & opp_bits.high;
-   flip_bits.low = my_bits.low << 8 as i32 & opp_bits.low;
-   flip_bits.high |= (flip_bits.high << 8 as i32 | flip_bits.low >> 24 as i32) & opp_bits.high;
-   flip_bits.low |= flip_bits.low << 8 as i32 & opp_bits.low;
-   adjacent_opp_bits.high = opp_bits.high & (opp_bits.high << 8 as i32 | opp_bits.low >> 24 as i32);
-   adjacent_opp_bits.low = opp_bits.low & opp_bits.low << 8 as i32;
-   flip_bits.high |= (flip_bits.high << 16 as i32 | flip_bits.low >> 16 as i32) & adjacent_opp_bits.high;
-   flip_bits.low |= flip_bits.low << 16 as i32 & adjacent_opp_bits.low;
-   flip_bits.high |= (flip_bits.high << 16 as i32 | flip_bits.low >> 16 as i32) & adjacent_opp_bits.high;
-   flip_bits.low |= flip_bits.low << 16 as i32 & adjacent_opp_bits.low;
-   moves.high |= flip_bits.high << 8 as i32 | flip_bits.low >> 24 as i32;
-   moves.low |= flip_bits.low << 8 as i32;
-   flip_bits.high = my_bits.high >> 7 as i32 & opp_inner_bits.high;
-   flip_bits.low = (my_bits.low >> 7 as i32 | my_bits.high << 25 as i32) & opp_inner_bits.low;
-   flip_bits.high |= flip_bits.high >> 7 as i32 & opp_inner_bits.high;
-   flip_bits.low |= (flip_bits.low >> 7 as i32 | flip_bits.high << 25 as i32) & opp_inner_bits.low;
-   adjacent_opp_bits.high = opp_inner_bits.high & opp_inner_bits.high >> 7 as i32;
-   adjacent_opp_bits.low = opp_inner_bits.low & (opp_inner_bits.low >> 7 as i32 | opp_inner_bits.high << 25 as i32);
-   flip_bits.high |= flip_bits.high >> 14 as i32 & adjacent_opp_bits.high;
-   flip_bits.low |= (flip_bits.low >> 14 as i32 | flip_bits.high << 18 as i32) & adjacent_opp_bits.low;
-   flip_bits.high |= flip_bits.high >> 14 as i32 & adjacent_opp_bits.high;
-   flip_bits.low |= (flip_bits.low >> 14 as i32 | flip_bits.high << 18 as i32) & adjacent_opp_bits.low;
-   moves.high |= flip_bits.high >> 7 as i32;
-   moves.low |= flip_bits.low >> 7 as i32 | flip_bits.high << 25 as i32;
-   flip_bits.high = (my_bits.high << 7 as i32 | my_bits.low >> 25 as i32) & opp_inner_bits.high;
-   flip_bits.low = my_bits.low << 7 as i32 & opp_inner_bits.low;
-   flip_bits.high |= (flip_bits.high << 7 as i32 | flip_bits.low >> 25 as i32) & opp_inner_bits.high;
-   flip_bits.low |= flip_bits.low << 7 as i32 & opp_inner_bits.low;
-   adjacent_opp_bits.high = opp_inner_bits.high & (opp_inner_bits.high << 7 as i32 | opp_inner_bits.low >> 25 as i32);
-   adjacent_opp_bits.low = opp_inner_bits.low & opp_inner_bits.low << 7 as i32;
-   flip_bits.high |= (flip_bits.high << 14 as i32 | flip_bits.low >> 18 as i32) & adjacent_opp_bits.high;
-   flip_bits.low |= flip_bits.low << 14 as i32 & adjacent_opp_bits.low;
-   flip_bits.high |= (flip_bits.high << 14 as i32 | flip_bits.low >> 18 as i32) & adjacent_opp_bits.high;
-   flip_bits.low |= flip_bits.low << 14 as i32 & adjacent_opp_bits.low;
-   moves.high |= flip_bits.high << 7 as i32 | flip_bits.low >> 25 as i32;
-   moves.low |= flip_bits.low << 7 as i32;
-   flip_bits.high = my_bits.high >> 9 as i32 & opp_inner_bits.high;
-   flip_bits.low = (my_bits.low >> 9 as i32 | my_bits.high << 23 as i32) & opp_inner_bits.low;
-   flip_bits.high |= flip_bits.high >> 9 as i32 & opp_inner_bits.high;
-   flip_bits.low |= (flip_bits.low >> 9 as i32 | flip_bits.high << 23 as i32) & opp_inner_bits.low;
-   adjacent_opp_bits.high = opp_inner_bits.high & opp_inner_bits.high >> 9 as i32;
-   adjacent_opp_bits.low = opp_inner_bits.low & (opp_inner_bits.low >> 9 as i32 | opp_inner_bits.high << 23 as i32);
-   flip_bits.high |= flip_bits.high >> 18 as i32 & adjacent_opp_bits.high;
-   flip_bits.low |= (flip_bits.low >> 18 as i32 | flip_bits.high << 14 as i32) & adjacent_opp_bits.low;
-   flip_bits.high |= flip_bits.high >> 18 as i32 & adjacent_opp_bits.high;
-   flip_bits.low |= (flip_bits.low >> 18 as i32 | flip_bits.high << 14 as i32) & adjacent_opp_bits.low;
-   moves.high |= flip_bits.high >> 9 as i32;
-   moves.low |= flip_bits.low >> 9 as i32 | flip_bits.high << 23 as i32;
-   flip_bits.high = (my_bits.high << 9 as i32 | my_bits.low >> 23 as i32) & opp_inner_bits.high;
-   flip_bits.low = my_bits.low << 9 as i32 & opp_inner_bits.low;
-   flip_bits.high |= (flip_bits.high << 9 as i32 | flip_bits.low >> 23 as i32) & opp_inner_bits.high;
-   flip_bits.low |= flip_bits.low << 9 as i32 & opp_inner_bits.low;
-   adjacent_opp_bits.high = opp_inner_bits.high & (opp_inner_bits.high << 9 as i32 | opp_inner_bits.low >> 23 as i32);
-   adjacent_opp_bits.low = opp_inner_bits.low & opp_inner_bits.low << 9 as i32;
-   flip_bits.high |= (flip_bits.high << 18 as i32 | flip_bits.low >> 14 as i32) & adjacent_opp_bits.high;
-   flip_bits.low |= flip_bits.low << 18 as i32 & adjacent_opp_bits.low;
-   flip_bits.high |= (flip_bits.high << 18 as i32 | flip_bits.low >> 14 as i32) & adjacent_opp_bits.high;
-   flip_bits.low |= flip_bits.low << 18 as i32 & adjacent_opp_bits.low;
-   moves.high |= flip_bits.high << 9 as i32 | flip_bits.low >> 23 as i32;
-   moves.low |= flip_bits.low << 9 as i32;
+   flip_bits.high = my_bits.high >> 1 & opp_inner_bits.high; /* 0 o7&o6 o6&o5 o5&o4 o4&o3 o3&o2 o2&o1 0 */
+   flip_bits.low = my_bits.low >> 1 & opp_inner_bits.low; /* 0 m7&o6 (m6&o5)|(m7&o6&o5) ..|(m7&o6&o5&o4) ..|(m6&o5&o4&o3)|(m7&o6&o5&o4&o3) .. */
+   flip_bits.high |= flip_bits.high >> 1 & opp_inner_bits.high;
+   flip_bits.low |= flip_bits.low >> 1 & opp_inner_bits.low;
+   adjacent_opp_bits.high = opp_inner_bits.high & opp_inner_bits.high >> 1;
+   adjacent_opp_bits.low = opp_inner_bits.low & opp_inner_bits.low >> 1;
+   flip_bits.high |= flip_bits.high >> 2 & adjacent_opp_bits.high;
+   flip_bits.low |= flip_bits.low >> 2 & adjacent_opp_bits.low;
+   flip_bits.high |= flip_bits.high >> 2 & adjacent_opp_bits.high;
+   flip_bits.low |= flip_bits.low >> 2 & adjacent_opp_bits.low;
+   moves.high = flip_bits.high >> 1;
+   moves.low = flip_bits.low >> 1;
+   flip_bits.high = my_bits.high << 1 & opp_inner_bits.high;
+   flip_bits.low = my_bits.low << 1 & opp_inner_bits.low;
+   flip_bits.high |= flip_bits.high << 1 & opp_inner_bits.high;
+   flip_bits.low |= flip_bits.low << 1 & opp_inner_bits.low;
+   adjacent_opp_bits.high = opp_inner_bits.high & opp_inner_bits.high << 1;
+   adjacent_opp_bits.low = opp_inner_bits.low & opp_inner_bits.low << 1;
+   flip_bits.high |= flip_bits.high << 2 & adjacent_opp_bits.high;
+   flip_bits.low |= flip_bits.low << 2 & adjacent_opp_bits.low;
+   flip_bits.high |= flip_bits.high << 2 & adjacent_opp_bits.high;
+   flip_bits.low |= flip_bits.low << 2 & adjacent_opp_bits.low;
+   moves.high |= flip_bits.high << 1;
+   moves.low |= flip_bits.low << 1;
+   flip_bits.high = my_bits.high >> 8 & opp_bits.high;
+   flip_bits.low = (my_bits.low >> 8 | my_bits.high << 24) & opp_bits.low;
+   flip_bits.high |= flip_bits.high >> 8 & opp_bits.high;
+   flip_bits.low |= (flip_bits.low >> 8 | flip_bits.high << 24) & opp_bits.low;
+   adjacent_opp_bits.high = opp_bits.high & opp_bits.high >> 8;
+   adjacent_opp_bits.low = opp_bits.low & (opp_bits.low >> 8 | opp_bits.high << 24);
+   flip_bits.high |= flip_bits.high >> 16 & adjacent_opp_bits.high;
+   flip_bits.low |= (flip_bits.low >> 16 | flip_bits.high << 16) & adjacent_opp_bits.low;
+   flip_bits.high |= flip_bits.high >> 16 & adjacent_opp_bits.high;
+   flip_bits.low |= (flip_bits.low >> 16 | flip_bits.high << 16) & adjacent_opp_bits.low;
+   moves.high |= flip_bits.high >> 8;
+   moves.low |= flip_bits.low >> 8 | flip_bits.high << 24;
+   flip_bits.high = (my_bits.high << 8 | my_bits.low >> 24) & opp_bits.high;
+   flip_bits.low = my_bits.low << 8 & opp_bits.low;
+   flip_bits.high |= (flip_bits.high << 8 | flip_bits.low >> 24) & opp_bits.high;
+   flip_bits.low |= flip_bits.low << 8 & opp_bits.low;
+   adjacent_opp_bits.high = opp_bits.high & (opp_bits.high << 8 | opp_bits.low >> 24);
+   adjacent_opp_bits.low = opp_bits.low & opp_bits.low << 8;
+   flip_bits.high |= (flip_bits.high << 16 | flip_bits.low >> 16) & adjacent_opp_bits.high;
+   flip_bits.low |= flip_bits.low << 16 & adjacent_opp_bits.low;
+   flip_bits.high |= (flip_bits.high << 16 | flip_bits.low >> 16) & adjacent_opp_bits.high;
+   flip_bits.low |= flip_bits.low << 16 & adjacent_opp_bits.low;
+   moves.high |= flip_bits.high << 8 | flip_bits.low >> 24;
+   moves.low |= flip_bits.low << 8;
+   flip_bits.high = my_bits.high >> 7 & opp_inner_bits.high;
+   flip_bits.low = (my_bits.low >> 7 | my_bits.high << 25) & opp_inner_bits.low;
+   flip_bits.high |= flip_bits.high >> 7 & opp_inner_bits.high;
+   flip_bits.low |= (flip_bits.low >> 7 | flip_bits.high << 25) & opp_inner_bits.low;
+   adjacent_opp_bits.high = opp_inner_bits.high & opp_inner_bits.high >> 7;
+   adjacent_opp_bits.low = opp_inner_bits.low & (opp_inner_bits.low >> 7 | opp_inner_bits.high << 25);
+   flip_bits.high |= flip_bits.high >> 14 & adjacent_opp_bits.high;
+   flip_bits.low |= (flip_bits.low >> 14 | flip_bits.high << 18) & adjacent_opp_bits.low;
+   flip_bits.high |= flip_bits.high >> 14 & adjacent_opp_bits.high;
+   flip_bits.low |= (flip_bits.low >> 14 | flip_bits.high << 18) & adjacent_opp_bits.low;
+   moves.high |= flip_bits.high >> 7;
+   moves.low |= flip_bits.low >> 7 | flip_bits.high << 25;
+   flip_bits.high = (my_bits.high << 7 | my_bits.low >> 25) & opp_inner_bits.high;
+   flip_bits.low = my_bits.low << 7 & opp_inner_bits.low;
+   flip_bits.high |= (flip_bits.high << 7 | flip_bits.low >> 25) & opp_inner_bits.high;
+   flip_bits.low |= flip_bits.low << 7 & opp_inner_bits.low;
+   adjacent_opp_bits.high = opp_inner_bits.high & (opp_inner_bits.high << 7 | opp_inner_bits.low >> 25);
+   adjacent_opp_bits.low = opp_inner_bits.low & opp_inner_bits.low << 7;
+   flip_bits.high |= (flip_bits.high << 14 | flip_bits.low >> 18) & adjacent_opp_bits.high;
+   flip_bits.low |= flip_bits.low << 14 & adjacent_opp_bits.low;
+   flip_bits.high |= (flip_bits.high << 14 | flip_bits.low >> 18) & adjacent_opp_bits.high;
+   flip_bits.low |= flip_bits.low << 14 & adjacent_opp_bits.low;
+   moves.high |= flip_bits.high << 7 | flip_bits.low >> 25;
+   moves.low |= flip_bits.low << 7;
+   flip_bits.high = my_bits.high >> 9 & opp_inner_bits.high;
+   flip_bits.low = (my_bits.low >> 9 | my_bits.high << 23) & opp_inner_bits.low;
+   flip_bits.high |= flip_bits.high >> 9 & opp_inner_bits.high;
+   flip_bits.low |= (flip_bits.low >> 9 | flip_bits.high << 23) & opp_inner_bits.low;
+   adjacent_opp_bits.high = opp_inner_bits.high & opp_inner_bits.high >> 9;
+   adjacent_opp_bits.low = opp_inner_bits.low & (opp_inner_bits.low >> 9 | opp_inner_bits.high << 23);
+   flip_bits.high |= flip_bits.high >> 18 & adjacent_opp_bits.high;
+   flip_bits.low |= (flip_bits.low >> 18 | flip_bits.high << 14) & adjacent_opp_bits.low;
+   flip_bits.high |= flip_bits.high >> 18 & adjacent_opp_bits.high;
+   flip_bits.low |= (flip_bits.low >> 18 | flip_bits.high << 14) & adjacent_opp_bits.low;
+   moves.high |= flip_bits.high >> 9;
+   moves.low |= flip_bits.low >> 9 | flip_bits.high << 23;
+   flip_bits.high = (my_bits.high << 9 | my_bits.low >> 23) & opp_inner_bits.high;
+   flip_bits.low = my_bits.low << 9 & opp_inner_bits.low;
+   flip_bits.high |= (flip_bits.high << 9 | flip_bits.low >> 23) & opp_inner_bits.high;
+   flip_bits.low |= flip_bits.low << 9 & opp_inner_bits.low;
+   adjacent_opp_bits.high = opp_inner_bits.high & (opp_inner_bits.high << 9 | opp_inner_bits.low >> 23);
+   adjacent_opp_bits.low = opp_inner_bits.low & opp_inner_bits.low << 9;
+   flip_bits.high |= (flip_bits.high << 18 | flip_bits.low >> 14) & adjacent_opp_bits.high;
+   flip_bits.low |= flip_bits.low << 18 & adjacent_opp_bits.low;
+   flip_bits.high |= (flip_bits.high << 18 | flip_bits.low >> 14) & adjacent_opp_bits.high;
+   flip_bits.low |= flip_bits.low << 18 & adjacent_opp_bits.low;
+   moves.high |= flip_bits.high << 9 | flip_bits.low >> 23;
+   moves.low |= flip_bits.low << 9;
    moves.high &= !(my_bits.high | opp_bits.high);
    moves.low &= !(my_bits.low | opp_bits.low);
    return moves;
@@ -152,7 +152,7 @@ pub fn weighted_mobility(my_bits: BitBoard,
     let mut moves = BitBoard{high: 0, low: 0,};
     moves = generate_all_c(my_bits, opp_bits);
     n1 =
-        moves.high.wrapping_sub(moves.high >> 1 as i32 &
+        moves.high.wrapping_sub(moves.high >> 1 &
                                     0x15555555 as
                                         u32).wrapping_add(moves.high
                                                                        &
@@ -160,7 +160,7 @@ pub fn weighted_mobility(my_bits: BitBoard,
                                                                            as
                                                                            u32);
     n2 =
-        moves.low.wrapping_sub(moves.low >> 1 as i32 &
+        moves.low.wrapping_sub(moves.low >> 1 &
                                    0x55555515 as
                                        u32).wrapping_add(moves.low &
                                                                       0x1 as
@@ -168,20 +168,19 @@ pub fn weighted_mobility(my_bits: BitBoard,
     n1 =
         (n1 &
              0x33333333 as
-                 u32).wrapping_add(n1 >> 2 as i32 &
+                 u32).wrapping_add(n1 >> 2 &
                                                 0x33333333 as u32);
     n2 =
         (n2 &
              0x33333333 as
-                 u32).wrapping_add(n2 >> 2 as i32 &
+                 u32).wrapping_add(n2 >> 2 &
                                                 0x33333333 as u32);
-    n1 = n1.wrapping_add(n1 >> 4 as i32) & 0xf0f0f0f as u32;
+    n1 = n1.wrapping_add(n1 >> 4) & 0xf0f0f0f as u32;
     n1 =
-        n1.wrapping_add(n2.wrapping_add(n2 >> 4 as i32) &
+        n1.wrapping_add(n2.wrapping_add(n2 >> 4) &
                             0xf0f0f0f as u32);
     return (n1.wrapping_mul(0x1010101 as u32) >>
-                24 as
-                    i32).wrapping_mul(128 as i32 as
+                24).wrapping_mul(128 as
                                                   u32) as
                i32;
 }

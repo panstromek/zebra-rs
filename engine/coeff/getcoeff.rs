@@ -86,7 +86,7 @@ impl CoeffSetData {
 pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
                                           board: &[i32; 128], set: &mut CoeffSet) -> i32 {
     /* The constant feature and the parity feature */
-    let mut  score = set.parity_constant[(disks_played & 1 as i32) as usize];
+    let mut  score = set.parity_constant[(disks_played & 1) as usize];
     let set = set.data.as_mut().unwrap();
 
     // Following assert is an invariant of a board type in this program - it's not yet captured in a type
@@ -99,7 +99,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
     //  (from 14742 to 5442), which improves build time + runtime doesn't seem to be affected
     /// (tests still run in ~2.5 seconds like before this change)
     fn update_pattern( pat0:i32, board: &[i32; 128], index: u8) -> i32 {
-        (3 as i32).wrapping_mul(pat0).wrapping_add(
+        (3_i32).wrapping_mul(pat0).wrapping_add(
             board[index as usize]
         )
     }
@@ -114,7 +114,7 @@ pub fn constant_and_parity_feature(side_to_move: i32, disks_played: i32,
 
     fn update_score(board: &[i32; 128], side_to_move: i32, score: i16, set_item: &[i16], indexes: &[u8]) -> i16 {
         let pattern = compute_pattern(board, indexes);
-        let off = if side_to_move == 0 as i32 {
+        let off = if side_to_move == 0 {
             pattern as isize
         } else {
             (set_item.len() as isize - 1 - pattern as isize) as isize
@@ -186,36 +186,36 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
     let mut j;
     let mut k;
     let mut i = 0;
-    while i < 59049 as i32 {
+    while i < 59049 {
         result = 0.0f64;
         j = 0;
-        while j < 8 as i32 {
-            if row[j as usize] == 0 as i32 {
+        while j < 8 {
+            if row[j as usize] == 0 {
                 result += value[0][j as usize]
-            } else if row[j as usize] == 2 as i32 {
+            } else if row[j as usize] == 2 {
                 result -= value[0][j as usize]
             }
             j += 1
         }
-        if row[8] == 0 as i32 {
+        if row[8] == 0 {
             result +=value[1][1]
-        } else if row[8] == 2 as i32 {
+        } else if row[8] == 2 {
             result -=value[1][1]
         }
-        if row[9] == 0 as i32 {
+        if row[9] == 0 {
             result +=value[1][6]
-        } else if row[9] == 2 as i32 {
+        } else if row[9] == 2 {
             result -=value[1][6]
         }
         coeff_set.afile2x_mut()[i as usize] = f64::floor(result * 128.0f64 + 0.5f64) as i16;
         result = 0.0f64;
         j = 0;
-        while j < 5 as i32 {
+        while j < 5 {
             k = 0;
-            while k < 2 as i32 {
-                if row[(5 as i32 * k + j) as usize] ==0 as i32 {
+            while k < 2 {
+                if row[(5 * k + j) as usize] ==0 {
                     result += value[j as usize][k as usize]
-                } else if row[(5 as i32 * k + j) as usize] ==2 as i32 {
+                } else if row[(5 * k + j) as usize] ==2 {
                     result -= value[j as usize][k as usize]
                 }
                 k += 1
@@ -223,15 +223,15 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
             j += 1
         }
         coeff_set.corner52_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16;
-        if i < 19683 as i32 {
+        if i < 19683 {
             result = 0.0f64;
             j = 0;
-            while j < 3 as i32 {
+            while j < 3 {
                 k = 0;
-                while k < 3 as i32 {
-                    if row[(3 as i32 * j + k) as usize] ==0 as i32 {
+                while k < 3 {
+                    if row[(3 * j + k) as usize] ==0 {
                         result += value[j as usize][k as usize]
-                    } else if row[(3 as i32 * j + k) as usize] ==2 as i32 {
+                    } else if row[(3 * j + k) as usize] ==2 {
                         result -= value[j as usize][k as usize]
                     }
                     k += 1
@@ -240,13 +240,13 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
             }
             coeff_set.corner33_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16
         }
-        if i < 6561 as i32 {
+        if i < 6561 {
             result = 0.0f64;
             j = 0;
-            while j < 8 as i32 {
-                if row[j as usize] == 0 as i32 {
+            while j < 8 {
+                if row[j as usize] == 0 {
                     result += value[1][j as usize]
-                } else if row[j as usize] == 2 as i32 {
+                } else if row[j as usize] == 2 {
                     result -= value[1][j as usize]
                 }
                 j += 1
@@ -254,10 +254,10 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
             coeff_set.bfile_mut()[i as usize] = f64::floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
-            while j < 8 as i32 {
-                if row[j as usize] == 0 as i32 {
+            while j < 8 {
+                if row[j as usize] == 0 {
                     result += value[2][j as usize]
-                } else if row[j as usize] == 2 as i32 {
+                } else if row[j as usize] == 2 {
                     result -= value[2][j as usize]
                 }
                 j += 1
@@ -265,10 +265,10 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
             coeff_set.cfile_mut()[i as usize] = f64::floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
-            while j < 8 as i32 {
-                if row[j as usize] == 0 as i32 {
+            while j < 8 {
+                if row[j as usize] == 0 {
                     result += value[3][j as usize]
-                } else if row[j as usize] == 2 as i32 {
+                } else if row[j as usize] == 2 {
                     result -= value[3][j as usize]
                 }
                 j += 1
@@ -276,63 +276,63 @@ pub fn terminal_patterns(coeff_set: &mut CoeffSet) {
             coeff_set.dfile_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16;
             result = 0.0f64;
             j = 0;
-            while j < 8 as i32 {
-                if row[j as usize] == 0 as i32 {
+            while j < 8 {
+                if row[j as usize] == 0 {
                     result += value[j as usize][j as usize]
-                } else if row[j as usize] == 2 as i32 {
+                } else if row[j as usize] == 2 {
                     result -= value[j as usize][j as usize]
                 }
                 j += 1
             }
             coeff_set.diag8_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16
         }
-        if i < 2187 as i32 {
+        if i < 2187 {
             result = 0.0f64;
             j = 0;
-            while j < 7 as i32 {
-                if row[j as usize] == 0 as i32 {
-                    result +=value[j as usize][(j + 1 as i32) as usize]
-                } else if row[j as usize] == 2 as i32 {
-                    result -=value[j as usize][(j + 1 as i32) as usize]
+            while j < 7 {
+                if row[j as usize] == 0 {
+                    result +=value[j as usize][(j + 1) as usize]
+                } else if row[j as usize] == 2 {
+                    result -=value[j as usize][(j + 1) as usize]
                 }
                 j += 1
             }
             coeff_set.diag7_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16
         }
-        if i < 729 as i32 {
+        if i < 729 {
             result = 0.0f64;
             j = 0;
-            while j < 6 as i32 {
-                if row[j as usize] == 0 as i32 {
-                    result +=value[j as usize][(j + 2 as i32) as usize]
-                } else if row[j as usize] == 2 as i32 {
-                    result -=value[j as usize][(j + 2 as i32) as usize]
+            while j < 6 {
+                if row[j as usize] == 0 {
+                    result +=value[j as usize][(j + 2) as usize]
+                } else if row[j as usize] == 2 {
+                    result -=value[j as usize][(j + 2) as usize]
                 }
                 j += 1
             }
             coeff_set.diag6_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16
         }
-        if i < 243 as i32 {
+        if i < 243 {
             result = 0.0f64;
             j = 0;
-            while j < 5 as i32 {
-                if row[j as usize] == 0 as i32 {
-                    result +=value[j as usize][(j + 3 as i32) as usize]
-                } else if row[j as usize] == 2 as i32 {
-                    result -=value[j as usize][(j + 3 as i32) as usize]
+            while j < 5 {
+                if row[j as usize] == 0 {
+                    result +=value[j as usize][(j + 3) as usize]
+                } else if row[j as usize] == 2 {
+                    result -=value[j as usize][(j + 3) as usize]
                 }
                 j += 1
             }
             coeff_set.diag5_mut()[i as usize] =f64::floor(result * 128.0f64 + 0.5f64) as i16
         }
-        if i < 81 as i32 {
+        if i < 81 {
             result = 0.0f64;
             j = 0;
-            while j < 4 as i32 {
-                if row[j as usize] == 0 as i32 {
-                    result +=value[j as usize][(j + 4 as i32) as usize]
-                } else if row[j as usize] == 2 as i32 {
-                    result -=value[j as usize][(j + 4 as i32) as usize]
+            while j < 4 {
+                if row[j as usize] == 0 {
+                    result +=value[j as usize][(j + 4) as usize]
+                } else if row[j as usize] == 2 {
+                    result -=value[j as usize][(j + 4) as usize]
                 }
                 j += 1
             }
@@ -349,11 +349,11 @@ pub fn odometer_principle(row: &mut [i32; 10], cutoff: i32) {
     loop {
         /* The odometer principle */
         row[j as usize] += 1;
-        if row[j as usize] == 3 as i32 {
-            row[j as usize] = 0 as i32
+        if row[j as usize] == 3 {
+            row[j as usize] = 0
         }
         j += 1;
-        if !(row[(j - 1 as i32) as usize] == 0 as i32 && j < cutoff) {
+        if !(row[(j - 1) as usize] == 0 && j < cutoff) {
             break;
         }
     }
@@ -376,9 +376,9 @@ fn create_terminal_pattern() -> [[f64; 8]; 8] {
 
     let mut i = 0;
     let mut value: [[f64; 8]; 8] = [[0.; 8]; 8];
-    while i < 8 as i32 {
+    while i < 8 {
         let mut j = 0;
-        while j < 8 as i32 {
+        while j < 8 {
             value[i as usize][j as usize] = 1.0f64 / HIT[i as usize][j as usize] as f64;
             j += 1
         }
@@ -393,7 +393,7 @@ fn create_terminal_pattern() -> [[f64; 8]; 8] {
 //     /* Count the number of times each square is counted */
 //
 //     let mut i = 0;
-//     while i < 8 as i32 {
+//     while i < 8 {
 //         hit[0][i as usize] += 1;
 //         hit[i as usize][0] += 1;
 //         hit[7][i as usize] += 1;
@@ -401,7 +401,7 @@ fn create_terminal_pattern() -> [[f64; 8]; 8] {
 //         i += 1
 //     }
 //     i = 0;
-//     while i < 8 as i32 {
+//     while i < 8 {
 //         hit[1][i as usize] += 1;
 //         hit[i as usize][1] += 1;
 //         hit[6][i as usize] += 1;
@@ -409,7 +409,7 @@ fn create_terminal_pattern() -> [[f64; 8]; 8] {
 //         i += 1
 //     }
 //     i = 0;
-//     while i < 8 as i32 {
+//     while i < 8 {
 //         hit[2][i as usize] += 1;
 //         hit[i as usize][2] += 1;
 //         hit[5][i as usize] += 1;
@@ -417,7 +417,7 @@ fn create_terminal_pattern() -> [[f64; 8]; 8] {
 //         i += 1
 //     }
 //     i = 0;
-//     while i < 8 as i32 {
+//     while i < 8 {
 //         hit[3][i as usize] += 1;
 //         hit[i as usize][3] += 1;
 //         hit[4][i as usize] += 1;
@@ -425,81 +425,81 @@ fn create_terminal_pattern() -> [[f64; 8]; 8] {
 //         i += 1
 //     }
 //     i = 0;
-//     while i < 3 as i32 {
+//     while i < 3 {
 //         j = 0;
-//         while j < 3 as i32 {
+//         while j < 3 {
 //             hit[i as usize][j as usize] += 1;
-//             hit[i as usize][(7 as i32 - j) as usize] += 1;
-//             hit[(7 as i32 - i) as usize][j as usize] += 1;
-//             hit[(7 as i32 - i) as
-//                 usize][(7 as i32 - j) as usize] += 1;
+//             hit[i as usize][(7 - j) as usize] += 1;
+//             hit[(7 - i) as usize][j as usize] += 1;
+//             hit[(7 - i) as
+//                 usize][(7 - j) as usize] += 1;
 //             j += 1
 //         }
 //         i += 1
 //     }
 //     i = 0;
-//     while i < 2 as i32 {
+//     while i < 2 {
 //         j = 0;
-//         while j < 5 as i32 {
+//         while j < 5 {
 //             hit[i as usize][j as usize] += 1;
 //             hit[j as usize][i as usize] += 1;
-//             hit[i as usize][(7 as i32 - j) as usize] += 1;
-//             hit[j as usize][(7 as i32 - i) as usize] += 1;
-//             hit[(7 as i32 - i) as usize][j as usize] += 1;
-//             hit[(7 as i32 - j) as usize][i as usize] += 1;
-//             hit[(7 as i32 - i) as
-//                 usize][(7 as i32 - j) as usize] += 1;
-//             hit[(7 as i32 - j) as
-//                 usize][(7 as i32 - i) as usize] += 1;
+//             hit[i as usize][(7 - j) as usize] += 1;
+//             hit[j as usize][(7 - i) as usize] += 1;
+//             hit[(7 - i) as usize][j as usize] += 1;
+//             hit[(7 - j) as usize][i as usize] += 1;
+//             hit[(7 - i) as
+//                 usize][(7 - j) as usize] += 1;
+//             hit[(7 - j) as
+//                 usize][(7 - i) as usize] += 1;
 //             j += 1
 //         }
 //         i += 1
 //     }
 //     i = 0;
-//     while i < 8 as i32 {
+//     while i < 8 {
 //         hit[i as usize][i as usize] += 1;
-//         hit[i as usize][(7 as i32 - i) as usize] += 1;
+//         hit[i as usize][(7 - i) as usize] += 1;
 //         i += 1
 //     }
 //     i = 0;
-//     while i < 7 as i32 {
-//         hit[i as usize][(i + 1 as i32) as usize] += 1;
-//         hit[(i + 1 as i32) as usize][i as usize] += 1;
-//         hit[i as usize][(6 as i32 - i) as usize] += 1;
-//         hit[(i + 1 as i32) as usize][(7 as i32 - i) as usize]
+//     while i < 7 {
+//         hit[i as usize][(i + 1) as usize] += 1;
+//         hit[(i + 1) as usize][i as usize] += 1;
+//         hit[i as usize][(6 - i) as usize] += 1;
+//         hit[(i + 1) as usize][(7 - i) as usize]
 //             += 1;
 //         i += 1
 //     }
 //     i = 0;
-//     while i < 6 as i32 {
-//         hit[i as usize][(i + 2 as i32) as usize] += 1;
-//         hit[(i + 2 as i32) as usize][i as usize] += 1;
-//         hit[i as usize][(5 as i32 - i) as usize] += 1;
-//         hit[(i + 2 as i32) as usize][(7 as i32 - i) as usize]
+//     while i < 6 {
+//         hit[i as usize][(i + 2) as usize] += 1;
+//         hit[(i + 2) as usize][i as usize] += 1;
+//         hit[i as usize][(5 - i) as usize] += 1;
+//         hit[(i + 2) as usize][(7 - i) as usize]
 //             += 1;
 //         i += 1
 //     }
 //     i = 0;
-//     while i < 5 as i32 {
-//         hit[i as usize][(i + 3 as i32) as usize] += 1;
-//         hit[(i + 3 as i32) as usize][i as usize] += 1;
-//         hit[i as usize][(4 as i32 - i) as usize] += 1;
-//         hit[(i + 3 as i32) as usize][(7 as i32 - i) as usize]
+//     while i < 5 {
+//         hit[i as usize][(i + 3) as usize] += 1;
+//         hit[(i + 3) as usize][i as usize] += 1;
+//         hit[i as usize][(4 - i) as usize] += 1;
+//         hit[(i + 3) as usize][(7 - i) as usize]
 //             += 1;
 //         i += 1
 //     }
 //     i = 0;
-//     while i < 4 as i32 {
-//         hit[i as usize][(i + 4 as i32) as usize] += 1;
-//         hit[(i + 4 as i32) as usize][i as usize] += 1;
-//         hit[i as usize][(3 as i32 - i) as usize] += 1;
-//         hit[(i + 4 as i32) as usize][(7 as i32 - i) as usize]
+//     while i < 4 {
+//         hit[i as usize][(i + 4) as usize] += 1;
+//         hit[(i + 4) as usize][i as usize] += 1;
+//         hit[i as usize][(3 - i) as usize] += 1;
+//         hit[(i + 4) as usize][(7 - i) as usize]
 //             += 1;
 //         i += 1
 //     }
-//     hit[1][1] += 2 as i32;
-//     hit[1][6] += 2 as i32;
-//     hit[6][1] += 2 as i32;
-//     hit[6][6] += 2 as i32;
+//     hit[1][1] += 2;
+//     hit[1][6] += 2;
+//     hit[6][1] += 2;
+//     hit[6][6] += 2;
 //     hit
 // }

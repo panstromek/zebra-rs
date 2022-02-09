@@ -37,8 +37,8 @@ impl LearnState {
     pub fn clear_stored_game(&mut self) {
         let mut i: i32 = 0;
         i = 0;
-        while i <= 60 as i32 {
-            self.game_move[i as usize] = -(1 as i32) as i16;
+        while i <= 60 {
+            self.game_move[i as usize] = -(1) as i16;
             i += 1
         };
     }
@@ -73,15 +73,15 @@ impl LearnState {
         let mut moves_available: i32 = 0;
         moves_available = 1;
         i = 0;
-        while i < move_count_0 && i < 60 as i32 - self.cutoff_empty {
-            if self.game_move[i as usize] as i32 == -(1 as i32) {
-                moves_available = 0 as i32
+        while i < move_count_0 && i < 60 - self.cutoff_empty {
+            if self.game_move[i as usize] as i32 == -(1) {
+                moves_available = 0
             }
             i += 1
         }
         return (moves_available != 0 &&
             (finished != 0 ||
-                move_count_0 >= 60 as i32 - self.cutoff_empty)) as
+                move_count_0 >= 60 - self.cutoff_empty)) as
             i32;
     }
 

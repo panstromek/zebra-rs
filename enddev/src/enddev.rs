@@ -72,11 +72,11 @@ unsafe extern "C" fn read_game(mut stream: FileHandle,
         }
         *ch = 0;
         *game_length = strlen(buffer.as_mut_ptr()).wrapping_div(2) as i32;
-        if *game_length > 60 as i32 || strlen(buffer.as_mut_ptr()).wrapping_rem(2) == 1 {
+        if *game_length > 60 || strlen(buffer.as_mut_ptr()).wrapping_rem(2) == 1 {
             fprintf(stderr,
                     b"Bad move string %s.\n\x00" as *const u8 as
                         *const i8, buffer.as_mut_ptr());
-            exit(1 as i32);
+            exit(1);
         }
         i = 0;
         while i < *game_length {
@@ -84,14 +84,14 @@ unsafe extern "C" fn read_game(mut stream: FileHandle,
                 ({
                     let mut __res: i32 = 0;
                     if ::std::mem::size_of::<i8>() as u64
-                        > 1 as i32 as u64 {
+                        > 1 as u64 {
                         if 0 != 0 {
                             let mut __c: i32 =
-                                buffer[(2 as i32 * i) as usize] as
+                                buffer[(2 * i) as usize] as
                                     i32;
                             __res =
-                                if __c < -(128 as i32) ||
-                                    __c > 255 as i32 {
+                                if __c < -(128) ||
+                                    __c > 255 {
                                     __c
                                 } else {
                                     *(*__ctype_tolower_loc()).offset(__c as
@@ -99,13 +99,12 @@ unsafe extern "C" fn read_game(mut stream: FileHandle,
                                 }
                         } else {
                             __res =
-                               tolower(buffer[(2 as i32 * i) as
+                               tolower(buffer[(2 * i) as
                                     usize] as i32)
                         }
                     } else {
                         __res =
-                            *(*__ctype_tolower_loc()).offset(buffer[(2 as
-                                i32
+                            *(*__ctype_tolower_loc()).offset(buffer[(2
                                 * i)
                                 as
                                 usize]
@@ -114,17 +113,17 @@ unsafe extern "C" fn read_game(mut stream: FileHandle,
                                 as isize)
                     }
                     __res
-                }) - 'a' as i32 + 1 as i32;
+                }) - 'a' as i32 + 1;
             let mut row: i32 =
-                buffer[(2 as i32 * i + 1 as i32) as usize] as
+                buffer[(2 * i + 1) as usize] as
                     i32 - '0' as i32;
-            if col < 1 as i32 || col > 8 as i32 ||
-                row < 1 as i32 || row > 8 as i32 {
+            if col < 1 || col > 8 ||
+                row < 1 || row > 8 {
                 fprintf(stderr,
                         b"Unexpected character in move string\x00" as
                             *const u8 as *const i8);
             }
-            *game_moves.offset(i as isize) = 10 as i32 * row + col;
+            *game_moves.offset(i as isize) = 10 * row + col;
             i += 1
         }
     };
@@ -143,13 +142,13 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let mut games_read: i32 = 0;
     let mut game_length: i32 = 0;
     let mut game_moves: [i32; 60] = [0; 60];
-    if argc != 3 as i32 ||
+    if argc != 3 ||
         sscanf(*argv.offset(2),
                b"%lf\x00" as *const u8 as *const i8,
-               &mut rand_prob as *mut f64) != 1 as i32 {
+               &mut rand_prob as *mut f64) != 1 {
         fputs(b"Usage:\n  enddev <game file> <randomization prob.>\n\x00" as
                   *const u8 as *const i8, stderr);
-        exit(1 as i32);
+        exit(1);
     }
     let stream =
         fopen(*argv.offset(1),
@@ -159,14 +158,14 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 b"Cannot open %s for reading.\n\x00" as *const u8 as
                     *const i8,
                 *argv.offset(1));
-        exit(1 as i32);
+        exit(1);
     }
     static src: LibcTimeSource = LibcTimeSource {};
     let mut full_state = FullState::new(&src);
     let g_state: &mut FullState = &mut full_state;
     init_learn(b"book.bin\x00" as *const u8 as *const i8,
-               1 as i32, g_state);
-    global_setup(0 as i32, hash_bits, g_state);
+               1, g_state);
+    global_setup(0, hash_bits, g_state);
     games_read = 0;
     first_allowed_dev = earliest_dev;
     last_was_pass = 0;
@@ -178,7 +177,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 game_length = g_state.moves_state.disks_played
             } else {
                 read_game(stream, game_moves.as_mut_ptr(), &mut game_length);
-                if games_read % 1000 as i32 == 0 as i32 {
+                if games_read % 1000 == 0 {
                     fprintf(stderr,
                             b"%d games processed\n\x00" as *const u8 as
                                 *const i8, games_read);
@@ -188,15 +187,15 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 first_allowed_dev = earliest_dev
             }
             game_init(0 as *const i8, &mut side_to_move, g_state);
-            setup_hash(1 as i32, &mut g_state.hash_state, &mut g_state.random_instance);
+            setup_hash(1, &mut g_state.hash_state, &mut g_state.random_instance);
             last_was_pass = 0;
             restart = 0;
-            in_branch = 0 as i32
+            in_branch = 0
         }
-        assert_eq!(disc_count(0 as i32, &g_state.board_state.board) + disc_count(2 as i32, &g_state.board_state.board), g_state.moves_state.disks_played + 4 as i32);
+        assert_eq!(disc_count(0, &g_state.board_state.board) + disc_count(2, &g_state.board_state.board), g_state.moves_state.disks_played + 4);
         determine_hash_values(side_to_move, &g_state.board_state.board, &mut g_state.hash_state);
         generate_all(side_to_move, &mut g_state.moves_state, &g_state.search_state, &g_state.board_state.board);
-        if g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] == 0 as i32 {
+        if g_state.moves_state.move_count[g_state.moves_state.disks_played as usize] == 0 {
             if last_was_pass != 0 {
                 /* Game over? */
                 restart = 1; /* Must pass. */
@@ -207,41 +206,41 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         printf(b"%c%c\x00" as *const u8 as
                                    *const i8,
                                'a' as i32 +
-                                   game_moves[i as usize] % 10 as i32
-                                   - 1 as i32,
+                                   game_moves[i as usize] % 10
+                                   - 1,
                                '0' as i32 +
                                    game_moves[i as usize] /
-                                       10 as i32);
+                                       10);
                         i += 1
                     }
                     write!(stdout, "\n");
                 }
             } else {
                 side_to_move =
-                    0 as i32 + 2 as i32 - side_to_move;
-                last_was_pass = 1 as i32
+                    0 + 2 - side_to_move;
+                last_was_pass = 1
             }
         } else {
             let mut move_0: i32 = 0;
-             g_state.g_timer.start_move(100000 as i32 as f64,
-                                        0 as i32 as f64,
-                                        g_state.moves_state.disks_played + 4 as i32);
+             g_state.g_timer.start_move(100000 as f64,
+                                        0 as f64,
+                                        g_state.moves_state.disks_played + 4);
             if in_branch != 0 {
                 let mut ev_info: EvaluationType =  EvaluationType::new();
                 move_0 =
-                    legacy_compute_move(side_to_move, 0 as i32,
-                                        100000 as i32, 0 as i32,
-                                        0 as i32, 0 as i32,
-                                        8 as i32, 60 as i32,
-                                        60 as i32, 1 as i32,
+                    legacy_compute_move(side_to_move, 0,
+                                        100000, 0,
+                                        0, 0,
+                                        8, 60,
+                                        60, 1,
                                         &mut ev_info, g_state) as i32
             } else {
                 move_0 = game_moves[g_state.moves_state.disks_played as usize];
                 if g_state.moves_state.disks_played >= first_allowed_dev &&
                     g_state.moves_state.disks_played <= latest_dev &&
                     (0.0001f64 *
-                        ((g_state.random_instance.my_random() >> 9 as i32) %
-                            10000 as i32 as i64) as
+                        ((g_state.random_instance.my_random() >> 9) %
+                            10000 as i64) as
                             f64) < rand_prob {
                     let mut i_0: i32 = 0;
                     let mut best_score: i32 = 0;
@@ -256,18 +255,18 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                     as *const u8 as *const i8,
                                 games_read, g_state.moves_state.disks_played);
                     }
-                    let evaluated_list = extended_compute_move::<LibcFatalError>(side_to_move, 0 as i32,
-                                                            0 as i32, 8 as i32,
-                                                            60 as i32,
-                                                            60 as i32, g_state.g_config.echo, g_state);
+                    let evaluated_list = extended_compute_move::<LibcFatalError>(side_to_move, 0,
+                                                            0, 8,
+                                                            60,
+                                                            60, g_state.g_config.echo, g_state);
                     assert_eq!(evaluated_list.get_evaluated_count(), g_state.moves_state.move_count[g_state.moves_state.disks_played as usize]);
-                    best_score = -(12345678 as i32);
+                    best_score = -(12345678);
                     i_0 = 0;
                     while i_0 < evaluated_list.get_evaluated_count() {
                         let mut ev_info_0: EvaluatedMove = evaluated_list.get_evaluated(i_0);
                         choices[i_0 as usize].move_0 = ev_info_0.move_0 as i32;
                         choices[i_0 as usize].score =
-                            ev_info_0.eval.score / 128 as i32;
+                            ev_info_0.eval.score / 128;
                         best_score =
                             if choices[i_0 as usize].score > best_score {
                                 choices[i_0 as usize].score
@@ -278,11 +277,11 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     i_0 = 0;
                     while i_0 < evaluated_list.get_evaluated_count() {
                         choices[i_0 as usize].prob =
-                            (100000 as i32 as f64 * ((choices[i_0 as usize].score - best_score) as f64 * 0.2f64).exp() + 1_f64) as i32;
+                            (100000 as f64 * ((choices[i_0 as usize].score - best_score) as f64 * 0.2f64).exp() + 1_f64) as i32;
                         if choices[i_0 as usize].move_0 == move_0 {
                             /* Encourage deviations. */
                             choices[i_0 as usize].prob =
-                                choices[i_0 as usize].prob / 2 as i32
+                                choices[i_0 as usize].prob / 2
                         }
                         total_prob += choices[i_0 as usize].prob;
                         i_0 += 1
@@ -295,11 +294,11 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                         *const u8 as *const i8,
                                     'a' as i32 +
                                         choices[i_0 as usize].move_0 %
-                                            10 as i32 -
-                                        1 as i32,
+                                            10 -
+                                        1,
                                     '0' as i32 +
                                         choices[i_0 as usize].move_0 /
-                                            10 as i32,
+                                            10,
                                     choices[i_0 as usize].score,
                                     choices[i_0 as usize].prob as
                                         f64 /
@@ -308,8 +307,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         }
                     }
                     rand_val =
-                        ((g_state.random_instance.my_random() >> 4 as i32) %
-                            (total_prob + 1 as i32) as i64)
+                        ((g_state.random_instance.my_random() >> 4) %
+                            (total_prob + 1) as i64)
                             as i32;
                     accum_prob = 0;
                     i_0 = 0;
@@ -324,19 +323,19 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         fprintf(stderr,
                                 b"  %c%c chosen, %c%c in game\n\x00" as
                                     *const u8 as *const i8,
-                                'a' as i32 + move_0 % 10 as i32 -
-                                    1 as i32,
-                                '0' as i32 + move_0 / 10 as i32,
+                                'a' as i32 + move_0 % 10 -
+                                    1,
+                                '0' as i32 + move_0 / 10,
                                 'a' as i32 +
                                     game_moves[g_state.moves_state.disks_played as usize] %
-                                        10 as i32 - 1 as i32,
+                                        10 - 1,
                                 '0' as i32 +
                                     game_moves[g_state.moves_state.disks_played as usize] /
-                                        10 as i32);
+                                        10);
                     }
                     if move_0 != game_moves[g_state.moves_state.disks_played as usize] {
                         in_branch = 1;
-                        first_allowed_dev = g_state.moves_state.disks_played + 1 as i32;
+                        first_allowed_dev = g_state.moves_state.disks_played + 1;
                         if VERBOSE != 0 {
                             fputs(b"  branching\n\x00" as *const u8 as
                                       *const i8, stderr);
@@ -350,26 +349,26 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                             *const u8 as *const i8, games_read,
                         move_0, g_state.moves_state.disks_played);
                 display_state.display_board(&mut libc_wrapper::stderr, &g_state.board_state.board, side_to_move,
-                              0 as i32, 0 as i32, 0 as i32,
+                              0, 0, 0,
                               &g_state.board_state.black_moves, &g_state.board_state.white_moves);
-                exit(1 as i32);
+                exit(1);
             }
             game_moves[g_state.moves_state.disks_played as usize] = move_0;
-            if make_move(side_to_move, move_0 as i8, 1 as i32, &mut g_state.moves_state, &mut g_state.board_state, &mut g_state.hash_state, &mut &mut g_state.flip_stack_) ==
-                0 as i32 {
+            if make_move(side_to_move, move_0 as i8, 1, &mut g_state.moves_state, &mut g_state.board_state, &mut g_state.hash_state, &mut &mut g_state.flip_stack_) ==
+                0 {
                 fprintf(stderr,
                         b"Internal error: \'Legal\' move flips no discs.\n\x00"
                             as *const u8 as *const i8);
-                exit(1 as i32);
+                exit(1);
             }
-            side_to_move = 0 as i32 + 2 as i32 - side_to_move;
-            last_was_pass = 0 as i32
+            side_to_move = 0 + 2 - side_to_move;
+            last_was_pass = 0
         }
     }
     fprintf(stderr,
             b"%d games processed\n\x00" as *const u8 as *const i8,
             games_read);
-    return 0 as i32;
+    return 0;
 }
 
 pub fn main() {

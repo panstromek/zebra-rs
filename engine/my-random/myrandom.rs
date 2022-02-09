@@ -55,7 +55,7 @@ impl MyRandom {
  *  MAX_TYPES*(rptr - state) + TYPE_3 == TYPE_3.
  */
 const MY_RANDTBL: [u64; 32] =
-    [3 as i32 as u64,
+    [3 as u64,
         0x9a319039 as u32 as u64,
         0x32d9c024 as u32 as u64,
         0x9b663182 as u32 as u64,
