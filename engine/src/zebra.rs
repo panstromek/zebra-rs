@@ -285,7 +285,7 @@ pub fn next_state<
                     }
                 }
             } else {
-                if play_state.side_to_move == 0 as i32 { play_state.g_state.board_state.score_sheet_row += 1 }
+                if play_state.side_to_move == 0 { play_state.g_state.board_state.score_sheet_row += 1 }
                 PlayGameState::AfterGame
             }
         }
@@ -318,7 +318,7 @@ pub fn next_state<
         PlayGameState::SwitchingSides { provided_move_count } => {
             play_state.side_to_move = 2 - play_state.side_to_move;
             if play_state.g_state.g_config.one_position_only != 0 {
-                if play_state.side_to_move == 0 as i32 { play_state.g_state.board_state.score_sheet_row += 1 }
+                if play_state.side_to_move == 0 { play_state.g_state.board_state.score_sheet_row += 1 }
                 PlayGameState::AfterGame
             } else {
                 PlayGameState::InGame { provided_move_count }
@@ -334,7 +334,7 @@ pub fn next_state<
             play_state.g_state.learn_state.store_move(play_state.g_state.moves_state.disks_played, play_state.curr_move);
             push_move(&mut play_state.move_vec, play_state.curr_move, play_state.g_state.moves_state.disks_played);
             make_move(play_state.side_to_move, play_state.curr_move, 1, &mut play_state.g_state.moves_state, &mut play_state.g_state.board_state, &mut play_state.g_state.hash_state, &mut play_state.g_state.flip_stack_);
-            if play_state.side_to_move == 0 as i32 {
+            if play_state.side_to_move == 0 {
                 play_state.g_state.board_state.black_moves[play_state.g_state.board_state.score_sheet_row as usize] = play_state.curr_move
             } else {
                 if play_state.g_state.board_state.white_moves[play_state.g_state.board_state.score_sheet_row as usize] != -(1) {
@@ -348,10 +348,10 @@ pub fn next_state<
         }
         PlayGameState::AfterDumpch { provided_move_count, move_start } => {
             if play_state.g_state.moves_state.disks_played >= provided_move_count {
-                if play_state.g_state.g_config.skill[play_state.side_to_move as usize] == 0 as i32 {
+                if play_state.g_state.g_config.skill[play_state.side_to_move as usize] == 0 {
                     if play_state.g_state.g_config.use_book != 0 && play_state.g_state.g_config.display_pv != 0 {
                         fill_move_alternatives::<FE>(play_state.side_to_move,
-                                                     0 as i32,
+                                                     0,
                                                      &mut play_state.g_state.g_book,
                                                      &mut play_state.g_state.board_state,
                                                      &mut play_state.g_state.moves_state,
@@ -380,12 +380,12 @@ pub fn next_state<
                             play_state.g_state.g_config.skill[play_state.side_to_move as usize],
                             play_state.g_state.g_config.exact_skill[play_state.side_to_move as usize],
                             play_state.g_state.g_config.wld_skill[play_state.side_to_move as usize],
-                            0 as i32, &mut play_state.eval_info,
+                            0, &mut play_state.eval_info,
                             &mut ComputeMoveLog::create_log_file_if_needed(),
                             play_state.g_state.g_config.display_pv,
                             play_state.g_state.g_config.echo,
                             &mut play_state.g_state);
-                    if play_state.side_to_move == 0 as i32 {
+                    if play_state.side_to_move == 0 {
                         ZF::set_evals(produce_compact_eval(play_state.eval_info), 0.0f64);
                     } else {
                         ZF::set_evals(0.0f64, produce_compact_eval(play_state.eval_info));
@@ -518,8 +518,8 @@ fn parse_provided_moves(provided_move: &mut [i8; 61], move_string: &[u8]) -> Res
 }
 
 fn push_move(move_vec: &mut [i8; 122], curr_move: i8, disks_played_: i32) {
-    move_vec[(2 as i32 * disks_played_) as usize] = 'a' as i8 + (curr_move % 10) - 1;
-    move_vec[(2 as i32 * disks_played_) as usize + 1] = '0' as i8 + (curr_move / 10);
+    move_vec[(2 * disks_played_) as usize] = 'a' as i8 + (curr_move % 10) - 1;
+    move_vec[(2 * disks_played_) as usize + 1] = '0' as i8 + (curr_move / 10);
 }
 
 fn clear_moves(state: &mut BoardState) {

@@ -51,13 +51,13 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
         writeln!(stdout, "To exit the program, type \'quit\'.");
         write!(stdout, "\n");
         write!(stdout, "Gunnar Andersson, {}\n", "Aug  9 2020");
-        std::process::exit(1 as i32);
+        std::process::exit(1);
     }
-    init_osf(1 as i32, g_state);
+    init_osf(1, g_state);
     let book_name = CString::new(book_name).unwrap();
     read_binary_database(book_name.as_ptr(), &mut g_state.g_book);
     game_init(0 as *const i8, &mut side_to_move, g_state);
-    (g_state.game_state).toggle_human_openings(0 as i32);
+    (g_state.game_state).toggle_human_openings(0);
     display_state.set_names("", "");
     quit = 0;
     while quit == 0 {
@@ -75,17 +75,17 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
         let orientation___ = &mut orientation;
         get_hash(val0___, val1___, orientation___, &mut (g_state.g_book), &(g_state.board_state).board);
         display_state.display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
-                      1 as i32, 0 as i32, 0 as i32,
+                      1, 0, 0,
                       &(g_state.board_state).black_moves, &(g_state.board_state).white_moves
         );
         write!(stdout, "Book hash: {} {} ({})\n\n", val0, val1, orientation);
-        let evaluated_list = extended_compute_move::<LibcFatalError>(side_to_move, 0 as i32,
-                                                1 as i32, 6 as i32,
-                                                16 as i32, 18 as i32, (g_state.g_config).echo, g_state);
+        let evaluated_list = extended_compute_move::<LibcFatalError>(side_to_move, 0,
+                                                1, 6,
+                                                16, 18, (g_state.g_config).echo, g_state);
         write!(stdout, "Scores for the {} moves:\n", evaluated_list.get_evaluated_count());
         i = 0;
         while i < evaluated_list.get_evaluated_count() {
-            let eval_str_ = produce_eval_text(&evaluated_list.get_evaluated(i).eval, 0 as i32);
+            let eval_str_ = produce_eval_text(&evaluated_list.get_evaluated(i).eval, 0);
             write!(stdout, "   {}   {}\n", TO_SQUARE(evaluated_list.get_evaluated(i).move_0), eval_str_);
 
             i += 1
@@ -93,7 +93,7 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
         write!(stdout, "\n");
         loop  {
             repeat = 0;
-            if side_to_move == 0 as i32 {
+            if side_to_move == 0 {
                 write!(stdout, "Black move: ");
             } else {
                 write!(stdout, "White move: ");
@@ -120,7 +120,7 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
                     (g_state.board_state).score_sheet_row = row[(g_state.moves_state).disks_played as usize]
                 } else if command != 0 {
                     write!(stdout, "Can\'t back up {} moves\n\n", command);
-                    repeat = 1 as i32
+                    repeat = 1
                 } else {
                     generate_all(side_to_move, &mut (g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board);
                     move_0 = (move_string[0] as i32 - 'a' as i32 + 1 + 10 * (move_string[1] as i32 - '0' as i32)) as i8;
@@ -132,7 +132,7 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
                         old_stm[g_state.moves_state.disks_played as usize] = side_to_move;
                         row[g_state.moves_state.disks_played as usize] = g_state.board_state.score_sheet_row;
                         move_list[g_state.moves_state.disks_played as usize] = move_0;
-                        make_move(side_to_move, move_0, 1 as i32,
+                        make_move(side_to_move, move_0, 1,
                                   &mut g_state.moves_state,
                                   &mut g_state.board_state,
                                   &mut g_state.hash_state,

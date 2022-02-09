@@ -99,14 +99,14 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     if script_stream.is_null() {
         printf(b"\nCan\'t open script file \'%s\' - aborting\n\n\x00" as
                    *const u8 as *const i8, in_file_name);
-        exit(1 as i32);
+        exit(1);
     }
     output_stream =
         fopen(out_file_name, b"w\x00" as *const u8 as *const i8);
     if output_stream.is_null() {
         printf(b"\nCan\'t create output file \'%s\' - aborting\n\n\x00" as
                    *const u8 as *const i8, out_file_name);
-        exit(1 as i32);
+        exit(1);
     }
     fclose(output_stream);
     /* Initialize display subsystem and search parameters */
@@ -114,7 +114,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     display_state.set_move_list(g_state.board_state.score_sheet_row);
     display_state.set_evals(0.0f64, 0.0f64);
     i = 0;
-    while i < 60 as i32 {
+    while i < 60 {
         g_state.board_state.black_moves[i as usize] = -1;
         g_state.board_state.white_moves[i as usize] = -1;
         i += 1
@@ -125,10 +125,10 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     book = use_book;
     mid = 60;
     if wld_only != 0 {
-        exact = 0 as i32
-    } else { exact = 60 as i32 }
+        exact = 0
+    } else { exact = 60 }
     wld = 60;
-    toggle_status_log(0 as i32);
+    toggle_status_log(0);
     reset_counter(&mut script_nodes);
     position_count = 0;
     max_search = -0.0f64;
@@ -138,7 +138,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     loop  {
         let mut pass_count = 0;
         /* Check if the line is a comment or an end marker */
-        fgets(buffer.as_mut_ptr(), 256 as i32, script_stream);
+        fgets(buffer.as_mut_ptr(), 256, script_stream);
         if feof(script_stream) != 0 { break ; }
         if buffer[0] as i32 == '%' as i32 {
             /* Comment */
@@ -149,7 +149,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 printf(b"\nCan\'t append to output file \'%s\' - aborting\n\n\x00"
                            as *const u8 as *const i8,
                        out_file_name);
-                exit(1 as i32);
+                exit(1);
             }
             fputs(buffer.as_mut_ptr(), output_stream);
             fclose(output_stream);
@@ -160,54 +160,54 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             }
         } else {
             if feof(script_stream) != 0 {
-                write!(stdout, "\nEOF encountered when reading position #{} - aborting\n\n", i + 1 as i32);
-                exit(1 as i32);
+                write!(stdout, "\nEOF encountered when reading position #{} - aborting\n\n", i + 1);
+                exit(1);
             }
             /* Parse the script line containing board and side to move */
             game_init(0 as *const i8, &mut side_to_move, g_state);
             g_state.g_book.set_slack(0.0f64 as i32);
-            g_state.game_state.toggle_human_openings(0 as i32);
+            g_state.game_state.toggle_human_openings(0);
             reset_book_search(&mut g_state.g_book);
-            set_deviation_value(0 as i32, 60 as i32, 0.0f64, &mut g_state.g_book);
-            setup_hash(1 as i32, &mut g_state.hash_state, &mut g_state.random_instance);
+            set_deviation_value(0, 60, 0.0f64, &mut g_state.g_book);
+            setup_hash(1, &mut g_state.hash_state, &mut g_state.random_instance);
             position_count += 1;
             scanned =
                 sscanf(buffer.as_mut_ptr(),
                        b"%s %s\x00" as *const u8 as *const i8,
                        board_string.as_mut_ptr(), stm_string.as_mut_ptr());
-            if scanned != 2 as i32 {
+            if scanned != 2 {
                 write!(stdout, "\nError parsing line {} - aborting\n\n", i + 1);
-                exit(1 as i32);
+                exit(1);
             }
             if   strlen(stm_string.as_mut_ptr()) != 1 {
                 write!(stdout, "\nAmbiguous side to move on line {} - aborting\n\n", i + 1);
-                exit(1 as i32);
+                exit(1);
             }
             match stm_string[0] as i32 {
-                79 | 48 => { side_to_move = 2 as i32 }
-                42 | 88 => { side_to_move = 0 as i32 }
+                79 | 48 => { side_to_move = 2 }
+                42 | 88 => { side_to_move = 0 }
                 _ => {
                     write!(stdout, "\nBad side-to-move indicator on line {} - aborting\n\n", i + 1);
                 }
             }
             if   strlen(board_string.as_mut_ptr()) != 64 {
                 write!(stdout, "\nBoard on line {} doesn\'t contain 64 positions - aborting\n\n", i + 1);
-                exit(1 as i32);
+                exit(1);
             }
             token = 0;
             row = 1;
-            while row <= 8 as i32 {
+            while row <= 8 {
                 col = 1;
-                while col <= 8 as i32 {
-                    pos = 10 as i32 * row + col;
+                while col <= 8 {
+                    pos = 10 * row + col;
                     match board_string[token as usize] as i32 {
                         42 | 88 | 120 => {
-                            g_state.board_state.board[pos as usize] = 0 as i32
+                            g_state.board_state.board[pos as usize] = 0
                         }
                         79 | 48 | 111 => {
-                            g_state.board_state.board[pos as usize] = 2 as i32
+                            g_state.board_state.board[pos as usize] = 2
                         }
-                        45 | 46 => { g_state.board_state.board[pos as usize] = 1 as i32 }
+                        45 | 46 => { g_state.board_state.board[pos as usize] = 1 }
                         _ => {
                             write!(stdout, "\nBad character \'{}\' in board on line {} - aborting\n\n",
                                    char::from(board_string[token as usize] as u8), i + 1);
@@ -219,54 +219,54 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 row += 1
             }
             g_state.moves_state.disks_played =
-                disc_count(0 as i32, &g_state.board_state.board) + disc_count(2 as i32, &g_state.board_state.board) -
-                    4 as i32;
+                disc_count(0, &g_state.board_state.board) + disc_count(2, &g_state.board_state.board) -
+                    4;
             /* Search the position */
             if g_state.g_config.echo != 0 {
                 display_state.set_move_list(g_state.board_state.score_sheet_row);
                 display_state.display_board(&mut stdout, &g_state.board_state.board, side_to_move,
-                              1 as i32, 0 as i32,
-                              1 as i32,
+                              1, 0,
+                              1,
                               &g_state.board_state.black_moves, &g_state.board_state.white_moves);
             }
             search_start =  g_state.g_timer.get_real_timer();
             g_state.g_timer.start_move(my_time as f64, my_incr as f64,
-                                       g_state.moves_state.disks_played + 4 as i32);
+                                       g_state.moves_state.disks_played + 4);
             g_state.g_timer.determine_move_time(my_time as f64,
                                                 my_incr as f64,
-                                                g_state.moves_state.disks_played + 4 as i32);
+                                                g_state.moves_state.disks_played + 4);
             pass_count = 0;
             move_0 =
-                legacy_compute_move(side_to_move, 1 as i32, my_time, my_incr,
+                legacy_compute_move(side_to_move, 1, my_time, my_incr,
                                     timed_search, book, mid, exact, wld,
-                                    1 as i32, &mut eval_info, g_state);
+                                    1, &mut eval_info, g_state);
             if move_0 == -(1) {
                 pass_count += 1;
                 side_to_move =
-                    0 as i32 + 2 as i32 - side_to_move;
+                    0 + 2 - side_to_move;
                 move_0 =
-                    legacy_compute_move(side_to_move, 1 as i32, my_time,
+                    legacy_compute_move(side_to_move, 1, my_time,
                                         my_incr, timed_search, book, mid, exact, wld,
-                                        1 as i32, &mut eval_info, g_state);
+                                        1, &mut eval_info, g_state);
                 if move_0 == -(1) {
                     /* Both pass, game over. */
                     let mut my_discs = disc_count(side_to_move, &g_state.board_state.board);
                     let mut opp_discs =
-                        disc_count(0 as i32 + 2 as i32 - side_to_move, &g_state.board_state.board);
+                        disc_count(0 + 2 - side_to_move, &g_state.board_state.board);
                     if my_discs > opp_discs {
-                        my_discs = 64 as i32 - opp_discs
+                        my_discs = 64 - opp_discs
                     } else if opp_discs > my_discs {
-                        opp_discs = 64 as i32 - my_discs
+                        opp_discs = 64 - my_discs
                     } else {
                         opp_discs = 32;
                         my_discs = opp_discs
                     }
                     eval_info.score =
-                        128 as i32 * (my_discs - opp_discs);
+                        128 * (my_discs - opp_discs);
                     pass_count += 1
                 }
             }
-            score = eval_info.score / 128 as i32;
+            score = eval_info.score / 128;
             search_stop =  g_state.g_timer.get_real_timer();
             if search_stop - search_start > max_search {
                 max_search = search_stop - search_start
@@ -279,45 +279,45 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 printf(b"\nCan\'t append to output file \'%s\' - aborting\n\n\x00"
                            as *const u8 as *const i8,
                        out_file_name);
-                exit(1 as i32);
+                exit(1);
             }
             if wld_only != 0 {
-                if side_to_move == 0 as i32 {
-                    if score > 0 as i32 {
+                if side_to_move == 0 {
+                    if score > 0 {
                         fputs(b"Black win\x00" as *const u8 as
                                   *const i8, output_stream);
-                    } else if score == 0 as i32 {
+                    } else if score == 0 {
                         fputs(b"Draw\x00" as *const u8 as *const i8,
                               output_stream);
                     } else {
                         fputs(b"White win\x00" as *const u8 as
                                   *const i8, output_stream);
                     }
-                } else if score > 0 as i32 {
+                } else if score > 0 {
                     fputs(b"White win\x00" as *const u8 as
                               *const i8, output_stream);
-                } else if score == 0 as i32 {
+                } else if score == 0 {
                     fputs(b"Draw\x00" as *const u8 as *const i8,
                           output_stream);
                 } else {
                     fputs(b"Black win\x00" as *const u8 as
                               *const i8, output_stream);
                 }
-            } else if side_to_move == 0 as i32 {
+            } else if side_to_move == 0 {
                 fprintf(output_stream,
                         b"%2d - %2d\x00" as *const u8 as *const i8,
-                        32 as i32 + score / 2 as i32,
-                        32 as i32 - score / 2 as i32);
+                        32 + score / 2,
+                        32 - score / 2);
             } else {
                 fprintf(output_stream,
                         b"%2d - %2d\x00" as *const u8 as *const i8,
-                        32 as i32 - score / 2 as i32,
-                        32 as i32 + score / 2 as i32);
+                        32 - score / 2,
+                        32 + score / 2);
             }
-            if display_line != 0 && pass_count != 2 as i32 {
+            if display_line != 0 && pass_count != 2 {
                 fputs(b"   \x00" as *const u8 as *const i8,
                       output_stream);
-                if pass_count == 1 as i32 {
+                if pass_count == 1 {
                     fputs(b" --\x00" as *const u8 as *const i8,
                           output_stream);
                 }
@@ -389,7 +389,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     g_config.display_pv = 1;
     use_learning = 0;
     use_thor = 0;
-    skill[2] = -(1 as i32);
+    skill[2] = -(1);
     skill[0] = skill[2];
     hash_bits = 18;
     log_file_name = 0 as *mut i8;
@@ -464,7 +464,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-script\x00" as *const u8 as
                                  *const i8) == 0 {
-            if arg_index + 2 as i32 >= argc {
+            if arg_index + 2 >= argc {
                 help = 1;
                 current_block_37 = 4808432441040389987;
             } else {
@@ -492,18 +492,18 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         }
         match current_block_37 {
             13303144130133872306 => {
-                if arg_index >= argc { help = 1 as i32 }
+                if arg_index >= argc { help = 1 }
             }
             _ => { }
         }
         arg_index += 1
     }
-    if run_script == 0 { help = 1 as i32 }
-    if komi != 0 as i32 {
+    if run_script == 0 { help = 1 }
+    if komi != 0 {
         if wld_only == 0 {
             puts(b"Komi can only be applied to WLD solves.\x00" as *const u8
                 as *const i8);
-            exit(1 as i32);
+            exit(1);
         }
         game_state.set_komi(komi);
     }
@@ -514,11 +514,11 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         write!(stdout, "\n");
         puts(b"  -e <echo?>\x00" as *const u8 as *const i8);
         printf(b"    Toggles screen output on/off (default %d).\n\n\x00" as
-                   *const u8 as *const i8, 1 as i32);
+                   *const u8 as *const i8, 1);
         puts(b"  -h <bits in hash key>\x00" as *const u8 as
             *const i8);
         printf(b"    Size of hash table is 2^{this value} (default %d).\n\n\x00"
-                   as *const u8 as *const i8, 18 as i32);
+                   as *const u8 as *const i8, 18);
         puts(b"  -script <script file> <output file>\x00" as *const u8 as
             *const i8);
         puts(b"    Solves all positions in script file for exact score.\n\x00"
@@ -526,39 +526,39 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         puts(b"  -wld <only solve WLD?>\x00" as *const u8 as
             *const i8);
         printf(b"    Toggles WLD only solve on/off (default %d).\n\n\x00" as
-                   *const u8 as *const i8, 0 as i32);
+                   *const u8 as *const i8, 0);
         puts(b"  -line <output line?>\x00" as *const u8 as
             *const i8);
         printf(b"    Toggles output of optimal line on/off (default %d).\n\n\x00"
-                   as *const u8 as *const i8, 0 as i32);
+                   as *const u8 as *const i8, 0);
         puts(b"  -b <use book?>\x00" as *const u8 as *const i8);
         printf(b"    Toggles usage of opening book on/off (default %d).\n\x00"
-                   as *const u8 as *const i8, 0 as i32);
+                   as *const u8 as *const i8, 0);
         write!(stdout, "\n");
         puts(b"  -komi <komi>\x00" as *const u8 as *const i8);
         puts(b"    Number of discs that white has to win with (only WLD).\x00"
             as *const u8 as *const i8);
         write!(stdout, "\n");
         write!(stdout, "\n");
-        exit(1 as i32);
+        exit(1);
     }
-    if hash_bits < 1 as i32 {
+    if hash_bits < 1 {
         printf(b"Hash table key must contain at least 1 bit\n\x00" as
             *const u8 as *const i8);
-        exit(1 as i32);
+        exit(1);
     }
     global_setup(use_random, hash_bits, g_state);
     init_thor_database(g_state);
     if use_book != 0 {
         init_learn(b"book.bin\x00" as *const u8 as *const i8,
-                   1 as i32, g_state);
+                   1, g_state);
     }
-    if use_random != 0 && 1 as i32 == 0 {
+    if use_random != 0 && 1 == 0 {
         time(&mut timer);
         let x = timer as i32;
         g_state.random_instance.my_srandom(x);
     } else {
-        let x = 1 as i32;
+        let x = 1;
         g_state.random_instance.my_srandom(x); }
     if run_script != 0 {
         run_endgame_script(script_in_file, script_out_file,

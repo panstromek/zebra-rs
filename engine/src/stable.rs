@@ -61,11 +61,11 @@ impl StableState {
 
 fn and_line_shift_64(target: &mut BitBoard, base: BitBoard, shift: i32, mut dir_ss: BitBoard) {
     /* Shift to the left */
-    dir_ss.high |= base.high << shift | base.low >> 32 as i32 - shift;
+    dir_ss.high |= base.high << shift | base.low >> 32 - shift;
     dir_ss.low |= base.low << shift;
     /* Shift to the right */
     dir_ss.high |= base.high >> shift;
-    dir_ss.low |= base.low >> shift | base.high << 32 as i32 - shift;
+    dir_ss.low |= base.low >> shift | base.high << 32 - shift;
     (*target).high &= dir_ss.high;
     (*target).low &= dir_ss.low;
 }
@@ -102,15 +102,15 @@ fn edge_zardoz_stable(ss: &mut BitBoard, dd: BitBoard, od: BitBoard) {
     fb.high = dd.high | od.high; /* rotate within bit 1 and bit 28 */
     fb.low = dd.low | od.low; /* rotate within bit 3 and bit 30 */
     t = fb.high;
-    t &= t >> 4 as i32;
-    t &= t >> 2 as i32;
-    t &= t >> 1 as i32;
-    lrf.high = (t & 0x1010101 as i32 as u32).wrapping_mul(255 as i32 as u32) | 0x81818181 as u32;
+    t &= t >> 4;
+    t &= t >> 2;
+    t &= t >> 1;
+    lrf.high = (t & 0x1010101 as i32 as u32).wrapping_mul(255 as u32) | 0x81818181 as u32;
     t = fb.low;
-    t &= t >> 4 as i32;
-    t &= t >> 2 as i32;
-    t &= t >> 1 as i32;
-    lrf.low = (t & 0x1010101 as i32 as u32).wrapping_mul(255 as i32 as u32) | 0x81818181 as u32;
+    t &= t >> 4;
+    t &= t >> 2;
+    t &= t >> 1;
+    lrf.low = (t & 0x1010101 as i32 as u32).wrapping_mul(255 as u32) | 0x81818181 as u32;
     t = fb.high & fb.low;
     t &= t >> 16 | t << 16;
     t &= t >> 8 | t << 24;
@@ -118,23 +118,23 @@ fn edge_zardoz_stable(ss: &mut BitBoard, dd: BitBoard, od: BitBoard) {
     udf.low = t | 0xff as i32 as u32;
     daf.high = 0xff818181 as u32;
     daf.low = 0x818181ff as u32;
-    t = ((fb.high << 4 as i32 | 0xf0f0f0f as i32 as u32) & fb.low | 0xe0c08000 as u32) & 0x1ffffffe as i32 as u32;
-    t &= t >> 14 as i32 | t << 14 as i32;
-    t &= t >> 7 as i32 | t << 21 as i32;
+    t = ((fb.high << 4 | 0xf0f0f0f as i32 as u32) & fb.low | 0xe0c08000 as u32) & 0x1ffffffe as i32 as u32;
+    t &= t >> 14 | t << 14;
+    t &= t >> 7 | t << 21;
     daf.low |= t & 0x1f3f7efc as i32 as u32;
-    daf.high |= t >> 4 as i32 & 0x103070f as i32 as u32;
-    t = ((fb.low >> 4 as i32 | 0xf0f0f0f0 as u32) & fb.high | 0x10307 as i32 as u32) & 0x7ffffff8 as i32 as u32;
-    t &= t >> 14 as i32 | t << 14 as i32;
-    t &= t >> 7 as i32 | t << 21 as i32;
+    daf.high |= t >> 4 & 0x103070f as i32 as u32;
+    t = ((fb.low >> 4 | 0xf0f0f0f0 as u32) & fb.high | 0x10307 as i32 as u32) & 0x7ffffff8 as i32 as u32;
+    t &= t >> 14 | t << 14;
+    t &= t >> 7 | t << 21;
     daf.high |= t & 0x3e7cf8f0 as i32 as u32;
-    daf.low |= t << 4 as i32 & 0xe0c08000 as u32;
+    daf.low |= t << 4 & 0xe0c08000 as u32;
     dbf.high = 0xff818181 as u32;
     dbf.low = 0x818181ff as u32;
-    t = (fb.high >> 4 as i32 | 0xf0f0f0f0 as u32) & fb.low;
+    t = (fb.high >> 4 | 0xf0f0f0f0 as u32) & fb.low;
     /* 17 16 15 14 13 12 11 10  9  8 NG  6  5  4  3  2  1  0 */
-    t &= t >> 18 as i32 | 0x3c000 as i32 as u32; /*  *  *  *  * 31 30 29 28 27 26 25 NG 23 22 21 20 19 18 */
-    t &= t >> 9 as i32 | t << 9 as i32; /*  8 NG  6  5  4  3  2  1  0 17 16 15 14 13 12 11 10  9 */
-    t |= t << 18 as i32; /* 26 25 NG 23 22 21 20 19 18  *  *  *  * 31 30 29 28 27 */
+    t &= t >> 18 | 0x3c000 as i32 as u32; /*  *  *  *  * 31 30 29 28 27 26 25 NG 23 22 21 20 19 18 */
+    t &= t >> 9 | t << 9; /*  8 NG  6  5  4  3  2  1  0 17 16 15 14 13 12 11 10  9 */
+    t |= t << 18; /* 26 25 NG 23 22 21 20 19 18  *  *  *  * 31 30 29 28 27 */
     dbf.low |= t & 0xf8fc7e3f as u32;
     dbf.high |= t << 4 & 0x80c0e0f0 as u32;
     t = (fb.low << 4 | 0xf0f0f0f as i32 as u32) & fb.high;
@@ -145,7 +145,7 @@ fn edge_zardoz_stable(ss: &mut BitBoard, dd: BitBoard, od: BitBoard) {
     dbf.low |= t >> 4 & 0x7030100 as i32 as u32;
     (*ss).high |= lrf.high & udf.high & daf.high & dbf.high & dd.high;
     (*ss).low |= lrf.low & udf.low & daf.low & dbf.low & dd.low;
-    if (*ss).high | (*ss).low == 0 as i32 as u32 { return }
+    if (*ss).high | (*ss).low == 0 as u32 { return }
     loop  {
         ost = *ss;
         expand_ss.high = lrf.high | ost.high << 1 | ost.high >> 1;
@@ -169,8 +169,8 @@ fn edge_zardoz_stable(ss: &mut BitBoard, dd: BitBoard, od: BitBoard) {
 */
 
 pub fn count_edge_stable(color: i32, col_bits: BitBoard, opp_bits: BitBoard, state: &mut StableState) -> i32 {
-    let col_mask = (col_bits.low & 0x1010101 as u32).wrapping_add((col_bits.high & 0x1010101 as u32) << 4 as i32).wrapping_mul(0x1020408 as u32) >> 24;
-    let opp_mask = (opp_bits.low & 0x1010101 as u32).wrapping_add((opp_bits.high & 0x1010101 as u32) << 4 as i32).wrapping_mul(0x1020408 as u32) >> 24;
+    let col_mask = (col_bits.low & 0x1010101 as u32).wrapping_add((col_bits.high & 0x1010101 as u32) << 4).wrapping_mul(0x1020408 as u32) >> 24;
+    let opp_mask = (opp_bits.low & 0x1010101 as u32).wrapping_add((opp_bits.high & 0x1010101 as u32) << 4).wrapping_mul(0x1020408 as u32) >> 24;
     let ix_a1a8 = (state.base_conversion[col_mask as usize] as i32 - state.base_conversion[opp_mask as usize] as i32) as u32;
     let col_mask = ((col_bits.low & 0x80808080 as u32) >> 4).wrapping_add(col_bits.high & 0x80808080 as u32).wrapping_mul((0x1020408 / 8) as u32) >> 24;
     let opp_mask = ((opp_bits.low & 0x80808080 as u32) >> 4).wrapping_add(opp_bits.high & 0x80808080 as u32).wrapping_mul((0x1020408 / 8) as u32) >> 24;
@@ -214,10 +214,10 @@ pub fn count_stable(color: i32, col_bits: BitBoard, opp_bits: BitBoard, state: &
     common_stable.high = ((state.edge_stable[state.edge_a8h8 as usize] as i32) << 24) as u32;
     let t = state.edge_stable[state.edge_a1a8 as usize] as u32;
     common_stable.low |= (t & 0xf as i32 as u32).wrapping_mul(0x204081 as i32 as u32) & 0x1010101 as i32 as u32;
-    common_stable.high |= (t >> 4 as i32).wrapping_mul(0x204081 as i32 as u32) & 0x1010101 as i32 as u32;
+    common_stable.high |= (t >> 4).wrapping_mul(0x204081 as i32 as u32) & 0x1010101 as i32 as u32;
     let t = state.edge_stable[state.edge_h1h8 as usize] as u32;
     common_stable.low |= (t & 0xf as i32 as u32).wrapping_mul(0x10204080 as i32 as u32) & 0x80808080 as u32;
-    common_stable.high |= (t >> 4 as i32).wrapping_mul(0x10204080 as i32 as u32) & 0x80808080 as u32;
+    common_stable.high |= (t >> 4).wrapping_mul(0x10204080 as i32 as u32) & 0x80808080 as u32;
     /* Expand the stable edge discs into a full set of stable discs */
     col_stable.high = col_bits.high & common_stable.high;
     col_stable.low = col_bits.low & common_stable.low;
@@ -256,24 +256,24 @@ fn stability_search(end: &mut End, my_bits: BitBoard,
     let mut new_opp_bits = BitBoard{high: 0, low: 0,};
     let mut all_stable_bits = BitBoard{high: 0, low: 0,};
     *stability_nodes += 1;
-    if *stability_nodes > 10000 as i32 { return }
-    if max_depth >= 3 as i32 {
-        if side_to_move == 0 as i32 {
+    if *stability_nodes > 10000 { return }
+    if max_depth >= 3 {
+        if side_to_move == 0 {
             black_bits = my_bits;
             white_bits = opp_bits
         } else { black_bits = opp_bits; white_bits = my_bits }
         all_stable_bits.high = 0;
         all_stable_bits.low = 0;
-        count_edge_stable(0 as i32, black_bits, white_bits,  state);
+        count_edge_stable(0, black_bits, white_bits,  state);
         if (*candidate_bits).high & black_bits.high != 0 ||
                (*candidate_bits).low & black_bits.low != 0 {
-            count_stable(0 as i32, black_bits, white_bits, state);
+            count_stable(0, black_bits, white_bits, state);
             all_stable_bits.high |= state.last_black_stable.high;
             all_stable_bits.low |= state.last_black_stable.low
         }
         if (*candidate_bits).high & white_bits.high != 0 ||
                (*candidate_bits).low & white_bits.low != 0 {
-            count_stable(2 as i32, white_bits, black_bits,  state);
+            count_stable(2, white_bits, black_bits,  state);
             all_stable_bits.high |= state.last_white_stable.high;
             all_stable_bits.low |= state.last_white_stable.low
         }
@@ -296,7 +296,7 @@ fn stability_search(end: &mut End, my_bits: BitBoard,
             end.bb_flips.low &= !my_bits.low;
             (*candidate_bits).high &= !end.bb_flips.high;
             (*candidate_bits).low &= !end.bb_flips.low;
-            if max_depth > 1 as i32 {
+            if max_depth > 1 {
                 new_opp_bits.high = opp_bits.high & !end.bb_flips.high;
                 new_opp_bits.low = opp_bits.low & !end.bb_flips.low;
                 state.stab_move_list[old_sq as usize].succ = state.stab_move_list[sq as usize].succ;
@@ -309,10 +309,10 @@ fn stability_search(end: &mut End, my_bits: BitBoard,
         old_sq = sq;
         sq = state.stab_move_list[sq as usize].succ
     }
-    if mobility == 0 as i32 && last_was_pass == 0 {
+    if mobility == 0 && last_was_pass == 0 {
         stability_search(end, opp_bits, my_bits,
-                         0 as i32 + 2 as i32 - side_to_move,
-                         candidate_bits, max_depth, 1 as i32,
+                         0 + 2 - side_to_move,
+                         candidate_bits, max_depth, 1,
                          stability_nodes,  state);
     };
 }
@@ -339,9 +339,9 @@ fn complete_stability_search(end: &mut End,  board: &Board,
     /* Prepare the move list */
     let mut last_sq = 0;
     i = 0;
-    while i < 60 as i32 {
+    while i < 60 {
         let sq = position_list[i as usize];
-        if board[sq as usize] == 1 as i32 {
+        if board[sq as usize] == 1 {
             state.stab_move_list[last_sq as usize].succ = sq;
             state.stab_move_list[sq as usize].pred = last_sq;
             last_sq = sq
@@ -351,10 +351,10 @@ fn complete_stability_search(end: &mut End,  board: &Board,
     state.stab_move_list[last_sq as usize].succ = 99;
     empties = 0;
     i = 1;
-    while i <= 8 as i32 {
+    while i <= 8 {
         j = 1;
-        while j <= 8 as i32 {
-            if board[(10 as i32 * i + j) as usize] == 1 as i32 {
+        while j <= 8 {
+            if board[(10 * i + j) as usize] == 1 {
                 empties += 1
             }
             j += 1
@@ -374,25 +374,25 @@ fn complete_stability_search(end: &mut End,  board: &Board,
     stability_search(end, my_bits, opp_bits, side_to_move, &mut candidate_bits,
                      if empties < shallow_depth {
                          empties
-                     } else { shallow_depth }, 0 as i32,
+                     } else { shallow_depth }, 0,
                      &mut stability_nodes, state);
     /* Scan through the rest of the discs one at a time until the
        maximum number of stability nodes is exceeded. Hopefully
        a subset of the stable discs is found also if this happens. */
     abort = 0;
     i = 1;
-    while i <= 8 as i32 && abort == 0 {
+    while i <= 8 && abort == 0 {
         j = 1;
-        while j <= 8 as i32 && abort == 0 {
-            let sq_0 = 10 as i32 * i + j;
+        while j <= 8 && abort == 0 {
+            let sq_0 = 10 * i + j;
             test_bits = square_mask[sq_0 as usize];
             if test_bits.high & candidate_bits.high |
                    test_bits.low & candidate_bits.low != 0 {
                 stability_search(end, my_bits, opp_bits, side_to_move,
-                                 &mut test_bits, empties, 0 as i32,
+                                 &mut test_bits, empties, 0,
                                  &mut stability_nodes,  state);
                 abort =
-                    (stability_nodes > 10000 as i32) as i32;
+                    (stability_nodes > 10000) as i32;
                 if abort == 0 {
                     if test_bits.high | test_bits.low != 0 {
                         (*stable_bits).high |= test_bits.high;
@@ -421,9 +421,9 @@ pub fn get_stable(end:&mut End, board: &Board,
     let mut black_bits = BitBoard{high: 0, low: 0,};
     let mut white_bits = BitBoard{high: 0, low: 0,};
     let mut all_stable = BitBoard{high: 0, low: 0,};
-    set_bitboards(board, 0 as i32, &mut black_bits, &mut white_bits);
+    set_bitboards(board, 0, &mut black_bits, &mut white_bits);
     let mut i = 0;
-    while i < 100 as i32 {
+    while i < 100 {
         *is_stable.offset(i as isize) = 0;
         i += 1
     }
@@ -467,7 +467,7 @@ pub fn get_stable(end:&mut End, board: &Board,
                     *is_stable.offset((10 * i + j) as isize) = 1
                 }
                 j += 1;
-                mask <<= 1 as i32
+                mask <<= 1
             }
             i += 1
         }
@@ -489,116 +489,116 @@ fn recursive_find_stable(&mut self, pattern: i32)
     let mut temp: i32 = 0;
     let mut row: [i32; 8] = [0; 8];
     let mut stored_row: [i32; 8] = [0; 8];
-    if self.edge_stable[pattern as usize] as i32 != -(1 as i32) {
+    if self.edge_stable[pattern as usize] as i32 != -(1) {
         return self.edge_stable[pattern as usize] as i32
     }
     temp = pattern;
     i = 0;
-    while i < 8 as i32 {
-        row[i as usize] = temp % 3 as i32;
+    while i < 8 {
+        row[i as usize] = temp % 3;
         i += 1;
-        temp /= 3 as i32
+        temp /= 3
     }
     /* All positions stable unless proved otherwise. */
     stable = 255;
     /* Play out the 8 different moves and AND together the stability masks. */
     j = 0;
-    while j < 8 as i32 {
+    while j < 8 {
         stored_row[j as usize] = row[j as usize];
         j += 1
     }
     i = 0;
-    while i < 8 as i32 {
+    while i < 8 {
         /* Make sure we work with the original configuration */
         j = 0;
-        while j < 8 as i32 {
+        while j < 8 {
             row[j as usize] = stored_row[j as usize];
             j += 1
         }
-        if row[i as usize] == 1 as i32 {
+        if row[i as usize] == 1 {
             /* Empty ==> playable! */
             /* Mark the empty square as unstable and store position */
-            stable &= !((1 as i32) << i);
+            stable &= !((1) << i);
             /* Play out a black move */
             row[i as usize] = 0;
-            if i >= 2 as i32 {
-                j = i - 1 as i32;
-                while j >= 1 as i32 &&
-                          row[j as usize] == 2 as i32 {
+            if i >= 2 {
+                j = i - 1;
+                while j >= 1 &&
+                          row[j as usize] == 2 {
                     j -= 1
                 }
-                if row[j as usize] == 0 as i32 {
+                if row[j as usize] == 0 {
                     j += 1;
                     while j < i {
                         row[j as usize] = 0;
-                        stable &= !((1 as i32) << j);
+                        stable &= !((1) << j);
                         j += 1
                     }
                 }
             }
-            if i <= 5 as i32 {
-                j = i + 1 as i32;
-                while j <= 6 as i32 &&
-                          row[j as usize] == 2 as i32 {
+            if i <= 5 {
+                j = i + 1;
+                while j <= 6 &&
+                          row[j as usize] == 2 {
                     j += 1
                 }
-                if row[j as usize] == 0 as i32 {
+                if row[j as usize] == 0 {
                     j -= 1;
                     while j > i {
                         row[j as usize] = 0;
-                        stable &= !((1 as i32) << j);
+                        stable &= !((1) << j);
                         j -= 1
                     }
                 }
             }
             new_pattern = 0;
             j = 0;
-            while j < 8 as i32 {
+            while j < 8 {
                 new_pattern += pow3(j as usize) * row[j as usize];
                 j += 1
             }
             stable &= self.recursive_find_stable(new_pattern);
             /* Restore position */
             j = 0;
-            while j < 8 as i32 {
+            while j < 8 {
                 row[j as usize] = stored_row[j as usize];
                 j += 1
             }
             /* Play out a white move */
             row[i as usize] = 2;
-            if i >= 2 as i32 {
-                j = i - 1 as i32;
-                while j >= 1 as i32 &&
-                          row[j as usize] == 0 as i32 {
+            if i >= 2 {
+                j = i - 1;
+                while j >= 1 &&
+                          row[j as usize] == 0 {
                     j -= 1
                 }
-                if row[j as usize] == 2 as i32 {
+                if row[j as usize] == 2 {
                     j += 1;
                     while j < i {
                         row[j as usize] = 2;
-                        stable &= !((1 as i32) << j);
+                        stable &= !((1) << j);
                         j += 1
                     }
                 }
             }
-            if i <= 5 as i32 {
-                j = i + 1 as i32;
-                while j <= 6 as i32 &&
-                          row[j as usize] == 0 as i32 {
+            if i <= 5 {
+                j = i + 1;
+                while j <= 6 &&
+                          row[j as usize] == 0 {
                     j += 1
                 }
-                if row[j as usize] == 2 as i32 {
+                if row[j as usize] == 2 {
                     j -= 1;
                     while j > i {
                         row[j as usize] = 2;
-                        stable &= !((1 as i32) << j);
+                        stable &= !((1) << j);
                         j -= 1
                     }
                 }
             }
             new_pattern = 0;
             j = 0;
-            while j < 8 as i32 {
+            while j < 8 {
                 new_pattern += pow3(j as usize) * row[j as usize];
                 j += 1
             }
@@ -626,22 +626,22 @@ fn count_color_stable(stable_state_: &mut StableState) {
     let mut pattern: i32 = 0;
     let mut row: [i32; 10] = [0; 10];
     static stable_incr: [i32; 8] =
-        [1 as i32, 2 as i32, 2 as i32,
-         2 as i32, 2 as i32, 2 as i32,
-         2 as i32, 1 as i32];
+        [1, 2, 2,
+         2, 2, 2,
+         2, 1];
     pattern = 0;
-    while pattern < 6561 as i32 {
+    while pattern < 6561 {
         stable_state_.black_stable[pattern as usize] = 0;
         stable_state_.white_stable[pattern as usize] = 0;
         j = 0;
-        while j < 8 as i32 {
+        while j < 8 {
             if stable_state_.edge_stable[pattern as usize] as i32 &
-                   (1 as i32) << j != 0 {
-                if row[j as usize] == 0 as i32 {
+                   (1) << j != 0 {
+                if row[j as usize] == 0 {
                     stable_state_.black_stable[pattern as usize] =
                         (stable_state_.black_stable[pattern as usize] as i32 +
                              stable_incr[j as usize]) as u8
-                } else if row[j as usize] == 2 as i32 {
+                } else if row[j as usize] == 2 {
                     stable_state_.white_stable[pattern as usize] =
                         (stable_state_.white_stable[pattern as usize] as i32 +
                              stable_incr[j as usize]) as u8
@@ -664,11 +664,11 @@ pub fn init_stable(state: &mut StableState) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     i = 0;
-    while i < 256 as i32 {
+    while i < 256 {
         state.base_conversion[i as usize] = 0;
         j = 0;
-        while j < 8 as i32 {
-            if i & (1 as i32) << j != 0 {
+        while j < 8 {
+            if i & (1) << j != 0 {
                 state.base_conversion[i as usize] =
                     (state.base_conversion[i as usize] as i32 +
                          pow3(j as usize)) as i16
@@ -678,13 +678,13 @@ pub fn init_stable(state: &mut StableState) {
         i += 1
     }
     i = 0;
-    while i < 6561 as i32 {
-        state.edge_stable[i as usize] = -(1 as i32) as i16;
+    while i < 6561 {
+        state.edge_stable[i as usize] = -(1) as i16;
         i += 1
     }
     i = 0;
-    while i < 6561 as i32 {
-        if state.edge_stable[i as usize] as i32 == -(1 as i32) {
+    while i < 6561 {
+        if state.edge_stable[i as usize] as i32 == -(1) {
             state.recursive_find_stable(i);
         }
         i += 1

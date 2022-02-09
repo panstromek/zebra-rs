@@ -46,37 +46,37 @@ pub static flip_direction: [[i8; 16]; 100] = init_flip_direction();
 
 pub static dir_mask: [i32; 100] = const_dir_mask;
 pub const const_dir_mask: [i32; 100] =
-    [0 as i32, 0 as i32, 0 as i32, 0 as i32,
-        0 as i32, 0 as i32, 0 as i32, 0 as i32,
-        0 as i32, 0 as i32, 0 as i32, 81 as i32,
-        81 as i32, 87 as i32, 87 as i32,
-        87 as i32, 87 as i32, 22 as i32,
-        22 as i32, 0 as i32, 0 as i32, 81 as i32,
-        81 as i32, 87 as i32, 87 as i32,
-        87 as i32, 87 as i32, 22 as i32,
-        22 as i32, 0 as i32, 0 as i32,
-        121 as i32, 121 as i32, 255 as i32,
-        255 as i32, 255 as i32, 255 as i32,
-        182 as i32, 182 as i32, 0 as i32,
-        0 as i32, 121 as i32, 121 as i32,
-        255 as i32, 255 as i32, 255 as i32,
-        255 as i32, 182 as i32, 182 as i32,
-        0 as i32, 0 as i32, 121 as i32,
-        121 as i32, 255 as i32, 255 as i32,
-        255 as i32, 255 as i32, 182 as i32,
-        182 as i32, 0 as i32, 0 as i32,
-        121 as i32, 121 as i32, 255 as i32,
-        255 as i32, 255 as i32, 255 as i32,
-        182 as i32, 182 as i32, 0 as i32,
-        0 as i32, 41 as i32, 41 as i32,
-        171 as i32, 171 as i32, 171 as i32,
-        171 as i32, 162 as i32, 162 as i32,
-        0 as i32, 0 as i32, 41 as i32, 41 as i32,
-        171 as i32, 171 as i32, 171 as i32,
-        171 as i32, 162 as i32, 162 as i32,
-        0 as i32, 0 as i32, 0 as i32, 0 as i32,
-        0 as i32, 0 as i32, 0 as i32, 0 as i32,
-        0 as i32, 0 as i32, 0 as i32];
+    [0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 81,
+        81, 87, 87,
+        87, 87, 22,
+        22, 0, 0, 81,
+        81, 87, 87,
+        87, 87, 22,
+        22, 0, 0,
+        121, 121, 255,
+        255, 255, 255,
+        182, 182, 0,
+        0, 121, 121,
+        255, 255, 255,
+        255, 182, 182,
+        0, 0, 121,
+        121, 255, 255,
+        255, 255, 182,
+        182, 0, 0,
+        121, 121, 255,
+        255, 255, 255,
+        182, 182, 0,
+        0, 41, 41,
+        171, 171, 171,
+        171, 162, 162,
+        0, 0, 41, 41,
+        171, 171, 171,
+        171, 162, 162,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0];
 
 pub const const_move_offset: [i8; 8] = [1, -1, 9, -9, 10, -10, 11, -11];
 pub static move_offset: [i8; 8] = const_move_offset;
@@ -157,7 +157,7 @@ pub fn make_move(side_to_move: i32, move_0: i8, update_hash: i32,
             move_0, side_to_move, &mut board_state_.board,
             &mut hash_state_.hash_flip1, &mut hash_state_.hash_flip2, flip_stack);
         flipped = flipped_;
-        if flipped == 0 as i32 { return 0 as i32 }
+        if flipped == 0 { return 0 }
         diff1 =
             hash_update1_ ^
                 hash_state_.hash_put_value1[side_to_move as usize][move_0 as usize];
@@ -170,26 +170,26 @@ pub fn make_move(side_to_move: i32, move_0: i8, update_hash: i32,
         hash_state_.hash2 ^= diff2
     } else {
         flipped = DoFlips_no_hash(move_0, side_to_move, &mut board_state_.board, flip_stack);
-        if flipped == 0 as i32 { return 0 as i32 }
+        if flipped == 0 { return 0 }
         hash_state_.hash_stored1[moves_state_.disks_played as usize] = hash_state_.hash1;
         hash_state_.hash_stored2[moves_state_.disks_played as usize] = hash_state_.hash2
     }
     let ss = hash_state_;
     moves_state_.flip_count[moves_state_.disks_played as usize] = flipped;
     board_state_.board[move_0 as usize] = side_to_move;
-    if side_to_move == 0 as i32 {
-        board_state_.piece_count[0][(moves_state_.disks_played + 1 as i32) as usize] =
+    if side_to_move == 0 {
+        board_state_.piece_count[0][(moves_state_.disks_played + 1) as usize] =
             board_state_.piece_count[0][moves_state_.disks_played as usize] +
-                flipped + 1 as i32;
-        board_state_.piece_count[2][(moves_state_.disks_played + 1 as i32) as usize] =
+                flipped + 1;
+        board_state_.piece_count[2][(moves_state_.disks_played + 1) as usize] =
             board_state_.piece_count[2][moves_state_.disks_played as usize] -
                 flipped
     } else {
         /* side_to_move == WHITESQ */
-        board_state_.piece_count[2][(moves_state_.disks_played + 1 as i32) as usize] =
+        board_state_.piece_count[2][(moves_state_.disks_played + 1) as usize] =
             board_state_.piece_count[2][moves_state_.disks_played as usize] +
-                flipped + 1 as i32;
-        board_state_.piece_count[0][(moves_state_.disks_played + 1 as i32) as usize] =
+                flipped + 1;
+        board_state_.piece_count[0][(moves_state_.disks_played + 1) as usize] =
             board_state_.piece_count[0][moves_state_.disks_played as usize] -
                 flipped
     }
@@ -210,15 +210,15 @@ pub fn unmake_move(side_to_move: i32, move_0: i8, board: &mut [i32; 128], moves_
     hash_state_.hash1 = hash_state_.hash_stored1[moves_state_.disks_played as usize];
     hash_state_.hash2 = hash_state_.hash_stored2[moves_state_.disks_played as usize];
     let mut UndoFlips__flip_count = moves_state_.flip_count[moves_state_.disks_played as usize];
-    let UndoFlips__oppcol = 0 as i32 + 2 as i32 - side_to_move;
+    let UndoFlips__oppcol = 0 + 2 - side_to_move;
 
-    if UndoFlips__flip_count & 1 as i32 != 0 {
+    if UndoFlips__flip_count & 1 != 0 {
         UndoFlips__flip_count -= 1;
         flip_stack.flip_stack = flip_stack.flip_stack.offset(-1);
         board[flip_stack.global_flip_stack[flip_stack.flip_stack] as usize] = UndoFlips__oppcol
     }
     while UndoFlips__flip_count != 0 {
-        UndoFlips__flip_count -= 2 as i32;
+        UndoFlips__flip_count -= 2;
         flip_stack.flip_stack = flip_stack.flip_stack.offset(-1);
         board[flip_stack.global_flip_stack[flip_stack.flip_stack] as usize] = UndoFlips__oppcol;
         flip_stack.flip_stack = flip_stack.flip_stack.offset(-1);
@@ -234,7 +234,7 @@ pub fn unmake_move(side_to_move: i32, move_0: i8, board: &mut [i32; 128], moves_
 pub fn generate_specific(curr_move: i8, side_to_move: i32, board: &[i32; 128]) -> i32 {
     let inc = &flip_direction[curr_move as usize]; //first_flip_direction[curr_move as usize];
     return AnyFlips_compact(board, inc, curr_move, side_to_move,
-                            0 as i32 + 2 as i32 - side_to_move);
+                            0 + 2 - side_to_move);
 }
 /*
    GENERATE_MOVE
@@ -250,12 +250,12 @@ pub fn generate_move(side_to_move: i32, board: &Board,
     let mut move_0 = 0;
     let mut move_index = 0;
     move_index = moves_state_.sweep_status[moves_state_.disks_played as usize];
-    while move_index < 60 as i32 {
+    while move_index < 60 {
         move_0 = search_state_.sorted_move_order[moves_state_.disks_played as usize][move_index as usize];
-        if board[move_0 as usize] == 1 as i32 &&
+        if board[move_0 as usize] == 1 &&
             generate_specific(move_0, side_to_move, board) != 0 {
             moves_state_.sweep_status[moves_state_.disks_played as usize] =
-                move_index + 1 as i32;
+                move_index + 1;
             return move_0
         } else { move_index += 1 }
     }
@@ -297,9 +297,9 @@ pub fn count_all(side_to_move: i32, empty: i32, board: &Board, current_move_orde
     mobility = 0;
     found_empty = 0;
     move_index = 0;
-    while move_index < 60 as i32 {
+    while move_index < 60 {
         move_0 = current_move_order_sorted[move_index as usize];
-        if board[move_0 as usize] == 1 as i32 {
+        if board[move_0 as usize] == 1 {
             if generate_specific(move_0, side_to_move, board) != 0 { mobility += 1 }
             found_empty += 1;
             if found_empty == empty { return mobility }
@@ -316,13 +316,13 @@ pub fn count_all(side_to_move: i32, empty: i32, board: &Board, current_move_orde
 pub fn game_in_progress(moves_state_: &mut MovesState, search_state_: &SearchState, board: &Board) -> i32 {
     let mut black_count: i32 = 0;
     let mut white_count: i32 = 0;
-    let side_to_move = 0 as i32;
+    let side_to_move = 0;
     generate_all(side_to_move, moves_state_, search_state_, board);
     black_count = moves_state_.move_count[moves_state_.disks_played as usize];
-    let side_to_move = 2 as i32;
+    let side_to_move = 2;
     generate_all(side_to_move, moves_state_, search_state_, board);
     white_count = moves_state_.move_count[moves_state_.disks_played as usize];
-    return (black_count > 0 as i32 || white_count > 0 as i32) as i32;
+    return (black_count > 0 || white_count > 0) as i32;
 }
 
 /*
@@ -337,22 +337,22 @@ pub fn game_in_progress(moves_state_: &mut MovesState, search_state_: &SearchSta
 pub fn make_move_no_hash(side_to_move: i32, move_0: i8, board_state_: &mut BoardState, moves_state_: &mut MovesState, flip_stack: &mut FlipStack)
                                 -> i32 {
     let flipped = DoFlips_no_hash(move_0, side_to_move, &mut board_state_.board, flip_stack);
-    if flipped == 0 as i32 { return 0 as i32 }
+    if flipped == 0 { return 0 }
     moves_state_.flip_count[moves_state_.disks_played as usize] = flipped;
     board_state_.board[move_0 as usize] = side_to_move;
-    if side_to_move == 0 as i32 {
-        board_state_.piece_count[0][(moves_state_.disks_played + 1 as i32) as usize] =
+    if side_to_move == 0 {
+        board_state_.piece_count[0][(moves_state_.disks_played + 1) as usize] =
             board_state_.piece_count[0][moves_state_.disks_played as usize] +
-                flipped + 1 as i32;
-        board_state_.piece_count[2][(moves_state_.disks_played + 1 as i32) as usize] =
+                flipped + 1;
+        board_state_.piece_count[2][(moves_state_.disks_played + 1) as usize] =
             board_state_.piece_count[2][moves_state_.disks_played as usize] -
                 flipped
     } else {
         /* side_to_move == WHITESQ */
-        board_state_.piece_count[2][(moves_state_.disks_played + 1 as i32) as usize] =
+        board_state_.piece_count[2][(moves_state_.disks_played + 1) as usize] =
             board_state_.piece_count[2][moves_state_.disks_played as usize] +
-                flipped + 1 as i32;
-        board_state_.piece_count[0][(moves_state_.disks_played + 1 as i32) as usize] =
+                flipped + 1;
+        board_state_.piece_count[0][(moves_state_.disks_played + 1) as usize] =
             board_state_.piece_count[0][moves_state_.disks_played as usize] -
                 flipped
     }
@@ -370,14 +370,14 @@ pub fn unmake_move_no_hash(side_to_move: i32, move_0: i8, board: &mut [i32; 128]
     board[move_0 as usize] = 1;
     moves_state_.disks_played -= 1;
     let mut UndoFlips__flip_count = moves_state_.flip_count[moves_state_.disks_played as usize];
-    let UndoFlips__oppcol = 0 as i32 + 2 as i32 - side_to_move;
-    if UndoFlips__flip_count & 1 as i32 != 0 {
+    let UndoFlips__oppcol = 0 + 2 - side_to_move;
+    if UndoFlips__flip_count & 1 != 0 {
         UndoFlips__flip_count -= 1;
         flip_stack.flip_stack = flip_stack.flip_stack - 1;
         board[flip_stack.global_flip_stack[flip_stack.flip_stack] as usize ] = UndoFlips__oppcol
     }
     while UndoFlips__flip_count != 0 {
-        UndoFlips__flip_count -= 2 as i32;
+        UndoFlips__flip_count -= 2;
         flip_stack.flip_stack = flip_stack.flip_stack - 1;
         board[flip_stack.global_flip_stack[flip_stack.flip_stack] as usize ] = UndoFlips__oppcol;
         flip_stack.flip_stack = flip_stack.flip_stack - 1;
@@ -395,23 +395,23 @@ pub fn valid_move(move_0: i8, side_to_move: i32, board: &[i32; 128]) -> i32{
     let mut count = 0;
     if move_0 < 11 || move_0 > 88 ||
         board[move_0 as usize] != 1 {
-        return 0 as i32
+        return 0
     }
     i = 0;
-    while i < 8 as i32 {
-        if dir_mask[move_0 as usize] & (1 as i32) << i != 0 {
+    while i < 8 {
+        if dir_mask[move_0 as usize] & (1) << i != 0 {
             pos = move_0 + move_offset[i as usize];
             count = 0;
             while board[pos as usize] ==
-                0 as i32 + 2 as i32 - side_to_move {
+                0 + 2 - side_to_move {
                 pos += move_offset[i as usize];
                 count += 1
             }
             if board[pos as usize] == side_to_move {
-                if count >= 1 as i32 { return 1 as i32 }
+                if count >= 1 { return 1 }
             }
         }
         i += 1
     }
-    return 0 as i32;
+    return 0;
 }

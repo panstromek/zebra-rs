@@ -55,7 +55,7 @@ impl PlayerDatabaseType {
       Returns the name of the INDEXth player if available.
     */
     pub fn get_player_name(&self, index: i32) -> &'static [u8] {
-        if index < 0 as i32 || index >= self.count() {
+        if index < 0 || index >= self.count() {
             return b"< Not available >"
         } else {
             return self.name_buffer[(20 * index as usize)..].split(|&c| c == 0).next().unwrap();
@@ -67,7 +67,7 @@ impl PlayerDatabaseType {
       INDEXth player if available, otherwise the last index + 1.
     */
     pub fn player_lex_order(&self, index: i32) -> i32 {
-        if index < 0 as i32 || index >= self.count() {
+        if index < 0 || index >= self.count() {
             return self.count()
         } else {
             return self.player_list[index as usize].lex_order
@@ -160,7 +160,7 @@ impl TournamentDatabaseType {
       Returns the name of the INDEXth tournament if available.
     */
     pub fn tournament_name(&self, index: i32) -> &'static [u8] {
-        if index < 0 as i32 || index >= self.count() {
+        if index < 0 || index >= self.count() {
             return b"<Not available>"
         } else {
             return self.name_buffer[(26 * index as usize)..].split(|&c| c == 0).next().unwrap()
@@ -260,7 +260,7 @@ impl SearchResultType {
     */
 
     unsafe fn get_thor_game_move_count(&self, index: i32) -> i32 {
-        if index < 0 as i32 || index >= self.match_count {
+        if index < 0 || index >= self.match_count {
             /* Bad index */
             return -1
         } else {

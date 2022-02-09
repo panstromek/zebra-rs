@@ -90,12 +90,12 @@ impl LibcFatalError {
             while i < match_count {
                 write!(stdout, "{}: {:4.1}%    " , TO_SQUARE(move_list[i as usize].move_0),
                        100.0f64 * move_list[i as usize].frequency as f64 / freq_sum as f64);
-                if i % 6 as i32 == 4 as i32 {
+                if i % 6 == 4 {
                     write!(stdout, "\n");
                 }
                 i += 1
             }
-            if match_count % 6 as i32 != 5 as i32 {
+            if match_count % 6 != 5 {
                 write!(stdout, "\n");
             }
         }
@@ -136,7 +136,7 @@ impl FrontEnd for LibcFatalError {
         unsafe {
             let timer =  g_timer.get_real_timer();
             if timer - display_state.last_output >= display_state.interval2 || display_state.timed_buffer_management == 0 {
-                display_state.display_status(&mut stdout, 0 as i32);
+                display_state.display_status(&mut stdout, 0);
                 display_state.status_modified = 0;
                 if timer - display_state.last_output >= display_state.interval2 {
                     if display_state.sweep_modified != 0 { display_state.display_sweep(&mut stdout); }
@@ -180,7 +180,7 @@ impl FrontEnd for LibcFatalError {
                 Self::end_tree_search_some_pv_stats_report(alpha, beta, curr_val)
             }
             send_sweep!(display_state, " ");
-            if update_pv != 0 && move_index > 0 as i32 && echo != 0 {
+            if update_pv != 0 && move_index > 0 && echo != 0 {
                 display_state.display_sweep(&mut stdout);
             }
         }
@@ -211,12 +211,12 @@ impl FrontEnd for LibcFatalError {
         /* Output some stats */
         unsafe {
             send_sweep!(display_state, "{}", TO_SQUARE(entry.move_0[0]));
-            if entry.flags as i32 & 16 as i32 != 0 &&
-                entry.flags as i32 & 4 as i32 != 0 {
+            if entry.flags as i32 & 16 != 0 &&
+                entry.flags as i32 & 4 != 0 {
                 send_sweep!(display_state, "={}", entry.eval);
-            } else if entry.flags as i32 & 16 as i32 != 0
+            } else if entry.flags as i32 & 16 != 0
                 &&
-                entry.flags as i32 & 1 as i32 !=
+                entry.flags as i32 & 1 !=
                     0 {
                 send_sweep!(display_state, ">{}", entry.eval - 1);
             } else {
@@ -262,7 +262,7 @@ impl FrontEnd for LibcFatalError {
             search_state.set_current_eval(eval);
             display_state.clear_status();
             send_status!(display_state, "-->  {:2}  ", empties);
-            let mut eval_str = produce_eval_text(&*eval_info, 1 as i32);
+            let mut eval_str = produce_eval_text(&*eval_info, 1);
             send_status!(display_state, "{:<10}  ", eval_str);
             let nodes_counter: &mut CounterType = &mut search_state.nodes;
             let node_val = counter_value(nodes_counter);
@@ -323,7 +323,7 @@ impl FrontEnd for LibcFatalError {
 
     fn end_display_zero_status() {
         unsafe {
-            display_state.display_status(&mut stdout, 0 as i32);
+            display_state.display_status(&mut stdout, 0);
         }
     }
 
@@ -357,12 +357,12 @@ impl FrontEnd for LibcFatalError {
     fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, candidate_list_: &[CandidateMove; 60], search_state: & SearchState) {
         unsafe {
             send_status!(display_state, "-->   Book     ");
-            if flags & 16 as i32 != 0 {
+            if flags & 16 != 0 {
                 send_status!(display_state, "{:+3} (exact)   ",
-                            chosen_score / 128 as i32);
-            } else if flags & 4 as i32 != 0 {
+                            chosen_score / 128);
+            } else if flags & 4 != 0 {
                 send_status!(display_state, "{:+3} (WLD)     ",
-                            chosen_score / 128 as i32);
+                            chosen_score / 128);
             } else {
                 send_status!(display_state, "{:+6.2}        ",
                             chosen_score as f64 / 128.0f64);
@@ -383,16 +383,16 @@ impl FrontEnd for LibcFatalError {
         use std::fmt::Write;
         let mut buffer_ = String::with_capacity(32);
         unsafe {
-            if alpha <= -(29000 as i32) && beta >= 29000 as i32 {
+            if alpha <= -(29000) && beta >= 29000 {
                 write!(buffer_,
                         "[-inf,inf]:");
-            } else if alpha <= -(29000 as i32) &&
-                beta < 29000 as i32 {
+            } else if alpha <= -(29000) &&
+                beta < 29000 {
                 write!(buffer_,
                         "[-inf,{:.1}]:",
                         beta as f64 / 128.0f64);
-            } else if alpha > -(29000 as i32) &&
-                beta >= 29000 as i32 {
+            } else if alpha > -(29000) &&
+                beta >= 29000 {
                 write!(buffer_,
                         "[{:.1},inf]:",
                         alpha as f64 / 128.0f64);
@@ -414,11 +414,11 @@ impl FrontEnd for LibcFatalError {
             if update_pv != 0 {
                 if curr_val <= alpha {
                     send_sweep!(display_state, "<{:.2}",
-                                 (curr_val + 1 as i32) as f64
+                                 (curr_val + 1) as f64
                                    / 128.0f64);
                 } else if curr_val >= beta {
                     send_sweep!(display_state, ">{:.2}",
-                                 (curr_val - 1 as i32) as f64
+                                 (curr_val - 1) as f64
                                    / 128.0f64);
                 } else {
                     send_sweep!(display_state, "={:.2}",
@@ -426,8 +426,8 @@ impl FrontEnd for LibcFatalError {
                 }
             }
             send_sweep!(display_state, " ");
-            if update_pv != 0 && searched > 0 as i32 && echo != 0 &&
-                max_depth >= 10 as i32 {
+            if update_pv != 0 && searched > 0 && echo != 0 &&
+                max_depth >= 10 {
                 display_state.display_sweep(&mut stdout);
             }
         }
@@ -457,7 +457,7 @@ impl FrontEnd for LibcFatalError {
              }
              send_status!(display_state, "{:2}  ",
                          depth);
-             let mut eval_str = produce_eval_text(eval_info, 1 as i32);
+             let mut eval_str = produce_eval_text(eval_info, 1);
              send_status!(display_state, "{:<10}  ",
                          eval_str);
              let node_val = counter_value(nodes_counter);
@@ -465,7 +465,7 @@ impl FrontEnd for LibcFatalError {
              if search_state.get_ponder_move() != 0 {
                  send_status!(display_state, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
              }
-             hash_expand_pv(side_to_move, 0 as i32, 4 as i32, 12345678 as i32, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
+             hash_expand_pv(side_to_move, 0, 4, 12345678, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
              let mut pv_zero: &mut [i8; 64] = &mut board_state.pv[0];
              let mut pv_depth_zero: i32 = board_state.pv_depth[0];
 

@@ -41,20 +41,20 @@ pub fn non_iterative_popcount(mut n1: u32, mut n2: u32) -> u32 {
 pub fn bit_reverse_32(mut val: u32)
  -> u32 {
     val =
-        val >> 1 as i32 & 0x55555555 as i32 as u32 |
-            val << 1 as i32 & 0xaaaaaaaa as u32;
+        val >> 1 & 0x55555555 as i32 as u32 |
+            val << 1 & 0xaaaaaaaa as u32;
     val =
-        val >> 2 as i32 & 0x33333333 as i32 as u32 |
-            val << 2 as i32 & 0xcccccccc as u32;
+        val >> 2 & 0x33333333 as i32 as u32 |
+            val << 2 & 0xcccccccc as u32;
     val =
-        val >> 4 as i32 & 0xf0f0f0f as i32 as u32 |
-            val << 4 as i32 & 0xf0f0f0f0 as u32;
+        val >> 4 & 0xf0f0f0f as i32 as u32 |
+            val << 4 & 0xf0f0f0f0 as u32;
     val =
-        val >> 8 as i32 & 0xff00ff as i32 as u32 |
-            val << 8 as i32 & 0xff00ff00 as u32;
+        val >> 8 & 0xff00ff as i32 as u32 |
+            val << 8 & 0xff00ff00 as u32;
     val =
-        val >> 16 as i32 & 0xffff as i32 as u32 |
-            val << 16 as i32 & 0xffff0000 as u32;
+        val >> 16 & 0xffff as i32 as u32 |
+            val << 16 & 0xffff0000 as u32;
     return val;
 }
 /*
@@ -78,35 +78,35 @@ pub fn set_bitboards(board: &[i32; 128],
     opp_bits.low = 0;
     mask = 1;
     i = 1;
-    while i <= 4 as i32 {
+    while i <= 4 {
         j = 1;
-        while j <= 8 as i32 {
-            pos = 10 as i32 * i + j;
+        while j <= 8 {
+            pos = 10 * i + j;
             if board[pos as usize] == side_to_move {
                 my_bits.low |= mask
             } else if board[pos as usize] ==
-                          0 as i32 + 2 as i32 - side_to_move {
+                          0 + 2 - side_to_move {
                 opp_bits.low |= mask
             }
             j += 1;
-            mask <<= 1 as i32
+            mask <<= 1
         }
         i += 1
     }
     mask = 1;
     i = 5;
-    while i <= 8 as i32 {
+    while i <= 8 {
         j = 1;
-        while j <= 8 as i32 {
-            pos = 10 as i32 * i + j;
+        while j <= 8 {
+            pos = 10 * i + j;
             if board[pos as usize] == side_to_move {
                 my_bits.high |= mask
             } else if board[pos as usize] ==
-                          0 as i32 + 2 as i32 - side_to_move {
+                          0 + 2 - side_to_move {
                 opp_bits.high |= mask
             }
             j += 1;
-            mask <<= 1 as i32
+            mask <<= 1
         }
         i += 1
     }
@@ -118,23 +118,23 @@ const fn create_square_mask() -> [BitBoard; 100] {
     let mut square_mask_: [BitBoard; 100] = [BitBoard{high: 0, low: 0,}; 100];
     let mut j = 0;
     let mut i = 1;
-    while i <= 8 as i32 {
+    while i <= 8 {
         j = 1;
-        while j <= 8 as i32 {
-            let pos = 10 as i32 * i + j;
+        while j <= 8 {
+            let pos = 10 * i + j;
             let shift =
-                (8 as i32 * (i - 1 as i32) +
-                     (j - 1 as i32)) as u32;
-            if shift < 32 as i32 as u32 {
+                (8 * (i - 1) +
+                     (j - 1)) as u32;
+            if shift < 32 as u32 {
                 square_mask_[pos as usize].low =
                     ((1 as u64) << shift) as u32;
                 square_mask_[pos as usize].high =
-                    0 as i32 as u32
+                    0 as u32
             } else {
                 square_mask_[pos as usize].low = 0;
                 square_mask_[pos as usize].high =
                     ((1 as u64) <<
-                         shift.wrapping_sub(32 as i32 as
+                         shift.wrapping_sub(32 as
                                                 u32)) as u32
             }
             j += 1

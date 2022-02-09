@@ -178,7 +178,7 @@ impl DisplayState {
 pub fn dumpch(stdin_lock : &mut StdinLock) {
     let mut ch = [0_u8];
     stdin_lock.read(&mut ch);
-    if ch[0] == b' ' { std::process::exit(1 as i32); };
+    if ch[0] == b' ' { std::process::exit(1); };
 }
 /*
    DISPLAY_BOARD
@@ -346,13 +346,13 @@ pub fn display_move(stream: &mut dyn Write, move_0: i8) {
 
 pub fn display_optimal_line(stream: &mut dyn Write, full_pv_depth_: i32, full_pv_: &[i8; 120]) {
     let mut i: i32 = 0;
-    if full_pv_depth_ == 0 as i32 { return }
+    if full_pv_depth_ == 0 { return }
     write!(stream, "PV: ");
     i = 0;
     while i < full_pv_depth_ {
-        if i % 25 as i32 != 0 as i32 {
+        if i % 25 != 0 {
             write!(stream, " ");
-        } else if i > 0 as i32 {
+        } else if i > 0 {
             write!(stream, "\n    ");
         }
         display_move(stream, full_pv_[i as usize]);
@@ -517,9 +517,9 @@ pub fn produce_eval_text(eval_info: &EvaluationType,
     let disk_diff: f64;
     let int_confidence: i32;
     match eval_info.type_0 as u32 {
-        0 => if eval_info.score >= 29000 as i32 {
+        0 => if eval_info.score >= 29000 {
             write!(buffer, "Win");
-        } else if eval_info.score <= -(29000 as i32) {
+        } else if eval_info.score <= -(29000) {
             write!(buffer, "Loss");
         } else {
             disk_diff = eval_info.score as f64 / 128.0f64;
@@ -592,14 +592,14 @@ pub fn produce_eval_text(eval_info: &EvaluationType,
                     write!(buffer, "{} @ {}%", "Draw", int_confidence);
                 },
                 2 => if eval_info.score != -128 {
-                    write!(buffer, "{:+} @ {}%", eval_info.score >> 7 as i32, int_confidence);
+                    write!(buffer, "{:+} @ {}%", eval_info.score >> 7, int_confidence);
                 } else {
                     write!(buffer,
                                   "{} @ {}%",
                                   "Loss",
                                   int_confidence);
                 },
-                3 => if eval_info.score == 0 as i32 {
+                3 => if eval_info.score == 0 {
                     write!(buffer, "Draw @ {}%", int_confidence);
                 } else {
                     write!(buffer, "{:+} @ {}%", eval_info.score / 128, int_confidence);

@@ -181,8 +181,8 @@ pub fn wide_to_compact(entry: &HashEntry, compact_entry: &mut CompactHashEntry) 
         ((entry.move_0[3] as u32) << 24)
     );
     compact_entry.key1_selectivity_flags_draft = (entry.key1 & 0xff000000 as u32)
-        .wrapping_add(((entry.selectivity as i32) << 16 as i32) as u32)
-        .wrapping_add(((entry.flags as i32) << 8 as i32) as u32)
+        .wrapping_add(((entry.selectivity as i32) << 16) as u32)
+        .wrapping_add(((entry.flags as i32) << 8) as u32)
         .wrapping_add(entry.draft as u32);
 }
 
@@ -230,17 +230,17 @@ pub fn setup_hash(clear: i32, hash_state_: &mut HashState, random: &mut MyRandom
     if clear != 0 {
         i = 0;
         while i < has_table_ptr.len() as i32 {
-            (*has_table_ptr.offset(i as isize)).key1_selectivity_flags_draft &= !(255 as i32) as u32;
+            (*has_table_ptr.offset(i as isize)).key1_selectivity_flags_draft &= !(255) as u32;
             (*has_table_ptr.offset(i as isize)).key2 = 0;
             i += 1
         }
     }
     rand_index = 0;
-    while rand_index < 130 as i32 {
+    while rand_index < 130 {
         'c_2013: loop {
-            random_pair[rand_index as usize][0] = ((random.my_random() << 3 as i32) + (random.my_random() >> 2 as i32)) as u32;
-            random_pair[rand_index as usize][1] = ((random.my_random() << 3 as i32) + (random.my_random() >> 2 as i32)) as u32;
-            closeness = get_closeness(random_pair[rand_index as usize][0], random_pair[rand_index as usize][1], 0 as i32 as u32, 0 as i32 as u32);
+            random_pair[rand_index as usize][0] = ((random.my_random() << 3) + (random.my_random() >> 2)) as u32;
+            random_pair[rand_index as usize][1] = ((random.my_random() << 3) + (random.my_random() >> 2)) as u32;
+            closeness = get_closeness(random_pair[rand_index as usize][0], random_pair[rand_index as usize][1], 0 as u32, 0 as u32);
             if closeness > max_zero_closeness { continue; }
             i = 0;
             loop {
@@ -256,7 +256,7 @@ pub fn setup_hash(clear: i32, hash_state_: &mut HashState, random: &mut MyRandom
     }
     rand_index = 0;
     i = 0;
-    while i < 128 as i32 {
+    while i < 128 {
         hash_state_.hash_value1[0][i as usize] = 0;
         hash_state_.hash_value2[0][i as usize] = 0;
         hash_state_.hash_value1[2][i as usize] = 0;
@@ -264,10 +264,10 @@ pub fn setup_hash(clear: i32, hash_state_: &mut HashState, random: &mut MyRandom
         i += 1
     }
     i = 1;
-    while i <= 8 as i32 {
+    while i <= 8 {
         j = 1;
-        while j <= 8 as i32 {
-            pos = 10 as i32 * i + j;
+        while j <= 8 {
+            pos = 10 * i + j;
             hash_state_.hash_value1[0][pos as usize] = random_pair[rand_index as usize][0];
             hash_state_.hash_value2[0][pos as usize] = random_pair[rand_index as usize][1];
             rand_index += 1;
@@ -279,7 +279,7 @@ pub fn setup_hash(clear: i32, hash_state_: &mut HashState, random: &mut MyRandom
         i += 1
     }
     i = 0;
-    while i < 128 as i32 {
+    while i < 128 {
         hash_state_.hash_flip1[i as usize] = hash_state_.hash_value1[0][i as usize] ^ hash_state_.hash_value1[2][i as usize];
         hash_state_.hash_flip2[i as usize] = hash_state_.hash_value2[0][i as usize] ^ hash_state_.hash_value2[2][i as usize];
         i += 1
@@ -293,7 +293,7 @@ pub fn setup_hash(clear: i32, hash_state_: &mut HashState, random: &mut MyRandom
     hash_state_.hash_flip_color1 = hash_state_.hash_color1[0] ^ hash_state_.hash_color1[2];
     hash_state_.hash_flip_color2 = hash_state_.hash_color2[0] ^ hash_state_.hash_color2[2];
     j = 0;
-    while j < 128 as i32 {
+    while j < 128 {
         hash_state_.hash_put_value1[0][j as usize] = hash_state_.hash_value1[0][j as usize] ^ hash_state_.hash_flip_color1;
         hash_state_.hash_put_value2[0][j as usize] = hash_state_.hash_value2[0][j as usize] ^ hash_state_.hash_flip_color2;
         hash_state_.hash_put_value1[2][j as usize] = hash_state_.hash_value1[2][j as usize] ^ hash_state_.hash_flip_color1;
@@ -336,7 +336,7 @@ pub fn add_hash(state: &mut HashState, reverse_mode: i32,
         code2 = state.hash1 ^ state.hash_trans1
     } else { code1 = state.hash1 ^ state.hash_trans1; code2 = state.hash2 ^ state.hash_trans2 }
     index1 = code1 & state.hash_mask as u32;
-    index2 = index1 ^ 1 as i32 as u32;
+    index2 = index1 ^ 1 as u32;
     let hash_table_ptr: &mut [_] = &mut state.hash_table;
     if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
         index = index1
@@ -344,24 +344,24 @@ pub fn add_hash(state: &mut HashState, reverse_mode: i32,
         index = index2
     } else if (*hash_table_ptr.offset(index1 as
         isize)).key1_selectivity_flags_draft &
-        255 as i32 as u32 <=
+        255 as u32 <=
         (*hash_table_ptr.offset(index2 as
             isize)).key1_selectivity_flags_draft
-            & 255 as i32 as u32 {
+            & 255 as u32 {
         index = index1
     } else { index = index2 }
     old_draft =
         ((*hash_table_ptr.offset(index as isize)).key1_selectivity_flags_draft &
-            255 as i32 as u32) as i32;
-    if flags & 4 as i32 != 0 {
+            255 as u32) as i32;
+    if flags & 4 != 0 {
         /* Exact scores are potentially more useful */
-        change_encouragment = 2 as i32
-    } else { change_encouragment = 0 as i32 }
+        change_encouragment = 2
+    } else { change_encouragment = 0 }
     if (*hash_table_ptr.offset(index as isize)).key2 == code2 {
-        if old_draft > draft + change_encouragment + 2 as i32 {
+        if old_draft > draft + change_encouragment + 2 {
             return
         }
-    } else if old_draft > draft + change_encouragment + 4 as i32 {
+    } else if old_draft > draft + change_encouragment + 4 {
         return
     }
     entry.key1 = code1;
@@ -453,7 +453,7 @@ impl HashState {
             code2 = self.hash1 ^ self.hash_trans1
         } else { code1 = self.hash1 ^ self.hash_trans1; code2 = self.hash2 ^ self.hash_trans2 }
         index1 = code1 & self.hash_mask as u32;
-        index2 = index1 ^ 1 as i32 as u32;
+        index2 = index1 ^ 1 as u32;
         let hash_table_ptr: &mut [_] = &mut self.hash_table;
         if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
             index = index1
@@ -461,31 +461,31 @@ impl HashState {
             index = index2
         } else if (*hash_table_ptr.offset(index1 as
             isize)).key1_selectivity_flags_draft &
-            255 as i32 as u32 <=
+            255 as u32 <=
             (*hash_table_ptr.offset(index2 as
                 isize)).key1_selectivity_flags_draft
-                & 255 as i32 as u32 {
+                & 255 as u32 {
             index = index1
         } else { index = index2 }
         old_draft =
             ((*hash_table_ptr.offset(index as isize)).key1_selectivity_flags_draft &
-                255 as i32 as u32) as i32;
-        if flags & 4 as i32 != 0 {
+                255 as u32) as i32;
+        if flags & 4 != 0 {
             /* Exact scores are potentially more useful */
-            change_encouragment = 2 as i32
-        } else { change_encouragment = 0 as i32 }
+            change_encouragment = 2
+        } else { change_encouragment = 0 }
         if (*hash_table_ptr.offset(index as isize)).key2 == code2 {
-            if old_draft > draft + change_encouragment + 2 as i32 {
+            if old_draft > draft + change_encouragment + 2 {
                 return
             }
-        } else if old_draft > draft + change_encouragment + 4 as i32 {
+        } else if old_draft > draft + change_encouragment + 4 {
             return
         }
         entry.key1 = code1;
         entry.key2 = code2;
         entry.eval = score;
         i = 0;
-        while i < 4 as i32 {
+        while i < 4 {
             entry.move_0[i as usize] = best[i as usize];
             i += 1
         }
