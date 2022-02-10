@@ -401,7 +401,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                 transform2[i as usize] = abs((g_state.random_instance).my_random() as i32) as u32
             } else {
                 transform1[i as usize] = 0;
-                transform2[i as usize] = 0 as u32
+                transform2[i as usize] = 0
             }
             i += 1;
             index += 1

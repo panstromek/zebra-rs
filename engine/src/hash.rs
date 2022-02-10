@@ -240,7 +240,7 @@ pub fn setup_hash(clear: i32, hash_state_: &mut HashState, random: &mut MyRandom
         'c_2013: loop {
             random_pair[rand_index as usize][0] = ((random.my_random() << 3) + (random.my_random() >> 2)) as u32;
             random_pair[rand_index as usize][1] = ((random.my_random() << 3) + (random.my_random() >> 2)) as u32;
-            closeness = get_closeness(random_pair[rand_index as usize][0], random_pair[rand_index as usize][1], 0 as u32, 0 as u32);
+            closeness = get_closeness(random_pair[rand_index as usize][0], random_pair[rand_index as usize][1], 0, 0);
             if closeness > max_zero_closeness { continue; }
             i = 0;
             loop {
@@ -336,7 +336,7 @@ pub fn add_hash(state: &mut HashState, reverse_mode: i32,
         code2 = state.hash1 ^ state.hash_trans1
     } else { code1 = state.hash1 ^ state.hash_trans1; code2 = state.hash2 ^ state.hash_trans2 }
     index1 = code1 & state.hash_mask as u32;
-    index2 = index1 ^ 1 as u32;
+    index2 = index1 ^ 1;
     let hash_table_ptr: &mut [_] = &mut state.hash_table;
     if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
         index = index1
@@ -344,15 +344,15 @@ pub fn add_hash(state: &mut HashState, reverse_mode: i32,
         index = index2
     } else if (*hash_table_ptr.offset(index1 as
         isize)).key1_selectivity_flags_draft &
-        255 as u32 <=
+        255 <=
         (*hash_table_ptr.offset(index2 as
             isize)).key1_selectivity_flags_draft
-            & 255 as u32 {
+            & 255 {
         index = index1
     } else { index = index2 }
     old_draft =
         ((*hash_table_ptr.offset(index as isize)).key1_selectivity_flags_draft &
-            255 as u32) as i32;
+            255) as i32;
     if flags & 4 != 0 {
         /* Exact scores are potentially more useful */
         change_encouragment = 2
@@ -453,7 +453,7 @@ impl HashState {
             code2 = self.hash1 ^ self.hash_trans1
         } else { code1 = self.hash1 ^ self.hash_trans1; code2 = self.hash2 ^ self.hash_trans2 }
         index1 = code1 & self.hash_mask as u32;
-        index2 = index1 ^ 1 as u32;
+        index2 = index1 ^ 1;
         let hash_table_ptr: &mut [_] = &mut self.hash_table;
         if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
             index = index1
@@ -461,15 +461,15 @@ impl HashState {
             index = index2
         } else if (*hash_table_ptr.offset(index1 as
             isize)).key1_selectivity_flags_draft &
-            255 as u32 <=
+            255 <=
             (*hash_table_ptr.offset(index2 as
                 isize)).key1_selectivity_flags_draft
-                & 255 as u32 {
+                & 255 {
             index = index1
         } else { index = index2 }
         old_draft =
             ((*hash_table_ptr.offset(index as isize)).key1_selectivity_flags_draft &
-                255 as u32) as i32;
+                255) as i32;
         if flags & 4 != 0 {
             /* Exact scores are potentially more useful */
             change_encouragment = 2

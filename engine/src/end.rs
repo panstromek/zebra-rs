@@ -513,7 +513,7 @@ fn solve_parity(end:&mut End, my_bits: BitBoard,
     }
     /* Odd parity */
     parity_mask =end.region_parity;
-    if end.region_parity != 0 as u32 {
+    if end.region_parity != 0 {
         /* Is there any region with odd parity? */
         old_sq = 0;
         sq = end. end_move_list[old_sq as usize].succ;
@@ -646,18 +646,17 @@ pub fn setup_end(flip_stack_: &mut FlipStack, end_g: &mut End) {
             end.neighborhood_mask[pos as usize].low = 0;
             end.neighborhood_mask[pos as usize].high = 0;
             k = 0;
-            while k < 8 as u32 {
+            while k < 8 {
                 if dir_mask[pos as usize] & (1) << k != 0 {
                     let neighbor =
                         (shift + dir_shift[k as usize]) as u32;
-                    if neighbor < 32 as u32 {
+                    if neighbor < 32 {
                         end.neighborhood_mask[pos as usize].low |=
                             ((1) << neighbor) as u32
                     } else {
                         end.neighborhood_mask[pos as usize].high |=
                             ((1) <<
-                                neighbor.wrapping_sub(32 as
-                                    u32)) as
+                                neighbor.wrapping_sub(32)) as
                                 u32
                     }
                 }
@@ -781,7 +780,7 @@ fn solve_parity_hash(end:&mut End, my_bits: BitBoard,
     }
     /* Odd parity. */
     parity_mask = end.region_parity;
-    if end.region_parity != 0 as u32 {
+    if end.region_parity != 0 {
         /* Is there any region with odd parity? */
         old_sq = 0;
         sq = end. end_move_list[old_sq as usize].succ;

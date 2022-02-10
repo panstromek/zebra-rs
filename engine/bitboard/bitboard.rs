@@ -125,17 +125,16 @@ const fn create_square_mask() -> [BitBoard; 100] {
             let shift =
                 (8 * (i - 1) +
                      (j - 1)) as u32;
-            if shift < 32 as u32 {
+            if shift < 32 {
                 square_mask_[pos as usize].low =
                     ((1 as u64) << shift) as u32;
                 square_mask_[pos as usize].high =
-                    0 as u32
+                    0
             } else {
                 square_mask_[pos as usize].low = 0;
                 square_mask_[pos as usize].high =
                     ((1 as u64) <<
-                         shift.wrapping_sub(32 as
-                                                u32)) as u32
+                         shift.wrapping_sub(32)) as u32
             }
             j += 1
         }

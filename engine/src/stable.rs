@@ -105,12 +105,12 @@ fn edge_zardoz_stable(ss: &mut BitBoard, dd: BitBoard, od: BitBoard) {
     t &= t >> 4;
     t &= t >> 2;
     t &= t >> 1;
-    lrf.high = (t & 0x1010101 as i32 as u32).wrapping_mul(255 as u32) | 0x81818181 as u32;
+    lrf.high = (t & 0x1010101 as i32 as u32).wrapping_mul(255) | 0x81818181 as u32;
     t = fb.low;
     t &= t >> 4;
     t &= t >> 2;
     t &= t >> 1;
-    lrf.low = (t & 0x1010101 as i32 as u32).wrapping_mul(255 as u32) | 0x81818181 as u32;
+    lrf.low = (t & 0x1010101 as i32 as u32).wrapping_mul(255) | 0x81818181 as u32;
     t = fb.high & fb.low;
     t &= t >> 16 | t << 16;
     t &= t >> 8 | t << 24;
@@ -145,7 +145,7 @@ fn edge_zardoz_stable(ss: &mut BitBoard, dd: BitBoard, od: BitBoard) {
     dbf.low |= t >> 4 & 0x7030100 as i32 as u32;
     (*ss).high |= lrf.high & udf.high & daf.high & dbf.high & dd.high;
     (*ss).low |= lrf.low & udf.low & daf.low & dbf.low & dd.low;
-    if (*ss).high | (*ss).low == 0 as u32 { return }
+    if (*ss).high | (*ss).low == 0 { return }
     loop  {
         ost = *ss;
         expand_ss.high = lrf.high | ost.high << 1 | ost.high >> 1;
@@ -175,7 +175,7 @@ pub fn count_edge_stable(color: i32, col_bits: BitBoard, opp_bits: BitBoard, sta
     let col_mask = ((col_bits.low & 0x80808080 as u32) >> 4).wrapping_add(col_bits.high & 0x80808080 as u32).wrapping_mul((0x1020408 / 8) as u32) >> 24;
     let opp_mask = ((opp_bits.low & 0x80808080 as u32) >> 4).wrapping_add(opp_bits.high & 0x80808080 as u32).wrapping_mul((0x1020408 / 8) as u32) >> 24;
     let ix_h1h8 = (state.base_conversion[col_mask as usize] as i32 - state.base_conversion[opp_mask as usize] as i32) as u32;
-    let ix_a1h1 = (state.base_conversion[(col_bits.low & 255 as u32) as usize] as i32 - state.base_conversion[(opp_bits.low & 255 as u32) as usize] as i32) as u32;
+    let ix_a1h1 = (state.base_conversion[(col_bits.low & 255) as usize] as i32 - state.base_conversion[(opp_bits.low & 255) as usize] as i32) as u32;
     let ix_a8h8 = (state.base_conversion[(col_bits.high >> 24) as usize] as i32 - state.base_conversion[(opp_bits.high >> 24) as usize] as i32) as u32;
     if color == 0 {
         state.edge_a1h1 = 3280_u32.wrapping_sub(ix_a1h1) as i32;
