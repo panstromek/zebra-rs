@@ -222,45 +222,31 @@ pub fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32,
     mut midgame_state: &mut MidgameState,
 )
                                                      -> i32 {
-    let mut i: i32 = 0;
     let mut move_0 = 0;
     let mut depth_one_score: i32 = 0;
     let mut depth_two_score: i32 = 0;
-    let mut best_score_restricted: i32 = 0;
-    let mut best_score_unrestricted: i32 = 0;
-    let mut best_move_restricted = 0;
-    let mut best_move_unrestricted= 0;
     generate_all(side_to_move, &mut moves_state, &search_state, &board_state.board);
-    best_score_restricted = -(12345678);
-    best_score_unrestricted = -(12345678);
-    best_move_restricted = 0;
-    best_move_unrestricted = 0;
-    i = 0;
+    let mut best_score_restricted = -(12345678);
+    let mut best_score_unrestricted = -(12345678);
+    let mut best_move_restricted = 0;
+    let mut best_move_unrestricted = 0;
+    let mut i = 0;
     while i < moves_state.move_count[moves_state.disks_played as usize] {
         search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
         move_0 = moves_state.move_list[moves_state.disks_played as usize][i as usize];
         make_move(side_to_move, move_0, 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
         search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
-        let side_to_move_argument = 0 + 2 -
-            side_to_move;
-        depth_one_score =
-            -pattern_evaluation(side_to_move_argument, &mut board_state, &moves_state, &mut coeff_state);
-        depth_two_score =
-            -tree_search::<FE>(1, 2,
-                         0 + 2 - side_to_move,
-                         -(12345678), 12345678,
-                         0, 0,
-                         0, echo,
-        &mut moves_state ,
-        &mut search_state ,
-        &mut board_state ,
-        &mut hash_state,
-        &mut flip_stack_,
-        &mut coeff_state,
-        &mut prob_cut, &mut g_timer, midgame_state);
-        {
-            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
-        };
+        let side_to_move_argument = 0 + 2 - side_to_move;
+        depth_one_score = -pattern_evaluation(side_to_move_argument, &mut board_state, &moves_state, &mut coeff_state);
+        depth_two_score = -tree_search::<FE>(
+            1, 2, 0 + 2 - side_to_move, -(12345678), 12345678,
+            0, 0, 0, echo,
+            &mut moves_state, &mut search_state,
+            &mut board_state, &mut hash_state,
+            &mut flip_stack_, &mut coeff_state,
+            &mut prob_cut, &mut g_timer, midgame_state
+        );
+        unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
         if depth_one_score > best_score_unrestricted {
             best_score_unrestricted = depth_one_score;
             best_move_unrestricted = move_0
@@ -273,14 +259,12 @@ pub fn protected_one_ply_search<FE: FrontEnd>(side_to_move: i32, echo:i32,
         i += 1
     }
     board_state.pv_depth[0] = 1;
-    if best_score_restricted > -(12345678) {
+    if best_score_restricted > -12345678 {
         /* No immediate loss */
-        board_state.pv[0][0] =
-            best_move_restricted;
+        board_state.pv[0][0] = best_move_restricted;
         return best_score_restricted
     } else {
-        board_state.pv[0][0] =
-            best_move_unrestricted;
+        board_state.pv[0][0] = best_move_unrestricted;
         return best_score_unrestricted
     };
 }
