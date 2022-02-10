@@ -315,13 +315,10 @@ pub fn add_hash(state: &mut HashState, reverse_mode: i32,
                        flags: i32,
                        draft: i32,
                        selectivity: i32) {
-    let mut old_draft: i32 = 0;
-    let mut change_encouragment: i32 = 0;
-    let mut index: u32 = 0;
-    let mut index1: u32 = 0;
-    let mut index2: u32 = 0;
-    let mut code1: u32 = 0;
-    let mut code2: u32 = 0;
+    let change_encouragment;
+    let index;
+    let code1;
+    let code2;
     let mut entry = HashEntry::new();
     // TODO
     //  note for investigation. There was this assert in the original source
@@ -334,29 +331,30 @@ pub fn add_hash(state: &mut HashState, reverse_mode: i32,
     if reverse_mode != 0 {
         code1 = state.hash2 ^ state.hash_trans2;
         code2 = state.hash1 ^ state.hash_trans1
-    } else { code1 = state.hash1 ^ state.hash_trans1; code2 = state.hash2 ^ state.hash_trans2 }
-    index1 = code1 & state.hash_mask as u32;
-    index2 = index1 ^ 1;
+    } else {
+        code1 = state.hash1 ^ state.hash_trans1;
+        code2 = state.hash2 ^ state.hash_trans2
+    }
+    let index1 = code1 & state.hash_mask as u32;
+    let index2 = index1 ^ 1;
     let hash_table_ptr: &mut [_] = &mut state.hash_table;
     if (*hash_table_ptr.offset(index1 as isize)).key2 == code2 {
         index = index1
     } else if (*hash_table_ptr.offset(index2 as isize)).key2 == code2 {
         index = index2
-    } else if (*hash_table_ptr.offset(index1 as
-        isize)).key1_selectivity_flags_draft &
-        255 <=
-        (*hash_table_ptr.offset(index2 as
-            isize)).key1_selectivity_flags_draft
-            & 255 {
+    } else if (*hash_table_ptr.offset(index1 as isize)).key1_selectivity_flags_draft & 255
+        <= (*hash_table_ptr.offset(index2 as isize)).key1_selectivity_flags_draft & 255 {
         index = index1
-    } else { index = index2 }
-    old_draft =
-        ((*hash_table_ptr.offset(index as isize)).key1_selectivity_flags_draft &
-            255) as i32;
+    } else {
+        index = index2
+    }
+    let old_draft = ((*hash_table_ptr.offset(index as isize)).key1_selectivity_flags_draft & 255) as i32;
     if flags & 4 != 0 {
         /* Exact scores are potentially more useful */
         change_encouragment = 2
-    } else { change_encouragment = 0 }
+    } else {
+        change_encouragment = 0
+    }
     if (*hash_table_ptr.offset(index as isize)).key2 == code2 {
         if old_draft > draft + change_encouragment + 2 {
             return
