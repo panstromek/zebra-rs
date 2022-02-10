@@ -2997,9 +2997,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
         ch =
             script_buffer.as_mut_ptr().offset(strlen(script_buffer.as_mut_ptr())
                 as
-                isize).offset(-(1
-                as
-                isize));
+                isize).offset(-1);
         while ch >= script_buffer.as_mut_ptr() &&
             *(*__ctype_b_loc()).offset(*ch as i32 as isize) as
                 i32 &
@@ -3011,9 +3009,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
         ch =
             result_buffer.as_mut_ptr().offset(strlen(result_buffer.as_mut_ptr())
                 as
-                isize).offset(-(1
-                as
-                isize));
+                isize).offset(-1);
         while ch >= result_buffer.as_mut_ptr() &&
             *(*__ctype_b_loc()).offset(*ch as i32 as isize) as
                 i32 &
