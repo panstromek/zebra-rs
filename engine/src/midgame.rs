@@ -132,15 +132,10 @@ impl MidgameState {
   not already first in the list.
 */
 pub fn advance_move(index: i32, search: &mut SearchState, moves: &mut MovesState) {
-    let mut temp_move = 0;
     if index > 0 {
-        temp_move = search.sorted_move_order[moves.disks_played as usize][index as usize];
-        search.sorted_move_order[moves.disks_played as usize][index as usize] =
-            search.sorted_move_order[moves.disks_played as
-                usize][(index - 1) as usize];
-        search.sorted_move_order[moves.disks_played as
-            usize][(index - 1) as usize] =
-            temp_move
+        let temp_move = search.sorted_move_order[moves.disks_played as usize][index as usize];
+        search.sorted_move_order[moves.disks_played as usize][index as usize] = search.sorted_move_order[moves.disks_played as usize][(index - 1) as usize];
+        search.sorted_move_order[moves.disks_played as usize][(index - 1) as usize] = temp_move
     };
 }
 /*
