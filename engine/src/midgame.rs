@@ -959,7 +959,7 @@ fn fast_tree_search(level: i32,
         }
     }
     /* Reorder the move lists now and then to keep the empty squares up front */
-    if search_state.nodes.lo & 4095 as u32 == 0 as u32 {
+    if search_state.nodes.lo & 4095 == 0 {
         reorder_move_list(&board_state.board, &mut search_state.sorted_move_order[moves_state.disks_played as usize]);
     }
     /* Search */

@@ -1163,8 +1163,8 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
             if g_state.g_book.get_candidate_count() > 0 ||
                 g_state.moves_state.disks_played >= 40 {
                 osfbook::print_move_alternatives(side_to_move, &mut g_state.board_state, &mut g_state.g_book);
-                g_state.hash_state.set_hash_transformation(0 as u32,
-                                        0 as u32);
+                g_state.hash_state.set_hash_transformation(0,
+                                        0);
                end_game::<osfbook::FE>(side_to_move, 0, 1,
                                        1, 0, &mut dummy_info, echo, &mut g_state.flip_stack_
                                        , &mut g_state.search_state
@@ -1236,8 +1236,8 @@ unsafe fn do_endgame_statistics(index: i32,
         if g_state.g_book.get_candidate_count() > 0 ||
             g_state.moves_state.disks_played >= 40 {
             osfbook::print_move_alternatives(side_to_move, &mut g_state.board_state, &mut g_state.g_book);
-            g_state.hash_state.set_hash_transformation(0 as u32,
-                                    0 as u32);
+            g_state.hash_state.set_hash_transformation(0,
+                                    0);
            end_game::<osfbook::FE>(side_to_move, 0, 1,
                                    1, 0, &mut dummy_info, echo, &mut g_state.flip_stack_
                                    , &mut g_state.search_state

@@ -180,7 +180,6 @@ pub fn weighted_mobility(my_bits: BitBoard,
         n1.wrapping_add(n2.wrapping_add(n2 >> 4) &
                             0xf0f0f0f as u32);
     return (n1.wrapping_mul(0x1010101 as u32) >>
-                24).wrapping_mul(128 as
-                                                  u32) as
+                24).wrapping_mul(128) as
                i32;
 }

@@ -910,7 +910,7 @@ fn get_corner_mask(disc_a1: i32, disc_a8: i32, disc_h1: i32, disc_h8: i32) -> u3
     if disc_a8 != 1 { count += 1 }
     if disc_h1 != 1 { count += 1 }
     if disc_h8 != 1 { count += 1 }
-    if count == 0 { return 0 as u32 }
+    if count == 0 { return 0 }
     config[0] = (mask_a1 + 4 * mask_a8 + 16 * mask_h1 + 64 * mask_h8) as u32;
     config[1] = (mask_a1 + 4 * mask_h1 + 16 * mask_a8 + 64 * mask_h8) as u32;
     config[2] = (mask_a8 + 4 * mask_a1 + 16 * mask_h8 + 64 * mask_h1) as u32;

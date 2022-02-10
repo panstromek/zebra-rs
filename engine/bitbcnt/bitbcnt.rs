@@ -2371,7 +2371,7 @@ fn CountFlips_bitboard_c3(my_bits_high: u32,
         (flipped as
              u32).wrapping_add(!my_bits_low >> 25 &
                                             my_bits_high >> 0 &
-                                            1 as u32)
+                                            1)
             as i8 as i8;
     return flipped as i32;
 }
@@ -2435,7 +2435,7 @@ fn CountFlips_bitboard_f3(my_bits_high: u32,
         (flipped as
              u32).wrapping_add(!my_bits_low >> 30 &
                                             my_bits_high >> 7 &
-                                            1 as u32)
+                                            1)
             as i8 as i8;
     return flipped as i32;
 }
@@ -2503,7 +2503,7 @@ fn CountFlips_bitboard_c6(my_bits_high: u32,
         (flipped as
              u32).wrapping_add(!my_bits_high >> 1 &
                                             my_bits_low >> 24 &
-                                            1 as u32)
+                                            1)
             as i8 as i8;
     return flipped as i32;
 }
@@ -2570,7 +2570,7 @@ fn CountFlips_bitboard_f6(my_bits_high: u32,
         (flipped as
              u32).wrapping_add(!my_bits_high >> 6 &
                                             my_bits_low >> 31 &
-                                            1 as u32)
+                                            1)
             as i8 as i8;
     return flipped as i32;
 }
