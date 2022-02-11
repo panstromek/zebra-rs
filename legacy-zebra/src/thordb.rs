@@ -2258,22 +2258,6 @@ unsafe fn position_match(mut game: &mut GameType,
 }
 
 /*
-  TOURNAMENT_LEX_ORDER
-  Returns the index into the lexicographical order of the
-  INDEXth tournament if available, otherwise the last
-  index + 1.
-*/
-unsafe fn tournament_lex_order(index: i32)
-                               -> i32 {
-    if index < 0 || index >= tournaments.count() {
-        return tournaments.count()
-    } else {
-        return (*tournaments.tournament_list.offset(index as isize)).lex_order
-    };
-}
-
-
-/*
   THOR_COMPARE
   Compares two games from a list of pointers to games.
   Only to be called by QSORT. A full comparison is
@@ -2303,9 +2287,9 @@ pub unsafe fn thor_compare(game1: &GameType, game2: &GameType) -> i32 {
             }
             4 => {
                 result =
-                    tournament_lex_order((*game1).tournament_no as
+                    tournaments.tournament_lex_order((*game1).tournament_no as
                         i32) -
-                        tournament_lex_order((*game2).tournament_no as
+                        tournaments.tournament_lex_order((*game2).tournament_no as
                             i32)
             }
             5 => {

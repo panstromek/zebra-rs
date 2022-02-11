@@ -166,6 +166,20 @@ impl TournamentDatabaseType {
             return self.name_buffer[(26 * index as usize)..].split(|&c| c == 0).next().unwrap()
         };
     }
+
+    /*
+      TOURNAMENT_LEX_ORDER
+      Returns the index into the lexicographical order of the
+      INDEXth tournament if available, otherwise the last
+      index + 1.
+    */
+    pub fn tournament_lex_order(&self, index: i32) -> i32 {
+        if index < 0 || index >= self.count() {
+            self.count()
+        } else {
+            self.tournament_list[index as usize].lex_order
+        }
+    }
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
