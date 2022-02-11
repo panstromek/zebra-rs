@@ -20,21 +20,23 @@ use crate::src::zebra::FullState;
 use engine::src::globals::BoardState;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, BufReader, BufRead, Write};
+use std::sync::atomic::AtomicI32;
+use std::sync::atomic::Ordering::SeqCst;
 
 use engine::src::timer::Timer;
 
 #[macro_use]
 use crate::send_status;
 
-pub static mut use_log_file: i32 = 1;
+pub static use_log_file: AtomicI32 = AtomicI32::new(1);
 /*
   TOGGLE_STATUS_LOG
   Enable/disable the use of logging all the output that the
   text version of Zebra would output to the screen.
 */
 
-pub unsafe fn toggle_status_log(write_log: i32) {
-    use_log_file = write_log;
+pub fn toggle_status_log(write_log: i32) {
+    use_log_file.store(write_log, SeqCst);
 }
 
 /*
@@ -63,7 +65,7 @@ pub struct LogFileHandler {
 
 unsafe fn setup_log_file() {
     /* Clear the log file. No error handling done. */
-    if use_log_file != 0 {
+    if use_log_file.load(SeqCst) != 0 {
         if let Ok(mut log_file) = OpenOptions::new().write(true).truncate(true).create(true).open("zebra.log") {
             let mut timer_: time_t = 0;
             time(&mut timer_);
@@ -642,12 +644,10 @@ impl LogFileHandler {
 impl ComputeMoveLogger for LogFileHandler {
 
 fn create_log_file_if_needed() -> Option<Self> {
-    unsafe {
-        if use_log_file != 0 {
-            Self::create()
-        } else {
-            None
-        }
+    if use_log_file.load(SeqCst) != 0 {
+        Self::create()
+    } else {
+        None
     }
 }
 
