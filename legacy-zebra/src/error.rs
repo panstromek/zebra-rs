@@ -343,17 +343,14 @@ impl FrontEnd for LibcFatalError {
     }
 
     fn report_unwanted_book_draw(this_move: i32) {
-         {
-            write!(stdout, "{} leads to an unwanted book draw\n", TO_SQUARE(this_move));
-        }
+        write!(stdout, "{} leads to an unwanted book draw\n", TO_SQUARE(this_move));
     }
 
     fn report_in_get_book_move_1(side_to_move: i32, remaining_slack: i32, board_state: &mut BoardState, g_book: &mut Book) {
-        unsafe {
-            write!(stdout, "Slack left is {:.2}. ", remaining_slack as f64 / 128.0f64);
-            print_move_alternatives(side_to_move,board_state, g_book );
-        }
+        write!(stdout, "Slack left is {:.2}. ", remaining_slack as f64 / 128.0f64);
+        print_move_alternatives(side_to_move, board_state, g_book);
     }
+
     fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, candidate_list_: &[CandidateMove; 60], search_state: & SearchState) {
         unsafe {
             send_status!(display_state, "-->   Book     ");

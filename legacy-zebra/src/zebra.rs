@@ -1102,7 +1102,7 @@ impl ZebraFrontend for LibcFrontend {
     }}
 
     fn print_move_alternatives(side_to_move: i32, mut board_state: &mut BoardState, mut g_book: &mut Book) {
-        unsafe { print_move_alternatives(side_to_move, board_state,  g_book) }
+        print_move_alternatives(side_to_move, board_state, g_book)
     }
 }
 

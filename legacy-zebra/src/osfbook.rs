@@ -546,7 +546,7 @@ pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book)
    any flag combination.
 */
 
-pub unsafe fn print_move_alternatives(side_to_move: i32, board_state: &BoardState, g_book: &mut Book) {
+pub fn print_move_alternatives(side_to_move: i32, board_state: &BoardState, g_book: &mut Book) {
     let mut i: i32 = 0;
     let mut sign: i32 = 0;
     let mut slot: i32 = 0;
