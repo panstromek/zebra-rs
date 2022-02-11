@@ -51,32 +51,10 @@ pub unsafe fn global_setup(use_random: i32,
         Ok(var) => var,
         Err(_) => "./coeffs2.bin".to_owned(),
     };
-    let FullState {
-        ref mut g_config,
-        ref mut learn_state,
-        ref mut midgame_state,
-        ref mut game_state,
-        ref mut end_g,
-        ref mut coeff_state,
-        ref mut g_timer,
-        ref mut moves_state,
-        ref mut stable_state,
-        ref mut board_state,
-        ref mut hash_state,
-        ref mut random_instance,
-        ref mut g_book,
-        ref mut prob_cut,
-        ref mut search_state,
-        ref mut flip_stack_,
-    } : &mut FullState = g_state;
-    engine_global_setup::<_,LibcFatalError>(use_random, hash_bits, coeff_adjustments, new_coeff_source(file_name.as_ref()),
-                                            search_state
-                                            , hash_state
-                                            , g_timer
-                                            , coeff_state
-                                            , random_instance
-                                            , stable_state
-                                            , prob_cut);
+    engine_global_setup::<_, LibcFatalError>(
+        use_random, hash_bits, coeff_adjustments, new_coeff_source(file_name.as_ref()),
+        &mut g_state.search_state, &mut g_state.hash_state, &mut g_state.g_timer,
+        &mut g_state.coeff_state, &mut g_state.random_instance, &mut g_state.stable_state, &mut g_state.prob_cut);
 }
 
 pub struct LogFileHandler {
