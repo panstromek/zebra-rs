@@ -24,7 +24,6 @@ use crate::{
 };
 use crate::src::display::{display_state, TO_SQUARE};
 use crate::src::osfbook::print_move_alternatives;
-use crate::src::thordb::sort_thor_games;
 
 use engine::src::timer::Timer;
 use engine::src::osfbook::Book;
@@ -100,10 +99,7 @@ impl LibcFatalError {
             }
         }
     }
-    #[inline(always)]
-    pub fn sort_thor_games(count: i32) {
-        unsafe { sort_thor_games(count) }
-    }
+
     pub fn memory_allocation_failure(block_count_: i32) -> ! {
         {
             fatal_error!("{} @ #{}\n", "Memory allocation failure", block_count_);

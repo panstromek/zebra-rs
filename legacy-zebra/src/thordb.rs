@@ -2531,7 +2531,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
             }
             current_db_ = &(*current_db).next
         }
-        LibcFatalError::sort_thor_games(thor_game_count);
+        sort_thor_games(thor_game_count);
         j = 0;
         while j < thor_game_count {
             (**thor_search.match_list.offset(j as isize)).sort_order = j;
