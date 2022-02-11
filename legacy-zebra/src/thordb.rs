@@ -155,7 +155,7 @@ pub type FE = LibcFatalError;
   Reads an 8-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-fn get_int_8(mut stream: impl Read, value: &mut Int8) -> i32 {
+fn get_int_8(stream: &mut impl Read, value: &mut Int8) -> i32 {
     let mut buf = [0_u8;1];
     match stream.read_exact(&mut buf) {
         Ok(_) => {
@@ -170,7 +170,7 @@ fn get_int_8(mut stream: impl Read, value: &mut Int8) -> i32 {
   Reads a 16-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-fn get_int_16(mut stream: FileHandle, value: &mut Int16)
+fn get_int_16(mut stream: &mut impl Read, value: &mut Int16)
                      -> i32 {
     let mut buf = [0_u8;2];
     match stream.read_exact(&mut buf) {
@@ -186,7 +186,7 @@ fn get_int_16(mut stream: FileHandle, value: &mut Int16)
   Reads a 32-bit signed integer from STREAM. Returns TRUE upon
   success, FALSE otherwise.
 */
-fn get_int_32(mut stream: FileHandle, value: &mut Int32) -> i32 {
+fn get_int_32(mut stream: &mut impl Read, value: &mut Int32) -> i32 {
     let mut buf = [0_u8; 4];
     match stream.read_exact(&mut buf) {
         Ok(_) => {
@@ -203,8 +203,7 @@ fn get_int_32(mut stream: FileHandle, value: &mut Int32) -> i32 {
   values which aren't used are read.
   Returns TRUE upon success, otherwise FALSE.
 */
-fn read_prolog(stream: FileHandle,
-                      mut prolog: &mut PrologType) -> i32 {
+fn read_prolog(stream: &mut impl Read, mut prolog: &mut PrologType) -> i32 {
     let mut success: i32 = 0;
     let mut byte_val: Int8 = 0;
     let mut word_val: Int16 = 0;
@@ -273,7 +272,7 @@ pub unsafe fn read_tournament_database(file_name:
     let mut buffer_size: i32 = 0;
     let mut stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() { return 0 }
-    if read_prolog(stream, &mut tournaments.prolog) == 0 {
+    if read_prolog(&mut stream, &mut tournaments.prolog) == 0 {
         fclose(stream);
         return 0
     }
@@ -364,7 +363,7 @@ pub unsafe fn read_player_database(file_name:
     let mut buffer_size: i32 = 0;
     let mut stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() { return 0 }
-    if read_prolog(stream, &mut players.prolog) == 0 {
+    if read_prolog(&mut stream, &mut players.prolog) == 0 {
         fclose(stream);
         return 0
     }
@@ -405,7 +404,7 @@ pub unsafe fn read_player_database(file_name:
   for database questions. Returns TRUE upon success,
   otherwise FALSE.
 */
-unsafe fn read_game(mut stream: FileHandle, mut game: &mut GameType) -> i32 {
+unsafe fn read_game(mut stream: &mut impl Read, mut game: &mut GameType) -> i32 {
     let mut success: i32 = 0;
     let mut byte_val: Int8 = 0;
     let mut word_val: Int16 = 0;
@@ -459,7 +458,7 @@ pub unsafe fn read_game_database(file_name:
         next: old_database_head
     };
 
-    if read_prolog(stream, &mut db_head.prolog) == 0 {
+    if read_prolog(&mut stream, &mut db_head.prolog) == 0 {
         fclose(stream);
         // FIXME This is here to preserve consistency with the old version but seems wrong
         //  why we would assign database head when we fail to parse the game??
@@ -479,7 +478,7 @@ pub unsafe fn read_game_database(file_name:
     while i < (db_head).count {
         success =
             (success != 0 &&
-                 read_game(stream,
+                 read_game(&mut stream,
                            &mut *(db_head).games.offset(i as isize)) !=
                      0) as i32;
         let ref mut fresh4 =
@@ -517,7 +516,7 @@ pub unsafe fn game_database_already_loaded(file_name:
                    reserved: 0,};
     let mut stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
     if stream.is_null() { return 0 }
-    if read_prolog(stream, &mut new_prolog) == 0 {
+    if read_prolog(&mut stream, &mut new_prolog) == 0 {
         fclose(stream);
         return 0
     }
