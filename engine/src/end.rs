@@ -1480,7 +1480,7 @@ pub fn update_best_list<FE: FrontEnd>(best_list: &mut [i8; 4],
     use engine_traits::Offset;
     verbose = 0;
     if verbose != 0 {
-        FE::before_update_best_list_verbose(best_list, move_0, best_list_index, best_list_length)
+        FE::before_update_best_list_verbose(best_list, move_0, best_list_index, *best_list_length)
     }
     if best_list_index < *best_list_length {
         let mut i = best_list_index;

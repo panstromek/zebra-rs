@@ -133,7 +133,7 @@ impl DisplayState {
       RESET_BUFFER_DISPLAY
       Clear all buffers and initialize time variables.
     */
-    pub fn reset_buffer_display(&mut self, g_timer: &mut Timer) {
+    pub fn reset_buffer_display(&mut self, g_timer: &Timer) {
         /* The first two Fibonacci numbers */
         self.clear_status();
         self.clear_sweep();
