@@ -125,7 +125,7 @@ pub unsafe fn full_learn_public_game(moves: &[i32],
     }
     let mut dummy: i32 = 0;
     /* Determine side to move for all positions */
-    game_init(0 as *const i8, &mut dummy, g_state);
+    game_init(&mut dummy, g_state);
     let mut side_to_move = 0;
     let mut i = 0;
     while i < length {

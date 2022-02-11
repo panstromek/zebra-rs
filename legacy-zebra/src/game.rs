@@ -117,10 +117,8 @@ impl BoardSource for BasicBoardFileSource {
    specified by FILE_NAME.
 */
 
-pub unsafe fn game_init(file_name: *const i8, side_to_move: &mut i32, g_state: &mut FullState) {
-    //todo remove file_name argument
-    let file_name = (!file_name.is_null()).then(|| CStr::from_ptr(file_name));
-    generic_game_init::<BasicBoardFileSource, LibcFatalError>(file_name, side_to_move, g_state);
+pub fn game_init(side_to_move: &mut i32, g_state: &mut FullState) {
+    generic_game_init::<BasicBoardFileSource, LibcFatalError>(None, side_to_move, g_state);
 }
 /*
   PONDER_MOVE

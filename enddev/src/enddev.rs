@@ -186,7 +186,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                 games_read += 1;
                 first_allowed_dev = earliest_dev
             }
-            game_init(0 as *const i8, &mut side_to_move, g_state);
+            game_init(&mut side_to_move, g_state);
             setup_hash(1, &mut g_state.hash_state, &mut g_state.random_instance);
             last_was_pass = 0;
             restart = 0;

@@ -2903,7 +2903,7 @@ pub unsafe fn unpack_compressed_database(in_name: *const i8, out_name: *const i8
     if stream.is_null() {
         fatal_error!("{} '{}'\n", "Could not create database file", &CStr::from_ptr(out_name).to_str().unwrap());
     }
-    game_init(0 as *const i8, &mut dummy,g_state);
+    game_init(&mut dummy,g_state);
     g_state.midgame_state.toggle_midgame_hash_usage(1, 1);
     g_state.g_timer.toggle_abort_check(0);
     g_state.midgame_state.toggle_midgame_abort_check(0);

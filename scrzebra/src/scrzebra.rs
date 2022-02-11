@@ -164,7 +164,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 exit(1);
             }
             /* Parse the script line containing board and side to move */
-            game_init(0 as *const i8, &mut side_to_move, g_state);
+            game_init(&mut side_to_move, g_state);
             g_state.g_book.set_slack(0.0f64 as i32);
             g_state.game_state.toggle_human_openings(0);
             reset_book_search(&mut g_state.g_book);
