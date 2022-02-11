@@ -835,7 +835,12 @@ pub fn process_board_source<S: BoardSource>(side_to_move: &mut i32, mut file_sou
 pub trait FileBoardSource : BoardSource {
     fn open(file_name: &CStr) -> Option<Self> where Self: Sized;
 }
-
+/*
+   GAME_INIT
+   Prepare the relevant data structures so that a game
+   can be played. The position is read from the file
+   specified by FILE_NAME.
+*/
 pub fn generic_game_init<Source: FileBoardSource, FE: FrontEnd>(file_name: Option<&CStr>, side_to_move: &mut i32, g_state: &mut FullState) {
     if let Some(file_name) = file_name {
         g_state.board_state.board = create_fresh_board();

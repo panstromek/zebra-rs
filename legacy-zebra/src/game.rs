@@ -110,12 +110,6 @@ impl BoardSource for BasicBoardFileSource {
         }
     }
 }
-/*
-   GAME_INIT
-   Prepare the relevant data structures so that a game
-   can be played. The position is read from the file
-   specified by FILE_NAME.
-*/
 
 pub fn game_init(side_to_move: &mut i32, g_state: &mut FullState) {
     generic_game_init::<BasicBoardFileSource, LibcFatalError>(None, side_to_move, g_state);
