@@ -666,17 +666,17 @@ macro_rules! to_square {
 const LOG_PONDER_MOVE: bool = false;
 
 impl FrontEnd for WasmFrontend {
-    fn reset_buffer_display(g_timer: &mut Timer) {
+    fn reset_buffer_display(g_timer: &Timer) {
         //
     }
 
-    fn display_buffers(g_timer: &mut Timer) {
+    fn display_buffers(g_timer: &Timer) {
         // TODO?
     }
 
-    fn after_update_best_list_verbose(best_list: &mut [i8; 4]) {}
+    fn after_update_best_list_verbose(best_list: &[i8; 4]) {}
 
-    fn before_update_best_list_verbose(best_list: &mut [i8; 4], move_0: i8, best_list_index: i32, best_list_length: &mut i32) {}
+    fn before_update_best_list_verbose(best_list: &[i8; 4], move_0: i8, best_list_index: i32, best_list_length: i32) {}
 
     fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32, echo: i32) {}
 
@@ -692,7 +692,7 @@ impl FrontEnd for WasmFrontend {
 
     fn end_tree_search_level_0_report(alpha: i32, beta: i32) {}
 
-    fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType, pv_zero: &mut [i8; 64], pv_depth_zero: i32, g_timer: &mut Timer, search_state: &mut SearchState) {
+    fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &EvaluationType, pv_zero: &mut [i8; 64], pv_depth_zero: i32, g_timer: &Timer, search_state: &mut SearchState) {
         // c_log!("Solve status TODO")
     }
 

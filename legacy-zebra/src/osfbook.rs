@@ -546,7 +546,7 @@ pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book)
    any flag combination.
 */
 
-pub unsafe fn print_move_alternatives(side_to_move: i32, mut board_state: &mut BoardState, mut g_book: &mut Book) {
+pub unsafe fn print_move_alternatives(side_to_move: i32, board_state: &BoardState, g_book: &mut Book) {
     let mut i: i32 = 0;
     let mut sign: i32 = 0;
     let mut slot: i32 = 0;
@@ -561,8 +561,8 @@ pub unsafe fn print_move_alternatives(side_to_move: i32, mut board_state: &mut B
         } else {
             sign = -1
         }
-        get_hash(&mut val1, &mut val2, &mut orientation, &mut g_book, &board_state.board);
-        slot = probe_hash_table(val1, val2, &mut g_book);
+        get_hash(&mut val1, &mut val2, &mut orientation, &g_book, &board_state.board);
+        slot = probe_hash_table(val1, val2, g_book);
         /* Check that the position is in the opening book after all */
         if slot == -1 || *g_book.book_hash_table.offset(slot as isize) == -1 {
             return

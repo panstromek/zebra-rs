@@ -124,7 +124,7 @@ impl LibcFatalError {
 
 }
 impl FrontEnd for LibcFatalError {
-    fn reset_buffer_display(g_timer:&mut Timer) {
+    fn reset_buffer_display(g_timer:&Timer) {
         unsafe { display_state.reset_buffer_display(g_timer) }
     }
     /*
@@ -132,7 +132,7 @@ impl FrontEnd for LibcFatalError {
       If an update has happened and the last display was long enough ago,
       output relevant buffers.
     */
-    fn display_buffers(g_timer: &mut Timer) {
+    fn display_buffers(g_timer: &Timer) {
         unsafe {
             let timer =  g_timer.get_real_timer();
             if timer - display_state.last_output >= display_state.interval2 || display_state.timed_buffer_management == 0 {
@@ -150,7 +150,7 @@ impl FrontEnd for LibcFatalError {
         }
     }
 
-    fn after_update_best_list_verbose(best_list: &mut [i8; 4]) {
+    fn after_update_best_list_verbose(best_list: &[i8; 4]) {
          {
             // let best_list = best_list.as_mut_ptr();
             write!(stdout, "      After:  ");
@@ -162,9 +162,9 @@ impl FrontEnd for LibcFatalError {
             write!(stdout, "\n");
         }
     }
-    fn before_update_best_list_verbose(best_list: &mut [i8; 4], move_0: i8, best_list_index: i32, best_list_length: &mut i32) {
+    fn before_update_best_list_verbose(best_list: &[i8; 4], move_0: i8, best_list_index: i32, best_list_length: i32) {
          {
-            write!(stdout, "move={:2}  index={}  length={}      ", move_0 as i32, best_list_index, *best_list_length);
+            write!(stdout, "move={:2}  index={}  length={}      ", move_0 as i32, best_list_index, best_list_length);
             write!(stdout, "Before:  ");
             let mut i = 0;
             while i < 4 {
@@ -252,10 +252,10 @@ impl FrontEnd for LibcFatalError {
       SEND_SOLVE_STATUS
       Displays endgame results - partial or full.
     */
-    fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &mut EvaluationType,
+    fn send_solve_status(empties: i32, _side_to_move: i32, eval_info: &EvaluationType,
                           pv_zero: &mut [i8; 64],
                          pv_depth_zero: i32,
-                         mut g_timer: &mut Timer,
+                         mut g_timer: &Timer,
                          mut search_state: &mut SearchState) {
         unsafe {
             let eval = *eval_info;
