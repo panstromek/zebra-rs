@@ -548,27 +548,19 @@ pub unsafe fn game_database_already_loaded(file_name:
   The flag DISPLAY_MOVES specifies if the moves of the
   game are to be output or not.
 */
-fn print_game(stream: &mut impl Write, game: &GameType,
-                     display_moves: i32, tournaments_: &TournamentDatabaseType, players_: &PlayerDatabaseType) {
-    let mut i: i32 = 0;
-    stream.write(tournaments_.tournament_name((*game).tournament_no as i32));
-    write!(stream, "  {}\n",            (*(*game).database).prolog.origin_year);
-    stream.write(players_.get_player_name((*game).black_no as i32));
+fn print_game(stream: &mut impl Write, game: &GameType, display_moves: i32, tournaments_: &TournamentDatabaseType, players_: &PlayerDatabaseType) {
+    stream.write(tournaments_.tournament_name(game.tournament_no as i32));
+    write!(stream, "  {}\n", game.database.prolog.origin_year);
+    stream.write(players_.get_player_name(game.black_no as i32));
     stream.write(b" vs ");
-    stream.write(players_.get_player_name((*game).white_no as i32));
+    stream.write(players_.get_player_name(game.white_no as i32));
     stream.write(b"\n");
-    write!(stream, "{} - {}   ",
-            (*game).actual_black_score as i32,
-            64 - (*game).actual_black_score as i32);
-    write!(stream, "[ {} - {} {} ]\n",
-            (*game).perfect_black_score as i32,
-            64 - (*game).perfect_black_score,
-            "perfect");
+    write!(stream, "{} - {}   ", game.actual_black_score, 64 - game.actual_black_score);
+    write!(stream, "[ {} - {} {} ]\n", game.perfect_black_score, 64 - game.perfect_black_score, "perfect");
     if display_moves != 0 {
-        i = 0;
+        let mut i = 0;
         while i < 60 {
-            write!(stream, " {}",
-                    abs((*game).moves[i as usize] as i32));
+            write!(stream, " {}", abs(game.moves[i as usize] as i32));
             if i % 20 == 19 {
                 stream.write(b"\n");
             }
