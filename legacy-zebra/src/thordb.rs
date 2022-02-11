@@ -548,7 +548,7 @@ pub unsafe fn game_database_already_loaded(file_name:
   The flag DISPLAY_MOVES specifies if the moves of the
   game are to be output or not.
 */
-fn print_game(mut stream: FileHandle, game: &GameType,
+fn print_game(stream: &mut impl Write, game: &GameType,
                      display_moves: i32, tournaments_: &TournamentDatabaseType, players_: &PlayerDatabaseType) {
     let mut i: i32 = 0;
     stream.write(tournaments_.tournament_name((*game).tournament_no as i32));
@@ -613,7 +613,7 @@ pub unsafe fn print_thor_matches(mut stream: FileHandle,
         if i == 0 {
             stream.write(b"\n");
         }
-        print_game(stream, &**thor_search.match_list.offset(i as isize),
+        print_game(&mut stream, &**thor_search.match_list.offset(i as isize),
                    0, &tournaments, &players);
         i += 1
     };
