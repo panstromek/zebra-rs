@@ -1600,37 +1600,27 @@ unsafe fn init_symmetry_maps() {
   Play the MAX_MOVES first moves of GAME and update THOR_BOARD
   and THOR_SIDE_TO_MOVE to represent the position after those moves.
 */
-unsafe fn play_through_game(game: *mut GameType,
-                            max_moves: i32)
-                            -> i32 {
-    let mut i: i32 = 0;
+unsafe fn play_through_game(game: &mut GameType, max_moves: i32) -> i32 {
     let mut move_0: i32 = 0;
     let mut flipped: i32 = 0;
     clear_thor_board(&mut thor_board);
     thor_side_to_move = 0;
-    i = 0;
+    let mut i = 0;
     while i < max_moves {
         move_0 = abs((*game).moves[i as usize] as i32);
-        flipped =
-            any_flips(move_0, thor_side_to_move,
-                      0 + 2 -
-                          thor_side_to_move, &mut thor_board);
+        flipped = any_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
         if flipped != 0 {
             thor_board[move_0 as usize] = thor_side_to_move;
-            thor_side_to_move =
-                0 + 2 - thor_side_to_move
+            thor_side_to_move = 0 + 2 - thor_side_to_move
         } else {
-            thor_side_to_move =
-                0 + 2 - thor_side_to_move;
-            flipped =
-                any_flips(move_0, thor_side_to_move,
-                          0 + 2 -
-                              thor_side_to_move, &mut thor_board);
+            thor_side_to_move = 0 + 2 - thor_side_to_move;
+            flipped = any_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
             if flipped != 0 {
                 thor_board[move_0 as usize] = thor_side_to_move;
-                thor_side_to_move =
-                    0 + 2 - thor_side_to_move
-            } else { return 0 }
+                thor_side_to_move = 0 + 2 - thor_side_to_move
+            } else {
+                return 0
+            }
         }
         i += 1
     }
@@ -1658,8 +1648,7 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
        at each stage. */
     clear_thor_board(&mut thor_board);
     disc_count[2] = 2;
-    disc_count[0] =
-        disc_count[2];
+    disc_count[0] = disc_count[2];
     thor_side_to_move = 0;
     corner_descriptor = 0;
     moves_played = 0;
