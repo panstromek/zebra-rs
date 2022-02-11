@@ -548,15 +548,14 @@ pub unsafe fn game_database_already_loaded(file_name:
   The flag DISPLAY_MOVES specifies if the moves of the
   game are to be output or not.
 */
-unsafe fn print_game(mut stream: FileHandle,
-                     game: &GameType,
-                     display_moves: i32) {
+fn print_game(mut stream: FileHandle, game: &GameType,
+                     display_moves: i32, tournaments_: &TournamentDatabaseType, players_: &PlayerDatabaseType) {
     let mut i: i32 = 0;
-    stream.write(tournaments.tournament_name((*game).tournament_no as i32));
+    stream.write(tournaments_.tournament_name((*game).tournament_no as i32));
     write!(stream, "  {}\n",            (*(*game).database).prolog.origin_year);
-    stream.write(players.get_player_name((*game).black_no as i32));
+    stream.write(players_.get_player_name((*game).black_no as i32));
     stream.write(b" vs ");
-    stream.write(players.get_player_name((*game).white_no as i32));
+    stream.write(players_.get_player_name((*game).white_no as i32));
     stream.write(b"\n");
     write!(stream, "{} - {}   ",
             (*game).actual_black_score as i32,
@@ -610,15 +609,12 @@ pub unsafe fn print_thor_matches(mut stream: FileHandle,
                                  max_games: i32) {
     let mut i: i32 = 0;
     i = 0;
-    while i <
-              (if thor_search.match_count < max_games {
-                   thor_search.match_count
-               } else { max_games }) {
+    while i < (if thor_search.match_count < max_games { thor_search.match_count } else { max_games }) {
         if i == 0 {
             stream.write(b"\n");
         }
         print_game(stream, &**thor_search.match_list.offset(i as isize),
-                   0);
+                   0, &tournaments, &players);
         i += 1
     };
 }
