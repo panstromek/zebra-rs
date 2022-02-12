@@ -2107,9 +2107,8 @@ fn position_match(mut game: &mut GameType,
   performed using the priority order from THOR_SORT_ORDER.
 */
 pub unsafe fn thor_compare(game1: &GameType, game2: &GameType) -> i32 {
-    let mut i: i32 = 0;
-    while i < thor_sort_criteria_count {
-        let result = match thor_sort_order[i as usize] {
+    for sort_order_item in &thor_sort_order[0..thor_sort_criteria_count as usize] {
+        let result = match sort_order_item {
             1 => game2.origin_year - game1.origin_year,
             2 => players.player_lex_order((*game1).black_no as i32) - players.player_lex_order((*game2).black_no as i32),
             3 => players.player_lex_order((*game1).white_no as i32) - players.player_lex_order((*game2).white_no as i32),
@@ -2123,7 +2122,6 @@ pub unsafe fn thor_compare(game1: &GameType, game2: &GameType) -> i32 {
         if result != 0 {
             return result
         }
-        i += 1
     }
     /* If control reaches this point, the two games couldn't be
        distinguished by the current search criteria. */
