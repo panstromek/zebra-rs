@@ -1235,7 +1235,7 @@ unsafe fn specify_thor_sort_order(mut count: i32, sort_order: &[i32]) {
   with the primary and secondary hash codes from the 8 different
   rotations.
 */
-unsafe fn recursive_opening_scan(tree: &mut ThorOpeningTree, 
+fn recursive_opening_scan(tree: &mut ThorOpeningTree,
                                  node: OpeningNodeRef,
                                  depth: i32,
                                  moves_played: i32,
