@@ -1539,30 +1539,30 @@ unsafe fn init_symmetry_maps() {
         i += 1
     };
 }
-
+impl ThorBoard {
 /*
   PLAY_THROUGH_GAME
   Play the MAX_MOVES first moves of GAME and update THOR_BOARD
   and THOR_SIDE_TO_MOVE to represent the position after those moves.
 */
-unsafe fn play_through_game(game: &mut GameType, max_moves: i32) -> i32 {
+fn play_through_game(&mut self, game: &mut GameType, max_moves: i32) -> i32 {
     let mut move_0: i32 = 0;
     let mut flipped: i32 = 0;
-    clear_thor_board(&mut board.board);
-    board.side_to_move = 0;
+    clear_thor_board(&mut self.board);
+    self.side_to_move = 0;
     let mut i = 0;
     while i < max_moves {
         move_0 = abs((*game).moves[i as usize] as i32);
-        flipped = any_flips(move_0, board.side_to_move, 0 + 2 - board.side_to_move, &mut board.board);
+        flipped = any_flips(move_0, self.side_to_move, 0 + 2 - self.side_to_move, &mut self.board);
         if flipped != 0 {
-            board.board[move_0 as usize] = board.side_to_move;
-            board.side_to_move = 0 + 2 - board.side_to_move
+            self.board[move_0 as usize] = self.side_to_move;
+            self.side_to_move = 0 + 2 - self.side_to_move
         } else {
-            board.side_to_move = 0 + 2 - board.side_to_move;
-            flipped = any_flips(move_0, board.side_to_move, 0 + 2 - board.side_to_move, &mut board.board);
+            self.side_to_move = 0 + 2 - self.side_to_move;
+            flipped = any_flips(move_0, self.side_to_move, 0 + 2 - self.side_to_move, &mut self.board);
             if flipped != 0 {
-                board.board[move_0 as usize] = board.side_to_move;
-                board.side_to_move = 0 + 2 - board.side_to_move
+                self.board[move_0 as usize] = self.side_to_move;
+                self.side_to_move = 0 + 2 - self.side_to_move
             } else {
                 return 0
             }
@@ -1571,7 +1571,7 @@ unsafe fn play_through_game(game: &mut GameType, max_moves: i32) -> i32 {
     }
     return 1;
 }
-
+}
 /*
   PREPARE_GAME
   Performs off-line analysis of GAME to speed up subsequent requests.
@@ -2083,7 +2083,7 @@ unsafe fn position_match(mut game: &mut GameType,
        number of discs is correct and check if the hash
        functions match the given hash values for at least one
        rotation (common to the two hash functions). */
-    if play_through_game(game, move_count) != 0 {
+    if board.play_through_game(game, move_count) != 0 {
         compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &board.board);
         primary_hit_mask = thor_hash.primary_hash_lookup(in_hash1);
         if primary_hit_mask != 0 {
