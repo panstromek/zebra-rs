@@ -1757,75 +1757,78 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
     (*game).corner_descriptor = corner_descriptor;
 }
 impl ThorHash {
-/*
-  INIT_THOR_HASH
-  Computes hash codes for each of the 6561 configurations of the 8 different
-  rows. A special feature of the codes is the relation
+    /*
+      INIT_THOR_HASH
+      Computes hash codes for each of the 6561 configurations of the 8 different
+      rows. A special feature of the codes is the relation
 
-     hash[flip[pattern]] == reverse[hash[pattern]]
+         hash[flip[pattern]] == reverse[hash[pattern]]
 
-  which speeds up the computation of the hash functions.
-*/
-fn init_thor_hash(&mut self, g_state: &mut FullState) {
-    let FullState {
-        ref mut random_instance,
-        ..
-    } : &mut FullState = g_state;
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut row: [i32; 10] = [0; 10];
-    let mut flip_row: [i32; 6561] = [0; 6561];
-    let mut buffer: [i32; 6561] = [0; 6561];
-    i = 0;
-    while i < 8 { row[i as usize] = 0; i += 1 }
-    i = 0;
-    while i < 6561 {
-        flip_row[i as usize] = 0;
-        j = 0;
-        while j < 8 {
-            flip_row[i as usize] +=
-                row[j as usize] * pow3((7 - j) as usize);
-            j += 1
+      which speeds up the computation of the hash functions.
+    */
+    fn init_thor_hash(&mut self, g_state: &mut FullState) {
+        let FullState {
+            ref mut random_instance,
+            ..
+        }: &mut FullState = g_state;
+        let mut i: i32 = 0;
+        let mut j: i32 = 0;
+        let mut row: [i32; 10] = [0; 10];
+        let mut flip_row: [i32; 6561] = [0; 6561];
+        let mut buffer: [i32; 6561] = [0; 6561];
+        i = 0;
+        while i < 8 {
+            row[i as usize] = 0;
+            i += 1
         }
-        /* Next configuration */
-        odometer_principle(&mut row, 8);
-        i += 1
+        i = 0;
+        while i < 6561 {
+            flip_row[i as usize] = 0;
+            j = 0;
+            while j < 8 {
+                flip_row[i as usize] +=
+                    row[j as usize] * pow3((7 - j) as usize);
+                j += 1
+            }
+            /* Next configuration */
+            odometer_principle(&mut row, 8);
+            i += 1
+        }
+        i = 0;
+        while i < 8 {
+            j = 0;
+            while j < 6561 {
+                buffer[j as usize] = abs(random_instance.my_random() as i32);
+                j += 1
+            }
+            j = 0;
+            while j < 6561 {
+                self.primary_hash[i as usize][j as usize] =
+                    buffer[j as usize] as u32 &
+                        0xffff0000 as u32 |
+                        bit_reverse_32(buffer[flip_row[j as usize] as usize] as
+                            u32) &
+                            0xffff as i32 as u32;
+                j += 1
+            }
+            j = 0;
+            while j < 6561 {
+                buffer[j as usize] = abs(random_instance.my_random() as i32);
+                j += 1
+            }
+            j = 0;
+            while j < 6561 {
+                self.secondary_hash[i as usize][j as usize] =
+                    buffer[j as usize] as u32 &
+                        0xffff0000 as u32 |
+                        bit_reverse_32(buffer[flip_row[j as usize] as usize] as
+                            u32) &
+                            0xffff as i32 as u32;
+                j += 1
+            }
+            i += 1
+        };
     }
-    i = 0;
-    while i < 8 {
-        j = 0;
-        while j < 6561 {
-            buffer[j as usize] = abs(random_instance.my_random() as i32);
-            j += 1
-        }
-        j = 0;
-        while j < 6561 {
-            self.primary_hash[i as usize][j as usize] =
-                buffer[j as usize] as u32 &
-                    0xffff0000 as u32 |
-                    bit_reverse_32(buffer[flip_row[j as usize] as usize] as
-                        u32) &
-                        0xffff as i32 as u32;
-            j += 1
-        }
-        j = 0;
-        while j < 6561 {
-            buffer[j as usize] = abs(random_instance.my_random() as i32);
-            j += 1
-        }
-        j = 0;
-        while j < 6561 {
-            self.secondary_hash[i as usize][j as usize] =
-                buffer[j as usize] as u32 &
-                    0xffff0000 as u32 |
-                    bit_reverse_32(buffer[flip_row[j as usize] as usize] as
-                        u32) &
-                        0xffff as i32 as u32;
-            j += 1
-        }
-        i += 1
-    };
-}
 }
 /*
   NEW_THOR_OPENING_NODE
