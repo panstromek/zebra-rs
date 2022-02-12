@@ -92,7 +92,7 @@ pub struct DatabaseType {
     pub prolog: PrologType,
     pub games: *mut GameType,
     pub count: i32,
-    pub next: Option<&'static DatabaseType>,
+    pub next: Option<Box<DatabaseType>>,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
