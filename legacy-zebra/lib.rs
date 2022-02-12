@@ -15,5 +15,4 @@ pub mod src {
     pub mod osfbook;
     pub mod thordb;
     pub mod zebra;
-    pub mod safemem;
 }
