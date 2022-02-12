@@ -1072,7 +1072,7 @@ impl ThorHash {
   FILTER_DATABASE
   Applies the current filter rules to the database DB.
 */
-unsafe fn filter_database(db: &mut DatabaseType) {
+fn filter_database(db: &mut DatabaseType, tournaments_: &[TournamentType], players_: &[PlayerType], filter_: &FilterType) {
     let mut category: i32 = 0;
     let mut passes_filter: i32 = 0;
     let mut year: i32 = 0;
@@ -1081,31 +1081,31 @@ unsafe fn filter_database(db: &mut DatabaseType) {
         let game = (*db).games.offset(i as isize);
         passes_filter = 1;
         /* Apply the tournament filter */
-        if passes_filter != 0 && (*tournaments.tournament_list.offset((*game).tournament_no as isize)).selected == 0 {
+        if passes_filter != 0 && (*tournaments_.offset((*game).tournament_no as isize)).selected == 0 {
             passes_filter = 0
         }
         /* Apply the year filter */
         if passes_filter != 0 {
             year = (*game).origin_year;
-            if year < filter.first_year || year > filter.last_year {
+            if year < filter_.first_year || year > filter_.last_year {
                 passes_filter = 0
             }
         }
         /* Apply the player filter */
         if passes_filter != 0 {
-            match filter.player_filter as u32 {
-                0 => if (*players.player_list.offset((*game).black_no as isize)).selected == 0 &&
-                    (*players.player_list.offset((*game).white_no as isize)).selected == 0 {
+            match filter_.player_filter as u32 {
+                0 => if (*players_.offset((*game).black_no as isize)).selected == 0 &&
+                    (*players_.offset((*game).white_no as isize)).selected == 0 {
                     passes_filter = 0
                 },
-                1 => if (*players.player_list.offset((*game).black_no as isize)).selected == 0
-                    || (*players.player_list.offset((*game).white_no as isize)).selected == 0 {
+                1 => if (*players_.offset((*game).black_no as isize)).selected == 0
+                    || (*players_.offset((*game).white_no as isize)).selected == 0 {
                     passes_filter = 0
                 },
-                2 => if (*players.player_list.offset((*game).black_no as isize)).selected == 0 {
+                2 => if (*players_.offset((*game).black_no as isize)).selected == 0 {
                     passes_filter = 0
                 },
-                3 => if (*players.player_list.offset((*game).white_no as isize)).selected == 0 {
+                3 => if (*players_.offset((*game).white_no as isize)).selected == 0 {
                     passes_filter = 0
                 },
                 _ => {}
@@ -1113,18 +1113,18 @@ unsafe fn filter_database(db: &mut DatabaseType) {
         }
         /* Apply the game type filter */
         if passes_filter != 0 {
-            if (*players.player_list.offset((*game).black_no as isize)).is_program != 0 {
-                if (*players.player_list.offset((*game).white_no as isize)).is_program != 0 {
+            if (*players_.offset((*game).black_no as isize)).is_program != 0 {
+                if (*players_.offset((*game).white_no as isize)).is_program != 0 {
                     category = 4
                 } else {
                     category = 2
                 }
-            } else if (*players.player_list.offset((*game).white_no as isize)).is_program != 0 {
+            } else if (*players_.offset((*game).white_no as isize)).is_program != 0 {
                 category = 2
             } else {
                 category = 1
             }
-            passes_filter = category & filter.game_categories
+            passes_filter = category & filter_.game_categories
         }
         (*game).passes_filter = passes_filter as i16;
         i += 1
@@ -1137,7 +1137,7 @@ unsafe fn filter_database(db: &mut DatabaseType) {
 unsafe fn filter_all_databases() {
     let mut current_db_ = &mut database_head;
     while let Some(current_db) = current_db_ {
-        filter_database(current_db);
+        filter_database(current_db, &tournaments.tournament_list, &players.player_list, &filter);
         current_db_ = &mut (*current_db).next
     };
 }
