@@ -83,41 +83,32 @@ pub type FE = LibcFatalError;
 
 impl LibcFatalError {
     pub fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
-         {
-            write!(stdout, "{}:        ", "Thor database");
-            let mut i = 0;
-            while i < match_count {
-                write!(stdout, "{}: {:4.1}%    " , TO_SQUARE(move_list[i as usize].move_0),
-                       100.0f64 * move_list[i as usize].frequency as f64 / freq_sum as f64);
-                if i % 6 == 4 {
-                    write!(stdout, "\n");
-                }
-                i += 1
-            }
-            if match_count % 6 != 5 {
+        write!(stdout, "{}:        ", "Thor database");
+        let mut i = 0;
+        while i < match_count {
+            write!(stdout, "{}: {:4.1}%    ", TO_SQUARE(move_list[i as usize].move_0),
+                   100.0f64 * move_list[i as usize].frequency as f64 / freq_sum as f64);
+            if i % 6 == 4 {
                 write!(stdout, "\n");
             }
+            i += 1
+        }
+        if match_count % 6 != 5 {
+            write!(stdout, "\n");
         }
     }
 
     pub fn memory_allocation_failure(block_count_: i32) -> ! {
-        {
-            fatal_error!("{} @ #{}\n", "Memory allocation failure", block_count_);
-        }
+        fatal_error!("{} @ #{}\n", "Memory allocation failure", block_count_);
     }
 
     pub fn error_in_map(i: i32, pos: i32, symmetry_map_item: i32) -> ! {
-        {
-            fatal_error!("Error in map {}: inv(map({}))={}\n", i, pos, symmetry_map_item);
-        }
+        fatal_error!("Error in map {}: inv(map({}))={}\n", i, pos, symmetry_map_item);
     }
 
     pub fn error_in_map_thor(i: i32, pos: i32, to_report: i32) -> ! {
-        {
-            fatal_error!("Error in map {}: inv(map({}))={}\n", i, pos, to_report);
-        }
+        fatal_error!("Error in map {}: inv(map({}))={}\n", i, pos, to_report);
     }
-
 }
 impl FrontEnd for LibcFatalError {
     fn reset_buffer_display(g_timer:&Timer) {
