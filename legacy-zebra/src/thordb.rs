@@ -1569,7 +1569,7 @@ fn play_through_game(&mut self, game: &mut GameType, max_moves: i32) -> i32 {
   The main result is that the number of black discs on the board after
   each of the moves is stored.
 */
-unsafe fn prepare_game(mut game: &mut GameType, thor_board: &mut ThorBoard, tree: &mut ThorOpeningTree) {
+fn prepare_game(mut game: &mut GameType, thor_board: &mut ThorBoard, tree: &mut ThorOpeningTree) {
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
     let mut done: i32 = 0;
