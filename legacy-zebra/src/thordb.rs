@@ -26,11 +26,9 @@ use std::ptr::null_mut;
 /* Local variables */
 static mut thor_game_count: i32 = 0;
 static mut thor_database_count: i32 = 0;
-static mut thor_side_to_move: i32 = 0;
 static mut thor_sort_criteria_count: i32 = 0;
 static mut thor_games_sorted: i32 = 0;
 static mut thor_games_filtered: i32 = 0;
-static mut thor_board: [i32; 100] = [0; 100];
 struct SymmetryMaps {
     b1_b1_map: [i32; 100],
     g1_b1_map: [i32; 100],
@@ -42,6 +40,16 @@ struct SymmetryMaps {
     h2_b1_map: [i32; 100],
 }
 static SYMMENTRY_MAPS: SymmetryMaps = create_symetry_maps();
+
+struct ThorBoard {
+    side_to_move: i32,
+    board: [i32; 100],
+}
+
+static mut board: ThorBoard = ThorBoard {
+    side_to_move: 0,
+    board: [0; 100]
+};
 
 struct ThorHash {
     primary_hash: [[u32; 6561]; 8],
@@ -1540,21 +1548,21 @@ unsafe fn init_symmetry_maps() {
 unsafe fn play_through_game(game: &mut GameType, max_moves: i32) -> i32 {
     let mut move_0: i32 = 0;
     let mut flipped: i32 = 0;
-    clear_thor_board(&mut thor_board);
-    thor_side_to_move = 0;
+    clear_thor_board(&mut board.board);
+    board.side_to_move = 0;
     let mut i = 0;
     while i < max_moves {
         move_0 = abs((*game).moves[i as usize] as i32);
-        flipped = any_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
+        flipped = any_flips(move_0, board.side_to_move, 0 + 2 - board.side_to_move, &mut board.board);
         if flipped != 0 {
-            thor_board[move_0 as usize] = thor_side_to_move;
-            thor_side_to_move = 0 + 2 - thor_side_to_move
+            board.board[move_0 as usize] = board.side_to_move;
+            board.side_to_move = 0 + 2 - board.side_to_move
         } else {
-            thor_side_to_move = 0 + 2 - thor_side_to_move;
-            flipped = any_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
+            board.side_to_move = 0 + 2 - board.side_to_move;
+            flipped = any_flips(move_0, board.side_to_move, 0 + 2 - board.side_to_move, &mut board.board);
             if flipped != 0 {
-                thor_board[move_0 as usize] = thor_side_to_move;
-                thor_side_to_move = 0 + 2 - thor_side_to_move
+                board.board[move_0 as usize] = board.side_to_move;
+                board.side_to_move = 0 + 2 - board.side_to_move
             } else {
                 return 0
             }
@@ -1583,10 +1591,10 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
     let mut child = 0 as *mut ThorOpeningNode;
     /* Play through the game and count the number of black discs
        at each stage. */
-    clear_thor_board(&mut thor_board);
+    clear_thor_board(&mut board.board);
     disc_count[2] = 2;
     disc_count[0] = disc_count[2];
-    thor_side_to_move = 0;
+    board.side_to_move = 0;
     corner_descriptor = 0;
     moves_played = 0;
     done = 0;
@@ -1596,27 +1604,27 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
         /* Make the move, update the board and disc count,
            and change the sign for white moves */
         move_0 = (*game).moves[moves_played as usize] as i32;
-        flipped = count_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
+        flipped = count_flips(move_0, board.side_to_move, 0 + 2 - board.side_to_move, &mut board.board);
         if flipped != 0 {
-            thor_board[move_0 as usize] = thor_side_to_move;
-            disc_count[thor_side_to_move as usize] += flipped + 1;
-            disc_count[(0 + 2 - thor_side_to_move) as usize] -= flipped;
-            if thor_side_to_move == 2 {
+            board.board[move_0 as usize] = board.side_to_move;
+            disc_count[board.side_to_move as usize] += flipped + 1;
+            disc_count[(0 + 2 - board.side_to_move) as usize] -= flipped;
+            if board.side_to_move == 2 {
                 (*game).moves[moves_played as usize] = -((*game).moves[moves_played as usize] as i32) as i8
             }
-            thor_side_to_move = 0 + 2 - thor_side_to_move;
+            board.side_to_move = 0 + 2 - board.side_to_move;
             moves_played += 1
         } else {
-            thor_side_to_move = 0 + 2 - thor_side_to_move;
-            flipped = count_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
+            board.side_to_move = 0 + 2 - board.side_to_move;
+            flipped = count_flips(move_0, board.side_to_move, 0 + 2 - board.side_to_move, &mut board.board);
             if flipped != 0 {
-                thor_board[move_0 as usize] = thor_side_to_move;
-                disc_count[thor_side_to_move as usize] += flipped + 1;
-                disc_count[(0 + 2 - thor_side_to_move) as usize] -= flipped;
-                if thor_side_to_move == 2 {
+                board.board[move_0 as usize] = board.side_to_move;
+                disc_count[board.side_to_move as usize] += flipped + 1;
+                disc_count[(0 + 2 - board.side_to_move) as usize] -= flipped;
+                if board.side_to_move == 2 {
                     (*game).moves[moves_played as usize] = -((*game).moves[moves_played as usize] as i32) as i8
                 }
-                thor_side_to_move = 0 + 2 - thor_side_to_move;
+                board.side_to_move = 0 + 2 - board.side_to_move;
                 moves_played += 1
             } else {
                 done = 1
@@ -1624,7 +1632,7 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
         }
         /* Update the corner descriptor if necessary */
         if move_0 == 11 || move_0 == 18 || move_0 == 81 || move_0 == 88 {
-            corner_descriptor |= get_corner_mask(thor_board[11], thor_board[81], thor_board[18], thor_board[88])
+            corner_descriptor |= get_corner_mask(board.board[11], board.board[81], board.board[18], board.board[88])
         }
         if !(done == 0 && moves_played < 60) {
             break;
@@ -1769,8 +1777,8 @@ unsafe fn build_thor_opening_tree() {
     let mut node_list: [*mut ThorOpeningNode; 61] = [0 as *mut ThorOpeningNode; 61];
     /* Create the root node and compute its hash value */
     root_node = new_thor_opening_node(0 as *mut ThorOpeningNode);
-    clear_thor_board(&mut thor_board);
-    compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board);
+    clear_thor_board(&mut board.board);
+    compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &board.board);
     thor_hash.compute_partial_hash(&mut hash1, &mut hash2);
     (*root_node).hash1 = hash1;
     (*root_node).hash2 = hash2;
@@ -1792,21 +1800,21 @@ unsafe fn build_thor_opening_tree() {
         }
         /* Play through the moves common with the previous line
            and the first deviation */
-        clear_thor_board(&mut thor_board);
-        thor_side_to_move = 0;
+        clear_thor_board(&mut board.board);
+        board.side_to_move = 0;
         j = 0;
         while j <= branch_depth {
             move_0 = thor_move_list[j as usize] as i32;
-            flipped = any_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
+            flipped = any_flips(move_0, board.side_to_move, 0 + 2 - board.side_to_move, &mut board.board);
             if flipped != 0 {
-                thor_board[move_0 as usize] = thor_side_to_move;
-                thor_side_to_move = 0 + 2 - thor_side_to_move
+                board.board[move_0 as usize] = board.side_to_move;
+                board.side_to_move = 0 + 2 - board.side_to_move
             } else {
-                thor_side_to_move = 0 + 2 - thor_side_to_move;
-                flipped = any_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
+                board.side_to_move = 0 + 2 - board.side_to_move;
+                flipped = any_flips(move_0, board.side_to_move, 0 + 2 - board.side_to_move, &mut board.board);
                 if flipped != 0 {
-                    thor_board[move_0 as usize] = thor_side_to_move;
-                    thor_side_to_move = 0 + 2 - thor_side_to_move
+                    board.board[move_0 as usize] = board.side_to_move;
+                    board.side_to_move = 0 + 2 - board.side_to_move
                 } else {
                     FE::thordb_report_flipped_0_first();
                 }
@@ -1816,7 +1824,7 @@ unsafe fn build_thor_opening_tree() {
         /* Create the branch from the previous node */
         parent = node_list[branch_depth as usize];
         new_child = new_thor_opening_node(parent);
-        compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board);
+        compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &board.board);
         thor_hash.compute_partial_hash(&mut hash1, &mut hash2);
         (*new_child).hash1 = hash1;
         (*new_child).hash2 = hash2;
@@ -1837,23 +1845,23 @@ unsafe fn build_thor_opening_tree() {
         j = branch_depth + 1;
         while j < end_depth {
             move_0 = thor_move_list[j as usize] as i32;
-            flipped = any_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
+            flipped = any_flips(move_0, board.side_to_move, 0 + 2 - board.side_to_move, &mut board.board);
             if flipped != 0 {
-                thor_board[move_0 as usize] = thor_side_to_move;
-                thor_side_to_move = 0 + 2 - thor_side_to_move
+                board.board[move_0 as usize] = board.side_to_move;
+                board.side_to_move = 0 + 2 - board.side_to_move
             } else {
-                thor_side_to_move = 0 + 2 - thor_side_to_move;
-                flipped = any_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
+                board.side_to_move = 0 + 2 - board.side_to_move;
+                flipped = any_flips(move_0, board.side_to_move, 0 + 2 - board.side_to_move, &mut board.board);
                 if flipped != 0 {
-                    thor_board[move_0 as usize] = thor_side_to_move;
-                    thor_side_to_move = 0 + 2 - thor_side_to_move
+                    board.board[move_0 as usize] = board.side_to_move;
+                    board.side_to_move = 0 + 2 - board.side_to_move
                 } else {
                     FE::thordb_report_flipped_0_second();
                 }
             }
             parent = new_child;
             new_child = new_thor_opening_node(parent);
-            compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board);
+            compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &board.board);
             thor_hash.compute_partial_hash(&mut hash1, &mut hash2);
             (*new_child).hash1 = hash1;
             (*new_child).hash2 = hash2;
@@ -1904,7 +1912,7 @@ pub unsafe fn init_thor_database(g_state: &mut FullState) {
     init_move_masks();
     init_symmetry_maps();
     thor_hash.init_thor_hash(&mut g_state.random_instance);
-    prepare_thor_board(&mut thor_board);
+    prepare_thor_board(&mut board.board);
     build_thor_opening_tree();
     filter.game_categories = 1 | 2 | 4;
     filter.player_filter = EITHER_SELECTED_FILTER;
@@ -2076,7 +2084,7 @@ unsafe fn position_match(mut game: &mut GameType,
        functions match the given hash values for at least one
        rotation (common to the two hash functions). */
     if play_through_game(game, move_count) != 0 {
-        compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board);
+        compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &board.board);
         primary_hit_mask = thor_hash.primary_hash_lookup(in_hash1);
         if primary_hit_mask != 0 {
             secondary_hit_mask = thor_hash.secondary_hash_lookup(in_hash2);
