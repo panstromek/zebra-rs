@@ -138,26 +138,22 @@ impl FrontEnd for LibcFatalError {
     }
 
     fn after_update_best_list_verbose(best_list: &[i8; 4]) {
-         {
-            // let best_list = best_list.as_mut_ptr();
-            write!(stdout, "      After:  ");
-            let mut i = 0;
-            while i < 4 {
-                write!(stdout, "{:2} ", best_list[i] as i32);
-                i += 1
-            }
-            write!(stdout, "\n");
+        write!(stdout, "      After:  ");
+        let mut i = 0;
+        while i < 4 {
+            write!(stdout, "{:2} ", best_list[i] as i32);
+            i += 1
         }
+        write!(stdout, "\n");
     }
+
     fn before_update_best_list_verbose(best_list: &[i8; 4], move_0: i8, best_list_index: i32, best_list_length: i32) {
-         {
-            write!(stdout, "move={:2}  index={}  length={}      ", move_0 as i32, best_list_index, best_list_length);
-            write!(stdout, "Before:  ");
-            let mut i = 0;
-            while i < 4 {
-                write!(stdout, "{:2} ", best_list[i] as i32);
-                i += 1
-            }
+        write!(stdout, "move={:2}  index={}  length={}      ", move_0 as i32, best_list_index, best_list_length);
+        write!(stdout, "Before:  ");
+        let mut i = 0;
+        while i < 4 {
+            write!(stdout, "{:2} ", best_list[i] as i32);
+            i += 1
         }
     }
 
