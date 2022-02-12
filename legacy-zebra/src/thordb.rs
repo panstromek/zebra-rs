@@ -491,8 +491,8 @@ pub unsafe fn read_game_database(file_name:
                            &mut *(db_head).games.offset(i as isize)) !=
                      0) as i32;
         let ref mut fresh4 =
-            (*(db_head).games.offset(i as isize)).database;
-        *fresh4 = db_head;
+            (*(db_head).games.offset(i as isize)).origin_year;
+        *fresh4 = db_head.prolog.origin_year;
         i += 1
     }
     thor_database_count += 1;
@@ -558,7 +558,7 @@ pub unsafe fn game_database_already_loaded(file_name:
 */
 fn print_game(stream: &mut impl Write, game: &GameType, display_moves: i32, tournaments_: &TournamentDatabaseType, players_: &PlayerDatabaseType) {
     stream.write(tournaments_.tournament_name(game.tournament_no as i32));
-    write!(stream, "  {}\n", game.database.prolog.origin_year);
+    write!(stream, "  {}\n", game.origin_year);
     stream.write(players_.get_player_name(game.black_no as i32));
     stream.write(b" vs ");
     stream.write(players_.get_player_name(game.white_no as i32));
@@ -1082,7 +1082,7 @@ unsafe fn filter_database(db: &DatabaseType) {
         }
         /* Apply the year filter */
         if passes_filter != 0 {
-            year = (*(*game).database).prolog.origin_year;
+            year = (*game).origin_year;
             if year < filter.first_year || year > filter.last_year {
                 passes_filter = 0
             }
@@ -1371,7 +1371,7 @@ unsafe fn get_thor_game(index: i32) -> GameInfoType {
         info.black_name = players.get_player_name((*game).black_no as i32);
         info.white_name = players.get_player_name((*game).white_no as i32);
         info.tournament = tournaments.tournament_name((*game).tournament_no as i32);
-        info.year = (*(*game).database).prolog.origin_year;
+        info.year = (*game).origin_year;
         info.black_actual_score = (*game).actual_black_score as i32;
         info.black_corrected_score = (*game).perfect_black_score as i32
     }
@@ -2110,7 +2110,7 @@ pub unsafe fn thor_compare(game1: &GameType, game2: &GameType) -> i32 {
     let mut i: i32 = 0;
     while i < thor_sort_criteria_count {
         let result = match thor_sort_order[i as usize] {
-            1 => (*(*game2).database).prolog.origin_year - (*(*game1).database).prolog.origin_year,
+            1 => game2.origin_year - game1.origin_year,
             2 => players.player_lex_order((*game1).black_no as i32) - players.player_lex_order((*game2).black_no as i32),
             3 => players.player_lex_order((*game1).white_no as i32) - players.player_lex_order((*game2).white_no as i32),
             4 => tournaments.tournament_lex_order((*game1).tournament_no as i32) - tournaments.tournament_lex_order((*game2).tournament_no as i32),
@@ -2118,7 +2118,7 @@ pub unsafe fn thor_compare(game1: &GameType, game2: &GameType) -> i32 {
             6 => (*game2).actual_black_score as i32 - (*game1).actual_black_score as i32,
 
             /* Really can't happen */
-            0 | _ => (*(*game1).database).prolog.origin_year - (*(*game2).database).prolog.origin_year,
+            0 | _ => game1.origin_year - game2.origin_year,
         };
         if result != 0 {
             return result
