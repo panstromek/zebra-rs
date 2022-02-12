@@ -1977,7 +1977,7 @@ pub unsafe fn get_thor_game_move(index: i32, move_number: i32) -> i32 {
   SIDE_TO_MOVE being the player to move, matches the hash codes
   IN_HASH1 and IN_HASH2, otherwise FALSE.
 */
-unsafe fn position_match(mut game: &mut GameType,
+fn position_match(mut game: &mut GameType,
                          thor_board: &mut ThorBoard,
                          thor_hash_: &mut ThorHash,
                          tree: &mut ThorOpeningTree,
