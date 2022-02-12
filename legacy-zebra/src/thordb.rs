@@ -1766,11 +1766,7 @@ impl ThorHash {
 
       which speeds up the computation of the hash functions.
     */
-    fn init_thor_hash(&mut self, g_state: &mut FullState) {
-        let FullState {
-            ref mut random_instance,
-            ..
-        }: &mut FullState = g_state;
+    fn init_thor_hash(&mut self, random_instance: &mut MyRandom) {
         let mut i: i32 = 0;
         let mut j: i32 = 0;
         let mut row: [i32; 10] = [0; 10];
@@ -2038,7 +2034,7 @@ pub unsafe fn init_thor_database(g_state: &mut FullState) {
     thor_games_filtered = 0;
     init_move_masks();
     init_symmetry_maps();
-    thor_hash.init_thor_hash(g_state);
+    thor_hash.init_thor_hash(&mut g_state.random_instance);
     prepare_thor_board(&mut thor_board);
     build_thor_opening_tree();
     filter.game_categories =
