@@ -963,127 +963,128 @@ unsafe fn get_database_info(info: *mut DatabaseInfoType) {
         if !(change != 0) { break ; }
     };
 }
-impl ThorHash {
-/*
-  COMPUTE_PARTIAL_HASH
-  Computes the primary and secondary hash values for the
-  unit element in the rotation group.
-*/
-fn compute_partial_hash(&self, hash_val1: &mut u32, hash_val2: &mut u32) {
-    let mut i: i32 = 0;
-    *hash_val1 = 0;
-    *hash_val2 = 0;
-    i = 0;
-    while i < 8 {
-        *hash_val1 ^= self.primary_hash[i as usize][self.thor_row_pattern[i as usize] as usize];
-        *hash_val2 ^= self.secondary_hash[i as usize][self.thor_row_pattern[i as usize] as usize];
-        i += 1
-    };
-}
-/*
-  COMPUTE_FULL_PRIMARY_HASH
-  COMPUTE_FULL_SECONDARY_HASH
-  Compute the primary and secondary hash codes respectively
-  for all elements in the rotation group.
-  Note: The order of the hash codes must coincide with the
-        definitions in INIT_SYMMETRY_MAPS().
-*/
-fn compute_full_primary_hash(&self, hash_val: &mut [u32]) {
-    let mut i = 0;
-    while i < 4 {
-        *hash_val.offset(i as isize) = 0;
-        i += 1
-    }
-    i = 0;
-    while i < 8 {
-        /* b1 -> b1 */
-        hash_val[0] ^= self.primary_hash[i as usize][self.thor_row_pattern[i as usize] as usize];
-        /* b8 -> b1 */
-        *hash_val.offset(1) ^= self.primary_hash[i as usize][self.thor_row_pattern[(7 - i) as usize] as usize];
-        /* a2 -> b1 */
-        *hash_val.offset(2) ^= self.primary_hash[i as usize][self.thor_col_pattern[i as usize] as usize];
-        /* h2 -> b1 */
-        *hash_val.offset(3) ^= self.primary_hash[i as usize][self.thor_col_pattern[(7 - i) as usize] as usize];
-        i += 1
-    }
-    /* g1 -> b1 */
-    *hash_val.offset(4) = bit_reverse_32(hash_val[0]);
-    /* g8 -> b1 */
-    *hash_val.offset(5) = bit_reverse_32(*hash_val.offset(1));
-    /* a7 -> b1 */
-    *hash_val.offset(6) = bit_reverse_32(*hash_val.offset(2));
-    /* h7 -> b1 */
-    *hash_val.offset(7) = bit_reverse_32(*hash_val.offset(3));
-}
-fn compute_full_secondary_hash(&self, hash_val: &mut [u32]) {
-    let mut i = 0;
-    while i < 4 {
-        *hash_val.offset(i as isize) = 0;
-        i += 1
-    }
-    i = 0;
-    while i < 8 {
-        /* b1 -> b1 */
-        hash_val[0] ^= self.secondary_hash[i as usize][self.thor_row_pattern[i as usize] as usize];
-        /* b8 -> b1 */
-        *hash_val.offset(1) ^= self.secondary_hash[i as usize][self.thor_row_pattern[(7 - i) as usize] as usize];
-        /* a2 -> b1 */
-        *hash_val.offset(2) ^= self.secondary_hash[i as usize][self.thor_col_pattern[i as usize] as usize];
-        /* h2 -> b1 */
-        *hash_val.offset(3) ^= self.secondary_hash[i as usize][self.thor_col_pattern[(7 - i) as usize] as usize];
-        i += 1
-    }
-    /* g1 -> b1 */
-    *hash_val.offset(4) = bit_reverse_32(hash_val[0]);
-    /* g8 -> b1 */
-    *hash_val.offset(5) = bit_reverse_32(*hash_val.offset(1));
-    /* a7 -> b1 */
-    *hash_val.offset(6) = bit_reverse_32(*hash_val.offset(2));
-    /* h7 -> b1 */
-    *hash_val.offset(7) = bit_reverse_32(*hash_val.offset(3));
-}
 
-/*
-  PRIMARY_HASH_LOOKUP
-  Checks if any of the rotations of the current pattern set
-  match the primary hash code TARGET_HASH.
-*/
-fn primary_hash_lookup(&self, target_hash: u32) -> i32 {
-    let mut i: i32 = 0;
-    let mut hit_mask: i32 = 0;
-    let mut hash_val: [u32; 8] = [0; 8];
-    self.compute_full_primary_hash(&mut hash_val);
-    hit_mask = 0;
-    i = 0;
-    while i < 8 {
-        if hash_val[i as usize] == target_hash {
-            hit_mask |= (1) << i
-        }
-        i += 1
+impl ThorHash {
+    /*
+      COMPUTE_PARTIAL_HASH
+      Computes the primary and secondary hash values for the
+      unit element in the rotation group.
+    */
+    fn compute_partial_hash(&self, hash_val1: &mut u32, hash_val2: &mut u32) {
+        let mut i: i32 = 0;
+        *hash_val1 = 0;
+        *hash_val2 = 0;
+        i = 0;
+        while i < 8 {
+            *hash_val1 ^= self.primary_hash[i as usize][self.thor_row_pattern[i as usize] as usize];
+            *hash_val2 ^= self.secondary_hash[i as usize][self.thor_row_pattern[i as usize] as usize];
+            i += 1
+        };
     }
-    return hit_mask;
-}
-/*
-  SECONDARY_HASH_LOOKUP
-  Checks if any of the rotations of the current pattern set
-  match the secondary hash code TARGET_HASH.
-*/
-fn secondary_hash_lookup(&self, target_hash: u32)
-                                -> i32 {
-    let mut i: i32 = 0;
-    let mut hit_mask: i32 = 0;
-    let mut hash_val: [u32; 8] = [0; 8];
-    self.compute_full_secondary_hash(&mut hash_val);
-    hit_mask = 0;
-    i = 0;
-    while i < 8 {
-        if hash_val[i as usize] == target_hash {
-            hit_mask |= (1) << i
+    /*
+      COMPUTE_FULL_PRIMARY_HASH
+      COMPUTE_FULL_SECONDARY_HASH
+      Compute the primary and secondary hash codes respectively
+      for all elements in the rotation group.
+      Note: The order of the hash codes must coincide with the
+            definitions in INIT_SYMMETRY_MAPS().
+    */
+    fn compute_full_primary_hash(&self, hash_val: &mut [u32]) {
+        let mut i = 0;
+        while i < 4 {
+            *hash_val.offset(i as isize) = 0;
+            i += 1
         }
-        i += 1
+        i = 0;
+        while i < 8 {
+            /* b1 -> b1 */
+            hash_val[0] ^= self.primary_hash[i as usize][self.thor_row_pattern[i as usize] as usize];
+            /* b8 -> b1 */
+            *hash_val.offset(1) ^= self.primary_hash[i as usize][self.thor_row_pattern[(7 - i) as usize] as usize];
+            /* a2 -> b1 */
+            *hash_val.offset(2) ^= self.primary_hash[i as usize][self.thor_col_pattern[i as usize] as usize];
+            /* h2 -> b1 */
+            *hash_val.offset(3) ^= self.primary_hash[i as usize][self.thor_col_pattern[(7 - i) as usize] as usize];
+            i += 1
+        }
+        /* g1 -> b1 */
+        *hash_val.offset(4) = bit_reverse_32(hash_val[0]);
+        /* g8 -> b1 */
+        *hash_val.offset(5) = bit_reverse_32(*hash_val.offset(1));
+        /* a7 -> b1 */
+        *hash_val.offset(6) = bit_reverse_32(*hash_val.offset(2));
+        /* h7 -> b1 */
+        *hash_val.offset(7) = bit_reverse_32(*hash_val.offset(3));
     }
-    return hit_mask;
-}
+    fn compute_full_secondary_hash(&self, hash_val: &mut [u32]) {
+        let mut i = 0;
+        while i < 4 {
+            *hash_val.offset(i as isize) = 0;
+            i += 1
+        }
+        i = 0;
+        while i < 8 {
+            /* b1 -> b1 */
+            hash_val[0] ^= self.secondary_hash[i as usize][self.thor_row_pattern[i as usize] as usize];
+            /* b8 -> b1 */
+            *hash_val.offset(1) ^= self.secondary_hash[i as usize][self.thor_row_pattern[(7 - i) as usize] as usize];
+            /* a2 -> b1 */
+            *hash_val.offset(2) ^= self.secondary_hash[i as usize][self.thor_col_pattern[i as usize] as usize];
+            /* h2 -> b1 */
+            *hash_val.offset(3) ^= self.secondary_hash[i as usize][self.thor_col_pattern[(7 - i) as usize] as usize];
+            i += 1
+        }
+        /* g1 -> b1 */
+        *hash_val.offset(4) = bit_reverse_32(hash_val[0]);
+        /* g8 -> b1 */
+        *hash_val.offset(5) = bit_reverse_32(*hash_val.offset(1));
+        /* a7 -> b1 */
+        *hash_val.offset(6) = bit_reverse_32(*hash_val.offset(2));
+        /* h7 -> b1 */
+        *hash_val.offset(7) = bit_reverse_32(*hash_val.offset(3));
+    }
+
+    /*
+      PRIMARY_HASH_LOOKUP
+      Checks if any of the rotations of the current pattern set
+      match the primary hash code TARGET_HASH.
+    */
+    fn primary_hash_lookup(&self, target_hash: u32) -> i32 {
+        let mut i: i32 = 0;
+        let mut hit_mask: i32 = 0;
+        let mut hash_val: [u32; 8] = [0; 8];
+        self.compute_full_primary_hash(&mut hash_val);
+        hit_mask = 0;
+        i = 0;
+        while i < 8 {
+            if hash_val[i as usize] == target_hash {
+                hit_mask |= (1) << i
+            }
+            i += 1
+        }
+        return hit_mask;
+    }
+    /*
+      SECONDARY_HASH_LOOKUP
+      Checks if any of the rotations of the current pattern set
+      match the secondary hash code TARGET_HASH.
+    */
+    fn secondary_hash_lookup(&self, target_hash: u32)
+                             -> i32 {
+        let mut i: i32 = 0;
+        let mut hit_mask: i32 = 0;
+        let mut hash_val: [u32; 8] = [0; 8];
+        self.compute_full_secondary_hash(&mut hash_val);
+        hit_mask = 0;
+        i = 0;
+        while i < 8 {
+            if hash_val[i as usize] == target_hash {
+                hit_mask |= (1) << i
+            }
+            i += 1
+        }
+        return hit_mask;
+    }
 }
 /*
   FILTER_DATABASE
