@@ -963,21 +963,20 @@ unsafe fn get_database_info(info: *mut DatabaseInfoType) {
         if !(change != 0) { break ; }
     };
 }
-
+impl ThorHash {
 /*
   COMPUTE_PARTIAL_HASH
   Computes the primary and secondary hash values for the
   unit element in the rotation group.
 */
-unsafe fn compute_partial_hash(hash_val1: &mut u32,
-                               hash_val2: &mut u32) {
+fn compute_partial_hash(&self, hash_val1: &mut u32, hash_val2: &mut u32) {
     let mut i: i32 = 0;
     *hash_val1 = 0;
     *hash_val2 = 0;
     i = 0;
     while i < 8 {
-        *hash_val1 ^= thor_hash.primary_hash[i as usize][thor_hash.thor_row_pattern[i as usize] as usize];
-        *hash_val2 ^= thor_hash.secondary_hash[i as usize][thor_hash.thor_row_pattern[i as usize] as usize];
+        *hash_val1 ^= self.primary_hash[i as usize][self.thor_row_pattern[i as usize] as usize];
+        *hash_val2 ^= self.secondary_hash[i as usize][self.thor_row_pattern[i as usize] as usize];
         i += 1
     };
 }
@@ -989,7 +988,7 @@ unsafe fn compute_partial_hash(hash_val1: &mut u32,
   Note: The order of the hash codes must coincide with the
         definitions in INIT_SYMMETRY_MAPS().
 */
-unsafe fn compute_full_primary_hash(hash_val: &mut [u32]) {
+fn compute_full_primary_hash(&self, hash_val: &mut [u32]) {
     let mut i = 0;
     while i < 4 {
         *hash_val.offset(i as isize) = 0;
@@ -998,13 +997,13 @@ unsafe fn compute_full_primary_hash(hash_val: &mut [u32]) {
     i = 0;
     while i < 8 {
         /* b1 -> b1 */
-        hash_val[0] ^= thor_hash.primary_hash[i as usize][thor_hash.thor_row_pattern[i as usize] as usize];
+        hash_val[0] ^= self.primary_hash[i as usize][self.thor_row_pattern[i as usize] as usize];
         /* b8 -> b1 */
-        *hash_val.offset(1) ^= thor_hash.primary_hash[i as usize][thor_hash.thor_row_pattern[(7 - i) as usize] as usize];
+        *hash_val.offset(1) ^= self.primary_hash[i as usize][self.thor_row_pattern[(7 - i) as usize] as usize];
         /* a2 -> b1 */
-        *hash_val.offset(2) ^= thor_hash.primary_hash[i as usize][thor_hash.thor_col_pattern[i as usize] as usize];
+        *hash_val.offset(2) ^= self.primary_hash[i as usize][self.thor_col_pattern[i as usize] as usize];
         /* h2 -> b1 */
-        *hash_val.offset(3) ^= thor_hash.primary_hash[i as usize][thor_hash.thor_col_pattern[(7 - i) as usize] as usize];
+        *hash_val.offset(3) ^= self.primary_hash[i as usize][self.thor_col_pattern[(7 - i) as usize] as usize];
         i += 1
     }
     /* g1 -> b1 */
@@ -1016,7 +1015,7 @@ unsafe fn compute_full_primary_hash(hash_val: &mut [u32]) {
     /* h7 -> b1 */
     *hash_val.offset(7) = bit_reverse_32(*hash_val.offset(3));
 }
-unsafe fn compute_full_secondary_hash(hash_val: &mut [u32]) {
+fn compute_full_secondary_hash(&self, hash_val: &mut [u32]) {
     let mut i = 0;
     while i < 4 {
         *hash_val.offset(i as isize) = 0;
@@ -1025,13 +1024,13 @@ unsafe fn compute_full_secondary_hash(hash_val: &mut [u32]) {
     i = 0;
     while i < 8 {
         /* b1 -> b1 */
-        hash_val[0] ^= thor_hash.secondary_hash[i as usize][thor_hash.thor_row_pattern[i as usize] as usize];
+        hash_val[0] ^= self.secondary_hash[i as usize][self.thor_row_pattern[i as usize] as usize];
         /* b8 -> b1 */
-        *hash_val.offset(1) ^= thor_hash.secondary_hash[i as usize][thor_hash.thor_row_pattern[(7 - i) as usize] as usize];
+        *hash_val.offset(1) ^= self.secondary_hash[i as usize][self.thor_row_pattern[(7 - i) as usize] as usize];
         /* a2 -> b1 */
-        *hash_val.offset(2) ^= thor_hash.secondary_hash[i as usize][thor_hash.thor_col_pattern[i as usize] as usize];
+        *hash_val.offset(2) ^= self.secondary_hash[i as usize][self.thor_col_pattern[i as usize] as usize];
         /* h2 -> b1 */
-        *hash_val.offset(3) ^= thor_hash.secondary_hash[i as usize][thor_hash.thor_col_pattern[(7 - i) as usize] as usize];
+        *hash_val.offset(3) ^= self.secondary_hash[i as usize][self.thor_col_pattern[(7 - i) as usize] as usize];
         i += 1
     }
     /* g1 -> b1 */
@@ -1049,12 +1048,11 @@ unsafe fn compute_full_secondary_hash(hash_val: &mut [u32]) {
   Checks if any of the rotations of the current pattern set
   match the primary hash code TARGET_HASH.
 */
-unsafe fn primary_hash_lookup(target_hash: u32)
-                              -> i32 {
+fn primary_hash_lookup(&self, target_hash: u32) -> i32 {
     let mut i: i32 = 0;
     let mut hit_mask: i32 = 0;
     let mut hash_val: [u32; 8] = [0; 8];
-    compute_full_primary_hash(&mut hash_val);
+    self.compute_full_primary_hash(&mut hash_val);
     hit_mask = 0;
     i = 0;
     while i < 8 {
@@ -1070,12 +1068,12 @@ unsafe fn primary_hash_lookup(target_hash: u32)
   Checks if any of the rotations of the current pattern set
   match the secondary hash code TARGET_HASH.
 */
-unsafe fn secondary_hash_lookup(target_hash: u32)
+fn secondary_hash_lookup(&self, target_hash: u32)
                                 -> i32 {
     let mut i: i32 = 0;
     let mut hit_mask: i32 = 0;
     let mut hash_val: [u32; 8] = [0; 8];
-    compute_full_secondary_hash(&mut hash_val);
+    self.compute_full_secondary_hash(&mut hash_val);
     hit_mask = 0;
     i = 0;
     while i < 8 {
@@ -1086,7 +1084,7 @@ unsafe fn secondary_hash_lookup(target_hash: u32)
     }
     return hit_mask;
 }
-
+}
 /*
   FILTER_DATABASE
   Applies the current filter rules to the database DB.
@@ -1347,8 +1345,8 @@ unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
 unsafe fn opening_scan(moves_played: i32) {
     let mut primary_hash_0: [u32; 8] = [0; 8];
     let mut secondary_hash_0: [u32; 8] = [0; 8];
-    compute_full_primary_hash(&mut primary_hash_0);
-    compute_full_secondary_hash(&mut secondary_hash_0);
+    thor_hash.compute_full_primary_hash(&mut primary_hash_0);
+    thor_hash.compute_full_secondary_hash(&mut secondary_hash_0);
     recursive_opening_scan(root_node, 0, moves_played,
                            &mut primary_hash_0,
                            &mut secondary_hash_0);
@@ -1870,7 +1868,7 @@ unsafe fn build_thor_opening_tree() {
     root_node = new_thor_opening_node(0 as *mut ThorOpeningNode);
     clear_thor_board(&mut thor_board);
     compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board);
-    compute_partial_hash(&mut hash1, &mut hash2);
+    thor_hash.compute_partial_hash(&mut hash1, &mut hash2);
     (*root_node).hash1 = hash1;
     (*root_node).hash2 = hash2;
     node_list[0] = root_node;
@@ -1938,7 +1936,7 @@ unsafe fn build_thor_opening_tree() {
         parent = node_list[branch_depth as usize];
         new_child = new_thor_opening_node(parent);
         compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board);
-        compute_partial_hash(&mut hash1, &mut hash2);
+        thor_hash.compute_partial_hash(&mut hash1, &mut hash2);
         (*new_child).hash1 = hash1;
         (*new_child).hash2 = hash2;
         if (*parent).child_node.is_null() {
@@ -1985,7 +1983,7 @@ unsafe fn build_thor_opening_tree() {
             parent = new_child;
             new_child = new_thor_opening_node(parent);
             compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board);
-            compute_partial_hash(&mut hash1, &mut hash2);
+            thor_hash.compute_partial_hash(&mut hash1, &mut hash2);
             (*new_child).hash1 = hash1;
             (*new_child).hash2 = hash2;
             (*parent).child_node = new_child;
@@ -2236,9 +2234,9 @@ unsafe fn position_match(mut game: &mut GameType,
        rotation (common to the two hash functions). */
     if play_through_game(game, move_count) != 0 {
         compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board);
-        primary_hit_mask = primary_hash_lookup(in_hash1);
+        primary_hit_mask = thor_hash.primary_hash_lookup(in_hash1);
         if primary_hit_mask != 0 {
-            secondary_hit_mask = secondary_hash_lookup(in_hash2);
+            secondary_hit_mask = thor_hash.secondary_hash_lookup(in_hash2);
             if primary_hit_mask & secondary_hit_mask != 0 {
                 i = 0;
                 while i < 8 {
@@ -2382,8 +2380,8 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
     }
     /* Calculate frequencies for all moves */
     compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &in_board);
-    compute_full_primary_hash(&mut primary_hash_0);
-    compute_full_secondary_hash(&mut secondary_hash_0);
+    thor_hash.compute_full_primary_hash(&mut primary_hash_0);
+    thor_hash.compute_full_secondary_hash(&mut secondary_hash_0);
     recursive_frequency_count(root_node, &mut freq_count,
                               0, disc_count - 4,
                               &mut symmetries,
@@ -2561,7 +2559,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         disc_count[0] +
             disc_count[2] - 4;
     compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, in_board);
-    compute_partial_hash(&mut target_hash1, &mut target_hash2);
+    thor_hash.compute_partial_hash(&mut target_hash1, &mut target_hash2);
     opening_scan(move_count);
     /* Determine the shape masks */
     i = 0;
