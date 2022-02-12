@@ -23,8 +23,7 @@
 
 use std::ffi::c_void;
 use libc_wrapper::malloc;
-#[macro_use]
-use crate::fatal_error;
+use legacy_zebra::fatal_error;
 
 pub unsafe fn safe_malloc(size: u64) -> *mut c_void {
     let block = malloc(size as usize);

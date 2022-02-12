@@ -2,27 +2,27 @@
 non_upper_case_globals, unused_assignments, unused_mut, unused_must_use)]
 
 use engine_traits::Offset;
-use engine::src::osfbook::{set_deviation_value, set_max_batch_size, size_t, BookNode, probe_hash_table, get_hash, fill_move_alternatives, clear_node_depth, get_node_depth, adjust_score, _ISgraph, _ISupper, _ISprint, _ISspace};
+use engine::src::osfbook::{_ISgraph, _ISprint, _ISspace, _ISupper, adjust_score, BookNode, clear_node_depth, fill_move_alternatives, get_hash, get_node_depth, probe_hash_table, set_deviation_value, set_max_batch_size, size_t};
 use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WINS};
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
-use legacy_zebra::src::error::{LibcFatalError};
+use legacy_zebra::src::error::LibcFatalError;
 use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
 
-use libc_wrapper::{time, atof, fflush, stdout, fopen, fread, fclose, FileHandle, fprintf, fputc, free, sprintf, putc, fputs, stderr, sscanf, strlen, fgets, qsort, feof, strcmp, strstr, __ctype_b_loc, fwrite, malloc, toupper, ctime, strcpy, tolower, printf, puts, strcasecmp, atoi, exit};
+use libc_wrapper::{__ctype_b_loc, atof, atoi, ctime, exit, fclose, feof, fflush, fgets, FileHandle, fopen, fprintf, fputc, fputs, fread, free, fwrite, malloc, printf, putc, puts, qsort, sprintf, sscanf, stderr, stdout, strcasecmp, strcmp, strcpy, strlen, strstr, time, tolower, toupper};
 use legacy_zebra::src::osfbook;
-use engine::src::moves::{generate_all, make_move, unmake_move, unmake_move_no_hash, make_move_no_hash, generate_specific};
+use engine::src::moves::{generate_all, generate_specific, make_move, make_move_no_hash, unmake_move, unmake_move_no_hash};
 use engine::src::search::disc_count;
-use legacy_zebra::src::safemem::safe_malloc;
+use safemem::safe_malloc;
 use engine::src::zebra::EvaluationType;
 use engine::src::stubs::{abs, floor};
-use legacy_zebra::src::display::{display_state};
-use engine::src::hash::{setup_hash, determine_hash_values};
+use legacy_zebra::src::display::display_state;
+use engine::src::hash::{determine_hash_values, setup_hash};
 use engine::src::midgame::middle_game;
 use engine::src::end::end_game;
 use engine::src::counter::reset_counter;
-use legacy_zebra::src::osfbook::{write_text_database,write_binary_database,
-                                 read_text_database, read_binary_database, init_osf, time_t, add_new_game, prepare_tree_traversal,
-                                 do_minimax, evaluate_node, create_BookNode};
+use legacy_zebra::src::osfbook::{add_new_game, create_BookNode,
+                                 do_minimax, evaluate_node, init_osf, prepare_tree_traversal, read_binary_database, read_text_database,
+                                 time_t, write_binary_database, write_text_database};
 use engine::src::error::FrontEnd;
 use legacy_zebra::src::game::game_init;
 use std::io::Write;
@@ -30,6 +30,8 @@ use std::io::Write;
 pub type FE = LibcFatalError;
 use legacy_zebra::fatal_error;
 use std::ffi::CStr;
+
+pub mod safemem;
 
 pub const MIDGAME_STATISTICS: C2RustUnnamed = 0;
 pub type C2RustUnnamed = u32;
