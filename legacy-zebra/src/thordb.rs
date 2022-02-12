@@ -1,4 +1,4 @@
-use libc_wrapper::{free, fclose, fopen, FileHandle};
+use libc_wrapper::{fclose, fopen, FileHandle};
 use crate::src::error::LibcFatalError;
 use engine::src::stubs::abs;
 use crate::src::safemem::{safe_malloc};
@@ -7,7 +7,6 @@ use thordb_types::{Int8, Int16, Int32};
 use engine::src::bitboard::bit_reverse_32;
 
 use engine::src::moves::dir_mask;
-use std::ffi::{c_void};
 use thordb_types::{GameType, DatabaseType, C2RustUnnamed, EITHER_SELECTED_FILTER,
                        TournamentType, PlayerType, ThorOpeningNode,
                        GameInfoType, PlayerFilterType, DatabaseInfoType, FilterType,
@@ -88,8 +87,8 @@ static mut thor_search: SearchResultType =
         median_black_score: 0,
         allocation: 0,
         next_move_frequency: [0; 100],
-        match_list:
-        0 as *const *mut GameType as *mut *mut GameType,};
+        match_list: Vec::new(),
+    };
 static mut tournaments: TournamentDatabaseType =
     TournamentDatabaseType{prolog:
     PrologType{creation_century: 0,
@@ -590,8 +589,7 @@ pub unsafe fn sort_thor_games(count: i32) {
         /* No need to sort 0 or 1 games. */
         return
     }
-    let slice = std::slice::from_raw_parts_mut(thor_search.match_list, count as usize);
-    slice.sort_by(|g1, g2| {
+    thor_search.match_list.sort_by(|g1, g2| {
         match unsafe { thor_compare(&**g1, &**g2) } {
             i32::MIN..=-1_i32 => Ordering::Less,
             0 => Ordering::Equal,
@@ -1887,7 +1885,7 @@ unsafe fn build_thor_opening_tree() {
 pub unsafe fn init_thor_database(g_state: &mut FullState) {
     thor_game_count = 0;
     thor_database_count = 0;
-    thor_search.match_list = 0 as *mut *mut GameType;
+    thor_search.match_list = Vec::new();
     thor_search.allocation = 0;
     thor_search.match_count = 0;
     thor_search.black_wins = 0;
@@ -2292,11 +2290,10 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     /* Make sure there's memory allocated if all positions
        in all databases match the position */
     if thor_search.allocation == 0 {
-        thor_search.match_list = safe_malloc((thor_game_count as u64).wrapping_mul(::std::mem::size_of::<*mut GameType>() as u64)) as *mut *mut GameType;
+        thor_search.match_list = vec![null_mut(); thor_game_count as usize];
         thor_search.allocation = thor_game_count
     } else if thor_search.allocation < thor_game_count {
-        free(thor_search.match_list as *mut c_void);
-        thor_search.match_list = safe_malloc((thor_game_count as u64).wrapping_mul(::std::mem::size_of::<*mut GameType>() as u64)) as *mut *mut GameType;
+        thor_search.match_list = vec![null_mut(); thor_game_count as usize];
         thor_search.allocation = thor_game_count
     }
     /* If necessary, filter all games in the database */
