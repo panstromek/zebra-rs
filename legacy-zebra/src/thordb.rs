@@ -63,7 +63,7 @@ static move_mask_hi: [u32; 100] = init_move_masks()[0];
 static move_mask_lo: [u32; 100] = init_move_masks()[1];
 static unmove_mask_hi: [u32; 100] = init_move_masks()[2];
 static unmove_mask_lo: [u32; 100] = init_move_masks()[3];
-static mut database_head: Option<&'static DatabaseType> = None;
+static mut database_head: Option<Box<DatabaseType>> = None;
 static mut players: PlayerDatabaseType =
     PlayerDatabaseType{prolog:
     PrologType{creation_century: 0,
@@ -471,7 +471,7 @@ pub unsafe fn read_game_database(file_name:
         fclose(stream);
         // FIXME This is here to preserve consistency with the old version but seems wrong
         //  why we would assign database head when we fail to parse the game??
-        database_head = Some(Box::leak(Box::new(db_head)));
+        database_head = Some(Box::new(db_head));
         return 0
     }
     success = 1;
@@ -482,7 +482,7 @@ pub unsafe fn read_game_database(file_name:
                                                          as u64)) as
             *mut GameType;
     i = 0;
-    let db_head = Box::leak(Box::new(db_head));
+    let db_head = Box::new(db_head);
 
     while i < (db_head).count {
         success =
