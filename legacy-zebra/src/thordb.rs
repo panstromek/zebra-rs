@@ -1752,7 +1752,7 @@ fn new_thor_opening_node(tree: &mut ThorOpeningTree, parent: Option<OpeningNodeR
   Builds the opening tree from the statically computed
   structure THOR_OPENING_LIST (see thorop.c).
 */
-unsafe fn build_thor_opening_tree(thor_board: &mut ThorBoard) {
+fn build_thor_opening_tree(thor_board: &mut ThorBoard, thor_hash_: &mut ThorHash, tree: &mut ThorOpeningTree) {
     type FE = LibcFatalError;
     let mut thor_move_list: [i8; 61] = [0; 61];
     let mut j: i32 = 0;
@@ -1766,14 +1766,13 @@ unsafe fn build_thor_opening_tree(thor_board: &mut ThorBoard) {
     // let mut last_child = None;
     // let mut new_child = None;
     let mut node_list: [Option<OpeningNodeRef>; 61] = [None; 61];
-    let mut tree = &mut thor_opening_tree;
     /* Create the root node and compute its hash value */
-    let mut root_node = new_thor_opening_node(&mut tree, None);
+    let mut root_node = new_thor_opening_node(tree, None);
     tree.set_root(root_node);
 
     clear_thor_board(&mut thor_board.board);
-    compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board.board);
-    thor_hash.compute_partial_hash(&mut hash1, &mut hash2);
+    compute_thor_patterns(&mut thor_hash_.thor_row_pattern, &mut thor_hash_.thor_col_pattern, &thor_board.board);
+    thor_hash_.compute_partial_hash(&mut hash1, &mut hash2);
     (tree[root_node]).hash1 = hash1;
     (tree[root_node]).hash2 = hash2;
     node_list[0] = Some(root_node);
@@ -1817,9 +1816,9 @@ unsafe fn build_thor_opening_tree(thor_board: &mut ThorBoard) {
         }
         /* Create the branch from the previous node */
         let mut parent = node_list[branch_depth as usize].unwrap();
-        let mut new_child = new_thor_opening_node(&mut tree, Some(parent));
-        compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board.board);
-        thor_hash.compute_partial_hash(&mut hash1, &mut hash2);
+        let mut new_child = new_thor_opening_node(tree, Some(parent));
+        compute_thor_patterns(&mut thor_hash_.thor_row_pattern, &mut thor_hash_.thor_col_pattern, &thor_board.board);
+        thor_hash_.compute_partial_hash(&mut hash1, &mut hash2);
         (tree[new_child]).hash1 = hash1;
         (tree[new_child]).hash2 = hash2;
         if (tree[parent]).child_node.is_none() {
@@ -1854,9 +1853,9 @@ unsafe fn build_thor_opening_tree(thor_board: &mut ThorBoard) {
                 }
             }
             parent = new_child;
-            new_child = new_thor_opening_node(&mut tree, Some(parent));
-            compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board.board);
-            thor_hash.compute_partial_hash(&mut hash1, &mut hash2);
+            new_child = new_thor_opening_node(tree, Some(parent));
+            compute_thor_patterns(&mut thor_hash_.thor_row_pattern, &mut thor_hash_.thor_col_pattern, &thor_board.board);
+            thor_hash_.compute_partial_hash(&mut hash1, &mut hash2);
             tree[new_child].hash1 = hash1;
             tree[new_child].hash2 = hash2;
             tree[parent].child_node = Some(new_child);
@@ -1868,7 +1867,7 @@ unsafe fn build_thor_opening_tree(thor_board: &mut ThorBoard) {
         i += 1
     }
     /* Calculate opening frequencies also for interior nodes */
-    calculate_opening_frequency(&mut tree, root_node);
+    calculate_opening_frequency(tree, root_node);
 }
 
 
@@ -1907,7 +1906,7 @@ pub unsafe fn init_thor_database(g_state: &mut FullState) {
     init_symmetry_maps();
     thor_hash.init_thor_hash(&mut g_state.random_instance);
     prepare_thor_board(&mut board.board);
-    build_thor_opening_tree(&mut board);
+    build_thor_opening_tree(&mut board, &mut thor_hash, &mut thor_opening_tree);
     filter.game_categories = 1 | 2 | 4;
     filter.player_filter = EITHER_SELECTED_FILTER;
     filter.first_year = -((1) << 25);
