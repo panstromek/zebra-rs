@@ -8,7 +8,7 @@ use engine::src::bitboard::bit_reverse_32;
 use engine::src::moves::dir_mask;
 use thordb_types::{GameType, DatabaseType, C2RustUnnamed, EITHER_SELECTED_FILTER,
                        TournamentType, PlayerType, ThorOpeningNode,
-                       GameInfoType, PlayerFilterType, DatabaseInfoType, FilterType,
+                       GameInfoType, DatabaseInfoType, FilterType,
                        PrologType, TournamentDatabaseType, SearchResultType, PlayerDatabaseType};
 use thor_opening_list::THOR_OPENING_LIST;
 use engine_traits::Offset;
@@ -1156,15 +1156,7 @@ unsafe fn set_player_filter(selected: &mut [i32]) {
     }
     thor_games_filtered = 0;
 }
-/*
-  SET_PLAYER_FILTER_TYPE
-  Specifies whether it suffices for a game to contain one selected
-  player or if both players have to be selected for it be displayed.
-*/
 
-unsafe fn set_player_filter_type(player_filter: PlayerFilterType) {
-    filter.player_filter = player_filter;
-}
 /*
   SET_TOURNAMENT_FILTER
   Specify what tournaments to search for. The boolean vector SELECTED

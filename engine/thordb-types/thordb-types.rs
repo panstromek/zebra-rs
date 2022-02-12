@@ -290,6 +290,16 @@ pub struct FilterType {
     pub last_year: i32,
     pub player_filter: PlayerFilterType,
 }
+impl FilterType {
+    /*
+      SET_PLAYER_FILTER_TYPE
+      Specifies whether it suffices for a game to contain one selected
+      player or if both players have to be selected for it be displayed.
+    */
+    fn set_player_filter_type(&mut self, player_filter: PlayerFilterType) {
+        self.player_filter = player_filter;
+    }
+}
 #[derive(Clone)]
 #[repr(C)]
 pub struct SearchResultType {
