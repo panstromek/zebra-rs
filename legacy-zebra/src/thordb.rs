@@ -1756,7 +1756,7 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
     /* Store the corner descriptor */
     (*game).corner_descriptor = corner_descriptor;
 }
-
+impl ThorHash {
 /*
   INIT_THOR_HASH
   Computes hash codes for each of the 6561 configurations of the 8 different
@@ -1766,7 +1766,7 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
 
   which speeds up the computation of the hash functions.
 */
-unsafe fn init_thor_hash(g_state: &mut FullState) {
+fn init_thor_hash(&mut self, g_state: &mut FullState) {
     let FullState {
         ref mut random_instance,
         ..
@@ -1800,7 +1800,7 @@ unsafe fn init_thor_hash(g_state: &mut FullState) {
         }
         j = 0;
         while j < 6561 {
-            thor_hash.primary_hash[i as usize][j as usize] =
+            self.primary_hash[i as usize][j as usize] =
                 buffer[j as usize] as u32 &
                     0xffff0000 as u32 |
                     bit_reverse_32(buffer[flip_row[j as usize] as usize] as
@@ -1815,7 +1815,7 @@ unsafe fn init_thor_hash(g_state: &mut FullState) {
         }
         j = 0;
         while j < 6561 {
-            thor_hash.secondary_hash[i as usize][j as usize] =
+            self.secondary_hash[i as usize][j as usize] =
                 buffer[j as usize] as u32 &
                     0xffff0000 as u32 |
                     bit_reverse_32(buffer[flip_row[j as usize] as usize] as
@@ -1825,6 +1825,7 @@ unsafe fn init_thor_hash(g_state: &mut FullState) {
         }
         i += 1
     };
+}
 }
 /*
   NEW_THOR_OPENING_NODE
@@ -2034,7 +2035,7 @@ pub unsafe fn init_thor_database(g_state: &mut FullState) {
     thor_games_filtered = 0;
     init_move_masks();
     init_symmetry_maps();
-    init_thor_hash(g_state);
+    thor_hash.init_thor_hash(g_state);
     prepare_thor_board(&mut thor_board);
     build_thor_opening_tree();
     filter.game_categories =
