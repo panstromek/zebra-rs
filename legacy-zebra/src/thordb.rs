@@ -1282,12 +1282,12 @@ fn recursive_opening_scan(tree: &mut ThorOpeningTree,
   Fills the opening tree with information on how well
   the current pattern configuration matches the openings.
 */
-unsafe fn opening_scan(moves_played: i32) {
+fn opening_scan(moves_played: i32, thor_hash_: &mut ThorHash, tree: &mut ThorOpeningTree) {
     let mut primary_hash_0: [u32; 8] = [0; 8];
     let mut secondary_hash_0: [u32; 8] = [0; 8];
-    thor_hash.compute_full_primary_hash(&mut primary_hash_0);
-    thor_hash.compute_full_secondary_hash(&mut secondary_hash_0);
-    recursive_opening_scan(&mut thor_opening_tree, thor_opening_tree.root().unwrap(), 0, moves_played, &mut primary_hash_0, &mut secondary_hash_0);
+    thor_hash_.compute_full_primary_hash(&mut primary_hash_0);
+    thor_hash_.compute_full_secondary_hash(&mut secondary_hash_0);
+    recursive_opening_scan(tree, tree.root().unwrap(), 0, moves_played, &mut primary_hash_0, &mut secondary_hash_0);
 }
 /*
   RECURSIVE_FREQUENCY_COUNT
@@ -2346,7 +2346,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     move_count = disc_count[0] + disc_count[2] - 4;
     compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, in_board);
     thor_hash.compute_partial_hash(&mut target_hash1, &mut target_hash2);
-    opening_scan(move_count);
+    opening_scan(move_count, (&mut thor_hash), &mut thor_opening_tree);
     /* Determine the shape masks */
     i = 0;
     while i < 8 {
