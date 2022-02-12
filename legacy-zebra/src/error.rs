@@ -264,44 +264,23 @@ impl FrontEnd for LibcFatalError {
     }
 
     fn end_report_panic_abort_2(elapsed_time: f64) {
-         {
-            write!(stdout, "{} {:.1} {} {}\n",
-                   "Panic abort after", elapsed_time, 's', "in selective search");
-        }
+        write!(stdout, "{} {:.1} {} {}\n", "Panic abort after", elapsed_time, 's', "in selective search");
     }
 
-     fn end_report_semi_panic_abort_3(elapsed_time: f64) {
-          {
-             write!(stdout, "{} {:.1} {} {}\n",
-                    "Semi-panic abort after", elapsed_time,
-                    's', "in WLD search");
-         }
+    fn end_report_semi_panic_abort_3(elapsed_time: f64) {
+        write!(stdout, "{} {:.1} {} {}\n", "Semi-panic abort after", elapsed_time, 's', "in WLD search");
     }
 
     fn end_report_semi_panic_abort_2(elapsed_time: f64) {
-         {
-            write!(stdout, "{} {:.1} {} {}\n",
-                   "Semi-panic abort after" , elapsed_time, 's',
-                   "in exact search" );
-        }
+        write!(stdout, "{} {:.1} {} {}\n", "Semi-panic abort after", elapsed_time, 's', "in exact search");
     }
 
     fn end_report_panic_abort(elapsed_time: f64) {
-         {
-            write!(stdout, "{} {:.1} {} {}\n",
-                   "Panic abort after", elapsed_time,
-                   's',
-                   "in WLD search");
-        }
+        write!(stdout, "{} {:.1} {} {}\n", "Panic abort after", elapsed_time, 's', "in WLD search");
     }
 
     fn end_report_semi_panic_abort(elapsed_time: f64) {
-         {
-            write!(stdout, "{} {:.1} {} {}\n",
-                   "Semi-panic abort after", elapsed_time,
-                   's',
-                   "in selective search");
-        }
+        write!(stdout, "{} {:.1} {} {}\n", "Semi-panic abort after", elapsed_time, 's', "in selective search");
     }
 
     fn end_display_zero_status() {
@@ -311,18 +290,15 @@ impl FrontEnd for LibcFatalError {
     }
 
     fn handle_fatal_pv_error(i: i32, pv_0_depth: i32, pv_0: &[i8; 64]) {
-         {
-            write!(stdout, "pv_depth[0] = {}\n",
-                   pv_0_depth);
-            let mut j = 0;
-            while j < pv_0_depth {
-                write!(stdout, "{} ",TO_SQUARE(pv_0[j as usize]));
-                j += 1
-            }
-            write!(stdout, "\n");
-            write!(stdout, "i={}\n", i);
-            fatal_error!("Error in PV completion");
+        write!(stdout, "pv_depth[0] = {}\n", pv_0_depth);
+        let mut j = 0;
+        while j < pv_0_depth {
+            write!(stdout, "{} ", TO_SQUARE(pv_0[j as usize]));
+            j += 1
         }
+        write!(stdout, "\n");
+        write!(stdout, "i={}\n", i);
+        fatal_error!("Error in PV completion");
     }
 
     fn report_unwanted_book_draw(this_move: i32) {
@@ -390,7 +366,6 @@ impl FrontEnd for LibcFatalError {
     fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32,
                                    searched: i32, update_pv: i32, echo: i32) {
         unsafe {
-
             if update_pv != 0 {
                 if curr_val <= alpha {
                     send_sweep!(display_state, "<{:.2}",
@@ -424,9 +399,6 @@ impl FrontEnd for LibcFatalError {
                                mut flip_stack_: &mut FlipStack
      ) {
          let mut nodes_counter: &mut CounterType = &mut search_state.nodes;
-
-
-
          unsafe {
              display_state.clear_status();
              send_status!(display_state, "--> ");
@@ -456,19 +428,12 @@ impl FrontEnd for LibcFatalError {
                              node_val / ( g_timer.get_elapsed_time() + 0.001f64),
                              "nps");
              }
-
          }
     }
 
     fn report_mirror_symetry_error(count: i32, i: i32, first_mirror_offset: i32, first_item: i32, second_item: i32) {
-         {
-            write!(stdout, "{} @ {} <--> {} of {}\n",
-                   "Mirror symmetry error", i, first_mirror_offset,
-                   count);
-            write!(stdout, "{} <--> {}\n",
-                   first_item,
-                   second_item);
-        }
+        write!(stdout, "{} @ {} <--> {} of {}\n", "Mirror symmetry error", i, first_mirror_offset, count);
+        write!(stdout, "{} <--> {}\n", first_item, second_item);
     }
 }
 
