@@ -914,7 +914,7 @@ fn get_corner_mask(disc_a1: i32, disc_a8: i32, disc_h1: i32, disc_h8: i32) -> u3
   above.
 */
 
-unsafe fn get_database_info(info: *mut DatabaseInfoType) {
+unsafe fn get_database_info(info: &mut [DatabaseInfoType]) {
     let mut change: i32 = 0;
     let mut temp = DatabaseInfoType{year: 0, count: 0,};
     let mut current_db_ = &database_head;
