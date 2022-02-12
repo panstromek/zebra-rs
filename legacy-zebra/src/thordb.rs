@@ -462,7 +462,7 @@ pub unsafe fn read_game_database(file_name:
 
     let mut db_head = DatabaseType {
         prolog: prolog_type,
-        games: null_mut(),
+        games: Vec::new(),
         count: 0,
         next: old_database_head
     };
@@ -476,13 +476,9 @@ pub unsafe fn read_game_database(file_name:
     }
     success = 1;
     (db_head).count = (db_head).prolog.game_count;
-    (db_head).games =
-        safe_malloc(((db_head).count as
-                         u64).wrapping_mul(::std::mem::size_of::<GameType>()
-                                                         as u64)) as
-            *mut GameType;
+    (db_head).games = vec![GameType::new(); (db_head).count as usize];
     i = 0;
-    let db_head = Box::new(db_head);
+    let mut db_head = Box::new(db_head);
 
     while i < (db_head).count {
         success =
@@ -1067,14 +1063,13 @@ impl ThorHash {
   FILTER_DATABASE
   Applies the current filter rules to the database DB.
 */
-unsafe fn filter_database(db: &DatabaseType) {
+unsafe fn filter_database(db: &mut DatabaseType) {
     let mut category: i32 = 0;
     let mut passes_filter: i32 = 0;
     let mut year: i32 = 0;
-    let mut game = 0 as *mut GameType;
     let mut i = 0;
     while i < (*db).count {
-        game = &mut *(*db).games.offset(i as isize) as *mut GameType;
+        let game = (*db).games.offset(i as isize);
         passes_filter = 1;
         /* Apply the tournament filter */
         if passes_filter != 0 && (*tournaments.tournament_list.offset((*game).tournament_no as isize)).selected == 0 {
@@ -1131,10 +1126,10 @@ unsafe fn filter_database(db: &DatabaseType) {
   Applies the current filter rules to all databases.
 */
 unsafe fn filter_all_databases() {
-    let mut current_db_ = &database_head;
+    let mut current_db_ = &mut database_head;
     while let Some(current_db) = current_db_ {
         filter_database(current_db);
-        current_db_ = &(*current_db).next
+        current_db_ = &mut (*current_db).next
     };
 }
 
@@ -2303,7 +2298,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     }
     /* If necessary, sort all games in the database */
     if thor_games_sorted == 0 {
-        let mut current_db_ = &database_head;
+        let mut current_db_ = &mut database_head;
         i = 0;
         while let Some(current_db) = current_db_ {
             j = 0;
@@ -2313,7 +2308,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
                 i += 1;
                 j += 1
             }
-            current_db_ = &(*current_db).next
+            current_db_ = &mut (*current_db).next
         }
         sort_thor_games(thor_game_count);
         j = 0;
@@ -2441,7 +2436,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         thor_search.next_move_score[i as usize] = 0.0f64;
         i += 1
     }
-    let mut current_db_ = &database_head;
+    let mut current_db_ = &mut database_head;
     while let Some(current_db) = current_db_ {
         i = 0;
         while i < (*current_db).count {
@@ -2474,7 +2469,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
             }
             i += 1
         }
-        current_db_ = &(*current_db).next
+        current_db_ = &mut (*current_db).next
     }
     /* Remove the NULLs from the list of matching games if there are any.
        This gives a sorted list. */
