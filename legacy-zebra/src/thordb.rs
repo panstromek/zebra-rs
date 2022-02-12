@@ -1984,6 +1984,8 @@ pub unsafe fn get_thor_game_move(index: i32, move_number: i32) -> i32 {
   IN_HASH1 and IN_HASH2, otherwise FALSE.
 */
 unsafe fn position_match(mut game: &mut GameType,
+                         thor_board: &mut ThorBoard,
+                         thor_hash_: &mut ThorHash,
                          move_count: i32,
                          side_to_move: i32,
                          shape_lo: &mut [u32],
@@ -2083,11 +2085,11 @@ unsafe fn position_match(mut game: &mut GameType,
        number of discs is correct and check if the hash
        functions match the given hash values for at least one
        rotation (common to the two hash functions). */
-    if board.play_through_game(game, move_count) != 0 {
-        compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &board.board);
-        primary_hit_mask = thor_hash.primary_hash_lookup(in_hash1);
+    if thor_board.play_through_game(game, move_count) != 0 {
+        compute_thor_patterns(&mut thor_hash_.thor_row_pattern, &mut thor_hash_.thor_col_pattern, &thor_board.board);
+        primary_hit_mask = thor_hash_.primary_hash_lookup(in_hash1);
         if primary_hit_mask != 0 {
-            secondary_hit_mask = thor_hash.secondary_hash_lookup(in_hash2);
+            secondary_hit_mask = thor_hash_.secondary_hash_lookup(in_hash2);
             if primary_hit_mask & secondary_hit_mask != 0 {
                 i = 0;
                 while i < 8 {
@@ -2451,7 +2453,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
             game = &mut *(*current_db).games.offset(i as isize);
             if (*game).passes_filter != 0 {
                 if disc_count[0] == (*game).black_disc_count[move_count as usize] as i32 {
-                    if position_match(game, move_count, side_to_move, &mut shape_lo, &mut shape_hi, corner_mask, target_hash1, target_hash2) != 0 {
+                    if position_match(game, &mut board, &mut thor_hash, move_count, side_to_move, &mut shape_lo, &mut shape_hi, corner_mask, target_hash1, target_hash2) != 0 {
                         let ref mut fresh7 = *thor_search.match_list.offset((*game).sort_order as isize);
                         *fresh7 = game;
                         symmetry = (*game).matching_symmetry as i32;
