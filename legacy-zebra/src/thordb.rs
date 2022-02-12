@@ -1295,14 +1295,15 @@ unsafe fn opening_scan(moves_played: i32) {
   the number of times each move has been played according to the
   trimmed set of openings from the Thor database.
 */
-unsafe fn recursive_frequency_count(tree: &mut ThorOpeningTree,
+fn recursive_frequency_count(tree: &mut ThorOpeningTree,
                                     node: OpeningNodeRef,
                                     freq_count: &mut [i32],
                                     depth: i32,
                                     moves_played: i32,
                                     symmetries: &mut [i32],
                                     primary_hash_0: &mut [u32],
-                                    secondary_hash_0: &mut [u32]) {
+                                    secondary_hash_0: &mut [u32],
+                                    inv_symmetry_map_: &[&[i32]; 8]) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut child_move: i32 = 0;
@@ -1316,7 +1317,7 @@ unsafe fn recursive_frequency_count(tree: &mut ThorOpeningTree,
                 let mut child = (tree[node]).child_node;
                 while !child.is_none() {
                     *freq_count.offset(
-                        *inv_symmetry_map[j as usize].offset(child_move as isize) as isize
+                        *inv_symmetry_map_[j as usize].offset(child_move as isize) as isize
                     ) += (tree[child.unwrap()]).frequency;
                     child_move = (tree[child.unwrap()]).sibling_move as i32;
                     child = (tree[child.unwrap()]).sibling_node
@@ -1330,7 +1331,7 @@ unsafe fn recursive_frequency_count(tree: &mut ThorOpeningTree,
             recursive_frequency_count(tree, child.unwrap(), freq_count,
                                       depth + 1, moves_played,
                                       symmetries, primary_hash_0,
-                                      secondary_hash_0);
+                                      secondary_hash_0, inv_symmetry_map_);
             child = (tree[child.unwrap()]).sibling_node
         }
     };
@@ -2194,7 +2195,7 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
     thor_hash.compute_full_primary_hash(&mut primary_hash_0);
     thor_hash.compute_full_secondary_hash(&mut secondary_hash_0);
     recursive_frequency_count(tree, tree.root().unwrap(), &mut freq_count, 0, disc_count - 4,
-                              &mut symmetries, &mut primary_hash_0, &mut secondary_hash_0);
+                              &mut symmetries, &mut primary_hash_0, &mut secondary_hash_0, &inv_symmetry_map);
     freq_sum = 0;
     i = 1;
     while i <= 8 {
