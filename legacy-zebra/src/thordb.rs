@@ -1,7 +1,7 @@
 use libc_wrapper::{fclose, fopen, FileHandle};
 use crate::src::error::LibcFatalError;
 use engine::src::stubs::abs;
-use thordb_types::{Int8, Int16, Int32};
+use thordb_types::{Int8, Int16, Int32, OpeningNodeRef, ThorOpeningTree};
 
 use engine::src::bitboard::bit_reverse_32;
 
@@ -108,7 +108,8 @@ static mut tournaments: TournamentDatabaseType =
         reserved: 0,},
         name_buffer: b"",
         tournament_list: Vec::new()};
-static mut root_node: *mut ThorOpeningNode = 0 as *const ThorOpeningNode as *mut ThorOpeningNode;
+// static mut root_node: *mut ThorOpeningNode = 0 as *const ThorOpeningNode as *mut ThorOpeningNode;
+static mut thor_opening_tree: ThorOpeningTree = ThorOpeningTree::new();
 static default_sort_order: [i32; 5] = [2, 3, 1, 5, 4];
 static mut thor_sort_order: [i32; 10] = [0; 10];
 static mut filter: FilterType =
@@ -439,7 +440,7 @@ unsafe fn read_game(mut stream: &mut impl Read, mut game: &mut GameType) -> i32 
     (*game).moves.iter_mut().zip(bytes.iter().take(actually_read)).for_each(|(g, b)| {
         *g = *b as i8
     });
-    prepare_game(game, &mut board);
+    prepare_game(game, &mut board, &mut thor_opening_tree);
     return (success != 0 && actually_read == 60) as i32;
 }
 /*
@@ -1242,44 +1243,45 @@ unsafe fn specify_thor_sort_order(mut count: i32, sort_order: &[i32]) {
   with the primary and secondary hash codes from the 8 different
   rotations.
 */
-unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
+unsafe fn recursive_opening_scan(tree: &mut ThorOpeningTree, 
+                                 node: OpeningNodeRef,
                                  depth: i32,
                                  moves_played: i32,
                                  primary_hash_0: &mut [u32],
                                  secondary_hash_0: &mut [u32]) {
     /* Determine the status of the current node */
     if depth < moves_played {
-        (*node).matching_symmetry = 0;
-        (*node).current_match = 0
+        (tree[node]).matching_symmetry = 0;
+        (tree[node]).current_match = 0
     } else if depth == moves_played {
         /* Check the hash codes */
         let mut match_0 = 0;
         let mut matching_symmetry = 0;
         let mut i = 7;
         while i >= 0 {
-            if (*node).hash1 == *primary_hash_0.offset(i as isize) &&
-                (*node).hash2 == *secondary_hash_0.offset(i as isize) {
+            if (tree[node]).hash1 == *primary_hash_0.offset(i as isize) &&
+                (tree[node]).hash2 == *secondary_hash_0.offset(i as isize) {
                 match_0 = 1;
                 matching_symmetry = i
             }
             i -= 1
         }
         if match_0 != 0 {
-            (*node).matching_symmetry = matching_symmetry;
-            (*node).current_match = 1
+            (tree[node]).matching_symmetry = matching_symmetry;
+            (tree[node]).current_match = 1
         } else {
-            (*node).current_match = 2
+            (tree[node]).current_match = 2
         }
     } else {
         /* depth > moves_played */
-        (*node).current_match = (*(*node).parent_node).current_match;
-        (*node).matching_symmetry = (*(*node).parent_node).matching_symmetry
+        (tree[node]).current_match = (tree[(tree[node]).parent_node.unwrap()]).current_match;
+        (tree[node]).matching_symmetry = (tree[(tree[node]).parent_node.unwrap()]).matching_symmetry
     }
     /* Recursively search the childen */
-    let mut child = (*node).child_node;
-    while !child.is_null() {
-        recursive_opening_scan(child, depth + 1, moves_played, primary_hash_0, secondary_hash_0);
-        child = (*child).sibling_node
+    let mut child = (tree[node]).child_node;
+    while !child.is_none() {
+        recursive_opening_scan(tree, child.unwrap(), depth + 1, moves_played, primary_hash_0, secondary_hash_0);
+        child = tree[child.unwrap()].sibling_node
     };
 }
 
@@ -1293,7 +1295,7 @@ unsafe fn opening_scan(moves_played: i32) {
     let mut secondary_hash_0: [u32; 8] = [0; 8];
     thor_hash.compute_full_primary_hash(&mut primary_hash_0);
     thor_hash.compute_full_secondary_hash(&mut secondary_hash_0);
-    recursive_opening_scan(root_node, 0, moves_played, &mut primary_hash_0, &mut secondary_hash_0);
+    recursive_opening_scan(&mut thor_opening_tree, thor_opening_tree.root().unwrap(), 0, moves_played, &mut primary_hash_0, &mut secondary_hash_0);
 }
 /*
   RECURSIVE_FREQUENCY_COUNT
@@ -1301,7 +1303,8 @@ unsafe fn opening_scan(moves_played: i32) {
   the number of times each move has been played according to the
   trimmed set of openings from the Thor database.
 */
-unsafe fn recursive_frequency_count(node: *mut ThorOpeningNode,
+unsafe fn recursive_frequency_count(tree: &mut ThorOpeningTree,
+                                    node: OpeningNodeRef,
                                     freq_count: &mut [i32],
                                     depth: i32,
                                     moves_played: i32,
@@ -1311,35 +1314,32 @@ unsafe fn recursive_frequency_count(node: *mut ThorOpeningNode,
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut child_move: i32 = 0;
-    let mut child = 0 as *mut ThorOpeningNode;
     if depth == moves_played {
         i = 0;
         while i < 8 {
             j = *symmetries.offset(i as isize);
-            if (*node).hash1 == *primary_hash_0.offset(j as isize) &&
-                (*node).hash2 == *secondary_hash_0.offset(j as isize) {
-                child_move = (*node).child_move as i32;
-                child = (*node).child_node;
-                while !child.is_null() {
-                    *freq_count.offset(*inv_symmetry_map[j as
-                        usize].offset(child_move
-                        as
-                        isize)
-                        as isize) += (*child).frequency;
-                    child_move = (*child).sibling_move as i32;
-                    child = (*child).sibling_node
+            if (tree[node]).hash1 == *primary_hash_0.offset(j as isize) &&
+                (tree[node]).hash2 == *secondary_hash_0.offset(j as isize) {
+                child_move = (tree[node]).child_move as i32;
+                let mut child = (tree[node]).child_node;
+                while !child.is_none() {
+                    *freq_count.offset(
+                        *inv_symmetry_map[j as usize].offset(child_move as isize) as isize
+                    ) += (tree[child.unwrap()]).frequency;
+                    child_move = (tree[child.unwrap()]).sibling_move as i32;
+                    child = (tree[child.unwrap()]).sibling_node
                 }
                 break ;
             } else { i += 1 }
         }
     } else if depth < moves_played {
-        child = (*node).child_node;
-        while !child.is_null() {
-            recursive_frequency_count(child, freq_count,
+        let mut child = (tree[node]).child_node;
+        while !child.is_none() {
+            recursive_frequency_count(tree, child.unwrap(), freq_count,
                                       depth + 1, moves_played,
                                       symmetries, primary_hash_0,
                                       secondary_hash_0);
-            child = (*child).sibling_node
+            child = (tree[child.unwrap()]).sibling_node
         }
     };
 }
@@ -1438,18 +1438,18 @@ const fn init_move_masks() -> [[u32; 100]; 4] {
   Calculates and returns the number of lines in the Thor opening base
   that match the line defined by NODE.
 */
-unsafe fn calculate_opening_frequency(mut node: *mut ThorOpeningNode) -> i32 {
-    let mut child = (*node).child_node;
-    if child.is_null() {
-        return (*node).frequency
+fn calculate_opening_frequency(tree: &mut ThorOpeningTree, node: OpeningNodeRef) -> i32 {
+    let mut child = tree[node].child_node;
+    if child.is_none() {
+        return tree[node].frequency
     } else {
         let mut sum = 0;
         loop  {
-            sum += calculate_opening_frequency(child);
-            child = (*child).sibling_node;
-            if child.is_null() { break ; }
+            sum += calculate_opening_frequency(tree, child.unwrap());
+            child = tree[child.unwrap()].sibling_node;
+            if child.is_none() { break ; }
         }
-        (*node).frequency = sum;
+        tree[node].frequency = sum;
         return sum
     };
 }
@@ -1577,7 +1577,7 @@ fn play_through_game(&mut self, game: &mut GameType, max_moves: i32) -> i32 {
   The main result is that the number of black discs on the board after
   each of the moves is stored.
 */
-unsafe fn prepare_game(mut game: &mut GameType, thor_board: &mut ThorBoard) {
+unsafe fn prepare_game(mut game: &mut GameType, thor_board: &mut ThorBoard, tree: &mut ThorOpeningTree) {
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
     let mut done: i32 = 0;
@@ -1586,8 +1586,6 @@ unsafe fn prepare_game(mut game: &mut GameType, thor_board: &mut ThorBoard) {
     let mut moves_played: i32 = 0;
     let mut disc_count: [i32; 3] = [0; 3];
     let mut corner_descriptor: u32 = 0;
-    let mut opening = 0 as *mut ThorOpeningNode;
-    let mut child = 0 as *mut ThorOpeningNode;
     /* Play through the game and count the number of black discs
        at each stage. */
     clear_thor_board(&mut thor_board.board);
@@ -1645,25 +1643,27 @@ unsafe fn prepare_game(mut game: &mut GameType, thor_board: &mut ThorBoard) {
         i += 1
     }
     /* Find the longest opening which coincides with the game */
-    opening = root_node;
+    let mut opening = tree.root().unwrap();
+    let mut child = None;
+
     i = 0;
     opening_match = 1;
     while opening_match != 0 {
-        move_0 = (*opening).child_move as i32;
-        child = (*opening).child_node;
-        while !child.is_null() &&
+        move_0 = (tree[opening]).child_move as i32;
+        child = (tree[opening]).child_node;
+        while !child.is_none() &&
             move_0 != abs((*game).moves[i as usize] as i32) {
-            move_0 = (*child).sibling_move as i32;
-            child = (*child).sibling_node
+            move_0 = (tree[child.unwrap()]).sibling_move as i32;
+            child = (tree[child.unwrap()]).sibling_node
         }
-        if child.is_null() {
+        if child.is_none() {
             opening_match = 0
         } else {
-            opening = child;
+            opening = child.unwrap();
             i += 1
         }
     }
-    (*game).opening = opening;
+    (*game).opening = &mut tree[opening] as _;
     /* Initialize the shape state */
     (*game).shape_lo = 3 << 27;
     (*game).shape_hi = 3 << 3;
@@ -1745,14 +1745,14 @@ impl ThorHash {
   NEW_THOR_OPENING_NODE
   Creates and initializes a new node for use in the opening tree.
 */
-unsafe fn new_thor_opening_node(parent: *mut ThorOpeningNode) -> *mut ThorOpeningNode {
-    let mut node = Box::into_raw(Box::new(ThorOpeningNode::new()));
-    (*node).child_move = 0;
-    (*node).sibling_move = 0;
-    (*node).child_node = 0 as *mut ThorOpeningNode;
-    (*node).sibling_node = 0 as *mut ThorOpeningNode;
-    (*node).parent_node = parent;
-    return node;
+fn new_thor_opening_node(tree: &mut ThorOpeningTree, parent: Option<OpeningNodeRef>) -> OpeningNodeRef {
+    let mut node = ThorOpeningNode::new();
+    node.child_move = 0;
+    node.sibling_move = 0;
+    node.child_node = None;
+    node.sibling_node = None;
+    node.parent_node = parent;
+    tree.add(node)
 }
 
 /*
@@ -1770,18 +1770,21 @@ unsafe fn build_thor_opening_tree(thor_board: &mut ThorBoard) {
     let mut flipped: i32 = 0;
     let mut hash1: u32 = 0;
     let mut hash2: u32 = 0;
-    let mut parent = 0 as *mut ThorOpeningNode;
-    let mut last_child = 0 as *mut ThorOpeningNode;
-    let mut new_child = 0 as *mut ThorOpeningNode;
-    let mut node_list: [*mut ThorOpeningNode; 61] = [0 as *mut ThorOpeningNode; 61];
+    // let mut parent = None;
+    // let mut last_child = None;
+    // let mut new_child = None;
+    let mut node_list: [Option<OpeningNodeRef>; 61] = [None; 61];
+    let mut tree = &mut thor_opening_tree;
     /* Create the root node and compute its hash value */
-    root_node = new_thor_opening_node(0 as *mut ThorOpeningNode);
+    let mut root_node = new_thor_opening_node(&mut tree, None);
+    tree.set_root(root_node);
+
     clear_thor_board(&mut thor_board.board);
     compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board.board);
     thor_hash.compute_partial_hash(&mut hash1, &mut hash2);
-    (*root_node).hash1 = hash1;
-    (*root_node).hash2 = hash2;
-    node_list[0] = root_node;
+    (tree[root_node]).hash1 = hash1;
+    (tree[root_node]).hash2 = hash2;
+    node_list[0] = Some(root_node);
     /* Add each of the openings to the tree */
     let mut i = 0;
     while i < 741 {
@@ -1821,24 +1824,24 @@ unsafe fn build_thor_opening_tree(thor_board: &mut ThorBoard) {
             j += 1
         }
         /* Create the branch from the previous node */
-        parent = node_list[branch_depth as usize];
-        new_child = new_thor_opening_node(parent);
+        let mut parent = node_list[branch_depth as usize].unwrap();
+        let mut new_child = new_thor_opening_node(&mut tree, Some(parent));
         compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board.board);
         thor_hash.compute_partial_hash(&mut hash1, &mut hash2);
-        (*new_child).hash1 = hash1;
-        (*new_child).hash2 = hash2;
-        if (*parent).child_node.is_null() {
-            (*parent).child_node = new_child;
-            (*parent).child_move = thor_move_list[branch_depth as usize]
+        (tree[new_child]).hash1 = hash1;
+        (tree[new_child]).hash2 = hash2;
+        if (tree[parent]).child_node.is_none() {
+            (tree[parent]).child_node = Some(new_child);
+            (tree[parent]).child_move = thor_move_list[branch_depth as usize]
         } else {
-            last_child = (*parent).child_node;
-            while !(*last_child).sibling_node.is_null() {
-                last_child = (*last_child).sibling_node
+            let mut last_child = (tree[parent]).child_node.unwrap();
+            while !(tree[last_child]).sibling_node.is_none() {
+                last_child = (tree[last_child]).sibling_node.unwrap()
             }
-            (*last_child).sibling_node = new_child;
-            (*last_child).sibling_move = thor_move_list[branch_depth as usize]
+            (tree[last_child]).sibling_node = Some(new_child);
+            (tree[last_child]).sibling_move = thor_move_list[branch_depth as usize]
         }
-        node_list[(branch_depth + 1) as usize] = new_child;
+        node_list[(branch_depth + 1) as usize] = Some(new_child);
         /* Play through the rest of the moves and create new nodes for each
            of the resulting positions */
         j = branch_depth + 1;
@@ -1859,21 +1862,21 @@ unsafe fn build_thor_opening_tree(thor_board: &mut ThorBoard) {
                 }
             }
             parent = new_child;
-            new_child = new_thor_opening_node(parent);
+            new_child = new_thor_opening_node(&mut tree, Some(parent));
             compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &thor_board.board);
             thor_hash.compute_partial_hash(&mut hash1, &mut hash2);
-            (*new_child).hash1 = hash1;
-            (*new_child).hash2 = hash2;
-            (*parent).child_node = new_child;
-            (*parent).child_move = thor_move_list[j as usize];
-            node_list[(j + 1) as usize] = new_child;
+            tree[new_child].hash1 = hash1;
+            tree[new_child].hash2 = hash2;
+            tree[parent].child_node = Some(new_child);
+            tree[parent].child_move = thor_move_list[j as usize];
+            node_list[(j + 1) as usize] = Some(new_child);
             j += 1
         }
-        (*new_child).frequency = THOR_OPENING_LIST[i as usize].frequency;
+        (tree[new_child]).frequency = THOR_OPENING_LIST[i as usize].frequency;
         i += 1
     }
     /* Calculate opening frequencies also for interior nodes */
-    calculate_opening_frequency(root_node);
+    calculate_opening_frequency(&mut tree, root_node);
 }
 
 
@@ -2141,6 +2144,7 @@ pub unsafe fn thor_compare(game1: &GameType, game2: &GameType) -> i32 {
   towards common moves. (If no moves are found, PASS is returned.)
 */
 pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32, random_instance: &mut MyRandom) -> i32 {
+    let tree: &mut ThorOpeningTree = &mut thor_opening_tree;
     let mut j: i32 = 0;
     let mut temp_symm: i32 = 0;
     let mut pos: i32 = 0;
@@ -2197,7 +2201,7 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
     compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &in_board);
     thor_hash.compute_full_primary_hash(&mut primary_hash_0);
     thor_hash.compute_full_secondary_hash(&mut secondary_hash_0);
-    recursive_frequency_count(root_node, &mut freq_count, 0, disc_count - 4,
+    recursive_frequency_count(tree, tree.root().unwrap(), &mut freq_count, 0, disc_count - 4,
                               &mut symmetries, &mut primary_hash_0, &mut secondary_hash_0);
     freq_sum = 0;
     i = 1;
