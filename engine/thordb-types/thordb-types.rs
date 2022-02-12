@@ -1,3 +1,4 @@
+use std::ops::{Index, IndexMut};
 use std::ptr::null_mut;
 
 #[derive(Copy, Clone)]
@@ -156,9 +157,9 @@ pub struct ThorOpeningNode {
     pub matching_symmetry: i32,
     pub child_move: i8,
     pub sibling_move: i8,
-    pub child_node: *mut ThorOpeningNode,
-    pub sibling_node: *mut ThorOpeningNode,
-    pub parent_node: *mut ThorOpeningNode,
+    pub child_node: Option<OpeningNodeRef>,
+    pub sibling_node: Option<OpeningNodeRef>,
+    pub parent_node: Option<OpeningNodeRef>,
 }
 
 impl ThorOpeningNode {
@@ -171,10 +172,52 @@ impl ThorOpeningNode {
             matching_symmetry: 0,
             child_move: 0,
             sibling_move: 0,
-            child_node: null_mut(),
-            sibling_node: null_mut(),
-            parent_node: null_mut()
+            child_node: None,
+            sibling_node: None,
+            parent_node: None
         }
+    }
+}
+
+#[derive(Copy, Clone)]
+pub struct OpeningNodeRef {
+    index: usize,
+}
+
+pub struct ThorOpeningTree {
+    nodes: Vec<ThorOpeningNode>,
+    root_node: Option<OpeningNodeRef>,
+}
+
+impl ThorOpeningTree {
+    pub const fn new() -> Self {
+        ThorOpeningTree { nodes: vec![], root_node: None }
+    }
+    pub fn add(&mut self, node: ThorOpeningNode) -> OpeningNodeRef {
+        self.nodes.push(node);
+        return OpeningNodeRef {
+            index: self.nodes.len() - 1
+        }
+    }
+    pub fn root(&self) -> Option<OpeningNodeRef> {
+        return self.root_node
+    }
+    pub fn set_root(&mut self, node: OpeningNodeRef) {
+        self.root_node = Some(node)
+    }
+}
+
+impl Index<OpeningNodeRef> for ThorOpeningTree {
+    type Output = ThorOpeningNode;
+
+    fn index(&self, index: OpeningNodeRef) -> &Self::Output {
+        return &self.nodes[index.index];
+    }
+}
+
+impl IndexMut<OpeningNodeRef> for ThorOpeningTree {
+    fn index_mut(&mut self, index: OpeningNodeRef) -> &mut Self::Output {
+        &mut self.nodes[index.index]
     }
 }
 
