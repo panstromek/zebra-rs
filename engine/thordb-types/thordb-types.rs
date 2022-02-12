@@ -1,3 +1,4 @@
+use std::ptr::null_mut;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -90,7 +91,7 @@ pub struct PrologType {
 #[repr(C)]
 pub struct DatabaseType {
     pub prolog: PrologType,
-    pub games: *mut GameType,
+    pub games: Vec<GameType>,
     pub count: i32,
     pub next: Option<Box<DatabaseType>>,
 }
@@ -118,6 +119,31 @@ pub struct GameType {
     pub sort_order: i32,
     pub matching_symmetry: i16,
     pub passes_filter: i16,
+}
+
+impl GameType {
+    pub const fn new() -> Self {
+        GameType {
+            tournament_no: 0,
+            black_no: 0,
+            white_no: 0,
+            actual_black_score: 0,
+            perfect_black_score: 0,
+            moves: [0; 60],
+            move_count: 0,
+            black_disc_count: [0; 61],
+            opening: null_mut(),
+            origin_year: 0,
+            shape_hi: 0,
+            shape_lo: 0,
+            shape_state_hi: 0,
+            shape_state_lo: 0,
+            corner_descriptor: 0,
+            sort_order: 0,
+            matching_symmetry: 0,
+            passes_filter: 0,
+        }
+    }
 }
 
 #[derive(Copy, Clone)]
