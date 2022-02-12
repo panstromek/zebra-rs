@@ -606,16 +606,13 @@ pub unsafe fn sort_thor_games(count: i32) {
   database search to STREAM.
 */
 
-pub unsafe fn print_thor_matches(mut stream: FileHandle,
-                                 max_games: i32) {
+pub unsafe fn print_thor_matches(mut stream: FileHandle, max_games: i32) {
     let mut i: i32 = 0;
-    i = 0;
     while i < (if thor_search.match_count < max_games { thor_search.match_count } else { max_games }) {
         if i == 0 {
             stream.write(b"\n");
         }
-        print_game(&mut stream, &**thor_search.match_list.offset(i as isize),
-                   0, &tournaments, &players);
+        print_game(&mut stream, &**thor_search.match_list.offset(i as isize), 0, &tournaments, &players);
         i += 1
     };
 }
@@ -624,8 +621,7 @@ pub unsafe fn print_thor_matches(mut stream: FileHandle,
   CLEAR_THOR_BOARD
 */
 fn clear_thor_board(thor_board_: &mut [i32; 100]) {
-    let mut pos: i32 = 0;
-    pos = 11;
+    let mut pos = 11;
     while pos <= 88 {
         thor_board_[pos as usize] = 1;
         pos += 1
@@ -753,41 +749,31 @@ fn count_flips(
     oppcol: i32,
     thor_board_: &mut [i32; 100],
 ) -> i32 {
-    let mut count: i32 = 0;
-    let mut mask: i32 = 0;
-    count = 0;
-    mask = dir_mask[sqnum as usize];
+    let mut count = 0;
+    let mask = dir_mask[sqnum as usize];
     if mask & 128 != 0 {
-        count +=
-            directional_flip_count(sqnum, -(11), color, oppcol, thor_board_)
+        count += directional_flip_count(sqnum, -(11), color, oppcol, thor_board_)
     }
     if mask & 64 != 0 {
-        count +=
-            directional_flip_count(sqnum, 11, color, oppcol, thor_board_)
+        count += directional_flip_count(sqnum, 11, color, oppcol, thor_board_)
     }
     if mask & 32 != 0 {
-        count +=
-            directional_flip_count(sqnum, -(10), color, oppcol, thor_board_)
+        count += directional_flip_count(sqnum, -(10), color, oppcol, thor_board_)
     }
     if mask & 16 != 0 {
-        count +=
-            directional_flip_count(sqnum, 10, color, oppcol, thor_board_)
+        count += directional_flip_count(sqnum, 10, color, oppcol, thor_board_)
     }
     if mask & 8 != 0 {
-        count +=
-            directional_flip_count(sqnum, -(9), color, oppcol, thor_board_)
+        count += directional_flip_count(sqnum, -(9), color, oppcol, thor_board_)
     }
     if mask & 4 != 0 {
-        count +=
-            directional_flip_count(sqnum, 9, color, oppcol, thor_board_)
+        count += directional_flip_count(sqnum, 9, color, oppcol, thor_board_)
     }
     if mask & 2 != 0 {
-        count +=
-            directional_flip_count(sqnum, -1, color, oppcol, thor_board_)
+        count += directional_flip_count(sqnum, -1, color, oppcol, thor_board_)
     }
     if mask & 1 != 0 {
-        count +=
-            directional_flip_count(sqnum, 1, color, oppcol, thor_board_)
+        count += directional_flip_count(sqnum, 1, color, oppcol, thor_board_)
     }
     return count;
 }
@@ -796,36 +782,29 @@ fn count_flips(
   Returns 1 if SQNUM flips any discs for COLOR, otherwise 0, and
   flips those discs.
 */
-fn any_flips(sqnum: i32, color: i32,
-                    oppcol: i32, thor_board_: &mut [i32; 100]) -> i32 {
-    let mut count: i32 = 0;
-    let mut mask: i32 = 0;
-    count = 0;
-    mask = dir_mask[sqnum as usize];
+fn any_flips(sqnum: i32, color: i32, oppcol: i32, thor_board_: &mut [i32; 100]) -> i32 {
+    let mut count = 0;
+    let mask = dir_mask[sqnum as usize];
     if mask & 128 != 0 {
-        count |=
-            directional_flip_any(sqnum, -(11), color, oppcol, thor_board_)
+        count |= directional_flip_any(sqnum, -(11), color, oppcol, thor_board_)
     }
     if mask & 64 != 0 {
         count |= directional_flip_any(sqnum, 11, color, oppcol, thor_board_)
     }
     if mask & 32 != 0 {
-        count |=
-            directional_flip_any(sqnum, -(10), color, oppcol, thor_board_)
+        count |= directional_flip_any(sqnum, -(10), color, oppcol, thor_board_)
     }
     if mask & 16 != 0 {
         count |= directional_flip_any(sqnum, 10, color, oppcol, thor_board_)
     }
     if mask & 8 != 0 {
-        count |=
-            directional_flip_any(sqnum, -(9), color, oppcol, thor_board_)
+        count |= directional_flip_any(sqnum, -(9), color, oppcol, thor_board_)
     }
     if mask & 4 != 0 {
         count |= directional_flip_any(sqnum, 9, color, oppcol, thor_board_)
     }
     if mask & 2 != 0 {
-        count |=
-            directional_flip_any(sqnum, -1, color, oppcol, thor_board_)
+        count |= directional_flip_any(sqnum, -1, color, oppcol, thor_board_)
     }
     if mask & 1 != 0 {
         count |= directional_flip_any(sqnum, 1, color, oppcol, thor_board_)
@@ -842,10 +821,9 @@ fn compute_thor_patterns(
     col_pattern: &mut [i32; 8],
     in_board: &[i32],
 ) {
-    let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
-    i = 0;
+    let mut i = 0;
     while i < 8 {
         row_pattern[i as usize] = 0;
         col_pattern[i as usize] = 0;
@@ -946,9 +924,8 @@ unsafe fn get_database_info(info: *mut DatabaseInfoType) {
         current_db_ = &(*current_db).next;
         i += 1
     }
-    loop
     /* Sort the list */
-    {
+    loop {
         change = 0;
         i = 0;
         while i < thor_database_count - 1 {
@@ -960,7 +937,9 @@ unsafe fn get_database_info(info: *mut DatabaseInfoType) {
             }
             i += 1
         }
-        if !(change != 0) { break ; }
+        if !(change != 0) {
+            break;
+        }
     };
 }
 
@@ -1091,20 +1070,16 @@ impl ThorHash {
   Applies the current filter rules to the database DB.
 */
 unsafe fn filter_database(db: &DatabaseType) {
-    let mut i: i32 = 0;
     let mut category: i32 = 0;
     let mut passes_filter: i32 = 0;
     let mut year: i32 = 0;
     let mut game = 0 as *mut GameType;
-    i = 0;
+    let mut i = 0;
     while i < (*db).count {
         game = &mut *(*db).games.offset(i as isize) as *mut GameType;
         passes_filter = 1;
         /* Apply the tournament filter */
-        if passes_filter != 0 &&
-            (*tournaments.tournament_list.offset((*game).tournament_no as
-                isize)).selected == 0
-        {
+        if passes_filter != 0 && (*tournaments.tournament_list.offset((*game).tournament_no as isize)).selected == 0 {
             passes_filter = 0
         }
         /* Apply the year filter */
@@ -1117,56 +1092,36 @@ unsafe fn filter_database(db: &DatabaseType) {
         /* Apply the player filter */
         if passes_filter != 0 {
             match filter.player_filter as u32 {
-                0 => {
-                    if (*players.player_list.offset((*game).black_no as
-                        isize)).selected == 0
-                        &&
-                        (*players.player_list.offset((*game).white_no as
-                            isize)).selected
-                            == 0 {
-                        passes_filter = 0
-                    }
-                }
-                1 => {
-                    if (*players.player_list.offset((*game).black_no as
-                        isize)).selected == 0
-                        ||
-                        (*players.player_list.offset((*game).white_no as
-                            isize)).selected
-                            == 0 {
-                        passes_filter = 0
-                    }
-                }
-                2 => {
-                    if (*players.player_list.offset((*game).black_no as
-                        isize)).selected == 0
-                    {
-                        passes_filter = 0
-                    }
-                }
-                3 => {
-                    if (*players.player_list.offset((*game).white_no as
-                        isize)).selected == 0
-                    {
-                        passes_filter = 0
-                    }
-                }
-                _ => { }
+                0 => if (*players.player_list.offset((*game).black_no as isize)).selected == 0 &&
+                    (*players.player_list.offset((*game).white_no as isize)).selected == 0 {
+                    passes_filter = 0
+                },
+                1 => if (*players.player_list.offset((*game).black_no as isize)).selected == 0
+                    || (*players.player_list.offset((*game).white_no as isize)).selected == 0 {
+                    passes_filter = 0
+                },
+                2 => if (*players.player_list.offset((*game).black_no as isize)).selected == 0 {
+                    passes_filter = 0
+                },
+                3 => if (*players.player_list.offset((*game).white_no as isize)).selected == 0 {
+                    passes_filter = 0
+                },
+                _ => {}
             }
         }
         /* Apply the game type filter */
         if passes_filter != 0 {
-            if (*players.player_list.offset((*game).black_no as
-                isize)).is_program != 0 {
-                if (*players.player_list.offset((*game).white_no as
-                    isize)).is_program != 0 {
+            if (*players.player_list.offset((*game).black_no as isize)).is_program != 0 {
+                if (*players.player_list.offset((*game).white_no as isize)).is_program != 0 {
                     category = 4
-                } else { category = 2 }
-            } else if (*players.player_list.offset((*game).white_no as
-                isize)).is_program != 0
-            {
+                } else {
+                    category = 2
+                }
+            } else if (*players.player_list.offset((*game).white_no as isize)).is_program != 0 {
                 category = 2
-            } else { category = 1 }
+            } else {
+                category = 1
+            }
             passes_filter = category & filter.game_categories
         }
         (*game).passes_filter = passes_filter as i16;
@@ -1194,10 +1149,8 @@ unsafe fn filter_all_databases() {
 
 unsafe fn set_player_filter(selected: &mut [i32]) {
     let mut i: i32 = 0;
-    i = 0;
     while i < players.count() {
-        (*players.player_list.offset(i as isize)).selected =
-            *selected.offset(i as isize);
+        (*players.player_list.offset(i as isize)).selected = *selected.offset(i as isize);
         i += 1
     }
     thor_games_filtered = 0;
@@ -1208,8 +1161,7 @@ unsafe fn set_player_filter(selected: &mut [i32]) {
   player or if both players have to be selected for it be displayed.
 */
 
-unsafe fn set_player_filter_type(player_filter:
-                                 PlayerFilterType) {
+unsafe fn set_player_filter_type(player_filter: PlayerFilterType) {
     filter.player_filter = player_filter;
 }
 /*
@@ -1221,7 +1173,6 @@ unsafe fn set_player_filter_type(player_filter:
 
 unsafe fn set_tournament_filter(selected: &mut [i32]) {
     let mut i: i32 = 0;
-    i = 0;
     while i < tournaments.count() {
         (*tournaments.tournament_list.offset(i as isize)).selected =
             *selected.offset(i as isize);
@@ -1234,8 +1185,7 @@ unsafe fn set_tournament_filter(selected: &mut [i32]) {
   Specify the interval of years to which the search will be confined.
 */
 
-unsafe fn set_year_filter(first_year: i32,
-                          last_year: i32) {
+unsafe fn set_year_filter(first_year: i32, last_year: i32) {
     filter.first_year = first_year;
     filter.last_year = last_year;
     thor_games_filtered = 0;
@@ -1247,8 +1197,7 @@ unsafe fn set_year_filter(first_year: i32,
   OR of the flags for the types enabled.
 */
 
-unsafe fn specify_game_categories(categories:
-                                  i32) {
+unsafe fn specify_game_categories(categories: i32) {
     if categories != filter.game_categories {
         filter.game_categories = categories;
         thor_games_filtered = 0
@@ -1264,14 +1213,13 @@ unsafe fn specify_game_categories(categories:
 */
 
 unsafe fn specify_thor_sort_order(mut count: i32, sort_order: &[i32]) {
-    let mut i: i32 = 0;
     /* Truncate the input vector if it is too long */
     count = if count < 10 { count } else { 10 };
     /* Check if the new order coincides with the old order */
     if count != thor_sort_criteria_count {
         thor_games_sorted = 0
     } else {
-        i = 0;
+        let mut i = 0;
         while i < count {
             if sort_order[i as usize] != thor_sort_order[i as usize] {
                 thor_games_sorted = 0
@@ -1280,7 +1228,7 @@ unsafe fn specify_thor_sort_order(mut count: i32, sort_order: &[i32]) {
         }
     }
     thor_sort_criteria_count = count;
-    i = 0;
+    let mut i = 0;
     while i < count {
         thor_sort_order[i as usize] = sort_order[i as usize];
         i += 1
@@ -1299,19 +1247,15 @@ unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
                                  moves_played: i32,
                                  primary_hash_0: &mut [u32],
                                  secondary_hash_0: &mut [u32]) {
-    let mut i: i32 = 0;
-    let mut match_0: i32 = 0;
-    let mut matching_symmetry: i32 = 0;
-    let mut child = 0 as *mut ThorOpeningNode;
     /* Determine the status of the current node */
     if depth < moves_played {
         (*node).matching_symmetry = 0;
         (*node).current_match = 0
     } else if depth == moves_played {
         /* Check the hash codes */
-        match_0 = 0;
-        matching_symmetry = 0;
-        i = 7;
+        let mut match_0 = 0;
+        let mut matching_symmetry = 0;
+        let mut i = 7;
         while i >= 0 {
             if (*node).hash1 == *primary_hash_0.offset(i as isize) &&
                 (*node).hash2 == *secondary_hash_0.offset(i as isize) {
@@ -1323,17 +1267,18 @@ unsafe fn recursive_opening_scan(mut node: *mut ThorOpeningNode,
         if match_0 != 0 {
             (*node).matching_symmetry = matching_symmetry;
             (*node).current_match = 1
-        } else { (*node).current_match = 2 }
+        } else {
+            (*node).current_match = 2
+        }
     } else {
         /* depth > moves_played */
         (*node).current_match = (*(*node).parent_node).current_match;
         (*node).matching_symmetry = (*(*node).parent_node).matching_symmetry
     }
     /* Recursively search the childen */
-    child = (*node).child_node;
+    let mut child = (*node).child_node;
     while !child.is_null() {
-        recursive_opening_scan(child, depth + 1, moves_played,
-                               primary_hash_0, secondary_hash_0);
+        recursive_opening_scan(child, depth + 1, moves_played, primary_hash_0, secondary_hash_0);
         child = (*child).sibling_node
     };
 }
@@ -1348,9 +1293,7 @@ unsafe fn opening_scan(moves_played: i32) {
     let mut secondary_hash_0: [u32; 8] = [0; 8];
     thor_hash.compute_full_primary_hash(&mut primary_hash_0);
     thor_hash.compute_full_secondary_hash(&mut secondary_hash_0);
-    recursive_opening_scan(root_node, 0, moves_played,
-                           &mut primary_hash_0,
-                           &mut secondary_hash_0);
+    recursive_opening_scan(root_node, 0, moves_played, &mut primary_hash_0, &mut secondary_hash_0);
 }
 /*
   RECURSIVE_FREQUENCY_COUNT
@@ -1407,16 +1350,15 @@ unsafe fn recursive_frequency_count(node: *mut ThorOpeningNode,
   in the list of matching games generated by DATABASE_SEARCH.
 */
 
-unsafe fn get_thor_game(index: i32)
-                        -> GameInfoType {
-    let mut info =
-        GameInfoType{black_name: b"",
-            white_name: b"",
-            tournament: b"",
-            year: 0,
-            black_actual_score: 0,
-            black_corrected_score: 0,};
-    let mut game = 0 as *mut GameType;
+unsafe fn get_thor_game(index: i32) -> GameInfoType {
+    let mut info = GameInfoType {
+        black_name: b"",
+        white_name: b"",
+        tournament: b"",
+        year: 0,
+        black_actual_score: 0,
+        black_corrected_score: 0,
+    };
     if index < 0 || index >= thor_search.match_count {
         /* Bad index, so fill with empty values */
         info.black_name = b"";
@@ -1427,14 +1369,13 @@ unsafe fn get_thor_game(index: i32)
         info.black_corrected_score = 32
     } else {
         /* Copy name fields etc */
-        game = *thor_search.match_list.offset(index as isize);
+        let game = *thor_search.match_list.offset(index as isize);
         info.black_name = players.get_player_name((*game).black_no as i32);
         info.white_name = players.get_player_name((*game).white_no as i32);
         info.tournament = tournaments.tournament_name((*game).tournament_no as i32);
         info.year = (*(*game).database).prolog.origin_year;
         info.black_actual_score = (*game).actual_black_score as i32;
-        info.black_corrected_score =
-            (*game).perfect_black_score as i32
+        info.black_corrected_score = (*game).perfect_black_score as i32
     }
     return info;
 }
@@ -1497,16 +1438,12 @@ const fn init_move_masks() -> [[u32; 100]; 4] {
   Calculates and returns the number of lines in the Thor opening base
   that match the line defined by NODE.
 */
-unsafe fn calculate_opening_frequency(mut node:
-                                      *mut ThorOpeningNode)
-                                      -> i32 {
-    let mut sum: i32 = 0;
-    let mut child = 0 as *mut ThorOpeningNode;
-    child = (*node).child_node;
+unsafe fn calculate_opening_frequency(mut node: *mut ThorOpeningNode) -> i32 {
+    let mut child = (*node).child_node;
     if child.is_null() {
         return (*node).frequency
     } else {
-        sum = 0;
+        let mut sum = 0;
         loop  {
             sum += calculate_opening_frequency(child);
             child = (*child).sibling_node;
@@ -1540,7 +1477,6 @@ const fn create_symetry_maps() -> SymmetryMaps {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
-    i = 1;
     while i <= 8 {
         j = 1;
         while j <= 8 {
@@ -1663,70 +1599,49 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
     done = 0;
     loop  {
         /* Store the number of black discs. */
-        (*game).black_disc_count[moves_played as usize] =
-            disc_count[0] as i8;
+        (*game).black_disc_count[moves_played as usize] = disc_count[0] as i8;
         /* Make the move, update the board and disc count,
            and change the sign for white moves */
         move_0 = (*game).moves[moves_played as usize] as i32;
-        flipped =
-            count_flips(move_0, thor_side_to_move,
-                        0 + 2 -
-                            thor_side_to_move, &mut thor_board);
+        flipped = count_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
         if flipped != 0 {
             thor_board[move_0 as usize] = thor_side_to_move;
-            disc_count[thor_side_to_move as usize] +=
-                flipped + 1;
-            disc_count[(0 + 2 -
-                thor_side_to_move) as usize] -= flipped;
+            disc_count[thor_side_to_move as usize] += flipped + 1;
+            disc_count[(0 + 2 - thor_side_to_move) as usize] -= flipped;
             if thor_side_to_move == 2 {
-                (*game).moves[moves_played as usize] =
-                    -((*game).moves[moves_played as usize] as i32) as
-                        i8
+                (*game).moves[moves_played as usize] = -((*game).moves[moves_played as usize] as i32) as i8
             }
-            thor_side_to_move =
-                0 + 2 - thor_side_to_move;
+            thor_side_to_move = 0 + 2 - thor_side_to_move;
             moves_played += 1
         } else {
-            thor_side_to_move =
-                0 + 2 - thor_side_to_move;
-            flipped =
-                count_flips(move_0, thor_side_to_move,
-                            0 + 2 -
-                                thor_side_to_move, &mut thor_board);
+            thor_side_to_move = 0 + 2 - thor_side_to_move;
+            flipped = count_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
             if flipped != 0 {
                 thor_board[move_0 as usize] = thor_side_to_move;
-                disc_count[thor_side_to_move as usize] +=
-                    flipped + 1;
-                disc_count[(0 + 2 -
-                    thor_side_to_move) as usize] -= flipped;
+                disc_count[thor_side_to_move as usize] += flipped + 1;
+                disc_count[(0 + 2 - thor_side_to_move) as usize] -= flipped;
                 if thor_side_to_move == 2 {
-                    (*game).moves[moves_played as usize] =
-                        -((*game).moves[moves_played as usize] as i32)
-                            as i8
+                    (*game).moves[moves_played as usize] = -((*game).moves[moves_played as usize] as i32) as i8
                 }
-                thor_side_to_move =
-                    0 + 2 - thor_side_to_move;
+                thor_side_to_move = 0 + 2 - thor_side_to_move;
                 moves_played += 1
-            } else { done = 1 }
+            } else {
+                done = 1
+            }
         }
         /* Update the corner descriptor if necessary */
-        if move_0 == 11 || move_0 == 18 ||
-            move_0 == 81 || move_0 == 88 {
-            corner_descriptor |=
-                get_corner_mask(thor_board[11],
-                                thor_board[81],
-                                thor_board[18],
-                                thor_board[88])
+        if move_0 == 11 || move_0 == 18 || move_0 == 81 || move_0 == 88 {
+            corner_descriptor |= get_corner_mask(thor_board[11], thor_board[81], thor_board[18], thor_board[88])
         }
-        if !(done == 0 && moves_played < 60) { break ; }
+        if !(done == 0 && moves_played < 60) {
+            break;
+        }
     }
-    (*game).black_disc_count[moves_played as usize] =
-        disc_count[0] as i8;
+    (*game).black_disc_count[moves_played as usize] = disc_count[0] as i8;
     (*game).move_count = moves_played as i16;
     i = moves_played + 1;
     while i <= 60 {
-        (*game).black_disc_count[i as usize] =
-            -1 as i8;
+        (*game).black_disc_count[i as usize] = -1;
         i += 1
     }
     /* Find the longest opening which coincides with the game */
@@ -1743,19 +1658,21 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
         }
         if child.is_null() {
             opening_match = 0
-        } else { opening = child; i += 1 }
+        } else {
+            opening = child;
+            i += 1
+        }
     }
     (*game).opening = opening;
     /* Initialize the shape state */
-    (*game).shape_lo =
-        ((3) << 27) as u32;
-    (*game).shape_hi =
-        ((3) << 3) as u32;
+    (*game).shape_lo = 3 << 27;
+    (*game).shape_hi = 3 << 3;
     (*game).shape_state_hi = 0;
     (*game).shape_state_lo = 0;
     /* Store the corner descriptor */
     (*game).corner_descriptor = corner_descriptor;
 }
+
 impl ThorHash {
     /*
       INIT_THOR_HASH
@@ -1772,7 +1689,6 @@ impl ThorHash {
         let mut row: [i32; 10] = [0; 10];
         let mut flip_row: [i32; 6561] = [0; 6561];
         let mut buffer: [i32; 6561] = [0; 6561];
-        i = 0;
         while i < 8 {
             row[i as usize] = 0;
             i += 1
@@ -1782,8 +1698,7 @@ impl ThorHash {
             flip_row[i as usize] = 0;
             j = 0;
             while j < 8 {
-                flip_row[i as usize] +=
-                    row[j as usize] * pow3((7 - j) as usize);
+                flip_row[i as usize] += row[j as usize] * pow3((7 - j) as usize);
                 j += 1
             }
             /* Next configuration */
@@ -1830,12 +1745,8 @@ impl ThorHash {
   NEW_THOR_OPENING_NODE
   Creates and initializes a new node for use in the opening tree.
 */
-unsafe fn new_thor_opening_node(parent: *mut ThorOpeningNode)
-                                              -> *mut ThorOpeningNode {
-    let mut node = 0 as *mut ThorOpeningNode;
-    node =
-        safe_malloc(::std::mem::size_of::<ThorOpeningNode>() as u64)
-            as *mut ThorOpeningNode;
+unsafe fn new_thor_opening_node(parent: *mut ThorOpeningNode) -> *mut ThorOpeningNode {
+    let mut node = safe_malloc(::std::mem::size_of::<ThorOpeningNode>() as u64) as *mut ThorOpeningNode;
     (*node).child_move = 0;
     (*node).sibling_move = 0;
     (*node).child_node = 0 as *mut ThorOpeningNode;
@@ -1852,7 +1763,6 @@ unsafe fn new_thor_opening_node(parent: *mut ThorOpeningNode)
 unsafe fn build_thor_opening_tree() {
     type FE = LibcFatalError;
     let mut thor_move_list: [i8; 61] = [0; 61];
-    let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut move_0: i32 = 0;
     let mut branch_depth: i32 = 0;
@@ -1863,8 +1773,7 @@ unsafe fn build_thor_opening_tree() {
     let mut parent = 0 as *mut ThorOpeningNode;
     let mut last_child = 0 as *mut ThorOpeningNode;
     let mut new_child = 0 as *mut ThorOpeningNode;
-    let mut node_list: [*mut ThorOpeningNode; 61] =
-        [0 as *mut ThorOpeningNode; 61];
+    let mut node_list: [*mut ThorOpeningNode; 61] = [0 as *mut ThorOpeningNode; 61];
     /* Create the root node and compute its hash value */
     root_node = new_thor_opening_node(0 as *mut ThorOpeningNode);
     clear_thor_board(&mut thor_board);
@@ -1874,7 +1783,7 @@ unsafe fn build_thor_opening_tree() {
     (*root_node).hash2 = hash2;
     node_list[0] = root_node;
     /* Add each of the openings to the tree */
-    i = 0;
+    let mut i = 0;
     while i < 741 {
         branch_depth = THOR_OPENING_LIST[i as usize].first_unique;
         end_depth =
@@ -1882,22 +1791,10 @@ unsafe fn build_thor_opening_tree() {
                 (THOR_OPENING_LIST[i as usize].move_str.len() as u64).wrapping_div(2)) as i32;
         j = 0;
         while j < end_depth - branch_depth {
-            thor_move_list[(branch_depth + j) as usize] =
-                (10 *
-                    (*THOR_OPENING_LIST[i as
-                        usize].move_str.offset((2
-                        * j +
-                        1)
-                        as
-                        isize)
-                        as i32 - '0' as i32) +
-                    (*THOR_OPENING_LIST[i as
-                        usize].move_str.offset((2
-                        * j)
-                        as
-                        isize)
-                        as i32 - 'a' as i32 + 1)) as
-                    i8;
+            thor_move_list[(branch_depth + j) as usize] = (10 *
+                (*THOR_OPENING_LIST[i as usize].move_str.offset((2 * j + 1) as isize) as i32 - '0' as i32) +
+                (*THOR_OPENING_LIST[i as usize].move_str.offset((2 * j) as isize) as i32 - 'a' as i32 + 1)
+            ) as i8;
             j += 1
         }
         /* Play through the moves common with the previous line
@@ -1907,26 +1804,16 @@ unsafe fn build_thor_opening_tree() {
         j = 0;
         while j <= branch_depth {
             move_0 = thor_move_list[j as usize] as i32;
-            flipped =
-                any_flips(move_0, thor_side_to_move,
-                          0 + 2 -
-                              thor_side_to_move, &mut thor_board);
+            flipped = any_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
             if flipped != 0 {
                 thor_board[move_0 as usize] = thor_side_to_move;
-                thor_side_to_move =
-                    0 + 2 - thor_side_to_move
+                thor_side_to_move = 0 + 2 - thor_side_to_move
             } else {
-                thor_side_to_move =
-                    0 + 2 - thor_side_to_move;
-                flipped =
-                    any_flips(move_0, thor_side_to_move,
-                              0 + 2 -
-                                  thor_side_to_move, &mut thor_board);
+                thor_side_to_move = 0 + 2 - thor_side_to_move;
+                flipped = any_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
                 if flipped != 0 {
                     thor_board[move_0 as usize] = thor_side_to_move;
-                    thor_side_to_move =
-                        0 + 2 -
-                            thor_side_to_move
+                    thor_side_to_move = 0 + 2 - thor_side_to_move
                 } else {
                     FE::thordb_report_flipped_0_first();
                 }
@@ -1957,26 +1844,16 @@ unsafe fn build_thor_opening_tree() {
         j = branch_depth + 1;
         while j < end_depth {
             move_0 = thor_move_list[j as usize] as i32;
-            flipped =
-                any_flips(move_0, thor_side_to_move,
-                          0 + 2 -
-                              thor_side_to_move, &mut thor_board);
+            flipped = any_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
             if flipped != 0 {
                 thor_board[move_0 as usize] = thor_side_to_move;
-                thor_side_to_move =
-                    0 + 2 - thor_side_to_move
+                thor_side_to_move = 0 + 2 - thor_side_to_move
             } else {
-                thor_side_to_move =
-                    0 + 2 - thor_side_to_move;
-                flipped =
-                    any_flips(move_0, thor_side_to_move,
-                              0 + 2 -
-                                  thor_side_to_move, &mut thor_board);
+                thor_side_to_move = 0 + 2 - thor_side_to_move;
+                flipped = any_flips(move_0, thor_side_to_move, 0 + 2 - thor_side_to_move, &mut thor_board);
                 if flipped != 0 {
                     thor_board[move_0 as usize] = thor_side_to_move;
-                    thor_side_to_move =
-                        0 + 2 -
-                            thor_side_to_move
+                    thor_side_to_move = 0 + 2 - thor_side_to_move
                 } else {
                     FE::thordb_report_flipped_0_second();
                 }
@@ -2008,7 +1885,6 @@ unsafe fn build_thor_opening_tree() {
 */
 
 pub unsafe fn init_thor_database(g_state: &mut FullState) {
-    let mut i: i32 = 0; /* "infinity" */
     thor_game_count = 0;
     thor_database_count = 0;
     thor_search.match_list = 0 as *mut *mut GameType;
@@ -2020,7 +1896,7 @@ pub unsafe fn init_thor_database(g_state: &mut FullState) {
     thor_search.median_black_score = 0;
     thor_search.average_black_score = 0.0f64;
     thor_sort_criteria_count = 5;
-    i = 0;
+    let mut i: i32 = 0; /* "infinity" */
     while i < 5 {
         thor_sort_order[i as usize] = default_sort_order[i as usize];
         i += 1
@@ -2037,8 +1913,7 @@ pub unsafe fn init_thor_database(g_state: &mut FullState) {
     thor_hash.init_thor_hash(&mut g_state.random_instance);
     prepare_thor_board(&mut thor_board);
     build_thor_opening_tree();
-    filter.game_categories =
-        1 | 2 | 4;
+    filter.game_categories = 1 | 2 | 4;
     filter.player_filter = EITHER_SELECTED_FILTER;
     filter.first_year = -((1) << 25);
     filter.last_year = (1) << 25;
@@ -2053,10 +1928,7 @@ pub unsafe fn init_thor_database(g_state: &mut FullState) {
   on what rotation that gave a match.
 */
 
-unsafe fn get_thor_game_moves(index: i32,
-                              move_count: &mut i32,
-                              moves: &mut [i32]) {
-    let mut i: i32 = 0;
+unsafe fn get_thor_game_moves(index: i32, move_count: &mut i32, moves: &mut [i32]) {
     let mut game = 0 as *mut GameType;
     if index < 0 || index >= thor_search.match_count {
         /* Bad index, so fill with empty values */
@@ -2067,24 +1939,17 @@ unsafe fn get_thor_game_moves(index: i32,
         match (*game).matching_symmetry as i32 {
             0 | 2 | 5 | 7 => {
                 /* Symmetries that preserve the initial position. */
-                i = 0;
+                let mut i = 0;
                 while i < (*game).move_count as i32 {
-                    *moves.offset(i as isize) =
-                        *symmetry_map[(*game).matching_symmetry as
-                            usize].offset(abs((*game).moves[i as
-                            usize]
-                            as
-                            i32)
-                            as isize);
+                    *moves.offset(i as isize) = *symmetry_map[(*game).matching_symmetry as usize].offset(abs((*game).moves[i as usize] as i32) as isize);
                     i += 1
                 }
             }
             _ => {
                 /* Symmetries that reverse the initial position. */
-                i = 0;
+                let mut i = 0;
                 while i < (*game).move_count as i32 {
-                    *moves.offset(i as isize) =
-                        abs((*game).moves[i as usize] as i32);
+                    *moves.offset(i as isize) = abs((*game).moves[i as usize] as i32);
                     i += 1
                 }
             }
@@ -2097,25 +1962,18 @@ unsafe fn get_thor_game_moves(index: i32,
   in the list of matching games generated by DATABASE_SEARCH.
 */
 
-pub unsafe fn get_thor_game_move(index: i32,
-                                 move_number: i32)
-                                 -> i32 {
+pub unsafe fn get_thor_game_move(index: i32, move_number: i32) -> i32 {
     if index < 0 || index >= thor_search.match_count {
-        return -1
+        -1
     } else {
         let game = *thor_search.match_list.offset(index as isize);
         if move_number < 0 ||
             move_number >= (*game).move_count as i32 {
-            return -1
+            -1
         } else {
-            return *symmetry_map[(*game).matching_symmetry as
-                usize].offset(abs((*game).moves[move_number
-                as
-                usize]
-                as i32) as
-                isize)
+            *symmetry_map[(*game).matching_symmetry as usize].offset(abs((*game).moves[move_number as usize] as i32) as isize)
         }
-    };
+    }
 }
 
 /*
@@ -2147,13 +2005,11 @@ unsafe fn position_match(mut game: &mut GameType,
         /* No side-to-move status to check if the game is over */
     } else if side_to_move == 0 {
         /* Black to move */
-        if ((*game).moves[move_count as usize] as i32) <
-            0 {
+        if ((*game).moves[move_count as usize] as i32) < 0 {
             /* White to move in the game */
             return 0
         }
-    } else if (*game).moves[move_count as usize] as i32 >
-        0 {
+    } else if (*game).moves[move_count as usize] as i32 > 0 {
         /* White to move */
         /* Black to move in the game */
         return 0
@@ -2161,8 +2017,7 @@ unsafe fn position_match(mut game: &mut GameType,
     /* Check if the opening information suffices to
        determine if the position matches or not. */
     if (*(*game).opening).current_match == 1 {
-        (*game).matching_symmetry =
-            (*(*game).opening).matching_symmetry as i16;
+        (*game).matching_symmetry = (*(*game).opening).matching_symmetry as i16;
         return 1
     } else {
         if (*(*game).opening).current_match == 2 {
@@ -2173,18 +2028,14 @@ unsafe fn position_match(mut game: &mut GameType,
     if ((*game).shape_state_lo as i32) < move_count {
         i = (*game).shape_state_lo as i32;
         while i < move_count {
-            (*game).shape_lo |=
-                move_mask_lo[abs((*game).moves[i as usize] as i32) as
-                    usize];
+            (*game).shape_lo |= move_mask_lo[abs((*game).moves[i as usize] as i32) as usize];
             i += 1
         }
         (*game).shape_state_lo = move_count as i16
     } else if (*game).shape_state_lo as i32 > move_count {
         i = (*game).shape_state_lo as i32 - 1;
         while i >= move_count {
-            (*game).shape_lo &=
-                !move_mask_lo[abs((*game).moves[i as usize] as i32) as
-                    usize];
+            (*game).shape_lo &= !move_mask_lo[abs((*game).moves[i as usize] as i32) as usize];
             i -= 1
         }
         (*game).shape_state_lo = move_count as i16
@@ -2192,27 +2043,24 @@ unsafe fn position_match(mut game: &mut GameType,
     shape_match = 0;
     i = 0;
     while i < 8 {
-        shape_match |=
-            ((*game).shape_lo == *shape_lo.offset(i as isize)) as i32;
+        shape_match |= ((*game).shape_lo == *shape_lo.offset(i as isize)) as i32;
         i += 1
     }
-    if shape_match == 0 { return 0 }
+    if shape_match == 0 {
+        return 0
+    }
     /* Check if the upper 32 bits of the shape state coincide */
     if ((*game).shape_state_hi as i32) < move_count {
         i = (*game).shape_state_hi as i32;
         while i < move_count {
-            (*game).shape_hi |=
-                move_mask_hi[abs((*game).moves[i as usize] as i32) as
-                    usize];
+            (*game).shape_hi |= move_mask_hi[abs((*game).moves[i as usize] as i32) as usize];
             i += 1
         }
         (*game).shape_state_hi = move_count as i16
     } else if (*game).shape_state_hi as i32 > move_count {
         i = (*game).shape_state_hi as i32 - 1;
         while i >= move_count {
-            (*game).shape_hi &=
-                !move_mask_hi[abs((*game).moves[i as usize] as i32) as
-                    usize];
+            (*game).shape_hi &= !move_mask_hi[abs((*game).moves[i as usize] as i32) as usize];
             i -= 1
         }
         (*game).shape_state_hi = move_count as i16
@@ -2220,11 +2068,12 @@ unsafe fn position_match(mut game: &mut GameType,
     shape_match = 0;
     i = 0;
     while i < 8 {
-        shape_match |=
-            ((*game).shape_hi == *shape_hi.offset(i as isize)) as i32;
+        shape_match |= ((*game).shape_hi == *shape_hi.offset(i as isize)) as i32;
         i += 1
     }
-    if shape_match == 0 { return 0 }
+    if shape_match == 0 {
+        return 0
+    }
     /* Check if the corner mask is compatible with that of the game */
     if corner_mask & !(*game).corner_descriptor != 0 {
         return 0
@@ -2241,8 +2090,7 @@ unsafe fn position_match(mut game: &mut GameType,
             if primary_hit_mask & secondary_hit_mask != 0 {
                 i = 0;
                 while i < 8 {
-                    if primary_hit_mask & secondary_hit_mask &
-                        (1) << i != 0 {
+                    if primary_hit_mask & secondary_hit_mask & (1) << i != 0 {
                         (*game).matching_symmetry = i as i16;
                         return 1
                     }
@@ -2260,53 +2108,23 @@ unsafe fn position_match(mut game: &mut GameType,
   Only to be called by QSORT. A full comparison is
   performed using the priority order from THOR_SORT_ORDER.
 */
-
 pub unsafe fn thor_compare(game1: &GameType, game2: &GameType) -> i32 {
     let mut i: i32 = 0;
-    let mut result: i32 = 0;
-    i = 0;
     while i < thor_sort_criteria_count {
-        match thor_sort_order[i as usize] {
-            1 => {
-                result =
-                    (*(*game2).database).prolog.origin_year -
-                        (*(*game1).database).prolog.origin_year
-            }
-            2 => {
-                result =
-                    players.player_lex_order((*game1).black_no as i32) -
-                        players.player_lex_order((*game2).black_no as i32)
-            }
-            3 => {
-                result =
-                    players.player_lex_order((*game1).white_no as i32) -
-                        players.player_lex_order((*game2).white_no as i32)
-            }
-            4 => {
-                result =
-                    tournaments.tournament_lex_order((*game1).tournament_no as
-                        i32) -
-                        tournaments.tournament_lex_order((*game2).tournament_no as
-                            i32)
-            }
-            5 => {
-                result =
-                    (*game1).actual_black_score as i32 -
-                        (*game2).actual_black_score as i32
-            }
-            6 => {
-                result =
-                    (*game2).actual_black_score as i32 -
-                        (*game1).actual_black_score as i32
-            }
-            0 | _ => {
-                /* Really can't happen */
-                result =
-                    (*(*game1).database).prolog.origin_year -
-                        (*(*game2).database).prolog.origin_year
-            }
+        let result = match thor_sort_order[i as usize] {
+            1 => (*(*game2).database).prolog.origin_year - (*(*game1).database).prolog.origin_year,
+            2 => players.player_lex_order((*game1).black_no as i32) - players.player_lex_order((*game2).black_no as i32),
+            3 => players.player_lex_order((*game1).white_no as i32) - players.player_lex_order((*game2).white_no as i32),
+            4 => tournaments.tournament_lex_order((*game1).tournament_no as i32) - tournaments.tournament_lex_order((*game2).tournament_no as i32),
+            5 => (*game1).actual_black_score as i32 - (*game2).actual_black_score as i32,
+            6 => (*game2).actual_black_score as i32 - (*game1).actual_black_score as i32,
+
+            /* Really can't happen */
+            0 | _ => (*(*game1).database).prolog.origin_year - (*(*game2).database).prolog.origin_year,
+        };
+        if result != 0 {
+            return result
         }
-        if result != 0 { return result }
         i += 1
     }
     /* If control reaches this point, the two games couldn't be
@@ -2314,21 +2132,16 @@ pub unsafe fn thor_compare(game1: &GameType, game2: &GameType) -> i32 {
     return 0;
 }
 
-
 /*
   CHOOSE_THOR_OPENING_MOVE
   Computes frequencies for all moves from the given position,
   display these and chooses one if from a distribution skewed
   towards common moves. (If no moves are found, PASS is returned.)
 */
-
-pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32,
-                                       random_instance: &mut MyRandom) -> i32 {
-    let mut i: i32 = 0;
+pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32, random_instance: &mut MyRandom) -> i32 {
     let mut j: i32 = 0;
     let mut temp_symm: i32 = 0;
     let mut pos: i32 = 0;
-    let mut disc_count: i32 = 0;
     let mut freq_sum: i32 = 0;
     let mut acc_freq_sum: i32 = 0;
     let mut random_move: i32 = 0;
@@ -2338,11 +2151,10 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
     let mut freq_count: [i32; 100] = [0; 100];
     let mut primary_hash_0: [u32; 8] = [0; 8];
     let mut secondary_hash_0: [u32; 8] = [0; 8];
-    let mut move_list: [C2RustUnnamed; 64] =
-        [C2RustUnnamed{move_0: 0, frequency: 0,}; 64];
+    let mut move_list: [C2RustUnnamed; 64] = [C2RustUnnamed{move_0: 0, frequency: 0,}; 64];
     let mut temp = C2RustUnnamed{move_0: 0, frequency: 0,};
-    disc_count = 0;
-    i = 1;
+    let mut disc_count = 0;
+    let mut i = 1;
     while i <= 8 {
         j = 1;
         pos = 10 * i + 1;
@@ -2383,11 +2195,8 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
     compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &in_board);
     thor_hash.compute_full_primary_hash(&mut primary_hash_0);
     thor_hash.compute_full_secondary_hash(&mut secondary_hash_0);
-    recursive_frequency_count(root_node, &mut freq_count,
-                              0, disc_count - 4,
-                              &mut symmetries,
-                              &mut primary_hash_0,
-                              &mut secondary_hash_0);
+    recursive_frequency_count(root_node, &mut freq_count, 0, disc_count - 4,
+                              &mut symmetries, &mut primary_hash_0, &mut secondary_hash_0);
     freq_sum = 0;
     i = 1;
     while i <= 8 {
@@ -2416,12 +2225,9 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
             while j <= 8 {
                 if freq_count[pos as usize] > 0 {
                     move_list[match_count as usize].move_0 = pos;
-                    move_list[match_count as usize].frequency =
-                        freq_count[pos as usize];
+                    move_list[match_count as usize].frequency = freq_count[pos as usize];
                     match_count += 1;
-                    if acc_freq_sum < random_value &&
-                        acc_freq_sum + freq_count[pos as usize] >=
-                            random_value {
+                    if acc_freq_sum < random_value && acc_freq_sum + freq_count[pos as usize] >= random_value {
                         random_move = pos
                     }
                     acc_freq_sum += freq_count[pos as usize]
@@ -2437,12 +2243,9 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
             while i < match_count {
                 j = 0;
                 while j < match_count - 1 {
-                    if move_list[j as usize].frequency <
-                        move_list[(j + 1) as
-                            usize].frequency {
+                    if move_list[j as usize].frequency < move_list[(j + 1) as usize].frequency {
                         temp = move_list[j as usize];
-                        move_list[j as usize] =
-                            move_list[(j + 1) as usize];
+                        move_list[j as usize] = move_list[(j + 1) as usize];
                         move_list[(j + 1) as usize] = temp
                     }
                     j += 1
@@ -2489,21 +2292,11 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     /* Make sure there's memory allocated if all positions
        in all databases match the position */
     if thor_search.allocation == 0 {
-        thor_search.match_list =
-            safe_malloc((thor_game_count as
-                u64).wrapping_mul(::std::mem::size_of::<*mut GameType>()
-                as
-                u64))
-                as *mut *mut GameType;
+        thor_search.match_list = safe_malloc((thor_game_count as u64).wrapping_mul(::std::mem::size_of::<*mut GameType>() as u64)) as *mut *mut GameType;
         thor_search.allocation = thor_game_count
     } else if thor_search.allocation < thor_game_count {
         free(thor_search.match_list as *mut c_void);
-        thor_search.match_list =
-            safe_malloc((thor_game_count as
-                u64).wrapping_mul(::std::mem::size_of::<*mut GameType>()
-                as
-                u64))
-                as *mut *mut GameType;
+        thor_search.match_list = safe_malloc((thor_game_count as u64).wrapping_mul(::std::mem::size_of::<*mut GameType>() as u64)) as *mut *mut GameType;
         thor_search.allocation = thor_game_count
     }
     /* If necessary, filter all games in the database */
@@ -2518,11 +2311,8 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         while let Some(current_db) = current_db_ {
             j = 0;
             while j < (*current_db).count {
-                let ref mut fresh5 =
-                    *thor_search.match_list.offset(i as isize);
-                *fresh5 =
-                    &mut *(*current_db).games.offset(j as isize) as
-                        *mut GameType;
+                let ref mut fresh5 = *thor_search.match_list.offset(i as isize);
+                *fresh5 = &mut *(*current_db).games.offset(j as isize) as *mut GameType;
                 i += 1;
                 j += 1
             }
@@ -2539,8 +2329,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     /* Determine disc count, hash codes, patterns and opening
        for the position */
     disc_count[2] = 0;
-    disc_count[0] =
-        disc_count[2];
+    disc_count[0] = disc_count[2];
     i = 1;
     while i <= 8 {
         j = 1;
@@ -2556,9 +2345,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         }
         i += 1
     }
-    move_count =
-        disc_count[0] +
-            disc_count[2] - 4;
+    move_count = disc_count[0] + disc_count[2] - 4;
     compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, in_board);
     thor_hash.compute_partial_hash(&mut target_hash1, &mut target_hash2);
     opening_scan(move_count);
@@ -2577,79 +2364,51 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
             if *in_board.offset(pos as isize) != 1 {
                 index = 8 * i + j;
                 if index < 32 {
-                    shape_lo[0] |=
-                        ((1) << index) as u32
+                    shape_lo[0] |= ((1) << index) as u32
                 } else {
-                    shape_hi[0] |=
-                        ((1) << index - 32) as
-                            u32
+                    shape_hi[0] |= ((1) << index - 32) as u32
                 }
                 index = 8 * i + (7 - j);
                 if index < 32 {
-                    shape_lo[1] |=
-                        ((1) << index) as u32
+                    shape_lo[1] |= ((1) << index) as u32
                 } else {
-                    shape_hi[1] |=
-                        ((1) << index - 32) as
-                            u32
+                    shape_hi[1] |= ((1) << index - 32) as u32
                 }
                 index = 8 * j + i;
                 if index < 32 {
-                    shape_lo[2] |=
-                        ((1) << index) as u32
+                    shape_lo[2] |= ((1) << index) as u32
                 } else {
-                    shape_hi[2] |=
-                        ((1) << index - 32) as
-                            u32
+                    shape_hi[2] |= ((1) << index - 32) as u32
                 }
                 index = 8 * j + (7 - i);
                 if index < 32 {
-                    shape_lo[3] |=
-                        ((1) << index) as u32
+                    shape_lo[3] |= ((1) << index) as u32
                 } else {
-                    shape_hi[3] |=
-                        ((1) << index - 32) as
-                            u32
+                    shape_hi[3] |= ((1) << index - 32) as u32
                 }
                 index = 8 * (7 - i) + j;
                 if index < 32 {
-                    shape_lo[4] |=
-                        ((1) << index) as u32
+                    shape_lo[4] |= ((1) << index) as u32
                 } else {
-                    shape_hi[4] |=
-                        ((1) << index - 32) as
-                            u32
+                    shape_hi[4] |= ((1) << index - 32) as u32
                 }
-                index =
-                    8 * (7 - i) +
-                        (7 - j);
+                index = 8 * (7 - i) + (7 - j);
                 if index < 32 {
-                    shape_lo[5] |=
-                        ((1) << index) as u32
+                    shape_lo[5] |= ((1) << index) as u32
                 } else {
-                    shape_hi[5] |=
-                        ((1) << index - 32) as
-                            u32
+                    shape_hi[5] |= ((1) << index - 32) as u32
                 }
                 index = 8 * (7 - j) + i;
                 if index < 32 {
-                    shape_lo[6] |=
-                        ((1) << index) as u32
+                    shape_lo[6] |= ((1) << index) as u32
                 } else {
-                    shape_hi[6] |=
-                        ((1) << index - 32) as
-                            u32
+                    shape_hi[6] |= ((1) << index - 32) as u32
                 }
-                index =
-                    8 * (7 - j) +
-                        (7 - i);
+                index = 8 * (7 - j) + (7 - i);
                 if index < 32 {
-                    shape_lo[7] |=
-                        ((1) << index) as u32
+                    shape_lo[7] |= ((1) << index) as u32
                 } else {
-                    shape_hi[7] |=
-                        ((1) << index - 32) as
-                            u32
+                    shape_hi[7] |= ((1) << index - 32) as u32
                 }
             }
             j += 1;
@@ -2658,11 +2417,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         i += 1
     }
     /* Get the corner mask */
-    corner_mask =
-        get_corner_mask(*in_board.offset(11),
-                        *in_board.offset(81),
-                        *in_board.offset(18),
-                        *in_board.offset(88));
+    corner_mask = get_corner_mask(*in_board.offset(11), *in_board.offset(81), *in_board.offset(18), *in_board.offset(88));
     /* Query the database about all positions in all databases.
        Only games which pass the currently applied filter are scanned.
        Also compute the frequency table and the next move table.
@@ -2695,45 +2450,24 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         while i < (*current_db).count {
             game = &mut *(*current_db).games.offset(i as isize);
             if (*game).passes_filter != 0 {
-                if disc_count[0] ==
-                    (*game).black_disc_count[move_count as usize] as
-                        i32 {
-                    if position_match(game, move_count, side_to_move,
-                                      &mut shape_lo,
-                                      &mut shape_hi, corner_mask,
-                                      target_hash1, target_hash2) != 0 {
-                        let ref mut fresh7 =
-                            *thor_search.match_list.offset((*game).sort_order
-                                as isize);
+                if disc_count[0] == (*game).black_disc_count[move_count as usize] as i32 {
+                    if position_match(game, move_count, side_to_move, &mut shape_lo, &mut shape_hi, corner_mask, target_hash1, target_hash2) != 0 {
+                        let ref mut fresh7 = *thor_search.match_list.offset((*game).sort_order as isize);
                         *fresh7 = game;
                         symmetry = (*game).matching_symmetry as i32;
                         if move_count < (*game).move_count as i32 {
-                            next_move =
-                                *symmetry_map[symmetry as
-                                    usize].offset(abs((*game).moves[move_count
-                                    as
-                                    usize]
-                                    as
-                                    i32)
-                                    as isize);
-                            thor_search.next_move_frequency[next_move as
-                                usize] += 1;
-                            if (*game).actual_black_score as i32 ==
-                                32 {
-                                thor_search.next_move_score[next_move as
-                                    usize] +=
-                                    0.5f64
-                            } else if (*game).actual_black_score as
-                                i32 > 32 {
+                            next_move = *symmetry_map[symmetry as usize].offset(
+                                abs((*game).moves[move_count as usize] as i32) as isize
+                            );
+                            thor_search.next_move_frequency[next_move as usize] += 1;
+                            if (*game).actual_black_score as i32 == 32 {
+                                thor_search.next_move_score[next_move as usize] += 0.5f64
+                            } else if (*game).actual_black_score as i32 > 32 {
                                 if side_to_move == 0 {
-                                    thor_search.next_move_score[next_move as
-                                        usize] +=
-                                        1.0f64
+                                    thor_search.next_move_score[next_move as usize] += 1.0f64
                                 }
                             } else if side_to_move == 2 {
-                                thor_search.next_move_score[next_move as
-                                    usize] +=
-                                    1.0f64
+                                thor_search.next_move_score[next_move as usize] += 1.0f64
                             }
                         }
                         frequency[(*game).actual_black_score as usize] += 1;
@@ -2753,8 +2487,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         j = 0;
         while i < thor_search.match_count {
             if !(*thor_search.match_list.offset(j as isize)).is_null() {
-                let ref mut fresh8 =
-                    *thor_search.match_list.offset(i as isize);
+                let ref mut fresh8 = *thor_search.match_list.offset(i as isize);
                 *fresh8 = *thor_search.match_list.offset(j as isize);
                 i += 1
             }
@@ -2784,21 +2517,17 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         /* Average of 0 values is pointless */
         thor_search.average_black_score = 32.0f64
     } else {
-        thor_search.average_black_score =
-            sum as f64 / thor_search.match_count as f64
+        thor_search.average_black_score = sum as f64 / thor_search.match_count as f64
     }
     /* Determine the median score */
     if thor_search.match_count == 0 {
         /* ...and so is median of 0 values */
         thor_search.median_black_score = 32
     } else {
-        cumulative[0] =
-            frequency[0];
+        cumulative[0] = frequency[0];
         i = 1;
         while i <= 64 {
-            cumulative[i as usize] =
-                cumulative[(i - 1) as usize] +
-                    frequency[i as usize];
+            cumulative[i as usize] = cumulative[(i - 1) as usize] + frequency[i as usize];
             i += 1
         }
         /* Median is average between first value for which cumulative
@@ -2807,13 +2536,11 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
            of the parity of the number of values.
            By definition of median, both loops terminate for indices <= 64. */
         i = 0;
-        while 2 * cumulative[i as usize] <
-            thor_search.match_count {
+        while 2 * cumulative[i as usize] < thor_search.match_count {
             i += 1
         }
         j = i;
-        while 2 * cumulative[j as usize] <
-            thor_search.match_count + 1 {
+        while 2 * cumulative[j as usize] < thor_search.match_count + 1 {
             j += 1
         }
         thor_search.median_black_score = (i + j) / 2
