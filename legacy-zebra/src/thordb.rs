@@ -593,8 +593,9 @@ pub unsafe fn sort_thor_games(count: i32) {
         /* No need to sort 0 or 1 games. */
         return
     }
+    let sord_order = &thor_sort_order[0..thor_sort_criteria_count as usize];
     thor_search.match_list.sort_by(|g1, g2| {
-        match unsafe { thor_compare(&**g1, &**g2) } {
+        match unsafe { thor_compare(&**g1, &**g2, sord_order) } {
             i32::MIN..=-1_i32 => Ordering::Less,
             0 => Ordering::Equal,
             1_i32..=i32::MAX => Ordering::Greater,
@@ -2106,8 +2107,8 @@ fn position_match(mut game: &mut GameType,
   Only to be called by QSORT. A full comparison is
   performed using the priority order from THOR_SORT_ORDER.
 */
-pub unsafe fn thor_compare(game1: &GameType, game2: &GameType) -> i32 {
-    for sort_order_item in &thor_sort_order[0..thor_sort_criteria_count as usize] {
+pub unsafe fn thor_compare(game1: &GameType, game2: &GameType, sord_order: &[i32]) -> i32 {
+    for sort_order_item in sord_order {
         let result = match sort_order_item {
             1 => game2.origin_year - game1.origin_year,
             2 => players.player_lex_order((*game1).black_no as i32) - players.player_lex_order((*game2).black_no as i32),
