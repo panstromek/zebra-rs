@@ -1,7 +1,6 @@
 use libc_wrapper::{fclose, fopen, FileHandle};
 use crate::src::error::LibcFatalError;
 use engine::src::stubs::abs;
-use crate::src::safemem::{safe_malloc};
 use thordb_types::{Int8, Int16, Int32};
 
 use engine::src::bitboard::bit_reverse_32;
@@ -1747,7 +1746,7 @@ impl ThorHash {
   Creates and initializes a new node for use in the opening tree.
 */
 unsafe fn new_thor_opening_node(parent: *mut ThorOpeningNode) -> *mut ThorOpeningNode {
-    let mut node = safe_malloc(::std::mem::size_of::<ThorOpeningNode>() as u64) as *mut ThorOpeningNode;
+    let mut node = Box::into_raw(Box::new(ThorOpeningNode::new()));
     (*node).child_move = 0;
     (*node).sibling_move = 0;
     (*node).child_node = 0 as *mut ThorOpeningNode;

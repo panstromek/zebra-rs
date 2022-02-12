@@ -160,6 +160,24 @@ pub struct ThorOpeningNode {
     pub sibling_node: *mut ThorOpeningNode,
     pub parent_node: *mut ThorOpeningNode,
 }
+
+impl ThorOpeningNode {
+    pub fn new() -> Self {
+        ThorOpeningNode {
+            hash1: 0,
+            hash2: 0,
+            current_match: 0,
+            frequency: 0,
+            matching_symmetry: 0,
+            child_move: 0,
+            sibling_move: 0,
+            child_node: null_mut(),
+            sibling_node: null_mut(),
+            parent_node: null_mut()
+        }
+    }
+}
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct TournamentType {
