@@ -1,5 +1,4 @@
 use std::ops::{Index, IndexMut};
-use std::ptr::null_mut;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -107,7 +106,7 @@ pub struct GameType {
     pub moves: [i8; 60],
     pub move_count: i16,
     pub black_disc_count: [i8; 61],
-    pub opening: *mut ThorOpeningNode,
+    pub opening: OpeningNodeRef,
     // pub database: &'static DatabaseType, -> replaced by origin_year field below
 
     // replacement for `database` field, because we only need a year from it
@@ -133,7 +132,7 @@ impl GameType {
             moves: [0; 60],
             move_count: 0,
             black_disc_count: [0; 61],
-            opening: null_mut(),
+            opening: OpeningNodeRef::root(),
             origin_year: 0,
             shape_hi: 0,
             shape_lo: 0,
@@ -182,6 +181,12 @@ impl ThorOpeningNode {
 #[derive(Copy, Clone)]
 pub struct OpeningNodeRef {
     index: usize,
+}
+
+impl OpeningNodeRef {
+    const fn root() -> OpeningNodeRef {
+        OpeningNodeRef { index: 0 }
+    }
 }
 
 pub struct ThorOpeningTree {
