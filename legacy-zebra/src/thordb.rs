@@ -1663,7 +1663,7 @@ unsafe fn prepare_game(mut game: &mut GameType, thor_board: &mut ThorBoard, tree
             i += 1
         }
     }
-    (*game).opening = &mut tree[opening] as _;
+    (*game).opening = opening;
     /* Initialize the shape state */
     (*game).shape_lo = 3 << 27;
     (*game).shape_hi = 3 << 3;
@@ -1988,6 +1988,7 @@ pub unsafe fn get_thor_game_move(index: i32, move_number: i32) -> i32 {
 unsafe fn position_match(mut game: &mut GameType,
                          thor_board: &mut ThorBoard,
                          thor_hash_: &mut ThorHash,
+                         tree: &mut ThorOpeningTree,
                          move_count: i32,
                          side_to_move: i32,
                          shape_lo: &mut [u32],
@@ -2021,11 +2022,11 @@ unsafe fn position_match(mut game: &mut GameType,
     }
     /* Check if the opening information suffices to
        determine if the position matches or not. */
-    if (*(*game).opening).current_match == 1 {
-        (*game).matching_symmetry = (*(*game).opening).matching_symmetry as i16;
+    if (tree[game.opening]).current_match == 1 {
+        (*game).matching_symmetry = (tree[game.opening]).matching_symmetry as i16;
         return 1
     } else {
-        if (*(*game).opening).current_match == 2 {
+        if (tree[game.opening]).current_match == 2 {
             return 0
         }
     }
@@ -2456,7 +2457,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
             game = &mut *(*current_db).games.offset(i as isize);
             if (*game).passes_filter != 0 {
                 if disc_count[0] == (*game).black_disc_count[move_count as usize] as i32 {
-                    if position_match(game, &mut board, &mut thor_hash, move_count, side_to_move, &mut shape_lo, &mut shape_hi, corner_mask, target_hash1, target_hash2) != 0 {
+                    if position_match(game, &mut board, &mut thor_hash, &mut thor_opening_tree, move_count, side_to_move, &mut shape_lo, &mut shape_hi, corner_mask, target_hash1, target_hash2) != 0 {
                         let ref mut fresh7 = *thor_search.match_list.offset((*game).sort_order as isize);
                         *fresh7 = game;
                         symmetry = (*game).matching_symmetry as i32;
