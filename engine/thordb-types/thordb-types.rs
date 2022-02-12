@@ -195,7 +195,7 @@ pub struct FilterType {
     pub last_year: i32,
     pub player_filter: PlayerFilterType,
 }
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 #[repr(C)]
 pub struct SearchResultType {
     pub average_black_score: f64,
@@ -207,7 +207,7 @@ pub struct SearchResultType {
     pub median_black_score: i32,
     pub allocation: i32,
     pub next_move_frequency: [i32; 100],
-    pub match_list: *mut *mut GameType,
+    pub match_list: Vec<*mut GameType>,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -278,7 +278,7 @@ impl SearchResultType {
             /* Bad index */
             return -1
         } else {
-            return (**self.match_list.offset(index as isize)).move_count as i32
+            return (*self.match_list[index as usize]).move_count as i32
         };
     }
 }
