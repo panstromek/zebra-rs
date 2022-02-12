@@ -440,7 +440,7 @@ unsafe fn read_game(mut stream: &mut impl Read, mut game: &mut GameType) -> i32 
     (*game).moves.iter_mut().zip(bytes.iter().take(actually_read)).for_each(|(g, b)| {
         *g = *b as i8
     });
-    prepare_game(game);
+    prepare_game(game, &mut board);
     return (success != 0 && actually_read == 60) as i32;
 }
 /*
@@ -1578,7 +1578,7 @@ fn play_through_game(&mut self, game: &mut GameType, max_moves: i32) -> i32 {
   The main result is that the number of black discs on the board after
   each of the moves is stored.
 */
-pub unsafe fn prepare_game(mut game: &mut GameType) {
+unsafe fn prepare_game(mut game: &mut GameType, thor_board: &mut ThorBoard) {
     let mut i: i32 = 0;
     let mut move_0: i32 = 0;
     let mut done: i32 = 0;
@@ -1591,10 +1591,10 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
     let mut child = 0 as *mut ThorOpeningNode;
     /* Play through the game and count the number of black discs
        at each stage. */
-    clear_thor_board(&mut board.board);
+    clear_thor_board(&mut thor_board.board);
     disc_count[2] = 2;
     disc_count[0] = disc_count[2];
-    board.side_to_move = 0;
+    thor_board.side_to_move = 0;
     corner_descriptor = 0;
     moves_played = 0;
     done = 0;
@@ -1604,27 +1604,27 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
         /* Make the move, update the board and disc count,
            and change the sign for white moves */
         move_0 = (*game).moves[moves_played as usize] as i32;
-        flipped = count_flips(move_0, board.side_to_move, 0 + 2 - board.side_to_move, &mut board.board);
+        flipped = count_flips(move_0, thor_board.side_to_move, 0 + 2 - thor_board.side_to_move, &mut thor_board.board);
         if flipped != 0 {
-            board.board[move_0 as usize] = board.side_to_move;
-            disc_count[board.side_to_move as usize] += flipped + 1;
-            disc_count[(0 + 2 - board.side_to_move) as usize] -= flipped;
-            if board.side_to_move == 2 {
+            thor_board.board[move_0 as usize] = thor_board.side_to_move;
+            disc_count[thor_board.side_to_move as usize] += flipped + 1;
+            disc_count[(0 + 2 - thor_board.side_to_move) as usize] -= flipped;
+            if thor_board.side_to_move == 2 {
                 (*game).moves[moves_played as usize] = -((*game).moves[moves_played as usize] as i32) as i8
             }
-            board.side_to_move = 0 + 2 - board.side_to_move;
+            thor_board.side_to_move = 0 + 2 - thor_board.side_to_move;
             moves_played += 1
         } else {
-            board.side_to_move = 0 + 2 - board.side_to_move;
-            flipped = count_flips(move_0, board.side_to_move, 0 + 2 - board.side_to_move, &mut board.board);
+            thor_board.side_to_move = 0 + 2 - thor_board.side_to_move;
+            flipped = count_flips(move_0, thor_board.side_to_move, 0 + 2 - thor_board.side_to_move, &mut thor_board.board);
             if flipped != 0 {
-                board.board[move_0 as usize] = board.side_to_move;
-                disc_count[board.side_to_move as usize] += flipped + 1;
-                disc_count[(0 + 2 - board.side_to_move) as usize] -= flipped;
-                if board.side_to_move == 2 {
+                thor_board.board[move_0 as usize] = thor_board.side_to_move;
+                disc_count[thor_board.side_to_move as usize] += flipped + 1;
+                disc_count[(0 + 2 - thor_board.side_to_move) as usize] -= flipped;
+                if thor_board.side_to_move == 2 {
                     (*game).moves[moves_played as usize] = -((*game).moves[moves_played as usize] as i32) as i8
                 }
-                board.side_to_move = 0 + 2 - board.side_to_move;
+                thor_board.side_to_move = 0 + 2 - thor_board.side_to_move;
                 moves_played += 1
             } else {
                 done = 1
@@ -1632,7 +1632,7 @@ pub unsafe fn prepare_game(mut game: &mut GameType) {
         }
         /* Update the corner descriptor if necessary */
         if move_0 == 11 || move_0 == 18 || move_0 == 81 || move_0 == 88 {
-            corner_descriptor |= get_corner_mask(board.board[11], board.board[81], board.board[18], board.board[88])
+            corner_descriptor |= get_corner_mask(thor_board.board[11], thor_board.board[81], thor_board.board[18], thor_board.board[88])
         }
         if !(done == 0 && moves_played < 60) {
             break;
