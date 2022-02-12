@@ -65,8 +65,8 @@ static mut thor_hash: ThorHash = ThorHash {
     thor_col_pattern: [0; 8],
 };
 
-static mut symmetry_map: [*const i32; 8] = [0 as *const i32; 8];
-static mut inv_symmetry_map: [*const i32; 8] = [0 as *const i32; 8];
+static mut symmetry_map: [&'static [i32]; 8] = [&[]; 8];
+static mut inv_symmetry_map: [&'static [i32]; 8] = [&[]; 8];
 static move_mask_hi: [u32; 100] = init_move_masks()[0];
 static move_mask_lo: [u32; 100] = init_move_masks()[1];
 static unmove_mask_hi: [u32; 100] = init_move_masks()[2];
@@ -1505,22 +1505,22 @@ const fn create_symetry_maps() -> SymmetryMaps {
     and COMPUTE_FULL_SECONDARY_HASH().
 */
 unsafe fn init_symmetry_maps() {
-    symmetry_map[0] = SYMMENTRY_MAPS.b1_b1_map.as_ptr();
-    inv_symmetry_map[0] = SYMMENTRY_MAPS.b1_b1_map.as_ptr();
-    symmetry_map[1] = SYMMENTRY_MAPS.b8_b1_map.as_ptr();
-    inv_symmetry_map[1] = SYMMENTRY_MAPS.b8_b1_map.as_ptr();
-    symmetry_map[2] = SYMMENTRY_MAPS.a2_b1_map.as_ptr();
-    inv_symmetry_map[2] = SYMMENTRY_MAPS.a2_b1_map.as_ptr();
-    symmetry_map[3] = SYMMENTRY_MAPS.h2_b1_map.as_ptr();
-    inv_symmetry_map[3] = SYMMENTRY_MAPS.a7_b1_map.as_ptr();
-    symmetry_map[4] = SYMMENTRY_MAPS.g1_b1_map.as_ptr();
-    inv_symmetry_map[4] = SYMMENTRY_MAPS.g1_b1_map.as_ptr();
-    symmetry_map[5] = SYMMENTRY_MAPS.g8_b1_map.as_ptr();
-    inv_symmetry_map[5] = SYMMENTRY_MAPS.g8_b1_map.as_ptr();
-    symmetry_map[6] = SYMMENTRY_MAPS.a7_b1_map.as_ptr();
-    inv_symmetry_map[6] = SYMMENTRY_MAPS.h2_b1_map.as_ptr();
-    symmetry_map[7] = SYMMENTRY_MAPS.h7_b1_map.as_ptr();
-    inv_symmetry_map[7] = SYMMENTRY_MAPS.h7_b1_map.as_ptr();
+    symmetry_map[0] = &SYMMENTRY_MAPS.b1_b1_map;
+    inv_symmetry_map[0] = &SYMMENTRY_MAPS.b1_b1_map;
+    symmetry_map[1] = &SYMMENTRY_MAPS.b8_b1_map;
+    inv_symmetry_map[1] = &SYMMENTRY_MAPS.b8_b1_map;
+    symmetry_map[2] = &SYMMENTRY_MAPS.a2_b1_map;
+    inv_symmetry_map[2] = &SYMMENTRY_MAPS.a2_b1_map;
+    symmetry_map[3] = &SYMMENTRY_MAPS.h2_b1_map;
+    inv_symmetry_map[3] = &SYMMENTRY_MAPS.a7_b1_map;
+    symmetry_map[4] = &SYMMENTRY_MAPS.g1_b1_map;
+    inv_symmetry_map[4] = &SYMMENTRY_MAPS.g1_b1_map;
+    symmetry_map[5] = &SYMMENTRY_MAPS.g8_b1_map;
+    inv_symmetry_map[5] = &SYMMENTRY_MAPS.g8_b1_map;
+    symmetry_map[6] = &SYMMENTRY_MAPS.a7_b1_map;
+    inv_symmetry_map[6] = &SYMMENTRY_MAPS.h2_b1_map;
+    symmetry_map[7] = &SYMMENTRY_MAPS.h7_b1_map;
+    inv_symmetry_map[7] = &SYMMENTRY_MAPS.h7_b1_map;
     let mut i = 0;
     while i < 8 {
         let mut j = 1;
