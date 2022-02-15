@@ -920,18 +920,18 @@ unsafe fn get_database_info(info: &mut [DatabaseInfoType]) {
     let mut temp = DatabaseInfoType{year: 0, count: 0,};
     let mut current_db_ = &database_head;
     let mut i = 0;
-    while i < thor_database_count {
-        let current_db = current_db_.as_ref().unwrap();
+    while let Some(current_db) = current_db_.as_ref() {
         (*info.offset(i as isize)).year = (*current_db).prolog.origin_year;
         (*info.offset(i as isize)).count = (*current_db).count;
         current_db_ = &(*current_db).next;
         i += 1
     }
+    let database_count = i;
     /* Sort the list */
     loop {
         change = 0;
-        i = 0;
-        while i < thor_database_count - 1 {
+        let mut i = 0;
+        while i < database_count - 1 {
             if (*info.offset(i as isize)).year > (*info.offset((i + 1) as isize)).year {
                 change = 1;
                 temp = *info.offset(i as isize);
