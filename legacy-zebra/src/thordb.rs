@@ -1272,9 +1272,9 @@ fn recursive_opening_scan(tree: &mut ThorOpeningTree,
     }
     /* Recursively search the childen */
     let mut child = (tree[node]).child_node;
-    while !child.is_none() {
-        recursive_opening_scan(tree, child.unwrap(), depth + 1, moves_played, primary_hash_0, secondary_hash_0);
-        child = tree[child.unwrap()].sibling_node
+    while let Some(child_) = child {
+        recursive_opening_scan(tree, child_, depth + 1, moves_played, primary_hash_0, secondary_hash_0);
+        child = tree[child_].sibling_node
     };
 }
 
@@ -1316,24 +1316,24 @@ fn recursive_frequency_count(tree: &mut ThorOpeningTree,
                 (tree[node]).hash2 == *secondary_hash_0.offset(j as isize) {
                 child_move = (tree[node]).child_move as i32;
                 let mut child = (tree[node]).child_node;
-                while !child.is_none() {
+                while let Some(child_) = child {
                     *freq_count.offset(
                         *inv_symmetry_map_[j as usize].offset(child_move as isize) as isize
-                    ) += (tree[child.unwrap()]).frequency;
-                    child_move = (tree[child.unwrap()]).sibling_move as i32;
-                    child = (tree[child.unwrap()]).sibling_node
+                    ) += (tree[child_]).frequency;
+                    child_move = (tree[child_]).sibling_move as i32;
+                    child = (tree[child_]).sibling_node
                 }
                 break ;
             } else { i += 1 }
         }
     } else if depth < moves_played {
         let mut child = (tree[node]).child_node;
-        while !child.is_none() {
-            recursive_frequency_count(tree, child.unwrap(), freq_count,
+        while let Some(child_) = child {
+            recursive_frequency_count(tree, child_, freq_count,
                                       depth + 1, moves_played,
                                       symmetries, primary_hash_0,
                                       secondary_hash_0, inv_symmetry_map_);
-            child = (tree[child.unwrap()]).sibling_node
+            child = (tree[child_]).sibling_node
         }
     };
 }
