@@ -1433,13 +1433,9 @@ const fn init_move_masks() -> [[u32; 100]; 4] {
   that match the line defined by NODE.
 */
 fn calculate_opening_frequency(tree: &mut ThorOpeningTree, node: OpeningNodeRef) -> i32 {
-    let mut child = tree[node].child_node;
-    if child.is_none() {
-        return tree[node].frequency
-    } else {
-        let mut child = child.unwrap();
+    if let Some(mut child) = tree[node].child_node {
         let mut sum = 0;
-        loop  {
+        loop {
             sum += calculate_opening_frequency(tree, child);
             if let Some(new_child) = tree[child].sibling_node {
                 child = new_child
@@ -1448,8 +1444,10 @@ fn calculate_opening_frequency(tree: &mut ThorOpeningTree, node: OpeningNodeRef)
             }
         }
         tree[node].frequency = sum;
-        return sum
-    };
+        sum
+    } else {
+        tree[node].frequency
+    }
 }
 
 /*
