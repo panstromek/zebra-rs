@@ -1437,11 +1437,15 @@ fn calculate_opening_frequency(tree: &mut ThorOpeningTree, node: OpeningNodeRef)
     if child.is_none() {
         return tree[node].frequency
     } else {
+        let mut child = child.unwrap();
         let mut sum = 0;
         loop  {
-            sum += calculate_opening_frequency(tree, child.unwrap());
-            child = tree[child.unwrap()].sibling_node;
-            if child.is_none() { break ; }
+            sum += calculate_opening_frequency(tree, child);
+            if let Some(new_child) = tree[child].sibling_node {
+                child = new_child
+            } else {
+                break;
+            }
         }
         tree[node].frequency = sum;
         return sum
