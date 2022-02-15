@@ -1828,8 +1828,8 @@ fn build_thor_opening_tree(thor_board: &mut ThorBoard, thor_hash_: &mut ThorHash
             (tree[parent]).child_move = thor_move_list[branch_depth as usize]
         } else {
             let mut last_child = (tree[parent]).child_node.unwrap();
-            while !(tree[last_child]).sibling_node.is_none() {
-                last_child = (tree[last_child]).sibling_node.unwrap()
+            while let Some(next_child) = (tree[last_child]).sibling_node {
+                last_child = next_child
             }
             (tree[last_child]).sibling_node = Some(new_child);
             (tree[last_child]).sibling_move = thor_move_list[branch_depth as usize]
