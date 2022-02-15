@@ -24,7 +24,7 @@ use std::ptr::null_mut;
 
 /* Local variables */
 static mut thor_game_count: i32 = 0;
-static mut thor_database_count: i32 = 0;
+static mut thor_database_count: i32 = 0; // todo remove, probably redundant
 static mut thor_sort_criteria_count: i32 = 0;
 static mut thor_games_sorted: i32 = 0;
 static mut thor_games_filtered: i32 = 0;
