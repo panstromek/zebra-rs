@@ -1645,10 +1645,12 @@ fn prepare_game(mut game: &mut GameType, thor_board: &mut ThorBoard, tree: &mut 
     while opening_match != 0 {
         move_0 = (tree[opening]).child_move as i32;
         child = (tree[opening]).child_node;
-        while !child.is_none() &&
-            move_0 != abs((*game).moves[i as usize] as i32) {
-            move_0 = (tree[child.unwrap()]).sibling_move as i32;
-            child = (tree[child.unwrap()]).sibling_node
+        while let Some(child_) = child {
+            if move_0 == abs((*game).moves[i as usize] as i32) {
+                break;
+            }
+            move_0 = (tree[child_]).sibling_move as i32;
+            child = (tree[child_]).sibling_node
         }
         if let Some(child) = child {
             opening = child;
