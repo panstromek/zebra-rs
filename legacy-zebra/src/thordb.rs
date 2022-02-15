@@ -24,7 +24,6 @@ use std::ptr::null_mut;
 
 /* Local variables */
 static mut thor_game_count: i32 = 0;
-static mut thor_database_count: i32 = 0; // todo remove, probably redundant
 static mut thor_sort_criteria_count: i32 = 0;
 static mut thor_games_sorted: i32 = 0;
 static mut thor_games_filtered: i32 = 0;
@@ -499,7 +498,6 @@ pub unsafe fn read_game_database(file_name:
         *fresh4 = db_head.prolog.origin_year;
         i += 1
     }
-    thor_database_count += 1;
     thor_game_count += (db_head).count;
     thor_games_sorted = 0;
     thor_games_filtered = 0;
@@ -1886,7 +1884,6 @@ fn build_thor_opening_tree(thor_board: &mut ThorBoard, thor_hash_: &mut ThorHash
 
 pub unsafe fn init_thor_database(g_state: &mut FullState) {
     thor_game_count = 0;
-    thor_database_count = 0;
     thor_search.match_list = Vec::new();
     thor_search.allocation = 0;
     thor_search.match_count = 0;
