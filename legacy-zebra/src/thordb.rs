@@ -107,7 +107,6 @@ static mut tournaments: TournamentDatabaseType =
         reserved: 0,},
         name_buffer: b"",
         tournament_list: Vec::new()};
-// static mut root_node: *mut ThorOpeningNode = 0 as *const ThorOpeningNode as *mut ThorOpeningNode;
 static mut thor_opening_tree: ThorOpeningTree = ThorOpeningTree::new();
 static default_sort_order: [i32; 5] = [2, 3, 1, 5, 4];
 static mut thor_sort_order: [i32; 10] = [0; 10];
