@@ -1226,12 +1226,14 @@ f1_940, " -l 3 8 3 4 6 2 -seqfile ../seq.txt -randmove 3 -g ../board.txt -log ze
                 || line.starts_with("Zebra (c) 1997-2005 Gunnar Andersson, compile date")
                 || line.starts_with("Gunnar Andersson")
 
-                // // todo maybe check seconds for these 3?
+                // todo maybe check seconds for these 3?
+                //  (We need to filter them because of timezones)
                 || line.starts_with("Fatal error")
                 || line.starts_with("Log file created")
 
-                // matches a log_game_ending output
-                || (line.starts_with("# ") && line.contains("#     ") && line.contains(" - "))
+                // matches a log_game_ending output ("# Thu Jan  1 01:00:04 1970")
+                // we need to update this if our code ever overflows over to friday
+                || (line.starts_with("# Thu Jan  1 ") && line.ends_with(" 1970"))
             )
         }
 
