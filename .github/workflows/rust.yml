@@ -25,5 +25,8 @@ jobs:
           toolchain: nightly
           override: true
           components: llvm-tools-preview
+
+    - uses: Swatinem/rust-cache@v1
+
     - name: Build and run tests
       run: bash ./run-tests.sh
