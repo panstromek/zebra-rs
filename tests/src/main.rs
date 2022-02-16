@@ -1224,7 +1224,15 @@ f1_940, " -l 3 8 3 4 6 2 -seqfile ../seq.txt -randmove 3 -g ../board.txt -log ze
         fn variable_lines(line: &&str) -> bool {
             !(line.starts_with("Engine compiled")
                 || line.starts_with("Zebra (c) 1997-2005 Gunnar Andersson, compile date")
-                || line.starts_with("Gunnar Andersson"))
+                || line.starts_with("Gunnar Andersson")
+
+                // // todo maybe check seconds for these 3?
+                || line.starts_with("Fatal Error")
+                || line.starts_with("Log File Created")
+
+                // matches a log_game_ending output
+                || (line.starts_with("# ") && line.contains("#     ") && line.contains(" - "))
+            )
         }
 
         let snapshot = snapshot_str.unwrap();
