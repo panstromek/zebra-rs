@@ -1226,6 +1226,9 @@ f1_940, " -l 3 8 3 4 6 2 -seqfile ../seq.txt -randmove 3 -g ../board.txt -log ze
                 || line.starts_with("Zebra (c) 1997-2005 Gunnar Andersson, compile date")
                 || line.starts_with("Gunnar Andersson")
 
+                // this one contains a local path
+                || line.contains("Wrong checksum, might be an old version")
+
                 // todo maybe check seconds for these 3?
                 //  (We need to filter them because of timezones)
                 || line.starts_with("Fatal error")
