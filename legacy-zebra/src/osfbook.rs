@@ -156,19 +156,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
             }
         }
         end_game::<FE>(side_to_move, 0, 0, 1, 0,
-                       &mut dummy_info, echo , &mut (g_state.flip_stack_)
-                       , &mut (g_state.search_state)
-                       , &mut (g_state.board_state)
-                       , &mut (g_state.hash_state)
-                       , &mut (g_state.g_timer)
-                       , &mut (g_state.end_g)
-                       , &mut (g_state.midgame_state)
-                       , &mut (g_state.coeff_state)
-                       , &mut (g_state.moves_state)
-                       , &mut (g_state.random_instance)
-                       , &mut (g_state.g_book)
-                       , &mut (g_state.stable_state)
-                       , &mut (g_state.prob_cut));
+                       &mut dummy_info, echo , g_state);
         outcome = (g_state.search_state).root_eval;
         if side_to_move == 2 {
             outcome = -outcome
@@ -238,19 +226,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 /* Only solve the position if it hasn't been solved already */
                 if (*(g_state.g_book).node.offset(this_node as isize)).flags as i32 & 16 == 0 {
                     end_game::<FE>(side_to_move, 0, 0, 1, 0,
-                                   &mut dummy_info, echo, &mut (g_state.flip_stack_)
-                                   , &mut (g_state.search_state)
-                                   , &mut (g_state.board_state)
-                                   , &mut (g_state.hash_state)
-                                   , &mut (g_state.g_timer)
-                                   , &mut (g_state.end_g)
-                                   , &mut (g_state.midgame_state)
-                                   , &mut (g_state.coeff_state)
-                                   , &mut (g_state.moves_state)
-                                   , &mut (g_state.random_instance)
-                                   , &mut (g_state.g_book)
-                                   , &mut (g_state.stable_state)
-                                   , &mut (g_state.prob_cut));
+                                   &mut dummy_info, echo, g_state);
                     if side_to_move == 0 {
                         outcome = (g_state.search_state).root_eval
                     } else {
@@ -277,19 +253,7 @@ pub unsafe fn add_new_game(move_count_0: i32,
                 /* Only solve the position if its WLD status is unknown */
                 if (*(g_state.g_book).node.offset(this_node as isize)).flags as i32 & 4 == 0 {
                     end_game::<FE>(side_to_move, 1, 0, 1, 0,
-                                   &mut dummy_info, echo , &mut (g_state.flip_stack_)
-                                   , &mut (g_state.search_state)
-                                   , &mut (g_state.board_state)
-                                   , &mut (g_state.hash_state)
-                                   , &mut (g_state.g_timer)
-                                   , &mut (g_state.end_g)
-                                   , &mut (g_state.midgame_state)
-                                   , &mut (g_state.coeff_state)
-                                   , &mut (g_state.moves_state)
-                                   , &mut (g_state.random_instance)
-                                   , &mut (g_state.g_book)
-                                   , &mut (g_state.stable_state)
-                                   , &mut (g_state.prob_cut));
+                                   &mut dummy_info, echo , g_state);
                     if side_to_move == 0 {
                         outcome = (g_state.search_state).root_eval
                     } else {

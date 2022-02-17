@@ -1168,19 +1168,7 @@ unsafe fn endgame_correlation(mut side_to_move: i32,
                 g_state.hash_state.set_hash_transformation(0,
                                         0);
                end_game::<osfbook::FE>(side_to_move, 0, 1,
-                                       1, 0, &mut dummy_info, echo, &mut g_state.flip_stack_
-                                       , &mut g_state.search_state
-                                       , &mut g_state.board_state
-                                       , &mut g_state.hash_state
-                                       , &mut g_state.g_timer
-                                       , &mut g_state.end_g
-                                       , &mut g_state.midgame_state
-                                       , &mut g_state.coeff_state
-                                       , &mut g_state.moves_state
-                                       , &mut g_state.random_instance
-                                       , &mut g_state.g_book
-                                       , &mut g_state.stable_state
-                                       , &mut g_state.prob_cut);
+                                       1, 0, &mut dummy_info, echo, g_state);
                 endgame_correlation(side_to_move, g_state.search_state.root_eval,
                                     g_state.board_state.pv[0][0],
                                     min_disks, max_disks, spec, echo, g_state);
@@ -1241,19 +1229,7 @@ unsafe fn do_endgame_statistics(index: i32,
             g_state.hash_state.set_hash_transformation(0,
                                     0);
            end_game::<osfbook::FE>(side_to_move, 0, 1,
-                                   1, 0, &mut dummy_info, echo, &mut g_state.flip_stack_
-                                   , &mut g_state.search_state
-                                   , &mut g_state.board_state
-                                   , &mut g_state.hash_state
-                                   , &mut g_state.g_timer
-                                   , &mut g_state.end_g
-                                   , &mut g_state.midgame_state
-                                   , &mut g_state.coeff_state
-                                   , &mut g_state.moves_state
-                                   , &mut g_state.random_instance
-                                   , &mut g_state.g_book
-                                   , &mut g_state.stable_state
-                                   , &mut g_state.prob_cut);
+                                   1, 0, &mut dummy_info, echo, g_state);
             if abs(g_state.search_state.root_eval) <= spec.max_diff {
                 endgame_correlation(side_to_move, g_state.search_state.root_eval,
                                     g_state.board_state.pv[0][0],
@@ -1568,19 +1544,7 @@ unsafe fn do_correct(index: i32,
                 reset_counter(&mut g_state.search_state.nodes);
                end_game::<osfbook::FE>(side_to_move, (full_solve == 0) as i32,
                                        0, 1, 0,
-                                       &mut dummy_info, echo, &mut g_state.flip_stack_
-                                       , &mut g_state.search_state
-                                       , &mut g_state.board_state
-                                       , &mut g_state.hash_state
-                                       , &mut g_state.g_timer
-                                       , &mut g_state.end_g
-                                       , &mut g_state.midgame_state
-                                       , &mut g_state.coeff_state
-                                       , &mut g_state.moves_state
-                                       , &mut g_state.random_instance
-                                       , &mut g_state.g_book
-                                       , &mut g_state.stable_state
-                                       , &mut g_state.prob_cut);
+                                       &mut dummy_info, echo, g_state);
                 if side_to_move == 0 {
                     outcome = g_state.search_state.root_eval
                 } else { outcome = -g_state.search_state.root_eval }

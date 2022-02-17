@@ -24,7 +24,7 @@ use crate::src::search::SearchState;
 use crate::src::stubs::{abs, ceil};
 use crate::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use crate::src::zebra::EvalType::{EXACT_EVAL, MIDGAME_EVAL, SELECTIVE_EVAL, WLD_EVAL};
-use crate::src::zebra::EvaluationType;
+use crate::src::zebra::{EvaluationType, FullState};
 use crate::src::stable::StableState;
 use std::collections::hash_map::RandomState;
 use crate::src::myrandom::MyRandom;
@@ -2318,20 +2318,20 @@ pub fn end_game<FE: FrontEnd>(side_to_move: i32,
                               allow_book: i32,
                               komi: i32,
                               mut eval_info: &mut EvaluationType, echo: i32,
-                              mut flip_stack_: &mut FlipStack,
-                              mut search_state: &mut SearchState,
-                              mut board_state: &mut BoardState,
-                              mut hash_state: &mut HashState,
-                              mut g_timer: &mut Timer,
-                              mut end: &mut End,
-                              mut midgame_state: &mut MidgameState,
-                              mut coeff_state: &mut CoeffState,
-                              mut moves_state: &mut MovesState,
-                              mut random_instance: &mut MyRandom,
-                              mut g_book: &mut Book,
-                              mut stable_state: &mut StableState,
-                              mut prob_cut: &mut ProbCut)
-                              -> i8 {
+                              g_state: &mut FullState) -> i8 {
+    let mut flip_stack_ = &mut g_state.flip_stack_;
+    let mut search_state = &mut g_state.search_state;
+    let mut board_state = &mut g_state.board_state;
+    let mut hash_state = &mut g_state.hash_state;
+    let mut g_timer = &mut g_state.g_timer;
+    let mut end = &mut g_state.end_g;
+    let mut midgame_state = &mut g_state.midgame_state;
+    let mut coeff_state = &mut g_state.coeff_state;
+    let mut moves_state = &mut g_state.moves_state;
+    let mut random_instance = &mut g_state.random_instance;
+    let mut g_book = &mut g_state.g_book;
+    let mut stable_state = &mut g_state.stable_state;
+    let mut prob_cut = &mut g_state.prob_cut;
     let mut current_confidence: f64 = 0.;
     let mut solve_status = WIN;
     let mut book_move = 0;

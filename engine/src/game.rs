@@ -1212,52 +1212,15 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
                    end_game::<FE>(side_to_move,
                                   (g_state.moves_state.disks_played < 60 - exact) as
                                  i32, 0, book, g_state.game_state.komi,
-                                  &mut end_eval_info, echo
-                                  , &mut g_state.flip_stack_
-                                  , &mut g_state.search_state
-                                  , &mut g_state.board_state
-                                  , &mut g_state.hash_state
-                                  , &mut g_state.g_timer
-                                  , &mut g_state.end_g
-                                  , &mut g_state.midgame_state
-                                  , &mut g_state.coeff_state
-                                  , &mut g_state.moves_state
-                                  , &mut g_state.random_instance
-                                  , &mut g_state.g_book
-                                  , &mut g_state.stable_state
-                                  , &mut g_state.prob_cut)
+                                  &mut end_eval_info, echo, g_state)
             } else if empties <= exact {
-                curr_move =
-                   end_game::<FE>(side_to_move, 0, 0,
-                                  book, g_state.game_state.komi, &mut end_eval_info, echo, &mut g_state.flip_stack_
-                                  , &mut g_state.search_state
-                                  , &mut g_state.board_state
-                                  , &mut g_state.hash_state
-                                  , &mut g_state.g_timer
-                                  , &mut g_state.end_g
-                                  , &mut g_state.midgame_state
-                                  , &mut g_state.coeff_state
-                                  , &mut g_state.moves_state
-                                  , &mut g_state.random_instance
-                                  , &mut g_state.g_book
-                                  , &mut g_state.stable_state
-                                  , &mut g_state.prob_cut)
+                curr_move = end_game::<FE>(side_to_move, 0, 0,
+                                           book, g_state.game_state.komi,
+                                           &mut end_eval_info, echo, g_state)
             } else {
-                curr_move =
-                   end_game::<FE>(side_to_move, 1, 0,
-                                  book, g_state.game_state.komi, &mut end_eval_info, echo, &mut g_state.flip_stack_
-                                  , &mut g_state.search_state
-                                  , &mut g_state.board_state
-                                  , &mut g_state.hash_state
-                                  , &mut g_state.g_timer
-                                  , &mut g_state.end_g
-                                  , &mut g_state.midgame_state
-                                  , &mut g_state.coeff_state
-                                  , &mut g_state.moves_state
-                                  , &mut g_state.random_instance
-                                  , &mut g_state.g_book
-                                  , &mut g_state.stable_state
-                                  , &mut g_state.prob_cut)
+                curr_move = end_game::<FE>(side_to_move, 1, 0,
+                                           book, g_state.game_state.komi,
+                                           &mut end_eval_info, echo, g_state)
             }
             let eval = end_eval_info;
             g_state.search_state.set_current_eval(eval);
