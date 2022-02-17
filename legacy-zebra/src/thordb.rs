@@ -1,4 +1,4 @@
-use libc_wrapper::{fclose, fopen, FileHandle};
+use libc_wrapper::{fclose, fopen};
 use crate::src::error::LibcFatalError;
 use engine::src::stubs::abs;
 use thordb_types::{Int8, Int16, Int32, OpeningNodeRef, ThorOpeningTree};
@@ -606,7 +606,7 @@ pub unsafe fn sort_thor_games(count: i32) {
   database search to STREAM.
 */
 
-pub unsafe fn print_thor_matches(mut stream: FileHandle, max_games: i32) {
+pub unsafe fn print_thor_matches(mut stream: &mut impl Write, max_games: i32) {
     let mut i: i32 = 0;
     while i < (if thor_search.match_count < max_games { thor_search.match_count } else { max_games }) {
         if i == 0 {

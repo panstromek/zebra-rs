@@ -931,7 +931,7 @@ impl LibcFrontend {
     }
 
     fn print_out_thor_matches(thor_max_games_: i32) {
-        unsafe { print_thor_matches(stdout, thor_max_games_); }
+        unsafe { print_thor_matches(&mut stdout, thor_max_games_); }
     }
 
     fn log_game_ending(log_file_name_: &CStr, move_vec: &[i8; 122],
