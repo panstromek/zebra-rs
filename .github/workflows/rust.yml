@@ -22,7 +22,7 @@ jobs:
           version: latest
     - uses: actions-rs/toolchain@v1
       with:
-          toolchain: nightly
+          toolchain: nightly-2022-02-16
           override: true
           components: llvm-tools-preview
 
