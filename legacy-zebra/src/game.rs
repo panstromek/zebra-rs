@@ -44,8 +44,7 @@ pub fn toggle_status_log(write_log: i32) {
    Initialize the different sub-systems.
 */
 
-pub unsafe fn global_setup(use_random: i32,
-                                      hash_bits: i32, mut g_state: &mut FullState) {
+pub unsafe fn global_setup(use_random: i32, hash_bits: i32, mut g_state: &mut FullState) {
     setup_log_file();
     let coeff_adjustments = load_coeff_adjustments();
 
@@ -70,11 +69,7 @@ unsafe fn setup_log_file() {
             let mut timer_: time_t = 0;
             time(&mut timer_);
             write!(log_file, "{} {}\n", "Log file created", c_time(timer_));
-            write!(log_file,
-                    "{} {} {}\n",
-                    "Engine compiled",
-                    "Jul  2 2020" ,
-                    "19:33:59");
+            write!(log_file, "{} {} {}\n", "Engine compiled", "Jul  2 2020", "19:33:59");
             log_file.flush();
         }
     }
@@ -102,12 +97,7 @@ impl BoardSource for BasicBoardFileSource {
     }
 
     fn report_unrecognized_character(unrecognized: i8) {
-         {
-            write!(stdout, "{} '{}' {}\n",
-                   "Unrecognized character",
-                   unrecognized as u8 as char,
-                   "in game file");
-        }
+        write!(stdout, "{} '{}' {}\n", "Unrecognized character", unrecognized as u8 as char, "in game file");
     }
 }
 
