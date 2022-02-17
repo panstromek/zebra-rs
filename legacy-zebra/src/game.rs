@@ -122,28 +122,22 @@ pub fn game_init(side_to_move: &mut i32, g_state: &mut FullState) {
 */
 
 pub struct LibcPonderMoveReport;
-impl LibcFatalError {
-    fn report_move_evals(expect_count: i32, move_list_item: &[i8; 64], evals_item: &[i32; 128]) {
-        let mut i = 0;
-        while i < expect_count {
-            let move__ = move_list_item[i as usize] as i32;
-            let move_eval = evals_item[move__ as usize];
-             {
-                write!(stdout, "{} {:<6.2}  ", TO_SQUARE(move__), move_eval as f64 / 128.0f64);
-            }
-            if i % 7 == 6 || i == expect_count - 1 {
-                 { write!(stdout, "\n"); }
-            }
-            i += 1
-        }
-    }
 
-    fn report_hash_move(hash_move: i8) {
-         {
-            write!(stdout, "{}={}\n",
-                   "hash move", hash_move as i32);
+fn report_move_evals(expect_count: i32, move_list_item: &[i8; 64], evals_item: &[i32; 128]) {
+    let mut i = 0;
+    while i < expect_count {
+        let move__ = move_list_item[i as usize] as i32;
+        let move_eval = evals_item[move__ as usize];
+        write!(stdout, "{} {:<6.2}  ", TO_SQUARE(move__), move_eval as f64 / 128.0f64);
+        if i % 7 == 6 || i == expect_count - 1 {
+            write!(stdout, "\n");
         }
+        i += 1
     }
+}
+
+fn report_hash_move(hash_move: i8) {
+    write!(stdout, "{}={}\n", "hash move", hash_move as i32);
 }
 
 pub unsafe fn ponder_move<
@@ -210,10 +204,10 @@ pub unsafe fn ponder_move<
             expect_list[i as usize] = g_state.moves_state.move_list[ g_state.moves_state.disks_played as usize][i as usize];
             i += 1
         }
-        Rep::report_hash_move(hash_move);
+        report_hash_move(hash_move);
         let move_list_item = &&mut g_state.moves_state.move_list[g_state.moves_state.disks_played as usize];
         let evals_item = &&mut g_state.search_state.evals[g_state.moves_state.disks_played as usize];
-        Rep::report_move_evals(expect_count, move_list_item, evals_item);
+        report_move_evals(expect_count, move_list_item, evals_item);
     }
     /* Go through the expected moves in order and prepare responses. */
     let mut best_pv_depth = 0;
