@@ -378,117 +378,87 @@ pub fn perform_extended_solve(side_to_move: i32,
                         exact - 1, wld - 1,
                         1,
                         &mut evaluated_list[0].eval, g_state);
-    if evaluated_list[0].eval.type_0 as u32
-           == PASS_EVAL as i32 as u32 {
+    if evaluated_list[0].eval.type_0 as u32 == PASS_EVAL as i32 as u32 {
         /* Don't allow pass */
         legacy_compute_move(side_to_move, 0, 0,
                             0, 0, book,
                             mid - 1, exact - 1,
                             wld - 1, 1,
                             &mut evaluated_list[0].eval, g_state);
-        if evaluated_list[0].eval.type_0 as
-               u32 == PASS_EVAL as i32 as u32 {
+        if evaluated_list[0].eval.type_0 as u32 == PASS_EVAL as i32 as u32 {
             /* Game has ended */
-            disc_diff =
-                disc_count(side_to_move, &( g_state.board_state).board) -
-                    disc_count(0 + 2 -
-                                   side_to_move, &( g_state.board_state).board);
+            disc_diff = disc_count(side_to_move, &(g_state.board_state).board) -
+                disc_count(0 + 2 - side_to_move, &(g_state.board_state).board);
             if disc_diff > 0 {
-                corrected_diff =
-                    64 -
-                        2 *
-                            disc_count(0 + 2 -
-                                           side_to_move, &( g_state.board_state).board);
+                corrected_diff = 64 - 2 * disc_count(0 + 2 - side_to_move, &(g_state.board_state).board);
                 res = WON_POSITION
             } else if disc_diff == 0 {
                 corrected_diff = 0;
                 res = DRAWN_POSITION
             } else {
-                corrected_diff =
-                    2 * disc_count(side_to_move, &( g_state.board_state).board) -
-                        64;
+                corrected_diff = 2 * disc_count(side_to_move, &(g_state.board_state).board) - 64;
                 res = LOST_POSITION
             }
-            evaluated_list[0].eval =
-                create_eval_info(EXACT_EVAL, res,
-                                 128 * corrected_diff, 0.0f64,
-                                 60 - ( g_state.moves_state).disks_played,
-                                 0)
+            evaluated_list[0].eval = create_eval_info(
+                EXACT_EVAL, res,
+                128 * corrected_diff, 0.0f64,
+                60 - (g_state.moves_state).disks_played, 0)
         }
     } else {
         /* Sign-correct the score produced */
-        evaluated_list[0].eval.score =
-            -evaluated_list[0].eval.score;
-        if evaluated_list[0].eval.res as u32
-               == WON_POSITION as i32 as u32 {
+        evaluated_list[0].eval.score = -evaluated_list[0].eval.score;
+        if evaluated_list[0].eval.res == WON_POSITION {
             evaluated_list[0].eval.res = LOST_POSITION
-        } else if evaluated_list[0].eval.res as
-                      u32 ==
-                      LOST_POSITION as i32 as u32 {
+        } else if evaluated_list[0].eval.res == LOST_POSITION {
             evaluated_list[0].eval.res = WON_POSITION
         }
     }
     if force_return != 0 {
-        evaluated_list[0].eval =
-            create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
-                             0, 0.0f64, 0,
-                             0)
+        evaluated_list[0].eval = create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
+                                                  0, 0.0f64, 0, 0)
     } else {
-        evaluated_list[0].pv_depth =
-            ( g_state.board_state).pv_depth[0] + 1;
+        evaluated_list[0].pv_depth = (g_state.board_state).pv_depth[0] + 1;
         evaluated_list[0].pv[0] = actual_move;
         i = 0;
         while i < ( g_state.board_state).pv_depth[0] {
-            evaluated_list[0].pv[(i + 1) as usize] =
-                ( g_state.board_state).pv[0][i as usize];
+            evaluated_list[0].pv[(i + 1) as usize] = (g_state.board_state).pv[0][i as usize];
             i += 1
         }
     }
-    let move_0 = actual_move;
-    {
-        unmake_move(side_to_move, move_0, &mut ( g_state.board_state).board, &mut ( g_state.moves_state), &mut ( g_state.hash_state), &mut ( g_state.flip_stack_));
-    };
+    unmake_move(side_to_move, actual_move, &mut (g_state.board_state).board, &mut (g_state.moves_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
     g_state.game_state.prefix_move = 0;
     let negate = 0;
     ( g_state.search_state).negate_current_eval(negate);
     ( g_state.game_state).max_depth_reached += 1;
     /* Compute the score for the best move and store it in the move list
        if it isn't ACTUAL_MOVE */
-    best_move =
-        legacy_compute_move(side_to_move, 0, 0,
-                            0, 0, book, mid, exact,
-                            wld, 1,
-                            &mut evaluated_list[1].eval, g_state);
+    best_move = legacy_compute_move(side_to_move, 0, 0,
+                                    0, 0, book, mid, exact,
+                                    wld, 1, &mut evaluated_list[1].eval, g_state);
     if force_return == 0 && best_move != actual_move {
         /* Move list will contain best move first and then the actual move */
         game_evaluated_count = 2;
         evaluated_list[1].side_to_move = side_to_move;
         evaluated_list[1].move_0 = best_move;
-        evaluated_list[1].pv_depth =
-            ( g_state.board_state).pv_depth[0];
+        evaluated_list[1].pv_depth = (g_state.board_state).pv_depth[0];
         i = 0;
-        while i < ( g_state.board_state).pv_depth[0] {
-            evaluated_list[1].pv[i as usize] =
-                ( g_state.board_state).pv[0][i as usize];
+        while i < (g_state.board_state).pv_depth[0] {
+            evaluated_list[1].pv[i as usize] = (g_state.board_state).pv[0][i as usize];
             i += 1
         }
         temp = evaluated_list[0];
-        evaluated_list[0] =
-            evaluated_list[1];
+        evaluated_list[0] = evaluated_list[1];
         evaluated_list[1] = temp
     }
     /* The PV and current eval should when correspond to the best move
        when leaving */
-    ( g_state.board_state).pv_depth[0] =
-        evaluated_list[0].pv_depth;
+    (g_state.board_state).pv_depth[0] = evaluated_list[0].pv_depth;
     i = 0;
     while i < ( g_state.board_state).pv_depth[0] {
-        ( g_state.board_state).pv[0][i as usize] =
-            evaluated_list[0].pv[i as usize];
+        ( g_state.board_state).pv[0][i as usize] = evaluated_list[0].pv[i as usize];
         i += 1
     }
-    let eval_argument = evaluated_list[0].eval;
-    ( g_state.search_state).set_current_eval(eval_argument);
+    ( g_state.search_state).set_current_eval(evaluated_list[0].eval);
     /* Don't forget to enable the time control mechanisms when leaving */
     ( g_state.g_timer).toggle_abort_check(1);
     ( g_state.midgame_state).toggle_midgame_abort_check(1);
@@ -532,18 +502,14 @@ fn display_out_optimal_line(search_state: &SearchState) {
 fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, timer: &mut Timer, board_state: &BoardState) {
     unsafe {
         display_state.clear_status();
-        send_status!(display_state, "--> *{:2}",
-                    interrupted_depth);
+        send_status!(display_state, "--> *{:2}", interrupted_depth);
         let mut eval_str = produce_eval_text(info, 1);
         send_status!(display_state, "{:>10}  ", eval_str);
         display_state.send_status_nodes(counter_value);
         display_state.send_status_pv(&board_state.pv[0], interrupted_depth, board_state.pv_depth[0]);
         display_state.send_status_time(timer.get_elapsed_time());
         if timer.get_elapsed_time() != 0.0f64 {
-            send_status!(display_state, "{:6.0} {}",
-                        counter_value /
-                            (timer.get_elapsed_time() + 0.001f64),
-                        "nps" );
+            send_status!(display_state, "{:6.0} {}", counter_value / (timer.get_elapsed_time() + 0.001f64), "nps" );
         }
     }
 }
@@ -554,20 +520,18 @@ fn display_status_out() {
 
 fn echo_ponder_move_4(curr_move: i8, ponder_move: i8) {
     unsafe {
-        send_status!(display_state, "-->   {}        ",
-                    "Thor database");
+        send_status!(display_state, "-->   {}        ", "Thor database");
         if ponder_move != 0 {
             send_status!(display_state, "{{{}}} ",TO_SQUARE(ponder_move));
         }
-        send_status!(display_state, "{}",TO_SQUARE(curr_move)         );
+        send_status!(display_state, "{}", TO_SQUARE(curr_move));
         display_state.display_status(&mut stdout, 0);
     }
 }
 
 fn echo_ponder_move_2(curr_move: i8, ponder_move: i8) {
     unsafe {
-        send_status!(display_state, "-->   {}        ",
-                    "Thor database");
+        send_status!(display_state, "-->   {}        ", "Thor database");
         if ponder_move != 0 {
             send_status!(display_state, "{{{}}} ", TO_SQUARE(ponder_move));
         }
@@ -591,7 +555,7 @@ fn echo_compute_move_2(info: &EvaluationType, disk: i8) {
     unsafe {
         let mut eval_str = produce_eval_text(info, 0);
         send_status!(display_state, "-->         ");
-        send_status!(display_state, "{:<8}  ",             eval_str);
+        send_status!(display_state, "{:<8}  ", eval_str);
         send_status!(display_state, "{} ", TO_SQUARE(disk));
         display_state.display_status(&mut stdout, 0);
     }
@@ -652,12 +616,8 @@ fn log_best_move(logger: &mut LogFileHandler, best_move: i8) {
 }
 
 fn log_chosen_move(logger: &mut LogFileHandler, curr_move: i8, info: &EvaluationType) {
-        let mut eval_str = produce_eval_text(info, 0);
-        write!(logger.log_file,
-                "{}: {}  {}\n",
-                "Move chosen",
-                TO_SQUARE(curr_move),
-                eval_str);
+    let mut eval_str = produce_eval_text(info, 0);
+    write!(logger.log_file, "{}: {}  {}\n", "Move chosen", TO_SQUARE(curr_move), eval_str);
 }
 
 fn log_status(logger: &mut LogFileHandler) {
