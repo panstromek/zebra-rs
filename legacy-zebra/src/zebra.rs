@@ -911,19 +911,16 @@ impl LibcFrontend {
     }
 
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
-        write!(stdout, "{} black wins,  {} draws,  {} white wins\n",
-               black_win_count, draw_count,
-               white_win_count);
-        write!(stdout, "Median score {}-{}\n", black_median_score,
-               64 - black_median_score);
-        write!(stdout, ", average score {:.2}-{:.2}\n", black_average_score,
-               64.0f64 - black_average_score);
+        write!(stdout, "{} black wins,  {} draws,  {} white wins\n", black_win_count, draw_count, white_win_count);
+        write!(stdout, "Median score {}-{}\n", black_median_score, 64 - black_median_score);
+        write!(stdout, ", average score {:.2}-{:.2}\n", black_average_score, 64.0f64 - black_average_score);
     }
+
     fn report_some_thor_stats(total_search_time: f64, thor_position_count: i32, db_search_time: f64) {
-            write!(stdout, "{} matching games  ({:.3} s search time, {:.3} s total)\n",
-                   thor_position_count, db_search_time,
-                   total_search_time);
+        write!(stdout, "{} matching games  ({:.3} s search time, {:.3} s total)\n",
+               thor_position_count, db_search_time, total_search_time);
     }
+
     fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
                                 black_moves_: &[i8; 60], white_moves_: &[i8; 60]) {
         unsafe {
@@ -932,15 +929,16 @@ impl LibcFrontend {
                           black_moves_, white_moves_);
         }
     }
+
     fn print_out_thor_matches(thor_max_games_: i32) {
         unsafe { print_thor_matches(stdout, thor_max_games_); }
     }
+
     fn log_game_ending(log_file_name_: &CStr, move_vec: &[i8; 122],
                        first_side_to_move: i32, second_side_to_move: i32) {
         let log_file_name_ = log_file_name_.as_ptr();
         unsafe {
-            let mut log_file = fopen(log_file_name_,
-                                     b"a\x00" as *const u8 as *const i8);
+            let mut log_file = fopen(log_file_name_, b"a\x00" as *const u8 as *const i8);
 
             if !log_file.is_null() {
                 let mut timer = time(0 as *mut time_t);
@@ -957,20 +955,18 @@ impl LibcFrontend {
         }
     }
 
-    fn get_pass(stdin_lock : &mut StdinLock) {
-            write!(stdout, "You must pass - please press Enter\n");
-            dumpch(stdin_lock);
+    fn get_pass(stdin_lock: &mut StdinLock) {
+        write!(stdout, "You must pass - please press Enter\n");
+        dumpch(stdin_lock);
     }
 
     fn prompt_get_move(side_to_move: i32, stdin_lock : &mut StdinLock) -> (i32, i32) {
         let mut buffer1 = [0; 4];
         let mut buffer = &mut buffer1[0..3];
-        {
-            if side_to_move == 0 {
-                write!(stdout, "{}: ", "Black move");
-            } else {
-                write!(stdout, "{}: ", "White move");
-            }
+        if side_to_move == 0 {
+            write!(stdout, "{}: ", "Black move");
+        } else {
+            write!(stdout, "{}: ", "White move");
         }
         loop {
             match stdin_lock.fill_buf() {
@@ -991,41 +987,34 @@ impl LibcFrontend {
         }
 
         let curr_move = buffer1.atoi();
-        let curr_move_2 =
-            buffer1[0] as i32 - 'a' as i32 + 1 + 10 * (buffer1[1] as i32 - '0' as i32);
+        let curr_move_2 = buffer1[0] as i32 - 'a' as i32 + 1 + 10 * (buffer1[1] as i32 - '0' as i32);
         (curr_move, curr_move_2)
+    }
 
-    }
     fn report_after_game_ended(node_val: f64, eval_val: f64, black_disc_count: i32, white_disc_count: i32, total_time_: f64) {
-         {
-            write!(stdout, "\nBlack: {}   White: {}\n", black_disc_count, white_disc_count);
-            write!(stdout, "Nodes searched:        {:<-10.0}\n", node_val);
-            write!(stdout, "Positions evaluated:   {:<-10.0}\n", eval_val);
-            write!(stdout, "Total time: {:.1} s\n", total_time_);
-        }
+        write!(stdout, "\nBlack: {}   White: {}\n", black_disc_count, white_disc_count);
+        write!(stdout, "Nodes searched:        {:<-10.0}\n", node_val);
+        write!(stdout, "Positions evaluated:   {:<-10.0}\n", eval_val);
+        write!(stdout, "Total time: {:.1} s\n", total_time_);
     }
+
     fn report_skill_levels(black_level: i32, white_level: i32) {
-         {
-            write!(stdout, "\n");
-            write!(stdout, "Black level: {}\n", black_level);
-            write!(stdout, "White level: {}\n", white_level);
-        }
+        write!(stdout, "\n");
+        write!(stdout, "Black level: {}\n", black_level);
+        write!(stdout, "White level: {}\n", white_level);
     }
+
     fn report_thor_matching_games_stats(total_search_time: f64, thor_position_count: i32, database_time: f64) {
-         {
-            write!(stdout, "{} matching games  ({:.3} s search time, {:.3} s total)\n",
-                   thor_position_count, database_time, total_search_time);
-        }
+        write!(stdout, "{} matching games  ({:.3} s search time, {:.3} s total)\n",
+               thor_position_count, database_time, total_search_time);
     }
+
     fn report_thor_stats(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
-         {
-            write!(stdout, "{} black wins, {} draws, {} white wins\n",
-                   black_win_count, draw_count, white_win_count);
-            write!(stdout, "Median score {}-{}", black_median_score, 64 - black_median_score);
-            write!(stdout, ", average score {:.2}-{:.2}\n",
-                   black_average_score, 64.0f64 - black_average_score);
-        }
+        write!(stdout, "{} black wins, {} draws, {} white wins\n", black_win_count, draw_count, white_win_count);
+        write!(stdout, "Median score {}-{}", black_median_score, 64 - black_median_score);
+        write!(stdout, ", average score {:.2}-{:.2}\n", black_average_score, 64.0f64 - black_average_score);
     }
+
     fn report_opening_name(opening_name: &CStr) {
         write!(stdout, "\nOpening: {}\n", opening_name.to_str().unwrap());
     }
@@ -1096,8 +1085,7 @@ impl ZebraFrontend for LibcFrontend {
         read_game_database(b"thor/wth_1981.wtb\x00" as *const u8 as *const i8);
         read_game_database(b"thor/wth_1980.wtb\x00" as *const u8 as *const i8);
         let database_stop =  g_timer.get_real_timer();
-        write!(stdout, "Loaded {} games in {:.3} s.\n",
-               get_total_game_count(), database_stop - database_start);
+        write!(stdout, "Loaded {} games in {:.3} s.\n", get_total_game_count(), database_stop - database_start);
         write!(stdout, "Each Thor game occupies {} bytes.\n", get_thor_game_size());
     }}
 
@@ -1110,9 +1098,7 @@ impl ZebraFrontend for LibcFrontend {
    ANALYZE_GAME
    Analyzes all positions arising from a given move sequence.
 */
-unsafe fn analyze_game(mut move_string: &str,
-                       g_state : &mut FullState
-) {
+unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
     let mut best_info1 =  EvaluationType::new();
     let mut best_info2 =  EvaluationType::new();
     let mut played_info1 =  EvaluationType::new();
@@ -1195,10 +1181,8 @@ unsafe fn analyze_game(mut move_string: &str,
             (&mut g_state.g_timer).clear_panic_abort();
             if (&mut g_state.g_config).echo != 0 {
                 display_state.set_move_list((g_state.board_state).score_sheet_row);
-                display_state.set_times(floor((&mut g_state.g_config).player_time[0]) as
-                              i32,
-                          floor((&mut g_state.g_config).player_time[2]) as
-                              i32);
+                display_state.set_times(floor((&mut g_state.g_config).player_time[0]) as i32,
+                          floor((&mut g_state.g_config).player_time[2]) as i32);
                 let opening_name = find_opening_name(&mut (&mut g_state.g_book), &(g_state.board_state).board);
                 if let Some(opening_name) = opening_name {
                     write!(stdout, "\nOpening: {}\n", CStr::from_bytes_with_nul(opening_name).map(CStr::to_str).unwrap().unwrap());
@@ -1218,9 +1202,7 @@ unsafe fn analyze_game(mut move_string: &str,
             (&mut g_state.g_timer).determine_move_time((&mut g_state.g_config).player_time[side_to_move as usize],
                                                        (&mut g_state.g_config).player_increment[side_to_move as usize],
                                                        (g_state.moves_state).disks_played + 4);
-            timed_search =
-                ((&mut g_state.g_config).skill[side_to_move as usize] >= 60) as
-                    i32;
+            timed_search = ((&mut g_state.g_config).skill[side_to_move as usize] >= 60) as i32;
             empties = 60 - (g_state.moves_state).disks_played;
             /* Determine the score for the move actually played.
                A private hash transformation is used so that the parallel
@@ -1232,28 +1214,23 @@ unsafe fn analyze_game(mut move_string: &str,
             make_move(side_to_move, curr_move, 1, (&mut g_state.moves_state), &mut (&mut g_state.board_state), &mut (&mut g_state.hash_state), &mut (&mut g_state.flip_stack_));
             if empties > (&mut g_state.g_config).wld_skill[side_to_move as usize] {
                 reset_counter(&mut (&mut g_state.search_state).nodes);
-                resp_move =
-                    legacy_compute_move(opponent, 0,
-                                        (&mut g_state.g_config).player_time[opponent as usize] as
-                                     i32,
-                                        (&mut g_state.g_config).player_increment[opponent as usize] as
-                                     i32, timed_search, (&mut g_state.g_config).use_book,
+                resp_move = legacy_compute_move(opponent, 0,
+                                        (&mut g_state.g_config).player_time[opponent as usize] as i32,
+                                        (&mut g_state.g_config).player_increment[opponent as usize] as i32,
+                                        timed_search, (&mut g_state.g_config).use_book,
                                         (&mut g_state.g_config).skill[opponent as usize] - 2,
-                                        (&mut g_state.g_config).exact_skill[opponent as usize] -
-                                     1,
-                                        (&mut g_state.g_config).wld_skill[opponent as usize] -
-                                     1, 1,
-                                        &mut played_info1, g_state)
+                                        (&mut g_state.g_config).exact_skill[opponent as usize] - 1,
+                                        (&mut g_state.g_config).wld_skill[opponent as usize] - 1,
+                                        1, &mut played_info1, g_state)
             }
             reset_counter(&mut (&mut g_state.search_state).nodes);
             resp_move =
                 legacy_compute_move(opponent, 0,
                                     (&mut g_state.g_config).player_time[opponent as usize] as i32,
-                                    (&mut g_state.g_config).player_increment[opponent as usize] as
-                                 i32, timed_search, (&mut g_state.g_config).use_book,
+                                    (&mut g_state.g_config).player_increment[opponent as usize] as i32,
+                                    timed_search, (&mut g_state.g_config).use_book,
                                     (&mut g_state.g_config).skill[opponent as usize] - 1,
-                                    (&mut g_state.g_config).exact_skill[opponent as usize] -
-                                 1,
+                                    (&mut g_state.g_config).exact_skill[opponent as usize] - 1,
                                     (&mut g_state.g_config).wld_skill[opponent as usize] - 1,
                                     1, &mut played_info2, g_state);
             unmake_move(side_to_move, curr_move, &mut (g_state.board_state).board, (&mut g_state.moves_state), &mut (&mut g_state.hash_state), &mut (&mut g_state.flip_stack_));
@@ -1263,38 +1240,33 @@ unsafe fn analyze_game(mut move_string: &str,
             if empties > (&mut g_state.g_config).wld_skill[side_to_move as usize] {
                 (&mut g_state.hash_state).set_hash_transformation(best_trans1, best_trans2);
                 reset_counter(&mut (&mut g_state.search_state).nodes);
-                curr_move =
-                    legacy_compute_move(side_to_move, 0,
-                                        (&mut g_state.g_config).player_time[side_to_move as usize] as
-                                     i32,
-                                        (&mut g_state.g_config).player_increment[side_to_move as usize] as
-                                     i32, timed_search, (&mut g_state.g_config).use_book,
-                                        (&mut g_state.g_config).skill[side_to_move as usize] -
-                                     1,
+                curr_move = legacy_compute_move(side_to_move, 0,
+                                        (&mut g_state.g_config).player_time[side_to_move as usize] as i32,
+                                        (&mut g_state.g_config).player_increment[side_to_move as usize] as i32,
+                                        timed_search, (&mut g_state.g_config).use_book,
+                                        (&mut g_state.g_config).skill[side_to_move as usize] - 1,
                                         (&mut g_state.g_config).exact_skill[side_to_move as usize],
                                         (&mut g_state.g_config).wld_skill[side_to_move as usize],
                                         1, &mut best_info1, g_state)
             }
             reset_counter(&mut (&mut g_state.search_state).nodes);
-            curr_move =
-                legacy_compute_move(side_to_move, 0,
-                                    (&mut g_state.g_config).player_time[side_to_move as usize] as
-                                 i32,
-                                    (&mut g_state.g_config).player_increment[side_to_move as usize] as
-                                 i32, timed_search, (&mut g_state.g_config).use_book,
+            curr_move = legacy_compute_move(side_to_move, 0,
+                                    (&mut g_state.g_config).player_time[side_to_move as usize] as i32,
+                                    (&mut g_state.g_config).player_increment[side_to_move as usize] as i32,
+                                    timed_search, (&mut g_state.g_config).use_book,
                                     (&mut g_state.g_config).skill[side_to_move as usize],
                                     (&mut g_state.g_config).exact_skill[side_to_move as usize],
                                     (&mut g_state.g_config).wld_skill[side_to_move as usize],
                                     1, &mut best_info2, g_state);
             if side_to_move == 0 {
                 display_state.set_evals(produce_compact_eval(best_info2), 0.0f64);
-            } else { display_state.set_evals(0.0f64, produce_compact_eval(best_info2)); }
+            } else {
+                display_state.set_evals(0.0f64, produce_compact_eval(best_info2));
+            }
             /* Output the two score-move pairs */
             write!(output_stream, "{} ", TO_SQUARE(curr_move));
             if empties <= (&mut g_state.g_config).exact_skill[side_to_move as usize] {
-                write!(output_stream,
-                        "{:+6}",
-                        best_info2.score / 128);
+                write!(output_stream, "{:+6}", best_info2.score / 128);
             } else if empties <= (&mut g_state.g_config).wld_skill[side_to_move as usize] {
                 if best_info2.res == WON_POSITION {
                     write!(output_stream, "    +1");
@@ -1303,24 +1275,18 @@ unsafe fn analyze_game(mut move_string: &str,
                 } else {
                     write!(output_stream, "     0");
                 }
-            } else if curr_move == provided_move[(g_state.moves_state).disks_played as usize] &&
-                          resp_move != -1 {
-                write!(output_stream,
-                        "{:6.2}",
-                        -(played_info1.score + played_info2.score) as f64 / (2. * 128.0f64));
+            } else if curr_move == provided_move[(g_state.moves_state).disks_played as usize] && resp_move != -1 {
+                write!(output_stream, "{:6.2}", -(played_info1.score + played_info2.score) as f64 / (2. * 128.0f64));
             } else {
-                write!(output_stream,
-                        "{:6.2}",
-                        (best_info1.score + best_info2.score) as f64 / (2. * 128.0f64));
+                write!(output_stream, "{:6.2}",
+                       (best_info1.score + best_info2.score) as f64 / (2. * 128.0f64));
             }
             curr_move = provided_move[(g_state.moves_state).disks_played as usize];
             write!(output_stream, "       {} ", TO_SQUARE(curr_move));
             if resp_move == -1 {
                 write!(output_stream, "     ?");
             } else if empties <= (&mut g_state.g_config).exact_skill[side_to_move as usize] {
-                write!(output_stream,
-                        "{:+6}",
-                        -played_info2.score / 128);
+                write!(output_stream, "{:+6}", -played_info2.score / 128);
             } else if empties <= (&mut g_state.g_config).wld_skill[side_to_move as usize] {
                 if played_info2.res == WON_POSITION {
                     write!(output_stream, "    -1");
@@ -1330,11 +1296,7 @@ unsafe fn analyze_game(mut move_string: &str,
                     write!(output_stream, "     0");
                 }
             } else {
-                write!(output_stream,
-                        "{:6.2}",
-                        -(played_info1.score + played_info2.score) as
-                            f64 /
-                            (2 as f64 * 128.0f64));
+                write!(output_stream, "{:6.2}", -(played_info1.score + played_info2.score) as f64 / (2 as f64 * 128.0f64));
             }
             write!(output_stream, "\n");
             if valid_move(curr_move, side_to_move, &(g_state.board_state).board) == 0 {
@@ -1349,8 +1311,7 @@ unsafe fn analyze_game(mut move_string: &str,
             if side_to_move == 0 {
                 (g_state.board_state).black_moves[(g_state.board_state).score_sheet_row as usize] = curr_move
             } else {
-                if (g_state.board_state).white_moves[(g_state.board_state).score_sheet_row as usize] !=
-                       -1 {
+                if (g_state.board_state).white_moves[(g_state.board_state).score_sheet_row as usize] != -1 {
                     (g_state.board_state).score_sheet_row += 1
                 }
                 (g_state.board_state).white_moves[(g_state.board_state).score_sheet_row as usize] = curr_move
@@ -1369,10 +1330,8 @@ unsafe fn analyze_game(mut move_string: &str,
     LibcDumpHandler::dump_game_score(side_to_move, (g_state.board_state).score_sheet_row, &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
     if (g_state.g_config).echo != 0 && (&mut g_state.g_config).one_position_only == 0 {
         display_state.set_move_list((g_state.board_state).score_sheet_row);
-        display_state.set_times(floor((&mut g_state.g_config).player_time[0]) as
-                      i32,
-                  floor((&mut g_state.g_config).player_time[2]) as
-                      i32);
+        display_state.set_times(floor((&mut g_state.g_config).player_time[0]) as i32,
+                  floor((&mut g_state.g_config).player_time[2]) as i32);
         display_state.display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
                       1, (&mut g_state.g_config).use_timer, 1,
                       &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
