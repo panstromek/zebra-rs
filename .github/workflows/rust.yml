@@ -16,10 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions-rs/install@v0.1
-      with:
-          crate: cargo-binutils
-          version: latest
     - uses: actions-rs/toolchain@v1
       with:
           toolchain: nightly-2022-02-16
@@ -27,6 +23,11 @@ jobs:
           components: llvm-tools-preview
 
     - uses: Swatinem/rust-cache@v1
+
+    - uses: actions-rs/install@v0.1
+      with:
+          crate: cargo-binutils
+          version: latest
 
     - name: Build and run tests
       run: bash ./run-tests.sh
