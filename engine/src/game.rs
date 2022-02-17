@@ -1305,7 +1305,10 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
     /* Write the principal variation, if available, to the log file
        and, optionally, to screen. */
     if g_state.search_state.get_ponder_move() == 0 {
-        complete_pv::<FE>(side_to_move, &mut g_state.search_state, &mut g_state.board_state, &mut g_state.flip_stack_, &mut g_state.hash_state, &mut g_state.moves_state);
+        let res = complete_pv(side_to_move, &mut g_state.search_state, &mut g_state.board_state, &mut g_state.flip_stack_, &mut g_state.hash_state, &mut g_state.moves_state);
+        if let Err(e) = res {
+            FE::handle_fatal_pv_error(e.pv_depth_index, g_state.board_state.pv_depth[0], &g_state.board_state.pv[0]);
+        }
         if display_pv != 0 && echo != 0 { Out::display_out_optimal_line(&g_state.search_state); }
         if let Some(logger) = logger { L::log_optimal_line(logger, &g_state.search_state); }
     }

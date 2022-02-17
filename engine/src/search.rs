@@ -530,13 +530,16 @@ pub fn hash_expand_pv(mut side_to_move: i32, mode: i32, flags: i32, max_selectiv
     board_state_.pv_depth[0] = new_pv_depth as i32;
 }
 
+pub struct FatalPvError {
+    pub pv_depth_index: i32,
+}
 
 /*
   COMPLETE_PV
   Complete the principal variation with passes (if any there are any).
 */
 
-pub fn complete_pv<FE: FrontEnd>(mut side_to_move: i32, search_state_: &mut SearchState, board_state_: &mut BoardState, flip_stack: &mut FlipStack, hash_state_: &mut HashState, moves_state_: &mut MovesState) {
+pub fn complete_pv(mut side_to_move: i32, search_state_: &mut SearchState, board_state_: &mut BoardState, flip_stack: &mut FlipStack, hash_state_: &mut HashState, moves_state_: &mut MovesState) -> Result<(), FatalPvError> {
     let mut actual_side_to_move = [0; 60];
     search_state_.full_pv_depth = 0;
     let mut i = 0;
@@ -556,7 +559,7 @@ pub fn complete_pv<FE: FrontEnd>(mut side_to_move: i32, search_state_: &mut Sear
             } else {
                 let pv_0_depth: i32 = board_state_.pv_depth[0];
                 let pv_0: &[i8; 64] = &board_state_.pv[0];
-                FE::handle_fatal_pv_error(i, pv_0_depth, pv_0);
+                return Err(FatalPvError { pv_depth_index: i });
             }
         }
         side_to_move = 0 + 2 - side_to_move;
@@ -571,4 +574,5 @@ pub fn complete_pv<FE: FrontEnd>(mut side_to_move: i32, search_state_: &mut Sear
         };
         i -= 1
     };
+    Ok(())
 }
