@@ -121,8 +121,6 @@ pub fn game_init(side_to_move: &mut i32, g_state: &mut FullState) {
   with useful scores and moves.
 */
 
-pub struct LibcPonderMoveReport;
-
 fn report_move_evals(expect_count: i32, move_list_item: &[i8; 64], evals_item: &[i32; 128]) {
     let mut i = 0;
     while i < expect_count {
