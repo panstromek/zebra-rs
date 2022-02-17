@@ -137,8 +137,8 @@ impl MovesState {
 }
 
 pub fn make_move(side_to_move: i32, move_0: i8, update_hash: i32,
-                moves_state_: &mut MovesState, board_state_: &mut BoardState, hash_state_: &mut HashState, flip_stack: &mut FlipStack) -> i32 {
-    if board_state_.board[move_0 as usize] == 0 || board_state_.board[move_0 as usize] == 2 {
+                 moves: &mut MovesState, board: &mut BoardState, hash: &mut HashState, flip_stack: &mut FlipStack) -> i32 {
+    if board.board[move_0 as usize] == 0 || board.board[move_0 as usize] == 2 {
         // This should be unreachable, but fuzzer found an instance where it happens:
         // -r 0 -l 9 6 3 5 19 0 -repeat 4 -p 1 -b 1 -w 0 -h 19 -dev 17 75 94.33498 -g tests/resources/board.txt -time 40 48 6 24
         // continuing here can lead to index out of bounds somewhere else, so we return 0 here.
@@ -154,46 +154,33 @@ pub fn make_move(side_to_move: i32, move_0: i8, update_hash: i32,
     let mut diff2: u32 = 0;
     if update_hash != 0 {
         let (flipped_, hash_update1_, hash_update2_) = DoFlips_hash(
-            move_0, side_to_move, &mut board_state_.board,
-            &mut hash_state_.hash_flip1, &mut hash_state_.hash_flip2, flip_stack);
+            move_0, side_to_move, &mut board.board,
+            &mut hash.hash_flip1, &mut hash.hash_flip2, flip_stack);
         flipped = flipped_;
         if flipped == 0 { return 0 }
-        diff1 =
-            hash_update1_ ^
-                hash_state_.hash_put_value1[side_to_move as usize][move_0 as usize];
-        diff2 =
-            hash_update2_ ^
-                hash_state_.hash_put_value2[side_to_move as usize][move_0 as usize];
-        hash_state_.hash_stored1[moves_state_.disks_played as usize] = hash_state_.hash1;
-        hash_state_.hash_stored2[moves_state_.disks_played as usize] = hash_state_.hash2;
-        hash_state_.hash1 ^= diff1;
-        hash_state_.hash2 ^= diff2
+        diff1 = hash_update1_ ^ hash.hash_put_value1[side_to_move as usize][move_0 as usize];
+        diff2 = hash_update2_ ^ hash.hash_put_value2[side_to_move as usize][move_0 as usize];
+        hash.hash_stored1[moves.disks_played as usize] = hash.hash1;
+        hash.hash_stored2[moves.disks_played as usize] = hash.hash2;
+        hash.hash1 ^= diff1;
+        hash.hash2 ^= diff2
     } else {
-        flipped = DoFlips_no_hash(move_0, side_to_move, &mut board_state_.board, flip_stack);
+        flipped = DoFlips_no_hash(move_0, side_to_move, &mut board.board, flip_stack);
         if flipped == 0 { return 0 }
-        hash_state_.hash_stored1[moves_state_.disks_played as usize] = hash_state_.hash1;
-        hash_state_.hash_stored2[moves_state_.disks_played as usize] = hash_state_.hash2
+        hash.hash_stored1[moves.disks_played as usize] = hash.hash1;
+        hash.hash_stored2[moves.disks_played as usize] = hash.hash2
     }
-    let ss = hash_state_;
-    moves_state_.flip_count[moves_state_.disks_played as usize] = flipped;
-    board_state_.board[move_0 as usize] = side_to_move;
+    moves.flip_count[moves.disks_played as usize] = flipped;
+    board.board[move_0 as usize] = side_to_move;
     if side_to_move == 0 {
-        board_state_.piece_count[0][(moves_state_.disks_played + 1) as usize] =
-            board_state_.piece_count[0][moves_state_.disks_played as usize] +
-                flipped + 1;
-        board_state_.piece_count[2][(moves_state_.disks_played + 1) as usize] =
-            board_state_.piece_count[2][moves_state_.disks_played as usize] -
-                flipped
+        board.piece_count[0][(moves.disks_played + 1) as usize] = board.piece_count[0][moves.disks_played as usize] + flipped + 1;
+        board.piece_count[2][(moves.disks_played + 1) as usize] = board.piece_count[2][moves.disks_played as usize] - flipped
     } else {
         /* side_to_move == WHITESQ */
-        board_state_.piece_count[2][(moves_state_.disks_played + 1) as usize] =
-            board_state_.piece_count[2][moves_state_.disks_played as usize] +
-                flipped + 1;
-        board_state_.piece_count[0][(moves_state_.disks_played + 1) as usize] =
-            board_state_.piece_count[0][moves_state_.disks_played as usize] -
-                flipped
+        board.piece_count[2][(moves.disks_played + 1) as usize] = board.piece_count[2][moves.disks_played as usize] + flipped + 1;
+        board.piece_count[0][(moves.disks_played + 1) as usize] = board.piece_count[0][moves.disks_played as usize] - flipped
     }
-    moves_state_.disks_played += 1;
+    moves.disks_played += 1;
     return flipped;
 }
 /*
