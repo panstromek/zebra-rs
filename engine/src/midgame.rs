@@ -341,57 +341,47 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
     }
     search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
     /* Check the hash table */
-    use_hash =
-        (remains >= 2 && 1 != 0 &&
-            allow_hash != 0) as i32;
+    use_hash = (remains >= 2 && 1 != 0 && allow_hash != 0) as i32;
     if 1 != 0 && allow_mpc != 0 {
         selectivity = 1
-    } else { selectivity = 0 }
+    } else {
+        selectivity = 0
+    }
     if use_hash != 0 && midgame_state.allow_midgame_hash_probe != 0 {
         find_hash(&mut entry, 0, &mut hash_state);
         if entry.draft as i32 >= remains &&
             entry.selectivity as i32 <= selectivity &&
-            valid_move(entry.move_0[0],
-                       side_to_move, &board_state.board) != 0 &&
+            valid_move(entry.move_0[0], side_to_move, &board_state.board) != 0 &&
             entry.flags as i32 & 8 != 0 &&
-            (entry.flags as i32 & 4 != 0 ||
-                entry.flags as i32 & 1 != 0 &&
-                    entry.eval >= beta ||
-                entry.flags as i32 & 2 != 0 &&
-                    entry.eval <= alpha) {
-            board_state.pv[level as usize][level as usize] =
-                entry.move_0[0];
+            (entry.flags as i32 & 4 != 0 || entry.flags as i32 & 1 != 0 && entry.eval >= beta ||
+                entry.flags as i32 & 2 != 0 && entry.eval <= alpha)
+        {
+            board_state.pv[level as usize][level as usize] = entry.move_0[0];
             board_state.pv_depth[level as usize] = level + 1;
             return entry.eval
         }
     }
-    hash_hit =
-        (use_hash != 0 && midgame_state.allow_midgame_hash_probe != 0) as i32;
+    hash_hit = (use_hash != 0 && midgame_state.allow_midgame_hash_probe != 0) as i32;
     if hash_hit != 0 {
         hash_move = entry.move_0[0]
-    } else { hash_move = 44 }
+    } else {
+        hash_move = 44
+    }
     pre_search_done = 0;
     /* Use multi-prob-cut to selectively prune the tree */
-    if 1 != 0 && allow_mpc != 0 && remains <= 22
-    {
+    if 1 != 0 && allow_mpc != 0 && remains <= 22 {
         let mut alpha_test = 1;
         let mut beta_test = 1;
         cut = 0;
         while cut < prob_cut.mpc_cut[remains as usize].cut_tries {
             /* Determine the fail-high and fail-low bounds */
-            let bias =
-                &prob_cut.mpc_cut[remains as
-                    usize].bias[cut as usize][moves_state.disks_played as usize];
-            let window =
-                &prob_cut.mpc_cut[remains as
-                    usize].window[cut as
-                    usize][moves_state.disks_played as usize];
+            let bias = &prob_cut.mpc_cut[remains as usize].bias[cut as usize][moves_state.disks_played as usize];
+            let window = &prob_cut.mpc_cut[remains as usize].window[cut as usize][moves_state.disks_played as usize];
             let alpha_bound = alpha + bias - window;
             let beta_bound = beta + bias + window;
             /* Don't use an MPC cut which results in the full-width depth
             being less than some predefined constant */
-            shallow_remains =
-                prob_cut.mpc_cut[remains as usize].cut_depth[cut as usize];
+            shallow_remains = prob_cut.mpc_cut[remains as usize].cut_depth[cut as usize];
             if !(level + shallow_remains < 8) {
                 if shallow_remains > 1 {
                     /* "Deep" shallow search */
@@ -399,8 +389,7 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
                         /* Use static eval to decide if a one- or two-sided
                        MPC test is to be performed. */
                         search_state.evaluations.lo = search_state.evaluations.lo.wrapping_add(1);
-                        let static_eval =
-                            pattern_evaluation(side_to_move, &mut board_state, &moves_state, &mut coeff_state);
+                        let static_eval = pattern_evaluation(side_to_move, &mut board_state, &moves_state, &mut coeff_state);
                         if static_eval <= alpha_bound {
                             beta_test = 0
                         } else if static_eval >= beta_bound {
@@ -410,33 +399,27 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
                     assert!(alpha_test != 0 || beta_test != 0);
                     if alpha_test != 0 && beta_test != 0 {
                         /* Test for likely fail-low or likely fail-high. */
-                        let shallow_val =
-                            tree_search::<FE>(level, level + shallow_remains,
-                                        side_to_move, alpha_bound, beta_bound,
-                                        allow_hash, 0,
-                                        void_legal, echo,  &mut moves_state ,
-                                              &mut search_state ,
-                                              &mut board_state ,
-                                              &mut hash_state,
-                                              &mut flip_stack_,
-                                              &mut coeff_state,
-                                              &mut prob_cut ,&mut g_timer, &mut midgame_state);
+                        let shallow_val = tree_search::<FE>(
+                            level, level + shallow_remains,
+                            side_to_move, alpha_bound, beta_bound,
+                            allow_hash, 0, void_legal, echo,
+                            &mut moves_state, &mut search_state,
+                            &mut board_state, &mut hash_state,
+                            &mut flip_stack_, &mut coeff_state,
+                            &mut prob_cut, &mut g_timer, &mut midgame_state,
+                        );
                         if shallow_val >= beta_bound {
-                            if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
-                            {
-                                add_hash(&mut hash_state,0, beta,
+                            if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
+                                add_hash(&mut hash_state, 0, beta,
                                          board_state.pv[level as usize][level as usize],
-                                         8 | 1,
-                                         remains, selectivity);
+                                         8 | 1, remains, selectivity);
                             }
                             return beta
                         } else if shallow_val <= alpha_bound {
-                            if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
-                            {
-                                add_hash(&mut hash_state,0, alpha,
+                            if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
+                                add_hash(&mut hash_state, 0, alpha,
                                          board_state.pv[level as usize][level as usize],
-                                         8 | 2,
-                                         remains, selectivity);
+                                         8 | 2, remains, selectivity);
                             }
                             return alpha
                         } else {
@@ -460,46 +443,39 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
                         }
                     } else if beta_test != 0 {
                         /* Fail-high with high probability? */
-                        if tree_search::<FE>(level, level + shallow_remains,
-                                       side_to_move,
-                                       beta_bound - 1,
-                                       beta_bound, allow_hash,
-                                       0, void_legal, echo, &mut moves_state ,
-                                             &mut search_state ,
-                                             &mut board_state ,
-                                             &mut hash_state,
-                                             &mut flip_stack_,
-                                             &mut coeff_state,
-                                             &mut prob_cut ,&mut g_timer, midgame_state) >=
-                            beta_bound {
-                            if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
-                            {
-                                add_hash(&mut hash_state,0, beta,
+                        if tree_search::<FE>(
+                            level, level + shallow_remains,
+                            side_to_move, beta_bound - 1,
+                            beta_bound, allow_hash, 0, void_legal,
+                            echo, &mut moves_state, &mut search_state,
+                            &mut board_state, &mut hash_state,
+                            &mut flip_stack_, &mut coeff_state,
+                            &mut prob_cut, &mut g_timer, midgame_state)
+                            >= beta_bound
+                        {
+                            if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
+                                add_hash(&mut hash_state, 0, beta,
                                          board_state.pv[level as usize][level as usize],
-                                         8 | 1,
-                                         remains, selectivity);
+                                         8 | 1, remains, selectivity);
                             }
                             return beta
                         }
                     } else if alpha_test != 0 {
                         /* Fail-low with high probability? */
-                        if tree_search::<FE>(level, level + shallow_remains,
-                                       side_to_move, alpha_bound,
-                                       alpha_bound + 1,
-                                       allow_hash, 0,
-                                       void_legal, echo, &mut moves_state ,
-                                             &mut search_state ,
-                                             &mut board_state ,
-                                             &mut hash_state,
-                                             &mut flip_stack_,
-                                             &mut coeff_state,
-                                             &mut prob_cut ,&mut g_timer, midgame_state) <= alpha_bound {
-                            if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0
-                            {
+                        if tree_search::<FE>(
+                            level, level + shallow_remains,
+                            side_to_move, alpha_bound,
+                            alpha_bound + 1,
+                            allow_hash, 0,
+                            void_legal, echo, &mut moves_state,
+                            &mut search_state,
+                            &mut board_state, &mut hash_state, &mut flip_stack_, &mut coeff_state,
+                            &mut prob_cut, &mut g_timer, midgame_state) <= alpha_bound
+                        {
+                            if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
                                 add_hash(&mut hash_state,0, alpha,
                                          board_state.pv[level as usize][level as usize],
-                                         8 | 2,
-                                         remains, selectivity);
+                                         8 | 2, remains, selectivity);
                             }
                             return alpha
                         }
@@ -511,56 +487,30 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
                     empties_remaining = 60 - moves_state.disks_played;
                     move_index = 0;
                     while move_index < 60 {
-                        move_0 =
-                            search_state.sorted_move_order[moves_state.disks_played as
-                                usize][move_index as usize];
+                        move_0 = search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
                         if board_state.board[move_0 as usize] == 1 {
-                            if make_move_no_hash(side_to_move, move_0, &mut board_state, &mut moves_state, &mut flip_stack_ ) !=
-                                0 {
-                                let side_to_move_argument = 0
-                                    +
-                                    2
-                                    -
-                                    side_to_move;
-                                curr_val =
-                                    -static_or_terminal_evaluation(side_to_move_argument, &moves_state, &mut board_state, &mut search_state, &mut coeff_state);
-                                let side_to_move___unmake_move_no_hash = side_to_move;
-                                let move_0___unmake_move_no_hash = move_0;
-                                {
-                                    unmake_move_no_hash(side_to_move___unmake_move_no_hash, move_0___unmake_move_no_hash, &mut board_state.board, &mut moves_state, &mut flip_stack_);
-                                };
+                            if make_move_no_hash(side_to_move, move_0, &mut board_state, &mut moves_state, &mut flip_stack_ ) != 0 {
+                                let side_to_move_argument = 0 + 2 - side_to_move;
+                                curr_val = -static_or_terminal_evaluation(side_to_move_argument, &moves_state, &mut board_state, &mut search_state, &mut coeff_state);
+                                unmake_move_no_hash(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut flip_stack_);
                                 search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
                                 if curr_val > best {
                                     best = curr_val;
                                     if best >= beta_bound {
-                                        if use_hash != 0 &&
-                                            midgame_state.allow_midgame_hash_update != 0
-                                        {
-                                            add_hash(&mut hash_state,0, beta,
-                                                     board_state.pv[level as
-                                                         usize][level as
-                                                         usize],
-                                                     8 |
-                                                         1,
-                                                     remains, selectivity);
+                                        if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
+                                            add_hash(&mut hash_state, 0, beta,
+                                                     board_state.pv[level as usize][level as usize],
+                                                     8 | 1, remains, selectivity);
                                         }
                                         return beta
                                     }
                                 }
-                                search_state.evals[moves_state.disks_played as usize][move_0 as usize]
-                                    = curr_val;
+                                search_state.evals[moves_state.disks_played as usize][move_0 as usize] = curr_val;
                                 if move_0 == hash_move {
                                     /* Always try hash table move first */
-                                    search_state.evals[moves_state.disks_played as
-                                        usize][move_0 as usize] +=
-                                        10000
+                                    search_state.evals[moves_state.disks_played as usize][move_0 as usize] += 10000
                                 }
-                                midgame_state.feas_index_list[moves_state.disks_played as
-                                    usize][moves_state.move_count[moves_state.disks_played
-                                    as
-                                    usize]
-                                    as usize] =
-                                    move_index;
+                                midgame_state.feas_index_list[moves_state.disks_played as usize][moves_state.move_count[moves_state.disks_played as usize] as usize] = move_index;
                                 moves_state.move_count[moves_state.disks_played as usize] += 1
                             }
                             empties_remaining -= 1;
@@ -570,14 +520,11 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
                         }
                         move_index += 1
                     }
-                    if best == alpha_bound &&
-                        moves_state.move_count[moves_state.disks_played as usize] >
-                            0 {
+                    if best == alpha_bound && moves_state.move_count[moves_state.disks_played as usize] > 0 {
                         if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
-                            add_hash(&mut hash_state,0, alpha,
+                            add_hash(&mut hash_state, 0, alpha,
                                      board_state.pv[level as usize][level as usize],
-                                     8 | 2,
-                                     remains, selectivity);
+                                     8 | 2, remains, selectivity);
                         }
                         return alpha
                     }
@@ -636,9 +583,7 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
                 move_index = 0;
                 while move_index < 60 {
                     let mut already_checked: i32 = 0;
-                    move_0 =
-                        search_state.sorted_move_order[moves_state.disks_played as
-                            usize][move_index as usize];
+                    move_0 = search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
                     already_checked = 0;
                     j = 0;
                     while j < best_list_length {
@@ -649,99 +594,61 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
                     }
                     if board_state.board[move_0 as usize] == 1 {
                         if already_checked == 0 &&
-                            make_move(side_to_move, move_0,
-                                      1, &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ ) != 0
+                            make_move(side_to_move, move_0, 1, &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_) != 0
                         {
-                            curr_val =
-                                -tree_search::<FE>(level + 1,
-                                             level + pre_depth,
-                                             0 +
-                                                 2 -
-                                                 side_to_move,
-                                             -(12345678),
-                                             -pre_best, 0,
-                                             0,
-                                             1, echo, &mut moves_state ,
-                                                   &mut search_state ,
-                                                   &mut board_state ,
-                                                   &mut hash_state,
-                                                   &mut flip_stack_,
-                                                   &mut coeff_state,
-                                                   &mut prob_cut ,&mut g_timer, midgame_state);
-                            pre_best =
-                                if pre_best > curr_val {
-                                    pre_best
-                                } else { curr_val };
-                            {
-                                unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
-                            };
-                            search_state.evals[moves_state.disks_played as usize][move_0 as usize] =
-                                curr_val;
-                            midgame_state.feas_index_list[moves_state.disks_played as
-                                usize][moves_state.move_count[moves_state.disks_played
-                                as
-                                usize]
-                                as usize] =
-                                move_index;
+                            curr_val = -tree_search::<FE>(
+                                level + 1, level + pre_depth,
+                                0 + 2 - side_to_move, -(12345678),
+                                -pre_best, 0, 0,
+                                1, echo, &mut moves_state,
+                                &mut search_state, &mut board_state, &mut hash_state,
+                                &mut flip_stack_, &mut coeff_state, &mut prob_cut,
+                                &mut g_timer, midgame_state);
+                            pre_best = if pre_best > curr_val { pre_best } else { curr_val };
+                            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                            search_state.evals[moves_state.disks_played as usize][move_0 as usize] = curr_val;
+                            midgame_state.feas_index_list[moves_state.disks_played as usize][moves_state.move_count[moves_state.disks_played as usize] as usize] = move_index;
                             moves_state.move_count[moves_state.disks_played as usize] += 1
                         }
                         empties_remaining -= 1;
-                        if empties_remaining == 0 { break ; }
+                        if empties_remaining == 0 {
+                            break;
+                        }
                     }
                     move_index += 1
                 }
                 pre_search_done = 1
             }
-            if i == moves_state.move_count[moves_state.disks_played as usize] { break ; }
+            if i == moves_state.move_count[moves_state.disks_played as usize] {
+                break;
+            }
             best_index = i;
-            best_score =
-                search_state.evals[moves_state.disks_played as
-                    usize][search_state.sorted_move_order[moves_state.disks_played as
-                    usize][midgame_state.feas_index_list[moves_state.disks_played
-                    as
-                    usize][i
-                    as
-                    usize]
-                    as usize] as
-                    usize];
+            best_score = search_state.evals[moves_state.disks_played as usize][search_state.sorted_move_order[moves_state.disks_played as usize][midgame_state.feas_index_list[moves_state.disks_played as usize][i as usize] as usize] as usize];
             j = i + 1;
             while j < moves_state.move_count[moves_state.disks_played as usize] {
-                let mut cand_move = 0;
-                cand_move =
-                    search_state.sorted_move_order[moves_state.disks_played as
-                        usize][midgame_state.feas_index_list[moves_state.disks_played
-                        as
-                        usize][j
-                        as
-                        usize]
-                        as usize];
-                if search_state.evals[moves_state.disks_played as usize][cand_move as usize] >
-                    best_score {
-                    best_score =
-                        search_state.evals[moves_state.disks_played as usize][cand_move as usize];
+                let cand_move = search_state.sorted_move_order[moves_state.disks_played as usize][midgame_state.feas_index_list[moves_state.disks_played as usize][j as usize] as usize];
+                if search_state.evals[moves_state.disks_played as usize][cand_move as usize] > best_score {
+                    best_score = search_state.evals[moves_state.disks_played as usize][cand_move as usize];
                     best_index = j
                 }
                 j += 1
             }
-            move_index =
-                midgame_state.feas_index_list[moves_state.disks_played as usize][best_index as usize];
-            midgame_state.feas_index_list[moves_state.disks_played as usize][best_index as usize] =
-                midgame_state.feas_index_list[moves_state.disks_played as usize][i as usize]
+            move_index = midgame_state.feas_index_list[moves_state.disks_played as usize][best_index as usize];
+            midgame_state.feas_index_list[moves_state.disks_played as usize][best_index as usize] = midgame_state.feas_index_list[moves_state.disks_played as usize][i as usize]
         }
-        move_0 =
-            search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
+        move_0 = search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
         midgame_state.counter_phase = midgame_state.counter_phase + 1 & 63;
         if midgame_state.counter_phase == 0 {
-            let mut node_val: f64 = 0.;
             adjust_counter(&mut search_state.nodes);
-            node_val = counter_value(&mut search_state.nodes);
-            if node_val - g_timer.last_panic_check >=
-                100000 as f64 {
+            let node_val = counter_value(&mut search_state.nodes);
+            if node_val - g_timer.last_panic_check >= 100000.0 {
                 /* Time abort? */
                 g_timer.last_panic_check = node_val;
-                 g_timer.check_panic_abort();
+                g_timer.check_panic_abort();
                 /* Display available search information */
-                if echo != 0 { FE::display_buffers(g_timer); }
+                if echo != 0 {
+                    FE::display_buffers(g_timer);
+                }
                 /* Check for events */
                 if g_timer.is_panic_abort() != 0 || force_return != 0 {
                     return -(27000)
@@ -751,47 +658,27 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
         make_move(side_to_move, move_0, 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ );
         update_pv = 0;
         if searched == 0 {
-            curr_val =
-                -tree_search::<FE>(level + 1, max_depth,
-                             0 + 2 -
-                                 side_to_move, -beta, -curr_alpha, allow_hash,
-                             allow_mpc, 1, echo, &mut moves_state ,
-                                   &mut search_state ,
-                                   &mut board_state ,
-                                   &mut hash_state,
-                                   &mut flip_stack_,
-                                   &mut coeff_state,
-                                   &mut prob_cut ,&mut g_timer, midgame_state);
+            curr_val = -tree_search::<FE>(level + 1, max_depth, 0 + 2 - side_to_move, -beta, -curr_alpha, allow_hash,
+                                          allow_mpc, 1, echo, &mut moves_state, &mut search_state,
+                                          &mut board_state, &mut hash_state, &mut flip_stack_, &mut coeff_state,
+                                          &mut prob_cut, &mut g_timer, midgame_state);
             best = curr_val;
             best_move_index = move_index;
             update_pv = 1
         } else {
             curr_alpha = if best > curr_alpha { best } else { curr_alpha };
-            curr_val =
-                -tree_search::<FE>(level + 1, max_depth,
-                             0 + 2 -
-                                 side_to_move,
-                             -(curr_alpha + 1), -curr_alpha,
-                             allow_hash, allow_mpc, 1, echo, &mut moves_state ,
-                                   &mut search_state ,
-                                   &mut board_state ,
-                                   &mut hash_state,
-                                   &mut flip_stack_,
-                                   &mut coeff_state,
-                                   &mut prob_cut ,&mut g_timer, midgame_state);
+            curr_val = -tree_search::<FE>(level + 1, max_depth, 0 + 2 - side_to_move,
+                                          -(curr_alpha + 1), -curr_alpha, allow_hash,
+                                          allow_mpc, 1, echo, &mut moves_state,
+                                          &mut search_state, &mut board_state,
+                                          &mut hash_state, &mut flip_stack_,
+                                          &mut coeff_state, &mut prob_cut, &mut g_timer, midgame_state);
             if curr_val > curr_alpha && curr_val < beta {
-                curr_val =
-                    -tree_search::<FE>(level + 1, max_depth,
-                                 0 + 2 -
-                                     side_to_move, -beta,
-                                 12345678, allow_hash,
-                                 allow_mpc, 1, echo, &mut moves_state ,
-                                       &mut search_state ,
-                                       &mut board_state ,
-                                       &mut hash_state,
-                                       &mut flip_stack_,
-                                       &mut coeff_state,
-                                       &mut prob_cut ,&mut g_timer, midgame_state);
+                curr_val = -tree_search::<FE>(level + 1, max_depth, 0 + 2 - side_to_move, -beta,
+                                              12345678, allow_hash, allow_mpc, 1, echo, &mut moves_state,
+                                              &mut search_state, &mut board_state,
+                                              &mut hash_state, &mut flip_stack_,
+                                              &mut coeff_state, &mut prob_cut, &mut g_timer, midgame_state);
                 if curr_val > best {
                     best = curr_val;
                     best_move_index = move_index;
@@ -803,33 +690,25 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
                 update_pv = 1
             }
         }
-        {
-            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
-        };
+        unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
         if g_timer.is_panic_abort() != 0 || force_return != 0 {
             return -(27000)
         }
         search_state.evals[moves_state.disks_played as usize][move_0 as usize] = curr_val;
         if update_pv != 0 {
-            midgame_c__update_best_list(&mut best_list, move_0,
-                                        best_list_index, best_list_length);
+            midgame_c__update_best_list(&mut best_list, move_0, best_list_index, best_list_length);
             board_state.pv[level as usize][level as usize] = move_0;
-            board_state.pv_depth[level as usize] =
-                board_state.pv_depth[(level + 1) as usize];
+            board_state.pv_depth[level as usize] = board_state.pv_depth[(level + 1) as usize];
             j = level + 1;
             while j < board_state.pv_depth[(level + 1) as usize] {
-                board_state.pv[level as usize][j as usize] =
-                    board_state.pv[(level + 1) as usize][j as usize];
+                board_state.pv[level as usize][j as usize] = board_state.pv[(level + 1) as usize][j as usize];
                 j += 1
             }
         }
         if best >= beta {
             advance_move(move_index, &mut search_state, &mut moves_state);
             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
-                hash_state.add_hash_extended(0, best,
-                                  &best_list,
-                                  8 | 1,
-                                  remains, selectivity);
+                hash_state.add_hash_extended(0, best, &best_list, 8 | 1, remains, selectivity);
             }
             return best
         }
@@ -842,15 +721,9 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
         advance_move(best_move_index, &mut search_state, &mut moves_state);
         if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
             if best > alpha {
-                hash_state.add_hash_extended(0, best,
-                                  &best_list,
-                                  8 | 4,
-                                  remains, selectivity);
+                hash_state.add_hash_extended(0, best, &best_list, 8 | 4, remains, selectivity);
             } else {
-                hash_state.add_hash_extended(0, best,
-                                  &best_list,
-                                  8 | 2,
-                                  remains, selectivity);
+                hash_state.add_hash_extended(0, best, &best_list, 8 | 2, remains, selectivity);
             }
         }
         return best
@@ -858,18 +731,13 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
         /* No feasible moves */
         hash_state.hash1 ^= hash_state.hash_flip_color1;
         hash_state.hash2 ^= hash_state.hash_flip_color2;
-        curr_val =
-            -tree_search::<FE>(level, max_depth,
-                         0 + 2 - side_to_move,
-                         -beta, -alpha, allow_hash, allow_mpc,
-                         0, echo, &mut moves_state ,
-                               &mut search_state ,
-                               &mut board_state ,
-                               &mut hash_state,
-                               &mut flip_stack_,
-                               &mut coeff_state,
-                               &mut prob_cut,
-                               &mut g_timer, midgame_state);
+        curr_val = -tree_search::<FE>(level, max_depth, 0 + 2 - side_to_move,
+                                      -beta, -alpha, allow_hash, allow_mpc,
+                                      0, echo, &mut moves_state,
+                                      &mut search_state, &mut board_state,
+                                      &mut hash_state, &mut flip_stack_,
+                                      &mut coeff_state, &mut prob_cut,
+                                      &mut g_timer, midgame_state);
         hash_state.hash1 ^= hash_state.hash_flip_color1;
         hash_state.hash2 ^= hash_state.hash_flip_color2;
         return curr_val
@@ -884,21 +752,17 @@ pub fn tree_search<FE: FrontEnd>(level: i32,
    The recursive tree search function. It uses negascout for
    tree pruning.
 */
-fn fast_tree_search(level: i32,
-                                         max_depth: i32,
-                                         side_to_move: i32,
-                                         alpha: i32,
-                                         beta: i32,
-                                         allow_hash: i32,
-                                         void_legal: i32,
-                                  mut moves_state : &mut MovesState,
-                                  mut search_state : &mut SearchState,
-                                  mut board_state : &mut BoardState,
-                                  mut hash_state: &mut HashState,
-                                  mut flip_stack_: &mut FlipStack,
-                                  mut coeff_state: &mut CoeffState, mut midgame_state: &mut MidgameState
-)
-                                         -> i32 {
+fn fast_tree_search(level: i32, max_depth: i32, side_to_move: i32,
+                    alpha: i32, beta: i32,
+                    allow_hash: i32, void_legal: i32,
+                    mut moves_state: &mut MovesState,
+                    mut search_state: &mut SearchState,
+                    mut board_state: &mut BoardState,
+                    mut hash_state: &mut HashState,
+                    mut flip_stack_: &mut FlipStack,
+                    mut coeff_state: &mut CoeffState,
+                    mut midgame_state: &mut MidgameState,
+) -> i32 {
     let mut curr_val: i32 = 0;
     let mut move_index: i32 = 0;
     let mut move_0 = 0_i8;
@@ -942,8 +806,7 @@ fn fast_tree_search(level: i32,
             move_0 =
                 search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
             if board_state.board[move_0 as usize] == 1 {
-                if make_move_no_hash(side_to_move, move_0, &mut board_state, &mut moves_state, &mut flip_stack_ ) != 0
-                {
+                if make_move_no_hash(side_to_move, move_0, &mut board_state, &mut moves_state, &mut flip_stack_ ) != 0 {
                     let side_to_move_argument = 0 + 2 - side_to_move;
                     curr_val = -static_or_terminal_evaluation(side_to_move_argument, &moves_state, &mut board_state, &mut search_state, &mut coeff_state);
                     unmake_move_no_hash(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut flip_stack_);
@@ -964,7 +827,9 @@ fn fast_tree_search(level: i32,
                     first = 0
                 }
                 empties_remaining -= 1;
-                if empties_remaining == 0 { break ; }
+                if empties_remaining == 0 {
+                    break;
+                }
             }
             move_index += 1
         }
@@ -1062,12 +927,12 @@ fn fast_tree_search(level: i32,
   Perturbs SCORE by PERTURBATION if it doesn't appear to be
   a midgame win.
 */
-pub fn perturb_score(score: i32,
-                        perturbation: i32)
-                        -> i32 {
+pub fn perturb_score(score: i32, perturbation: i32) -> i32 {
     if abs(score) < 29000 - 4000 {
-        return score + perturbation
-    } else { return score };
+        score + perturbation
+    } else {
+        score
+    }
 }
 
 
@@ -1122,12 +987,12 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
     let mut entry = HashEntry::new();
     remains = max_depth - level;
     search_state.nodes.lo = search_state.nodes.lo.wrapping_add(1);
-    use_hash =
-        (remains >= 2 && 1 != 0 &&
-            allow_hash != 0) as i32;
+    use_hash = (remains >= 2 && 1 != 0 && allow_hash != 0) as i32;
     if 1 != 0 && allow_mpc != 0 {
         selectivity = 1
-    } else { selectivity = 0 }
+    } else {
+        selectivity = 0
+    }
     /* Hash strategy at the root: Only use hash table information for
        move ordering purposes.  This guarantees that score perturbation
        is applied for all moves. */
@@ -1175,9 +1040,7 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
         if pre_search_done == 0 && best_list_index < best_list_length {
             moves_state.move_count[moves_state.disks_played as usize] += 1;
             move_index = 0;
-            while search_state.sorted_move_order[moves_state.disks_played as
-                usize][move_index as usize] !=
-                best_list[best_list_index as usize] {
+            while search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize] != best_list[best_list_index as usize] {
                 move_index += 1
             }
         } else {
@@ -1185,14 +1048,14 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
             if pre_search_done == 0 {
                 if remains < 10 {
                     pre_depth = 1
-                } else { pre_depth = 2 }
+                } else {
+                    pre_depth = 2
+                }
                 pre_best = -(12345678);
                 move_index = 0;
                 while move_index < 60 {
                     let mut already_checked: i32 = 0;
-                    move_0 =
-                        search_state.sorted_move_order[moves_state.disks_played as
-                            usize][move_index as usize];
+                    move_0 = search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
                     already_checked = 0;
                     j = 0;
                     while j < best_list_length {
@@ -1203,35 +1066,17 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
                     }
                     if already_checked == 0 &&
                         board_state.board[move_0 as usize] == 1 &&
-                        make_move(side_to_move, move_0, 1 , &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_ )
-                            != 0 {
-                        curr_val =
-                            -tree_search::<FE>(level + 1,
-                                         level + pre_depth,
-                                         0 + 2 -
-                                             side_to_move,
-                                         -(12345678),
-                                         -pre_best, 0,
-                                         0, 1, echo,  &mut moves_state ,
-                                               &mut search_state ,
-                                               &mut board_state ,
-                                               &mut hash_state,
-                                               &mut flip_stack_,
-                                               &mut coeff_state,
-                                               &mut prob_cut ,&mut g_timer, midgame_state);
-                        pre_best =
-                            if pre_best > curr_val {
-                                pre_best
-                            } else { curr_val };
-                        {
-                            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
-                        };
-                        search_state.evals[moves_state.disks_played as usize][move_0 as usize] =
-                            curr_val;
-                        midgame_state.feas_index_list[moves_state.disks_played as
-                            usize][moves_state.move_count[moves_state.disks_played as
-                            usize] as
-                            usize] = move_index;
+                        make_move(side_to_move, move_0, 1, &mut moves_state, &mut board_state, &mut hash_state, &mut flip_stack_) != 0 {
+                        curr_val = -tree_search::<FE>(level + 1, level + pre_depth, 0 + 2 -
+                            side_to_move, -(12345678), -pre_best, 0,
+                                                      0, 1, echo, &mut moves_state,
+                                                      &mut search_state, &mut board_state,
+                                                      &mut hash_state, &mut flip_stack_,
+                                                      &mut coeff_state, &mut prob_cut, &mut g_timer, midgame_state);
+                        pre_best = if pre_best > curr_val { pre_best } else { curr_val };
+                        unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
+                        search_state.evals[moves_state.disks_played as usize][move_0 as usize] = curr_val;
+                        midgame_state.feas_index_list[moves_state.disks_played as usize][moves_state.move_count[moves_state.disks_played as usize] as usize] = move_index;
                         moves_state.move_count[moves_state.disks_played as usize] += 1
                     }
                     move_index += 1
@@ -1240,32 +1085,22 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
             }
             if i == moves_state.move_count[moves_state.disks_played as usize] { break ; }
             best_index = i;
-            best_score =
-                search_state.evals[moves_state.disks_played as
-                    usize][search_state.sorted_move_order[moves_state.disks_played as
-                    usize][midgame_state.feas_index_list[moves_state.disks_played
-                    as
-                    usize][i
-                    as
-                    usize]
-                    as usize] as
-                    usize];
+            best_score = search_state.evals
+                    [moves_state.disks_played as usize]
+                    [search_state.sorted_move_order[moves_state.disks_played as usize][midgame_state.feas_index_list[moves_state.disks_played as usize][i as usize] as usize] as usize];
             j = i + 1;
             while j < moves_state.move_count[moves_state.disks_played as usize] {
                 let mut cand_move = 0;
                 cand_move = search_state.sorted_move_order[moves_state.disks_played as usize][midgame_state.feas_index_list[moves_state.disks_played as usize][j as usize] as usize];
                 if search_state.evals[moves_state.disks_played as usize][cand_move as usize] >
                     best_score {
-                    best_score =
-                        search_state.evals[moves_state.disks_played as usize][cand_move as usize];
+                    best_score = search_state.evals[moves_state.disks_played as usize][cand_move as usize];
                     best_index = j
                 }
                 j += 1
             }
-            move_index =
-                midgame_state.feas_index_list[moves_state.disks_played as usize][best_index as usize];
-            midgame_state.feas_index_list[moves_state.disks_played as usize][best_index as usize] =
-                midgame_state.feas_index_list[moves_state.disks_played as usize][i as usize]
+            move_index = midgame_state.feas_index_list[moves_state.disks_played as usize][best_index as usize];
+            midgame_state.feas_index_list[moves_state.disks_played as usize][best_index as usize] = midgame_state.feas_index_list[moves_state.disks_played as usize][i as usize]
         }
         move_0 = search_state.sorted_move_order[moves_state.disks_played as usize][move_index as usize];
         if search_state.get_ponder_move() == 0 {
@@ -1275,60 +1110,35 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
         update_pv = 0;
         offset = midgame_state.score_perturbation[move_0 as usize];
         if searched == 0 {
-            curr_val =
-                perturb_score(-tree_search::<FE>(level + 1,
-                                           max_depth,
-                                           0 + 2
-                                               - side_to_move,
-                                           -(beta - offset),
-                                           -(curr_alpha - offset), allow_hash,
-                                           allow_mpc, 1, echo,  &mut moves_state ,
-                                                 &mut search_state ,
-                                                 &mut board_state ,
-                                                 &mut hash_state,
-                                                 &mut flip_stack_,
-                                                 &mut coeff_state,
-                                                 &mut prob_cut ,&mut g_timer, midgame_state),
-                              offset);
+            curr_val = perturb_score(-tree_search::<FE>(
+                level + 1, max_depth, 0 + 2 - side_to_move,
+                -(beta - offset), -(curr_alpha - offset), allow_hash,
+                allow_mpc, 1, echo, &mut moves_state,
+                &mut search_state, &mut board_state, &mut hash_state,
+                &mut flip_stack_, &mut coeff_state, &mut prob_cut, &mut g_timer, midgame_state,
+            ), offset);
             best = curr_val;
             best_move_index = move_index;
             update_pv = 1;
             midgame_state.best_mid_root_move = move_0
         } else {
             curr_alpha = if best > curr_alpha { best } else { curr_alpha };
-            curr_val =
-                perturb_score(-tree_search::<FE>(level + 1,
-                                           max_depth,
-                                           0 + 2
-                                               - side_to_move,
-                                           -(curr_alpha - offset +
-                                               1),
-                                           -(curr_alpha - offset), allow_hash,
-                                           allow_mpc, 1, echo,  &mut moves_state ,
-                                                 &mut search_state ,
-                                                 &mut board_state ,
-                                                 &mut hash_state,
-                                                 &mut flip_stack_,
-                                                 &mut coeff_state,
-                                                 &mut prob_cut ,&mut g_timer, midgame_state),
-                              offset);
+            curr_val = perturb_score(-tree_search::<FE>(
+                level + 1, max_depth, 0 + 2 - side_to_move, -(curr_alpha - offset + 1),
+                -(curr_alpha - offset), allow_hash, allow_mpc, 1, echo, &mut moves_state,
+                &mut search_state, &mut board_state, &mut hash_state, &mut flip_stack_,
+                &mut coeff_state, &mut prob_cut, &mut g_timer, midgame_state,
+            ), offset);
             if curr_val > curr_alpha && curr_val < beta {
-                curr_val =
-                    perturb_score(-tree_search::<FE>(level + 1,
-                                               max_depth,
-                                               0 +
-                                                   2 -
-                                                   side_to_move,
-                                               -(beta - offset),
-                                               12345678,
-                                               allow_hash, allow_mpc,
-                                               1, echo,  &mut moves_state ,
-                                                     &mut search_state ,
-                                                     &mut board_state ,
-                                                     &mut hash_state,
-                                                     &mut flip_stack_,
-                                                     &mut coeff_state,
-                                                     &mut prob_cut ,&mut g_timer, midgame_state), offset);
+                curr_val = perturb_score(-tree_search::<FE>(
+                    level + 1, max_depth,
+                    0 + 2 - side_to_move, -(beta - offset),
+                    12345678, allow_hash, allow_mpc,
+                    1, echo, &mut moves_state, &mut search_state,
+                    &mut board_state, &mut hash_state,
+                    &mut flip_stack_, &mut coeff_state,
+                    &mut prob_cut, &mut g_timer, midgame_state,
+                ), offset);
                 if curr_val > best {
                     best = curr_val;
                     best_move_index = move_index;
@@ -1343,9 +1153,7 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
                 update_pv = 1
             }
         }
-        {
-            unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
-        };
+        unmake_move(side_to_move, move_0, &mut board_state.board, &mut moves_state, &mut hash_state, &mut flip_stack_);
         if g_timer.is_panic_abort() != 0 || force_return != 0 {
             return -(27000)
         }
@@ -1354,34 +1162,26 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
             FE::midgame_display_ponder_move(max_depth, alpha, beta, curr_val, searched, update_pv, echo)
         }
         if update_pv != 0 {
-            midgame_c__update_best_list(&mut best_list, move_0,
-                                        best_list_index, best_list_length);
+            midgame_c__update_best_list(&mut best_list, move_0, best_list_index, best_list_length);
             board_state.pv[level as usize][level as usize] = move_0;
-            board_state.pv_depth[level as usize] =
-                board_state.pv_depth[(level + 1) as usize];
+            board_state.pv_depth[level as usize] = board_state.pv_depth[(level + 1) as usize];
             j = level + 1;
             while j < board_state.pv_depth[(level + 1) as usize] {
-                board_state.pv[level as usize][j as usize] =
-                    board_state.pv[(level + 1) as usize][j as usize];
+                board_state.pv[level as usize][j as usize] = board_state.pv[(level + 1) as usize][j as usize];
                 j += 1
             }
         }
         if best >= beta {
             advance_move(move_index, &mut search_state, &mut moves_state);
             if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
-                hash_state.add_hash_extended(0, best,
-                                  &best_list,
-                                  8 | 1,
-                                  remains, selectivity);
+                hash_state.add_hash_extended(0, best, &best_list, 8 | 1, remains, selectivity);
             }
             return best
         }
         /* For symmetry reasons, the score for any move is the score of the
            position for the initial position. */
         if moves_state.disks_played == 0 {
-            hash_state.add_hash_extended(0, best, &best_list,
-                              8 | 4, remains,
-                              selectivity);
+            hash_state.add_hash_extended(0, best, &best_list, 8 | 4, remains, selectivity);
             return best
         }
         searched += 1;
@@ -1393,15 +1193,9 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
         advance_move(best_move_index, &mut search_state, &mut moves_state);
         if use_hash != 0 && midgame_state.allow_midgame_hash_update != 0 {
             if best > alpha {
-                hash_state.add_hash_extended(0, best,
-                                  &best_list,
-                                  8 | 4,
-                                  remains, selectivity);
+                hash_state.add_hash_extended(0, best, &best_list, 8 | 4, remains, selectivity);
             } else {
-                hash_state.add_hash_extended(0, best,
-                                  &best_list,
-                                  8 | 2,
-                                  remains, selectivity);
+                hash_state.add_hash_extended(0, best, &best_list, 8 | 2, remains, selectivity);
             }
         }
         return best
@@ -1409,17 +1203,12 @@ pub fn root_tree_search<FE: FrontEnd>(level: i32,
         /* No feasible moves */
         hash_state.hash1 ^= hash_state.hash_flip_color1;
         hash_state.hash2 ^= hash_state.hash_flip_color2;
-        curr_val =
-            -root_tree_search::<FE>(level, max_depth,
-                              0 + 2 -
-                                  side_to_move, -beta, -alpha, allow_hash,
-                              allow_mpc, 0, echo,  &mut moves_state ,
-                                    &mut search_state ,
-                                    &mut board_state ,
-                                    &mut hash_state,
-                                    &mut flip_stack_,
-                                    &mut coeff_state, &mut prob_cut,
-                                    &mut g_timer, midgame_state);
+        curr_val = -root_tree_search::<FE>(level, max_depth, 0 + 2 - side_to_move, -beta, -alpha, allow_hash,
+                                           allow_mpc, 0, echo, &mut moves_state,
+                                           &mut search_state, &mut board_state,
+                                           &mut hash_state, &mut flip_stack_,
+                                           &mut coeff_state, &mut prob_cut,
+                                           &mut g_timer, midgame_state);
         hash_state.hash1 ^= hash_state.hash_flip_color1;
         hash_state.hash2 ^= hash_state.hash_flip_color2;
         return curr_val
