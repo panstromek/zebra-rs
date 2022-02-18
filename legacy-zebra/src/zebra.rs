@@ -1060,7 +1060,7 @@ impl ZebraFrontend for LibcFrontend {
     fn load_thor_files(g_timer: &mut Timer) { unsafe {
         /* No error checking done as it's only for testing purposes */
         let database_start =  g_timer.get_real_timer();
-        read_player_database(b"thor/wthor.jou\x00" as *const u8 as *const i8);
+        read_player_database("thor/wthor.jou");
         read_tournament_database(b"thor/wthor.trn\x00" as *const u8 as *const i8);
         read_game_database(b"thor/wth_2001.wtb\x00" as *const u8 as *const i8);
         read_game_database(b"thor/wth_2000.wtb\x00" as *const u8 as *const i8);

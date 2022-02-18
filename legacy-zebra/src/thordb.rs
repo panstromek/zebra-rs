@@ -20,6 +20,7 @@ use engine::src::getcoeff::odometer_principle;
 use std::io::{Read, Write};
 use engine::src::game::to_lower;
 use std::cmp::Ordering;
+use std::fs::File;
 use std::ptr::null_mut;
 
 /* Local variables */
@@ -370,16 +371,15 @@ fn sort_player_database(db: &mut [PlayerType]) {
   Returns TRUE if all went well, otherwise FALSE.
 */
 
-pub unsafe fn read_player_database(file_name:
-                                                  *const i8)
- -> i32 {
+pub unsafe fn read_player_database(file_name: &str) -> i32 {
     let mut success: i32 = 0;
     let mut actually_read: i32 = 0;
     let mut buffer_size: i32 = 0;
-    let mut stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
-    if stream.is_null() { return 0 }
+    let mut stream = match File::open(file_name) {
+        Ok(s) => s,
+        Err(_) => return 0,
+    };
     if read_prolog(&mut stream, &mut players.prolog) == 0 {
-        fclose(stream);
         return 0
     }
     let players_count = players.prolog.item_count;
@@ -390,7 +390,7 @@ pub unsafe fn read_player_database(file_name:
 
     players.name_buffer = Vec::leak(players_name_buffer);
     success = (actually_read == buffer_size) as i32;
-    fclose(stream);
+    drop(stream);
     if success != 0 {
         players.player_list = vec![PlayerType::default(); players_count as usize];
         let mut i = 0;
