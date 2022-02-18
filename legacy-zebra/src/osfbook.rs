@@ -41,7 +41,7 @@ pub type time_t = __time_t;
   Adds a new game to the game tree.
 */
 
-pub unsafe fn add_new_game(move_count_0: i32,
+pub fn add_new_game(move_count_0: i32,
                            game_move_list: Option<&[i16]>,
                            min_empties: i32,
                            max_full_solve: i32,
@@ -604,7 +604,7 @@ pub unsafe fn init_osf(do_global_setup: i32, g_state: &mut FullState) {
    Note: This function assumes that generate_all() has been
          called prior to it being called.
 */
-pub unsafe fn evaluate_node(index: i32, echo: i32, g_state: &mut FullState) {
+pub fn evaluate_node(index: i32, echo: i32, g_state: &mut FullState) {
     let mut i: i32 = 0;
     let mut side_to_move: i32 = 0;
     let mut alternative_move_count: i32 = 0;
@@ -717,7 +717,7 @@ pub unsafe fn evaluate_node(index: i32, echo: i32, g_state: &mut FullState) {
   This wrapper on top of TREE_SEARCH is used by EVALUATE_NODE
   to search the possible deviations.
 */
-pub unsafe fn nega_scout<FE: FrontEnd>(depth: i32,
+pub fn nega_scout<FE: FrontEnd>(depth: i32,
                                        allow_mpc: i32,
                                        side_to_move: i32,
                                        allowed_count: i32,
@@ -953,9 +953,8 @@ pub fn create_BookNode(val1: i32, val2: i32, flags: u16, book: &mut Book) -> i32
    DO_MINIMAX
    Calculates the minimax value of g_book.node INDEX.
 */
-pub unsafe fn do_minimax(index: i32,
-                         black_score: &mut i32,
-                         white_score: &mut i32, g_state: &mut FullState) {
+pub fn do_minimax(index: i32, black_score: &mut i32,
+                  white_score: &mut i32, g_state: &mut FullState) {
     let mut i: i32 = 0;
     let mut child: i32 = 0;
     let mut child_black_score: i32 = 0;

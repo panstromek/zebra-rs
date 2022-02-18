@@ -128,7 +128,7 @@ fn report_hash_move(hash_move: i8) {
     write!(stdout, "{}={}\n", "hash move", hash_move as i32);
 }
 
-pub unsafe fn ponder_move<
+pub fn ponder_move<
     L: ComputeMoveLogger,
     Out: ComputeMoveOutput,
     FE: FrontEnd,
