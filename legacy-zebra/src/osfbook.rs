@@ -590,7 +590,7 @@ pub fn print_move_alternatives(side_to_move: i32, board_state: &BoardState, g_bo
 */
 
 pub unsafe fn init_osf(do_global_setup: i32, g_state: &mut FullState) {
-    engine_init_osf::<LibcFatalError>(g_state);
+    engine_init_osf(g_state);
     if do_global_setup != 0 {
         global_setup(0, 19, g_state);
     };
@@ -1155,9 +1155,9 @@ pub fn do_minimax(index: i32, black_score: &mut i32,
 
 
 
-pub fn engine_init_osf<FE: FrontEnd>(g_state :&mut FullState) {
+pub fn engine_init_osf(g_state :&mut FullState) {
 
-    init_maps::<FE>(&mut g_state.g_book); //FIXME why is this not called from zebra everytime in the engine?????
+    init_maps(&mut g_state.g_book); //FIXME why is this not called from zebra everytime in the engine?????
     let mut hash_state = (&mut g_state.hash_state);
     let mut random_instance = (&mut g_state.random_instance);
     let mut g_book = (&mut g_state.g_book);
@@ -1203,7 +1203,7 @@ pub fn prepare_tree_traversal(g_state: &mut FullState) {
    Notice that the order of these MUST coincide with the returned
    orientation value from get_hash() OR YOU WILL LOSE BIG.
 */
-pub fn init_maps<FE: FrontEnd>(book: &mut Book) {
+pub fn init_maps(book: &mut Book) {
     book.symmetry_map[0] = &BOOK_MAPS.b1_b1_map;
     book.inv_symmetry_map[0] = &BOOK_MAPS.b1_b1_map;
     book.symmetry_map[1] = &BOOK_MAPS.g1_b1_map;
