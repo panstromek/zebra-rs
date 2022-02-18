@@ -780,7 +780,8 @@ fn play_game(mut file_name: &str,
                                   floor(play_state.g_state.g_config.player_time[2]) as i32);
                     let opening_name = find_opening_name(&play_state.g_state.g_book, &play_state.g_state.board_state.board);
                     if let Some(opening_name) = opening_name {
-                        ZF::report_opening_name(CStr::from_bytes_with_nul(opening_name).unwrap());
+                        let opening_name = CStr::from_bytes_with_nul(opening_name).unwrap();
+                        write!(stdout, "\nOpening: {}\n", opening_name.to_str().unwrap());
                     }
                     deal_with_thor_1(play_state.g_state.g_config.use_thor,
                                                  play_state.side_to_move,
@@ -1009,10 +1010,6 @@ impl LibcFrontend {
         write!(stdout, "{} black wins, {} draws, {} white wins\n", black_win_count, draw_count, white_win_count);
         write!(stdout, "Median score {}-{}", black_median_score, 64 - black_median_score);
         write!(stdout, ", average score {:.2}-{:.2}\n", black_average_score, 64.0f64 - black_average_score);
-    }
-
-    fn report_opening_name(opening_name: &CStr) {
-        write!(stdout, "\nOpening: {}\n", opening_name.to_str().unwrap());
     }
 }
 impl ZebraFrontend for LibcFrontend {
