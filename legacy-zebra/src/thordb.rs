@@ -446,14 +446,15 @@ unsafe fn read_game(mut stream: &mut impl Read, mut game: &mut GameType) -> i32 
   Reads a game database from FILE_NAME.
 */
 
-pub unsafe fn read_game_database(file_name:
-                                                *const i8)
+pub unsafe fn read_game_database(file_name: &str)
  -> i32 {
     let mut i: i32 = 0;
     let mut success: i32 = 0;
     let mut old_database_head = None;
-    let mut stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
-    if stream.is_null() { return 0 }
+    let mut stream = match File::open(file_name) {
+        Ok(s) => s,
+        Err(_) => return 0
+    };
     old_database_head = database_head.take();
     let prolog_type = PrologType {
         creation_century: 0,
@@ -474,7 +475,6 @@ pub unsafe fn read_game_database(file_name:
     };
 
     if read_prolog(&mut stream, &mut db_head.prolog) == 0 {
-        fclose(stream);
         // FIXME This is here to preserve consistency with the old version but seems wrong
         //  why we would assign database head when we fail to parse the game??
         database_head = Some(Box::new(db_head));
@@ -501,7 +501,7 @@ pub unsafe fn read_game_database(file_name:
     thor_games_sorted = 0;
     thor_games_filtered = 0;
 
-    fclose(stream);
+    drop(stream);
     database_head = Some(db_head);
     return success;
 }
