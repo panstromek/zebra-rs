@@ -742,7 +742,6 @@ fn play_game(mut file_name: &str,
     };
     type ZF = LibcFrontend;
     type Source = FileMoveSource;
-    type Dump = LibcDumpHandler;
     type BoardSrc = BasicBoardFileSource;
     type ComputeMoveLog = LogFileHandler;
     type ComputeMoveOut = LibcZebraOutput;
@@ -795,8 +794,8 @@ fn play_game(mut file_name: &str,
                                                  &play_state.g_state.board_state.black_moves,
                                                  &play_state.g_state.board_state.white_moves);
                 }
-                Dump::dump_position(play_state.side_to_move, &play_state.g_state.board_state.board);
-                Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
+                dump_position(play_state.side_to_move, &play_state.g_state.board_state.board);
+                dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
                 /* Check what the Thor opening statistics has to say */
                 Thor::choose_thor_opening_move(&play_state.g_state.board_state.board, play_state.side_to_move, play_state.g_state.g_config.echo, &mut play_state.g_state.random_instance);
             }
@@ -815,7 +814,7 @@ fn play_game(mut file_name: &str,
                     let white_level = play_state.g_state.g_config.skill[2];
                     ZF::report_skill_levels(black_level, white_level);
                 }
-                Dump::dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
+                dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
                 if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.one_position_only == 0 {
                     ZF::set_move_list(
                         play_state.g_state.board_state.score_sheet_row);
@@ -1320,7 +1319,7 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
         write!(stdout, "White level: {}\n", (&mut g_state.g_config).skill[2]);
     }
     if side_to_move == 0 { (g_state.board_state).score_sheet_row += 1 }
-    LibcDumpHandler::dump_game_score(side_to_move, (g_state.board_state).score_sheet_row, &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
+    dump_game_score(side_to_move, (g_state.board_state).score_sheet_row, &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
     if (g_state.g_config).echo != 0 && (&mut g_state.g_config).one_position_only == 0 {
         display_state.set_move_list((g_state.board_state).score_sheet_row);
         display_state.set_times(floor((&mut g_state.g_config).player_time[0]) as i32,
@@ -1331,75 +1330,73 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
     }
 }
 
-struct LibcDumpHandler;
-impl LibcDumpHandler {
-    /*
-       DUMP_POSITION
-       Saves the current board position to disk.
-    */
-    fn dump_position(side_to_move: i32, board_: &[i32; 128]) {
-        // let mut stream = 0 as *mut FILE;
-        let mut stream = File::create("current.gam").unwrap_or_else(|_| {
-            fatal_error!("File creation error when writing CURRENT.GAM\n");
-        });
+/*
+   DUMP_POSITION
+   Saves the current board position to disk.
+*/
+fn dump_position(side_to_move: i32, board_: &[i32; 128]) {
+    // let mut stream = 0 as *mut FILE;
+    let mut stream = File::create("current.gam").unwrap_or_else(|_| {
+        fatal_error!("File creation error when writing CURRENT.GAM\n");
+    });
 
     let mut i: i32 = 1;
-        let mut j: i32 = 0;
-        while i <= 8 {
-            j = 1;
-            while j <= 8 {
-                match board_[(10 * i + j) as usize] {
-                    0 => stream.write(b"X"),
-                    2 => stream.write(b"O"),
-                    1 => stream.write(b"-"),
-                    _ => {
-                        /* This really can't happen but shouldn't cause a crash */
-                        stream.write(b"?")
-                    }
-                };
-                j += 1
-            }
-            i += 1
-        }
-        stream.write(&['\n' as u8]);
-        if side_to_move == 0 {
-            stream.write(b"Black");
-        } else {
-            stream.write(b"White");
-        }
-        stream.write(b" to move\nThis file was automatically generated\n");
-    }
-    /*
-      DUMP_GAME_SCORE
-      Writes the current game score to disk.
-    */
-    fn dump_game_score(side_to_move: i32, score_sheet_row_: i32,
-                       black_moves_: &[i8; 60], white_moves_: &[i8; 60]) {
-        let mut stream = File::create("current.mov").unwrap_or_else(|_| {
-            fatal_error!("File creation error when writing CURRENT.MOV\n");
-        });
-
-        let mut i: i32 = 0;
-        while i <= score_sheet_row_ {
-            write!(stream, "   {: >2}.    ", i + 1);
-            if black_moves_[i as usize] == -1 {
-                write!(stream, "- " );
-            } else {
-                write!(stream, "{}", TO_SQUARE(black_moves_[i as usize]));
-            }
-            write!(stream, "  ");
-            if i < score_sheet_row_ || i == score_sheet_row_ && side_to_move == 0 {
-                if white_moves_[i as usize] == -1 {
-                    write!(stream, "- ");
-                } else {
-                    write!(stream, "{}", TO_SQUARE(white_moves_[i as usize]));
+    let mut j: i32 = 0;
+    while i <= 8 {
+        j = 1;
+        while j <= 8 {
+            match board_[(10 * i + j) as usize] {
+                0 => stream.write(b"X"),
+                2 => stream.write(b"O"),
+                1 => stream.write(b"-"),
+                _ => {
+                    /* This really can't happen but shouldn't cause a crash */
+                    stream.write(b"?")
                 }
-            }
-            write!(stream ,"\n");
-            i += 1
+            };
+            j += 1
         }
+        i += 1
+    }
+    stream.write(&['\n' as u8]);
+    if side_to_move == 0 {
+        stream.write(b"Black");
+    } else {
+        stream.write(b"White");
+    }
+    stream.write(b" to move\nThis file was automatically generated\n");
+}
+/*
+  DUMP_GAME_SCORE
+  Writes the current game score to disk.
+*/
+fn dump_game_score(side_to_move: i32, score_sheet_row_: i32,
+                   black_moves_: &[i8; 60], white_moves_: &[i8; 60]) {
+    let mut stream = File::create("current.mov").unwrap_or_else(|_| {
+        fatal_error!("File creation error when writing CURRENT.MOV\n");
+    });
+
+    let mut i: i32 = 0;
+    while i <= score_sheet_row_ {
+        write!(stream, "   {: >2}.    ", i + 1);
+        if black_moves_[i as usize] == -1 {
+            write!(stream, "- ");
+        } else {
+            write!(stream, "{}", TO_SQUARE(black_moves_[i as usize]));
+        }
+        write!(stream, "  ");
+        if i < score_sheet_row_ || i == score_sheet_row_ && side_to_move == 0 {
+            if white_moves_[i as usize] == -1 {
+                write!(stream, "- ");
+            } else {
+                write!(stream, "{}", TO_SQUARE(white_moves_[i as usize]));
+            }
+        }
+        write!(stream, "\n");
+        i += 1
     }
 }
+
 
 pub fn main() {
     unsafe {
