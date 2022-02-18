@@ -512,9 +512,7 @@ pub unsafe fn read_game_database(file_name: &str)
   according to the specification of the database format).
 */
 
-pub unsafe fn game_database_already_loaded(file_name:
-                                                          *const i8)
- -> i32 {
+pub unsafe fn game_database_already_loaded(file_name: &str) -> i32 {
     let mut new_prolog =
         PrologType{creation_century: 0,
                    creation_year: 0,
@@ -523,14 +521,16 @@ pub unsafe fn game_database_already_loaded(file_name:
                    game_count: 0,
                    item_count: 0,
                    origin_year: 0,
-                   reserved: 0,};
-    let mut stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
-    if stream.is_null() { return 0 }
+            reserved: 0,
+        };
+    let mut stream = match File::open(file_name) {
+        Ok(s) => s,
+        Err(_) => return 0
+    };
     if read_prolog(&mut stream, &mut new_prolog) == 0 {
-        fclose(stream);
         return 0
     }
-    fclose(stream);
+    drop(stream);
     let mut current_db_ = &database_head;
     while let Some(current_db) = current_db_ {
         if (*current_db).prolog.creation_century ==
