@@ -936,11 +936,11 @@ impl LibcFrontend {
 
     fn log_game_ending(log_file_name_: &CStr, move_vec: &[i8; 122],
                        first_side_to_move: i32, second_side_to_move: i32) {
-        let log_file_name_ = log_file_name_.as_ptr();
+        let log_file_name_ = log_file_name_.to_str().unwrap();
         unsafe {
-            let mut log_file = fopen(log_file_name_, b"a\x00" as *const u8 as *const i8);
+            let log_file = File::options().append(true).create(true).open(log_file_name_);
 
-            if !log_file.is_null() {
+            if let Ok(mut log_file) = log_file {
                 let mut timer = time(0 as *mut time_t);
                 write!(log_file,
                         "# {}#     {:2} - {:2}\n" , c_time(timer),
@@ -950,7 +950,7 @@ impl LibcFrontend {
                     log_file.write(&[c as _]);
                 }
                 log_file.write(b"\n");
-                fclose(log_file);
+                drop(log_file);
             }
         }
     }
