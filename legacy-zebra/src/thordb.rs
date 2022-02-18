@@ -1905,7 +1905,7 @@ pub unsafe fn init_thor_database(g_state: &mut FullState) {
     thor_games_filtered = 0;
     init_move_masks();
     init_symmetry_maps();
-    thor_hash.init_thor_hash(&mut g_state.random_instance);
+    thor_hash.init_thor_hash(&mut g_state.random);
     prepare_thor_board(&mut board.board);
     build_thor_opening_tree(&mut board, &mut thor_hash, &mut thor_opening_tree);
     filter.game_categories = 1 | 2 | 4;

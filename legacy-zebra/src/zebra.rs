@@ -110,7 +110,7 @@ unsafe fn main_0()
     let mut log_file_name = "";
     let script_out_file = "";
     let script_in_file = "";
-    set_default_engine_globals((&mut g_state.g_config));
+    set_default_engine_globals((&mut g_state.config));
     let mut current_block_107: u64;
     let mut arg_index = 1;
     let mut help = 0;
@@ -121,7 +121,7 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).echo = (argv[arg_index as usize]).parse().unwrap_or(0);
+                (g_state.config).echo = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
         } else if argv[arg_index as usize] == "-h" {
@@ -134,24 +134,24 @@ unsafe fn main_0()
                 current_block_107 = 10485226111480991281;
             }
         } else if argv[arg_index as usize] == "-l" {
-            (g_state.g_config).tournament = 0;
+            (g_state.config).tournament = 0;
             arg_index += 1;
             if arg_index == argc {
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).skill[0] =
+                (g_state.config).skill[0] =
                     (argv[arg_index as usize]).parse().unwrap_or(0);
-                if (g_state.g_config).skill[0] > 0 {
+                if (g_state.config).skill[0] > 0 {
                     if arg_index + 2 >= argc {
                         help = 1;
                         current_block_107 = 2668756484064249700;
                     } else {
                         arg_index += 1;
-                        (g_state.g_config).exact_skill[0] =
+                        (g_state.config).exact_skill[0] =
                             (argv[arg_index as usize]).parse().unwrap_or(0);
                         arg_index += 1;
-                        (g_state.g_config).wld_skill[0] =
+                        (g_state.config).wld_skill[0] =
                             (argv[arg_index as usize]).parse().unwrap_or(0);
                         current_block_107 = 15004371738079956865;
                     }
@@ -164,18 +164,18 @@ unsafe fn main_0()
                             help = 1;
                             current_block_107 = 2668756484064249700;
                         } else {
-                            (g_state.g_config).skill[2] =
+                            (g_state.config).skill[2] =
                                 (argv[arg_index as usize]).parse().unwrap_or(0);
-                            if (g_state.g_config).skill[2] >
+                            if (g_state.config).skill[2] >
                                    0 {
                                 if arg_index + 2 >= argc {
                                     help = 1;
                                     current_block_107 = 2668756484064249700;
                                 } else {
                                     arg_index += 1;
-                                    (g_state.g_config).exact_skill[2] = argv[arg_index as usize].parse().unwrap_or(0);
+                                    (g_state.config).exact_skill[2] = argv[arg_index as usize].parse().unwrap_or(0);
                                     arg_index += 1;
-                                    (g_state.g_config).wld_skill[2] = argv[arg_index as usize].parse().unwrap_or(0);
+                                    (g_state.config).wld_skill[2] = argv[arg_index as usize].parse().unwrap_or(0);
                                     current_block_107 = 10485226111480991281;
                                 }
                             } else {
@@ -193,18 +193,18 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).tournament = 1;
-                (g_state.g_config).tournament_levels = (argv[arg_index as usize]).parse().unwrap_or(0);
-                if arg_index + 3 * (g_state.g_config).tournament_levels >= argc {
+                (g_state.config).tournament = 1;
+                (g_state.config).tournament_levels = (argv[arg_index as usize]).parse().unwrap_or(0);
+                if arg_index + 3 * (g_state.config).tournament_levels >= argc {
                     help = 1;
                     current_block_107 = 2668756484064249700;
                 } else {
                     i = 0;
-                    while i < (g_state.g_config).tournament_levels {
+                    while i < (g_state.config).tournament_levels {
                         j = 0;
                         while j < 3 {
                             arg_index += 1;
-                            (g_state.g_config).tournament_skill[i as usize][j as usize] =
+                            (g_state.config).tournament_skill[i as usize][j as usize] =
                                 (argv[arg_index as usize]).parse().unwrap_or(0);
                             j += 1
                         }
@@ -219,7 +219,7 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).wait = (argv[arg_index as usize]).parse().unwrap_or(0);
+                (g_state.config).wait = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
         } else if argv[arg_index as usize] == "-p" {
@@ -228,7 +228,7 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).display_pv = (argv[arg_index as usize]).parse().unwrap_or(0);
+                (g_state.config).display_pv = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
         } else if argv[arg_index as usize] == "?" {
@@ -258,7 +258,7 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).use_book = (argv[arg_index as usize]).parse().unwrap_or(0);
+                (g_state.config).use_book = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
         } else if argv[arg_index as usize] == "-time" {
@@ -267,18 +267,18 @@ unsafe fn main_0()
                 current_block_107 = 2668756484064249700;
             } else {
                 arg_index += 1;
-                (g_state.g_config).player_time[0] =
+                (g_state.config).player_time[0] =
                     (argv[arg_index as usize]).atoi() as f64;
                 arg_index += 1;
-                (g_state.g_config).player_increment[0] =
+                (g_state.config).player_increment[0] =
                     (argv[arg_index as usize]).atoi() as f64;
                 arg_index += 1;
-                (g_state.g_config).player_time[2] =
+                (g_state.config).player_time[2] =
                     (argv[arg_index as usize]).atoi() as f64;
                 arg_index += 1;
-                (g_state.g_config).player_increment[2] =
+                (g_state.config).player_increment[2] =
                     (argv[arg_index as usize]).atoi() as f64;
-                (g_state.g_config).use_timer = 1;
+                (g_state.config).use_timer = 1;
                 current_block_107 = 10485226111480991281;
             }
         } else if argv[arg_index as usize] == "-learn" {
@@ -287,10 +287,10 @@ unsafe fn main_0()
                 current_block_107 = 2668756484064249700;
             } else {
                 arg_index += 1;
-                (g_state.g_config).deviation_depth = (argv[arg_index as usize]).parse().unwrap_or(0);
+                (g_state.config).deviation_depth = (argv[arg_index as usize]).parse().unwrap_or(0);
                 arg_index += 1;
-                (g_state.g_config).cutoff_empty = (argv[arg_index as usize]).parse().unwrap_or(0);
-                g_state.g_config.use_learning = true;
+                (g_state.config).cutoff_empty = (argv[arg_index as usize]).parse().unwrap_or(0);
+                g_state.config.use_learning = true;
                 current_block_107 = 10485226111480991281;
             }
         } else if argv[arg_index as usize] == "-slack" {
@@ -299,7 +299,7 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).slack = (argv[arg_index as usize]).parse().unwrap_or(0.0);
+                (g_state.config).slack = (argv[arg_index as usize]).parse().unwrap_or(0.0);
                 current_block_107 = 10485226111480991281;
             }
         } else if argv[arg_index as usize] == "-dev" {
@@ -308,11 +308,11 @@ unsafe fn main_0()
                 current_block_107 = 2668756484064249700;
             } else {
                 arg_index += 1;
-                (g_state.g_config).low_thresh = (argv[arg_index as usize]).parse().unwrap_or(0);
+                (g_state.config).low_thresh = (argv[arg_index as usize]).parse().unwrap_or(0);
                 arg_index += 1;
-                (g_state.g_config).high_thresh = (argv[arg_index as usize]).parse().unwrap_or(0);
+                (g_state.config).high_thresh = (argv[arg_index as usize]).parse().unwrap_or(0);
                 arg_index += 1;
-                (g_state.g_config).dev_bonus = (argv[arg_index as usize]).parse().unwrap_or(0.0);
+                (g_state.config).dev_bonus = (argv[arg_index as usize]).parse().unwrap_or(0.0);
                 current_block_107 = 10485226111480991281;
             }
         } else if argv[arg_index as usize] == "-log" {
@@ -343,7 +343,7 @@ unsafe fn main_0()
             (g_state.g_book).set_draw_mode(OPPONENT_WINS);
             current_block_107 = 10485226111480991281;
         } else if argv[arg_index as usize] == "-test" {
-            (g_state.g_config).one_position_only = 1;
+            (g_state.config).one_position_only = 1;
             current_block_107 = 10485226111480991281;
         } else if argv[arg_index as usize] == "-seq" {
             arg_index += 1;
@@ -378,12 +378,12 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                g_state.g_config.use_thor = true;
-                (g_state.g_config).thor_max_games = (argv[arg_index as usize]).parse().unwrap_or(0);
+                g_state.config.use_thor = true;
+                (g_state.config).thor_max_games = (argv[arg_index as usize]).parse().unwrap_or(0);
                 current_block_107 = 10485226111480991281;
             }
         } else if argv[arg_index as usize] == "-analyze" {
-            (g_state.g_config).only_analyze = 1;
+            (g_state.config).only_analyze = 1;
             current_block_107 = 10485226111480991281;
         } else if argv[arg_index as usize] == "-randmove" {
             arg_index += 1;
@@ -391,8 +391,8 @@ unsafe fn main_0()
                 help = 1;
                 current_block_107 = 2668756484064249700;
             } else {
-                (g_state.g_config).rand_move_freq = (argv[arg_index as usize]).parse().unwrap_or(0);
-                if (g_state.g_config).rand_move_freq < 0 {
+                (g_state.config).rand_move_freq = (argv[arg_index as usize]).parse().unwrap_or(0);
+                if (g_state.config).rand_move_freq < 0 {
                     help = 1;
                     current_block_107 = 2668756484064249700;
                 } else { current_block_107 = 10485226111480991281; }
@@ -527,7 +527,7 @@ Flags:
     }
     global_setup(use_random, hash_bits,&mut g_state);
     init_thor_database(&mut g_state);
-    if (g_state.g_config).use_book != 0 {
+    if (g_state.config).use_book != 0 {
         let file_name = if let Ok(var) = std::env::var("BOOK_PATH") {
             CString::new(var).unwrap()
         } else {
@@ -539,44 +539,44 @@ Flags:
     if use_random != 0 {
         time(&mut timer);
         let x = timer as i32;
-        (g_state.random_instance).my_srandom(x);
+        (g_state.random).my_srandom(x);
     } else {
         let x = 1;
-        (g_state.random_instance).my_srandom(x); }
-    if (g_state.g_config).tournament == 0 {
-        while (g_state.g_config).skill[0] < 0 {
+        (g_state.random).my_srandom(x); }
+    if (g_state.config).tournament == 0 {
+        while (g_state.config).skill[0] < 0 {
             write!(stdout, "Black parameters: ");
             scanf(b"%d\x00" as *const u8 as *const i8,
-                  &mut *(g_state.g_config).skill.as_mut_ptr()
+                  &mut *(g_state.config).skill.as_mut_ptr()
                       as *mut i32);
-            if (g_state.g_config).skill[0] > 0 {
+            if (g_state.config).skill[0] > 0 {
                 scanf(b"%d %d\x00" as *const u8 as *const i8,
-                      &mut *(g_state.g_config).exact_skill.as_mut_ptr() as
+                      &mut *(g_state.config).exact_skill.as_mut_ptr() as
                           *mut i32,
-                      &mut *(g_state.g_config).wld_skill.as_mut_ptr() as
+                      &mut *(g_state.config).wld_skill.as_mut_ptr() as
                           *mut i32);
             }
         }
-        while (g_state.g_config).skill[2] < 0 {
+        while (g_state.config).skill[2] < 0 {
             write!(stdout, "White parameters: ");
             scanf(b"%d\x00" as *const u8 as *const i8,
-                  &mut *(g_state.g_config).skill.as_mut_ptr().offset(2)
+                  &mut *(g_state.config).skill.as_mut_ptr().offset(2)
                       as *mut i32);
-            if (g_state.g_config).skill[2] > 0 {
+            if (g_state.config).skill[2] > 0 {
                 scanf(b"%d %d\x00" as *const u8 as *const i8,
-                      &mut *(g_state.g_config).exact_skill.as_mut_ptr().offset(2) as
+                      &mut *(g_state.config).exact_skill.as_mut_ptr().offset(2) as
                           *mut i32,
-                      &mut *(g_state.g_config).wld_skill.as_mut_ptr().offset(2) as
+                      &mut *(g_state.config).wld_skill.as_mut_ptr().offset(2) as
                           *mut i32);
             }
         }
     }
-    if (g_state.g_config).one_position_only != 0 {
+    if (g_state.config).one_position_only != 0 {
         display_state.toggle_smart_buffer_management(0);
     }
-    if (g_state.g_config).tournament != 0 {
+    if (g_state.config).tournament != 0 {
         play_tournament(move_sequence, log_file_name, g_state);
-    } else if (g_state.g_config).only_analyze != 0 {
+    } else if (g_state.config).only_analyze != 0 {
         analyze_game(move_sequence, &mut g_state);
     } else {
         play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name, g_state);
@@ -606,29 +606,29 @@ unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state
 
     let mut i = 0;
     let mut j = 0;
-    let tournament_levels_ = (g_state.g_config).tournament_levels;
+    let tournament_levels_ = (g_state.config).tournament_levels;
     while i < tournament_levels_ {
         j = 0;
         while j < tournament_levels_ {
-            (g_state.g_config).skill[0] = (g_state.g_config).tournament_skill[i as usize][0];
-            (g_state.g_config).exact_skill[0] = (g_state.g_config).tournament_skill[i as usize][1];
-            (g_state.g_config).wld_skill[0] = (g_state.g_config).tournament_skill[i as usize][2];
-            (g_state.g_config).skill[2] = (g_state.g_config).tournament_skill[j as usize][0];
-            (g_state.g_config).exact_skill[2] = (g_state.g_config).tournament_skill[j as usize][1];
-            (g_state.g_config).wld_skill[2] = (g_state.g_config).tournament_skill[j as usize][2];
+            (g_state.config).skill[0] = (g_state.config).tournament_skill[i as usize][0];
+            (g_state.config).exact_skill[0] = (g_state.config).tournament_skill[i as usize][1];
+            (g_state.config).wld_skill[0] = (g_state.config).tournament_skill[i as usize][2];
+            (g_state.config).skill[2] = (g_state.config).tournament_skill[j as usize][0];
+            (g_state.config).exact_skill[2] = (g_state.config).tournament_skill[j as usize][1];
+            (g_state.config).wld_skill[2] = (g_state.config).tournament_skill[j as usize][2];
             g_state = play_game("", move_sequence,
                       "", 1, log_file_name_, g_state);
-            add_counter(&mut tourney_nodes, &mut (g_state.search_state).total_nodes);
-            tourney_time += (&mut g_state.search_state).total_time;
+            add_counter(&mut tourney_nodes, &mut (g_state.search).total_nodes);
+            tourney_time += (&mut g_state.search).total_time;
             result[i as usize][j as usize][0] =
-                disc_count(0, &( g_state.board_state).board);
+                disc_count(0, &( g_state.board).board);
             result[i as usize][j as usize][2] =
-                disc_count(2, &( g_state.board_state).board);
-            if disc_count(0, &( g_state.board_state).board) > disc_count(2, &( g_state.board_state).board) {
+                disc_count(2, &( g_state.board).board);
+            if disc_count(0, &( g_state.board).board) > disc_count(2, &( g_state.board).board) {
                 score[i as usize] += 1.0f64;
                 color_score[0] += 1.0f64
-            } else if disc_count(0, &(&mut g_state.board_state).board) ==
-                          disc_count(2, &(&mut g_state.board_state).board) {
+            } else if disc_count(0, &(&mut g_state.board).board) ==
+                          disc_count(2, &(&mut g_state.board).board) {
                 score[i as usize] += 0.5f64;
                 score[j as usize] += 0.5f64;
                 color_score[0] += 0.5f64;
@@ -642,7 +642,7 @@ unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state
         i += 1
     }
     adjust_counter(&mut tourney_nodes);
-    let tournament_skill_ = &&mut (g_state.g_config).tournament_skill;
+    let tournament_skill_ = &&mut (g_state.config).tournament_skill;
     let tourney_counter_value = counter_value(&mut tourney_nodes);
 
     write!(stdout, "\n\nTime:  {:.1} s\nNodes: {:.0}\n", tourney_time,
@@ -775,72 +775,72 @@ fn play_game(mut file_name: &str,
                 move_attempt = Some(MoveAttempt(res.0 as i8, res.1 as i8))
             }
             PlayGameState::NeedsDump {..} => {
-                if play_state.g_state.g_config.echo != 0 {
-                    ZF::set_move_list(play_state.g_state.board_state.score_sheet_row);
-                    ZF::set_times(floor(play_state.g_state.g_config.player_time[0]) as i32,
-                                  floor(play_state.g_state.g_config.player_time[2]) as i32);
-                    let opening_name = find_opening_name(&play_state.g_state.g_book, &play_state.g_state.board_state.board);
+                if play_state.g_state.config.echo != 0 {
+                    ZF::set_move_list(play_state.g_state.board.score_sheet_row);
+                    ZF::set_times(floor(play_state.g_state.config.player_time[0]) as i32,
+                                  floor(play_state.g_state.config.player_time[2]) as i32);
+                    let opening_name = find_opening_name(&play_state.g_state.g_book, &play_state.g_state.board.board);
                     if let Some(opening_name) = opening_name {
                         let opening_name = CStr::from_bytes_with_nul(opening_name).unwrap();
                         write!(stdout, "\nOpening: {}\n", opening_name.to_str().unwrap());
                     }
-                    deal_with_thor_1(play_state.g_state.g_config.use_thor,
-                                                 play_state.side_to_move,
-                                                 &play_state.g_state.g_config,
-                                                 &play_state.g_state.g_timer,
-                                                 &play_state.g_state.board_state,
-                                                 &mut total_search_time);
+                    deal_with_thor_1(play_state.g_state.config.use_thor,
+                                     play_state.side_to_move,
+                                     &play_state.g_state.config,
+                                     &play_state.g_state.timer,
+                                     &play_state.g_state.board,
+                                     &mut total_search_time);
 
-                    ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer,
-                                                 &play_state.g_state.board_state.board,
-                                                 &play_state.g_state.board_state.black_moves,
-                                                 &play_state.g_state.board_state.white_moves);
+                    ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.config.use_timer,
+                                                 &play_state.g_state.board.board,
+                                                 &play_state.g_state.board.black_moves,
+                                                 &play_state.g_state.board.white_moves);
                 }
-                dump_position(play_state.side_to_move, &play_state.g_state.board_state.board);
-                dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
+                dump_position(play_state.side_to_move, &play_state.g_state.board.board);
+                dump_game_score(play_state.side_to_move, play_state.g_state.board.score_sheet_row, &play_state.g_state.board.black_moves, &play_state.g_state.board.white_moves);
                 /* Check what the Thor opening statistics has to say */
-                Thor::choose_thor_opening_move(&play_state.g_state.board_state.board, play_state.side_to_move, play_state.g_state.g_config.echo, &mut play_state.g_state.random_instance);
+                Thor::choose_thor_opening_move(&play_state.g_state.board.board, play_state.side_to_move, play_state.g_state.config.echo, &mut play_state.g_state.random);
             }
             PlayGameState::CanLearn => {
-                if play_state.g_state.g_config.use_learning && play_state.g_state.g_config.one_position_only == 0 {
-                    play_state.g_state.g_timer.toggle_abort_check(0);
-                    Learn::learn_game(play_state.g_state.moves_state.disks_played,
-                                      (play_state.g_state.g_config.skill[0] != 0 && play_state.g_state.g_config.skill[2] != 0) as i32,
+                if play_state.g_state.config.use_learning && play_state.g_state.config.one_position_only == 0 {
+                    play_state.g_state.timer.toggle_abort_check(0);
+                    Learn::learn_game(play_state.g_state.moves.disks_played,
+                                      (play_state.g_state.config.skill[0] != 0 && play_state.g_state.config.skill[2] != 0) as i32,
                                       (play_state.repeat == 0) as i32, &mut play_state.g_state);
-                    play_state.g_state.g_timer.toggle_abort_check(1);
+                    play_state.g_state.timer.toggle_abort_check(1);
                 }
             }
             PlayGameState::AfterGameReport { node_val, eval_val } => {
-                if play_state.g_state.g_config.echo == 0 && play_state.g_state.g_config.one_position_only == 0 {
-                    let black_level = play_state.g_state.g_config.skill[0];
-                    let white_level = play_state.g_state.g_config.skill[2];
+                if play_state.g_state.config.echo == 0 && play_state.g_state.config.one_position_only == 0 {
+                    let black_level = play_state.g_state.config.skill[0];
+                    let white_level = play_state.g_state.config.skill[2];
                     ZF::report_skill_levels(black_level, white_level);
                 }
-                dump_game_score(play_state.side_to_move, play_state.g_state.board_state.score_sheet_row, &play_state.g_state.board_state.black_moves, &play_state.g_state.board_state.white_moves);
-                if play_state.g_state.g_config.echo != 0 && play_state.g_state.g_config.one_position_only == 0 {
+                dump_game_score(play_state.side_to_move, play_state.g_state.board.score_sheet_row, &play_state.g_state.board.black_moves, &play_state.g_state.board.white_moves);
+                if play_state.g_state.config.echo != 0 && play_state.g_state.config.one_position_only == 0 {
                     ZF::set_move_list(
-                        play_state.g_state.board_state.score_sheet_row);
-                    deal_with_thor_2(play_state.g_state.g_config.use_thor, play_state.side_to_move,
-                                                 &play_state.g_state.g_config,
-                                                 &play_state.g_state.g_timer,
-                                                 &play_state.g_state.board_state,
-                                                 &mut total_search_time);
-                    ZF::set_times(floor(play_state.g_state.g_config.player_time[0]) as _, floor(play_state.g_state.g_config.player_time[2]) as _);
-                    ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.g_config.use_timer, &play_state.g_state.board_state.board,
-                                                 &play_state.g_state.board_state.black_moves,
-                                                 &play_state.g_state.board_state.white_moves,
+                        play_state.g_state.board.score_sheet_row);
+                    deal_with_thor_2(play_state.g_state.config.use_thor, play_state.side_to_move,
+                                     &play_state.g_state.config,
+                                     &play_state.g_state.timer,
+                                     &play_state.g_state.board,
+                                     &mut total_search_time);
+                    ZF::set_times(floor(play_state.g_state.config.player_time[0]) as _, floor(play_state.g_state.config.player_time[2]) as _);
+                    ZF::display_board_after_thor(play_state.side_to_move, play_state.g_state.config.use_timer, &play_state.g_state.board.board,
+                                                 &play_state.g_state.board.black_moves,
+                                                 &play_state.g_state.board.white_moves,
                     );
                 }
-                let black_disc_count = disc_count(0, &play_state.g_state.board_state.board);
-                let white_disc_count = disc_count(2, &play_state.g_state.board_state.board);
-                let total_time_ = play_state.g_state.search_state.total_time;
+                let black_disc_count = disc_count(0, &play_state.g_state.board.board);
+                let white_disc_count = disc_count(2, &play_state.g_state.board.board);
+                let total_time_ = play_state.g_state.search.total_time;
                 ZF::report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
 
-                if let (Some(log_file_name_), 0) = (log_file_name_.as_ref(), play_state.g_state.g_config.one_position_only) {
+                if let (Some(log_file_name_), 0) = (log_file_name_.as_ref(), play_state.g_state.config.one_position_only) {
                     ZF::log_game_ending((&*log_file_name_),
                                         &play_state.move_vec,
-                                        disc_count(0, &play_state.g_state.board_state.board),
-                                        disc_count(2, &play_state.g_state.board_state.board))
+                                        disc_count(0, &play_state.g_state.board.board),
+                                        disc_count(2, &play_state.g_state.board.board))
                 }
             }
             _ => {}
@@ -1127,119 +1127,119 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
         Err(_) => fatal_error!("Can\'t create log file analysis.log - aborting")
     };
     /* Set up the position and the search engine */
-    if (&mut g_state.g_config).echo != 0 {
+    if (&mut g_state.config).echo != 0 {
         write!(stdout, "Analyzing provided game...\n");
     }
     generic_game_init::<BasicBoardFileSource, LibcFatalError>(None, &mut side_to_move, g_state);
-    setup_hash(1, &mut (&mut g_state.hash_state), &mut (&mut g_state.random_instance));
-    (&mut g_state.learn_state).clear_stored_game();
-    if (&mut g_state.g_config).echo != 0 && (&mut g_state.g_config).use_book != 0 {
+    setup_hash(1, &mut (&mut g_state.hash), &mut (&mut g_state.random));
+    (&mut g_state.learn).clear_stored_game();
+    if (&mut g_state.config).echo != 0 && (&mut g_state.config).use_book != 0 {
         write!(stdout, "Disabling usage of opening book\n");
     }
-    (&mut g_state.g_config).use_book = 0;
+    (&mut g_state.config).use_book = 0;
     reset_book_search(&mut (&mut g_state.g_book));
     let black_name = "Zebra";
     let white_name = "Zebra";
     display_state.set_names(black_name, white_name);
-    display_state.set_move_list((g_state.board_state).score_sheet_row);
+    display_state.set_move_list((g_state.board).score_sheet_row);
     display_state.set_evals(0.0f64, 0.0f64);
-    g_state.board_state.black_moves = [-1; 60];
-    g_state.board_state.white_moves = [-1; 60];
-    let _black_hash1 = (g_state.random_instance).my_random() as i32;
-    let _black_hash2 = (g_state.random_instance).my_random() as i32;
-    let _white_hash1 = (g_state.random_instance).my_random() as i32;
-    let _white_hash2 = (g_state.random_instance).my_random() as i32;
-    let best_trans1 = (g_state.random_instance).my_random() as u32;
-    let best_trans2 = (g_state.random_instance).my_random() as u32;
-    let played_trans1 = (g_state.random_instance).my_random() as u32;
-    let played_trans2 = (g_state.random_instance).my_random() as u32;
+    g_state.board.black_moves = [-1; 60];
+    g_state.board.white_moves = [-1; 60];
+    let _black_hash1 = (g_state.random).my_random() as i32;
+    let _black_hash2 = (g_state.random).my_random() as i32;
+    let _white_hash1 = (g_state.random).my_random() as i32;
+    let _white_hash2 = (g_state.random).my_random() as i32;
+    let best_trans1 = (g_state.random).my_random() as u32;
+    let best_trans2 = (g_state.random).my_random() as u32;
+    let played_trans1 = (g_state.random).my_random() as u32;
+    let played_trans2 = (g_state.random).my_random() as u32;
     let stdin = std::io::stdin();
     let mut stdin_lock = stdin.lock();
-    while game_in_progress((&mut g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board) != 0 && (g_state.moves_state).disks_played < provided_move_count {
-        remove_coeffs((g_state.moves_state).disks_played, &mut ( g_state.coeff_state));
-        generate_all(side_to_move, (&mut g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board);
-        if side_to_move == 0 { (g_state.board_state).score_sheet_row += 1 }
-        if (g_state.moves_state).move_count[(g_state.moves_state).disks_played as usize] != 0 {
-            move_start =  (&mut g_state.g_timer).get_real_timer();
-            (&mut g_state.g_timer).clear_panic_abort();
-            if (&mut g_state.g_config).echo != 0 {
-                display_state.set_move_list((g_state.board_state).score_sheet_row);
-                display_state.set_times(floor((&mut g_state.g_config).player_time[0]) as i32,
-                          floor((&mut g_state.g_config).player_time[2]) as i32);
-                let opening_name = find_opening_name(&mut (&mut g_state.g_book), &(g_state.board_state).board);
+    while game_in_progress((&mut g_state.moves), &(g_state.search), &(g_state.board).board) != 0 && (g_state.moves).disks_played < provided_move_count {
+        remove_coeffs((g_state.moves).disks_played, &mut ( g_state.coeff));
+        generate_all(side_to_move, (&mut g_state.moves), &(g_state.search), &(g_state.board).board);
+        if side_to_move == 0 { (g_state.board).score_sheet_row += 1 }
+        if (g_state.moves).move_count[(g_state.moves).disks_played as usize] != 0 {
+            move_start =  (&mut g_state.timer).get_real_timer();
+            (&mut g_state.timer).clear_panic_abort();
+            if (&mut g_state.config).echo != 0 {
+                display_state.set_move_list((g_state.board).score_sheet_row);
+                display_state.set_times(floor((&mut g_state.config).player_time[0]) as i32,
+                                        floor((&mut g_state.config).player_time[2]) as i32);
+                let opening_name = find_opening_name(&mut (&mut g_state.g_book), &(g_state.board).board);
                 if let Some(opening_name) = opening_name {
                     write!(stdout, "\nOpening: {}\n", CStr::from_bytes_with_nul(opening_name).map(CStr::to_str).unwrap().unwrap());
                 }
-                display_state.display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
-                              1, (&mut g_state.g_config).use_timer, 1,
-                              &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
+                display_state.display_board(&mut stdout, &(g_state.board).board, side_to_move,
+                                            1, (&mut g_state.config).use_timer, 1,
+                                            &(g_state.board).black_moves, &(g_state.board).white_moves);
             }
             /* Check what the Thor opening statistics has to say */
-            choose_thor_opening_move(&(g_state.board_state).board, side_to_move, (&mut g_state.g_config).echo, &mut (&mut g_state.random_instance));
-            if (&mut g_state.g_config).echo != 0 && (&mut g_state.g_config).wait != 0 {
+            choose_thor_opening_move(&(g_state.board).board, side_to_move, (&mut g_state.config).echo, &mut (&mut g_state.random));
+            if (&mut g_state.config).echo != 0 && (&mut g_state.config).wait != 0 {
                 dumpch(&mut stdin_lock);
             }
-             (&mut g_state.g_timer).start_move((&mut g_state.g_config).player_time[side_to_move as usize],
-                                                     (&mut g_state.g_config).player_increment[side_to_move as usize],
-                                                     (g_state.moves_state).disks_played + 4);
-            (&mut g_state.g_timer).determine_move_time((&mut g_state.g_config).player_time[side_to_move as usize],
-                                                       (&mut g_state.g_config).player_increment[side_to_move as usize],
-                                                       (g_state.moves_state).disks_played + 4);
-            timed_search = ((&mut g_state.g_config).skill[side_to_move as usize] >= 60) as i32;
-            empties = 60 - (g_state.moves_state).disks_played;
+             (&mut g_state.timer).start_move((&mut g_state.config).player_time[side_to_move as usize],
+                                             (&mut g_state.config).player_increment[side_to_move as usize],
+                                             (g_state.moves).disks_played + 4);
+            (&mut g_state.timer).determine_move_time((&mut g_state.config).player_time[side_to_move as usize],
+                                                     (&mut g_state.config).player_increment[side_to_move as usize],
+                                                     (g_state.moves).disks_played + 4);
+            timed_search = ((&mut g_state.config).skill[side_to_move as usize] >= 60) as i32;
+            empties = 60 - (g_state.moves).disks_played;
             /* Determine the score for the move actually played.
                A private hash transformation is used so that the parallel
             search trees - "played" and "best" - don't clash. This way
              all scores are comparable. */
-            (&mut g_state.hash_state).set_hash_transformation(played_trans1, played_trans2);
-            curr_move = provided_move[(g_state.moves_state).disks_played as usize];
+            (&mut g_state.hash).set_hash_transformation(played_trans1, played_trans2);
+            curr_move = provided_move[(g_state.moves).disks_played as usize];
             opponent = 0 + 2 - side_to_move;
-            make_move(side_to_move, curr_move, 1, (&mut g_state.moves_state), &mut (&mut g_state.board_state), &mut (&mut g_state.hash_state), &mut (&mut g_state.flip_stack_));
-            if empties > (&mut g_state.g_config).wld_skill[side_to_move as usize] {
-                reset_counter(&mut (&mut g_state.search_state).nodes);
+            make_move(side_to_move, curr_move, 1, (&mut g_state.moves), &mut (&mut g_state.board), &mut (&mut g_state.hash), &mut (&mut g_state.flip_stack));
+            if empties > (&mut g_state.config).wld_skill[side_to_move as usize] {
+                reset_counter(&mut (&mut g_state.search).nodes);
                 resp_move = legacy_compute_move(opponent, 0,
-                                        (&mut g_state.g_config).player_time[opponent as usize] as i32,
-                                        (&mut g_state.g_config).player_increment[opponent as usize] as i32,
-                                        timed_search, (&mut g_state.g_config).use_book,
-                                        (&mut g_state.g_config).skill[opponent as usize] - 2,
-                                        (&mut g_state.g_config).exact_skill[opponent as usize] - 1,
-                                        (&mut g_state.g_config).wld_skill[opponent as usize] - 1,
-                                        1, &mut played_info1, g_state)
+                                                (&mut g_state.config).player_time[opponent as usize] as i32,
+                                                (&mut g_state.config).player_increment[opponent as usize] as i32,
+                                                timed_search, (&mut g_state.config).use_book,
+                                                (&mut g_state.config).skill[opponent as usize] - 2,
+                                                (&mut g_state.config).exact_skill[opponent as usize] - 1,
+                                                (&mut g_state.config).wld_skill[opponent as usize] - 1,
+                                                1, &mut played_info1, g_state)
             }
-            reset_counter(&mut (&mut g_state.search_state).nodes);
+            reset_counter(&mut (&mut g_state.search).nodes);
             resp_move = legacy_compute_move(opponent, 0,
-                                    (&mut g_state.g_config).player_time[opponent as usize] as i32,
-                                    (&mut g_state.g_config).player_increment[opponent as usize] as i32,
-                                    timed_search, (&mut g_state.g_config).use_book,
-                                    (&mut g_state.g_config).skill[opponent as usize] - 1,
-                                    (&mut g_state.g_config).exact_skill[opponent as usize] - 1,
-                                    (&mut g_state.g_config).wld_skill[opponent as usize] - 1,
-                                    1, &mut played_info2, g_state);
-            unmake_move(side_to_move, curr_move, &mut (g_state.board_state).board, (&mut g_state.moves_state), &mut (&mut g_state.hash_state), &mut (&mut g_state.flip_stack_));
+                                            (&mut g_state.config).player_time[opponent as usize] as i32,
+                                            (&mut g_state.config).player_increment[opponent as usize] as i32,
+                                            timed_search, (&mut g_state.config).use_book,
+                                            (&mut g_state.config).skill[opponent as usize] - 1,
+                                            (&mut g_state.config).exact_skill[opponent as usize] - 1,
+                                            (&mut g_state.config).wld_skill[opponent as usize] - 1,
+                                            1, &mut played_info2, g_state);
+            unmake_move(side_to_move, curr_move, &mut (g_state.board).board, (&mut g_state.moves), &mut (&mut g_state.hash), &mut (&mut g_state.flip_stack));
             /* Determine the 'best' move and its score. For midgame moves,
             search twice to dampen oscillations. Unless we're in the endgame
              region, a private hash transform is used - see above. */
-            if empties > (&mut g_state.g_config).wld_skill[side_to_move as usize] {
-                (&mut g_state.hash_state).set_hash_transformation(best_trans1, best_trans2);
-                reset_counter(&mut (&mut g_state.search_state).nodes);
+            if empties > (&mut g_state.config).wld_skill[side_to_move as usize] {
+                (&mut g_state.hash).set_hash_transformation(best_trans1, best_trans2);
+                reset_counter(&mut (&mut g_state.search).nodes);
                 curr_move = legacy_compute_move(side_to_move, 0,
-                                        (&mut g_state.g_config).player_time[side_to_move as usize] as i32,
-                                        (&mut g_state.g_config).player_increment[side_to_move as usize] as i32,
-                                        timed_search, (&mut g_state.g_config).use_book,
-                                        (&mut g_state.g_config).skill[side_to_move as usize] - 1,
-                                        (&mut g_state.g_config).exact_skill[side_to_move as usize],
-                                        (&mut g_state.g_config).wld_skill[side_to_move as usize],
-                                        1, &mut best_info1, g_state)
+                                                (&mut g_state.config).player_time[side_to_move as usize] as i32,
+                                                (&mut g_state.config).player_increment[side_to_move as usize] as i32,
+                                                timed_search, (&mut g_state.config).use_book,
+                                                (&mut g_state.config).skill[side_to_move as usize] - 1,
+                                                (&mut g_state.config).exact_skill[side_to_move as usize],
+                                                (&mut g_state.config).wld_skill[side_to_move as usize],
+                                                1, &mut best_info1, g_state)
             }
-            reset_counter(&mut (&mut g_state.search_state).nodes);
+            reset_counter(&mut (&mut g_state.search).nodes);
             curr_move = legacy_compute_move(side_to_move, 0,
-                                    (&mut g_state.g_config).player_time[side_to_move as usize] as i32,
-                                    (&mut g_state.g_config).player_increment[side_to_move as usize] as i32,
-                                    timed_search, (&mut g_state.g_config).use_book,
-                                    (&mut g_state.g_config).skill[side_to_move as usize],
-                                    (&mut g_state.g_config).exact_skill[side_to_move as usize],
-                                    (&mut g_state.g_config).wld_skill[side_to_move as usize],
-                                    1, &mut best_info2, g_state);
+                                            (&mut g_state.config).player_time[side_to_move as usize] as i32,
+                                            (&mut g_state.config).player_increment[side_to_move as usize] as i32,
+                                            timed_search, (&mut g_state.config).use_book,
+                                            (&mut g_state.config).skill[side_to_move as usize],
+                                            (&mut g_state.config).exact_skill[side_to_move as usize],
+                                            (&mut g_state.config).wld_skill[side_to_move as usize],
+                                            1, &mut best_info2, g_state);
             if side_to_move == 0 {
                 display_state.set_evals(produce_compact_eval(best_info2), 0.0f64);
             } else {
@@ -1247,9 +1247,9 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
             }
             /* Output the two score-move pairs */
             write!(output_stream, "{} ", TO_SQUARE(curr_move));
-            if empties <= (&mut g_state.g_config).exact_skill[side_to_move as usize] {
+            if empties <= (&mut g_state.config).exact_skill[side_to_move as usize] {
                 write!(output_stream, "{:+6}", best_info2.score / 128);
-            } else if empties <= (&mut g_state.g_config).wld_skill[side_to_move as usize] {
+            } else if empties <= (&mut g_state.config).wld_skill[side_to_move as usize] {
                 if best_info2.res == WON_POSITION {
                     write!(output_stream, "    +1");
                 } else if best_info2.res == LOST_POSITION {
@@ -1257,18 +1257,18 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
                 } else {
                     write!(output_stream, "     0");
                 }
-            } else if curr_move == provided_move[(g_state.moves_state).disks_played as usize] && resp_move != -1 {
+            } else if curr_move == provided_move[(g_state.moves).disks_played as usize] && resp_move != -1 {
                 write!(output_stream, "{:6.2}", -(played_info1.score + played_info2.score) as f64 / (2. * 128.0f64));
             } else {
                 write!(output_stream, "{:6.2}", (best_info1.score + best_info2.score) as f64 / (2. * 128.0f64));
             }
-            curr_move = provided_move[(g_state.moves_state).disks_played as usize];
+            curr_move = provided_move[(g_state.moves).disks_played as usize];
             write!(output_stream, "       {} ", TO_SQUARE(curr_move));
             if resp_move == -1 {
                 write!(output_stream, "     ?");
-            } else if empties <= (&mut g_state.g_config).exact_skill[side_to_move as usize] {
+            } else if empties <= (&mut g_state.config).exact_skill[side_to_move as usize] {
                 write!(output_stream, "{:+6}", -played_info2.score / 128);
-            } else if empties <= (&mut g_state.g_config).wld_skill[side_to_move as usize] {
+            } else if empties <= (&mut g_state.config).wld_skill[side_to_move as usize] {
                 if played_info2.res == WON_POSITION {
                     write!(output_stream, "    -1");
                 } else if played_info2.res == LOST_POSITION {
@@ -1280,42 +1280,42 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
                 write!(output_stream, "{:6.2}", -(played_info1.score + played_info2.score) as f64 / (2 as f64 * 128.0f64));
             }
             write!(output_stream, "\n");
-            if valid_move(curr_move, side_to_move, &(g_state.board_state).board) == 0 {
+            if valid_move(curr_move, side_to_move, &(g_state.board).board) == 0 {
                 fatal_error!("Invalid move {} in move sequence", TO_SQUARE(curr_move));
             }
-            move_stop =  (&mut g_state.g_timer).get_real_timer();
-            if (&mut g_state.g_config).player_time[side_to_move as usize] != 10000000.0f64 {
-                (&mut g_state.g_config).player_time[side_to_move as usize] -= move_stop - move_start
+            move_stop =  (&mut g_state.timer).get_real_timer();
+            if (&mut g_state.config).player_time[side_to_move as usize] != 10000000.0f64 {
+                (&mut g_state.config).player_time[side_to_move as usize] -= move_stop - move_start
             }
-            (&mut g_state.learn_state).store_move((g_state.moves_state).disks_played, curr_move);
-            make_move(side_to_move, curr_move, 1, (&mut g_state.moves_state), &mut (&mut g_state.board_state), &mut (&mut g_state.hash_state), &mut (&mut g_state.flip_stack_));
+            (&mut g_state.learn).store_move((g_state.moves).disks_played, curr_move);
+            make_move(side_to_move, curr_move, 1, (&mut g_state.moves), &mut (&mut g_state.board), &mut (&mut g_state.hash), &mut (&mut g_state.flip_stack));
             if side_to_move == 0 {
-                (g_state.board_state).black_moves[(g_state.board_state).score_sheet_row as usize] = curr_move
+                (g_state.board).black_moves[(g_state.board).score_sheet_row as usize] = curr_move
             } else {
-                if (g_state.board_state).white_moves[(g_state.board_state).score_sheet_row as usize] != -1 {
-                    (g_state.board_state).score_sheet_row += 1
+                if (g_state.board).white_moves[(g_state.board).score_sheet_row as usize] != -1 {
+                    (g_state.board).score_sheet_row += 1
                 }
-                (g_state.board_state).white_moves[(g_state.board_state).score_sheet_row as usize] = curr_move
+                (g_state.board).white_moves[(g_state.board).score_sheet_row as usize] = curr_move
             }
         } else if side_to_move == 0 {
-            (g_state.board_state).black_moves[(g_state.board_state).score_sheet_row as usize] = -1
-        } else { (g_state.board_state).white_moves[(g_state.board_state).score_sheet_row as usize] = -1 }
+            (g_state.board).black_moves[(g_state.board).score_sheet_row as usize] = -1
+        } else { (g_state.board).white_moves[(g_state.board).score_sheet_row as usize] = -1 }
         side_to_move = 0 + 2 - side_to_move
     }
-    if (g_state.g_config).echo == 0 {
+    if (g_state.config).echo == 0 {
         write!(stdout, "\n");
-        write!(stdout, "Black level: {}\n", (&mut g_state.g_config).skill[0]);
-        write!(stdout, "White level: {}\n", (&mut g_state.g_config).skill[2]);
+        write!(stdout, "Black level: {}\n", (&mut g_state.config).skill[0]);
+        write!(stdout, "White level: {}\n", (&mut g_state.config).skill[2]);
     }
-    if side_to_move == 0 { (g_state.board_state).score_sheet_row += 1 }
-    dump_game_score(side_to_move, (g_state.board_state).score_sheet_row, &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
-    if (g_state.g_config).echo != 0 && (&mut g_state.g_config).one_position_only == 0 {
-        display_state.set_move_list((g_state.board_state).score_sheet_row);
-        display_state.set_times(floor((&mut g_state.g_config).player_time[0]) as i32,
-                  floor((&mut g_state.g_config).player_time[2]) as i32);
-        display_state.display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
-                      1, (&mut g_state.g_config).use_timer, 1,
-                      &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
+    if side_to_move == 0 { (g_state.board).score_sheet_row += 1 }
+    dump_game_score(side_to_move, (g_state.board).score_sheet_row, &(g_state.board).black_moves, &(g_state.board).white_moves);
+    if (g_state.config).echo != 0 && (&mut g_state.config).one_position_only == 0 {
+        display_state.set_move_list((g_state.board).score_sheet_row);
+        display_state.set_times(floor((&mut g_state.config).player_time[0]) as i32,
+                                floor((&mut g_state.config).player_time[2]) as i32);
+        display_state.display_board(&mut stdout, &(g_state.board).board, side_to_move,
+                                    1, (&mut g_state.config).use_timer, 1,
+                                    &(g_state.board).black_moves, &(g_state.board).white_moves);
     }
 }
 

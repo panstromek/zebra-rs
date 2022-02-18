@@ -57,15 +57,15 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
     let book_name = CString::new(book_name).unwrap();
     read_binary_database(book_name.as_ptr(), &mut g_state.g_book);
     game_init(&mut side_to_move, g_state);
-    (g_state.game_state).toggle_human_openings(0);
+    (g_state.game).toggle_human_openings(0);
     display_state.set_names("", "");
     quit = 0;
     while quit == 0 {
         let mut val0: i32 = 0;
         let mut val1: i32 = 0;
         let mut orientation: i32 = 0;
-        display_state.set_move_list((g_state.board_state).score_sheet_row);
-        let opening_name = find_opening_name(&mut (g_state.g_book), &(g_state.board_state).board);
+        display_state.set_move_list((g_state.board).score_sheet_row);
+        let opening_name = find_opening_name(&mut (g_state.g_book), &(g_state.board).board);
         if let Some(opening_name) = opening_name {
             write!(stdout, "\nOpening: {}\n",
                    CStr::from_bytes_with_nul(opening_name).unwrap().to_str().unwrap());
@@ -73,15 +73,15 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
         let val0___ = &mut val0;
         let val1___ = &mut val1;
         let orientation___ = &mut orientation;
-        get_hash(val0___, val1___, orientation___, &mut (g_state.g_book), &(g_state.board_state).board);
-        display_state.display_board(&mut stdout, &(g_state.board_state).board, side_to_move,
-                      1, 0, 0,
-                      &(g_state.board_state).black_moves, &(g_state.board_state).white_moves
+        get_hash(val0___, val1___, orientation___, &mut (g_state.g_book), &(g_state.board).board);
+        display_state.display_board(&mut stdout, &(g_state.board).board, side_to_move,
+                                    1, 0, 0,
+                                    &(g_state.board).black_moves, &(g_state.board).white_moves
         );
         write!(stdout, "Book hash: {} {} ({})\n\n", val0, val1, orientation);
         let evaluated_list = extended_compute_move::<LibcFatalError>(side_to_move, 0,
-                                                1, 6,
-                                                16, 18, (g_state.g_config).echo, g_state);
+                                                                     1, 6,
+                                                                     16, 18, (g_state.config).echo, g_state);
         write!(stdout, "Scores for the {} moves:\n", evaluated_list.get_evaluated_count());
         i = 0;
         while i < evaluated_list.get_evaluated_count() {
@@ -106,42 +106,42 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
             } else {
                 command = move_string.atoi();
 
-                if command >= 1 && command <= g_state.moves_state.disks_played {
+                if command >= 1 && command <= g_state.moves.disks_played {
                     i = 1;
                     while i <= command {
-                        let side_to_move = old_stm[(g_state.moves_state.disks_played - 1) as usize];
-                        let move_0 = move_list[(g_state.moves_state.disks_played - 1) as usize];
+                        let side_to_move = old_stm[(g_state.moves.disks_played - 1) as usize];
+                        let move_0 = move_list[(g_state.moves.disks_played - 1) as usize];
                         {
-                            unmake_move(side_to_move, move_0, &mut (g_state.board_state).board, &mut (g_state.moves_state), &mut (g_state.hash_state), &mut (g_state.flip_stack_));
+                            unmake_move(side_to_move, move_0, &mut (g_state.board).board, &mut (g_state.moves), &mut (g_state.hash), &mut (g_state.flip_stack));
                         };
                         i += 1
                     }
-                    side_to_move = old_stm[(g_state.moves_state).disks_played as usize];
-                    (g_state.board_state).score_sheet_row = row[(g_state.moves_state).disks_played as usize]
+                    side_to_move = old_stm[(g_state.moves).disks_played as usize];
+                    (g_state.board).score_sheet_row = row[(g_state.moves).disks_played as usize]
                 } else if command != 0 {
                     write!(stdout, "Can\'t back up {} moves\n\n", command);
                     repeat = 1
                 } else {
-                    generate_all(side_to_move, &mut (g_state.moves_state), &(g_state.search_state), &(g_state.board_state).board);
+                    generate_all(side_to_move, &mut (g_state.moves), &(g_state.search), &(g_state.board).board);
                     move_0 = (move_string[0] as i32 - 'a' as i32 + 1 + 10 * (move_string[1] as i32 - '0' as i32)) as i8;
                     if move_string[0] as i32 >= 'a' as i32 &&
                         move_string[0] as i32 <= 'h' as i32 &&
                         move_string[1] as i32 >= '1' as i32 &&
                         move_string[1] as i32 <= '8' as i32 &&
-                        valid_move(move_0, side_to_move, &g_state.board_state.board) != 0 {
-                        old_stm[g_state.moves_state.disks_played as usize] = side_to_move;
-                        row[g_state.moves_state.disks_played as usize] = g_state.board_state.score_sheet_row;
-                        move_list[g_state.moves_state.disks_played as usize] = move_0;
+                        valid_move(move_0, side_to_move, &g_state.board.board) != 0 {
+                        old_stm[g_state.moves.disks_played as usize] = side_to_move;
+                        row[g_state.moves.disks_played as usize] = g_state.board.score_sheet_row;
+                        move_list[g_state.moves.disks_played as usize] = move_0;
                         make_move(side_to_move, move_0, 1,
-                                  &mut g_state.moves_state,
-                                  &mut g_state.board_state,
-                                  &mut g_state.hash_state,
-                                  &mut g_state.flip_stack_);
+                                  &mut g_state.moves,
+                                  &mut g_state.board,
+                                  &mut g_state.hash,
+                                  &mut g_state.flip_stack);
                         if side_to_move == 0 {
-                            g_state.board_state.score_sheet_row += 1;
-                            g_state.board_state.black_moves[g_state.board_state.score_sheet_row as usize] = move_0
+                            g_state.board.score_sheet_row += 1;
+                            g_state.board.black_moves[g_state.board.score_sheet_row as usize] = move_0
                         } else {
-                            g_state.board_state.white_moves[g_state.board_state.score_sheet_row as usize] = move_0
+                            g_state.board.white_moves[g_state.board.score_sheet_row as usize] = move_0
                         }
                         side_to_move = 2 - side_to_move
                     } else {

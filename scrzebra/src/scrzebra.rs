@@ -111,12 +111,12 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     fclose(output_stream);
     /* Initialize display subsystem and search parameters */
     display_state.set_names("", "");
-    display_state.set_move_list(g_state.board_state.score_sheet_row);
+    display_state.set_move_list(g_state.board.score_sheet_row);
     display_state.set_evals(0.0f64, 0.0f64);
     i = 0;
     while i < 60 {
-        g_state.board_state.black_moves[i as usize] = -1;
-        g_state.board_state.white_moves[i as usize] = -1;
+        g_state.board.black_moves[i as usize] = -1;
+        g_state.board.white_moves[i as usize] = -1;
         i += 1
     }
     my_time = 100000000;
@@ -132,7 +132,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     reset_counter(&mut script_nodes);
     position_count = 0;
     max_search = -0.0f64;
-    start_time =  g_state.g_timer.get_real_timer();
+    start_time =  g_state.timer.get_real_timer();
     /* Scan through the script file */
     i = 0;
     loop  {
@@ -166,10 +166,10 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             /* Parse the script line containing board and side to move */
             game_init(&mut side_to_move, g_state);
             g_state.g_book.set_slack(0.0f64 as i32);
-            g_state.game_state.toggle_human_openings(0);
+            g_state.game.toggle_human_openings(0);
             reset_book_search(&mut g_state.g_book);
             set_deviation_value(0, 60, 0.0f64, &mut g_state.g_book);
-            setup_hash(1, &mut g_state.hash_state, &mut g_state.random_instance);
+            setup_hash(1, &mut g_state.hash, &mut g_state.random);
             position_count += 1;
             scanned =
                 sscanf(buffer.as_mut_ptr(),
@@ -202,12 +202,12 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                     pos = 10 * row + col;
                     match board_string[token as usize] as i32 {
                         42 | 88 | 120 => {
-                            g_state.board_state.board[pos as usize] = 0
+                            g_state.board.board[pos as usize] = 0
                         }
                         79 | 48 | 111 => {
-                            g_state.board_state.board[pos as usize] = 2
+                            g_state.board.board[pos as usize] = 2
                         }
-                        45 | 46 => { g_state.board_state.board[pos as usize] = 1 }
+                        45 | 46 => { g_state.board.board[pos as usize] = 1 }
                         _ => {
                             write!(stdout, "\nBad character \'{}\' in board on line {} - aborting\n\n",
                                    char::from(board_string[token as usize] as u8), i + 1);
@@ -218,23 +218,23 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 }
                 row += 1
             }
-            g_state.moves_state.disks_played =
-                disc_count(0, &g_state.board_state.board) + disc_count(2, &g_state.board_state.board) -
+            g_state.moves.disks_played =
+                disc_count(0, &g_state.board.board) + disc_count(2, &g_state.board.board) -
                     4;
             /* Search the position */
-            if g_state.g_config.echo != 0 {
-                display_state.set_move_list(g_state.board_state.score_sheet_row);
-                display_state.display_board(&mut stdout, &g_state.board_state.board, side_to_move,
-                              1, 0,
-                              1,
-                              &g_state.board_state.black_moves, &g_state.board_state.white_moves);
+            if g_state.config.echo != 0 {
+                display_state.set_move_list(g_state.board.score_sheet_row);
+                display_state.display_board(&mut stdout, &g_state.board.board, side_to_move,
+                                            1, 0,
+                                            1,
+                                            &g_state.board.black_moves, &g_state.board.white_moves);
             }
-            search_start =  g_state.g_timer.get_real_timer();
-            g_state.g_timer.start_move(my_time as f64, my_incr as f64,
-                                       g_state.moves_state.disks_played + 4);
-            g_state.g_timer.determine_move_time(my_time as f64,
-                                                my_incr as f64,
-                                                g_state.moves_state.disks_played + 4);
+            search_start =  g_state.timer.get_real_timer();
+            g_state.timer.start_move(my_time as f64, my_incr as f64,
+                                     g_state.moves.disks_played + 4);
+            g_state.timer.determine_move_time(my_time as f64,
+                                              my_incr as f64,
+                                              g_state.moves.disks_played + 4);
             pass_count = 0;
             move_0 =
                 legacy_compute_move(side_to_move, 1, my_time, my_incr,
@@ -250,9 +250,9 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                                         1, &mut eval_info, g_state);
                 if move_0 == -(1) {
                     /* Both pass, game over. */
-                    let mut my_discs = disc_count(side_to_move, &g_state.board_state.board);
+                    let mut my_discs = disc_count(side_to_move, &g_state.board.board);
                     let mut opp_discs =
-                        disc_count(0 + 2 - side_to_move, &g_state.board_state.board);
+                        disc_count(0 + 2 - side_to_move, &g_state.board.board);
                     if my_discs > opp_discs {
                         my_discs = 64 - opp_discs
                     } else if opp_discs > my_discs {
@@ -267,11 +267,11 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 }
             }
             score = eval_info.score / 128;
-            search_stop =  g_state.g_timer.get_real_timer();
+            search_stop =  g_state.timer.get_real_timer();
             if search_stop - search_start > max_search {
                 max_search = search_stop - search_start
             }
-            add_counter(&mut script_nodes, &mut g_state.search_state.nodes);
+            add_counter(&mut script_nodes, &mut g_state.search.nodes);
             output_stream =
                 fopen(out_file_name,
                       b"a\x00" as *const u8 as *const i8);
@@ -322,10 +322,10 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                           output_stream);
                 }
                 j = 0;
-                while j < g_state.search_state.full_pv_depth {
+                while j < g_state.search.full_pv_depth {
                     fputs(b" \x00" as *const u8 as *const i8,
                           output_stream);
-                    display_move(&mut output_stream, g_state.search_state.full_pv[j as usize]);
+                    display_move(&mut output_stream, g_state.search.full_pv[j as usize]);
                     j += 1
                 }
             }
@@ -342,7 +342,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                       output_stream);
             }
             fclose(output_stream);
-            if g_state.g_config.echo != 0 {
+            if g_state.config.echo != 0 {
                 puts(b"\n\n\n\x00" as *const u8 as *const i8);
             }
         }
@@ -350,7 +350,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     }
     /* Clean up and terminate */
     fclose(script_stream);
-    stop_time =  (&mut g_state.g_timer).get_real_timer();
+    stop_time =  (&mut g_state.timer).get_real_timer();
     write!(stdout, "Total positions solved:   {}\n", position_count);
     write!(stdout, "Total time:               {:.1} s\n", stop_time - start_time);
     write!(stdout, "Total nodes:              {:.0}\n", counter_value(&mut script_nodes));
@@ -383,8 +383,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     static src: LibcTimeSource = LibcTimeSource {};
     let mut full_state = FullState::new(&src);
     let g_state: &mut FullState = &mut full_state;
-    let mut g_config = &mut g_state.g_config;
-    let mut game_state = &mut g_state.game_state;
+    let mut g_config = &mut g_state.config;
+    let mut game_state = &mut g_state.game;
     g_config.echo = 1;
     g_config.display_pv = 1;
     use_learning = 0;
@@ -556,10 +556,10 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     if use_random != 0 && 1 == 0 {
         time(&mut timer);
         let x = timer as i32;
-        g_state.random_instance.my_srandom(x);
+        g_state.random.my_srandom(x);
     } else {
         let x = 1;
-        g_state.random_instance.my_srandom(x); }
+        g_state.random.my_srandom(x); }
     if run_script != 0 {
         run_endgame_script(script_in_file, script_out_file,
                            script_optimal_line, g_state);

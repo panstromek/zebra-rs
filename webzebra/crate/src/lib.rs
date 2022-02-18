@@ -93,31 +93,31 @@ impl ZebraGame {
         let state = &mut zebra.game.g_state;
 
         engine_global_setup::<_, WasmFrontend>(0, 18, None, coeffs,
-                                               &mut state.search_state
-                                               , &mut state.hash_state
-                                               , &mut state.g_timer
-                                               , &mut state.coeff_state
-                                               , &mut state.random_instance
-                                               , &mut state.stable_state
+                                               &mut state.search
+                                               , &mut state.hash
+                                               , &mut state.timer
+                                               , &mut state.coeff
+                                               , &mut state.random
+                                               , &mut state.stable
                                                , &mut state.prob_cut);
 
-        set_default_engine_globals(&mut state.g_config);
-        state.g_config.use_book = 0;
-        state.g_config.use_thor = false;
+        set_default_engine_globals(&mut state.config);
+        state.config.use_book = 0;
+        state.config.use_thor = false;
 
         // // init_thor_database::<WasmFrontend>();
         //
         let x = 1;
-        state.random_instance.my_srandom(x);
-        if state.g_config.skill[0] < 0 {
-            state.g_config.skill[0] = 6;
-            state.g_config.exact_skill[0] = 6;
-            state.g_config.wld_skill[0] = 6;
+        state.random.my_srandom(x);
+        if state.config.skill[0] < 0 {
+            state.config.skill[0] = 6;
+            state.config.exact_skill[0] = 6;
+            state.config.wld_skill[0] = 6;
         }
-        if state.g_config.skill[2] < 0 {
-            state.g_config.skill[2] = 0;
-            state.g_config.exact_skill[2] = 0;
-            state.g_config.wld_skill[2] = 0;
+        if state.config.skill[2] < 0 {
+            state.config.skill[2] = 0;
+            state.config.exact_skill[2] = 0;
+            state.config.wld_skill[2] = 0;
         }
         return zebra;
     }
@@ -185,14 +185,14 @@ impl ZebraGame {
             ((BLACKSQ + WHITESQ) - (color))
         }
         let side_to_move = &mut self.game.side_to_move;
-        let score_sheet_row = &mut self.game.g_state.board_state.score_sheet_row;
+        let score_sheet_row = &mut self.game.g_state.board.score_sheet_row;
 
         if *score_sheet_row == 0 && *side_to_move == BLACKSQ {
             generate_all(*side_to_move,
-                         &mut self.game.g_state.moves_state,
-                         &mut self.game.g_state.search_state,
-                         &mut self.game.g_state.board_state.board);
-            display_board(&self.game.g_state.board_state.board);
+                         &mut self.game.g_state.moves,
+                         &mut self.game.g_state.search,
+                         &mut self.game.g_state.board.board);
+            display_board(&self.game.g_state.board.board);
 
             return None;
         }
@@ -200,8 +200,8 @@ impl ZebraGame {
         let auto_make_forced_moves = false;
 
         // _droidzebra_undo_stack_push(disks_played);
-        let mut white_moves = &mut self.game.g_state.board_state.white_moves;
-        let mut black_moves = &mut self.game.g_state.board_state.black_moves;
+        let mut white_moves = &mut self.game.g_state.board.white_moves;
+        let mut black_moves = &mut self.game.g_state.board.black_moves;
         loop {
             *side_to_move = OPP(*side_to_move);
 
@@ -210,9 +210,9 @@ impl ZebraGame {
             }
             let score_sheet_row = *score_sheet_row;
             human_can_move =
-                self.game.g_state.g_config.skill[(*side_to_move) as usize] == 0 &&
+                self.game.g_state.config.skill[(*side_to_move) as usize] == 0 &&
                     !(
-                        (auto_make_forced_moves && self.game.g_state.moves_state.move_count[self.game.g_state.moves_state.disks_played as usize - 1] == 1)
+                        (auto_make_forced_moves && self.game.g_state.moves.move_count[self.game.g_state.moves.disks_played as usize - 1] == 1)
                             || (*side_to_move==WHITESQ && white_moves[score_sheet_row as usize]==PASS)
                             || (*side_to_move==BLACKSQ && black_moves[score_sheet_row as usize]==PASS)
                     );
@@ -222,10 +222,10 @@ impl ZebraGame {
                 if white_moves[score_sheet_row as usize]!=PASS {
                     unmake_move(WHITESQ,
                                 white_moves[score_sheet_row as usize],
-                                &mut self.game.g_state.board_state.board,
-                                &mut self.game.g_state.moves_state,
-                                &mut self.game.g_state.hash_state,
-                                &mut self.game.g_state.flip_stack_
+                                &mut self.game.g_state.board.board,
+                                &mut self.game.g_state.moves,
+                                &mut self.game.g_state.hash,
+                                &mut self.game.g_state.flip_stack
                     );
 
                 }
@@ -234,10 +234,10 @@ impl ZebraGame {
                 curr_move = black_moves[score_sheet_row as usize];
                 if black_moves[score_sheet_row as usize] != PASS {
                     unmake_move(BLACKSQ, black_moves[score_sheet_row as usize],
-                                &mut self.game.g_state.board_state.board,
-                                &mut self.game.g_state.moves_state,
-                                &mut self.game.g_state.hash_state,
-                                &mut self.game.g_state.flip_stack_);
+                                &mut self.game.g_state.board.board,
+                                &mut self.game.g_state.moves,
+                                &mut self.game.g_state.hash,
+                                &mut self.game.g_state.flip_stack);
                 }
                 black_moves[score_sheet_row as usize] = PASS;
             }
@@ -255,12 +255,12 @@ impl ZebraGame {
         }
 
         generate_all(*side_to_move,
-                     &mut self.game.g_state.moves_state,
-                     &mut self.game.g_state.search_state,
-                     &mut self.game.g_state.board_state.board);
+                     &mut self.game.g_state.moves,
+                     &mut self.game.g_state.search,
+                     &mut self.game.g_state.board.board);
         // set_move_list?
         // TODO find and display opening name?
-        display_board(&self.game.g_state.board_state.board);
+        display_board(&self.game.g_state.board.board);
 
         // Where does this fn + field come from?
         // It wasn't in the original C code but it's in the Android C code
@@ -270,7 +270,7 @@ impl ZebraGame {
 
     #[wasm_bindgen]
     pub fn get_board(&self) -> Box<[i32]> {
-        self.game.g_state.board_state.board.into()
+        self.game.g_state.board.board.into()
     }
     #[wasm_bindgen]
     pub fn set_skills(
@@ -283,12 +283,12 @@ impl ZebraGame {
         white_wld_skill: i32,
     ) {
         let state = &mut self.game.g_state;
-        state.g_config.skill[0] = black_skill;
-        state.g_config.exact_skill[0] = black_exact_skill;
-        state.g_config.wld_skill[0] = black_wld_skill;
-        state.g_config.skill[2] = white_skill;
-        state.g_config.exact_skill[2] = white_exact_skill;
-        state.g_config.wld_skill[2] = white_wld_skill;
+        state.config.skill[0] = black_skill;
+        state.config.exact_skill[0] = black_exact_skill;
+        state.config.wld_skill[0] = black_wld_skill;
+        state.config.skill[2] = white_skill;
+        state.config.exact_skill[2] = white_exact_skill;
+        state.config.wld_skill[2] = white_wld_skill;
     }
 }
 
@@ -301,12 +301,12 @@ impl ZebraGame {
         match state {
             PlayGameState::GetPass { provided_move_count } => {
                 // TODO signal this to frontend
-                display_board(&play_state.g_state.board_state.board);
+                display_board(&play_state.g_state.board.board);
 
                 return Some(InteractionRequest::Pass);
             }
             PlayGameState::GettingMove { provided_move_count, move_start, side_to_move } => {
-                display_board(&play_state.g_state.board_state.board);
+                display_board(&play_state.g_state.board.board);
                 c_log!("Computing evals");
                 droidzebra_msg_candidate_evals(self.compute_evals(side_to_move));
                 // TODO signal that we need move
@@ -314,21 +314,21 @@ impl ZebraGame {
                 return Some(InteractionRequest::Move);
             }
             PlayGameState::AfterGameReport { node_val, eval_val } => {
-                display_board(&play_state.g_state.board_state.board);
+                display_board(&play_state.g_state.board.board);
 
                 // TODO report game score?
                 // TODO display
-                let black_disc_count = disc_count(0, &play_state.g_state.board_state.board);
-                let white_disc_count = disc_count(2, &play_state.g_state.board_state.board);
-                let total_time_ = play_state.g_state.search_state.total_time;
+                let black_disc_count = disc_count(0, &play_state.g_state.board.board);
+                let white_disc_count = disc_count(2, &play_state.g_state.board.board);
+                let total_time_ = play_state.g_state.search.total_time;
                 report_after_game_ended(node_val, eval_val, black_disc_count, white_disc_count, total_time_);
             }
             PlayGameState::End => {
-                display_board(&play_state.g_state.board_state.board);
+                display_board(&play_state.g_state.board.board);
                 return Some(InteractionRequest::End);
             }
             PlayGameState::NeedsDump { .. } => {
-                display_board(&play_state.g_state.board_state.board);
+                display_board(&play_state.g_state.board.board);
             }
             _ => {}
         };
@@ -337,15 +337,15 @@ impl ZebraGame {
     // ported from droidzebra (_droidzebra_compute_evals) - todo richer attribution
     pub fn compute_evals(&mut self, side_to_move: i32) -> EvaluatedList {
         let stored_slack = self.game.g_state.g_book.max_slack;
-        let stored_perturbation = self.game.g_state.midgame_state.perturbation_amplitude;
-        let stored_human_opening = self.game.g_state.game_state.play_human_openings;
+        let stored_perturbation = self.game.g_state.midgame.perturbation_amplitude;
+        let stored_human_opening = self.game.g_state.game.play_human_openings;
 
         self.game.g_state.g_book.set_slack(0);
-        self.game.g_state.midgame_state.set_perturbation(0);
-        self.game.g_state.game_state.toggle_human_openings(0);
+        self.game.g_state.midgame.set_perturbation(0);
+        self.game.g_state.game.toggle_human_openings(0);
         // set_forced_opening( NULL );// TODO??
-        let stored_pv = self.game.g_state.search_state.full_pv;
-        let stored_pv_depth = self.game.g_state.search_state.full_pv_depth;
+        let stored_pv = self.game.g_state.search.full_pv;
+        let stored_pv_depth = self.game.g_state.search.full_pv_depth;
 
         let evals = extended_compute_move::<WasmComputeMoveLogger,WasmFrontend , WasmFrontend, WasmThor>(side_to_move, 0, 1,
                                           //fixme which ones should these be?
@@ -354,13 +354,13 @@ impl ZebraGame {
                                           8 /*self.game.g_state.g_config.wld_skill[0]*/,
                                           1, &mut self.game.g_state,
         );
-        self.game.g_state.search_state.full_pv = stored_pv;
-        self.game.g_state.search_state.full_pv_depth = stored_pv_depth;
+        self.game.g_state.search.full_pv = stored_pv;
+        self.game.g_state.search.full_pv_depth = stored_pv_depth;
         self.game.g_state.g_book.set_slack(stored_slack);
-        self.game.g_state.midgame_state.set_perturbation(stored_perturbation);
-        self.game.g_state.game_state.toggle_human_openings(stored_human_opening);
+        self.game.g_state.midgame.set_perturbation(stored_perturbation);
+        self.game.g_state.game.toggle_human_openings(stored_human_opening);
         // set_forced_opening( s_forced_opening_seq );
-        display_board(&self.game.g_state.board_state.board);
+        display_board(&self.game.g_state.board.board);
         return evals;
         // display_status(stdout, FALSE);
     }
