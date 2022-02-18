@@ -764,7 +764,7 @@ fn play_game(mut file_name: &str,
                 return play_state.g_state;
             }
             PlayGameState::Dumpch { provided_move_count, move_start } => {
-                ZF::dumpch(&mut stdin_lock);
+                dumpch(&mut stdin_lock);
             }
             PlayGameState::GetPass { provided_move_count } => {
                 ZF::get_pass(&mut stdin_lock);
@@ -1013,10 +1013,6 @@ impl LibcFrontend {
 
     fn report_opening_name(opening_name: &CStr) {
         write!(stdout, "\nOpening: {}\n", opening_name.to_str().unwrap());
-    }
-
-    fn dumpch(stdin_lock : &mut StdinLock) {
-        dumpch(stdin_lock)
     }
 }
 impl ZebraFrontend for LibcFrontend {
