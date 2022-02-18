@@ -1219,8 +1219,7 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
                                         1, &mut played_info1, g_state)
             }
             reset_counter(&mut (&mut g_state.search_state).nodes);
-            resp_move =
-                legacy_compute_move(opponent, 0,
+            resp_move = legacy_compute_move(opponent, 0,
                                     (&mut g_state.g_config).player_time[opponent as usize] as i32,
                                     (&mut g_state.g_config).player_increment[opponent as usize] as i32,
                                     timed_search, (&mut g_state.g_config).use_book,
@@ -1273,8 +1272,7 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
             } else if curr_move == provided_move[(g_state.moves_state).disks_played as usize] && resp_move != -1 {
                 write!(output_stream, "{:6.2}", -(played_info1.score + played_info2.score) as f64 / (2. * 128.0f64));
             } else {
-                write!(output_stream, "{:6.2}",
-                       (best_info1.score + best_info2.score) as f64 / (2. * 128.0f64));
+                write!(output_stream, "{:6.2}", (best_info1.score + best_info2.score) as f64 / (2. * 128.0f64));
             }
             curr_move = provided_move[(g_state.moves_state).disks_played as usize];
             write!(output_stream, "       {} ", TO_SQUARE(curr_move));
@@ -1340,14 +1338,13 @@ impl LibcDumpHandler {
        Saves the current board position to disk.
     */
     fn dump_position(side_to_move: i32, board_: &[i32; 128]) {
-        let mut i: i32 = 0;
-        let mut j: i32 = 0;
         // let mut stream = 0 as *mut FILE;
         let mut stream = File::create("current.gam").unwrap_or_else(|_| {
-            { fatal_error!("File creation error when writing CURRENT.GAM\n"); }
+            fatal_error!("File creation error when writing CURRENT.GAM\n");
         });
 
-        i = 1;
+    let mut i: i32 = 1;
+        let mut j: i32 = 0;
         while i <= 8 {
             j = 1;
             while j <= 8 {
@@ -1378,13 +1375,11 @@ impl LibcDumpHandler {
     */
     fn dump_game_score(side_to_move: i32, score_sheet_row_: i32,
                        black_moves_: &[i8; 60], white_moves_: &[i8; 60]) {
-        let mut i: i32 = 0;
-
         let mut stream = File::create("current.mov").unwrap_or_else(|_| {
             fatal_error!("File creation error when writing CURRENT.MOV\n");
         });
 
-        i = 0;
+        let mut i: i32 = 0;
         while i <= score_sheet_row_ {
             write!(stream, "   {: >2}.    ", i + 1);
             if black_moves_[i as usize] == -1 {
@@ -1393,8 +1388,7 @@ impl LibcDumpHandler {
                 write!(stream, "{}", TO_SQUARE(black_moves_[i as usize]));
             }
             write!(stream, "  ");
-            if i < score_sheet_row_ ||
-                i == score_sheet_row_ && side_to_move == 0 {
+            if i < score_sheet_row_ || i == score_sheet_row_ && side_to_move == 0 {
                 if white_moves_[i as usize] == -1 {
                     write!(stream, "- ");
                 } else {
