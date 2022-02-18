@@ -1061,7 +1061,7 @@ impl ZebraFrontend for LibcFrontend {
         /* No error checking done as it's only for testing purposes */
         let database_start =  g_timer.get_real_timer();
         read_player_database("thor/wthor.jou");
-        read_tournament_database(b"thor/wthor.trn\x00" as *const u8 as *const i8);
+        read_tournament_database("thor/wthor.trn");
         read_game_database("thor/wth_2001.wtb");
         read_game_database("thor/wth_2000.wtb");
         read_game_database("thor/wth_1999.wtb");

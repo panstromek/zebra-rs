@@ -1,4 +1,3 @@
-use libc_wrapper::{fclose, fopen};
 use crate::src::error::LibcFatalError;
 use engine::src::stubs::abs;
 use thordb_types::{Int8, Int16, Int32, OpeningNodeRef, ThorOpeningTree};
@@ -279,17 +278,17 @@ fn sort_tournament_database(db: &mut [TournamentType]) {
   Returns TRUE if all went well, otherwise FALSE.
 */
 
-pub unsafe fn read_tournament_database(file_name:
-                                                      *const i8)
+pub unsafe fn read_tournament_database(file_name: &str)
  -> i32 {
     let mut i: i32 = 0;
     let mut success: i32 = 0;
     let mut actually_read: i32 = 0;
     let mut buffer_size: i32 = 0;
-    let mut stream = fopen(file_name, b"rb\x00" as *const u8 as *const i8);
-    if stream.is_null() { return 0 }
+    let mut stream = match File::open(file_name) {
+        Ok(s) => s,
+        Err(_) => return 0
+    };
     if read_prolog(&mut stream, &mut tournaments.prolog) == 0 {
-        fclose(stream);
         return 0
     }
     let tournaments_count = tournaments.prolog.item_count;
@@ -300,7 +299,7 @@ pub unsafe fn read_tournament_database(file_name:
     actually_read = stream.read(&mut name_buffer).unwrap()/*.map_or(0, |_| name_buffer.len())*/ as i32;
     tournaments.name_buffer = Vec::leak(name_buffer);
     success = (actually_read == buffer_size) as i32;
-    fclose(stream);
+    drop(stream);
     if success != 0 {
         tournaments.tournament_list.resize(tournaments_count as usize, TournamentType {
             lex_order: 0,
