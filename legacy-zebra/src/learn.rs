@@ -1,6 +1,5 @@
 use engine::src::game::generic_game_init;
 use engine::src::moves::{generate_all, make_move};
-use libc_wrapper::{fclose, fopen};
 
 use crate::src::error::{LibcFatalError};
 use crate::src::game::{game_init, BasicBoardFileSource};
@@ -9,6 +8,7 @@ use crate::src::zebra::FullState;
 #[macro_use]
 use crate::fatal_error;
 use std::ffi::CStr;
+use std::fs::File;
 use crate::src::display::TO_SQUARE;
 
 /*
@@ -101,10 +101,8 @@ pub unsafe fn full_learn_public_game(moves: &[i32],
                                                 wld: i32, echo:i32, g_state: &mut FullState) {
     use std::io::Write;
     let length = moves.len();
-    let mut stream =
-        fopen(b"learn.log\x00" as *const u8 as *const i8,
-              b"a\x00" as *const u8 as *const i8);
-    if !stream.is_null() {
+    let mut stream = File::options().create(true).append(true).open("learn.log");
+    if let Ok (mut stream) = stream {
         /* Write the game learned to a log file. */
         let mut i = 0;
         while i < length {
@@ -113,7 +111,7 @@ pub unsafe fn full_learn_public_game(moves: &[i32],
             i += 1
         }
         write!(stream, "\n");
-        fclose(stream);
+        drop(stream);
     }
     ( g_state.g_timer).clear_panic_abort();
     ( g_state.g_timer).toggle_abort_check(0);
