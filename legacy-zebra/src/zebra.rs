@@ -767,7 +767,8 @@ fn play_game(mut file_name: &str,
                 dumpch(&mut stdin_lock);
             }
             PlayGameState::GetPass { provided_move_count } => {
-                ZF::get_pass(&mut stdin_lock);
+                write!(stdout, "You must pass - please press Enter\n");
+                dumpch(&mut stdin_lock);
             }
             PlayGameState::GettingMove { provided_move_count, move_start, side_to_move } => {
                 let res = ZF::prompt_get_move(side_to_move, &mut stdin_lock);
@@ -950,11 +951,6 @@ impl LibcFrontend {
                 drop(log_file);
             }
         }
-    }
-
-    fn get_pass(stdin_lock: &mut StdinLock) {
-        write!(stdout, "You must pass - please press Enter\n");
-        dumpch(stdin_lock);
     }
 
     fn prompt_get_move(side_to_move: i32, stdin_lock : &mut StdinLock) -> (i32, i32) {
