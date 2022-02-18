@@ -1448,8 +1448,7 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                   mut prob_cut: &mut ProbCut,
                                   mut g_timer: &mut Timer,
                                   mut midgame_state: &mut MidgameState,
-)
-                                         -> i8 {
+) -> i8 {
     let mut adjusted_val: i32;
     let mut alpha: i32;
     let mut beta: i32;
@@ -1457,24 +1456,15 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
     let mut entry = HashEntry::new();
     g_timer.last_panic_check = 0.0f64;
     midgame_state.counter_phase = 0;
-    board_state.piece_count[0][moves_state.disks_played as usize] =
-        disc_count(0, &board_state.board);
-    board_state.piece_count[2][moves_state.disks_played as usize] =
-        disc_count(2, &board_state.board);
-    let base_stage =
-        disc_count(0, &board_state.board) + disc_count(2, &board_state.board) -
-            4;
+    board_state.piece_count[0][moves_state.disks_played as usize] = disc_count(0, &board_state.board);
+    board_state.piece_count[2][moves_state.disks_played as usize] = disc_count(2, &board_state.board);
+    let base_stage = disc_count(0, &board_state.board) + disc_count(2, &board_state.board) - 4;
     let mut val = 0;
     let mut old_val = --(27000);
     let enable_mpc = (max_depth >= 9) as i32;
-    let initial_depth =
-        if 1 > max_depth - 2 {
-            1
-        } else { (max_depth) - 2 };
+    let initial_depth = if 1 > max_depth - 2 { 1 } else { max_depth - 2 };
     let initial_depth = max_depth;
-    *eval_info =
-        create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION, 0,
-                         0.0f64, 0, 0);
+    *eval_info = create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION, 0, 0.0f64, 0, 0);
     let mut depth = initial_depth;
     while depth <= max_depth {
         alpha = -(12345678);
@@ -1491,8 +1481,7 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                                  &mut coeff_state, &mut prob_cut,
                                                  &mut g_timer, midgame_state)
         } else if enable_mpc != 0 {
-            val =
-                root_tree_search::<FE>(0, depth, side_to_move, alpha,
+            val = root_tree_search::<FE>(0, depth, side_to_move, alpha,
                                  beta, 1, 1,
                                  1, echo,  &mut moves_state ,
                                        &mut search_state ,
@@ -1501,14 +1490,11 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                        &mut flip_stack_,
                                        &mut coeff_state, &mut prob_cut,
                                        &mut g_timer, midgame_state);
-            if force_return == 0 && g_timer.is_panic_abort() == 0 &&
-                (val <= alpha || val >= beta) {
-                val =
-                    root_tree_search::<FE>(0, depth, side_to_move,
-                                     -(12345678),
-                                     12345678,
-                                     1, 1,
-                                     1, echo,  &mut moves_state ,
+            if force_return == 0 && g_timer.is_panic_abort() == 0 && (val <= alpha || val >= beta) {
+                val = root_tree_search::<FE>(0, depth, side_to_move,
+                                     -(12345678), 12345678,
+                                     1, 1, 1,
+                                             echo,  &mut moves_state ,
                                            &mut search_state ,
                                            &mut board_state ,
                                            &mut hash_state,
@@ -1517,8 +1503,7 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                            &mut g_timer, midgame_state)
             }
         } else {
-            val =
-                root_tree_search::<FE>(0, depth, side_to_move, alpha,
+            val = root_tree_search::<FE>(0, depth, side_to_move, alpha,
                                  beta, 1, 0,
                                  1, echo,  &mut moves_state ,
                                        &mut search_state ,
@@ -1529,48 +1514,36 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
                                        &mut g_timer, midgame_state);
             if g_timer.is_panic_abort() == 0 && force_return == 0 {
                 if val <= alpha {
-                    val =
-                        root_tree_search::<FE>(0, depth,
-                                         side_to_move,
-                                         -(29000), alpha,
-                                         1, 0,
-                                         1, echo,  &mut moves_state ,
-                                               &mut search_state ,
-                                               &mut board_state ,
-                                               &mut hash_state,
-                                               &mut flip_stack_,
-                                               &mut coeff_state, &mut prob_cut,
-                                               &mut g_timer, midgame_state)
+                    val = root_tree_search::<FE>(0, depth, side_to_move,
+                                                 -(29000), alpha, 1, 0,
+                                                 1, echo, &mut moves_state, &mut search_state,
+                                                 &mut board_state, &mut hash_state,
+                                                 &mut flip_stack_, &mut coeff_state, &mut prob_cut,
+                                                 &mut g_timer, midgame_state)
                 } else if val >= beta {
-                    val =
-                        root_tree_search::<FE>(0, depth,
-                                         side_to_move, beta,
-                                         29000,
-                                         1, 0,
-                                         1, echo,  &mut moves_state ,
-                                               &mut search_state ,
-                                               &mut board_state ,
-                                               &mut hash_state,
-                                               &mut flip_stack_,
-                                               &mut coeff_state, &mut prob_cut,
-                                               &mut g_timer, midgame_state)
+                    val = root_tree_search::<FE>(0, depth, side_to_move, beta,
+                                                 29000, 1, 0,
+                                                 1, echo, &mut moves_state,
+                                                 &mut search_state, &mut board_state,
+                                                 &mut hash_state, &mut flip_stack_,
+                                                 &mut coeff_state, &mut prob_cut,
+                                                 &mut g_timer, midgame_state)
                 }
             }
         }
         /* Adjust scores and PV if search is aborted */
         if g_timer.is_panic_abort() != 0 || force_return != 0 {
-            board_state.pv[0][0] =
-                midgame_state.best_mid_root_move;
+            board_state.pv[0][0] = midgame_state.best_mid_root_move;
             board_state.pv_depth[0] = 1;
             hash_expand_pv(side_to_move, 0, 4, 12345678, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
-            if base_stage + depth - 2 >= 0 &&
-                midgame_state.stage_reached[(base_stage + depth - 2) as
-                    usize] != 0 {
-                val =
-                    midgame_state.stage_score[(base_stage + depth - 2) as
-                        usize];
-                if side_to_move == 2 { val = -val }
-            } else { val = old_val }
+            if base_stage + depth - 2 >= 0 && midgame_state.stage_reached[(base_stage + depth - 2) as usize] != 0 {
+                val = midgame_state.stage_score[(base_stage + depth - 2) as usize];
+                if side_to_move == 2 {
+                    val = -val
+                }
+            } else {
+                val = old_val
+            }
         }
         /* Check if the search info corresponds to a variation of
            depth exactly DEPTH which would mean that the search
@@ -1590,61 +1563,50 @@ pub fn middle_game<FE : FrontEnd>(side_to_move: i32,
             midgame_state.stage_reached[(base_stage + depth) as usize] = 1;
             if side_to_move == 0 {
                 midgame_state.stage_score[(base_stage + depth) as usize] = val
-            } else { midgame_state.stage_score[(base_stage + depth) as usize] = -val }
+            } else {
+                midgame_state.stage_score[(base_stage + depth) as usize] = -val
+            }
         }
         /* Adjust the eval for oscillations odd/even by simply averaging the
            last two stages (if they are available). */
         if *midgame_state.stage_reached.get((base_stage + depth) as usize).unwrap_or(&0) != 0 &&
-            midgame_state.stage_reached[(base_stage + depth - 1) as usize]
-                != 0 && update_evals != 0 {
+            midgame_state.stage_reached[(base_stage + depth - 1) as usize] != 0 &&
+            update_evals != 0
+        {
             if side_to_move == 0 {
-                adjusted_val =
-                    (midgame_state.stage_score[(base_stage + depth) as usize] +
-                        midgame_state.stage_score[(base_stage + depth - 1)
-                            as usize]) / 2
+                adjusted_val = (midgame_state.stage_score[(base_stage + depth) as usize] +
+                    midgame_state.stage_score[(base_stage + depth - 1) as usize]) / 2
             } else {
-                adjusted_val =
-                    -(midgame_state.stage_score[(base_stage + depth) as usize] +
-                        midgame_state.stage_score[(base_stage + depth - 1)
-                            as usize]) / 2
+                adjusted_val = -(midgame_state.stage_score[(base_stage + depth) as usize] +
+                    midgame_state.stage_score[(base_stage + depth - 1) as usize]) / 2
             }
         } else if depth == initial_depth {
             adjusted_val = val
-        } else { adjusted_val = (val + old_val) / 2 }
+        } else {
+            adjusted_val = (val + old_val) / 2
+        }
         /* In case the search reached the end of the game, the score
            must be converted into an endgame score */
         if val >= 29000 {
-            *eval_info =
-                create_eval_info(EXACT_EVAL, WON_POSITION,
-                                 (val - 29000) *
-                                     128, 0.0f64, depth,
-                                 0)
+            *eval_info = create_eval_info(EXACT_EVAL, WON_POSITION, (val - 29000) * 128, 0.0f64, depth, 0)
         } else if val <= -(29000) {
-            *eval_info =
-                create_eval_info(EXACT_EVAL, LOST_POSITION,
-                                 (val + 29000) *
-                                     128, 0.0f64, depth,
-                                 0)
+            *eval_info = create_eval_info(EXACT_EVAL, LOST_POSITION, (val + 29000) * 128, 0.0f64, depth, 0)
         } else {
-            *eval_info =
-                create_eval_info(MIDGAME_EVAL, UNSOLVED_POSITION,
-                                 adjusted_val, 0.0f64, depth,
-                                 0)
+            *eval_info = create_eval_info(MIDGAME_EVAL, UNSOLVED_POSITION, adjusted_val, 0.0f64, depth, 0)
         }
         /* Display and store search info */
         if depth == max_depth {
-            FE::midgame_display_status(side_to_move, max_depth, eval_info, depth,
-                                       force_return != 0,
+            FE::midgame_display_status(side_to_move, max_depth, eval_info, depth, force_return != 0,
                                        g_timer, moves_state, board_state, hash_state, search_state, flip_stack_)
         }
-        if g_timer.is_panic_abort() != 0 || force_return != 0 { break ; }
+        if g_timer.is_panic_abort() != 0 || force_return != 0 {
+            break;
+        }
         /* Check if search time or adjusted search time are long enough
            for the search to be discontinued */
         old_val = adjusted_val;
         if midgame_state.do_check_midgame_abort != 0 {
-            if  g_timer.above_recommended() != 0 ||
-                 g_timer.extended_above_recommended() != 0 &&
-                    depth >= g_timer.frozen_ponder_depth {
+            if g_timer.above_recommended() != 0 || g_timer.extended_above_recommended() != 0 && depth >= g_timer.frozen_ponder_depth {
                 midgame_state.set_midgame_abort();
                 break ;
             }
