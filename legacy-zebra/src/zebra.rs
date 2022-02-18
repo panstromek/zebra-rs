@@ -24,10 +24,7 @@ use engine::src::zebra::{Config, EvaluationType, InitialMoveSource, set_default_
 use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WINS};
 use engine::src::zebra::EvalResult::{LOST_POSITION, WON_POSITION};
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
-
-
-use libc_wrapper::{fclose, fopen, scanf, stdout, time, c_time, time_t};
-
+use libc_wrapper::{scanf, stdout, time, c_time, time_t};
 use crate::src::display::{dumpch, display_state, TO_SQUARE};
 use crate::src::error::{FE, LibcFatalError};
 use crate::src::game::{legacy_compute_move, global_setup, BasicBoardFileSource, LibcZebraOutput, LogFileHandler};
@@ -1137,12 +1134,10 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
         }
     }
     /* Open the output log file */
-    let mut output_stream =
-        fopen(b"analysis.log\x00" as *const u8 as *const i8,
-              b"w\x00" as *const u8 as *const i8);
-    if output_stream.is_null() {
-        fatal_error!("Can\'t create log file analysis.log - aborting");
-    }
+    let mut output_stream = match File::options().create(true).write(true).truncate(true).open("analysis.log") {
+        Ok(s) => s,
+        Err(_) => fatal_error!("Can\'t create log file analysis.log - aborting")
+    };
     /* Set up the position and the search engine */
     if (&mut g_state.g_config).echo != 0 {
         write!(stdout, "Analyzing provided game...\n");
@@ -1336,7 +1331,6 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
                       1, (&mut g_state.g_config).use_timer, 1,
                       &(g_state.board_state).black_moves, &(g_state.board_state).white_moves);
     }
-    fclose(output_stream);
 }
 
 struct LibcDumpHandler;
