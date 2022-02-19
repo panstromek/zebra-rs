@@ -44,18 +44,14 @@ jobs:
             ~/.crates2.json
           key: ${{ runner.os }}-cargo-binaries
 
-    - uses: actions-rs/install@v0.1
-      with:
-          crate: cargo-binutils
-          version: latest
+    - name: Install Binutils
+      run: cargo install cargo-binutils || cargo install cargo-binutils --force
 
     - name: Install Wasm Pack
-      uses: actions-rs/install@v0.1
-      with:
-          crate: wasm-pack
-          version: 0.10.2
+      run: cargo install wasm-pack || cargo install wasm-pack --force
 
-    - uses: Swatinem/rust-cache@v1
+    - name: Cache Rust Dependencies
+      uses: Swatinem/rust-cache@v1
 
     - name: Build and run tests
       run: bash ./run-tests.sh
