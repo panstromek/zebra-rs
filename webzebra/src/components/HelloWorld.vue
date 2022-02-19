@@ -95,20 +95,20 @@ export default defineComponent({
   },
   data() {
     const board = Array(128).fill(1);
-    board[54] = 0;
-    board[45] = 0;
-    board[55] = 2;
-    board[44] = 2;
+    // board[54] = 0;
+    // board[45] = 0;
+    // board[55] = 2;
+    // board[44] = 2;
     return {
       board: board,
       waitingForMove: false,
       waitingForPass: false,
-      black_skill: 6,
-      black_exact_skill: 6,
-      black_wld_skill: 6,
-      white_skill: 6,
-      white_exact_skill: 6,
-      white_wld_skill: 6,
+      black_skill: 0,
+      black_exact_skill: 0,
+      black_wld_skill: 0,
+      white_skill: 0,
+      white_exact_skill: 0,
+      white_wld_skill: 0,
       practiceMode: true,
       evals: []
     }
@@ -161,6 +161,7 @@ export default defineComponent({
       this.worker.postMessage([Message.SetSkill, numbers])
     },
     newGame() {
+      this.setSkills()
       this.worker.postMessage([Message.NewGame])
     },
     clickBoard(e: MouseEvent) {
