@@ -40,4 +40,5 @@ jobs:
       run: bash ./run-tests.sh
 
     - name: Build Rust WebZebra crate
-      run: cd webzebra/crate && wasm-pack build --target web --release
+      working-directory: ./webzebra/crate
+      run: wasm-pack build --target web --release
