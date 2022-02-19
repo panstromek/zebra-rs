@@ -35,7 +35,11 @@ jobs:
           profile: minimal
           components: llvm-tools-preview
 
-    - uses: Swatinem/rust-cache@v1
+    - name: Cache cargo binaries
+      uses: actions/cache@v1
+      with:
+          path: ~/.cargo/bin
+          key: ${{ runner.os }}-cargo-binaries
 
     - uses: actions-rs/install@v0.1
       with:
@@ -47,6 +51,8 @@ jobs:
       with:
           crate: wasm-pack
           version: 0.10.2
+
+    - uses: Swatinem/rust-cache@v1
 
     - name: Build and run tests
       run: bash ./run-tests.sh
