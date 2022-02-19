@@ -72,7 +72,7 @@ self.send_evals  = function(evals: string) {
 // FIXME is it possible to get rid of this nonsense cascade?
 // I'm fighting some transpile process or something with this
 
-init('../crate/pkg/webzebra_bg.wasm')
+init()
     .then(() => import('../crate/pkg'))
     .then(res => {
         res.initialize()
