@@ -58,3 +58,8 @@ jobs:
     - name: Install yarn Deps
       working-directory: ./webzebra
       run: yarn
+
+    - name: Build WebZebra
+      working-directory: ./webzebra
+      run: yarn vite build
+
