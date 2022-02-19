@@ -88,4 +88,6 @@ jobs:
              -H "Authorization: Bearer ${NETLIFY_ACCESS_TOKEN}" \
              --data-binary "@dist.zip" \
              https://api.netlify.com/api/v1/sites/webzebra.netlify.app/deploys \
-             --fail
+             --fail \
+             -o /dev/null \
+             --show-error
