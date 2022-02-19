@@ -91,11 +91,13 @@ export default defineComponent({
     }
   },
   data() {
+    const board = Array(128).fill(1);
+    board[54] = 0;
+    board[45] = 0;
+    board[55] = 2;
+    board[44] = 2;
     return {
-      board: Array(128).fill(0)
-          .map(Math.random)
-          .map(a => a * 2)
-          .map(Math.round),
+      board: board,
       waitingForMove: false,
       waitingForPass: false,
       black_skill: 6,
