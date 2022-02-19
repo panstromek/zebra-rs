@@ -53,3 +53,7 @@ jobs:
     - name: Build Rust WebZebra crate
       working-directory: ./webzebra/crate
       run: wasm-pack build --target web --release
+
+    - name: Install yarn Deps
+      working-directory: ./webzebra
+      run: yarn
