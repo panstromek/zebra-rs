@@ -42,11 +42,19 @@
       </svg>
     </div>
     <div class="max-w-sm text-left p-1.5">
-      <button
-          @click="newGame"
-          class="focus:outline-none border border-solid border-black bg-green-900 text-white p-0.5 m-0.5">
-        New Game
-      </button>
+      <div class="flex justify-between items-center">
+        <div class="flex items-center text-black text-2xl">
+          <div style="width: 1em; height: 1em; border-radius: 0.5em; background: black"></div>
+          <div class="px-2">{{ score.black }}</div>
+          <div style="width: 1em; height: 1em; border-radius: 0.5em; background: white"></div>
+          <div class="px-2 text-white">{{ score.white }}</div>
+        </div>
+        <button
+            @click="newGame"
+            class="focus:outline-none border-2 rounded border-solid border-black text-white p-2 m-0.5">
+          New Game
+        </button>
+      </div>
       <br>
       <h4>Skills</h4>
       <div>
@@ -62,11 +70,6 @@
       </div>
       <div v-if="waitingForMove">Waiting for move</div>
       <div v-if="waitingForPass">Waiting for pass (click anywhere on the board)</div>
-      <div class="mt-8">
-        Score: <br>
-        Black: {{ score.black }} <br>
-        White: {{ score.white }}
-      </div>
       <button @click="undo">Undo</button>
       <div>
         <input type="checkbox" id="practice_mode_checkbox" class="mr-2" v-model="practiceMode">
