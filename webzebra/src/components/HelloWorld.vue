@@ -1,7 +1,11 @@
 <template>
-  <div class="flex flex-wrap">
-    <div>
-      <svg width="600" height="600" viewBox="0 0 800 800" style="background-color: green"
+  <div class="flex flex-wrap justify-center">
+    <div class="p-1.5" style="max-width: 900px; width: 100%">
+      <svg width="100%"
+           preserveAspectRatio="xMidYMid meet"
+           ref="board"
+           viewBox="0 0 800 800"
+           style="background-color: green; border: 4px brown solid;"
            @click="clickBoard">
         <g>
           <template v-if="practiceMode">
@@ -155,7 +159,8 @@ export default defineComponent({
       this.worker.postMessage([Message.NewGame])
     },
     clickBoard(e: MouseEvent) {
-      const boardSize = 600
+      const board = this.$refs.board as SVGElement;
+      const boardSize = board.clientWidth
       const fieldSize = boardSize / 8
 
       if (this.waitingForPass) {
