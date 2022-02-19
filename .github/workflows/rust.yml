@@ -41,6 +41,7 @@ jobs:
           path: |
             ~/.cargo/bin
             ~/.cargo/.crates.toml
+            ~/.cargo/.crates2.json
           key: ${{ runner.os }}-cargo-binaries-1
 
     - name: Install Binutils
