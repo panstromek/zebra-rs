@@ -47,7 +47,7 @@ jobs:
       run: cargo install cargo-binutils || cargo install cargo-binutils --force
 
     - name: Install Wasm Pack
-      run: cargo install wasm-pack || cargo install wasm-pack --force
+      run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
     - name: Cache Rust Dependencies
       uses: Swatinem/rust-cache@v1
