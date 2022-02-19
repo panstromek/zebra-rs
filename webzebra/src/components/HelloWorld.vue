@@ -162,8 +162,8 @@ export default defineComponent({
         this.worker.postMessage([Message.GetPass, -1])
         this.waitingForPass = false
       } else if (this.waitingForMove) {
-        let x = e.clientX
-        let y = e.clientY
+        let x = e.offsetX
+        let y = e.offsetY
         let j = Math.floor(x / fieldSize) + 1
         let i = Math.floor(y / fieldSize) + 1
         let move = (10 * i + j)
