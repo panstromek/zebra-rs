@@ -1,11 +1,11 @@
 <template>
   <div class="flex flex-wrap justify-center">
-    <div class="p-1.5" style="max-width: 900px; width: 100%">
+    <div style="max-width: 900px; width: 100%">
       <svg width="100%"
            preserveAspectRatio="xMidYMid meet"
            ref="board"
            viewBox="0 0 800 800"
-           style="background-color: green; border: 4px brown solid;"
+           style="background-color: #3a7f46; border: 4px brown solid;"
            @click="clickBoard">
         <g>
           <template v-if="practiceMode">
@@ -215,9 +215,9 @@ export default defineComponent({
               }
 
               if (eval_.best) {
-                color = 'cyan'
+                color = '#00FFFF'
               } else {
-                color = 'yellow'
+                color = '#FFFF00'
               }
               const text = eval_.eval_s
               evals.push({
