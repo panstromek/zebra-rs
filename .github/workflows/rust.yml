@@ -35,17 +35,19 @@ jobs:
           profile: minimal
           components: llvm-tools-preview
 
-    - name: Cache cargo binaries
+    - name: Cache cargo files
       uses: actions/cache@v2
       with:
           path: |
             ~/.cargo/bin
             ~/.cargo/.crates.toml
             ~/.cargo/.crates2.json
-          key: ${{ runner.os }}-cargo-binaries-1
-
-    - name: Cache Rust Dependencies
-      uses: Swatinem/rust-cache@v1
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            ./target
+            ./test-target
+          key: ${{ runner.os }}-cargo-files-0
 
     - name: Install Binutils
       run: cargo install cargo-binutils || cargo install cargo-binutils --force
