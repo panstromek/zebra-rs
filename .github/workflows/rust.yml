@@ -30,5 +30,11 @@ jobs:
           crate: cargo-binutils
           version: latest
 
+    - name: Install Wasm Pack
+      uses: actions-rs/install@v0.1
+      with:
+          crate: wasm-pack
+          version: 0.10.2
+
     - name: Build and run tests
       run: bash ./run-tests.sh
