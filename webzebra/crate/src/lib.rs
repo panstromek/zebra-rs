@@ -7,7 +7,6 @@ use std::convert::{TryFrom, TryInto};
 use std::error::Error;
 use std::panic;
 
-use thiserror::Error;
 use wasm_bindgen::__rt::core::ffi::c_void;
 use wasm_bindgen::__rt::core::ptr::null_mut;
 use wasm_bindgen::__rt::std::ffi::CStr;

@@ -54,10 +54,14 @@ jobs:
       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
     - name: Build and run tests
+      env:
+        CARGO_INCREMENTAL: 0
       run: bash ./run-tests.sh
 
     - name: Build Rust WebZebra crate
       working-directory: ./webzebra/crate
+      env:
+        CARGO_INCREMENTAL: 0
       run: wasm-pack build --target web --release
 
     - name: Install yarn Deps
