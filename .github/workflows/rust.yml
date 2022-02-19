@@ -38,3 +38,6 @@ jobs:
 
     - name: Build and run tests
       run: bash ./run-tests.sh
+
+    - name: Build Rust WebZebra crate
+      run: cd webzebra/crate && wasm-pack build --target web --release
