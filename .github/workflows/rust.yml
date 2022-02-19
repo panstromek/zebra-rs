@@ -68,6 +68,10 @@ jobs:
       working-directory: ./webzebra
       run: yarn vite build
 
+    - name: Package dist directory
+      working-directory: ./webzebra/dist
+      run: zip -r ../dist.zip .
+
     - name: Deploy Webzebra
       if: github.ref == 'ref/head/master'
       run: echo "TODO Deploy"
