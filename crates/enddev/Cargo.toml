@@ -1,5 +1,5 @@
 [package]
-name = "practice"
+name = "enddev"
 version = "0.1.0"
 authors = ["panstromek <panstromek@seznam.cz>"]
 edition = "2018"
@@ -8,12 +8,12 @@ edition = "2018"
 
 
 [dependencies]
-engine = { path= "./../engine" }
-flip = { path= "./../engine/flip" }
-legacy-zebra = { path= "./../legacy-zebra" }
+engine = { path= "../engine" }
+flip = { path= "../flip" }
+legacy-zebra = { path= "../legacy-zebra" }
 libc = "0.2"
-libc-wrapper = { path = "./../libc-wrapper"}
+libc-wrapper = { path = "../libc-wrapper" }
 
 [[bin]]
-path = "src/practice.rs"
-name = "practice"
+path = "src/enddev.rs"
+name = "enddev"

@@ -1,12 +1,15 @@
 [package]
-name = "coeff"
+name = "flate2-coeff-source"
 version = "0.1.0"
 authors = ["panstromek <panstromek@seznam.cz>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-name="coeff"
-path="getcoeff.rs"
+name = "flate2_coeff_source"
+path = "lib.rs"
+
+
 [dependencies]
-engine-traits = { path = "./../engine-traits" }
+engine-traits = { path = "../engine-traits" }
+flate2 = "1.0"

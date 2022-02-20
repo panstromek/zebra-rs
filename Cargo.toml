@@ -1,28 +1,8 @@
 [workspace]
 members = [
-    "engine",
-    "booktool",
-    "tune8db",
-    "scrzebra",
-    "practice",
-    "enddev",
-    "engine/bitboard",
-    "engine/pcstat",
-    "engine/epcstat",
-    "engine/bitbcnt",
-    "engine/patterns",
-    "engine/thordb-types",
-    "engine/my-random",
-    "thor-opening-list",
-    "libc-wrapper",
-    "engine/engine-traits",
-    "flate2-coeff-source",
-    "legacy-zebra",
     "tests",
-    "engine/flip",
-    "engine/coeff",
-    "script",
-    "webzebra/crate"
+    "webzebra/crate",
+    "crates/*"
 ]
 
 [profile.release]

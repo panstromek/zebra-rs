@@ -1,0 +1,23 @@
+[package]
+name = "engine"
+version = "0.1.0"
+authors = ["panstromek"]
+edition = "2018"
+
+[lib]
+name = "engine"
+path = "lib.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bitboard = { path = "../bitboard" }
+pcstat = { path = "../pcstat" }
+epcstat = { path = "../epcstat" }
+bitbcnt = { path = "../bitbcnt" }
+patterns = { path = "../patterns" }
+thordb-types = { path = "../thordb-types" }
+engine-traits = { path = "../engine-traits" }
+coeff = { path = "../coeff" }
+flip = { path = "../flip" }
+my-random = { path = "../my-random" }

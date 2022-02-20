@@ -33,11 +33,11 @@ wasm-opt = false
 default = ["wee_alloc"]
 
 [dependencies]
-engine = { path= "./../../engine" }
-flip = { path= "./../../engine/flip" }
-engine-traits = { path = "./../../engine/engine-traits" }
-flate2-coeff-source = { path = "./../../flate2-coeff-source" }
-thordb-types = { path = "../../engine/thordb-types" }
+engine = { path= "../../crates/engine" }
+flip = { path= "../../crates/flip" }
+engine-traits = { path = "../../crates/engine-traits" }
+flate2-coeff-source = { path = "../../crates/flate2-coeff-source" }
+thordb-types = { path = "../../crates/thordb-types" }
 console_error_panic_hook = "0.1.6"
 
 # The `wasm-bindgen` crate provides the bare minimum functionality needed

@@ -6,10 +6,8 @@ fuzzer
 fuzzer-data
 ./current.gam
 ./current.mov
-/booktool/zebra.err
-/booktool/zebra.log
-/practice/zebra.err
-/practice/zebra.log
+/crates/**/zebra.err
+/crates/**/zebra.log
 wasm-simple/pkg
 wasm-simple/node_modules
 run_dir
