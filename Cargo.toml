@@ -4,6 +4,7 @@ members = [
     "webzebra/crate",
     "crates/*"
 ]
+exclude = ["crates/script"]
 
 [profile.release]
 opt-level = 3
