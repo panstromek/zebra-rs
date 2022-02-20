@@ -6,6 +6,18 @@ Rust port of [Zebra](http://www.radagast.se/othello/zebra.html). A strong Othell
 This repository also contains a source code for [Webzebra](https://webzebra.netlify.app/), wasm version
 based on the Rust port, which runs in the browser.
 
+This project is a result of transpiling original sources from C to Rust 
+using [c2rust](https://github.com/immunant/c2rust) and gradual refactoring of the output.
+The code quite messy in many places and contains a lot of refactoring artifacts.
+The goal is to gradually get it in shape, but currently expect a lot of rough edges.
+
+## Future goals
+
+ - Add more features to WebZebra (to be roughly on par with WZebra or Reversatile)
+ - Getting rid of unsafe, global variables, cleaning up c2rust/refactoring artifacts
+ - Separate the engine better from UI (CLI or Webzebra) and make it more usable and less prone to bugs
+ - In further future, extend/optimize the engine (e.g. make it multithreaded, which should be easier to do in Rust than in the original C code)
+
 ## Building
 
 Following instructions are for CLI version of zebra and its tools. For building Webzebra,
