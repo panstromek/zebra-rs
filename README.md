@@ -3,7 +3,7 @@
 
 Rust port of [Zebra](http://www.radagast.se/othello/zebra.html). A strong Othello program.
 
-This repository also contains a source code for [Webzebra](https://webzebra.netlify.app/), wasm version
+This repository also contains a source code for [Webzebra](https://www.webzebra.app/), wasm version
 based on the Rust port, which runs in the browser.
 
 This project is a result of transpiling original sources from C to Rust 
