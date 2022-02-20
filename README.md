@@ -8,7 +8,7 @@ based on the Rust port, which runs in the browser.
 
 This project is a result of transpiling original sources from C to Rust 
 using [c2rust](https://github.com/immunant/c2rust) and gradual refactoring of the output.
-The code quite messy in many places and contains a lot of refactoring artifacts.
+The code is quite messy in many places and contains a lot of refactoring artifacts.
 The goal is to gradually get it in shape, but currently expect a lot of rough edges.
 
 ## Future goals
