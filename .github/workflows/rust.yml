@@ -47,7 +47,9 @@ jobs:
             ~/.cargo/git/db
             ./target
             ./test-target
-          key: ${{ runner.os }}-cargo-files-0 # todo better key - this one is never invalidated so the cache goes slowly out of date
+          key: ${{ runner.os }}-cargo-files-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml', '~/.cargo/.crates.toml', '~/.cargo/.crates2.json', '**/run-tests.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-files-
 
     - name: Install Binutils
       run: cargo install cargo-binutils || cargo install cargo-binutils --force
