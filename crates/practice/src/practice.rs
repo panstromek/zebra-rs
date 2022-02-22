@@ -109,11 +109,10 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
                 if command >= 1 && command <= g_state.moves.disks_played {
                     i = 1;
                     while i <= command {
-                        let side_to_move = old_stm[(g_state.moves.disks_played - 1) as usize];
-                        let move_0 = move_list[(g_state.moves.disks_played - 1) as usize];
-                        {
-                            unmake_move(side_to_move, move_0, &mut (g_state.board).board, &mut (g_state.moves), &mut (g_state.hash), &mut (g_state.flip_stack));
-                        };
+                        unmake_move(old_stm[(g_state.moves.disks_played - 1) as usize],
+                                    move_list[(g_state.moves.disks_played - 1) as usize],
+                                    &mut (g_state.board).board, &mut (g_state.moves),
+                                    &mut (g_state.hash), &mut (g_state.flip_stack));
                         i += 1
                     }
                     side_to_move = old_stm[(g_state.moves).disks_played as usize];
