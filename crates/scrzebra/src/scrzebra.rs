@@ -548,7 +548,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         exit(1);
     }
     global_setup(use_random, hash_bits, g_state);
-    init_thor_database(g_state);
+    init_thor_database(&mut g_state.random);
     if use_book != 0 {
         init_learn(b"book.bin\x00" as *const u8 as *const i8,
                    1, g_state);

@@ -526,7 +526,7 @@ Flags:
         exit(1);
     }
     global_setup(use_random, hash_bits,&mut g_state);
-    init_thor_database(&mut g_state);
+    init_thor_database(&mut g_state.random);
     if (g_state.config).use_book != 0 {
         let file_name = if let Ok(var) = std::env::var("BOOK_PATH") {
             CString::new(var).unwrap()

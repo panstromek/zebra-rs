@@ -12,7 +12,6 @@ use thordb_types::{GameType, DatabaseType, C2RustUnnamed, EITHER_SELECTED_FILTER
 use thor_opening_list::THOR_OPENING_LIST;
 use engine_traits::Offset;
 use engine::src::thordb::ThorDatabase;
-use crate::src::zebra::{FullState};
 use engine::src::myrandom::MyRandom;
 use engine::src::getcoeff::odometer_principle;
 use std::io::{Read, Write};
@@ -1880,7 +1879,7 @@ fn build_thor_opening_tree(thor_board: &mut ThorBoard, thor_hash_: &mut ThorHash
   must be called.
 */
 
-pub unsafe fn init_thor_database(g_state: &mut FullState) {
+pub unsafe fn init_thor_database(random: &mut MyRandom) {
     thor_game_count = 0;
     thor_search.match_list = Vec::new();
     thor_search.allocation = 0;
@@ -1905,7 +1904,7 @@ pub unsafe fn init_thor_database(g_state: &mut FullState) {
     thor_games_filtered = 0;
     init_move_masks();
     init_symmetry_maps();
-    thor_hash.init_thor_hash(&mut g_state.random);
+    thor_hash.init_thor_hash(random);
     prepare_thor_board(&mut board.board);
     build_thor_opening_tree(&mut board, &mut thor_hash, &mut thor_opening_tree);
     filter.game_categories = 1 | 2 | 4;
