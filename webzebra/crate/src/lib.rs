@@ -23,7 +23,6 @@ use engine::src::zebra::{Config, EvaluationType, INITIAL_CONFIG, InitialMoveSour
 use engine_traits::CoeffSource;
 use flate2_coeff_source::Flate2Source;
 use flip::unflip;
-use thordb_types::C2RustUnnamed;
 use flip::unflip::FlipStack;
 use engine::src::search::{SearchState, disc_count};
 use engine::src::probcut::ProbCut;
@@ -460,10 +459,6 @@ pub enum InteractionRequest {
 struct WasmThor;
 
 impl ThorDatabase for WasmThor {
-    fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[thordb_types::C2RustUnnamed; 64]) {
-
-    }
-
     fn get_thor_game_move(index: i32, move_number: i32) -> i32 {
         0
     }

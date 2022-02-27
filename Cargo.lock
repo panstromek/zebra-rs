@@ -569,7 +569,6 @@ dependencies = [
  "engine-traits",
  "flate2-coeff-source",
  "flip",
- "thordb-types",
  "wasm-bindgen",
  "wee_alloc",
 ]

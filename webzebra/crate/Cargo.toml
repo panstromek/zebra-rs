@@ -37,7 +37,6 @@ engine = { path= "../../crates/engine" }
 flip = { path= "../../crates/flip" }
 engine-traits = { path = "../../crates/engine-traits" }
 flate2-coeff-source = { path = "../../crates/flate2-coeff-source" }
-thordb-types = { path = "../../crates/thordb-types" }
 console_error_panic_hook = "0.1.6"
 
 # The `wasm-bindgen` crate provides the bare minimum functionality needed

@@ -118,10 +118,6 @@ static mut filter: FilterType =
 pub struct LegacyThor;
 
 impl ThorDatabase for LegacyThor {
-    fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {
-        { LibcFatalError::choose_thor_opening_move_report(freq_sum, match_count, move_list) }
-    }
-
     fn get_thor_game_move(index: i32, move_number: i32) -> i32 {
         unsafe { get_thor_game_move(index, move_number) }
     }
