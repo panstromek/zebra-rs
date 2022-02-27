@@ -21,4 +21,4 @@ fi
 echo "-----"
 echo "Coverage:"
 cargo-profdata -- merge -sparse ./tests/snapshot-tests/*/*/default.profraw -o __all-tests-coverage.profdata\
-&& cargo cov -- report test-target/release/zebra -instr-profile __all-tests-coverage.profdata -ignore-filename-regex /home/matyas/.cargo/ | tail -n "$num_lines"
+&& cargo cov -- report test-target/release/zebra -instr-profile __all-tests-coverage.profdata -ignore-filename-regex "\.cargo/" | tail -n "$num_lines"
