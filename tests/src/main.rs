@@ -329,7 +329,7 @@ fn main() {
             .arg("cargo-profdata -- merge -sparse ./tests/snapshot-tests/*/*/default.profraw ./fuzzer/*/run_dir/*.profraw  -o all-tests-with-fuzz.profdata")
             .output().unwrap();
         let coverage = Command::new("cargo")
-            .args("cov -- report test-target/release/zebra -instr-profile all-tests-with-fuzz.profdata -ignore-filename-regex /home/matyas/.cargo/".split_whitespace())
+            .args("cov -- report test-target/release/zebra -instr-profile all-tests-with-fuzz.profdata -ignore-filename-regex \\.cargo/".split_whitespace())
             .output().unwrap().stdout;
         std::str::from_utf8(&coverage)
             .unwrap()
@@ -388,7 +388,7 @@ fn test_case_coverage() {
             writeln!(report, "Computing new coverage for case: {}" ,case);
             // TODO --Xdemangler=rustfilt ?
             let arg = format!("cargo-profdata -- merge -sparse -num-threads=1 {}  -o {dir}case.profdata && \
-        cargo cov -- report test-target/release/zebra -instr-profile {dir}case.profdata -ignore-filename-regex /home/matyas/.cargo/", case, dir = dir);
+        cargo cov -- report test-target/release/zebra -instr-profile {dir}case.profdata -ignore-filename-regex \"\\.cargo/\"", case, dir = dir);
 
             let cov = String::from_utf8(Command::new("bash")
                 .arg("-c")
