@@ -11,7 +11,6 @@ use thordb_types::{GameType, DatabaseType, C2RustUnnamed, EITHER_SELECTED_FILTER
                        PrologType, TournamentDatabaseType, SearchResultType, PlayerDatabaseType};
 use thor_opening_list::THOR_OPENING_LIST;
 use engine_traits::Offset;
-use engine::src::patterns::pow3;
 use engine::src::thordb::ThorDatabase;
 use crate::src::zebra::{FullState};
 use engine::src::myrandom::MyRandom;
@@ -833,8 +832,8 @@ fn compute_thor_patterns(
         j = 0;
         pos = 10 * i + 11;
         while j < 8 {
-            row_pattern[i as usize] += pow3(j as usize) * *in_board.offset(pos as isize);
-            col_pattern[j as usize] += pow3(i as usize) * *in_board.offset(pos as isize);
+            row_pattern[i as usize] += 3_i32.wrapping_pow(j as _) * *in_board.offset(pos as isize);
+            col_pattern[j as usize] += 3_i32.wrapping_pow(i as _) * *in_board.offset(pos as isize);
             j += 1;
             pos += 1
         }
@@ -1692,7 +1691,8 @@ impl ThorHash {
             flip_row[i as usize] = 0;
             j = 0;
             while j < 8 {
-                flip_row[i as usize] += row[j as usize] * pow3((7 - j) as usize);
+                let n = (7 - j) as usize;
+                flip_row[i as usize] += row[j as usize] * 3i32.wrapping_pow(n as _);
                 j += 1
             }
             /* Next configuration */
