@@ -2,13 +2,13 @@
 non_upper_case_globals, unused_assignments, unused_mut, unused_must_use)]
 
 use engine_traits::Offset;
-use engine::src::osfbook::{_ISgraph, _ISprint, _ISspace, _ISupper, adjust_score, BookNode, clear_node_depth, fill_move_alternatives, get_hash, get_node_depth, probe_hash_table, set_deviation_value, set_max_batch_size, size_t};
+use engine::src::osfbook::{adjust_score, BookNode, clear_node_depth, fill_move_alternatives, get_hash, get_node_depth, probe_hash_table, set_deviation_value, set_max_batch_size, size_t};
 use engine::src::zebra::DrawMode::{BLACK_WINS, NEUTRAL, OPPONENT_WINS, WHITE_WINS};
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 use legacy_zebra::src::error::LibcFatalError;
 use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
 
-use libc_wrapper::{__ctype_b_loc, atof, atoi, ctime, exit, fclose, feof, fflush, fgets, FileHandle, fopen, fprintf, fputc, fputs, fread, free, fwrite, malloc, printf, putc, puts, qsort, sprintf, sscanf, stderr, stdout, strcasecmp, strcmp, strcpy, strlen, strstr, time, tolower, toupper};
+use libc_wrapper::{atof, atoi, ctime, exit, fclose, feof, fflush, fgets, FileHandle, fopen, fprintf, fputc, fputs, fread, free, fwrite, malloc, printf, putc, puts, qsort, sprintf, sscanf, stderr, stdout, strcasecmp, strcmp, strcpy, strlen, strstr, time, tolower, toupper};
 use legacy_zebra::src::osfbook;
 use engine::src::moves::{generate_all, generate_specific, make_move, make_move_no_hash, unmake_move, unmake_move_no_hash};
 use engine::src::search::disc_count;
@@ -30,6 +30,7 @@ use std::io::Write;
 pub type FE = LibcFatalError;
 use legacy_zebra::fatal_error;
 use std::ffi::CStr;
+use libc::{isgraph, isprint, isspace, isupper};
 
 pub mod safemem;
 
@@ -2520,17 +2521,11 @@ pub unsafe fn convert_opening_list(base_file:
         name_start =
             buffer.as_mut_ptr().offset(strlen(move_seq.as_mut_ptr()) as
                 isize);
-        while *(*__ctype_b_loc()).offset(*name_start as i32 as isize)
-            as i32 &
-            _ISspace as i32 as u16 as i32 !=
-            0 {
+        while isspace(*name_start as i32) != 0 {
             name_start = name_start.offset(1)
         }
         scan_ptr = name_start;
-        while *(*__ctype_b_loc()).offset(*scan_ptr as i32 as isize) as
-            i32 &
-            _ISprint as i32 as u16 as i32 !=
-            0 {
+        while isprint(*scan_ptr as i32) != 0 {
             scan_ptr = scan_ptr.offset(1)
         }
         *scan_ptr = 0;
@@ -2538,10 +2533,7 @@ pub unsafe fn convert_opening_list(base_file:
         j = 0;
         move_ptr = buffer.as_mut_ptr();
         while j < op_move_count {
-            if *(*__ctype_b_loc()).offset(*move_ptr as i32 as isize)
-                as i32 &
-                _ISupper as i32 as u16 as i32 !=
-                0 {
+            if isupper(*move_ptr as i32) != 0 {
                 side_to_move[j as usize] = 0
             } else { side_to_move[j as usize] = 2 }
             col =
@@ -2964,11 +2956,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
             script_buffer.as_mut_ptr().offset(strlen(script_buffer.as_mut_ptr())
                 as
                 isize).offset(-1);
-        while ch >= script_buffer.as_mut_ptr() &&
-            *(*__ctype_b_loc()).offset(*ch as i32 as isize) as
-                i32 &
-                _ISgraph as i32 as u16 as i32
-                == 0 {
+        while ch >= script_buffer.as_mut_ptr() && isgraph(*ch as i32) == 0 {
             *ch = 0;
             ch = ch.offset(-1)
         }
@@ -2976,11 +2964,7 @@ pub unsafe fn merge_position_list<FE: FrontEnd>(script_file:
             result_buffer.as_mut_ptr().offset(strlen(result_buffer.as_mut_ptr())
                 as
                 isize).offset(-1);
-        while ch >= result_buffer.as_mut_ptr() &&
-            *(*__ctype_b_loc()).offset(*ch as i32 as isize) as
-                i32 &
-                _ISgraph as i32 as u16 as i32
-                == 0 {
+        while ch >= result_buffer.as_mut_ptr() && isgraph(*ch as i32) == 0 {
             *ch = 0;
             ch = ch.offset(-1)
         }
