@@ -11,7 +11,7 @@ use legacy_zebra::src::display::{display_state};
 use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{legacy_compute_move, extended_compute_move, game_init, global_setup};
 use legacy_zebra::src::learn::init_learn;
-use libc_wrapper::{_IO_FILE, stdout, fprintf, fputs, printf, feof, fopen, sscanf, tolower, strlen, __ctype_b_loc, fgets, stderr, FileHandle, exit, __ctype_tolower_loc};
+use libc_wrapper::{_IO_FILE, stdout, fprintf, fputs, printf, feof, fopen, sscanf, tolower, strlen, __ctype_b_loc, fgets, stderr, FileHandle, exit};
 use legacy_zebra::src::zebra::LibcTimeSource;
 use std::io::Write;
 
@@ -80,43 +80,8 @@ unsafe extern "C" fn read_game(mut stream: FileHandle,
         }
         i = 0;
         while i < *game_length {
-            let mut col: i32 =
-                ({
-                    let mut __res: i32 = 0;
-                    if ::std::mem::size_of::<i8>() as u64
-                        > 1 as u64 {
-                        if 0 != 0 {
-                            let mut __c: i32 =
-                                buffer[(2 * i) as usize] as
-                                    i32;
-                            __res =
-                                if __c < -(128) ||
-                                    __c > 255 {
-                                    __c
-                                } else {
-                                    *(*__ctype_tolower_loc()).offset(__c as
-                                        isize)
-                                }
-                        } else {
-                            __res =
-                               tolower(buffer[(2 * i) as
-                                    usize] as i32)
-                        }
-                    } else {
-                        __res =
-                            *(*__ctype_tolower_loc()).offset(buffer[(2
-                                * i)
-                                as
-                                usize]
-                                as
-                                i32
-                                as isize)
-                    }
-                    __res
-                }) - 'a' as i32 + 1;
-            let mut row: i32 =
-                buffer[(2 * i + 1) as usize] as
-                    i32 - '0' as i32;
+            let mut col: i32 = tolower(buffer[(2 * i) as usize] as i32) - 'a' as i32 + 1;
+            let mut row: i32 = buffer[(2 * i + 1) as usize] as i32 - '0' as i32;
             if col < 1 || col > 8 ||
                 row < 1 || row > 8 {
                 fprintf(stderr,
