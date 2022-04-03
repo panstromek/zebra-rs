@@ -70,7 +70,7 @@ jobs:
 
     - name: Install yarn Deps
       working-directory: ./webzebra
-      run: yarn
+      run: yarn --frozen-lockfile
 
     - name: Build WebZebra
       working-directory: ./webzebra
