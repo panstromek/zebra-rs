@@ -11,9 +11,10 @@ use legacy_zebra::src::display::{display_state};
 use legacy_zebra::src::error::{LibcFatalError};
 use legacy_zebra::src::game::{legacy_compute_move, extended_compute_move, game_init, global_setup};
 use legacy_zebra::src::learn::init_learn;
-use libc_wrapper::{_IO_FILE, stdout, fprintf, fputs, printf, feof, fopen, sscanf, tolower, strlen, __ctype_b_loc, fgets, stderr, FileHandle, exit};
+use libc_wrapper::{_IO_FILE, stdout, fprintf, fputs, printf, feof, fopen, sscanf, tolower, strlen, fgets, stderr, FileHandle, exit};
 use legacy_zebra::src::zebra::LibcTimeSource;
 use std::io::Write;
+use libc::isalnum;
 
 pub type C2RustUnnamed = u32;
 pub const _ISalnum: C2RustUnnamed = 8;
@@ -64,10 +65,7 @@ unsafe extern "C" fn read_game(mut stream: FileHandle,
     } else {
         let mut i: i32 = 0;
         let mut ch: *mut i8 = buffer.as_mut_ptr();
-        while *(*__ctype_b_loc()).offset(*ch as i32 as isize) as
-            i32 &
-            _ISalnum as i32 as u16 as i32 !=
-            0 {
+        while isalnum(*ch as i32) != 0 {
             ch = ch.offset(1)
         }
         *ch = 0;

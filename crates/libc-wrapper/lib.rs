@@ -90,6 +90,7 @@ pub use libc::{
     qsort,
     strcpy,
     strcmp,
+    isalnum
 };
 
 extern "C" {
