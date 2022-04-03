@@ -95,7 +95,6 @@ pub use libc::{
 extern "C" {
     pub fn ctime(__timer: *const time_t) -> *mut i8;
     pub fn __ctype_b_loc() -> *mut *const u16;
-    pub fn __ctype_tolower_loc() -> *mut *const i32;
 }
 
 pub use FileHandle::StdIn as stdin;
