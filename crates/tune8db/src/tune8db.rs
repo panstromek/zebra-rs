@@ -24,6 +24,11 @@ pub struct InfoItem {
     pub frequency: i32,
     pub most_common: i32,
 }
+impl InfoItem {
+    pub const fn new() -> Self {
+        InfoItem { solution: 0., gradient: 0., direction: 0., pattern: 0, frequency: 0, most_common: 0 }
+    }
+}
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct CompactPosition {
@@ -144,116 +149,46 @@ pub static mut position_list: *mut CompactPosition =
     0 as *const CompactPosition as *mut CompactPosition;
 
 pub static mut constant: InfoItem =
-    InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,};
+    InfoItem::new();
 
 pub static mut parity: InfoItem =
-    InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,};
+    InfoItem::new();
 
 pub static mut afile: [InfoItem; 6561] =
-    [InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,}; 6561];
+    [InfoItem::new(); 6561];
 
 pub static mut bfile: [InfoItem; 6561] =
-    [InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,}; 6561];
+    [InfoItem::new(); 6561];
 
 pub static mut cfile: [InfoItem; 6561] =
-    [InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,}; 6561];
+    [InfoItem::new(); 6561];
 
 pub static mut dfile: [InfoItem; 6561] =
-    [InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,}; 6561];
+    [InfoItem::new(); 6561];
 
 pub static mut corner52: [InfoItem; 59049] =
-    [InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,}; 59049];
+    [InfoItem::new(); 59049];
 
 pub static mut diag8: [InfoItem; 6561] =
-    [InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,}; 6561];
+    [InfoItem::new(); 6561];
 
 pub static mut diag7: [InfoItem; 2187] =
-    [InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,}; 2187];
+    [InfoItem::new(); 2187];
 
 pub static mut diag6: [InfoItem; 729] =
-    [InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,}; 729];
+    [InfoItem::new(); 729];
 
 pub static mut diag5: [InfoItem; 243] =
-    [InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,}; 243];
+    [InfoItem::new(); 243];
 
 pub static mut diag4: [InfoItem; 81] =
-    [InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,}; 81];
+    [InfoItem::new(); 81];
 
 pub static mut corner33: [InfoItem; 19683] =
-    [InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,}; 19683];
+    [InfoItem::new(); 19683];
 
 pub static mut afile2x: [InfoItem; 59049] =
-    [InfoItem{solution: 0.,
-        gradient: 0.,
-        direction: 0.,
-        pattern: 0,
-        frequency: 0,
-        most_common: 0,}; 59049];
+    [InfoItem::new(); 59049];
 
 pub static mut inverse4: [i32; 81] = [0; 81];
 
