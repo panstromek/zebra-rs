@@ -39,169 +39,82 @@ pub struct CompactPosition {
 }
 
 pub static mut objective: f64 = 0.;
-
 pub static mut abs_error_sum: f64 = 0.;
-
 pub static mut max_delta: f64 = 0.;
-
 pub static mut average_delta: f64 = 0.;
-
 pub static mut delta_sum: f64 = 0.;
-
 pub static mut quad_coeff: f64 = 0.;
-
 pub static mut lin_coeff: f64 = 0.;
-
 pub static mut const_coeff: f64 = 0.;
-
 pub static mut total_weight: f64 = 0.;
-
 pub static mut weight: [f64; 61] = [0.; 61];
-
 pub static mut stage_count: i32 = 0;
-
 pub static mut analysis_stage: i32 = 0;
-
 pub static mut update_count: i32 = 0;
-
 pub static mut last_active: i32 = 0;
-
 pub static mut max_positions: i32 = 0;
-
 pub static mut position_count: i32 = 0;
-
 pub static mut max_diff: i32 = 0;
-
 pub static mut relevant_count: i32 = 0;
-
 pub static mut node_count: i32 = 0;
-
 pub static mut interval: i32 = 0;
-
 pub static mut buffer_size: i32 = 0;
-
 pub static mut node_buffer_pos: i32 = 0;
-
 pub static mut short_buffer_pos: i32 = 0;
-
 pub static mut node_allocations: i32 = 0;
-
 pub static mut short_allocations: i32 = 0;
-
 pub static mut stage: [i32; 64] = [0; 64];
-
 pub static mut active: [i32; 61] = [0; 61];
-
 pub static mut compact: [i32; 1048576] = [0; 1048576];
-
 pub static mut mirror: [i32; 6561] = [0; 6561];
-
 pub static mut flip52: [i32; 59049] = [0; 59049];
-
 pub static mut mirror7: [i32; 2187] = [0; 2187];
-
 pub static mut mirror6: [i32; 729] = [0; 729];
-
 pub static mut mirror5: [i32; 243] = [0; 243];
-
 pub static mut mirror4: [i32; 81] = [0; 81];
-
 pub static mut mirror3: [i32; 27] = [0; 27];
-
 pub static mut mirror82x: [i32; 59049] = [0; 59049];
-
 pub static mut identity10: [i32; 59049] = [0; 59049];
-
 pub static mut flip33: [i32; 19683] = [0; 19683];
-
 pub static mut mirror33: [i32; 19683] = [0; 19683];
 
 pub static mut board: [i32; 100] = [0; 100];
-
 pub static mut row_pattern: [i32; 8] = [0; 8];
-
 pub static mut col_pattern: [i32; 8] = [0; 8];
-
 pub static mut diag1_pattern: [i32; 15] = [0; 15];
-
 pub static mut diag2_pattern: [i32; 15] = [0; 15];
-
 pub static mut row_no: [i32; 100] = [0; 100];
-
 pub static mut row_index: [i32; 100] = [0; 100];
-
 pub static mut col_no: [i32; 100] = [0; 100];
-
 pub static mut col_index: [i32; 100] = [0; 100];
-
 pub static mut diag1_no: [i32; 100] = [0; 100];
-
 pub static mut diag1_index: [i32; 100] = [0; 100];
-
 pub static mut diag2_no: [i32; 100] = [0; 100];
-
 pub static mut diag2_index: [i32; 100] = [0; 100];
 
-pub static mut short_buffer: *mut i16 =
-    0 as *const i16 as *mut i16;
-
-pub static mut position_list: *mut CompactPosition =
-    0 as *const CompactPosition as *mut CompactPosition;
-
-pub static mut constant: InfoItem =
-    InfoItem::new();
-
-pub static mut parity: InfoItem =
-    InfoItem::new();
-
-pub static mut afile: [InfoItem; 6561] =
-    [InfoItem::new(); 6561];
-
-pub static mut bfile: [InfoItem; 6561] =
-    [InfoItem::new(); 6561];
-
-pub static mut cfile: [InfoItem; 6561] =
-    [InfoItem::new(); 6561];
-
-pub static mut dfile: [InfoItem; 6561] =
-    [InfoItem::new(); 6561];
-
-pub static mut corner52: [InfoItem; 59049] =
-    [InfoItem::new(); 59049];
-
-pub static mut diag8: [InfoItem; 6561] =
-    [InfoItem::new(); 6561];
-
-pub static mut diag7: [InfoItem; 2187] =
-    [InfoItem::new(); 2187];
-
-pub static mut diag6: [InfoItem; 729] =
-    [InfoItem::new(); 729];
-
-pub static mut diag5: [InfoItem; 243] =
-    [InfoItem::new(); 243];
-
-pub static mut diag4: [InfoItem; 81] =
-    [InfoItem::new(); 81];
-
-pub static mut corner33: [InfoItem; 19683] =
-    [InfoItem::new(); 19683];
-
-pub static mut afile2x: [InfoItem; 59049] =
-    [InfoItem::new(); 59049];
+pub static mut short_buffer: *mut i16 = 0 as *const i16 as *mut i16;
+pub static mut position_list: *mut CompactPosition = 0 as *const CompactPosition as *mut CompactPosition;
+pub static mut constant: InfoItem = InfoItem::new();
+pub static mut parity: InfoItem = InfoItem::new();
+pub static mut afile: [InfoItem; 6561] = [InfoItem::new(); 6561];
+pub static mut bfile: [InfoItem; 6561] = [InfoItem::new(); 6561];
+pub static mut cfile: [InfoItem; 6561] = [InfoItem::new(); 6561];
+pub static mut dfile: [InfoItem; 6561] = [InfoItem::new(); 6561];
+pub static mut corner52: [InfoItem; 59049] = [InfoItem::new(); 59049];
+pub static mut diag8: [InfoItem; 6561] = [InfoItem::new(); 6561];
+pub static mut diag7: [InfoItem; 2187] = [InfoItem::new(); 2187];
+pub static mut diag6: [InfoItem; 729] = [InfoItem::new(); 729];
+pub static mut diag5: [InfoItem; 243] = [InfoItem::new(); 243];
+pub static mut diag4: [InfoItem; 81] = [InfoItem::new(); 81];
+pub static mut corner33: [InfoItem; 19683] = [InfoItem::new(); 19683];
+pub static mut afile2x: [InfoItem; 59049] = [InfoItem::new(); 59049];
 
 pub static mut inverse4: [i32; 81] = [0; 81];
-
 pub static mut inverse5: [i32; 243] = [0; 243];
-
 pub static mut inverse6: [i32; 729] = [0; 729];
-
 pub static mut inverse7: [i32; 2187] = [0; 2187];
-
 pub static mut inverse8: [i32; 6561] = [0; 6561];
-
 pub static mut inverse9: [i32; 19683] = [0; 19683];
-
 pub static mut inverse10: [i32; 59049] = [0; 59049];
 /*
   PACK_POSITION
