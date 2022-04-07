@@ -339,7 +339,7 @@ pub unsafe  fn compute_patterns() {
    Sorts an integer vector using bubble-sort.
 */
 #[inline]
-unsafe  fn sort(mut vec: *mut i32, mut count: i32) {
+fn sort(mut vec: &mut [i32], mut count: i32) {
     let mut i: i32 = 0;
     let mut temp: i32 = 0;
     let mut changed: i32 = 0;
@@ -347,11 +347,11 @@ unsafe  fn sort(mut vec: *mut i32, mut count: i32) {
         changed = 0;
         i = 0;
         while i < count - 1 {
-            if *vec.offset(i as isize) > *vec.offset((i + 1) as isize) {
+            if vec[i as usize] > vec[(i + 1) as usize] {
                 changed = 1;
-                temp = *vec.offset(i as isize);
-                *vec.offset(i as isize) = *vec.offset((i + 1) as isize);
-                *vec.offset((i + 1) as isize) = temp
+                temp = vec[i as usize];
+                vec[i as usize] = vec[(i + 1) as usize];
+                vec[(i + 1) as usize] = temp
             }
             i += 1
         }
@@ -604,7 +604,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
                        buffer_6.as_mut_ptr(), buffer_5.as_mut_ptr(),
                        buffer_4.as_mut_ptr());
     /* The D file */
-    sort(buffer_d.as_mut_ptr(), 4);
+    sort(&mut buffer_d, 4);
     start = 0;
     loop  {
         stop = start + 1;
@@ -618,7 +618,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
         if !(start < 4) { break ; }
     }
     /* The C file */
-    sort(buffer_c.as_mut_ptr(), 4);
+    sort(buffer_c.as_mut(), 4);
     start = 0;
     loop  {
         stop = start + 1;
@@ -632,7 +632,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
         if !(start < 4) { break ; }
     }
     /* The B file */
-    sort(buffer_b.as_mut_ptr(), 4);
+    sort(buffer_b.as_mut(), 4);
     start = 0;
     loop  {
         stop = start + 1;
@@ -646,7 +646,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
         if !(start < 4) { break ; }
     }
     /* The A file */
-    sort(buffer_a.as_mut_ptr(), 4);
+    sort(buffer_a.as_mut(), 4);
     start = 0;
     loop  {
         stop = start + 1;
@@ -660,7 +660,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
         if !(start < 4) { break ; }
     }
     /* The diagonals of length 8 */
-    sort(buffer_8.as_mut_ptr(), 2);
+    sort(buffer_8.as_mut(), 2);
     start = 0;
     loop  {
         stop = start + 1;
@@ -674,7 +674,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
         if !(start < 2) { break ; }
     }
     /* The diagonals of length 7 */
-    sort(buffer_7.as_mut_ptr(), 4);
+    sort(buffer_7.as_mut(), 4);
     start = 0;
     loop  {
         stop = start + 1;
@@ -688,7 +688,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
         if !(start < 4) { break ; }
     }
     /* The diagonals of length 6 */
-    sort(buffer_6.as_mut_ptr(), 4);
+    sort(buffer_6.as_mut(), 4);
     start = 0;
     loop  {
         stop = start + 1;
@@ -702,7 +702,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
         if !(start < 4) { break ; }
     }
     /* The diagonals of length 5 */
-    sort(buffer_5.as_mut_ptr(), 4);
+    sort(buffer_5.as_mut(), 4);
     start = 0;
     loop  {
         stop = start + 1;
@@ -716,7 +716,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
         if !(start < 4) { break ; }
     }
     /* The diagonals of length 4 */
-    sort(buffer_4.as_mut_ptr(), 4);
+    sort(buffer_4.as_mut(), 4);
     start = 0;
     loop  {
         stop = start + 1;
@@ -730,7 +730,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
         if !(start < 4) { break ; }
     }
     /* The 5*2 corner pattern */
-    sort(buffer_52.as_mut_ptr(), 8);
+    sort(buffer_52.as_mut(), 8);
     start = 0;
     loop  {
         stop = start + 1;
@@ -744,7 +744,7 @@ pub unsafe  fn perform_analysis(mut index: i32) {
         if !(start < 8) { break ; }
     }
     /* The 3*3 corner pattern */
-    sort(buffer_33.as_mut_ptr(), 4);
+    sort(buffer_33.as_mut(), 4);
     start = 0;
     loop  {
         stop = start + 1;
