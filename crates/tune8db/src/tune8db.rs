@@ -1036,7 +1036,7 @@ pub unsafe  fn perform_step_update(mut index: i32) {
    A wrapper to the function given by the function pointer BFUNC.
 */
 #[inline]
-unsafe fn perform_action(mut bfunc: Option<unsafe fn(_: i32) -> ()>, mut index: i32) {
+unsafe fn perform_action(mut bfunc: unsafe fn(_: i32) -> (), mut index: i32) {
     node_count += 1;
     if active[(*position_list.offset(index as isize)).stage as usize] != 0 {
         relevant_count += 1;
@@ -1045,7 +1045,7 @@ unsafe fn perform_action(mut bfunc: Option<unsafe fn(_: i32) -> ()>, mut index: 
             fflush(stdout);
         }
         unpack_position(index);
-        bfunc.expect("non-null function pointer")(index);
+        bfunc(index);
     };
 }
 /*
@@ -1053,7 +1053,7 @@ unsafe fn perform_action(mut bfunc: Option<unsafe fn(_: i32) -> ()>, mut index: 
    Applies the function BFUNC to all the (relevant)
    positions in the position list.
 */
-pub unsafe fn iterate(mut bfunc: Option<unsafe fn(_: i32) -> ()>) {
+pub unsafe fn iterate(mut bfunc: unsafe fn(_: i32) -> ()) {
     let mut index: i32 = 0;
     while index < position_count {
         perform_action(bfunc, index);
@@ -1068,7 +1068,7 @@ pub unsafe fn analyze_games() {
     node_count = 0;
     relevant_count = 0;
     interval = 0;
-    iterate(Some(perform_analysis as unsafe fn(_: i32) -> ()));
+    iterate(perform_analysis as unsafe fn(_: i32) -> ());
 }
 /*
    EVALUATE_GAMES
@@ -1077,7 +1077,7 @@ pub unsafe fn analyze_games() {
 pub unsafe  fn evaluate_games() {
     node_count = 0;
     relevant_count = 0;
-    iterate(Some(perform_evaluation as unsafe fn(_: i32) -> ()));
+    iterate(perform_evaluation as unsafe fn(_: i32) -> ());
 }
 /*
    DETERMINE_GAMES
@@ -1086,7 +1086,7 @@ pub unsafe  fn evaluate_games() {
 pub unsafe  fn determine_games() {
     node_count = 0;
     relevant_count = 0;
-    iterate(Some(perform_step_update as unsafe fn(_: i32) -> ()));
+    iterate(perform_step_update as unsafe fn(_: i32) -> ());
 }
 /*
    PATTERN_SETUP
