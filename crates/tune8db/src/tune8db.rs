@@ -1055,8 +1055,10 @@ unsafe fn perform_action(mut bfunc: Option<unsafe fn(_: i32) -> ()>, mut index: 
 */
 pub unsafe fn iterate(mut bfunc: Option<unsafe fn(_: i32) -> ()>) {
     let mut index: i32 = 0;
-    index = 0;
-    while index < position_count { perform_action(bfunc, index); index += 1 };
+    while index < position_count {
+        perform_action(bfunc, index);
+        index += 1
+    };
 }
 /*
    ANALYZE_GAMES
@@ -1736,7 +1738,6 @@ pub unsafe fn update_solution(mut item: *mut InfoItem, mut count: i32, mut scale
     let mut change: f64 = 0.;
     let mut abs_change: f64 = 0.;
     let mut i: i32 = 0;
-    i = 0;
     while i < count {
         if (*item.offset(i as isize)).frequency > 0 && (*item.offset(i as isize)).most_common == 0 {
             change = scale * (*item.offset(i as isize)).direction;
@@ -1845,14 +1846,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8) -> i32 {
         i = stage[(analysis_stage - 1) as usize] + 1;
         while i <= stage[analysis_stage as usize] {
             active[i as usize] = 1;
-            weight[i as usize] =
-                f64::sqrt(1.0f64 *
-                    (i -
-                        stage[(analysis_stage - 1) as
-                            usize]) as f64 /
-                    (stage[analysis_stage as usize] -
-                        stage[(analysis_stage - 1) as
-                            usize]) as f64);
+            weight[i as usize] = f64::sqrt(1.0f64 * (i - stage[(analysis_stage - 1) as usize]) as f64
+                / (stage[analysis_stage as usize] - stage[(analysis_stage - 1) as usize]) as f64);
             i += 1
         }
     }
@@ -1860,13 +1855,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8) -> i32 {
         i = stage[analysis_stage as usize];
         while i < stage[(analysis_stage + 1) as usize] {
             active[i as usize] = 1;
-            weight[i as usize] =
-                f64::sqrt(1.0f64 *
-                    (stage[(analysis_stage + 1) as usize]
-                        - i) as f64 /
-                    (stage[(analysis_stage + 1) as usize]
-                        - stage[analysis_stage as usize]) as
-                        f64);
+            weight[i as usize] = f64::sqrt(1.0f64 * (stage[(analysis_stage + 1) as usize] - i) as f64
+                / (stage[(analysis_stage + 1) as usize] - stage[analysis_stage as usize]) as f64);
             i += 1
         }
     }
