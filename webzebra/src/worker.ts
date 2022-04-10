@@ -53,21 +53,22 @@ function play_game(game: ZebraGame, move?: number) {
     }
 }
 
-self.js_time = function js_time() {
+(self as any).js_time = function js_time() {
     return Math.round(Date.now() / 1000)
-}
+};
 
-self.zebra = {
+(self as any).zebra = {
     display_board(arr) {
         // TODO this call is really expensive for some reason, investigate that.
         self.postMessage([Message.DisplayBoard, [...arr]])
     }
-}
-self.send_evals  = function(evals: string) {
+};
+
+(self as any).send_evals  = function(evals: string) {
     console.log((evals))
     console.log(JSON.parse(evals))
     self.postMessage([Message.Evals, evals])
-}
+};
 
 // FIXME is it possible to get rid of this nonsense cascade?
 // I'm fighting some transpile process or something with this
