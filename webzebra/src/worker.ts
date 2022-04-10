@@ -3,7 +3,7 @@ import {Message} from "./message";
 
 
 let game: ZebraGame | undefined = undefined
-let skills = [6, 6, 6, 0, 0, 0]
+let skills: [number, number, number, number, number, number] = [6, 6, 6, 0, 0, 0]
 
 self.addEventListener("message", ev => {
     const messageType = ev.data[0];
@@ -26,7 +26,7 @@ self.addEventListener("message", ev => {
     } else if (messageType === Message.SetSkill) {
         skills = messageData
         if (game)
-            game.set_skills(...messageData)
+            game.set_skills(...skills)
     } else if (messageType === Message.Undo) {
         if (game) {
             game.undo()
@@ -58,7 +58,7 @@ function play_game(game: ZebraGame, move?: number) {
 };
 
 (self as any).zebra = {
-    display_board(arr) {
+    display_board(arr: number[]) {
         // TODO this call is really expensive for some reason, investigate that.
         self.postMessage([Message.DisplayBoard, [...arr]])
     }
