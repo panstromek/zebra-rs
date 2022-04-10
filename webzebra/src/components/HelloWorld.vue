@@ -50,8 +50,10 @@
           <div class="px-2 text-white">{{ score.white }}</div>
         </div>
         <button
+            :disabled="!initialized"
             @click="newGame"
-            class="focus:outline-none border-2 rounded border-solid border-black text-white p-2 m-0.5">
+            :class="initialized ? 'border-black' : 'text-gray-700 border-gray-700'"
+            class="focus:outline-none border-2 rounded border-solid text-white p-2 m-0.5">
           New Game
         </button>
       </div>
@@ -110,7 +112,8 @@ export default defineComponent({
       white_exact_skill: 0,
       white_wld_skill: 0,
       practiceMode: true,
-      evals: []
+      evals: [],
+      initialized: false
     }
   },
   created() {
@@ -134,6 +137,9 @@ export default defineComponent({
         case Message.Evals: {
           this.evals = JSON.parse(data).evals
           break;
+        }
+        case Message.Initialized: {
+          this.initialized = true
         }
       }
     })

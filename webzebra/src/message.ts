@@ -7,4 +7,5 @@ export const enum Message {
     SetSkill,
     Undo,
     Evals,
+    Initialized
 }

@@ -79,3 +79,6 @@ init()
         res.initialize()
 
     })
+    .then(() => {
+        self.postMessage([Message.Initialized])
+    })
