@@ -34,6 +34,19 @@ pub struct EvaluatedMove {
     pub pv_depth: i32,
     pub pv: [i8; 60],
 }
+
+impl EvaluatedMove {
+    pub fn new() -> Self {
+        Self {
+            eval: EvaluationType::new(),
+            side_to_move: 0,
+            move_0: 0,
+            pv_depth: 0,
+            pv: [0; 60],
+        }
+    }
+}
+
 pub const BOOK_MOVE: C2RustUnnamed = 1;
 pub type C2RustUnnamed = u32;
 pub const ENDGAME_MOVE: C2RustUnnamed = 3;
@@ -115,6 +128,16 @@ pub struct EvaluatedList {
 }
 
 impl EvaluatedList {
+    fn new() -> Self {
+        Self {
+            evaluated_list: [EvaluatedMove::new(); 60],
+            game_evaluated_count: 0,
+            best_move: 0,
+        }
+    }
+}
+
+impl EvaluatedList {
     pub fn get_evaluated(&self, index: i32) -> EvaluatedMove {
         return self.evaluated_list[index as usize];
     }
@@ -142,24 +165,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                            mut exact: i32,
                                            mut wld: i32, mut echo: i32, g_state: &mut FullState, update_cb: fn(&EvaluatedList))
                                            -> EvaluatedList {
-    let mut list = EvaluatedList {
-        evaluated_list: [EvaluatedMove {
-            eval: EvaluationType {
-                type_0: MIDGAME_EVAL,
-                res: WON_POSITION,
-                score: 0,
-                confidence: 0.,
-                search_depth: 0,
-                is_book: 0,
-            },
-            side_to_move: 0,
-            move_0: 0,
-            pv_depth: 0,
-            pv: [0; 60],
-        }; 60],
-        game_evaluated_count: 0,
-        best_move: 0
-    };
+    let mut list = EvaluatedList::new();
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut index: i32 = 0;
