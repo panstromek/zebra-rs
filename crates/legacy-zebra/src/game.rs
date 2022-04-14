@@ -326,13 +326,7 @@ pub fn perform_extended_solve(side_to_move: i32,
     let mut best_move = 0;
     let mut disc_diff: i32 = 0;
     let mut corrected_diff: i32 = 0;
-    let mut temp =
-        EvaluatedMove{eval:
-         EvaluationType::new(),
-                      side_to_move: 0,
-                      move_0: 0,
-                      pv_depth: 0,
-                      pv: [0; 60],};
+    let mut temp = EvaluatedMove::new();
     let mut res = WON_POSITION;
     /* Disable all time control mechanisms */
     ( g_state.timer).toggle_abort_check(0);
@@ -352,13 +346,7 @@ pub fn perform_extended_solve(side_to_move: i32,
         exact = 60
     } else { exact = 0 }
     let mut game_evaluated_count = 1;
-    let mut evaluated_list: [EvaluatedMove; 60] = [EvaluatedMove {
-        eval: EvaluationType::new(),
-        side_to_move: 0,
-        move_0: 0,
-        pv_depth: 0,
-        pv: [0; 60],
-    }; 60];
+    let mut evaluated_list: [EvaluatedMove; 60] = [EvaluatedMove::new(); 60];
     /* Calculate the score for the preferred move */
     evaluated_list[0].side_to_move = side_to_move;
     evaluated_list[0].move_0 = actual_move;
