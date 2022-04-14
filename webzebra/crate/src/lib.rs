@@ -347,7 +347,7 @@ impl ZebraGame {
 
         let evals = extended_compute_move::<WasmComputeMoveLogger,WasmFrontend , WasmFrontend, WasmThor>(side_to_move, 0, 1,
                                           //fixme which ones should these be?
-                                          7 /*self.game.g_state.g_config.skill[0]*/,
+                                          8  /*self.game.g_state.g_config.skill[0]*/,
                                           16 /*self.game.g_state.g_config.exact_skill[0]*/,
                                           16 /*self.game.g_state.g_config.wld_skill[0]*/,
                                           1, &mut self.game.g_state,droidzebra_msg_candidate_evals
