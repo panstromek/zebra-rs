@@ -519,14 +519,7 @@ fn display_status_out() {
 }
 
 fn echo_ponder_move_4(curr_move: i8, ponder_move: i8) {
-    unsafe {
-        send_status!(display_state, "-->   {}        ", "Thor database");
-        if ponder_move != 0 {
-            send_status!(display_state, "{{{}}} ",TO_SQUARE(ponder_move));
-        }
-        send_status!(display_state, "{}", TO_SQUARE(curr_move));
-        display_state.display_status(&mut stdout, 0);
-    }
+   Self::echo_ponder_move_2(curr_move, ponder_move)
 }
 
 fn echo_ponder_move_2(curr_move: i8, ponder_move: i8) {
