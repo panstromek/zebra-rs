@@ -65,8 +65,6 @@ function play_game(game: ZebraGame, move?: number) {
 };
 
 (self as any).send_evals  = function(evals: string) {
-    console.log((evals))
-    console.log(JSON.parse(evals))
     self.postMessage([Message.Evals, evals])
 };
 
