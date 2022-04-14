@@ -305,7 +305,7 @@ pub fn extended_compute_move<FE: FrontEnd>(
     side_to_move: i32, book_only: i32, book: i32, mid: i32, exact: i32, wld: i32, echo: i32, g_state: &mut FullState)
     -> EvaluatedList {
     engine::src::game::extended_compute_move::<LogFileHandler, LibcZebraOutput, FE, LegacyThor>(
-        side_to_move, book_only, book, mid, exact, wld, echo, g_state
+        side_to_move, book_only, book, mid, exact, wld, echo, g_state, |_| ()
     )
 }
 /*

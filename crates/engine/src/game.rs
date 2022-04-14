@@ -140,23 +140,26 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                            mut book: i32,
                                            mut mid: i32,
                                            mut exact: i32,
-                                           mut wld: i32, mut echo: i32, g_state: &mut FullState)
+                                           mut wld: i32, mut echo: i32, g_state: &mut FullState, update_cb: fn(&EvaluatedList))
                                            -> EvaluatedList {
-    let mut evaluated_list: [EvaluatedMove; 60] = [EvaluatedMove {
-        eval: EvaluationType {
-            type_0: MIDGAME_EVAL,
-            res: WON_POSITION,
-            score: 0,
-            confidence: 0.,
-            search_depth: 0,
-            is_book: 0,
-        },
-        side_to_move: 0,
-        move_0: 0,
-        pv_depth: 0,
-        pv: [0; 60],
-    }; 60];
-    let mut game_evaluated_count: i32 = 0;
+    let mut list = EvaluatedList {
+        evaluated_list: [EvaluatedMove {
+            eval: EvaluationType {
+                type_0: MIDGAME_EVAL,
+                res: WON_POSITION,
+                score: 0,
+                confidence: 0.,
+                search_depth: 0,
+                is_book: 0,
+            },
+            side_to_move: 0,
+            move_0: 0,
+            pv_depth: 0,
+            pv: [0; 60],
+        }; 60],
+        game_evaluated_count: 0,
+        best_move: 0
+    };
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut index: i32 = 0;
@@ -164,7 +167,6 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
     let mut this_move = 0;
     let mut disc_diff: i32 = 0;
     let mut corrected_diff: i32 = 0;
-    let mut best_move = 0;
     let mut temp_move = 0;
     let mut best_score: i32 = 0;
     let mut best_pv_depth: i32 = 0;
@@ -201,8 +203,8 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
     (g_state.timer).clear_ponder_times();
     determine_hash_values(side_to_move, &(g_state.board).board, (&mut g_state.hash));
     empties = 60 - (g_state.moves).disks_played;
-    best_move = 0;
-    game_evaluated_count = 0;
+    list.best_move = 0;
+    list.game_evaluated_count = 0;
     reset_counter(&mut (g_state.search).nodes);
     generate_all(side_to_move, (&mut g_state.moves), &(g_state.search), &(g_state.board).board);
     if book_only != 0 || book != 0 {
@@ -218,64 +220,65 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                      &mut (g_state.search),
                                      &mut (g_state.flip_stack),
                                      &mut (g_state.hash));
-        game_evaluated_count = (g_state.g_book).get_candidate_count();
+        list.game_evaluated_count = (g_state.g_book).get_candidate_count();
         i = 0;
-        while i < game_evaluated_count {
+        while i < list.game_evaluated_count {
             let mut child_flags: i32 = 0;
             book_move = (g_state.g_book).get_candidate(i);
-            evaluated_list[i as usize].side_to_move = side_to_move;
-            evaluated_list[i as usize].move_0 = book_move.move_0;
-            evaluated_list[i as usize].pv_depth = 1;
-            evaluated_list[i as usize].pv[0] =
-                book_move.move_0;
-            evaluated_list[i as usize].eval =
+            list.evaluated_list[i as usize].side_to_move = side_to_move;
+            list.evaluated_list[i as usize].move_0 = book_move.move_0;
+            list.evaluated_list[i as usize].pv_depth = 1;
+            list.evaluated_list[i as usize].pv[0] = book_move.move_0;
+            list.evaluated_list[i as usize].eval =
                 create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
                                  book_move.score, 0.0f64, 0,
                                  1);
             child_flags = book_move.flags & book_move.parent_flags;
             if child_flags & (16 | 4) != 0 {
                 if child_flags & 16 != 0 {
-                    evaluated_list[i as usize].eval.type_0 = EXACT_EVAL
-                } else { evaluated_list[i as usize].eval.type_0 = WLD_EVAL }
+                    list.evaluated_list[i as usize].eval.type_0 = EXACT_EVAL
+                } else { list.evaluated_list[i as usize].eval.type_0 = WLD_EVAL }
                 if book_move.score > 0 {
-                    evaluated_list[i as usize].eval.res = WON_POSITION;
+                    list.evaluated_list[i as usize].eval.res = WON_POSITION;
                     /* Normalize the scores so that e.g. 33-31 becomes +256 */
-                    evaluated_list[i as usize].eval.score -=
+                    list.evaluated_list[i as usize].eval.score -=
                         30000;
-                    evaluated_list[i as usize].eval.score *=
+                    list.evaluated_list[i as usize].eval.score *=
                         128
                 } else if book_move.score == 0 {
-                    evaluated_list[i as usize].eval.res = DRAWN_POSITION
+                    list.evaluated_list[i as usize].eval.res = DRAWN_POSITION
                 } else {
                     /* score < 0 */
-                    evaluated_list[i as usize].eval.res = LOST_POSITION;
+                    list.evaluated_list[i as usize].eval.res = LOST_POSITION;
                     /* Normalize the scores so that e.g. 30-34 becomes -512 */
-                    evaluated_list[i as usize].eval.score +=
+                    list.evaluated_list[i as usize].eval.score +=
                         30000;
-                    evaluated_list[i as usize].eval.score *=
+                    list.evaluated_list[i as usize].eval.score *=
                         128
                 }
-            } else { evaluated_list[i as usize].eval.type_0 = MIDGAME_EVAL }
-            i += 1
+            } else { list.evaluated_list[i as usize].eval.type_0 = MIDGAME_EVAL }
+            i += 1;
+            update_cb(&list);
+            // TODO here calback to UI with update
         }
     }
     if book_only != 0 {
         /* Only book moves are to be considered */
-        if game_evaluated_count > 0 {
-            best_move = get_book_move::<FE>(side_to_move, 0,
-                                            &mut book_eval_info, echo,
-                                            &mut (g_state.board),
-                                            &mut (g_state.g_book),
-                                            &(g_state.search),
-                                            &mut (g_state.moves),
-                                            &mut (g_state.hash),
-                                            &mut (g_state.random),
-                                            &mut (g_state.flip_stack));
+        if list.game_evaluated_count > 0 {
+            list.best_move = get_book_move::<FE>(side_to_move, 0,
+                                                         &mut book_eval_info, echo,
+                                                         &mut (g_state.board),
+                                                         &mut (g_state.g_book),
+                                                         &(g_state.search),
+                                                         &mut (g_state.moves),
+                                                         &mut (g_state.hash),
+                                                         &mut (g_state.random),
+                                                         &mut (g_state.flip_stack));
             let eval = book_eval_info;
             (g_state.search).set_current_eval(eval);
         } else {
             (g_state.board).pv_depth[0] = 0;
-            best_move = -1;
+            list.best_move = -1;
             book_eval_info = create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION, 0, 0.0f64, 0, 0);
             let eval = book_eval_info;
             (g_state.search).set_current_eval(eval);
@@ -286,10 +289,10 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
         let empties_0 = 60 - (g_state.moves).disks_played;
         book = 0;
         best_score = -(12345678);
-        if game_evaluated_count > 0 {
+        if list.game_evaluated_count > 0 {
             /* Book PV available */
-            best_score = evaluated_list[0].eval.score;
-            best_move = evaluated_list[0].move_0
+            best_score = list.evaluated_list[0].eval.score;
+            list.best_move = list.evaluated_list[0].move_0
         }
         let negate = 1;
         (g_state.search).negate_current_eval(negate);
@@ -311,8 +314,8 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
             this_move = (g_state.moves).move_list[(g_state.moves).disks_played as usize][i as usize];
             unsearched = 1;
             j = 0;
-            while j < game_evaluated_count {
-                if evaluated_list[j as usize].move_0 == this_move {
+            while j < list.game_evaluated_count {
+                if list.evaluated_list[j as usize].move_0 == this_move {
                     unsearched = 0
                 }
                 j += 1
@@ -389,13 +392,13 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
         }
         /* Initialize the entire list as being empty */
         i = 0;
-        index = game_evaluated_count;
+        index = list.game_evaluated_count;
         while i < unsearched_count {
-            evaluated_list[index as usize].side_to_move = side_to_move;
-            evaluated_list[index as usize].move_0 = unsearched_move[i as usize];
-            evaluated_list[index as usize].eval = create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION, 0, 0.0f64, 0, 0);
-            evaluated_list[index as usize].pv_depth = 1;
-            evaluated_list[index as usize].pv[0] = unsearched_move[i as usize];
+            list.evaluated_list[index as usize].side_to_move = side_to_move;
+            list.evaluated_list[index as usize].move_0 = unsearched_move[i as usize];
+            list.evaluated_list[index as usize].eval = create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION, 0, 0.0f64, 0, 0);
+            list.evaluated_list[index as usize].pv_depth = 1;
+            list.evaluated_list[index as usize].pv[0] = unsearched_move[i as usize];
             if empties_0 > (if wld > exact { wld } else { exact }) {
                 transform1[i as usize] = abs((g_state.random).my_random() as i32) as u32;
                 transform2[i as usize] = abs((g_state.random).my_random() as i32) as u32
@@ -467,7 +470,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                    because the moves might have been reordered during the
                    iterative deepening. */
                 index = 0;
-                while evaluated_list[index as usize].move_0 != this_move {
+                while list.evaluated_list[index as usize].move_0 != this_move {
                     index += 1
                 }
                 /* To avoid strange effects when browsing back and forth through
@@ -549,23 +552,23 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                             this_eval.res = WON_POSITION
                         }
                     }
-                    if force_return != 0 {
+                    if force_return != 0 { // TODO here check UI flag
                         break;
                     }
-                    evaluated_list[index as usize].eval = this_eval;
+                    list.evaluated_list[index as usize].eval = this_eval;
                     /* Store the PV corresponding to the move */
-                    evaluated_list[index as usize].pv_depth = (g_state.board).pv_depth[0] + 1;
-                    evaluated_list[index as usize].pv[0] = this_move;
+                    list.evaluated_list[index as usize].pv_depth = (g_state.board).pv_depth[0] + 1;
+                    list.evaluated_list[index as usize].pv[0] = this_move;
                     j = 0;
                     while j < (g_state.board).pv_depth[0] {
-                        evaluated_list[index as usize].pv[(j + 1) as usize] = (g_state.board).pv[0][j as usize];
+                        list.evaluated_list[index as usize].pv[(j + 1) as usize] = (g_state.board).pv[0][j as usize];
                         j += 1
                     }
                     /* Store the PV corresponding to the best move */
-                    if evaluated_list[index as usize].eval.score > best_score
+                    if list.evaluated_list[index as usize].eval.score > best_score
                     {
-                        best_score = evaluated_list[index as usize].eval.score;
-                        best_move = this_move;
+                        best_score = list.evaluated_list[index as usize].eval.score;
+                        list.best_move = this_move;
                         best_pv_depth = (g_state.board).pv_depth[0];
                         j = 0;
                         while j < best_pv_depth {
@@ -579,23 +582,24 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                         unmake_move(side_to_move, move_0, &mut (g_state.board).board, &mut (g_state.moves), &mut (g_state.hash), &mut (g_state.flip_stack));
                     };
                     /* Sort the moves evaluated */
-                    if first_iteration != 0 { game_evaluated_count += 1 }
-                    if force_return == 0 {
+                    if first_iteration != 0 { list.game_evaluated_count += 1 }
+                    if force_return == 0 { // TODO here check UI flag
                         loop  {
                             changed = 0;
                             j = 0;
-                            while j < game_evaluated_count - 1 {
-                                if compare_eval(evaluated_list[j as usize].eval, evaluated_list[(j + 1) as usize].eval) < 0 {
+                            while j < list.game_evaluated_count - 1 {
+                                if compare_eval(list.evaluated_list[j as usize].eval, list.evaluated_list[(j + 1) as usize].eval) < 0 {
                                     changed = 1;
-                                    temp = evaluated_list[j as usize];
-                                    evaluated_list[j as usize] = evaluated_list[(j + 1) as usize];
-                                    evaluated_list[(j + 1) as usize] = temp
+                                    temp = list.evaluated_list[j as usize];
+                                    list.evaluated_list[j as usize] = list.evaluated_list[(j + 1) as usize];
+                                    list.evaluated_list[(j + 1) as usize] = temp
                                 }
                                 j += 1
                             }
                             if !(changed != 0) { break ; }
                         }
                     }
+                    update_cb(&list);
                     i += 1
                 }
             }
@@ -604,9 +608,9 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
             the front of the list, starting with the bad moves and ending
              with the best move.  This ensures that unsearched_move will be
              sorted w.r.t. the order in evaluated_list. */
-            i = game_evaluated_count - 1;
+            i = list.game_evaluated_count - 1;
             while i >= 0 {
-                let this_move_0 = evaluated_list[i as usize].move_0;
+                let this_move_0 = list.evaluated_list[i as usize].move_0;
                 j = 0;
                 while j != unsearched_count && unsearched_move[j as usize] != this_move_0 {
                     j += 1
@@ -622,15 +626,16 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                 /* Must be book move, skip */
                 i -= 1
             }
+            // TODO check UI flag
             if !(force_return == 0 && (current_mid != mid || current_exact != exact || current_wld != wld)) {
                 break ;
             }
         }
         echo = stored_echo;
-        game_evaluated_count = (g_state.moves).move_count[(g_state.moves).disks_played as usize];
+        list.game_evaluated_count = (g_state.moves).move_count[(g_state.moves).disks_played as usize];
         /* Make sure that the PV and the score correspond to the best move */
         (g_state.board).pv_depth[0] = best_pv_depth + 1;
-        (g_state.board).pv[0][0] = best_move;
+        (g_state.board).pv[0][0] = list.best_move;
         i = 0;
         while i < best_pv_depth {
             (g_state.board).pv[0][(i + 1) as usize] = best_pv[i as usize];
@@ -639,7 +644,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
         let negate = 0;
         (g_state.search).negate_current_eval(negate);
         if (g_state.moves).move_count[(g_state.moves).disks_played as usize] > 0 {
-            let eval_argument = evaluated_list[0].eval;
+            let eval_argument = list.evaluated_list[0].eval;
             (g_state.search).set_current_eval(eval_argument);
         }
     }
@@ -651,11 +656,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
     (g_state.midgame).toggle_perturbation_usage(1);
     (g_state.game).max_depth_reached += 1;
     g_state.game.prefix_move = 0;
-    return EvaluatedList {
-        evaluated_list,
-        game_evaluated_count,
-        best_move
-    };
+    return list;
 }
 /*
   COMPARE_EVAL

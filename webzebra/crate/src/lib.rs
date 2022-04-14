@@ -306,7 +306,7 @@ impl ZebraGame {
             PlayGameState::GettingMove { provided_move_count, move_start, side_to_move } => {
                 display_board(&play_state.g_state.board.board);
                 c_log!("Computing evals");
-                droidzebra_msg_candidate_evals(self.compute_evals(side_to_move));
+                droidzebra_msg_candidate_evals(&self.compute_evals(side_to_move));
                 // TODO signal that we need move
                 // move_attempt =  Some(MoveAttempt(res.0, res.1))
                 return Some(InteractionRequest::Move);
@@ -350,7 +350,7 @@ impl ZebraGame {
                                           6 /*self.game.g_state.g_config.skill[0]*/,
                                           8 /*self.game.g_state.g_config.exact_skill[0]*/,
                                           8 /*self.game.g_state.g_config.wld_skill[0]*/,
-                                          1, &mut self.game.g_state,
+                                          1, &mut self.game.g_state,droidzebra_msg_candidate_evals
         );
         self.game.g_state.search.full_pv = stored_pv;
         self.game.g_state.search.full_pv_depth = stored_pv_depth;
@@ -409,7 +409,7 @@ fn candidate_eval_text( eval_info: EvaluationType) -> String {
 }
 
 // PORTED from droidzebra
-fn droidzebra_msg_candidate_evals(evals: EvaluatedList)
+fn droidzebra_msg_candidate_evals(evals: &EvaluatedList)
 {
 	let mut buffer  =  "{\"evals\":[ ".to_string();
 
