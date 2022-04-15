@@ -88,11 +88,15 @@
 import {defineComponent} from 'vue'
 
 import ZebraWorker from '../worker.ts?worker=true'
-import {EvaluatedMove, Message, MessageType} from "../message";
+import {EvaluatedMove, Message, MessageType, SkillSetting} from "../message";
 import {createStopToken, stop} from "../stopToken";
 
+interface ZWorker extends Worker {
+  postMessage(message: Message): void
+}
+
 type NonReactiveData = {
-  worker: Worker,
+  worker: ZWorker,
   workerListener: (this: Worker, ev: WorkerEventMap[keyof WorkerEventMap]) => any
 }
 
@@ -129,12 +133,12 @@ export default defineComponent({
 
       // workardound for analysis not working properly
       // initialized in created hook
-      worker: undefined as any as Worker,
+      worker: undefined as any as ZWorker,
       workerListener: undefined as any as (this: Worker, ev: WorkerEventMap[keyof WorkerEventMap]) => any
     }
   },
   created() {
-    const worker = new ZebraWorker() as Worker
+    const worker = new ZebraWorker() as ZWorker
     this.worker = worker
     worker.addEventListener('message', this.workerListener = ev => {
       const [type, data] = (ev as any).data as Message;
@@ -181,7 +185,7 @@ export default defineComponent({
     setSkills() {
       this.stopWorkerIfNeeded()
 
-      let numbers = [
+      let numbers: SkillSetting = [
         Number(this.black_skill),
         Number(this.black_exact_skill),
         Number(this.black_wld_skill),
