@@ -125,6 +125,7 @@ export default defineComponent({
       initialized: false,
       stopToken: undefined as string | undefined,
       workerIsRunning: false,
+      clickedMove: undefined as number | undefined,
 
       // workardound for analysis not working properly
       // initialized in created hook
@@ -140,6 +141,7 @@ export default defineComponent({
       switch (type) {
         case Message.DisplayBoard: {
           this.board = data
+          this.clickedMove = undefined
           break
         }
         case Message.GetMove : {
@@ -227,6 +229,7 @@ export default defineComponent({
         let j = Math.floor(x / fieldSize) + 1
         let i = Math.floor(y / fieldSize) + 1
         let move = (10 * i + j)
+        this.clickedMove = move
         this.worker.postMessage([Message.GetMove, move])
         this.waitingForMove = false
       }
@@ -248,6 +251,7 @@ export default defineComponent({
       let evals = []
       const fieldSize = 100
       const arr = []
+      const clickedMove = this.clickedMove;
       for (let i = 1; i <= 8; i++) {
         for (let j = 1; j <= 8; j++) {
           let color;
@@ -264,6 +268,11 @@ export default defineComponent({
 
             default :
             {
+              if (clickedMove === move) {
+                // todo take into account side to move
+                color = 'rgba(127, 127, 127, 0.5)'
+                break
+              }
               const eval_ = this.evals.find(eval_ => eval_.move === move)
               if (!eval_) {
                 continue
