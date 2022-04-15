@@ -8,9 +8,13 @@ let skills: SkillSetting = [6, 6, 6, 0, 0, 0]
 let stopToken: string | undefined
 let lastMessageTime = Date.now()
 
+function sendMessage(message: Message) {
+    self.postMessage(message)
+}
+
 self.addEventListener("message", ev => {
     lastMessageTime = Date.now()
-    self.postMessage([MessageType.WorkerIsRunning, true])
+    sendMessage([MessageType.WorkerIsRunning, true])
 
     const msg = ev.data as Message;
     const messageType = msg[0];
@@ -43,7 +47,7 @@ self.addEventListener("message", ev => {
         console.log('Unknown message')
     }
 
-    self.postMessage([MessageType.WorkerIsRunning, false])
+    sendMessage([MessageType.WorkerIsRunning, false])
 });
 
 function play_game(game: ZebraGame, move?: number) {
@@ -57,12 +61,12 @@ function play_game(game: ZebraGame, move?: number) {
         // just don't do anything
         // self.zebra.display_board(game.get_board())
     } else if (request == InteractionRequest.Pass) {
-        self.postMessage([MessageType.GetPass])
+        sendMessage([MessageType.GetPass])
     } else if (request == InteractionRequest.Move) {
         if (game.side_to_move() === -1) {
-            self.postMessage([MessageType.GetPass])
+            sendMessage([MessageType.GetPass])
         } else {
-            self.postMessage([MessageType.GetMove])
+            sendMessage([MessageType.GetMove])
         }
     }
 }
@@ -74,12 +78,12 @@ function play_game(game: ZebraGame, move?: number) {
 (self as any).zebra = {
     display_board(arr: number[]) {
         // TODO this call is really expensive for some reason, investigate that.
-        self.postMessage([MessageType.DisplayBoard, [...arr]])
+        sendMessage([MessageType.DisplayBoard, [...arr]])
     }
 };
 
 (self as any).send_evals  = function(evals: string) {
-    self.postMessage([MessageType.Evals, evals])
+    sendMessage([MessageType.Evals, evals])
 };
 
 let lastStopTokenCheck = undefined as number | undefined;
@@ -119,5 +123,5 @@ init()
 
     })
     .then(() => {
-        self.postMessage([MessageType.Initialized])
+        sendMessage([MessageType.Initialized])
     })

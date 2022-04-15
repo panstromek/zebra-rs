@@ -15,7 +15,7 @@ export type SkillSetting = [number, number, number, number, number, number]
 
 export type Message =
     | [MessageType.GetMove, number?]
-    | [MessageType.GetPass, -1]
+    | [MessageType.GetPass, -1?]
     | [MessageType.DisplayBoard, number[]]
     | [MessageType.NewGame]
     | [MessageType.SetSkill, SkillSetting]
