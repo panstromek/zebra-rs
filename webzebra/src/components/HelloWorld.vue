@@ -97,7 +97,7 @@ interface ZWorker extends Worker {
 
 type NonReactiveData = {
   worker: ZWorker,
-  workerListener: (this: Worker, ev: WorkerEventMap[keyof WorkerEventMap]) => any
+  workerListener: (this: Worker, ev: MessageEvent) => any
 }
 
 export default defineComponent({
@@ -141,7 +141,7 @@ export default defineComponent({
     const worker = new ZebraWorker() as ZWorker
     this.worker = worker
     worker.addEventListener('message', this.workerListener = ev => {
-      const [type, data] = (ev as any).data as Message;
+      const [type, data] = (ev as MessageEvent).data as Message;
       switch (type) {
         case MessageType.DisplayBoard: {
           this.board = data
