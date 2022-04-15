@@ -208,7 +208,6 @@ export default defineComponent({
           console.error('cannot stop worker, missing stop token')
         }
 
-        console.log('Recreating stop token')
         this.stopToken = createStopToken()
         this.worker.postMessage([Message.StopToken, this.stopToken])
       }
