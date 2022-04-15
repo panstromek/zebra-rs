@@ -9,4 +9,5 @@ export const enum Message {
     Evals,
     Initialized,
     StopToken,
+    WorkerIsRunning
 }

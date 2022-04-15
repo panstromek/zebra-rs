@@ -57,6 +57,9 @@
           New Game
         </button>
       </div>
+<!--      <div>-->
+<!--        Worker running: {{workerIsRunning}}-->
+<!--      </div>-->
 <!--      <br>-->
 <!--      <h4>Skills</h4>-->
 <!--      <div>-->
@@ -84,8 +87,14 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
 
-import Worker from '../worker.ts?worker=true'
+import ZebraWorker from '../worker.ts?worker=true'
 import {Message} from "../message";
+import {createStopToken, stop} from "../stopToken";
+
+type NonReactiveData = {
+  worker: Worker,
+  workerListener: (this: Worker, ev: WorkerEventMap[keyof WorkerEventMap]) => any
+}
 
 export default defineComponent({
   name: 'HelloWorld',
@@ -112,16 +121,22 @@ export default defineComponent({
       white_exact_skill: 0,
       white_wld_skill: 0,
       practiceMode: true,
-      evals: [],
+      evals: [] as object[],
       initialized: false,
-      stopToken: undefined
+      stopToken: undefined as string | undefined,
+      workerIsRunning: false,
+
+      // workardound for analysis not working properly
+      // initialized in created hook
+      worker: undefined as any as Worker,
+      workerListener: undefined as any as (this: Worker, ev: WorkerEventMap[keyof WorkerEventMap]) => any
     }
   },
   created() {
-    const worker = new Worker()
+    const worker = new ZebraWorker() as Worker
     this.worker = worker
     worker.addEventListener('message', this.workerListener = ev => {
-      const [type, data] = ev.data;
+      const [type, data] = (ev as any).data as [Message, any];
       switch (type) {
         case Message.DisplayBoard: {
           this.board = data
@@ -143,21 +158,27 @@ export default defineComponent({
           this.initialized = true
           break;
         }
-        case Message.StopToken : {
-          this.stopToken = data
+        case Message.WorkerIsRunning : {
+          this.workerIsRunning = data
           break
         }
       }
     })
+
+    this.stopToken = createStopToken()
+    worker.postMessage([Message.StopToken, this.stopToken])
   },
   beforeUnmount() {
     this.worker.removeEventListener('message', this.workerListener)
   },
   methods: {
     undo() {
+      this.stopWorkerIfNeeded()
       this.worker.postMessage([Message.Undo])
     },
     setSkills() {
+      this.stopWorkerIfNeeded()
+
       let numbers = [
         Number(this.black_skill),
         Number(this.black_exact_skill),
@@ -173,10 +194,26 @@ export default defineComponent({
       this.worker.postMessage([Message.SetSkill, numbers])
     },
     newGame() {
+      this.stopWorkerIfNeeded()
       this.setSkills()
       this.worker.postMessage([Message.NewGame])
     },
+    stopWorkerIfNeeded() {
+      if (this.workerIsRunning) {
+        if (this.stopToken) {
+          console.log('trying to stop worker')
+          stop(this.stopToken)
+        } else {
+          console.error('cannot stop worker, missing stop token')
+        }
+
+        console.log('Recreating stop token')
+        this.stopToken = createStopToken()
+        this.worker.postMessage([Message.StopToken, this.stopToken])
+      }
+    },
     clickBoard(e: MouseEvent) {
+      this.stopWorkerIfNeeded()
       const board = this.$refs.board as SVGElement;
       const boardSize = board.clientWidth
       const fieldSize = boardSize / 8
@@ -184,7 +221,7 @@ export default defineComponent({
       if (this.waitingForPass) {
         this.worker.postMessage([Message.GetPass, -1])
         this.waitingForPass = false
-      } else if (this.waitingForMove) {
+      } else {
         let x = e.offsetX
         let y = e.offsetY
         let j = Math.floor(x / fieldSize) + 1

@@ -346,12 +346,22 @@ impl ZebraGame {
         let stored_pv = self.game.g_state.search.full_pv;
         let stored_pv_depth = self.game.g_state.search.full_pv_depth;
 
-        let evals = extended_compute_move::<WasmComputeMoveLogger,WasmFrontend , WasmFrontend, WasmThor>(side_to_move, 0, 1,
+        // Cache the stop flag to avoid crossing wasm-js boundary after
+        // it has beens set to true - once it's true, it'll always be true
+        // during this iteration
+        let mut cached_stop = false;
+        let evals = extended_compute_move::<WasmComputeMoveLogger,WasmFrontend , WasmFrontend, WasmThor, _>(side_to_move, 0, 1,
                                           //fixme which ones should these be?
-                                          8  /*self.game.g_state.g_config.skill[0]*/,
-                                          18 /*self.game.g_state.g_config.exact_skill[0]*/,
-                                          18 /*self.game.g_state.g_config.wld_skill[0]*/,
-                                          1, &mut self.game.g_state,droidzebra_msg_candidate_evals
+                                          12  /*self.game.g_state.g_config.skill[0]*/,
+                                          22 /*self.game.g_state.g_config.exact_skill[0]*/,
+                                          22 /*self.game.g_state.g_config.wld_skill[0]*/,
+                                          1, &mut self.game.g_state,droidzebra_msg_candidate_evals,
+            || if cached_stop == true {
+                true
+            } else {
+                cached_stop = should_stop();
+                cached_stop
+            }
         );
         self.game.g_state.search.full_pv = stored_pv;
         self.game.g_state.search.full_pv_depth = stored_pv_depth;

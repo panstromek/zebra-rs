@@ -5,12 +5,18 @@ import {checkStopToken, createStopToken} from "./stopToken";
 
 let game: ZebraGame | undefined = undefined
 let skills: [number, number, number, number, number, number] = [6, 6, 6, 0, 0, 0]
-let stopToken = createStopToken()
+let stopToken: string | undefined
+let lastMessageTime = Date.now()
 
 self.addEventListener("message", ev => {
+    lastMessageTime = Date.now()
+    self.postMessage([Message.WorkerIsRunning, true])
+
     const messageType = ev.data[0];
     const messageData = ev.data[1];
-    if (messageType === Message.GetMove) {
+    if (messageType === Message.StopToken) {
+        stopToken = messageData
+    } else if (messageType === Message.GetMove) {
         if (game) {
             play_game(game, ev.data[1])
         }
@@ -36,9 +42,15 @@ self.addEventListener("message", ev => {
     } else {
         console.log('Unknown message')
     }
+
+    self.postMessage([Message.WorkerIsRunning, false])
 });
 
 function play_game(game: ZebraGame, move?: number) {
+    if (stopToken === undefined) {
+        console.error('missing stop token, can\'t continue working.')
+        return
+    }
     // self.zebra.display_board(game.get_board())
     let request = game.play_until_next_interaction(move);
     if (request == InteractionRequest.End) {
@@ -70,10 +82,28 @@ function play_game(game: ZebraGame, move?: number) {
     self.postMessage([Message.Evals, evals])
 };
 
+let lastStopTokenCheck = undefined as number | undefined;
+
 (self as any).should_stop = function() : boolean {
-    if (checkStopToken(stopToken)) {
-        stopToken = createStopToken()
-        self.postMessage([Message.StopToken, stopToken])
+    if (stopToken === undefined) {
+        return true
+    }
+    // Stop token check is expensive, so let's assume that
+    // no one will interact with zebra too quickly
+    // and skip the check at the begining
+    if ((Date.now() - lastMessageTime) < 300) {
+        return false
+    }
+    // Stop token check is expensive, don't check if we checked recently
+    if (lastStopTokenCheck !== undefined && (Date.now() - lastStopTokenCheck) < 80) {
+        return false
+    }
+
+    let shouldStop = checkStopToken(stopToken);
+    lastStopTokenCheck = Date.now()
+    if (shouldStop) {
+        stopToken = undefined
+        lastStopTokenCheck = undefined
         return true
     }
     return false

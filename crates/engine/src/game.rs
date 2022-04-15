@@ -158,12 +158,13 @@ impl EvaluatedList {
   except for the best.
 */
 
-pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, Thor: ThorDatabase>(side_to_move: i32,
+pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, Thor: ThorDatabase, StopFn: FnMut() -> bool>(side_to_move: i32,
                                            book_only: i32,
                                            mut book: i32,
                                            mut mid: i32,
                                            mut exact: i32,
-                                           mut wld: i32, mut echo: i32, g_state: &mut FullState, update_cb: fn(&EvaluatedList))
+                                           mut wld: i32, mut echo: i32, g_state: &mut FullState,
+                                           update_cb: fn(&EvaluatedList), mut should_stop: StopFn)
                                            -> EvaluatedList {
     let mut list = EvaluatedList::new();
     let mut i: i32 = 0;
@@ -464,7 +465,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                 current_wld = wld
             } else { current_exact = exact }
             i = 0;
-            while i < unsearched_count && force_return == 0 {
+            while i < unsearched_count && force_return == 0 && !should_stop() {
                 let mut this_eval =  EvaluationType::new();
                 this_move = unsearched_move[i as usize];
                 /* Locate the current move in the list.  This has to be done
@@ -503,7 +504,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                                      g_state.config.echo,
                                                      g_state);
                 }
-                if force_return != 0 {
+                if force_return != 0 || should_stop() {
                     /* Clear eval and exit search immediately */
                     this_eval = create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
                                          0, 0.0f64,
@@ -553,7 +554,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                             this_eval.res = WON_POSITION
                         }
                     }
-                    if force_return != 0 { // TODO here check UI flag
+                    if force_return != 0 || should_stop() {
                         break;
                     }
                     list.evaluated_list[index as usize].eval = this_eval;
@@ -584,7 +585,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                     };
                     /* Sort the moves evaluated */
                     if first_iteration != 0 { list.game_evaluated_count += 1 }
-                    if force_return == 0 { // TODO here check UI flag
+                    if force_return == 0 || should_stop() { // TODO here check UI flag
                         loop  {
                             changed = 0;
                             j = 0;
@@ -627,8 +628,8 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                 /* Must be book move, skip */
                 i -= 1
             }
-            // TODO check UI flag
-            if !(force_return == 0 && (current_mid != mid || current_exact != exact || current_wld != wld)) {
+
+            if !(force_return == 0 && (current_mid != mid || current_exact != exact || current_wld != wld) && !should_stop()) {
                 break ;
             }
         }
