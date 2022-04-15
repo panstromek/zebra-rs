@@ -109,7 +109,7 @@ export default defineComponent({
     }
   },
   data() {
-    const board = Array(128).fill(1);
+    const board = Array(128).fill(1) as number[];
     // board[54] = 0;
     // board[45] = 0;
     // board[55] = 2;
