@@ -203,7 +203,6 @@ export default defineComponent({
     stopWorkerIfNeeded() {
       if (this.workerIsRunning) {
         if (this.stopToken) {
-          console.log('trying to stop worker')
           stop(this.stopToken)
         } else {
           console.error('cannot stop worker, missing stop token')
