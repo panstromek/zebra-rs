@@ -6,7 +6,7 @@
            ref="board"
            viewBox="0 0 800 800"
            style="background-color: #3a7f46; border: 1vw brown solid;"
-           @click="clickBoard">
+           @click.prevent.stop="clickBoard">
         <g>
           <template v-if="practiceMode">
             <text v-for="eval_ in svg_data.evals"
@@ -303,8 +303,20 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style>
 a {
   color: #42b983;
+}
+
+/* Avoid text selection on the board */
+svg text {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+svg text::selection {
+  background: none;
 }
 </style>
