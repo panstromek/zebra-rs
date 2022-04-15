@@ -306,7 +306,6 @@ impl ZebraGame {
             }
             PlayGameState::GettingMove { provided_move_count, move_start, side_to_move } => {
                 display_board(&play_state.g_state.board.board);
-                c_log!("Computing evals");
                 droidzebra_msg_candidate_evals(&self.compute_evals(side_to_move));
                 // TODO signal that we need move
                 // move_attempt =  Some(MoveAttempt(res.0, res.1))
