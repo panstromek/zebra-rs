@@ -22,22 +22,12 @@ export function stop(stopToken: string): void {
 }
 
 export function checkStopToken(stopToken: string): boolean {
-    console.log('checking stop token') // todo remove in prod?
     let xhr = new XMLHttpRequest();
-    let res = false
     xhr.open("GET", stopToken, false);
-    xhr.onload = function (e) {
-        if (xhr.readyState === 4 && xhr.status !== 200) {
-            res = true
-        }
-    };
-    xhr.onerror = function (e) {
-        console.error(xhr.statusText);
-    };
     try {
         xhr.send(null);
     } catch (e) {
         return true
     }
-    return res;
+    return false;
 }
