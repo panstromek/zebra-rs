@@ -73,6 +73,7 @@ function play_game(game: ZebraGame, move?: number) {
 (self as any).should_stop = function() : boolean {
     if (checkStopToken(stopToken)) {
         stopToken = createStopToken()
+        self.postMessage([Message.StopToken, stopToken])
         return true
     }
     return false
