@@ -113,7 +113,8 @@ export default defineComponent({
       white_wld_skill: 0,
       practiceMode: true,
       evals: [],
-      initialized: false
+      initialized: false,
+      stopToken: undefined
     }
   },
   created() {
@@ -140,6 +141,11 @@ export default defineComponent({
         }
         case Message.Initialized: {
           this.initialized = true
+          break;
+        }
+        case Message.StopToken : {
+          this.stopToken = data
+          break
         }
       }
     })

@@ -1,9 +1,11 @@
 import init, {InteractionRequest, ZebraGame} from '../crate/pkg'
 import {Message} from "./message";
+import {checkStopToken, createStopToken} from "./stopToken";
 
 
 let game: ZebraGame | undefined = undefined
 let skills: [number, number, number, number, number, number] = [6, 6, 6, 0, 0, 0]
+let stopToken = createStopToken()
 
 self.addEventListener("message", ev => {
     const messageType = ev.data[0];
@@ -67,6 +69,14 @@ function play_game(game: ZebraGame, move?: number) {
 (self as any).send_evals  = function(evals: string) {
     self.postMessage([Message.Evals, evals])
 };
+
+(self as any).should_stop = function() : boolean {
+    if (checkStopToken(stopToken)) {
+        stopToken = createStopToken()
+        return true
+    }
+    return false
+}
 
 // FIXME is it possible to get rid of this nonsense cascade?
 // I'm fighting some transpile process or something with this

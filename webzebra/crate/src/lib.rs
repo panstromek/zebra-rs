@@ -47,6 +47,7 @@ extern "C" {
     fn send_evals(s: String);
     #[wasm_bindgen(js_namespace = zebra)]
     fn display_board(board: &[i32]);
+    fn should_stop() -> bool;
 }
 
 macro_rules! c_log {
