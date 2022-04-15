@@ -24,3 +24,10 @@ export type Message =
     | [MessageType.Initialized]
     | [MessageType.StopToken, string]
     | [MessageType.WorkerIsRunning, boolean]
+
+export interface EvaluatedMove {
+    move: number
+    best: boolean
+    eval_s: string
+    eval_l: string
+}

@@ -88,7 +88,7 @@
 import {defineComponent} from 'vue'
 
 import ZebraWorker from '../worker.ts?worker=true'
-import {Message, MessageType} from "../message";
+import {EvaluatedMove, Message, MessageType} from "../message";
 import {createStopToken, stop} from "../stopToken";
 
 type NonReactiveData = {
@@ -121,7 +121,7 @@ export default defineComponent({
       white_exact_skill: 0,
       white_wld_skill: 0,
       practiceMode: true,
-      evals: [] as object[],
+      evals: [] as EvaluatedMove[],
       initialized: false,
       stopToken: undefined as string | undefined,
       workerIsRunning: false,
