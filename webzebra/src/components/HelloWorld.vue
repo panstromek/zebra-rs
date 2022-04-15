@@ -88,7 +88,7 @@
 import {defineComponent} from 'vue'
 
 import ZebraWorker from '../worker.ts?worker=true'
-import {Message} from "../message";
+import {MessageType} from "../messageType";
 import {createStopToken, stop} from "../stopToken";
 
 type NonReactiveData = {
@@ -137,30 +137,30 @@ export default defineComponent({
     const worker = new ZebraWorker() as Worker
     this.worker = worker
     worker.addEventListener('message', this.workerListener = ev => {
-      const [type, data] = (ev as any).data as [Message, any];
+      const [type, data] = (ev as any).data as [MessageType, any];
       switch (type) {
-        case Message.DisplayBoard: {
+        case MessageType.DisplayBoard: {
           this.board = data
           this.clickedMove = undefined
           break
         }
-        case Message.GetMove : {
+        case MessageType.GetMove : {
           this.waitingForMove = true
           break
         }
-        case Message.GetPass : {
+        case MessageType.GetPass : {
           this.waitingForPass = true
           break
         }
-        case Message.Evals: {
+        case MessageType.Evals: {
           this.evals = JSON.parse(data).evals
           break;
         }
-        case Message.Initialized: {
+        case MessageType.Initialized: {
           this.initialized = true
           break;
         }
-        case Message.WorkerIsRunning : {
+        case MessageType.WorkerIsRunning : {
           this.workerIsRunning = data
           break
         }
@@ -168,7 +168,7 @@ export default defineComponent({
     })
 
     this.stopToken = createStopToken()
-    worker.postMessage([Message.StopToken, this.stopToken])
+    worker.postMessage([MessageType.StopToken, this.stopToken])
   },
   beforeUnmount() {
     this.worker.removeEventListener('message', this.workerListener)
@@ -176,7 +176,7 @@ export default defineComponent({
   methods: {
     undo() {
       this.stopWorkerIfNeeded()
-      this.worker.postMessage([Message.Undo])
+      this.worker.postMessage([MessageType.Undo])
     },
     setSkills() {
       this.stopWorkerIfNeeded()
@@ -193,12 +193,12 @@ export default defineComponent({
         alert('Some values are not integers')
         return
       }
-      this.worker.postMessage([Message.SetSkill, numbers])
+      this.worker.postMessage([MessageType.SetSkill, numbers])
     },
     newGame() {
       this.stopWorkerIfNeeded()
       this.setSkills()
-      this.worker.postMessage([Message.NewGame])
+      this.worker.postMessage([MessageType.NewGame])
     },
     stopWorkerIfNeeded() {
       if (this.workerIsRunning) {
@@ -209,7 +209,7 @@ export default defineComponent({
         }
 
         this.stopToken = createStopToken()
-        this.worker.postMessage([Message.StopToken, this.stopToken])
+        this.worker.postMessage([MessageType.StopToken, this.stopToken])
       }
     },
     clickBoard(e: MouseEvent) {
@@ -219,7 +219,7 @@ export default defineComponent({
       const fieldSize = boardSize / 8
 
       if (this.waitingForPass) {
-        this.worker.postMessage([Message.GetPass, -1])
+        this.worker.postMessage([MessageType.GetPass, -1])
         this.waitingForPass = false
       } else {
         let x = e.offsetX
@@ -228,7 +228,7 @@ export default defineComponent({
         let i = Math.floor(y / fieldSize) + 1
         let move = (10 * i + j)
         this.clickedMove = move
-        this.worker.postMessage([Message.GetMove, move])
+        this.worker.postMessage([MessageType.GetMove, move])
         this.waitingForMove = false
       }
     }

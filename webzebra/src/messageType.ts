@@ -1,5 +1,5 @@
 
-export const enum Message {
+export const enum MessageType {
     GetMove,
     GetPass,
     DisplayBoard,

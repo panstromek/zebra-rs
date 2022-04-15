@@ -1,5 +1,5 @@
 import init, {InteractionRequest, ZebraGame} from '../crate/pkg'
-import {Message} from "./message";
+import {MessageType} from "./messageType";
 import {checkStopToken, createStopToken} from "./stopToken";
 
 
@@ -10,32 +10,32 @@ let lastMessageTime = Date.now()
 
 self.addEventListener("message", ev => {
     lastMessageTime = Date.now()
-    self.postMessage([Message.WorkerIsRunning, true])
+    self.postMessage([MessageType.WorkerIsRunning, true])
 
     const messageType = ev.data[0];
     const messageData = ev.data[1];
-    if (messageType === Message.StopToken) {
+    if (messageType === MessageType.StopToken) {
         stopToken = messageData
-    } else if (messageType === Message.GetMove) {
+    } else if (messageType === MessageType.GetMove) {
         if (game) {
             play_game(game, ev.data[1])
         }
-    } else if (messageType === Message.GetPass) {
+    } else if (messageType === MessageType.GetPass) {
         if (game) {
             play_game(game, ev.data[1])
         }
-    } else if (messageType === Message.NewGame) {
+    } else if (messageType === MessageType.NewGame) {
         if (game) {
             game.free()
         }
         game = ZebraGame.new()
         game.set_skills(...skills)
         play_game(game)
-    } else if (messageType === Message.SetSkill) {
+    } else if (messageType === MessageType.SetSkill) {
         skills = messageData
         if (game)
             game.set_skills(...skills)
-    } else if (messageType === Message.Undo) {
+    } else if (messageType === MessageType.Undo) {
         if (game) {
             game.undo()
         }
@@ -43,7 +43,7 @@ self.addEventListener("message", ev => {
         console.log('Unknown message')
     }
 
-    self.postMessage([Message.WorkerIsRunning, false])
+    self.postMessage([MessageType.WorkerIsRunning, false])
 });
 
 function play_game(game: ZebraGame, move?: number) {
@@ -57,12 +57,12 @@ function play_game(game: ZebraGame, move?: number) {
         // just don't do anything
         // self.zebra.display_board(game.get_board())
     } else if (request == InteractionRequest.Pass) {
-        self.postMessage([Message.GetPass])
+        self.postMessage([MessageType.GetPass])
     } else if (request == InteractionRequest.Move) {
         if (game.side_to_move() === -1) {
-            self.postMessage([Message.GetPass])
+            self.postMessage([MessageType.GetPass])
         } else {
-            self.postMessage([Message.GetMove])
+            self.postMessage([MessageType.GetMove])
         }
     }
 }
@@ -74,12 +74,12 @@ function play_game(game: ZebraGame, move?: number) {
 (self as any).zebra = {
     display_board(arr: number[]) {
         // TODO this call is really expensive for some reason, investigate that.
-        self.postMessage([Message.DisplayBoard, [...arr]])
+        self.postMessage([MessageType.DisplayBoard, [...arr]])
     }
 };
 
 (self as any).send_evals  = function(evals: string) {
-    self.postMessage([Message.Evals, evals])
+    self.postMessage([MessageType.Evals, evals])
 };
 
 let lastStopTokenCheck = undefined as number | undefined;
@@ -119,5 +119,5 @@ init()
 
     })
     .then(() => {
-        self.postMessage([Message.Initialized])
+        self.postMessage([MessageType.Initialized])
     })
