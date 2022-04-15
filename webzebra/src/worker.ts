@@ -1,10 +1,10 @@
 import init, {InteractionRequest, ZebraGame} from '../crate/pkg'
-import {MessageType} from "./messageType";
-import {checkStopToken, createStopToken} from "./stopToken";
+import {Message, MessageType, SkillSetting} from "./message";
+import {checkStopToken} from "./stopToken";
 
 
 let game: ZebraGame | undefined = undefined
-let skills: [number, number, number, number, number, number] = [6, 6, 6, 0, 0, 0]
+let skills: SkillSetting = [6, 6, 6, 0, 0, 0]
 let stopToken: string | undefined
 let lastMessageTime = Date.now()
 
@@ -12,17 +12,17 @@ self.addEventListener("message", ev => {
     lastMessageTime = Date.now()
     self.postMessage([MessageType.WorkerIsRunning, true])
 
-    const messageType = ev.data[0];
-    const messageData = ev.data[1];
-    if (messageType === MessageType.StopToken) {
-        stopToken = messageData
+    const msg = ev.data as Message;
+    const messageType = msg[0];
+    if (msg[0] === MessageType.StopToken) {
+        stopToken = msg[1]
     } else if (messageType === MessageType.GetMove) {
         if (game) {
-            play_game(game, ev.data[1])
+            play_game(game, msg[1])
         }
     } else if (messageType === MessageType.GetPass) {
         if (game) {
-            play_game(game, ev.data[1])
+            play_game(game, msg[1])
         }
     } else if (messageType === MessageType.NewGame) {
         if (game) {
@@ -32,7 +32,7 @@ self.addEventListener("message", ev => {
         game.set_skills(...skills)
         play_game(game)
     } else if (messageType === MessageType.SetSkill) {
-        skills = messageData
+        skills = msg[1]
         if (game)
             game.set_skills(...skills)
     } else if (messageType === MessageType.Undo) {

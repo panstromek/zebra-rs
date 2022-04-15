@@ -88,7 +88,7 @@
 import {defineComponent} from 'vue'
 
 import ZebraWorker from '../worker.ts?worker=true'
-import {MessageType} from "../messageType";
+import {Message, MessageType} from "../message";
 import {createStopToken, stop} from "../stopToken";
 
 type NonReactiveData = {
@@ -137,7 +137,7 @@ export default defineComponent({
     const worker = new ZebraWorker() as Worker
     this.worker = worker
     worker.addEventListener('message', this.workerListener = ev => {
-      const [type, data] = (ev as any).data as [MessageType, any];
+      const [type, data] = (ev as any).data as Message;
       switch (type) {
         case MessageType.DisplayBoard: {
           this.board = data
