@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-wrap justify-center">
-    <div style="max-width: 900px; width: 100%">
+    <div style="max-width: 750px; width: 100%">
       <svg width="100%"
            preserveAspectRatio="xMidYMid meet"
            ref="board"
