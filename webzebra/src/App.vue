@@ -5,7 +5,7 @@
       Source
     </a>
   </div>
-  <HelloWorld msg="Hello Vue 3 + Vite" />
+  <HelloWorld />
 </template>
 
 <script lang="ts">

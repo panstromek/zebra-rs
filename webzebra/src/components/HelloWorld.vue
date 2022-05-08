@@ -102,12 +102,6 @@ type NonReactiveData = {
 
 export default defineComponent({
   name: 'HelloWorld',
-  props: {
-    msg: {
-      type: String,
-      required: true,
-    }
-  },
   data() {
     const board = Array(128).fill(1) as number[];
     // board[54] = 0;
