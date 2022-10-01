@@ -172,39 +172,42 @@ impl FrontEnd for LibcFatalError {
 
     fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32) {
         unsafe {
+            let ds = &mut display_state;
             if curr_val <= alpha {
-                send_sweep!(display_state, "<{}", curr_val + 1);
+                send_sweep!(ds, "<{}", curr_val + 1);
             } else if curr_val >= beta {
-                send_sweep!(display_state, ">{}", curr_val - 1);
+                send_sweep!(ds, ">{}", curr_val - 1);
             } else {
-                send_sweep!(display_state, "={}", curr_val);
+                send_sweep!(ds, "={}", curr_val);
             }
         }
     }
 
     fn end_tree_search_level_0_ponder_0_short_report(move_0: i8, first: i32) {
         unsafe {
+            let ds = &mut display_state;
             if first != 0 {
-                send_sweep!(display_state, "{:<10} ", buffer);
+                send_sweep!(ds, "{:<10} ", buffer);
             }
-            send_sweep!(display_state, "{}", TO_SQUARE(move_0));
+            send_sweep!(ds, "{}", TO_SQUARE(move_0));
         }
     }
 
     fn end_tree_search_output_some_stats(entry: &HashEntry) {
         /* Output some stats */
         unsafe {
-            send_sweep!(display_state, "{}", TO_SQUARE(entry.move_0[0]));
+            let ds = &mut display_state;
+            send_sweep!(ds, "{}", TO_SQUARE(entry.move_0[0]));
             if entry.flags as i32 & 16 != 0 &&
                 entry.flags as i32 & 4 != 0 {
-                send_sweep!(display_state, "={}", entry.eval);
+                send_sweep!(ds, "={}", entry.eval);
             } else if entry.flags as i32 & 16 != 0
                 &&
                 entry.flags as i32 & 1 !=
                     0 {
-                send_sweep!(display_state, ">{}", entry.eval - 1);
+                send_sweep!(ds, ">{}", entry.eval - 1);
             } else {
-                send_sweep!(display_state, "<{}", entry.eval + 1);
+                send_sweep!(ds, "<{}", entry.eval + 1);
             }
             stdout.flush();
         }
@@ -212,14 +215,15 @@ impl FrontEnd for LibcFatalError {
 
      fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32, best_move_: i32) {
          unsafe {
-             send_sweep!(display_state, "{:<10} ", buffer);
-             send_sweep!(display_state, "{}", TO_SQUARE(best_move_));
+             let ds = &mut display_state;
+             send_sweep!(ds, "{:<10} ", buffer);
+             send_sweep!(ds, "{}", TO_SQUARE(best_move_));
              if result <= alpha {
-                 send_sweep!(display_state, "<{}", result + 1 );
+                 send_sweep!(ds, "<{}", result + 1 );
              } else if result >= beta {
-                 send_sweep!(display_state, ">{}", result - 1);
+                 send_sweep!(ds, ">{}", result - 1);
              } else {
-                 send_sweep!(display_state, "={}", result);
+                 send_sweep!(ds, "={}", result);
              }
          }
     }
@@ -244,20 +248,21 @@ impl FrontEnd for LibcFatalError {
         unsafe {
             let eval = *eval_info;
             search_state.set_current_eval(eval);
-            display_state.clear_status();
-            send_status!(display_state, "-->  {:2}  ", empties);
+            let ds = &mut display_state;
+            ds.clear_status();
+            send_status!(ds, "-->  {:2}  ", empties);
             let mut eval_str = produce_eval_text(&*eval_info, 1);
-            send_status!(display_state, "{:<10}  ", eval_str);
+            send_status!(ds, "{:<10}  ", eval_str);
             let nodes_counter: &mut CounterType = &mut search_state.nodes;
             let node_val = counter_value(nodes_counter);
-            display_state.send_status_nodes(node_val);
+            ds.send_status_nodes(node_val);
             if search_state.get_ponder_move() != 0 {
-                send_status!(display_state, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
+                send_status!(ds, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
             }
-            display_state.send_status_pv(pv_zero, empties, pv_depth_zero);
-            display_state.send_status_time( g_timer.get_elapsed_time());
+            ds.send_status_pv(pv_zero, empties, pv_depth_zero);
+            ds.send_status_time( g_timer.get_elapsed_time());
             if  g_timer.get_elapsed_time() > 0.0001f64 {
-                send_status!(display_state, "{:6.0} {}  ",
+                send_status!(ds, "{:6.0} {}  ",
                             node_val / ( g_timer.get_elapsed_time() + 0.0001f64),
                             "nps");
             };
@@ -313,21 +318,22 @@ impl FrontEnd for LibcFatalError {
 
     fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, candidate_list_: &[CandidateMove; 60], search_state: & SearchState) {
         unsafe {
-            send_status!(display_state, "-->   Book     ");
+            let ds = &mut display_state;
+            send_status!(ds, "-->   Book     ");
             if flags & 16 != 0 {
-                send_status!(display_state, "{:+3} (exact)   ",
+                send_status!(ds, "{:+3} (exact)   ",
                             chosen_score / 128);
             } else if flags & 4 != 0 {
-                send_status!(display_state, "{:+3} (WLD)     ",
+                send_status!(ds, "{:+3} (WLD)     ",
                             chosen_score / 128);
             } else {
-                send_status!(display_state, "{:+6.2}        ",
+                send_status!(ds, "{:+6.2}        ",
                             chosen_score as f64 / 128.0f64);
             }
             if search_state.get_ponder_move() != 0 {
-                send_status!(display_state, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
+                send_status!(ds, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
             }
-            send_status!(display_state, "{}", TO_SQUARE(candidate_list_[chosen_index as usize].move_0));
+            send_status!(ds, "{}", TO_SQUARE(candidate_list_[chosen_index as usize].move_0));
         }
     }
     fn midgame_display_simple_ponder_move(move_0: i8) {
@@ -359,32 +365,34 @@ impl FrontEnd for LibcFatalError {
                         alpha as f64 / 128.0f64,
                         beta as f64 / 128.0f64);
             }
-            display_state.clear_sweep();
-            send_sweep!(display_state, "{:<14} ", buffer_);
+            let ds = &mut display_state;
+            ds.clear_sweep();
+            send_sweep!(ds, "{:<14} ", buffer_);
         }
     }
 
     fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32,
                                    searched: i32, update_pv: i32, echo: i32) {
         unsafe {
+            let ds = &mut display_state;
             if update_pv != 0 {
                 if curr_val <= alpha {
-                    send_sweep!(display_state, "<{:.2}",
+                    send_sweep!(ds, "<{:.2}",
                                  (curr_val + 1) as f64
                                    / 128.0f64);
                 } else if curr_val >= beta {
-                    send_sweep!(display_state, ">{:.2}",
+                    send_sweep!(ds, ">{:.2}",
                                  (curr_val - 1) as f64
                                    / 128.0f64);
                 } else {
-                    send_sweep!(display_state, "={:.2}",
+                    send_sweep!(ds, "={:.2}",
                                  curr_val as f64 / 128.0f64);
                 }
             }
-            send_sweep!(display_state, " ");
+            send_sweep!(ds, " ");
             if update_pv != 0 && searched > 0 && echo != 0 &&
                 max_depth >= 10 {
-                display_state.display_sweep(&mut stdout);
+                ds.display_sweep(&mut stdout);
             }
         }
     }
@@ -401,31 +409,32 @@ impl FrontEnd for LibcFatalError {
      ) {
          let mut nodes_counter: &mut CounterType = &mut search_state.nodes;
          unsafe {
-             display_state.clear_status();
-             send_status!(display_state, "--> ");
+             let ds = &mut display_state;
+             ds.clear_status();
+             send_status!(ds, "--> ");
              if g_timer.is_panic_abort() != 0 || force_return_ {
-                 send_status!(display_state, "*");
+                 send_status!(ds, "*");
              } else {
-                 send_status!(display_state, " ");
+                 send_status!(ds, " ");
              }
-             send_status!(display_state, "{:2}  ",
+             send_status!(ds, "{:2}  ",
                          depth);
              let mut eval_str = produce_eval_text(eval_info, 1);
-             send_status!(display_state, "{:<10}  ",
+             send_status!(ds, "{:<10}  ",
                          eval_str);
              let node_val = counter_value(nodes_counter);
-             display_state.send_status_nodes(node_val);
+             ds.send_status_nodes(node_val);
              if search_state.get_ponder_move() != 0 {
-                 send_status!(display_state, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
+                 send_status!(ds, "{{{}}} ",TO_SQUARE(search_state.get_ponder_move()));
              }
              hash_expand_pv(side_to_move, 0, 4, 12345678, &mut board_state, &mut hash_state, &mut moves_state, &mut flip_stack_);
              let mut pv_zero: &mut [i8; 64] = &mut board_state.pv[0];
              let mut pv_depth_zero: i32 = board_state.pv_depth[0];
 
-             display_state.send_status_pv(pv_zero, max_depth, pv_depth_zero);
-             display_state.send_status_time( g_timer.get_elapsed_time());
+             ds.send_status_pv(pv_zero, max_depth, pv_depth_zero);
+             ds.send_status_time( g_timer.get_elapsed_time());
              if  g_timer.get_elapsed_time() != 0.0f64 {
-                 send_status!(display_state, "{:6.0} {}",
+                 send_status!(ds, "{:6.0} {}",
                              node_val / ( g_timer.get_elapsed_time() + 0.001f64),
                              "nps");
              }
