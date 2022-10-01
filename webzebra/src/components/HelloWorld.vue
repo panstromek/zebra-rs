@@ -254,11 +254,13 @@ export default defineComponent({
       return this.svg_data.circles
     },
     svg_data(): { circles: Circle[], evals: Eval[] } {
-      let board = this.board;
+      const board = this.board;
+      const evaluatedMoves = this.evals;
+      const clickedMove = this.clickedMove;
+
       let evals = []
       const fieldSize = 100
       const arr = [] as Circle[]
-      const clickedMove = this.clickedMove;
       for (let i = 1; i <= 8; i++) {
         for (let j = 1; j <= 8; j++) {
           let color;
@@ -280,7 +282,7 @@ export default defineComponent({
                 color = 'rgba(127, 127, 127, 0.5)'
                 break
               }
-              const eval_ = this.evals.find((eval_: EvaluatedMove) => eval_.move === move)
+              const eval_ = evaluatedMoves.find((eval_: EvaluatedMove) => eval_.move === move)
               if (!eval_) {
                 continue
               }
