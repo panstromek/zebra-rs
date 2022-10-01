@@ -99,7 +99,18 @@ type NonReactiveData = {
   worker: ZWorker,
   workerListener: (this: Worker, ev: MessageEvent) => any
 }
-
+type Circle = {
+  cx: number,
+  cy: number,
+  r: number,
+  color: string
+}
+type Eval = {
+  x: number,
+  y: number,
+  color: string,
+  text: string
+}
 export default defineComponent({
   name: 'HelloWorld',
   data() {
@@ -232,21 +243,21 @@ export default defineComponent({
     }
   },
   computed: {
-    score() {
+    score(): { white: number, black: number } {
       return {
         // todo this is slow, use something better when we use some more efficient board representation
-        white: this.circles.reduce((count, circle) => circle.color === 'white' ? count + 1 : count, 0),
-        black: this.circles.reduce((count, circle) => circle.color === 'black' ? count + 1 : count, 0)
+        white: this.circles.reduce((count: number, circle: Circle) => circle.color === 'white' ? count + 1 : count, 0),
+        black: this.circles.reduce((count: number, circle: Circle) => circle.color === 'black' ? count + 1 : count, 0)
       }
     },
-    circles() {
+    circles(): Circle[] {
       return this.svg_data.circles
     },
-    svg_data() {
+    svg_data(): { circles: Circle[], evals: Eval[] } {
       let board = this.board;
       let evals = []
       const fieldSize = 100
-      const arr = []
+      const arr = [] as Circle[]
       const clickedMove = this.clickedMove;
       for (let i = 1; i <= 8; i++) {
         for (let j = 1; j <= 8; j++) {
@@ -269,7 +280,7 @@ export default defineComponent({
                 color = 'rgba(127, 127, 127, 0.5)'
                 break
               }
-              const eval_ = this.evals.find(eval_ => eval_.move === move)
+              const eval_ = this.evals.find((eval_: EvaluatedMove) => eval_.move === move)
               if (!eval_) {
                 continue
               }
