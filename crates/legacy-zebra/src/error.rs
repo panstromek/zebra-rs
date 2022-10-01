@@ -122,16 +122,17 @@ impl FrontEnd for LibcFatalError {
     fn display_buffers(g_timer: &Timer) {
         unsafe {
             let timer =  g_timer.get_real_timer();
-            if timer - display_state.last_output >= display_state.interval2 || display_state.timed_buffer_management == 0 {
-                display_state.display_status(&mut stdout, 0);
-                display_state.status_modified = 0;
-                if timer - display_state.last_output >= display_state.interval2 {
-                    if display_state.sweep_modified != 0 { display_state.display_sweep(&mut stdout); }
-                    display_state.last_output = timer;
+            let ds = &mut display_state;
+            if timer - ds.last_output >= ds.interval2 || ds.timed_buffer_management == 0 {
+                ds.display_status(&mut stdout, 0);
+                ds.status_modified = 0;
+                if timer - ds.last_output >= ds.interval2 {
+                    if ds.sweep_modified != 0 { ds.display_sweep(&mut stdout); }
+                    ds.last_output = timer;
                     /* Display the sweep at Fibonacci-spaced times */
-                    let new_interval = display_state.interval1 + display_state.interval2;
-                    display_state.interval1 = display_state.interval2;
-                    display_state.interval2 = new_interval
+                    let new_interval = ds.interval1 + ds.interval2;
+                    ds.interval1 = ds.interval2;
+                    ds.interval2 = new_interval
                 }
             };
         }
