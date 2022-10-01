@@ -2347,14 +2347,7 @@ pub fn end_game<FE: FrontEnd>(side_to_move: i32,
     let mut old_eval: i32 = 0;
     let mut last_window_center: i32 = 0;
     let mut old_pv: [i8; 64] = [0; 64];
-    let mut book_eval_info = EvaluationType {
-        type_0: MIDGAME_EVAL,
-        res: WON_POSITION,
-        score: 0,
-        confidence: 0.,
-        search_depth: 0,
-        is_book: 0,
-    };
+    let mut book_eval_info = EvaluationType::new();
     let mut empties = 64- disc_count(0, &board_state.board) -
             disc_count(2, &board_state.board);
     /* In komi games, the WLD window is adjusted. */
