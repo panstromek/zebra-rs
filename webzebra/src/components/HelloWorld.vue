@@ -95,10 +95,6 @@ interface ZWorker extends Worker {
   postMessage(message: Message): void
 }
 
-type NonReactiveData = {
-  worker: ZWorker,
-  workerListener: (this: Worker, ev: MessageEvent) => any
-}
 type Circle = {
   cx: number,
   cy: number,
