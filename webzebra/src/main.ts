@@ -1,4 +1,4 @@
-import {computed, createApp, defineComponent, reactive} from 'vue'
+import {computed, createApp, defineComponent, reactive, watchEffect} from 'vue'
 import './index.css'
 import ZebraWorker from './worker.ts?worker=true'
 import {EvaluatedMove, Message, MessageType, SkillSetting} from "./message";
@@ -160,9 +160,6 @@ const App = defineComponent({
         return data
     },
     computed: {
-        score(): { white: number, black: number } {
-            return scoreFromCircles(svgData.value.circles);
-        },
         circlesHtml(): string {
             const circles = svgData.value.circles;
             return circles.map(circle => {
@@ -185,12 +182,15 @@ const App = defineComponent({
         },
         evalsHtml() {
             document.getElementById('evals')!.innerHTML = this.evalsHtml
-        },
-        score(score) {
-            document.getElementById('score-black')!.innerText = score.black
-            document.getElementById('score-white')!.innerText = score.white
         }
     }
 })
 created()
+
+watchEffect(() => {
+    const score = scoreFromCircles(svgData.value.circles)
+    document.getElementById('score-black')!.innerText = '' + score.black
+    document.getElementById('score-white')!.innerText = '' + score.white
+})
+
 createApp(App).mount('#app')
