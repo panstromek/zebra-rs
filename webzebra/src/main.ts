@@ -162,14 +162,11 @@ const App = defineComponent({
     },
     computed: {
         score(): { white: number, black: number } {
-            const circles = this.svg_data.circles;
+            const circles = svgData.value.circles;
             return scoreFromCircles(circles);
         },
-        svg_data(): { circles: Circle[], evals: Eval[] } {
-            return svgData.value
-        },
         circlesHtml(): string {
-            const circles = this.svg_data.circles;
+            const circles = svgData.value.circles;
             return circles.map(circle => {
                 return `<circle r="${circle.r}" cx="${circle.cx}" cy="${circle.cy}" style="fill: ${circle.color}"></circle>`
             }).join('')
@@ -178,7 +175,7 @@ const App = defineComponent({
             if (!this.practiceMode) {
                 return ''
             }
-            const evals = this.svg_data.evals;
+            const evals = svgData.value.evals;
             return evals.map(eval_ => {
                 return `<text x="${eval_.x}" y="${eval_.y}" style="fill: ${eval_.color}; font-size: 50px">${eval_.text}</text>`
             }).join('')
