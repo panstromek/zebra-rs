@@ -7,14 +7,14 @@
            viewBox="0 0 800 800"
            style="background-color: #3a7f46; border: 1vw brown solid;"
            @click.prevent.stop="clickBoard">
-          <template v-if="practiceMode">
+          <g id="evals" v-if="practiceMode">
             <text v-for="eval_ in svg_data.evals"
                   :x="eval_.x"
                   :y="eval_.y"
                   :style="{'fill': eval_.color, 'font-size' : '50px'}">
               {{eval_.text}}
             </text>
-          </template>
+          </g>
         <g id="circles">
           <circle
               v-for="circle in circles"
