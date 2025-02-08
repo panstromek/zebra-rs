@@ -150,7 +150,6 @@ const svgData = computed(() => {
 })
 
 watch([svgData, () => data.practiceMode], ([svgData_, practiceMode]: [typeof svgData.value, boolean])=> {
-    console.log('practice mode changed', svgData_, practiceMode)
     if (!practiceMode) {
         return ''
     }
