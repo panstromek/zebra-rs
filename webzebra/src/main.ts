@@ -46,8 +46,8 @@ const App = defineComponent({
     },
     created() {
         const worker = new ZebraWorker() as ZWorker
-        this.worker = worker
-        worker.addEventListener('message', this.workerListener = ev => {
+        data.worker = worker
+        worker.addEventListener('message', data.workerListener = ev => {
             const [type, data] = (ev as MessageEvent).data as Message;
             switch (type) {
                 case MessageType.DisplayBoard: {
@@ -78,8 +78,8 @@ const App = defineComponent({
             }
         })
 
-        this.stopToken = createStopToken()
-        worker.postMessage([MessageType.StopToken, this.stopToken])
+        data.stopToken = createStopToken()
+        worker.postMessage([MessageType.StopToken, data.stopToken])
         // @click.prevent.stop="clickBoard"
         document.getElementById('board')?.addEventListener('click', (e) => {
             e.preventDefault()
@@ -91,23 +91,23 @@ const App = defineComponent({
         })
     },
     beforeUnmount() {
-        this.worker.removeEventListener('message', this.workerListener)
+        data.worker.removeEventListener('message', data.workerListener)
     },
     methods: {
         undo() {
             this.stopWorkerIfNeeded()
-            this.worker.postMessage([MessageType.Undo])
+            data.worker.postMessage([MessageType.Undo])
         },
         setSkills() {
             this.stopWorkerIfNeeded()
 
             let numbers: SkillSetting = [
-                Number(this.black_skill),
-                Number(this.black_exact_skill),
-                Number(this.black_wld_skill),
-                Number(this.white_skill),
-                Number(this.white_exact_skill),
-                Number(this.white_wld_skill)
+                Number(data.black_skill),
+                Number(data.black_exact_skill),
+                Number(data.black_wld_skill),
+                Number(data.white_skill),
+                Number(data.white_exact_skill),
+                Number(data.white_wld_skill)
             ];
             if (numbers.some(num => isNaN(num) && !Number.isInteger(num))) {
                 alert('Some values are not integers')
@@ -118,18 +118,18 @@ const App = defineComponent({
         newGame() {
             this.stopWorkerIfNeeded()
             this.setSkills()
-            this.worker.postMessage([MessageType.NewGame])
+            data.worker.postMessage([MessageType.NewGame])
         },
         stopWorkerIfNeeded() {
-            if (this.workerIsRunning) {
-                if (this.stopToken) {
-                    stop(this.stopToken)
+            if (data.workerIsRunning) {
+                if (data.stopToken) {
+                    stop(data.stopToken)
                 } else {
                     console.error('cannot stop worker, missing stop token')
                 }
 
-                this.stopToken = createStopToken()
-                this.worker.postMessage([MessageType.StopToken, this.stopToken])
+                data.stopToken = createStopToken()
+                this.worker.postMessage([MessageType.StopToken, data.stopToken])
             }
         },
         clickBoard(e: MouseEvent) {
