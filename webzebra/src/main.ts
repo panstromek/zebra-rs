@@ -16,6 +16,8 @@ interface ZWorker extends Worker {
     postMessage(message: Message): void
 }
 
+const worker = new ZebraWorker() as ZWorker
+
 const data = reactive({
     board: Array(128).fill(1) as number[],
     waitingForMove: false,
@@ -102,7 +104,6 @@ function clickBoard(e: MouseEvent) {
     }
 }
 
-const worker = new ZebraWorker() as ZWorker
 data.worker = worker
 worker.addEventListener('message', data.workerListener = ev => {
     const [type, dataFromWorker] = (ev as MessageEvent).data as Message;
