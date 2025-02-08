@@ -34,10 +34,6 @@ const data = reactive({
     stopToken: undefined as string | undefined,
     workerIsRunning: false,
     clickedMove: undefined as number | undefined,
-
-    // workardound for analysis not working properly
-    // initialized in created hook
-    worker: undefined as any as ZWorker
 })
 
 const stopWorkerIfNeeded = () => {
@@ -49,13 +45,13 @@ const stopWorkerIfNeeded = () => {
         }
 
         data.stopToken = createStopToken()
-        data.worker.postMessage([MessageType.StopToken, data.stopToken])
+        worker.postMessage([MessageType.StopToken, data.stopToken])
     }
 };
 
 function undo() {
     stopWorkerIfNeeded()
-    data.worker.postMessage([MessageType.Undo])
+    worker.postMessage([MessageType.Undo])
 }
 
 function setSkills() {
@@ -73,13 +69,13 @@ function setSkills() {
         alert('Some values are not integers')
         return
     }
-    data.worker.postMessage([MessageType.SetSkill, numbers])
+    worker.postMessage([MessageType.SetSkill, numbers])
 }
 
 function newGame() {
     stopWorkerIfNeeded()
     setSkills()
-    data.worker.postMessage([MessageType.NewGame])
+    worker.postMessage([MessageType.NewGame])
 }
 
 function clickBoard(e: MouseEvent) {
@@ -89,7 +85,7 @@ function clickBoard(e: MouseEvent) {
     const fieldSize = boardSize / 8
 
     if (data.waitingForPass) {
-        data.worker.postMessage([MessageType.GetPass, -1])
+        worker.postMessage([MessageType.GetPass, -1])
         data.waitingForPass = false
     } else {
         let x = e.offsetX
@@ -98,12 +94,11 @@ function clickBoard(e: MouseEvent) {
         let i = Math.floor(y / fieldSize) + 1
         let move = (10 * i + j)
         data.clickedMove = move
-        data.worker.postMessage([MessageType.GetMove, move])
+        worker.postMessage([MessageType.GetMove, move])
         data.waitingForMove = false
     }
 }
 
-data.worker = worker
 worker.addEventListener('message', ev => {
     const [type, dataFromWorker] = (ev as MessageEvent).data as Message;
     switch (type) {
