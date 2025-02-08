@@ -9,7 +9,7 @@ do
     esac
 done
 
-CARGO_TARGET_DIR=test-target RUSTFLAGS="-Zinstrument-coverage -C link-arg=-Wl,--wrap=time" cargo build --release \
+CARGO_TARGET_DIR=test-target RUSTFLAGS="-Cinstrument-coverage -C link-arg=-Wl,--wrap=time" cargo build --release \
 && cargo test --release --package tests "$whichtests" -- --nocapture -Z unstable-options --report-time && fullcoverage=10000
 
 if test "$fullcoverage"; then
