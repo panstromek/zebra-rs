@@ -1,22 +1,14 @@
 import {computed, reactive, watch} from '@vue/reactivity'
 import './index.css'
-// @ts-ignore
-import ZebraWorker from './worker.ts?worker=true'
 import {EvaluatedMove, Message, MessageType, SkillSetting} from "./message";
 import {createStopToken, stop} from "./stopToken";
 import {boardData, scoreFromCircles} from "./game";
-// we have to reference the wasm url here, otherwise wasm doesn't get bundled for some reason.
-// If we reference it only from worker, it's missing in production build.
-// FIXME report this as a bug in Vite
-import wasm_path from '../crate/pkg/webzebra_bg.wasm?url'
-// log, because bundler would eliminate the import if we didn't use it
-console.log('wasm path: ' + wasm_path)
 
 interface ZWorker extends Worker {
     postMessage(message: Message): void
 }
 
-const worker = new ZebraWorker() as ZWorker
+const worker = new Worker(new URL('./worker.js', import.meta.url), {type: 'module'}) as ZWorker
 
 const data = reactive({
     board: Array(128).fill(1) as number[],
