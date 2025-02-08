@@ -147,6 +147,7 @@ function created() {
         newGame()
     })
 }
+created()
 
 const svgData = computed(() => {
     const board = data.board;
@@ -154,8 +155,6 @@ const svgData = computed(() => {
     const clickedMove = data.clickedMove;
     return boardData(board, clickedMove, evaluatedMoves);
 })
-
-created()
 
 watchEffect(() => {
 
