@@ -39,6 +39,18 @@ const data = reactive({
     workerListener: undefined as any as (this: Worker, ev: WorkerEventMap[keyof WorkerEventMap]) => any
 })
 
+const stopWorkerIfNeeded = () => {
+    if (data.workerIsRunning) {
+        if (data.stopToken) {
+            stop(data.stopToken)
+        } else {
+            console.error('cannot stop worker, missing stop token')
+        }
+
+        data.stopToken = createStopToken()
+        data.worker.postMessage([MessageType.StopToken, data.stopToken])
+    }
+};
 const App = defineComponent({
     name: 'HelloWorld',
     data() {
@@ -95,11 +107,11 @@ const App = defineComponent({
     },
     methods: {
         undo() {
-            this.stopWorkerIfNeeded()
+            stopWorkerIfNeeded()
             data.worker.postMessage([MessageType.Undo])
         },
         setSkills() {
-            this.stopWorkerIfNeeded()
+            stopWorkerIfNeeded()
 
             let numbers: SkillSetting = [
                 Number(data.black_skill),
@@ -116,24 +128,12 @@ const App = defineComponent({
             data.worker.postMessage([MessageType.SetSkill, numbers])
         },
         newGame() {
-            this.stopWorkerIfNeeded()
+            stopWorkerIfNeeded()
             this.setSkills()
             data.worker.postMessage([MessageType.NewGame])
         },
-        stopWorkerIfNeeded() {
-            if (data.workerIsRunning) {
-                if (data.stopToken) {
-                    stop(data.stopToken)
-                } else {
-                    console.error('cannot stop worker, missing stop token')
-                }
-
-                data.stopToken = createStopToken()
-                data.worker.postMessage([MessageType.StopToken, data.stopToken])
-            }
-        },
         clickBoard(e: MouseEvent) {
-            this.stopWorkerIfNeeded()
+            stopWorkerIfNeeded()
             const board = document.getElementById('board') as unknown as SVGElement;
             const boardSize = board.clientWidth
             const fieldSize = boardSize / 8
