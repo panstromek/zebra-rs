@@ -1,11 +1,4 @@
-<template>
-
-          <div style="width: 1em; height: 1em; border-radius: 0.5em; background: black"></div>
-          <div class="px-2">{{ score.black }}</div>
-          <div style="width: 1em; height: 1em; border-radius: 0.5em; background: white"></div>
-          <div class="px-2 text-white">{{ score.white }}</div>
-
-</template>
+<template></template>
 
 <script lang="ts">
 import {defineComponent} from 'vue'
@@ -195,6 +188,10 @@ export default defineComponent({
     },
     evalsHtml() {
       document.getElementById('evals')!.innerHTML = this.evalsHtml
+    },
+    score(score) {
+      document.getElementById('score-black')!.innerText = score.black
+      document.getElementById('score-white')!.innerText = score.white
     }
   }
 })

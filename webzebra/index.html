@@ -52,8 +52,11 @@
     </div>
     <div class="max-w-sm text-left p-1.5 w-full mt-3">
         <div class="flex justify-between items-center">
-            <div id="app" class="flex items-center text-black text-2xl">
-
+            <div class="flex items-center text-black text-2xl">
+                <div style="width: 1em; height: 1em; border-radius: 0.5em; background: black"></div>
+                <div class="px-2" id="score-black">0</div>
+                <div style="width: 1em; height: 1em; border-radius: 0.5em; background: white"></div>
+                <div class="px-2 text-white" id="score-white">0</div>
             </div>
 
             <button
@@ -86,6 +89,7 @@
         <!--        <label for="practice_mode_checkbox">Practice mode</label>-->
         <!--      </div>-->
     </div>
+    <div id="app"></div>
 </div>
 <script type="module" src="/src/main.ts"></script>
 </body>
