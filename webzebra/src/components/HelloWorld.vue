@@ -7,14 +7,7 @@
            viewBox="0 0 800 800"
            style="background-color: #3a7f46; border: 1vw brown solid;"
            @click.prevent.stop="clickBoard">
-          <g id="evals" v-if="practiceMode">
-            <text v-for="eval_ in svg_data.evals"
-                  :x="eval_.x"
-                  :y="eval_.y"
-                  :style="{'fill': eval_.color, 'font-size' : '50px'}">
-              {{eval_.text}}
-            </text>
-          </g>
+          <g id="evals" v-html="evalsHtml"></g>
         <g id="circles" v-html="circlesHtml"></g>
         <g id="lines">
           <line x1="0" y1="100" x2="800" y2="100" stroke="black"></line>
@@ -238,6 +231,15 @@ export default defineComponent({
       const circles = this.circles;
       return circles.map(circle => {
         return `<circle r="${circle.r}" cx="${circle.cx}" cy="${circle.cy}" style="fill: ${circle.color}"></circle>`
+      }).join('')
+    },
+    evalsHtml(): string {
+      if (!this.practiceMode) {
+        return ''
+      }
+      const evals = this.svg_data.evals;
+      return evals.map(eval_ => {
+        return `<text x="${eval_.x}" y="${eval_.y}" style="fill: ${eval_.color}; font-size: 50px">${eval_.text}</text>`
       }).join('')
     }
   }
