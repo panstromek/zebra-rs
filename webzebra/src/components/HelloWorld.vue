@@ -23,6 +23,7 @@
               :cy="circle.cy"
               :style="{'fill': circle.color}"></circle>
         </g>
+        <g id="lines">
           <line
               v-for="i in 7"
               x1="0"
@@ -39,6 +40,7 @@
               :x2="i*100"
               stroke="black"
           ></line>
+        </g>
       </svg>
     </div>
     <div class="max-w-sm text-left p-1.5 w-full mt-3">
