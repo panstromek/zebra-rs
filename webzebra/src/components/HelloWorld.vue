@@ -230,21 +230,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style>
-a {
-  color: #42b983;
-}
-
-/* Avoid text selection on the board */
-svg text {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-svg text::selection {
-  background: none;
-}
-</style>
