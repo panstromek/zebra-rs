@@ -154,12 +154,8 @@ const svgData = computed(() => {
     return boardData(board, clickedMove, evaluatedMoves);
 })
 
-const App = defineComponent({
-    name: 'HelloWorld',
-    data() {
-        return data
-    }
-})
+const App = defineComponent({})
+
 created()
 
 watchEffect(() => {
