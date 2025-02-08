@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import {createApp, reactive} from 'vue'
 import './index.css'
 import {defineComponent} from 'vue'
 import ZebraWorker from './worker.ts?worker=true'
