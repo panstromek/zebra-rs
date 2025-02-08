@@ -7,7 +7,6 @@
            viewBox="0 0 800 800"
            style="background-color: #3a7f46; border: 1vw brown solid;"
            @click.prevent.stop="clickBoard">
-        <g>
           <template v-if="practiceMode">
             <text v-for="eval_ in svg_data.evals"
                   :x="eval_.x"
@@ -38,7 +37,6 @@
               :x2="i*100"
               stroke="black"
           ></line>
-        </g>
       </svg>
     </div>
     <div class="max-w-sm text-left p-1.5 w-full mt-3">
