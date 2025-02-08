@@ -10,7 +10,6 @@
     "@vue/reactivity": "^3.0.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^2.2.2",
     "autoprefixer": "^10.2.4",
     "postcss": "^8.2.4",
     "tailwindcss": "^3.0.23",
