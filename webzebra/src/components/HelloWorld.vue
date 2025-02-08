@@ -24,22 +24,20 @@
               :style="{'fill': circle.color}"></circle>
         </g>
         <g id="lines">
-          <line
-              v-for="i in 7"
-              x1="0"
-              :y1="i * 100"
-              x2="800"
-              :y2="i*100"
-              stroke="black"
-          ></line>
-          <line
-              v-for="i in 7"
-              y1="0"
-              :x1="i * 100"
-              y2="800"
-              :x2="i*100"
-              stroke="black"
-          ></line>
+          <line x1="0" y1="100" x2="800" y2="100" stroke="black"></line>
+          <line x1="0" y1="200" x2="800" y2="200" stroke="black"></line>
+          <line x1="0" y1="300" x2="800" y2="300" stroke="black"></line>
+          <line x1="0" y1="400" x2="800" y2="400" stroke="black"></line>
+          <line x1="0" y1="500" x2="800" y2="500" stroke="black"></line>
+          <line x1="0" y1="600" x2="800" y2="600" stroke="black"></line>
+          <line x1="0" y1="700" x2="800" y2="700" stroke="black"></line>
+          <line y1="0" x1="100" y2="800" x2="100" stroke="black"></line>
+          <line y1="0" x1="200" y2="800" x2="200" stroke="black"></line>
+          <line y1="0" x1="300" y2="800" x2="300" stroke="black"></line>
+          <line y1="0" x1="400" y2="800" x2="400" stroke="black"></line>
+          <line y1="0" x1="500" y2="800" x2="500" stroke="black"></line>
+          <line y1="0" x1="600" y2="800" x2="600" stroke="black"></line>
+          <line y1="0" x1="700" y2="800" x2="700" stroke="black"></line>
         </g>
       </svg>
     </div>
