@@ -20,13 +20,8 @@ console.log('wasm path: ' + wasm_path)
 const App = defineComponent({
     name: 'HelloWorld',
     data() {
-        const board = Array(128).fill(1) as number[];
-        // board[54] = 0;
-        // board[45] = 0;
-        // board[55] = 2;
-        // board[44] = 2;
         return {
-            board: board,
+            board: Array(128).fill(1) as number[],
             waitingForMove: false,
             waitingForPass: false,
             black_skill: 0,
