@@ -1,5 +1,4 @@
-import {computed, reactive} from '@vue/reactivity'
-import {watchEffect} from '@vue/runtime-core'
+import {computed, reactive, watch} from '@vue/reactivity'
 import './index.css'
 import ZebraWorker from './worker.ts?worker=true'
 import {EvaluatedMove, Message, MessageType, SkillSetting} from "./message";
@@ -149,9 +148,8 @@ const svgData = computed(() => {
     return boardData(board, clickedMove, evaluatedMoves);
 })
 
-watchEffect(() => {
-
-    const circles = svgData.value.circles;
+watch(svgData, (svgData_: typeof svgData.value) => {
+    const circles = svgData_.circles;
     const circlesHtml = circles.map(circle => {
         return `<circle r="${circle.r}" cx="${circle.cx}" cy="${circle.cy}" style="fill: ${circle.color}"></circle>`
     }).join('')
@@ -159,11 +157,12 @@ watchEffect(() => {
     document.getElementById('circles')!.innerHTML = circlesHtml
 })
 
-watchEffect(() => {
-    if (!data.practiceMode) {
+watch([svgData, () => data.practiceMode], ([svgData_, practiceMode]: [typeof svgData.value, boolean])=> {
+    console.log('practice mode changed', svgData_, practiceMode)
+    if (!practiceMode) {
         return ''
     }
-    const evals = svgData.value.evals;
+    const evals = svgData_.evals;
     const evalsHtml = evals.map(eval_ => {
         return `<text x="${eval_.x}" y="${eval_.y}" style="fill: ${eval_.color}; font-size: 50px">${eval_.text}</text>`
     }).join('')
@@ -171,8 +170,8 @@ watchEffect(() => {
     document.getElementById('evals')!.innerHTML = evalsHtml
 })
 
-watchEffect(() => {
-    const score = scoreFromCircles(svgData.value.circles)
+watch(svgData, (svgData_: typeof svgData.value) => {
+    const score = scoreFromCircles(svgData_.circles)
     document.getElementById('score-black')!.innerText = '' + score.black
     document.getElementById('score-white')!.innerText = '' + score.white
 })
