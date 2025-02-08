@@ -1,19 +1,9 @@
 <template>
 
-
-        <div class="flex items-center text-black text-2xl">
           <div style="width: 1em; height: 1em; border-radius: 0.5em; background: black"></div>
           <div class="px-2">{{ score.black }}</div>
           <div style="width: 1em; height: 1em; border-radius: 0.5em; background: white"></div>
           <div class="px-2 text-white">{{ score.white }}</div>
-        </div>
-        <button
-            :disabled="!initialized"
-            @click="newGame"
-            :class="initialized ? 'border-black' : 'text-gray-700 border-gray-700'"
-            class="focus:outline-none border-2 rounded border-solid text-white p-2 m-0.5">
-          New Game
-        </button>
 
 </template>
 
@@ -101,6 +91,9 @@ export default defineComponent({
       e.preventDefault()
       e.stopPropagation()
       this.clickBoard(e)
+    })
+    document.getElementById('new_game')?.addEventListener('click', (e) => {
+      this.newGame()
     })
   },
   beforeUnmount() {
