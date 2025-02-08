@@ -29,11 +29,6 @@ hr {
     border-top-width: 1px
 }
 
-abbr:where([title]) {
-    -webkit-text-decoration: underline dotted;
-    text-decoration: underline dotted
-}
-
 h1, h2, h3, h4, h5, h6 {
     font-size: inherit;
     font-weight: inherit
@@ -46,36 +41,6 @@ a {
 
 b, strong {
     font-weight: bolder
-}
-
-code, kbd, samp, pre {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
-    font-size: 1em
-}
-
-small {
-    font-size: 80%
-}
-
-sub, sup {
-    font-size: 75%;
-    line-height: 0;
-    position: relative;
-    vertical-align: baseline
-}
-
-sub {
-    bottom: -.25em
-}
-
-sup {
-    top: -.5em
-}
-
-table {
-    text-indent: 0;
-    border-color: inherit;
-    border-collapse: collapse
 }
 
 button, input, optgroup, select, textarea {
@@ -103,70 +68,6 @@ button, [type=button], [type=reset], [type=submit] {
 
 :-moz-ui-invalid {
     box-shadow: none
-}
-
-progress {
-    vertical-align: baseline
-}
-
-::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
-    height: auto
-}
-
-[type=search] {
-    -webkit-appearance: textfield;
-    outline-offset: -2px
-}
-
-::-webkit-search-decoration {
-    -webkit-appearance: none
-}
-
-::-webkit-file-upload-button {
-    -webkit-appearance: button;
-    font: inherit
-}
-
-summary {
-    display: list-item
-}
-
-blockquote, dl, dd, h1, h2, h3, h4, h5, h6, hr, figure, p, pre {
-    margin: 0
-}
-
-fieldset {
-    margin: 0;
-    padding: 0
-}
-
-legend {
-    padding: 0
-}
-
-ol, ul, menu {
-    list-style: none;
-    margin: 0;
-    padding: 0
-}
-
-textarea {
-    resize: vertical
-}
-
-input::-moz-placeholder, textarea::-moz-placeholder {
-    opacity: 1;
-    color: #9ca3af
-}
-
-input:-ms-input-placeholder, textarea:-ms-input-placeholder {
-    opacity: 1;
-    color: #9ca3af
-}
-
-input::placeholder, textarea::placeholder {
-    opacity: 1;
-    color: #9ca3af
 }
 
 button, [role=button] {
