@@ -15,14 +15,7 @@
               {{eval_.text}}
             </text>
           </g>
-        <g id="circles">
-          <circle
-              v-for="circle in circles"
-              :r="circle.r"
-              :cx="circle.cx"
-              :cy="circle.cy"
-              :style="{'fill': circle.color}"></circle>
-        </g>
+        <g id="circles" v-html="circlesHtml"></g>
         <g id="lines">
           <line x1="0" y1="100" x2="800" y2="100" stroke="black"></line>
           <line x1="0" y1="200" x2="800" y2="200" stroke="black"></line>
@@ -240,6 +233,12 @@ export default defineComponent({
       const evaluatedMoves = this.evals;
       const clickedMove = this.clickedMove;
       return boardData(board, clickedMove, evaluatedMoves);
+    },
+    circlesHtml(): string {
+      const circles = this.circles;
+      return circles.map(circle => {
+        return `<circle r="${circle.r}" cx="${circle.cx}" cy="${circle.cy}" style="fill: ${circle.color}"></circle>`
+      }).join('')
     }
   }
 })
