@@ -7,8 +7,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@vue/reactivity": "^3.0.5",
-    "@vue/runtime-core": "^3.0.5"
+    "@vue/reactivity": "^3.0.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.2",
