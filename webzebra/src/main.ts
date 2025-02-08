@@ -149,15 +149,6 @@ const svgData = computed(() => {
     return boardData(board, clickedMove, evaluatedMoves);
 })
 
-watch(svgData, (svgData_: typeof svgData.value) => {
-    const circles = svgData_.circles;
-    const circlesHtml = circles.map(circle => {
-        return `<circle r="${circle.r}" cx="${circle.cx}" cy="${circle.cy}" style="fill: ${circle.color}"></circle>`
-    }).join('')
-
-    document.getElementById('circles')!.innerHTML = circlesHtml
-})
-
 watch([svgData, () => data.practiceMode], ([svgData_, practiceMode]: [typeof svgData.value, boolean])=> {
     console.log('practice mode changed', svgData_, practiceMode)
     if (!practiceMode) {
@@ -173,6 +164,12 @@ watch([svgData, () => data.practiceMode], ([svgData_, practiceMode]: [typeof svg
 
 watch(svgData, (svgData_: typeof svgData.value) => {
     const score = scoreFromCircles(svgData_.circles)
+    const circles = svgData_.circles;
+    const circlesHtml = circles.map(circle => {
+        return `<circle r="${circle.r}" cx="${circle.cx}" cy="${circle.cy}" style="fill: ${circle.color}"></circle>`
+    }).join('')
+
+    document.getElementById('circles')!.innerHTML = circlesHtml
     document.getElementById('score-black')!.innerText = '' + score.black
     document.getElementById('score-white')!.innerText = '' + score.white
 })
