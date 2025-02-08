@@ -15,12 +15,14 @@
               {{eval_.text}}
             </text>
           </template>
+        <g id="circles">
           <circle
               v-for="circle in circles"
               :r="circle.r"
               :cx="circle.cx"
               :cy="circle.cy"
               :style="{'fill': circle.color}"></circle>
+        </g>
           <line
               v-for="i in 7"
               x1="0"
