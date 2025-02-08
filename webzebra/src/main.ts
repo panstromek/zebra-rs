@@ -183,5 +183,3 @@ watchEffect(() => {
     document.getElementById('score-black')!.innerText = '' + score.black
     document.getElementById('score-white')!.innerText = '' + score.white
 })
-
-createApp(defineComponent({})).mount('#app')
