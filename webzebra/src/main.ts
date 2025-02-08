@@ -1,4 +1,4 @@
-import {computed, createApp, defineComponent, reactive, watchEffect} from 'vue'
+import {computed, reactive, watchEffect} from 'vue'
 import './index.css'
 import ZebraWorker from './worker.ts?worker=true'
 import {EvaluatedMove, Message, MessageType, SkillSetting} from "./message";
