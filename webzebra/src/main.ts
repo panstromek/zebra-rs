@@ -154,8 +154,6 @@ const svgData = computed(() => {
     return boardData(board, clickedMove, evaluatedMoves);
 })
 
-const App = defineComponent({})
-
 created()
 
 watchEffect(() => {
@@ -186,4 +184,4 @@ watchEffect(() => {
     document.getElementById('score-white')!.innerText = '' + score.white
 })
 
-createApp(App).mount('#app')
+createApp(defineComponent({})).mount('#app')
