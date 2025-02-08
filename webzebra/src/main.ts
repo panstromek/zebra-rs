@@ -51,28 +51,28 @@ const App = defineComponent({
             const [type, dataFromWorker] = (ev as MessageEvent).data as Message;
             switch (type) {
                 case MessageType.DisplayBoard: {
-                    this.board = dataFromWorker
-                    this.clickedMove = undefined
+                    data.board = dataFromWorker
+                    data.clickedMove = undefined
                     break
                 }
                 case MessageType.GetMove : {
-                    this.waitingForMove = true
+                    data.waitingForMove = true
                     break
                 }
                 case MessageType.GetPass : {
-                    this.waitingForPass = true
+                    data.waitingForPass = true
                     break
                 }
                 case MessageType.Evals: {
-                    this.evals = JSON.parse(dataFromWorker).evals
+                    data.evals = JSON.parse(dataFromWorker).evals
                     break;
                 }
                 case MessageType.Initialized: {
-                    this.initialized = true
+                    data.initialized = true
                     break;
                 }
                 case MessageType.WorkerIsRunning : {
-                    this.workerIsRunning = dataFromWorker
+                    data.workerIsRunning = dataFromWorker
                     break
                 }
             }
@@ -113,7 +113,7 @@ const App = defineComponent({
                 alert('Some values are not integers')
                 return
             }
-            this.worker.postMessage([MessageType.SetSkill, numbers])
+            data.worker.postMessage([MessageType.SetSkill, numbers])
         },
         newGame() {
             this.stopWorkerIfNeeded()
@@ -129,7 +129,7 @@ const App = defineComponent({
                 }
 
                 data.stopToken = createStopToken()
-                this.worker.postMessage([MessageType.StopToken, data.stopToken])
+                data.worker.postMessage([MessageType.StopToken, data.stopToken])
             }
         },
         clickBoard(e: MouseEvent) {
@@ -139,17 +139,17 @@ const App = defineComponent({
             const fieldSize = boardSize / 8
 
             if (this.waitingForPass) {
-                this.worker.postMessage([MessageType.GetPass, -1])
-                this.waitingForPass = false
+                data.worker.postMessage([MessageType.GetPass, -1])
+                data.waitingForPass = false
             } else {
                 let x = e.offsetX
                 let y = e.offsetY
                 let j = Math.floor(x / fieldSize) + 1
                 let i = Math.floor(y / fieldSize) + 1
                 let move = (10 * i + j)
-                this.clickedMove = move
-                this.worker.postMessage([MessageType.GetMove, move])
-                this.waitingForMove = false
+                data.clickedMove = move
+                data.worker.postMessage([MessageType.GetMove, move])
+                data.waitingForMove = false
             }
         }
     },
