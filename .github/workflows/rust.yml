@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [22.1]
 
     steps:
     - uses: actions/checkout@v2
@@ -30,7 +30,7 @@ jobs:
 
     - uses: actions-rs/toolchain@v1
       with:
-          toolchain: nightly-2022-02-16
+          toolchain: nightly-2025-02-01
           override: true
           profile: minimal
           components: llvm-tools-preview
