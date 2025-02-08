@@ -12,7 +12,7 @@ done
 CARGO_TARGET_DIR=test-target \
 # RUSTFLAGS="-Cinstrument-coverage -C link-arg=-Wl,--wrap=time" \
 # LLVM_PROFILE_FILE="default.profraw" \ # fixme this doesn't fix tests
- \cargo build --release \
+ cargo build --release \
 && cargo test --release --package tests "$whichtests" -- --nocapture -Z unstable-options --report-time && fullcoverage=10000
 
 if test "$fullcoverage"; then
