@@ -17,31 +17,33 @@ import wasm_path from '../crate/pkg/webzebra_bg.wasm?url'
 // log, because bundler would eliminate the import if we didn't use it
 console.log('wasm path: ' + wasm_path)
 
+const data = reactive({
+    board: Array(128).fill(1) as number[],
+    waitingForMove: false,
+    waitingForPass: false,
+    black_skill: 0,
+    black_exact_skill: 0,
+    black_wld_skill: 0,
+    white_skill: 0,
+    white_exact_skill: 0,
+    white_wld_skill: 0,
+    practiceMode: true,
+    evals: [] as EvaluatedMove[],
+    initialized: false,
+    stopToken: undefined as string | undefined,
+    workerIsRunning: false,
+    clickedMove: undefined as number | undefined,
+
+    // workardound for analysis not working properly
+    // initialized in created hook
+    worker: undefined as any as ZWorker,
+    workerListener: undefined as any as (this: Worker, ev: WorkerEventMap[keyof WorkerEventMap]) => any
+})
+
 const App = defineComponent({
     name: 'HelloWorld',
     data() {
-        return {
-            board: Array(128).fill(1) as number[],
-            waitingForMove: false,
-            waitingForPass: false,
-            black_skill: 0,
-            black_exact_skill: 0,
-            black_wld_skill: 0,
-            white_skill: 0,
-            white_exact_skill: 0,
-            white_wld_skill: 0,
-            practiceMode: true,
-            evals: [] as EvaluatedMove[],
-            initialized: false,
-            stopToken: undefined as string | undefined,
-            workerIsRunning: false,
-            clickedMove: undefined as number | undefined,
-
-            // workardound for analysis not working properly
-            // initialized in created hook
-            worker: undefined as any as ZWorker,
-            workerListener: undefined as any as (this: Worker, ev: WorkerEventMap[keyof WorkerEventMap]) => any
-        }
+        return data
     },
     created() {
         const worker = new ZebraWorker() as ZWorker
