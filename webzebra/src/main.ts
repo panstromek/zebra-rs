@@ -1,10 +1,9 @@
-import {computed, createApp, reactive, watchEffect} from 'vue'
+import {computed, createApp, defineComponent, reactive} from 'vue'
 import './index.css'
-import {defineComponent} from 'vue'
 import ZebraWorker from './worker.ts?worker=true'
 import {EvaluatedMove, Message, MessageType, SkillSetting} from "./message";
 import {createStopToken, stop} from "./stopToken";
-import {boardData, Circle, Eval, scoreFromCircles} from "./game";
+import {boardData, scoreFromCircles} from "./game";
 // we have to reference the wasm url here, otherwise wasm doesn't get bundled for some reason.
 // If we reference it only from worker, it's missing in production build.
 // FIXME report this as a bug in Vite
@@ -162,8 +161,7 @@ const App = defineComponent({
     },
     computed: {
         score(): { white: number, black: number } {
-            const circles = svgData.value.circles;
-            return scoreFromCircles(circles);
+            return scoreFromCircles(svgData.value.circles);
         },
         circlesHtml(): string {
             const circles = svgData.value.circles;
