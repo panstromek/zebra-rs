@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "START /B watch.bat && vite",
-    "build": "vuedx-typecheck . && vite build",
+    "build": "tsc --noEmit && vite build",
     "serve": "vite preview"
   },
   "dependencies": {
