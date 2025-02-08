@@ -158,22 +158,6 @@ const App = defineComponent({
     name: 'HelloWorld',
     data() {
         return data
-    },
-    computed: {
-        evalsHtml(): string {
-            if (!this.practiceMode) {
-                return ''
-            }
-            const evals = svgData.value.evals;
-            return evals.map(eval_ => {
-                return `<text x="${eval_.x}" y="${eval_.y}" style="fill: ${eval_.color}; font-size: 50px">${eval_.text}</text>`
-            }).join('')
-        }
-    },
-    watch: {
-        evalsHtml() {
-            document.getElementById('evals')!.innerHTML = this.evalsHtml
-        }
     }
 })
 created()
@@ -186,6 +170,18 @@ watchEffect(() => {
     }).join('')
 
     document.getElementById('circles')!.innerHTML = circlesHtml
+})
+
+watchEffect(() => {
+    if (!data.practiceMode) {
+        return ''
+    }
+    const evals = svgData.value.evals;
+    const evalsHtml = evals.map(eval_ => {
+        return `<text x="${eval_.x}" y="${eval_.y}" style="fill: ${eval_.color}; font-size: 50px">${eval_.text}</text>`
+    }).join('')
+
+    document.getElementById('evals')!.innerHTML = evalsHtml
 })
 
 watchEffect(() => {
