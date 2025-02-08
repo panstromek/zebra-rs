@@ -152,9 +152,6 @@ const App = defineComponent({
     data() {
         return data
     },
-    beforeUnmount() {
-        data.worker.removeEventListener('message', data.workerListener)
-    },
     computed: {
         score(): { white: number, black: number } {
             const circles = this.svg_data.circles;
