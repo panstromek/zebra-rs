@@ -101,56 +101,56 @@ function clickBoard(e: MouseEvent) {
         data.waitingForMove = false
     }
 }
+function created() {
+    const worker = new ZebraWorker() as ZWorker
+    data.worker = worker
+    worker.addEventListener('message', data.workerListener = ev => {
+        const [type, dataFromWorker] = (ev as MessageEvent).data as Message;
+        switch (type) {
+            case MessageType.DisplayBoard: {
+                data.board = dataFromWorker
+                data.clickedMove = undefined
+                break
+            }
+            case MessageType.GetMove : {
+                data.waitingForMove = true
+                break
+            }
+            case MessageType.GetPass : {
+                data.waitingForPass = true
+                break
+            }
+            case MessageType.Evals: {
+                data.evals = JSON.parse(dataFromWorker).evals
+                break;
+            }
+            case MessageType.Initialized: {
+                data.initialized = true
+                break;
+            }
+            case MessageType.WorkerIsRunning : {
+                data.workerIsRunning = dataFromWorker
+                break
+            }
+        }
+    })
+
+    data.stopToken = createStopToken()
+    worker.postMessage([MessageType.StopToken, data.stopToken])
+    // @click.prevent.stop="clickBoard"
+    document.getElementById('board')?.addEventListener('click', (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        clickBoard(e)
+    })
+    document.getElementById('new_game')?.addEventListener('click', (e) => {
+        newGame()
+    })
+}
 const App = defineComponent({
     name: 'HelloWorld',
     data() {
         return data
-    },
-    created() {
-        const worker = new ZebraWorker() as ZWorker
-        data.worker = worker
-        worker.addEventListener('message', data.workerListener = ev => {
-            const [type, dataFromWorker] = (ev as MessageEvent).data as Message;
-            switch (type) {
-                case MessageType.DisplayBoard: {
-                    data.board = dataFromWorker
-                    data.clickedMove = undefined
-                    break
-                }
-                case MessageType.GetMove : {
-                    data.waitingForMove = true
-                    break
-                }
-                case MessageType.GetPass : {
-                    data.waitingForPass = true
-                    break
-                }
-                case MessageType.Evals: {
-                    data.evals = JSON.parse(dataFromWorker).evals
-                    break;
-                }
-                case MessageType.Initialized: {
-                    data.initialized = true
-                    break;
-                }
-                case MessageType.WorkerIsRunning : {
-                    data.workerIsRunning = dataFromWorker
-                    break
-                }
-            }
-        })
-
-        data.stopToken = createStopToken()
-        worker.postMessage([MessageType.StopToken, data.stopToken])
-        // @click.prevent.stop="clickBoard"
-        document.getElementById('board')?.addEventListener('click', (e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            clickBoard(e)
-        })
-        document.getElementById('new_game')?.addEventListener('click', (e) => {
-            newGame()
-        })
     },
     beforeUnmount() {
         data.worker.removeEventListener('message', data.workerListener)
@@ -198,5 +198,5 @@ const App = defineComponent({
         }
     }
 })
-
+created()
 createApp(App).mount('#app')
