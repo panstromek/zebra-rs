@@ -48,10 +48,10 @@ const App = defineComponent({
         const worker = new ZebraWorker() as ZWorker
         data.worker = worker
         worker.addEventListener('message', data.workerListener = ev => {
-            const [type, data] = (ev as MessageEvent).data as Message;
+            const [type, dataFromWorker] = (ev as MessageEvent).data as Message;
             switch (type) {
                 case MessageType.DisplayBoard: {
-                    this.board = data
+                    this.board = dataFromWorker
                     this.clickedMove = undefined
                     break
                 }
@@ -64,7 +64,7 @@ const App = defineComponent({
                     break
                 }
                 case MessageType.Evals: {
-                    this.evals = JSON.parse(data).evals
+                    this.evals = JSON.parse(dataFromWorker).evals
                     break;
                 }
                 case MessageType.Initialized: {
@@ -72,7 +72,7 @@ const App = defineComponent({
                     break;
                 }
                 case MessageType.WorkerIsRunning : {
-                    this.workerIsRunning = data
+                    this.workerIsRunning = dataFromWorker
                     break
                 }
             }
