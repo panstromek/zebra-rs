@@ -301,10 +301,11 @@ export default defineComponent({
   },
   computed: {
     score(): { white: number, black: number } {
+      const circles = this.circles;
       return {
         // todo this is slow, use something better when we use some more efficient board representation
-        white: this.circles.reduce((count: number, circle: Circle) => circle.color === 'white' ? count + 1 : count, 0),
-        black: this.circles.reduce((count: number, circle: Circle) => circle.color === 'black' ? count + 1 : count, 0)
+        white: circles.reduce((count: number, circle: Circle) => circle.color === 'white' ? count + 1 : count, 0),
+        black: circles.reduce((count: number, circle: Circle) => circle.color === 'black' ? count + 1 : count, 0)
       }
     },
     circles(): Circle[] {
