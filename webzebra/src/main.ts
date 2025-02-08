@@ -1,4 +1,4 @@
-import {createApp, reactive} from 'vue'
+import {createApp, reactive, watchEffect} from 'vue'
 import './index.css'
 import {defineComponent} from 'vue'
 import ZebraWorker from './worker.ts?worker=true'
@@ -157,11 +157,8 @@ const App = defineComponent({
     },
     computed: {
         score(): { white: number, black: number } {
-            const circles = this.circles;
+            const circles = this.svg_data.circles;
             return scoreFromCircles(circles);
-        },
-        circles(): Circle[] {
-            return this.svg_data.circles
         },
         svg_data(): { circles: Circle[], evals: Eval[] } {
             const board = this.board;
@@ -170,7 +167,7 @@ const App = defineComponent({
             return boardData(board, clickedMove, evaluatedMoves);
         },
         circlesHtml(): string {
-            const circles = this.circles;
+            const circles = this.svg_data.circles;
             return circles.map(circle => {
                 return `<circle r="${circle.r}" cx="${circle.cx}" cy="${circle.cy}" style="fill: ${circle.color}"></circle>`
             }).join('')
