@@ -1,6 +1,6 @@
 <template>
-    <div class="max-w-sm text-left p-1.5 w-full mt-3">
-      <div class="flex justify-between items-center">
+
+
         <div class="flex items-center text-black text-2xl">
           <div style="width: 1em; height: 1em; border-radius: 0.5em; background: black"></div>
           <div class="px-2">{{ score.black }}</div>
@@ -14,31 +14,7 @@
             class="focus:outline-none border-2 rounded border-solid text-white p-2 m-0.5">
           New Game
         </button>
-      </div>
-<!--      <div>-->
-<!--        Worker running: {{workerIsRunning}}-->
-<!--      </div>-->
-<!--      <br>-->
-<!--      <h4>Skills</h4>-->
-<!--      <div>-->
-<!--        <input v-model="black_skill" placeholder="black_skill" type="number">-->
-<!--        <input v-model="black_exact_skill" placeholder="black_exact_skill" type="number">-->
-<!--        <input v-model="black_wld_skill" placeholder="black_wld_skill" type="number">-->
-<!--        <br>-->
-<!--        <input v-model="white_skill" placeholder="white_skill" type="number">-->
-<!--        <input v-model="white_exact_skill" placeholder="white_exact_skill" type="number">-->
-<!--        <input v-model="white_wld_skill" placeholder="white_wld_skill" type="number">-->
-<!--        <br>-->
-<!--        <button @click="setSkills">Set Skills</button>-->
-<!--      </div>-->
-<!--      <div v-if="waitingForMove">Waiting for move</div>-->
-<!--      <div v-if="waitingForPass">Waiting for pass (click anywhere on the board)</div>-->
-<!--      <button @click="undo">Undo</button>-->
-<!--      <div>-->
-<!--        <input type="checkbox" id="practice_mode_checkbox" class="mr-2" v-model="practiceMode">-->
-<!--        <label for="practice_mode_checkbox">Practice mode</label>-->
-<!--      </div>-->
-    </div>
+
 </template>
 
 <script lang="ts">
