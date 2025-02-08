@@ -1,5 +1,6 @@
 import {computed, reactive, watch} from '@vue/reactivity'
 import './index.css'
+// @ts-ignore
 import ZebraWorker from './worker.ts?worker=true'
 import {EvaluatedMove, Message, MessageType, SkillSetting} from "./message";
 import {createStopToken, stop} from "./stopToken";
