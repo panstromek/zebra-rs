@@ -1,31 +1,4 @@
 <template>
-    <div style="max-width: 750px; width: 100%">
-      <svg width="100%"
-           preserveAspectRatio="xMidYMid meet"
-           ref="board"
-           viewBox="0 0 800 800"
-           style="background-color: #3a7f46; border: 1vw brown solid;"
-           @click.prevent.stop="clickBoard">
-          <g id="evals" v-html="evalsHtml"></g>
-        <g id="circles" v-html="circlesHtml"></g>
-        <g id="lines">
-          <line x1="0" y1="100" x2="800" y2="100" stroke="black"></line>
-          <line x1="0" y1="200" x2="800" y2="200" stroke="black"></line>
-          <line x1="0" y1="300" x2="800" y2="300" stroke="black"></line>
-          <line x1="0" y1="400" x2="800" y2="400" stroke="black"></line>
-          <line x1="0" y1="500" x2="800" y2="500" stroke="black"></line>
-          <line x1="0" y1="600" x2="800" y2="600" stroke="black"></line>
-          <line x1="0" y1="700" x2="800" y2="700" stroke="black"></line>
-          <line y1="0" x1="100" y2="800" x2="100" stroke="black"></line>
-          <line y1="0" x1="200" y2="800" x2="200" stroke="black"></line>
-          <line y1="0" x1="300" y2="800" x2="300" stroke="black"></line>
-          <line y1="0" x1="400" y2="800" x2="400" stroke="black"></line>
-          <line y1="0" x1="500" y2="800" x2="500" stroke="black"></line>
-          <line y1="0" x1="600" y2="800" x2="600" stroke="black"></line>
-          <line y1="0" x1="700" y2="800" x2="700" stroke="black"></line>
-        </g>
-      </svg>
-    </div>
     <div class="max-w-sm text-left p-1.5 w-full mt-3">
       <div class="flex justify-between items-center">
         <div class="flex items-center text-black text-2xl">
@@ -147,6 +120,12 @@ export default defineComponent({
 
     this.stopToken = createStopToken()
     worker.postMessage([MessageType.StopToken, this.stopToken])
+    // @click.prevent.stop="clickBoard"
+    document.getElementById('board')?.addEventListener('click', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      this.clickBoard(e)
+    })
   },
   beforeUnmount() {
     this.worker.removeEventListener('message', this.workerListener)
@@ -192,7 +171,7 @@ export default defineComponent({
     },
     clickBoard(e: MouseEvent) {
       this.stopWorkerIfNeeded()
-      const board = this.$refs.board as SVGElement;
+      const board = document.getElementById('board') as unknown as SVGElement;
       const boardSize = board.clientWidth
       const fieldSize = boardSize / 8
 
@@ -239,6 +218,14 @@ export default defineComponent({
       return evals.map(eval_ => {
         return `<text x="${eval_.x}" y="${eval_.y}" style="fill: ${eval_.color}; font-size: 50px">${eval_.text}</text>`
       }).join('')
+    }
+  },
+  watch: {
+    circlesHtml() {
+      document.getElementById('circles')!.innerHTML = this.circlesHtml
+    },
+    evalsHtml() {
+      document.getElementById('evals')!.innerHTML = this.evalsHtml
     }
   }
 })
