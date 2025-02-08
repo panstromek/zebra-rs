@@ -37,8 +37,7 @@ const data = reactive({
 
     // workardound for analysis not working properly
     // initialized in created hook
-    worker: undefined as any as ZWorker,
-    workerListener: undefined as any as (this: Worker, ev: WorkerEventMap[keyof WorkerEventMap]) => any
+    worker: undefined as any as ZWorker
 })
 
 const stopWorkerIfNeeded = () => {
@@ -105,7 +104,7 @@ function clickBoard(e: MouseEvent) {
 }
 
 data.worker = worker
-worker.addEventListener('message', data.workerListener = ev => {
+worker.addEventListener('message', ev => {
     const [type, dataFromWorker] = (ev as MessageEvent).data as Message;
     switch (type) {
         case MessageType.DisplayBoard: {
