@@ -1,4 +1,4 @@
-import {createApp, reactive, watchEffect} from 'vue'
+import {computed, createApp, reactive, watchEffect} from 'vue'
 import './index.css'
 import {defineComponent} from 'vue'
 import ZebraWorker from './worker.ts?worker=true'
@@ -147,6 +147,14 @@ function created() {
         newGame()
     })
 }
+
+const svgData = computed(() => {
+    const board = data.board;
+    const evaluatedMoves = data.evals;
+    const clickedMove = data.clickedMove;
+    return boardData(board, clickedMove, evaluatedMoves);
+})
+
 const App = defineComponent({
     name: 'HelloWorld',
     data() {
@@ -158,10 +166,7 @@ const App = defineComponent({
             return scoreFromCircles(circles);
         },
         svg_data(): { circles: Circle[], evals: Eval[] } {
-            const board = this.board;
-            const evaluatedMoves = this.evals;
-            const clickedMove = this.clickedMove;
-            return boardData(board, clickedMove, evaluatedMoves);
+            return svgData.value
         },
         circlesHtml(): string {
             const circles = this.svg_data.circles;
