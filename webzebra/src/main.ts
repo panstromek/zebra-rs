@@ -51,6 +51,56 @@ const stopWorkerIfNeeded = () => {
         data.worker.postMessage([MessageType.StopToken, data.stopToken])
     }
 };
+
+function undo() {
+    stopWorkerIfNeeded()
+    data.worker.postMessage([MessageType.Undo])
+}
+
+function setSkills() {
+    stopWorkerIfNeeded()
+
+    let numbers: SkillSetting = [
+        Number(data.black_skill),
+        Number(data.black_exact_skill),
+        Number(data.black_wld_skill),
+        Number(data.white_skill),
+        Number(data.white_exact_skill),
+        Number(data.white_wld_skill)
+    ];
+    if (numbers.some(num => isNaN(num) && !Number.isInteger(num))) {
+        alert('Some values are not integers')
+        return
+    }
+    data.worker.postMessage([MessageType.SetSkill, numbers])
+}
+
+function newGame() {
+    stopWorkerIfNeeded()
+    setSkills()
+    data.worker.postMessage([MessageType.NewGame])
+}
+
+function clickBoard(e: MouseEvent) {
+    stopWorkerIfNeeded()
+    const board = document.getElementById('board') as unknown as SVGElement;
+    const boardSize = board.clientWidth
+    const fieldSize = boardSize / 8
+
+    if (data.waitingForPass) {
+        data.worker.postMessage([MessageType.GetPass, -1])
+        data.waitingForPass = false
+    } else {
+        let x = e.offsetX
+        let y = e.offsetY
+        let j = Math.floor(x / fieldSize) + 1
+        let i = Math.floor(y / fieldSize) + 1
+        let move = (10 * i + j)
+        data.clickedMove = move
+        data.worker.postMessage([MessageType.GetMove, move])
+        data.waitingForMove = false
+    }
+}
 const App = defineComponent({
     name: 'HelloWorld',
     data() {
@@ -96,62 +146,14 @@ const App = defineComponent({
         document.getElementById('board')?.addEventListener('click', (e) => {
             e.preventDefault()
             e.stopPropagation()
-            this.clickBoard(e)
+            clickBoard(e)
         })
         document.getElementById('new_game')?.addEventListener('click', (e) => {
-            this.newGame()
+            newGame()
         })
     },
     beforeUnmount() {
         data.worker.removeEventListener('message', data.workerListener)
-    },
-    methods: {
-        undo() {
-            stopWorkerIfNeeded()
-            data.worker.postMessage([MessageType.Undo])
-        },
-        setSkills() {
-            stopWorkerIfNeeded()
-
-            let numbers: SkillSetting = [
-                Number(data.black_skill),
-                Number(data.black_exact_skill),
-                Number(data.black_wld_skill),
-                Number(data.white_skill),
-                Number(data.white_exact_skill),
-                Number(data.white_wld_skill)
-            ];
-            if (numbers.some(num => isNaN(num) && !Number.isInteger(num))) {
-                alert('Some values are not integers')
-                return
-            }
-            data.worker.postMessage([MessageType.SetSkill, numbers])
-        },
-        newGame() {
-            stopWorkerIfNeeded()
-            this.setSkills()
-            data.worker.postMessage([MessageType.NewGame])
-        },
-        clickBoard(e: MouseEvent) {
-            stopWorkerIfNeeded()
-            const board = document.getElementById('board') as unknown as SVGElement;
-            const boardSize = board.clientWidth
-            const fieldSize = boardSize / 8
-
-            if (this.waitingForPass) {
-                data.worker.postMessage([MessageType.GetPass, -1])
-                data.waitingForPass = false
-            } else {
-                let x = e.offsetX
-                let y = e.offsetY
-                let j = Math.floor(x / fieldSize) + 1
-                let i = Math.floor(y / fieldSize) + 1
-                let move = (10 * i + j)
-                data.clickedMove = move
-                data.worker.postMessage([MessageType.GetMove, move])
-                data.waitingForMove = false
-            }
-        }
     },
     computed: {
         score(): { white: number, black: number } {
