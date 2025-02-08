@@ -160,12 +160,6 @@ const App = defineComponent({
         return data
     },
     computed: {
-        circlesHtml(): string {
-            const circles = svgData.value.circles;
-            return circles.map(circle => {
-                return `<circle r="${circle.r}" cx="${circle.cx}" cy="${circle.cy}" style="fill: ${circle.color}"></circle>`
-            }).join('')
-        },
         evalsHtml(): string {
             if (!this.practiceMode) {
                 return ''
@@ -177,15 +171,22 @@ const App = defineComponent({
         }
     },
     watch: {
-        circlesHtml() {
-            document.getElementById('circles')!.innerHTML = this.circlesHtml
-        },
         evalsHtml() {
             document.getElementById('evals')!.innerHTML = this.evalsHtml
         }
     }
 })
 created()
+
+watchEffect(() => {
+
+    const circles = svgData.value.circles;
+    const circlesHtml = circles.map(circle => {
+        return `<circle r="${circle.r}" cx="${circle.cx}" cy="${circle.cy}" style="fill: ${circle.color}"></circle>`
+    }).join('')
+
+    document.getElementById('circles')!.innerHTML = circlesHtml
+})
 
 watchEffect(() => {
     const score = scoreFromCircles(svgData.value.circles)
