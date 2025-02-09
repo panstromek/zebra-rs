@@ -138,7 +138,7 @@ document.getElementById('board')?.addEventListener('click', (e) => {
 function render() {
     let evals_ = []
     const fieldSize = 100
-    const arr = [] as Circle[]
+    const circles = [] as Circle[]
     for (let i = 1; i <= 8; i++) {
         for (let j = 1; j <= 8; j++) {
             let color;
@@ -181,7 +181,7 @@ function render() {
             }
 
             const pieceSize = 80
-            arr.push({
+            circles.push({
                 cx: (j - 1) * fieldSize + 0.5 * fieldSize,
                 cy: (i - 1) * fieldSize + 0.5 * fieldSize,
                 r: pieceSize / 2,
@@ -189,8 +189,6 @@ function render() {
             })
         }
     }
-
-    const circles = arr
 
     // todo this is slow, use something better when we use some more efficient board representation
     const score_white = circles.reduce((count: number, circle: Circle) => circle.color === 'white' ? count + 1 : count, 0)
