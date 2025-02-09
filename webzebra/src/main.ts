@@ -1,4 +1,4 @@
-import {computed, reactive, watch} from '@vue/reactivity'
+import {reactive, watch} from '@vue/reactivity'
 import './index.css'
 import {EvaluatedMove, Message, MessageType, SkillSetting} from "./message";
 import {createStopToken, stop} from "./stopToken";
@@ -134,14 +134,12 @@ document.getElementById('board')?.addEventListener('click', (e) => {
     clickBoard(e)
 })
 
-const svgData = computed(() => {
+watch(data, ()=> {
     const board = data.board;
     const evaluatedMoves = data.evals;
     const clickedMove = data.clickedMove;
-    return boardData(board, clickedMove, evaluatedMoves);
-})
+    const svgData_ = boardData(board, clickedMove, evaluatedMoves);
 
-watch(svgData, (svgData_: typeof svgData.value)=> {
     const score = scoreFromCircles(svgData_.circles)
     const circles = svgData_.circles;
     const circlesHtml = circles.map(circle => {
