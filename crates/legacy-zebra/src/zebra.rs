@@ -747,7 +747,7 @@ fn play_game(mut file_name: &str,
     type ComputeMoveOut = LibcZebraOutput;
     type Learn = LibcLearner;
     type FE = LibcFatalError;
-    type Thor = LegacyThor;
+    let thor = LegacyThor;
     let mut play_state: PlayGame<Source> = PlayGame::new(file_name, move_string, repeat, move_file, g_state);
     let mut move_attempt = None;
     let mut total_search_time: f64 = 0.;
@@ -756,7 +756,7 @@ fn play_game(mut file_name: &str,
     let mut stdin_lock = stdin.lock();
     loop {
         let state = next_state::<
-            ZF, Source, BoardSrc, ComputeMoveLog, ComputeMoveOut, FE, Thor
+            ZF, Source, BoardSrc, ComputeMoveLog, ComputeMoveOut, FE, LegacyThor
         >(&mut play_state, move_attempt.take(), &LegacyThor);
         match state {
             // TODO here in all these branches, we should ideally not need mutable reference to play_state
@@ -799,7 +799,7 @@ fn play_game(mut file_name: &str,
                 dump_position(play_state.side_to_move, &play_state.g_state.board.board);
                 dump_game_score(play_state.side_to_move, play_state.g_state.board.score_sheet_row, &play_state.g_state.board.black_moves, &play_state.g_state.board.white_moves);
                 /* Check what the Thor opening statistics has to say */
-                Thor::choose_thor_opening_move(&play_state.g_state.board.board, play_state.side_to_move, play_state.g_state.config.echo, &mut play_state.g_state.random);
+                thor.choose_thor_opening_move(&play_state.g_state.board.board, play_state.side_to_move, play_state.g_state.config.echo, &mut play_state.g_state.random);
             }
             PlayGameState::CanLearn => {
                 if play_state.g_state.config.use_learning && play_state.g_state.config.one_position_only == 0 {
@@ -852,22 +852,22 @@ fn deal_with_thor_1(use_thor_: bool, side_to_move: i32,
                                                            mut config: &Config, g_timer: &Timer,
                                                            board_state: &BoardState, total_search_time: &mut f64) {
     type ZF = LibcFrontend;
-    type Thor = LegacyThor;
+    let thor = LegacyThor;
 
     if use_thor_ {
         let database_start = g_timer.get_real_timer();
-        Thor::database_search(&board_state.board, side_to_move);
-        let thor_position_count = Thor::get_match_count();
+        thor.database_search(&board_state.board, side_to_move);
+        let thor_position_count = thor.get_match_count();
         let database_stop = g_timer.get_real_timer();
         let database_time = database_stop - database_start;
         *total_search_time += database_time;
         ZF::report_thor_matching_games_stats(*total_search_time, thor_position_count, database_time);
         if thor_position_count > 0 {
-            let black_win_count = Thor::get_black_win_count();
-            let draw_count = Thor::get_draw_count();
-            let white_win_count = Thor::get_white_win_count();
-            let black_median_score = Thor::get_black_median_score();
-            let black_average_score = Thor::get_black_average_score();
+            let black_win_count = thor.get_black_win_count();
+            let draw_count = thor.get_draw_count();
+            let white_win_count = thor.get_white_win_count();
+            let black_median_score = thor.get_black_median_score();
+            let black_average_score = thor.get_black_average_score();
 
             ZF::report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
         }
@@ -879,21 +879,22 @@ fn deal_with_thor_2(use_thor_: bool, side_to_move: i32,
                                                           config: &Config, g_timer: &Timer,
                                                           board_state: &BoardState, total_search_time: &mut f64){
     type ZF = LibcFrontend;
-    type Thor = LegacyThor;
+    let thor = LegacyThor{};
+    use ThorDatabase;
     if use_thor_ {
         let database_start = g_timer.get_real_timer();
-        Thor::database_search(&board_state.board, side_to_move);
-        let thor_position_count = Thor::get_match_count();
+        thor.database_search(&board_state.board, side_to_move);
+        let thor_position_count = thor.get_match_count();
         let database_stop = g_timer.get_real_timer();
         let db_search_time = database_stop - database_start;
         *total_search_time += db_search_time;
         ZF::report_some_thor_stats(*total_search_time, thor_position_count, db_search_time);
         if thor_position_count > 0 {
-            let black_win_count = Thor::get_black_win_count();
-            let draw_count = Thor::get_draw_count();
-            let white_win_count = Thor::get_white_win_count();
-            let black_median_score = Thor::get_black_median_score();
-            let black_average_score = Thor::get_black_average_score();
+            let black_win_count = thor.get_black_win_count();
+            let draw_count = thor.get_draw_count();
+            let white_win_count = thor.get_white_win_count();
+            let black_median_score = thor.get_black_median_score();
+            let black_average_score = thor.get_black_average_score();
             ZF::report_some_thor_scores(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
         }
         ZF::print_out_thor_matches(config.thor_max_games);

@@ -118,39 +118,39 @@ static mut filter: FilterType =
 pub struct LegacyThor;
 
 impl ThorDatabase for LegacyThor {
-    fn get_thor_game_move(index: i32, move_number: i32) -> i32 {
+    fn get_thor_game_move(&self, index: i32, move_number: i32) -> i32 {
         unsafe { get_thor_game_move(index, move_number) }
     }
 
-    fn database_search(in_board: &[i32], side_to_move: i32) {
+    fn database_search(&self, in_board: &[i32], side_to_move: i32) {
         unsafe { database_search(in_board, side_to_move) }
     }
 
-    fn get_match_count() -> i32 {
+    fn get_match_count(&self) -> i32 {
         unsafe { thor_search.get_match_count() }
     }
 
-    fn get_black_win_count() -> i32 {
+    fn get_black_win_count(&self) -> i32 {
         unsafe { thor_search.get_black_win_count() }
     }
 
-    fn get_draw_count() -> i32 {
+    fn get_draw_count(&self) -> i32 {
         unsafe { thor_search.get_draw_count() }
     }
 
-    fn get_white_win_count() -> i32 {
+    fn get_white_win_count(&self) -> i32 {
         unsafe { thor_search.get_white_win_count() }
     }
 
-    fn get_black_median_score() -> i32 {
+    fn get_black_median_score(&self) -> i32 {
         unsafe { thor_search.get_black_median_score() }
     }
 
-    fn get_black_average_score() -> f64 {
+    fn get_black_average_score(&self) -> f64 {
         unsafe { thor_search.get_black_average_score() }
     }
 
-    fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32, random: &mut MyRandom) -> i32 {
+    fn choose_thor_opening_move(&self, in_board: &[i32], side_to_move: i32, echo: i32, random: &mut MyRandom) -> i32 {
         unsafe { choose_thor_opening_move(in_board, side_to_move, echo, random) }
     }
 }

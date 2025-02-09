@@ -1011,12 +1011,12 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
     if book_move_found == 0 && play_thor_match_openings != 0 {
         /* Optionally use the Thor database as opening book. */
         let threshold = 2;
-        Thor::database_search(&g_state.board.board, side_to_move);
-        if Thor::get_match_count() >= threshold {
+        Thor::database_search(thor, &g_state.board.board, side_to_move);
+        if Thor::get_match_count(thor) >= threshold {
             let game_index =
                 ((g_state.random.my_random() >> 8) %
-                    Thor::get_match_count() as i64) as i32;
-            curr_move = Thor::get_thor_game_move(game_index, g_state.moves.disks_played) as i8;
+                    Thor::get_match_count(thor) as i64) as i32;
+            curr_move = Thor::get_thor_game_move(thor, game_index, g_state.moves.disks_played) as i8;
             if valid_move(curr_move, side_to_move, &g_state.board.board) != 0 {
                 book_eval_info =
                     create_eval_info(UNDEFINED_EVAL, UNSOLVED_POSITION,
@@ -1041,7 +1041,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
     if book_move_found == 0 && g_state.game.play_human_openings != 0 && book != 0 {
         /* Check Thor statistics for a move */
         curr_move =
-            Thor::choose_thor_opening_move(&g_state.board.board, side_to_move,
+            Thor::choose_thor_opening_move(thor, &g_state.board.board, side_to_move,
                                            0, &mut g_state.random) as i8;
         if curr_move != -(1) {
             book_eval_info =
