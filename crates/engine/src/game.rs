@@ -164,7 +164,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                            mut mid: i32,
                                            mut exact: i32,
                                            mut wld: i32, mut echo: i32, g_state: &mut FullState,
-                                           update_cb: fn(&EvaluatedList), mut should_stop: StopFn)
+                                           update_cb: fn(&EvaluatedList), mut should_stop: StopFn, thor: &Thor)
                                            -> EvaluatedList {
     let mut list = EvaluatedList::new();
     let mut i: i32 = 0;
@@ -341,7 +341,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                                      0, 0,
                                                      1, &mut shallow_info, g_state.config.display_pv,
                                                      g_state.config.echo,
-                                                     g_state);
+                                                     g_state, thor);
                     if shallow_info.type_0 == PASS_EVAL {
                         /* Don't allow pass */
                         compute_move::<L, Out, FE, Thor>(side_to_move, 0,
@@ -351,7 +351,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                                          0, 0,
                                                          1, &mut shallow_info, g_state.config.display_pv,
                                                          g_state.config.echo,
-                                                         g_state);
+                                                         g_state, thor);
                         if shallow_info.type_0 == PASS_EVAL {
                             /* Game over */
                             disc_diff = disc_count(side_to_move, &(g_state.board).board) -
@@ -502,7 +502,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                                      1, &mut this_eval,
                                                      g_state.config.display_pv,
                                                      g_state.config.echo,
-                                                     g_state);
+                                                     g_state,thor);
                 }
                 if force_return != 0 || should_stop() {
                     /* Clear eval and exit search immediately */
@@ -528,7 +528,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                                              current_wld - 1,
                                                              1, &mut this_eval, g_state.config.display_pv,
                                                              g_state.config.echo,
-                                                             g_state);
+                                                             g_state, thor);
                         }
                         if this_eval.type_0 == PASS_EVAL {
                             /* Game over */
@@ -881,7 +881,8 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
                                                                                                eval_info: &mut EvaluationType,
                                                                                                logger: &mut Option<L>,
                                                                                                display_pv:i32,
-                                                                                               echo:i32, g_state: &mut FullState
+                                                                                               echo:i32, g_state: &mut FullState,
+                                                                                               thor: &Thor
 )
                                                                                                -> i8 {
     let mut book_eval_info = EvaluationType::new();
@@ -1300,7 +1301,9 @@ pub fn compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, 
     wld: i32,
     search_forced: i32,
     eval_info: &mut EvaluationType, display_pv:i32, echo:i32,
-    g_state: &mut FullState)
+    g_state: &mut FullState,
+    thor: &Thor
+)
     -> i8 {
     return generic_compute_move::<L, Out, FE, Thor>(
         side_to_move, update_all, my_time,
@@ -1308,7 +1311,8 @@ pub fn compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, 
         book, mid,
         exact, wld,
         search_forced, eval_info, &mut L::create_log_file_if_needed(), display_pv, echo,
-        g_state
+        g_state,
+        thor
     );
 }
 

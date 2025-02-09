@@ -136,7 +136,7 @@ pub fn ponder_move<
                            _book: i32,
                            mid: i32,
                            exact: i32,
-                           wld: i32, display_pv: i32, mut echo:i32, g_state: &mut FullState) {
+                           wld: i32, display_pv: i32, mut echo:i32, g_state: &mut FullState, thor: &Thor) {
     type Rep = LibcFatalError;
 
     let mut eval_info =EvaluationType::new();
@@ -177,7 +177,7 @@ pub fn ponder_move<
                                      if (8) < mid {
                                          8
                                      } else { mid }, 0, 0,
-                                     0, &mut eval_info, display_pv, echo, g_state);
+                                     0, &mut eval_info, display_pv, echo, g_state, thor);
     echo = stored_echo;
     /* Sort the opponents on the score and push the table move (if any)
        to the front of the list */
@@ -210,7 +210,7 @@ pub fn ponder_move<
         engine::src::game::compute_move::<L, Out, FE, Thor>(0 + 2 - side_to_move,
                                          0, 0, 0,
                                          1, 0, mid, exact, wld,
-                                         0, &mut eval_info, display_pv, echo, g_state);
+                                         0, &mut eval_info, display_pv, echo, g_state, thor);
         let move_0 = this_move;
         {
             unmake_move(side_to_move, move_0, &mut g_state.board.board, &mut g_state.moves, &mut g_state.hash, &mut g_state.flip_stack);
@@ -305,7 +305,7 @@ pub fn extended_compute_move<FE: FrontEnd>(
     side_to_move: i32, book_only: i32, book: i32, mid: i32, exact: i32, wld: i32, echo: i32, g_state: &mut FullState)
     -> EvaluatedList {
     engine::src::game::extended_compute_move::<LogFileHandler, LibcZebraOutput, FE, LegacyThor, _>(
-        side_to_move, book_only, book, mid, exact, wld, echo, g_state, |_| (), || false
+        side_to_move, book_only, book, mid, exact, wld, echo, g_state, |_| (), || false, &LegacyThor
     )
 }
 /*
@@ -477,7 +477,7 @@ pub fn legacy_compute_move(side_to_move: i32,
                                                                                                &mut LogFileHandler::create_log_file_if_needed(),
                                                                                                g_state.config.display_pv,
                                                                                                g_state.config.echo,
-                                                                                               g_state);
+                                                                                               g_state, &LegacyThor);
 }
 
 pub struct LibcZebraOutput;

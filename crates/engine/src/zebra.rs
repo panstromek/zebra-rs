@@ -384,7 +384,7 @@ pub fn next_state<
                             &mut ComputeMoveLog::create_log_file_if_needed(),
                             play_state.g_state.config.display_pv,
                             play_state.g_state.config.echo,
-                            &mut play_state.g_state);
+                            &mut play_state.g_state, thor);
                     if play_state.side_to_move == 0 {
                         ZF::set_evals(produce_compact_eval(play_state.eval_info), 0.0f64);
                     } else {

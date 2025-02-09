@@ -360,8 +360,7 @@ impl ZebraGame {
             } else {
                 cached_stop = should_stop();
                 cached_stop
-            }
-        );
+            }, &WasmThor);
         self.game.g_state.search.full_pv = stored_pv;
         self.game.g_state.search.full_pv_depth = stored_pv_depth;
         self.game.g_state.g_book.set_slack(stored_slack);
