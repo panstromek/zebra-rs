@@ -1,4 +1,3 @@
-import {reactive, watch} from '@vue/reactivity'
 import './index.css'
 import {EvaluatedMove, Message, MessageType, SkillSetting} from "./message";
 import {createStopToken, stop} from "./stopToken";
@@ -10,11 +9,10 @@ interface ZWorker extends Worker {
 
 const worker = new Worker(new URL('./worker.js', import.meta.url), {type: 'module'}) as ZWorker
 
-const data = reactive({
-    board: Array(128).fill(1) as number[],
-    evals: [] as EvaluatedMove[],
-    clickedMove: undefined as number | undefined,
-})
+let board = Array(128).fill(1) as number[]
+let evals = [] as EvaluatedMove[]
+let clickedMove = undefined as number | undefined
+
 let waitingForMove = false;
 let waitingForPass = false;
 let workerIsRunning = false;
@@ -84,9 +82,10 @@ function clickBoard(e: MouseEvent) {
         let j = Math.floor(x / fieldSize) + 1
         let i = Math.floor(y / fieldSize) + 1
         let move = (10 * i + j)
-        data.clickedMove = move
+        clickedMove = move
         worker.postMessage([MessageType.GetMove, move])
         waitingForMove = false
+        render()
     }
 }
 
@@ -94,8 +93,9 @@ worker.addEventListener('message', ev => {
     const [type, dataFromWorker] = (ev as MessageEvent).data as Message;
     switch (type) {
         case MessageType.DisplayBoard: {
-            data.board = dataFromWorker
-            data.clickedMove = undefined
+            board = dataFromWorker
+            clickedMove = undefined
+            render()
             break
         }
         case MessageType.GetMove : {
@@ -107,7 +107,8 @@ worker.addEventListener('message', ev => {
             break
         }
         case MessageType.Evals: {
-            data.evals = JSON.parse(dataFromWorker).evals
+            evals = JSON.parse(dataFromWorker).evals
+            render()
             break;
         }
         case MessageType.Initialized: {
@@ -135,9 +136,8 @@ document.getElementById('board')?.addEventListener('click', (e) => {
 })
 
 function render() {
-    const board = data.board;
-    const evaluatedMoves = data.evals;
-    const clickedMove = data.clickedMove;
+    const evaluatedMoves = evals;
+
     const svgData_ = boardData(board, clickedMove, evaluatedMoves);
 
     const score = scoreFromCircles(svgData_.circles)
@@ -150,12 +150,11 @@ function render() {
     document.getElementById('score-black')!.innerText = '' + score.black
     document.getElementById('score-white')!.innerText = '' + score.white
 
-    const evals = svgData_.evals;
-    const evalsHtml = evals.map(eval_ => {
+    const evals_ = svgData_.evals;
+    const evalsHtml = evals_.map(eval_ => {
         return `<text x="${eval_.x}" y="${eval_.y}" style="fill: ${eval_.color}; font-size: 50px">${eval_.text}</text>`
     }).join('')
 
     document.getElementById('evals')!.innerHTML = evalsHtml
 }
 
-watch(data, render)
