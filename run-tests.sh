@@ -9,11 +9,10 @@ do
     esac
 done
 
-CARGO_TARGET_DIR=test-target \
-# RUSTFLAGS="-Cinstrument-coverage -C link-arg=-Wl,--wrap=time" \
-# LLVM_PROFILE_FILE="default.profraw" \ # fixme this doesn't fix tests
- cargo build --release \
-&& cargo test --release --package tests "$whichtests" -- --nocapture -Z unstable-options --report-time && fullcoverage=10000
+#CARGO_TARGET_DIR=test-target RUSTFLAGS="-Cinstrument-coverage -C link-arg=-Wl,--wrap=time" cargo build --release \
+ #&& cargo test --release --package tests "$whichtests" -- --nocapture -Z unstable-options --report-time && fullcoverage=10000
+CARGO_TARGET_DIR=test-target RUSTFLAGS="-Cinstrument-coverage -C link-arg=-Wl,--wrap=time" cargo build --release \
+&& LLVM_PROFILE_FILE="default.profraw" cargo test --release --package tests "$whichtests" -- --nocapture -Z unstable-options --report-time && fullcoverage=10000
 
 if test "$fullcoverage"; then
   num_lines=100000

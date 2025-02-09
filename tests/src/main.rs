@@ -1029,7 +1029,7 @@ f1_940, " -l 3 8 3 4 6 2 -seqfile ../seq.txt -randmove 3 -g ../board.txt -log ze
         };
         let res = snapshot_test_with_folder(BINARY_FOLDER, binary, arguments, Path::new(snapshot_test_dir), with_adjust,
                                   interactive, coeffs_path_from_run_dir, book_path_from_run_dir,
-                                  "resources/book-tmp.bin", 15, &[], "../thor");
+                                  "resources/book-tmp.bin", 35, &[], "../thor");
         assert!(res);
     }
 
