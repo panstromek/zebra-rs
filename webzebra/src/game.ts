@@ -14,7 +14,7 @@ export type Eval = {
 }
 
 export function boardData(board: number[], clickedMove: number | undefined, evaluatedMoves: EvaluatedMove[]) {
-    let evals = []
+    let evals_ = []
     const fieldSize = 100
     const arr = [] as Circle[]
     for (let i = 1; i <= 8; i++) {
@@ -48,7 +48,7 @@ export function boardData(board: number[], clickedMove: number | undefined, eval
                         color = '#FFFF00'
                     }
                     const text = eval_.eval_s
-                    evals.push({
+                    evals_.push({
                         x: (j - 1) * fieldSize + 0.2 * fieldSize,
                         y: (i - 1) * fieldSize + 0.65 * fieldSize,
                         color,
@@ -69,7 +69,7 @@ export function boardData(board: number[], clickedMove: number | undefined, eval
     }
     return {
         circles: arr,
-        evals
+        evals: evals_
     }
 }
 
