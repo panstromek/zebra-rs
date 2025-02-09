@@ -113,15 +113,7 @@ let lastStopTokenCheck = undefined as number | undefined;
     return false
 }
 
-// FIXME is it possible to get rid of this nonsense cascade?
-// I'm fighting some transpile process or something with this
-
-init()
-    .then(() => import('../crate/pkg'))
-    .then(res => {
-        res.initialize()
-
-    })
-    .then(() => {
-        sendMessage([MessageType.Initialized])
-    })
+init().then(res => {
+    res.initialize()
+    sendMessage([MessageType.Initialized])
+})
