@@ -144,7 +144,9 @@ function render() {
             let color;
             let move = 10 * i + j;
 
-            switch (board[move]) {
+            const piece = board[move];
+
+            switch (piece) {
                 case 0  :
                     color = 'black'
                     break;
