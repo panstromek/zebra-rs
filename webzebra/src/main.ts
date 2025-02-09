@@ -16,7 +16,6 @@ const data = reactive({
     waitingForPass: false,
     practiceMode: true,
     evals: [] as EvaluatedMove[],
-    initialized: false,
     clickedMove: undefined as number | undefined,
 })
 let workerIsRunning = false;
@@ -113,7 +112,11 @@ worker.addEventListener('message', ev => {
             break;
         }
         case MessageType.Initialized: {
-            data.initialized = true
+            const newGameButton = document.getElementById('new_game');
+            newGameButton?.removeAttribute('disabled')
+            newGameButton?.addEventListener('click', (e) => {
+                newGame()
+            })
             break;
         }
         case MessageType.WorkerIsRunning : {
@@ -130,9 +133,6 @@ document.getElementById('board')?.addEventListener('click', (e) => {
     e.preventDefault()
     e.stopPropagation()
     clickBoard(e)
-})
-document.getElementById('new_game')?.addEventListener('click', (e) => {
-    newGame()
 })
 
 const svgData = computed(() => {
