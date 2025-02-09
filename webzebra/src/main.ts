@@ -136,9 +136,7 @@ document.getElementById('board')?.addEventListener('click', (e) => {
 })
 
 function render() {
-    const evaluatedMoves = evals;
-
-    const svgData_ = boardData(board, clickedMove, evaluatedMoves);
+    const svgData_ = boardData(board, clickedMove, evals);
 
     const score = scoreFromCircles(svgData_.circles)
     const circles = svgData_.circles;
