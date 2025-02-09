@@ -23,21 +23,21 @@ const data = reactive({
     practiceMode: true,
     evals: [] as EvaluatedMove[],
     initialized: false,
-    stopToken: undefined as string | undefined,
     workerIsRunning: false,
     clickedMove: undefined as number | undefined,
 })
+let stopToken = undefined as string | undefined;
 
 const stopWorkerIfNeeded = () => {
     if (data.workerIsRunning) {
-        if (data.stopToken) {
-            stop(data.stopToken)
+        if (stopToken) {
+            stop(stopToken)
         } else {
             console.error('cannot stop worker, missing stop token')
         }
 
-        data.stopToken = createStopToken()
-        worker.postMessage([MessageType.StopToken, data.stopToken])
+        stopToken = createStopToken()
+        worker.postMessage([MessageType.StopToken, stopToken])
     }
 };
 
@@ -122,8 +122,8 @@ worker.addEventListener('message', ev => {
     }
 })
 
-data.stopToken = createStopToken()
-worker.postMessage([MessageType.StopToken, data.stopToken])
+stopToken = createStopToken()
+worker.postMessage([MessageType.StopToken, stopToken])
 // @click.prevent.stop="clickBoard"
 document.getElementById('board')?.addEventListener('click', (e) => {
     e.preventDefault()
