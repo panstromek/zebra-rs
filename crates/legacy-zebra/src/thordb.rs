@@ -531,11 +531,7 @@ pub fn read_game_database(thor: &mut LegacyThor, file_name: &str) -> i32 {
     let mut db_head = Box::new(db_head);
 
     while i < (db_head).count {
-        success =
-            (success != 0 &&
-                 read_game(thor, &mut stream,
-                           games.offset(i as isize)) !=
-                     0) as i32;
+        success = (success != 0 && read_game(thor, &mut stream, games.offset(i as isize)) != 0) as i32;
         let ref mut fresh4 = (*games.offset(i as isize)).origin_year;
         *fresh4 = db_head.prolog.origin_year;
         i += 1
