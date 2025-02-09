@@ -1,3 +1,4 @@
+use std::cell::Cell;
 use crate::src::error::LibcFatalError;
 use engine::src::stubs::abs;
 use thordb_types::{Int8, Int16, Int32, OpeningNodeRef, ThorOpeningTree};
@@ -296,14 +297,14 @@ pub unsafe fn read_tournament_database(file_name: &str)
     if success != 0 {
         tournaments.tournament_list.resize(tournaments_count as usize, TournamentType {
             lex_order: 0,
-            selected: 0,
+            selected: Cell::new(0),
             name: &[]
         });
         i = 0;
         while i < tournaments_count {
             tournaments.tournament_list[i as usize] = (TournamentType {
                 lex_order: 0,
-                selected: 1,
+                selected: Cell::new(1),
                 name: tournaments.tournament_name(i)
             });
             i += 1
@@ -1070,7 +1071,7 @@ fn filter_database(db: &DatabaseType, tournaments_: &[TournamentType], players_:
         let game = (*db).games.as_slice().offset(i as isize);
         passes_filter = 1;
         /* Apply the tournament filter */
-        if passes_filter != 0 && (*tournaments_.offset((*game).tournament_no as isize)).selected == 0 {
+        if passes_filter != 0 && (*tournaments_.offset((*game).tournament_no as isize)).selected.get() == 0 {
             passes_filter = 0
         }
         /* Apply the year filter */
@@ -1157,8 +1158,7 @@ unsafe fn set_player_filter(selected: &[i32]) {
 unsafe fn set_tournament_filter(selected: &mut [i32]) {
     let mut i: i32 = 0;
     while i < tournaments.count() {
-        (*tournaments.tournament_list.offset(i as isize)).selected =
-            *selected.offset(i as isize);
+        (*tournaments.tournament_list.offset(i as isize)).selected.set(*selected.offset(i as isize));
         i += 1
     }
     thor_games_filtered = 0;

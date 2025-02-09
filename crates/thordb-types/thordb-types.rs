@@ -227,11 +227,11 @@ impl IndexMut<OpeningNodeRef> for ThorOpeningTree {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 #[repr(C)]
 pub struct TournamentType {
     pub lex_order: i32,
-    pub selected: i32,
+    pub selected: Cell<i32>,
     pub name: &'static [u8],
 }
 
