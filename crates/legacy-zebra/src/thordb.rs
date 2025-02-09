@@ -1489,23 +1489,23 @@ const fn create_symetry_maps() -> SymmetryMaps {
         in which they are calculated in COMPUTE_FULL_PRIMARY_HASH()
     and COMPUTE_FULL_SECONDARY_HASH().
 */
-unsafe fn init_symmetry_maps() {
-    symmetry_map[0] = &SYMMENTRY_MAPS.b1_b1_map;
-    inv_symmetry_map[0] = &SYMMENTRY_MAPS.b1_b1_map;
-    symmetry_map[1] = &SYMMENTRY_MAPS.b8_b1_map;
-    inv_symmetry_map[1] = &SYMMENTRY_MAPS.b8_b1_map;
-    symmetry_map[2] = &SYMMENTRY_MAPS.a2_b1_map;
-    inv_symmetry_map[2] = &SYMMENTRY_MAPS.a2_b1_map;
-    symmetry_map[3] = &SYMMENTRY_MAPS.h2_b1_map;
-    inv_symmetry_map[3] = &SYMMENTRY_MAPS.a7_b1_map;
-    symmetry_map[4] = &SYMMENTRY_MAPS.g1_b1_map;
-    inv_symmetry_map[4] = &SYMMENTRY_MAPS.g1_b1_map;
-    symmetry_map[5] = &SYMMENTRY_MAPS.g8_b1_map;
-    inv_symmetry_map[5] = &SYMMENTRY_MAPS.g8_b1_map;
-    symmetry_map[6] = &SYMMENTRY_MAPS.a7_b1_map;
-    inv_symmetry_map[6] = &SYMMENTRY_MAPS.h2_b1_map;
-    symmetry_map[7] = &SYMMENTRY_MAPS.h7_b1_map;
-    inv_symmetry_map[7] = &SYMMENTRY_MAPS.h7_b1_map;
+fn init_symmetry_maps(symmetry_map_: &mut [&[i32]; 8], inv_symmetry_map_: &mut [&[i32]; 8]) {
+    symmetry_map_[0] = &SYMMENTRY_MAPS.b1_b1_map;
+    inv_symmetry_map_[0] = &SYMMENTRY_MAPS.b1_b1_map;
+    symmetry_map_[1] = &SYMMENTRY_MAPS.b8_b1_map;
+    inv_symmetry_map_[1] = &SYMMENTRY_MAPS.b8_b1_map;
+    symmetry_map_[2] = &SYMMENTRY_MAPS.a2_b1_map;
+    inv_symmetry_map_[2] = &SYMMENTRY_MAPS.a2_b1_map;
+    symmetry_map_[3] = &SYMMENTRY_MAPS.h2_b1_map;
+    inv_symmetry_map_[3] = &SYMMENTRY_MAPS.a7_b1_map;
+    symmetry_map_[4] = &SYMMENTRY_MAPS.g1_b1_map;
+    inv_symmetry_map_[4] = &SYMMENTRY_MAPS.g1_b1_map;
+    symmetry_map_[5] = &SYMMENTRY_MAPS.g8_b1_map;
+    inv_symmetry_map_[5] = &SYMMENTRY_MAPS.g8_b1_map;
+    symmetry_map_[6] = &SYMMENTRY_MAPS.a7_b1_map;
+    inv_symmetry_map_[6] = &SYMMENTRY_MAPS.h2_b1_map;
+    symmetry_map_[7] = &SYMMENTRY_MAPS.h7_b1_map;
+    inv_symmetry_map_[7] = &SYMMENTRY_MAPS.h7_b1_map;
     let mut i = 0;
     while i < 8 {
         let mut j = 1;
@@ -1513,8 +1513,8 @@ unsafe fn init_symmetry_maps() {
             let mut k = 1;
             while k <= 8 {
                 let pos = 10 * j + k;
-                if *inv_symmetry_map[i as usize].offset(*symmetry_map[i as usize].offset(pos as isize) as isize) != pos {
-                    let to_report = *inv_symmetry_map[i as usize].offset(*symmetry_map[i as usize].offset(pos as isize) as isize);
+                if *inv_symmetry_map_[i as usize].offset(*symmetry_map_[i as usize].offset(pos as isize) as isize) != pos {
+                    let to_report = *inv_symmetry_map_[i as usize].offset(*symmetry_map_[i as usize].offset(pos as isize) as isize);
                     LibcFatalError::error_in_map_thor(i, pos, to_report);
                 }
                 k += 1
@@ -1899,7 +1899,7 @@ pub unsafe fn init_thor_database(random: &mut MyRandom) {
     thor_games_sorted = 0;
     thor_games_filtered = 0;
     init_move_masks();
-    init_symmetry_maps();
+    init_symmetry_maps(&mut symmetry_map, &mut inv_symmetry_map);
     thor_hash.init_thor_hash(random);
     prepare_thor_board(&mut board.board);
     build_thor_opening_tree(&mut board, &mut thor_hash, &mut thor_opening_tree);
