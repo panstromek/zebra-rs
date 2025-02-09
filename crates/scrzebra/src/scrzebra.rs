@@ -56,7 +56,7 @@ pub type Board = [i32; 128];
 unsafe fn run_endgame_script(mut in_file_name: *const i8,
                              mut out_file_name: *const i8,
                              mut display_line: i32,
-                             g_state: &mut FullState, thor: LegacyThor) {
+                             g_state: &mut FullState, mut thor: LegacyThor) {
     let mut script_nodes = CounterType { hi: 0, lo: 0 };
     let mut eval_info =  EvaluationType::new();
     let mut comment = 0 as *mut i8;
