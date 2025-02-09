@@ -23,13 +23,13 @@ const data = reactive({
     practiceMode: true,
     evals: [] as EvaluatedMove[],
     initialized: false,
-    workerIsRunning: false,
     clickedMove: undefined as number | undefined,
 })
+let workerIsRunning = false;
 let stopToken = undefined as string | undefined;
 
 const stopWorkerIfNeeded = () => {
-    if (data.workerIsRunning) {
+    if (workerIsRunning) {
         if (stopToken) {
             stop(stopToken)
         } else {
@@ -116,7 +116,7 @@ worker.addEventListener('message', ev => {
             break;
         }
         case MessageType.WorkerIsRunning : {
-            data.workerIsRunning = dataFromWorker
+            workerIsRunning = dataFromWorker
             break
         }
     }
