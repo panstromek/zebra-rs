@@ -1,3 +1,4 @@
+use std::cell::Cell;
 use std::ops::{Index, IndexMut};
 
 #[derive(Copy, Clone)]
@@ -95,7 +96,7 @@ pub struct DatabaseType {
     pub count: i32,
     pub next: Option<Box<DatabaseType>>,
 }
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 #[repr(C)]
 pub struct GameType {
     pub tournament_no: i16,
@@ -111,13 +112,13 @@ pub struct GameType {
 
     // replacement for `database` field, because we only need a year from it
     pub origin_year: i32,
-    pub shape_hi: u32,
-    pub shape_lo: u32,
-    pub shape_state_hi: i16,
-    pub shape_state_lo: i16,
+    pub shape_hi: Cell<u32>,
+    pub shape_lo: Cell<u32>,
+    pub shape_state_hi: Cell<i16>,
+    pub shape_state_lo: Cell<i16>,
     pub corner_descriptor: u32,
-    pub sort_order: i32,
-    pub matching_symmetry: i16,
+    pub sort_order: Cell<i32>,
+    pub matching_symmetry: Cell<i16>,
     pub passes_filter: i16,
 }
 
@@ -134,13 +135,13 @@ impl GameType {
             black_disc_count: [0; 61],
             opening: OpeningNodeRef::root(),
             origin_year: 0,
-            shape_hi: 0,
-            shape_lo: 0,
-            shape_state_hi: 0,
-            shape_state_lo: 0,
+            shape_hi: Cell::new(0),
+            shape_lo: Cell::new(0),
+            shape_state_hi: Cell::new(0),
+            shape_state_lo: Cell::new(0),
             corner_descriptor: 0,
-            sort_order: 0,
-            matching_symmetry: 0,
+            sort_order: Cell::new(0),
+            matching_symmetry: Cell::new(0),
             passes_filter: 0,
         }
     }
@@ -312,7 +313,7 @@ pub struct SearchResultType {
     pub median_black_score: i32,
     pub allocation: i32,
     pub next_move_frequency: [i32; 100],
-    pub match_list: Vec<*mut GameType>,
+    pub match_list: Vec<Option<&'static GameType>>,
 }
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -383,7 +384,7 @@ impl SearchResultType {
             /* Bad index */
             return -1
         } else {
-            return (*self.match_list[index as usize]).move_count as i32
+            return (self.match_list[index as usize]).unwrap().move_count as i32
         };
     }
 }

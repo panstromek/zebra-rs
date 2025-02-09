@@ -18,7 +18,6 @@ use std::io::{Read, Write};
 use engine::src::game::to_lower;
 use std::cmp::Ordering;
 use std::fs::File;
-use std::ptr::null_mut;
 
 /* Local variables */
 static mut thor_game_count: i32 = 0;
@@ -585,7 +584,7 @@ pub unsafe fn sort_thor_games(count: i32) {
     }
     let sord_order = &thor_sort_order[0..thor_sort_criteria_count as usize];
     thor_search.match_list.sort_by(|g1, g2| {
-        match unsafe { thor_compare(&**g1, &**g2, sord_order, &players, &tournaments) } {
+        match unsafe { thor_compare(g1.unwrap(), g2.unwrap(), sord_order, &players, &tournaments) } {
             i32::MIN..=-1_i32 => Ordering::Less,
             0 => Ordering::Equal,
             1_i32..=i32::MAX => Ordering::Greater,
@@ -605,7 +604,7 @@ pub unsafe fn print_thor_matches(mut stream: &mut impl Write, max_games: i32) {
         if i == 0 {
             stream.write(b"\n");
         }
-        print_game(&mut stream, &**thor_search.match_list.offset(i as isize), 0, &tournaments, &players);
+        print_game(&mut stream, thor_search.match_list.offset(i as isize).unwrap(), 0, &tournaments, &players);
         i += 1
     };
 }
@@ -1353,7 +1352,7 @@ unsafe fn get_thor_game(index: i32) -> GameInfoType {
         info.black_corrected_score = 32
     } else {
         /* Copy name fields etc */
-        let game = *thor_search.match_list.offset(index as isize);
+        let game = thor_search.match_list.offset(index as isize).unwrap();
         info.black_name = players.get_player_name((*game).black_no as i32);
         info.white_name = players.get_player_name((*game).white_no as i32);
         info.tournament = tournaments.tournament_name((*game).tournament_no as i32);
@@ -1530,7 +1529,7 @@ impl ThorBoard {
   Play the MAX_MOVES first moves of GAME and update THOR_BOARD
   and THOR_SIDE_TO_MOVE to represent the position after those moves.
 */
-fn play_through_game(&mut self, game: &mut GameType, max_moves: i32) -> i32 {
+fn play_through_game(&mut self, game: &GameType, max_moves: i32) -> i32 {
     let mut move_0: i32 = 0;
     let mut flipped: i32 = 0;
     clear_thor_board(&mut self.board);
@@ -1653,10 +1652,10 @@ fn prepare_game(mut game: &mut GameType, thor_board: &mut ThorBoard, tree: &mut 
     }
     (*game).opening = opening;
     /* Initialize the shape state */
-    (*game).shape_lo = 3 << 27;
-    (*game).shape_hi = 3 << 3;
-    (*game).shape_state_hi = 0;
-    (*game).shape_state_lo = 0;
+    (*game).shape_lo.set(3 << 27);
+    (*game).shape_hi.set(3 << 3);
+    (*game).shape_state_hi.set(0);
+    (*game).shape_state_lo.set(0);
     /* Store the corner descriptor */
     (*game).corner_descriptor = corner_descriptor;
 }
@@ -1919,19 +1918,18 @@ pub unsafe fn init_thor_database(random: &mut MyRandom) {
 */
 
 unsafe fn get_thor_game_moves(index: i32, move_count: &mut i32, moves: &mut [i32]) {
-    let mut game = 0 as *mut GameType;
     if index < 0 || index >= thor_search.match_count {
         /* Bad index, so fill with empty values */
         *move_count = 0
     } else {
-        game = *thor_search.match_list.offset(index as isize);
+        let game = thor_search.match_list.offset(index as isize).unwrap();
         *move_count = (*game).move_count as i32;
-        match (*game).matching_symmetry as i32 {
+        match (*game).matching_symmetry.get() as i32 {
             0 | 2 | 5 | 7 => {
                 /* Symmetries that preserve the initial position. */
                 let mut i = 0;
                 while i < (*game).move_count as i32 {
-                    *moves.offset(i as isize) = *symmetry_map[(*game).matching_symmetry as usize].offset(abs((*game).moves[i as usize] as i32) as isize);
+                    *moves.offset(i as isize) = *symmetry_map[(*game).matching_symmetry.get() as usize].offset(abs((*game).moves[i as usize] as i32) as isize);
                     i += 1
                 }
             }
@@ -1956,12 +1954,12 @@ pub unsafe fn get_thor_game_move(index: i32, move_number: i32) -> i32 {
     if index < 0 || index >= thor_search.match_count {
         -1
     } else {
-        let game = *thor_search.match_list.offset(index as isize);
+        let game = thor_search.match_list.offset(index as isize).unwrap();
         if move_number < 0 ||
             move_number >= (*game).move_count as i32 {
             -1
         } else {
-            *symmetry_map[(*game).matching_symmetry as usize].offset(abs((*game).moves[move_number as usize] as i32) as isize)
+            *symmetry_map[(*game).matching_symmetry.get() as usize].offset(abs((*game).moves[move_number as usize] as i32) as isize)
         }
     }
 }
@@ -1972,7 +1970,7 @@ pub unsafe fn get_thor_game_move(index: i32, move_number: i32) -> i32 {
   SIDE_TO_MOVE being the player to move, matches the hash codes
   IN_HASH1 and IN_HASH2, otherwise FALSE.
 */
-fn position_match(mut game: &mut GameType,
+fn position_match(mut game: &GameType,
                          thor_board: &mut ThorBoard,
                          thor_hash_: &mut ThorHash,
                          tree: &mut ThorOpeningTree,
@@ -2010,7 +2008,7 @@ fn position_match(mut game: &mut GameType,
     /* Check if the opening information suffices to
        determine if the position matches or not. */
     if (tree[game.opening]).current_match == 1 {
-        (*game).matching_symmetry = (tree[game.opening]).matching_symmetry as i16;
+        (*game).matching_symmetry.set((tree[game.opening]).matching_symmetry as i16);
         return 1
     } else {
         if (tree[game.opening]).current_match == 2 {
@@ -2018,50 +2016,50 @@ fn position_match(mut game: &mut GameType,
         }
     }
     /* Check if the lower 32 bits of the shape state coincide */
-    if ((*game).shape_state_lo as i32) < move_count {
-        i = (*game).shape_state_lo as i32;
+    if ((*game).shape_state_lo.get() as i32) < move_count {
+        i = (*game).shape_state_lo.get() as i32;
         while i < move_count {
-            (*game).shape_lo |= move_mask_lo[abs((*game).moves[i as usize] as i32) as usize];
+            (*game).shape_lo.set((*game).shape_lo.get() | move_mask_lo[abs((*game).moves[i as usize] as i32) as usize]);
             i += 1
         }
-        (*game).shape_state_lo = move_count as i16
-    } else if (*game).shape_state_lo as i32 > move_count {
-        i = (*game).shape_state_lo as i32 - 1;
+        (*game).shape_state_lo.set(move_count as i16)
+    } else if (*game).shape_state_lo.get() as i32 > move_count {
+        i = (*game).shape_state_lo.get() as i32 - 1;
         while i >= move_count {
-            (*game).shape_lo &= !move_mask_lo[abs((*game).moves[i as usize] as i32) as usize];
+            (*game).shape_lo.set((*game).shape_lo.get() & !move_mask_lo[abs((*game).moves[i as usize] as i32) as usize]);
             i -= 1
         }
-        (*game).shape_state_lo = move_count as i16
+        (*game).shape_state_lo.set(move_count as i16);
     }
     shape_match = 0;
     i = 0;
     while i < 8 {
-        shape_match |= ((*game).shape_lo == *shape_lo.offset(i as isize)) as i32;
+        shape_match |= ((*game).shape_lo.get() == *shape_lo.offset(i as isize)) as i32;
         i += 1
     }
     if shape_match == 0 {
         return 0
     }
     /* Check if the upper 32 bits of the shape state coincide */
-    if ((*game).shape_state_hi as i32) < move_count {
-        i = (*game).shape_state_hi as i32;
+    if ((*game).shape_state_hi.get() as i32) < move_count {
+        i = (*game).shape_state_hi.get() as i32;
         while i < move_count {
-            (*game).shape_hi |= move_mask_hi[abs((*game).moves[i as usize] as i32) as usize];
+            (*game).shape_hi.set((*game).shape_hi.get() | move_mask_hi[abs((*game).moves[i as usize] as i32) as usize]);
             i += 1
         }
-        (*game).shape_state_hi = move_count as i16
-    } else if (*game).shape_state_hi as i32 > move_count {
-        i = (*game).shape_state_hi as i32 - 1;
+        (*game).shape_state_hi.set(move_count as i16)
+    } else if (*game).shape_state_hi.get() as i32 > move_count {
+        i = (*game).shape_state_hi.get() as i32 - 1;
         while i >= move_count {
-            (*game).shape_hi &= !move_mask_hi[abs((*game).moves[i as usize] as i32) as usize];
+            (*game).shape_hi.set((*game).shape_hi.get() & !move_mask_hi[abs((*game).moves[i as usize] as i32) as usize]);
             i -= 1
         }
-        (*game).shape_state_hi = move_count as i16
+        (*game).shape_state_hi.set(move_count as i16)
     }
     shape_match = 0;
     i = 0;
     while i < 8 {
-        shape_match |= ((*game).shape_hi == *shape_hi.offset(i as isize)) as i32;
+        shape_match |= ((*game).shape_hi.get() == *shape_hi.offset(i as isize)) as i32;
         i += 1
     }
     if shape_match == 0 {
@@ -2084,7 +2082,7 @@ fn position_match(mut game: &mut GameType,
                 i = 0;
                 while i < 8 {
                     if primary_hit_mask & secondary_hit_mask & (1) << i != 0 {
-                        (*game).matching_symmetry = i as i16;
+                        (*game).matching_symmetry.set(i as i16);
                         return 1
                     }
                     i += 1
@@ -2274,7 +2272,6 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     let mut corner_mask: u32 = 0;
     let mut shape_lo: [u32; 8] = [0; 8];
     let mut shape_hi: [u32; 8] = [0; 8];
-    let mut game;
     /* We need a player and a tournament database. */
     if players.count() == 0 ||
         tournaments.count() == 0 {
@@ -2284,10 +2281,10 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     /* Make sure there's memory allocated if all positions
        in all databases match the position */
     if thor_search.allocation == 0 {
-        thor_search.match_list = vec![null_mut(); thor_game_count as usize];
+        thor_search.match_list = vec![Default::default(); thor_game_count as usize];
         thor_search.allocation = thor_game_count
     } else if thor_search.allocation < thor_game_count {
-        thor_search.match_list = vec![null_mut(); thor_game_count as usize];
+        thor_search.match_list = vec![Default::default(); thor_game_count as usize];
         thor_search.allocation = thor_game_count
     }
     /* If necessary, filter all games in the database */
@@ -2297,22 +2294,22 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     }
     /* If necessary, sort all games in the database */
     if thor_games_sorted == 0 {
-        let mut current_db_ = &mut database_head;
+        let mut current_db_ = &database_head;
         i = 0;
         while let Some(current_db) = current_db_ {
             j = 0;
             while j < (*current_db).count {
                 let ref mut fresh5 = *thor_search.match_list.offset(i as isize);
-                *fresh5 = &mut *(*current_db).games.offset(j as isize) as *mut GameType;
+                *fresh5 = Some((*current_db).games.as_slice().offset(j as isize));
                 i += 1;
                 j += 1
             }
-            current_db_ = &mut (*current_db).next
+            current_db_ = &(*current_db).next
         }
         sort_thor_games(thor_game_count);
         j = 0;
         while j < thor_game_count {
-            (**thor_search.match_list.offset(j as isize)).sort_order = j;
+            (thor_search.match_list.offset(j as isize)).unwrap().sort_order.set(j);
             j += 1
         }
         thor_games_sorted = 1
@@ -2421,7 +2418,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     i = 0;
     while i < thor_game_count {
         let ref mut fresh6 = *thor_search.match_list.offset(i as isize);
-        *fresh6 = 0 as *mut GameType;
+        *fresh6 = None;//0 as *mut GameType;
         i += 1
     }
     i = 0;
@@ -2435,17 +2432,17 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         thor_search.next_move_score[i as usize] = 0.0f64;
         i += 1
     }
-    let mut current_db_ = &mut database_head;
+    let mut current_db_ = & database_head;
     while let Some(current_db) = current_db_ {
         i = 0;
         while i < (*current_db).count {
-            game = &mut *(*current_db).games.offset(i as isize);
+            let game = (*current_db).games.as_slice().offset(i as isize);
             if (*game).passes_filter != 0 {
                 if disc_count[0] == (*game).black_disc_count[move_count as usize] as i32 {
                     if position_match(game, &mut board, &mut thor_hash, &mut thor_opening_tree, move_count, side_to_move, &mut shape_lo, &mut shape_hi, corner_mask, target_hash1, target_hash2) != 0 {
-                        let ref mut fresh7 = *thor_search.match_list.offset((*game).sort_order as isize);
-                        *fresh7 = game;
-                        symmetry = (*game).matching_symmetry as i32;
+                        let ref mut fresh7 = *thor_search.match_list.offset(game.sort_order.get() as _);
+                        *fresh7 = Some(game);
+                        symmetry = (game).matching_symmetry.get() as i32;
                         if move_count < (*game).move_count as i32 {
                             next_move = *symmetry_map[symmetry as usize].offset(
                                 abs((*game).moves[move_count as usize] as i32) as isize
@@ -2468,7 +2465,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
             }
             i += 1
         }
-        current_db_ = &mut (*current_db).next
+        current_db_ = &(*current_db).next
     }
     /* Remove the NULLs from the list of matching games if there are any.
        This gives a sorted list. */
@@ -2477,7 +2474,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         i = 0;
         j = 0;
         while i < thor_search.match_count {
-            if !(*thor_search.match_list.offset(j as isize)).is_null() {
+            if !(*thor_search.match_list.offset(j as isize)).is_none() {
                 let ref mut fresh8 = *thor_search.match_list.offset(i as isize);
                 *fresh8 = *thor_search.match_list.offset(j as isize);
                 i += 1
