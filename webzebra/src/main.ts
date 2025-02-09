@@ -191,19 +191,18 @@ function render() {
     }
 
     const circles = arr
-    const score = {
-        // todo this is slow, use something better when we use some more efficient board representation
-        white: circles.reduce((count: number, circle: Circle) => circle.color === 'white' ? count + 1 : count, 0),
-        black: circles.reduce((count: number, circle: Circle) => circle.color === 'black' ? count + 1 : count, 0)
-    }
+
+    // todo this is slow, use something better when we use some more efficient board representation
+    const score_white = circles.reduce((count: number, circle: Circle) => circle.color === 'white' ? count + 1 : count, 0)
+    const score_black = circles.reduce((count: number, circle: Circle) => circle.color === 'black' ? count + 1 : count, 0)
 
     const circlesHtml = circles.map(circle => {
         return `<circle r="${circle.r}" cx="${circle.cx}" cy="${circle.cy}" style="fill: ${circle.color}"></circle>`
     }).join('')
 
     document.getElementById('circles')!.innerHTML = circlesHtml
-    document.getElementById('score-black')!.innerText = '' + score.black
-    document.getElementById('score-white')!.innerText = '' + score.white
+    document.getElementById('score-black')!.innerText = '' + score_black
+    document.getElementById('score-white')!.innerText = '' + score_white
 
     const evalsHtml = evals_.map(eval_ => {
         return `<text x="${eval_.x}" y="${eval_.y}" style="fill: ${eval_.color}; font-size: 50px">${eval_.text}</text>`
