@@ -1138,7 +1138,7 @@ unsafe fn filter_all_databases() {
   GET_PLAYER_COUNT() if necessary.
 */
 
-unsafe fn set_player_filter(selected: &mut [i32]) {
+unsafe fn set_player_filter(selected: &[i32]) {
     let mut i: i32 = 0;
     while i < players.count() {
         (*players.player_list.offset(i as isize)).selected = *selected.offset(i as isize);
