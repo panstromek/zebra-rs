@@ -142,18 +142,6 @@ const svgData = computed(() => {
 })
 
 watch([svgData, () => data.practiceMode], ([svgData_, practiceMode]: [typeof svgData.value, boolean])=> {
-    if (!practiceMode) {
-        return ''
-    }
-    const evals = svgData_.evals;
-    const evalsHtml = evals.map(eval_ => {
-        return `<text x="${eval_.x}" y="${eval_.y}" style="fill: ${eval_.color}; font-size: 50px">${eval_.text}</text>`
-    }).join('')
-
-    document.getElementById('evals')!.innerHTML = evalsHtml
-})
-
-watch(svgData, (svgData_: typeof svgData.value) => {
     const score = scoreFromCircles(svgData_.circles)
     const circles = svgData_.circles;
     const circlesHtml = circles.map(circle => {
@@ -163,4 +151,14 @@ watch(svgData, (svgData_: typeof svgData.value) => {
     document.getElementById('circles')!.innerHTML = circlesHtml
     document.getElementById('score-black')!.innerText = '' + score.black
     document.getElementById('score-white')!.innerText = '' + score.white
+
+    if (!practiceMode) {
+        return ''
+    }
+    const evals = svgData_.evals;
+    const evalsHtml = evals.map(eval_ => {
+        return `<text x="${eval_.x}" y="${eval_.y}" style="fill: ${eval_.color}; font-size: 50px">${eval_.text}</text>`
+    }).join('')
+
+    document.getElementById('evals')!.innerHTML = evalsHtml
 })
