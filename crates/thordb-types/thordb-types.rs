@@ -76,7 +76,7 @@ impl PlayerDatabaseType {
         };
     }
 }
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 #[repr(C)]
 pub struct PrologType {
     pub creation_century: i32,
@@ -88,6 +88,22 @@ pub struct PrologType {
     pub origin_year: i32,
     pub reserved: i32,
 }
+
+impl PrologType {
+    pub const fn new() -> PrologType {
+        PrologType {
+            creation_century: 0,
+            creation_year: 0,
+            creation_month: 0,
+            creation_day: 0,
+            game_count: 0,
+            item_count: 0,
+            origin_year: 0,
+            reserved: 0,
+        }
+    }
+}
+
 #[derive(Clone)]
 #[repr(C)]
 pub struct DatabaseType {

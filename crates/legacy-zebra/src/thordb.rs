@@ -70,14 +70,7 @@ static unmove_mask_lo: [u32; 100] = init_move_masks()[3];
 static mut database_head: Option<Box<DatabaseType>> = None;
 static mut players: PlayerDatabaseType =
     PlayerDatabaseType{prolog:
-    PrologType{creation_century: 0,
-        creation_year: 0,
-        creation_month: 0,
-        creation_day: 0,
-        game_count: 0,
-        item_count: 0,
-        origin_year: 0,
-        reserved: 0,},
+    PrologType::new(),
         name_buffer:
         b"",
         player_list: Vec::new(),};
@@ -95,14 +88,7 @@ static mut thor_search: SearchResultType =
     };
 static mut tournaments: TournamentDatabaseType =
     TournamentDatabaseType{prolog:
-    PrologType{creation_century: 0,
-        creation_year: 0,
-        creation_month: 0,
-        creation_day: 0,
-        game_count: 0,
-        item_count: 0,
-        origin_year: 0,
-        reserved: 0,},
+    PrologType::new(),
         name_buffer: b"",
         tournament_list: Vec::new()};
 static mut thor_opening_tree: ThorOpeningTree = ThorOpeningTree::new();
