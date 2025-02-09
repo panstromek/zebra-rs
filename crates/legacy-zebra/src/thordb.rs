@@ -1124,10 +1124,10 @@ fn filter_database(db: &DatabaseType, tournaments_: &[TournamentType], players_:
   Applies the current filter rules to all databases.
 */
 unsafe fn filter_all_databases() {
-    let mut current_db_ = &mut database_head;
+    let mut current_db_ = &database_head;
     while let Some(current_db) = current_db_ {
         filter_database(current_db, &tournaments.tournament_list, &players.player_list, &filter);
-        current_db_ = &mut (*current_db).next
+        current_db_ = &(*current_db).next
     };
 }
 
