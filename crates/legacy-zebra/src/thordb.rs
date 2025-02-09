@@ -1271,7 +1271,7 @@ fn opening_scan(moves_played: i32, thor_hash_: &mut ThorHash, tree: &mut ThorOpe
   the number of times each move has been played according to the
   trimmed set of openings from the Thor database.
 */
-fn recursive_frequency_count(tree: &mut ThorOpeningTree,
+fn recursive_frequency_count(tree: &ThorOpeningTree,
                                     node: OpeningNodeRef,
                                     freq_count: &mut [i32],
                                     depth: i32,
@@ -2114,7 +2114,7 @@ pub fn thor_compare(game1: &GameType, game2: &GameType, sord_order: &[i32], play
   towards common moves. (If no moves are found, PASS is returned.)
 */
 pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32, random_instance: &mut MyRandom) -> i32 {
-    let tree: &mut ThorOpeningTree = &mut thor_opening_tree;
+    let tree: &ThorOpeningTree = &thor_opening_tree;
     let mut j: i32 = 0;
     let mut temp_symm: i32 = 0;
     let mut pos: i32 = 0;
