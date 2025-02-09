@@ -212,7 +212,7 @@ pub fn next_state<
     ComputeMoveOut: ComputeMoveOutput,
     FE: FrontEnd,
     Thor: ThorDatabase
->(play_state: &mut PlayGame<Source>, move_attempt: Option<MoveAttempt>) -> PlayGameState {
+>(play_state: &mut PlayGame<Source>, move_attempt: Option<MoveAttempt>, thor: &Thor) -> PlayGameState {
     play_state.state = match play_state.state {
         PlayGameState::Initial => {
             /* Decode the predefined move sequence */

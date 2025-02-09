@@ -78,8 +78,7 @@ pub fn fatal_error_(args: std::fmt::Arguments<'_>) -> ! {
     std::process::exit(1);
 }
 
-pub struct LibcFatalError; // FIXME rename this, it's not only error anymore
-pub type FE = LibcFatalError;
+pub struct LibcFatalError;
 
 impl LibcFatalError {
     pub fn choose_thor_opening_move_report(freq_sum: i32, match_count: i32, move_list: &[C2RustUnnamed; 64]) {

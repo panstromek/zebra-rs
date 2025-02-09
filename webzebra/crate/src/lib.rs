@@ -296,7 +296,7 @@ impl ZebraGame {
         let mut play_state = &mut self.game;
         let state = next_state::<
             WasmFrontend, WasmInitialMoveSource, WasmBoardSource, WasmComputeMoveLogger, WasmFrontend, WasmFrontend, WasmThor
-        >(&mut play_state, move_attempt.take());
+        >(&mut play_state, move_attempt.take(), &WasmThor{});
         match state {
             PlayGameState::GetPass { provided_move_count } => {
                 // TODO signal this to frontend

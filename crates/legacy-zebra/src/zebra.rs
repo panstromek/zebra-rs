@@ -26,7 +26,7 @@ use engine::src::zebra::EvalResult::{LOST_POSITION, WON_POSITION};
 use engine::src::zebra::GameMode::{PRIVATE_GAME, PUBLIC_GAME};
 use libc_wrapper::{scanf, stdout, time, c_time, time_t};
 use crate::src::display::{dumpch, display_state, TO_SQUARE};
-use crate::src::error::{FE, LibcFatalError};
+use crate::src::error::LibcFatalError;
 use crate::src::game::{legacy_compute_move, global_setup, BasicBoardFileSource, LibcZebraOutput, LogFileHandler};
 use crate::src::learn::{init_learn, LibcLearner};
 use crate::src::osfbook::print_move_alternatives;
@@ -757,7 +757,7 @@ fn play_game(mut file_name: &str,
     loop {
         let state = next_state::<
             ZF, Source, BoardSrc, ComputeMoveLog, ComputeMoveOut, FE, Thor
-        >(&mut play_state, move_attempt.take());
+        >(&mut play_state, move_attempt.take(), &LegacyThor);
         match state {
             // TODO here in all these branches, we should ideally not need mutable reference to play_state
             PlayGameState::End => {
@@ -1107,7 +1107,7 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
     } else {
         provided_move_count = (move_string.len()).wrapping_div(2) as i32;
         if provided_move_count > 60 || (move_string.len()).wrapping_rem(2) == 1 {
-            FE::invalid_move_string_provided();
+            LibcFatalError::invalid_move_string_provided();
         }
         i = 0;
         let move_string = move_string.as_bytes();
@@ -1115,7 +1115,7 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
             col = (*move_string.offset((2 * i) as isize) as char).to_ascii_lowercase() as u8 - b'a' + 1;
             row = *move_string.offset((2 * i + 1) as isize) - b'0';
             if col < 1 || col > 8 || row < 1 || row > 8 {
-                FE::unexpected_character_in_a_move_string();
+                LibcFatalError::unexpected_character_in_a_move_string();
             }
             provided_move[i as usize] = (10 * row + col) as i8;
             i += 1
