@@ -505,7 +505,7 @@ pub unsafe fn read_game_database(file_name: &str)
   according to the specification of the database format).
 */
 
-pub unsafe fn game_database_already_loaded(file_name: &str) -> i32 {
+pub fn game_database_already_loaded(file_name: &str, current_db_: &Option<Box<DatabaseType>>) -> i32 {
     let mut new_prolog =
         PrologType{creation_century: 0,
                    creation_year: 0,
@@ -524,7 +524,7 @@ pub unsafe fn game_database_already_loaded(file_name: &str) -> i32 {
         return 0
     }
     drop(stream);
-    let mut current_db_ = &database_head;
+    let mut current_db_ = current_db_;
     while let Some(current_db) = current_db_ {
         if (*current_db).prolog.creation_century ==
                new_prolog.creation_century &&
