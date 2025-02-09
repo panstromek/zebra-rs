@@ -509,16 +509,7 @@ pub fn read_game_database(thor: &mut LegacyThor, file_name: &str) -> i32 {
         Err(_) => return 0
     };
     old_database_head = thor.database_head.take();
-    let prolog_type = PrologType {
-        creation_century: 0,
-        creation_year: 0,
-        creation_month: 0,
-        creation_day: 0,
-        game_count: 0,
-        item_count: 0,
-        origin_year: 0,
-        reserved: 0
-    };
+    let prolog_type = PrologType::new();
 
     let mut db_head = DatabaseType {
         prolog: prolog_type,
