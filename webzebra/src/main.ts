@@ -134,7 +134,7 @@ document.getElementById('board')?.addEventListener('click', (e) => {
     clickBoard(e)
 })
 
-watch(data, ()=> {
+function render() {
     const board = data.board;
     const evaluatedMoves = data.evals;
     const clickedMove = data.clickedMove;
@@ -156,4 +156,6 @@ watch(data, ()=> {
     }).join('')
 
     document.getElementById('evals')!.innerHTML = evalsHtml
-})
+}
+
+watch(data, render)
