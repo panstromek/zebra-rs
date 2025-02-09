@@ -1,7 +1,7 @@
 import './index.css'
 import {EvaluatedMove, Message, MessageType, SkillSetting} from "./message";
 import {createStopToken, stop} from "./stopToken";
-import {boardData, scoreFromCircles} from "./game";
+import {Circle, scoreFromCircles} from "./game";
 
 interface ZWorker extends Worker {
     postMessage(message: Message): void
@@ -136,10 +136,63 @@ document.getElementById('board')?.addEventListener('click', (e) => {
 })
 
 function render() {
-    const svgData_ = boardData(board, clickedMove, evals);
+    let evals_ = []
+    const fieldSize = 100
+    const arr = [] as Circle[]
+    for (let i = 1; i <= 8; i++) {
+        for (let j = 1; j <= 8; j++) {
+            let color;
+            let move = 10 * i + j;
 
-    const score = scoreFromCircles(svgData_.circles)
-    const circles = svgData_.circles;
+            switch (board[move]) {
+                case 0  :
+                    color = 'black'
+                    break;
+
+                case 2 :
+                    color = 'white'
+                    break;
+
+                default : {
+                    if (clickedMove === move) {
+                        // todo take into account side to move
+                        color = 'rgba(127, 127, 127, 0.5)'
+                        break
+                    }
+                    const eval_ = evals.find((eval_: EvaluatedMove) => eval_.move === move)
+                    if (!eval_) {
+                        continue
+                    }
+
+                    if (eval_.best) {
+                        color = '#00FFFF'
+                    } else {
+                        color = '#FFFF00'
+                    }
+                    const text = eval_.eval_s
+                    evals_.push({
+                        x: (j - 1) * fieldSize + 0.2 * fieldSize,
+                        y: (i - 1) * fieldSize + 0.65 * fieldSize,
+                        color,
+                        text
+                    })
+                    continue
+                }
+            }
+
+            const pieceSize = 80
+            arr.push({
+                cx: (j - 1) * fieldSize + 0.5 * fieldSize,
+                cy: (i - 1) * fieldSize + 0.5 * fieldSize,
+                r: pieceSize / 2,
+                color
+            })
+        }
+    }
+
+    const circles = arr
+    const score = scoreFromCircles(circles)
+
     const circlesHtml = circles.map(circle => {
         return `<circle r="${circle.r}" cx="${circle.cx}" cy="${circle.cy}" style="fill: ${circle.color}"></circle>`
     }).join('')
@@ -148,7 +201,6 @@ function render() {
     document.getElementById('score-black')!.innerText = '' + score.black
     document.getElementById('score-white')!.innerText = '' + score.white
 
-    const evals_ = svgData_.evals;
     const evalsHtml = evals_.map(eval_ => {
         return `<text x="${eval_.x}" y="${eval_.y}" style="fill: ${eval_.color}; font-size: 50px">${eval_.text}</text>`
     }).join('')
