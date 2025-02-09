@@ -553,16 +553,7 @@ pub fn read_game_database(thor: &mut LegacyThor, file_name: &str) -> i32 {
 */
 
 pub fn game_database_already_loaded(file_name: &str, current_db_: &Option<Box<DatabaseType>>) -> i32 {
-    let mut new_prolog =
-        PrologType{creation_century: 0,
-                   creation_year: 0,
-                   creation_month: 0,
-                   creation_day: 0,
-                   game_count: 0,
-                   item_count: 0,
-                   origin_year: 0,
-            reserved: 0,
-        };
+    let mut new_prolog = PrologType::new();
     let mut stream = match File::open(file_name) {
         Ok(s) => s,
         Err(_) => return 0
