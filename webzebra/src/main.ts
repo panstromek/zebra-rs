@@ -14,7 +14,6 @@ const data = reactive({
     board: Array(128).fill(1) as number[],
     waitingForMove: false,
     waitingForPass: false,
-    practiceMode: true,
     evals: [] as EvaluatedMove[],
     clickedMove: undefined as number | undefined,
 })
@@ -142,7 +141,7 @@ const svgData = computed(() => {
     return boardData(board, clickedMove, evaluatedMoves);
 })
 
-watch([svgData, () => data.practiceMode], ([svgData_, practiceMode]: [typeof svgData.value, boolean])=> {
+watch(svgData, (svgData_: typeof svgData.value)=> {
     const score = scoreFromCircles(svgData_.circles)
     const circles = svgData_.circles;
     const circlesHtml = circles.map(circle => {
@@ -153,9 +152,6 @@ watch([svgData, () => data.practiceMode], ([svgData_, practiceMode]: [typeof svg
     document.getElementById('score-black')!.innerText = '' + score.black
     document.getElementById('score-white')!.innerText = '' + score.white
 
-    if (!practiceMode) {
-        return ''
-    }
     const evals = svgData_.evals;
     const evalsHtml = evals.map(eval_ => {
         return `<text x="${eval_.x}" y="${eval_.y}" style="fill: ${eval_.color}; font-size: 50px">${eval_.text}</text>`
