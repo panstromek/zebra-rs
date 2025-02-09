@@ -1061,13 +1061,13 @@ impl ThorHash {
   FILTER_DATABASE
   Applies the current filter rules to the database DB.
 */
-fn filter_database(db: &mut DatabaseType, tournaments_: &[TournamentType], players_: &[PlayerType], filter_: &FilterType) {
+fn filter_database(db: &DatabaseType, tournaments_: &[TournamentType], players_: &[PlayerType], filter_: &FilterType) {
     let mut category: i32 = 0;
     let mut passes_filter: i32 = 0;
     let mut year: i32 = 0;
     let mut i = 0;
     while i < (*db).count {
-        let game = (*db).games.offset(i as isize);
+        let game = (*db).games.as_slice().offset(i as isize);
         passes_filter = 1;
         /* Apply the tournament filter */
         if passes_filter != 0 && (*tournaments_.offset((*game).tournament_no as isize)).selected == 0 {
@@ -1115,7 +1115,7 @@ fn filter_database(db: &mut DatabaseType, tournaments_: &[TournamentType], playe
             }
             passes_filter = category & filter_.game_categories
         }
-        (*game).passes_filter = passes_filter as i16;
+        (*game).passes_filter.set(passes_filter as i16);
         i += 1
     };
 }
@@ -2437,7 +2437,7 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         i = 0;
         while i < (*current_db).count {
             let game = (*current_db).games.as_slice().offset(i as isize);
-            if (*game).passes_filter != 0 {
+            if (*game).passes_filter.get() != 0 {
                 if disc_count[0] == (*game).black_disc_count[move_count as usize] as i32 {
                     if position_match(game, &mut board, &mut thor_hash, &mut thor_opening_tree, move_count, side_to_move, &mut shape_lo, &mut shape_hi, corner_mask, target_hash1, target_hash2) != 0 {
                         let ref mut fresh7 = *thor_search.match_list.offset(game.sort_order.get() as _);
