@@ -12,11 +12,11 @@ const worker = new Worker(new URL('./worker.js', import.meta.url), {type: 'modul
 
 const data = reactive({
     board: Array(128).fill(1) as number[],
-    waitingForMove: false,
-    waitingForPass: false,
     evals: [] as EvaluatedMove[],
     clickedMove: undefined as number | undefined,
 })
+let waitingForMove = false;
+let waitingForPass = false;
 let workerIsRunning = false;
 let stopToken = undefined as string | undefined;
 
@@ -75,9 +75,9 @@ function clickBoard(e: MouseEvent) {
     const boardSize = board.clientWidth
     const fieldSize = boardSize / 8
 
-    if (data.waitingForPass) {
+    if (waitingForPass) {
         worker.postMessage([MessageType.GetPass, -1])
-        data.waitingForPass = false
+        waitingForPass = false
     } else {
         let x = e.offsetX
         let y = e.offsetY
@@ -86,7 +86,7 @@ function clickBoard(e: MouseEvent) {
         let move = (10 * i + j)
         data.clickedMove = move
         worker.postMessage([MessageType.GetMove, move])
-        data.waitingForMove = false
+        waitingForMove = false
     }
 }
 
@@ -99,11 +99,11 @@ worker.addEventListener('message', ev => {
             break
         }
         case MessageType.GetMove : {
-            data.waitingForMove = true
+            waitingForMove = true
             break
         }
         case MessageType.GetPass : {
-            data.waitingForPass = true
+            waitingForPass = true
             break
         }
         case MessageType.Evals: {
