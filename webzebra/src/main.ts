@@ -128,7 +128,7 @@ worker.addEventListener('message', ev => {
 
 stopToken = createStopToken()
 worker.postMessage([MessageType.StopToken, stopToken])
-// @click.prevent.stop="clickBoard"
+
 document.getElementById('board')?.addEventListener('click', (e) => {
     e.preventDefault()
     e.stopPropagation()
