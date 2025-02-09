@@ -905,10 +905,10 @@ fn get_corner_mask(disc_a1: i32, disc_a8: i32, disc_h1: i32, disc_h8: i32) -> u3
   above.
 */
 
-unsafe fn get_database_info(info: &mut [DatabaseInfoType]) {
+fn get_database_info(info: &mut [DatabaseInfoType], current_db_: &Option<Box<DatabaseType>>) {
     let mut change: i32 = 0;
     let mut temp = DatabaseInfoType{year: 0, count: 0,};
-    let mut current_db_ = &database_head;
+    let mut current_db_ = current_db_;
     let mut i = 0;
     while let Some(current_db) = current_db_.as_ref() {
         (*info.offset(i as isize)).year = (*current_db).prolog.origin_year;
