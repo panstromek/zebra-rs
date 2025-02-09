@@ -19,12 +19,9 @@ use std::io::{Read, Write};
 use engine::src::game::to_lower;
 use std::cmp::Ordering;
 use std::fs::File;
+use engine::src::timer::Timer;
+use libc_wrapper::stdout;
 
-/* Local variables */
-static mut thor_game_count: i32 = 0;
-static mut thor_sort_criteria_count: i32 = 0;
-static mut thor_games_sorted: i32 = 0;
-static mut thor_games_filtered: i32 = 0;
 struct SymmetryMaps {
     b1_b1_map: [i32; 100],
     g1_b1_map: [i32; 100],
@@ -42,11 +39,6 @@ struct ThorBoard {
     board: [i32; 100],
 }
 
-static mut board: ThorBoard = ThorBoard {
-    side_to_move: 0,
-    board: [0; 100]
-};
-
 struct ThorHash {
     primary_hash: [[u32; 6561]; 8],
     secondary_hash: [[u32; 6561]; 8],
@@ -54,90 +46,171 @@ struct ThorHash {
     thor_col_pattern: [i32; 8],
 }
 
-static mut thor_hash: ThorHash = ThorHash {
-    primary_hash: [[0; 6561]; 8],
-    secondary_hash: [[0; 6561]; 8],
-    thor_row_pattern: [0; 8],
-    thor_col_pattern: [0; 8],
-};
-
-static mut symmetry_map: [&'static [i32]; 8] = [&[]; 8];
-static mut inv_symmetry_map: [&'static [i32]; 8] = [&[]; 8];
 static move_mask_hi: [u32; 100] = init_move_masks()[0];
 static move_mask_lo: [u32; 100] = init_move_masks()[1];
 static unmove_mask_hi: [u32; 100] = init_move_masks()[2];
 static unmove_mask_lo: [u32; 100] = init_move_masks()[3];
-static mut database_head: Option<Box<DatabaseType>> = None;
-static mut players: PlayerDatabaseType =
-    PlayerDatabaseType{prolog:
-    PrologType::new(),
-        name_buffer:
-        b"",
-        player_list: Vec::new(),};
-static mut thor_search: SearchResultType =
-    SearchResultType{average_black_score: 0.,
-        next_move_score: [0.; 100],
-        match_count: 0,
-        black_wins: 0,
-        draws: 0,
-        white_wins: 0,
-        median_black_score: 0,
-        allocation: 0,
-        next_move_frequency: [0; 100],
-        match_list: Vec::new(),
-    };
-static mut tournaments: TournamentDatabaseType =
-    TournamentDatabaseType{prolog:
-    PrologType::new(),
-        name_buffer: b"",
-        tournament_list: Vec::new()};
-static mut thor_opening_tree: ThorOpeningTree = ThorOpeningTree::new();
+
 static default_sort_order: [i32; 5] = [2, 3, 1, 5, 4];
-static mut thor_sort_order: [i32; 10] = [0; 10];
-static mut filter: FilterType =
-    FilterType{game_categories: 0,
-        first_year: 0,
-        last_year: 0,
-        player_filter: EITHER_SELECTED_FILTER,};
 
+pub struct LegacyThor {
+    filter: FilterType,
+    thor_hash: ThorHash,
+    tournaments: TournamentDatabaseType,
+    thor_game_count: i32,
+    thor_sort_criteria_count: i32,
+    thor_games_sorted: i32,
+    thor_games_filtered: i32,
+    thor_opening_tree: ThorOpeningTree,
+    thor_sort_order: [i32; 10],
+    symmetry_map:[&'static [i32]; 8],
+    inv_symmetry_map: [&'static [i32]; 8],
+    board: ThorBoard,
+    players: PlayerDatabaseType,
+    thor_search: SearchResultType,
+    database_head: Option<Box<DatabaseType>>
+}
 
-pub struct LegacyThor;
+impl LegacyThor {
+    pub fn new() -> Self {
+         let thor_hash: ThorHash = ThorHash {
+            primary_hash: [[0; 6561]; 8],
+            secondary_hash: [[0; 6561]; 8],
+            thor_row_pattern: [0; 8],
+            thor_col_pattern: [0; 8],
+        };
+
+         let tournaments: TournamentDatabaseType =
+            TournamentDatabaseType{prolog:
+            PrologType::new(),
+                name_buffer: b"",
+                tournament_list: Vec::new()};
+         let thor_game_count: i32 = 0;
+         let thor_sort_criteria_count: i32 = 0;
+         let thor_games_sorted: i32 = 0;
+         let thor_games_filtered: i32 = 0;
+         let thor_opening_tree: ThorOpeningTree = ThorOpeningTree::new();
+         let thor_sort_order: [i32; 10] = [0; 10];
+         let database_head: Option<Box<DatabaseType>> = None;
+
+         let symmetry_map: [&'static [i32]; 8] = [&[]; 8];
+         let inv_symmetry_map: [&'static [i32]; 8] = [&[]; 8];
+
+         let board: ThorBoard = ThorBoard {
+            side_to_move: 0,
+            board: [0; 100]
+        };
+
+         let players: PlayerDatabaseType =
+            PlayerDatabaseType{prolog:
+            PrologType::new(),
+                name_buffer:
+                b"",
+                player_list: Vec::new(),};
+         let thor_search: SearchResultType =
+            SearchResultType{average_black_score: 0.,
+                next_move_score: [0.; 100],
+                match_count: 0,
+                black_wins: 0,
+                draws: 0,
+                white_wins: 0,
+                median_black_score: 0,
+                allocation: 0,
+                next_move_frequency: [0; 100],
+                match_list: Vec::new(),
+            };
+
+        Self {
+            filter: FilterType{game_categories: 0,
+                first_year: 0,
+                last_year: 0,
+                player_filter: EITHER_SELECTED_FILTER,},
+            thor_hash,
+            tournaments,
+            thor_game_count,
+            thor_sort_criteria_count,
+            thor_games_sorted,
+            thor_games_filtered,
+            thor_opening_tree,
+            thor_sort_order,
+            symmetry_map,
+            inv_symmetry_map,
+            board,
+            players,
+            thor_search,
+            database_head
+        }
+    }
+}
 
 impl ThorDatabase for LegacyThor {
     fn get_thor_game_move(&self, index: i32, move_number: i32) -> i32 {
-        unsafe { get_thor_game_move(index, move_number) }
+        { get_thor_game_move(self, index, move_number) }
     }
 
-    fn database_search(&self, in_board: &[i32], side_to_move: i32) {
-        unsafe { database_search(in_board, side_to_move) }
+    fn database_search(&mut self, in_board: &[i32], side_to_move: i32) {
+        { database_search(self, in_board, side_to_move) }
     }
 
     fn get_match_count(&self) -> i32 {
-        unsafe { thor_search.get_match_count() }
+         { self.thor_search.get_match_count() }
     }
 
     fn get_black_win_count(&self) -> i32 {
-        unsafe { thor_search.get_black_win_count() }
+         { self.thor_search.get_black_win_count() }
     }
 
     fn get_draw_count(&self) -> i32 {
-        unsafe { thor_search.get_draw_count() }
+         { self.thor_search.get_draw_count() }
     }
 
     fn get_white_win_count(&self) -> i32 {
-        unsafe { thor_search.get_white_win_count() }
+         { self.thor_search.get_white_win_count() }
     }
 
     fn get_black_median_score(&self) -> i32 {
-        unsafe { thor_search.get_black_median_score() }
+         { self.thor_search.get_black_median_score() }
     }
 
     fn get_black_average_score(&self) -> f64 {
-        unsafe { thor_search.get_black_average_score() }
+         { self.thor_search.get_black_average_score() }
     }
 
-    fn choose_thor_opening_move(&self, in_board: &[i32], side_to_move: i32, echo: i32, random: &mut MyRandom) -> i32 {
-        unsafe { choose_thor_opening_move(in_board, side_to_move, echo, random) }
+    fn choose_thor_opening_move(&mut self, in_board: &[i32], side_to_move: i32, echo: i32, random: &mut MyRandom) -> i32 {
+        { choose_thor_opening_move(self, in_board, side_to_move, echo, random) }
+    }
+
+    fn load_thor_files(&mut self, g_timer: &mut Timer) {
+        let mut thor = self;
+        /* No error checking done as it's only for testing purposes */
+        let database_start =  g_timer.get_real_timer();
+        read_player_database(&mut thor,"thor/wthor.jou");
+        read_tournament_database(&mut thor,"thor/wthor.trn");
+        read_game_database(&mut thor,"thor/wth_2001.wtb");
+        read_game_database(&mut thor,"thor/wth_2000.wtb");
+        read_game_database(&mut thor,"thor/wth_1999.wtb");
+        read_game_database(&mut thor,"thor/wth_1998.wtb");
+        read_game_database(&mut thor,"thor/wth_1997.wtb");
+        read_game_database(&mut thor,"thor/wth_1996.wtb");
+        read_game_database(&mut thor,"thor/wth_1995.wtb");
+        read_game_database(&mut thor,"thor/wth_1994.wtb");
+        read_game_database(&mut thor,"thor/wth_1993.wtb");
+        read_game_database(&mut thor,"thor/wth_1992.wtb");
+        read_game_database(&mut thor,"thor/wth_1991.wtb");
+        read_game_database(&mut thor,"thor/wth_1990.wtb");
+        read_game_database(&mut thor,"thor/wth_1989.wtb");
+        read_game_database(&mut thor,"thor/wth_1988.wtb");
+        read_game_database(&mut thor,"thor/wth_1987.wtb");
+        read_game_database(&mut thor,"thor/wth_1986.wtb");
+        read_game_database(&mut thor,"thor/wth_1985.wtb");
+        read_game_database(&mut thor,"thor/wth_1984.wtb");
+        read_game_database(&mut thor,"thor/wth_1983.wtb");
+        read_game_database(&mut thor,"thor/wth_1982.wtb");
+        read_game_database(&mut thor,"thor/wth_1981.wtb");
+        read_game_database(&mut thor,"thor/wth_1980.wtb");
+        let database_stop =  g_timer.get_real_timer();
+        write!(stdout, "Loaded {} games in {:.3} s.\n", get_total_game_count(&thor), database_stop - database_start);
+        write!(stdout, "Each Thor game occupies {} bytes.\n", get_thor_game_size());
     }
 }
 
@@ -258,8 +331,9 @@ fn sort_tournament_database(db: &mut [TournamentType]) {
   Returns TRUE if all went well, otherwise FALSE.
 */
 
-pub unsafe fn read_tournament_database(file_name: &str)
+pub fn read_tournament_database(thor: &mut LegacyThor, file_name: &str)
  -> i32 {
+    let tournaments = &mut thor.tournaments;
     let mut i: i32 = 0;
     let mut success: i32 = 0;
     let mut actually_read: i32 = 0;
@@ -296,8 +370,8 @@ pub unsafe fn read_tournament_database(file_name: &str)
             i += 1
         }
         sort_tournament_database(&mut tournaments.tournament_list);
-        thor_games_sorted = 0;
-        thor_games_filtered = 0
+        thor.thor_games_sorted = 0;
+        thor.thor_games_filtered = 0
     }
     return success;
 }
@@ -350,7 +424,8 @@ fn sort_player_database(db: &mut [PlayerType]) {
   Returns TRUE if all went well, otherwise FALSE.
 */
 
-pub unsafe fn read_player_database(file_name: &str) -> i32 {
+pub fn read_player_database( thor:&mut LegacyThor , file_name: &str) -> i32 {
+    let players = &mut thor.players;
     let mut success: i32 = 0;
     let mut actually_read: i32 = 0;
     let mut buffer_size: i32 = 0;
@@ -387,8 +462,8 @@ pub unsafe fn read_player_database(file_name: &str) -> i32 {
             i += 1
         }
         sort_player_database(&mut players.player_list);
-        thor_games_sorted = 0;
-        thor_games_filtered = 0
+        thor.thor_games_sorted = 0;
+        thor.thor_games_filtered = 0
     }
     return success;
 }
@@ -398,7 +473,7 @@ pub unsafe fn read_player_database(file_name: &str) -> i32 {
   for database questions. Returns TRUE upon success,
   otherwise FALSE.
 */
-unsafe fn read_game(mut stream: &mut impl Read, mut game: &mut GameType) -> i32 {
+fn read_game(thor: &mut LegacyThor, mut stream: &mut impl Read, mut game: &mut GameType) -> i32 {
     let mut success: i32 = 0;
     let mut byte_val: Int8 = 0;
     let mut word_val: Int16 = 0;
@@ -417,7 +492,7 @@ unsafe fn read_game(mut stream: &mut impl Read, mut game: &mut GameType) -> i32 
     (*game).moves.iter_mut().zip(bytes.iter().take(actually_read)).for_each(|(g, b)| {
         *g = *b as i8
     });
-    prepare_game(game, &mut board, &mut thor_opening_tree);
+    prepare_game(game, &mut thor.board, &mut thor.thor_opening_tree);
     return (success != 0 && actually_read == 60) as i32;
 }
 /*
@@ -425,8 +500,7 @@ unsafe fn read_game(mut stream: &mut impl Read, mut game: &mut GameType) -> i32 
   Reads a game database from FILE_NAME.
 */
 
-pub unsafe fn read_game_database(file_name: &str)
- -> i32 {
+pub fn read_game_database(thor: &mut LegacyThor, file_name: &str) -> i32 {
     let mut i: i32 = 0;
     let mut success: i32 = 0;
     let mut old_database_head = None;
@@ -434,7 +508,7 @@ pub unsafe fn read_game_database(file_name: &str)
         Ok(s) => s,
         Err(_) => return 0
     };
-    old_database_head = database_head.take();
+    old_database_head = thor.database_head.take();
     let prolog_type = PrologType {
         creation_century: 0,
         creation_year: 0,
@@ -448,7 +522,7 @@ pub unsafe fn read_game_database(file_name: &str)
 
     let mut db_head = DatabaseType {
         prolog: prolog_type,
-        games: Vec::new(),
+        games: &[],
         count: 0,
         next: old_database_head
     };
@@ -456,32 +530,32 @@ pub unsafe fn read_game_database(file_name: &str)
     if read_prolog(&mut stream, &mut db_head.prolog) == 0 {
         // FIXME This is here to preserve consistency with the old version but seems wrong
         //  why we would assign database head when we fail to parse the game??
-        database_head = Some(Box::new(db_head));
+        thor.database_head = Some(Box::new(db_head));
         return 0
     }
     success = 1;
     (db_head).count = (db_head).prolog.game_count;
-    (db_head).games = vec![GameType::new(); (db_head).count as usize];
+    let mut games = vec![GameType::new(); (db_head).count as usize];
     i = 0;
     let mut db_head = Box::new(db_head);
 
     while i < (db_head).count {
         success =
             (success != 0 &&
-                 read_game(&mut stream,
-                           &mut *(db_head).games.offset(i as isize)) !=
+                 read_game(thor, &mut stream,
+                           games.offset(i as isize)) !=
                      0) as i32;
-        let ref mut fresh4 =
-            (*(db_head).games.offset(i as isize)).origin_year;
+        let ref mut fresh4 = (*games.offset(i as isize)).origin_year;
         *fresh4 = db_head.prolog.origin_year;
         i += 1
     }
-    thor_game_count += (db_head).count;
-    thor_games_sorted = 0;
-    thor_games_filtered = 0;
+    db_head.games = games.leak();
+    thor.thor_game_count += (db_head).count;
+    thor.thor_games_sorted = 0;
+    thor.thor_games_filtered = 0;
 
     drop(stream);
-    database_head = Some(db_head);
+    thor.database_head = Some(db_head);
     return success;
 }
 /*
@@ -564,19 +638,23 @@ fn print_game(stream: &mut impl Write, game: &GameType, display_moves: i32, tour
   The first THOR_SORT_CRITERIA_COUNT entries of THOR_SORT_ORDER are
   used (in order) to sort the matches.
 */
-pub unsafe fn sort_thor_games(count: i32) {
+pub fn sort_thor_games(thor: &mut LegacyThor, count: i32) {
     if count <= 1 {
         /* No need to sort 0 or 1 games. */
         return
     }
-    let sord_order = &thor_sort_order[0..thor_sort_criteria_count as usize];
-    thor_search.match_list.sort_by(|g1, g2| {
-        match unsafe { thor_compare(g1.unwrap(), g2.unwrap(), sord_order, &players, &tournaments) } {
+    let sord_order = &thor.thor_sort_order[0..thor.thor_sort_criteria_count as usize];
+    let players = &thor.players;
+    let tournaments = &thor.tournaments;
+
+    let cmp = |g1: &Option<&GameType>, g2: &Option<&GameType>| {
+        match { thor_compare(g1.unwrap(), g2.unwrap(), sord_order, players, tournaments) } {
             i32::MIN..=-1_i32 => Ordering::Less,
             0 => Ordering::Equal,
             1_i32..=i32::MAX => Ordering::Greater,
         }
-    });
+    };
+    thor.thor_search.match_list.sort_by(cmp);
 }
 
 /*
@@ -585,13 +663,13 @@ pub unsafe fn sort_thor_games(count: i32) {
   database search to STREAM.
 */
 
-pub unsafe fn print_thor_matches(mut stream: &mut impl Write, max_games: i32) {
+pub fn print_thor_matches(thor: &LegacyThor, mut stream: &mut impl Write, max_games: i32) {
     let mut i: i32 = 0;
-    while i < (if thor_search.match_count < max_games { thor_search.match_count } else { max_games }) {
+    while i < (if thor.thor_search.match_count < max_games { thor.thor_search.match_count } else { max_games }) {
         if i == 0 {
             stream.write(b"\n");
         }
-        print_game(&mut stream, thor_search.match_list.offset(i as isize).unwrap(), 0, &tournaments, &players);
+        print_game(&mut stream, thor.thor_search.match_list.as_slice().offset(i as isize).unwrap(), 0, &thor.tournaments, &thor.players);
         i += 1
     };
 }
@@ -1054,7 +1132,7 @@ fn filter_database(db: &DatabaseType, tournaments_: &[TournamentType], players_:
     let mut year: i32 = 0;
     let mut i = 0;
     while i < (*db).count {
-        let game = (*db).games.as_slice().offset(i as isize);
+        let game = (*db).games.offset(i as isize);
         passes_filter = 1;
         /* Apply the tournament filter */
         if passes_filter != 0 && (*tournaments_.offset((*game).tournament_no as isize)).selected.get() == 0 {
@@ -1110,10 +1188,10 @@ fn filter_database(db: &DatabaseType, tournaments_: &[TournamentType], players_:
   FILTER_ALL_DATABASES
   Applies the current filter rules to all databases.
 */
-unsafe fn filter_all_databases() {
-    let mut current_db_ = &database_head;
+fn filter_all_databases(thor : &LegacyThor) {
+    let mut current_db_ = &thor.database_head;
     while let Some(current_db) = current_db_ {
-        filter_database(current_db, &tournaments.tournament_list, &players.player_list, &filter);
+        filter_database(current_db, &thor.tournaments.tournament_list, &thor.players.player_list, &thor.filter);
         current_db_ = &(*current_db).next
     };
 }
@@ -1125,13 +1203,13 @@ unsafe fn filter_all_databases() {
   GET_PLAYER_COUNT() if necessary.
 */
 
-unsafe fn set_player_filter(selected: &[i32]) {
+fn set_player_filter(thor : &mut LegacyThor, selected: &[i32]) {
     let mut i: i32 = 0;
-    while i < players.count() {
-        (*players.player_list.offset(i as isize)).selected = *selected.offset(i as isize);
+    while i < thor.players.count() {
+        (*thor.players.player_list.offset(i as isize)).selected = *selected.offset(i as isize);
         i += 1
     }
-    thor_games_filtered = 0;
+    thor.thor_games_filtered = 0;
 }
 
 /*
@@ -1141,23 +1219,23 @@ unsafe fn set_player_filter(selected: &[i32]) {
   GET_TOURNAMENT_COUNT() if necessary.
 */
 
-unsafe fn set_tournament_filter(selected: &mut [i32]) {
+fn set_tournament_filter(thor : &mut LegacyThor, selected: &mut [i32]) {
     let mut i: i32 = 0;
-    while i < tournaments.count() {
-        (*tournaments.tournament_list.offset(i as isize)).selected.set(*selected.offset(i as isize));
+    while i < thor.tournaments.count() {
+        (*thor.tournaments.tournament_list.offset(i as isize)).selected.set(*selected.offset(i as isize));
         i += 1
     }
-    thor_games_filtered = 0;
+    thor.thor_games_filtered = 0;
 }
 /*
   SET_YEAR_FILTER
   Specify the interval of years to which the search will be confined.
 */
 
-unsafe fn set_year_filter(first_year: i32, last_year: i32) {
-    filter.first_year = first_year;
-    filter.last_year = last_year;
-    thor_games_filtered = 0;
+fn set_year_filter(thor : &mut LegacyThor, first_year: i32, last_year: i32) {
+    thor.filter.first_year = first_year;
+    thor.filter.last_year = last_year;
+    thor.thor_games_filtered = 0;
 }
 /*
   SPECIFY_GAME_CATEGORIES
@@ -1166,10 +1244,10 @@ unsafe fn set_year_filter(first_year: i32, last_year: i32) {
   OR of the flags for the types enabled.
 */
 
-unsafe fn specify_game_categories(categories: i32) {
-    if categories != filter.game_categories {
-        filter.game_categories = categories;
-        thor_games_filtered = 0
+fn specify_game_categories(thor : &mut LegacyThor, categories: i32) {
+    if categories != thor.filter.game_categories {
+        thor.filter.game_categories = categories;
+        thor.thor_games_filtered = 0
     };
 }
 /*
@@ -1181,25 +1259,25 @@ unsafe fn specify_game_categories(categories: i32) {
         to which SORT_ORDER points, a crash is likely.
 */
 
-unsafe fn specify_thor_sort_order(mut count: i32, sort_order: &[i32]) {
+fn specify_thor_sort_order(thor : &mut LegacyThor, mut count: i32, sort_order: &[i32]) {
     /* Truncate the input vector if it is too long */
     count = if count < 10 { count } else { 10 };
     /* Check if the new order coincides with the old order */
-    if count != thor_sort_criteria_count {
-        thor_games_sorted = 0
+    if count != thor.thor_sort_criteria_count {
+        thor.thor_games_sorted = 0
     } else {
         let mut i = 0;
         while i < count {
-            if sort_order[i as usize] != thor_sort_order[i as usize] {
-                thor_games_sorted = 0
+            if sort_order[i as usize] != thor.thor_sort_order[i as usize] {
+                thor.thor_games_sorted = 0
             }
             i += 1
         }
     }
-    thor_sort_criteria_count = count;
+    thor.thor_sort_criteria_count = count;
     let mut i = 0;
     while i < count {
-        thor_sort_order[i as usize] = sort_order[i as usize];
+        thor.thor_sort_order[i as usize] = sort_order[i as usize];
         i += 1
     };
 }
@@ -1258,7 +1336,7 @@ fn recursive_opening_scan(tree: &mut ThorOpeningTree,
   Fills the opening tree with information on how well
   the current pattern configuration matches the openings.
 */
-fn opening_scan(moves_played: i32, thor_hash_: &mut ThorHash, tree: &mut ThorOpeningTree) {
+fn opening_scan( moves_played: i32, thor_hash_: &ThorHash, tree: &mut ThorOpeningTree) {
     let mut primary_hash_0: [u32; 8] = [0; 8];
     let mut secondary_hash_0: [u32; 8] = [0; 8];
     thor_hash_.compute_full_primary_hash(&mut primary_hash_0);
@@ -1319,7 +1397,7 @@ fn recursive_frequency_count(tree: &ThorOpeningTree,
   in the list of matching games generated by DATABASE_SEARCH.
 */
 
-unsafe fn get_thor_game(index: i32) -> GameInfoType {
+fn get_thor_game(thor: &LegacyThor, index: i32) -> GameInfoType {
     let mut info = GameInfoType {
         black_name: b"",
         white_name: b"",
@@ -1328,7 +1406,7 @@ unsafe fn get_thor_game(index: i32) -> GameInfoType {
         black_actual_score: 0,
         black_corrected_score: 0,
     };
-    if index < 0 || index >= thor_search.match_count {
+    if index < 0 || index >= thor.thor_search.match_count {
         /* Bad index, so fill with empty values */
         info.black_name = b"";
         info.white_name = b"";
@@ -1338,10 +1416,10 @@ unsafe fn get_thor_game(index: i32) -> GameInfoType {
         info.black_corrected_score = 32
     } else {
         /* Copy name fields etc */
-        let game = thor_search.match_list.offset(index as isize).unwrap();
-        info.black_name = players.get_player_name((*game).black_no as i32);
-        info.white_name = players.get_player_name((*game).white_no as i32);
-        info.tournament = tournaments.tournament_name((*game).tournament_no as i32);
+        let game = thor.thor_search.match_list.as_slice().offset(index as isize).unwrap();
+        info.black_name = thor.players.get_player_name((*game).black_no as i32);
+        info.white_name = thor.players.get_player_name((*game).white_no as i32);
+        info.tournament = thor.tournaments.tournament_name((*game).tournament_no as i32);
         info.year = (*game).origin_year;
         info.black_actual_score = (*game).actual_black_score as i32;
         info.black_corrected_score = (*game).perfect_black_score as i32
@@ -1353,8 +1431,8 @@ unsafe fn get_thor_game(index: i32) -> GameInfoType {
   GET_TOTAL_GAME_COUNT
 */
 
-pub unsafe fn get_total_game_count() -> i32 {
-    return thor_game_count;
+pub fn get_total_game_count(thor: &LegacyThor) -> i32 {
+    return thor.thor_game_count;
 }
 
 /*
@@ -1860,38 +1938,38 @@ fn build_thor_opening_tree(thor_board: &mut ThorBoard, thor_hash_: &mut ThorHash
   must be called.
 */
 
-pub unsafe fn init_thor_database(random: &mut MyRandom) {
-    thor_game_count = 0;
-    thor_search.match_list = Vec::new();
-    thor_search.allocation = 0;
-    thor_search.match_count = 0;
-    thor_search.black_wins = 0;
-    thor_search.draws = 0;
-    thor_search.white_wins = 0;
-    thor_search.median_black_score = 0;
-    thor_search.average_black_score = 0.0f64;
-    thor_sort_criteria_count = 5;
+pub fn init_thor_database(thor: &mut LegacyThor, random: &mut MyRandom) {
+    thor.thor_game_count = 0;
+    thor.thor_search.match_list = Vec::new();
+    thor.thor_search.allocation = 0;
+    thor.thor_search.match_count = 0;
+    thor.thor_search.black_wins = 0;
+    thor.thor_search.draws = 0;
+    thor.thor_search.white_wins = 0;
+    thor.thor_search.median_black_score = 0;
+    thor.thor_search.average_black_score = 0.0f64;
+    thor.thor_sort_criteria_count = 5;
     let mut i: i32 = 0; /* "infinity" */
     while i < 5 {
-        thor_sort_order[i as usize] = default_sort_order[i as usize];
+        thor.thor_sort_order[i as usize] = default_sort_order[i as usize];
         i += 1
     }
-    database_head = None;
-    players.name_buffer = b"";
-    players.player_list = Vec::new();
-    tournaments.tournament_list.clear();
-    tournaments.name_buffer = b"";
-    thor_games_sorted = 0;
-    thor_games_filtered = 0;
+    thor.database_head = None;
+    thor.players.name_buffer = b"";
+    thor.players.player_list = Vec::new();
+    thor.tournaments.tournament_list.clear();
+    thor.tournaments.name_buffer = b"";
+    thor.thor_games_sorted = 0;
+    thor.thor_games_filtered = 0;
     init_move_masks();
-    init_symmetry_maps(&mut symmetry_map, &mut inv_symmetry_map);
-    thor_hash.init_thor_hash(random);
-    prepare_thor_board(&mut board.board);
-    build_thor_opening_tree(&mut board, &mut thor_hash, &mut thor_opening_tree);
-    filter.game_categories = 1 | 2 | 4;
-    filter.player_filter = EITHER_SELECTED_FILTER;
-    filter.first_year = -((1) << 25);
-    filter.last_year = (1) << 25;
+    init_symmetry_maps(&mut thor.symmetry_map, &mut thor.inv_symmetry_map);
+    thor.thor_hash.init_thor_hash(random);
+    prepare_thor_board(&mut thor.board.board);
+    build_thor_opening_tree(&mut thor.board, &mut thor.thor_hash, &mut thor.thor_opening_tree);
+    thor.filter.game_categories = 1 | 2 | 4;
+    thor.filter.player_filter = EITHER_SELECTED_FILTER;
+    thor.filter.first_year = -((1) << 25);
+    thor.filter.last_year = (1) << 25;
 }
 
 /*
@@ -1903,19 +1981,19 @@ pub unsafe fn init_thor_database(random: &mut MyRandom) {
   on what rotation that gave a match.
 */
 
-unsafe fn get_thor_game_moves(index: i32, move_count: &mut i32, moves: &mut [i32]) {
-    if index < 0 || index >= thor_search.match_count {
+fn get_thor_game_moves(thor: &LegacyThor, index: i32, move_count: &mut i32, moves: &mut [i32]) {
+    if index < 0 || index >= thor.thor_search.match_count {
         /* Bad index, so fill with empty values */
         *move_count = 0
     } else {
-        let game = thor_search.match_list.offset(index as isize).unwrap();
+        let game = thor.thor_search.match_list.as_slice().offset(index as isize).unwrap();
         *move_count = (*game).move_count as i32;
         match (*game).matching_symmetry.get() as i32 {
             0 | 2 | 5 | 7 => {
                 /* Symmetries that preserve the initial position. */
                 let mut i = 0;
                 while i < (*game).move_count as i32 {
-                    *moves.offset(i as isize) = *symmetry_map[(*game).matching_symmetry.get() as usize].offset(abs((*game).moves[i as usize] as i32) as isize);
+                    *moves.offset(i as isize) = *thor.symmetry_map[(*game).matching_symmetry.get() as usize].offset(abs((*game).moves[i as usize] as i32) as isize);
                     i += 1
                 }
             }
@@ -1936,16 +2014,16 @@ unsafe fn get_thor_game_moves(index: i32, move_count: &mut i32, moves: &mut [i32
   in the list of matching games generated by DATABASE_SEARCH.
 */
 
-pub unsafe fn get_thor_game_move(index: i32, move_number: i32) -> i32 {
-    if index < 0 || index >= thor_search.match_count {
+pub fn get_thor_game_move(thor: &LegacyThor, index: i32, move_number: i32) -> i32 {
+    if index < 0 || index >= thor.thor_search.match_count {
         -1
     } else {
-        let game = thor_search.match_list.offset(index as isize).unwrap();
+        let game = thor.thor_search.match_list.as_slice().offset(index as isize).unwrap();
         if move_number < 0 ||
             move_number >= (*game).move_count as i32 {
             -1
         } else {
-            *symmetry_map[(*game).matching_symmetry.get() as usize].offset(abs((*game).moves[move_number as usize] as i32) as isize)
+            *thor.symmetry_map[(*game).matching_symmetry.get() as usize].offset(abs((*game).moves[move_number as usize] as i32) as isize)
         }
     }
 }
@@ -2113,8 +2191,8 @@ pub fn thor_compare(game1: &GameType, game2: &GameType, sord_order: &[i32], play
   display these and chooses one if from a distribution skewed
   towards common moves. (If no moves are found, PASS is returned.)
 */
-pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo: i32, random_instance: &mut MyRandom) -> i32 {
-    let tree: &ThorOpeningTree = &thor_opening_tree;
+pub fn choose_thor_opening_move(thor: &mut LegacyThor, in_board: &[i32], side_to_move: i32, echo: i32, random_instance: &mut MyRandom) -> i32 {
+    let tree: &ThorOpeningTree = &thor.thor_opening_tree;
     let mut j: i32 = 0;
     let mut temp_symm: i32 = 0;
     let mut pos: i32 = 0;
@@ -2168,11 +2246,11 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
         i += 1
     }
     /* Calculate frequencies for all moves */
-    compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, &in_board);
-    thor_hash.compute_full_primary_hash(&mut primary_hash_0);
-    thor_hash.compute_full_secondary_hash(&mut secondary_hash_0);
+    compute_thor_patterns(&mut thor.thor_hash.thor_row_pattern, &mut thor.thor_hash.thor_col_pattern, &in_board);
+    thor.thor_hash.compute_full_primary_hash(&mut primary_hash_0);
+    thor.thor_hash.compute_full_secondary_hash(&mut secondary_hash_0);
     recursive_frequency_count(tree, tree.root().unwrap(), &mut freq_count, 0, disc_count - 4,
-                              &mut symmetries, &mut primary_hash_0, &mut secondary_hash_0, &inv_symmetry_map);
+                              &mut symmetries, &mut primary_hash_0, &mut secondary_hash_0, &thor.inv_symmetry_map);
     freq_sum = 0;
     i = 1;
     while i <= 8 {
@@ -2241,7 +2319,10 @@ pub unsafe fn choose_thor_opening_move(in_board: &[i32], side_to_move: i32, echo
   given by IN_BOARD with SIDE_TO_MOVE being the player whose turn it is.
 */
 
-pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
+pub fn database_search(thor: &mut LegacyThor, in_board: &[i32], side_to_move: i32) {
+    let players = &thor.players;
+    let tournaments = &thor.tournaments;
+    let database_head = &thor.database_head;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut index: i32 = 0;
@@ -2261,44 +2342,47 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
     /* We need a player and a tournament database. */
     if players.count() == 0 ||
         tournaments.count() == 0 {
-        thor_search.match_count = 0;
+        thor.thor_search.match_count = 0;
         return
     }
+    let thor_search = &mut thor.thor_search;
+
     /* Make sure there's memory allocated if all positions
        in all databases match the position */
     if thor_search.allocation == 0 {
-        thor_search.match_list = vec![Default::default(); thor_game_count as usize];
-        thor_search.allocation = thor_game_count
-    } else if thor_search.allocation < thor_game_count {
-        thor_search.match_list = vec![Default::default(); thor_game_count as usize];
-        thor_search.allocation = thor_game_count
+        thor_search.match_list = vec![Default::default(); thor.thor_game_count as usize];
+        thor_search.allocation = thor.thor_game_count
+    } else if thor_search.allocation < thor.thor_game_count {
+        thor_search.match_list = vec![Default::default(); thor.thor_game_count as usize];
+        thor_search.allocation = thor.thor_game_count
     }
     /* If necessary, filter all games in the database */
-    if thor_games_filtered == 0 {
-        filter_all_databases();
-        thor_games_filtered = 1
+    if thor.thor_games_filtered == 0 {
+        filter_all_databases(thor);
+        thor.thor_games_filtered = 1;
     }
+    let thor_search = &mut thor.thor_search;
     /* If necessary, sort all games in the database */
-    if thor_games_sorted == 0 {
-        let mut current_db_ = &database_head;
+    if thor.thor_games_sorted == 0 {
+        let mut current_db_ = database_head;
         i = 0;
         while let Some(current_db) = current_db_ {
             j = 0;
             while j < (*current_db).count {
-                let ref mut fresh5 = *thor_search.match_list.offset(i as isize);
-                *fresh5 = Some((*current_db).games.as_slice().offset(j as isize));
+                // let ref mut fresh5 = thor_search.match_list.offset(i as isize);
+                thor_search.match_list[i as usize] = Some(&current_db.games[j as usize]);
                 i += 1;
                 j += 1
             }
             current_db_ = &(*current_db).next
         }
-        sort_thor_games(thor_game_count);
+        sort_thor_games(thor, thor.thor_game_count);
         j = 0;
-        while j < thor_game_count {
-            (thor_search.match_list.offset(j as isize)).unwrap().sort_order.set(j);
+        while j < thor.thor_game_count {
+            (thor.thor_search.match_list.offset(j as isize)).unwrap().sort_order.set(j);
             j += 1
         }
-        thor_games_sorted = 1
+        thor.thor_games_sorted = 1
     }
     /* Determine disc count, hash codes, patterns and opening
        for the position */
@@ -2320,9 +2404,9 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         i += 1
     }
     move_count = disc_count[0] + disc_count[2] - 4;
-    compute_thor_patterns(&mut thor_hash.thor_row_pattern, &mut thor_hash.thor_col_pattern, in_board);
-    thor_hash.compute_partial_hash(&mut target_hash1, &mut target_hash2);
-    opening_scan(move_count, (&mut thor_hash), &mut thor_opening_tree);
+    compute_thor_patterns(&mut thor.thor_hash.thor_row_pattern, &mut thor.thor_hash.thor_col_pattern, in_board);
+    thor.thor_hash.compute_partial_hash(&mut target_hash1, &mut target_hash2);
+    opening_scan(move_count, (&thor.thor_hash), &mut thor.thor_opening_tree);
     /* Determine the shape masks */
     i = 0;
     while i < 8 {
@@ -2400,9 +2484,10 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
        inserted at a position determined by the field SORT_ORDER
        in the game. As this index is unique, no over-write
        can occur. */
+    let thor_search = &mut thor.thor_search;
     thor_search.match_count = 0;
     i = 0;
-    while i < thor_game_count {
+    while i < thor.thor_game_count {
         let ref mut fresh6 = *thor_search.match_list.offset(i as isize);
         *fresh6 = None;//0 as *mut GameType;
         i += 1
@@ -2418,19 +2503,19 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
         thor_search.next_move_score[i as usize] = 0.0f64;
         i += 1
     }
-    let mut current_db_ = & database_head;
+    let mut current_db_ = &mut thor.database_head;
     while let Some(current_db) = current_db_ {
         i = 0;
         while i < (*current_db).count {
-            let game = (*current_db).games.as_slice().offset(i as isize);
+            let game = (*current_db).games.offset(i as isize);
             if (*game).passes_filter.get() != 0 {
                 if disc_count[0] == (*game).black_disc_count[move_count as usize] as i32 {
-                    if position_match(game, &mut board, &mut thor_hash, &mut thor_opening_tree, move_count, side_to_move, &mut shape_lo, &mut shape_hi, corner_mask, target_hash1, target_hash2) != 0 {
+                    if position_match(game, &mut thor.board, &mut thor.thor_hash, &mut thor.thor_opening_tree, move_count, side_to_move, &mut shape_lo, &mut shape_hi, corner_mask, target_hash1, target_hash2) != 0 {
                         let ref mut fresh7 = *thor_search.match_list.offset(game.sort_order.get() as _);
                         *fresh7 = Some(game);
                         symmetry = (game).matching_symmetry.get() as i32;
                         if move_count < (*game).move_count as i32 {
-                            next_move = *symmetry_map[symmetry as usize].offset(
+                            next_move = *thor.symmetry_map[symmetry as usize].offset(
                                 abs((*game).moves[move_count as usize] as i32) as isize
                             );
                             thor_search.next_move_frequency[next_move as usize] += 1;
@@ -2451,18 +2536,18 @@ pub unsafe fn database_search(in_board: &[i32], side_to_move: i32) {
             }
             i += 1
         }
-        current_db_ = &(*current_db).next
+        current_db_ = &mut (current_db).next
     }
     /* Remove the NULLs from the list of matching games if there are any.
        This gives a sorted list. */
     if thor_search.match_count > 0 &&
-        thor_search.match_count < thor_game_count {
+        thor_search.match_count < thor.thor_game_count {
         i = 0;
         j = 0;
         while i < thor_search.match_count {
             if !(*thor_search.match_list.offset(j as isize)).is_none() {
-                let ref mut fresh8 = *thor_search.match_list.offset(i as isize);
-                *fresh8 = *thor_search.match_list.offset(j as isize);
+                // let ref mut fresh8 = *thor_search.match_list.offset(i as isize);
+                thor_search.match_list[i as usize] = *thor_search.match_list.offset(j as isize);
                 i += 1
             }
             j += 1

@@ -15,6 +15,7 @@ use libc_wrapper::{_IO_FILE, stdout, fprintf, fputs, printf, feof, fopen, sscanf
 use legacy_zebra::src::zebra::LibcTimeSource;
 use std::io::Write;
 use libc::isalnum;
+use legacy_zebra::src::thordb::LegacyThor;
 
 pub type C2RustUnnamed = u32;
 pub const _ISalnum: C2RustUnnamed = 8;
@@ -134,6 +135,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     last_was_pass = 0;
     restart = 1;
     in_branch = 0;
+    let mut thor = LegacyThor::new();
     loop  {
         if restart != 0 {
             if in_branch != 0 {
@@ -196,7 +198,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                                         0, 0,
                                         8, 60,
                                         60, 1,
-                                        &mut ev_info, g_state) as i32
+                                        &mut ev_info, g_state, &mut thor) as i32
             } else {
                 move_0 = game_moves[g_state.moves.disks_played as usize];
                 if g_state.moves.disks_played >= first_allowed_dev &&
@@ -221,7 +223,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                     let evaluated_list = extended_compute_move::<LibcFatalError>(side_to_move, 0,
                                                                                  0, 8,
                                                                                  60,
-                                                                                 60, g_state.config.echo, g_state);
+                                                                                 60, g_state.config.echo, g_state, &mut thor);
                     assert_eq!(evaluated_list.get_evaluated_count(), g_state.moves.move_count[g_state.moves.disks_played as usize]);
                     best_score = -(12345678);
                     i_0 = 0;

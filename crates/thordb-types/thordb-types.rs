@@ -108,7 +108,7 @@ impl PrologType {
 #[repr(C)]
 pub struct DatabaseType {
     pub prolog: PrologType,
-    pub games: Vec<GameType>,
+    pub games: &'static [GameType],
     pub count: i32,
     pub next: Option<Box<DatabaseType>>,
 }

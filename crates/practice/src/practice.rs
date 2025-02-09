@@ -11,7 +11,7 @@ use libc_wrapper::{stdout, scanf};
 use std::ffi::{CStr, CString};
 use engine::src::zebra::FullState;
 use std::io::Write;
-
+use legacy_zebra::src::thordb::LegacyThor;
 /*
    File:         practice.c
 
@@ -60,6 +60,7 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
     (g_state.game).toggle_human_openings(0);
     display_state.set_names("", "");
     quit = 0;
+    let mut thor = LegacyThor::new();
     while quit == 0 {
         let mut val0: i32 = 0;
         let mut val1: i32 = 0;
@@ -81,7 +82,7 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
         write!(stdout, "Book hash: {} {} ({})\n\n", val0, val1, orientation);
         let evaluated_list = extended_compute_move::<LibcFatalError>(side_to_move, 0,
                                                                      1, 6,
-                                                                     16, 18, (g_state.config).echo, g_state);
+                                                                     16, 18, (g_state.config).echo, g_state, &mut thor);
         write!(stdout, "Scores for the {} moves:\n", evaluated_list.get_evaluated_count());
         i = 0;
         while i < evaluated_list.get_evaluated_count() {

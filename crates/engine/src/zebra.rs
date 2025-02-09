@@ -164,7 +164,6 @@ pub trait ZebraFrontend {
     fn report_engine_override();
     fn before_get_move();
     fn report_book_randomness(slack_: f64);
-    fn load_thor_files(g_timer: &mut Timer);
     fn print_move_alternatives(side_to_move: i32, board_state: &mut BoardState, g_book: &mut Book);
 }
 
@@ -212,7 +211,7 @@ pub fn next_state<
     ComputeMoveOut: ComputeMoveOutput,
     FE: FrontEnd,
     Thor: ThorDatabase
->(play_state: &mut PlayGame<Source>, move_attempt: Option<MoveAttempt>, thor: &Thor) -> PlayGameState {
+>(play_state: &mut PlayGame<Source>, move_attempt: Option<MoveAttempt>, thor: &mut Thor) -> PlayGameState {
     play_state.state = match play_state.state {
         PlayGameState::Initial => {
             /* Decode the predefined move sequence */
@@ -244,7 +243,7 @@ pub fn next_state<
             reset_book_search(&mut play_state.g_state.g_book);
             set_deviation_value(play_state.g_state.config.low_thresh, play_state.g_state.config.high_thresh, play_state.g_state.config.dev_bonus, &mut play_state.g_state.g_book);
             if play_state.g_state.config.use_thor {
-                ZF::load_thor_files(&mut play_state.g_state.timer);
+                Thor::load_thor_files(thor, &mut play_state.g_state.timer);
             }
             let white_is_player = play_state.g_state.config.skill[0] == 0;
             let black_is_player = play_state.g_state.config.skill[2] == 0;

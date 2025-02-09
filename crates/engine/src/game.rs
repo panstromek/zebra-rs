@@ -164,7 +164,7 @@ pub fn extended_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: F
                                            mut mid: i32,
                                            mut exact: i32,
                                            mut wld: i32, mut echo: i32, g_state: &mut FullState,
-                                           update_cb: fn(&EvaluatedList), mut should_stop: StopFn, thor: &Thor)
+                                           update_cb: fn(&EvaluatedList), mut should_stop: StopFn, thor: &mut Thor)
                                            -> EvaluatedList {
     let mut list = EvaluatedList::new();
     let mut i: i32 = 0;
@@ -882,7 +882,7 @@ pub fn generic_compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: Fr
                                                                                                logger: &mut Option<L>,
                                                                                                display_pv:i32,
                                                                                                echo:i32, g_state: &mut FullState,
-                                                                                               thor: &Thor
+                                                                                               thor: &mut Thor
 )
                                                                                                -> i8 {
     let mut book_eval_info = EvaluationType::new();
@@ -1302,7 +1302,7 @@ pub fn compute_move<L: ComputeMoveLogger, Out: ComputeMoveOutput, FE: FrontEnd, 
     search_forced: i32,
     eval_info: &mut EvaluationType, display_pv:i32, echo:i32,
     g_state: &mut FullState,
-    thor: &Thor
+    thor: &mut Thor
 )
     -> i8 {
     return generic_compute_move::<L, Out, FE, Thor>(

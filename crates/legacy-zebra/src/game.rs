@@ -136,7 +136,7 @@ pub fn ponder_move<
                            _book: i32,
                            mid: i32,
                            exact: i32,
-                           wld: i32, display_pv: i32, mut echo:i32, g_state: &mut FullState, thor: &Thor) {
+                           wld: i32, display_pv: i32, mut echo:i32, g_state: &mut FullState, thor: &mut Thor) {
     type Rep = LibcFatalError;
 
     let mut eval_info =EvaluationType::new();
@@ -302,10 +302,12 @@ pub fn get_pv(destin: &mut [i8], g_state: &mut FullState) -> i32 {
     };
 }
 pub fn extended_compute_move<FE: FrontEnd>(
-    side_to_move: i32, book_only: i32, book: i32, mid: i32, exact: i32, wld: i32, echo: i32, g_state: &mut FullState)
+    side_to_move: i32, book_only: i32, book: i32, mid: i32, exact: i32, wld: i32, echo: i32, g_state: &mut FullState,
+    thor: &mut LegacyThor
+)
     -> EvaluatedList {
     engine::src::game::extended_compute_move::<LogFileHandler, LibcZebraOutput, FE, LegacyThor, _>(
-        side_to_move, book_only, book, mid, exact, wld, echo, g_state, |_| (), || false, &LegacyThor
+        side_to_move, book_only, book, mid, exact, wld, echo, g_state, |_| (), || false, thor
     )
 }
 /*
@@ -318,7 +320,7 @@ pub fn perform_extended_solve(side_to_move: i32,
                                                 actual_move: i8,
                                                 book: i32,
                                                 exact_solve:
-                                                    i32, g_state: &mut FullState) {
+                                                    i32, g_state: &mut FullState, thor: &mut LegacyThor) {
     let mut i: i32 = 0;
     let mut mid: i32 = 0;
     let mut wld: i32 = 0;
@@ -365,14 +367,14 @@ pub fn perform_extended_solve(side_to_move: i32,
                         0, book, mid - 1,
                         exact - 1, wld - 1,
                         1,
-                        &mut evaluated_list[0].eval, g_state);
+                        &mut evaluated_list[0].eval, g_state, thor);
     if evaluated_list[0].eval.type_0 as u32 == PASS_EVAL as i32 as u32 {
         /* Don't allow pass */
         legacy_compute_move(side_to_move, 0, 0,
                             0, 0, book,
                             mid - 1, exact - 1,
                             wld - 1, 1,
-                            &mut evaluated_list[0].eval, g_state);
+                            &mut evaluated_list[0].eval, g_state, thor);
         if evaluated_list[0].eval.type_0 as u32 == PASS_EVAL as i32 as u32 {
             /* Game has ended */
             disc_diff = disc_count(side_to_move, &(g_state.board).board) -
@@ -422,7 +424,7 @@ pub fn perform_extended_solve(side_to_move: i32,
        if it isn't ACTUAL_MOVE */
     best_move = legacy_compute_move(side_to_move, 0, 0,
                                     0, 0, book, mid, exact,
-                                    wld, 1, &mut evaluated_list[1].eval, g_state);
+                                    wld, 1, &mut evaluated_list[1].eval, g_state, thor);
     if force_return == 0 && best_move != actual_move {
         /* Move list will contain best move first and then the actual move */
         game_evaluated_count = 2;
@@ -467,7 +469,9 @@ pub fn legacy_compute_move(side_to_move: i32,
                            exact: i32,
                            wld: i32,
                            search_forced: i32,
-                           eval_info: &mut EvaluationType, g_state: &mut FullState)
+                           eval_info: &mut EvaluationType, g_state: &mut FullState,
+                           thor: &mut LegacyThor
+)
                            -> i8 {
     return generic_compute_move::<LogFileHandler, LibcZebraOutput, LibcFatalError, LegacyThor>(side_to_move, update_all, my_time,
                                                                                                my_incr, timed_depth,
@@ -477,7 +481,7 @@ pub fn legacy_compute_move(side_to_move: i32,
                                                                                                &mut LogFileHandler::create_log_file_if_needed(),
                                                                                                g_state.config.display_pv,
                                                                                                g_state.config.echo,
-                                                                                               g_state, &LegacyThor);
+                                                                                               g_state, thor);
 }
 
 pub struct LibcZebraOutput;

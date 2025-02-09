@@ -30,7 +30,7 @@ use crate::src::error::LibcFatalError;
 use crate::src::game::{legacy_compute_move, global_setup, BasicBoardFileSource, LibcZebraOutput, LogFileHandler};
 use crate::src::learn::{init_learn, LibcLearner};
 use crate::src::osfbook::print_move_alternatives;
-use crate::src::thordb::{choose_thor_opening_move, get_thor_game_size, get_total_game_count, init_thor_database, LegacyThor, print_thor_matches, read_game_database, read_player_database, read_tournament_database};
+use crate::src::thordb::{choose_thor_opening_move, init_thor_database, LegacyThor, print_thor_matches};
 
 #[macro_use]
 use crate::fatal_error;
@@ -526,7 +526,8 @@ Flags:
         exit(1);
     }
     global_setup(use_random, hash_bits,&mut g_state);
-    init_thor_database(&mut g_state.random);
+    let mut thor = LegacyThor::new();
+    init_thor_database(&mut thor, &mut g_state.random);
     if (g_state.config).use_book != 0 {
         let file_name = if let Ok(var) = std::env::var("BOOK_PATH") {
             CString::new(var).unwrap()
@@ -575,11 +576,11 @@ Flags:
         display_state.toggle_smart_buffer_management(0);
     }
     if (g_state.config).tournament != 0 {
-        play_tournament(move_sequence, log_file_name, g_state);
+        play_tournament(move_sequence, log_file_name, g_state, &mut thor);
     } else if (g_state.config).only_analyze != 0 {
-        analyze_game(move_sequence, &mut g_state);
+        analyze_game(move_sequence, &mut g_state, &mut thor);
     } else {
-        play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name, g_state);
+        play_game(game_file_name, move_sequence, move_file_name, repeat, log_file_name, g_state, &mut thor);
     }
     0
 }
@@ -588,7 +589,7 @@ Flags:
    Administrates the tournament between different levels
    of the program.
 */
-unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state: FullState) {
+unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state: FullState, thor: &mut LegacyThor) {
     let mut result: [[[i32; 3]; 8]; 8] = [[[0; 3]; 8]; 8];
     let mut tourney_time: f64 = 0.;
     let mut score: [f64; 8] = [0.; 8];
@@ -617,7 +618,7 @@ unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state
             (g_state.config).exact_skill[2] = (g_state.config).tournament_skill[j as usize][1];
             (g_state.config).wld_skill[2] = (g_state.config).tournament_skill[j as usize][2];
             g_state = play_game("", move_sequence,
-                      "", 1, log_file_name_, g_state);
+                      "", 1, log_file_name_, g_state, thor);
             add_counter(&mut tourney_nodes, &mut (g_state.search).total_nodes);
             tourney_time += (&mut g_state.search).total_time;
             result[i as usize][j as usize][0] =
@@ -725,7 +726,8 @@ fn play_game(mut file_name: &str,
                     mut move_file_name: &str,
                     mut repeat: i32,
                     log_file_name_: &str,
-                    g_state: FullState
+                    g_state: FullState,
+                    mut thor: &mut LegacyThor
 ) -> FullState {
     let move_file = if move_file_name.is_empty() {
         None
@@ -747,7 +749,6 @@ fn play_game(mut file_name: &str,
     type ComputeMoveOut = LibcZebraOutput;
     type Learn = LibcLearner;
     type FE = LibcFatalError;
-    let thor = LegacyThor;
     let mut play_state: PlayGame<Source> = PlayGame::new(file_name, move_string, repeat, move_file, g_state);
     let mut move_attempt = None;
     let mut total_search_time: f64 = 0.;
@@ -757,7 +758,7 @@ fn play_game(mut file_name: &str,
     loop {
         let state = next_state::<
             ZF, Source, BoardSrc, ComputeMoveLog, ComputeMoveOut, FE, LegacyThor
-        >(&mut play_state, move_attempt.take(), &LegacyThor);
+        >(&mut play_state, move_attempt.take(), &mut thor);
         match state {
             // TODO here in all these branches, we should ideally not need mutable reference to play_state
             PlayGameState::End => {
@@ -784,7 +785,7 @@ fn play_game(mut file_name: &str,
                         let opening_name = CStr::from_bytes_with_nul(opening_name).unwrap();
                         write!(stdout, "\nOpening: {}\n", opening_name.to_str().unwrap());
                     }
-                    deal_with_thor_1(play_state.g_state.config.use_thor,
+                    deal_with_thor_1(&mut thor, play_state.g_state.config.use_thor,
                                      play_state.side_to_move,
                                      &play_state.g_state.config,
                                      &play_state.g_state.timer,
@@ -820,7 +821,7 @@ fn play_game(mut file_name: &str,
                 if play_state.g_state.config.echo != 0 && play_state.g_state.config.one_position_only == 0 {
                     ZF::set_move_list(
                         play_state.g_state.board.score_sheet_row);
-                    deal_with_thor_2(play_state.g_state.config.use_thor, play_state.side_to_move,
+                    deal_with_thor_2(&mut thor, play_state.g_state.config.use_thor, play_state.side_to_move,
                                      &play_state.g_state.config,
                                      &play_state.g_state.timer,
                                      &play_state.g_state.board,
@@ -848,11 +849,10 @@ fn play_game(mut file_name: &str,
     }
 }
 
-fn deal_with_thor_1(use_thor_: bool, side_to_move: i32,
+fn deal_with_thor_1(thor: &mut LegacyThor, use_thor_: bool, side_to_move: i32,
                                                            mut config: &Config, g_timer: &Timer,
                                                            board_state: &BoardState, total_search_time: &mut f64) {
     type ZF = LibcFrontend;
-    let thor = LegacyThor;
 
     if use_thor_ {
         let database_start = g_timer.get_real_timer();
@@ -871,15 +871,14 @@ fn deal_with_thor_1(use_thor_: bool, side_to_move: i32,
 
             ZF::report_thor_stats(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
         }
-        ZF::print_out_thor_matches(config.thor_max_games);
+        ZF::print_out_thor_matches(thor, config.thor_max_games);
     }
 }
 
-fn deal_with_thor_2(use_thor_: bool, side_to_move: i32,
+fn deal_with_thor_2(thor: &mut LegacyThor, use_thor_: bool, side_to_move: i32,
                                                           config: &Config, g_timer: &Timer,
                                                           board_state: &BoardState, total_search_time: &mut f64){
     type ZF = LibcFrontend;
-    let thor = LegacyThor{};
     use ThorDatabase;
     if use_thor_ {
         let database_start = g_timer.get_real_timer();
@@ -897,7 +896,7 @@ fn deal_with_thor_2(use_thor_: bool, side_to_move: i32,
             let black_average_score = thor.get_black_average_score();
             ZF::report_some_thor_scores(black_win_count, draw_count, white_win_count, black_median_score, black_average_score);
         }
-        ZF::print_out_thor_matches(config.thor_max_games);
+        ZF::print_out_thor_matches(thor, config.thor_max_games);
     }
 }
 
@@ -929,8 +928,8 @@ impl LibcFrontend {
         }
     }
 
-    fn print_out_thor_matches(thor_max_games_: i32) {
-        unsafe { print_thor_matches(&mut stdout, thor_max_games_); }
+    fn print_out_thor_matches(thor: &LegacyThor, thor_max_games_: i32) {
+        { print_thor_matches(thor, &mut stdout, thor_max_games_); }
     }
 
     fn log_game_ending(log_file_name_: &CStr, move_vec: &[i8; 122],
@@ -1043,38 +1042,6 @@ impl ZebraFrontend for LibcFrontend {
     fn report_book_randomness(slack_: f64) {
         write!(stdout, "Book randomness: {:.2} disks\n", slack_);
     }
-    fn load_thor_files(g_timer: &mut Timer) { unsafe {
-        /* No error checking done as it's only for testing purposes */
-        let database_start =  g_timer.get_real_timer();
-        read_player_database("thor/wthor.jou");
-        read_tournament_database("thor/wthor.trn");
-        read_game_database("thor/wth_2001.wtb");
-        read_game_database("thor/wth_2000.wtb");
-        read_game_database("thor/wth_1999.wtb");
-        read_game_database("thor/wth_1998.wtb");
-        read_game_database("thor/wth_1997.wtb");
-        read_game_database("thor/wth_1996.wtb");
-        read_game_database("thor/wth_1995.wtb");
-        read_game_database("thor/wth_1994.wtb");
-        read_game_database("thor/wth_1993.wtb");
-        read_game_database("thor/wth_1992.wtb");
-        read_game_database("thor/wth_1991.wtb");
-        read_game_database("thor/wth_1990.wtb");
-        read_game_database("thor/wth_1989.wtb");
-        read_game_database("thor/wth_1988.wtb");
-        read_game_database("thor/wth_1987.wtb");
-        read_game_database("thor/wth_1986.wtb");
-        read_game_database("thor/wth_1985.wtb");
-        read_game_database("thor/wth_1984.wtb");
-        read_game_database("thor/wth_1983.wtb");
-        read_game_database("thor/wth_1982.wtb");
-        read_game_database("thor/wth_1981.wtb");
-        read_game_database("thor/wth_1980.wtb");
-        let database_stop =  g_timer.get_real_timer();
-        write!(stdout, "Loaded {} games in {:.3} s.\n", get_total_game_count(), database_stop - database_start);
-        write!(stdout, "Each Thor game occupies {} bytes.\n", get_thor_game_size());
-    }}
-
     fn print_move_alternatives(side_to_move: i32, mut board_state: &mut BoardState, mut g_book: &mut Book) {
         print_move_alternatives(side_to_move, board_state, g_book)
     }
@@ -1084,7 +1051,7 @@ impl ZebraFrontend for LibcFrontend {
    ANALYZE_GAME
    Analyzes all positions arising from a given move sequence.
 */
-unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
+unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState, thor: &mut LegacyThor) {
     let mut best_info1 =  EvaluationType::new();
     let mut best_info2 =  EvaluationType::new();
     let mut played_info1 =  EvaluationType::new();
@@ -1176,7 +1143,7 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
                                             &(g_state.board).black_moves, &(g_state.board).white_moves);
             }
             /* Check what the Thor opening statistics has to say */
-            choose_thor_opening_move(&(g_state.board).board, side_to_move, (&mut g_state.config).echo, &mut (&mut g_state.random));
+            choose_thor_opening_move(thor, &(g_state.board).board, side_to_move, (&mut g_state.config).echo, &mut (&mut g_state.random));
             if (&mut g_state.config).echo != 0 && (&mut g_state.config).wait != 0 {
                 dumpch(&mut stdin_lock);
             }
@@ -1205,7 +1172,7 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
                                                 (&mut g_state.config).skill[opponent as usize] - 2,
                                                 (&mut g_state.config).exact_skill[opponent as usize] - 1,
                                                 (&mut g_state.config).wld_skill[opponent as usize] - 1,
-                                                1, &mut played_info1, g_state)
+                                                1, &mut played_info1, g_state, thor)
             }
             reset_counter(&mut (&mut g_state.search).nodes);
             resp_move = legacy_compute_move(opponent, 0,
@@ -1215,7 +1182,7 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
                                             (&mut g_state.config).skill[opponent as usize] - 1,
                                             (&mut g_state.config).exact_skill[opponent as usize] - 1,
                                             (&mut g_state.config).wld_skill[opponent as usize] - 1,
-                                            1, &mut played_info2, g_state);
+                                            1, &mut played_info2, g_state, thor);
             unmake_move(side_to_move, curr_move, &mut (g_state.board).board, (&mut g_state.moves), &mut (&mut g_state.hash), &mut (&mut g_state.flip_stack));
             /* Determine the 'best' move and its score. For midgame moves,
             search twice to dampen oscillations. Unless we're in the endgame
@@ -1230,7 +1197,7 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
                                                 (&mut g_state.config).skill[side_to_move as usize] - 1,
                                                 (&mut g_state.config).exact_skill[side_to_move as usize],
                                                 (&mut g_state.config).wld_skill[side_to_move as usize],
-                                                1, &mut best_info1, g_state)
+                                                1, &mut best_info1, g_state, thor)
             }
             reset_counter(&mut (&mut g_state.search).nodes);
             curr_move = legacy_compute_move(side_to_move, 0,
@@ -1240,7 +1207,7 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState) {
                                             (&mut g_state.config).skill[side_to_move as usize],
                                             (&mut g_state.config).exact_skill[side_to_move as usize],
                                             (&mut g_state.config).wld_skill[side_to_move as usize],
-                                            1, &mut best_info2, g_state);
+                                            1, &mut best_info2, g_state, thor);
             if side_to_move == 0 {
                 display_state.set_evals(produce_compact_eval(best_info2), 0.0f64);
             } else {

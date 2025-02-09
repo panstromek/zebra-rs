@@ -9,7 +9,7 @@ use engine::src::zebra::EvaluationType;
 use legacy_zebra::src::display::{display_move, display_state};
 use legacy_zebra::src::game::{legacy_compute_move, game_init, global_setup, toggle_status_log};
 use legacy_zebra::src::learn::init_learn;
-use legacy_zebra::src::thordb::init_thor_database;
+use legacy_zebra::src::thordb::{init_thor_database, LegacyThor};
 use legacy_zebra::src::zebra::{FullState, LibcTimeSource};
 use libc_wrapper::{FileHandle, strlen, strstr, time, fclose, fopen, fprintf, printf, sscanf,
                    fgets, fputs, puts, feof, exit, strcasecmp, stdout, atoi};
@@ -56,7 +56,7 @@ pub type Board = [i32; 128];
 unsafe fn run_endgame_script(mut in_file_name: *const i8,
                              mut out_file_name: *const i8,
                              mut display_line: i32,
-                             g_state: &mut FullState) {
+                             g_state: &mut FullState, thor: LegacyThor) {
     let mut script_nodes = CounterType { hi: 0, lo: 0 };
     let mut eval_info =  EvaluationType::new();
     let mut comment = 0 as *mut i8;
@@ -239,7 +239,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
             move_0 =
                 legacy_compute_move(side_to_move, 1, my_time, my_incr,
                                     timed_search, book, mid, exact, wld,
-                                    1, &mut eval_info, g_state);
+                                    1, &mut eval_info, g_state, &mut thor);
             if move_0 == -(1) {
                 pass_count += 1;
                 side_to_move =
@@ -247,7 +247,7 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                 move_0 =
                     legacy_compute_move(side_to_move, 1, my_time,
                                         my_incr, timed_search, book, mid, exact, wld,
-                                        1, &mut eval_info, g_state);
+                                        1, &mut eval_info, g_state, &mut thor);
                 if move_0 == -(1) {
                     /* Both pass, game over. */
                     let mut my_discs = disc_count(side_to_move, &g_state.board.board);
@@ -548,7 +548,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         exit(1);
     }
     global_setup(use_random, hash_bits, g_state);
-    init_thor_database(&mut g_state.random);
+    let mut thor = LegacyThor::new();
+    init_thor_database(&mut thor, &mut g_state.random);
     if use_book != 0 {
         init_learn(b"book.bin\x00" as *const u8 as *const i8,
                    1, g_state);
@@ -562,7 +563,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
         g_state.random.my_srandom(x); }
     if run_script != 0 {
         run_endgame_script(script_in_file, script_out_file,
-                           script_optimal_line, g_state);
+                           script_optimal_line, g_state, thor);
     }
     0
 }

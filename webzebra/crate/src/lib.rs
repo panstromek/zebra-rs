@@ -296,7 +296,7 @@ impl ZebraGame {
         let mut play_state = &mut self.game;
         let state = next_state::<
             WasmFrontend, WasmInitialMoveSource, WasmBoardSource, WasmComputeMoveLogger, WasmFrontend, WasmFrontend, WasmThor
-        >(&mut play_state, move_attempt.take(), &WasmThor{});
+        >(&mut play_state, move_attempt.take(), &mut WasmThor{});
         match state {
             PlayGameState::GetPass { provided_move_count } => {
                 // TODO signal this to frontend
@@ -360,7 +360,7 @@ impl ZebraGame {
             } else {
                 cached_stop = should_stop();
                 cached_stop
-            }, &WasmThor);
+            }, &mut WasmThor);
         self.game.g_state.search.full_pv = stored_pv;
         self.game.g_state.search.full_pv_depth = stored_pv_depth;
         self.game.g_state.g_book.set_slack(stored_slack);
@@ -472,7 +472,7 @@ impl ThorDatabase for WasmThor {
         0
     }
 
-    fn database_search(&self, in_board: &[i32], side_to_move: i32) {
+    fn database_search(&mut self, in_board: &[i32], side_to_move: i32) {
         //
     }
 
@@ -501,8 +501,11 @@ impl ThorDatabase for WasmThor {
         0.0
     }
 
-    fn choose_thor_opening_move(&self, in_board: &[i32], side_to_move: i32, echo: i32, random: &mut MyRandom) -> i32 {
+    fn choose_thor_opening_move(&mut self, in_board: &[i32], side_to_move: i32, echo: i32, random: &mut MyRandom) -> i32 {
         0
+    }
+    fn load_thor_files(&mut self, g_timer: &mut Timer) {
+
     }
 }
 
@@ -650,10 +653,6 @@ impl ZebraFrontend for WasmFrontend {
 
     fn report_book_randomness(slack_: f64) {
         c_log!("Book randomness: {} disks\n", slack_);
-    }
-
-    fn load_thor_files(g_timer: &mut Timer) {
-
     }
 
     fn print_move_alternatives(side_to_move: i32, board_state: &mut BoardState, g_book: &mut Book) {
