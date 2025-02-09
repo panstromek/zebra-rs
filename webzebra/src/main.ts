@@ -14,12 +14,6 @@ const data = reactive({
     board: Array(128).fill(1) as number[],
     waitingForMove: false,
     waitingForPass: false,
-    black_skill: 0,
-    black_exact_skill: 0,
-    black_wld_skill: 0,
-    white_skill: 0,
-    white_exact_skill: 0,
-    white_wld_skill: 0,
     practiceMode: true,
     evals: [] as EvaluatedMove[],
     initialized: false,
@@ -49,13 +43,20 @@ function undo() {
 function setSkills() {
     stopWorkerIfNeeded()
 
+    const black_skill = 0,
+        black_exact_skill = 0,
+        black_wld_skill = 0,
+        white_skill = 0,
+        white_exact_skill = 0,
+        white_wld_skill = 0;
+
     let numbers: SkillSetting = [
-        Number(data.black_skill),
-        Number(data.black_exact_skill),
-        Number(data.black_wld_skill),
-        Number(data.white_skill),
-        Number(data.white_exact_skill),
-        Number(data.white_wld_skill)
+        black_skill,
+        black_exact_skill,
+        black_wld_skill,
+        white_skill,
+        white_exact_skill,
+        white_wld_skill
     ];
     if (numbers.some(num => isNaN(num) && !Number.isInteger(num))) {
         alert('Some values are not integers')
