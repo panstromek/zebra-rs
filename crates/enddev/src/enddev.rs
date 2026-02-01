@@ -1,6 +1,6 @@
 #![allow(dead_code,  non_camel_case_types, non_snake_case,
 non_upper_case_globals, unused_assignments, unused_mut, unused_must_use)]
-#![feature(extern_types, label_break_value, register_tool)]
+#![feature(extern_types, register_tool)]
 
 use engine::src::game::EvaluatedMove;
 use engine::src::hash::{determine_hash_values, setup_hash};
