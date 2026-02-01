@@ -191,8 +191,8 @@ pub unsafe fn fopen(__filename: *const i8, __modes: *const i8) -> FileHandle {
     FileHandle::File(f)
 }
 pub unsafe extern "C" fn fprintf(__stream: FileHandle, __format: *const i8, args: ...) -> i32 {
-    let mut arg_ptr = args.clone();
-    inner::vfprintf((__stream).file(), __format, arg_ptr.as_va_list())
+    let arg_ptr = args.clone();
+    inner::vfprintf((__stream).file(), __format, arg_ptr)
 }
 pub unsafe fn fputc(__c: i32, __stream: FileHandle) -> i32 {
     inner::fputc(__c, (__stream).file())
