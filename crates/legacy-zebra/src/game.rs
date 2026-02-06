@@ -44,7 +44,7 @@ pub fn toggle_status_log(write_log: i32) {
    Initialize the different sub-systems.
 */
 
-pub unsafe fn global_setup(use_random: i32, hash_bits: i32, mut g_state: &mut FullState) {
+pub fn global_setup(use_random: i32, hash_bits: i32, mut g_state: &mut FullState) {
     setup_log_file();
     let coeff_adjustments = load_coeff_adjustments();
 
@@ -62,13 +62,17 @@ pub struct LogFileHandler {
     log_file: File,
 }
 
-unsafe fn setup_log_file() {
+fn setup_log_file() {
     /* Clear the log file. No error handling done. */
     if use_log_file.load(SeqCst) != 0 {
         if let Ok(mut log_file) = OpenOptions::new().write(true).truncate(true).create(true).open("zebra.log") {
             let mut timer_: time_t = 0;
-            time(&mut timer_);
-            write!(log_file, "{} {}\n", "Log file created", c_time(timer_));
+            // safety - libc time should be thread safe
+            unsafe { time(&mut timer_) } ;
+            // safety: FIXME - thiis not correct. c_time is not thread safe. Currently not an issue, because we are always single threaded
+            //  but technically this function has no way of ensuring correct access. We should use one of those thread safe variants (asctime?)
+            //  or something ours
+            write!(log_file, "{} {}\n", "Log file created", unsafe { c_time(timer_) } );
             write!(log_file, "{} {} {}\n", "Engine compiled", "Jul  2 2020", "19:33:59");
             log_file.flush();
         }
