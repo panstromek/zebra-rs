@@ -30,8 +30,9 @@ use engine::src::osfbook::Book;
 use engine::src::globals::BoardState;
 use engine::src::moves::MovesState;
 use flip::unflip::FlipStack;
+use std::sync::Mutex;
 
-static mut buffer: String = String::new();
+static buffer: Mutex<String> = Mutex::new(String::new());
 
 /*
    File:       error.h
@@ -186,10 +187,10 @@ impl FrontEnd for LibcFatalError {
     }
 
     fn end_tree_search_level_0_ponder_0_short_report(move_0: i8, first: i32) {
-        unsafe {
+        {
             let mut ds = display_state.lock().unwrap();
             if first != 0 {
-                send_sweep!(ds, "{:<10} ", buffer);
+                send_sweep!(ds, "{:<10} ", buffer.lock().unwrap());
             }
             send_sweep!(ds, "{}", TO_SQUARE(move_0));
         }
@@ -218,7 +219,7 @@ impl FrontEnd for LibcFatalError {
      fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32, best_move_: i32) {
          {
              let mut ds = display_state.lock().unwrap();
-             send_sweep!(ds, "{:<10} ", unsafe{&buffer});
+             send_sweep!(ds, "{:<10} ", buffer.lock().unwrap());
              send_sweep!(ds, "{}", TO_SQUARE(best_move_));
              if result <= alpha {
                  send_sweep!(ds, "<{}", result + 1 );
@@ -231,10 +232,11 @@ impl FrontEnd for LibcFatalError {
     }
 
     fn end_tree_search_level_0_report(alpha: i32, beta: i32) {
-        unsafe {
+        {
             use std::fmt::Write;
-            buffer.clear();
-            write!(buffer, "[{},{}]:", alpha, beta);
+            let mut buffer_ = buffer.lock().unwrap();
+            buffer_.clear();
+            write!(buffer_, "[{},{}]:", alpha, beta);
             display_state.lock().unwrap().clear_sweep();
         }
     }
