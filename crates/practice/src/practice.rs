@@ -58,14 +58,20 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
     read_binary_database(book_name.as_ptr(), &mut g_state.g_book);
     game_init(&mut side_to_move, g_state);
     (g_state.game).toggle_human_openings(0);
-    display_state.set_names("", "");
+    {
+        let mut ds = display_state.lock().unwrap();
+        ds.set_names("", "");
+    }
     quit = 0;
     let mut thor = LegacyThor::new();
     while quit == 0 {
         let mut val0: i32 = 0;
         let mut val1: i32 = 0;
         let mut orientation: i32 = 0;
-        display_state.set_move_list((g_state.board).score_sheet_row);
+        {
+            let mut ds = display_state.lock().unwrap();
+            ds.set_move_list((g_state.board).score_sheet_row);
+        }
         let opening_name = find_opening_name(&mut (g_state.g_book), &(g_state.board).board);
         if let Some(opening_name) = opening_name {
             write!(stdout, "\nOpening: {}\n",
@@ -75,10 +81,13 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
         let val1___ = &mut val1;
         let orientation___ = &mut orientation;
         get_hash(val0___, val1___, orientation___, &mut (g_state.g_book), &(g_state.board).board);
-        display_state.display_board(&mut stdout, &(g_state.board).board, side_to_move,
-                                    1, 0, 0,
-                                    &(g_state.board).black_moves, &(g_state.board).white_moves
-        );
+        {
+            let mut ds = display_state.lock().unwrap();
+            ds.display_board(&mut stdout, &(g_state.board).board, side_to_move,
+                             1, 0, 0,
+                             &(g_state.board).black_moves, &(g_state.board).white_moves
+            );
+        }
         write!(stdout, "Book hash: {} {} ({})\n\n", val0, val1, orientation);
         let evaluated_list = extended_compute_move::<LibcFatalError>(side_to_move, 0,
                                                                      1, 6,

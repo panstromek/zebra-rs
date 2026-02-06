@@ -1,4 +1,5 @@
 use std::ffi::{CStr};
+use std::sync::Mutex;
 
 use engine::src::search::disc_count;
 use engine::src::stubs::{abs, ceil, floor};
@@ -31,7 +32,7 @@ pub struct DisplayState {
     pub sweep_pos: i32,
 }
 
-pub static mut display_state: DisplayState = DisplayState {
+pub static display_state: Mutex<DisplayState> = Mutex::new(DisplayState {
     black_player: "",
     white_player: "",
     status_buffer: Vec::new(), //TODO I want with capacity here - original also had just array. we should weight some perf implications of both approaches I guess
@@ -49,7 +50,7 @@ pub static mut display_state: DisplayState = DisplayState {
     timed_buffer_management: 1,
     status_pos: 0,
     sweep_pos: 0,
-};
+});
 
 pub struct Square (u8, u8);
 impl std::fmt::Display for Square {

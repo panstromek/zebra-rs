@@ -573,7 +573,7 @@ Flags:
         }
     }
     if (g_state.config).one_position_only != 0 {
-        display_state.toggle_smart_buffer_management(0);
+        display_state.lock().unwrap().toggle_smart_buffer_management(0);
     }
     if (g_state.config).tournament != 0 {
         play_tournament(move_sequence, log_file_name, g_state, &mut thor);
@@ -905,7 +905,7 @@ pub struct LibcFrontend {} //TODO this could probably be merged with the FrontEn
 impl LibcFrontend {
 
     fn set_times(black: i32, white: i32) {
-        unsafe { display_state.set_times(black, white) }
+        display_state.lock().unwrap().set_times(black, white)
     }
 
     fn report_some_thor_scores(black_win_count: i32, draw_count: i32, white_win_count: i32, black_median_score: i32, black_average_score: f64) {
@@ -921,11 +921,9 @@ impl LibcFrontend {
 
     fn display_board_after_thor(side_to_move: i32, give_time_: i32, board_: &[i32; 128],
                                 black_moves_: &[i8; 60], white_moves_: &[i8; 60]) {
-        unsafe {
-            display_state.display_board(&mut stdout, board_,
+        display_state.lock().unwrap().display_board(&mut stdout, board_,
                           side_to_move, 1, give_time_, 1,
                           black_moves_, white_moves_);
-        }
     }
 
     fn print_out_thor_matches(thor: &LegacyThor, thor_max_games_: i32) {
@@ -1010,11 +1008,11 @@ impl LibcFrontend {
 }
 impl ZebraFrontend for LibcFrontend {
     fn set_evals(black: f64, white: f64) {
-        unsafe { display_state.set_evals(black, white); }
+        display_state.lock().unwrap().set_evals(black, white);
     }
 
     fn set_move_list(row: i32) {
-        unsafe { display_state.set_move_list(row) }
+        display_state.lock().unwrap().set_move_list(row)
     }
 
     fn set_names(white_is_player: bool, black_is_player: bool) {
@@ -1028,7 +1026,7 @@ impl ZebraFrontend for LibcFrontend {
         } else {
             "Zebra"
         };
-        unsafe { display_state.set_names(black_name, white_name) }
+        display_state.lock().unwrap().set_names(black_name, white_name)
     }
 
     fn report_engine_override() {
@@ -1108,9 +1106,12 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState, thor: &m
     reset_book_search(&mut (&mut g_state.g_book));
     let black_name = "Zebra";
     let white_name = "Zebra";
-    display_state.set_names(black_name, white_name);
-    display_state.set_move_list((g_state.board).score_sheet_row);
-    display_state.set_evals(0.0f64, 0.0f64);
+    {
+        let mut ds = display_state.lock().unwrap();
+        ds.set_names(black_name, white_name);
+        ds.set_move_list((g_state.board).score_sheet_row);
+        ds.set_evals(0.0f64, 0.0f64);
+    }
     g_state.board.black_moves = [-1; 60];
     g_state.board.white_moves = [-1; 60];
     let _black_hash1 = (g_state.random).my_random() as i32;
@@ -1131,14 +1132,17 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState, thor: &m
             move_start =  (&mut g_state.timer).get_real_timer();
             (&mut g_state.timer).clear_panic_abort();
             if (&mut g_state.config).echo != 0 {
-                display_state.set_move_list((g_state.board).score_sheet_row);
-                display_state.set_times(floor((&mut g_state.config).player_time[0]) as i32,
-                                        floor((&mut g_state.config).player_time[2]) as i32);
+                {
+                    let mut ds = display_state.lock().unwrap();
+                    ds.set_move_list((g_state.board).score_sheet_row);
+                    ds.set_times(floor((&mut g_state.config).player_time[0]) as i32,
+                                 floor((&mut g_state.config).player_time[2]) as i32);
+                }
                 let opening_name = find_opening_name(&mut (&mut g_state.g_book), &(g_state.board).board);
                 if let Some(opening_name) = opening_name {
                     write!(stdout, "\nOpening: {}\n", CStr::from_bytes_with_nul(opening_name).map(CStr::to_str).unwrap().unwrap());
                 }
-                display_state.display_board(&mut stdout, &(g_state.board).board, side_to_move,
+                display_state.lock().unwrap().display_board(&mut stdout, &(g_state.board).board, side_to_move,
                                             1, (&mut g_state.config).use_timer, 1,
                                             &(g_state.board).black_moves, &(g_state.board).white_moves);
             }
@@ -1209,9 +1213,9 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState, thor: &m
                                             (&mut g_state.config).wld_skill[side_to_move as usize],
                                             1, &mut best_info2, g_state, thor);
             if side_to_move == 0 {
-                display_state.set_evals(produce_compact_eval(best_info2), 0.0f64);
+                display_state.lock().unwrap().set_evals(produce_compact_eval(best_info2), 0.0f64);
             } else {
-                display_state.set_evals(0.0f64, produce_compact_eval(best_info2));
+                display_state.lock().unwrap().set_evals(0.0f64, produce_compact_eval(best_info2));
             }
             /* Output the two score-move pairs */
             write!(output_stream, "{} ", TO_SQUARE(curr_move));
@@ -1278,12 +1282,15 @@ unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState, thor: &m
     if side_to_move == 0 { (g_state.board).score_sheet_row += 1 }
     dump_game_score(side_to_move, (g_state.board).score_sheet_row, &(g_state.board).black_moves, &(g_state.board).white_moves);
     if (g_state.config).echo != 0 && (&mut g_state.config).one_position_only == 0 {
-        display_state.set_move_list((g_state.board).score_sheet_row);
-        display_state.set_times(floor((&mut g_state.config).player_time[0]) as i32,
-                                floor((&mut g_state.config).player_time[2]) as i32);
-        display_state.display_board(&mut stdout, &(g_state.board).board, side_to_move,
-                                    1, (&mut g_state.config).use_timer, 1,
-                                    &(g_state.board).black_moves, &(g_state.board).white_moves);
+        {
+            let mut ds = display_state.lock().unwrap();
+            ds.set_move_list((g_state.board).score_sheet_row);
+            ds.set_times(floor((&mut g_state.config).player_time[0]) as i32,
+                         floor((&mut g_state.config).player_time[2]) as i32);
+            ds.display_board(&mut stdout, &(g_state.board).board, side_to_move,
+                             1, (&mut g_state.config).use_timer, 1,
+                             &(g_state.board).black_moves, &(g_state.board).white_moves);
+        }
     }
 }
 

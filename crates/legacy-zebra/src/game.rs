@@ -492,8 +492,8 @@ fn display_out_optimal_line(search_state: &SearchState) {
 }
 
 fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counter_value: f64, timer: &mut Timer, board_state: &BoardState) {
-    unsafe {
-        let ds = &mut display_state;
+     {
+        let mut ds = display_state.lock().unwrap();
         ds.clear_status();
         send_status!(ds, "--> *{:2}", interrupted_depth);
         let mut eval_str = produce_eval_text(info, 1);
@@ -508,7 +508,7 @@ fn send_move_type_0_status(interrupted_depth: i32, info: &EvaluationType, counte
 }
 
 fn display_status_out() {
-    unsafe { display_state.display_status(&mut stdout, 0); }
+     { display_state.lock().unwrap().display_status(&mut stdout, 0); }
 }
 
 fn echo_ponder_move_4(curr_move: i8, ponder_move: i8) {
@@ -516,8 +516,8 @@ fn echo_ponder_move_4(curr_move: i8, ponder_move: i8) {
 }
 
 fn echo_ponder_move_2(curr_move: i8, ponder_move: i8) {
-    unsafe {
-        let ds = &mut display_state;
+     {
+        let mut ds = display_state.lock().unwrap();
         send_status!(ds, "-->   {}        ", "Thor database");
         if ponder_move != 0 {
             send_status!(ds, "{{{}}} ", TO_SQUARE(ponder_move));
@@ -528,8 +528,8 @@ fn echo_ponder_move_2(curr_move: i8, ponder_move: i8) {
 }
 
 fn echo_ponder_move(curr_move: i8, ponder_move: i8) {
-    unsafe {
-        let ds = &mut display_state;
+     {
+        let mut ds = display_state.lock().unwrap();
         send_status!(ds, "-->   Forced opening move        ");
         if ponder_move != 0 {
             send_status!(ds, "{} ",TO_SQUARE(ponder_move));
@@ -540,8 +540,8 @@ fn echo_ponder_move(curr_move: i8, ponder_move: i8) {
 }
 
 fn echo_compute_move_2(info: &EvaluationType, disk: i8) {
-    unsafe {
-        let ds = &mut display_state;
+     {
+        let mut ds = display_state.lock().unwrap();
         let mut eval_str = produce_eval_text(info, 0);
         send_status!(ds, "-->         ");
         send_status!(ds, "{:<8}  ", eval_str);
@@ -551,8 +551,8 @@ fn echo_compute_move_2(info: &EvaluationType, disk: i8) {
 }
 
 fn echo_compute_move_1(info: &EvaluationType) {
-    unsafe {
-        let ds = &mut display_state;
+     {
+        let mut ds = display_state.lock().unwrap();
         let mut eval_str = produce_eval_text(info, 0);
         send_status!(ds, "-->         ");
         send_status!(ds, "{:<8}  ",             eval_str);
@@ -611,7 +611,7 @@ fn log_chosen_move(logger: &mut LogFileHandler, curr_move: i8, info: &Evaluation
 }
 
 fn log_status(logger: &mut LogFileHandler) {
-    unsafe { display_state.display_status(&mut logger.log_file, 1); }
+     { display_state.lock().unwrap().display_status(&mut logger.log_file, 1); }
 }
 
 fn log_optimal_line(logger: &mut LogFileHandler, search_state: &SearchState) {
@@ -621,10 +621,10 @@ fn log_optimal_line(logger: &mut LogFileHandler, search_state: &SearchState) {
 fn close_logger(logger: &mut LogFileHandler) {}
 
 fn log_board(logger: &mut LogFileHandler, board_state: &BoardState, side_to_move_: i32) {
-    unsafe {
-        display_state.display_board(&mut logger.log_file, &board_state.board, side_to_move_,
-                                    0, 0, 0,
-                                    &board_state.black_moves, &board_state.white_moves,
+     {
+        display_state.lock().unwrap().display_board(&mut logger.log_file, &board_state.board, side_to_move_,
+                                                    0, 0, 0,
+                                                    &board_state.black_moves, &board_state.white_moves,
         );
     }
 }

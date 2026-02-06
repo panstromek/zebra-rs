@@ -313,9 +313,12 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
                         b"Game #%d contains illegal move %d @ #%d.\n\x00" as
                             *const u8 as *const i8, games_read,
                         move_0, g_state.moves.disks_played);
-                display_state.display_board(&mut libc_wrapper::stderr, &g_state.board.board, side_to_move,
-                                            0, 0, 0,
-                                            &g_state.board.black_moves, &g_state.board.white_moves);
+                {
+                    let mut ds = display_state.lock().unwrap();
+                    ds.display_board(&mut libc_wrapper::stderr, &g_state.board.board, side_to_move,
+                                     0, 0, 0,
+                                     &g_state.board.black_moves, &g_state.board.white_moves);
+                }
                 exit(1);
             }
             game_moves[g_state.moves.disks_played as usize] = move_0;

@@ -111,7 +111,7 @@ impl LibcFatalError {
 }
 impl FrontEnd for LibcFatalError {
     fn reset_buffer_display(g_timer:&Timer) {
-        unsafe { display_state.reset_buffer_display(g_timer) }
+         { display_state.lock().unwrap().reset_buffer_display(g_timer) }
     }
     /*
       DISPLAY_BUFFERS
@@ -119,9 +119,9 @@ impl FrontEnd for LibcFatalError {
       output relevant buffers.
     */
     fn display_buffers(g_timer: &Timer) {
-        unsafe {
+         {
             let timer =  g_timer.get_real_timer();
-            let ds = &mut display_state;
+            let mut ds = display_state.lock().unwrap();
             if timer - ds.last_output >= ds.interval2 || ds.timed_buffer_management == 0 {
                 ds.display_status(&mut stdout, 0);
                 ds.status_modified = 0;
@@ -158,20 +158,23 @@ impl FrontEnd for LibcFatalError {
     }
 
     fn end_tree_search_output_some_second_stats(alpha: i32, beta: i32, curr_val: i32, update_pv: i32, move_index: i32, echo: i32) {
-        unsafe {
+         {
             if update_pv != 0 {
                 Self::end_tree_search_some_pv_stats_report(alpha, beta, curr_val)
             }
-            send_sweep!(display_state, " ");
-            if update_pv != 0 && move_index > 0 && echo != 0 {
-                display_state.display_sweep(&mut stdout);
+            {
+                let mut ds = display_state.lock().unwrap();
+                send_sweep!(ds, " ");
+                if update_pv != 0 && move_index > 0 && echo != 0 {
+                    ds.display_sweep(&mut stdout);
+                }
             }
         }
     }
 
     fn end_tree_search_some_pv_stats_report(alpha: i32, beta: i32, curr_val: i32) {
-        unsafe {
-            let ds = &mut display_state;
+        {
+            let mut ds = display_state.lock().unwrap();
             if curr_val <= alpha {
                 send_sweep!(ds, "<{}", curr_val + 1);
             } else if curr_val >= beta {
@@ -184,7 +187,7 @@ impl FrontEnd for LibcFatalError {
 
     fn end_tree_search_level_0_ponder_0_short_report(move_0: i8, first: i32) {
         unsafe {
-            let ds = &mut display_state;
+            let mut ds = display_state.lock().unwrap();
             if first != 0 {
                 send_sweep!(ds, "{:<10} ", buffer);
             }
@@ -194,8 +197,8 @@ impl FrontEnd for LibcFatalError {
 
     fn end_tree_search_output_some_stats(entry: &HashEntry) {
         /* Output some stats */
-        unsafe {
-            let ds = &mut display_state;
+        {
+            let mut ds = display_state.lock().unwrap();
             send_sweep!(ds, "{}", TO_SQUARE(entry.move_0[0]));
             if entry.flags as i32 & 16 != 0 &&
                 entry.flags as i32 & 4 != 0 {
@@ -213,9 +216,9 @@ impl FrontEnd for LibcFatalError {
     }
 
      fn end_tree_search_level_0_ponder_0_report(alpha: i32, beta: i32, result: i32, best_move_: i32) {
-         unsafe {
-             let ds = &mut display_state;
-             send_sweep!(ds, "{:<10} ", buffer);
+         {
+             let mut ds = display_state.lock().unwrap();
+             send_sweep!(ds, "{:<10} ", unsafe{&buffer});
              send_sweep!(ds, "{}", TO_SQUARE(best_move_));
              if result <= alpha {
                  send_sweep!(ds, "<{}", result + 1 );
@@ -232,7 +235,7 @@ impl FrontEnd for LibcFatalError {
             use std::fmt::Write;
             buffer.clear();
             write!(buffer, "[{},{}]:", alpha, beta);
-            display_state.clear_sweep();
+            display_state.lock().unwrap().clear_sweep();
         }
     }
     /*
@@ -244,10 +247,10 @@ impl FrontEnd for LibcFatalError {
                          pv_depth_zero: i32,
                          mut g_timer: &Timer,
                          mut search_state: &mut SearchState) {
-        unsafe {
+         {
             let eval = *eval_info;
             search_state.set_current_eval(eval);
-            let ds = &mut display_state;
+            let mut ds = display_state.lock().unwrap();
             ds.clear_status();
             send_status!(ds, "-->  {:2}  ", empties);
             let mut eval_str = produce_eval_text(&*eval_info, 1);
@@ -289,8 +292,8 @@ impl FrontEnd for LibcFatalError {
     }
 
     fn end_display_zero_status() {
-        unsafe {
-            display_state.display_status(&mut stdout, 0);
+        {
+            display_state.lock().unwrap().display_status(&mut stdout, 0);
         }
     }
 
@@ -316,8 +319,8 @@ impl FrontEnd for LibcFatalError {
     }
 
     fn report_in_get_book_move_2(chosen_score: i32, chosen_index: i32, flags: &i32, candidate_list_: &[CandidateMove; 60], search_state: & SearchState) {
-        unsafe {
-            let ds = &mut display_state;
+        {
+            let mut ds = display_state.lock().unwrap();
             send_status!(ds, "-->   Book     ");
             if flags & 16 != 0 {
                 send_status!(ds, "{:+3} (exact)   ",
@@ -336,15 +339,16 @@ impl FrontEnd for LibcFatalError {
         }
     }
     fn midgame_display_simple_ponder_move(move_0: i8) {
-        unsafe {
-            send_sweep!(display_state, "{}", TO_SQUARE(move_0));
+        {
+            let mut ds = display_state.lock().unwrap();
+            send_sweep!(ds, "{}", TO_SQUARE(move_0));
         }
     }
 
     fn midgame_display_initial_ponder_move(alpha: i32, beta: i32) {
         use std::fmt::Write;
         let mut buffer_ = String::with_capacity(32);
-        unsafe {
+        {
             if alpha <= -(29000) && beta >= 29000 {
                 write!(buffer_,
                         "[-inf,inf]:");
@@ -364,7 +368,7 @@ impl FrontEnd for LibcFatalError {
                         alpha as f64 / 128.0f64,
                         beta as f64 / 128.0f64);
             }
-            let ds = &mut display_state;
+            let mut ds = display_state.lock().unwrap();
             ds.clear_sweep();
             send_sweep!(ds, "{:<14} ", buffer_);
         }
@@ -372,8 +376,8 @@ impl FrontEnd for LibcFatalError {
 
     fn midgame_display_ponder_move(max_depth: i32, alpha: i32, beta: i32, curr_val: i32,
                                    searched: i32, update_pv: i32, echo: i32) {
-        unsafe {
-            let ds = &mut display_state;
+        {
+            let mut ds = display_state.lock().unwrap();
             if update_pv != 0 {
                 if curr_val <= alpha {
                     send_sweep!(ds, "<{:.2}",
@@ -407,8 +411,8 @@ impl FrontEnd for LibcFatalError {
                                mut flip_stack_: &mut FlipStack
      ) {
          let mut nodes_counter: &mut CounterType = &mut search_state.nodes;
-         unsafe {
-             let ds = &mut display_state;
+         {
+             let mut ds = display_state.lock().unwrap();
              ds.clear_status();
              send_status!(ds, "--> ");
              if g_timer.is_panic_abort() != 0 || force_return_ {

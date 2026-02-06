@@ -110,9 +110,12 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
     }
     fclose(output_stream);
     /* Initialize display subsystem and search parameters */
-    display_state.set_names("", "");
-    display_state.set_move_list(g_state.board.score_sheet_row);
-    display_state.set_evals(0.0f64, 0.0f64);
+    {
+        let mut ds = display_state.lock().unwrap();
+        ds.set_names("", "");
+        ds.set_move_list(g_state.board.score_sheet_row);
+        ds.set_evals(0.0f64, 0.0f64);
+    }
     i = 0;
     while i < 60 {
         g_state.board.black_moves[i as usize] = -1;
@@ -223,11 +226,14 @@ unsafe fn run_endgame_script(mut in_file_name: *const i8,
                     4;
             /* Search the position */
             if g_state.config.echo != 0 {
-                display_state.set_move_list(g_state.board.score_sheet_row);
-                display_state.display_board(&mut stdout, &g_state.board.board, side_to_move,
-                                            1, 0,
-                                            1,
-                                            &g_state.board.black_moves, &g_state.board.white_moves);
+                {
+                    let mut ds = display_state.lock().unwrap();
+                    ds.set_move_list(g_state.board.score_sheet_row);
+                    ds.display_board(&mut stdout, &g_state.board.board, side_to_move,
+                                     1, 0,
+                                     1,
+                                     &g_state.board.black_moves, &g_state.board.white_moves);
+                }
             }
             search_start =  g_state.timer.get_real_timer();
             g_state.timer.start_move(my_time as f64, my_incr as f64,
