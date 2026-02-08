@@ -589,7 +589,7 @@ Flags:
    Administrates the tournament between different levels
    of the program.
 */
-unsafe fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state: FullState, thor: &mut LegacyThor) {
+fn play_tournament(move_sequence: &str, log_file_name_: &str, mut g_state: FullState, thor: &mut LegacyThor) {
     let mut result: [[[i32; 3]; 8]; 8] = [[[0; 3]; 8]; 8];
     let mut tourney_time: f64 = 0.;
     let mut score: [f64; 8] = [0.; 8];
@@ -1049,7 +1049,7 @@ impl ZebraFrontend for LibcFrontend {
    ANALYZE_GAME
    Analyzes all positions arising from a given move sequence.
 */
-unsafe fn analyze_game(mut move_string: &str, g_state : &mut FullState, thor: &mut LegacyThor) {
+fn analyze_game(mut move_string: &str, g_state : &mut FullState, thor: &mut LegacyThor) {
     let mut best_info1 =  EvaluationType::new();
     let mut best_info2 =  EvaluationType::new();
     let mut played_info1 =  EvaluationType::new();
