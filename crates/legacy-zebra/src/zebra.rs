@@ -39,9 +39,11 @@ pub struct LibcTimeSource;
 
 impl TimeSource for LibcTimeSource {
     fn time(& self, __timer: &mut i64) -> i64 {
-        // fixme.. with the mutable reference here.. this is probably unsound
-        /// this can be called from multiple threads. Is it safe?
-        unsafe { time(__timer) }
+        // SAFETY: time() should be thread safe.
+        //  we assign the &mut __timer ourselves
+        //  to avoid potential aliasing issues.
+        *__timer = unsafe { time(std::ptr::null_mut()) };
+        *__timer
     }
 }
 // This function mimics the behaviour of atoi function (except for the UB)
