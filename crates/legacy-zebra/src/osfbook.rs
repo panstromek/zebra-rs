@@ -477,8 +477,7 @@ pub unsafe fn write_text_database(file_name: *const i8, g_book: &mut Book) {
    Writes the database to a binary file.
 */
 
-pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book) {
-    let file_name = CStr::from_ptr(file_name).to_str().unwrap();
+pub fn write_binary_database(file_name: &Path, mut g_book: &mut Book) {
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     time(&mut start_time);
@@ -486,7 +485,7 @@ pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book)
     stdout.flush();
 
     let Ok(mut stream) = OpenOptions::new().write(true).truncate(true).open(file_name) else {
-        fatal_error!("{} '{}'\n", "Could not create database file", file_name);
+        fatal_error!("{} '{}'\n", "Could not create database file", file_name.display());
     };
 
     let mut magic = 2718_i16;

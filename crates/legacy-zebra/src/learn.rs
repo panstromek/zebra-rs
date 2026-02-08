@@ -83,7 +83,8 @@ pub unsafe fn learn_game(game_length: i32,
                  full_solve, wld_solve, 1, private_game, echo, g_state);
     if save_database != 0 {
         if g_state.learn.binary_database != 0 {
-            write_binary_database(g_state.learn.database_name.as_mut_ptr(), &mut g_state.g_book);
+            let name = Path::new(OsStr::from_bytes(CStr::from_ptr(g_state.learn.database_name.as_ptr()).to_bytes()));
+            write_binary_database(name, &mut g_state.g_book);
         } else { write_text_database(g_state.learn.database_name.as_mut_ptr(), &mut g_state.g_book); }
     }
     (g_state.timer).toggle_abort_check(1);
@@ -149,7 +150,8 @@ pub unsafe fn full_learn_public_game(moves: &[i32],
     add_new_game(length as _, None, cutoff, exact, wld,
                  1, 0, echo, g_state);
     if g_state.learn.binary_database != 0 {
-        write_binary_database(g_state.learn.database_name.as_mut_ptr(), &mut g_state.g_book);
+        let name = Path::new(OsStr::from_bytes(CStr::from_ptr(g_state.learn.database_name.as_ptr()).to_bytes()));
+        write_binary_database(name, &mut g_state.g_book);
     } else { write_text_database(g_state.learn.database_name.as_mut_ptr(), &mut g_state.g_book); }
     ( g_state.timer).toggle_abort_check(1);
 }

@@ -593,7 +593,8 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     }
     if output_database != 0 {
         if output_binary != 0 {
-            write_binary_database(output_file_name, &mut g_state.g_book);
+            let output_file_name = OsStr::from_bytes(CStr::from_ptr(output_file_name).to_bytes());
+            write_binary_database(Path::new(output_file_name), &mut g_state.g_book);
         } else if output_compressed != 0 {
             write_compressed_database(output_file_name, g_state);
         } else { write_text_database(output_file_name,&mut g_state.g_book); }
