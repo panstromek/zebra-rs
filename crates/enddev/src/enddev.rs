@@ -2,6 +2,7 @@
 non_upper_case_globals, unused_assignments, unused_mut, unused_must_use)]
 #![feature(extern_types, register_tool)]
 
+use std::ffi::CStr;
 use engine::src::game::EvaluatedMove;
 use engine::src::hash::{determine_hash_values, setup_hash};
 use engine::src::moves::{generate_all, make_move, valid_move};
@@ -127,7 +128,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     static src: LibcTimeSource = LibcTimeSource {};
     let mut full_state = FullState::new(&src);
     let g_state: &mut FullState = &mut full_state;
-    init_learn(b"book.bin\x00" as *const u8 as *const i8,
+    init_learn(CStr::from_bytes_with_nul(b"book.bin\x00").unwrap(),
                1, g_state);
     global_setup(0, hash_bits, g_state);
     games_read = 0;

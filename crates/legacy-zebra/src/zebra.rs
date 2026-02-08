@@ -536,8 +536,7 @@ Flags:
         } else {
             CString::new("book.bin").unwrap()
         };
-        init_learn(file_name.as_ref().as_ptr() as *const u8 as *const i8,
-                   1, &mut g_state);
+        init_learn(file_name.as_ref(), 1, &mut g_state);
     }
     if use_random != 0 {
         LibcTimeSource.time(&mut timer);

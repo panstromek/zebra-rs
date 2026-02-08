@@ -1,6 +1,7 @@
 #![allow(dead_code,  non_camel_case_types, non_snake_case,
 non_upper_case_globals, unused_assignments, unused_mut, unused_must_use)]
 
+use std::ffi::CStr;
 use engine::src::counter::{add_counter, counter_value, CounterType, reset_counter};
 use engine::src::hash::setup_hash;
 use engine::src::osfbook::{reset_book_search, set_deviation_value};
@@ -557,8 +558,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
     let mut thor = LegacyThor::new();
     init_thor_database(&mut thor, &mut g_state.random);
     if use_book != 0 {
-        init_learn(b"book.bin\x00" as *const u8 as *const i8,
-                   1, g_state);
+        init_learn(CStr::from_bytes_with_nul(b"book.bin\x00").unwrap(), 1, g_state);
     }
     if use_random != 0 && 1 == 0 {
         time(&mut timer);

@@ -16,14 +16,14 @@ use crate::src::display::TO_SQUARE;
    Initialize the learning module.
 */
 
-pub unsafe fn init_learn(file_name: *const i8, is_binary: i32, g_state: &mut FullState) {
+pub unsafe fn init_learn(file_name: &CStr, is_binary: i32, g_state: &mut FullState) {
     init_osf(0, g_state);
     if is_binary != 0 {
-        read_binary_database(file_name, &mut g_state.g_book);
-    } else { read_text_database(file_name, &mut g_state.g_book); }
+        read_binary_database(file_name.as_ptr(), &mut g_state.g_book);
+    } else { read_text_database(file_name.as_ptr(), &mut g_state.g_book); }
 
     // strcpy replacement
-    CStr::from_ptr(file_name)
+    file_name
         .to_bytes_with_nul()
         .iter()
         .take(g_state.learn.database_name.len() - 1)
