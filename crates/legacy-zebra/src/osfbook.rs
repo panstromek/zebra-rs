@@ -594,7 +594,7 @@ pub fn print_move_alternatives(side_to_move: i32, board_state: &BoardState, g_bo
    Makes sure all data structures are initialized.
 */
 
-pub unsafe fn init_osf(do_global_setup: i32, g_state: &mut FullState) {
+pub fn init_osf(do_global_setup: i32, g_state: &mut FullState) {
     engine_init_osf(g_state);
     if do_global_setup != 0 {
         global_setup(0, 19, g_state);
