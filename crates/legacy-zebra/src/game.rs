@@ -16,14 +16,14 @@ use crate::src::display::{display_optimal_line, produce_eval_text, display_state
 use crate::src::error::{LibcFatalError};
 use crate::src::getcoeff::{load_coeff_adjustments, new_coeff_source};
 use crate::src::thordb::LegacyThor;
-use crate::src::zebra::FullState;
+use crate::src::zebra::{FullState, LibcTimeSource};
 use engine::src::globals::BoardState;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, BufReader, BufRead, Write};
 use std::sync::atomic::AtomicI32;
 use std::sync::atomic::Ordering::SeqCst;
 
-use engine::src::timer::Timer;
+use engine::src::timer::{TimeSource, Timer};
 
 #[macro_use]
 use crate::send_status;
@@ -67,8 +67,7 @@ fn setup_log_file() {
     if use_log_file.load(SeqCst) != 0 {
         if let Ok(mut log_file) = OpenOptions::new().write(true).truncate(true).create(true).open("zebra.log") {
             let mut timer_: time_t = 0;
-            // safety - libc time should be thread safe
-            unsafe { time(&mut timer_) } ;
+            LibcTimeSource.time(&mut timer_);
             // safety: FIXME - thiis not correct. c_time is not thread safe. Currently not an issue, because we are always single threaded
             //  but technically this function has no way of ensuring correct access. We should use one of those thread safe variants (asctime?)
             //  or something ours
