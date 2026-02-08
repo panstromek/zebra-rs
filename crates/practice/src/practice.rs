@@ -55,7 +55,7 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
     }
     init_osf(1, g_state);
     let book_name = CString::new(book_name).unwrap();
-    read_binary_database(book_name.as_ptr(), &mut g_state.g_book);
+    read_binary_database(book_name.as_ref(), &mut g_state.g_book);
     game_init(&mut side_to_move, g_state);
     (g_state.game).toggle_human_openings(0);
     {

@@ -168,7 +168,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             arg_index += 1;
             input_file_name = *argv.offset(arg_index as isize);
             if input_binary != 0 {
-                read_binary_database(input_file_name, &mut g_state.g_book);
+                read_binary_database(CStr::from_ptr(input_file_name), &mut g_state.g_book);
             } else { read_text_database(input_file_name, &mut g_state.g_book); }
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-w\x00" as *const u8 as *const i8) ==

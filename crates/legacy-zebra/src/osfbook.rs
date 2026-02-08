@@ -363,8 +363,8 @@ pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
    Reads a binary database file.
 */
 
-pub unsafe fn read_binary_database(file_name_: *const i8, g_book: &mut Book) -> Option<()> {
-    let file_name = CStr::from_ptr(file_name_).to_str().unwrap();
+pub fn read_binary_database(file_name_: &CStr, g_book: &mut Book) -> Option<()> {
+    let file_name = file_name_.to_str().unwrap();
 
     let mut new_book_node_count: i32 = 0;
     let mut magic1: i16 = 0;
