@@ -16,7 +16,7 @@ use crate::src::display::TO_SQUARE;
    Initialize the learning module.
 */
 
-pub unsafe fn init_learn(file_name: &CStr, is_binary: i32, g_state: &mut FullState) {
+pub fn init_learn(file_name: &CStr, is_binary: i32, g_state: &mut FullState) {
     init_osf(0, g_state);
     if is_binary != 0 {
         read_binary_database(file_name, &mut g_state.g_book);

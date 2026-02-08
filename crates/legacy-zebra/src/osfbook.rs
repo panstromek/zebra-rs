@@ -319,7 +319,11 @@ pub fn add_new_game(move_count_0: i32,
    Reads an existing ASCII database file.
 */
 
-pub unsafe fn read_text_database(file_name: &CStr, g_book: &mut Book) {
+pub fn read_text_database(file_name: &CStr, g_book: &mut Book) {
+    unsafe { read_text_database_impl(file_name, g_book) }
+}
+
+unsafe fn read_text_database_impl(file_name: &CStr, g_book: &mut Book) {
     let mut magic1: i32 = 0;
     let mut magic2: i32 = 0;
     let mut new_book_node_count: i32 = 0;
