@@ -319,7 +319,7 @@ pub fn add_new_game(move_count_0: i32,
    Reads an existing ASCII database file.
 */
 
-pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
+pub unsafe fn read_text_database(file_name: &CStr, g_book: &mut Book) {
     let mut magic1: i32 = 0;
     let mut magic2: i32 = 0;
     let mut new_book_node_count: i32 = 0;
@@ -328,14 +328,14 @@ pub unsafe fn read_text_database(file_name: *const i8, g_book: &mut Book) {
     time(&mut start_time);
     write!(stdout, "Reading text opening database... ");
     stdout.flush();
-    let stream = fopen(file_name, b"r\x00" as *const u8 as *const i8);
+    let stream = fopen(file_name.as_ptr(), b"r\x00" as *const u8 as *const i8);
     if stream.is_null() {
-        fatal_error!("{} '{}'\n","Could not open database file", &CStr::from_ptr(file_name).to_str().unwrap());
+        fatal_error!("{} '{}'\n","Could not open database file", &file_name.to_str().unwrap());
     }
     fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8, &mut magic1 as *mut i32);
     fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8, &mut magic2 as *mut i32);
     if magic1 != 2718 || magic2 != 2818 {
-        fatal_error!("{}: {}", "Wrong checksum, might be an old version\x00" , &CStr::from_ptr(file_name).to_str().unwrap());
+        fatal_error!("{}: {}", "Wrong checksum, might be an old version\x00" , &file_name.to_str().unwrap());
     }
     fscanf(stream.file(), b"%d\x00" as *const u8 as *const i8, &mut new_book_node_count as *mut i32);
     set_allocation(new_book_node_count + 1000, g_book);

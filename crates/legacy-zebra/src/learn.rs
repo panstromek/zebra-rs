@@ -20,7 +20,7 @@ pub unsafe fn init_learn(file_name: &CStr, is_binary: i32, g_state: &mut FullSta
     init_osf(0, g_state);
     if is_binary != 0 {
         read_binary_database(file_name, &mut g_state.g_book);
-    } else { read_text_database(file_name.as_ptr(), &mut g_state.g_book); }
+    } else { read_text_database(file_name, &mut g_state.g_book); }
 
     // strcpy replacement
     file_name
