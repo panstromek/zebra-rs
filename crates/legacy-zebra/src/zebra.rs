@@ -540,7 +540,7 @@ Flags:
                    1, &mut g_state);
     }
     if use_random != 0 {
-        time(&mut timer);
+        LibcTimeSource.time(&mut timer);
         let x = timer as i32;
         (g_state.random).my_srandom(x);
     } else {
@@ -939,7 +939,7 @@ impl LibcFrontend {
             let log_file = File::options().append(true).create(true).open(log_file_name_);
 
             if let Ok(mut log_file) = log_file {
-                let mut timer = time(0 as *mut time_t);
+                let mut timer = LibcTimeSource.time(&mut 0);
                 write!(log_file,
                         "# {}#     {:2} - {:2}\n" , c_time(timer),
                         first_side_to_move,
