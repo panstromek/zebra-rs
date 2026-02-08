@@ -29,7 +29,9 @@ use std::io::Write;
 
 pub type FE = LibcFatalError;
 use legacy_zebra::fatal_error;
-use std::ffi::CStr;
+use std::ffi::{CStr, OsStr};
+use std::os::unix::prelude::OsStrExt;
+use std::path::Path;
 use libc::{isgraph, isprint, isspace, isupper};
 
 pub mod safemem;
@@ -168,7 +170,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8)
             arg_index += 1;
             input_file_name = *argv.offset(arg_index as isize);
             if input_binary != 0 {
-                read_binary_database(CStr::from_ptr(input_file_name), &mut g_state.g_book);
+                read_binary_database(Path::new(OsStr::from_bytes(CStr::from_ptr(input_file_name).to_bytes())), &mut g_state.g_book);
             } else { read_text_database(CStr::from_ptr(input_file_name), &mut g_state.g_book); }
         } else if strcasecmp(*argv.offset(arg_index as isize),
                              b"-w\x00" as *const u8 as *const i8) ==

@@ -11,6 +11,7 @@ use libc_wrapper::{stdout, scanf};
 use std::ffi::{CStr, CString};
 use engine::src::zebra::FullState;
 use std::io::Write;
+use std::path::Path;
 use legacy_zebra::src::thordb::LegacyThor;
 /*
    File:         practice.c
@@ -54,8 +55,7 @@ use legacy_zebra::src::thordb::LegacyThor;
         std::process::exit(1);
     }
     init_osf(1, g_state);
-    let book_name = CString::new(book_name).unwrap();
-    read_binary_database(book_name.as_ref(), &mut g_state.g_book);
+    read_binary_database(Path::new(book_name), &mut g_state.g_book);
     game_init(&mut side_to_move, g_state);
     (g_state.game).toggle_human_openings(0);
     {

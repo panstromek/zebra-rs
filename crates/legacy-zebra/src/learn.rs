@@ -7,8 +7,10 @@ use crate::src::osfbook::{add_new_game, init_osf, read_binary_database, read_tex
 use crate::src::zebra::FullState;
 #[macro_use]
 use crate::fatal_error;
-use std::ffi::CStr;
+use std::ffi::{CStr, OsStr};
 use std::fs::File;
+use std::os::unix::prelude::OsStrExt;
+use std::path::Path;
 use crate::src::display::TO_SQUARE;
 
 /*
@@ -19,7 +21,7 @@ use crate::src::display::TO_SQUARE;
 pub fn init_learn(file_name: &CStr, is_binary: i32, g_state: &mut FullState) {
     init_osf(0, g_state);
     if is_binary != 0 {
-        read_binary_database(file_name, &mut g_state.g_book);
+        read_binary_database(Path::new(OsStr::from_bytes(file_name.to_bytes())), &mut g_state.g_book);
     } else { read_text_database(file_name, &mut g_state.g_book); }
 
     // strcpy replacement

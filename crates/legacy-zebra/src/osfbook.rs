@@ -28,8 +28,9 @@ use crate::src::error::{LibcFatalError};
 use crate::src::zebra::{FullState, LibcTimeSource};
 
 use engine::src::globals::BoardState;
-use std::ffi::CStr;
+use std::ffi::{CStr};
 use std::fs::{OpenOptions};
+use std::path::Path;
 use engine::src::timer::TimeSource;
 use crate::src::display::TO_SQUARE;
 
@@ -368,9 +369,7 @@ unsafe fn read_text_database_impl(file_name: &CStr, g_book: &mut Book) {
    Reads a binary database file.
 */
 
-pub fn read_binary_database(file_name_: &CStr, g_book: &mut Book) -> Option<()> {
-    let file_name = file_name_.to_str().unwrap();
-
+pub fn read_binary_database(file_name: &Path, g_book: &mut Book) -> Option<()> {
     let mut new_book_node_count: i32 = 0;
     let mut magic1: i16 = 0;
     let mut magic2: i16 = 0;
@@ -382,7 +381,7 @@ pub fn read_binary_database(file_name_: &CStr, g_book: &mut Book) -> Option<()> 
 
     let stream = std::fs::read(file_name);
     if let Err(_) = stream {
-        fatal_error!("{} '{}'\n", "Could not open database file", file_name);
+        fatal_error!("{} '{}'\n", "Could not open database file", file_name.display());
     }
     struct Reader<T> {
         inner: T
@@ -413,7 +412,7 @@ pub fn read_binary_database(file_name_: &CStr, g_book: &mut Book) -> Option<()> 
     magic2 = stream.parse().unwrap_or(0);
 
     if magic1 as i32 != 2718 || magic2 as i32 != 2818 {
-        fatal_error!("{}: {}", "Wrong checksum, might be an old version", file_name);
+        fatal_error!("{}: {}", "Wrong checksum, might be an old version", file_name.display());
     }
 
     new_book_node_count = stream.parse()?;
