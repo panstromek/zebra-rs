@@ -13,7 +13,7 @@ use engine::src::stubs::{abs};
 use engine::src::zebra::EvaluationType;
 use engine::src::zebra::GameMode::PRIVATE_GAME;
 use engine_traits::Offset;
-use libc_wrapper::{fclose, fopen, fscanf, stdout, time};
+use libc_wrapper::{fclose, fopen, fscanf, stdout};
 use std::io::Write;
 #[macro_use]
 use crate::fatal_error;
@@ -25,16 +25,21 @@ use crate::{
 };
 
 use crate::src::error::{LibcFatalError};
-use crate::src::zebra::FullState;
+use crate::src::zebra::{FullState, LibcTimeSource};
 
 use engine::src::globals::BoardState;
 use std::ffi::CStr;
+use engine::src::timer::TimeSource;
 use crate::src::display::TO_SQUARE;
 
 pub type FE = LibcFatalError;
 
 pub type _IO_lock_t = ();
 pub type time_t = __time_t;
+
+fn time(__timer: &mut i64) -> i64 {
+    LibcTimeSource.time(__timer)
+}
 
 /*
   ADD_NEW_GAME
