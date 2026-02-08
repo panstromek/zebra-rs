@@ -8,6 +8,7 @@
 use std::ffi::{c_void, CStr};
 use std::io::{Write, ErrorKind};
 use std::ptr::null_mut;
+use std::sync::atomic::{AtomicI64, Ordering};
 
 extern crate libc;
 
@@ -173,9 +174,9 @@ impl Write for FileHandle {
 
 #[no_mangle]
 pub unsafe extern "C" fn __wrap_time(__timer: *mut time_t) -> time_t {
-    static mut time: time_t = 100;
-    time += 1;
-    let result = time / 100;
+    static time: AtomicI64 = AtomicI64::new(100);
+    let result = time.fetch_add(1, Ordering::SeqCst) + 1;
+    let result = result / 100;
     if __timer != null_mut() {
         *__timer = result;
     }
