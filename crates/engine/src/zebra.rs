@@ -478,7 +478,7 @@ impl<Src: InitialMoveSource> PlayGame<Src> {
 }
 
 fn load_moves_from_source<'a, Source: InitialMoveSource>(mut move_file: &mut Option<Source>, line_buffer: &'a mut [u8; 1001]) -> Option<&'a [u8]> {
-    if let Some(ref mut move_file) = &mut move_file {
+    if let Some(move_file) = &mut move_file {
         {
             // this is kindof a hack just to preserve null teminator at the absolute end of this string
             // we slice the buffer at the end and pass along just smaller slice to the trait function

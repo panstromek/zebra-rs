@@ -2,7 +2,7 @@
 name = "legacy-zebra"
 version = "0.1.0"
 authors = ["panstromek <panstromek@seznam.cz>"]
-edition = "2018"
+edition = "2024"
 publish = false
 autobins = false
 

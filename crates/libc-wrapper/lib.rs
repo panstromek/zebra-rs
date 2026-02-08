@@ -63,7 +63,7 @@ mod inner  {
     pub type FILE = _IO_FILE;
 
     pub use libc::{atoi, strcasecmp, fclose, fopen, fprintf, fputc, fgets, fputs, feof, fflush, fread, fwrite};
-    extern "C" {
+    unsafe extern "C" {
         pub static mut stdin: *mut FILE;
         pub static mut stdout: *mut FILE;
         pub static mut stderr: *mut FILE;
@@ -94,7 +94,7 @@ pub use libc::{
     isalnum
 };
 
-extern "C" {
+unsafe extern "C" {
     pub fn ctime(__timer: *const time_t) -> *mut i8;
 }
 
@@ -172,7 +172,7 @@ impl Write for FileHandle {
     }
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn __wrap_time(__timer: *mut time_t) -> time_t {
     static time: AtomicI64 = AtomicI64::new(100);
     let result = time.fetch_add(1, Ordering::SeqCst) + 1;

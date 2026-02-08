@@ -2,7 +2,7 @@
 name = "booktool"
 version = "0.1.0"
 authors = ["panstromek <panstromek@seznam.cz>"]
-edition = "2018"
+edition = "2024"
 
 
 [[bin]]

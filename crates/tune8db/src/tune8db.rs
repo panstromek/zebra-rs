@@ -5,7 +5,7 @@
 #![allow(unused_assignments)]
 #![allow(unused_mut)]
 #![allow(unused_must_use)]
-
+#![warn(static_mut_refs)]
 use libc_wrapper::{printf, fflush, time, puts, fclose, fscanf, fopen, FileHandle, sprintf, free,
                    fread, malloc, fprintf, fwrite, feof, fgets, sscanf, atoi, stdout, exit};
 use std::io::Write;
@@ -125,7 +125,7 @@ pub static mut inverse10: [i32; 59049] = [0; 59049];
 
 pub unsafe  fn pack_position(mut buffer: *mut i8,
                                        mut index: i32)
-                                       -> i32 {
+                                       -> i32 { unsafe {
     let mut black_mask: i32 = 0;
     let mut white_mask: i32 = 0;
     let mut i: i32 = 0;
@@ -193,13 +193,13 @@ pub unsafe  fn pack_position(mut buffer: *mut i8,
     }
     (*position_list.offset(index as isize)).stage = stage_0 as i16;
     return 1;
-}
+}}
 /*
   UNPACK_POSITION
   Expand the 128-bit compressed position into a full board.
 */
 
-pub unsafe  fn unpack_position(mut index: i32) {
+pub unsafe  fn unpack_position(mut index: i32) { unsafe {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -221,13 +221,13 @@ pub unsafe  fn unpack_position(mut index: i32) {
         }
         i += 1
     };
-}
+}}
 /*
   DISPLAY_BOARD
   Provides a crude position dump.
 */
 
-pub unsafe  fn display_board(mut index: i32) {
+pub unsafe  fn display_board(mut index: i32) { unsafe {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     puts(b"\x00" as *const u8 as *const i8);
@@ -255,14 +255,14 @@ pub unsafe  fn display_board(mut index: i32) {
            (*position_list.offset(index as isize)).stage as i32);
     printf(b"score=%d\n\x00" as *const u8 as *const i8,
            (*position_list.offset(index as isize)).score as i32);
-}
+}}
 /*
    READ_POSITION_FILE
    Reads a game database and creates a game tree containing its games.
 */
 
 pub unsafe  fn read_position_file(mut file_name:
-                                            *mut i8) {
+                                            *mut i8) { unsafe {
     let mut stream: FileHandle = FileHandle::null();
     let mut buffer: [i8; 100] = [0; 100];
     position_list = malloc((max_positions as usize).wrapping_mul(::std::mem::size_of::<CompactPosition>()))
@@ -297,14 +297,14 @@ pub unsafe  fn read_position_file(mut file_name:
     display_board( i );
   }
   */
-}
+}}
 /*
   COMPUTE_PATTERNS
   Computes the board patterns corresponding to rows, columns
   and diagonals.
 */
 
-pub unsafe  fn compute_patterns() {
+pub unsafe  fn compute_patterns() { unsafe {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut pos: i32 = 0;
@@ -333,7 +333,7 @@ pub unsafe  fn compute_patterns() {
         }
         i += 1
     };
-}
+}}
 /*
    SORT
    Sorts an integer vector using bubble-sort.
@@ -378,7 +378,7 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
                                             mut buffer_7: *mut i32,
                                             mut buffer_6: *mut i32,
                                             mut buffer_5: *mut i32,
-                                            mut buffer_4: *mut i32) {
+                                            mut buffer_4: *mut i32) { unsafe {
     let mut config52: i32 = 0;
     let mut config33: i32 = 0;
     compute_patterns();
@@ -570,13 +570,13 @@ pub unsafe  fn determine_features(mut side_to_move: i32,
         *buffer_4.offset(2) = mirror4[inverse4[compact[diag2_pattern[3] as usize] as usize] as usize];
         *buffer_4.offset(3) = mirror4[inverse4[compact[diag2_pattern[11] as usize] as usize] as usize]
     };
-}
+}}
 /*
    PERFORM_ANALYSIS
    Updates frequency counts.
 */
 
-pub unsafe  fn perform_analysis(mut index: i32) {
+pub unsafe  fn perform_analysis(mut index: i32) { unsafe {
     let mut _coeff: i32 = 0;
     let mut start: i32 = 0;
     let mut stop: i32 = 0;
@@ -757,13 +757,13 @@ pub unsafe  fn perform_analysis(mut index: i32) {
         start = stop;
         if !(start < 4) { break ; }
     };
-}
+}}
 /*
    PERFORM_EVALUATION
    Updates the gradient based on the position BRANCH.
 */
 
-pub unsafe  fn perform_evaluation(mut index: i32) {
+pub unsafe  fn perform_evaluation(mut index: i32) { unsafe {
     let mut error: f64 = 0.;
     let mut grad_contrib: f64 = 0.;
     let mut curr_weight: f64 = 0.;
@@ -914,14 +914,14 @@ pub unsafe  fn perform_evaluation(mut index: i32) {
         diag4[buffer_4[i as usize] as usize].gradient += grad_contrib;
         i += 1
     };
-}
+}}
 /*
    PERFORM_STEP_UPDATE
    Updates the parameters used to determine the optimal step length
    based on the position BRANCH.
 */
 
-pub unsafe  fn perform_step_update(mut index: i32) {
+pub unsafe  fn perform_step_update(mut index: i32) { unsafe {
     let mut error: f64 = 0.;
     let mut grad_contrib: f64 = 0.;
     let mut curr_weight: f64 = 0.;
@@ -1030,13 +1030,13 @@ pub unsafe  fn perform_step_update(mut index: i32) {
     quad_coeff += grad_contrib * grad_contrib;
     lin_coeff += 2.0f64 * grad_contrib * error;
     const_coeff += error * error;
-}
+}}
 /*
    PERFORM_ACTION
    A wrapper to the function given by the function pointer BFUNC.
 */
 #[inline]
-unsafe fn perform_action(mut bfunc: unsafe fn(_: i32) -> (), mut index: i32) {
+unsafe fn perform_action(mut bfunc: unsafe fn(_: i32) -> (), mut index: i32) { unsafe {
     node_count += 1;
     if active[(*position_list.offset(index as isize)).stage as usize] != 0 {
         relevant_count += 1;
@@ -1047,52 +1047,52 @@ unsafe fn perform_action(mut bfunc: unsafe fn(_: i32) -> (), mut index: i32) {
         unpack_position(index);
         bfunc(index);
     };
-}
+}}
 /*
    ITERATE
    Applies the function BFUNC to all the (relevant)
    positions in the position list.
 */
-pub unsafe fn iterate(mut bfunc: unsafe fn(_: i32) -> ()) {
+pub unsafe fn iterate(mut bfunc: unsafe fn(_: i32) -> ()) { unsafe {
     let mut index: i32 = 0;
     while index < position_count {
         perform_action(bfunc, index);
         index += 1
     };
-}
+}}
 /*
    ANALYZE_GAMES
    Creates frequency statistics.
 */
-pub unsafe fn analyze_games() {
+pub unsafe fn analyze_games() { unsafe {
     node_count = 0;
     relevant_count = 0;
     interval = 0;
     iterate(perform_analysis as unsafe fn(_: i32) -> ());
-}
+}}
 /*
    EVALUATE_GAMES
    Determines the gradient for all patterns.
 */
-pub unsafe  fn evaluate_games() {
+pub unsafe  fn evaluate_games() { unsafe {
     node_count = 0;
     relevant_count = 0;
     iterate(perform_evaluation as unsafe fn(_: i32) -> ());
-}
+}}
 /*
    DETERMINE_GAMES
    Determines the optimal step length.
 */
-pub unsafe  fn determine_games() {
+pub unsafe  fn determine_games() { unsafe {
     node_count = 0;
     relevant_count = 0;
     iterate(perform_step_update as unsafe fn(_: i32) -> ());
-}
+}}
 /*
    PATTERN_SETUP
    Creates a bunch of maps between patterns.
 */
-pub unsafe fn pattern_setup() {
+pub unsafe fn pattern_setup() { unsafe {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
@@ -1538,13 +1538,13 @@ pub unsafe fn pattern_setup() {
         diag4[i as usize].most_common = 0;
         i += 1
     };
-}
+}}
 /*
    SAVE
    Writes a set of pattern values to disc.
 */
 
-pub unsafe fn save(mut base: *const i8, mut suffix: *mut i8, mut items: *mut InfoItem, mut count: i32) {
+pub unsafe fn save(mut base: *const i8, mut suffix: *mut i8, mut items: *mut InfoItem, mut count: i32) { unsafe {
     let mut file_name: [i8; 32] = [0; 32];
     let mut vals: [f32; 59049] = [0.; 59049];
     let mut i: i32 = 0;
@@ -1569,13 +1569,13 @@ pub unsafe fn save(mut base: *const i8, mut suffix: *mut i8, mut items: *mut Inf
                count as size_t, stream);
         fclose(stream);
     };
-}
+}}
 /*
    STORE_PATTERNS
    Writes all sets of feature values to disc.
 */
 
-pub unsafe  fn store_patterns() {
+pub unsafe  fn store_patterns() { unsafe {
     let mut suffix: [i8; 8] = [0; 8];
     let mut file_name: [i8; 16] = [0; 16];
     let mut stream: FileHandle = FileHandle::null();
@@ -1608,13 +1608,13 @@ pub unsafe  fn store_patterns() {
         fclose(stream);
     }
     puts(b" done\x00" as *const u8 as *const i8);
-}
+}}
 /*
    WRITE_LOG
    Saves info on the state of the optimization to disc.
 */
 
-pub unsafe  fn write_log(mut iteration: i32) {
+pub unsafe  fn write_log(mut iteration: i32) { unsafe {
     let mut file_name: [i8; 32] = [0; 32];
     let mut stream: FileHandle = FileHandle::null();
     sprintf(file_name.as_mut_ptr(), b"log.s%d\x00" as *const u8 as *const i8, analysis_stage);
@@ -1626,7 +1626,7 @@ pub unsafe  fn write_log(mut iteration: i32) {
                 iteration, objective, abs_error_sum, max_delta, average_delta);
         fclose(stream);
     };
-}
+}}
 /*
    INITIALIZE_SOLUTION
    Reads the starting point from disc if available, otherwise
@@ -1635,7 +1635,7 @@ pub unsafe  fn write_log(mut iteration: i32) {
    due to its poor performance.
 */
 
-pub unsafe fn initialize_solution(mut base: *const i8, mut item: *mut InfoItem, mut count: i32, _my_mirror: *mut i32) {
+pub unsafe fn initialize_solution(mut base: *const i8, mut item: *mut InfoItem, mut count: i32, _my_mirror: *mut i32) { unsafe {
     let mut file_name: [i8; 32] = [0; 32];
     let mut vals: *mut f32 = 0 as *mut f32;
     let mut i: i32 = 0;
@@ -1673,13 +1673,13 @@ pub unsafe fn initialize_solution(mut base: *const i8, mut item: *mut InfoItem, 
         free(freq as *mut ::std::ffi::c_void);
         free(vals as *mut ::std::ffi::c_void);
     };
-}
+}}
 /*
    FIND_MOST_COMMON
    Finds and marks the most common pattern of a feature.
 */
 
-pub unsafe fn find_most_common(mut item: *mut InfoItem, mut count: i32) {
+pub unsafe fn find_most_common(mut item: *mut InfoItem, mut count: i32) { unsafe {
     let mut i: i32 = 0;
     let mut index: i32 = 0;
     let mut value: i32 = 0;
@@ -1695,14 +1695,14 @@ pub unsafe fn find_most_common(mut item: *mut InfoItem, mut count: i32) {
     }
     (*item.offset(index as isize)).most_common = 1;
     (*item.offset(index as isize)).solution = 0.0f64;
-}
+}}
 /*
    INITIALIZE_NON_PATTERNS
    Reads or calculates the starting point for features not
    corresponding to patterns in the board.
 */
 
-pub unsafe  fn initialize_non_patterns(mut base: *const i8) {
+pub unsafe  fn initialize_non_patterns(mut base: *const i8) { unsafe {
     let mut file_name: [i8; 32] = [0; 32];
     let mut stream: FileHandle = FileHandle::null();
     sprintf(file_name.as_mut_ptr(), b"%s.s%d\x00" as *const u8 as *const i8, base, analysis_stage);
@@ -1715,26 +1715,26 @@ pub unsafe  fn initialize_non_patterns(mut base: *const i8) {
         fscanf(stream.file(), b"%lf\x00" as *const u8 as *const i8, &mut parity.solution as *mut f64);
         fclose(stream);
     };
-}
+}}
 /*
    LIMIT_CHANGE
    Change one feature value, but not more than the damping specifies.
 */
-pub unsafe fn limit_change(mut value: *mut f64, mut change: f32) {
+pub unsafe fn limit_change(mut value: *mut f64, mut change: f32) { unsafe {
     if change as f64 > 0.50f64 {
         change = 0.50f64 as f32
     } else if (change as f64) < -0.50f64 {
         change = -0.50f64 as f32
     }
     *value += change as f64;
-}
+}}
 /*
    UPDATE_SOLUTION
    Changes a specific set of pattern using a specified scale.
    Notice that pattern 0 is not updated; it is removed to
    obtain linear independence,
 */
-pub unsafe fn update_solution(mut item: *mut InfoItem, mut count: i32, mut scale: f64) {
+pub unsafe fn update_solution(mut item: *mut InfoItem, mut count: i32, mut scale: f64) { unsafe {
     let mut change: f64 = 0.;
     let mut abs_change: f64 = 0.;
     let mut i: i32 = 0;
@@ -1756,13 +1756,13 @@ pub unsafe fn update_solution(mut item: *mut InfoItem, mut count: i32, mut scale
         }
         i += 1
     };
-}
+}}
 /*
    UPDATE_SEARCH_DIRECTION
    Update the search direction for a set of pattern using
    Fletcher-Reeves' update rule.
 */
-pub unsafe fn update_search_direction(mut item: *mut InfoItem, mut count: i32, mut beta: f64) {
+pub unsafe fn update_search_direction(mut item: *mut InfoItem, mut count: i32, mut beta: f64) { unsafe {
     let mut i: i32 = 0;
     i = 0;
     while i < count {
@@ -1773,9 +1773,9 @@ pub unsafe fn update_search_direction(mut item: *mut InfoItem, mut count: i32, m
         }
         i += 1
     };
-}
+}}
 
-unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8) -> i32 {
+unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8) -> i32 { unsafe {
     let mut game_file: *mut i8 = 0 as *mut i8;
     let mut option_file: *mut i8 = 0 as *mut i8;
     let mut prefix: [i8; 32] = [0; 32];
@@ -2094,7 +2094,7 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8) -> i32 {
         iteration += 1
     }
     return 0;
-}
+}}
 
 pub fn main() {
     let mut args: Vec<*mut i8> = Vec::new();

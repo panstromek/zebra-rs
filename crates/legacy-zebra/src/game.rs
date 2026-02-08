@@ -266,8 +266,8 @@ pub fn ponder_move<
 
 pub fn get_search_statistics(max_depth: &mut i32, node_count: &mut f64, g_state: &mut FullState) {
     let FullState {
-        game: ref mut game_state,
-        search: ref mut search_state,
+        game: game_state,
+        search: search_state,
         ..
     } : &mut FullState = g_state;
     *max_depth = game_state.max_depth_reached;
@@ -285,7 +285,7 @@ pub fn get_search_statistics(max_depth: &mut i32, node_count: &mut f64, g_state:
 */
 
 pub fn get_pv(destin: &mut [i8], g_state: &mut FullState) -> i32 {
-    let FullState { game: ref mut game_state, board: ref mut board_state, .. } = g_state;
+    let FullState { game: game_state, board: board_state, .. } = g_state;
     let mut i = 0;
     return if game_state.prefix_move == 0 {
         i = 0;
