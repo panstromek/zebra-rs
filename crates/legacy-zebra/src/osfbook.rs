@@ -29,6 +29,7 @@ use crate::src::zebra::{FullState, LibcTimeSource};
 
 use engine::src::globals::BoardState;
 use std::ffi::CStr;
+use std::fs::{OpenOptions};
 use engine::src::timer::TimeSource;
 use crate::src::display::TO_SQUARE;
 
@@ -478,15 +479,17 @@ pub unsafe fn write_text_database(file_name: *const i8, g_book: &mut Book) {
 */
 
 pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book) {
+    let file_name = CStr::from_ptr(file_name).to_str().unwrap();
     let mut start_time: time_t = 0;
     let mut stop_time: time_t = 0;
     time(&mut start_time);
     write!(stdout, "Writing binary database... ");
     stdout.flush();
-    let mut stream = fopen(file_name, b"wb\x00" as *const u8 as *const i8);
-    if stream.is_null() {
-        fatal_error!("{} '{}'\n", "Could not create database file", CStr::from_ptr(file_name).to_str().unwrap());
-    }
+
+    let Ok(mut stream) = OpenOptions::new().write(true).truncate(true).open(file_name) else {
+        fatal_error!("{} '{}'\n", "Could not create database file", file_name);
+    };
+
     let mut magic = 2718_i16;
     stream.write(&magic.to_le_bytes());
     let mut magic = 2818_i16;
@@ -504,7 +507,8 @@ pub unsafe fn write_binary_database(file_name: *const i8, mut g_book: &mut Book)
         stream.write(&node.flags.to_le_bytes());
         i += 1
     }
-    fclose(stream);
+    stream.flush();
+    drop(stream);
     time(&mut stop_time);
     write!(stdout, "done (took {} s)\n",
            (stop_time - start_time) as i32);
