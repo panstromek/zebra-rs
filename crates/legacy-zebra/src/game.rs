@@ -10,7 +10,7 @@ use engine::src::thordb::ThorDatabase;
 use engine::src::zebra::EvalResult::{DRAWN_POSITION, LOST_POSITION, UNSOLVED_POSITION, WON_POSITION};
 use engine::src::zebra::EvalType::{EXACT_EVAL, PASS_EVAL, UNDEFINED_EVAL};
 use engine::src::zebra::EvaluationType;
-use libc_wrapper::{stdout, time, time_t, c_time};
+use libc_wrapper::{stdout, time_t, c_time};
 
 use crate::src::display::{display_optimal_line, produce_eval_text, display_state, TO_SQUARE};
 use crate::src::error::{LibcFatalError};

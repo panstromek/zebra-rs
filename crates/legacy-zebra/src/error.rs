@@ -10,7 +10,7 @@ use engine::src::hash::{HashEntry, HashState};
 use engine::src::search::{hash_expand_pv, SearchState};
 
 use engine::src::zebra::{EvaluationType};
-use libc_wrapper::{stderr, stdout, time, time_t, c_time};
+use libc_wrapper::{stderr, stdout, time_t, c_time};
 use thordb_types::C2RustUnnamed;
 #[macro_use]
 use crate::send_status;
@@ -25,7 +25,7 @@ use crate::{
 use crate::src::display::{display_state, TO_SQUARE};
 use crate::src::osfbook::print_move_alternatives;
 
-use engine::src::timer::Timer;
+use engine::src::timer::{TimeSource, Timer};
 use engine::src::osfbook::Book;
 use engine::src::globals::BoardState;
 use engine::src::moves::MovesState;
@@ -65,13 +65,15 @@ macro_rules! fatal_error {
 }
 
 use std::io::Write;
+use crate::src::zebra::LibcTimeSource;
+
 pub fn fatal_error_(args: std::fmt::Arguments<'_>) -> ! {
     let mut timer: time_t = 0;
     eprint!("\nFatal error: ");
     unsafe {
         stderr.write_fmt(args);
         if let Ok(mut stream) = std::fs::OpenOptions::new().append(true).write(true).create(true).open("zebra.err") {
-            time(&mut timer);
+            LibcTimeSource.time(&mut timer);
             write!(stream, "{} @ {}\n  ", "Fatal error", c_time(timer));
             stream.write_fmt(args);
         }
