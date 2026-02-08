@@ -24,7 +24,7 @@ use legacy_zebra::src::thordb::LegacyThor;
    Contents:     A small utility which enables the user to browse
                  an opening book file.
 */
-unsafe fn main_0(args: Vec<String>) -> i32 {
+ fn main_0(args: Vec<String>) -> i32 {
     let book_name: &str;
     let mut i;
     let mut side_to_move: i32 = 0;
@@ -110,7 +110,9 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
             }
             stdout.flush();
             let mut move_string: [u8; 10] = [0; 10];
-            scanf(b"%s\x00" as *const u8 as *const i8, move_string.as_mut_ptr());
+            unsafe {
+                scanf(b"%s\x00" as *const u8 as *const i8, move_string.as_mut_ptr());
+            }
             if move_string.split(|&byte| byte == b'\x00').next().map_or(false, |s| s == b"quit") {
                 quit = 1
             } else {
@@ -166,7 +168,5 @@ unsafe fn main_0(args: Vec<String>) -> i32 {
 }
 
 pub fn main() {
-    unsafe {
-        ::std::process::exit(main_0(::std::env::args().collect()) as i32)
-    }
+    ::std::process::exit(main_0(::std::env::args().collect()))
 }
